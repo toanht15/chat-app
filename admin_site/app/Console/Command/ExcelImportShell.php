@@ -24,6 +24,7 @@ App::uses('ContractController', 'Controller');
 class ExcelImportShell extends AppShell
 {
   const EXCEL_FILE_PATH = '/var/www/sinclo/admin_site/app/Console/import.xlsx';
+  const RESULT_EXCEL_FILE_PATH = '/var/www/sinclo/admin_site/app/Console/import_result.xlsx';
 
   const ROW_CNAME = 'B';
   const ROW_TRIAL_FLG = 'C';
@@ -81,15 +82,22 @@ class ExcelImportShell extends AppShell
         $this->printLog('ADD_AGREEMENT_INFO ==================');
         $this->printLog(var_export($agreementInfo, TRUE));
         $this->printLog('=====================================');
-        $controller->processTransaction($companyInfo, $userInfo, $agreementInfo);
+        $addedCompanyInfo = $controller->processTransaction($companyInfo, $userInfo, $agreementInfo);
+        // 企業用タグをExeclに書き込む
+        $this->currentSheet->setCellValue(self::ROW_TAG.$index, "<script type='text/javascript' src='".C_NODE_SERVER_ADDR."/client/".$addedCompanyInfo['companyKey'].".js'></script>");
+
         $this->printLog('RESULT: OK');
         $this->printLog('=====================================');
       }
-      $this->printLog("END   ExcelCompanyImport");
     } catch(Exception $e) {
       $this->printLog('RESULT: NG!!!!');
       $this->printLog('=====================================');
     }
+    $this->printLog('SAVING RESULT EXCEL FILE TO '.self::RESULT_EXCEL_FILE_PATH);
+    // タグ情報を記載したExcelを出力
+    $writer = PHPExcel_IOFactory::createWriter($this->phpExcel, 'Excel2007');
+    $writer->save(self::RESULT_EXCEL_FILE_PATH);
+    $this->printLog("END   ExcelCompanyImport");
   }
 
   private function readExcel() {
