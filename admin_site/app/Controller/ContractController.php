@@ -404,7 +404,7 @@ class ContractController extends AppController
         "user_name" => $userInfo["user_name"],
         "display_name" => $userInfo["user_display_name"],
         "mail_address" => $userInfo["user_mail_address"],
-        "change_password_flg" => C_NO_CHANGE_PASSWORD_FLG,
+        "change_password_flg" => !empty($userInfo['no_change_password_flg']) ? $userInfo['no_change_password_flg'] : C_NO_CHANGE_PASSWORD_FLG,
         "permission_level" => C_AUTHORITY_ADMIN,
         "new_password" => $userInfo["user_password"]
     ];
