@@ -40,7 +40,7 @@
       <h3>アクションを追加する</h3>
       <div id="tchatbotscenario_form_action_menulist">
         <!-- アクション追加ボタン -->
-        <a ng-repeat="(key, item) in actionList" ng-click="main.addItem(key)" class="greenBtn btn-shadow">{{item.label}}</a>
+        <a ng-repeat="(key, item) in actionList" ng-click="main.addItem(key)" class="greenBtn btn-shadow commontooltip" data-text="{{item.tooltip}}">{{item.label}}</a>
       </div>
     </div>
     <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">
