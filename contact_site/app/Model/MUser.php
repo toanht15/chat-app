@@ -301,7 +301,8 @@ class MUser extends AppModel {
     }
 
     public function isFreeAddressChk($field = array()) {
-      if(!preg_match('/(gmail.com_$)/', $field['mail_address'])) {
+      //追加する場合は(gmail.com_$|○○○)で追加
+      if(preg_match('/(@gmail.com$)/', $field['mail_address'])) {
         return false;
       }
       else {

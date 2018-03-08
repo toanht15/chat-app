@@ -6,8 +6,8 @@
 App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Validation');
 class TrialController extends AppController {
   const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
-  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
-  const ML_MAIL_ADDRESS_AND_ALEX = "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const USER_NAME = "##USER_NAME##";
