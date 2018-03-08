@@ -306,6 +306,8 @@
           common.widgetHandler.show(true);
           sinclo.operatorInfo.widgetHide();
 
+          sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
+
           if ( String(openFlg) === "true" ) {
             sinclo.widget.condifiton.set(true, true);
 
@@ -328,6 +330,9 @@
               height += $("#sincloBox #chatTab").outerHeight(true);
               sincloBox.style.height = height;
             }
+            if(check.smartphone()) {
+              sinclo.chatApi.lockPageScroll();
+            }
           }
           else {
             //ここでもしバナーだったら二段階表示防止のために以下の処理を避ける
@@ -335,6 +340,9 @@
             if(bannerAct !== "true"){
               sinclo.widget.condifiton.set(false, true);
               sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
+            }
+            if(check.smartphone()) {
+              sinclo.chatApi.unlockPageScroll();
             }
           }
 
@@ -1487,9 +1495,11 @@
         }
         //横の場合
         else {
-          var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
-          var hRatio = chatAreaHeight * 0.07;
-          document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + 'px';
+          if(!check.android()) {
+            var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
+            var hRatio = chatAreaHeight * 0.07;
+            document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + 'px';
+          }
         }
       }
     },
@@ -1737,6 +1747,18 @@
               if(e) e.stopPropagation();
               var message = document.getElementById('sincloChatMessage');
               message.placeholder = "";
+              if(check.smartphone()) {
+                //自由入力エリアが閉まっているか空いているかチェック
+                var textareaOpend = storage.l.get('textareaOpend');
+                //チャットのテキストエリア表示
+                if( textareaOpend == 'close') {
+                  sinclo.hideTextarea();
+                }
+                //チャットのテキストエリア非表示
+                else {
+                  sinclo.displayTextarea();
+                }
+              }
             })
             .on('blur', "#sincloChatMessage",function(e){
               if(e) e.stopPropagation();
@@ -1748,6 +1770,18 @@
                 }
                 else {
                   message.placeholder += "\n（Shift+Enterで改行/Enterで送信）";
+                }
+              }
+              if(check.smartphone()) {
+                //自由入力エリアが閉まっているか空いているかチェック
+                var textareaOpend = storage.l.get('textareaOpend');
+                //チャットのテキストエリア表示
+                if( textareaOpend == 'close') {
+                  sinclo.hideTextarea();
+                }
+                //チャットのテキストエリア非表示
+                else {
+                  sinclo.displayTextarea();
                 }
               }
             })

@@ -46,6 +46,10 @@ class MUser extends AppModel {
             'isUniqueChk' => [
                 'rule' => 'isUniqueChk',
                 'message' => '既に登録されているアドレスです。'
+            ],
+            'isFreeAddressChk' => [
+                'rule'     => 'isFreeAddressChk',
+                'message' => 'フリーアドレスのご利用はできません。'
             ]
         ],
         'new_password' => [
@@ -296,5 +300,15 @@ class MUser extends AppModel {
 
     }
 
+    public function isFreeAddressChk($field = array()) {
+      $Address = ['@gmail.com$','@yahoo.co.jp$','@outlook.jp$','outlook.com$','@hotmail.co.jp$','@excite.co.jp$','@aol.jp$',
+                  '@biglobe.ne.jp$','@zoho.com$','@yandex.com$','@mail.ru$','@inbox.ru$','@list.ru$','@bk.ru$'];
+      foreach($Address as $k => $v){
+        if(preg_match('/('.$v.')/', $field['mail_address'])) {
+          return false;
+        }
+      }
+      return true;
+    }
 
 }
