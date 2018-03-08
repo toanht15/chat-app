@@ -674,7 +674,7 @@ $config['chatbotScenarioActionList'] = [
   // シナリオ呼び出し
   C_SCENARIO_ACTION_CALL_SCENARIO => [
     'label' => 'シナリオ呼び出し',
-    'tooltip' => 'シナリオを呼び出すアクションです。',
+    'tooltip' => '呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -684,7 +684,7 @@ $config['chatbotScenarioActionList'] = [
   // 外部システム連携
   C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION => [
     'label' => '外部システム連携',
-    'tooltip' => '任意の値を設定して、APIの実行を行うアクションです。',
+    'tooltip' => '連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
