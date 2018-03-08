@@ -98,6 +98,8 @@
       url: "<?= $this->Html->url('/Trial/add') ?>",
       data: $('#ContractAddForm').serialize()
     }).done(function(data){
+      console.log('data');
+      console.log(data);
       if(data.trim() == '既に登録されているアドレスです。') {
         loading.load.finish();
         document.getElementById('mailAddress').style.display = "block";

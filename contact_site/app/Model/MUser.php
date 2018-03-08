@@ -301,13 +301,13 @@ class MUser extends AppModel {
     }
 
     public function isFreeAddressChk($field = array()) {
-      //追加する場合は(@gmail.com_$|○○○)で追加
-      if(preg_match('/(@gmail.com$)/', $field['mail_address'])) {
-        return false;
+      $Address = ['@gmail.com$'];
+      foreach($Address as $k => $v){
+        if(preg_match('/('.$v.')/', $field['mail_address'])) {
+          return false;
+        }
       }
-      else {
-        return true;
-      }
+      return true;
     }
 
 }
