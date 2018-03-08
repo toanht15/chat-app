@@ -46,8 +46,9 @@ class TrialController extends AppController {
     $this->MUser->set($data);
     //mailAddress validattionチェック
     if(!$this->MUser->validates()) {
+      $errorMessage = $this->MUser->validationErrors;
       $this->MUser->rollback();
-      return 'error';
+      return $errorMessage['mail_address'][0];
     }
 
     $data['MCompany']['trial_flg'] = C_TRIAL_FLG;
