@@ -2285,6 +2285,10 @@ var socket, // socket.io
       // iPhone/iPod/Androidのみ有効のロジック
       return (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
     },
+    android: function(){
+      var ua = navigator.userAgent.toLowerCase();
+      return ua.indexOf('android') > 0;
+    },
     isset: function(a){
       if ( a === null || a === '' || a === undefined || String(a) === "null" || String(a) === "undefined" ) {
          return false;
