@@ -1533,12 +1533,10 @@
         }
         //横の場合
         else {
-          if(!check.android()) {
-            document.getElementById("flexBoxHeight").style.display = 'none';
-            var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
-            var hRatio = chatAreaHeight * 0.07;
-            document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
-          }
+          document.getElementById("flexBoxHeight").style.display = 'none';
+          var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
+          var hRatio = chatAreaHeight * 0.07;
+          document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
         }
       }
     },
