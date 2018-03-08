@@ -6875,64 +6875,17 @@ ul.naviBtn {
                   padding: 3px 0 5px;
                 }
 
-                &.action_hearing table {
+                table {
                   width: 100%;
-
-                  .item_name {
-                    width: 13.5em;
-                  }
-                  .item_type {
-                    width: 10em;
-                  }
-                  .item_message {
-                    width: auto;
-                  }
-                  .item_btn_block {
-                    width: 4em;
-                    padding-left: 0;
-                    vertical-align: bottom;
-                    padding-bottom: 0.5em;
-                    .btnBlock {
-                      padding-left: 0;
-                    }
-                  }
-                  .item_detail_settings {
-                    padding: 0.5em;
-                  }
 
                   thead th {
                     background-color: #ffffff;
                     text-align: center;
                     font-weight: normal;
                     border: none;
-
-                    // 外部システム連携、移動しないといけないスタイルたち
-                    &.apiRequestHeaderNameLabel {
-                      width: 40%;
-                    }
-                    &.apiRequestHeaderValueLabel {
-                      width: auto;
-                    }
-                    &.apiRequestHeaderBtnGroupLabel {
-                      width: 4em;
-                    }
-
-                    &.apiResponseBodyVariableNameLabel {
-                      width: 40%;
-                    }
-                    &.apiResponseBodySourceKeyLabel {
-                      width: auto;
-                    }
-                    &.apiResponseBodyBtnGroupLabel {
-                      width: 4em;
-                    }
                   }
 
                   tbody {
-                    tr:nth-child(2n+2) {
-                      height: 5em;
-                    }
-
                     td {
                       border: none;
                       vertical-align: top;
@@ -6959,6 +6912,51 @@ ul.naviBtn {
                           margin-left: 0.8em;
                         }
                       }
+                    }
+                  }
+                }
+
+                &.action_hearing table {
+                  tr:nth-child(2n+2) {
+                    height: 5em;
+                  }
+
+                  .item_name {
+                    width: 13.5em;
+                  }
+                  .item_type {
+                    width: 10em;
+                  }
+                  .item_message {
+                    width: auto;
+                  }
+                  .item_btn_block {
+                    width: 4em;
+                    padding-left: 0;
+                    vertical-align: bottom;
+                    padding-bottom: 0.5em;
+                    .btnBlock {
+                      padding-left: 0;
+                    }
+                  }
+                  .item_detail_settings {
+                    padding: 0.5em;
+                  }
+
+                }
+
+                &.action_external_api_connection table {
+                  .item_name {
+                    width: 40%;
+                  }
+                  .item_value {
+                    width: auto;
+                  }
+                  .item_btn_block {
+                    width: 4em;
+                    padding-left: 0;
+                    .btnBlock {
+                      padding-left: 0;
                     }
                   }
                 }
