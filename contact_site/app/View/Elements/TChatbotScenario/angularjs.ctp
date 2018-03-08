@@ -178,10 +178,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var validatedActivity = this.createJsonData(true);
     var unvalidatedActivity = this.createJsonData(false);
 
-    // シナリオの新規追加、もしくは入力済みの項目が全て保存可能なとき、localStorageから一時保存データを削除する
-    if ($scope.storageKey === 'scenario_tmp' || validatedActivity === unvalidatedActivity) {
-      localStorage.removeItem($scope.storageKey);
-    }
+    // localStorageから一時保存データを削除する
+    localStorage.removeItem($scope.storageKey);
 
     // アラート表示を行わないように、フラグを戻す
     $scope.changeFlg = false;
@@ -225,33 +223,37 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     activity.chatbotType = "1"; // 現在、複数タイプ存在しないため、固定で1を設定する
     activity.scenarios = {};
 
-    // activity の内容をチェックする
     angular.forEach($scope.setActionList, function(originalAction, index) {
       var action = angular.copy(originalAction);
       action.messageIntervalTimeSec = $scope.messageIntervalTimeSec;
+
+      // 表示用のデータをオブジェクトから削除する
       delete action.label;
+      delete action.tooltip;
       delete action.default;
       delete action.$valid;
 
-      switch(parseInt(action.actionType, 10)) {
-        case <?= C_SCENARIO_ACTION_TEXT ?>:
-          action = adjustDataOftext(action, isCheckValidation);
-          break;
-        case <?= C_SCENARIO_ACTION_HEARING ?>:
-          action = adjustDataOfHearing(action, isCheckValidation);
-          break;
-        case <?= C_SCENARIO_ACTION_SELECT_OPTION ?>:
-          action = adjustDataOfSelectOption(action, isCheckValidation);
-          break;
-        case <?= C_SCENARIO_ACTION_SEND_MAIL ?>:
-          action = adjustDataOfSendMail(action, isCheckValidation);
-          break;
-        case <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>:
-          action = adjustDataOfCallScenario(action, isCheckValidation);
-          break;
-        case <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>:
-          action = adjustDataOfExternalApiConnection(action, isCheckValidation);
-          break;
+      if (isCheckValidation) {
+        switch(parseInt(action.actionType, 10)) {
+          case <?= C_SCENARIO_ACTION_TEXT ?>:
+            action = self.trimDataText(action);
+            break;
+          case <?= C_SCENARIO_ACTION_HEARING ?>:
+            action = self.trimDataHearing(action);
+            break;
+          case <?= C_SCENARIO_ACTION_SELECT_OPTION ?>:
+            action = self.trimDataSelectOption(action);
+            break;
+          case <?= C_SCENARIO_ACTION_SEND_MAIL ?>:
+            action = self.trimDataSendMail(action);
+            break;
+          case <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>:
+            action = self.trimDataCallScenario(action);
+            break;
+          case <?= C_SCENARIO_ACTION_EXTERNAL_API ?>:
+            action = self.trimDataExternalApi(action);
+            break;
+        }
       }
 
       if (action !== null) {
@@ -260,6 +262,146 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
     return JSON.stringify(activity);
   };
+
+  /**
+   * trimDataText
+   * テキスト発言のバリデーションチェックを行い、保存可能なデータを返す
+   * @param Object  action  アクションの詳細
+   */
+  this.trimDataText = function(action) {
+    if (typeof action.message == 'undefined' || action.message == '') {
+      return null;
+    }
+    return action;
+  };
+
+  /**
+   * trimDataHearing
+   * ヒアリングのバリデーションチェックを行い、保存可能なデータを返す
+   * @param Object  action  アクションの詳細
+   */
+  this.trimDataHearing = function(action) {
+    if (typeof action.hearings === 'undefined' || typeof action.hearings.length < 1 ||
+      typeof action.errorMessage === 'undefined' || action.errorMessage === '' ||
+      (action.isConfirm && (typeof action.confirmMessage === 'undefined' || action.confirmMessage === '' || typeof action.success === 'undefined' || action.success === '' || typeof action.cancel === 'undefined' || action.cancel === ''))
+    ) {
+      return null;
+    }
+
+    var hearings = [];
+    angular.forEach(action.hearings, function(item, index) {
+      if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !== 'undefined' && item.message !== '') {
+        item.inputLFType = item.inputLFType == 1 ? '1' : '2';
+        item.sendMessageType = item.sendMessageType == 1 ? '1' : '2';
+        hearings.push(item);
+      }
+    });
+    if (hearings.length < 1) return null;
+    action.hearings = hearings;
+
+    action.isConfirm = action.isConfirm ? '1' : '2';
+    action.cv = action.cv ? '1' : '2';
+    return action;
+  };
+
+  /**
+   * trimDataSelectOption
+   * 選択肢のバリデーションチェックを行い、保存可能なデータを返す
+   * @param Object  action  アクションの詳細
+   */
+  this.trimDataSelectOption = function(action) {
+    if (typeof action.message === 'undefined' || action.message === '' ||
+      typeof action.selection === 'undefined' || action.selection.options.length < 1 ||
+      typeof action.selection.variableName === 'undefined' || action.selection.variableName === ''
+    ) {
+      return null;
+    }
+
+    var options = [];
+    angular.forEach(action.selection.options, function(item, index) {
+      if (item !== '') {
+        options.push(item);
+      }
+    });
+    if (options.length < 1) return null;
+    action.selection.options = options;
+
+    return action;
+  };
+
+  /**
+   * trimDataSendMail
+   * メール送信のバリデーションチェックを行い、保存可能なデータを返す
+   * @param Object  action  アクションの詳細
+   */
+  this.trimDataSendMail = function(action) {
+    if (typeof action.subject === 'undefined' || action.subject === '' ||
+      typeof action.fromName === 'undefined' || action.fromName === '' ||
+      typeof action.toAddress === 'undefined' || action.toAddress < 1 ||
+      (action.mailType == 3 && (typeof action.template === 'undefined' || action.template === ''))
+    ) {
+      return null;
+    }
+
+    var toAddress = [];
+    angular.forEach(action.toAddress, function(item, index) {
+      if (item !== '') {
+        toAddress.push(item);
+      }
+    });
+    if (toAddress.length < 1) return null;
+    action.toAddress = toAddress;
+
+    return action;
+  };
+
+  /**
+   * trimDataCallScenario
+   * シナリオ呼び出しのバリデーションチェックを行い、保存可能なデータを返す
+   * @param Object  action  アクションの詳細
+   */
+  this.trimDataCallScenario = function(action) {
+    if (typeof action.scenarioId == 'undefined' || action.scenarioId === '' || action.scenarioId === null) {
+      return null;
+    }
+    return action;
+  }
+
+  /**
+   * trimDataExternalApi
+   * 外部システム連携のバリデーションチェックを行い、保存可能なデータを返す
+   * @param Object  action  アクションの詳細
+   */
+  this.trimDataExternalApi = function(action) {
+    if (typeof action.url == 'undefined' || action.url == '') {
+      return null;
+    }
+
+    // メソッド種別によって送信するリクエスト情報を整理する
+    if (action.methodType == <?= C_SCENARIO_METHOD_TYPE_POST ?>) {
+      var requestHeaders = [];
+      angular.forEach(action.requestHeaders, function(item, index) {
+        if (typeof item.name !== 'undefined' && item.name !== '' && typeof item.value !== 'undefined' && item.value !== '') {
+          requestHeaders.push(item);
+        }
+      });
+      action.requestHeaders = requestHeaders;
+    } else {
+      action.requestHeaders =$scope.actionList[<?= C_SCENARIO_ACTION_EXTERNAL_API ?>].default.requestHeaders;
+      action.requestBody = '';
+    }
+
+    var responseBodys = [];
+    angular.forEach(action.responseBodyMaps, function(item, index) {
+      if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.sourceKey !== 'undefined' && item.sourceKey !== '') {
+        responseBodys.push(item);
+      }
+    });
+    if (responseBodys.length < 1) return null;
+    action.responseBodyMaps = responseBodys;
+
+    return action;
+  }
 
   this.controllHearingSettingView = function(actionStep) {
     $timeout(function() {
@@ -337,7 +479,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         this.controllMailSetting(actionStep);
       }
 
-    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
+    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
       if (/externalApiRequestHeader/.test(targetClassName)) {
         var src = $scope.actionList[actionType].default.requestHeaders[0];
         var target = $scope.setActionList[actionStep].requestHeaders;
@@ -371,7 +513,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       targetObjList = $scope.setActionList[actionStep].toAddress;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
       limitNum = 5;
-    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
+    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
       if (/externalApiRequestHeader/.test(targetClassName)) {
         targetObjList = $scope.setActionList[actionStep].requestHeaders;
         selector = '#action' + actionStep + '_setting .itemListGroup.externalApiRequestHeader tr';
@@ -588,7 +730,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
       // メッセージ間隔
       var time =  actionDetail.messageIntervalTimeSec;
-      if (!!setTime || $scope.actionStep === 0 || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
+      if (!!setTime || $scope.actionStep === 0 || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
         time = setTime || '0';
       }
 
@@ -623,7 +765,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
           self.getScenarioDetail(actionDetail.scenarioId);
         } else
-        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
           self.callExternalApi(actionDetail);
         }
       }, parseInt(time, 10) * 1000);
@@ -902,131 +1044,6 @@ $(document).ready(function() {
   });
 });
 
-// テキスト発言のバリデーションチェック
-function adjustDataOftext(action, isCheckValidation) {
-  if (isCheckValidation) {
-    if (typeof action.message == 'undefined' || action.message == '') {
-      return null;
-    }
-  }
-  return action;
-}
-
-// ヒアリングのバリデーションチェック
-function adjustDataOfHearing(action, isCheckValidation) {
-  if (isCheckValidation) {
-    if (typeof action.hearings === 'undefined' || typeof action.hearings.length < 1 ||
-      typeof action.errorMessage === 'undefined' || action.errorMessage === '' ||
-      (action.isConfirm && (typeof action.confirmMessage === 'undefined' || action.confirmMessage === '' || typeof action.success === 'undefined' || action.success === '' || typeof action.cancel === 'undefined' || action.cancel === ''))
-    ) {
-      return null;
-    }
-
-    var hearings = [];
-    angular.forEach(action.hearings, function(item, index) {
-      if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !== 'undefined' && item.message !== '') {
-        item.inputLFType = item.inputLFType == 1 ? '1' : '2';
-        item.sendMessageType = item.sendMessageType == 1 ? '1' : '2';
-        hearings.push(item);
-      }
-    });
-    if (hearings.length < 1) return null;
-    action.hearings = hearings;
-  }
-  action.isConfirm = action.isConfirm ? '1' : '2';
-  action.cv = action.cv ? '1' : '2';
-  return action;
-}
-
-// 選択肢のバリデーションチェック
-function adjustDataOfSelectOption(action, isCheckValidation) {
-  if (isCheckValidation) {
-    if (typeof action.message === 'undefined' || action.message === '' ||
-      typeof action.selection === 'undefined' || action.selection.options.length < 1 ||
-      typeof action.selection.variableName === 'undefined' || action.selection.variableName === ''
-    ) {
-      return null;
-    }
-
-    var options = [];
-    angular.forEach(action.selection.options, function(item, index) {
-      if (item !== '') {
-        options.push(item);
-      }
-    });
-    if (options.length < 1) return null;
-    action.selection.options = options;
-  }
-  return action;
-}
-
-// メール送信のバリデーションチェック
-function adjustDataOfSendMail(action, isCheckValidation) {
-  if (isCheckValidation) {
-    if (typeof action.subject === 'undefined' || action.subject === '' ||
-      typeof action.fromName === 'undefined' || action.fromName === '' ||
-      typeof action.toAddress === 'undefined' || action.toAddress < 1 ||
-      (action.mailType == 3 && (typeof action.template === 'undefined' || action.template === ''))
-    ) {
-      return null;
-    }
-
-    var toAddress = [];
-    angular.forEach(action.toAddress, function(item, index) {
-      if (item !== '') {
-        toAddress.push(item);
-      }
-    });
-    if (toAddress.length < 1) return null;
-    action.toAddress = toAddress;
-  }
-
-  return action;
-}
-
-// シナリオ呼び出しのバリデーションチェック
-function adjustDataOfCallScenario(action, isCheckValidation) {
-  if (isCheckValidation) {
-    if (typeof action.scenarioId == 'undefined' || action.scenarioId === '' || action.scenarioId === null) {
-      return null;
-    }
-  }
-
-  return action;
-}
-
-// 外部システム連携のバリデーションチェック
-function adjustDataOfExternalApiConnection(action, isCheckValidation) {
-  if (isCheckValidation) {
-    if (typeof action.url == 'undefined' || action.url == '') {
-      return null;
-    }
-
-    var requestHeaders = [];
-    angular.forEach(action.requestHeaders, function(item, index) {
-      if (typeof item.name !== 'undefined' && item.name !== '' && typeof item.value !== 'undefined' && item.value !== '') {
-        requestHeaders.push(item);
-      }
-    });
-    action.requestHeaders = requestHeaders;
-
-    if (action.methodType != <?= C_SCENARIO_METHOD_TYPE_POST ?>) {
-      delete action.requestBody;
-    }
-
-    var responseBodys = [];
-    angular.forEach(action.responseBodyMaps, function(item, index) {
-      if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.sourceKey !== 'undefined' && item.sourceKey !== '') {
-        responseBodys.push(item);
-      }
-    });
-    if (responseBodys.length < 1) return null;
-    action.responseBodyMaps = responseBodys;
-  }
-
-  return action;
-}
-
 // アクションのバリデーションとエラーメッセージの設定
 function validateAction(element, setActionList, actionItem) {
   var messageList = [];
@@ -1106,7 +1123,7 @@ function validateAction(element, setActionList, actionItem) {
     }
 
   } else
-  if (actionItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>) {
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
     if (!actionItem.url) {
       messageList.push('連携先URLが未入力です');
     }
