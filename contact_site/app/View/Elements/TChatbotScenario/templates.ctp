@@ -166,7 +166,7 @@
 </div>
 
 <?php /* 外部システム連携 */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION ?>" class="set_action_item_body action_external_api_connection" ng-init="main.controllExternalApiSetting(setActionId)">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>" class="set_action_item_body action_external_api_connection" ng-init="main.controllExternalApiSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
       <span class="fb13em"><label>連携先URL<span class="questionBalloon"><icon class="questionBtn" data-tooltip="HTTP(S)で通信するリクエスト対象の外部連携先のURLです。（変数の利用も可能です）">?</icon></span></label></span>

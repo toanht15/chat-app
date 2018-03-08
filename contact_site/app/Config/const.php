@@ -194,7 +194,7 @@ define('C_SCENARIO_ACTION_HEARING', 2); // ヒアリング
 define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
 define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
 define('C_SCENARIO_ACTION_CALL_SCENARIO', 5); // シナリオ呼び出し
-define('C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION', 6); // 外部システム連携
+define('C_SCENARIO_ACTION_EXTERNAL_API', 6); // 外部システム連携
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -682,7 +682,7 @@ $config['chatbotScenarioActionList'] = [
     ]
   ],
   // 外部システム連携
-  C_SCENARIO_ACTION_EXTERNAL_API_CONNECTION => [
+  C_SCENARIO_ACTION_EXTERNAL_API => [
     'label' => '外部システム連携',
     'tooltip' => '連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。',
     'default' => [
