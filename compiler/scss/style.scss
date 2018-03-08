@@ -6853,7 +6853,11 @@ ul.naviBtn {
                 }
 
                 span {
+                  display: inline-block;
                   padding: 5px 0;
+                  label + label {
+                    margin-left: 0.8em;
+                  }
                 }
 
                 input[type="text"],
@@ -6905,13 +6909,6 @@ ul.naviBtn {
                         border: 1px solid #909090 !important;
                         width: calc(100% - 3px);
                       }
-
-                      p {
-                        margin: 0 0 5px 0;
-                        label + label {
-                          margin-left: 0.8em;
-                        }
-                      }
                     }
                   }
                 }
@@ -6941,6 +6938,9 @@ ul.naviBtn {
                   }
                   .item_detail_settings {
                     padding: 0.5em;
+                    span {
+                      padding-bottom: 0;
+                    }
                   }
 
                 }
