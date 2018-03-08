@@ -32,9 +32,15 @@
       document.getElementById('companyName').style.display = "block";
       validate = 'false';
     }
+    else {
+      document.getElementById('companyName').style.display = "none";
+    }
     if($('#MAgreementsApplicationName').val() == "") {
       document.getElementById('name').style.display = "block";
       validate = 'false';
+    }
+    else {
+      document.getElementById('name').style.display = "none";
     }
     if($('#ContractUserMailAddress').val() == "") {
       document.getElementById('mailAddress').style.display = "block";
@@ -43,20 +49,43 @@
       document.getElementById('registered').style.display = "none";
       validate = 'false';
     }
-    if($('#ContractUserMailAddress').val() !== "" && $('#ContractUserMailAddress').val().match(/.+@.+\..+/)==null){
+    else if($('#ContractUserMailAddress').val() !== "" && $('#ContractUserMailAddress').val().match(/.+@.+\..+/)==null){
       document.getElementById('mailAddress').style.display = "block";
       document.getElementById('empty').style.display = "none";
       document.getElementById('mailFormat').style.display = "block";
       document.getElementById('registered').style.display = "none";
       validate = 'false';
     }
+    else {
+      document.getElementById('mailAddress').style.display = "none";
+      document.getElementById('empty').style.display = "none";
+      document.getElementById('mailFormat').style.display = "none";
+      document.getElementById('registered').style.display = "none";
+    }
+    var tel = document.getElementById('MAgreementsTelephoneNumber').value.replace(/[━.*‐.*―.*－.*\-.*ー.*\-]/gi,'');
     if($('#MAgreementsTelephoneNumber').val() == "") {
       document.getElementById('phoneNumber').style.display = "block";
+      document.getElementById('phoneNumberEmpty').style.display = "block";
+      document.getElementById('phoneNumberFormat').style.display = "none";
       validate = 'false';
+    }
+    else if($('#MAgreementsTelephoneNumber').val() !== "" && !tel.match(/^(0[5-9]0[0-9]{8}|0[1-9][1-9][0-9]{7})$/)) {
+      document.getElementById('phoneNumber').style.display = "block";
+      document.getElementById('phoneNumberEmpty').style.display = "none";
+      document.getElementById('phoneNumberFormat').style.display = "block";
+      validate = 'false';
+    }
+    else {
+      document.getElementById('phoneNumber').style.display = "none";
+      document.getElementById('phoneNumberEmpty').style.display = "none";
+      document.getElementById('phoneNumberFormat').style.display = "none";
     }
     if(!$("#agree").prop('checked')) {
       document.getElementById('agreeEroor').style.display = "block";
       validate = 'false';
+    }
+    else {
+      document.getElementById('agreeEroor').style.display = "none";
     }
     if(validate == 'false') {
       return false;
@@ -69,12 +98,21 @@
       url: "<?= $this->Html->url('/Trial/add') ?>",
       data: $('#ContractAddForm').serialize()
     }).done(function(data){
-      if(data.trim() == 'error') {
+      if(data.trim() == '既に登録されているアドレスです。') {
         loading.load.finish();
         document.getElementById('mailAddress').style.display = "block";
         document.getElementById('empty').style.display = "none";
         document.getElementById('mailFormat').style.display = "none";
         document.getElementById('registered').style.display = "block";
+        document.getElementById("registered").innerHTML="既に登録されているアドレスです。";
+       }
+        if(data.trim() == 'フリーアドレスのご利用はできません。') {
+        loading.load.finish();
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('registered').style.display = "block";
+        document.getElementById("registered").innerHTML = "フリーアドレスのご利用はできません。";
        }
       else {
         socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}),function(){
@@ -252,7 +290,8 @@
                   <div class="nf-after-field" id = "phoneNumber" style = "display:none;">
                     <div class="nf-input-limit"></div>
                     <div id="nf-error-8" class="nf-error-wrap nf-error" role="alert">
-                      <div class="nf-error-msg nf-error-required-error" style = "margin-bottom: -12px;">必須項目です</div>
+                      <div class="nf-error-msg nf-error-required-error" id = "phoneNumberEmpty" style = "margin-bottom: -12px;display:none;">必須項目です</div>
+                      <div class="nf-error-msg nf-error-required-error" id = "phoneNumberFormat"  style = "margin-bottom: -12px;display:none;">固定電話10桁〜携帯電話11桁の数値を入力してください</div>
                     </div>
                   </div>
                 </div>

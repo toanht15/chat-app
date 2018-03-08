@@ -46,6 +46,10 @@ class MUser extends AppModel {
             'isUniqueChk' => [
                 'rule' => 'isUniqueChk',
                 'message' => '既に登録されているアドレスです。'
+            ],
+            'isFreeAddressChk' => [
+                'rule'     => 'isFreeAddressChk',
+                'message' => 'フリーアドレスのご利用はできません。'
             ]
         ],
         'new_password' => [
@@ -296,5 +300,13 @@ class MUser extends AppModel {
 
     }
 
+    public function isFreeAddressChk($field = array()) {
+      if(!preg_match('/(gmail.com_$)/', $field['mail_address'])) {
+        return false;
+      }
+      else {
+        return true;
+      }
+    }
 
 }
