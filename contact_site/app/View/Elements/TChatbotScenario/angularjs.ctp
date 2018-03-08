@@ -265,7 +265,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
-      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup tr:nth-child(2n+1)');
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup tr:nth-child(2n+2)');
       var targetObjList = $scope.setActionList[actionStep].hearings;
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
     });
@@ -297,11 +297,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).then(function() {
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup.externalApiRequestHeader tr');
       var targetObjList = $scope.setActionList[actionStep].requestHeaders;
-      self.controllListView(targetElmList, targetObjList);
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList);
 
       targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup.externalApiResponseBody tr');
       targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
-      self.controllListView(targetElmList, targetObjList);
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList);
     });
   };
 
@@ -312,7 +312,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param String  actionStep  アクション番号
    * @param Integer listIndex   ボタン押下されたリスト番号
    */
-  this.addActionItemList = function(actionStep, listIndex) {
+  this.addActionItemList = function($event, listIndex) {
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var targetClassName = $($event.target).parents('.itemListGroup')[0].className;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
@@ -363,7 +363,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       targetObjList = $scope.setActionList[actionStep].hearings;
-      selector = '#action' + actionStep + '_setting .itemListGroup tr:nth-child(2n+1)';
+      selector = '#action' + actionStep + '_setting .itemListGroup tr:nth-child(2n+2)';
     } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       targetObjList = $scope.setActionList[actionStep].selection.options;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
@@ -405,23 +405,27 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (typeof limitNum === 'undefined') {
       limitNum = 0;
     }
+
     var elmNum = targetElmList.length;
     var objNum = targetObjList.length;
 
     angular.forEach(targetElmList, function(targetElm, index) {
-      if (index == elmNum-1) {
+      if (elmNum == 1 && index == 0) {
+        // リストが一件のみの場合、追加ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        if (index == 0) {
-          $(targetElm).find('.btnBlock .deleteBtn').hide();
-        } else if (index == limitNum-1) {
-          $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
-        }
+        $(targetElm).find('.btnBlock .deleteBtn').hide();
       } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        // リストが複数件ある場合、ヒアリング・選択肢アクションは、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-      } else {
         $(targetElm).find('.btnBlock .deleteBtn').show();
+      } else if (index == elmNum -1 && index != limitNum-1) {
+        // リストの最後の一件の場合、追加・削除ボタンを表示する
+        $(targetElm).find('.btnBlock .disOffgreenBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn').show();
+      } else {
+        // 削除ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
+        $(targetElm).find('.btnBlock .deleteBtn').show();
       }
     });
   };

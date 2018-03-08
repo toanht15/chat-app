@@ -42,7 +42,7 @@
             </td>
             <td class="item_btn_block">
               <div class="btnBlock">
-                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList(setActionId, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList(setActionId, listId)')) ?></a>
+                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
               </div>
             </td>
           </tr>
@@ -186,17 +186,19 @@
         <table cellspacing="5">
           <thead>
             <tr>
-              <th class="apiRequestHeaderNameLabel">名前</th>
-              <th class="apiRequestHeaderValueLabel">値</th>
-              <th class="apiRequestHeaderBtnGroupLabel"></th>
+              <th class="item_name">名前</th>
+              <th class="item_value">値</th>
+              <th class="item_btn_block"></th>
             </tr>
           </thead>
           <tbody class="externalApiRequestHeader itemListGroup">
             <tr ng-repeat="(listId, headerItem) in setItem.requestHeaders">
-              <td><input ng-model="headerItem.name" type="text" class="frame"></td>
-              <td><input ng-model="headerItem.value" type="text" class="frame"></td>
-              <td class="btnBlock">
-                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+              <td class="item_name"><input ng-model="headerItem.name" type="text" class="frame"></td>
+              <td class="item_value"><input ng-model="headerItem.value" type="text" class="frame"></td>
+              <td class="item_btn_block">
+                <div class="btnBlock">
+                  <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -221,17 +223,19 @@
         <table cellspacing="5">
           <thead>
             <tr>
-              <th class="apiResponseBodyVariableNameLabel">変数名</th>
-              <th class="apiResponseBodySourceKeyLabel">変換元キー名</th>
-              <th class="apiResponseBodyBtnGroupLabel"></th>
+              <th class="item_name">変数名</th>
+              <th class="item_value">変換元キー名</th>
+              <th class="item_btn_block"></th>
             </tr>
           </thead>
           <tbody class="externalApiResponseBody itemListGroup">
             <tr ng-repeat="(listId, bodyItem) in setItem.responseBodyMaps">
-              <td><input ng-model="bodyItem.variableName" type="text" class="frame"></td>
-              <td><input ng-model="bodyItem.sourceKey" type="text" class="frame"></td>
-              <td class="btnBlock">
-                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+              <td class="item_name"><input ng-model="bodyItem.variableName" type="text" class="frame"></td>
+              <td class="item_value"><input ng-model="bodyItem.sourceKey" type="text" class="frame"></td>
+              <td class="item_btn_block">
+                <div class="btnBlock">
+                  <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+                </div>
               </td>
             </tr>
           </tbody>
