@@ -108,7 +108,7 @@
         document.getElementById('registered').style.display = "block";
         document.getElementById("registered").innerHTML="既に登録されているアドレスです。";
        }
-        if(data.trim() == 'フリーアドレスのご利用はできません。') {
+      else if(data.trim() == 'フリーアドレスのご利用はできません。') {
         loading.load.finish();
         document.getElementById('mailAddress').style.display = "block";
         document.getElementById('empty').style.display = "none";
