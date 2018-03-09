@@ -4034,6 +4034,7 @@
                         case 'pname_kana':
                         case 'pname_kana2':
                           storeValue = parseResult[elm].join(" ");
+                          break;
                         case 'zip':
                         case 'tel':
                         case 'fax':
@@ -4041,8 +4042,10 @@
                         case 'chokutsu':
                         case 'daihyo':
                           storeValue = parseResult[elm].join("-");
+                          break;
                         default:
                           storeValue = parseResult[elm];
+                          break;
                       }
                       self._parent._saveVariable(self._easyApi.labelMap[elm], storeValue);
                     } else if(hearing.hearingTarget[elm]) {
