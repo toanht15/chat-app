@@ -493,7 +493,7 @@ sinclo@medialink-ml.co.jp
       $lastData = $this->TChatbotScenario->find('first', $params);
 
       // ソート順が取得できなかった場合、該当するシナリオ全体をソートし直す
-      if ($lastData['TChatbotScenario']['sort'] === '0' || $lastData['TChatbotScenario']['sort'] === 0 || $lastData['TChatbotScenario']['sort'] === null) {
+      if (empty($lastData['TChatbotScenario']['sort'])) {
         if (!$this->_remoteSetSort()) {
           throw Exception();
         }
@@ -513,67 +513,35 @@ sinclo@medialink-ml.co.jp
    /**
    * シナリオ設定ソート順を現在のID順でセット
    * */
-   private function _remoteSetSort(){
-     $this->TChatbotScenario->begin();
-     /* 現在の並び順を取得 */
-     $this->paginate['TChatbotScenario']['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
-     $params = [
-         'fields' => [
-             'TChatbotScenario.sort'
-         ],
-         'conditions' => [
-             'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-         ],
-         'order' => [
-             'TChatbotScenario.sort' => 'asc',
-             'TChatbotScenario.id' => 'asc'
-         ],
-         'limit' => 1,
-         'recursive' => -1
-     ];
-     $params['fields'] = [
-         'TChatbotScenario.id',
-         'TChatbotScenario.sort'
-     ];
-     unset($params['limit']);
-     $prevSort = $this->TChatbotScenario->find('list', $params);
-     // ソート順のリセットはID順とする
-     $i = 1;
-     foreach($prevSort as $key => $val){
-       $prevSort[$key] = strval($i);
-       $i++;
-     }
-     $prevSortKeys = am($prevSort);
-     $this->log($prevSortKeys,LOG_DEBUG);
-     $i = 0;
-     $ret = true;
-     foreach($prevSort as $key => $val){
-       $id = $key;
-       $saveData = [
-           'TChatbotScenario' => [
-               'id' => $id,
-               'sort' => $prevSortKeys[$i]
-           ]
-       ];
-       if (!$this->TChatbotScenario->validates()) {
-         $ret = false;
-         break;
-       }
-       if (!$this->TChatbotScenario->save($saveData)) {
-         $ret = false;
-         break;
-       }
-       $i++;
-     }
-     if ($ret) {
-       $this->TChatbotScenario->commit();
-       return true;
-     }
-     else {
-       $this->TChatbotScenario->rollback();
-       return false;
-     }
-   }
+  private function _remoteSetSort(){
+    try {
+      // 現在の並び順を取得
+      $scenarioList = $this->TChatbotScenario->find('all', [
+        'fields' => [
+          'TChatbotScenario.id',
+          'TChatbotScenario.sort'
+        ],
+        'conditions' => [
+          'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'order' => [
+          'TChatbotScenario.sort' => 'asc',
+          'TChatbotScenario.id' => 'asc'
+        ],
+        'recursive' => -1
+      ]);
+
+      // sortが正しく設定されていない部分は、ID順に振り直す
+      $count = 1;
+      foreach($scenarioList as &$value){
+        $value['TChatbotScenario']['sort'] = $count++;
+      }
+
+      return $this->TChatbotScenario->saveAll($scenarioList);
+    } catch(Exeption $e) {
+      throw $e;
+    }
+  }
 
   /**
    * 保存機能
