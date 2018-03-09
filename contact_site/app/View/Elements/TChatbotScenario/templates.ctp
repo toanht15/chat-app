@@ -16,12 +16,12 @@
 <?php /* ヒアリング | C_SCENARIO_ACTION_HEARING */ ?>
 <div ng-if="setItem.actionType == 2" class="set_action_item_body action_hearing" ng-init="main.controllHearingSettingView(setActionId)">
   <ul>
-    <li><label for="hearingParseSignatureMode"><input type="checkbox" id="hearingParseSignatureMode" name="parseSignatureMode" ng-init="setItem.parseSignatureMode = false" ng-model="setItem.parseSignatureMode"/>署名による一括ヒアリング</label></li>
+    <li><label for="hearingParseSignatureMode"><input type="checkbox" id="hearingParseSignatureMode" name="parseSignatureMode" ng-model="setItem.parseSignatureMode"/>一括ヒアリング</label></li>
     <li ng-if="setItem.parseSignatureMode === false">
       <table cellspacing="5">
         <thead>
           <tr>
-            <th class="hearingVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、｛｛変数名｝｝としてメッセージ内で利用することができるようになります">?</icon></div></th>
+            <th class="hearingVariableNameLabel">変数名<div class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットから投げかけた質問の回答を保存し、\{\{変数名\}\}としてメッセージ内で利用することができるようになります">?</icon></div></th>
             <th class="hearingVariableTypeLabel">タイプ<div class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができるようになります">?</icon></div></th>
             <th class="hearingVariableQuestionLabel">質問内容</th>
             <th class="hearginVariableBtnGroupLabel"></th>
@@ -43,7 +43,7 @@
     </li>
     <li class="styleFlexbox" ng-if="setItem.parseSignatureMode === true">
       <span class="fb11em"><label class="hearingErrorMessageLabel">質問内容</label></span>
-      <input type="text" ng-model="setItem.message" class="frame">
+      <input type="text" ng-model="setItem.hearings[0].message" class="frame">
     </li>
     <li class="styleFlexbox" ng-if="setItem.parseSignatureMode === true">
       <span class="fb11em"><label class="hearingErrorMessageLabel">取得対象</label></span>
@@ -52,9 +52,16 @@
           $util = new LandscapeEasyEntryAPIUtil();
           $list = $util->getLabelMap();
           foreach($list as $key => $label) {
-            echo '<label for="' . $key . '" style="cursor:pointer; margin-right: 5px;"><input type="checkbox" name="' . $key . '" ng-model="hearingTarget.'.$key.'"/>'.$label.'</label>';
+            echo '<label for="' . $key . '" style="cursor:pointer; margin-right: 5px;"><input type="checkbox" name="' . $key . '" ng-model="setItem.hearings[0].hearingTarget.'.$key.'"/>'.$label.'</label>';
           }
         ?>
+      </div>
+    </li>
+    <li ng-if="setItem.parseSignatureMode === true">
+      <span class="fb11em"><label>メール本文タイプ</label></span>
+      <div>
+        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_hearing_target_condition" value="1" ng-model="setItem.hearingTargetCondition">一部の項目でも正常に取得されたらOK</label>
+        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_hearing_target_condition" value="2" ng-model="setItem.hearingTargetCondition">すべての項目が正常に取得されたらOK</label>
       </div>
     </li>
     <li class="styleFlexbox">

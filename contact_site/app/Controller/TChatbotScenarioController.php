@@ -493,7 +493,7 @@ class TChatbotScenarioController extends AppController {
    * */
   private function _entry($saveData) {
     $nextPage = '1';
-    $transactions = null;
+      $transactions = null;
     try {
       $transactions = $this->TransactionManager->begin();
       $nextPage = $this->_entryProcess($saveData);

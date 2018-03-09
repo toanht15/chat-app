@@ -46,8 +46,10 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   }
 
   public function replaceVariables($message) {
-    foreach($this->variables as $variable => $value) {
-      $message = preg_replace("/{{(".$variable.")\}}/", $value, $message);
+    if(preg_match("/{{(.*?)\}}/", $message)) {
+      foreach($this->variables as $variable => $value) {
+        $message = preg_replace("/{{(".$variable.")\}}/", $value, $message);
+      }
     }
     return $message;
   }
@@ -102,6 +104,9 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   private function createVariablesMessageBlock() {
     $this->scenarioMessageBlock .= self::MESSAGE_SEPARATOR."\n";
     foreach($this->variables as $variableName => $value) {
+      if(is_array($value)) {
+        $value = join(" ", $value);
+      }
       $this->scenarioMessageBlock .= $variableName."：".$value."\n";
     }
   }

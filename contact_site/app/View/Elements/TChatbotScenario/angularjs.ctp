@@ -97,12 +97,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         newObject.$valid = !!newObject.message;
       } else
       if (newObject.actionType == <?= C_SCENARIO_ACTION_HEARING ?> ) {
-        newObject.$valid = newObject.hearings.some(function(obj) {
-          return !!obj.variableName && !!obj.message;
-        });
-        newObject.$valid = newObject.$valid && !!newObject.errorMessage;
-        if (newObject.isConfirm) {
-          newObject.$valid = newObject.$valid && !!newObject.confirmMessage && !!newObject.success && !!newObject.cancel;
+        if(newObject.parseSignatureMode) {
+          newObject.$valid = Object.keys(newObject.hearingTarget).length >= 1
+        } else {
+          newObject.$valid = newObject.hearings.some(function(obj) {
+            return !!obj.variableName && !!obj.message;
+          });
+          newObject.$valid = newObject.$valid && !!newObject.errorMessage;
+          if (newObject.isConfirm) {
+            newObject.$valid = newObject.$valid && !!newObject.confirmMessage && !!newObject.success && !!newObject.cancel;
+          }
         }
       } else
       if (newObject.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
@@ -168,7 +172,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   this.saveAct = function() {
     $('#TChatbotScenarioActivity').val(this.createJsonData());
-    //submitAct();
+    submitAct();
   };
 
   // jsonデータ作る

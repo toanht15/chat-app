@@ -3855,6 +3855,44 @@
           validAll: "2",
           confirmOK: "3"
         },
+        _easyApi: {
+          labelMap: {
+            "lbc_office_id"     :"",
+            "lbc_head_office_id":"",
+            "pref_code"         :"都道府県コード",
+            "city_code"         :"市区町村コード",
+            "addr"              :"住所",
+            "cname"             :"企業名",
+            "oname"             :"事業所名",
+            "pname"             :"姓名",
+            "pname_kana"        :"姓名カナ",
+            "pname_kana2"       :"姓名かな",
+            "busho"             :"部署名",
+            "yakushoku"         :"役職名",
+            "zip"               :"郵便番号",
+            "tel"               :"電話番号",
+            "fax"               :"FAX番号",
+            "ktai"              :"携帯番号",
+            "chokutsu"          :"直通番号",
+            "daihyo"            :"代表番号",
+            "mail"              :"メールアドレス",
+            "url"               :"URL",
+            "extra"             :"その他",
+            "unknown"           :"その他",
+            "org_addr"          :"住所",
+            "org_zip"           :"郵便番号",
+            "exist_cname"       :"企業名マスタ存在",
+            "exist_addr"        :"住所マスタ存在",
+            "exist_zip"         :"郵便番号マスタ存在",
+            "match_pref_add"    :"都道府県・住所一致",
+            "match_pref_zip"    :"都道府県・郵便番号一致",
+            "match_pref_tel"    :"都道府県・電話番号一致"
+          },
+          targetCondition: {
+            validOnce: "1",
+            validAll: "2"
+          },
+        },
 
         _init: function (parent, currentScenario) {
           this._parent = parent;
@@ -3905,11 +3943,35 @@
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               self._parent._saveWaitingInputState(true);
-              if(self._parent.get(self._parent._lKey.currentScenario).parseSignatureMode === 1) {
-                self._waitingSignatureInput(function (inputVal){
+              if(self._parent.get(self._parent._lKey.currentScenario).parseSignatureMode === true) {
+                self._waitingSignatureInput(function (data){
+                  var obj = JSON.parse(data);
                   self._parent._unWaitingInput();
                   self._parent._handleStoredMessage();
-                  self._executeParseSignatureConfirm(inputVal);
+                  // FIXME 関数化
+                  var parseResult = obj.data;
+                  var result = {};
+                  Object.keys(hearing.hearingTarget).forEach(function(elm, index, arr) {
+                    if(hearing.hearingTarget[elm] && parseResult[elm] !== "") {
+                      result[elm] = parseResult[elm];
+                      self._parent._saveVariable(self._easyApi.labelMap[elm], parseResult[elm]);
+                    } else if(hearing.hearingTarget[elm]) {
+                      console.log("NOT FOUND : " + elm);
+                      self._parent._saveVariable(self._easyApi.labelMap[elm], "");
+                      if(self._eastApiRequireAll()) {
+                        obj.success = false;
+                      }
+                    }
+                  });
+                  if(obj.success) {
+                    if (self._goToNext()) {
+                      self._process();
+                    } else {
+                      self._executeConfirm();
+                    }
+                  } else {
+                    self._showError();
+                  }
                 });
               } else {
                 self._parent._waitingInput(function (inputVal) {
@@ -3943,7 +4005,7 @@
           $(document).on(self._parent._events.inputCompleted, function(e, inputVal) {
             self._waitingParseSignature(inputVal, callback);
           });
-          self._saveWaitingInputState(true);
+          self._parent._saveWaitingInputState(true);
         },
         _waitingParseSignature: function(text, callback) {
           emit('sendParseSignature', {targetText: text}, callback);
@@ -3988,9 +4050,9 @@
           var errorMessage = self._parent.get(self._parent._lKey.currentScenario).errorMessage;
           self._parent._doing(self._parent._getIntervalTimeSec(), function(){
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
-            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._parent.get(self._state.currentSeq) + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
-              self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._parent.get(self._state.currentSeq));
-              self._process();
+            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._getCurrentSeq() + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
+              self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._getCurrentSeq());
+              self._parent._process();
             });
           });
         },
@@ -4022,6 +4084,10 @@
         _cvIsEnable: function() {
           var self = sinclo.scenarioApi._hearing;
           return self._parent.get(self._parent._lKey.currentScenario).cv === "1";
+        },
+        _eastApiRequireAll: function() {
+          var self = sinclo.scenarioApi._hearing;
+          return self._parent.get(self._parent._lKey.currentScenario).hearingTargetCondition === self._parent._lKey._hearing._easyApi.targetCondition.validAll;
         },
         _showConfirmMessage: function() {
           var self = sinclo.scenarioApi._hearing;
@@ -4078,49 +4144,17 @@
             });
           });
         },
-        _createSignatureMessage: function(result) {
+        _createSignatureMessage: function(obj) {
+          var self = sinclo.scenarioApi._hearing;
           var message = "";
-          var labelMap = {
-            "lbc_office_id"     :"",
-            "lbc_head_office_id":"",
-            "pref_code"         :"都道府県コード",
-            "city_code"         :"市区町村コード",
-            "addr"              :"住所",
-            "cname"             :"企業名",
-            "oname"             :"事業所名",
-            "pname"             :"姓名",
-            "pname_kana"        :"姓名カナ",
-            "pname_kana2"       :"姓名かな",
-            "busho"             :"部署名",
-            "yakushoku"         :"役職名",
-            "zip"               :"郵便番号",
-            "tel"               :"電話番号",
-            "fax"               :"FAX番号",
-            "ktai"              :"携帯番号",
-            "chokutsu"          :"直通番号",
-            "daihyo"            :"代表番号",
-            "mail"              :"メールアドレス",
-            "url"               :"URL",
-            "extra"             :"その他",
-            "unknown"           :"その他",
-            "org_addr"          :"住所",
-            "org_zip"           :"郵便番号",
-            "exist_cname"       :"企業名マスタ存在",
-            "exist_addr"        :"住所マスタ存在",
-            "exist_zip"         :"郵便番号マスタ存在",
-            "match_pref_add"    :"都道府県・住所一致",
-            "match_pref_zip"    :"都道府県・郵便番号一致",
-            "match_pref_tel"    :"都道府県・電話番号一致"
-          };
-          var obj = JSON.parse(result);
-          Object.keys(obj.data).forEach(function(elm, index, arr){
-            if(obj.data[elm] !== "") {
-              if(typeof (obj.data[elm]) === "string") {
-                message += labelMap[elm] + "：" + obj.data[elm] + "\n";
-              } else if  (typeof(obj.data[elm]) === "object") {
-                var concatStr = labelMap[elm] + "：";
-                for(var i=0; i < obj.data[elm].length; i++) {
-                  concatStr += obj.data[elm][i] + " ";
+          Object.keys(obj).forEach(function(elm, index, arr){
+            if(obj[elm] !== "") {
+              if(typeof (obj[elm]) === "string") {
+                message += self._easyApi.labelMap[elm] + "：" + obj[elm] + "\n";
+              } else if  (typeof(obj[elm]) === "object") {
+                var concatStr = self._easyApi.labelMap[elm] + "：";
+                for(var i=0; i < obj[elm].length; i++) {
+                  concatStr += obj[elm][i] + " ";
                 }
                 message += concatStr + "\n";
               }
