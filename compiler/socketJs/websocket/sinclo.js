@@ -4163,7 +4163,7 @@
           var self = sinclo.scenarioApi._hearing;
           return self._parent.get(self._parent._lKey.currentScenario).parseSignatureMode;
         },
-        _eastApiRequireAll: function() {
+        _easyApiRequireAll: function() {
           var self = sinclo.scenarioApi._hearing;
           return self._parent.get(self._parent._lKey.currentScenario).hearingTargetCondition === self._easyApi.targetCondition.validAll;
         },
