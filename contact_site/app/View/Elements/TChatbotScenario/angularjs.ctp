@@ -98,7 +98,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       } else
       if (newObject.actionType == <?= C_SCENARIO_ACTION_HEARING ?> ) {
         if(newObject.parseSignatureMode) {
-          newObject.$valid = Object.keys(newObject.hearingTarget).length >= 1
+          if(newObject.bulkHearing && newObject.bulkHearing.hearingTarget) {
+            newObject.$valid = Object.keys(newObject.bulkHearing.hearingTarget).length >= 1
+          } else {
+            newObject.$valid = false;
+          }
         } else {
           newObject.$valid = newObject.hearings.some(function(obj) {
             return !!obj.variableName && !!obj.message;
@@ -693,7 +697,7 @@ function adjustDataOfHearing(action) {
 
 // ヒアリング（署名一括）のバリデーション
 function adjustDataOfHearingSignature(action) {
-  if (typeof action.hearingTarget === 'undefined' || typeof action.hearingTarget.length < 1 ||
+  if (typeof action.bulkHearing.hearingTarget === 'undefined' || typeof action.bulkHearing.hearingTarget.length < 1 ||
     typeof action.errorMessage === 'undefined' || action.errorMessage === '' ||
     (action.isConfirm && (typeof action.confirmMessage === 'undefined' || action.confirmMessage === '' || typeof action.success === 'undefined' || action.success === '' || typeof action.cancel === 'undefined' || action.cancel === ''))
   ) {

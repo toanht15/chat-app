@@ -3966,7 +3966,11 @@
         _init: function (parent, currentScenario) {
           this._parent = parent;
           this._setCurrentSeq(this._getCurrentSeq());
-          this._setLength(this._parent.get(this._parent._lKey.currentScenario).hearings.length);
+          if(this._isParseSignatureMode()) {
+            this._setLength(1);
+          } else {
+            this._setLength(this._parent.get(this._parent._lKey.currentScenario).hearings.length);
+          }
         },
         _setCurrentSeq: function (val) {
           var self = sinclo.scenarioApi._hearing;
@@ -3998,6 +4002,7 @@
           }
 
           var doHearing = self._getCurrentHearingProcess();
+          console.log(JSON.stringify(doHearing));
           if(self._isTheEnd()) {
             self._executeConfirm();
           } else {
@@ -4108,7 +4113,7 @@
         _getCurrentHearingProcess: function() {
           var self = sinclo.scenarioApi._hearing;
           var result = {};
-          var triggerObj =  self._parent.get(self._parent._lKey.currentScenario).hearings[self._getCurrentSeq()];
+          var triggerObj = self._isParseSignatureMode() ? self._parent.get(self._parent._lKey.currentScenario).bulkHearing : self._parent.get(self._parent._lKey.currentScenario).hearings[self._getCurrentSeq()];
           if(typeof(triggerObj) !== 'undefined') {
             result = triggerObj;
           }
@@ -4153,6 +4158,10 @@
         _cvIsEnable: function() {
           var self = sinclo.scenarioApi._hearing;
           return self._parent.get(self._parent._lKey.currentScenario).cv === "1";
+        },
+        _isParseSignatureMode: function() {
+          var self = sinclo.scenarioApi._hearing;
+          return self._parent.get(self._parent._lKey.currentScenario).parseSignatureMode;
         },
         _eastApiRequireAll: function() {
           var self = sinclo.scenarioApi._hearing;

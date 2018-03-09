@@ -43,7 +43,7 @@
     </li>
     <li class="styleFlexbox" ng-if="setItem.parseSignatureMode === true">
       <span class="fb11em"><label class="hearingErrorMessageLabel">質問内容</label></span>
-      <input type="text" ng-model="setItem.hearings[0].message" class="frame">
+      <input type="text" ng-model="setItem.bulkHearing.message" class="frame">
     </li>
     <li class="styleFlexbox" ng-if="setItem.parseSignatureMode === true">
       <span class="fb11em"><label class="hearingErrorMessageLabel">取得対象</label></span>
@@ -52,7 +52,7 @@
           $util = new LandscapeEasyEntryAPIUtil();
           $list = $util->getLabelMap();
           foreach($list as $key => $label) {
-            echo '<label for="' . $key . '" style="cursor:pointer; margin-right: 5px;"><input type="checkbox" name="' . $key . '" ng-model="setItem.hearings[0].hearingTarget.'.$key.'"/>'.$label.'</label>';
+            echo '<label for="' . $key . '" style="cursor:pointer; margin-right: 5px;"><input type="checkbox" name="' . $key . '" ng-model="setItem.bulkHearing.hearingTarget.'.$key.'"/>'.$label.'</label>';
           }
         ?>
       </div>
