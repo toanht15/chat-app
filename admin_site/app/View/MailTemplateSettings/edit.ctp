@@ -8,7 +8,7 @@
   </div>
 
   <div id='contract_form' class="p20x">
-    <?= $this->Form->create('MailTemplateSettings', array('type' => 'post', 'url' => '/MailTemplateSettings/edit/'.$id)); ?>
+    <?= $this->Form->create('MailTemplateSettings', array('type' => 'post', 'url' => '/MailTemplateSettings/edit/'.$id.'/'.$value)); ?>
       <div class="form01">
         <section>
           <?= $this->Form->input('id', array('type' => 'hidden')); ?>
@@ -18,9 +18,9 @@
             <section>
             <?=$this->Form->hidden('id')?>
               <div class="button">
-                <?= $this->Html->link('一覧',['controller'=>'Contract', 'action' => 'index'],['escape' => false, 'id' => 'searchRefine','class' => 'normal_btn']); ?>
+                <?= $this->Html->link('一覧',['controller'=>'MailTemplateSettings', 'action' => 'index'],['escape' => false, 'id' => 'searchRefine','class' => 'normal_btn']); ?>
                 <?= $this->Html->link('更新', 'javascript:void(0)', ['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'saveEdit()']); ?>
-                <?= $this->Html->link('削除', 'javascript:void(0)', ['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => "remoteDeleteCompany('$id')"]); ?>
+                <?= $this->Html->link('削除', 'javascript:void(0)', ['escape' => false, 'id' => 'searchRefine','class' => 'action_btn delete_btn','style' => 'display:none;','onclick' => "remoteDeleteCompany('$id','$value')"]); ?>
               </div>
             </section>
           </ul>

@@ -4,10 +4,21 @@
  * 無料トライアル登録画面
  */
 App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Validation');
+App::uses('ComponentCollection', 'Controller'); //これが大事
+App::uses('MailSenderComponent', 'Controller/Component');
 class TrialController extends AppController {
+  /*必ず消す*/
+  const LOG_INFO = 'batch-info';
+  const LOG_ERROR = 'batch-error';
+
+  /*必ず治す*/
+  const FROM_ADDRESS = "henmi0201@gmail.com";
+  const FROM_NAME = "sinclo（シンクロ）";
+  /*必ず消す*/
+
   const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
-  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
-  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS_AND_ALEX = "henmi0201@gmail.com";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const USER_NAME = "##USER_NAME##";
@@ -20,13 +31,12 @@ class TrialController extends AppController {
   const URL = "##URL##";
   const OTHER = "##OTHER##";
   public $components = ['AutoMessageMailTemplate', 'MailSender', 'Auth'];
-  public $uses = ['MUser','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate'];
+  public $uses = ['MUser','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate','MCompany'];
 
   public function beforeFilter(){
     parent::beforeFilter();
     $this->Auth->allow(['index','add','thanks','remoteTermsOfService']);
     $this->header('Access-Control-Allow-Origin: http://127.0.0.1:81/Contract/add');
-    $this->set('title_for_layout', '無料トライアル登録画面');
   }
 
   /* *
@@ -36,6 +46,110 @@ class TrialController extends AppController {
   public function index() {
     $businessModel = Configure::read('businessModelType');
     $this->set('businessModel',$businessModel);
+    $this->set('title_for_layout', '無料トライアル登録画面');
+
+    //ここから消す
+    //何日後の何時にメールを飛ばすか取得
+    $schedules = $this->MJobMailTemplate->find('all');
+    //トライアル中の企業を抜粋
+    $trialCompany = $this->MCompany->find('all',[
+      'conditions' => [
+        'trial_flg' => 1,
+        'del_flg' => 0
+      ]
+    ]);
+    $companyIds = [];
+    foreach($trialCompany as $company) {
+      $companyIds[] .= $company['MCompany']['id'];
+    }
+    //トライアル中の企業のトライアル期間を検出
+    $trialDay = $this->MAgreement->find('all',[
+      'fields' => [
+        'm_companies_id',
+        'trial_start_day',
+        'trial_end_day'
+      ],
+      'conditions' => [
+        'm_companies_id' => $companyIds
+      ]
+    ]);
+    $jobMailTemplatesData = [];
+    $companyIds = [];
+    //何日後の何時に当てはまる企業を抜粋
+    foreach($schedules as $key => $val) {
+        foreach($trialDay as $day) {
+          if($val['MJobMailTemplate']['value_type'] == 0) {
+            $trialTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('+'.$val['MJobMailTemplate']['value'].'day',strtotime($day['MAgreement']['trial_start_day'])));
+          }
+          if($val['MJobMailTemplate']['value_type'] == 1) {
+            $trialTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('-'.$val['MJobMailTemplate']['value'].'day',strtotime($day['MAgreement']['trial_end_day'])));
+          }
+          $nowTime = date('Y-m-d H');
+          if($trialTime == $nowTime) {
+            $jobMailTemplatesData[$key]['id'] = $val['MJobMailTemplate']['id'];
+            $jobMailTemplatesData[$key]['mail_type_cd'] = $val['MJobMailTemplate']['mail_type_cd'];
+            $jobMailTemplatesData[$key]['sender'] = $val['MJobMailTemplate']['sender'];
+            $jobMailTemplatesData[$key]['subject'] = $val['MJobMailTemplate']['subject'];
+            $jobMailTemplatesData[$key]['mail_body'] = $val['MJobMailTemplate']['mail_body'];
+            $jobMailTemplatesData[$key]['send_mail_ml_flg'] = $val['MJobMailTemplate']['send_mail_ml_flg'];
+            $companyIds[] .= $day['MAgreement']['m_companies_id'];
+          }
+      }
+    }
+    //トライアル中の企業のユーザーのメールアドレスを検出
+    $mailAdressData = $this->MUser->find('all',[
+      'fields' => [
+        'mail_address'
+      ],
+      'conditions' => [
+        'm_companies_id' => $companyIds,
+        'permission_level' => [1,2]
+      ]
+    ]);
+
+    if(empty($mailAdressData)) {
+      $this->log('schedule is not found.', self::LOG_INFO);
+    } else {
+      foreach($jobMailTemplatesData as $jobMailTemplate) {
+        foreach($mailAdressData as $index => $mailAdress) {
+          try {
+            $id = $jobMailTemplate['id'];
+            $to = $mailAdress['MUser']['mail_address'];
+            $sender = $jobMailTemplate['sender'];
+            $body = $jobMailTemplate['mail_body'];
+            $subject = $jobMailTemplate['subject'];
+            $this->log("Sending mail to ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
+            /*$this->component->setFrom(self::FROM_ADDRESS);
+            $this->component->setFromName($sender);
+            $this->component->setTo($to);
+            $this->component->setBody($body);
+            $this->component->setSubject($subject);
+            $this->component->send();*/
+            $sender2 = new MailSenderComponent();
+            $sender2->setFrom(self::FROM_ADDRESS);
+            $sender2->setFromName($sender);
+            $sender2->setTo($to);
+            $sender2->setBody($body);
+            $sender2->setSubject($subject);
+            $sender2->send();
+
+          } catch(Exception $e) {
+            $this->log('send mail error !!!!', self::LOG_ERROR);
+          }
+        }
+        if($jobMailTemplate['send_mail_ml_flg'] == 0) {
+          $sender2 = new MailSenderComponent();
+          $sender2->setFrom(self::FROM_ADDRESS);
+          $sender2->setFromName($sender);
+          $sender2->setTo('yuki.henmi@medialink-ml.co.jp');
+          $sender2->setBody($body);
+          $sender2->setSubject($subject);
+          $sender2->send();
+        }
+      }
+    }
+    $this->log('END   sendmail schedule.', self::LOG_INFO);
+    //ここまで
   }
 
   public function add() {
@@ -59,120 +173,11 @@ class TrialController extends AppController {
     $data['MAgreements']['trial_end_day'] = date('Y-m-d', strtotime('+13 day', time()));
     $data['MAgreements']['agreement_start_day'] = '';
     $data['MAgreements']['agreement_end_day'] = '';
-    $data['Contract']['user_name'] = 'テストユーザー';
-    $data['Contract']['user_display_name'] = 'テストユーザー';
-    $password = $this->generateRandomPassword(8);
-    $data['Contract']['user_password'] = $password;
 
     $socket = new HttpSocket(array(
       'timeout' => self::API_CALL_TIMEOUT
     ));
     $result = $socket->post(self::CONTRACT_ADD_URL,$data,array('header' => array('X-Forwarded-Port' => 443)));
-
-    $jobMailTemplateData = $this->MJobMailTemplate->find('all');
-
-    $tmpData = [];
-    foreach($jobMailTemplateData as $k => $v){
-      $sendingDatetime = date('Y-m-d', strtotime(' +'.$v['MJobMailTemplate']['days_after'].' day'));
-      $sendingDatetime = date('Y-m-d H:i:s', strtotime($sendingDatetime.$v['MJobMailTemplate']['time'].':00:00'));
-      $tmpData['TSendSystemMailSchedule']['sending_datetime'] = $sendingDatetime;
-      $tmpData['TSendSystemMailSchedule']['subject'] = $v['MJobMailTemplate']['subject'];
-      $tmpData['TSendSystemMailSchedule']['mail_body'] = $v['MJobMailTemplate']['mail_body'];
-      $tmpData['TSendSystemMailSchedule']['mail_address'] = $data['Contract']['user_mail_address'];
-      $tmpData['TSendSystemMailSchedule']['send-mail_flg'] = 0;
-      $this->TSendSystemMailSchedule->create();
-      $this->TSendSystemMailSchedule->set($tmpData);
-      $this->TSendSystemMailSchedule->save();
-      $this->TSendSystemMailSchedule->commit();
-    }
-
-    $mailTemplateData = $this->MSystemMailTemplate->find('all');
-
-    $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[0]['MSystemMailTemplate']['mail_body']);
-    $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
-    $mailBodyData = str_replace(self::PASSWORD, $data['Contract']['user_password'], $mailBodyData);
-    $mailBodyData = str_replace(self::MAIL_ADDRESS, $data['Contract']['user_mail_address'], $mailBodyData);
-
-    // 送信前にログを生成
-    $this->TMailTransmissionLog->create();
-    $this->TMailTransmissionLog->set(array(
-      'm_companies_id' => 0, // システムメールなので0で登録
-      'mail_type_cd' => 'TL001',
-      'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
-      'from_name' => 'sinclo(メディアリンク株式会社)',
-      'to_address' => $data['Contract']['user_mail_address'],
-      'subject' => $mailTemplateData[0]['MSystemMailTemplate']['subject'],
-      'body' => $mailBodyData,
-      'send_flg' => 0
-    ));
-    $this->TMailTransmissionLog->save();
-    $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
-
-    //お客さん向け
-    $sender = new MailSenderComponent();
-    $sender->setFrom(self::ML_MAIL_ADDRESS);
-    $sender->setFromName('sinclo（シンクロ）');
-    $sender->setTo($data['Contract']['user_mail_address']);
-    $sender->setSubject($mailTemplateData[0]['MSystemMailTemplate']['subject']);
-    $sender->setBody($mailBodyData);
-    $sender->send();
-
-    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
-    $this->TMailTransmissionLog->read(null, $lastInsertId);
-    $this->TMailTransmissionLog->set([
-      'send_flg' => 1,
-      'sent_datetime' => $now->format("Y/m/d H:i:s")
-    ]);
-    $this->TMailTransmissionLog->save();
-
-    //会社向け
-    $sender = new MailSenderComponent();
-    $sender->setFrom($data['Contract']['user_mail_address']);
-    $sender->setFromName($data['MCompany']['company_name'].'　'.$data['MAgreements']['application_name']);
-    $sender->setTo(self::ML_MAIL_ADDRESS_AND_ALEX);
-    $sender->setSubject($mailTemplateData[1]['MSystemMailTemplate']['subject']);
-    $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[1]['MSystemMailTemplate']['mail_body']);
-    $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
-    if($data['MAgreements']['business_model'] == 1) {
-      $data['MAgreements']['business_model'] = 'BtoB';
-    }
-    if($data['MAgreements']['business_model'] == 2) {
-      $data['MAgreements']['business_model'] = 'BtoC';
-    }
-    if($data['MAgreements']['business_model'] == 3) {
-      $data['MAgreements']['business_model'] = 'どちらも';
-    }
-    $mailBodyData = str_replace(self::BUSINESS_MODEL, $data['MAgreements']['business_model'], $mailBodyData);
-    if(!empty($data['MAgreements']['application_department'])) {
-      $mailBodyData = str_replace(self::DEPARTMENT, $data['MAgreements']['application_department'], $mailBodyData);
-    }
-    else {
-      $mailBodyData = str_replace(self::DEPARTMENT, "", $mailBodyData);
-    }
-    if(!empty($data['MAgreements']['application_position'])) {
-      $mailBodyData = str_replace(self::POSITION, $data['MAgreements']['application_position'], $mailBodyData);
-    }
-    else {
-      $mailBodyData = str_replace(self::POSITION, "", $mailBodyData);
-    }
-    $mailBodyData = str_replace(self::MAIL_ADDRESS, $data['Contract']['user_mail_address'], $mailBodyData);
-    $mailBodyData = str_replace(self::PHONE_NUMBER, $data['MAgreements']['telephone_number'], $mailBodyData);
-    if(!empty($data['MAgreements']['installation_url'])) {
-      $mailBodyData = str_replace(self::URL, $data['MAgreements']['installation_url'], $mailBodyData);
-    }
-    else {
-      $mailBodyData = str_replace(self::URL, "", $mailBodyData);
-    }
-    if(!empty($data['MAgreements']['note'])) {
-      $mailBodyData = str_replace(self::OTHER, $data['MAgreements']['note'], $mailBodyData);
-    }
-    else {
-      $mailBodyData = str_replace(self::OTHER, "", $mailBodyData);
-    }
-    $sender->setBody($mailBodyData);
-    $sender->send();
-
-
   }
 
   /* *
@@ -180,7 +185,7 @@ class TrialController extends AppController {
    * @return void
    * */
   public function thanks() {
-
+    $this->set('title_for_layout', '無料トライアルを受付いたしました');
   }
 
    /* *

@@ -473,12 +473,22 @@
             alert(message);
             return false;
             break;
+          case 4: //trialOver
+          className = "outOfTermTrial";
+          break;
         }
         $("#shortMessage").text(message).attr('style', '').addClass(className);
         $("#shortMessage").removeClass('popup-off');
-        window.setTimeout(function () {
-          shortMessage.close();
-        }, 1500);
+        if(type != 4) {
+          window.setTimeout(function () {
+            shortMessage.close();
+          }, 1500);
+        }
+        else {
+          window.setTimeout(function () {
+            shortMessage.trialClose();
+          }, 300);
+        };
       },
       close: function () {
         $("#shortMessage").animate(
@@ -492,7 +502,25 @@
             }, 500);
           }
         );
-      }
+      },
+      trialClose: function () {
+        $(".outOfTermTrial").animate(
+          {
+            'top':'-5px'
+          },
+          700,
+          function () {
+            window.setTimeout(function () {
+              $(".outOfTermTrial").animate(
+                {
+                  'top':'-100px'
+                },700)
+              window.setTimeout(function () {
+                $('#shortMessage').prop('class', 'popup-off');
+              },1000)
+            }, 4000);
+          }
+        );
     };
 
   !function (pe, se) {

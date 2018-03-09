@@ -10,6 +10,12 @@
   <?= $this->Form->input('MCompany.company_name', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
    <?php if (!empty($errors['company_name'])) echo "<li class='error-message'>" . h($errors['company_name'][0]) . "</li>"; ?>
 </li>
+  <!-- /* お名前 */ -->
+<li>
+  <div class="labelArea fLeft"><span class="require"><label>お名前</label></span></div>
+  <?= $this->Form->input('MAgreements.application_name', array('div' => false, 'label' => false, 'maxlength' => 50)) ?>
+   <?php if (!empty($errors['application_name'])) echo "<li class='error-message'>" . h($errors['application_name'][0]) . "</li>"; ?>
+</li>
 <!-- /* サイトキー サイトキーは登録日（MD5）のハッシュ値 */ -->
 <!-- /* テスト利用 */ -->
 <li>
@@ -63,29 +69,34 @@
 <li>
   <div class="labelArea fLeft"><span class="require"><label>初期管理者情報</label></span></div>
 </li>
-<!-- /* 管理者名 */ -->
+<!-- /* 部署名 */ -->
 <li>
   <div class="labelArea fLeft"><span><label></label></span></div>
-  <?= $this->Form->input('user_name', array('div' => false, 'label' => '管理者名', 'maxlength' => 10)) ?>
+  <?= $this->Form->input('MAgreements.application_department', array('div' => false, 'label' => '部署名', 'maxlength' => 50)) ?>
 </li>
-<!-- /* 表示名 */ -->
+<!-- /* 役職 */ -->
 <li>
   <div class="labelArea fLeft"><span><label></label></span></div>
-  <?= $this->Form->input('user_display_name', array('div' => false, 'label' => '表示名', 'maxlength' => 50)) ?>
+  <?= $this->Form->input('MAgreements.application_position', array('div' => false, 'label' => '役職', 'maxlength' => 50)) ?>
 </li>
 <!-- /* メールアドレス */ -->
 <li>
   <div class="labelArea fLeft"><span><label></label></span></div>
-  <?= $this->Form->input('user_mail_address', array('div' => false, 'label' => 'メールアドレス', 'maxlength' => 50)) ?>
+  <?= $this->Form->input('user_mail_address', array('div' => false, 'label' => array('text' => 'メールアドレス','class' => 'require'), 'maxlength' => 50)) ?>
 </li>
-<!-- /* パスワード TODO: 自動発行してメールで通知したい */ -->
+<!-- /* 電話番号 */ -->
 <li>
   <div class="labelArea fLeft"><span><label></label></span></div>
-  <?= $this->Form->input('user_password', array('div' => false, 'type' => 'password', 'label' => 'パスワード', 'maxlength' => 50)) ?>
+  <?= $this->Form->input('MAgreements.telephone_number', array('div' => false, 'label' => array('text' => '電話番号','class' => 'require'),'maxlength' => 50)) ?>
 </li>
-<!-- /* パスワード（確認用） TODO: 自動発行してメールで通知したい */ -->
+<!-- /* ビジネスモデル */ -->
+<li>
+ <div class="labelArea fLeft"><span><label></label></span></div><label class = "require">ビジネスモデル</label>
+  <?= $this->Form->input('MAgreements.business_model', array('type' => 'radio','legend' => false,'options' => $businessModel, 'label' => 'BtoB','default' => false,'value' => 1)) ?>
+</li>
+<!-- /* 導入を検討しているサイトURL */ -->
 <li>
   <div class="labelArea fLeft"><span><label></label></span></div>
-  <?= $this->Form->input('user_confirm_password', array('div' => false, 'type' => 'password', 'label' => 'パスワードの確認', 'maxlength' => 50)) ?>
+  <?= $this->Form->input('MAgreements.installation_url', array('div' => false, 'label' => '導入を検討しているサイトURL','maxlength' => 50)) ?>
 </li>
 <?php endif; ?>
