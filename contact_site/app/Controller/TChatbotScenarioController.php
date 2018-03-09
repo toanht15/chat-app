@@ -4,6 +4,7 @@
  * シナリオ設定
  * @property TransactionManager $TransactionManager
  * @property TChatbotScenario $TChatbotScenario
+ * @property TAutoMessage $TAutoMessage
  * @property MWidgetSetting $MWidgetSetting
  * @property MMailTransmissionSetting $MMailTransmissionSetting
  * @property MMailTemplate $MMailTemplate
@@ -41,6 +42,36 @@ class TChatbotScenarioController extends AppController {
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
     'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
   ];
+
+  const SCENARIO_VARIABLES_TEMPLATE = "※このメールはお客様の設定によりsincloから自動送信されました。
+
+ご担当者様
+
+sincloのシナリオ設定によりメールを送信致しました。
+以下のメッセージ内容をご確認下さい。
+
+##SCENARIO_VARIABLES_BLOCK##
+
+------------------------------------------------------------------
+このメールにお心当たりのない方は、誠に恐れ入りますが
+下記連絡先までご連絡ください。
+sinclo@medialink-ml.co.jp
+------------------------------------------------------------------";
+
+  const SCENARIO_ALL_MESSAGE_TEMPLATE = "※このメールはお客様の設定によりsincloから自動送信されました。
+
+ご担当者様
+
+sincloのシナリオ設定によりメールを送信致しました。
+以下のメッセージ内容をご確認下さい。
+
+##SCENARIO_ALL_MESSAGE_BLOCK##
+
+------------------------------------------------------------------
+このメールにお心当たりのない方は、誠に恐れ入りますが
+下記連絡先までご連絡ください。
+sinclo@medialink-ml.co.jp
+------------------------------------------------------------------";
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -81,18 +112,7 @@ class TChatbotScenarioController extends AppController {
     }
 
     // シナリオ設定の一覧を取得する
-    $scenarioList = $this->TChatbotScenario->coFind('list', [
-      'fields' => ['id', 'name'],
-      'order' => [
-        'TChatbotScenario.sort' => 'asc',
-        'TChatbotScenario.id' => 'asc'
-      ],
-      'conditions' => [
-        'TChatbotScenario.del_flg != ' => 1
-      ]
-    ]);
-    $this->request->data['scenarioList'] = $scenarioList;
-
+    $this->request->data['scenarioList'] = $this->_getScenarioList();
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->_viewElement();
@@ -126,8 +146,9 @@ class TChatbotScenarioController extends AppController {
       foreach ($activity->scenarios as $key => &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
           foreach ($action->hearings as $key => &$param) {
-            // 自由入力エリアの改行可・不可および送信設定の初期化(機能追加前に保存された設定への対応)
+            // 自由入力エリアの改行設定の初期化(機能追加前に保存された設定は、改行可とする)
             $param->inputLFType = empty($param->inputLFType) ? C_SCENARIO_INPUT_LF_TYPE_ALLOW : $param->inputLFType;
+            // 自由入力エリアの送信設定の初期化(機能追加前に保存された設定は、ウィジェット設定に準拠する)
             if (empty($param->sendMessageType)) {
               $param->sendMessageType = $this->request->data['widgetSettings']['chat_trigger'] == C_WIDGET_SEND_ACT_PUSH_KEY ? C_SCENARIO_SEND_MESSAGE_BY_ENTER : C_SCENARIO_SEND_MESSAGE_BY_BUTTON;
             }
@@ -157,19 +178,8 @@ class TChatbotScenarioController extends AppController {
     // 呼び出し元情報を取得する
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
     $this->request->data['callerInfo'] = $this->_getScenarioCallerInfo($id, $scenarioList);
-
     // シナリオ設定の一覧を取得する
-    $scenarioList = $this->TChatbotScenario->coFind('list', [
-      'fields' => ['id', 'name'],
-      'order' => [
-        'TChatbotScenario.sort' => 'asc',
-        'TChatbotScenario.id' => 'asc'
-      ],
-      'conditions' => [
-        'TChatbotScenario.del_flg != ' => 1
-      ]
-    ]);
-    $this->request->data['scenarioList'] = $scenarioList;
+    $this->request->data['scenarioList'] = $this->_getScenarioList();
 
     $this->_viewElement();
   }
@@ -282,35 +292,6 @@ class TChatbotScenarioController extends AppController {
     foreach($copyData as $value){
       $this->TChatbotScenario->create();
       $saveData = [];
-      $params = [
-        'fields' => [
-          'TChatbotScenario.sort'
-        ],
-        'conditions' => [
-          'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-        ],
-        'order' => [
-          'TChatbotScenario.sort' => 'desc',
-          'TChatbotScenario.id' => 'desc'
-        ],
-        'recursive' => -1
-      ];
-      $lastData = $this->TChatbotScenario->find('first', $params);
-      if($lastData['TChatbotScenario']['sort'] === '0'
-        || $lastData['TChatbotScenario']['sort'] === 0
-        || $lastData['TChatbotScenario']['sort'] === null){
-        // ソート順が登録されていなかったらソート順をセットする
-        if(! $this->_remoteSetSort()){
-          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-          return false;
-        }
-        // もう一度ソートの最大値を取り直す
-        $lastData = $this->TChatbotScenario->find('first', $params);
-      }
-      $nextSort = 1;
-      if (!empty($lastData)) {
-        $nextSort = intval($lastData['TChatbotScenario']['sort']) + 1;
-      }
 
       // シナリオ設定の詳細
       $activity = json_decode($value['TChatbotScenario']['activity']);
@@ -338,14 +319,14 @@ class TChatbotScenarioController extends AppController {
         }
       }
 
-      $saveData['TChatbotScenario']['sort'] = $nextSort;
-      $saveData['TChatbotScenario']['m_companies_id'] = $value['TChatbotScenario']['m_companies_id'];
-      $saveData['TChatbotScenario']['name'] = $value['TChatbotScenario']['name'].'コピー';
-      $saveData['TChatbotScenario']['activity'] = json_encode($activity);
-      $saveData['TChatbotScenario']['del_flg'] = $value['TChatbotScenario']['del_flg'];
-      $this->TChatbotScenario->set($saveData);
-
       try {
+        $saveData['TChatbotScenario']['sort'] = $this->_getNextSort();
+        $saveData['TChatbotScenario']['m_companies_id'] = $value['TChatbotScenario']['m_companies_id'];
+        $saveData['TChatbotScenario']['name'] = $value['TChatbotScenario']['name'].'コピー';
+        $saveData['TChatbotScenario']['activity'] = json_encode($activity);
+        $saveData['TChatbotScenario']['del_flg'] = $value['TChatbotScenario']['del_flg'];
+        $this->TChatbotScenario->set($saveData);
+
         // バリデーションチェックでエラーが出た場合
         if (!$this->TChatbotScenario->validates()) {
           $res = false;
@@ -485,9 +466,52 @@ class TChatbotScenarioController extends AppController {
     }
   }
 
+  /**
+   * _getNextSort
+   * これまでのシナリオ設定を元に、登録可能なsort順を算出する
+   * @return Integer sort順
+   */
+  private function _getNextSort() {
+    try {
+      $nextSort = 1;
+      $params = [
+        'fields' => [
+          'TChatbotScenario.sort'
+        ],
+        'conditions' => [
+          'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'order' => [
+          'TChatbotScenario.sort' => 'desc',
+          'TChatbotScenario.id' => 'desc'
+        ],
+        'limit' => 1,
+        'recursive' => -1
+      ];
+
+      // ソートの最大値を取り出す
+      $lastData = $this->TChatbotScenario->find('first', $params);
+
+      // ソート順が取得できなかった場合、該当するシナリオ全体をソートし直す
+      if ($lastData['TChatbotScenario']['sort'] === '0' || $lastData['TChatbotScenario']['sort'] === 0 || $lastData['TChatbotScenario']['sort'] === null) {
+        if (!$this->_remoteSetSort()) {
+          throw Exception();
+        }
+        $lastData = $this->TChatbotScenario->find('first', $params);
+      }
+
+      if (!empty($lastData)) {
+        $nextSort = intval($lastData['TChatbotScenario']['sort']) + 1;
+      }
+      return $nextSort;
+    } catch(Exception $e) {
+      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+      throw $e;
+    }
+  }
+
    /**
    * シナリオ設定ソート順を現在のID順でセット
-   *
    * */
    private function _remoteSetSort(){
      $this->TChatbotScenario->begin();
@@ -595,42 +619,8 @@ class TChatbotScenarioController extends AppController {
     if ( empty($saveData['TChatbotScenario']['id']) ) {
       //新規追加
       $this->TChatbotScenario->create();
-
       // 設定するsort順を算出する
-      $params = [
-          'fields' => [
-              'TChatbotScenario.sort'
-          ],
-          'conditions' => [
-              'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-             // 'TChatbotScenario.del_flg != ' => 1
-          ],
-          'order' => [
-              'TChatbotScenario.sort' => 'desc',
-              'TChatbotScenario.id' => 'desc'
-          ],
-          'limit' => 1,
-          'recursive' => -1
-      ];
-      $lastData = $this->TChatbotScenario->find('first', $params);
-      if($lastData){
-        if($lastData['TChatbotScenario']['sort'] === '0'
-            || $lastData['TChatbotScenario']['sort'] === 0
-            || $lastData['TChatbotScenario']['sort'] === null){
-          //ソート順が登録されていなかったらソート順をセットする
-          if(! $this->_remoteSetSort()){
-            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-            throw new ChatbotScenarioException('ソート順が設定できませんでした。');
-          }
-          //もう一度ソートの最大値を取り直す
-          $lastData = $this->TChatbotScenario->find('first', $params);
-        }
-      }
-      $nextSort = 1;
-      if (!empty($lastData)) {
-        $nextSort = intval($lastData['TChatbotScenario']['sort']) + 1;
-      }
-      $saveData['TChatbotScenario']['sort'] = $nextSort;
+      $saveData['TChatbotScenario']['sort'] = $this->_getNextSort();
     }
 
     $this->TChatbotScenario->set($saveData);
@@ -730,36 +720,10 @@ class TChatbotScenarioController extends AppController {
     } else
     if ($saveData->mailType == C_SCENARIO_MAIL_TYPE_VARIABLES) {
       // 変数の値のみメールする
-      $template = "※このメールはお客様の設定によりsincloから自動送信されました。
-
-ご担当者様
-
-sincloのシナリオ設定によりメールを送信致しました。
-以下のメッセージ内容をご確認下さい。
-
-##SCENARIO_VARIABLES_BLOCK##
-
-------------------------------------------------------------------
-このメールにお心当たりのない方は、誠に恐れ入りますが
-下記連絡先までご連絡ください。
-sinclo@medialink-ml.co.jp
-------------------------------------------------------------------";
+      $template = self::SCENARIO_VARIABLES_TEMPLATE;
     } else {
       // メール内容をすべてメールする
-      $template = "※このメールはお客様の設定によりsincloから自動送信されました。
-
-ご担当者様
-
-sincloのシナリオ設定によりメールを送信致しました。
-以下のメッセージ内容をご確認下さい。
-
-##SCENARIO_ALL_MESSAGE_BLOCK##
-
-------------------------------------------------------------------
-このメールにお心当たりのない方は、誠に恐れ入りますが
-下記連絡先までご連絡ください。
-sinclo@medialink-ml.co.jp
-------------------------------------------------------------------";
+      $template = self::SCENARIO_ALL_MESSAGE_TEMPLATE;
     }
 
     // メールテンプレート設定の保存
@@ -1348,5 +1312,23 @@ sinclo@medialink-ml.co.jp
     }
 
     return $filteredScenarioList;
+  }
+
+  /**
+   * _getScenarioList
+   * アクション「シナリオ呼び出し」に表示する、idとnameの一覧を返す
+   * @return Array シナリオ一覧
+   */
+  private function _getScenarioList() {
+    return $this->TChatbotScenario->coFind('list', [
+      'fields' => ['id', 'name'],
+      'order' => [
+        'TChatbotScenario.sort' => 'asc',
+        'TChatbotScenario.id' => 'asc'
+      ],
+      'conditions' => [
+        'TChatbotScenario.del_flg != ' => 1
+      ]
+    ]);
   }
 }
