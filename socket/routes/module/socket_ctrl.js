@@ -1,3 +1,6 @@
+var express = require('express');
+var router = express.Router();
+
 var database = require('../database');
 var api = require('../api');
 var uuid = require('node-uuid');
@@ -272,6 +275,13 @@ function getCompanyList(){
   });
 }
 getCompanyList();
+
+router.get('/refreshCompanyList', function(req, res, next){
+  getCompanyList();
+  res.send("OK");
+  res.status(200);
+});
+module.exports = router;
 
 function _numPad(str){
   return ("0" + str).slice(-2);
@@ -1104,6 +1114,8 @@ io.sockets.on('connection', function (socket) {
                         });
                       }
                     });
+                  } else {
+                    emit.toCompany('sendChatResult', sendChatData, d.siteKey);
                   }
 
                   if(d.messageType === 1 && insertData.message_read_flg != 1) {
@@ -2799,10 +2811,12 @@ io.sockets.on('connection', function (socket) {
       obj.messages[i].messageType = chatApi.cnst.observeType.auto;
       setList[fullDateTime(Date.parse(created))] = obj.messages[i];
     }
-    for (var i = 0; i < obj.scenarios.length; i++) {
-      if(!isset(obj.scenarios[i]) || !isset(obj.scenarios[i].created)) continue;
-      var created = new Date(obj.scenarios[i].created);
-      setList[fullDateTime(Date.parse(created))] = obj.scenarios[i];
+    if(isset(obj.scenarios)) {
+      for (var i = 0; i < obj.scenarios.length; i++) {
+        if (!isset(obj.scenarios[i]) || !isset(obj.scenarios[i].created)) continue;
+        var created = new Date(obj.scenarios[i].created);
+        setList[fullDateTime(Date.parse(created))] = obj.scenarios[i];
+      }
     }
     var ret = {};
         ret.messages = objectSort(setList);

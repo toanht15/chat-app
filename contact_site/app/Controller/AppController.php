@@ -262,7 +262,9 @@ class AppController extends Controller {
         $seconddiff = abs(strtotime($today) - strtotime($trialEndDay));
         // 日数に変換
         $daydiff = $seconddiff / (60 * 60 * 24) + 1;
-        $this->set('trialTime','トライアル期間終了まであと'.$daydiff.'日です');
+        $this->set('trialTime',$daydiff);
+      } else if(strtotime($today) > strtotime($trialEndDay)) {
+        $this->set('trialTime', 0);
       }
     }
   }

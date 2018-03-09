@@ -665,16 +665,6 @@
           'THistoryChatLog.created'
          ]
       ]);
-      foreach($historyList as $key => $value){
-        if(!empty($value['SpeechTime']['firstSpeechTime'])) {
-          $key_id[$key] = $value['SpeechTime']['firstSpeechTime'];
-        }
-        else {
-          $key_id[$key] = $value['THistoryChatLog2']['created'];
-          $historyList[$key]['SpeechTime']['firstSpeechTime'] = $value['THistoryChatLog2']['created'];
-        }
-      }
-      array_multisort($key_id , SORT_DESC ,$historyList);
 
       //$historyListに担当者を追加
       $userList = $this->_userList($historyList);
@@ -755,7 +745,7 @@
           $row['transmissionKind'] = '訪問者';
           $row['transmissionPerson'] = '';
         }
-        if($val['THistoryChatLog'][' '] == 2) {
+        if($val['THistoryChatLog']['message_type'] == 2) {
           $row['transmissionKind'] = 'オペレーター';
           $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
         }
@@ -1507,6 +1497,7 @@
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+      //初回チャット受信日時順に並び替え
       foreach($historyList as $key => $value){
         if(!empty($value['SpeechTime']['firstSpeechTime'])) {
           $key_id[$key] = $value['SpeechTime']['firstSpeechTime'];

@@ -1,16 +1,24 @@
 <script src="https://cdn.jsdelivr.net/clipboard.js/1.5.3/clipboard.min.js"></script>
 <script>
   $(function () {
-  // クリップボードにコピーする
-  var clipboard = new Clipboard('.copyBtn');
-  clipboard.on('success', function(e) {
-    var self = e;
-    // コピーしたことが視覚的にわかりやすいように
-    // 少しゆとりを持って選択を解除する
-    window.setTimeout(function(){
-      self.clearSelection();
-    }, 300);
-  });
+    // クリップボードにコピーする
+    var clipboard = new Clipboard('.copyBtn');
+    clipboard.on('success', function(e) {
+      var self = e;
+      // コピーしたことが視覚的にわかりやすいように
+      // 少しゆとりを持って選択を解除する
+      window.setTimeout(function(){
+        self.clearSelection();
+      }, 300);
+    });
+
+    $('#showFormTag').on('click', function(e){
+      if($(this).prop('checked')) {
+        $('#formTagWrap').css('display','');
+      } else {
+        $('#formTagWrap').css('display','none');
+      }
+    });
   });
 </script>
 <?php
@@ -32,7 +40,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
     <dl>
       <dt>（１）ウィジェット表示タグ</dt>
       <dd>
-        <pre>ウィジェットを表示したい通常のページ（フォーム以外のページ）に埋め込むタグです。</pre>
+        <pre>ウィジェットを表示するページに埋め込むタグです。</pre>
         <p>
           <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "'></script>"; ?>
           <span class="copyBtn" data-clipboard-target="#normalTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
@@ -41,37 +49,44 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
       </dd>
       <dt>（２）ウィジェット非表示タグ</dt>
       <dd>
-        <pre>ウィジェットは表示させずに画面共有の対象とする通常のページ（フォーム以外のページ）に埋め込むタグです。</pre>
+        <pre>ウィジェットを表示させたくないページに埋め込むタグです。
+※ウィジェットは表示させずに、リアルタイムモニタへの表示やアクセス履歴の対象としたいページや、
+画面共有の対象としたいページに本タグを埋め込んでください。</pre>
         <p>
           <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1'></script>"; ?>
           <span class="copyBtn" data-clipboard-target="#hideTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
           <span class="copyArea"><?=$this->Form->input('hideTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
         </p>
       </dd>
-      <dt>（３）フォーム用ウィジェット表示タグ</dt>
-      <dd>
-        <pre>ウィジェットを表示したいフォーム系ページに埋め込むタグです。
+      <?php if($coreSettings[C_COMPANY_USE_SYNCLO] || $coreSettings[C_COMPANY_USE_DOCUMENT] || $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
+      <label for="showFormTag" style="cursor:pointer; margin-bottom: 1em; display:block; font-size: 1.2em"><input type="checkbox" id="showFormTag" style="position:relative; top:-1px"/>フォーム代理入力（画面共有機能）を利用する場合に対象ページに埋め込むタグ</label>
+      <div id="formTagWrap" style="display:none;">
+      <dt>（３）フォーム代理入力するページ用のタグ（ウィジェット表示）</dt>
+        <dd>
+          <pre>画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット表示）
 ※本タグを埋め込んだページは、画面共有中に企業側からのsubmitボタン操作を無効にします。</pre>
-        <p>
-          <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-form='1'></script>"; ?>
-          <span class="copyBtn" data-clipboard-target="#formTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
-          <span class="copyArea"><?=$this->Form->input('formTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
-        </p>
-      </dd>
-      <dt>（４）フォーム用ウィジェット非表示タグ</dt>
-      <dd>
-        <pre>ウィジェットは表示させずに画面共有の対象とするフォーム系ページに埋め込むタグです。
-※本タグを埋め込んだページは、画面共有中に企業側からのsubmitボタン操作を無効にします</pre>
-        <p>
-          <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1' data-form='1'></script>"; ?>
-          <span class="copyBtn" data-clipboard-target="#formHideTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
-          <span class="copyArea"><?=$this->Form->input('formHideTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
-        </p>
-      </dd>
-    </dl>
-    <pre style="color:red">注意：フォーム系ページの次のページ（submitボタンをクリックした後に遷移する「確認ページ」や「サンクスページ」）にはsincloタグは
+          <p>
+            <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-form='1'></script>"; ?>
+            <span class="copyBtn" data-clipboard-target="#formTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
+            <span class="copyArea"><?=$this->Form->input('formTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
+          </p>
+        </dd>
+        <dt>（４）フォーム代理入力するページ用のタグ（ウィジェット非表示）</dt>
+        <dd>
+          <pre>画面共有を利用してフォームの代理入力を行うページに埋め込むタグです。（ウィジェット非表示）
+※本タグを埋め込んだページは、画面共有中に企業側からのsubmitボタン操作を無効にします。</pre>
+          <p>
+            <?php $scriptName = "<script type='text/javascript' src='" . $fileName . "' data-hide='1' data-form='1'></script>"; ?>
+            <span class="copyBtn" data-clipboard-target="#formHideTag"><?=$this->Html->image('clipboard.png', array('alt' =>'コピー', 'width' => 25, 'height' => 25)) ?></span>
+            <span class="copyArea"><?=$this->Form->input('formHideTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
+          </p>
+        </dd>
+        <pre style="color:red">注意：フォーム系ページの次のページ（submitボタンをクリックした後に遷移する「確認ページ」や「サンクスページ」）にはsincloタグは
 　　　埋め込まないでください。
-    </pre>
+        </pre>
+      </div>
+    </dl>
+    <?php endif; ?>
   </section>
   <?php endif; ?>
   <h2><?= mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．デモサイト</h2>

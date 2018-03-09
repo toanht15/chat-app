@@ -82,7 +82,7 @@ class ContractController extends AppController
 
       try {
         $addedCompanyInfo = $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
-        return ison_encode(array(
+        return json_encode(array(
           'success' => true,
           'message' => "OK",
           'newCompanyId' => $addedCompanyInfo['id']
@@ -151,6 +151,8 @@ class ContractController extends AppController
       $editData = $this->MCompany->read(null, $id);
       // オプションを別領域に設定
       $editData['MCompany']['options']['refCompanyData'] = json_decode($editData['MCompany']['core_settings'],TRUE)['refCompanyData'];
+      $editData['MCompany']['options']['chatbotScenario'] = json_decode($editData['MCompany']['core_settings'],TRUE)['chatbotScenario'];
+
       // ここまで
       $agreementData = $this->MAgreements->find('first',[
         'conditions' => array(
@@ -210,7 +212,15 @@ class ContractController extends AppController
 
   }
 
-  private function processTransaction($companyInfo, $userInfo, $agreementInfo) {
+  /**
+   * Console/Command/ExcelImportShellからも呼び出すためpublicとなっている。
+   * @param $companyInfo
+   * @param $userInfo
+   * @param $agreementInfo
+   * @return 一番最後に追加した
+   * @throws Exception
+   */
+  public function processTransaction($companyInfo, $userInfo, $agreementInfo) {
     try {
       $transaction = $this->TransactionManager->begin();
       $addedCompanyInfo = $this->createCompany($companyInfo);
@@ -353,9 +363,6 @@ class ContractController extends AppController
     if(empty($agreementInfo['trial_end_day'])) {
       $agreementInfo['trial_end_day'] = "";
     }
-    if(empty($agreementInfo['business_model']) == 0) {
-      $agreementInfo['business_model'] = "";
-    }
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
       'business_model' => $agreementInfo['business_model'],
@@ -397,7 +404,7 @@ class ContractController extends AppController
         "user_name" => $userInfo["user_name"],
         "display_name" => $userInfo["user_display_name"],
         "mail_address" => $userInfo["user_mail_address"],
-        "change_password_flg" => C_NO_CHANGE_PASSWORD_FLG,
+        "change_password_flg" => !empty($userInfo['no_change_password_flg']) ? $userInfo['no_change_password_flg'] : C_NO_CHANGE_PASSWORD_FLG,
         "permission_level" => C_AUTHORITY_ADMIN,
         "new_password" => $userInfo["user_password"]
     ];
@@ -688,14 +695,14 @@ class ContractController extends AppController
   }
 
   private function isChatEnable($m_contact_types_id) {
-    return $m_contact_types_id === C_CONTRACT_FULL_PLAN_ID
-        || $m_contact_types_id === C_CONTRACT_CHAT_PLAN_ID
-        || $m_contact_types_id === C_CONTRACT_CHAT_BASIC_PLAN_ID;
+    return strcmp($m_contact_types_id, C_CONTRACT_FULL_PLAN_ID) === 0
+        || strcmp($m_contact_types_id, C_CONTRACT_CHAT_PLAN_ID) === 0
+        || strcmp($m_contact_types_id, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0;
   }
 
   private function isAdvancedChatEnable($m_contact_types_id) {
-    return $m_contact_types_id === C_CONTRACT_FULL_PLAN_ID
-        || $m_contact_types_id === C_CONTRACT_CHAT_PLAN_ID;
+    return strcmp($m_contact_types_id, C_CONTRACT_FULL_PLAN_ID) === 0
+        || strcmp($m_contact_types_id, C_CONTRACT_CHAT_PLAN_ID) === 0;
   }
 
   private function convertActivityToJSON($activity) {

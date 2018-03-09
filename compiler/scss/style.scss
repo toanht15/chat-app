@@ -1099,7 +1099,7 @@ ul#color-bar-right {
     .error-message {
       padding: 0;
       margin: -3px 0 15px 0;
-      color: #F57E7E;
+      color: #cc000a;
     }
   }
   #content-area-title {
@@ -5079,6 +5079,30 @@ ul.naviBtn {
 
   section {
     padding-left: 1em;
+  }
+
+  .separator {
+    display: table;
+    text-align: center;
+    white-space: nowrap;
+    margin-bottom: 2em;
+
+    &:after,
+    &:before {
+      content: '';
+      display: table-cell;
+      width: 164px;
+      background: linear-gradient(transparent 50%, #B7B7B7 50%, #B7B7B7 calc(50% + 2px), transparent calc(50% + 2px));
+      background-clip: padding;
+    }
+
+    &:after {
+      border-left: 1px solid transparent;
+    }
+
+    &:before {
+      border-right: 1px solid transparent;
+    }
   }
 
   dl {
