@@ -4032,7 +4032,7 @@
                     } else if(hearing.hearingTarget[elm]) {
                       console.log("NOT FOUND : " + elm);
                       self._parent._saveVariable(self._easyApi.labelMap[elm], "");
-                      if(self._eastApiRequireAll()) {
+                      if(self._easyApiRequireAll()) {
                         obj.success = false;
                       }
                     }
@@ -4165,7 +4165,7 @@
         },
         _eastApiRequireAll: function() {
           var self = sinclo.scenarioApi._hearing;
-          return self._parent.get(self._parent._lKey.currentScenario).hearingTargetCondition === self._parent._lKey._hearing._easyApi.targetCondition.validAll;
+          return self._parent.get(self._parent._lKey.currentScenario).hearingTargetCondition === self._easyApi.targetCondition.validAll;
         },
         _showConfirmMessage: function() {
           var self = sinclo.scenarioApi._hearing;
