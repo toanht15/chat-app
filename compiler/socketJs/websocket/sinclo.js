@@ -4028,7 +4028,23 @@
                   Object.keys(hearing.hearingTarget).forEach(function(elm, index, arr) {
                     if(hearing.hearingTarget[elm] && parseResult[elm] !== "") {
                       result[elm] = parseResult[elm];
-                      self._parent._saveVariable(self._easyApi.labelMap[elm], parseResult[elm]);
+                      var storeValue = "";
+                      switch(elm) {
+                        case 'pname':
+                        case 'pname_kana':
+                        case 'pname_kana2':
+                          storeValue = parseResult[elm].join(" ");
+                        case 'zip':
+                        case 'tel':
+                        case 'fax':
+                        case 'ktai':
+                        case 'chokutsu':
+                        case 'daihyo':
+                          storeValue = parseResult[elm].join("-");
+                        default:
+                          storeValue = parseResult[elm];
+                      }
+                      self._parent._saveVariable(self._easyApi.labelMap[elm], storeValue);
                     } else if(hearing.hearingTarget[elm]) {
                       console.log("NOT FOUND : " + elm);
                       self._parent._saveVariable(self._easyApi.labelMap[elm], "");
