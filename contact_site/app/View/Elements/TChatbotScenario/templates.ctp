@@ -16,7 +16,7 @@
 <?php /* ヒアリング | C_SCENARIO_ACTION_HEARING */ ?>
 <div ng-if="setItem.actionType == 2" class="set_action_item_body action_hearing" ng-init="main.controllHearingSettingView(setActionId)">
   <ul>
-    <li><label for="hearingParseSignatureMode"><input type="checkbox" id="hearingParseSignatureMode" name="parseSignatureMode" ng-model="setItem.parseSignatureMode"/>一括ヒアリング</label></li>
+    <li><label for="hearing_{{setActionId}}_ParseSignatureMode"><input type="checkbox" id="hearing_{{setActionId}}_ParseSignatureMode" name="parseSignatureMode_{{setActionId}}" ng-model="setItem.parseSignatureMode"/>一括ヒアリング</label></li>
     <li ng-if="setItem.parseSignatureMode === false">
       <table cellspacing="5">
         <thead>
@@ -57,11 +57,11 @@
         ?>
       </div>
     </li>
-    <li ng-if="setItem.parseSignatureMode === true">
-      <span class="fb11em"><label>メール本文タイプ</label></span>
-      <div>
-        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_hearing_target_condition" value="1" ng-model="setItem.hearingTargetCondition">一部の項目でも正常に取得されたらOK</label>
-        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_hearing_target_condition" value="2" ng-model="setItem.hearingTargetCondition">すべての項目が正常に取得されたらOK</label>
+    <li class="styleFlexbox" ng-if="setItem.parseSignatureMode === true">
+      <span class="fb11em"><label>正常入力条件</label></span>
+      <div ng-init="setItem.hearingTargetCondition = '1'">
+        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_hearing_target_condition" value="1" ng-model="setItem.hearingTargetCondition">一部の項目でも正常に取得された場合</label>
+        <label class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_hearing_target_condition" value="2" ng-model="setItem.hearingTargetCondition">すべての項目が正常に取得された場合</label>
       </div>
     </li>
     <li class="styleFlexbox">
