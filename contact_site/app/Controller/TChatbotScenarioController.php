@@ -8,12 +8,13 @@
  * @property MWidgetSetting $MWidgetSetting
  * @property MMailTransmissionSetting $MMailTransmissionSetting
  * @property MMailTemplate $MMailTemplate
+ * @property TExternalApiConnection $TExternalApiConnection
  */
 
 App::uses('ChatbotScenarioException', 'Lib/Error');
 
 class TChatbotScenarioController extends AppController {
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -153,7 +154,7 @@ sinclo@medialink-ml.co.jp
               $param->sendMessageType = $this->request->data['widgetSettings']['chat_trigger'] == C_WIDGET_SEND_ACT_PUSH_KEY ? C_SCENARIO_SEND_MESSAGE_BY_ENTER : C_SCENARIO_SEND_MESSAGE_BY_BUTTON;
             }
           }
-        }
+        } else
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の取得
           if (!empty($action->mMailTransmissionId)) {
@@ -172,7 +173,21 @@ sinclo@medialink-ml.co.jp
         } else
         if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
           // シナリオ呼び出し設定
-          $action->scenarioId = $action->tChatbotScenariosId;
+          if (!empty($action->tChatbotScenarioId)) {
+            $action->scenarioId = $action->tChatbotScenarioId;
+          }
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+          // 外部システム連携設定
+          if (!empty($action->tExternalApiConnectionId)) {
+            $externalApiData = $this->TExternalApiConnection->findById($action->tExternalApiConnectionId);
+            $action->url = $externalApiData['TExternalApiConnection']['url'];
+            $action->methodType = $externalApiData['TExternalApiConnection']['method_type'];
+            $action->requestHeaders = json_decode($externalApiData['TExternalApiConnection']['request_headers']);
+            $action->requestBody = $externalApiData['TExternalApiConnection']['request_body'];
+            $action->responseType = $externalApiData['TExternalApiConnection']['response_type'];
+            $action->responseBodyMaps = json_decode($externalApiData['TExternalApiConnection']['response_body_maps']);
+          }
         }
       }
       $editData[0]['TChatbotScenario']['activity'] = json_encode($activity);
@@ -499,7 +514,7 @@ sinclo@medialink-ml.co.jp
       // ソート順が取得できなかった場合、該当するシナリオ全体をソートし直す
       if (empty($lastData['TChatbotScenario']['sort'])) {
         if (!$this->_remoteSetSort()) {
-          throw Exception();
+          throw new Exception();
         }
         $lastData = $this->TChatbotScenario->find('first', $params);
       }
@@ -611,8 +626,14 @@ sinclo@medialink-ml.co.jp
         } else
         if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
           // シナリオ呼び出し設定
-          $action->tChatbotScenariosId = $action->scenarioId;
+          $action->tChatbotScenarioId = $action->scenarioId;
           unset($action->scenarioId);
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+          // 外部システム連携
+          $this->log('actionType: external api connection');
+          $action = $this->_entryProcessForExternalApi($action);
+          $this->log($action);
         }
       }
     }
@@ -644,10 +665,10 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * メール送信設定の保存機能
-   * トランザクションはこのメソッドの先祖で管理している。（TransactionManager）
-   * @param array $saveData
-   * @return {Void}
+   * _entryProcessForMessage
+   * メール送信設定の保存機能（トランザクションはこのメソッドの先祖で管理している）
+   * @param Object $saveData アクション詳細
+   * @return Object          t_chatbot_scenarioに保存するアクション詳細
    * */
   private function _entryProcessForMessage($saveData) {
     // 送信先メールアドレス情報の値を、保存可能な形式に変換する
@@ -734,6 +755,53 @@ sinclo@medialink-ml.co.jp
     unset($saveData->subject);
     unset($saveData->template);
 
+    return $saveData;
+  }
+
+  /**
+   * _entryProcessForExternalApi
+   * 外部システム連携の保存機能（トランザクションはこのメソッドの先祖で管理している）
+   * @param  Object $saveData アクション詳細
+   * @return Object           t_chatbot_scenarioに保存するアクション詳細
+   */
+  private function _entryProcessForExternalApi($saveData) {
+    // 外部システム連携設定の保存
+    if (empty($saveData->tExternalApiConnectionId)) {
+      $this->TExternalApiConnection->create();
+    } else {
+      $this->TExternalApiConnection->read(null, $saveData->tExternalApiConnectionId);
+    }
+    $this->TExternalApiConnection->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'url' => $saveData->url,
+      'method_type' => $saveData->methodType,
+      'request_headers' => json_encode($saveData->requestHeaders),
+      'request_body' => $saveData->requestBody,
+      'responseType' => $saveData->responseType,
+      'response_body_maps' => json_encode($saveData->responseBodyMaps)
+    ]);
+
+    $validate = $this->TExternalApiConnection->validates();
+    $errors = $this->TExternalApiConnection->validationErrors;
+    if(empty($errors)){
+      $this->TExternalApiConnection->save();
+      if(empty($saveData->tExternalApiConnectionId)) {
+        $saveData->tExternalApiConnectionId = $this->TExternalApiConnection->getLastInsertId();
+      }
+    } else {
+      $exception = new ChatbotScenarioException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
+
+    // 保存済みの設定をオブジェクトから削除する
+    unset($saveData->url);
+    unset($saveData->methodType);
+    unset($saveData->requestHeaders);
+    unset($saveData->requestBody);
+    unset($saveData->responseType);
+    unset($saveData->responseBodyMaps);
     return $saveData;
   }
 
@@ -1248,7 +1316,7 @@ sinclo@medialink-ml.co.jp
 
     // 呼び出し元シナリオ情報を取得する
     $matchScenarioNames = [];
-    $keyword = '"tChatbotScenariosId":"'. $id . '"';
+    $keyword = '"tChatbotScenarioId":"'. $id . '"';
     foreach ($scenarioList as $scenario) {
       if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
         $matchScenarioNames[] = $scenario['TChatbotScenario']['name'];

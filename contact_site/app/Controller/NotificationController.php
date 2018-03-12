@@ -246,7 +246,8 @@ class NotificationController extends AppController {
         $this->response->statusCode($response->code);
         return json_encode(array(
           'success' => false,
-          'errorCode' => $response->code
+          'errorCode' => $response->code,
+          'body' => $response->body
         ));
       }
     } catch(Exception $e) {
