@@ -169,6 +169,10 @@ sinclo@medialink-ml.co.jp
               $action->template = $mailTemplateData['MMailTemplate']['template'];
             }
           }
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
+          // シナリオ呼び出し設定
+          $action->scenarioId = $action->tChatbotScenariosId;
         }
       }
       $editData[0]['TChatbotScenario']['activity'] = json_encode($activity);
@@ -600,10 +604,15 @@ sinclo@medialink-ml.co.jp
     if ( !empty($saveData['TChatbotScenario']) ) {
       $activity = json_decode($saveData['TChatbotScenario']['activity']);
 
-      foreach($activity->scenarios as $key => &$action) {
+      foreach($activity->scenarios as &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の保存と、IDの取得
           $action = $this->_entryProcessForMessage($action);
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
+          // シナリオ呼び出し設定
+          $action->tChatbotScenariosId = $action->scenarioId;
+          unset($action->scenarioId);
         }
       }
     }
@@ -1239,7 +1248,7 @@ sinclo@medialink-ml.co.jp
 
     // 呼び出し元シナリオ情報を取得する
     $matchScenarioNames = [];
-    $keyword = '"scenarioId":"'. $id . '"';
+    $keyword = '"tChatbotScenariosId":"'. $id . '"';
     foreach ($scenarioList as $scenario) {
       if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
         $matchScenarioNames[] = $scenario['TChatbotScenario']['name'];
