@@ -1465,17 +1465,7 @@ var socket, // socket.io
     chatWidgetTemplate: function(widget){
       var html = "", placeholder, spFlg = check.smartphone();
       // ボタンのみの場合
-      if ( ( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
-        placeholder = "メッセージを入力してください";
-      }
-      else {
-        if ( spFlg ) { // スマートフォンの場合
-          placeholder = "メッセージを入力してください（改行で送信）";
-        }
-        else {
-          placeholder = "メッセージを入力してください&#13;&#10;（Shift+Enterで改行/Enterで送信）";
-        }
-      }
+      placeholder = sinclo.chatApi.getPlaceholderMessage();
       html += '  <section id="chatTab" class="flexBox">';
       html += '    <ul id="chatTalk"><sinclo-chat></sinclo-chat><sinclo-typing></sinclo-typing><sinclo-chat-receiver><span id="receiveMessage">テストメッセージです</span></sinclo-chat-receiver></ul>';
       html += '    <sinclo-chat-alert>通信が切断されました。<br>こちらをタップすると再接続します。</sinclo-chat-alert>';

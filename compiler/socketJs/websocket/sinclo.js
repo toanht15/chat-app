@@ -1745,8 +1745,7 @@
           $(document)
             .on('focus', "#sincloChatMessage",function(e){
               if(e) e.stopPropagation();
-              var message = document.getElementById('sincloChatMessage');
-              message.placeholder = "";
+              sinclo.chatApi.clearPlaceholderMessage();
               if(check.smartphone()) {
                 //自由入力エリアが閉まっているか空いているかチェック
                 var textareaOpend = storage.l.get('textareaOpend');
@@ -1762,16 +1761,7 @@
             })
             .on('blur', "#sincloChatMessage",function(e){
               if(e) e.stopPropagation();
-              var message = document.getElementById('sincloChatMessage');
-              message.placeholder = "メッセージを入力してください";
-              if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
-                if ( check.smartphone() ) {
-                  message.placeholder += "（改行で送信）";
-                }
-                else {
-                  message.placeholder += "\n（Shift+Enterで改行/Enterで送信）";
-                }
-              }
+              sinclo.chatApi.setPlaceholderMessage(sinclo.chatApi.getPlaceholderMessage());
               if(check.smartphone()) {
                 //自由入力エリアが閉まっているか空いているかチェック
                 var textareaOpend = storage.l.get('textareaOpend');
@@ -1836,6 +1826,34 @@
             .off('blur', "#sincloChatMessage")
             .off("click", "input[name^='sinclo-radio']");
           $("input[name^='sinclo-radio']").prop('disabled', true);
+        },
+        getPlaceholderMessage: function() {
+          var msg = "メッセージを入力してください";
+          if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
+            if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.getPlaceholderMessage() !== "") {
+              msg = sinclo.scenarioApi.getPlaceholderMessage();
+            } else {
+              if ( check.smartphone() )  {
+                msg += "（改行で送信）";
+              }
+              else {
+                msg += "\n（Shift+Enterで改行/Enterで送信）";
+              }
+            }
+          }
+          return msg;
+        },
+        setPlaceholderMessage: function(msg) {
+          var message = document.getElementById('sincloChatMessage');
+          if(message) {
+            message.placeholder = msg;
+          }
+        },
+        clearPlaceholderMessage: function() {
+          var message = document.getElementById('sincloChatMessage');
+          if(message) {
+            message.placeholder = "";
+          }
         },
         targetTextarea: null,
         lockPageScroll: function() {
@@ -3577,6 +3595,7 @@
         self._saveProcessingState(false);
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
+        self.setPlaceholderMessage(self.getPlaceholderMessage());
       },
       isProcessing: function() {
         var self = sinclo.scenarioApi;
@@ -3611,6 +3630,19 @@
       geScenarioMessageType: function() {
         var self = sinclo.scenarioApi;
         return self.get(this._lKey.sendCustomerMessageType);
+      },
+      getPlaceholderMessage: function() {
+        var self = sinclo.scenarioApi;
+        var msg = "";
+        if(self._hearing.isHearingMode()) {
+          msg = self._hearing._getCurrentHearingProcess().message;
+        }
+        return msg;
+      },
+      setPlaceholderMessage: function(msg) {
+        if(msg !== "") {
+          sinclo.chatApi.setPlaceholderMessage(msg);
+        }
       },
       /**
        * 現在実行されているシナリオに対してサイト訪問者が入力（返答）した場合のメッセージ種別を返却する
@@ -3788,7 +3820,7 @@
        * @param array 配列で格納したメッセージ
        * @property {number} type - シナリオメッセージのタイプ
        * @property {string} message - シナリオメッセージ
-       * @param {function} callback - メッセージをDBに格納した後のコールバック関数
+       * @param {ƒgetfunction} callback - メッセージをDBに格納した後のコールバック関数
        * @private
        */
       _storeMessageToDB: function(array, callback) {
@@ -3959,6 +3991,11 @@
           confirmOK: "3"
         },
 
+        isHearingMode: function() {
+          var self = sinclo.scenarioApi._hearing;
+          return self._parent.get(this._parent._lKey.currentScenario).actionType === "2";
+        },
+
         _init: function (parent, currentScenario) {
           this._parent = parent;
           this._setCurrentSeq(this._getCurrentSeq());
@@ -4004,6 +4041,7 @@
           var message = hearing.message;
           // クロージャー用
           var self = sinclo.scenarioApi._hearing;
+          self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
@@ -4122,7 +4160,7 @@
               });
             });
           });
-        }
+        },
       },
       _selection: {
         _parent: null,
