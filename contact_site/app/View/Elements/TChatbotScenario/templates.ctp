@@ -144,7 +144,7 @@
     <li class="styleFlexbox">
       <span class="fb13em"><label>メール本文タイプ</label></span>
       <div>
-        <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType" ng-init="setItem.mailType = setItem.mailType" default="setItem.default.mailType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span></label>
+        <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span></label>
         <resize-textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></resize-textarea>
       </div>
     </li>
@@ -180,7 +180,7 @@
         <label ng-repeat="(key, item) in apiMethodType" class="pointer"><input type="radio" ng-model="setItem.methodType" ng-value="key">{{item}}</label>
       </span>
     </li>
-    <li class="styleFlexbox" ng-if="setItem.methodType == <?= C_SCENARIO_METHOD_TYPE_POST ?>">
+    <li class="styleFlexbox">
       <span class="fb13em"><label>リクエストヘッダー<span class="questionBalloon"><icon class="questionBtn" data-tooltip="リクエストについての情報や属性を設定できます。外部連携先のサーバーにリクエストを送る際、リクエストヘッダーとして送信されます。">?</icon></span></label></span>
       <div>
         <table cellspacing="5">

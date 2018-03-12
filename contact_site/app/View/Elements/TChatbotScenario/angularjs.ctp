@@ -48,9 +48,18 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     cursor: 'move',
     helper: 'clone',
     revert: 100,
+    beforeStop: function(event, ui) {
+      // cloneした要素にチェック状態が奪われるため、再度設定し直す
+      $.each($(ui.helper).find('input:radio:checked'), function() {
+        var name = $(this).prop('name');
+        var value = $(this).prop('value');
+        $(ui.item).find('input:radio[name="' + name + '"][value="' + value + '"]').prop('checked', true);
+      });
+    },
     stop: function(event, ui) {
       $scope.$apply();
 
+      // 並び替え後、変数のチェックを行う
       var elms = event.target.querySelectorAll('li.set_action_item');
       $scope.setActionList.forEach(function(actionItem, index) {
         validateAction(elms[index], $scope.setActionList, actionItem);
@@ -219,11 +228,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param Boolean isCheckValidation アクションのバリデーションチェックを行うか
    */
   this.createJsonData = function(isCheckValidation) {
+    var index = 0;
     var activity = {};
     activity.chatbotType = "1"; // 現在、複数タイプ存在しないため、固定で1を設定する
     activity.scenarios = {};
 
-    angular.forEach($scope.setActionList, function(originalAction, index) {
+    angular.forEach($scope.setActionList, function(originalAction) {
       var action = angular.copy(originalAction);
       action.messageIntervalTimeSec = $scope.messageIntervalTimeSec;
 
@@ -257,7 +267,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
 
       if (action !== null) {
-        activity.scenarios[index] = action;
+        activity.scenarios[index++] = action;
       };
     });
     return JSON.stringify(activity);
@@ -843,6 +853,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       cache: false,
       timeout: 10000
     }).done(function(data) {
+      console.info('successed get scenario detail.');
       try {
         var scenarios = {};
         var idx = 0;
@@ -864,6 +875,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
     }).fail(function(jqXHR, textStatus, errorThrown) {
       // エラー情報を出力する
+      console.warn('failed get scenario detail');
       console.error(errorThrown);
 
       $scope.actionStep++;
@@ -875,6 +887,14 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // 外部システム連携のAPI実行(Controller呼び出し)
   this.callExternalApi = function(actionDetail) {
+    actionDetail.url = $scope.replaceVariable(actionDetail.url);
+    actionDetail.requestHeaders = actionDetail.requestHeaders.map(function(param) {
+      param.name = $scope.replaceVariable(param.name);
+      param.value = $scope.replaceVariable(param.value);
+      return param;
+    });
+    actionDetail.requestBody = $scope.replaceVariable(actionDetail.requestBody);
+
     $.ajax({
       url: "<?= $this->Html->url('/Notification/callExternalApi') ?>",
       type: 'post',
@@ -885,11 +905,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       cache: false,
       timeout: 10000
     }).done(function(data) {
+      console.info('successed calling external api.');
       data.result.forEach(function(param) {
         LocalStorageService.setItem(param.variableName, param.value);
       });
     }).fail(function(error) {
-      console.error('Failed to call external API');
+      console.error('failed calling external api.', error.statusText);
     }).always(function() {
       $scope.actionStep++;
       $scope.doAction();

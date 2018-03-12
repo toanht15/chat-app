@@ -693,10 +693,6 @@ $config['chatbotScenarioActionList'] = [
         'name' => '',
         'value' => ''
       ]],
-      'requestParameters' => [[
-        'name' => '',
-        'value' => ''
-      ]],
       'requestBody' => '',
       'responseType' => '0',
       'responseBodyMaps' => [[
