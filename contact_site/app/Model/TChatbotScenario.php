@@ -85,7 +85,7 @@ class TChatbotScenario extends AppModel {
       } else
       if ($action['actionType'] == C_SCENARIO_ACTION_CALL_SCENARIO) {
         // シナリオ呼び出し
-        if (empty($action['scenarioId'])) {
+        if (empty($action['tChatbotScenariosId'])) {
           return false;
         }
       }
