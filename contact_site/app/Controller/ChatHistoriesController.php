@@ -96,8 +96,6 @@
         ];
         $this->log("BEGIN tHistoryData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
         $tHistoryData = $this->THistory->find('first', $params);
-        $this->log('ティーヒストリーデータ',LOG_DEBUG);
-        $this->log($tHistoryData,LOG_DEBUG);
         $this->log("END tHistoryData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $this->log("BEGIN チャット送信ページ : ".$this->getDateWithMilliSec(),LOG_DEBUG);
@@ -230,8 +228,6 @@
         ];
         /*必ず治す！！*/
         $tHistoryCountData = $this->THistory->find('first', $params);
-         $this->log($this->THistoryChatLog->getDataSource()->getLog(),LOG_DEBUG);
-        //$tHistoryCountData = 2;
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
