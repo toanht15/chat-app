@@ -3740,9 +3740,11 @@
         switch(type) {
           case "1":
             sinclo.displayTextarea();
+            storage.l.set('textareaOpend', 'open');
             break;
           case "2":
             sinclo.hideTextarea();
+            storage.l.set('textareaOpend', 'close');
             break;
         }
       },
