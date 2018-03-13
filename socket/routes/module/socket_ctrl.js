@@ -1976,11 +1976,16 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
-  socket.on('getCustomerList', function(data){
+  socket.on('getCustomerList', function(data, ack){
     var obj = JSON.parse(data);
     if(isset(obj.siteKey)) {
       emit.toMine('beginOfCustomerList', {}, socket);
       processReceiveAccessInfo(obj.siteKey, socket);
+    }
+    if(ack) {
+      ack({
+        scInfo: ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {}
+      });
     }
   });
 
@@ -2911,17 +2916,30 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // チャット終了
   socket.on("chatEnd", function(d){
     var obj = JSON.parse(d), date = new Date(), now = fullDateTime(), type = chatApi.cnst.observeType.end;
-    var keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
-    var userName = c_connectList[obj.siteKey][obj.tabId][keys[keys.length-1]].user;
-    c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: type};
+
+    var keys = [];
+    var userName = "";
+    if(isset(c_connectList[obj.siteKey][obj.tabId])) {
+      keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
+      userName = c_connectList[obj.siteKey][obj.tabId][keys[keys.length-1]].user;
+      c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: type};
+    }
 
     /* チャット対応上限の処理（対応人数減算の処理） */
     if ( scList.hasOwnProperty(obj.siteKey) && scList[obj.siteKey].cnt.hasOwnProperty(obj.userId) ) {
-      scList[obj.siteKey].cnt[obj.userId]--; // 対応人数を減算する
+      if(scList[obj.siteKey].cnt[obj.userId] > 0) {
+        scList[obj.siteKey].cnt[obj.userId]--; // 対応人数を減算する
+      } else {
+        scList[obj.siteKey].cnt[obj.userId] = 0;
+      }
     }
     /* チャット対応上限の処理（対応人数減算の処理） */
+    scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
-    if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
+    if ( isset(sincloCore[obj.siteKey])
+      && isset(sincloCore[obj.siteKey][obj.tabId].chat)
+      && isset(connectList[sincloCore[obj.siteKey][obj.tabId].sessionId])
+      && isset(connectList[sincloCore[obj.siteKey][obj.tabId].sessionId].userId)) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
       if( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat) ) {
@@ -2930,7 +2948,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           delete sincloCore[obj.siteKey][obj.sincloSessionId].chat;
         }
       }
-      scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
       //emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
       emit.toSameUser("chatEndResult", {ret: true, messageType: type}, obj.siteKey, obj.sincloSessionId);
@@ -2969,6 +2986,23 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           chatApi.notifyCommit("chatEndResult", insertData);
         }
       });
+    } else {
+      // 既にいないユーザーの退室
+      var notifyData = {
+        ret: true,
+        scInfo: scInfo,
+        siteKey: obj.siteKey,
+        tabId: obj.tabId,
+        sincloSessionId: obj.sincloSessionId,
+        visitorsId: "",
+        userId: obj.userId,
+        chatMessage: "退室",
+        messageType: type,
+        messageDistinction: obj.messageDistinction,
+        userName: userName,
+        created: now
+      };
+      emit.toCompany("chatEndResult", notifyData, obj.siteKey);
     }
   });
 
@@ -3577,6 +3611,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           console.log("c_connectList : " + Object.keys(c_connectList).length);
           console.log("doc_connectList : " + Object.keys(doc_connectList).length);
           console.log("customerList : " + Object.keys(customerList[obj.targetKey]).length);
+          console.log("End --------------------------------------------------------");
+          break;
+        case 10: // view all Obj count socket.emit('settingReload', JSON.stringify({type:79 targetKey: "demo", siteKey: "master"}));
+          console.log("getSclist --------------------------------------------------");
+          console.log("scList : " + JSON.stringify(scList[obj.targetKey]));
           console.log("End --------------------------------------------------------");
           break;
         default:
