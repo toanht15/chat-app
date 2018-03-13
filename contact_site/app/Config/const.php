@@ -195,6 +195,7 @@ define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
 define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
 define('C_SCENARIO_ACTION_CALL_SCENARIO', 5); // シナリオ呼び出し
 define('C_SCENARIO_ACTION_EXTERNAL_API', 6); // 外部システム連携
+define('C_SCENARIO_ACTION_SEND_FILE', 7); // ファイル送信
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -618,7 +619,6 @@ $config['chatbotScenarioActionList'] = [
   // テキスト発言
   C_SCENARIO_ACTION_TEXT => [
     'label' => 'テキスト発言',
-    'tooltip' => 'チャットボットに発言させたいテキストメッセージを設定できるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -628,7 +628,6 @@ $config['chatbotScenarioActionList'] = [
   // ヒアリング
   C_SCENARIO_ACTION_HEARING => [
     'label' => 'ヒアリング',
-    'tooltip' => 'チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '1',
@@ -650,7 +649,6 @@ $config['chatbotScenarioActionList'] = [
   // 選択肢
   C_SCENARIO_ACTION_SELECT_OPTION => [
     'label' => '選択肢',
-    'tooltip' => 'チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -663,7 +661,6 @@ $config['chatbotScenarioActionList'] = [
   // メール送信
   C_SCENARIO_ACTION_SEND_MAIL => [
     'label' => 'メール送信',
-    'tooltip' => 'メールを送信するアクションです。宛先、差出人名、メールタイトル、メール本文を自由に設定することが可能です。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -674,7 +671,6 @@ $config['chatbotScenarioActionList'] = [
   // シナリオ呼び出し
   C_SCENARIO_ACTION_CALL_SCENARIO => [
     'label' => 'シナリオ呼び出し',
-    'tooltip' => '呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -684,7 +680,6 @@ $config['chatbotScenarioActionList'] = [
   // 外部システム連携
   C_SCENARIO_ACTION_EXTERNAL_API => [
     'label' => '外部システム連携',
-    'tooltip' => '連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -699,6 +694,18 @@ $config['chatbotScenarioActionList'] = [
         'sourceKey' => '',
         'variableName' => ''
       ]]
+    ]
+  ],
+  // ファイル送信
+  C_SCENARIO_ACTION_SEND_FILE => [
+    'label' => 'ファイル送信',
+    'default' => [
+      'messageIntervalTimeSec' > '2',
+      'chatTextArea' => '2',
+      'file' => [
+        'fileName' => '',
+        'fileSize' => '0'
+      ]
     ]
   ]
 ];

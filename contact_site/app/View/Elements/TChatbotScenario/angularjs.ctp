@@ -220,7 +220,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         }
       });
     };
-  }
+  };
 
   /**
    * createJsonData
@@ -546,6 +546,31 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
+   * ファイル選択ダイアログの起動
+   */
+  this.selectFile = function($event) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var fileElm = document.querySelector('#' + targetActionId + ' .fileElm');
+
+    if (fileElm) {
+      // ファイルピッカー呼び出し
+      fileElm.click();
+    }
+  };
+  /**
+   * ファイル削除
+   */
+  this.removeFile = function($event) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+    $scope.setActionList[actionStep].file = {
+      'name': '',
+      'size': '0',
+      'type': ''
+    };
+  }
+
+  /**
    * controllListView
    * 選択肢、ヒアリング、メール送信のリストに対して、追加・削除ボタンの表示状態を更新する
    * @param String  actionType      アクション種別
@@ -606,6 +631,21 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         localStorage.removeItem($scope.storageKey);
       }
     }
+
+    // ファイル選択
+    $(document).on('change', '.fileElm', function(e) {
+      var targetActionId = $(e.target).parents('.set_action_item').attr('id');
+      var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+      var file = this.files.item(0);
+
+      $scope.setActionList[actionStep].file = {
+        'name': file.name,
+        'size': file.size,
+        'type': file.type
+      };
+      // TODO: ファイルアップロード
+      $scope.$apply();
+    });
 
     // フォームからフォーカスが外れた際、localStorageに一時保存を行う
     $(document).on('focusout', '.set_action_item input, .set_action_item textarea', function() {

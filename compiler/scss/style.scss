@@ -6719,9 +6719,6 @@ ul.naviBtn {
                 margin: 10px 0;
               }
 
-              #TChatbotScenarioName {
-                width: 100%;
-              }
               #TChatbotScenarioMessageIntervalTimeSec {
                 width: 5em;
               }
@@ -6858,6 +6855,21 @@ ul.naviBtn {
                   label + label {
                     margin-left: 0.8em;
                   }
+
+                  span {
+                    padding: 0;
+                  }
+
+                  &.greenBtn,
+                  &.redBtn,
+                  &.disOffgrayBtn {
+                    width: 100px;
+                    text-align: center;
+                    padding: 4px;
+                    margin: 4px;
+                    height: 25px;
+                    font-size: 0.9em;
+                  }
                 }
 
                 input[type="text"],
@@ -6961,6 +6973,20 @@ ul.naviBtn {
                   }
                 }
 
+                &.action_send_file {
+                  .fileImage {
+                    margin: 10px;
+                    i {
+                      font-size: 5em;
+                    }
+                  }
+                  .fileDetail {
+                    span {
+                      display: block;
+                    }
+                  }
+                }
+
                 div > label:last-of-type:not(:last-child) {
                   padding-bottom: 0.5em;
                 }
@@ -7015,6 +7041,15 @@ ul.naviBtn {
                     }
                   }
 
+                  > .fb5em {
+                    flex-basis: 5em;
+                    min-width: 5em;
+                    white-space: nowrap;
+                    & + * {
+                      flex-grow: 1;
+                    }
+                  }
+
                   > ul {
                     flex-grow: 1;
                   }
@@ -7063,7 +7098,6 @@ ul.naviBtn {
             border-color: #4bacc6;
             padding: 0.5em 1.4em;
             display: inline-block;
-            margin: 0 auto;
             text-align: center;
 
             &:hover {

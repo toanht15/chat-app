@@ -18,7 +18,8 @@
         <?= $this->ngForm->input('name', [
           'type' => 'text',
           'placeholder' => 'シナリオ名称を入力',
-          'maxlength' => 50
+          'maxlength' => 50,
+          'class' => 'w100'
         ]) ?>
         <?php if (!empty($errors['name'])) echo "<span class='error-message'>" . h($errors['name'][0]) . "</span>"; ?>
       </li>
@@ -40,8 +41,24 @@
     <div id="tchatbotscenario_form_action_header" class="p10x">
       <h3>アクションを追加する</h3>
       <div id="tchatbotscenario_form_action_menulist">
-        <!-- アクション追加ボタン -->
-        <a ng-repeat="(key, item) in actionList" ng-click="main.addItem(key)" class="greenBtn btn-shadow commontooltip" data-text="{{item.tooltip}}">{{item.label}}</a>
+        <!-- テキスト発言 -->
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_TEXT ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットに発言させたいテキストメッセージを設定できるアクションです。">テキスト発言</a>
+        <!-- ヒアリング -->
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">ヒアリング</a>
+        <!-- 選択肢 -->
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SELECT_OPTION ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。">選択肢</a>
+        <!-- メール送信 -->
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)" class="greenBtn btn-shadow commontooltip" data-text="メールを送信するアクションです。宛先、差出人名、メールタイトル、メール本文を自由に設定することが可能です。">メール送信</a>
+        <!-- シナリオ呼び出し -->
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>)" class="greenBtn btn-shadow commontooltip" data-text="呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。">シナリオ呼び出し</a>
+        <!-- 外部システム連携 -->
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。">外部システム連携</a>
+        <!-- ファイル送信 -->
+        <?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
+          <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルの設定を設定できるアクションです。">ファイル送信</a>
+        <?php else: ?>
+          <a ng-click="" class="grayBtn btn-shadow commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。">ファイル送信</a>
+        <?php endif; ?>
       </div>
     </div>
     <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">

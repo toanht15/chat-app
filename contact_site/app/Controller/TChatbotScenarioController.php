@@ -550,7 +550,7 @@ sinclo@medialink-ml.co.jp
         'recursive' => -1
       ]);
 
-      // sortが正しく設定されていない部分は、ID順に振り直す
+      // sort順を振り直す
       $count = 1;
       foreach($scenarioList as &$value){
         $value['TChatbotScenario']['sort'] = $count++;
@@ -631,9 +631,7 @@ sinclo@medialink-ml.co.jp
         } else
         if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
           // 外部システム連携
-          $this->log('actionType: external api connection');
           $action = $this->_entryProcessForExternalApi($action);
-          $this->log($action);
         }
       }
     }

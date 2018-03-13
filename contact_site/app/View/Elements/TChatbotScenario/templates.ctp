@@ -244,3 +244,28 @@
     </li>
   </ul>
 </div>
+
+<?php /* ファイル送信 */ ?>
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>" class="set_action_item_body action_send_file">
+  <ul>
+    <li class="styleFlexbox">
+      <span class="fb9em"><label>発言内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットに発言させたいテキストメッセージを設定します。">?</icon></span></label></span>
+      <div>
+        <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください" ng-required="true"></resize-textarea>
+      </div>
+    </li>
+    <li class="styleFlexbox">
+      <span class="fb9em"><label>送信ファイル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信させたいファイルを設定します。">?</icon></span></label></span>
+      <ul>
+        <li ng-if="setItem.file.name == ''"><span>ファイルが選択されていません</span></li>
+        <li ng-if="setItem.file.name != ''" class="styleFlexbox">
+          <div class="fb5em fileImage"><i class="fa fa-file-o" aria-hidden="true"></i></div>
+          <div class="fileDetail"><span>{{setItem.file.name}}</span><span>{{setItem.file.size/1024|number:2}}KB</span></div>
+        </li>
+        <li>
+          <input type="file" class="hide fileElm"><span class="greenBtn btn-shadow" ng-click="main.selectFile($event)">ファイル選択</span><span class="btn-shadow" ng-class="{disOffgrayBtn: setItem.file.name == '', redBtn: setItem.file.name != ''}" ng-click="main.removeFile($event)">ファイル削除</span>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
