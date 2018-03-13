@@ -2049,7 +2049,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           clearTimeout($scope.pollingModeIntervalTimer);
         }
         $scope.pollingModeIntervalTimer = setTimeout(function(e){
-          emit('getCustomerList',{}, function(data){
+          emit('getCustomerList',{}, function(obj){
             <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
             // チャット対応上限を設定
             if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
