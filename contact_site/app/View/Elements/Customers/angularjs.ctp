@@ -12,7 +12,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   // -----------------------------------------------------------------------------
   //  関数
   // -----------------------------------------------------------------------------
-  function emit(ev, d){
+  function emit(ev, d, callback){
     var obj = {};
     if ( typeof(d) !== "object" ) {
       obj = JSON.parse(d);
@@ -23,7 +23,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     obj.siteKey = "<?=$siteKey?>";
     var status = $('#operatorStatus').data('status');
     var data = JSON.stringify(obj);
-    socket.emit(ev, data);
+    socket.emit(ev, data, callback);
   }
 
   modalFunc = {
@@ -1120,10 +1120,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.checkChatArea = function(){
       $scope.chatAreaShowFlg = true;
-      if ( !(isset($scope.detailId) && $scope.monitorList.hasOwnProperty($scope.detailId)) ) return false;
+      //if ( !(isset($scope.detailId) && $scope.monitorList.hasOwnProperty($scope.detailId)) ) return false;
       $("#chatContent").addClass("connectChat");
       // チャット対応上限が有効かつ、自身が担当していない場合
-      if ( "<?=$scFlg?>" === "<?=C_SC_ENABLED?>" && !(isset($scope.monitorList[$scope.detailId].chat) && $scope.monitorList[$scope.detailId].chat === myUserId) ) {
+      if ( "<?=$scFlg?>" === "<?=C_SC_ENABLED?>" && !(isset($scope.monitorList[$scope.detailId])) || !(isset($scope.monitorList[$scope.detailId].chat) && $scope.monitorList[$scope.detailId].chat === myUserId) ) {
 <?php if($widgetCheck){ /* 在席・離席管理の場合 */ ?>
         // 在席中かつ、上限に達している場合
         if ( String($('#changeOpStatus').data('status')) === "<?=C_OPERATOR_ACTIVE?>" && Number($scope.scInfo.remain) < 1 ) {
@@ -2049,7 +2049,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           clearTimeout($scope.pollingModeIntervalTimer);
         }
         $scope.pollingModeIntervalTimer = setTimeout(function(e){
-          emit('getCustomerList',{});
+          emit('getCustomerList',{}, function(obj){
+            <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+            // チャット対応上限を設定
+            if ( obj.hasOwnProperty('scInfo') && obj.scInfo.hasOwnProperty(<?=$muserId?>) ) {
+              $scope.scInfo.remain = (isNumber(<?=$scNum?>)) ? Number(<?=$scNum?>) : 0 ;
+              $scope.scInfo.remain -= Number(obj.scInfo[<?=$muserId?>]);
+            }
+            else {
+              $scope.scInfo.remain = 0;
+            }
+            <?php endif; ?>
+          });
         }, <?= C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC ?>);
       }
     };
@@ -2445,6 +2456,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           return (v !== this.t);
         }, {t: obj.tabId});
         $scope.monitorList[obj.tabId].chat = null;
+      } else if('tabId' in obj && isset($scope.detail) && $scope.detailId === obj.tabId) {
+        $scope.chatList = $scope.chatList.filter(function(v){
+          return (v !== this.t);
+        }, {t: obj.tabId});
+        $scope.detail.chat = null;
       }
       if ( obj.tabId === chatApi.tabId ) {
         var chat = {

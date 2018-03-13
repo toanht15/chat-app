@@ -4014,7 +4014,10 @@
                 if (self._parent._valid(hearing.inputType, inputVal)) {
                   if(self._isTheFirst() && self._cvTypeIs(self._cvType.validOnce)) {
                     // 一度OKの場合はCV
-                    emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+                    // 1秒後にCVを付ける
+                    setTimeout(function(){
+                      emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+                    }, 1000);
                   }
                   self._parent._saveVariable(hearing.variableName, inputVal);
                   if (self._goToNext()) {
@@ -4033,7 +4036,9 @@
           var self = sinclo.scenarioApi._hearing;
           if(self._cvTypeIs(self._cvType.validAll)) {
             // 全てOKの場合はCV
-            emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+            setTimeout(function(){
+              emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+            }, 1000);
           }
           if (self._requireConfirm()) {
             self._showConfirmMessage();
@@ -4109,7 +4114,9 @@
                 if(inputVal === self._parent.get(self._parent._lKey.currentScenario).success) {
                   if(self._cvTypeIs(self._cvType.confirmOK)) {
                     // OKを押したタイミングでCVを付ける
-                    emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+                    setTimeout(function(){
+                      emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+                    }, 1000);
                   }
                   if(self._parent._goToNextScenario()) {
                     self._parent._process();
