@@ -4024,38 +4024,7 @@
                   self._parent._handleStoredMessage();
                   // FIXME 関数化
                   var parseResult = obj.data;
-                  var result = {};
-                  Object.keys(hearing.hearingTarget).forEach(function(elm, index, arr) {
-                    if(hearing.hearingTarget[elm] && parseResult[elm] !== "") {
-                      result[elm] = parseResult[elm];
-                      var storeValue = "";
-                      switch(elm) {
-                        case 'pname':
-                        case 'pname_kana':
-                        case 'pname_kana2':
-                          storeValue = parseResult[elm].join(" ");
-                          break;
-                        case 'zip':
-                        case 'tel':
-                        case 'fax':
-                        case 'ktai':
-                        case 'chokutsu':
-                        case 'daihyo':
-                          storeValue = parseResult[elm].join("-");
-                          break;
-                        default:
-                          storeValue = parseResult[elm];
-                          break;
-                      }
-                      self._parent._saveVariable(self._easyApi.labelMap[elm], storeValue);
-                    } else if(hearing.hearingTarget[elm]) {
-                      console.log("NOT FOUND : " + elm);
-                      self._parent._saveVariable(self._easyApi.labelMap[elm], "");
-                      if(self._easyApiRequireAll()) {
-                        obj.success = false;
-                      }
-                    }
-                  });
+                  self._saveParsedVariables(hearing, parseResult);
                   if(obj.success) {
                     if (self._goToNext()) {
                       self._process();
@@ -4093,6 +4062,47 @@
             });
           });
         },
+        _saveParsedVariables: function(hearing, parseResult) {
+          var self = sinclo.scenarioApi._hearing;
+          var result = {};
+          var mes = "";
+          Object.keys(parseResult).forEach(function(elm, index, arr){
+            console.log("find key : " + elm);
+            mes += JSON.stringify(parseResult[elm]) + "\n";
+          });
+          sinclo.chatApi.createMessage('sinclo_se', mes, "検証値：APIの戻り値全て");
+          Object.keys(hearing.hearingTarget).forEach(function(elm, index, arr) {
+            if(hearing.hearingTarget[elm] && parseResult[elm] !== "") {
+              result[elm] = parseResult[elm];
+              var storeValue = "";
+              switch(elm) {
+                case 'pname':
+                case 'pname_kana':
+                case 'pname_kana2':
+                  storeValue = parseResult[elm].join(" ");
+                  break;
+                case 'zip':
+                case 'tel':
+                case 'fax':
+                case 'ktai':
+                case 'chokutsu':
+                case 'daihyo':
+                  storeValue = parseResult[elm].join("-");
+                  break;
+                default:
+                  storeValue = parseResult[elm];
+                  break;
+              }
+              self._parent._saveVariable(self._easyApi.labelMap[elm], storeValue);
+            } else if(hearing.hearingTarget[elm]) {
+              console.log("NOT FOUND : " + elm);
+              self._parent._saveVariable(self._easyApi.labelMap[elm], "");
+              if(self._easyApiRequireAll()) {
+                obj.success = false;
+              }
+            }
+          });
+        },
         _waitingSignatureInput: function(callback) {
           var self = sinclo.scenarioApi._hearing;
           $(document).on(self._parent._events.inputCompleted, function(e, inputVal) {
@@ -4116,14 +4126,6 @@
               self._parent._process();
             }
           }
-        },
-        _executeParseSignatureConfirm: function (result) {
-          var self = sinclo.scenarioApi._hearing;
-          if(self._cvTypeIs(self._cvType.validAll)) {
-            // 全てOKの場合はCV
-            emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
-          }
-          self._showParseSignatureConfirmMessage(result);
         },
         _requireConfirm: function() {
           var self = sinclo.scenarioApi._hearing;
@@ -4205,34 +4207,6 @@
                     self._parent._process();
                   }
                 } else if (inputVal === self._parent.get(self._parent._lKey.currentScenario).cancel) {
-                  self._parent._process(true);
-                } else {
-                  self._showError();
-                }
-              });
-            });
-          });
-        },
-        _showParseSignatureConfirmMessage: function(result) {
-          var self = sinclo.scenarioApi._hearing;
-          var message = "こちらの内容でよろしいですか？" + "\n" + self._createSignatureMessage(result);
-          var messageBlock = self._parent._createSelectionMessage(message, ["はい", "いいえ"]);
-          self._parent._doing(self._parent._getIntervalTimeSec(), function(){
-            self._parent._handleChatTextArea("2"); // 確認ダイアログを出すときはOFF固定
-            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, messageBlock, self._parent.get(self._state.currentSeq) + 1, "2", function(){
-              self._parent._waitingInput(function(inputVal){
-                self._parent._unWaitingInput();
-                self._parent._handleStoredMessage();
-                console.log("inputVal : " + inputVal + " self._parent._lKey.currentScenario.success : " + self._parent.get(self._parent._lKey.currentScenario).success + " self._parent._lKey.currentScenario.cancel : " + self._parent.get(self._parent._lKey.currentScenario).cancel);
-                if(inputVal === "はい") {
-                  if(self._cvTypeIs(self._cvType.confirmOK)) {
-                    // OKを押したタイミングでCVを付ける
-                    emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
-                  }
-                  if(self._parent._goToNextScenario()) {
-                    self._parent._process();
-                  }
-                } else if (inputVal === "いいえ") {
                   self._parent._process(true);
                 } else {
                   self._showError();

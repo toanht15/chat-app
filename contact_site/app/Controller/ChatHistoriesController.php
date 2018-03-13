@@ -5,7 +5,7 @@
    */
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
-    public $components = ['Landscape'];
+    public $components = ['LandscapeLbcAPI'];
     public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
     public $paginate = [
       'THistory' => [
@@ -1496,6 +1496,7 @@
       }
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
+      $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       //初回チャット受信日時順に並び替え
       foreach($historyList as $key => $value){
