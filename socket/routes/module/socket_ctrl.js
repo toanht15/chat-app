@@ -2936,7 +2936,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     /* チャット対応上限の処理（対応人数減算の処理） */
     scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
-    if ( isset(sincloCore[obj.siteKey][obj.tabId])
+    if ( isset(sincloCore[obj.siteKey][obj.tabId] )
       && isset(sincloCore[obj.siteKey][obj.tabId].chat)
       && isset(connectList[sincloCore[obj.siteKey][obj.tabId].sessionId])
       && isset(connectList[sincloCore[obj.siteKey][obj.tabId].sessionId].userId)) {
