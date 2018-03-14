@@ -257,13 +257,13 @@
     <li class="styleFlexbox">
       <span class="fb9em"><label>送信ファイル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信させたいファイルを設定します。">?</icon></span></label></span>
       <ul>
-        <li ng-if="setItem.file.name == ''"><span>ファイルが選択されていません</span></li>
-        <li ng-if="setItem.file.name != ''" class="styleFlexbox">
+        <li ng-if="setItem.file == '' || setItem.file.name == ''"><span>ファイルが選択されていません</span></li>
+        <li ng-if="setItem.file != '' && setItem.file.name != ''" class="styleFlexbox">
           <div class="fb5em fileImage"><i class="fa fa-file-o" aria-hidden="true"></i></div>
-          <div class="fileDetail"><span>{{setItem.file.name}}</span><span>{{setItem.file.size/1024|number:2}}KB</span></div>
+          <div class="fileDetail"><span>{{setItem.file.fileName}}</span><span>{{setItem.file.fileSize/1024|number:2}}KB</span></div>
         </li>
         <li>
-          <input type="file" class="hide fileElm"><span class="greenBtn btn-shadow" ng-click="main.selectFile($event)">ファイル選択</span><span class="btn-shadow" ng-class="{disOffgrayBtn: setItem.file.name == '', redBtn: setItem.file.name != ''}" ng-click="main.removeFile($event)">ファイル削除</span>
+          <input type="file" class="hide fileElm"><span class="greenBtn btn-shadow" ng-click="main.selectFile($event)">ファイル選択</span><span class="btn-shadow" ng-class="{disOffgrayBtn: setItem.file == '', redBtn: setItem.file != ''}" ng-click="main.removeFile($event)">ファイル削除</span>
         </li>
       </ul>
     </li>

@@ -120,7 +120,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   });
 
-  // アクション内の変更を検知する
+  // 各アクション内の変更を検知する
   $scope.watchSetActionList = function(action, index) {
     // watchの破棄
     if (typeof $scope.watchActionList[index] !== 'undefined') {
@@ -177,10 +177,45 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }, true);
   };
 
+  /**
+   * uploadFile ファイルアップロード
+   * @param String  actionStep  アクション番号
+   * @param File    fileObj     Fileオブジェクト
+   * @param Blob    loadFile    Blobオブジェクト
+   */
+  $scope.uploadFile = function(actionStep, fileObj, loadFile) {
+    console.log(`=== TChatbotScenario::uploadFile(${actionStep}) ===`);
+    console.log(fileObj);
+    console.log(loadFile);
+
+    var fd = new FormData();
+    var blob = new Blob([loadFile], {type: fileObj.type});
+    fd.append("file", blob, fileObj.name);
+
+    $.ajax({
+      url  : "<?= $this->Html->url('/File/uploadForScenario') ?>",
+      type : "POST",
+      data : fd,
+      cache       : false,
+      contentType : false,
+      processData : false,
+      dataType    : "json"
+    })
+    .done(function(data, textStatus, jqXHR){
+      console.info(JSON.stringify(data));
+      $scope.setActionList[actionStep].file = data;
+      $scope.$apply();
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+      alert("fail");
+    });
+  }
+
   // シミュレーターの起動
   this.openSimulator = function() {
     $scope.$broadcast('openSimulator', this.createJsonData(true));
-    $scope.$broadcast('switchSimulatorChatTextArea', true);  // シミュレータ起動時、強制的に自由入力エリア：有効の状態で表示する
+    // シミュレータ起動時、強制的に自由入力エリアを有効の状態で表示する
+    $scope.$broadcast('switchSimulatorChatTextArea', true);
   };
 
   this.saveAct = function() {
@@ -563,11 +598,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   this.removeFile = function($event) {
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
-    $scope.setActionList[actionStep].file = {
-      'name': '',
-      'size': '0',
-      'type': ''
-    };
+    $scope.setActionList[actionStep].file = '';
   }
 
   /**
@@ -636,15 +667,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $(document).on('change', '.fileElm', function(e) {
       var targetActionId = $(e.target).parents('.set_action_item').attr('id');
       var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
-      var file = this.files.item(0);
 
-      $scope.setActionList[actionStep].file = {
-        'name': file.name,
-        'size': file.size,
-        'type': file.type
+      var fileObj = this.files.item(0)
+      var fileReader = new FileReader();
+
+      // ファイルの内容は FileReader で読み込む
+      fileReader.onload = function(event) {
+        if (!fileObj.name) {
+          return;
+        }
+        var loadData = event.target.result;
+        $scope.uploadFile(actionStep, fileObj, loadData);
       };
-      // TODO: ファイルアップロード
-      $scope.$apply();
+      fileReader.readAsArrayBuffer(fileObj);
     });
 
     // フォームからフォーカスが外れた際、localStorageに一時保存を行う

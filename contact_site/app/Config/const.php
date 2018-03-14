@@ -702,10 +702,7 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' > '2',
       'chatTextArea' => '2',
-      'file' => [
-        'fileName' => '',
-        'fileSize' => '0'
-      ]
+      'file' => ''
     ]
   ]
 ];
