@@ -3772,9 +3772,11 @@
         switch(type) {
           case "1":
             sinclo.displayTextarea();
+            storage.l.set('textareaOpend', 'open');
             break;
           case "2":
             sinclo.hideTextarea();
+            storage.l.set('textareaOpend', 'close');
             break;
         }
       },
@@ -3983,6 +3985,7 @@
         _parent: null,
         _state: {
           currentSeq: "sh_currentSeq",
+          retry: "sh_retry",
           length: "sh_length"
         },
         _cvType: {
@@ -4010,6 +4013,21 @@
           var json = self._parent.get(self._state.currentSeq);
           var obj = json ? json : 0;
           console.log("scenarioApi::hearing::_getCurrentSeq => " + obj);
+          return obj;
+        },
+        _setRetryFlg: function () {
+          var self = sinclo.scenarioApi._hearing;
+          self._parent.set(self._state.retry, true);
+        },
+        _clearRetryFlg: function () {
+          var self = sinclo.scenarioApi._hearing;
+          self._parent.set(self._state.retry, false);
+        },
+        _getRetryFlg: function () {
+          var self = sinclo.scenarioApi._hearing;
+          var json = self._parent.get(self._state.retry);
+          var obj = json ? json : false;
+          console.log("scenarioApi::hearing::_getRetryFlg => " + obj);
           return obj;
         },
         _setLength: function (val) {
@@ -4128,7 +4146,7 @@
         },
         _isTheFirst: function() {
           var self = sinclo.scenarioApi._hearing;
-          return self._getCurrentSeq() === 0;
+          return self._getCurrentSeq() === 0 && !self._getRetryFlg();
         },
         _cvTypeIs: function(type) {
           var self = sinclo.scenarioApi._hearing;
@@ -4150,6 +4168,7 @@
                 self._parent._handleStoredMessage();
                 console.log("inputVal : " + inputVal + " self._parent._lKey.currentScenario.success : " + self._parent.get(self._parent._lKey.currentScenario).success + " self._parent._lKey.currentScenario.cancel : " + self._parent.get(self._parent._lKey.currentScenario).cancel);
                 if(inputVal === self._parent.get(self._parent._lKey.currentScenario).success) {
+                  self._clearRetryFlg();
                   if(self._cvTypeIs(self._cvType.confirmOK)) {
                     // OKを押したタイミングでCVを付ける
                     setTimeout(function(){
@@ -4160,6 +4179,7 @@
                     self._parent._process();
                   }
                 } else if (inputVal === self._parent.get(self._parent._lKey.currentScenario).cancel) {
+                  self._setRetryFlg();
                   self._parent._process(true);
                 } else {
                   self._showError();
