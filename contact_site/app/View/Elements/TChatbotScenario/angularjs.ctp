@@ -298,6 +298,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           case <?= C_SCENARIO_ACTION_EXTERNAL_API ?>:
             action = self.trimDataExternalApi(action);
             break;
+          case <?= C_SCENARIO_ACTION_SEND_FILE ?>:
+            action = self.trimDataSendFile(action);
+            break;
         }
       }
 
@@ -445,6 +448,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (responseBodys.length < 1) return null;
     action.responseBodyMaps = responseBodys;
 
+    return action;
+  }
+
+  /**
+   * trimDataSendFile
+   * ファイル送信のバリデーションチェックを行い、保存可能なデータを返す
+   * @param Object  action  アクションの詳細
+   */
+  this.trimDataSendFile = function(action) {
+    if (typeof action.file === 'undefined' ||
+      typeof action.file.fileName === 'undefined' || action.file.fileName === '' ||
+      typeof action.file.fileSize === 'undefined' || action.file.fileSize === ''
+    ) {
+      return null;
+    }
+
+    if (typeof action.message === 'undefined' || action.message == '') {
+      delete action.message;
+    }
     return action;
   }
 
@@ -852,6 +874,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
           self.callExternalApi(actionDetail);
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+          // ファイル送信
+          $scope.$broadcast('addReFileMessage', actionDetail.file);
+          $scope.actionStep++;
+          $scope.doAction();
         }
       }, parseInt(time, 10) * 1000);
     } else {
@@ -880,7 +908,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
       // 設定切り替え
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
-      $scope.$broadcast('setPlaceholder', $scope.replaceVariable(message));
       var allowInputLF = hearingDetail.inputLFType == <?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>;
       $scope.$broadcast('allowInputLF', allowInputLF);
       var allowSendMessageByEnter = hearingDetail.sendMessageType == <?= C_SCENARIO_SEND_MESSAGE_BY_ENTER ?>;

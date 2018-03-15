@@ -23,6 +23,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * addReMessage
    * 企業側メッセージの追加
    * @param String message 追加するメッセージ
+   * @param String prefix  ラジオボタンに付与するプレフィックス
    */
   $scope.$on('addReMessage', function(event, message, prefix) {
     $scope.addMessage('re', message, prefix);
@@ -38,12 +39,21 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   });
 
   /**
+   * addReFileMessage
+   * 企業側ファイル送信のメッセージ追加
+   * @param Object fileObj 追加するメッセージ
+   */
+  $scope.$on('addReFileMessage', function(event, fileObj) {
+    $scope.addFileMessage('re', fileObj);
+  });
+
+  /**
    * removeMessage
-   * メッセージの消去
+   * メッセージの消去（コピー元となる非表示要素を残して削除する）
    */
   $scope.$on('removeMessage', function(event) {
     document.querySelector('#sincloChatMessage').value = '';
-    var elms = $('#chatTalk div:nth-child(n+3)');
+    var elms = $('#chatTalk > div:not([style*="display: none;"])');
     angular.forEach(elms, function(elm) {
       document.querySelector('#chatTalk').removeChild(elm);
     });
@@ -63,8 +73,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.allowInputLF = true;
     // キー押下によるメッセージの許可状態を戻す
     $scope.allowSendMessageByEnter = $scope.defaultAllowSendMessageByEnter;
-    // placeholder を戻す
-    document.querySelector('#sincloChatMessage').placeholder = $scope.defaultPlaceholder;
     // 入力制限を戻す
     $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
 
@@ -94,27 +102,39 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     document.getElementById('chatTalk').appendChild(divElm);
     $('#chatTalk div:last-child').show();
 
-    // 高さ調整
-    $timeout(function() {
-      var target = $('#chatTalk');
-      var time = 500;
-      target.stop().animate({
-        scrollTop: target.get(0).scrollHeight - target.outerHeight()
-      }, time);
-    }, 0);
-  }
+    self.autoScroll();
+  };
 
   /**
-   * setPlaceholder
-   * プレースホルダの設定
-   * （サイト訪問者のメッセージ送信後に、プレースホルダの内容を戻す）
-   * @param String message プレースホルダに設定するメッセージ
+   * addFileMessage
+   * シミュレーター上へのファイル送信メッセージ追加
+   * @param String type     企業側(re)・訪問者側(se)のメッセージタイプ
+   * @param Object fileObj  追加するメッセージ
+   * @param String prefix   ラジオボタンに付与するプレフィックス
    */
-  $scope.$on('setPlaceholder', function(event, message) {
-    var elm = document.querySelector('#sincloChatMessage');
-    $scope.defaultPlaceholder = elm.placeholder;
-    elm.placeholder = message;
-  });
+  $scope.addFileMessage = function(type, fileObj) {
+    // ベースとなる要素をクローンする
+    if (type === 're') {
+      var list = document.querySelector('#chatTalk div > li.sinclo_re.file_left');
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_re.file_left').parentNode.cloneNode(true);
+    } else {
+      // 訪問者側からのファイル受信UIは未対応です
+    }
+
+    // パラメーターを表示用に設定する
+    divElm.querySelector('li .sendFileThumbnailArea .sendFileThumbnail').src = fileObj.uploadUrl; // TODO: downloadUrl に変更すること
+    divElm.querySelector('li .sendFileMetaArea .sendFileName').innerHTML = fileObj.fileName;
+    divElm.querySelector('li .sendFileMetaArea .sendFileSize').innerHTML = (fileObj.fileSize / 1024).toFixed(2) + 'KB';
+    divElm.addEventListener('click', function() {
+      window.open(fileObj.uploadUrl); // TODO: downloadUrl に変更すること
+    });
+
+    // 要素を追加する
+    document.getElementById('chatTalk').appendChild(divElm);
+    $('#chatTalk div:last-child').show();
+
+    self.autoScroll()
+  };
 
   /**
    * switchChatTextAreaDisplay
@@ -200,13 +220,19 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       chatTalkElm.style.height = chatTalkHeight + messageBoxHeight + "px";
     }
 
-    // 高さ調整
-    var target = $('#chatTalk');
-    var time = 500;
-    target.stop().animate({
-      scrollTop: target.get(0).scrollHeight - target.outerHeight()
-    }, time);
+    self.autoScroll();
   });
+
+  // 高さ調整
+  this.autoScroll = function() {
+    $timeout(function() {
+      var target = $('#chatTalk');
+      var time = 500;
+      target.stop().animate({
+        scrollTop: target.get(0).scrollHeight - target.outerHeight()
+      }, time);
+    }, 0);
+  }
 
   // 自由入力エリアのキーイベント
   $(document).on('keypress', '#sincloChatMessage', function(e) {
@@ -253,6 +279,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       // ラジオボタンを非活性にする
       $('input[name=' + name + '][type="radio"]').prop('disabled', true);
     }
+  });
+
+  // ダウンロード可能な吹き出しの背景色切替
+  $(document).on('mouseenter', '#chatTalk .file_left', function(e){
+    e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor(0.9);
+  }).on('mouseleave', '#chatTalk .file_left', function(e){
+    e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor();
   });
 }]);
 

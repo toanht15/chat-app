@@ -249,12 +249,6 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>" class="set_action_item_body action_send_file">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb9em"><label>発言内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットに発言させたいテキストメッセージを設定します。">?</icon></span></label></span>
-      <div>
-        <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください" ng-required="true"></resize-textarea>
-      </div>
-    </li>
-    <li class="styleFlexbox">
       <span class="fb9em"><label>送信ファイル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信させたいファイルを設定します。">?</icon></span></label></span>
       <ul>
         <li ng-if="setItem.file == '' || setItem.file.name == ''"><span>ファイルが選択されていません</span></li>
