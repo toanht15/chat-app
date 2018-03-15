@@ -992,6 +992,7 @@ class HistoriesController extends AppController {
 
     // 3) チャットに関する検索条件
     if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      $this->log('アクセス履歴の時',LOG_DEBUG);
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
       $chatStateList = $dbo2->buildStatement(
@@ -1027,7 +1028,8 @@ class HistoriesController extends AppController {
               'chat.*',
               '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus >= 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message >= 0 AND (se_cus >= 0 AND se_auto >= 0) THEN "自動返信" ELSE "" END ) AS type'
             ],
-          'conditions' => $chatLogCond
+          'conditions' => $chatLogCond,
+          'limit' => 100
         ],
         $this->THistoryChatLog
       );
@@ -1053,7 +1055,7 @@ class HistoriesController extends AppController {
 
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id ='. $this->userInfo['m_companies_id'] . ' GROUP BY t_histories_id)',
+        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id ='. $this->userInfo['m_companies_id'] . ' GROUP BY t_histories_id limit 100)',
         'alias' => 'LastSpeechTime',
         'field' => 'created as lastSpeechTime',
         'conditions' => [
@@ -1071,7 +1073,9 @@ class HistoriesController extends AppController {
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
+    $this->log('historyList start',LOG_DEBUG);
     $historyList = $this->paginate('THistory');
+    $this->log('historyList finish',LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
