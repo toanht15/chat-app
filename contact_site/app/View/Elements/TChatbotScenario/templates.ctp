@@ -29,15 +29,13 @@
             <td class="item_type">
               <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList"></select>
             </td>
-            <td class="item_message" rowspan="2"><textarea ng-model="hearingItem.message" rows="5"></textarea></td>
+            <td class="item_message" rowspan="2"><textarea ng-model="hearingItem.message" rows="3"></textarea></td>
           </tr>
           <tr ng-repeat-end>
             <td class="item_detail_settings" colspan="2">
               <span>
-                <label ng-repeat="(key, item) in inputLFTypeList" class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="key">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span></label>
-              </span>
-              <span ng-repeat="(key, item) in inputLFTypeList" ng-if="hearingItem.inputLFType == key" class="pointer">
-                <label ng-repeat="(detailKey, detailItem) in item.detail"><input type="radio" ng-model="hearingItem.sendMessageType" ng-value="detailKey">{{detailItem.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{detailItem.tooltip}}">?</icon></span></label>
+                <label class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="<?= C_SCENARIO_INPUT_LF_TYPE_DISALLOW ?>">改行不可<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の複数行入力を規制します。（改行できなくする）">?</icon></span></label>
+                <label class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="<?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>">改行可<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の複数行入力を許可します。（改行を許可）">?</icon></span></label>
               </span>
             </td>
             <td class="item_btn_block">

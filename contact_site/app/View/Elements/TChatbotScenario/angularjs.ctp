@@ -29,7 +29,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-  $scope.inputLFTypeList = <?php echo json_encode($chatbotScenarioInputLFType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiMethodType = <?php echo json_encode($chatbotScenarioApiMethodType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiResponseType = <?php echo json_encode($chatbotScenarioApiResponseType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
@@ -278,6 +277,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       delete action.default;
       delete action.$valid;
 
+      // 保存可能なデータに変換する
       if (isCheckValidation) {
         switch(parseInt(action.actionType, 10)) {
           case <?= C_SCENARIO_ACTION_TEXT ?>:
@@ -303,7 +303,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             break;
         }
       }
-
       if (action !== null) {
         activity.scenarios[index++] = action;
       };
@@ -340,7 +339,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     angular.forEach(action.hearings, function(item, index) {
       if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !== 'undefined' && item.message !== '') {
         item.inputLFType = item.inputLFType == 1 ? '1' : '2';
-        item.sendMessageType = item.sendMessageType == 1 ? '1' : '2';
         hearings.push(item);
       }
     });
@@ -838,7 +836,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
       // メッセージ間隔
       var time =  actionDetail.messageIntervalTimeSec;
-      if (!!setTime || $scope.actionStep === 0 || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
+      if (!!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
         time = setTime || '0';
       }
 
@@ -907,12 +905,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 質問する
       var message = hearingDetail.message;
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
-      // 設定切り替え
+      // 改行設定を元に、シミュレーターの設定変更
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
-      var allowInputLF = hearingDetail.inputLFType == <?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>;
-      $scope.$broadcast('allowInputLF', allowInputLF);
-      var allowSendMessageByEnter = hearingDetail.sendMessageType == <?= C_SCENARIO_SEND_MESSAGE_BY_ENTER ?>;
-      $scope.$broadcast('allowSendMessageByEnter', allowSendMessageByEnter);
+      if (hearingDetail.inputLFType == <?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>) {
+        $scope.$broadcast('allowSendMessageByShiftEnter', true);
+      } else {
+        $scope.$broadcast('allowInputLF', false);
+      }
       var strInputRule =$scope.inputTypeList[hearingDetail.inputType].inputRule;
       $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
     } else
@@ -924,7 +923,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }).join('\n');
 
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
-      $scope.$broadcast('switchSimulatorChatTextArea', false); // 設定したOK/NG以外が入力されないよう、自由入力エリアを非表示とする
+      // 設定したOK/NG以外が入力されないよう、自由入力エリアを非表示とする
+      $scope.$broadcast('switchSimulatorChatTextArea', false);
     } else {
       // 次のアクションへ移行する
       $scope.hearingIndex = 0;
@@ -1306,7 +1306,13 @@ function validateAction(element, setActionList, actionItem) {
   }
 }
 
-// オブジェクト内のプロパティを検索
+/**
+ * オブジェクト内のプロパティを検索
+ * （オブジェクトのキーが正規表現にマッチした、すべての値を返す）
+ * @param  Object obj   検索対象のオブジェクト
+ * @param  RegExp regex 正規表現
+ * @return Array        検索結果
+ */
 function searchObj (obj, regex) {
   var resultList = [];
   for (var key in obj) {

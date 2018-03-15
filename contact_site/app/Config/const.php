@@ -635,8 +635,7 @@ $config['chatbotScenarioActionList'] = [
         'variableName' => '',
         'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
         'message' => '',
-        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW,
-        'sendMessageType' => C_SCENARIO_SEND_MESSAGE_BY_BUTTON
+        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW
       ]],
       'errorMessage' => '',
       'isConfirm' => '2',
@@ -729,38 +728,6 @@ $config['chatbotScenarioInputType'] = [
     'label' => '@tel_number',
     'rule' => C_MATCH_RULE_TEL,
     'inputRule' => C_MATCH_INPUT_RULE_TEL
-  ]
-];
-
-/* シナリオ設定(ヒアリング) - 改行設定 */
-$config['chatbotScenarioInputLFType'] = [
-  C_SCENARIO_INPUT_LF_TYPE_DISALLOW => [
-    'label' => '改行不可',
-    'tooltip' => 'サイト訪問者の複数行入力を規制します。（改行できなくする）',
-    'detail' => [
-      C_SCENARIO_SEND_MESSAGE_BY_ENTER => [
-        'label' => 'Enterキーで送信',
-        'tooltip' => 'Enterキーにてメッセージを送信します。（「送信」ボタンクリックでもメッセージ送信可）'
-      ],
-      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => [
-        'label' => '送信ボタンで送信',
-        'tooltip' => 'Enterキーを無効化し、メッセージ送信は「送信」ボタンのクリックのみとします。'
-      ]
-    ]
-  ],
-  C_SCENARIO_INPUT_LF_TYPE_ALLOW => [
-    'label' => '改行可',
-    'tooltip' => 'サイト訪問者の複数行入力を許可します。（改行を許可）',
-    'detail' => [
-      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => [
-        'label' => 'Enterキーで改行',
-        'tooltip' => 'Enterキーにて改行します。（メッセージ送信は「送信」ボタンをクリック）'
-      ],
-      C_SCENARIO_SEND_MESSAGE_BY_ENTER => [
-        'label' => 'Enterキーで送信',
-        'tooltip' => 'Enterキーにてメッセージを送信します。（改行はShift+Enter）'
-      ]
-    ]
   ]
 ];
 
