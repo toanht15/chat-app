@@ -183,13 +183,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param Blob    loadFile    Blobオブジェクト
    */
   $scope.uploadFile = function(actionStep, fileObj, loadFile) {
-    console.log(`=== TChatbotScenario::uploadFile(${actionStep}) ===`);
-    console.log(fileObj);
-    console.log(loadFile);
-
     var fd = new FormData();
     var blob = new Blob([loadFile], {type: fileObj.type});
     fd.append("file", blob, fileObj.name);
+
+    var targetElm = document.querySelector('#action' + actionStep + '_setting .selectFileArea');
+    targetElm.querySelector('li:first-child').style.display = 'none';
+    targetElm.querySelector('.uploadProgress').classList.remove('hide');
 
     $.ajax({
       url  : "<?= $this->Html->url('/File/uploadForScenario') ?>",
@@ -198,15 +198,30 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       cache       : false,
       contentType : false,
       processData : false,
-      dataType    : "json"
+      dataType    : "json",
+      xhr: function() {
+        var XHR = $.ajaxSettings.xhr();
+        if(XHR.upload){
+          XHR.upload.addEventListener('progress',function(e){
+            var progress = parseInt(e.loaded/e.total*10000)/100;
+            targetElm.querySelector('.uploadProgressRate').style.width = progress + '%';
+            $scope.$apply();
+          }, false);
+        }
+        return XHR;
+      }
     })
     .done(function(data, textStatus, jqXHR){
       console.info(JSON.stringify(data));
       $scope.setActionList[actionStep].file = data;
-      $scope.$apply();
     })
     .fail(function(jqXHR, textStatus, errorThrown){
       alert("fail");
+    })
+    .always(function() {
+      targetElm.querySelector('li:first-child').style.display = '';
+      targetElm.querySelector('.uploadProgress').classList.add('hide');
+      $scope.$apply();
     });
   }
 
@@ -273,7 +288,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
       // 表示用のデータをオブジェクトから削除する
       delete action.label;
-      delete action.tooltip;
       delete action.default;
       delete action.$valid;
 
@@ -457,14 +471,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    */
   this.trimDataSendFile = function(action) {
     if (typeof action.file === 'undefined' ||
-      typeof action.file.fileName === 'undefined' || action.file.fileName === '' ||
-      typeof action.file.fileSize === 'undefined' || action.file.fileSize === ''
+      typeof action.file.file_path === 'undefined' || action.file.file_path === '' ||
+      typeof action.file.file_name === 'undefined' || action.file.file_name === '' ||
+      typeof action.file.file_size === 'undefined' || action.file.file_size === ''
     ) {
       return null;
-    }
-
-    if (typeof action.message === 'undefined' || action.message == '') {
-      delete action.message;
     }
     return action;
   }
@@ -1263,6 +1274,15 @@ function validateAction(element, setActionList, actionItem) {
     });
     if (!validResponseBody) {
       messageList.push('レスポンスボディ情報が未入力です')
+    }
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+    if (typeof actionItem.file === 'undefined' ||
+      typeof actionItem.file.file_path === 'undefined' || actionItem.file.file_path === '' ||
+      typeof actionItem.file.file_name === 'undefined' || actionItem.file.file_name === '' ||
+      typeof actionItem.file.file_size === 'undefined' || actionItem.file.file_size === ''
+    ) {
+      messageList.push('ファイルが未選択です');
     }
   }
 

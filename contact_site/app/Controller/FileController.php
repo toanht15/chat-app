@@ -58,10 +58,10 @@ class FileController extends AppController
 
     return json_encode([
       'success' => true,
-      // 'uploadUrl' => $filePath,
-      'uploadUrl' => $key,
-      'fileName' => $file['name'],
-      'fileSize' => $file['size']
+      // 'file_path' => $filePath,
+      'file_path' => $key,
+      'file_name' => $file['name'],
+      'file_size' => $file['size']
     ]);
   }
 

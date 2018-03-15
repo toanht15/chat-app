@@ -9,12 +9,13 @@
  * @property MMailTransmissionSetting $MMailTransmissionSetting
  * @property MMailTemplate $MMailTemplate
  * @property TExternalApiConnection $TExternalApiConnection
+ * @property TChatbotScenarioUploadFile $TChatbotScenarioUploadFile
  */
 
 App::uses('ChatbotScenarioException', 'Lib/Error');
 
 class TChatbotScenarioController extends AppController {
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioUploadFile'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -186,6 +187,15 @@ sinclo@medialink-ml.co.jp
             $action->requestBody = $externalApiData['TExternalApiConnection']['request_body'];
             $action->responseType = $externalApiData['TExternalApiConnection']['response_type'];
             $action->responseBodyMaps = json_decode($externalApiData['TExternalApiConnection']['response_body_maps']);
+          }
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+          // ファイル送信
+          if (!empty($action->tChatbotScenarioUploadFileId)) {
+            // $fileData = $this->TChatbotScenarioUploadFile->findById($action->tChatbotScenarioUploadFileId);
+            $action->file->file_path = 'fileScenarioTransfer/5a57481f4a7f5-20180315204525.png'; //$fileData['TChatbotScenarioUploadFile']['file_path'];
+            $action->file->file_name = 'sweets_icecream_monaka.png'; //$fileData['TChatbotScenarioUploadFile']['file_name'];
+            $action->file->file_size = '394681'; //$fileData['TChatbotScenarioUploadFile']['file_size'];
           }
         }
       }
@@ -626,6 +636,10 @@ sinclo@medialink-ml.co.jp
         if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
           // 外部システム連携
           $action = $this->_entryProcessForExternalApi($action);
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+          // ファイル送信
+          $action = $this->_entryProcessForUploadFile($action);
         }
       }
     }
@@ -757,7 +771,6 @@ sinclo@medialink-ml.co.jp
    * @return Object           t_chatbot_scenarioに保存するアクション詳細
    */
   private function _entryProcessForExternalApi($saveData) {
-    // 外部システム連携設定の保存
     if (empty($saveData->tExternalApiConnectionId)) {
       $this->TExternalApiConnection->create();
     } else {
@@ -794,6 +807,45 @@ sinclo@medialink-ml.co.jp
     unset($saveData->requestBody);
     unset($saveData->responseType);
     unset($saveData->responseBodyMaps);
+    return $saveData;
+  }
+
+  /**
+   * _entryProcessForExternalApi
+   * ファイル送信の保存機能（トランザクションはこのメソッドの先祖で管理している）
+   * @param  Object $saveData アクション詳細
+   * @return Object           t_chatbot_scenarioに保存するアクション詳細
+   */
+  private function _entryProcessForUploadFile($saveData) {
+    if (empty($saveData->tChatbotScenarioUploadFileId)) {
+      $this->TChatbotScenarioUploadFile->create();
+    } else {
+      $this->TChatbotScenarioUploadFile->read(null, $saveData->tChatbotScenarioUploadFileId);
+    }
+    $this->TChatbotScenarioUploadFile->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'file_path' => $saveData->file->file_path,
+      'file_name' => $saveData->file->file_name,
+      'file_size' => $saveData->file->file_size
+    ]);
+
+    $validate = $this->TChatbotScenarioUploadFile->validates();
+    $errors = $this->TChatbotScenarioUploadFile->validationErrors;
+
+    if(empty($errors)){
+      $this->TChatbotScenarioUploadFile->save();
+      if(empty($saveData->TChatbotScenarioUploadFile)) {
+        $saveData->tChatbotScenarioUploadFileId = $this->TChatbotScenarioUploadFile->getLastInsertId();
+      }
+    } else {
+      $exception = new ChatbotScenarioException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
+
+    // 保存済みの設定をオブジェクトから削除する
+    unset($saveData->file);
     return $saveData;
   }
 
