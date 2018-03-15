@@ -412,6 +412,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (typeof action.scenarioId == 'undefined' || action.scenarioId === '' || action.scenarioId === null) {
       return null;
     }
+    action.executeNextAction = action.executeNextAction ? '1' : '2';
     return action;
   }
 
@@ -870,7 +871,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           $scope.doAction();
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
-          self.getScenarioDetail(actionDetail.scenarioId);
+          self.getScenarioDetail(actionDetail.scenarioId, actionDetail.executeNextAction);
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
           self.callExternalApi(actionDetail);
@@ -943,8 +944,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * getScenarioDetail
    * 呼び出し先のシナリオ詳細を取得する
    * @param String scenarioId 呼び出し先シナリオID
+   * @param String isNext     呼び出したシナリオ終了後、次のアクションを続けるか
    */
-  this.getScenarioDetail = function(scenarioId) {
+  this.getScenarioDetail = function(scenarioId, isNext) {
     $.ajax({
       url: "<?= $this->Html->url('/TChatbotScenario/remoteGetActionDetail') ?>",
       type: 'post',
@@ -962,15 +964,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
 
         // 取得したシナリオのアクション情報を、setActionList内に詰める
-        for (var key in $scope.setActionList) {
+        Object.entries($scope.setActionList).every(function(param, key) {
           if (key == $scope.actionStep) {
             for (var exKey in activity.scenarios) {
               scenarios[idx++] = activity.scenarios[exKey];
             }
+            // 取得したシナリオを追加後、フラグを見て続けるか判断する
+            if (!isNext || isNext != '1') {
+              return false;
+            }
           } else {
             scenarios[idx++] = $scope.setActionList[key];
           }
-        }
+          return true;
+        });
         $scope.setActionList = scenarios;
       } catch(e) {
         $scope.actionStep++;

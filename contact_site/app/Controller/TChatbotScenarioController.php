@@ -610,11 +610,6 @@ sinclo@medialink-ml.co.jp
       $saveData['TChatbotScenario']['sort'] = $this->_getNextSort();
     }
 
-    $this->TChatbotScenario->set($saveData);
-
-    $validate = $this->TChatbotScenario->validates();
-    $errors = $this->TChatbotScenario->validationErrors;
-
     // その他のチェック
     if ( !empty($saveData['TChatbotScenario']) ) {
       $activity = json_decode($saveData['TChatbotScenario']['activity']);

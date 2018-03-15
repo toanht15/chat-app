@@ -162,6 +162,9 @@
         </select>
       </div>
     </li>
+    <li class="styleFlexbox">
+      <label class="pointer"><input type="checkbox" ng-model="setItem.executeNextAction" ng-init="setItem.executeNextAction = setItem.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。">?</icon></span></label>
+    </li>
   </ul>
 </div>
 

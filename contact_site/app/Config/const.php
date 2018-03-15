@@ -674,7 +674,8 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'scenarioId' => ''
+      'scenarioId' => '',
+      'executeNextAction' => '2'
     ]
   ],
   // 外部システム連携
