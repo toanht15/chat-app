@@ -3742,6 +3742,10 @@
             self._mail._init(self, self.get(self._lKey.currentScenario));
             self._mail._process();
             break;
+          case "5":
+            self._anotherScenario._init(self);
+            self._anotherScenario._process();
+            break;
         }
       },
       _isTheFiestScenaroAndSequence: function() {
@@ -3758,13 +3762,15 @@
         }
         return result;
       },
-      _goToNextScenario: function() {
+      _goToNextScenario: function(isJunpScenario) {
         var self = sinclo.scenarioApi;
         if(Number(self.get(self._lKey.currentScenarioSeqNum)) === Number(self.get(self._lKey.scenarioLength))-1) {
           self._end();
           return false;
         }
-        self.set(self._lKey.currentScenarioSeqNum, Number(self.get(self._lKey.currentScenarioSeqNum)) + 1);
+        if(!isJunpScenario) {
+          self.set(self._lKey.currentScenarioSeqNum, Number(self.get(self._lKey.currentScenarioSeqNum)) + 1);
+        }
         self.set(self._lKey.currentScenario, self.get(self._lKey.scenarios)[String(self.get(self._lKey.currentScenarioSeqNum))]);
         return true;
       },
@@ -3996,7 +4002,12 @@
 
         isHearingMode: function() {
           var self = sinclo.scenarioApi._hearing;
-          return self._parent.get(this._parent._lKey.currentScenario).actionType === "2";
+          if(!self._parent) {
+            // initがコールされていないのでヒアリング開始していない
+            return false;
+          } else {
+            return self._parent.get(self._parent._lKey.currentScenario).actionType === "2";
+          }
         },
 
         _init: function (parent, currentScenario) {
@@ -4100,6 +4111,7 @@
             self._showConfirmMessage();
           } else {
             if (self._parent._goToNextScenario()) {
+              self._setCurrentSeq(0);
               self._parent._process();
             }
           }
@@ -4175,6 +4187,7 @@
                       emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
                     }, 1000);
                   }
+                  self._setCurrentSeq(0);
                   if(self._parent._goToNextScenario()) {
                     self._parent._process();
                   }
@@ -4231,6 +4244,56 @@
           if(self._parent._goToNextScenario()) {
             self._parent._process();
           }
+        }
+      },
+      _anotherScenario: {
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._anotherScenario;
+          self._getScenario(function(result){
+            self._mergeScenario(result);
+            if(self._parent._goToNextScenario(true)) {
+              self._parent._process();
+            }
+          });
+        },
+        _isExecutableNextAction: function() {
+          var self = sinclo.scenarioApi._anotherScenario;
+          var result = self._parent.get(self._parent._lKey.currentScenario).executeNextAction;
+          return (result && "1".indexOf(result) >= 0);
+        },
+        _getScenario: function(callback) {
+          var self = sinclo.scenarioApi._anotherScenario;
+          var scenarioId = self._parent.get(self._parent._lKey.currentScenario).scenarioId;
+          emit('getScenario', {scenarioId: scenarioId}, callback);
+        },
+        _mergeScenario: function(result) {
+          var targetScenario = result.activity.scenarios;
+          var self = sinclo.scenarioApi._anotherScenario;
+          var scenarioObj = self._parent.get(self._parent._lKey.scenarios);
+          var scenarioSeqNum = self._parent.get(self._parent._lKey.currentScenarioSeqNum);
+          var newScenarioObj = {};
+          var executeNextAction = self._isExecutableNextAction();
+          var currentIndex = 0;
+          Object.keys(scenarioObj).some(function(elm, index){
+            if(index === scenarioSeqNum) {
+              Object.keys(targetScenario).forEach(function (elm, index, arr) {
+                newScenarioObj[String(currentIndex)] = targetScenario[elm];
+                currentIndex++;
+              });
+              if(!executeNextAction) {
+                return true;
+              }
+            } else {
+              newScenarioObj[String(currentIndex)] = scenarioObj[elm];
+              currentIndex++;
+            }
+          });
+          self._parent.set(self._parent._lKey.scenarios, newScenarioObj);
+          self._parent.set(self._parent._lKey.scenarioLength, Object.keys(newScenarioObj).length);
         }
       }
     },

@@ -1470,7 +1470,7 @@ var socket, // socket.io
       html += '    <ul id="chatTalk"><sinclo-chat></sinclo-chat><sinclo-typing></sinclo-typing><sinclo-chat-receiver><span id="receiveMessage">テストメッセージです</span></sinclo-chat-receiver></ul>';
       html += '    <sinclo-chat-alert>通信が切断されました。<br>こちらをタップすると再接続します。</sinclo-chat-alert>';
       html += '    <sinclo-div class="flexBoxRow" id = "flexBoxHeight">';
-      html += '      <textarea name="sincloChat" id="sincloChatMessage" maxlength="1000" placeholder=" ' + placeholder + ' "></textarea>';
+      html += '      <textarea pattern="[1-9]" name="sincloChat" id="sincloChatMessage" maxlength="1000" placeholder=" ' + placeholder + ' "></textarea>';
       html += '      <a id="sincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       html += '    </sinclo-div>';
       if(!check.smartphone() && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document))) {

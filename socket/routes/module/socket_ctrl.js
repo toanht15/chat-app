@@ -3178,19 +3178,27 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // ============================================
   //  シナリオイベントハンドラ
   // ============================================
-  socket.on('getScenario', function(data){
+  socket.on('getScenario', function(data, ack){
     var obj = JSON.parse(data);
     var result = {};
     pool.query('select activity from t_chatbot_scenarios where m_companies_id = ? and id = ?;', [companyList[obj.siteKey], obj.scenarioId],
       function(err, row){
         if ( err !== null && err !== '' ) {
-          emit.toMine('resGetSenario', result, socket);
+          if(ack) {
+            ack(result);
+          } else {
+            emit.toMine('resGetSenario', result, socket);
+          }
           return;
         }
         if(row.length !== 0) {
           result = JSON.parse(row[0].activity);
         }
-        emit.toMine('resGetScenario', {id: obj.scenarioId, activity: result}, socket);
+        if(ack) {
+          ack({id: obj.scenarioId, activity: result});
+        } else {
+          emit.toMine('resGetScenario', {id: obj.scenarioId, activity: result}, socket);
+        }
       });
   });
 
