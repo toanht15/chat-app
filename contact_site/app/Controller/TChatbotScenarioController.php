@@ -143,63 +143,9 @@ sinclo@medialink-ml.co.jp
         $this->redirect('/TChatbotScenario/index');
       }
 
-      $activity = json_decode($editData[0]['TChatbotScenario']['activity']);
-      foreach ($activity->scenarios as $key => &$action) {
-        if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
-          foreach ($action->hearings as $key => &$param) {
-            // 自由入力エリアの改行設定の初期化(機能追加前に保存された設定は、改行可とする)
-            $param->inputLFType = empty($param->inputLFType) ? C_SCENARIO_INPUT_LF_TYPE_ALLOW : $param->inputLFType;
-            // 自由入力エリアの送信設定の初期化(機能追加前に保存された設定は、ウィジェット設定に準拠する)
-            if (empty($param->sendMessageType)) {
-              $param->sendMessageType = $this->request->data['widgetSettings']['chat_trigger'] == C_WIDGET_SEND_ACT_PUSH_KEY ? C_SCENARIO_SEND_MESSAGE_BY_ENTER : C_SCENARIO_SEND_MESSAGE_BY_BUTTON;
-            }
-          }
-        } else
-        if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
-          // メール送信設定の取得
-          if (!empty($action->mMailTransmissionId)) {
-            $mailTransmissionData = $this->MMailTransmissionSetting->findById($action->mMailTransmissionId);
-            $action->toAddress = explode(',', $mailTransmissionData['MMailTransmissionSetting']['to_address']);
-            $action->subject = $mailTransmissionData['MMailTransmissionSetting']['subject'];
-            $action->fromName = $mailTransmissionData['MMailTransmissionSetting']['from_name'];
-          }
-          // メールテンプレートの取得
-          if (!empty($action->mMailTemplateId)) {
-            $mailTemplateData = $this->MMailTemplate->findById($action->mMailTemplateId);
-            if ($action->mailType == C_SCENARIO_MAIL_TYPE_CUSTOMIZE) {
-              $action->template = $mailTemplateData['MMailTemplate']['template'];
-            }
-          }
-        } else
-        if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
-          // シナリオ呼び出し設定
-          if (!empty($action->tChatbotScenarioId)) {
-            $action->scenarioId = $action->tChatbotScenarioId;
-          }
-        } else
-        if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
-          // 外部システム連携設定
-          if (!empty($action->tExternalApiConnectionId)) {
-            $externalApiData = $this->TExternalApiConnection->findById($action->tExternalApiConnectionId);
-            $action->url = $externalApiData['TExternalApiConnection']['url'];
-            $action->methodType = $externalApiData['TExternalApiConnection']['method_type'];
-            $action->requestHeaders = json_decode($externalApiData['TExternalApiConnection']['request_headers']);
-            $action->requestBody = $externalApiData['TExternalApiConnection']['request_body'];
-            $action->responseType = $externalApiData['TExternalApiConnection']['response_type'];
-            $action->responseBodyMaps = json_decode($externalApiData['TExternalApiConnection']['response_body_maps']);
-          }
-        } else
-        if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
-          // ファイル送信
-          if (!empty($action->tChatbotScenarioUploadFileId)) {
-            // $fileData = $this->TChatbotScenarioUploadFile->findById($action->tChatbotScenarioUploadFileId);
-            $action->file->file_path = 'fileScenarioTransfer/5a57481f4a7f5-20180315204525.png'; //$fileData['TChatbotScenarioUploadFile']['file_path'];
-            $action->file->file_name = 'sweets_icecream_monaka.png'; //$fileData['TChatbotScenarioUploadFile']['file_name'];
-            $action->file->file_size = '394681'; //$fileData['TChatbotScenarioUploadFile']['file_size'];
-          }
-        }
-      }
-      $editData[0]['TChatbotScenario']['activity'] = json_encode($activity);
+      // アクションごとに必要な設定を追加する
+      $this->_setActivityDetailSettings($editData[0]['TChatbotScenario']['activity']);
+
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
     }
 
@@ -485,6 +431,7 @@ sinclo@medialink-ml.co.jp
       ]);
 
       if (count($ret) === 1) {
+        $this->_setActivityDetailSettings($ret['TChatbotScenario']['activity']);
         return json_encode($ret);
       } else {
         return false;
@@ -495,7 +442,6 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _getNextSort
    * これまでのシナリオ設定を元に、登録可能なsort順を算出する
    * @return Integer sort順
    */
@@ -626,7 +572,7 @@ sinclo@medialink-ml.co.jp
       foreach($activity->scenarios as &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の保存と、IDの取得
-          $action = $this->_entryProcessForMessage($action);
+          $action = $this->_entryProcessForSendMail($action);
         } else
         if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
           // シナリオ呼び出し設定
@@ -671,12 +617,11 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _entryProcessForMessage
    * メール送信設定の保存機能（トランザクションはこのメソッドの先祖で管理している）
    * @param Object $saveData アクション詳細
    * @return Object          t_chatbot_scenarioに保存するアクション詳細
    * */
-  private function _entryProcessForMessage($saveData) {
+  private function _entryProcessForSendMail($saveData) {
     // 送信先メールアドレス情報の値を、保存可能な形式に変換する
     $toAddresses = '';
     if(count($saveData->toAddress)) {
@@ -765,7 +710,6 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _entryProcessForExternalApi
    * 外部システム連携の保存機能（トランザクションはこのメソッドの先祖で管理している）
    * @param  Object $saveData アクション詳細
    * @return Object           t_chatbot_scenarioに保存するアクション詳細
@@ -811,7 +755,6 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _entryProcessForExternalApi
    * ファイル送信の保存機能（トランザクションはこのメソッドの先祖で管理している）
    * @param  Object $saveData アクション詳細
    * @return Object           t_chatbot_scenarioに保存するアクション詳細
@@ -871,9 +814,7 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _getWidgetSettings
    * ウィジェット設定を取得し、シミュレーター表示用にパラメーターを設定する
-   *
    * @return $inputData['MWidgetSetting'] シミュレーター表示用にパラメーターを設定したもの
    */
   private function _getWidgetSettings() {
@@ -997,7 +938,6 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _settingToObj
    * JSON形式で取得した値をオブジェクト形式に変換
    *
    * @param $jsonData JSON JSON形式のデータ
@@ -1333,7 +1273,6 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _getScenarioCallerInfo
    * 呼び出し元情報を取得する
    * @param  Int    $id           シナリオID
    * @param  Array  $scenarioList アクション「シナリオ呼び出し」を含むシナリオ一覧
@@ -1370,10 +1309,9 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _findScenarioByActionType
    * 指定されたアクションタイプのシナリオ一覧を返す
    * @param Integer $actionType アクションタイプ
-   * @return Array  シナリオ一覧
+   * @return Array              シナリオ一覧
    */
   private function _findScenarioByActionType($actionType) {
     $scenarioList = $this->TChatbotScenario->coFind('all', [
@@ -1402,7 +1340,6 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _getScenarioList
    * アクション「シナリオ呼び出し」に表示する、idとnameの一覧を返す
    * @param  Integer $currentId 現在表示中のシナリオID（結果のリストから除外する）
    * @return Array              シナリオ一覧
@@ -1419,5 +1356,67 @@ sinclo@medialink-ml.co.jp
         'TChatbotScenario.del_flg != ' => 1
       ]
     ]);
+  }
+
+  /**
+   * アクションごとに必要な設定を追加する
+   * @param Object $json activity
+   */
+  private function _setActivityDetailSettings(&$json) {
+    $activity = json_decode($json);
+    foreach ($activity->scenarios as $key => &$action) {
+      if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
+        foreach ($action->hearings as $key => &$param) {
+          // 自由入力エリアの改行設定の初期化(機能追加前に保存された設定は、改行可とする)
+          $param->inputLFType = empty($param->inputLFType) ? C_SCENARIO_INPUT_LF_TYPE_ALLOW : $param->inputLFType;
+        }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
+        // メール送信設定の取得
+        if (!empty($action->mMailTransmissionId)) {
+          $mailTransmissionData = $this->MMailTransmissionSetting->findById($action->mMailTransmissionId);
+          $action->toAddress = explode(',', $mailTransmissionData['MMailTransmissionSetting']['to_address']);
+          $action->subject = $mailTransmissionData['MMailTransmissionSetting']['subject'];
+          $action->fromName = $mailTransmissionData['MMailTransmissionSetting']['from_name'];
+        }
+        // メールテンプレートの取得
+        if (!empty($action->mMailTemplateId)) {
+          $mailTemplateData = $this->MMailTemplate->findById($action->mMailTemplateId);
+          if ($action->mailType == C_SCENARIO_MAIL_TYPE_CUSTOMIZE) {
+            $action->template = $mailTemplateData['MMailTemplate']['template'];
+          }
+        }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
+        // シナリオ呼び出し設定
+        if (!empty($action->tChatbotScenarioId)) {
+          $action->scenarioId = $action->tChatbotScenarioId;
+        }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+        // 外部システム連携設定
+        if (!empty($action->tExternalApiConnectionId)) {
+          $externalApiData = $this->TExternalApiConnection->findById($action->tExternalApiConnectionId);
+          $action->url = $externalApiData['TExternalApiConnection']['url'];
+          $action->methodType = $externalApiData['TExternalApiConnection']['method_type'];
+          $action->requestHeaders = json_decode($externalApiData['TExternalApiConnection']['request_headers']);
+          $action->requestBody = $externalApiData['TExternalApiConnection']['request_body'];
+          $action->responseType = $externalApiData['TExternalApiConnection']['response_type'];
+          $action->responseBodyMaps = json_decode($externalApiData['TExternalApiConnection']['response_body_maps']);
+        }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+        // ファイル送信
+        if (!empty($action->tChatbotScenarioUploadFileId)) {
+          // $fileData = $this->TChatbotScenarioUploadFile->findById($action->tChatbotScenarioUploadFileId);
+          $action->file = [
+            'file_path' => 'fileScenarioTransfer/5a57481f4a7f5-20180315204525.png', //$fileData['TChatbotScenarioUploadFile']['file_path']
+            'file_name' => 'sweets_icecream_monaka.png', //$fileData['TChatbotScenarioUploadFile']['file_name'];
+            'file_size' => '394681' //$fileData['TChatbotScenarioUploadFile']['file_size'];
+          ];
+        }
+      }
+    }
+    $json = json_encode($activity);
   }
 }

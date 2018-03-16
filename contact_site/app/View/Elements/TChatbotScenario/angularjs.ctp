@@ -943,7 +943,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
+  /**
+   * メッセージ内の変数を、ローカルストレージ内のデータと置き換える
+   * @param String message 変数を含む文字列
+   * @return String        置換後の文字列
+   */
   $scope.replaceVariable = function(message) {
+    message = message ? message : '';
     return message.replace(/{{(.+?)\}}/g, function(param) {
       var name = param.replace(/^{{(.+)}}$/, '$1');
       return LocalStorageService.getItem(name) || name;
@@ -1007,9 +1013,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // 外部システム連携のAPI実行(Controller呼び出し)
   this.callExternalApi = function(actionDetail) {
     // パラメーターの設定
-    var requestHeaders = actionDetail.requestHeaders.map(function(param) {
-      return {'name': $scope.replaceVariable(param.name), 'value': $scope.replaceVariable(param.value)};
-    });
+    var requestHeaders = [];
+    if (typeof actionDetail.requestHeaders !== 'undefined') {
+      requestHeaders = actionDetail.requestHeaders.map(function(param) {
+        return {'name': $scope.replaceVariable(param.name), 'value': $scope.replaceVariable(param.value)};
+      });
+    }
     var sendData = {
       'url': $scope.replaceVariable(actionDetail.url),
       'methodType': actionDetail.methodType,
