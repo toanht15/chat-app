@@ -738,7 +738,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
-  // シミュレーションの起動(ダイアログ表示)
+  /**
+   * シミュレーションの起動(ダイアログ表示)
+   * @param Object activity 実行可能なシナリオ
+   */
   $scope.$on('openSimulator', function(event, activity) {
     var scenarios = JSON.parse(activity).scenarios;
     $scope.setActionList = scenarios;
@@ -897,7 +900,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   /**
-   * doHearingAction
    * ヒアリングアクションの実行
    * @param Object actionDetail アクションの詳細
    */
@@ -957,7 +959,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   /**
-   * getScenarioDetail
    * 呼び出し先のシナリオ詳細を取得する
    * @param String scenarioId 呼び出し先シナリオID
    * @param String isNext     呼び出したシナリオ終了後、次のアクションを続けるか
@@ -1010,7 +1011,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  // 外部システム連携のAPI実行(Controller呼び出し)
+  /**
+   * 外部システム連携のAPI実行(Controllerを呼び出す)
+   * @param Object actionDetail アクション詳細
+   */
   this.callExternalApi = function(actionDetail) {
     // パラメーターの設定
     var requestHeaders = [];
@@ -1020,7 +1024,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       });
     }
     var sendData = {
-      'url': $scope.replaceVariable(actionDetail.url),
+      'url': encodeURI($scope.replaceVariable(actionDetail.url)),
       'methodType': actionDetail.methodType,
       'requestHeaders': requestHeaders,
       'requestBody': $scope.replaceVariable(actionDetail.requestBody),
