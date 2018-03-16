@@ -1050,10 +1050,9 @@
       switch ($type) {
         //履歴一覧ボタンをクリックした場合
         case 1:
-          //$historyConditions['History']['start_day'] = date("Y/m/d",strtotime("-1 day"));
-          $historyConditions['History']['start_day'] = date("Y/m/d");
+          $historyConditions['History']['start_day'] = date("Y/m/d",strtotime("-30 day"));
           $historyConditions['History']['finish_day'] = date("Y/m/d");
-          $historyConditions['History']['period'] = '今日';
+          $historyConditions['History']['period'] = '過去一ヵ月間';
         break;
         //条件クリアをクリックした場合
         case 2:
@@ -1183,6 +1182,8 @@
         }
 
         /* チャットに関する検索条件 チャット担当者、チャット内容、チャット成果 */
+
+        // 検索条件に成果がある場合
         if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
           $chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
         }
@@ -1336,7 +1337,7 @@
           'alias' => 'SpeechTime',
           'field' => 'created as SpeechTime',
           'conditions' => [
-            'SpeechTime.t_histories_id = THistory.id'
+            'SpeechTime.t_histories_id = THistoryChatLog.t_histories_id'
           ],
         ];
 
@@ -1347,7 +1348,7 @@
           'alias' => 'NoticeChatTime',
           'field' => 'created',
           'conditions' => [
-            'NoticeChatTime.t_histories_id = THistory.id'
+            'NoticeChatTime.t_histories_id = THistoryChatLog.t_histories_id'
           ],
         ];
 
@@ -1497,7 +1498,7 @@
       }
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
-      $this->log("FINISH historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+      $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       //初回チャット受信日時順に並び替え
       foreach($historyList as $key => $value){
         if(!empty($value['SpeechTime']['firstSpeechTime'])) {
