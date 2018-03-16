@@ -187,7 +187,6 @@ class NotificationController extends AppController {
   }
 
   /**
-   * callExternalApi
    * 外部システム連携 API実行
    * @return JSON APIの実行結果（変数名と、API実行により取得した値）
    */
@@ -202,7 +201,7 @@ class NotificationController extends AppController {
       $apiParams = (isset($this->request->data['apiParams'])) ? $this->request->data['apiParams'] : '';
       $settings = json_decode($apiParams);
 
-      // URI
+      // URIのパース
       $parsedUrl = parse_url($settings->url);
 
       // リクエストヘッダー
@@ -213,7 +212,7 @@ class NotificationController extends AppController {
         }
       }
 
-      // 実行
+      // リクエストパラメーターの設定
       $HttpSocket = new HttpSocket();
       $request = [
         'method' => $apiMethodTypeList[$settings->methodType],
@@ -230,19 +229,26 @@ class NotificationController extends AppController {
         'body' => json_encode($settings->requestBody),
         'header' => $requestHeaders
       ];
+
+      // リクエストの内容をログ出力
+      $this->log('【EXTERNAL_API_REQUEST】Notification/callExternalApi リクエスト '.json_encode($request), 'external-api-request');
+
       $response = $HttpSocket->request($request);
+
+      // レスポンスの内容をログ出力
+      $this->log('【EXTERNAL_API_RESPONSE】Notification/callExternalApi コード '.$response->code.' ボディ '.json_encode($response->body), 'external-api-response');
 
       // レスポンス
       $responseBodyList = [];
       if ($response->code == 200) {
-        $jsonData = json_decode($response->body(), true);
+        $jsonData = json_decode($response->body, true);
         foreach ($settings->responseBodyMaps as $key => $param) {
           $resultData = $this->array_key_exists_recursive($jsonData, $param->sourceKey);
           $resultData = !is_null($resultData) ? $resultData : $param->variableName;
           $responseBodyList[] = ['variableName' => $param->variableName, 'value' => $resultData];
         }
       } else {
-        $this->log('【EXTERNAL_API_ERROR】Notification/callExternalApi 外部API呼び出し時にエラーが発生しました。 エラー番号 '.$response->code.' パラメータ: '.json_encode($apiParams), 'external-api-error');
+        $this->log('【EXTERNAL_API_ERROR】Notification/callExternalApi 外部API呼び出し時にエラーが発生しました。 エラー番号 '.$response->code.' リクエスト '.json_encode($request).' レスポンス '.json_encode($response->body), 'external-api-error');
         $this->response->statusCode($response->code);
         return json_encode(array(
           'success' => false,
@@ -251,7 +257,7 @@ class NotificationController extends AppController {
         ));
       }
     } catch(Exception $e) {
-      $this->log('【EXTERNAL_API_ERROR】Notification/callExternalApi呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($apiParams), 'external-api-error');
+      $this->log('【EXTERNAL_API_ERROR】Notification/callExternalApi呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($request), 'external-api-error');
       $this->response->statusCode($e->getCode());
       return json_encode(array(
         'success' => false,
