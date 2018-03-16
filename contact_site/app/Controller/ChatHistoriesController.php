@@ -819,7 +819,7 @@
       //message,messagetypeを使うためTHistoryChatLogとjoin
       $returnData['joinList'][] =  [
         'type' => 'LEFT',
-        'table' => '(SELECT * FROM t_history_chat_logs ORDER BY t_histories_id, created)',
+        'table' => "(SELECT * FROM t_history_chat_logs where m_companies_id = " . $this->userInfo['m_companies_id'] . " ORDER BY t_histories_id, created)",
         'alias' => 'THistoryChatLog',
         'conditions' => [
           'THistoryChatLog.t_histories_id = THistory.id'
