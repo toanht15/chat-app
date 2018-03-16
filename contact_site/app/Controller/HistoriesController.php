@@ -992,7 +992,6 @@ class HistoriesController extends AppController {
 
     // 3) チャットに関する検索条件
     if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
-      $this->log('アクセス履歴の時',LOG_DEBUG);
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
       $chatStateList = $dbo2->buildStatement(

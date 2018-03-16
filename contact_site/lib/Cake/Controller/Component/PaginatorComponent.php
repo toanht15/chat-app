@@ -132,7 +132,6 @@ class PaginatorComponent extends Component {
 			$object = null;
 		}
 
-
 		$object = $this->_getObject($object);
 
 		if (!is_object($object)) {
