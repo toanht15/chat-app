@@ -196,6 +196,7 @@ class NotificationController extends AppController {
 
     $this->autoRender = false;
     $this->layout = 'ajax';
+    $this->validatePostMethod();
 
     try {
       $apiParams = (isset($this->request->data['apiParams'])) ? $this->request->data['apiParams'] : '';

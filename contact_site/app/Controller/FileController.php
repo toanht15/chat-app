@@ -98,20 +98,6 @@ class FileController extends AppController
     }
   }
 
-  private function validatePostMethod() {
-    if(!$this->request->is('post')) {
-      $this->response->statusCode(405);
-      throw new MethodNotAllowedException('許可されていないメソッドでリクエストされました。');
-    }
-  }
-
-  private function validateGetMethod() {
-    if(!$this->request->is('get')) {
-      $this->response->statusCode(405);
-      throw new MethodNotAllowedException('許可されていないメソッドでリクエストされました。');
-    }
-  }
-
   private function getFilenameForSave($file) {
     return $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".$this->getExtension($file['name']);
   }

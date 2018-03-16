@@ -460,6 +460,20 @@ class AppController extends Controller {
     return $bytes;
   }
 
+  protected function validatePostMethod() {
+    if(!$this->request->is('post')) {
+      $this->response->statusCode(405);
+      throw new MethodNotAllowedException('許可されていないメソッドでリクエストされました。');
+    }
+  }
+
+  protected function validateGetMethod() {
+    if(!$this->request->is('get')) {
+      $this->response->statusCode(405);
+      throw new MethodNotAllowedException('許可されていないメソッドでリクエストされました。');
+    }
+  }
+
   private function _createPass(){
     $pwd = array();
     $pwd_strings = array(
