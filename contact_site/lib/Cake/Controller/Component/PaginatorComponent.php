@@ -194,7 +194,7 @@ class PaginatorComponent extends Component {
 				$parameters['recursive'] = $recursive;
 			}
 			if($object->name == 'THistory' && $page != 1) {
-				$extra['joins'][0] = str_replace("LIMIT 200", "LIMIT " . ($page-1) * 100 . ", " . ($page+1) * 100, $extra['joins'][0]);
+				$extra['joins'][0] = str_replace("LIMIT 200", "", $extra['joins'][0]);
 				$extra['joins'][1] = str_replace("LIMIT 200", "LIMIT " . ($page-1) * 100 . ", " . ($page+1) * 100, $extra['joins'][1]);
 				if(!empty($extra['joins'][2])) {
 					$extra['joins'][2] = str_replace("LIMIT 200", "LIMIT " . ($page-1) * 100 . ", " . ($page+1) * 100, $extra['joins'][2]);
@@ -228,7 +228,6 @@ class PaginatorComponent extends Component {
 					}
 				}
 				else {
-					$extra['joins'][0] = str_replace("LIMIT " . ($page-1) * 100 . ", " . ($page+1) * 100, " ", $extra['joins'][0]);
 					$extra['joins'][1] = str_replace("LIMIT " . ($page-1) * 100 . ", " . ($page+1) * 100, " ", $extra['joins'][1]);
 					if(!empty($extra['joins'][2])) {
 						$extra['joins'][2] = str_replace("LIMIT " . ($page-1) * 100 . ", " . ($page+1) * 100, " ", $extra['joins'][2]);
