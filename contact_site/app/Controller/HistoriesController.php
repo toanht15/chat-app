@@ -1073,9 +1073,7 @@ class HistoriesController extends AppController {
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
-    $this->log('historyList start',LOG_DEBUG);
     $historyList = $this->paginate('THistory');
-    $this->log('historyList finish',LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
