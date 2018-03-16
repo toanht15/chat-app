@@ -1316,7 +1316,7 @@
                '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus >= 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message >= 0 AND (se_cus >= 0 AND se_auto >= 0) THEN "自動返信" ELSE "" END ) AS type'
              ],
              'conditions' => $chatLogCond,
-             'limit' => 100
+             'limit' => 200
            ],
           $this->THistoryChatLog
         );
@@ -1333,7 +1333,7 @@
         //初回チャット受信日時、最終発言後離脱時間
         $joinToSpeechChatTime = [
           'type' => 'LEFT',
-          'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id LIMIT 100)',
+          'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id LIMIT 200)',
           'alias' => 'SpeechTime',
           'field' => 'created as SpeechTime',
           'conditions' => [
@@ -1344,7 +1344,7 @@
         //有人チャット受信日時
         $joinToNoticeChatTime = [
           'type' => 'LEFT',
-          'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id LIMIT 100)',
+          'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id LIMIT 200)',
           'alias' => 'NoticeChatTime',
           'field' => 'created',
           'conditions' => [

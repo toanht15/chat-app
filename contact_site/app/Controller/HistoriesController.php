@@ -1028,7 +1028,7 @@ class HistoriesController extends AppController {
               '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus >= 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message >= 0 AND (se_cus >= 0 AND se_auto >= 0) THEN "自動返信" ELSE "" END ) AS type'
             ],
           'conditions' => $chatLogCond,
-          'limit' => 100
+          'limit' => 200
         ],
         $this->THistoryChatLog
       );
@@ -1054,7 +1054,7 @@ class HistoriesController extends AppController {
 
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id ='. $this->userInfo['m_companies_id'] . ' GROUP BY t_histories_id limit 100)',
+        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id ='. $this->userInfo['m_companies_id'] . ' GROUP BY t_histories_id limit 200)',
         'alias' => 'LastSpeechTime',
         'field' => 'created as lastSpeechTime',
         'conditions' => [
