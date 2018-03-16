@@ -458,7 +458,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         responseBodys.push(item);
       }
     });
-    if (responseBodys.length < 1) return null;
     action.responseBodyMaps = responseBodys;
 
     return action;
@@ -1007,20 +1006,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // 外部システム連携のAPI実行(Controller呼び出し)
   this.callExternalApi = function(actionDetail) {
-    actionDetail.url = $scope.replaceVariable(actionDetail.url);
-    actionDetail.requestHeaders = actionDetail.requestHeaders.map(function(param) {
-      param.name = $scope.replaceVariable(param.name);
-      param.value = $scope.replaceVariable(param.value);
-      return param;
+    // パラメーターの設定
+    var requestHeaders = actionDetail.requestHeaders.map(function(param) {
+      return {'name': $scope.replaceVariable(param.name), 'value': $scope.replaceVariable(param.value)};
     });
-    actionDetail.requestBody = $scope.replaceVariable(actionDetail.requestBody);
+    var sendData = {
+      'url': $scope.replaceVariable(actionDetail.url),
+      'methodType': actionDetail.methodType,
+      'requestHeaders': requestHeaders,
+      'requestBody': $scope.replaceVariable(actionDetail.requestBody),
+      'responseType': actionDetail.responseType,
+      'responseBodyMaps': actionDetail.responseBodyMaps
+    };
 
     $.ajax({
       url: "<?= $this->Html->url('/Notification/callExternalApi') ?>",
       type: 'post',
       dataType: 'json',
       data: {
-        apiParams: JSON.stringify(actionDetail)
+        apiParams: JSON.stringify(sendData)
       },
       cache: false,
       timeout: 10000
