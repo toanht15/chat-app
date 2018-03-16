@@ -209,6 +209,16 @@ class PaginatorComponent extends Component {
 			if ($recursive != $object->recursive) {
 				$parameters['recursive'] = $recursive;
 			}
+
+			/*20180315 チャット履歴、アクセス履歴性能改善のため導入 henmi*/
+			if($object->name == 'THistory') {
+				$extra['joins'][0] = str_replace("LIMIT 100", " ", $extra['joins'][0]);
+				$extra['joins'][1] = str_replace("LIMIT 100", " ", $extra['joins'][1]);
+				if(!empty($extra['joins'][2])) {
+					$extra['joins'][2] = str_replace("LIMIT 100", " ", $extra['joins'][2]);
+				}
+			}
+			/*ここまで*/
 			$count = $object->find('count', array_merge($parameters, $extra));
 		}
 		$pageCount = (int)ceil($count / $limit);
