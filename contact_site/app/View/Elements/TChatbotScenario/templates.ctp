@@ -155,7 +155,7 @@
     <li class="styleFlexbox">
       <span class="fb7em"><label>シナリオ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができます。">?</icon></span></label></span>
       <div>
-        <select ng-model="setItem.scenarioId" ng-init="setItem.scenarioId" ng-options="item.key as item.name for item in main.scenarioList">
+        <select ng-model="setItem.scenarioId" ng-init="setItem.scenarioId" ng-options="item.id as item.name for item in main.scenarioList">
           <option value="">シナリオを選択してください</option>
         </select>
       </div>

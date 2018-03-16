@@ -207,7 +207,7 @@ sinclo@medialink-ml.co.jp
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
     $this->request->data['callerInfo'] = $this->_getScenarioCallerInfo($id, $scenarioList);
     // シナリオ設定の一覧を取得する
-    $this->request->data['scenarioList'] = $this->_getScenarioList();
+    $this->request->data['scenarioList'] = $this->_getScenarioList($id);
 
     $this->_viewElement();
   }
@@ -1404,16 +1404,18 @@ sinclo@medialink-ml.co.jp
   /**
    * _getScenarioList
    * アクション「シナリオ呼び出し」に表示する、idとnameの一覧を返す
-   * @return Array シナリオ一覧
+   * @param  Integer $currentId 現在表示中のシナリオID（結果のリストから除外する）
+   * @return Array              シナリオ一覧
    */
-  private function _getScenarioList() {
-    return $this->TChatbotScenario->coFind('list', [
-      'fields' => ['id', 'name'],
+  private function _getScenarioList($currentId=null) {
+    return $this->TChatbotScenario->coFind('all', [
+      'fields' => ['TChatbotScenario.id', 'TChatbotScenario.name'],
       'order' => [
         'TChatbotScenario.sort' => 'asc',
         'TChatbotScenario.id' => 'asc'
       ],
       'conditions' => [
+        'TChatbotScenario.id !=' => $currentId,
         'TChatbotScenario.del_flg != ' => 1
       ]
     ]);

@@ -23,8 +23,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // 登録済みシナリオ一覧
   var scenarioJsonList = JSON.parse(document.getElementById('TChatbotScenarioScenarioList').value);
   this.scenarioList = [];
-  for (var key in scenarioJsonList) {
-    this.scenarioList.push({'key': key, 'name': scenarioJsonList[key]});
+  for (var item of scenarioJsonList) {
+    this.scenarioList.push({'id': item.TChatbotScenario.id, 'name': item.TChatbotScenario.name});
   }
 
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
