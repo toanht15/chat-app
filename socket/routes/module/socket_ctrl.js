@@ -3249,7 +3249,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             created: elm.created,
             sort: elm.sort,
             messageDistinction: messageDistinction,
-            achievementFlg: null
+            achievementFlg: elm.requireCv ? -1 : null
           };
           chatApi.set(ret);
         });
@@ -3260,7 +3260,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   socket.on("addLastMessageToCV", function(d){
     var obj = JSON.parse(d);
-    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type >= 12 AND message_type <= 13) OR (message_type >= 21 AND message_type <= 24)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
+    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
       function(err, row){
         if ( err !== null && err !== '' ) {
           console.log("UPDATE lastMessage to cv is failed. historyId : " + obj.historyId);

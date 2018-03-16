@@ -3534,6 +3534,13 @@
       _events: {
         inputCompleted: "sinclo:scenario:inputComplete"
       },
+      _actionType: {
+        speakText: "1",
+        hearing: "2",
+        selection: "3",
+        mail: "4",
+        anotherScenario: "5"
+      },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
         var obj = self._getBaseObj();
@@ -3722,27 +3729,27 @@
       _process: function(forceFirst) {
         var self = sinclo.scenarioApi;
         switch(self.get(self._lKey.currentScenario).actionType) {
-          case "1":
+          case self._actionType.speakText:
             self._speakText();
             self.set(self._lKey.scenarioMessageType, 21);
             break;
-          case "2":
+          case self._actionType.hearing:
             self._hearing._init(self, self.get(self._lKey.currentScenario));
             self._hearing._process(forceFirst);
             self.set(self._lKey.sendCustomerMessageType, 12);
             self.set(self._lKey.scenarioMessageType, 22);
             break;
-          case "3":
+          case self._actionType.selection:
             self._selection._init(self, self.get(self._lKey.currentScenario));
             self._selection._process();
             self.set(self._lKey.sendCustomerMessageType, 13);
             self.set(self._lKey.scenarioMessageType, 23);
             break;
-          case "4":
+          case self._actionType.mail:
             self._mail._init(self, self.get(self._lKey.currentScenario));
             self._mail._process();
             break;
-          case "5":
+          case self._actionType.anotherScenario:
             self._anotherScenario._init(self);
             self._anotherScenario._process();
             break;
@@ -3752,11 +3759,11 @@
         var self = sinclo.scenarioApi;
         var result = false;
         // 現在の実行シナリオが「テキスト発言」「選択肢」「メール送信」であればシナリオのシーケンス番号だけを見る
-        if(self.get(self._lKey.currentScenario).actionType === "1"
-        || self.get(self._lKey.currentScenario).actionType === "3"
-        || self.get(self._lKey.currentScenario).actionType === "4") {
+        if(self.get(self._lKey.currentScenario).actionType === self._actionType.speakText
+        || self.get(self._lKey.currentScenario).actionType === self._actionType.selection
+        || self.get(self._lKey.currentScenario).actionType === self._actionType.mail) {
           result = self.get(self._lKey.currentScenarioSeqNum) === 0;
-        } else if(self.get(self._lKey.currentScenario).actionType === "2") {
+        } else if(self.get(self._lKey.currentScenario).actionType === self._actionType.hearing) {
           // ヒアリングの場合は一番最初の問いかけかも見る
           result = self.get(self._lKey.currentScenarioSeqNum) === 0 && self._hearing._isTheFirst();
         }
@@ -3852,6 +3859,7 @@
               type: type,
               messageType: self.get(self._lKey.scenarioMessageType),
               sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
+              requireCv: type === self._actionType.hearing && self._hearing._cvIsEnable(),
               categoryNum: categoryNum,
               showTextarea: showTextArea,
               message: message
@@ -4079,13 +4087,6 @@
                 self._parent._unWaitingInput();
                 self._parent._handleStoredMessage();
                 if (self._parent._valid(hearing.inputType, inputVal)) {
-                  if(self._isTheFirst() && self._cvTypeIs(self._cvType.validOnce)) {
-                    // 一度OKの場合はCV
-                    // 1秒後にCVを付ける
-                    setTimeout(function(){
-                      emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
-                    }, 1000);
-                  }
                   self._parent._saveVariable(hearing.variableName, inputVal);
                   if (self._goToNext()) {
                     self._process();
@@ -4101,15 +4102,15 @@
         },
         _executeConfirm: function () {
           var self = sinclo.scenarioApi._hearing;
-          if(self._cvTypeIs(self._cvType.validAll)) {
-            // 全てOKの場合はCV
-            setTimeout(function(){
-              emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
-            }, 1000);
-          }
           if (self._requireConfirm()) {
             self._showConfirmMessage();
           } else {
+            if(self._cvIsEnable()) {
+              // 全てOKの場合はCV
+              setTimeout(function(){
+                emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+              }, 1000);
+            }
             if (self._parent._goToNextScenario()) {
               self._setCurrentSeq(0);
               self._parent._process();
@@ -4181,7 +4182,7 @@
                 console.log("inputVal : " + inputVal + " self._parent._lKey.currentScenario.success : " + self._parent.get(self._parent._lKey.currentScenario).success + " self._parent._lKey.currentScenario.cancel : " + self._parent.get(self._parent._lKey.currentScenario).cancel);
                 if(inputVal === self._parent.get(self._parent._lKey.currentScenario).success) {
                   self._clearRetryFlg();
-                  if(self._cvTypeIs(self._cvType.confirmOK)) {
+                  if(self._cvIsEnable()) {
                     // OKを押したタイミングでCVを付ける
                     setTimeout(function(){
                       emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
