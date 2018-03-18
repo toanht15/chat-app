@@ -9,10 +9,8 @@
 </head>
 <body>
 <div class="header">
-  <nav class="navbar navbar-default" style="background-color: navy; color: white;">
-    <div class="container-fluid">
-    かんたん登録APIテスト
-    </div>
+  <nav class="navbar navbar-default bg-primary text-white" style="background-color: navy; color: white;">
+    かんたん登録API　テストページ
   </nav>
 </div>
   <div class="container-fluid" style="margin-top: 1em;">
@@ -35,28 +33,89 @@
         </div>
       </div>
       <div class="col-sm">
-        <h2>実行結果</h2>
-        <table class="table table-fixed">
-          <thead class="thead-dark">
+        <h3 >実行結果</h3>
+        <a class="btn btn-block d-none" href="#" role="button" data-toggle="modal" data-target="#exampleModal" id="resultSrcBtn">レスポンスデータを確認する</a>
+        <div class="loader d-none" id="resultLoader"></div>
+        <small>
+        <table class="table table-fixed table-condensed table-striped d-none" id="resultTable">
+          <thead class="success">
           <tr>
-            <th scope="col">パラメータ</th>
-            <th scope="col">パラメータ（日本語）</th>
-            <th scope="col">取得値</th>
+            <th scope="col" class="success">パラメータ</th>
+            <th scope="col" class="success">パラメータ（日本語）</th>
+            <th scope="col" class="success">取得値</th>
           </tr>
           </thead>
           <tbody id="resultTableBody">
           </tbody>
         </table>
+        </small>
       </div>
     </div>
   </div>
-<div class="footer"></div>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <div class="footer"></div>
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">レスポンスデータ</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="resultSrc">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   <script type="application/javascript">
     $(function(){
+      function convertParamToLabel(key) {
+        var map = {
+          lbc_office_id: "lbc_office_id",
+          lbc_head_office_id: "lbc_head_office_id",
+          pref_code: "都道府県コード",
+          city_code: "市区町村コード",
+          addr: "住所",
+          cname: "企業名",
+          oname: "事業所名",
+          pname: "姓名",
+          pname_kana: "姓名カナ",
+          pname_kana2: "姓名かな",
+          busho: "部署名",
+          yakushoku: "役職名",
+          zip: "郵便番号",
+          tel: "電話番号",
+          fax: "FAX番号",
+          ktai: "携帯番号",
+          chokutsu: "直通番号",
+          daihyo: "代表番号",
+          mail: "メールアドレス",
+          url: "URL",
+          extra: "ツイッター,ブログなど",
+          unknown: "その他",
+          org_addr: "抽出した住所",
+          org_zip: "抽出した郵便番号",
+          exist_cname: "cnameがマスタにあるか",
+          exist_addr: "addrがマスタにあるか",
+          exist_zip: "zipがマスタにあるか",
+          match_pref_addr: "都道府県と住所（市区郡）が一致するか",
+          match_pref_zip: "都道府県と郵便番号が一致するか",
+          match_pref_tel: "都道府県と電話番号が一致するか",
+          result_code: "処理結果コード"
+        }
+        return map[key];
+      }
+
       $("#callApiBtn").on('click', function(event){
+        $('#resultLoader').removeClass('d-none');
+        $('#resultTable').addClass('d-none');
         $('#resultTableBody').empty();
         $.ajax({
           cache: false,
@@ -68,10 +127,14 @@
           }),
           dataType: 'json'
         }).done(function (response, textStatus, jqXHR){
+          $('#resultLoader').addClass('d-none');
+          $('#resultTable').removeClass('d-none');
+          $('#resultSrcBtn').removeClass('d-none');
           if(response.success) {
             var data = response.data;
+            $('#resultSrc').text(JSON.stringify(data, null, '\t'));
             Object.keys(data).forEach(function(elm, index, arr){
-              $('#resultTableBody').append('<tr><td>' + elm + '</td>' + '<td></td><td>' + JSON.stringify(data[elm]) + '</td>');
+              $('#resultTableBody').append('<tr><td>' + elm + '</td>' + '<td>' + convertParamToLabel(elm) + '</td><td>' + JSON.stringify(data[elm]) + '</td>');
             });
           }
         });
