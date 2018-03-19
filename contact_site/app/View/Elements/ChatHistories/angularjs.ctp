@@ -1105,7 +1105,9 @@ $(document).ready(function(){
   var focusHeigt;
   $(window).on('keydown', function(e) {
     var check = parseInt($(".dataTables_scrollBody").css('height'));
-    if(e.keyCode === 40) { // ↓
+    var focusText = document.activeElement;
+    if(e.keyCode === 40 && focusText.id != 'ng-customer-company' && focusText.id != 'ng-customer-name' &&
+      focusText.id != 'ng-customer-tel' && focusText.id != 'ng-customer-mail' && focusText.id != 'ng-customer-memo') { // ↓
       e.preventDefault();
       number = number + 1;
       if(prevBoldTarget.next("tr")[0] != null) {
@@ -1149,7 +1151,8 @@ $(document).ready(function(){
         $(".dataTables_scrollBody").scrollTop($(".dataTables_scrollBody").scrollTop()+prevBoldTarget[0]['clientHeight']);
       }
     }
-    if(e.keyCode === 38) { // ↑キーを押したら
+    if(e.keyCode === 38 && focusText.id != 'ng-customer-company' && focusText.id != 'ng-customer-name' &&
+      focusText.id != 'ng-customer-tel' && focusText.id != 'ng-customer-mail' && focusText.id != 'ng-customer-memo') { // ↑キーを押したら
       e.preventDefault();
       if(number > 0) {
         number = number - 1;
