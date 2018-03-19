@@ -3526,6 +3526,16 @@
         "3": "^(([^<>()\\[\\]\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$",
         "4": '^\\+?(\\d|-)*$'
       },
+      _validChars: {
+        "1": '.+',
+        "1_lf": '(.|\\r\\n|\\n|\\r)+',
+        "2": '[0-9]+',
+        "2_lf": '([0-9]|\\r\\n|\\n|\\r)+',
+        "3": '[abcdefg.hijklmnopqrstuvwxyz!#$%&\'*/=?^_+-`{|}~0123456789)]+',
+        "3_lf": '([abcdefg.hijklmnopqrstuvwxyz!#$%&\'*/=?^_+-`{|}~0123456789]|\\r\\n|\\n|\\r)+',
+        "4": '([0-9]|\-)+',
+        "4_lf": '([0-9]|\-|\\r\\n|\\n|\\r)+'
+      },
       _lKey: {
         scenarioBase: "s_currentdata",
         scenarioId: "s_id",
@@ -4071,6 +4081,7 @@
           validAll: "2",
           confirmOK: "3"
         },
+        _watcher: null,
         isHearingMode: function() {
           var self = sinclo.scenarioApi._hearing;
           if(!self._parent) {
@@ -4130,6 +4141,30 @@
           var obj = json ? json : 0;
           return Number(obj);
         },
+        _beginValidInputWatcher: function() {
+          var self = sinclo.scenarioApi._hearing;
+          if(!self._watcher) {
+            setInterval(function(){
+              $('#sincloChatMessage').val(self._getValidChars($('#sincloChatMessage').val()));
+            },100);
+          }
+        },
+        _getValidChars: function (input) {
+          var self = sinclo.scenarioApi._hearing;
+          var validCharIndex = self.isLFModeDisabled() ? String(self._getCurrentHearingProcess().inputType) : String(self._getCurrentHearingProcess().inputType) + '_lf';
+          var match = input.match(self._parent._validChars[validCharIndex]);
+          if(match) {
+            return match[0];
+          } else {
+            return "";
+          }
+        },
+        _endValidInputWatcher: function() {
+          var self = sinclo.scenarioApi._hearing;
+          if(self._watcher) {
+            clearInterval(self._watcher);
+          }
+        },
         _process: function (forceFirst) {
           var self = sinclo.scenarioApi._hearing;
           if(forceFirst) {
@@ -4155,9 +4190,11 @@
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
+              self._beginValidInputWatcher();
               self._parent._waitingInput(function (inputVal) {
                 sinclo.chatApi.removeKeyDownEventToSendChat();
                 self._parent._unWaitingInput();
+                self._endValidInputWatcher();
                 self._parent._handleStoredMessage();
                 if (self._parent._valid(hearing.inputType, inputVal)) {
                   self._parent._saveVariable(hearing.variableName, inputVal);
