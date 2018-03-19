@@ -4144,7 +4144,7 @@
         _beginValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
           if(!self._watcher) {
-            setInterval(function(){
+            self._watcher = setInterval(function(){
               $('#sincloChatMessage').val(self._getValidChars($('#sincloChatMessage').val()));
             },100);
           }
