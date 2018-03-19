@@ -16,8 +16,8 @@ sincloApp.factory('LocalStorageService', function() {
       localStorage.setItem('chatbotVariables', data);
     },
     load: function() {
-      var data = localStorage.getItem('chatbotVariables');
-      if(typeof storageData !== 'undefined' && storageData !== null && storageData === "") {
+      var storageData = localStorage.getItem('chatbotVariables');
+      if(typeof storageData !== 'undefined' && storageData !== null && storageData !== "") {
         this._data = JSON.parse(storageData);
       }
     },
@@ -25,7 +25,7 @@ sincloApp.factory('LocalStorageService', function() {
       return this._data[key];
     },
     setItem: function(key, value) {
-      this._data[key] = value;
+      this._data[key] = value.toString(); // 文字列に変換して LocalStorage に格納する
       this.save();
     }
   };

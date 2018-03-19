@@ -19,6 +19,7 @@ class FileController extends AppController
   const PARAM_PARAM = "param";
 
   const FILE_TRANSFER_PREFIX = "fileTransfer/";
+  const FILE_SCENARIO_TRANSFER_PREFIX = "fileScenarioTransfer/";
 
   public $uses = ['TUploadTransferFile'];
   public $components = ['Amazon'];
@@ -37,8 +38,31 @@ class FileController extends AppController
     $targetUserId = $this->request->data(self::PARAM_TARGET_USER_ID);
     $saveFileName = $this->getFilenameForSave($file);
 
-    $filePath = $this->putFile($file, $saveFileName);
+    $filePath = $this->putFile($file, $saveFileName, self::FILE_TRANSFER_PREFIX);
     return $this->saveUploadFileData($file, $saveFileName, $filePath);
+  }
+
+  /**
+   * ファイルアップロード(シナリオ設定のファイル送信アクション)
+   * @return String 保存先URL
+   */
+  public function uploadForScenario() {
+    $this->autoRender = false;
+    $this->validatePostMethod();
+
+    $file = $this->params['form'][self::PARAM_FILE];
+    $saveFileName = $this->getFilenameForSave($file);
+
+    // $filePath = $this->putFile($file, $saveFileName, self::FILE_SCENARIO_TRANSFER_PREFIX);
+    $key = $this->getSaveKey($saveFileName, self::FILE_SCENARIO_TRANSFER_PREFIX);
+
+    return json_encode([
+      'success' => true,
+      // 'file_path' => $filePath,
+      'file_path' => $key,
+      'file_name' => $file['name'],
+      'file_size' => $this->prettyByte2Str($file['size'])
+    ]);
   }
 
   public function download() {
@@ -74,30 +98,29 @@ class FileController extends AppController
     }
   }
 
-  private function validatePostMethod() {
-    if(!$this->request->is('post')) {
-      $this->response->statusCode(405);
-      throw new MethodNotAllowedException('許可されていないメソッドでリクエストされました。');
-    }
-  }
-
-  private function validateGetMethod() {
-    if(!$this->request->is('get')) {
-      $this->response->statusCode(405);
-      throw new MethodNotAllowedException('許可されていないメソッドでリクエストされました。');
-    }
-  }
-
   private function getFilenameForSave($file) {
     return $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".$this->getExtension($file['name']);
   }
 
-  private function putFile($file, $saveFileName) {
-    return $this->Amazon->putObject($this->getSaveKey($saveFileName), $file['tmp_name']);
+  /**
+   * S3へのファイルアップロード
+   * @param  Object $file         実ファイル
+   * @param  String $saveFileName ファイル名
+   * @param  String $dirName      保存先パス
+   * @return String               保存先URL
+   */
+  private function putFile($file, $saveFileName, $dirName = self::FILE_TRANSFER_PREFIX) {
+    return $this->Amazon->putObject($this->getSaveKey($saveFileName, $dirName), $file['tmp_name']);
   }
 
-  private function getSaveKey($saveFileName) {
-    return self::FILE_TRANSFER_PREFIX.$saveFileName;
+  /**
+   * S3の保存先パス+ファイル名の生成
+   * @param  String $saveFileName 保存ファイル名
+   * @param  String $dirName      S3の保存先パス
+   * @return String               S3の保存先パス+ファイル名
+   */
+  private function getSaveKey($saveFileName, $dirName = self::FILE_TRANSFER_PREFIX) {
+    return $dirName.$saveFileName;
   }
 
   private function getFileByFileId($fileId) {
