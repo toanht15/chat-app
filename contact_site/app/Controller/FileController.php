@@ -61,7 +61,7 @@ class FileController extends AppController
       // 'file_path' => $filePath,
       'file_path' => $key,
       'file_name' => $file['name'],
-      'file_size' => $file['size']
+      'file_size' => $this->prettyByte2Str($file['size'])
     ]);
   }
 
