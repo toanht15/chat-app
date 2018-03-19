@@ -50,7 +50,11 @@ class MUser extends AppModel {
             'isFreeAddressChk' => [
                 'rule'     => 'isFreeAddressChk',
                 'message' => 'フリーアドレスのご利用はできません。'
-            ]
+            ],
+          'isCareerDomainChk' => [
+            'rule'     => 'isCareerDomainChk',
+            'message' => '携帯電話のメールアドレスのご利用はできません。'
+          ],
         ],
         'new_password' => [
             'minLength' => [
@@ -175,6 +179,61 @@ class MUser extends AppModel {
             ]
         ]
     ];
+
+    // フリーメールアドレスドメイン
+    private $freeMailaddressDomains = array(
+      'gmail.com',
+      'yahoo.co.jp',
+      'outlook.jp',
+      'outlook.com',
+      'hotmail.co.jp',
+      'excite.co.jp',
+      'aol.jp',
+      'biglobe.ne.jp',
+      'zoho.com',
+      'yandex.com',
+      'mail.ru',
+      'inbox.ru',
+      'list.ru',
+      'bk.ru'
+    );
+
+    // 携帯電話ドメイン
+    private $careerDomains = array(
+      'ezweb.ne.jp',
+      'ido.ne.jp',
+      'biz.ezweb.ne.jp',
+      'augps.ezweb.ne.jp',
+      'uqmobile.jp',
+      'docomo.ne.jp',
+      'mopera.net',
+      'dwmail.jp',
+      'pdx.ne.jp',
+      'wcm.ne.jp',
+      'willcom.com',
+      'y-mobile.ne.jp',
+      'emnet.ne.jp',
+      'emobile-s.ne.jp',
+      'emobile.ne.jp',
+      'ymobile1.ne.jp',
+      'ymobile.ne.jp',
+      'jp-c.ne.jp',
+      'jp-d.ne.jp',
+      'jp-h.ne.jp',
+      'jp-k.ne.jp',
+      'jp-n.ne.jp',
+      'jp-q.ne.jp',
+      'jp-r.ne.jp',
+      'jp-s.ne.jp',
+      'jp-t.ne.jp',
+      'sky.tkc.ne.jp',
+      'sky.tkk.ne.jp',
+      'sky.tu-ka.ne.jp',
+      'disney.ne.jp',
+      'i.softbank.jp',
+      'softbank.ne.jp',
+      'vodafone.ne.jp'
+    );
 
     public function isCurrentPw($currentPw){
         $data = $this->data['MUser'];
@@ -301,14 +360,20 @@ class MUser extends AppModel {
     }
 
     public function isFreeAddressChk($field = array()) {
-      $Address = ['@gmail.com$','@yahoo.co.jp$','@outlook.jp$','outlook.com$','@hotmail.co.jp$','@excite.co.jp$','@aol.jp$',
-                  '@biglobe.ne.jp$','@zoho.com$','@yandex.com$','@mail.ru$','@inbox.ru$','@list.ru$','@bk.ru$'];
-      foreach($Address as $k => $v){
-        if(preg_match('/('.$v.')/', $field['mail_address'])) {
+      foreach($this->freeMailaddressDomains as $k => $v){
+        if(preg_match('/(@'.$v.'$)/', $field['mail_address'])) {
           return false;
         }
       }
       return true;
     }
 
+    public function isCareerDomainChk($field=array()) {
+      forEach($this->careerDomains as $index => $domain) {
+        if(preg_match('/(@'.$domain.'$)/', $field['mail_address'])) {
+          return false;
+        }
+      }
+      return true;
+    }
 }
