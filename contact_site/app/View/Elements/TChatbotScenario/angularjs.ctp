@@ -23,13 +23,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // 登録済みシナリオ一覧
   var scenarioJsonList = JSON.parse(document.getElementById('TChatbotScenarioScenarioList').value);
   this.scenarioList = [];
-  for (var key in scenarioJsonList) {
-    this.scenarioList.push({'key': key, 'name': scenarioJsonList[key]});
+  for (var item of scenarioJsonList) {
+    this.scenarioList.push({'id': item.TChatbotScenario.id, 'name': item.TChatbotScenario.name});
   }
 
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-  $scope.inputLFTypeList = <?php echo json_encode($chatbotScenarioInputLFType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiMethodType = <?php echo json_encode($chatbotScenarioApiMethodType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiResponseType = <?php echo json_encode($chatbotScenarioApiResponseType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
@@ -120,7 +119,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   });
 
-  // アクション内の変更を検知する
+  // 各アクション内の変更を検知する
   $scope.watchSetActionList = function(action, index) {
     // watchの破棄
     if (typeof $scope.watchActionList[index] !== 'undefined') {
@@ -177,10 +176,60 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }, true);
   };
 
+  /**
+   * uploadFile ファイルアップロード
+   * @param String  actionStep  アクション番号
+   * @param File    fileObj     Fileオブジェクト
+   * @param Blob    loadFile    Blobオブジェクト
+   */
+  $scope.uploadFile = function(actionStep, fileObj, loadFile) {
+    var fd = new FormData();
+    var blob = new Blob([loadFile], {type: fileObj.type});
+    fd.append("file", blob, fileObj.name);
+
+    var targetElm = document.querySelector('#action' + actionStep + '_setting .selectFileArea');
+    targetElm.querySelector('li:first-child').style.display = 'none';
+    targetElm.querySelector('.uploadProgress').classList.remove('hide');
+
+    $.ajax({
+      url  : "<?= $this->Html->url('/File/uploadForScenario') ?>",
+      type : "POST",
+      data : fd,
+      cache       : false,
+      contentType : false,
+      processData : false,
+      dataType    : "json",
+      xhr: function() {
+        var XHR = $.ajaxSettings.xhr();
+        if(XHR.upload){
+          XHR.upload.addEventListener('progress',function(e){
+            var progress = parseInt(e.loaded/e.total*10000)/100;
+            targetElm.querySelector('.uploadProgressRate').style.width = progress + '%';
+            $scope.$apply();
+          }, false);
+        }
+        return XHR;
+      }
+    })
+    .done(function(data, textStatus, jqXHR){
+      console.info(JSON.stringify(data));
+      $scope.setActionList[actionStep].file = data;
+    })
+    .fail(function(jqXHR, textStatus, errorThrown){
+      alert("fail");
+    })
+    .always(function() {
+      targetElm.querySelector('li:first-child').style.display = '';
+      targetElm.querySelector('.uploadProgress').classList.add('hide');
+      $scope.$apply();
+    });
+  }
+
   // シミュレーターの起動
   this.openSimulator = function() {
     $scope.$broadcast('openSimulator', this.createJsonData(true));
-    $scope.$broadcast('switchSimulatorChatTextArea', true);  // シミュレータ起動時、強制的に自由入力エリア：有効の状態で表示する
+    // シミュレータ起動時、強制的に自由入力エリアを有効の状態で表示する
+    $scope.$broadcast('switchSimulatorChatTextArea', true);
   };
 
   this.saveAct = function() {
@@ -220,7 +269,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         }
       });
     };
-  }
+  };
 
   /**
    * createJsonData
@@ -243,6 +292,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       delete action.default;
       delete action.$valid;
 
+      // 保存可能なデータに変換する
       if (isCheckValidation) {
         switch(parseInt(action.actionType, 10)) {
           case <?= C_SCENARIO_ACTION_TEXT ?>:
@@ -263,9 +313,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           case <?= C_SCENARIO_ACTION_EXTERNAL_API ?>:
             action = self.trimDataExternalApi(action);
             break;
+          case <?= C_SCENARIO_ACTION_SEND_FILE ?>:
+            action = self.trimDataSendFile(action);
+            break;
         }
       }
-
       if (action !== null) {
         activity.scenarios[index++] = action;
       };
@@ -302,7 +354,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     angular.forEach(action.hearings, function(item, index) {
       if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !== 'undefined' && item.message !== '') {
         item.inputLFType = item.inputLFType == 1 ? '1' : '2';
-        item.sendMessageType = item.sendMessageType == 1 ? '1' : '2';
         hearings.push(item);
       }
     });
@@ -374,6 +425,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (typeof action.scenarioId == 'undefined' || action.scenarioId === '' || action.scenarioId === null) {
       return null;
     }
+    action.executeNextAction = action.executeNextAction ? '1' : '2';
     return action;
   }
 
@@ -407,9 +459,24 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         responseBodys.push(item);
       }
     });
-    if (responseBodys.length < 1) return null;
     action.responseBodyMaps = responseBodys;
 
+    return action;
+  }
+
+  /**
+   * trimDataSendFile
+   * ファイル送信のバリデーションチェックを行い、保存可能なデータを返す
+   * @param Object  action  アクションの詳細
+   */
+  this.trimDataSendFile = function(action) {
+    if (typeof action.file === 'undefined' ||
+      typeof action.file.file_path === 'undefined' || action.file.file_path === '' ||
+      typeof action.file.file_name === 'undefined' || action.file.file_name === '' ||
+      typeof action.file.file_size === 'undefined' || action.file.file_size === ''
+    ) {
+      return null;
+    }
     return action;
   }
 
@@ -546,6 +613,27 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
+   * ファイル選択ダイアログの起動
+   */
+  this.selectFile = function($event) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var fileElm = document.querySelector('#' + targetActionId + ' .fileElm');
+
+    if (fileElm) {
+      // ファイルピッカー呼び出し
+      fileElm.click();
+    }
+  };
+  /**
+   * ファイル削除
+   */
+  this.removeFile = function($event) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+    $scope.setActionList[actionStep].file = '';
+  }
+
+  /**
    * controllListView
    * 選択肢、ヒアリング、メール送信のリストに対して、追加・削除ボタンの表示状態を更新する
    * @param String  actionType      アクション種別
@@ -607,6 +695,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
     }
 
+    // ファイル選択
+    $(document).on('change', '.fileElm', function(e) {
+      var targetActionId = $(e.target).parents('.set_action_item').attr('id');
+      var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+
+      var fileObj = this.files.item(0)
+      var fileReader = new FileReader();
+
+      // ファイルの内容は FileReader で読み込む
+      fileReader.onload = function(event) {
+        if (!fileObj.name) {
+          return;
+        }
+        var loadData = event.target.result;
+        $scope.uploadFile(actionStep, fileObj, loadData);
+      };
+      fileReader.readAsArrayBuffer(fileObj);
+    });
+
     // フォームからフォーカスが外れた際、localStorageに一時保存を行う
     $(document).on('focusout', '.set_action_item input, .set_action_item textarea', function() {
       if ($scope.changeFlg) {
@@ -632,7 +739,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
-  // シミュレーションの起動(ダイアログ表示)
+  /**
+   * シミュレーションの起動(ダイアログ表示)
+   * @param Object activity 実行可能なシナリオ
+   */
   $scope.$on('openSimulator', function(event, activity) {
     var scenarios = JSON.parse(activity).scenarios;
     $scope.setActionList = scenarios;
@@ -740,7 +850,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
       // メッセージ間隔
       var time =  actionDetail.messageIntervalTimeSec;
-      if (!!setTime || $scope.actionStep === 0 || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
+      if (!!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
         time = setTime || '0';
       }
 
@@ -773,10 +883,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           $scope.doAction();
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
-          self.getScenarioDetail(actionDetail.scenarioId);
+          self.getScenarioDetail(actionDetail.scenarioId, actionDetail.executeNextAction);
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
           self.callExternalApi(actionDetail);
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+          // ファイル送信
+          $scope.$broadcast('addReFileMessage', actionDetail.file);
+          $scope.actionStep++;
+          $scope.doAction();
         }
       }, parseInt(time, 10) * 1000);
     } else {
@@ -785,7 +901,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   /**
-   * doHearingAction
    * ヒアリングアクションの実行
    * @param Object actionDetail アクションの詳細
    */
@@ -803,13 +918,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 質問する
       var message = hearingDetail.message;
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
-      // 設定切り替え
+      // 改行設定を元に、シミュレーターの設定変更
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
-      $scope.$broadcast('setPlaceholder', $scope.replaceVariable(message));
-      var allowInputLF = hearingDetail.inputLFType == <?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>;
-      $scope.$broadcast('allowInputLF', allowInputLF);
-      var allowSendMessageByEnter = hearingDetail.sendMessageType == <?= C_SCENARIO_SEND_MESSAGE_BY_ENTER ?>;
-      $scope.$broadcast('allowSendMessageByEnter', allowSendMessageByEnter);
+      if (hearingDetail.inputLFType == <?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>) {
+        $scope.$broadcast('allowSendMessageByShiftEnter', true);
+      } else {
+        $scope.$broadcast('allowInputLF', false);
+      }
       var strInputRule =$scope.inputTypeList[hearingDetail.inputType].inputRule;
       $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
     } else
@@ -821,7 +936,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }).join('\n');
 
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
-      $scope.$broadcast('switchSimulatorChatTextArea', false); // 設定したOK/NG以外が入力されないよう、自由入力エリアを非表示とする
+      // 設定したOK/NG以外が入力されないよう、自由入力エリアを非表示とする
+      $scope.$broadcast('switchSimulatorChatTextArea', false);
     } else {
       // 次のアクションへ移行する
       $scope.hearingIndex = 0;
@@ -830,7 +946,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
+  /**
+   * メッセージ内の変数を、ローカルストレージ内のデータと置き換える
+   * @param String message 変数を含む文字列
+   * @return String        置換後の文字列
+   */
   $scope.replaceVariable = function(message) {
+    message = message ? message : '';
     return message.replace(/{{(.+?)\}}/g, function(param) {
       var name = param.replace(/^{{(.+)}}$/, '$1');
       return LocalStorageService.getItem(name) || name;
@@ -838,11 +960,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   /**
-   * getScenarioDetail
    * 呼び出し先のシナリオ詳細を取得する
    * @param String scenarioId 呼び出し先シナリオID
+   * @param String isNext     呼び出したシナリオ終了後、次のアクションを続けるか
    */
-  this.getScenarioDetail = function(scenarioId) {
+  this.getScenarioDetail = function(scenarioId, isNext) {
     $.ajax({
       url: "<?= $this->Html->url('/TChatbotScenario/remoteGetActionDetail') ?>",
       type: 'post',
@@ -860,15 +982,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
 
         // 取得したシナリオのアクション情報を、setActionList内に詰める
-        for (var key in $scope.setActionList) {
+        Object.entries($scope.setActionList).every(function(param, key) {
           if (key == $scope.actionStep) {
             for (var exKey in activity.scenarios) {
               scenarios[idx++] = activity.scenarios[exKey];
             }
+            // 取得したシナリオを追加後、フラグを見て続けるか判断する
+            if (!isNext || isNext != '1') {
+              return false;
+            }
           } else {
             scenarios[idx++] = $scope.setActionList[key];
           }
-        }
+          return true;
+        });
         $scope.setActionList = scenarios;
       } catch(e) {
         $scope.actionStep++;
@@ -885,22 +1012,33 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  // 外部システム連携のAPI実行(Controller呼び出し)
+  /**
+   * 外部システム連携のAPI実行(Controllerを呼び出す)
+   * @param Object actionDetail アクション詳細
+   */
   this.callExternalApi = function(actionDetail) {
-    actionDetail.url = $scope.replaceVariable(actionDetail.url);
-    actionDetail.requestHeaders = actionDetail.requestHeaders.map(function(param) {
-      param.name = $scope.replaceVariable(param.name);
-      param.value = $scope.replaceVariable(param.value);
-      return param;
-    });
-    actionDetail.requestBody = $scope.replaceVariable(actionDetail.requestBody);
+    // パラメーターの設定
+    var requestHeaders = [];
+    if (typeof actionDetail.requestHeaders !== 'undefined') {
+      requestHeaders = actionDetail.requestHeaders.map(function(param) {
+        return {'name': $scope.replaceVariable(param.name), 'value': $scope.replaceVariable(param.value)};
+      });
+    }
+    var sendData = {
+      'url': encodeURI($scope.replaceVariable(actionDetail.url)),
+      'methodType': actionDetail.methodType,
+      'requestHeaders': requestHeaders,
+      'requestBody': $scope.replaceVariable(actionDetail.requestBody),
+      'responseType': actionDetail.responseType,
+      'responseBodyMaps': actionDetail.responseBodyMaps
+    };
 
     $.ajax({
       url: "<?= $this->Html->url('/Notification/callExternalApi') ?>",
       type: 'post',
       dataType: 'json',
       data: {
-        apiParams: JSON.stringify(actionDetail)
+        apiParams: JSON.stringify(sendData)
       },
       cache: false,
       timeout: 10000
@@ -1155,6 +1293,15 @@ function validateAction(element, setActionList, actionItem) {
     if (!validResponseBody) {
       messageList.push('レスポンスボディ情報が未入力です')
     }
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+    if (typeof actionItem.file === 'undefined' ||
+      typeof actionItem.file.file_path === 'undefined' || actionItem.file.file_path === '' ||
+      typeof actionItem.file.file_name === 'undefined' || actionItem.file.file_name === '' ||
+      typeof actionItem.file.file_size === 'undefined' || actionItem.file.file_size === ''
+    ) {
+      messageList.push('ファイルが未選択です');
+    }
   }
 
   // 使用されている変数名を抽出する
@@ -1197,7 +1344,13 @@ function validateAction(element, setActionList, actionItem) {
   }
 }
 
-// オブジェクト内のプロパティを検索
+/**
+ * オブジェクト内のプロパティを検索
+ * （オブジェクトのキーが正規表現にマッチした、すべての値を返す）
+ * @param  Object obj   検索対象のオブジェクト
+ * @param  RegExp regex 正規表現
+ * @return Array        検索結果
+ */
 function searchObj (obj, regex) {
   var resultList = [];
   for (var key in obj) {

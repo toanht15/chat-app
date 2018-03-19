@@ -29,15 +29,13 @@
             <td class="item_type">
               <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList"></select>
             </td>
-            <td class="item_message" rowspan="2"><textarea ng-model="hearingItem.message" rows="5"></textarea></td>
+            <td class="item_message" rowspan="2"><textarea ng-model="hearingItem.message" rows="3"></textarea></td>
           </tr>
           <tr ng-repeat-end>
             <td class="item_detail_settings" colspan="2">
               <span>
-                <label ng-repeat="(key, item) in inputLFTypeList" class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="key">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span></label>
-              </span>
-              <span ng-repeat="(key, item) in inputLFTypeList" ng-if="hearingItem.inputLFType == key" class="pointer">
-                <label ng-repeat="(detailKey, detailItem) in item.detail"><input type="radio" ng-model="hearingItem.sendMessageType" ng-value="detailKey">{{detailItem.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{detailItem.tooltip}}">?</icon></span></label>
+                <label class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="<?= C_SCENARIO_INPUT_LF_TYPE_DISALLOW ?>">改行不可<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の複数行入力を規制します。（改行できなくする）">?</icon></span></label>
+                <label class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="<?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>">改行可<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の複数行入力を許可します。（改行を許可）">?</icon></span></label>
               </span>
             </td>
             <td class="item_btn_block">
@@ -157,10 +155,13 @@
     <li class="styleFlexbox">
       <span class="fb7em"><label>シナリオ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができます。">?</icon></span></label></span>
       <div>
-        <select ng-model="setItem.scenarioId" ng-init="setItem.scenarioId" ng-options="item.key as item.name for item in main.scenarioList">
+        <select ng-model="setItem.scenarioId" ng-init="setItem.scenarioId" ng-options="item.id as item.name for item in main.scenarioList">
           <option value="">シナリオを選択してください</option>
         </select>
       </div>
+    </li>
+    <li class="styleFlexbox">
+      <label class="pointer"><input type="checkbox" ng-model="setItem.executeNextAction" ng-init="setItem.executeNextAction = setItem.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。">?</icon></span></label>
     </li>
   </ul>
 </div>
@@ -241,6 +242,30 @@
           </tbody>
         </table>
       </div>
+    </li>
+  </ul>
+</div>
+
+<?php /* ファイル送信 */ ?>
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>" class="set_action_item_body action_send_file">
+  <ul>
+    <li class="styleFlexbox">
+      <span class="fb9em"><label>送信ファイル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信させたいファイルを設定します。">?</icon></span></label></span>
+      <ul class="selectFileArea">
+        <li ng-if="setItem.file == '' || setItem.file.name == ''">
+          <span>ファイルが選択されていません</span>
+        </li>
+        <li ng-if="setItem.file != '' && setItem.file.name != ''" class="styleFlexbox">
+          <div class="fb5em fileImage"><i class="fa fa-file-o" aria-hidden="true"></i></div>
+          <div class="fileDetail"><span>{{setItem.file.file_name}}</span><span>{{setItem.file.file_size/1024|number:2}}KB</span></div>
+        </li>
+        <li class="uploadProgress hide">
+          <div class="uploadProgressArea"><span>アップロード中 ...</span><div class="uploadProgressRate"><span>アップロード中 ...</span></div></div>
+        </li>
+        <li>
+          <input type="file" class="hide fileElm"><span class="greenBtn btn-shadow" ng-click="main.selectFile($event)">ファイル選択</span><span class="btn-shadow" ng-class="{disOffgrayBtn: setItem.file == '', redBtn: setItem.file != ''}" ng-click="main.removeFile($event)">ファイル削除</span>
+        </li>
+      </ul>
     </li>
   </ul>
 </div>

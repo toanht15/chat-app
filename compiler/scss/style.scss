@@ -6719,9 +6719,6 @@ ul.naviBtn {
                 margin: 10px 0;
               }
 
-              #TChatbotScenarioName {
-                width: 100%;
-              }
               #TChatbotScenarioMessageIntervalTimeSec {
                 width: 5em;
               }
@@ -6858,6 +6855,21 @@ ul.naviBtn {
                   label + label {
                     margin-left: 0.8em;
                   }
+
+                  span {
+                    padding: 0;
+                  }
+
+                  &.greenBtn,
+                  &.redBtn,
+                  &.disOffgrayBtn {
+                    width: 100px;
+                    text-align: center;
+                    padding: 4px;
+                    margin: 4px;
+                    height: 25px;
+                    font-size: 0.9em;
+                  }
                 }
 
                 input[type="text"],
@@ -6915,7 +6927,7 @@ ul.naviBtn {
 
                 &.action_hearing table {
                   tr:nth-child(2n+2) {
-                    height: 5em;
+                    height: 3.5em;
                   }
 
                   .item_name {
@@ -6934,6 +6946,7 @@ ul.naviBtn {
                     padding-bottom: 0.5em;
                     .btnBlock {
                       padding-left: 0;
+                      width: 4em;
                     }
                   }
                   .item_detail_settings {
@@ -6957,6 +6970,52 @@ ul.naviBtn {
                     padding-left: 0;
                     .btnBlock {
                       padding-left: 0;
+                    }
+                  }
+                }
+
+                &.action_send_file {
+                  .uploadProgress {
+                    padding: 0.5em 0;
+
+                    .uploadProgressArea {
+                      position: relative;
+                      width: 100%;
+                      max-width: 35em;
+                      height: 1.5em;
+                      border: 1px solid #d9d9d9;
+                      white-space: nowrap;
+                      overflow: hidden;
+
+                      .uploadProgressRate {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        background-image: linear-gradient(  -45deg,  #ffffff 25%,  $main-color 25%,  $main-color 50%,  #ffffff 50%,  #ffffff 75%,  $main-color 75%,  $main-color );
+                        background-size: 15px 15px;
+                        background-attachment: fixed;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        height: 100%;
+                        width: 0%;
+                      }
+
+                      span {
+                        padding: 0 5px;
+                        height: 100%;
+                        line-height: 1.5em;
+                      }
+                    }
+                  }
+                  .fileImage {
+                    margin: 10px;
+                    i {
+                      font-size: 5em;
+                    }
+                  }
+                  .fileDetail {
+                    span {
+                      display: block;
                     }
                   }
                 }
@@ -7015,6 +7074,15 @@ ul.naviBtn {
                     }
                   }
 
+                  > .fb5em {
+                    flex-basis: 5em;
+                    min-width: 5em;
+                    white-space: nowrap;
+                    & + * {
+                      flex-grow: 1;
+                    }
+                  }
+
                   > ul {
                     flex-grow: 1;
                   }
@@ -7063,7 +7131,6 @@ ul.naviBtn {
             border-color: #4bacc6;
             padding: 0.5em 1.4em;
             display: inline-block;
-            margin: 0 auto;
             text-align: center;
 
             &:hover {

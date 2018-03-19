@@ -195,6 +195,7 @@ define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
 define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
 define('C_SCENARIO_ACTION_CALL_SCENARIO', 5); // シナリオ呼び出し
 define('C_SCENARIO_ACTION_EXTERNAL_API', 6); // 外部システム連携
+define('C_SCENARIO_ACTION_SEND_FILE', 7); // ファイル送信
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -618,7 +619,6 @@ $config['chatbotScenarioActionList'] = [
   // テキスト発言
   C_SCENARIO_ACTION_TEXT => [
     'label' => 'テキスト発言',
-    'tooltip' => 'チャットボットに発言させたいテキストメッセージを設定できるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -628,7 +628,6 @@ $config['chatbotScenarioActionList'] = [
   // ヒアリング
   C_SCENARIO_ACTION_HEARING => [
     'label' => 'ヒアリング',
-    'tooltip' => 'チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '1',
@@ -636,8 +635,7 @@ $config['chatbotScenarioActionList'] = [
         'variableName' => '',
         'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
         'message' => '',
-        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW,
-        'sendMessageType' => C_SCENARIO_SEND_MESSAGE_BY_BUTTON
+        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW
       ]],
       'errorMessage' => '',
       'isConfirm' => '2',
@@ -650,7 +648,6 @@ $config['chatbotScenarioActionList'] = [
   // 選択肢
   C_SCENARIO_ACTION_SELECT_OPTION => [
     'label' => '選択肢',
-    'tooltip' => 'チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -663,7 +660,6 @@ $config['chatbotScenarioActionList'] = [
   // メール送信
   C_SCENARIO_ACTION_SEND_MAIL => [
     'label' => 'メール送信',
-    'tooltip' => 'メールを送信するアクションです。宛先、差出人名、メールタイトル、メール本文を自由に設定することが可能です。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -674,17 +670,16 @@ $config['chatbotScenarioActionList'] = [
   // シナリオ呼び出し
   C_SCENARIO_ACTION_CALL_SCENARIO => [
     'label' => 'シナリオ呼び出し',
-    'tooltip' => '呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'scenarioId' => ''
+      'scenarioId' => '',
+      'executeNextAction' => '2'
     ]
   ],
   // 外部システム連携
   C_SCENARIO_ACTION_EXTERNAL_API => [
     'label' => '外部システム連携',
-    'tooltip' => '連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -699,6 +694,15 @@ $config['chatbotScenarioActionList'] = [
         'sourceKey' => '',
         'variableName' => ''
       ]]
+    ]
+  ],
+  // ファイル送信
+  C_SCENARIO_ACTION_SEND_FILE => [
+    'label' => 'ファイル送信',
+    'default' => [
+      'messageIntervalTimeSec' > '2',
+      'chatTextArea' => '2',
+      'file' => ''
     ]
   ]
 ];
@@ -724,38 +728,6 @@ $config['chatbotScenarioInputType'] = [
     'label' => '@tel_number',
     'rule' => C_MATCH_RULE_TEL,
     'inputRule' => C_MATCH_INPUT_RULE_TEL
-  ]
-];
-
-/* シナリオ設定(ヒアリング) - 改行設定 */
-$config['chatbotScenarioInputLFType'] = [
-  C_SCENARIO_INPUT_LF_TYPE_DISALLOW => [
-    'label' => '改行不可',
-    'tooltip' => 'サイト訪問者の複数行入力を規制します。（改行できなくする）',
-    'detail' => [
-      C_SCENARIO_SEND_MESSAGE_BY_ENTER => [
-        'label' => 'Enterキーで送信',
-        'tooltip' => 'Enterキーにてメッセージを送信します。（「送信」ボタンクリックでもメッセージ送信可）'
-      ],
-      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => [
-        'label' => '送信ボタンで送信',
-        'tooltip' => 'Enterキーを無効化し、メッセージ送信は「送信」ボタンのクリックのみとします。'
-      ]
-    ]
-  ],
-  C_SCENARIO_INPUT_LF_TYPE_ALLOW => [
-    'label' => '改行可',
-    'tooltip' => 'サイト訪問者の複数行入力を許可します。（改行を許可）',
-    'detail' => [
-      C_SCENARIO_SEND_MESSAGE_BY_BUTTON => [
-        'label' => 'Enterキーで改行',
-        'tooltip' => 'Enterキーにて改行します。（メッセージ送信は「送信」ボタンをクリック）'
-      ],
-      C_SCENARIO_SEND_MESSAGE_BY_ENTER => [
-        'label' => 'Enterキーで送信',
-        'tooltip' => 'Enterキーにてメッセージを送信します。（改行はShift+Enter）'
-      ]
-    ]
   ]
 ];
 
