@@ -1,6 +1,8 @@
 <script type="text/javascript">
 'use strict';
   var historySearchConditions = <?php echo json_encode($data);?>;
+  console.log('data');
+  console.log(historySearchConditions);
   var mCustomerInfoList = <?php echo json_encode($mCustomerList);?>;
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainController', ['$scope', '$timeout', function($scope, $timeout) {
