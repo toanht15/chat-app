@@ -1216,7 +1216,6 @@
           ];
         }
 
-        $this->log($data['THistoryChatLog'],LOG_DEBUG);
         if ( !empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog'])) ) {
           // 対象ユーザーのIDリストを取得するサブクエリを作成
           $users = $this->MUser->getDataSource();
@@ -1524,8 +1523,6 @@
       }
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
-      $this->log('クエリーチェック',LOG_DEBUG);
-      $this->log($this->THistory->getDataSource()->getLog(),LOG_DEBUG);
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       //初回チャット受信日時順に並び替え
       foreach($historyList as $key => $value){
