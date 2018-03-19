@@ -257,7 +257,7 @@
         </li>
         <li ng-if="setItem.file != '' && setItem.file.name != ''" class="styleFlexbox">
           <div class="fb5em fileImage"><i class="fa fa-file-o" aria-hidden="true"></i></div>
-          <div class="fileDetail"><span>{{setItem.file.file_name}}</span><span>{{setItem.file.file_size/1024|number:2}}KB</span></div>
+          <div class="fileDetail"><span>{{setItem.file.file_name}}</span><span>{{setItem.file.file_size}}</span></div>
         </li>
         <li class="uploadProgress hide">
           <div class="uploadProgressArea"><span>アップロード中 ...</span><div class="uploadProgressRate"><span>アップロード中 ...</span></div></div>
