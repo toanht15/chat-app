@@ -48,7 +48,7 @@
       </table>
     </li>
     <li class="styleFlexbox">
-      <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の発言内容がタイプに当てはまらなかった場合（整合性チェックエラーの場合）に自動返信するメッセージを設定します。">?</icon></span></span>
+      <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の発言内容がタイプに当てはまらなかった場合（整合性チェックエラーの場合）に自動返信するメッセージを設定します。">?</icon></span></label></span>
       <div>
         <resize-textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="4" placeholder="入力エラー時の返信メッセージを入力してください"></resize-textarea>
       </div>
@@ -257,7 +257,7 @@
         </li>
         <li ng-if="setItem.file != '' && setItem.file.name != ''" class="styleFlexbox">
           <div class="fb5em fileImage"><i class="fa fa-file-o" aria-hidden="true"></i></div>
-          <div class="fileDetail"><span>{{setItem.file.file_name}}</span><span>{{setItem.file.file_size/1024|number:2}}KB</span></div>
+          <div class="fileDetail"><span>{{setItem.file.file_name}}</span><span>{{setItem.file.file_size}}</span></div>
         </li>
         <li class="uploadProgress hide">
           <div class="uploadProgressArea"><span>アップロード中 ...</span><div class="uploadProgressRate"><span>アップロード中 ...</span></div></div>

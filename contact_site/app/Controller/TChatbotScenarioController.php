@@ -1412,7 +1412,7 @@ sinclo@medialink-ml.co.jp
           $action->file = [
             'file_path' => 'fileScenarioTransfer/5a57481f4a7f5-20180315204525.png', //$fileData['TChatbotScenarioUploadFile']['file_path']
             'file_name' => 'sweets_icecream_monaka.png', //$fileData['TChatbotScenarioUploadFile']['file_name'];
-            'file_size' => '394681' //$fileData['TChatbotScenarioUploadFile']['file_size'];
+            'file_size' => $this->prettyByte2Str(394681) //$fileData['TChatbotScenarioUploadFile']['file_size'];
           ];
         }
       }

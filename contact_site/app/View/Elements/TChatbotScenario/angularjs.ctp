@@ -23,8 +23,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // 登録済みシナリオ一覧
   var scenarioJsonList = JSON.parse(document.getElementById('TChatbotScenarioScenarioList').value);
   this.scenarioList = [];
-  for (var item of scenarioJsonList) {
-    this.scenarioList.push({'id': item.TChatbotScenario.id, 'name': item.TChatbotScenario.name});
+  for (var key in scenarioJsonList) {
+    if (scenarioJsonList.hasOwnProperty(key)) {
+      this.scenarioList.push({'id': scenarioJsonList[key].TChatbotScenario.id, 'name': scenarioJsonList[key].TChatbotScenario.name});
+    }
   }
 
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
@@ -1312,16 +1314,20 @@ function validateAction(element, setActionList, actionItem) {
 
   if (usedVariableList !== null && usedVariableList.length >= 1) {
 
+    // 自分自身以前に設定されたアクションのみチェックする
     setActionList.every(function(action) {
       // 設定されている変数名を抽出する
       var definedVariableList = searchObj(action, /^variableName$/);
 
       // 使用していない変数名を取り出す
       usedVariableList = usedVariableList.filter(function(usedVariable) {
-        return !definedVariableList.includes(usedVariable.replace(/{{([^}]+)}}/, '$1'));
+        var variableName = usedVariable.replace(/{{([^}]+)}}/, '$1');
+        var isUsing = definedVariableList.some(function(string) {
+          return string === variableName;
+        });
+        return !isUsing;
       });
 
-      // 自分自身より後ろに設定されたアクションはチェックしない
       return actionItem !== action;
     });
 
