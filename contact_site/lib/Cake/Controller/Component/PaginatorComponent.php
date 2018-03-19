@@ -126,7 +126,6 @@ class PaginatorComponent extends Component {
  * @throws NotFoundException
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
-		$this->log('ここに入ってる4',LOG_DEBUG);
 		if (is_array($object)) {
 			$whitelist = $scope;
 			$scope = $object;
@@ -138,7 +137,6 @@ class PaginatorComponent extends Component {
 		if (!is_object($object)) {
 			throw new MissingModelException($object);
 		}
-		$this->log($object->name,LOG_DEBUG);
 
 		$options = $this->mergeOptions($object->alias);
 		$options = $this->validateSort($object, $options, $whitelist);
