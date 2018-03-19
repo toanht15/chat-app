@@ -3539,7 +3539,8 @@
         hearing: "2",
         selection: "3",
         mail: "4",
-        anotherScenario: "5"
+        anotherScenario: "5",
+        callExternalApi: "6"
       },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
@@ -3752,6 +3753,10 @@
           case self._actionType.anotherScenario:
             self._anotherScenario._init(self);
             self._anotherScenario._process();
+            break;
+          case self._actionType.callExternalApi:
+            self._callExternalApi._init(self);
+            self._callExternalApi._process();
             break;
         }
       },
@@ -4296,7 +4301,29 @@
           self._parent.set(self._parent._lKey.scenarios, newScenarioObj);
           self._parent.set(self._parent._lKey.scenarioLength, Object.keys(newScenarioObj).length);
         }
-      }
+      },
+      _callExternalApi: {
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._callExternalApi;
+          self._callApi(function(response){
+            Object.keys(response).forEach(function(variableKey){
+              self._parent._saveVariable(variableKey, response[variableKey]);
+            });
+            if(self._parent._goToNextScenario()) {
+              self._parent._process();
+            }
+          });
+        },
+        _callApi: function(callback) {
+          var self = sinclo.scenarioApi._callExternalApi;
+          var externalApiConnectionId = self._parent.get(self._parent._lKey.currentScenario).tExternalApiConnectionId;
+          emit('callExternalApi', {externalApiConnectionId: externalApiConnectionId, variables: self._parent._getAllTargetVariables()}, callback);
+        }
+      },
     },
     // 外部連携API
     api: {
