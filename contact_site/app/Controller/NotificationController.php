@@ -239,12 +239,15 @@ class NotificationController extends AppController {
       // レスポンスの内容をログ出力
       $this->log('【EXTERNAL_API_RESPONSE】Notification/callExternalApi コード '.$response->code.' ボディ '.json_encode($response->body), 'external-api-response');
 
-      // レスポンス
       $responseBodyList = [];
       if ($response->code == 200) {
-        $jsonData = json_decode($response->body, true);
-        foreach ($settings->responseBodyMaps as $key => $param) {
-          $resultData = $this->array_key_exists_recursive($jsonData, $param->sourceKey);
+        // 変換元キー名を元に、レスポンス内容から値を取得する
+        $jsonData = json_decode($response->body);
+        foreach ($settings->responseBodyMaps as $param) {
+          $splitedKey = preg_split('/[.\[]/', $param->sourceKey);
+          $resultData = array_reduce($splitedKey, function($carry, $item) {
+            return is_array($carry) ? $carry[intval($item)] : $carry->$item;
+          }, $jsonData);
           $resultData = !is_null($resultData) ? $resultData : $param->variableName;
           $responseBodyList[] = ['variableName' => $param->variableName, 'value' => $resultData];
         }
@@ -359,28 +362,5 @@ class NotificationController extends AppController {
 
   private function getTransmissionConfigById($id) {
     return $this->MMailTransmissionSetting->findById($id);
-  }
-
-  /**
-   * array_key_exists_recursive
-   * 多次元配列中に指定したキーがあるか探索し、存在する場合はその値を返す
-   * @param  Array  $targetArray  探索対象の配列
-   * @param  String $key          検索したいキー
-   * @return String               検索結果の値
-   */
-  private function array_key_exists_recursive($targetArray, $key) {
-    if (array_key_exists($key, $targetArray)) {
-      return $targetArray[$key];
-    }
-
-    foreach ($targetArray as $value) {
-      if (is_array($value)) {
-        $resultValue = $this->array_key_exists_recursive($value, $key);
-        if (!is_null($resultValue)) {
-          return $resultValue;
-        }
-      }
-    }
-    return;
   }
 }
