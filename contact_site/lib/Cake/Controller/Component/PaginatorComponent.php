@@ -126,6 +126,7 @@ class PaginatorComponent extends Component {
  * @throws NotFoundException
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
+		$this->log('ここに入ってる4',LOG_DEBUG);
 		if (is_array($object)) {
 			$whitelist = $scope;
 			$scope = $object;
@@ -137,6 +138,7 @@ class PaginatorComponent extends Component {
 		if (!is_object($object)) {
 			throw new MissingModelException($object);
 		}
+		$this->log($object->name,LOG_DEBUG);
 
 		$options = $this->mergeOptions($object->alias);
 		$options = $this->validateSort($object, $options, $whitelist);
@@ -193,6 +195,7 @@ class PaginatorComponent extends Component {
 			if ($recursive != $object->recursive) {
 				$parameters['recursive'] = $recursive;
 			}
+			/*20180315 チャット履歴、アクセス履歴性能改善のため導入 henmi*/
 			if($object->name == 'THistory' && $page != 1) {
 				$extra['joins'][0] = str_replace("LIMIT 200", "", $extra['joins'][0]);
 				$extra['joins'][1] = str_replace("LIMIT 200", "LIMIT " . ($page-1) * 100 . ", " . ($page+1) * 100, $extra['joins'][1]);
@@ -200,6 +203,7 @@ class PaginatorComponent extends Component {
 					$extra['joins'][2] = str_replace("LIMIT 200", "LIMIT " . ($page-1) * 100 . ", " . ($page+1) * 100, $extra['joins'][2]);
 				}
 			}
+			/*ここまで*/
 			$results = $object->find($type, array_merge($parameters, $extra));
 		}
 		$defaults = $this->getDefaults($object->alias);
@@ -216,7 +220,6 @@ class PaginatorComponent extends Component {
 			if ($recursive != $object->recursive) {
 				$parameters['recursive'] = $recursive;
 			}
-
 
 			/*20180315 チャット履歴、アクセス履歴性能改善のため導入 henmi*/
 			if($object->name == 'THistory') {
