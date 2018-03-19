@@ -135,6 +135,18 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   };
 
   /**
+   * setPlaceholder
+   * プレースホルダの設定
+   * （サイト訪問者のメッセージ送信後に、プレースホルダの内容を戻す）
+   * @param String message プレースホルダに設定するメッセージ
+   */
+  $scope.$on('setPlaceholder', function(event, message) {
+    var elm = document.querySelector('#sincloChatMessage');
+    $scope.defaultPlaceholder = elm.placeholder;
+    elm.placeholder = message;
+  });
+
+  /**
    * switchChatTextAreaDisplay
    * シミュレーションの自由入力エリアの表示状態を切り替える
    * @param Boolean status 自由入力エリアの表示状態(true: 表示, false: 非表示）

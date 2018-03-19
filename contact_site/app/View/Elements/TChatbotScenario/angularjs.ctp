@@ -290,6 +290,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
       // 表示用のデータをオブジェクトから削除する
       delete action.label;
+      delete action.tooltip;
       delete action.default;
       delete action.$valid;
 

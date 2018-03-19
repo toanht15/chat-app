@@ -363,4 +363,27 @@ class NotificationController extends AppController {
   private function getTransmissionConfigById($id) {
     return $this->MMailTransmissionSetting->findById($id);
   }
+
+  /**
+   * array_key_exists_recursive
+   * 多次元配列中に指定したキーがあるか探索し、存在する場合はその値を返す
+   * @param  Array $targetArray   探索対象の配列
+   * @param  String $targetKey    検索したいキー
+   * @return String               検索結果の値
+   */
+  private function array_key_exists_recursive($targetArray, $targetKey) {
+    if (array_key_exists($targetKey, $targetArray)) {
+      return $targetArray[$targetKey];
+    }
+
+    foreach ($targetArray as $key => $value) {
+      if (is_array($value)) {
+        $resultValue = $this->array_key_exists_recursive($value, $targetKey);
+        if (!is_null($resultValue)) {
+          return $resultValue;
+        }
+      }
+    }
+    return;
+  }
 }

@@ -171,7 +171,7 @@
       <?= $this->Html->link(
         '条件クリア',
         'javascript:void(0)',
-        ['escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()']);
+        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()'));
       ?>
     </ul>
   </div>
@@ -225,10 +225,10 @@
           CV(コンバージョン)のみ表示する
         </label>
       <?php endif; ?>
-      <?=$this->Form->create('History', ['action' => 'index']);?>
+      <?=$this->Form->create('History', array('action' => 'index'));?>
         <?=$this->Form->hidden('outputData')?>
       <?=$this->Form->end();?>
-      <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
+      <?=  $this->Form->create('History', array('id' => 'historySearch','type' => 'post','url' => '/Histories')); ?>
     </div>
 </div>
 <div id = "list_body" style = "overflow-y: auto; overflow-x: hidden;">
@@ -385,15 +385,15 @@
             <td class="tCenter pre" style = "width:10%"><div class = "campaignInfo"><?=$campaignParam?></div></td>
             <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;"><a href = "<?=h($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
             <td class="tCenter" style = "width:5%"><?php
-              if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
-                if (isset($history['THistoryChatLog']['achievementFlg'])){
-                  echo !empty($achievementType[h($history['THistoryChatLog']['achievementFlg'])]) ? $achievementType[h($history['THistoryChatLog']['achievementFlg'])] : "";
-                }
+              if($history['THistoryChatLog']['eff'] != 0) {
+                echo $achievementType[2];
+              } else if($history['THistoryChatLog']['deny'] != 0) {
+                echo $achievementType[1];
               }
-              else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {
-                if (isset($history['THistoryChatLog']['achievementFlg'])){
-                  echo $achievementType[2].nl2br("\n").$achievementType[0];
-                }
+              if(isset($history['THistoryChatLog']['terminate']) && $history['THistoryChatLog']['terminate'] != 0 && $history['THistoryChatLog']['cv'] == 0) {
+                echo '途中<br>離脱';
+              } else if($history['THistoryChatLog']['cv'] != 0) {
+                echo $achievementType[0];
               }
             ?></td>
             <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
@@ -594,8 +594,8 @@
             </li>
           </ul>
           <div id="personal_action">
-              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
-              <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
+              <?= $this->Html->link('元に戻す', 'javascript:void(0)', array('onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton')) ?>
+              <?= $this->Html->link('更新', 'javascript:void(0)', array('onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton')) ?>
           </div>
           <?php } ?>
         </div>
@@ -608,7 +608,7 @@ $customerId = "";
 if ( isset($mCusData['MCustomer']['id']) ) {
   $customerId = $mCusData['MCustomer']['id'];
 }
-echo $this->Form->input('customerId', ['type'=>'hidden','id' => 'customerId', 'value' => $customerId, 'label' => false, 'div'=> false]);
+echo $this->Form->input('customerId', array('type'=>'hidden','id' => 'customerId', 'value' => $customerId, 'label' => false, 'div'=> false));
 ?>
 
 <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
