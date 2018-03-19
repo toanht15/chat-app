@@ -1355,27 +1355,28 @@
         else {
           $limit = " ";
         }
-          //初回チャット受信日時、最終発言後離脱時間
-          $joinToSpeechChatTime = [
-            'type' => 'LEFT',
-            'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id '. $limit .')',
-            'alias' => 'SpeechTime',
-            'field' => 'created as SpeechTime',
-            'conditions' => [
-              'SpeechTime.t_histories_id = THistoryChatLog.t_histories_id'
-            ],
-          ];
 
-          //有人チャット受信日時
-          $joinToNoticeChatTime = [
-            'type' => 'LEFT',
-            'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id '. $limit .')',
-            'alias' => 'NoticeChatTime',
-            'field' => 'created',
-            'conditions' => [
-              'NoticeChatTime.t_histories_id = THistoryChatLog.t_histories_id'
-            ],
-          ];
+        //初回チャット受信日時、最終発言後離脱時間
+        $joinToSpeechChatTime = [
+          'type' => 'LEFT',
+          'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id ORDER BY t_histories_id desc '. $limit .')',
+          'alias' => 'SpeechTime',
+          'field' => 'created as SpeechTime',
+          'conditions' => [
+            'SpeechTime.t_histories_id = THistoryChatLog.t_histories_id'
+          ],
+        ];
+
+        //有人チャット受信日時
+        $joinToNoticeChatTime = [
+          'type' => 'LEFT',
+          'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id ORDER BY t_histories_id desc '. $limit .')',
+          'alias' => 'NoticeChatTime',
+          'field' => 'created',
+          'conditions' => [
+            'NoticeChatTime.t_histories_id = THistoryChatLog.t_histories_id'
+          ],
+        ];
 
         // キャンペーンに関する検索条件
         if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
