@@ -1715,14 +1715,7 @@
               $("#sincloChatMessage").on("keyup keypress",function(e){
                 if(e) e.stopImmediatePropagation();
               });
-              $('#sincloChatMessage').on("keydown", function(e){
-                if(e) e.stopImmediatePropagation();
-                if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
-                  if ( !e.shiftKey && !e.ctrlKey ) {
-                    sinclo.chatApi.push();
-                  }
-                }
-              });
+              sinclo.chatApi.addKeyDownEventToSendChat();
               // キーイベント系はすべてバブリングしない
               $(document).on("keydown keyup keypress", "#sincloChatMessage", function(e){
                 if(e) e.stopImmediatePropagation();
@@ -1827,6 +1820,42 @@
             .off("click", "input[name^='sinclo-radio']");
           $("input[name^='sinclo-radio']").prop('disabled', true);
         },
+        addKeyDownEventToSendChat: function() {
+          // 重複登録防止
+          $('#sincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
+          $('#sincloChatMessage').on("keydown", sinclo.chatApi.handleKeyDown);
+        },
+        removeKeyDownEventToSendChat: function() {
+          if(!('chatTrigger' in window.sincloInfo.widget) || !(window.sincloInfo.widget.chatTrigger === 2)){
+            $('#sincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
+          }
+        },
+        handleKeyDown: function(e) {
+          var isScenarioHearingMode = sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
+            && sinclo.scenarioApi._hearing.isHearingMode(),
+              isScenarioLFDisabled = isScenarioHearingMode && sinclo.scenarioApi._hearing.isLFModeDisabled(),
+              isScenarioLFEnabled = isScenarioHearingMode && !sinclo.scenarioApi._hearing.isLFModeDisabled();
+          if(isScenarioLFDisabled) {
+            if(e) e.stopImmediatePropagation();
+            if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
+              sinclo.chatApi.push();
+            }
+          } else if(isScenarioLFEnabled) {
+            if(e) e.stopImmediatePropagation();
+            if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
+              if ( e.shiftKey ) {
+                sinclo.chatApi.push();
+              }
+            }
+          } else {
+            if(e) e.stopImmediatePropagation();
+            if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
+              if ( !e.shiftKey && !e.ctrlKey ) {
+                sinclo.chatApi.push();
+              }
+            }
+          }
+        },
         getPlaceholderMessage: function() {
           var msg = "メッセージを入力してください";
           if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
@@ -1846,6 +1875,7 @@
         setPlaceholderMessage: function(msg) {
           var message = document.getElementById('sincloChatMessage');
           if(message) {
+
             message.placeholder = msg;
           }
         },
@@ -3590,6 +3620,17 @@
           self.set(self._lKey.allowSave, false);
           self.set(self._lKey.showSequenceSet, {});
           self.set(self._lKey.previousChatMessageLength, 0);
+          console.log("〜〜〜〜〜〜〜〜〜〜 SET SCENARIO 〜〜〜〜〜〜〜〜〜〜");
+          console.log("self.set(self._lKey.scenarioId " + id);
+          console.log("self.set(self._lKey.scenarios " + JSON.stringify(scenarioObj));
+          console.log("self.set(self._lKey.scenarioLength " + Object.keys(scenarioObj).length);
+          console.log("self.set(self._lKey.currentScenario " + JSON.stringify(scenarioObj["0"]));
+          console.log("self.set(self._lKey.currentScenarioSeqNum " + 0);
+          console.log("self.set(self._lKey.storedVariableKeys " + []);
+          console.log("self.set(self._lKey.sendCustomerMessageType " + 1);
+          console.log("self.set(self._lKey.allowSave " + false);
+          console.log("self.set(self._lKey.showSequenceSet " + {});
+          console.log("self.set(self._lKey.previousChatMessageLength " + 0);
         }
       },
       begin: function() {
@@ -3643,7 +3684,25 @@
         var self = sinclo.scenarioApi;
         var msg = "";
         if(self._hearing.isHearingMode()) {
-          msg = self._hearing._getCurrentHearingProcess().message;
+          var currentSeq = self._hearing._getCurrentSeq();
+          switch(currentSeq.inputLFType) {
+            case "1": // 改行不可
+              msg = "メッセージを入力してください";
+              if(check.smartphone()) {
+                msg += "\n（改行で送信）";
+              } else {
+                msg += "\n（Enter/Shift+Enterで送信）"
+              }
+              break;
+            case "2":
+              msg = "メッセージを入力してください";
+              if(check.smartphone()) {
+                // 何も追加しない
+              } else {
+                msg += "\n（Enterで改行/Shift+Enterで送信）"
+              }
+              break;
+          }
         }
         return msg;
       },
@@ -3729,7 +3788,7 @@
        */
       _process: function(forceFirst) {
         var self = sinclo.scenarioApi;
-        switch(self.get(self._lKey.currentScenario).actionType) {
+        switch( String(self.get(self._lKey.currentScenario).actionType) ) {
           case self._actionType.speakText:
             self._speakText();
             self.set(self._lKey.scenarioMessageType, 21);
@@ -4012,17 +4071,24 @@
           validAll: "2",
           confirmOK: "3"
         },
-
         isHearingMode: function() {
           var self = sinclo.scenarioApi._hearing;
           if(!self._parent) {
             // initがコールされていないのでヒアリング開始していない
             return false;
           } else {
-            return self._parent.get(self._parent._lKey.currentScenario).actionType === "2";
+            return String(self._parent.get(self._parent._lKey.currentScenario).actionType) === "2";
           }
         },
-
+        isLFModeDisabled: function() {
+          var self = sinclo.scenarioApi._hearing;
+          if(!self._parent) {
+            // initがコールされていないのでヒアリング開始していない
+            return true;
+          } else {
+            return String(self._getCurrentHearingProcess().inputLFType) === "1";
+          }
+        },
         _init: function (parent, currentScenario) {
           this._parent = parent;
           this._setCurrentSeq(this._getCurrentSeq());
@@ -4087,8 +4153,10 @@
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
+              sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
               self._parent._waitingInput(function (inputVal) {
+                sinclo.chatApi.removeKeyDownEventToSendChat();
                 self._parent._unWaitingInput();
                 self._parent._handleStoredMessage();
                 if (self._parent._valid(hearing.inputType, inputVal)) {
