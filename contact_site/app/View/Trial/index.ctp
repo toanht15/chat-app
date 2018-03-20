@@ -224,7 +224,7 @@
         location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
       });
     }).fail(function(data){
-      console.log('data');
+      console.log('fail');
       console.log(data);
       loading.load.finish(); // ローディング終了
       var obj = JSON.parse(data.responseText);
