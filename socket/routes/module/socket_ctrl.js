@@ -1994,41 +1994,68 @@ io.sockets.on('connection', function (socket) {
     var counter = 0;
     var totalCounter = 0;
     var chunkSize = 100;
-    var keyLength = Object.keys(customerList[siteKey]).length;
+    var keyLength = 0;
+    if(isset(customerList[siteKey])) {
+      keyLength = Object.keys(customerList[siteKey]).length;
+    }
     var arr = [keyLength];
-    Object.keys(customerList[siteKey]).forEach(function (key) {
-      var splitedKey = key.split("/#");
-      if (splitedKey.length === 2 && isset(splitedKey[1])) {
-        var targetSocketId = "/#" + splitedKey[1]
-        if (!io.sockets.connected[targetSocketId]) {
-          var targetTabId = customerList[siteKey][key].tabId;
-          console.log("【" + siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
-          if (targetTabId && targetTabId !== "") {
-            emit.toCompany('unsetUser', {siteKey: siteKey, tabId: targetTabId}, siteKey);
-          }
-          delete customerList[siteKey][key];
+    if(isset(customerList[siteKey])) {
+      Object.keys(customerList[siteKey]).forEach(function (key) {
+        var splitedKey = key.split("/#");
+        if (splitedKey.length === 2 && isset(splitedKey[1])) {
+          var targetSocketId = "/#" + splitedKey[1]
+          if (!io.sockets.connected[targetSocketId]) {
+            var targetTabId = customerList[siteKey][key].tabId;
+            console.log("【" + siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
+            if (targetTabId && targetTabId !== "") {
+              emit.toCompany('unsetUser', {siteKey: siteKey, tabId: targetTabId}, siteKey);
+            }
+            delete customerList[siteKey][key];
 
-          if (totalCounter === keyLength - 1) {
-            emit.toMine("receiveAccessInfo", arr, socket);
-            arr = [keyLength];
+            if (totalCounter === keyLength - 1) {
+              emit.toMine("receiveAccessInfo", arr, socket);
+              arr = [keyLength];
+            }
+            totalCounter++;
+            return;
           }
-          totalCounter++;
-          return;
         }
-      }
-      var val = getConnectInfo(customerList[siteKey][key]);
-      if (val.time) {
-        val.term = timeCalculator(val);
-      }
-      customerApi.getInformations(val.userId, val.siteKey, function (information) {
-        val.customerInfo = information;
-        if (functionManager.isEnabled(siteKey, functionManager.keyList.chat)) {
-          chatApi.getUnreadCnt(val, function (ret) {
-            val['chatUnreadId'] = ret.chatUnreadId;
-            val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
-            if(functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
+        var val = getConnectInfo(customerList[siteKey][key]);
+        if (val.time) {
+          val.term = timeCalculator(val);
+        }
+        customerApi.getInformations(val.userId, val.siteKey, function (information) {
+          val.customerInfo = information;
+          if (functionManager.isEnabled(siteKey, functionManager.keyList.chat)) {
+            chatApi.getUnreadCnt(val, function (ret) {
+              val['chatUnreadId'] = ret.chatUnreadId;
+              val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
+              if (functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
+                && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
+                && ((isset(val['chatUnreadCnt']) && val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
+                // 何もしない
+              } else {
+                arr.push(val);
+                counter++;
+              }
+              if (counter === chunkSize) {
+                emit.toMine("receiveAccessInfo", arr, socket);
+                counter = 0;
+                arr = [keyLength];
+              }
+              if (totalCounter === keyLength - 1) {
+                emit.toMine("receiveAccessInfo", arr, socket);
+                if (functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+                  emit.toMine('endOfCustomerList', {}, socket);
+                }
+                arr = [keyLength];
+              }
+              totalCounter++;
+            });
+          } else {
+            if (functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
               && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
-              && ((isset(val['chatUnreadCnt']) && val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
+              && ((!isset(val['chatUnreadCnt']) || val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
               // 何もしない
             } else {
               arr.push(val);
@@ -2041,40 +2068,17 @@ io.sockets.on('connection', function (socket) {
             }
             if (totalCounter === keyLength - 1) {
               emit.toMine("receiveAccessInfo", arr, socket);
-              if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+              if (functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
                 emit.toMine('endOfCustomerList', {}, socket);
               }
               arr = [keyLength];
             }
             totalCounter++;
-          });
-        } else {
-          if(functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
-            && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
-            && ((!isset(val['chatUnreadCnt']) || val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
-            // 何もしない
-          } else {
-            arr.push(val);
-            counter++;
           }
-          if (counter === chunkSize) {
-            emit.toMine("receiveAccessInfo", arr, socket);
-            counter = 0;
-            arr = [keyLength];
-          }
-          if (totalCounter === keyLength - 1) {
-            emit.toMine("receiveAccessInfo", arr, socket);
-            if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
-              emit.toMine('endOfCustomerList', {}, socket);
-            }
-            arr = [keyLength];
-          }
-          totalCounter++;
-        }
+        });
       });
-    });
-
-    if(Object.keys(customerList[siteKey]).length === 0) {
+    }
+    if(isset(customerList[siteKey]) && Object.keys(customerList[siteKey]).length === 0) {
       emit.toMine("receiveAccessInfo", arr, socket);
       if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
         emit.toMine('endOfCustomerList', {}, socket);
