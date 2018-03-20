@@ -167,7 +167,7 @@ class TrialController extends AppController {
       $sender->send();
     } catch(Exception $e) {
       $this->log('Trial Controller Exception : '.$e->getMessage());
-      $this->response->statusCode(500);
+      $this->response->statusCode(409);
       return json_encode([
         'success' => false,
         'message' => 'メール送信に失敗しました。システム管理者にお問い合わせください。'
