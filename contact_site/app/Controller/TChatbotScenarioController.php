@@ -159,92 +159,141 @@ sinclo@medialink-ml.co.jp
   }
 
   /* *
-   * 削除
-   * @return void
+   * 削除(一覧ページから実行)
    * */
   public function remoteDelete(){
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
-    $ret = $this->TChatbotScenario->find('first', [
-      'fields' => 'TChatbotScenario.*',
-      'conditions' => [
-        'TChatbotScenario.del_flg' => 0,
-        'TChatbotScenario.id' => $id,
-        'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id'],
-        'TAutoMessage.t_chatbot_scenario_id' => NULL
-      ],
-      'joins' => [[
-        'type' => 'LEFT OUTER',
-        'table' => 't_auto_messages',
-        'alias' => 'TAutoMessage',
-        'conditions' => [
-          'TChatbotScenario.id = TAutoMessage.t_chatbot_scenario_id'
-        ]
-      ]],
-      'recursive' => -1
-    ]);
-    if ( count($ret) === 1 ) {
-      if ( $this->TChatbotScenario->logicalDelete($id) ) {
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+    $scenarioId = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
+
+    // 呼び出し設定されている場合は削除しない
+    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $callerInfo = $this->_getScenarioCallerInfo($scenarioId, $scenarioList);
+    if (!empty($callerInfo['TAutoMessage']) || !empty($callerInfo['TChatbotScenario'])) {
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      return;
+    }
+
+    $transactions = null;
+    try {
+      $transactions = $this->TransactionManager->begin();
+
+      if (!$this->TChatbotScenario->logicalDelete($scenarioId)) {
+        throw new ChatbotScenarioException('シナリオ削除エラー');
       }
-      else {
-        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+
+      // 関連するテーブルからレコードを削除する
+      // (メール送信設定は物理削除・論理削除共に行わない)
+      $activity = json_decode($scenarioData['TChatbotScenario']['activity']);
+      foreach ($activity->scenarios as $action) {
+
+        if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+          // 外部システム連携
+          if (!empty($action->tExternalApiConnectionId)) {
+            $this->TExternalApiConnection->logicalDelete($action->tExternalApiConnectionId);
+          }
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+          // ファイル送信
+          if (!empty($action->tChatbotScenarioUploadFileId)) {
+            $this->tChatbotScenarioUploadFile->logicalDelete($action->tChatbotScenarioUploadFileId);
+          }
+        }
       }
+
+      $this->TransactionManager->commitTransaction($transactions);
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+
+    } catch (ChatbotScenarioException $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    } catch (Exception $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
   }
 
+  /* *
+   * 削除(編集ページから実行)
+   * */
   public function chkRemoteDelete(){
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
+    // 削除対象のシナリオIDの一覧
     $selectedList = $this->request->data['selectedList'];
-    $this->TChatbotScenario->begin();
-    $res = false;
 
-    // オートメッセージで連携済みのシナリオは削除対象から外す
-    $linkedList = $this->TChatbotScenario->find('list', [
-        'fields' => 'TChatbotScenario.id',
-        'conditions' => [
-            'TChatbotScenario.del_flg' => 0,
-            'TChatbotScenario.id' => $selectedList,
-            'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-        ],
-        'joins' => [
-          [
-            'type' => 'INNER',
-            'table' => 't_auto_messages',
-            'alias' => 'TAutoMessage',
-            'conditions' => [
-              'TChatbotScenario.id = TAutoMessage.t_chatbot_scenario_id'
-            ]
-          ]
-        ],
-        'recursive' => -1
-    ]);
-    $targetList = array_diff($selectedList, $linkedList);
-
-    $deletedList = [];
-    foreach ($targetList as $id) {
-      if ($this->TChatbotScenario->logicalDelete($id)) {
-        $deletedList[] = $id;
-        $res = true;
+    // 呼び出し設定されているシナリオは削除対象から外す
+    $targetList = [];
+    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    foreach ($selectedList as $scenarioId) {
+      $callerInfo = $this->_getScenarioCallerInfo($scenarioId, $scenarioList);
+      if (empty($callerInfo['TAutoMessage']) && empty($callerInfo['TChatbotScenario'])) {
+        $targetList[] = $scenarioId;
       }
     }
 
-    if($res){
-      $this->TChatbotScenario->commit();
-      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-    }
-    else {
-      $this->TChatbotScenario->rollback();
+    $res = false;
+    $deletedList = [];
+    $transaction = null;
+    try {
+      $transactions = $this->TransactionManager->begin();
+
+      foreach ($targetList as $scenarioId) {
+        if ($this->TChatbotScenario->logicalDelete($scenarioId)) {
+          $deletedList[] = $scenarioId;
+          $res = true;
+
+          // 関連するテーブルからレコードを削除する
+          // (メール送信設定は物理削除・論理削除共に行わない)
+          $scenarioData = $this->TChatbotScenario->findById($action->$scenarioId);
+          $activity = json_decode($scenarioData['TChatbotScenario']['activity']);
+          foreach ($activity->scenarios as $action) {
+
+            if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+              // 外部システム連携
+              if (!empty($action->tExternalApiConnectionId)) {
+                $this->TExternalApiConnection->logicalDelete($action->tExternalApiConnectionId);
+              }
+            } else
+            if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+              // ファイル送信
+              if (!empty($action->tChatbotScenarioUploadFileId)) {
+                $this->tChatbotScenarioUploadFile->logicalDelete($action->tChatbotScenarioUploadFileId);
+              }
+            }
+          }
+        }
+      }
+
+      if($res){
+        $this->TransactionManager->commitTransaction($transactions);
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+      }
+      else {
+        $this->TransactionManager->rollbackTransaction($transactions);
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      }
+
+      // 一時保存データを削除するため、実際に削除したシナリオIDを返す
+      echo json_encode($deletedList);
+    } catch (ChatbotScenarioException $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    } catch (Exception $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
-
-    // 実際に削除したシナリオIDを返す
-    echo json_encode($deletedList);
   }
 
   /* *
