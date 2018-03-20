@@ -4415,8 +4415,8 @@
         _process: function() {
           var self = sinclo.scenarioApi._callExternalApi;
           self._callApi(function(response){
-            Object.keys(response).forEach(function(variableKey){
-              self._parent._saveVariable(variableKey, response[variableKey]);
+            Object.keys(response).forEach(function(elm, index, arr){
+              self._parent._saveVariable(response[elm].variableName, response[elm].value);
             });
             if(self._parent._goToNextScenario()) {
               self._parent._process();
@@ -4426,7 +4426,12 @@
         _callApi: function(callback) {
           var self = sinclo.scenarioApi._callExternalApi;
           var externalApiConnectionId = self._parent.get(self._parent._lKey.currentScenario).tExternalApiConnectionId;
-          emit('callExternalApi', {externalApiConnectionId: externalApiConnectionId, variables: self._parent._getAllTargetVariables()}, callback);
+          emit('callExternalApi', {
+            externalApiConnectionId: externalApiConnectionId,
+            variables: self._parent._getAllTargetVariables()
+          }, function(result) {
+            callback(result);
+          });
         }
       },
     },
