@@ -24,7 +24,7 @@ class TrialController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->Auth->allow(['index','add','thanks','remoteTermsOfService']);
+    $this->Auth->allow(['index','add','thanks','check','remoteTermsOfService']);
     $this->header('Access-Control-Allow-Origin: http://127.0.0.1:81/Contract/add');
     $this->set('title_for_layout', '無料トライアル登録画面');
   }
@@ -43,13 +43,6 @@ class TrialController extends AppController {
     $this->layout = 'ajax';
     $data = $this->request->data;
     $data['MUser']['mail_address'] = $data['Contract']['user_mail_address'];
-    $this->MUser->set($data);
-    //mailAddress validattionチェック
-    if(!$this->MUser->validates()) {
-      $errorMessage = $this->MUser->validationErrors;
-      $this->MUser->rollback();
-      return $errorMessage['mail_address'][0];
-    }
 
     $data['MCompany']['trial_flg'] = C_TRIAL_FLG;
     $data['MCompany']['options']['refCompanyData'] = 1;
@@ -181,6 +174,22 @@ class TrialController extends AppController {
    * */
   public function thanks() {
 
+  }
+
+  /* *
+   * メールアドレス　validateチェック
+   * @return void
+   * */
+  public function check() {
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $data = $this->request->data;
+    $data['MUser']['mail_address'] = $data['Contract']['user_mail_address'];
+    $this->MUser->set($data);
+    if(!$this->MUser->validates()) {
+      $errorMessage = $this->MUser->validationErrors;
+      return $errorMessage['mail_address'][0];
+    }
   }
 
    /* *
