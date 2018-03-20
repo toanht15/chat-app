@@ -587,13 +587,10 @@
         if ( document.getElementById('sincloBox') === null ) return false;
 
         createStartTimer = window.setInterval(function(){
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>" + window.sincloInfo.widget.showTiming);
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>" + window.sincloInfo.widgetDisplay);
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>" + sinclo.trigger.flg);
           if (window.sincloInfo.widget.showTiming !== 4 || (window.sincloInfo.widgetDisplay && !sinclo.trigger.flg)) {
             window.clearInterval(createStartTimer);
             createStart();
-          } else if (window.sincloInfo.widgetDisplay && sinclo.trigger.flg) {
+          } else if (window.sincloInfo.widgetDisplay && (sinclo.trigger.flg && !sinclo.chatApi.inactiveCloseFlg)) {
             // 再接続時はウィジェットが表示されたタイミングでチャット情報を再読み込みする
             window.clearInterval(createStartTimer);
             if ( window.sincloInfo.contract.chat ) {
