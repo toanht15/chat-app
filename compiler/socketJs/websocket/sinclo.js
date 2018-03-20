@@ -521,6 +521,8 @@
         storage.l.set('textareaOpend', 'open');
         storage.l.set('leaveFlg', 'false');
         storage.s.unset('amsg');
+        storage.s.unset('chatAct');
+        storage.s.unset('chatEmit');
         sinclo.scenarioApi.reset();
         userInfo.setPrevpage(true);
       }
@@ -558,26 +560,28 @@
         document.fireEvent('sinclo:connected', evt);
       }
     },
-    setHistoryId: function(){
-        var createStartTimer,
-            createStart = function(){
-                console.log("create start");
-                var sincloBox = document.getElementById('sincloBox');
-                if ( window.sincloInfo.contract.chat && check.smartphone() ) {
-                  common.widgetHandler.show();
-                  sincloBox.style.opacity = 0;
-                  sinclo.operatorInfo.widgetHide();
-                }
-                else {
-                  common.widgetHandler.show();
-                }
-                // ウィジェット表示
-                sinclo.chatApi.widgetOpen();
+    setHistoryId: function(d){
+      var obj = common.jParse(d),
+        createStartTimer,
+        createStart = function(){
+          console.log("create start");
+          var sincloBox = document.getElementById('sincloBox');
+          if ( window.sincloInfo.contract.chat && check.smartphone() ) {
+            common.widgetHandler.show();
+            sincloBox.style.opacity = 0;
+            sinclo.operatorInfo.widgetHide();
+          }
+          else {
+            common.widgetHandler.show();
+          }
+          // ウィジェット表示
+          sinclo.chatApi.widgetOpen();
 
-                if ( window.sincloInfo.contract.chat ) {
-                    // チャット情報読み込み
-                    sinclo.chatApi.init();
-            }
+          if ( window.sincloInfo.contract.chat ) {
+              // チャット情報読み込み
+              sinclo.chatApi.init();
+
+          }
         };
 
         if ( document.getElementById('sincloBox') === null ) return false;
@@ -586,6 +590,13 @@
           if (window.sincloInfo.widget.showTiming !== 4 || (window.sincloInfo.widgetDisplay && !sinclo.trigger.flg)) {
             window.clearInterval(createStartTimer);
             createStart();
+          } else if (window.sincloInfo.widgetDisplay && (sinclo.trigger.flg && !sinclo.chatApi.inactiveCloseFlg)) {
+            // 再接続時はウィジェットが表示されたタイミングでチャット情報を再読み込みする
+            window.clearInterval(createStartTimer);
+            if ( window.sincloInfo.contract.chat ) {
+              // チャット情報読み込み
+              sinclo.chatApi.init();
+            }
           }
         }, 500);
     },
