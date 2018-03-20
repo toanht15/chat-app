@@ -224,8 +224,10 @@
         location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
       });
     }).fail(function(data){
+      loading.load.finish(); // ローディング終了
       var obj = JSON.parse(data.responseText);
       alert(obj.message);
+      $("#submitButton").remove();
     });
   }
   /**
