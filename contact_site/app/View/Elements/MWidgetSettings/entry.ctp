@@ -298,6 +298,19 @@ $headerNo = 1;
               [
                 'entity' => 'MWidgetSetting.other_text_color'
               ]) ?></span><br>
+              <span style="height: 20px;"><label>ヘッダー文字サイズ</label><?= $this->ngForm->input('header_text_size', [
+                  'type' => 'number',
+                  'max-length' => '20',
+                  'placeholder' => '',
+                  'div' => false,
+                  'label' => false,
+                  'maxlength' => 7,
+                  'style' => "width: 120px; position: relative; left: 63px !important; margin: -5px 0 0 0;",
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.header_text_size'
+                  ]) ?></span><br>
               <?php if($coreSettings[C_COMPANY_USE_CHAT]){?>
               <div>
                 <hr class="separator">
@@ -332,6 +345,19 @@ $headerNo = 1;
                 [
                   'entity' => 'MWidgetSetting.re_text_color'
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('re_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
+                <span style="height: 20px;"><label>企業側吹き出し文字サイズ</label><?= $this->ngForm->input('re_text_size', [
+                    'type' => 'number',
+                    'max-length' => '20',
+                    'placeholder' => '',
+                    'div' => false,
+                    'label' => false,
+                    'maxlength' => 7,
+                    'style' => "width: 120px; position: relative; left: 63px !important; margin: -5px 0 0 0;",
+                    'error' => false
+                  ],
+                    [
+                      'entity' => 'MWidgetSetting.re_text_size'
+                    ]) ?></span><br>
                 <hr class="separator">
                 <!-- 16.訪問者側吹き出し背景色 -->
                 <span style="height: 35px;"><label>訪問者側吹き出し背景色</label><?= $this->ngForm->input('se_background_color', [
@@ -362,6 +388,19 @@ $headerNo = 1;
                   'entity' => 'MWidgetSetting.se_text_color'
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('se_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
               </div>
+                <span style="height: 20px;"><label>訪問者側吹き出し文字サイズ</label><?= $this->ngForm->input('se_text_size', [
+                    'type' => 'number',
+                    'max-length' => '20',
+                    'placeholder' => '',
+                    'div' => false,
+                    'label' => false,
+                    'maxlength' => 7,
+                    'style' => "width: 120px; position: relative; left: 63px !important; margin: -5px 0 0 0;",
+                    'error' => false
+                  ],
+                    [
+                      'entity' => 'MWidgetSetting.se_text_size'
+                    ]) ?></span><br>
               <!-- 5.ウィジェット枠線色 -->
 <!--
               <span style="height: 20px;"><label>ウィジェット枠線色</label><?= $this->ngForm->input('widget_border_color', [
