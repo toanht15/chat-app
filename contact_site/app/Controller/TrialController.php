@@ -6,8 +6,10 @@
 App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Validation');
 class TrialController extends AppController {
   const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
-  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
-  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
+  //const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  //const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS= "yuki.henmi@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "yuki.henmi@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const USER_NAME = "##USER_NAME##";
@@ -101,71 +103,78 @@ class TrialController extends AppController {
     $this->TMailTransmissionLog->save();
     $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
 
-    //お客さん向け
-    $sender = new MailSenderComponent();
-    $sender->setFrom(self::ML_MAIL_ADDRESS);
-    $sender->setFromName('sinclo（シンクロ）');
-    $sender->setTo($data['Contract']['user_mail_address']);
-    $sender->setSubject($mailTemplateData[0]['MSystemMailTemplate']['subject']);
-    $sender->setBody($mailBodyData);
-    $sender->send();
+    try {
+      //お客さん向け
+      $sender = new MailSenderComponent();
+      $sender->setFrom(self::ML_MAIL_ADDRESS);
+      $sender->setFromName('sinclo（シンクロ）');
+      $sender->setTo($data['Contract']['user_mail_address']);
+      $sender->setSubject($mailTemplateData[0]['MSystemMailTemplate']['subject']);
+      $sender->setBody($mailBodyData);
+      $sender->send();
 
-    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
-    $this->TMailTransmissionLog->read(null, $lastInsertId);
-    $this->TMailTransmissionLog->set([
-      'send_flg' => 1,
-      'sent_datetime' => $now->format("Y/m/d H:i:s")
-    ]);
-    $this->TMailTransmissionLog->save();
+      $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+      $this->TMailTransmissionLog->read(null, $lastInsertId);
+      $this->TMailTransmissionLog->set([
+        'send_flg' => 1,
+        'sent_datetime' => $now->format("Y/m/d H:i:s")
+      ]);
+      $this->TMailTransmissionLog->save();
 
-    //会社向け
-    $sender = new MailSenderComponent();
-    $sender->setFrom($data['Contract']['user_mail_address']);
-    $sender->setFromName($data['MCompany']['company_name'].'　'.$data['MAgreements']['application_name']);
-    $sender->setTo(self::ML_MAIL_ADDRESS_AND_ALEX);
-    $sender->setSubject($mailTemplateData[1]['MSystemMailTemplate']['subject']);
-    $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[1]['MSystemMailTemplate']['mail_body']);
-    $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
-    if($data['MAgreements']['business_model'] == 1) {
-      $data['MAgreements']['business_model'] = 'BtoB';
+      //会社向け
+      $sender = new MailSenderComponent();
+      $sender->setFrom($data['Contract']['user_mail_address']);
+      $sender->setFromName($data['MCompany']['company_name'].'　'.$data['MAgreements']['application_name']);
+      $sender->setTo(self::ML_MAIL_ADDRESS_AND_ALEX);
+      $sender->setSubject($mailTemplateData[1]['MSystemMailTemplate']['subject']);
+      $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[1]['MSystemMailTemplate']['mail_body']);
+      $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
+      if($data['MAgreements']['business_model'] == 1) {
+        $data['MAgreements']['business_model'] = 'BtoB';
+      }
+      if($data['MAgreements']['business_model'] == 2) {
+        $data['MAgreements']['business_model'] = 'BtoC';
+      }
+      if($data['MAgreements']['business_model'] == 3) {
+        $data['MAgreements']['business_model'] = 'どちらも';
+      }
+      $mailBodyData = str_replace(self::BUSINESS_MODEL, $data['MAgreements']['business_model'], $mailBodyData);
+      if(!empty($data['MAgreements']['application_department'])) {
+        $mailBodyData = str_replace(self::DEPARTMENT, $data['MAgreements']['application_department'], $mailBodyData);
+      }
+      else {
+        $mailBodyData = str_replace(self::DEPARTMENT, "", $mailBodyData);
+      }
+      if(!empty($data['MAgreements']['application_position'])) {
+        $mailBodyData = str_replace(self::POSITION, $data['MAgreements']['application_position'], $mailBodyData);
+      }
+      else {
+        $mailBodyData = str_replace(self::POSITION, "", $mailBodyData);
+      }
+      $mailBodyData = str_replace(self::MAIL_ADDRESS, $data['Contract']['user_mail_address'], $mailBodyData);
+      $mailBodyData = str_replace(self::PHONE_NUMBER, $data['MAgreements']['telephone_number'], $mailBodyData);
+      if(!empty($data['MAgreements']['installation_url'])) {
+        $mailBodyData = str_replace(self::URL, $data['MAgreements']['installation_url'], $mailBodyData);
+      }
+      else {
+        $mailBodyData = str_replace(self::URL, "", $mailBodyData);
+      }
+      if(!empty($data['MAgreements']['note'])) {
+        $mailBodyData = str_replace(self::OTHER, $data['MAgreements']['note'], $mailBodyData);
+      }
+      else {
+        $mailBodyData = str_replace(self::OTHER, "", $mailBodyData);
+      }
+      $sender->setBody($mailBodyData);
+      $sender->send();
+    } catch(Exception $e) {
+      $this->log('Trial Controller Exception : '.$e->getMessage());
+      $this->response->statusCode(500);
+      return json_encode([
+        'success' => false,
+        'message' => 'メール送信に失敗しました。システム管理者にお問い合わせください。'
+      ]);
     }
-    if($data['MAgreements']['business_model'] == 2) {
-      $data['MAgreements']['business_model'] = 'BtoC';
-    }
-    if($data['MAgreements']['business_model'] == 3) {
-      $data['MAgreements']['business_model'] = 'どちらも';
-    }
-    $mailBodyData = str_replace(self::BUSINESS_MODEL, $data['MAgreements']['business_model'], $mailBodyData);
-    if(!empty($data['MAgreements']['application_department'])) {
-      $mailBodyData = str_replace(self::DEPARTMENT, $data['MAgreements']['application_department'], $mailBodyData);
-    }
-    else {
-      $mailBodyData = str_replace(self::DEPARTMENT, "", $mailBodyData);
-    }
-    if(!empty($data['MAgreements']['application_position'])) {
-      $mailBodyData = str_replace(self::POSITION, $data['MAgreements']['application_position'], $mailBodyData);
-    }
-    else {
-      $mailBodyData = str_replace(self::POSITION, "", $mailBodyData);
-    }
-    $mailBodyData = str_replace(self::MAIL_ADDRESS, $data['Contract']['user_mail_address'], $mailBodyData);
-    $mailBodyData = str_replace(self::PHONE_NUMBER, $data['MAgreements']['telephone_number'], $mailBodyData);
-    if(!empty($data['MAgreements']['installation_url'])) {
-      $mailBodyData = str_replace(self::URL, $data['MAgreements']['installation_url'], $mailBodyData);
-    }
-    else {
-      $mailBodyData = str_replace(self::URL, "", $mailBodyData);
-    }
-    if(!empty($data['MAgreements']['note'])) {
-      $mailBodyData = str_replace(self::OTHER, $data['MAgreements']['note'], $mailBodyData);
-    }
-    else {
-      $mailBodyData = str_replace(self::OTHER, "", $mailBodyData);
-    }
-    $sender->setBody($mailBodyData);
-    $sender->send();
-
-
   }
 
   /* *
