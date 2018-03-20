@@ -92,6 +92,7 @@ define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
 // 表示名種別
 define('C_WIDGET_SHOW_NAME', 1); // 表示名
 define('C_WIDGET_SHOW_COMP', 2); // 企業名
+define('C_WIDGET_SHOW_NONE', 3); // 表示しない
 
 // チャットデザインタイプ
 define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX', 1); // BOX型（サイズ固定）
@@ -390,7 +391,8 @@ $config['widgetPositionType'] = [
 /* ウィジェット設定 － 担当者表示名種別 */
 $config['widgetShowNameType'] = [
     C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
-    C_WIDGET_SHOW_COMP=> "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+    C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>",
+    C_WIDGET_SHOW_NONE => "表示しない"
 ];
 
 /* ウィジェット設定 － 吹き出しデザイン */
