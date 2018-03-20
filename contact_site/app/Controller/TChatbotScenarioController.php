@@ -290,6 +290,30 @@ sinclo@medialink-ml.co.jp
             $result = $this->MMailTemplate->save();
             $action->mMailTemplateId = $this->MMailTemplate->getLastInsertId();
           }
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+          // 外部システム連携設定のコピー
+          $externalApiData = $this->TExternalApiConnection->findById($action->tExternalApiConnectionId);
+          if (!empty($externalApiData)) {
+            $this->TExternalApiConnection->create();
+            $externalApiData['TExternalApiConnection']['id'] = null;
+            $this->TExternalApiConnection->set($externalApiData);
+            $result = $this->TExternalApiConnection->save();
+            $action->tExternalApiConnectionId = $this->TExternalApiConnection->getLastInsertId();
+          }
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+          // ファイル送信設定のコピー
+          $uploadFileData = $this->TChatbotScenarioUploadFile->findById($action->tChatbotScenarioUploadFileId);
+          if (!empty($uploadFileData)) {
+            $this->TChatbotScenarioUploadFile->create();
+            $uploadFileData['TChatbotScenarioUploadFile']['id'] = null;
+            $this->TChatbotScenarioUploadFile->set($uploadFileData);
+            $result = $this->TChatbotScenarioUploadFile->save();
+            $action->tChatbotScenarioUploadFileId = $this->TChatbotScenarioUploadFile->getLastInsertId();
+
+            // TODO: S3データの複製
+          }
         }
       }
 
