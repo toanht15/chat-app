@@ -156,6 +156,30 @@ class LoginController extends AppController {
           ]);
           $companyData = $companyData[0];
           $mailTemplateData = $this->MSystemMailTemplate->find('all');
+
+          $mailBodyData = str_replace(self::COMPANY_NAME, $companyData['MCompany']['company_name'], $mailTemplateData[3]['MSystemMailTemplate']['mail_body']);
+          if(!empty($agreementData['MAgreements']['application_name'])) {
+            $mailBodyData = str_replace(self::USER_NAME, $agreementData['MAgreements']['application_name'], $mailBodyData);
+          }
+          $mailBodyData = str_replace(self::MAIL_ADDRESS, $inputData['MUser']['mail_address'], $mailBodyData);
+
+          $mailType = "";
+          if($companyData['MCompany']['trial_flg'] == 1) {
+            $mailType = 3;
+          }
+          else {
+            $mailType = 5;
+          }
+          //お客さん向け
+          $sender = new MailSenderComponent();
+          $sender->setFrom(self::ML_MAIL_ADDRESS);
+          $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
+          $sender->setTo($inputData['MUser']['mail_address']);
+          $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
+          $sender->setBody($mailBodyData);
+          $sender->send();
+
+          //会社(メディアリンク)向けにメール
           $sender = new MailSenderComponent();
           $sender->setFrom(self::ML_MAIL_ADDRESS);
           $sender->setFromName('sinclo（シンクロ）');
