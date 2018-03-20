@@ -705,7 +705,7 @@ var socket, // socket.io
       //カラーリストの取得
       var colorList = this.getColorList(widget);
 
-      var html = "", faintColor = widget.mainColor, balloonInnerColor = faintColor = widget.mainColor;
+      var html = "", faintColor = widget.mainColor, balloonInnerColor = faintColor = widget.mainColor, highlightColor = widget.mainColor;
       if ( faintColor.indexOf("#") >= 0 ) {
         var code = faintColor.substr(1), r,g,b;
         if (code.length === 3) {
@@ -723,6 +723,10 @@ var socket, // socket.io
         var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
         var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
         balloonInnerColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ');';
+        var highlightColorR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.7));
+        var highlightColorG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.7));
+        var highlightColorB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.7));
+        highlightColor = 'rgb(' + highlightColorR  + ', ' +  highlightColorG  + ', ' +  highlightColorB + ');';
       }
 
       // 表示位置
@@ -783,7 +787,7 @@ var socket, // socket.io
       html += '      #sincloBox label { display: inline; max-width: 100%; margin-bottom: 0; font-weight: normal;}';
       html += '      #sincloBox a:hover { color: ' + colorList['mainColor'] + '; }';
       html += '      #sincloBox sinclo-div#widgetHeader { cursor:pointer; position: relative;}';
-      html += '      #sincloBox sinclo-div#widgetHeader:hover { opacity: 0.75; }';
+      html += '      #sincloBox sinclo-div#widgetHeader:hover #widgetTitle { background-color: ' + highlightColor + ' }';
       html += '      #sincloBox sinclo-div#widgetHeader:after { content: " "; position: absolute; bottom: 0; left: 0; right: 0; z-index: -1; background-color: #FFF; }';
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { cursor:pointer; z-index: 2; position: absolute; }';

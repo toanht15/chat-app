@@ -15,7 +15,7 @@
     #sincloBox p#widgetTitle.middleSize { font-size: 15px; }
     #sincloBox p#widgetTitle.largeSize { font-size: 15px; }
     #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-    #sincloBox div.widgetHeaderWrap:hover { opacity: 0.75; }
+    #sincloBox div.widgetHeaderWrap:hover #widgetTitle { opacity: 0.75; }
     /*
           #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
       #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
@@ -183,11 +183,11 @@
     #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget_border_color}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
     #sincloBox #footer:not(.notNoneWidgetOutsideBorder) { border:none; }
   </style>
-  <div class="widgetHeaderWrap">
     <!-- 画像 -->
     <span id="mainImage" class="widgetOpener" ng-hide="spHeaderLightToggle() || mainImageToggle !== '1'">
       <img ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
     </span>
+  <div class="widgetHeaderWrap">
     <!-- 画像 -->
     <div>
       <!-- タイトル -->
