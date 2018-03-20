@@ -4144,6 +4144,7 @@
         _beginValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
           if(!self._watcher) {
+            console.log("BEGIN TIMER");
             self._watcher = setInterval(function(){
               $('#sincloChatMessage').val(self._getValidChars($('#sincloChatMessage').val()));
             },100);
@@ -4162,7 +4163,9 @@
         _endValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
           if(self._watcher) {
+            console.log("END TIMER");
             clearInterval(self._watcher);
+            self._watcher = null;
           }
         },
         _process: function (forceFirst) {
