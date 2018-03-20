@@ -261,23 +261,43 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
   }
 
-  // 自由入力エリアのキーイベント
+  /**
+   * 自由入力エリアのキーイベント
+   */
   $(document).on('keypress', '#sincloChatMessage', function(e) {
-    // ヒアリング：改行不可（Enterキーでメッセージ送信）
     if (!$scope.allowInputLF && e.key === 'Enter') {
+      // ヒアリング：改行不可（Enterキーでメッセージ送信）
       $scope.visitorSendMessage();
       return false;
     } else
-    // ヒアリング：改行可（Shift+Enterキーでメッセージ送信）
     if ($scope.allowSendMessageByShiftEnter && e.key === 'Enter' && e.shiftKey) {
+      // ヒアリング：改行可（Shift+Enterキーでメッセージ送信）
       $scope.visitorSendMessage();
       return false;
     }
+  });
+  /**
+   * 自由入力エリアのテキスト入力イベント
+   */
+  $(document).on('input paste', '#sincloChatMessage', function(e) {
+    var targetElm = $('#sincloChatMessage');
+    var inputText = targetElm.val();
 
-    // 入力制限
     var regex = new RegExp($scope.inputRule);
-    if (!regex.test(e.key)) {
-      return false;
+    var changed = '';
+    // 入力された文字列を改行ごとに分割し、設定された正規表現のルールに則っているかチェックする
+    var isMatched = inputText.split(/\r\n|\n/).every(function(string) {
+      var matchResult = string.match(regex);
+      // 入力文字列が適切ではない場合、先頭から適切な文字列のみを取り出して処理を終了する
+      if (matchResult === null || matchResult[0] !== matchResult.input) {
+        changed += (matchResult === null || matchResult.index !== 0) ? '' : matchResult[0];
+        return false;
+      }
+      changed += string + '\n';
+      return true;
+    });
+    if (!isMatched) {
+      targetElm.val(changed);
     }
   });
 

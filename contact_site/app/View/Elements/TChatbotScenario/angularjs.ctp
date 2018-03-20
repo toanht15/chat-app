@@ -771,10 +771,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var actionDetail = $scope.setActionList[$scope.actionStep];
 
       if ($scope.hearingIndex < actionDetail.hearings.length) {
-        // 入力内容のチェック
-        var inputType = actionDetail.hearings[$scope.hearingIndex].inputType
+        // 入力された文字列を改行ごとに分割し、適切な入力かチェックする
+        var inputType = actionDetail.hearings[$scope.hearingIndex].inputType;
         var regex = new RegExp($scope.inputTypeList[inputType].rule.replace(/^\/(.+)\/$/, "$1"));
-        if (regex.test(message)) {
+        var isMatched = message.split(/\r\n|\n/).every(function(string) {
+          return string.length >= 1 ? regex.test(string) : true;
+        });
+        if (isMatched) {
           // 変数の格納
           LocalStorageService.setItem(actionDetail.hearings[$scope.hearingIndex].variableName, message);
           // 次のアクション

@@ -141,10 +141,10 @@ define('C_MATCH_RULE_TEXT', '/.+/'); // 1文字以上のテキスト
 define('C_MATCH_RULE_NUMBER', '/^\d+$/');  // 1文字以上の数字
 define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
 
-define('C_MATCH_INPUT_RULE_ALL', '/./');  // 入力制限なし
-define('C_MATCH_INPUT_RULE_NUMBER', '/\d/');  // 数字入力
-define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.,;:@"]/'); // メールアドレス入力(半角英数記号入力)
-define('C_MATCH_INPUT_RULE_TEL', '/[\d+-]/'); // 電話番号入力（半角英数と一部記号入力）
+define('C_MATCH_INPUT_RULE_ALL', '/.*/');  // 入力制限なし
+define('C_MATCH_INPUT_RULE_NUMBER', '/[\d]*/');  // 数字入力
+define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.,;:@"]*/'); // メールアドレス入力(半角英数記号入力)
+define('C_MATCH_INPUT_RULE_TEL', '/[\d+-]*/'); // 電話番号入力（半角英数と一部記号入力）
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
