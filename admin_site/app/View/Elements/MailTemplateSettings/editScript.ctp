@@ -40,33 +40,32 @@ function remoteDeleteCompany(id,when){
 $(function(){
   //ラジオボタン変更したら
   $('input[type="radio"]').change(function(e) {
-    //何日後
-    if($(this).val() == 3 || $(this).val() == 4) {
+    if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail3' || $(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail4' ||
+      $(this)[0]['id'] == 'MJobMailTemplateSendMailMlFlg0' || $(this)[0]['id'] == 'MJobMailTemplateSendMailMlFlg1' ||
+      $(this)[0]['id'] == 'MJobMailTemplateAgreementFlg1' || $(this)[0]['id'] == 'MJobMailTemplateAgreementFlg2') {
       $(".daysAfter").css('display', 'block');
-      $('#MailTemplateSettingsEditForm')[0][3]['name'] = "data[MJobMailTemplate][mail_type_cd]";
-      $('#MailTemplateSettingsEditForm')[0][9]['name'] = "data[MJobMailTemplate][subject]";
-      $('#MailTemplateSettingsEditForm')[0][10]['name'] = "data[MJobMailTemplate][mail_body]";
-      $(this).parents('form').attr('action', '/MailTemplateSettings/edit/<?= $id ?>/3/<?= $value ?>');
+      if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail3') {
+        $("#value").text("何日後");
+      }
+      if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail4') {
+        $("#value").text("何日前");
+      }
+      $('#MailTemplateSettingsAddForm')[0][2]['name'] = "data[MJobMailTemplate][mail_type_cd]";
+      $('#MailTemplateSettingsAddForm')[0][13]['name'] = "data[MJobMailTemplate][sender]";
+      $('#MailTemplateSettingsAddForm')[0][14]['name'] = "data[MJobMailTemplate][subject]";
+      $('#MailTemplateSettingsAddForm')[0][15]['name'] = "data[MJobMailTemplate][mail_body]";
     }
-    //無料トライアル申込み後or初期パスワード変更後
     else {
       $(".daysAfter").css('display', 'none');
-      $('#MailTemplateSettingsEditForm')[0][3]['name'] = "data[MSystemMailTemplate][mail_type_cd]";
-      $('#MailTemplateSettingsEditForm')[0][9]['name'] = "data[MSystemMailTemplate][subject]";
-      $('#MailTemplateSettingsEditForm')[0][10]['name'] = "data[MSystemMailTemplate][mail_body]";
-      //無料トライアル申込み後
-      if($(this).val() == 1) {
-        $(this).parents('form').attr('action', '/MailTemplateSettings/edit/<?= $id ?>/1/<?= $value ?>');
-      }
-      //初期パスワード変更後
-      else if($(this).val() == 2) {
-        $(this).parents('form').attr('action', '/MailTemplateSettings/edit/<?= $id ?>/2/<?= $value ?>');
-      }
+      $('#MailTemplateSettingsAddForm')[0][2]['name'] = "data[MSystemMailTemplate][mail_type_cd]";
+      $('#MailTemplateSettingsAddForm')[0][13]['name'] = "data[MSystemMailTemplate][sender]";
+      $('#MailTemplateSettingsAddForm')[0][14]['name'] = "data[MSystemMailTemplate][subject]";
+      $('#MailTemplateSettingsAddForm')[0][15]['name'] = "data[MSystemMailTemplate][mail_body]";
     }
   });
 
   //初期表示
-  if(<?= $value ?> == 4) {
+  if(<?= $value ?> == 3 || <?= $value ?> == 4) {
     $(".daysAfter").css('display', 'block');
     $(".delete_btn").css('display', 'block');
   }

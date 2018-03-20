@@ -66,8 +66,12 @@ define('C_FREE_B_TO_B', 1); // BtoB
 define('C_FREE_B_TO_C', 2); // BtoC
 define('C_FREE_BOTH', 3); // BtoB,BtoCどちらも
 
+//メール設定 契約
+define('C_FREE_TRIAL_AGREEMENT', 1); // 無料トライアル契約
+define('C_AGREEMENT', 2); // 本契約
+
 //メール設定 いつ
-define('C_AFTER_TRIAL_APPLICATION', 1); // 無料トライアル登録時
+define('C_AFTER_APPLICATION', 1); // 無料トライアル登録時
 define('C_AFTER_PASSWORD_CHANGE', 2); // 初期パスワード変更時
 define('C_AFTER_DAYS', 3); // 無料トライアル登録後何日後
 define('C_BEFORE_DAYS', 4); // 無料トライアル終了何日前
@@ -89,12 +93,18 @@ $config['businessModelType'] = [
     C_FREE_BOTH => "どちらも"
 ];
 
+/* メール設定 － 契約 */
+$config['agreement'] = [
+    C_FREE_TRIAL_AGREEMENT => "無料トライアル契約",
+    C_AGREEMENT => "いきなり本契約",
+];
+
 /* メール設定 － いつ */
 $config['mailRegistration'] = [
-    C_AFTER_TRIAL_APPLICATION => "無料トライアル登録時",
+    C_AFTER_APPLICATION => "申込情報登録時",
     C_AFTER_PASSWORD_CHANGE => "初期パスワード変更時",
-    C_AFTER_DAYS => "無料トライアル登録後何日後",
-    C_BEFORE_DAYS => "無料トライアル終了何日前"
+    C_AFTER_DAYS => "登録後何日後",
+    C_BEFORE_DAYS => "終了何日前"
 ];
 
 /* メール設定 － MLにメール送信するか */

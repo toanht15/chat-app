@@ -142,7 +142,7 @@ class ContractController extends AppController
           $mailType = 0;
         }
         else {
-          $mailType = 5;
+          $mailType = 4;
         }
         //お客さん向け
         $sender = new MailSenderComponent();

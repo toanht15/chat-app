@@ -36,9 +36,9 @@ function remoteDeleteCompany(id,companyId,userId,companyKey){
     });
   };
 }
-$(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail4' ||
 $(function(){
   $('input[type="radio"]').change(function(e) {
+    console.log($('#MailTemplateSettingsAddForm'));
     if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail3' || $(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail4' ||
       $(this)[0]['id'] == 'MailTemplateSettingsToSendMediaLink0' || $(this)[0]['id'] == 'MailTemplateSettingsToSendMediaLink1') {
       $(".daysAfter").css('display', 'block');
@@ -49,16 +49,16 @@ $(function(){
         $("#value").text("何日前");
       }
       $('#MailTemplateSettingsAddForm')[0][2]['name'] = "data[MJobMailTemplate][mail_type_cd]";
-      $('#MailTemplateSettingsAddForm')[0][11]['name'] = "data[MJobMailTemplate][sender]";
-      $('#MailTemplateSettingsAddForm')[0][12]['name'] = "data[MJobMailTemplate][subject]";
-      $('#MailTemplateSettingsAddForm')[0][13]['name'] = "data[MJobMailTemplate][mail_body]";
+      $('#MailTemplateSettingsAddForm')[0][13]['name'] = "data[MJobMailTemplate][sender]";
+      $('#MailTemplateSettingsAddForm')[0][14]['name'] = "data[MJobMailTemplate][subject]";
+      $('#MailTemplateSettingsAddForm')[0][15]['name'] = "data[MJobMailTemplate][mail_body]";
     }
     else {
       $(".daysAfter").css('display', 'none');
       $('#MailTemplateSettingsAddForm')[0][2]['name'] = "data[MSystemMailTemplate][mail_type_cd]";
-      $('#MailTemplateSettingsAddForm')[0][11]['name'] = "data[MJobMailTemplate][sender]";
-      $('#MailTemplateSettingsAddForm')[0][12]['name'] = "data[MSystemMailTemplate][subject]";
-      $('#MailTemplateSettingsAddForm')[0][13]['name'] = "data[MSystemMailTemplate][mail_body]";
+      $('#MailTemplateSettingsAddForm')[0][13]['name'] = "data[MSystemMailTemplate][sender]";
+      $('#MailTemplateSettingsAddForm')[0][14]['name'] = "data[MSystemMailTemplate][subject]";
+      $('#MailTemplateSettingsAddForm')[0][15]['name'] = "data[MSystemMailTemplate][mail_body]";
     }
   });
 });

@@ -166,15 +166,21 @@ class LoginController extends AppController {
           if(!empty($agreementData['MAgreements']['application_name'])) {
             $mailBodyData = str_replace(self::USER_NAME, $agreementData['MAgreements']['application_name'], $mailBodyData);
           }
-          //$mailBodyData = str_replace(self::PASSWORD, $data['Contract']['user_password'], $mailBodyData);
           $mailBodyData = str_replace(self::MAIL_ADDRESS, $inputData['MUser']['mail_address'], $mailBodyData);
 
+          $mailType = "";
+          if($companyData['MCompany']['trial_flg'] == 1) {
+            $mailType = 3;
+          }
+          else {
+            $mailType = 5;
+          }
           //お客さん向け
           $sender = new MailSenderComponent();
           $sender->setFrom(self::ML_MAIL_ADDRESS);
-          $sender->setFromName($mailTemplateData[3]['MSystemMailTemplate']['sender']);
+          $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
           $sender->setTo($inputData['MUser']['mail_address']);
-          $sender->setSubject($mailTemplateData[3]['MSystemMailTemplate']['subject']);
+          $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
           $sender->setBody($mailBodyData);
           $sender->send();
 

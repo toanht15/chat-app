@@ -467,7 +467,7 @@
             className = "success";
             break;
           case 2: // failure
-            className = "failure";
+            className = "outOfTermTrial";
             break;
           case 3: // alert
             alert(message);
@@ -479,7 +479,7 @@
         }
         $("#shortMessage").text(message).attr('style', '').addClass(className);
         $("#shortMessage").removeClass('popup-off');
-        if(type != 4) {
+        if(type != 4 && type != 2) {
           window.setTimeout(function () {
             shortMessage.close();
           }, 1500);
@@ -521,6 +521,7 @@
             }, 4000);
           }
         );
+      }
     };
 
   !function (pe, se) {
