@@ -4,6 +4,7 @@ var router = express.Router();
 var database = require('../database');
 var api = require('../api');
 var uuid = require('node-uuid');
+var request = require('request');
 
 // mysql
 var mysql = require('mysql'),
@@ -3178,19 +3179,27 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // ============================================
   //  シナリオイベントハンドラ
   // ============================================
-  socket.on('getScenario', function(data){
+  socket.on('getScenario', function(data, ack){
     var obj = JSON.parse(data);
     var result = {};
     pool.query('select activity from t_chatbot_scenarios where m_companies_id = ? and id = ?;', [companyList[obj.siteKey], obj.scenarioId],
       function(err, row){
         if ( err !== null && err !== '' ) {
-          emit.toMine('resGetSenario', result, socket);
+          if(ack) {
+            ack(result);
+          } else {
+            emit.toMine('resGetSenario', result, socket);
+          }
           return;
         }
         if(row.length !== 0) {
           result = JSON.parse(row[0].activity);
         }
-        emit.toMine('resGetScenario', {id: obj.scenarioId, activity: result}, socket);
+        if(ack) {
+          ack({id: obj.scenarioId, activity: result});
+        } else {
+          emit.toMine('resGetScenario', {id: obj.scenarioId, activity: result}, socket);
+        }
       });
   });
 
@@ -3241,7 +3250,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             created: elm.created,
             sort: elm.sort,
             messageDistinction: messageDistinction,
-            achievementFlg: null
+            achievementFlg: elm.requireCv ? -1 : null
           };
           chatApi.set(ret);
         });
@@ -3252,7 +3261,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   socket.on("addLastMessageToCV", function(d){
     var obj = JSON.parse(d);
-    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type >= 12 AND message_type <= 13) OR (message_type >= 21 AND message_type <= 24)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
+    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
       function(err, row){
         if ( err !== null && err !== '' ) {
           console.log("UPDATE lastMessage to cv is failed. historyId : " + obj.historyId);
@@ -3292,6 +3301,80 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     emit.toSameUser('resScenarioMessage', scenario, scenario.siteKey, scenario.sincloSessionId);
     ack({data: scenario});
   });
+
+  socket.on("callExternalApi", function (data,ack){
+    var obj = JSON.parse(data);
+    pool.query('select * from t_external_api_connections where m_companies_id = ? and id = ? limit 0,1;', [companyList[obj.siteKey], obj.externalApiConnectionId],
+      function(err, row){
+        if ( err !== null && err !== '' ) {
+          console.log("callExternalApi select is failed. externalApiConnectionId : " + obj.externalApiConnectionId);
+          return;
+        }
+        if(row.length !== 0) {
+          var reqSettings = row[0];
+
+          var url = replaceVariable(obj.variables, reqSettings.url);
+          var reqBody = replaceVariable(data.variables, reqSettings.request_body);
+
+          var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          };
+
+          //オプションを定義
+          var options = {
+            url: 'http://' + process.env.GET_CD_API_HOST + ':' + process.env.GET_CD_API_PORT + '/Notification/callExternalApi',
+            headers: headers,
+            json: true,
+            form: {
+              apiParams: JSON.stringify({
+                url: url,
+                requestHeaders: JSON.parse(reqSettings.request_headers),
+                methodType: reqSettings.method_type,
+                requestBody: reqSettings.request_body,
+                responseBodyMaps: JSON.parse(reqSettings.response_body_maps),
+              })
+            }
+          };
+
+          if(process.env.DB_HOST === 'localhost') {
+            options.rejectUnauthorized = false;
+          }
+
+          //リクエスト送信
+          request.post(options, function (error, response, body) {
+            if (error) {
+              console.log('外部API実行時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+              ack({
+                success: false
+              });
+              return;
+            }
+            if(response.statusCode === 200) {
+              response.setEncoding('utf8');
+              if(body.success) {
+                ack(body.result);
+              } else {
+                ack({});
+              }
+              return;
+            } else {
+              console.log('外部API実行時にエラーが返却されました。 errorCode : ' + response.statusCode);
+              ack({
+                success: false
+              });
+              return;
+            }
+          });
+        }
+      });
+  });
+
+  var replaceVariable = function(variables, message) {
+    return message.replace(/{{(.+?)\}}/g, function(param) {
+      var name = param.replace(/^{{(.+)}}$/, '$1');
+      return variables[name] || name;
+    });
+  }
 
   // ============================================
   //  画面キャプチャ共有イベントハンドラ

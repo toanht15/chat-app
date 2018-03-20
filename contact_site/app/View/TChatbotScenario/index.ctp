@@ -91,7 +91,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
         <th width=" 5%">No</th>
         <th width="45%">名称</th>
-        <th width="45%">呼び出し元</th>
+        <th width="45%">呼び出し元<div class="questionBalloon"><icon class="questionBtn" data-tooltip="オートメッセージ設定やシナリオ設定のアクションから、呼び出し設定を利用できます">?</icon></div></th>
       </tr>
       </thead>
 <!--
@@ -108,7 +108,8 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         }
 
         // 呼び出し元情報
-        $callerInfo = count($val['TAutoMessage']) > 0 ? implode(', ', $val['TAutoMessage']) : '（未設定）';
+        $callerAutoMessage = count($val['callerInfo']['TAutoMessage']) > 0 ? implode(', ', $val['callerInfo']['TAutoMessage']) : '';
+        $callerScenario = count($val['callerInfo']['TChatbotScenario']) > 0 ? implode(', ', $val['callerInfo']['TChatbotScenario']) : '';
 
         $no = $prevCnt + h($key+1);
         ?>
@@ -120,7 +121,16 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           <td class="tCenter" width=" 5%"><?=$no?></td>
           <td class="tCenter" width="45%"><?= $val['TChatbotScenario']['name']; ?></td>
           <td class="p10x" width="45%">
-            <?= $callerInfo; ?>
+            <?php if ($callerAutoMessage === '' && $callerScenario === ''): ?>
+              <p>（未設定）</p>
+            <?php else: ?>
+              <?php if ($callerAutoMessage !== ''): ?>
+                <p><span class="callerTypeLabel typeAutoMessage">オートメッセージ</span><span><?= $callerAutoMessage; ?></span></p>
+              <?php endif; ?>
+              <?php if ($callerScenario !== ''): ?>
+                <p><span class="callerTypeLabel typeScenario">シナリオ</span><span><?= $callerScenario; ?></span></p>
+              <?php endif; ?>
+            <?php endif; ?>
           </td>
         </tr>
       <?php endforeach; ?>
@@ -129,5 +139,12 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <?php endif; ?>
       </tbody>
     </table>
+    <div class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span class="detail"></span></li>
+        </ul>
+      </icon-annotation>
+    </div>
   </div>
 </div>
