@@ -1155,8 +1155,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
             var url = window.URL.createObjectURL(file);
 
           openTrimmingDialog(function(){
-            beforeTrimmingInit(url);
-            trimmingInit($scope);
+            beforeTrimmingInit(url, $('#trim'));
+            trimmingInit($scope, null, 62 / 70);
           });
             // $scope.main_image = url;
             // $scope.$apply();

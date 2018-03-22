@@ -7,21 +7,24 @@
   var $image = null;
   var replaced = null;
   var targetImgTag = $('#img');
+  var viewImgTag = null;
+  var trimmingInfoTag = null;
   var croppedData = {};
   var ngScope = null;
 
-  function beforeTrimmingInit(img) {
+  function beforeTrimmingInit(img, viewTag) {
     targetImgTag.attr('src', img);
+    viewImgTag = viewTag;
   }
 
-  function trimmingInit($scope) {
+  function trimmingInit($scope, trimInfoTag, aspectRatio) {
     ngScope = $scope;
+    trimmingInfoTag = trimInfoTag;
     $image = $('.cropper-example-1 > img');
     targetImgTag.cropper({
-      aspectRatio: 62 / 70 // ここでアスペクト比の調整 ワイド画面にしたい場合は 16 / 9
+      aspectRatio: aspectRatio // ここでアスペクト比の調整 ワイド画面にしたい場合は 16 / 9
     });
     popupEvent.resize();
-    $('#popup-frame').css('width', '840px');
   }
 
   popupEvent.doTrimming = function(){
@@ -36,13 +39,16 @@
       _token: 'jf89ajtr234534829057835wjLA-SF_d8Z' // csrf用
     };
 
-    var imgDataUrl = $('#img').cropper('getCroppedCanvas').toDataURL();
-    $('#trim').attr('src', imgDataUrl);
+    var imgDataUrl = targetImgTag.cropper('getCroppedCanvas').toDataURL();
+    viewImgTag.attr('src', imgDataUrl);
     if(ngScope) {
       ngScope.main_image = imgDataUrl;
       console.log(trimmingData);
       ngScope.trimmingInfo = JSON.stringify(trimmingData);
       ngScope.$apply();
+    }
+    if(trimmingInfoTag) {
+      trimmingInfoTag.val(JSON.stringify(trimmingData));
     }
 
     return popupEvent.close();

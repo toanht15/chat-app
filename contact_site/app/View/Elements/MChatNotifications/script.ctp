@@ -103,10 +103,28 @@ $(document).ready(function(){
               $("#MChatNotificationUploadImage").val("");
               return false;
           }
-          var url = window.URL.createObjectURL(file);
-          changeImagePath(url, file.name);
+        var url = window.URL.createObjectURL(file);
+        changeImagePath(url, file.name);
+        openTrimmingDialog(function(){
+          beforeTrimmingInit(url, $('#picDiv img'));
+          trimmingInit(null, $('#TrimmingInfo'), 1);
+        });
       }
   });
+
+  function openTrimmingDialog(callback){
+    console.log('入ってるかチェック');
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
+      success: function(html){
+        modalOpen.call(window, html, 'p-widget-trimming', 'トリミング', 'moment');
+        callback();
+      }
+    });
+  }
 });
 
 document.body.onload = function(){

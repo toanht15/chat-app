@@ -936,6 +936,22 @@
         }
       }
 
+      /* ウィジェット設定 - トリミング用 */
+      &.p-widget-trimming {
+        width: 840px;
+
+        & #popup-button {
+          width: 18em;
+          margin: 0 auto;
+
+          .textBtn {
+            width: 6em;
+            margin: 0 0.5em;
+            float: left;
+          }
+        }
+      }
+
       &.p-auto-importexcel-upload {
         width: 50em;
 

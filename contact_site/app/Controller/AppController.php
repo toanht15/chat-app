@@ -400,14 +400,14 @@ class AppController extends Controller {
   /* *
    * imagecreatefrom**
    * */
-//  public function imageCreate($extension, $file){
-//    if ( preg_match('/^png$/i', $extension) ) {
-//      return imagecreatefrompng($file);
-//    }
-//    if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
-//      return imagecreatefromjpeg($file);
-//    }
-//  }
+  public function imageCreate($extension, $file){
+    if ( preg_match('/^png$/i', $extension) ) {
+      return imagecreatefrompng($file);
+    }
+    if ( preg_match('/^jpeg|jpg$/i', $extension) ) {
+      return imagecreatefromjpeg($file);
+    }
+  }
 
   /* *
    * image**
