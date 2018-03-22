@@ -27,6 +27,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     $scope.changeFlg = false;
 
+    $scope.trimmingInfo = "{}";
+
     $scope.switchWidget = function(num){
       $scope.showWidgetType = num;
       sincloChatMessagefocusFlg = true;
@@ -1151,8 +1153,13 @@ sincloApp.controller('WidgetCtrl', function($scope){
                 return false;
             }
             var url = window.URL.createObjectURL(file);
-            $scope.main_image = url;
-            $scope.$apply();
+
+          openTrimmingDialog(function(){
+            beforeTrimmingInit(url);
+            trimmingInit($scope);
+          });
+            // $scope.main_image = url;
+            // $scope.$apply();
         }
     });
 
@@ -1398,6 +1405,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope.changeFlg = false;
         $('#widgetShowTab').val($scope.widget.showTab);
         $('#MWidgetSettingMainImage').val($scope.main_image);
+        $('#TrimmingInfo').val($scope.trimmingInfo);
         $('#MWidgetSettingIndexForm').submit();
     }
 
@@ -1445,7 +1453,7 @@ $("body").on('focus', '#sincloChatMessage', function(e){
 /* [ #2243 ] IE緊急対応 */
 
 //モーダル画面
-function openTrimmingDialog(){
+function openTrimmingDialog(callback){
   console.log('入ってるかチェック');
   $.ajax({
     type: 'post',
@@ -1454,6 +1462,7 @@ function openTrimmingDialog(){
     url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-widget-trimming', 'トリミング', 'moment');
+      callback();
     }
   });
 }

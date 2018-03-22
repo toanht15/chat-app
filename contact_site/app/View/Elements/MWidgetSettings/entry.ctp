@@ -942,10 +942,7 @@ $headerNo = 1;
                 <div id="picChooseDiv">
                   <div class="greenBtn btn-shadow" ng-click="showGallary()">ギャラリーから選択</div>
                   <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage'); ?>画像をアップロード</div>
-                  <div class="greenBtn btn-shadow" onclick = "openTrimmingDialog()"　id = "trimming">画像をトリミング</div>
-                  <?php if(isset($file2) && !empty($file2)) { ?>
-                    <img src="<?php echo $file2 ?>"><br>
-                  <?php } ?>
+                  <input type="hidden" name="data[Trimming][info]" ng-model="trimmingInfo" id="TrimmingInfo" />
                 </div>
               </div>
               <?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['ng-if'=>'mainImageToggle=="1"']); ?>

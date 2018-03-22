@@ -3,11 +3,9 @@
  * MWidgetSettingsController controller.
  * ウィジェット設定マスタ
  */
-require '/var/www/sinclo/contact_site/app/Vendor/vendor/autoload.php';
-
-use Intervention\Image\ImageManagerStatic as Image;
 class MWidgetSettingsController extends AppController {
   public $uses = ['MWidgetSetting','MOperatingHour'];
+  public $components = ['ImageTrimming'];
   public $helpers = ['ngForm'];
   public $coreSettings = null;
   public $styleSetting = [
@@ -34,8 +32,6 @@ class MWidgetSettingsController extends AppController {
    * @return void
    * */
   public function index() {
-    Image::configure(['driver' => 'imagick']);
-    $img = Image::make('/img/Penguins.jpg?1517909330');
     //$image->resize('/img/Penguins.jpg?1517909330', 60, 60, true);
     if ( $this->request->is('post') ) {
       $errors = $this->_update($this->request->data);
@@ -347,23 +343,35 @@ class MWidgetSettingsController extends AppController {
     if ( $this->MWidgetSetting->validates() ) {
       if ( !empty($uploadImage) ) {
         $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
-        $filename = $this->userInfo['MCompany']['company_key'].'_'.date('YmdHis').'.'.$extension;
+        $filename = $this->userInfo['MCompany']['company_key'] . '_' . date('YmdHis') . '.' . $extension;
         $tmpFile = $uploadImage['tmp_name'];
         // ファイルの保存先フルパス＋ファイル名
-        $saveFile = C_PATH_WIDGET_IMG_DIR.DS.$filename;
-        $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
-        $width = ImageSx($in); // 画像の幅を取得
-        $height = ImageSy($in); // 画像の高さを取得
-        $save_width = 248; // 幅の最低サイズ
-        $save_height = 280; // 高さの最低サイズ
-        $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
-        $out = ImageCreateTrueColor($save_width , $save_height);
-        //ブレンドモードを無効にする
-        imagealphablending($out, false);
-        //完全なアルファチャネル情報を保存するフラグをonにする
-        imagesavealpha($out, true);
-        ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
-        $this->imageOut($extension, $out, $saveFile);
+        $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
+        if (!empty($inputData['Trimming']['info'])) {
+          $trimmingInfo = json_decode($inputData['Trimming']['info'], TRUE);
+          $component = new ImageTrimmingComponent();
+          $component->setFileData($uploadImage);
+          $component->setSavePath($saveFile);
+          $component->setX($trimmingInfo['x']);
+          $component->setY($trimmingInfo['y']);
+          $component->setWidth($trimmingInfo['width']);
+          $component->setHeight($trimmingInfo['height']);
+          $component->save();
+        } else {
+          $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
+          $width = ImageSx($in); // 画像の幅を取得
+          $height = ImageSy($in); // 画像の高さを取得
+          $save_width = 248; // 幅の最低サイズ
+          $save_height = 280; // 高さの最低サイズ
+          $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
+          $out = ImageCreateTrueColor($save_width , $save_height);
+          //ブレンドモードを無効にする
+          imagealphablending($out, false);
+          //完全なアルファチャネル情報を保存するフラグをonにする
+          imagesavealpha($out, true);
+          ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
+          $this->imageOut($extension, $out, $saveFile);
+        }
         $inputData['MWidgetSetting']['main_custom_image'] = $filename;
       }
       // ウィジェットのスタイル設定周りをJSON化
