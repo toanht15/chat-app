@@ -120,7 +120,17 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
 
     // パラメーターを表示用に設定する
-    divElm.querySelector('li .sendFileThumbnailArea .sendFileThumbnail').src = fileObj.file_path;
+    var tmbImage =  divElm.querySelector('li .sendFileThumbnailArea img.sendFileThumbnail');
+    var tmbIcon =  divElm.querySelector('li .sendFileThumbnailArea i.sendFileThumbnail');
+    if ($scope.simulatorSettings.isImage(fileObj.extension)) {
+      tmbImage.src = fileObj.file_path;
+      tmbImage.style.display = "";
+      tmbIcon.style.display = "none";
+    } else {
+      tmbIcon.classList.add($scope.simulatorSettings.selectIconClassFromExtension(fileObj.extension));
+      tmbIcon.style.display = "";
+      tmbImage.style.display = "none";
+    }
     divElm.querySelector('li .sendFileMetaArea .sendFileName').innerHTML = fileObj.file_name;
     divElm.querySelector('li .sendFileMetaArea .sendFileSize').innerHTML = fileObj.file_size;
     divElm.addEventListener('click', function() {

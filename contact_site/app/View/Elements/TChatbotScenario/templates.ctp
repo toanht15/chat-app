@@ -257,8 +257,8 @@
         </li>
         <li ng-if="setItem.file != '' && setItem.file.name != ''" class="styleFlexbox">
           <div class="fb5em fileImage">
-            <img ng-if="main.isImage(setItem.file.extension)" ng-src="{{setItem.file.file_path}}" width="64" height="64">
-            <i ng-if="!main.isImage(setItem.file.extension)" ng-class="main.selectIconClassFromExtension(setItem.file.extension)" class="fa fa-4x" aria-hidden="true"></i>
+            <img ng-if="widget.isImage(setItem.file.extension)" ng-src="{{setItem.file.file_path}}" width="64" height="64">
+            <i ng-if="!widget.isImage(setItem.file.extension)" ng-class="widget.selectIconClassFromExtension(setItem.file.extension)" class="fa fa-4x" aria-hidden="true"></i>
           </div>
           <div class="fileDetail"><span>{{setItem.file.file_name}}</span><span>{{setItem.file.file_size}}</span></div>
         </li>
