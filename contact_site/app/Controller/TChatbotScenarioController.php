@@ -1548,11 +1548,12 @@ sinclo@medialink-ml.co.jp
       if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
         // ファイル送信
         if (!empty($action->tChatbotScenarioSendFileId)) {
-          // $fileData = $this->TChatbotScenarioSendFile->findById($action->tChatbotScenarioSendFileId);
+          $fileData = $this->TChatbotScenarioSendFile->findById($action->tChatbotScenarioSendFileId);
           $action->file = [
-            'file_path' => 'fileScenarioTransfer/5a57481f4a7f5-20180315204525.png', //$fileData['TChatbotScenarioSendFile']['file_path']
-            'file_name' => 'sweets_icecream_monaka.png', //$fileData['TChatbotScenarioSendFile']['file_name'];
-            'file_size' => $this->prettyByte2Str(394681) //$fileData['TChatbotScenarioSendFile']['file_size'];
+            'file_path' => $fileData['TChatbotScenarioSendFile']['file_path'],
+            'file_name' => $fileData['TChatbotScenarioSendFile']['file_name'],
+            'file_size' => $this->prettyByte2Str($fileData['TChatbotScenarioSendFile']['file_size']),
+            'extension' => $this->getExtension($fileData['TChatbotScenarioSendFile']['file_name'])
           ];
         }
       }
@@ -1567,16 +1568,13 @@ sinclo@medialink-ml.co.jp
    */
   private function _uploadFile($file) {
     $saveFileName = $this->getFilenameForSave($file);
-
-    // $filePath = $this->putFile($file, $saveFileName);
-    $key = $this->getSaveKey($saveFileName);
-    $this->log('key ...' . $key);
+    $filePath = $this->putFile($file, $saveFileName);
 
     return [
-      // 'file_path' => $filePath,
-      'file_path' => $key,
+      'file_path' => $filePath,
       'file_name' => $file['name'],
-      'file_size' => $this->prettyByte2Str($file['size'])
+      'file_size' => $this->prettyByte2Str($file['size']),
+      'extension' => $this->getExtension($file['name'])
     ];
   }
 
@@ -1592,6 +1590,7 @@ sinclo@medialink-ml.co.jp
     if ($pos !== FALSE) {
       $key = substr($filePath, $pos);
       $this->log($key);
+      $this->Amazon->removeObject($key);
     }
   }
 }

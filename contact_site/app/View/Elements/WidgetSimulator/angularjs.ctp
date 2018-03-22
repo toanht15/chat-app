@@ -120,11 +120,11 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
 
     // パラメーターを表示用に設定する
-    divElm.querySelector('li .sendFileThumbnailArea .sendFileThumbnail').src = fileObj.file_path; // TODO: downloadUrl に変更すること
+    divElm.querySelector('li .sendFileThumbnailArea .sendFileThumbnail').src = fileObj.file_path;
     divElm.querySelector('li .sendFileMetaArea .sendFileName').innerHTML = fileObj.file_name;
-    divElm.querySelector('li .sendFileMetaArea .sendFileSize').innerHTML = (fileObj.file_size / 1024).toFixed(2) + 'KB';
+    divElm.querySelector('li .sendFileMetaArea .sendFileSize').innerHTML = fileObj.file_size;
     divElm.addEventListener('click', function() {
-      window.open(fileObj.uploadUrl); // TODO: downloadUrl に変更すること
+      window.open(fileObj.uploadUrl);
     });
 
     // 要素を追加する
