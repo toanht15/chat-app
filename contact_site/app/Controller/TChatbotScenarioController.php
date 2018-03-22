@@ -171,6 +171,7 @@ sinclo@medialink-ml.co.jp
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $scenarioId = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
+    $targetDeleteFileIds = (isset($this->request->data['targetDeleteFileIds'])) ? json_decode($this->request->data['targetDeleteFileIds']) : [];
 
     // 呼び出し設定されている場合は削除しない
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
@@ -202,9 +203,14 @@ sinclo@medialink-ml.co.jp
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
           // ファイル送信
           if (!empty($action->tChatbotScenarioSendFileId)) {
-            $this->TChatbotScenarioSendFile->logicalDelete($action->tChatbotScenarioSendFileId);
+            $targetDeleteFileIds[] = $action->tChatbotScenarioSendFileId;
           }
         }
+      }
+
+      // ファイル送信設定を削除する
+      if (!empty($targetDeleteFileIds)) {
+        $this->_deleteInvalidSendFileData($targetDeleteFileIds);
       }
 
       $this->TransactionManager->commitTransaction($transactions);
@@ -227,12 +233,13 @@ sinclo@medialink-ml.co.jp
    * 削除(編集ページから実行)
    * */
   public function chkRemoteDelete(){
+    $this->log('=== TChatbotScenarioSendFile::chkRemoteDelete ===');
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
-    // 削除対象のシナリオIDの一覧
     $selectedList = $this->request->data['selectedList'];
+    $targetDeleteFileData = (isset($this->request->data['targetDeleteFileData'])) ? json_decode($this->request->data['targetDeleteFileData']) : [];
 
     // 呼び出し設定されているシナリオは削除対象から外す
     $targetList = [];
@@ -253,11 +260,12 @@ sinclo@medialink-ml.co.jp
       foreach ($targetList as $scenarioId) {
         if ($this->TChatbotScenario->logicalDelete($scenarioId)) {
           $deletedList[] = $scenarioId;
+          $targetDeleteFileIds = [];
           $res = true;
 
           // 関連するテーブルからレコードを削除する
           // (メール送信設定は物理削除・論理削除共に行わない)
-          $scenarioData = $this->TChatbotScenario->findById($action->$scenarioId);
+          $scenarioData = $this->TChatbotScenario->findById($scenarioId);
           $activity = json_decode($scenarioData['TChatbotScenario']['activity']);
           foreach ($activity->scenarios as $action) {
 
@@ -270,9 +278,19 @@ sinclo@medialink-ml.co.jp
             if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
               // ファイル送信
               if (!empty($action->tChatbotScenarioSendFileId)) {
-                $this->TChatbotScenarioSendFile->logicalDelete($action->tChatbotScenarioSendFileId);
+                $targetDeleteFileIds[] = $action->tChatbotScenarioSendFileId;
               }
             }
+          }
+
+          // ファイル送信設定を削除
+          foreach ($targetDeleteFileData as $targetData) {
+            if ($scenarioId == $targetData->id) {
+              $targetDeleteFileIds = array_merge($targetDeleteFileIds, $targetData->targetDeleteFileIds);
+            }
+          }
+          if (!empty($targetDeleteFileIds)) {
+            $this->_deleteInvalidSendFileData($targetDeleteFileIds);
           }
         }
       }
@@ -705,7 +723,9 @@ sinclo@medialink-ml.co.jp
       }
 
       // 無効なファイル送信設定を削除する
-      $this->_deleteInvalidSendFileData($activity);
+      if (!empty($activity->targetDeleteFileIds)) {
+        $this->_deleteInvalidSendFileData($activity->targetDeleteFileIds, $activity->scenarios);
+      }
       unset($activity->targetDeleteFileIds);
     }
 
@@ -875,18 +895,15 @@ sinclo@medialink-ml.co.jp
 
   /**
    * ファイル送信設定の、画面上で削除された無効なデータを論理削除する
-   * @param  Object $activity シナリオ設定
+   * @param  Array $targetDeleteFileIds 削除対象のファイルID一覧
+   * @param  Array $scenarios           有効なシナリオ設定
    * @return Void
    */
-  private function _deleteInvalidSendFileData($activity) {
+  private function _deleteInvalidSendFileData($targetDeleteFileIds, $scenarios = []) {
     $this->log('=== TChatbotScenarioController::_deleteInvalidSendFileData ===');
-    if (empty($activity->targetDeleteFileIds)) {
-      return;
-    }
-
     // 有効なファイルIDを抽出する
     $validIds = [];
-    foreach ($activity->scenarios as $action) {
+    foreach ($scenarios as $action) {
       if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE ) {
         $validIds[] = $action->tChatbotScenarioSendFileId;
       }
@@ -894,7 +911,7 @@ sinclo@medialink-ml.co.jp
 
     // リストから、有効なファイルIDを除外する
     $targetIds = [];
-    foreach (array_unique($activity->targetDeleteFileIds) as $fileId) {
+    foreach (array_unique($targetDeleteFileIds) as $fileId) {
       if (!empty($fileId) && array_search($fileId, $validIds) === FALSE) {
         $targetIds[] = $fileId;
       };
@@ -909,7 +926,6 @@ sinclo@medialink-ml.co.jp
       ],
       'recursive' => -1
     ]);
-    $this->log($targetList);
     foreach ($targetList as $file) {
       $this->TChatbotScenarioSendFile->logicalDelete($file['TChatbotScenarioSendFile']['id']);
       $this->_removeFile($file['TChatbotScenarioSendFile']['file_path']);

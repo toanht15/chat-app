@@ -14,9 +14,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.setActionList = [];
   $scope.targetDeleteFileIds = [];
   var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
-  if (!setActivity) {
+  if (typeof setActivity  === "string") {
     var jsonData = JSON.parse(setActivity);
-    var setActionListTmp = (typeof(setActivity) === "string") ? jsonData.scenarios : {};
+    var setActionListTmp = jsonData.scenarios;
     for (var key in setActionListTmp) {
       if (setActionListTmp.hasOwnProperty(key)) {
         $scope.setActionList.push(setActionListTmp[key]);
@@ -111,8 +111,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの削除
   this.removeItem = function(setActionId) {
-    console.log($scope.setActionList[setActionId]);
+    var actionDetail = $scope.setActionList[setActionId];
+    if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' || actionDetail.tChatbotScenarioSendFileId !== null ) {
+      $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
+    }
+
     $scope.setActionList.splice(setActionId, 1);
+
+    // localStorageに一時保存を行う
+    localStorage.setItem($scope.storageKey, self.createJsonData(false));
   };
 
   // アクションの追加・削除を検知する
@@ -271,10 +278,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'シナリオ設定', 'moment');
     popupEvent.closePopup = function(){
+
+      // ファイルIDの削除リストを取得
+      $scope.setActionList.forEach(function(action) {
+        if (action.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+          $scope.targetDeleteFileIds.push(action.tChatbotScenarioSendFileId);
+        }
+      });
+
       $.ajax({
         type: 'post',
         data: {
-          id: document.getElementById('TChatbotScenarioId').value
+          id: document.getElementById('TChatbotScenarioId').value,
+          targetDeleteFileIds: JSON.stringify($scope.targetDeleteFileIds)
         },
         cache: false,
         url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
@@ -726,7 +742,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           $scope.setActionList.push(action);
         });
         // ファイルIDの削除リストを取得
-        $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
+        if (typeof jsonData.targetDeleteFileIds !== 'undefined' && jsonData.targetDeleteFileIds !== null) {
+          $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
+        }
 
         $scope.$apply();
       } else {
