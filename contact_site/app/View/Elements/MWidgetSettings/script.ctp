@@ -1444,4 +1444,17 @@ $("body").on('focus', '#sincloChatMessage', function(e){
 });
 /* [ #2243 ] IE緊急対応 */
 
+//モーダル画面
+function openTrimmingDialog(){
+  console.log('入ってるかチェック');
+  $.ajax({
+    type: 'post',
+    dataType: 'html',
+    cache: false,
+    url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
+    success: function(html){
+      modalOpen.call(window, html, 'p-widget-trimming', 'トリミング', 'moment');
+    }
+  });
+}
 </script>

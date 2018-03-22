@@ -1,5 +1,6 @@
 {
     "require": {
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpexcel": "^1.8",
+        "intervention/image": "2.3.*"
     }
 }
