@@ -9,13 +9,18 @@
  * @property MMailTransmissionSetting $MMailTransmissionSetting
  * @property MMailTemplate $MMailTemplate
  * @property TExternalApiConnection $TExternalApiConnection
- * @property TChatbotScenarioUploadFile $TChatbotScenarioUploadFile
+ * @property TChatbotScenarioSendFile $TChatbotScenarioSendFile
  */
 
+App::uses('FileAppController', 'Controller');
 App::uses('ChatbotScenarioException', 'Lib/Error');
 
-class TChatbotScenarioController extends AppController {
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioUploadFile'];
+class TChatbotScenarioController extends FileAppController {
+
+  // FileAppController
+  const FILE_TRANSFER_PREFIX = "fileScenarioTransfer/";
+
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -196,8 +201,8 @@ sinclo@medialink-ml.co.jp
         } else
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
           // ファイル送信
-          if (!empty($action->tChatbotScenarioUploadFileId)) {
-            $this->tChatbotScenarioUploadFile->logicalDelete($action->tChatbotScenarioUploadFileId);
+          if (!empty($action->tChatbotScenarioSendFileId)) {
+            $this->TChatbotScenarioSendFile->logicalDelete($action->tChatbotScenarioSendFileId);
           }
         }
       }
@@ -264,8 +269,8 @@ sinclo@medialink-ml.co.jp
             } else
             if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
               // ファイル送信
-              if (!empty($action->tChatbotScenarioUploadFileId)) {
-                $this->tChatbotScenarioUploadFile->logicalDelete($action->tChatbotScenarioUploadFileId);
+              if (!empty($action->tChatbotScenarioSendFileId)) {
+                $this->TChatbotScenarioSendFile->logicalDelete($action->tChatbotScenarioSendFileId);
               }
             }
           }
@@ -353,13 +358,13 @@ sinclo@medialink-ml.co.jp
         } else
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
           // ファイル送信設定のコピー
-          $uploadFileData = $this->TChatbotScenarioUploadFile->findById($action->tChatbotScenarioUploadFileId);
+          $uploadFileData = $this->TChatbotScenarioSendFile->findById($action->tChatbotScenarioSendFileId);
           if (!empty($uploadFileData)) {
-            $this->TChatbotScenarioUploadFile->create();
-            $uploadFileData['TChatbotScenarioUploadFile']['id'] = null;
-            $this->TChatbotScenarioUploadFile->set($uploadFileData);
-            $result = $this->TChatbotScenarioUploadFile->save();
-            $action->tChatbotScenarioUploadFileId = $this->TChatbotScenarioUploadFile->getLastInsertId();
+            $this->TChatbotScenarioSendFile->create();
+            $uploadFileData['TChatbotScenarioSendFile']['id'] = null;
+            $this->TChatbotScenarioSendFile->set($uploadFileData);
+            $result = $this->TChatbotScenarioSendFile->save();
+            $action->tChatbotScenarioSendFileId = $this->TChatbotScenarioSendFile->getLastInsertId();
 
             // TODO: S3データの複製
           }
@@ -486,11 +491,7 @@ sinclo@medialink-ml.co.jp
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-
-    // post, ajax以外の通信は弾く
-    if (!$this->request->is('post') || !$this->request->is('ajax')) {
-      return false;
-    }
+    $this->validatePostMethod();
 
     try {
       $id = (isset($this->request->data['id'])) ? $this->request->data['id']: '';
@@ -510,6 +511,47 @@ sinclo@medialink-ml.co.jp
         return false;
       }
     } catch (Exception $e) {
+      return false;
+    }
+  }
+
+  /**
+   * ファイルアップロード(アクション：ファイル送信)
+   */
+  public function remoteUploadFile() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+
+    $this->validatePostMethod();
+    $saveData = $this->params['form'];
+
+    try {
+      // S3へファイルアップロード
+      $saveData['file'] = $this->_uploadFile($saveData['file']);
+
+      $this->TChatbotScenarioSendFile->begin();
+
+      // ファイル情報は常にINSERTする(シナリオ保存・削除時に不要なファイル情報を削除する)
+      $this->TChatbotScenarioSendFile->create();
+      $this->TChatbotScenarioSendFile->set($saveData['file']);
+
+      $this->TChatbotScenarioSendFile->validates();
+      $errors = $this->TChatbotScenarioSendFile->validationErrors;
+      if (!empty($errors)) {
+        throw new ChatbotScenarioException('バリデーションエラー');
+      }
+
+      $this->TChatbotScenarioSendFile->save();
+      $saveData['tChatbotScenarioSendFileId'] = $this->TChatbotScenarioSendFile->getLastInsertId();
+
+      $this->TChatbotScenarioSendFile->commit();
+
+      return json_encode([
+        'success' => true,
+        'save_data' => $saveData,
+      ]);
+    } catch (Exception $e) {
+      $this->TChatbotScenarioSendFile->rollback();
       return false;
     }
   }
@@ -833,25 +875,25 @@ sinclo@medialink-ml.co.jp
    * @return Object           t_chatbot_scenarioに保存するアクション詳細
    */
   private function _entryProcessForUploadFile($saveData) {
-    if (empty($saveData->tChatbotScenarioUploadFileId)) {
-      $this->TChatbotScenarioUploadFile->create();
+    if (empty($saveData->tChatbotScenarioSendFileId)) {
+      $this->TChatbotScenarioSendFile->create();
     } else {
-      $this->TChatbotScenarioUploadFile->read(null, $saveData->tChatbotScenarioUploadFileId);
+      $this->TChatbotScenarioSendFile->read(null, $saveData->tChatbotScenarioSendFileId);
     }
-    $this->TChatbotScenarioUploadFile->set([
+    $this->TChatbotScenarioSendFile->set([
       'm_companies_id' => $this->userInfo['MCompany']['id'],
       'file_path' => $saveData->file->file_path,
       'file_name' => $saveData->file->file_name,
       'file_size' => $saveData->file->file_size
     ]);
 
-    $validate = $this->TChatbotScenarioUploadFile->validates();
-    $errors = $this->TChatbotScenarioUploadFile->validationErrors;
+    $validate = $this->TChatbotScenarioSendFile->validates();
+    $errors = $this->TChatbotScenarioSendFile->validationErrors;
 
     if(empty($errors)){
-      $this->TChatbotScenarioUploadFile->save();
-      if(empty($saveData->TChatbotScenarioUploadFile)) {
-        $saveData->tChatbotScenarioUploadFileId = $this->TChatbotScenarioUploadFile->getLastInsertId();
+      $this->TChatbotScenarioSendFile->save();
+      if(empty($saveData->TChatbotScenarioSendFile)) {
+        $saveData->tChatbotScenarioSendFileId = $this->TChatbotScenarioSendFile->getLastInsertId();
       }
     } else {
       $exception = new ChatbotScenarioException('バリデーションエラー');
@@ -1480,16 +1522,35 @@ sinclo@medialink-ml.co.jp
       } else
       if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
         // ファイル送信
-        if (!empty($action->tChatbotScenarioUploadFileId)) {
-          // $fileData = $this->TChatbotScenarioUploadFile->findById($action->tChatbotScenarioUploadFileId);
+        if (!empty($action->tChatbotScenarioSendFileId)) {
+          // $fileData = $this->TChatbotScenarioSendFile->findById($action->tChatbotScenarioSendFileId);
           $action->file = [
-            'file_path' => 'fileScenarioTransfer/5a57481f4a7f5-20180315204525.png', //$fileData['TChatbotScenarioUploadFile']['file_path']
-            'file_name' => 'sweets_icecream_monaka.png', //$fileData['TChatbotScenarioUploadFile']['file_name'];
-            'file_size' => $this->prettyByte2Str(394681) //$fileData['TChatbotScenarioUploadFile']['file_size'];
+            'file_path' => 'fileScenarioTransfer/5a57481f4a7f5-20180315204525.png', //$fileData['TChatbotScenarioSendFile']['file_path']
+            'file_name' => 'sweets_icecream_monaka.png', //$fileData['TChatbotScenarioSendFile']['file_name'];
+            'file_size' => $this->prettyByte2Str(394681) //$fileData['TChatbotScenarioSendFile']['file_size'];
           ];
         }
       }
     }
     $json = json_encode($activity);
+  }
+
+  /**
+   * ファイルアップロード
+   * @return String ファイル情報
+   */
+  private function _uploadFile($file) {
+    $saveFileName = $this->getFilenameForSave($file);
+
+    // $filePath = $this->putFile($file, $saveFileName);
+    $key = $this->getSaveKey($saveFileName);
+    $this->log('key ...' . $key);
+
+    return [
+      // 'file_path' => $filePath,
+      'file_path' => $key,
+      'file_name' => $file['name'],
+      'file_size' => $this->prettyByte2Str($file['size'])
+    ];
   }
 }
