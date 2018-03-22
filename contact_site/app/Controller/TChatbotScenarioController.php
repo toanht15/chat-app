@@ -17,9 +17,6 @@ App::uses('ChatbotScenarioException', 'Lib/Error');
 
 class TChatbotScenarioController extends FileAppController {
 
-  // FileAppController
-  const FILE_TRANSFER_PREFIX = "fileScenarioTransfer/";
-
   public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile'];
   public $paginate = [
     'TChatbotScenario' => [
@@ -88,6 +85,9 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
     $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
     $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
+
+    // FileAppController
+    $this->fileTransferPrefix = "fileScenarioTransfer/";
   }
 
   /**
@@ -700,9 +700,13 @@ sinclo@medialink-ml.co.jp
         } else
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
           // ファイル送信
-          $action = $this->_entryProcessForUploadFile($action);
+          unset($action->file);
         }
       }
+
+      // 無効なファイル送信設定を削除する
+      $this->_deleteInvalidSendFileData($activity);
+      unset($activity->targetDeleteFileIds);
     }
 
     $saveData['TChatbotScenario']['activity'] = json_encode($activity);
@@ -870,41 +874,46 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * ファイル送信の保存機能（トランザクションはこのメソッドの先祖で管理している）
-   * @param  Object $saveData アクション詳細
-   * @return Object           t_chatbot_scenarioに保存するアクション詳細
+   * ファイル送信設定の、画面上で削除された無効なデータを論理削除する
+   * @param  Object $activity シナリオ設定
+   * @return Void
    */
-  private function _entryProcessForUploadFile($saveData) {
-    if (empty($saveData->tChatbotScenarioSendFileId)) {
-      $this->TChatbotScenarioSendFile->create();
-    } else {
-      $this->TChatbotScenarioSendFile->read(null, $saveData->tChatbotScenarioSendFileId);
+  private function _deleteInvalidSendFileData($activity) {
+    $this->log('=== TChatbotScenarioController::_deleteInvalidSendFileData ===');
+    if (empty($activity->targetDeleteFileIds)) {
+      return;
     }
-    $this->TChatbotScenarioSendFile->set([
-      'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'file_path' => $saveData->file->file_path,
-      'file_name' => $saveData->file->file_name,
-      'file_size' => $saveData->file->file_size
-    ]);
 
-    $validate = $this->TChatbotScenarioSendFile->validates();
-    $errors = $this->TChatbotScenarioSendFile->validationErrors;
-
-    if(empty($errors)){
-      $this->TChatbotScenarioSendFile->save();
-      if(empty($saveData->TChatbotScenarioSendFile)) {
-        $saveData->tChatbotScenarioSendFileId = $this->TChatbotScenarioSendFile->getLastInsertId();
+    // 有効なファイルIDを抽出する
+    $validIds = [];
+    foreach ($activity->scenarios as $action) {
+      if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE ) {
+        $validIds[] = $action->tChatbotScenarioSendFileId;
       }
-    } else {
-      $exception = new ChatbotScenarioException('バリデーションエラー');
-      $exception->setErrors($errors);
-      $exception->setLastPage($nextPage);
-      throw $exception;
     }
 
-    // 保存済みの設定をオブジェクトから削除する
-    unset($saveData->file);
-    return $saveData;
+    // リストから、有効なファイルIDを除外する
+    $targetIds = [];
+    foreach (array_unique($activity->targetDeleteFileIds) as $fileId) {
+      if (!empty($fileId) && array_search($fileId, $validIds) === FALSE) {
+        $targetIds[] = $fileId;
+      };
+    }
+
+    // 無効なファイル情報を削除する
+    $targetList = $this->TChatbotScenarioSendFile->find('all', [
+      'fields' => ['id', 'file_path'],
+      'conditions' => [
+        'TChatbotScenarioSendFile.id' => $targetIds,
+        'TChatbotScenarioSendFile.del_flg' => 0
+      ],
+      'recursive' => -1
+    ]);
+    $this->log($targetList);
+    foreach ($targetList as $file) {
+      $this->TChatbotScenarioSendFile->logicalDelete($file['TChatbotScenarioSendFile']['id']);
+      $this->_removeFile($file['TChatbotScenarioSendFile']['file_path']);
+    }
   }
 
   /**
@@ -1537,7 +1546,8 @@ sinclo@medialink-ml.co.jp
 
   /**
    * ファイルアップロード
-   * @return String ファイル情報
+   * @param  Object ファイル情報
+   * @return Object アップロードしたファイル情報
    */
   private function _uploadFile($file) {
     $saveFileName = $this->getFilenameForSave($file);
@@ -1552,5 +1562,20 @@ sinclo@medialink-ml.co.jp
       'file_name' => $file['name'],
       'file_size' => $this->prettyByte2Str($file['size'])
     ];
+  }
+
+  /**
+   * ファイル削除
+   * @param  String $file ファイルパス
+   * @return [type]       [description]
+   */
+  private function _removeFile($filePath) {
+    $this->log('=== TChatbotScenario::_removeFile ===');
+    $this->log($filePath);
+    $pos = strpos($filePath, $this->fileTransferPrefix);
+    if ($pos !== FALSE) {
+      $key = substr($filePath, $pos);
+      $this->log($key);
+    }
   }
 }

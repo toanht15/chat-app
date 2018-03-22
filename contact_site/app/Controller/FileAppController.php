@@ -12,14 +12,15 @@ class FileAppController extends AppController
   const ENCRYPT_PARAM_DELIMITER = "@@";
   const EXPIRE_SEC = 3600; // ここを変更する場合はS3のライフサイクル設定も見直すこと。
 
-  // デフォルト設定
   const PARAM_FILE = "file";
   const PARAM_TARGET_USER_ID = "targetUserId";
   const PARAM_PARAM = "param";
-  const FILE_TRANSFER_PREFIX = "fileTransfer/";
 
   public $uses = ['TUploadTransferFile'];
   public $components = ['Amazon'];
+
+  // デフォルト設定
+  protected $fileTransferPrefix = 'fileTransfer/';
 
   public function beforeFilter() {
     parent::beforeFilter();
@@ -45,12 +46,21 @@ class FileAppController extends AppController
   }
 
   /**
+   * S3のファイル削除
+   * @param  String $file 保存先パス + ファイル名
+   * @return Void
+   */
+  protected function removeFile($file) {
+    return $this->Amazon->removeObject($file);
+  }
+
+  /**
    * S3保存時の相対パス取得
    * @param  String $saveFileName 保存ファイル名
    * @return String               ファイル名を含む相対パス
    */
   protected function getSaveKey($saveFileName) {
-    return self::FILE_TRANSFER_PREFIX.$saveFileName;
+    return $this->fileTransferPrefix.$saveFileName;
   }
 
   protected function getFileByFileId($fileId) {

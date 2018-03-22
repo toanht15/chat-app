@@ -9,15 +9,23 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   $scope.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.changeFlg = false;
-  $scope.targetDeleteFileIds = [];
 
   // アクション設定の取得・初期化
-  var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
-  var setActionListTmp = (typeof(setActivity) === "string") ? JSON.parse(setActivity).scenarios : {};
   $scope.setActionList = [];
-  for (var key in setActionListTmp) {
-    if (setActionListTmp.hasOwnProperty(key)) {
-      $scope.setActionList.push(setActionListTmp[key]);
+  $scope.targetDeleteFileIds = [];
+  var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
+  if (!setActivity) {
+    var jsonData = JSON.parse(setActivity);
+    var setActionListTmp = (typeof(setActivity) === "string") ? jsonData.scenarios : {};
+    for (var key in setActionListTmp) {
+      if (setActionListTmp.hasOwnProperty(key)) {
+        $scope.setActionList.push(setActionListTmp[key]);
+      }
+    }
+
+    // 削除対象のファイルID一覧の取得
+    if (typeof jsonData.targetDeleteFileIds !== 'undefined' && jsonData.targetDeleteFileIds.length >= 1) {
+      $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
     }
   }
 
@@ -37,7 +45,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
-  // 一時保存データの読み込み
+  // 一時保存データのキー生成
   var scenarioId = document.getElementById('TChatbotScenarioId').value || 'tmp';
   $scope.storageKey = 'scenario_' + scenarioId;
 
@@ -103,6 +111,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの削除
   this.removeItem = function(setActionId) {
+    console.log($scope.setActionList[setActionId]);
     $scope.setActionList.splice(setActionId, 1);
   };
 
@@ -122,7 +131,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   });
 
-  // 各アクション内の変更を検知する
+  // 各アクション内の変更を検知し、プレビューのメッセージを表示更新する
   $scope.watchSetActionList = function(action, index) {
     // watchの破棄
     if (typeof $scope.watchActionList[index] !== 'undefined') {
@@ -221,7 +230,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
       }
       // アップロードしたファイル情報で更新する
-      actionDetail = Object.assign(actionDetail, data.save_data);
+      actionDetail = angular.merge(actionDetail, data.save_data);
 
       // localStorageに一時保存を行う
       localStorage.setItem($scope.storageKey, self.createJsonData(false));
@@ -485,7 +494,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param Object  action  アクションの詳細
    */
   this.trimDataSendFile = function(action) {
-    if (typeof action.file === 'undefined' ||
+    if (typeof action.tChatbotScenarioSendFileId === 'undefined' || action.tChatbotScenarioSendFileId === null ||
+      typeof action.file === 'undefined' || action.file === null ||
       typeof action.file.file_path === 'undefined' || action.file.file_path === '' ||
       typeof action.file.file_name === 'undefined' || action.file.file_name === '' ||
       typeof action.file.file_size === 'undefined' || action.file.file_size === ''
@@ -734,6 +744,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         } else {
           localStorage.removeItem($scope.storageKey);
         }
+      }
+    } else {
+      // ファイルIDの削除リストが存在する場合、現在のシナリオ設定で一時保存データを上書きする
+      if ($scope.targetDeleteFileIds.length >= 1) {
+        localStorage.setItem($scope.storageKey, self.createJsonData(false));
       }
     }
 
@@ -1340,7 +1355,8 @@ function validateAction(element, setActionList, actionItem) {
     }
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
-    if (typeof actionItem.file === 'undefined' ||
+    if ( typeof actionItem.tChatbotScenarioSendFileId === 'undefined' || actionItem.tChatbotScenarioSendFileId === null ||
+      typeof actionItem.file === 'undefined' || actionItem.file === null ||
       typeof actionItem.file.file_path === 'undefined' || actionItem.file.file_path === '' ||
       typeof actionItem.file.file_name === 'undefined' || actionItem.file.file_name === '' ||
       typeof actionItem.file.file_size === 'undefined' || actionItem.file.file_size === ''

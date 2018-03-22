@@ -9,16 +9,12 @@ App::uses('FileAppController', 'Controller');
 
 class FileController extends FileAppController
 {
-
-  // FileAppController
-  const PARAM_FILE = "file";
-  const PARAM_TARGET_USER_ID = "targetUserId";
-  const PARAM_PARAM = "param";
-  const FILE_TRANSFER_PREFIX = "fileTransfer/";
-
   public function beforeFilter() {
     parent::beforeFilter();
     $this->Auth->allow('download');
+
+    // FileAppController
+    $this->fileTransferPrefix = "fileTransfer/";
   }
 
   public function upload() {
