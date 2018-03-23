@@ -150,6 +150,7 @@ define('C_MATCH_INPUT_RULE_TEL', '/[\d+-]/'); // 電話番号入力（半角英�
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
 define('C_MESSAGE_TYPE_ERROR', 2); // 処理失敗
 define('C_MESSAGE_TYPE_ALERT', 3); // 処理失敗
+define('C_MESSAGE_OUT_OF_TERM_TRIAL', 4); // トライアル期間終了
 // define('C_MESSAGE_TYPE_NOTICE', 3); // 通知（未実装）
 
 // ユーザー権限（リストあり：$config['Authority']）
