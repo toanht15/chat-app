@@ -11,7 +11,20 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'MChatSetting', 'TAutoMessages', 'TDictionaries', 'TDictionaryCategory', 'MMailTemplate', 'TransactionManager'];
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const API_CALL_TIMEOUT = 5;
+  const COMPANY_NAME = "##COMPANY_NAME##";
+  const USER_NAME = "##USER_NAME##";
+  const PASSWORD = "##PASSWORD##";
+  const BUSINESS_MODEL = "##BUSINESS_MODEL##";
+  const DEPARTMENT = "##DEPARTMENT##";
+  const POSITION = "##POSITION##";
+  const MAIL_ADDRESS = "##MAIL_ADDRESS##";
+  const PHONE_NUMBER = "##PHONE_NUMBER##";
+  const URL = "##URL##";
+  const OTHER = "##OTHER##";
+  public $components = ['MailSender', 'Auth'];
+  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'MChatSetting', 'TAutoMessages', 'TDictionaries', 'TDictionaryCategory', 'MMailTemplate', 'TransactionManager','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate'];
 
   public $paginate = [
     'MCompany' => [
@@ -79,6 +92,8 @@ class ContractController extends AppController
       $this->autoRender = false;
       $this->layout = "ajax";
       $data = $this->getParams();
+      $password = $this->generateRandomPassword(8);
+      $data['Contract']['user_password'] = $password;
 
       try {
         $addedCompanyInfo = $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
@@ -212,6 +227,10 @@ class ContractController extends AppController
           'message' => $e->getMessage()
         ], JSON_UNESCAPED_UNICODE);
       }
+    }
+    else {
+      $businessModel = Configure::read('businessModelType');
+      $this->set('businessModel',$businessModel);
     }
   }
 
@@ -514,6 +533,8 @@ class ContractController extends AppController
   }
 
   private function createFirstAdministratorUser($m_companies_id, $userInfo) {
+    $userInfo["user_name"] = 'テストユーザー';
+    $userInfo["user_display_name"] = 'テストユーザー';
     $errors = [];
     $tmpData = [
         "m_companies_id" => $m_companies_id,
