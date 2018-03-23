@@ -72,7 +72,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 並び替え後、変数のチェックを行う
       var elms = event.target.querySelectorAll('li.set_action_item');
       $scope.setActionList.forEach(function(actionItem, index) {
-        validateAction(elms[index], $scope.setActionList, actionItem);
+        actionValidationCheck(elms[index], $scope.setActionList, actionItem);
       });
     }
   };
@@ -395,6 +395,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
+   * ファイル送信設定の設定状態確認
+   * @param  Object  $action アクション詳細
+   * @return Boolean
+   */
+  this.isFileSet = function(action) {
+    return !!action.tChatbotScenarioSendFileId && !!action.file && !!action.file.download_url && !!action.file.file_size;
+  }
+
+  /**
    * ファイル選択ダイアログの起動
    */
   this.selectFile = function($event) {
@@ -628,12 +637,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param Object  action  アクションの詳細
    */
   this.trimDataSendFile = function(action) {
-    if (typeof action.tChatbotScenarioSendFileId === 'undefined' || action.tChatbotScenarioSendFileId === null ||
-      typeof action.file === 'undefined' || action.file === null ||
-      typeof action.file.file_path === 'undefined' || action.file.file_path === '' ||
-      typeof action.file.file_name === 'undefined' || action.file.file_name === '' ||
-      typeof action.file.file_size === 'undefined' || action.file.file_size === ''
-    ) {
+    if (!self.isFileSet(action)) {
       return null;
     }
     return action;
@@ -1165,7 +1169,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var elm = angular.element(element[0]);
 
       scope.$watch(attrs.ngModel, function(actionItem) {
-        validateAction(elm[0], scope.$parent.setActionList, actionItem);
+        actionValidationCheck(elm[0], scope.$parent.setActionList, actionItem);
       }, true);
     }
   };
@@ -1283,7 +1287,7 @@ $(document).ready(function() {
 });
 
 // アクションのバリデーションとエラーメッセージの設定
-function validateAction(element, setActionList, actionItem) {
+function actionValidationCheck(element, setActionList, actionItem) {
   var messageList = [];
 
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
@@ -1374,12 +1378,7 @@ function validateAction(element, setActionList, actionItem) {
     }
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
-    if ( typeof actionItem.tChatbotScenarioSendFileId === 'undefined' || actionItem.tChatbotScenarioSendFileId === null ||
-      typeof actionItem.file === 'undefined' || actionItem.file === null ||
-      typeof actionItem.file.file_path === 'undefined' || actionItem.file.file_path === '' ||
-      typeof actionItem.file.file_name === 'undefined' || actionItem.file.file_name === '' ||
-      typeof actionItem.file.file_size === 'undefined' || actionItem.file.file_size === ''
-    ) {
+    if (!actionItem.tChatbotScenarioSendFileId && !actionItem.file && !actionItem.file.download_url && !actionItem.file.file_size) {
       messageList.push('ファイルが未選択です');
     }
   }

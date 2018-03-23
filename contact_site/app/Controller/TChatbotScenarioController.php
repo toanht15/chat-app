@@ -559,10 +559,20 @@ sinclo@medialink-ml.co.jp
         throw new ChatbotScenarioException('バリデーションエラー');
       }
 
+      // ダウンロードURLの生成と送信ファイル設定の保存
       $this->TChatbotScenarioSendFile->save();
-      $saveData['tChatbotScenarioSendFileId'] = $this->TChatbotScenarioSendFile->getLastInsertId();
-
+      $lastInsertedId = $this->TChatbotScenarioSendFile->getLastInsertId();
+      $created = $this->TChatbotScenarioSendFile->field('created');
+      $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId);
+      $this->TChatbotScenarioSendFile->set([
+        'download_url' => $downloadUrl
+      ]);
+      $this->TChatbotScenarioSendFile->save();
       $this->TChatbotScenarioSendFile->commit();
+
+      $saveData['tChatbotScenarioSendFileId'] = $lastInsertedId;
+      $saveData['file']['download_url'] = $downloadUrl;
+      unset($saveData['file']['file_path']);
 
       return json_encode([
         'success' => true,
@@ -1550,7 +1560,7 @@ sinclo@medialink-ml.co.jp
         if (!empty($action->tChatbotScenarioSendFileId)) {
           $fileData = $this->TChatbotScenarioSendFile->findById($action->tChatbotScenarioSendFileId);
           $action->file = [
-            'file_path' => $fileData['TChatbotScenarioSendFile']['file_path'],
+            'download_url' => $fileData['TChatbotScenarioSendFile']['download_url'],
             'file_name' => $fileData['TChatbotScenarioSendFile']['file_name'],
             'file_size' => $this->prettyByte2Str($fileData['TChatbotScenarioSendFile']['file_size']),
             'extension' => $this->getExtension($fileData['TChatbotScenarioSendFile']['file_name'])

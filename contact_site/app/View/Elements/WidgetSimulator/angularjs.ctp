@@ -123,7 +123,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     var tmbImage =  divElm.querySelector('li .sendFileThumbnailArea img.sendFileThumbnail');
     var tmbIcon =  divElm.querySelector('li .sendFileThumbnailArea i.sendFileThumbnail');
     if ($scope.simulatorSettings.isImage(fileObj.extension)) {
-      tmbImage.src = fileObj.file_path;
+      tmbImage.src = fileObj.download_url;
       tmbImage.style.display = "";
       tmbIcon.style.display = "none";
     } else {
@@ -134,7 +134,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     divElm.querySelector('li .sendFileMetaArea .sendFileName').innerHTML = fileObj.file_name;
     divElm.querySelector('li .sendFileMetaArea .sendFileSize').innerHTML = fileObj.file_size;
     divElm.addEventListener('click', function() {
-      window.open(fileObj.uploadUrl);
+      window.open(fileObj.download_url);
     });
 
     // 要素を追加する

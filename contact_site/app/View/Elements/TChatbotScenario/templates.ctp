@@ -252,12 +252,12 @@
     <li class="styleFlexbox">
       <span class="fb9em"><label>送信ファイル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信させたいファイルを設定します。">?</icon></span></label></span>
       <ul class="selectFileArea">
-        <li ng-if="setItem.file == '' || setItem.file.name == ''">
+        <li ng-if="!main.isFileSet(setItem)">
           <span>ファイルが選択されていません</span>
         </li>
-        <li ng-if="setItem.file != '' && setItem.file.name != ''" class="styleFlexbox">
+        <li ng-if="main.isFileSet(setItem)" class="styleFlexbox">
           <div class="fb5em fileImage">
-            <img ng-if="widget.isImage(setItem.file.extension)" ng-src="{{setItem.file.file_path}}" width="64" height="64">
+            <img ng-if="widget.isImage(setItem.file.extension)" ng-src="{{setItem.file.download_url}}" width="64" height="64">
             <i ng-if="!widget.isImage(setItem.file.extension)" ng-class="widget.selectIconClassFromExtension(setItem.file.extension)" class="fa fa-4x" aria-hidden="true"></i>
           </div>
           <div class="fileDetail"><span>{{setItem.file.file_name}}</span><span>{{setItem.file.file_size}}</span></div>

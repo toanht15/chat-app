@@ -143,7 +143,7 @@ class FileAppController extends AppController
     return (time() - strtotime($created)) >= self::EXPIRE_SEC;
   }
 
-  private function createDownloadUrl($created, $fileId) {
+  protected function createDownloadUrl($created, $fileId) {
     return C_NODE_SERVER_ADDR.'/File/download?param='.$this->encryptParameterForDownload($created, $fileId);
   }
 
