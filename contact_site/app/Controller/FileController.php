@@ -62,4 +62,14 @@ class FileController extends FileAppController
       echo $str;
     }
   }
+
+  private function getFileByFileId($fileId) {
+    $data = $this->TUploadTransferFile->findById($fileId);
+    $file = $this->getFile($this->getSaveKey($data['TUploadTransferFile']['saved_file_key']));
+
+    return array(
+      'fileObj' => $file,
+      'record' => $data['TUploadTransferFile']
+    );
+  }
 }

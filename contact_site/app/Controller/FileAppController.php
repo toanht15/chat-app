@@ -1,6 +1,6 @@
 <?php
 /**
- * FileController controller.
+ * FileAppController controller.
  * S3のファイル管理用コントローラー
  * @property TUploadTransferFile $TUploadTransferFile
  */
@@ -27,7 +27,7 @@ class FileAppController extends AppController
   }
 
   /**
-   * S3保存時のファイル名の生成
+   * 保存時のファイル名の生成
    * @param  Object $file ファイルオブジェクト
    * @return String       ファイル名
    */
@@ -36,7 +36,7 @@ class FileAppController extends AppController
   }
 
   /**
-   * S3へのファイルアップロード
+   * ファイルアップロード
    * @param  Object $file         ファイルオブジェクト
    * @param  String $saveFileName ファイル名
    * @return String               保存先URL
@@ -46,7 +46,7 @@ class FileAppController extends AppController
   }
 
   /**
-   * S3のファイル削除
+   * ファイル削除
    * @param  String $file 保存先パス + ファイル名
    * @return Void
    */
@@ -55,20 +55,15 @@ class FileAppController extends AppController
   }
 
   /**
-   * S3保存時の相対パス取得
-   * @param  String $saveFileName 保存ファイル名
-   * @return String               ファイル名を含む相対パス
+   * ファイル取得
+   * @param  String $key 保存先パス + ファイル名
+   * @return Object      ファイル情報
    */
-  protected function getSaveKey($saveFileName) {
-    return $this->fileTransferPrefix.$saveFileName;
-  }
-
-  protected function getFileByFileId($fileId) {
+  protected function getFile($key) {
     try {
-      $data = $this->TUploadTransferFile->findById($fileId);
-      $file = $this->Amazon->getObject($this->getSaveKey($data['TUploadTransferFile']['saved_file_key']));
+      $file = $this->Amazon->getObject($key);
       if(empty($file)) {
-        $this->log('Aws::getObject時のデータが空です。 fileId : '.$fileId, LOG_WARNING);
+        $this->log('Aws::getObject時のデータが空です。 file : '.$key, LOG_WARNING);
         throw new NotFoundException('ファイルが存在しません。');
       }
     } catch (\Aws\S3\Exception\S3Exception $e) {
@@ -84,11 +79,18 @@ class FileAppController extends AppController
       throw new NotFoundException('ファイルが存在しません。');
     }
 
-    return array(
-      'fileObj' => $file,
-      'record' => $data['TUploadTransferFile']
-    );
+    return $file;
   }
+
+  /**
+   * S3保存時の相対パス取得
+   * @param  String $saveFileName 保存ファイル名
+   * @return String               ファイル名を含む相対パス
+   */
+  protected function getSaveKey($saveFileName) {
+    return $this->fileTransferPrefix.$saveFileName;
+  }
+
 
   protected function updateDownloadDataById($fileId) {
     $this->TUploadTransferFile->read(null, $fileId);
