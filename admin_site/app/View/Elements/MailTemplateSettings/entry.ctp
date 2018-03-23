@@ -73,6 +73,12 @@
         ##MAIL_ADDRESS##：　メールアドレス<br>
         ##PASSWORD##：　パスワード
       </span>
+    <?php } else { ?>
+      <span id = "variable" style = "font-weight:normal;display:none;">
+        ##MAIL_ADDRESS##：　メールアドレス<br>
+        ##PASSWORD##：　パスワード
+      </span>
     <?php } ?>
+
   </div>
 </li>
