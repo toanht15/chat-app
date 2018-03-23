@@ -76,6 +76,15 @@ define('C_AFTER_PASSWORD_CHANGE', 2); // 初期パスワード変更時
 define('C_AFTER_DAYS', 3); // 無料トライアル登録後何日後
 define('C_BEFORE_DAYS', 4); // 無料トライアル終了何日前
 
+//メール種別
+define('C_AFTER_FREE_APPLICATION_TO_CUSTOMER', 1); // 無料トライアル登録時 お客さん向けメール
+define('C_AFTER_FREE_APPLICATION_TO_COMPANY', 2); // 無料トライアル登録時 会社向けメール
+define('C_AFTER_FREE_PASSWORD_CHANGE_TO_COMPANY', 3); // 無料トライアル登録後初期パスワード変更 会社向けメール
+define('C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER', 4); // 無料トライアル登録後初期パスワード変更 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_CUSTOMER', 5); // いきなり契約登録時 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_COMPANY', 6); // いきなり契約登録時 会社向けメール
+define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // いきなり契約登録後初期パスワード変更 お客さん向けメール
+
 //メール設定 MLにもメール送信するか
 define('C_SEND_MAIL_ML', 0); // 送信する
 define('C_NOT_SEND_MAIL_ML', 1); // 送信しない

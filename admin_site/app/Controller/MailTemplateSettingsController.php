@@ -17,6 +17,7 @@ class MailTemplateSettingsController extends AppController
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
     header('Access-Control-Allow-Origin: *');
+    $this->Auth->allow(['index','add','edit','deleteMailInfo']);
   }
 
   /**
@@ -28,7 +29,8 @@ class MailTemplateSettingsController extends AppController
     $jobMailData = $this->MJobMailTemplate->find('all');
     $systemMailData = $this->MSystemMailTemplate->find('all',[
       'conditions' => [
-        'id' => array(1,4,5,7),
+        'id' => array(C_AFTER_FREE_APPLICATION_TO_CUSTOMER,C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER
+          ,C_AFTER_APPLICATION_TO_CUSTOMER,C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER),
       ]
     ]);
     $this->set('jobMailData', $jobMailData);
@@ -332,22 +334,22 @@ class MailTemplateSettingsController extends AppController
       else if($when == C_AFTER_APPLICATION || $when == C_AFTER_PASSWORD_CHANGE) {
         $editData = $this->MSystemMailTemplate->read(null, $id);
         $this->set('id', $editData['MSystemMailTemplate']['id']);//削除に必要なもの
-        if($id == 1) {
+        if($id == C_AFTER_FREE_APPLICATION_TO_CUSTOMER) {
           //無料トライアル登録後
           $this->set('value',C_AFTER_APPLICATION);
           $this->set('agreementFlg',C_FREE_TRIAL_AGREEMENT);
         }
-        if($id == 4) {
+        if($id == C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER) {
           //初期パスワード変更後(無料トライアル登録後)
           $this->set('value',C_AFTER_PASSWORD_CHANGE);
           $this->set('agreementFlg',C_FREE_TRIAL_AGREEMENT);
         }
-        if($id == 5) {
+        if($id == C_AFTER_APPLICATION_TO_CUSTOMER) {
           //本契約登録後
           $this->set('value',C_AFTER_APPLICATION);
           $this->set('agreementFlg',C_AGREEMENT);
         }
-        if($id == 7) {
+        if($id == C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER) {
           //初期パスワード変更後(本契約登録後)
           $this->set('value',C_AFTER_PASSWORD_CHANGE);
           $this->set('agreementFlg',C_AGREEMENT);
