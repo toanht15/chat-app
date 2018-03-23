@@ -6,7 +6,7 @@
  * Time: 12:09
  */
 
-App::uses('AppController', 'Controller','Component');
+App::uses('AppController', 'Controller');
 App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 App::uses('MailSenderComponent', 'Controller/Component');
@@ -68,7 +68,7 @@ class ContractController extends AppController
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['index','add','remoteSaveForm']);
+    $this->Auth->allow(['add','remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
