@@ -162,7 +162,7 @@ class LoginController extends AppController {
           $companyData = $companyData[0];
           $mailTemplateData = $this->MSystemMailTemplate->find('all');
 
-          $mailType = "";
+          $mailType = "false";
           //無料トライアルの場合
           if($data['MCompany']['trial_flg'] == 1) {
             foreach($mailTemplateData as $key => $mailTemplate) {
@@ -180,7 +180,7 @@ class LoginController extends AppController {
             }
           }
 
-          if(!empty($mailType)) {
+          if($mailType !== 'false') {
 
             $mailBodyData = str_replace(self::COMPANY_NAME, $companyData['MCompany']['company_name'], $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
             if(!empty($agreementData['MAgreement']['application_name'])) {
