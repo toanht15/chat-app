@@ -11,7 +11,7 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class MailTemplateSettingsController extends AppController
 {
-  public $uses = ['MCompany', 'MJobMailTemplate','MAgreements', 'MUser', 'MMailTemplate', 'TransactionManager'];
+  public $uses = ['MCompany', 'MJobMailTemplate','MAgreements', 'MUser', 'MMailTemplate', 'TransactionManager','MSystemMailTemplate'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -43,8 +43,6 @@ class MailTemplateSettingsController extends AppController
       $this->autoRender = false;
       $this->layout = "ajax";
       $data = $this->getParams();
-      $this->log('data',LOG_DEBUG);
-      $this->log($data,LOG_DEBUG);
 
       try {
         $this->processTransaction($data);
@@ -114,6 +112,7 @@ class MailTemplateSettingsController extends AppController
 
   private function createMailInfo($mailInfo) {
     $errors = [];
+    $mailInfo = $mailInfo['MJobMailTemplate'];
     $tmpData = [
         "mail_type_cd" => $mailInfo["mail_type_cd"],
         "subject" => $mailInfo["subject"],
@@ -212,7 +211,7 @@ class MailTemplateSettingsController extends AppController
    * @param id
    * @return void
    * */
-  public function edit($id)
+  public function edit($id,$when,$exam)
   {
     if ($this->request->is('post') || $this->request->is('put')) {
       $saveData = $this->request->data;
@@ -371,6 +370,7 @@ class MailTemplateSettingsController extends AppController
 
       $transaction = $this->TransactionManager->begin();
       $id = $this->request->data['id'];
+      $when = $this->request->data['when'];
 
       try {
         //何日後,何日前

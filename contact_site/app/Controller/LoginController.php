@@ -157,8 +157,6 @@ class LoginController extends AppController {
           $companyData = $companyData[0];
           $mailTemplateData = $this->MSystemMailTemplate->find('all');
 
-          $this->log('agreementData',LOG_DEBUG);
-          $this->log($agreementData,LOG_DEBUG);
           $mailType = "";
           if($companyData['MCompany']['trial_flg'] == 1) {
             $mailType = 3;
