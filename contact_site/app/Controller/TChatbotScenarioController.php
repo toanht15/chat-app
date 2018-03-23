@@ -4,15 +4,18 @@
  * シナリオ設定
  * @property TransactionManager $TransactionManager
  * @property TChatbotScenario $TChatbotScenario
+ * @property TAutoMessage $TAutoMessage
  * @property MWidgetSetting $MWidgetSetting
  * @property MMailTransmissionSetting $MMailTransmissionSetting
  * @property MMailTemplate $MMailTemplate
+ * @property TExternalApiConnection $TExternalApiConnection
+ * @property TChatbotScenarioUploadFile $TChatbotScenarioUploadFile
  */
 
 App::uses('ChatbotScenarioException', 'Lib/Error');
 
 class TChatbotScenarioController extends AppController {
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioUploadFile'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -42,12 +45,44 @@ class TChatbotScenarioController extends AppController {
     'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
   ];
 
+  const SCENARIO_VARIABLES_TEMPLATE = "※このメールはお客様の設定によりsincloから自動送信されました。
+
+ご担当者様
+
+sincloのシナリオ設定によりメールを送信致しました。
+以下のメッセージ内容をご確認下さい。
+
+##SCENARIO_VARIABLES_BLOCK##
+
+------------------------------------------------------------------
+このメールにお心当たりのない方は、誠に恐れ入りますが
+下記連絡先までご連絡ください。
+sinclo@medialink-ml.co.jp
+------------------------------------------------------------------";
+
+  const SCENARIO_ALL_MESSAGE_TEMPLATE = "※このメールはお客様の設定によりsincloから自動送信されました。
+
+ご担当者様
+
+sincloのシナリオ設定によりメールを送信致しました。
+以下のメッセージ内容をご確認下さい。
+
+##SCENARIO_ALL_MESSAGE_BLOCK##
+
+------------------------------------------------------------------
+このメールにお心当たりのない方は、誠に恐れ入りますが
+下記連絡先までご連絡ください。
+sinclo@medialink-ml.co.jp
+------------------------------------------------------------------";
+
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'シナリオ設定');
     $this->chatbotScenarioActionList = Configure::read('chatbotScenarioActionList');
     $this->chatbotScenarioInputType = Configure::read('chatbotScenarioInputType');
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
+    $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
+    $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
   }
 
   /**
@@ -58,20 +93,10 @@ class TChatbotScenarioController extends AppController {
     $this->paginate['TChatbotScenario']['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TChatbotScenario');
 
-    // 呼び出し元であるオートメッセージ情報を取得する
+    // 呼び出し元情報を取得する
+    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
     foreach($data as &$item) {
-      $autoMessage = $this->TAutoMessage->coFind('list', [
-        'fileds' => ['id', 'name'],
-        'order' => [
-          'TAutoMessage.sort' => 'asc',
-          'TAutoMessage.id' => 'asc'
-        ],
-        'conditions' => [
-          'TAutoMessage.del_flg != ' => 1,
-          'TAutoMessage.t_chatbot_scenario_id' => $item['TChatbotScenario']['id']
-        ]
-      ]);
-      $item['TAutoMessage'] = $autoMessage;
+      $item['callerInfo'] = $this->_getScenarioCallerInfo($item['TChatbotScenario']['id'], $scenarioList);
     }
 
     $this->set('settingList', $data);
@@ -87,6 +112,8 @@ class TChatbotScenarioController extends AppController {
       $this->_entry($this->request->data);
     }
 
+    // シナリオ設定の一覧を取得する
+    $this->request->data['scenarioList'] = $this->_getScenarioList();
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->_viewElement();
@@ -97,6 +124,9 @@ class TChatbotScenarioController extends AppController {
    * @return void
    * */
   public function edit($id=null) {
+    // プレビュー・シミュレーター表示用ウィジェット設定の取得
+    $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
+
     if ( $this->request->is('put') ) {
       $this->_entry($this->request->data);
     }
@@ -113,40 +143,18 @@ class TChatbotScenarioController extends AppController {
         $this->redirect('/TChatbotScenario/index');
       }
 
-      $activity = json_decode($editData[0]['TChatbotScenario']['activity']);
-      foreach ($activity->scenarios as $key => &$action) {
-        if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
-          // メール送信設定の取得
-          if (!empty($action->mMailTransmissionId)) {
-            $mailTransmissionData = $this->MMailTransmissionSetting->findById($action->mMailTransmissionId);
-            $action->toAddress = explode(',', $mailTransmissionData['MMailTransmissionSetting']['to_address']);
-            $action->subject = $mailTransmissionData['MMailTransmissionSetting']['subject'];
-            $action->fromName = $mailTransmissionData['MMailTransmissionSetting']['from_name'];
-          }
-          // メールテンプレートの取得
-          if (!empty($action->mMailTemplateId)) {
-            $mailTemplateData = $this->MMailTemplate->findById($action->mMailTemplateId);
-            if ($action->mailType == C_SCENARIO_MAIL_TYPE_CUSTOMIZE) {
-              $action->template = $mailTemplateData['MMailTemplate']['template'];
-            }
-          }
-        }
-      }
-      $editData[0]['TChatbotScenario']['activity'] = json_encode($activity);
+      // アクションごとに必要な設定を追加する
+      $this->_setActivityDetailSettings($editData[0]['TChatbotScenario']['activity']);
+
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
     }
 
-    // 呼び出し元であるオートメッセージ情報を取得する
-    $autoMessage = $this->TAutoMessage->coFind('list', [
-      'conditions' => [
-        'TAutoMessage.del_flg != ' => 1,
-        'TAutoMessage.t_chatbot_scenario_id' => $id
-      ]
-    ]);
-    $this->request->data['TAutoMessage'] = $autoMessage;
+    // 呼び出し元情報を取得する
+    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $this->request->data['callerInfo'] = $this->_getScenarioCallerInfo($id, $scenarioList);
+    // シナリオ設定の一覧を取得する
+    $this->request->data['scenarioList'] = $this->_getScenarioList($id);
 
-    // プレビュー・シミュレーター表示用ウィジェット設定の取得
-    $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->_viewElement();
   }
 
@@ -195,33 +203,37 @@ class TChatbotScenarioController extends AppController {
     $selectedList = $this->request->data['selectedList'];
     $this->TChatbotScenario->begin();
     $res = false;
-    foreach($selectedList as $key => $val){
-      $id = (isset($val)) ? $val: "";
-      // オートメッセージで設定済みのシナリオは削除対象から外す
-      $ret = $this->TChatbotScenario->find('first', [
-          'fields' => 'TChatbotScenario.*',
-          'conditions' => [
-              'TChatbotScenario.del_flg' => 0,
-              'TChatbotScenario.id' => $id,
-              'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id'],
-              'TAutoMessage.t_chatbot_scenario_id' => NULL
-          ],
-          'joins' => [[
-            'type' => 'LEFT OUTER',
+
+    // オートメッセージで連携済みのシナリオは削除対象から外す
+    $linkedList = $this->TChatbotScenario->find('list', [
+        'fields' => 'TChatbotScenario.id',
+        'conditions' => [
+            'TChatbotScenario.del_flg' => 0,
+            'TChatbotScenario.id' => $selectedList,
+            'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'joins' => [
+          [
+            'type' => 'INNER',
             'table' => 't_auto_messages',
             'alias' => 'TAutoMessage',
             'conditions' => [
               'TChatbotScenario.id = TAutoMessage.t_chatbot_scenario_id'
             ]
-          ]],
-          'recursive' => -1
-      ]);
-      if ( count($ret) === 1 ) {
-        if ($this->TChatbotScenario->logicalDelete($val) ) {
-          $res = true;
-        }
+          ]
+        ],
+        'recursive' => -1
+    ]);
+    $targetList = array_diff($selectedList, $linkedList);
+
+    $deletedList = [];
+    foreach ($targetList as $id) {
+      if ($this->TChatbotScenario->logicalDelete($id)) {
+        $deletedList[] = $id;
+        $res = true;
       }
     }
+
     if($res){
       $this->TChatbotScenario->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
@@ -230,6 +242,9 @@ class TChatbotScenarioController extends AppController {
       $this->TChatbotScenario->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
+
+    // 実際に削除したシナリオIDを返す
+    echo json_encode($deletedList);
   }
 
   /* *
@@ -251,35 +266,6 @@ class TChatbotScenarioController extends AppController {
     foreach($copyData as $value){
       $this->TChatbotScenario->create();
       $saveData = [];
-      $params = [
-        'fields' => [
-          'TChatbotScenario.sort'
-        ],
-        'conditions' => [
-          'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-        ],
-        'order' => [
-          'TChatbotScenario.sort' => 'desc',
-          'TChatbotScenario.id' => 'desc'
-        ],
-        'recursive' => -1
-      ];
-      $lastData = $this->TChatbotScenario->find('first', $params);
-      if($lastData['TChatbotScenario']['sort'] === '0'
-        || $lastData['TChatbotScenario']['sort'] === 0
-        || $lastData['TChatbotScenario']['sort'] === null){
-        // ソート順が登録されていなかったらソート順をセットする
-        if(! $this->remoteSetSort()){
-          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-          return false;
-        }
-        // もう一度ソートの最大値を取り直す
-        $lastData = $this->TChatbotScenario->find('first', $params);
-      }
-      $nextSort = 1;
-      if (!empty($lastData)) {
-        $nextSort = intval($lastData['TChatbotScenario']['sort']) + 1;
-      }
 
       // シナリオ設定の詳細
       $activity = json_decode($value['TChatbotScenario']['activity']);
@@ -307,14 +293,14 @@ class TChatbotScenarioController extends AppController {
         }
       }
 
-      $saveData['TChatbotScenario']['sort'] = $nextSort;
-      $saveData['TChatbotScenario']['m_companies_id'] = $value['TChatbotScenario']['m_companies_id'];
-      $saveData['TChatbotScenario']['name'] = $value['TChatbotScenario']['name'].'コピー';
-      $saveData['TChatbotScenario']['activity'] = json_encode($activity);
-      $saveData['TChatbotScenario']['del_flg'] = $value['TChatbotScenario']['del_flg'];
-      $this->TChatbotScenario->set($saveData);
-
       try {
+        $saveData['TChatbotScenario']['sort'] = $this->_getNextSort();
+        $saveData['TChatbotScenario']['m_companies_id'] = $value['TChatbotScenario']['m_companies_id'];
+        $saveData['TChatbotScenario']['name'] = $value['TChatbotScenario']['name'].'コピー';
+        $saveData['TChatbotScenario']['activity'] = json_encode($activity);
+        $saveData['TChatbotScenario']['del_flg'] = $value['TChatbotScenario']['del_flg'];
+        $this->TChatbotScenario->set($saveData);
+
         // バリデーションチェックでエラーが出た場合
         if (!$this->TChatbotScenario->validates()) {
           $res = false;
@@ -369,7 +355,7 @@ class TChatbotScenarioController extends AppController {
       }
       if($reset_flg){
         // ソート順が登録されていなかったらソート順をセットする
-        if(! $this->remoteSetSort()){
+        if(! $this->_remoteSetSort()){
           $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
           return false;
         }
@@ -420,71 +406,116 @@ class TChatbotScenarioController extends AppController {
     }
    }
 
+  /**
+   * 呼び出し先のシナリオ詳細の取得(アクション：シナリオ呼び出し)
+   */
+  public function remoteGetActionDetail() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+
+    // post, ajax以外の通信は弾く
+    if (!$this->request->is('post') || !$this->request->is('ajax')) {
+      return false;
+    }
+
+    try {
+      $id = (isset($this->request->data['id'])) ? $this->request->data['id']: '';
+      $ret = $this->TChatbotScenario->find('first', [
+        'fields' => ['id', 'activity'],
+        'conditions' => [
+          'TChatbotScenario.id' => $id,
+          'TChatbotScenario.del_flg' => 0,
+          'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+        ]
+      ]);
+
+      if (count($ret) === 1) {
+        $this->_setActivityDetailSettings($ret['TChatbotScenario']['activity']);
+        return json_encode($ret);
+      } else {
+        return false;
+      }
+    } catch (Exception $e) {
+      return false;
+    }
+  }
+
+  /**
+   * これまでのシナリオ設定を元に、登録可能なsort順を算出する
+   * @return Integer sort順
+   */
+  private function _getNextSort() {
+    try {
+      $nextSort = 1;
+      $params = [
+        'fields' => [
+          'TChatbotScenario.sort'
+        ],
+        'conditions' => [
+          'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'order' => [
+          'TChatbotScenario.sort' => 'desc',
+          'TChatbotScenario.id' => 'desc'
+        ],
+        'limit' => 1,
+        'recursive' => -1
+      ];
+
+      // ソートの最大値を取り出す
+      $lastData = $this->TChatbotScenario->find('first', $params);
+
+      // ソート順が取得できなかった場合、該当するシナリオ全体をソートし直す
+      if (empty($lastData['TChatbotScenario']['sort'])) {
+        if (!$this->_remoteSetSort()) {
+          throw new Exception();
+        }
+        $lastData = $this->TChatbotScenario->find('first', $params);
+      }
+
+      if (!empty($lastData)) {
+        $nextSort = intval($lastData['TChatbotScenario']['sort']) + 1;
+      }
+      return $nextSort;
+    } catch(Exception $e) {
+      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+      throw $e;
+    }
+  }
+
    /**
    * シナリオ設定ソート順を現在のID順でセット
-   *
    * */
-   public function remoteSetSort(){
-     $this->TChatbotScenario->begin();
-     /* 現在の並び順を取得 */
-     $this->paginate['TChatbotScenario']['conditions']['TChatbotScenario.m_companies_id'] = $this->userInfo['MCompany']['id'];
-     $params = [
-         'fields' => [
-             'TChatbotScenario.sort'
-         ],
-         'conditions' => [
-             'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-         ],
-         'order' => [
-             'TChatbotScenario.sort' => 'asc',
-             'TChatbotScenario.id' => 'asc'
-         ],
-         'limit' => 1,
-         'recursive' => -1
-     ];
-     $params['fields'] = [
-         'TChatbotScenario.id',
-         'TChatbotScenario.sort'
-     ];
-     unset($params['limit']);
-     $prevSort = $this->TChatbotScenario->find('list', $params);
-     // ソート順のリセットはID順とする
-     $i = 1;
-     foreach($prevSort as $key => $val){
-       $prevSort[$key] = strval($i);
-       $i++;
-     }
-     $prevSortKeys = am($prevSort);
-     $this->log($prevSortKeys,LOG_DEBUG);
-     $i = 0;
-     $ret = true;
-     foreach($prevSort as $key => $val){
-       $id = $key;
-       $saveData = [
-           'TChatbotScenario' => [
-               'id' => $id,
-               'sort' => $prevSortKeys[$i]
-           ]
-       ];
-       if (!$this->TChatbotScenario->validates()) {
-         $ret = false;
-         break;
-       }
-       if (!$this->TChatbotScenario->save($saveData)) {
-         $ret = false;
-         break;
-       }
-       $i++;
-     }
-     if ($ret) {
-       $this->TChatbotScenario->commit();
-       return true;
-     }
-     else {
-       $this->TChatbotScenario->rollback();
-       return false;
-     }
-   }
+  private function _remoteSetSort(){
+    try {
+      // 現在の並び順を取得
+      $scenarioList = $this->TChatbotScenario->find('all', [
+        'fields' => [
+          'TChatbotScenario.id',
+          'TChatbotScenario.sort'
+        ],
+        'conditions' => [
+          'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'order' => [
+          'TChatbotScenario.sort' => 'asc',
+          'TChatbotScenario.id' => 'asc'
+        ],
+        'recursive' => -1
+      ]);
+
+      // sort順を振り直す
+      $count = 1;
+      foreach($scenarioList as &$value){
+        $value['TChatbotScenario']['sort'] = $count++;
+      }
+
+      return $this->TChatbotScenario->saveAll($scenarioList);
+    } catch(Exeption $e) {
+      throw $e;
+    }
+  }
 
   /**
    * 保存機能
@@ -530,57 +561,31 @@ class TChatbotScenarioController extends AppController {
     if ( empty($saveData['TChatbotScenario']['id']) ) {
       //新規追加
       $this->TChatbotScenario->create();
-
       // 設定するsort順を算出する
-      $params = [
-          'fields' => [
-              'TChatbotScenario.sort'
-          ],
-          'conditions' => [
-              'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-             // 'TChatbotScenario.del_flg != ' => 1
-          ],
-          'order' => [
-              'TChatbotScenario.sort' => 'desc',
-              'TChatbotScenario.id' => 'desc'
-          ],
-          'limit' => 1,
-          'recursive' => -1
-      ];
-      $lastData = $this->TChatbotScenario->find('first', $params);
-      if($lastData){
-        if($lastData['TChatbotScenario']['sort'] === '0'
-            || $lastData['TChatbotScenario']['sort'] === 0
-            || $lastData['TChatbotScenario']['sort'] === null){
-          //ソート順が登録されていなかったらソート順をセットする
-          if(! $this->remoteSetSort()){
-            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-            throw new ChatbotScenarioException('ソート順が設定できませんでした。');
-          }
-          //もう一度ソートの最大値を取り直す
-          $lastData = $this->TChatbotScenario->find('first', $params);
-        }
-      }
-      $nextSort = 1;
-      if (!empty($lastData)) {
-        $nextSort = intval($lastData['TChatbotScenario']['sort']) + 1;
-      }
-      $saveData['TChatbotScenario']['sort'] = $nextSort;
+      $saveData['TChatbotScenario']['sort'] = $this->_getNextSort();
     }
-
-    $this->TChatbotScenario->set($saveData);
-
-    $validate = $this->TChatbotScenario->validates();
-    $errors = $this->TChatbotScenario->validationErrors;
 
     // その他のチェック
     if ( !empty($saveData['TChatbotScenario']) ) {
       $activity = json_decode($saveData['TChatbotScenario']['activity']);
 
-      foreach($activity->scenarios as $key => &$action) {
+      foreach($activity->scenarios as &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の保存と、IDの取得
-          $action = $this->_entryProcessForMessage($action);
+          $action = $this->_entryProcessForSendMail($action);
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
+          // シナリオ呼び出し設定
+          $action->tChatbotScenarioId = $action->scenarioId;
+          unset($action->scenarioId);
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+          // 外部システム連携
+          $action = $this->_entryProcessForExternalApi($action);
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+          // ファイル送信
+          $action = $this->_entryProcessForUploadFile($action);
         }
       }
     }
@@ -612,12 +617,11 @@ class TChatbotScenarioController extends AppController {
   }
 
   /**
-   * メール送信設定の保存機能
-   * トランザクションはこのメソッドの先祖で管理している。（TransactionManager）
-   * @param array $saveData
-   * @return {Void}
+   * メール送信設定の保存機能（トランザクションはこのメソッドの先祖で管理している）
+   * @param Object $saveData アクション詳細
+   * @return Object          t_chatbot_scenarioに保存するアクション詳細
    * */
-  private function _entryProcessForMessage($saveData) {
+  private function _entryProcessForSendMail($saveData) {
     // 送信先メールアドレス情報の値を、保存可能な形式に変換する
     $toAddresses = '';
     if(count($saveData->toAddress)) {
@@ -665,36 +669,10 @@ class TChatbotScenarioController extends AppController {
     } else
     if ($saveData->mailType == C_SCENARIO_MAIL_TYPE_VARIABLES) {
       // 変数の値のみメールする
-      $template = "※このメールはお客様の設定によりsincloから自動送信されました。
-
-ご担当者様
-
-sincloのシナリオ設定によりメールを送信致しました。
-以下のメッセージ内容をご確認下さい。
-
-##SCENARIO_VARIABLES_BLOCK##
-
-------------------------------------------------------------------
-このメールにお心当たりのない方は、誠に恐れ入りますが
-下記連絡先までご連絡ください。
-sinclo@medialink-ml.co.jp
-------------------------------------------------------------------";
+      $template = self::SCENARIO_VARIABLES_TEMPLATE;
     } else {
       // メール内容をすべてメールする
-      $template = "※このメールはお客様の設定によりsincloから自動送信されました。
-
-ご担当者様
-
-sincloのシナリオ設定によりメールを送信致しました。
-以下のメッセージ内容をご確認下さい。
-
-##SCENARIO_ALL_MESSAGE_BLOCK##
-
-------------------------------------------------------------------
-このメールにお心当たりのない方は、誠に恐れ入りますが
-下記連絡先までご連絡ください。
-sinclo@medialink-ml.co.jp
-------------------------------------------------------------------";
+      $template = self::SCENARIO_ALL_MESSAGE_TEMPLATE;
     }
 
     // メールテンプレート設定の保存
@@ -732,6 +710,89 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
+   * 外部システム連携の保存機能（トランザクションはこのメソッドの先祖で管理している）
+   * @param  Object $saveData アクション詳細
+   * @return Object           t_chatbot_scenarioに保存するアクション詳細
+   */
+  private function _entryProcessForExternalApi($saveData) {
+    if (empty($saveData->tExternalApiConnectionId)) {
+      $this->TExternalApiConnection->create();
+    } else {
+      $this->TExternalApiConnection->read(null, $saveData->tExternalApiConnectionId);
+    }
+    $this->TExternalApiConnection->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'url' => $saveData->url,
+      'method_type' => $saveData->methodType,
+      'request_headers' => json_encode($saveData->requestHeaders),
+      'request_body' => $saveData->requestBody,
+      'responseType' => $saveData->responseType,
+      'response_body_maps' => json_encode($saveData->responseBodyMaps)
+    ]);
+
+    $validate = $this->TExternalApiConnection->validates();
+    $errors = $this->TExternalApiConnection->validationErrors;
+    if(empty($errors)){
+      $this->TExternalApiConnection->save();
+      if(empty($saveData->tExternalApiConnectionId)) {
+        $saveData->tExternalApiConnectionId = $this->TExternalApiConnection->getLastInsertId();
+      }
+    } else {
+      $exception = new ChatbotScenarioException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
+
+    // 保存済みの設定をオブジェクトから削除する
+    unset($saveData->url);
+    unset($saveData->methodType);
+    unset($saveData->requestHeaders);
+    unset($saveData->requestBody);
+    unset($saveData->responseType);
+    unset($saveData->responseBodyMaps);
+    return $saveData;
+  }
+
+  /**
+   * ファイル送信の保存機能（トランザクションはこのメソッドの先祖で管理している）
+   * @param  Object $saveData アクション詳細
+   * @return Object           t_chatbot_scenarioに保存するアクション詳細
+   */
+  private function _entryProcessForUploadFile($saveData) {
+    if (empty($saveData->tChatbotScenarioUploadFileId)) {
+      $this->TChatbotScenarioUploadFile->create();
+    } else {
+      $this->TChatbotScenarioUploadFile->read(null, $saveData->tChatbotScenarioUploadFileId);
+    }
+    $this->TChatbotScenarioUploadFile->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'file_path' => $saveData->file->file_path,
+      'file_name' => $saveData->file->file_name,
+      'file_size' => $saveData->file->file_size
+    ]);
+
+    $validate = $this->TChatbotScenarioUploadFile->validates();
+    $errors = $this->TChatbotScenarioUploadFile->validationErrors;
+
+    if(empty($errors)){
+      $this->TChatbotScenarioUploadFile->save();
+      if(empty($saveData->TChatbotScenarioUploadFile)) {
+        $saveData->tChatbotScenarioUploadFileId = $this->TChatbotScenarioUploadFile->getLastInsertId();
+      }
+    } else {
+      $exception = new ChatbotScenarioException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
+
+    // 保存済みの設定をオブジェクトから削除する
+    unset($saveData->file);
+    return $saveData;
+  }
+
+  /**
    * ビュー部品セット
    * @return void
    * */
@@ -742,6 +803,10 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioInputType', $this->chatbotScenarioInputType);
     // メール送信タイプ種別
     $this->set('chatbotScenarioSendMailType', $this->chatbotScenarioSendMailType);
+    // API通信メソッド種別
+    $this->set('chatbotScenarioApiMethodType', $this->chatbotScenarioApiMethodType);
+    // API通信レスポンス種別
+    $this->set('chatbotScenarioApiResponseType', $this->chatbotScenarioApiResponseType);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);
@@ -749,9 +814,7 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _getWidgetSettings
    * ウィジェット設定を取得し、シミュレーター表示用にパラメーターを設定する
-   *
    * @return $inputData['MWidgetSetting'] シミュレーター表示用にパラメーターを設定したもの
    */
   private function _getWidgetSettings() {
@@ -875,7 +938,6 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * _settingToObj
    * JSON形式で取得した値をオブジェクト形式に変換
    *
    * @param $jsonData JSON JSON形式のデータ
@@ -1208,5 +1270,153 @@ sinclo@medialink-ml.co.jp
       }
     }
     return $d;
+  }
+
+  /**
+   * 呼び出し元情報を取得する
+   * @param  Int    $id           シナリオID
+   * @param  Array  $scenarioList アクション「シナリオ呼び出し」を含むシナリオ一覧
+   * @return Array                呼び出し元情報
+   */
+  private function _getScenarioCallerInfo($id, $scenarioList) {
+    $callerInfo = [];
+
+    // 呼び出し元オートメッセージ情報を取得する
+    $callerInfo['TAutoMessage'] = $this->TAutoMessage->coFind('list', [
+      'fileds' => ['id', 'name'],
+      'order' => [
+        'TAutoMessage.sort' => 'asc',
+        'TAutoMessage.id' => 'asc'
+      ],
+      'conditions' => [
+        'TAutoMessage.del_flg != ' => 1,
+        'TAutoMessage.t_chatbot_scenario_id' => $id,
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]);
+
+    // 呼び出し元シナリオ情報を取得する
+    $matchScenarioNames = [];
+    $keyword = '"tChatbotScenarioId":"'. $id . '"';
+    foreach ($scenarioList as $scenario) {
+      if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
+        $matchScenarioNames[] = $scenario['TChatbotScenario']['name'];
+      }
+    }
+    $callerInfo['TChatbotScenario'] = $matchScenarioNames;
+
+    return $callerInfo;
+  }
+
+  /**
+   * 指定されたアクションタイプのシナリオ一覧を返す
+   * @param Integer $actionType アクションタイプ
+   * @return Array              シナリオ一覧
+   */
+  private function _findScenarioByActionType($actionType) {
+    $scenarioList = $this->TChatbotScenario->coFind('all', [
+      'fileds' => ['id', 'name'],
+      'order' => [
+        'TChatbotScenario.sort' => 'asc',
+        'TChatbotScenario.id' => 'asc'
+      ],
+      'conditions' => [
+        'TChatbotScenario.del_flg != ' => 1,
+        'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
+      ],
+      'recursive' => -1
+    ]);
+
+    // 指定されたアクションタイプのシナリオのみを抽出する
+    $filteredScenarioList = [];
+    $keyword = '"actionType":"'. $actionType . '"';
+    foreach ($scenarioList as $scenario) {
+      if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
+        $filteredScenarioList[] = $scenario;
+      }
+    }
+
+    return $filteredScenarioList;
+  }
+
+  /**
+   * アクション「シナリオ呼び出し」に表示する、idとnameの一覧を返す
+   * @param  Integer $currentId 現在表示中のシナリオID（結果のリストから除外する）
+   * @return Array              シナリオ一覧
+   */
+  private function _getScenarioList($currentId=null) {
+    return $this->TChatbotScenario->coFind('all', [
+      'fields' => ['TChatbotScenario.id', 'TChatbotScenario.name'],
+      'order' => [
+        'TChatbotScenario.sort' => 'asc',
+        'TChatbotScenario.id' => 'asc'
+      ],
+      'conditions' => [
+        'TChatbotScenario.id !=' => $currentId,
+        'TChatbotScenario.del_flg != ' => 1
+      ]
+    ]);
+  }
+
+  /**
+   * アクションごとに必要な設定を追加する
+   * @param Object $json activity
+   */
+  private function _setActivityDetailSettings(&$json) {
+    $activity = json_decode($json);
+    foreach ($activity->scenarios as $key => &$action) {
+      if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
+        foreach ($action->hearings as $key => &$param) {
+          // 自由入力エリアの改行設定の初期化(機能追加前に保存された設定は、改行可とする)
+          $param->inputLFType = empty($param->inputLFType) ? C_SCENARIO_INPUT_LF_TYPE_ALLOW : $param->inputLFType;
+        }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
+        // メール送信設定の取得
+        if (!empty($action->mMailTransmissionId)) {
+          $mailTransmissionData = $this->MMailTransmissionSetting->findById($action->mMailTransmissionId);
+          $action->toAddress = explode(',', $mailTransmissionData['MMailTransmissionSetting']['to_address']);
+          $action->subject = $mailTransmissionData['MMailTransmissionSetting']['subject'];
+          $action->fromName = $mailTransmissionData['MMailTransmissionSetting']['from_name'];
+        }
+        // メールテンプレートの取得
+        if (!empty($action->mMailTemplateId)) {
+          $mailTemplateData = $this->MMailTemplate->findById($action->mMailTemplateId);
+          if ($action->mailType == C_SCENARIO_MAIL_TYPE_CUSTOMIZE) {
+            $action->template = $mailTemplateData['MMailTemplate']['template'];
+          }
+        }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
+        // シナリオ呼び出し設定
+        if (!empty($action->tChatbotScenarioId)) {
+          $action->scenarioId = $action->tChatbotScenarioId;
+        }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+        // 外部システム連携設定
+        if (!empty($action->tExternalApiConnectionId)) {
+          $externalApiData = $this->TExternalApiConnection->findById($action->tExternalApiConnectionId);
+          $action->url = $externalApiData['TExternalApiConnection']['url'];
+          $action->methodType = $externalApiData['TExternalApiConnection']['method_type'];
+          $action->requestHeaders = json_decode($externalApiData['TExternalApiConnection']['request_headers']);
+          $action->requestBody = $externalApiData['TExternalApiConnection']['request_body'];
+          $action->responseType = $externalApiData['TExternalApiConnection']['response_type'];
+          $action->responseBodyMaps = json_decode($externalApiData['TExternalApiConnection']['response_body_maps']);
+        }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+        // ファイル送信
+        if (!empty($action->tChatbotScenarioUploadFileId)) {
+          // $fileData = $this->TChatbotScenarioUploadFile->findById($action->tChatbotScenarioUploadFileId);
+          $action->file = [
+            'file_path' => 'fileScenarioTransfer/5a57481f4a7f5-20180315204525.png', //$fileData['TChatbotScenarioUploadFile']['file_path']
+            'file_name' => 'sweets_icecream_monaka.png', //$fileData['TChatbotScenarioUploadFile']['file_name'];
+            'file_size' => $this->prettyByte2Str(394681) //$fileData['TChatbotScenarioUploadFile']['file_size'];
+          ];
+        }
+      }
+    }
+    $json = json_encode($activity);
   }
 }

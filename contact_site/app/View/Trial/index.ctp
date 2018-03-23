@@ -220,9 +220,37 @@
       url: "<?= $this->Html->url('/Trial/add') ?>",
       data: $('#ContractAddForm').serialize()
     }).done(function(data){
-      socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}),function(){
-        location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
-      });
+      console.log('data');
+      console.log(data);
+      if(data.trim() == '既に登録されているアドレスです。') {
+        loading.load.finish();
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('registered').style.display = "block";
+        document.getElementById("registered").innerHTML="既に登録されているアドレスです。";
+      }
+      else if(data.trim() == 'フリーアドレスのご利用はできません。') {
+        loading.load.finish();
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('registered').style.display = "block";
+        document.getElementById("registered").innerHTML = "フリーアドレスのご利用はできません。";
+      }
+      else if(data.trim() == '携帯電話のメールアドレスのご利用はできません。') {
+        loading.load.finish();
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('registered').style.display = "block";
+        document.getElementById("registered").innerHTML = "携帯電話のメールアドレスのご利用はできません。";
+      }
+      else {
+        socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}),function(){
+          location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
+        });
+      }
     }).fail(function(data){
       loading.load.finish(); // ローディング終了
       var obj = JSON.parse(data.responseText);

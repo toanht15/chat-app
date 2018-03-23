@@ -119,6 +119,13 @@ CakeLog::config('apiLog', array(
     'size' => '10MB',
     'rotate' => 10,
 ));
+CakeLog::config('externalApiLog', array(
+  'engine' => 'File',
+  'types' => array('external-api-request', 'external-api-response', 'external-api-error'),
+  'file' => 'externalApiLog',
+  'size' => '10MB',
+  'rotate' => 10,
+));
 
 CakeLog::config('batchLog', array(
   'engine' => 'File',

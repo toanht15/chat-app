@@ -4,6 +4,7 @@ var router = express.Router();
 var database = require('../database');
 var api = require('../api');
 var uuid = require('node-uuid');
+var request = require('request');
 
 // mysql
 var mysql = require('mysql'),
@@ -1976,11 +1977,16 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
-  socket.on('getCustomerList', function(data){
+  socket.on('getCustomerList', function(data, ack){
     var obj = JSON.parse(data);
     if(isset(obj.siteKey)) {
       emit.toMine('beginOfCustomerList', {}, socket);
       processReceiveAccessInfo(obj.siteKey, socket);
+    }
+    if(ack) {
+      ack({
+        scInfo: ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {}
+      });
     }
   });
 
@@ -1988,41 +1994,68 @@ io.sockets.on('connection', function (socket) {
     var counter = 0;
     var totalCounter = 0;
     var chunkSize = 100;
-    var keyLength = Object.keys(customerList[siteKey]).length;
+    var keyLength = 0;
+    if(isset(customerList[siteKey])) {
+      keyLength = Object.keys(customerList[siteKey]).length;
+    }
     var arr = [keyLength];
-    Object.keys(customerList[siteKey]).forEach(function (key) {
-      var splitedKey = key.split("/#");
-      if (splitedKey.length === 2 && isset(splitedKey[1])) {
-        var targetSocketId = "/#" + splitedKey[1]
-        if (!io.sockets.connected[targetSocketId]) {
-          var targetTabId = customerList[siteKey][key].tabId;
-          console.log("【" + siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
-          if (targetTabId && targetTabId !== "") {
-            emit.toCompany('unsetUser', {siteKey: siteKey, tabId: targetTabId}, siteKey);
-          }
-          delete customerList[siteKey][key];
+    if(isset(customerList[siteKey])) {
+      Object.keys(customerList[siteKey]).forEach(function (key) {
+        var splitedKey = key.split("/#");
+        if (splitedKey.length === 2 && isset(splitedKey[1])) {
+          var targetSocketId = "/#" + splitedKey[1]
+          if (!io.sockets.connected[targetSocketId]) {
+            var targetTabId = customerList[siteKey][key].tabId;
+            console.log("【" + siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
+            if (targetTabId && targetTabId !== "") {
+              emit.toCompany('unsetUser', {siteKey: siteKey, tabId: targetTabId}, siteKey);
+            }
+            delete customerList[siteKey][key];
 
-          if (totalCounter === keyLength - 1) {
-            emit.toMine("receiveAccessInfo", arr, socket);
-            arr = [keyLength];
+            if (totalCounter === keyLength - 1) {
+              emit.toMine("receiveAccessInfo", arr, socket);
+              arr = [keyLength];
+            }
+            totalCounter++;
+            return;
           }
-          totalCounter++;
-          return;
         }
-      }
-      var val = getConnectInfo(customerList[siteKey][key]);
-      if (val.time) {
-        val.term = timeCalculator(val);
-      }
-      customerApi.getInformations(val.userId, val.siteKey, function (information) {
-        val.customerInfo = information;
-        if (functionManager.isEnabled(siteKey, functionManager.keyList.chat)) {
-          chatApi.getUnreadCnt(val, function (ret) {
-            val['chatUnreadId'] = ret.chatUnreadId;
-            val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
-            if(functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
+        var val = getConnectInfo(customerList[siteKey][key]);
+        if (val.time) {
+          val.term = timeCalculator(val);
+        }
+        customerApi.getInformations(val.userId, val.siteKey, function (information) {
+          val.customerInfo = information;
+          if (functionManager.isEnabled(siteKey, functionManager.keyList.chat)) {
+            chatApi.getUnreadCnt(val, function (ret) {
+              val['chatUnreadId'] = ret.chatUnreadId;
+              val['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
+              if (functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
+                && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
+                && ((isset(val['chatUnreadCnt']) && val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
+                // 何もしない
+              } else {
+                arr.push(val);
+                counter++;
+              }
+              if (counter === chunkSize) {
+                emit.toMine("receiveAccessInfo", arr, socket);
+                counter = 0;
+                arr = [keyLength];
+              }
+              if (totalCounter === keyLength - 1) {
+                emit.toMine("receiveAccessInfo", arr, socket);
+                if (functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+                  emit.toMine('endOfCustomerList', {}, socket);
+                }
+                arr = [keyLength];
+              }
+              totalCounter++;
+            });
+          } else {
+            if (functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
               && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
-              && ((isset(val['chatUnreadCnt']) && val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
+              && ((!isset(val['chatUnreadCnt']) || val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
               // 何もしない
             } else {
               arr.push(val);
@@ -2035,40 +2068,17 @@ io.sockets.on('connection', function (socket) {
             }
             if (totalCounter === keyLength - 1) {
               emit.toMine("receiveAccessInfo", arr, socket);
-              if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
+              if (functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
                 emit.toMine('endOfCustomerList', {}, socket);
               }
               arr = [keyLength];
             }
             totalCounter++;
-          });
-        } else {
-          if(functionManager.isEnabled(siteKey, functionManager.keyList.hideRealtimeMonitor)
-            && functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)
-            && ((!isset(val['chatUnreadCnt']) || val['chatUnreadCnt'] === 0) && !isset(val['responderId']) && !isset(val['chat']))) {
-            // 何もしない
-          } else {
-            arr.push(val);
-            counter++;
           }
-          if (counter === chunkSize) {
-            emit.toMine("receiveAccessInfo", arr, socket);
-            counter = 0;
-            arr = [keyLength];
-          }
-          if (totalCounter === keyLength - 1) {
-            emit.toMine("receiveAccessInfo", arr, socket);
-            if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
-              emit.toMine('endOfCustomerList', {}, socket);
-            }
-            arr = [keyLength];
-          }
-          totalCounter++;
-        }
+        });
       });
-    });
-
-    if(Object.keys(customerList[siteKey]).length === 0) {
+    }
+    if(isset(customerList[siteKey]) && Object.keys(customerList[siteKey]).length === 0) {
       emit.toMine("receiveAccessInfo", arr, socket);
       if(functionManager.isEnabled(siteKey, functionManager.keyList.monitorPollingMode)) {
         emit.toMine('endOfCustomerList', {}, socket);
@@ -2911,17 +2921,30 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // チャット終了
   socket.on("chatEnd", function(d){
     var obj = JSON.parse(d), date = new Date(), now = fullDateTime(), type = chatApi.cnst.observeType.end;
-    var keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
-    var userName = c_connectList[obj.siteKey][obj.tabId][keys[keys.length-1]].user;
-    c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: type};
+
+    var keys = [];
+    var userName = "";
+    if(isset(c_connectList[obj.siteKey][obj.tabId])) {
+      keys = Object.keys(c_connectList[obj.siteKey][obj.tabId]);
+      userName = c_connectList[obj.siteKey][obj.tabId][keys[keys.length-1]].user;
+      c_connectList[obj.siteKey][obj.tabId][now] = {type:"end", userName: userName, userId: obj.userId, messageType: type};
+    }
 
     /* チャット対応上限の処理（対応人数減算の処理） */
     if ( scList.hasOwnProperty(obj.siteKey) && scList[obj.siteKey].cnt.hasOwnProperty(obj.userId) ) {
-      scList[obj.siteKey].cnt[obj.userId]--; // 対応人数を減算する
+      if(scList[obj.siteKey].cnt[obj.userId] > 0) {
+        scList[obj.siteKey].cnt[obj.userId]--; // 対応人数を減算する
+      } else {
+        scList[obj.siteKey].cnt[obj.userId] = 0;
+      }
     }
     /* チャット対応上限の処理（対応人数減算の処理） */
+    scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
-    if ( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.tabId].chat) ) {
+    if ( isset(sincloCore[obj.siteKey][obj.tabId] )
+      && isset(sincloCore[obj.siteKey][obj.tabId].chat)
+      && isset(connectList[sincloCore[obj.siteKey][obj.tabId].sessionId])
+      && isset(connectList[sincloCore[obj.siteKey][obj.tabId].sessionId].userId)) {
       sincloCore[obj.siteKey][obj.tabId].chat = null;
       sincloCore[obj.siteKey][obj.tabId].chatSessionId = null;
       if( isset(sincloCore[obj.siteKey]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && isset(sincloCore[obj.siteKey][obj.sincloSessionId].chat) ) {
@@ -2930,7 +2953,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           delete sincloCore[obj.siteKey][obj.sincloSessionId].chat;
         }
       }
-      scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
 
       //emit.toUser("chatEndResult", {ret: true, messageType: type}, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
       emit.toSameUser("chatEndResult", {ret: true, messageType: type}, obj.siteKey, obj.sincloSessionId);
@@ -2969,6 +2991,23 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           chatApi.notifyCommit("chatEndResult", insertData);
         }
       });
+    } else {
+      // 既にいないユーザーの退室
+      var notifyData = {
+        ret: true,
+        scInfo: scInfo,
+        siteKey: obj.siteKey,
+        tabId: obj.tabId,
+        sincloSessionId: obj.sincloSessionId,
+        visitorsId: "",
+        userId: obj.userId,
+        chatMessage: "退室",
+        messageType: type,
+        messageDistinction: obj.messageDistinction,
+        userName: userName,
+        created: now
+      };
+      emit.toCompany("chatEndResult", notifyData, obj.siteKey);
     }
   });
 
@@ -3144,19 +3183,27 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // ============================================
   //  シナリオイベントハンドラ
   // ============================================
-  socket.on('getScenario', function(data){
+  socket.on('getScenario', function(data, ack){
     var obj = JSON.parse(data);
     var result = {};
     pool.query('select activity from t_chatbot_scenarios where m_companies_id = ? and id = ?;', [companyList[obj.siteKey], obj.scenarioId],
       function(err, row){
         if ( err !== null && err !== '' ) {
-          emit.toMine('resGetSenario', result, socket);
+          if(ack) {
+            ack(result);
+          } else {
+            emit.toMine('resGetSenario', result, socket);
+          }
           return;
         }
         if(row.length !== 0) {
           result = JSON.parse(row[0].activity);
         }
-        emit.toMine('resGetScenario', {id: obj.scenarioId, activity: result}, socket);
+        if(ack) {
+          ack({id: obj.scenarioId, activity: result});
+        } else {
+          emit.toMine('resGetScenario', {id: obj.scenarioId, activity: result}, socket);
+        }
       });
   });
 
@@ -3207,7 +3254,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             created: elm.created,
             sort: elm.sort,
             messageDistinction: messageDistinction,
-            achievementFlg: null
+            achievementFlg: elm.requireCv ? -1 : null
           };
           chatApi.set(ret);
         });
@@ -3218,7 +3265,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   socket.on("addLastMessageToCV", function(d){
     var obj = JSON.parse(d);
-    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type >= 12 AND message_type <= 13) OR (message_type >= 21 AND message_type <= 24)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
+    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
       function(err, row){
         if ( err !== null && err !== '' ) {
           console.log("UPDATE lastMessage to cv is failed. historyId : " + obj.historyId);
@@ -3258,6 +3305,80 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     emit.toSameUser('resScenarioMessage', scenario, scenario.siteKey, scenario.sincloSessionId);
     ack({data: scenario});
   });
+
+  socket.on("callExternalApi", function (data,ack){
+    var obj = JSON.parse(data);
+    pool.query('select * from t_external_api_connections where m_companies_id = ? and id = ? limit 0,1;', [companyList[obj.siteKey], obj.externalApiConnectionId],
+      function(err, row){
+        if ( err !== null && err !== '' ) {
+          console.log("callExternalApi select is failed. externalApiConnectionId : " + obj.externalApiConnectionId);
+          return;
+        }
+        if(row.length !== 0) {
+          var reqSettings = row[0];
+
+          var url = replaceVariable(obj.variables, reqSettings.url);
+          var reqBody = replaceVariable(data.variables, reqSettings.request_body);
+
+          var headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+          };
+
+          //オプションを定義
+          var options = {
+            url: 'http://' + process.env.GET_CD_API_HOST + ':' + process.env.GET_CD_API_PORT + '/Notification/callExternalApi',
+            headers: headers,
+            json: true,
+            form: {
+              apiParams: JSON.stringify({
+                url: url,
+                requestHeaders: JSON.parse(reqSettings.request_headers),
+                methodType: reqSettings.method_type,
+                requestBody: reqSettings.request_body,
+                responseBodyMaps: JSON.parse(reqSettings.response_body_maps),
+              })
+            }
+          };
+
+          if(process.env.DB_HOST === 'localhost') {
+            options.rejectUnauthorized = false;
+          }
+
+          //リクエスト送信
+          request.post(options, function (error, response, body) {
+            if (error) {
+              console.log('外部API実行時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+              ack({
+                success: false
+              });
+              return;
+            }
+            if(response.statusCode === 200) {
+              response.setEncoding('utf8');
+              if(body.success) {
+                ack(body.result);
+              } else {
+                ack({});
+              }
+              return;
+            } else {
+              console.log('外部API実行時にエラーが返却されました。 errorCode : ' + response.statusCode);
+              ack({
+                success: false
+              });
+              return;
+            }
+          });
+        }
+      });
+  });
+
+  var replaceVariable = function(variables, message) {
+    return message.replace(/{{(.+?)\}}/g, function(param) {
+      var name = param.replace(/^{{(.+)}}$/, '$1');
+      return variables[name] || name;
+    });
+  }
 
   // ============================================
   //  画面キャプチャ共有イベントハンドラ
@@ -3577,6 +3698,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           console.log("c_connectList : " + Object.keys(c_connectList).length);
           console.log("doc_connectList : " + Object.keys(doc_connectList).length);
           console.log("customerList : " + Object.keys(customerList[obj.targetKey]).length);
+          console.log("End --------------------------------------------------------");
+          break;
+        case 10: // view all Obj count socket.emit('settingReload', JSON.stringify({type:79 targetKey: "demo", siteKey: "master"}));
+          console.log("getSclist --------------------------------------------------");
+          console.log("scList : " + JSON.stringify(scList[obj.targetKey]));
           console.log("End --------------------------------------------------------");
           break;
         default:
