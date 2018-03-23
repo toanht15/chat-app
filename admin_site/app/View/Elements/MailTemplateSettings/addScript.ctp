@@ -39,7 +39,9 @@ function remoteDeleteCompany(id,companyId,userId,companyKey){
 $(function(){
   $('input[type="radio"]').change(function(e) {
     if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail3' || $(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail4' ||
-      $(this)[0]['id'] == 'MailTemplateSettingsToSendMediaLink0' || $(this)[0]['id'] == 'MailTemplateSettingsToSendMediaLink1') {
+      $(this)[0]['id'] == 'MJobMailTemplateSendMailMlFlg0' || $(this)[0]['id'] == 'MJobMailTemplateSendMailMlFlg1' ||
+      ($(this)[0]['id'] == 'MJobMailTemplateAgreementFlg1' && (document.form.elements[8].checked == true || document.form.elements[9].checked == true))
+      || ($(this)[0]['id'] == 'MJobMailTemplateAgreementFlg2' && (document.form.elements[8].checked == true || document.form.elements[9].checked == true))) {
       $(".daysAfter").css('display', 'block');
       if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail3') {
         $("#value").text("何日後");
@@ -59,8 +61,9 @@ $(function(){
       $('#MailTemplateSettingsAddForm')[0][14]['name'] = "data[MSystemMailTemplate][subject]";
       $('#MailTemplateSettingsAddForm')[0][15]['name'] = "data[MSystemMailTemplate][mail_body]";
     }
-    //変数メールアドレス・パスワード
-    if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail1') {
+    ///変数メールアドレス・パスワード
+    if(($(this)[0]['id'] == 'MJobMailTemplateAgreementFlg1' && document.form.elements[6].checked == true) ||
+     ($(this)[0]['id'] == 'MJobMailTemplateAgreementFlg2' && document.form.elements[6].checked == true) || $(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail1') {
       $("#variable").css('display', 'block');
     }
     else {

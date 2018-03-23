@@ -330,6 +330,15 @@ define('C_FREE_B_TO_B', 1); // BtoB
 define('C_FREE_B_TO_C', 2); // BtoC
 define('C_FREE_BOTH', 3); // BtoB,BtoCどちらも
 
+//メール種別
+define('C_AFTER_FREE_APPLICATION_TO_CUSTOMER', 1); // 無料トライアル登録時 お客さん向けメール
+define('C_AFTER_FREE_APPLICATION_TO_COMPANY', 2); // 無料トライアル登録時 会社向けメール
+define('C_AFTER_FREE_PASSWORD_CHANGE_TO_COMPANY', 3); // 無料トライアル登録後初期パスワード変更 会社向けメール
+define('C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER', 4); // 無料トライアル登録後初期パスワード変更 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_CUSTOMER', 5); // いきなり契約登録時 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_COMPANY', 6); // いきなり契約登録時 会社向けメール
+define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // いきなり契約登録後初期パスワード変更 お客さん向けメール
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",

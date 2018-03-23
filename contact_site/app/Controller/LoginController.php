@@ -163,27 +163,40 @@ class LoginController extends AppController {
           $mailTemplateData = $this->MSystemMailTemplate->find('all');
 
           $mailType = "";
-          if($companyData['MCompany']['trial_flg'] == 1) {
-            $mailType = 3;
+          //無料トライアルの場合
+          if($data['MCompany']['trial_flg'] == 1) {
+            foreach($mailTemplateData as $key => $mailTemplate) {
+              if($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER) {
+                $mailType = $key;
+              }
+            }
           }
           else {
-            $mailType = 6;
+            //いきなり本契約の場合
+            foreach($mailTemplateData as $key => $mailTemplate) {
+              if($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER) {
+                $mailType = $key;
+              }
+            }
           }
 
-          $mailBodyData = str_replace(self::COMPANY_NAME, $companyData['MCompany']['company_name'], $mailTemplateData[$mailType   ]['MSystemMailTemplate']['mail_body']);
-          if(!empty($agreementData['MAgreement']['application_name'])) {
-            $mailBodyData = str_replace(self::USER_NAME, $agreementData['MAgreement']['application_name'], $mailBodyData);
-          }
-          $mailBodyData = str_replace(self::MAIL_ADDRESS, $inputData['MUser']['mail_address'], $mailBodyData);
+          if(!empty($mailType)) {
 
-          //お客さん向け
-          $sender = new MailSenderComponent();
-          $sender->setFrom(self::ML_MAIL_ADDRESS);
-          $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
-          $sender->setTo($inputData['MUser']['mail_address']);
-          $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
-          $sender->setBody($mailBodyData);
-          $sender->send();
+            $mailBodyData = str_replace(self::COMPANY_NAME, $companyData['MCompany']['company_name'], $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
+            if(!empty($agreementData['MAgreement']['application_name'])) {
+              $mailBodyData = str_replace(self::USER_NAME, $agreementData['MAgreement']['application_name'], $mailBodyData);
+            }
+            $mailBodyData = str_replace(self::MAIL_ADDRESS, $inputData['MUser']['mail_address'], $mailBodyData);
+
+            //お客さん向け
+            $sender = new MailSenderComponent();
+            $sender->setFrom(self::ML_MAIL_ADDRESS);
+            $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
+            $sender->setTo($inputData['MUser']['mail_address']);
+            $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
+            $sender->setBody($mailBodyData);
+            $sender->send();
+          }
 
           //会社(メディアリンク)向けにメール
           $sender = new MailSenderComponent();
