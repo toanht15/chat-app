@@ -84,24 +84,17 @@ class ContractController extends AppController
         $addedCompanyInfo = $this->processTransaction($data['MCompany'], $data['Contract'], $data['MAgreements']);
         $jobMailTemplateData = $this->MJobMailTemplate->find('all');
 
-        /*$tmpData = [];
-        foreach($jobMailTemplateData as $k => $v){
-          $sendingDatetime = date('Y-m-d', strtotime(' +'.$v['MJobMailTemplate']['days_after'].' day'));
-          $sendingDatetime = date('Y-m-d H:i:s', strtotime($sendingDatetime.$v['MJobMailTemplate']['time'].':00:00'));
-          $tmpData['TSendSystemMailSchedule']['sending_datetime'] = $sendingDatetime;
-          $tmpData['TSendSystemMailSchedule']['subject'] = $v['MJobMailTemplate']['subject'];
-          $tmpData['TSendSystemMailSchedule']['mail_body'] = $v['MJobMailTemplate']['mail_body'];
-          $tmpData['TSendSystemMailSchedule']['mail_address'] = $data['Contract']['user_mail_address'];
-          $tmpData['TSendSystemMailSchedule']['send-mail_flg'] = 0;
-          $this->TSendSystemMailSchedule->create();
-          $this->TSendSystemMailSchedule->set($tmpData);
-          $this->TSendSystemMailSchedule->save();
-          $this->TSendSystemMailSchedule->commit();
-        }*/
-
         $mailTemplateData = $this->MSystemMailTemplate->find('all');
 
-        $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[0]['MSystemMailTemplate']['mail_body']);
+        $mailType = "";
+        if($data['MCompany']['trial_flg'] == 1) {
+          $mailType = 0;
+        }
+        else {
+          $mailType = 4;
+        }
+
+        $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
         if(!empty($data['MAgreements']['application_name'])) {
           $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
         }
@@ -122,13 +115,6 @@ class ContractController extends AppController
         $this->TMailTransmissionLog->save();
         $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
 
-        $mailType = "";
-        if($data['MCompany']['trial_flg'] == 1) {
-          $mailType = 0;
-        }
-        else {
-          $mailType = 4;
-        }
         //お客さん向け
         $sender = new MailSenderComponent();
         $sender->setFrom(self::ML_MAIL_ADDRESS);
@@ -150,8 +136,9 @@ class ContractController extends AppController
           $mailType = 1;
         }
         else {
-          $mailType = 6;
+          $mailType = 5;
         }
+
         //会社向け
         $sender = new MailSenderComponent();
         $sender->setFrom($data['Contract']['user_mail_address']);
@@ -219,7 +206,7 @@ class ContractController extends AppController
       } catch(Exception $e) {
         $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
         $this->log($e->getTraceAsString(),LOG_WARNING);
-        $this->response->statusCode(400);
+        $this->response->statusCode(409);
         return json_encode([
           'success' => false,
           'message' => $e->getMessage()

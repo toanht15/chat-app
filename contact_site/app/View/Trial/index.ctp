@@ -461,9 +461,9 @@
                     <div>
                       <div class="wrap">
                         <div class="eachElement">
-                          <p>※同業他社様、その他弊社の判断により、トライアル環境のご提供ができない場合がございます。<br>
-                          ※本フォームでご入力いただいた情報は、当社の営業活動および各種サービスに対するお問い合わせへの返答を目的として使用します。当社の個人情報の取り扱いについては
-                          <a href="https://www.medialink-ml.co.jp/privacy/" target="_blank">プライバシーポリシー</a>をご参照ください。
+                          <p><div style = "display: inline-flex;"><div>※</div><div>同業他社様、その他弊社の判断により、トライアル環境のご提供ができない場合がございます。</div></div><br>
+                          <div style = "display: inline-flex; margin-top:9px;"><div>※</div><div>本フォームでご入力いただいた情報は、当社の営業活動および各種サービスに対するお問い合わせへの返答を目的として使用します。当社の個人情報の取り扱いについては
+                          <a href="https://www.medialink-ml.co.jp/privacy/" target="_blank">プライバシーポリシー</a>をご参照ください。</div></div></p>
                           <div style = "margin-top: 1.6rem;width: 11em;margin-top: -0.3em;">
                           <?= $this->Form->input( 'agree', array(
                           'type' => 'checkbox',

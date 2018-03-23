@@ -51,11 +51,11 @@
         <?php } else if($val['MSystemMailTemplate']['id'] == 5) { ?>
           <td>いきなり本契約</td>
           <td>契約申込み後</td>
-        <?php } else if($val['MSystemMailTemplate']['id'] == 6) { ?>
+        <?php } else if($val['MSystemMailTemplate']['id'] == 7) { ?>
           <td>いきなり本契約</td>
           <td>初期パスワード変更後</td>
         <?php } ?>
-        <td><?= h($val['MSystemMailTemplate']['sender'])?></td>
+        <td><?= h($val['MSystemMailTemplate']['subject'])?></td>
       </tr>
     <?php endforeach; ?>
     </tbody>
