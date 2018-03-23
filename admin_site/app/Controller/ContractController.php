@@ -9,7 +9,6 @@
 App::uses('AppController', 'Controller');
 App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
-App::uses('MailSenderComponent', 'Controller/Component');
 class ContractController extends AppController
 {
   const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
@@ -25,7 +24,7 @@ class ContractController extends AppController
   const PHONE_NUMBER = "##PHONE_NUMBER##";
   const URL = "##URL##";
   const OTHER = "##OTHER##";
-  public $components = ['MailSender', 'Auth'];
+  public $components = ['MailSender','Auth'];
   public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'MChatSetting', 'TAutoMessages', 'TDictionaries', 'TDictionaryCategory', 'MMailTemplate', 'TransactionManager','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate'];
 
   public $paginate = [
@@ -103,7 +102,7 @@ class ContractController extends AppController
 
         $mailTemplateData = $this->MSystemMailTemplate->find('all');
 
-        $mailType = "";
+        $mailType = "false";
         //無料トライアルの場合
         if($data['MCompany']['trial_flg'] == 1) {
           foreach($mailTemplateData as $key => $mailTemplate) {
@@ -121,8 +120,7 @@ class ContractController extends AppController
           }
         }
 
-        if(!empty($mailType)) {
-
+        if($mailType !== "false") {
           $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
           if(!empty($data['MAgreements']['application_name'])) {
             $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
@@ -163,7 +161,7 @@ class ContractController extends AppController
           $this->TMailTransmissionLog->save();
         }
 
-        $mailType = "";
+        $mailType = "false";
         //無料トライアルの場合
         if($data['MCompany']['trial_flg'] == 1) {
           foreach($mailTemplateData as $key => $mailTemplate) {
@@ -181,8 +179,7 @@ class ContractController extends AppController
           }
         }
 
-        if(!empty($mailType)) {
-
+        if($mailType !== 'false') {
           //会社向け
           $sender = new MailSenderComponent();
           $sender->setFrom($data['Contract']['user_mail_address']);
