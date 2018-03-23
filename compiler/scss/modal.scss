@@ -1044,6 +1044,16 @@
       border-top: 12px solid #C18686;
     }
   }
+  &.outOfTermTrial {
+    background-color: #4a4747;
+    width: 100%;
+    text-align: center;
+    top: -100px;
+    opacity: 0.8;
+    border-radius: 0;
+    height: 60px;
+    padding: 20px;
+  }
 }
 
 /* フラッシュメッセージ用スタイル(モーダル用) */
