@@ -84,23 +84,7 @@ class TrialController extends AppController {
     }
   }
 
-  /* *
-   * メールアドレス　validateチェック
-   * @return void
-   * */
-  public function check() {
-    $this->autoRender = FALSE;
-    $this->layout = 'ajax';
-    $data = $this->request->data;
-    $data['MUser']['mail_address'] = $data['Contract']['user_mail_address'];
-    $this->MUser->set($data);
-    if(!$this->MUser->validates()) {
-      $errorMessage = $this->MUser->validationErrors;
-      return $errorMessage['mail_address'][0];
-    }
-  }
-
-   /* *
+ /* *
   * 利用規約
   * @return void
   * */
