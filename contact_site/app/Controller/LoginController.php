@@ -6,7 +6,7 @@
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 class LoginController extends AppController {
   const CONTRACT_ADD_URL = "http://admin.sinclo:81/Contract/add";
-  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const USER_NAME = "##USER_NAME##";
@@ -162,8 +162,6 @@ class LoginController extends AppController {
           $companyData = $companyData[0];
           $mailTemplateData = $this->MSystemMailTemplate->find('all');
 
-          $this->log('agreementData',LOG_DEBUG);
-          $this->log($agreementData,LOG_DEBUG);
           $mailType = "";
           if($companyData['MCompany']['trial_flg'] == 1) {
             $mailType = 3;

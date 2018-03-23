@@ -4,12 +4,7 @@
  * 無料トライアル登録画面
  */
 App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Validation');
-App::uses('ComponentCollection', 'Controller'); //これが大事
-App::uses('MailSenderComponent', 'Controller/Component');
 class TrialController extends AppController {
-  /*必ず消す*/
-  const LOG_INFO = 'batch-info';
-  const LOG_ERROR = 'batch-error';
 
   const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
   const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";

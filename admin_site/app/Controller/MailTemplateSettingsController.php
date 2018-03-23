@@ -17,7 +17,6 @@ class MailTemplateSettingsController extends AppController
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
     header('Access-Control-Allow-Origin: *');
-    $this->Auth->allow(['index','add','edit','deleteMailInfo']);
   }
 
   /**
@@ -44,8 +43,6 @@ class MailTemplateSettingsController extends AppController
       $this->autoRender = false;
       $this->layout = "ajax";
       $data = $this->getParams();
-      $this->log('data',LOG_DEBUG);
-      $this->log($data,LOG_DEBUG);
 
       try {
         $this->processTransaction($data);
@@ -76,8 +73,6 @@ class MailTemplateSettingsController extends AppController
   }
 
   private function processTransaction($mailInfo) {
-    $this->log('mailInfo',LOG_DEBUG);
-    $this->log($mailInfo,LOG_DEBUG);
     try {
       //N日後orN日前
       if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_DAYS || $mailInfo['MailTemplateSettings']['timeToSendMail'] == C_BEFORE_DAYS) {
@@ -118,8 +113,6 @@ class MailTemplateSettingsController extends AppController
   private function createMailInfo($mailInfo) {
     $errors = [];
     $mailInfo = $mailInfo['MJobMailTemplate'];
-    $this->log('mailInfo2',LOG_DEBUG);
-    $this->log($mailInfo,LOG_DEBUG);
     $tmpData = [
         "mail_type_cd" => $mailInfo["mail_type_cd"],
         "subject" => $mailInfo["subject"],
@@ -137,8 +130,6 @@ class MailTemplateSettingsController extends AppController
       $this->MJobMailTemplate->rollback();
       // 画面に返す
       $errors = $this->MJobMailTemplate->validationErrors;
-      $this->log('error',LOG_DEBUG);
-      $this->log($errors,LOG_DEBUG);
       throw new Exception("MJobMailTemplate validation error");
     }
     else {
