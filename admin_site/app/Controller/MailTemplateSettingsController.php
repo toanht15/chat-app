@@ -144,7 +144,7 @@ class MailTemplateSettingsController extends AppController
     if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION) {
       $mailInfo = $mailInfo['MSystemMailTemplate'];
       $tmpData = [
-          'id' => 1,
+          'id' => C_AFTER_FREE_APPLICATION_TO_CUSTOMER,
           "mail_type_cd" => $mailInfo["mail_type_cd"],
           "sender" => $mailInfo["sender"],
           "subject" => $mailInfo["subject"],
@@ -154,7 +154,7 @@ class MailTemplateSettingsController extends AppController
     else if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE) {
       $mailInfo = $mailInfo['MSystemMailTemplate'];
       $tmpData = [
-          'id' => 4,
+          'id' => C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER,
           "mail_type_cd" => $mailInfo["mail_type_cd"],
           "sender" => $mailInfo["sender"],
           "subject" => $mailInfo["subject"],
@@ -178,7 +178,7 @@ class MailTemplateSettingsController extends AppController
     if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION) {
       $mailInfo = $mailInfo['MSystemMailTemplate'];
       $tmpData = [
-          'id' => 5,
+          'id' => C_AFTER_APPLICATION_TO_CUSTOMER,
           "mail_type_cd" => $mailInfo["mail_type_cd"],
           "sender" => $mailInfo["sender"],
           "subject" => $mailInfo["subject"],
@@ -188,7 +188,7 @@ class MailTemplateSettingsController extends AppController
     else if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE) {
       $mailInfo = $mailInfo['MSystemMailTemplate'];
       $tmpData = [
-          'id' => 7,
+          'id' => C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER,
           "mail_type_cd" => $mailInfo["mail_type_cd"],
           "sender" => $mailInfo["sender"],
           "subject" => $mailInfo["subject"],
@@ -251,19 +251,19 @@ class MailTemplateSettingsController extends AppController
         ($when == 3 || $when == 4)) {
         if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION && $saveData['MJobMailTemplate']['agreement_flg'] == C_FREE_TRIAL_AGREEMENT) {
           $this->MJobMailTemplate->delete($id);
-          $saveData['MSystemMailTemplate']['id'] = 1;
+          $saveData['MSystemMailTemplate']['id'] = C_AFTER_FREE_APPLICATION_TO_CUSTOMER;
         }
         if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE && $saveData['MJobMailTemplate']['agreement_flg'] == C_FREE_TRIAL_AGREEMENT) {
           $this->MJobMailTemplate->delete($id);
-          $saveData['MSystemMailTemplate']['id'] = 4;
+          $saveData['MSystemMailTemplate']['id'] = C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER;
         }
         if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION && $saveData['MJobMailTemplate']['agreement_flg'] == C_AGREEMENT) {
           $this->MJobMailTemplate->delete($id);
-          $saveData['MSystemMailTemplate']['id'] = 5;
+          $saveData['MSystemMailTemplate']['id'] = C_AFTER_APPLICATION_TO_CUSTOMER;
         }
         if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE && $saveData['MJobMailTemplate']['agreement_flg'] == C_AGREEMENT) {
           $this->MJobMailTemplate->delete($id);
-          $saveData['MSystemMailTemplate']['id'] = 7;
+          $saveData['MSystemMailTemplate']['id'] = C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER;
         }
       }
       $transactions = $this->TransactionManager->begin();

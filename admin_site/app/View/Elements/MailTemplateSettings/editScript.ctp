@@ -62,7 +62,8 @@ $(function(){
       $('#MailTemplateSettingsEditForm')[0][16]['name'] = "data[MSystemMailTemplate][mail_body]";
     }
     //変数メールアドレス・パスワード
-    if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail1') {
+    if(($(this)[0]['id'] == 'MJobMailTemplateAgreementFlg1' && document.form.elements[6].checked == true) ||
+     ($(this)[0]['id'] == 'MJobMailTemplateAgreementFlg2' && document.form.elements[6].checked == true) || $(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail1') {
       $("#variable").css('display', 'block');
     }
     else {
