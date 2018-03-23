@@ -84,7 +84,7 @@
                   <span class="greenBtn btn-shadow" onclick="chatApi.addOption(1)">選択肢を追加する</span>
                 </chat-menu-child>
               </chat-menu>
-             <div id="sendMessageArea" ng-hide="chatAreaShowFlg !== true" style="position: relative">
+             <div id="sendMessageArea" style="position: relative">
                 <?php if ( strcmp($userInfo['permission_level'], C_AUTHORITY_SUPER) !== 0) :?>
                   <textarea rows="5" id="sendMessage" ng-focus="sendMessageConnectConfirm(detailId)" maxlength="1000" ng-attr-placeholder="{{chatPs()}}"></textarea>
 

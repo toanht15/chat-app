@@ -7,9 +7,30 @@ document.body.onload = function(){
       containment: "parent",
       cursor: 'move',
       cancel: '.sortable .cancel',
-      revert: 100
+      revert: 100,
+      helper: function(event, ui) {
+        // ドラッグ時に、helperの要素が小さくならないようにする
+        ui.children().each(function() {
+          $(this).width($(this).width());
+        });
+        return ui;
+      }
     });
     $(".sortable").sortable("disable");
+
+    // ツールチップの表示制御
+    $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
+      var targetObj = $('.explainTooltip');
+      targetObj.find('icon-annotation .detail').text($(this).data('tooltip'));
+      targetObj.find('icon-annotation').css('display','block');
+      targetObj.css({
+        top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
+        left: $(this).offset().left - 70 + 'px'
+      });
+    });
+    $(document).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
+      $('.explainTooltip').find('icon-annotation').css('display','none');
+    });
   });
 
   // 全選択用チェックボックス
@@ -91,7 +112,14 @@ function openConfirmDialog(){
         selectedList: selectedList
       },
       url: "<?= $this->Html->url('/TChatbotScenario/chkRemoteDelete') ?>",
-      success: function(){
+      success: function(data){
+        // 削除済みデータに紐付く、シナリオの一時保存データを削除する
+        JSON.parse(data).forEach(function(param) {
+          var storageKey = 'scenario_' + param;
+          localStorage.removeItem(storageKey);
+        });
+
+        // ページ再読み込み
         $(".p-dictionary-del #popup-button a").prop("disabled", true);
         var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
         location.href = url + "/page:" + index;

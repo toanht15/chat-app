@@ -150,33 +150,19 @@ sincloApp.factory('SimulatorService', function() {
 //       }
       return defColor;
     },
-    makeFaintColor: function() {
-      var defColor = "#F1F5C8";
-      //仕様変更、常に高度な設定が当たっている状態とする
-      defColor = this._settings.re_background_color;
-//       if(self.widgetSettings..color_setting_type === '1'){
-//         defColor = self.widgetSettings..re_background_color;
-//       }
-//       else{
-//         if ( self.widgetSettings..main_color.indexOf("#") >= 0 ) {
-//           var code = self.widgetSettings..main_color.substr(1), r,g,b;
-//           if (code.length === 3) {
-//             r = String(code.substr(0,1)) + String(code.substr(0,1));
-//             g = String(code.substr(1,1)) + String(code.substr(1,1));
-//             b = String(code.substr(2)) + String(code.substr(2));
-//           }
-//           else {
-//             r = String(code.substr(0,2));
-//             g = String(code.substr(2,2));
-//             b = String(code.substr(4));
-//           }
-//           var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
-//           var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
-//           var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
-//           defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
-//         }
-//       }
-      return defColor;
+    /**
+     * 吹き出しの背景色設定
+     * @param Integer opacity 透明度(省略可)
+     * @return String         RGBAカラーコード
+     */
+    makeFaintColor: function(opacity) {
+      opacity = opacity || 1;
+      var colorCode = this._settings.re_background_color || "#F1F5C8";
+
+      var red   = parseInt(colorCode.substring(1,3), 16);
+      var green = parseInt(colorCode.substring(3,5), 16);
+      var blue  = parseInt(colorCode.substring(5,7), 16);
+      return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + opacity + ')';
     },
     //シンプル表示判定
     /*
@@ -369,7 +355,12 @@ sincloApp.factory('SimulatorService', function() {
       }
       return res;
     },
-    // 表示用HTMLへの変換
+    /**
+     * 表示用HTMLへの変換
+     * @param String val    変換したいメッセージ
+     * @param String prefix ラジオボタンに付与するプレフィックス
+     * @return String       変換したメッセージ
+     */
     createMessage: function(val, prefix) {
       if (val === '') return;
       prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';

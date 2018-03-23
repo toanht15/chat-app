@@ -138,8 +138,13 @@ define('C_MATCH_RULE_NUM_1', '/^(100|[0-9]{1,2})$/');
 define('C_MATCH_RULE_NUM_2', '/^(100|[1-9][0-9]|[1-9]{1})$/');
 define('C_MATCH_RULE_NUM_3', '/^(60|[1-5][0-9]|[1-9]{1})$/');
 define('C_MATCH_RULE_TEXT', '/.+/'); // 1文字以上のテキスト
-define('C_MATCH_RULE_NUMBER', '/[0-9]+/');  // 1文字以上の数字
+define('C_MATCH_RULE_NUMBER', '/^\d+$/');  // 1文字以上の数字
 define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
+
+define('C_MATCH_INPUT_RULE_ALL', '/./');  // 入力制限なし
+define('C_MATCH_INPUT_RULE_NUMBER', '/\d/');  // 数字入力
+define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.,;:@"]/'); // メールアドレス入力(半角英数記号入力)
+define('C_MATCH_INPUT_RULE_TEL', '/[\d+-]/'); // 電話番号入力（半角英数と一部記号入力）
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
@@ -189,6 +194,9 @@ define('C_SCENARIO_ACTION_TEXT', 1); // テキスト発言
 define('C_SCENARIO_ACTION_HEARING', 2); // ヒアリング
 define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
 define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
+define('C_SCENARIO_ACTION_CALL_SCENARIO', 5); // シナリオ呼び出し
+define('C_SCENARIO_ACTION_EXTERNAL_API', 6); // 外部システム連携
+define('C_SCENARIO_ACTION_SEND_FILE', 7); // ファイル送信
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -196,9 +204,22 @@ define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
 define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
 define('C_SCENARIO_INPUT_TYPE_TEL', 4);
 
+/* シナリオ設定(ヒアリング) - 改行設定 */
+define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
+define('C_SCENARIO_INPUT_LF_TYPE_ALLOW', 2);
+
+/* シナリオ設定(ヒアリング) - メッセージ送信設定 */
+define('C_SCENARIO_SEND_MESSAGE_BY_ENTER', 1);
+define('C_SCENARIO_SEND_MESSAGE_BY_BUTTON', 2);
+
+/* シナリオ設定(メール送信) - メール送信タイプ */
 define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
 define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
 define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
+
+/* シナリオ設定(外部システム連携) - メソッド種別 */
+define('C_SCENARIO_METHOD_TYPE_GET', 1);
+define('C_SCENARIO_METHOD_TYPE_POST', 2);
 
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
@@ -608,38 +629,38 @@ $config['chatbotScenarioActionList'] = [
   // テキスト発言
   C_SCENARIO_ACTION_TEXT => [
     'label' => 'テキスト発言',
-    'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
       'message' => ''
     ]
   ],
   // ヒアリング
   C_SCENARIO_ACTION_HEARING => [
     'label' => 'ヒアリング',
-    'chatTextArea' => '1',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '1',
       'hearings' => [[
         'variableName' => '',
-        'inputType' => '1',
-        'message' => ''
+        'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
+        'message' => '',
+        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW
       ]],
       'errorMessage' => '',
-      'isConfirm' => 2,
+      'isConfirm' => '2',
       'confirmMessage' => '',
       'success' => '',
       'cancel' => '',
-      'cv' => 2,
-      'cvCondition' => 1
+      'cv' => '2'
     ]
   ],
   // 選択肢
   C_SCENARIO_ACTION_SELECT_OPTION => [
     'label' => '選択肢',
-    'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
       'selection' => [
         'variableName' => '',
         'options' => ['']
@@ -649,10 +670,49 @@ $config['chatbotScenarioActionList'] = [
   // メール送信
   C_SCENARIO_ACTION_SEND_MAIL => [
     'label' => 'メール送信',
-    'chatTextArea' => '2',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'toAddress' => [''],
       'mailType' => C_SCENARIO_MAIL_TYPE_ALL_MESSAGE
+    ]
+  ],
+  // シナリオ呼び出し
+  C_SCENARIO_ACTION_CALL_SCENARIO => [
+    'label' => 'シナリオ呼び出し',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'scenarioId' => '',
+      'executeNextAction' => '2'
+    ]
+  ],
+  // 外部システム連携
+  C_SCENARIO_ACTION_EXTERNAL_API => [
+    'label' => '外部システム連携',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'methodType' => '1',
+      'requestHeaders' => [[
+        'name' => '',
+        'value' => ''
+      ]],
+      'requestBody' => '',
+      'responseType' => '0',
+      'responseBodyMaps' => [[
+        'sourceKey' => '',
+        'variableName' => ''
+      ]]
+    ]
+  ],
+  // ファイル送信
+  C_SCENARIO_ACTION_SEND_FILE => [
+    'label' => 'ファイル送信',
+    'default' => [
+      'messageIntervalTimeSec' > '2',
+      'chatTextArea' => '2',
+      'file' => ''
     ]
   ]
 ];
@@ -661,27 +721,51 @@ $config['chatbotScenarioActionList'] = [
 $config['chatbotScenarioInputType'] = [
   C_SCENARIO_INPUT_TYPE_TEXT => [
     'label' => '@text',
-    'rule' => C_MATCH_RULE_TEXT
+    'rule' => C_MATCH_RULE_TEXT,
+    'inputRule' => C_MATCH_INPUT_RULE_ALL
   ],
   C_SCENARIO_INPUT_TYPE_NUMBER => [
     'label' => '@number',
-    'rule' => C_MATCH_RULE_NUMBER
+    'rule' => C_MATCH_RULE_NUMBER,
+    'inputRule' => C_MATCH_INPUT_RULE_NUMBER
   ],
   C_SCENARIO_INPUT_TYPE_EMAIL => [
     'label' => '@email',
-    'rule' => C_MATCH_RULE_EMAIL
+    'rule' => C_MATCH_RULE_EMAIL,
+    'inputRule' => C_MATCH_INPUT_RULE_EMAIL
   ],
   C_SCENARIO_INPUT_TYPE_TEL => [
     'label' => '@tel_number',
-    'rule' => C_MATCH_RULE_TEL
+    'rule' => C_MATCH_RULE_TEL,
+    'inputRule' => C_MATCH_INPUT_RULE_TEL
   ]
 ];
 
 /* シナリオ設定 - メール送信タイプ */
 $config['chatbotScenarioSendMailType'] = [
-  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => 'チャット内容をすべてメールする',
-  C_SCENARIO_MAIL_TYPE_VARIABLES => '変数の値のみメールする',
-  C_SCENARIO_MAIL_TYPE_CUSTOMIZE => 'メール本文をカスタマイズする'
+  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => [
+    'label' => 'チャット内容をすべてメールする',
+    'tooltip' => 'それまでのすべてのチャットやり取り内容すべてをメールします。'
+  ],
+  C_SCENARIO_MAIL_TYPE_VARIABLES => [
+    'label' => '変数の値のみメールする',
+    'tooltip' => 'ヒアリングおよび選択肢にて入力（または選択）された内容をメールします。'
+  ],
+  C_SCENARIO_MAIL_TYPE_CUSTOMIZE => [
+    'label' => 'メール本文をカスタマイズする',
+    'tooltip' => '自由にメール本文を編集することが可能です。（変数の利用も可能です）'
+  ]
+];
+
+/* シナリオ設定 - 外部システム連携のメソッド種別 */
+$config['chatbotScenarioApiMethodType'] = [
+  C_SCENARIO_METHOD_TYPE_GET => 'GET',
+  C_SCENARIO_METHOD_TYPE_POST => 'POST'
+];
+
+/* シナリオ設定 - 外部システム連携のレスポンス種別 */
+$config['chatbotScenarioApiResponseType'] = [
+  0 => 'JSON'
 ];
 
 /* 成果種別 */
