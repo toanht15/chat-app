@@ -11,14 +11,9 @@ class TrialController extends AppController {
   const LOG_INFO = 'batch-info';
   const LOG_ERROR = 'batch-error';
 
-  /*必ず治す*/
-  const FROM_ADDRESS = "henmi0201@gmail.com";
-  const FROM_NAME = "sinclo（シンクロ）";
-  /*必ず消す*/
-
   const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
-  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
-  const ML_MAIL_ADDRESS_AND_ALEX = "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const USER_NAME = "##USER_NAME##";
@@ -35,7 +30,7 @@ class TrialController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->Auth->allow(['index','add','thanks','remoteTermsOfService']);
+    $this->Auth->allow(['index','add','thanks','check','remoteTermsOfService']);
     $this->header('Access-Control-Allow-Origin: http://127.0.0.1:81/Contract/add');
   }
 
@@ -47,199 +42,6 @@ class TrialController extends AppController {
     $businessModel = Configure::read('businessModelType');
     $this->set('businessModel',$businessModel);
     $this->set('title_for_layout', '無料トライアル登録画面');
-
-    //ここから消す
-    //何日後の何時にメールを飛ばすか取得
-    $schedules = $this->MJobMailTemplate->find('all');
-    //トライアル中の企業を抜粋
-    $trialCompany = $this->MCompany->find('all',[
-      'conditions' => [
-        //'trial_flg' => 1,
-        'del_flg' => 0
-      ]
-    ]);
-    $trialCompanyIds = [];
-    $companyIds = [];
-    foreach($trialCompany as $company) {
-      if($company['MCompany']['trial_flg'] == 1) {
-        $trialCompanyIds[] .= $company['MCompany']['id'];
-      }
-      if($company['MCompany']['trial_flg'] == 0) {
-        $companyIds[] .= $company['MCompany']['id'];
-      }
-    }
-    //トライアル中の企業のトライアル期間を検出
-    $trialDay = $this->MAgreement->find('all',[
-      'fields' => [
-        'm_companies_id',
-        'trial_start_day',
-        'trial_end_day'
-      ],
-      'conditions' => [
-        'm_companies_id' => $trialCompanyIds
-      ]
-    ]);
-    //本契約中の企業のトライアル期間を検出
-    $agreementDay = $this->MAgreement->find('all',[
-      'fields' => [
-        'm_companies_id',
-        'agreement_start_day',
-        'agreement_end_day'
-      ],
-      'conditions' => [
-        'm_companies_id' => $companyIds
-      ]
-    ]);
-
-    $trialJobMailTemplatesData = [];
-    $jobMailTemplatesData = [];
-    $companyIds = [];
-    //何日後の何時に当てはまる企業を抜粋
-    foreach($schedules as $key => $val) {
-        foreach($trialDay as $trial) {
-          if($val['MJobMailTemplate']['value_type'] == 0) {
-            $trialTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('+'.$val['MJobMailTemplate']['value'].'day',strtotime($trial['MAgreement']['trial_start_day'])));
-          }
-          if($val['MJobMailTemplate']['value_type'] == 1) {
-            $trialTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('-'.$val['MJobMailTemplate']['value'].'day',strtotime($trial['MAgreement']['trial_end_day'])));
-          }
-          $nowTime = date('Y-m-d H');
-          if($trialTime == $nowTime && $val['MJobMailTemplate']['agreement_flg'] == 1) {
-            $trialJobMailTemplatesData[$key]['id'] = $val['MJobMailTemplate']['id'];
-            $trialJobMailTemplatesData[$key]['mail_type_cd'] = $val['MJobMailTemplate']['mail_type_cd'];
-            $trialJobMailTemplatesData[$key]['sender'] = $val['MJobMailTemplate']['sender'];
-            $trialJobMailTemplatesData[$key]['subject'] = $val['MJobMailTemplate']['subject'];
-            $trialJobMailTemplatesData[$key]['mail_body'] = $val['MJobMailTemplate']['mail_body'];
-            $trialJobMailTemplatesData[$key]['send_mail_ml_flg'] = $val['MJobMailTemplate']['send_mail_ml_flg'];
-            $trialCompanyIds[] .= $trial['MAgreement']['m_companies_id'];
-          }
-        }
-        foreach($agreementDay as $agreement) {
-          if($val['MJobMailTemplate']['value_type'] == 0) {
-            $agreementTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('+'.$val['MJobMailTemplate']['value'].'day',strtotime($agreement['MAgreement']['agreement_start_day'])));
-          }
-          if($val['MJobMailTemplate']['value_type'] == 1) {
-            $agreementTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('-'.$val['MJobMailTemplate']['value'].'day',strtotime($agreement['MAgreement']['agreement_end_day'])));
-          }
-          $nowTime = date('Y-m-d H');
-          if($agreementTime == $nowTime && $val['MJobMailTemplate']['agreement_flg'] == 2) {
-            $jobMailTemplatesData[$key]['id'] = $val['MJobMailTemplate']['id'];
-            $jobMailTemplatesData[$key]['mail_type_cd'] = $val['MJobMailTemplate']['mail_type_cd'];
-            $jobMailTemplatesData[$key]['sender'] = $val['MJobMailTemplate']['sender'];
-            $jobMailTemplatesData[$key]['subject'] = $val['MJobMailTemplate']['subject'];
-            $jobMailTemplatesData[$key]['mail_body'] = $val['MJobMailTemplate']['mail_body'];
-            $jobMailTemplatesData[$key]['send_mail_ml_flg'] = $val['MJobMailTemplate']['send_mail_ml_flg'];
-            $companyIds[] .= $agreement['MAgreement']['m_companies_id'];
-          }
-      }
-    }
-    //トライアル中の企業のユーザーのメールアドレスを検出
-    $trialMailAdressData = $this->MUser->find('all',[
-      'fields' => [
-        'mail_address'
-      ],
-      'conditions' => [
-        'm_companies_id' => $trialCompanyIds,
-        'permission_level' => [1,2]
-      ]
-    ]);
-
-    //本契約中の企業のユーザーのメールアドレスを検出
-    $mailAdressData = $this->MUser->find('all',[
-      'fields' => [
-        'mail_address'
-      ],
-      'conditions' => [
-        'm_companies_id' => $companyIds,
-        'permission_level' => [1,2]
-      ]
-    ]);
-
-    if(empty($trialMailAdressData)) {
-      $this->log('trialSchedule is not found.', self::LOG_INFO);
-    } else {
-      foreach($trialJobMailTemplatesData as $jobMailTemplate) {
-        foreach($trialMailAdressData as $index => $mailAdress) {
-          try {
-            $id = $jobMailTemplate['id'];
-            $to = $mailAdress['MUser']['mail_address'];
-            $sender = $jobMailTemplate['sender'];
-            $body = $jobMailTemplate['mail_body'];
-            $subject = $jobMailTemplate['subject'];
-            $this->log("Sending mail to ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
-            /*$this->component->setFrom(self::FROM_ADDRESS);
-            $this->component->setFromName($sender);
-            $this->component->setTo($to);
-            $this->component->setBody($body);
-            $this->component->setSubject($subject);
-            $this->component->send();*/
-            $sender2 = new MailSenderComponent();
-            $sender2->setFrom(self::FROM_ADDRESS);
-            $sender2->setFromName($sender);
-            $sender2->setTo($to);
-            $sender2->setBody($body);
-            $sender2->setSubject($subject);
-            $sender2->send();
-
-          } catch(Exception $e) {
-            $this->log('send mail error !!!!', self::LOG_ERROR);
-          }
-        }
-        if($jobMailTemplate['send_mail_ml_flg'] == 0) {
-          $sender2 = new MailSenderComponent();
-          $sender2->setFrom(self::FROM_ADDRESS);
-          $sender2->setFromName($sender);
-          $sender2->setTo('yuki.henmi@medialink-ml.co.jp');
-          $sender2->setBody($body);
-          $sender2->setSubject($subject);
-          $sender2->send();
-        }
-      }
-    }
-
-    if(empty($mailAdressData)) {
-      $this->log('schedule is not found.', self::LOG_INFO);
-    } else {
-      foreach($jobMailTemplatesData as $jobMailTemplate) {
-        foreach($mailAdressData as $index => $mailAdress) {
-          try {
-            $id = $jobMailTemplate['id'];
-            $to = $mailAdress['MUser']['mail_address'];
-            $sender = $jobMailTemplate['sender'];
-            $body = $jobMailTemplate['mail_body'];
-            $subject = $jobMailTemplate['subject'];
-            $this->log("Sending mail to ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
-            /*$this->component->setFrom(self::FROM_ADDRESS);
-            $this->component->setFromName($sender);
-            $this->component->setTo($to);
-            $this->component->setBody($body);
-            $this->component->setSubject($subject);
-            $this->component->send();*/
-            $sender2 = new MailSenderComponent();
-            $sender2->setFrom(self::FROM_ADDRESS);
-            $sender2->setFromName($sender);
-            $sender2->setTo($to);
-            $sender2->setBody($body);
-            $sender2->setSubject($subject);
-            $sender2->send();
-
-          } catch(Exception $e) {
-            $this->log('send mail error !!!!', self::LOG_ERROR);
-          }
-        }
-        if($jobMailTemplate['send_mail_ml_flg'] == 0) {
-          $sender2 = new MailSenderComponent();
-          $sender2->setFrom(self::FROM_ADDRESS);
-          $sender2->setFromName($sender);
-          $sender2->setTo('yuki.henmi@medialink-ml.co.jp');
-          $sender2->setBody($body);
-          $sender2->setSubject($subject);
-          $sender2->send();
-        }
-      }
-    }
-    $this->log('END   sendmail schedule.', self::LOG_INFO);
-    //ここまで
   }
 
   public function add() {
@@ -247,13 +49,6 @@ class TrialController extends AppController {
     $this->layout = 'ajax';
     $data = $this->request->data;
     $data['MUser']['mail_address'] = $data['Contract']['user_mail_address'];
-    $this->MUser->set($data);
-    //mailAddress validattionチェック
-    if(!$this->MUser->validates()) {
-      $errorMessage = $this->MUser->validationErrors;
-      $this->MUser->rollback();
-      return $errorMessage['mail_address'][0];
-    }
 
     $data['MCompany']['trial_flg'] = C_TRIAL_FLG;
     $data['MCompany']['options']['refCompanyData'] = 1;
@@ -276,6 +71,22 @@ class TrialController extends AppController {
    * */
   public function thanks() {
     $this->set('title_for_layout', '無料トライアルを受付いたしました');
+  }
+
+  /* *
+   * メールアドレス　validateチェック
+   * @return void
+   * */
+  public function check() {
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $data = $this->request->data;
+    $data['MUser']['mail_address'] = $data['Contract']['user_mail_address'];
+    $this->MUser->set($data);
+    if(!$this->MUser->validates()) {
+      $errorMessage = $this->MUser->validationErrors;
+      return $errorMessage['mail_address'][0];
+    }
   }
 
    /* *

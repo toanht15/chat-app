@@ -69,9 +69,11 @@
   <div style = "margin-left:30px;">
     ##COMPANY_NAME##：　会社名<br>
     ##USER_NAME##：　名前<br>
-    ##MAIL_ADDRESS##：　メールアドレス<br>
     <?php if($value == C_AFTER_APPLICATION) { ?>
-      ##PASSWORD##：　パスワード
+      <span id = "variable" style = "font-weight:normal;">
+        ##MAIL_ADDRESS##：　メールアドレス<br>
+        ##PASSWORD##：　パスワード
+      </span>
     <?php } ?>
   </div>
 </li>

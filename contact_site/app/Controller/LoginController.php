@@ -162,19 +162,22 @@ class LoginController extends AppController {
           $companyData = $companyData[0];
           $mailTemplateData = $this->MSystemMailTemplate->find('all');
 
-          $mailBodyData = str_replace(self::COMPANY_NAME, $companyData['MCompany']['company_name'], $mailTemplateData[3]['MSystemMailTemplate']['mail_body']);
-          if(!empty($agreementData['MAgreements']['application_name'])) {
-            $mailBodyData = str_replace(self::USER_NAME, $agreementData['MAgreements']['application_name'], $mailBodyData);
-          }
-          $mailBodyData = str_replace(self::MAIL_ADDRESS, $inputData['MUser']['mail_address'], $mailBodyData);
-
+          $this->log('agreementData',LOG_DEBUG);
+          $this->log($agreementData,LOG_DEBUG);
           $mailType = "";
           if($companyData['MCompany']['trial_flg'] == 1) {
             $mailType = 3;
           }
           else {
-            $mailType = 5;
+            $mailType = 6;
           }
+
+          $mailBodyData = str_replace(self::COMPANY_NAME, $companyData['MCompany']['company_name'], $mailTemplateData[$mailType   ]['MSystemMailTemplate']['mail_body']);
+          if(!empty($agreementData['MAgreement']['application_name'])) {
+            $mailBodyData = str_replace(self::USER_NAME, $agreementData['MAgreement']['application_name'], $mailBodyData);
+          }
+          $mailBodyData = str_replace(self::MAIL_ADDRESS, $inputData['MUser']['mail_address'], $mailBodyData);
+
           //お客さん向け
           $sender = new MailSenderComponent();
           $sender->setFrom(self::ML_MAIL_ADDRESS);

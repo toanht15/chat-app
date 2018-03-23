@@ -38,7 +38,6 @@ function remoteDeleteCompany(id,companyId,userId,companyKey){
 }
 $(function(){
   $('input[type="radio"]').change(function(e) {
-    console.log($('#MailTemplateSettingsAddForm'));
     if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail3' || $(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail4' ||
       $(this)[0]['id'] == 'MailTemplateSettingsToSendMediaLink0' || $(this)[0]['id'] == 'MailTemplateSettingsToSendMediaLink1') {
       $(".daysAfter").css('display', 'block');
@@ -59,6 +58,13 @@ $(function(){
       $('#MailTemplateSettingsAddForm')[0][13]['name'] = "data[MSystemMailTemplate][sender]";
       $('#MailTemplateSettingsAddForm')[0][14]['name'] = "data[MSystemMailTemplate][subject]";
       $('#MailTemplateSettingsAddForm')[0][15]['name'] = "data[MSystemMailTemplate][mail_body]";
+    }
+    //変数メールアドレス・パスワード
+    if($(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail1') {
+      $("#variable").css('display', 'block');
+    }
+    else {
+      $("#variable").css('display', 'none');
     }
   });
 });

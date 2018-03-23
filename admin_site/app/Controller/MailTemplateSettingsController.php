@@ -29,7 +29,7 @@ class MailTemplateSettingsController extends AppController
     $jobMailData = $this->MJobMailTemplate->find('all');
     $systemMailData = $this->MSystemMailTemplate->find('all',[
       'conditions' => [
-        'id' => array(1,4,5,6),
+        'id' => array(1,4,5,7),
       ]
     ]);
     $this->set('jobMailData', $jobMailData);
@@ -64,6 +64,7 @@ class MailTemplateSettingsController extends AppController
       $mailRegistration = Configure::read('mailRegistration');
       $sendingMailML = Configure::read('sendingMailML');
       $this->set('agreement',$agreement);
+      $this->set('agreementFlg',C_FREE_TRIAL_AGREEMENT);
       $this->set('mailRegistration',$mailRegistration);
       $this->set('sendingMailML',$sendingMailML);
       $this->set('value',C_AFTER_APPLICATION);
@@ -92,7 +93,7 @@ class MailTemplateSettingsController extends AppController
         $this->createMailInfo($mailInfo);
       }
       //無料トライアル契約
-      if($mailInfo['MJobMailTemplate']['Agreement'] == C_FREE_TRIAL_AGREEMENT) {
+      if($mailInfo['MJobMailTemplate']['agreement_flg'] == C_FREE_TRIAL_AGREEMENT) {
         //無料トライアル申込み後or契約申込み後or初期パスワード変更後
         if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION ||  $mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE) {
           $transaction = $this->TransactionManager->begin();
@@ -100,7 +101,7 @@ class MailTemplateSettingsController extends AppController
         }
       }
        //本契約
-      if($mailInfo['MJobMailTemplate']['Agreement'] == C_AGREEMENT) {
+      if($mailInfo['MJobMailTemplate']['agreement_flg'] == C_AGREEMENT) {
         //無料トライアル申込み後or契約申込み後or初期パスワード変更後
         if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION ||  $mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE) {
           $transaction = $this->TransactionManager->begin();
@@ -127,7 +128,7 @@ class MailTemplateSettingsController extends AppController
         "value_type" => $mailInfo["value_type"],
         "value" => $mailInfo["value"],
         "time" => $mailInfo["time"],
-        "agreement_flg" => $mailInfo["Agreement"],
+        "agreement_flg" => $mailInfo["agreement_flg"],
         "send_mail_ml_flg" => $mailInfo["mail_body"]
     ];
     $this->MJobMailTemplate->create();
@@ -194,7 +195,7 @@ class MailTemplateSettingsController extends AppController
     else if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE) {
       $mailInfo = $mailInfo['MSystemMailTemplate'];
       $tmpData = [
-          'id' => 6,
+          'id' => 7,
           "mail_type_cd" => $mailInfo["mail_type_cd"],
           "sender" => $mailInfo["sender"],
           "subject" => $mailInfo["subject"],
@@ -222,34 +223,54 @@ class MailTemplateSettingsController extends AppController
   public function edit($id,$when,$exam)
   {
     if ($this->request->is('post') || $this->request->is('put')) {
-      $this->log('when',LOG_DEBUG);
-      $this->log($when,LOG_DEBUG);
       $saveData = $this->request->data;
       //何日後,何日前の場合
-      if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_DAYS || $saveData['MailTemplateSettings']['timeToSendMail'] == C_BEFORE_DAYS) {
-        $mailInfo = $this->MJobMailTemplate->read(null, $id);
-      }
-      /*else if(($when == C_AFTER_DAYS || $when == C_BEFORE_DAYS) && empty($exam)) {
-        $this->log('新しく',LOG_DEBUG);
+      if(($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_DAYS || $saveData['MailTemplateSettings']['timeToSendMail'] == C_BEFORE_DAYS)) {
+        //時間設定
+        if($saveData['MJobMailTemplate']['time'] == 0) {
+          $saveData['MJobMailTemplate']['time'] = 9;
+        }
+        if($saveData['MJobMailTemplate']['time'] == 1) {
+          $saveData['MJobMailTemplate']['time'] = 12;
+        }
+        if($saveData['MJobMailTemplate']['time'] == 2) {
+          $saveData['MJobMailTemplate']['time'] = 15;
+        }
+        if($saveData['MJobMailTemplate']['time'] == 2) {
+          $saveData['MJobMailTemplate']['time'] = 19;
+        }
+        //何日後、何日前更新の場合
+        if($when == 3 || $when == 4) {
+          $mailInfo = $this->MJobMailTemplate->read(null, $id);
+        }
+        //申込情報登録時、初期パスワード変更時に変更の場合
+        if($when == 1 || $when == 2) {
         $this->MJobMailTemplate->create();
-      }*/
+        }
+      }
       //申込み後or初期パスワード変更後
-      else if(($when == C_AFTER_APPLICATION || $when == C_AFTER_PASSWORD_CHANGE) && $when == $exam) {
+      else if(($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION ||
+        $saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE) && ($when == 1 || $when == 2)) {
         $mailInfo = $this->MSystemMailTemplate->read(null, $id);
       }
-      else if(($when == C_AFTER_APPLICATION || $when == C_AFTER_PASSWORD_CHANGE) && $when !== $exam) {
-        $this->MJobMailTemplate->delete($id);
-        if($when == C_AFTER_APPLICATION && $this->request->data['MJobMailTemplate']['Agreement'] == C_FREE_TRIAL_AGREEMENT) {
-          $this->request->data['MSystemMailTemplate']['id'] = 1;
+      else if(($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION ||
+        $saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE) &&
+        ($when == 3 || $when == 4)) {
+        if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION && $saveData['MJobMailTemplate']['agreement_flg'] == C_FREE_TRIAL_AGREEMENT) {
+          $this->MJobMailTemplate->delete($id);
+          $saveData['MSystemMailTemplate']['id'] = 1;
         }
-        if($when == C_AFTER_PASSWORD_CHANGE && $this->request->data['MJobMailTemplate']['Agreement'] == C_FREE_TRIAL_AGREEMENT) {
-          $this->request->data['MSystemMailTemplate']['id'] = 4;
+        if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE && $saveData['MJobMailTemplate']['agreement_flg'] == C_FREE_TRIAL_AGREEMENT) {
+          $this->MJobMailTemplate->delete($id);
+          $saveData['MSystemMailTemplate']['id'] = 4;
         }
-        if($when == C_AFTER_APPLICATION && $this->request->data['MJobMailTemplate']['Agreement'] == C_AGREEMENT) {
-          $this->request->data['MSystemMailTemplate']['id'] = 5;
+        if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION && $saveData['MJobMailTemplate']['agreement_flg'] == C_AGREEMENT) {
+          $this->MJobMailTemplate->delete($id);
+          $saveData['MSystemMailTemplate']['id'] = 5;
         }
-        if($when == C_AFTER_PASSWORD_CHANGE && $this->request->data['MJobMailTemplate']['Agreement'] == C_AGREEMENT) {
-          $this->request->data['MSystemMailTemplate']['id'] = 6;
+        if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE && $saveData['MJobMailTemplate']['agreement_flg'] == C_AGREEMENT) {
+          $this->MJobMailTemplate->delete($id);
+          $saveData['MSystemMailTemplate']['id'] = 7;
         }
       }
       $transactions = $this->TransactionManager->begin();
@@ -269,8 +290,9 @@ class MailTemplateSettingsController extends AppController
         $this->MJobMailTemplate->commit();
       }
       //申込み後or初期パスワード変更後
-      else if($when == C_AFTER_APPLICATION || $when == C_AFTER_PASSWORD_CHANGE) {
-        $saveData = $this->request->data['MSystemMailTemplate'];
+      else if($saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_APPLICATION ||
+        $saveData['MailTemplateSettings']['timeToSendMail'] == C_AFTER_PASSWORD_CHANGE) {
+        $saveData = $saveData['MSystemMailTemplate'];
         $this->MSystemMailTemplate->set($saveData);
         $this->MSystemMailTemplate->save();
         $this->MSystemMailTemplate->commit();
@@ -281,6 +303,19 @@ class MailTemplateSettingsController extends AppController
       if($when == C_AFTER_DAYS || $when == C_BEFORE_DAYS) {
         $editData = $this->MJobMailTemplate->read(null, $id);
         $this->set('id', $editData['MJobMailTemplate']['id']);//削除に必要なもの
+        //時間設定
+        if($editData['MJobMailTemplate']['time'] == 9) {
+          $editData['MJobMailTemplate']['time'] = 0;
+        }
+        if($editData['MJobMailTemplate']['time'] == 12) {
+          $editData['MJobMailTemplate']['time'] = 1;
+        }
+        if($editData['MJobMailTemplate']['time'] == 15) {
+          $editData['MJobMailTemplate']['time'] = 2;
+        }
+        if($editData['MJobMailTemplate']['time'] == 19) {
+          $editData['MJobMailTemplate']['time'] = 3;
+        }
         //何日後(無料トライアル)
         if($when == C_AFTER_DAYS && $editData['MJobMailTemplate']['agreement_flg'] == C_FREE_TRIAL_AGREEMENT) {
           $this->set('value',C_AFTER_DAYS);
@@ -321,7 +356,7 @@ class MailTemplateSettingsController extends AppController
           $this->set('value',C_AFTER_APPLICATION);
           $this->set('agreementFlg',C_AGREEMENT);
         }
-        if($id == 6) {
+        if($id == 7) {
           //初期パスワード変更後(本契約登録後)
           $this->set('value',C_AFTER_PASSWORD_CHANGE);
           $this->set('agreementFlg',C_AGREEMENT);
@@ -347,8 +382,8 @@ class MailTemplateSettingsController extends AppController
       $when = $this->request->data['when'];
 
       try {
-        //何日後
-        if($when == C_AFTER_DAYS) {
+        //何日後,何日前
+        if($when == C_AFTER_DAYS || $when == C_BEFORE_DAYS) {
           //物理削除
           $this->MJobMailTemplate->delete($id);
         }
