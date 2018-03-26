@@ -548,6 +548,9 @@ class ContractController extends AppController
     if(empty($agreementInfo['trial_end_day'])) {
       $agreementInfo['trial_end_day'] = "";
     }
+    if(empty($agreementInfo['memo'])) {
+      $agreementInfo['memo'] = "";
+    }
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
       'business_model' => $agreementInfo['business_model'],
@@ -563,6 +566,7 @@ class ContractController extends AppController
       'admin_password' => $password,
       'telephone_number' => $agreementInfo['telephone_number'],
       'note' => $agreementInfo['note'],
+      'memo' => $agreementInfo['memo']
     ]);
     // スーパー管理者情報追加
     $tmpData = [
