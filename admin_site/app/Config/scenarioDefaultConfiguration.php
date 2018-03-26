@@ -63,16 +63,82 @@ $config['default'] = array(
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
             "mailType" => "3",
-            "mailTransmission" => array(), // FIXME
-            "mailTemplate" => array() // FIXME
+            "mailTransmission" => array(
+              'from_address' => '',
+              'from_name' => '★★★自由に編集してください★★★',
+              'to_address' => '{{メールアドレス}}',
+              'subject' => '資料請求ありがとうございます'
+            ), // FIXME
+            "mailTemplate" => array(
+              'mail_type_cd' => 'CS001',
+              'template' => '--------------------------------------------------------------------------------------------------------
+このメールは、資料請求の受け付け完了をお知らせする自動返信メールです。
+本メールへの返信は受け付けておりませんのでご了承ください。
+--------------------------------------------------------------------------------------------------------
+{{会社名}}
+{{名前}}様
+
+この度は、資料請求ありがとうございます。
+
+後ほど担当の者から資料をお送りさせて頂きますので少々お待ちください。
+
+
+──以下お問い合わせいただきました内容です──
+
+■会社名
+{{会社名}}
+
+■お名前
+{{名前}}
+
+■電話番号
+{{電話番号}}
+
+■メールアドレス
+{{メールアドレス}}
+
+■その他ご要望
+{{その他}}
+
+──────────ここまで─────────
+
+※本メールは自動返信にてお届けしています。
+
+──────────────────────────────
+
+★★★署名を自由に編集してください★★★
+
+──────────────────────────────'
+            )
           ),
           "3" => array(
             "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
             "mailType" => "1",
-            "mailTransmission" => array(), // FIXME
-            "mailTemplate" => array() // FIXME
+            "mailTransmission" => array(
+              'from_address' => '',
+              'from_name' => 'sinclo（シンクロ）',
+              'to_address' => '★★★貴社アドレスを設定して下さい★★★',
+              'subject' => '資料請求の申し込みがありました'
+            ), // FIXME
+            "mailTemplate" => array(
+              'mail_type_cd' => 'CS001',
+              'template' => '※このメールはお客様の設定によりsincloから自動送信されました。
+
+ご担当者様
+
+sincloのシナリオ設定によりメールを送信致しました。
+以下のメッセージ内容をご確認下さい。
+
+##SCENARIO_ALL_MESSAGE_BLOCK##
+
+------------------------------------------------------------------
+このメールにお心当たりのない方は、誠に恐れ入りますが
+下記連絡先までご連絡ください。
+sinclo@medialink-ml.co.jp
+------------------------------------------------------------------'
+            )
           ),
           "4" => array(
             "chatTextArea" => "2",
@@ -145,8 +211,29 @@ $config['default'] = array(
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
             "mailType" => "1",
-            "mailTransmission" => array(), // FIXME
-            "mailTemplate" => array() // FIXME
+            "mailTransmission" => array(
+              'from_address' => '',
+              'from_name' => 'sinclo（シンクロ）',
+              'to_address' => '★★★貴社アドレスを設定して下さい★★★',
+              'subject' => '資料請求の申し込みがありました'
+            ), // FIXME
+            "mailTemplate" => array(
+              'mail_type_cd' => 'CS001',
+              'template' => '※このメールはお客様の設定によりsincloから自動送信されました。
+
+ご担当者様
+
+sincloのシナリオ設定によりメールを送信致しました。
+以下のメッセージ内容をご確認下さい。
+
+##SCENARIO_ALL_MESSAGE_BLOCK##
+
+------------------------------------------------------------------
+このメールにお心当たりのない方は、誠に恐れ入りますが
+下記連絡先までご連絡ください。
+sinclo@medialink-ml.co.jp
+------------------------------------------------------------------'
+            )
           ),
           "4" => array(
             "chatTextArea" => "2",
@@ -251,8 +338,29 @@ $config['default'] = array(
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
             "mailType" => "1",
-            "mailTransmission" => array(), // FIXME
-            "mailTemplate" => array() // FIXME
+            "mailTransmission" => array(
+              'from_address' => '',
+              'from_name' => 'sinclo（シンクロ）',
+              'to_address' => '★★★貴社アドレスを設定して下さい★★★',
+              'subject' => '会員登録がありました'
+            ), // FIXME
+            "mailTemplate" => array(
+              'mail_type_cd' => 'CS001',
+              'template' => '※このメールはお客様の設定によりsincloから自動送信されました。
+
+ご担当者様
+
+sincloのシナリオ設定によりメールを送信致しました。
+以下のメッセージ内容をご確認下さい。
+
+##SCENARIO_ALL_MESSAGE_BLOCK##
+
+------------------------------------------------------------------
+このメールにお心当たりのない方は、誠に恐れ入りますが
+下記連絡先までご連絡ください。
+sinclo@medialink-ml.co.jp
+------------------------------------------------------------------'
+            )
           ),
           "6" => array(
             "chatTextArea" => "2",
@@ -456,16 +564,77 @@ $config['default'] = array(
             "actionType" => "4",
             "messageIntervalTimeSec" => "1",
             "mailType" => "3",
-            "mailTransmission" => array(), // FIXME
-            "mailTemplate" => array() // FIXME
+            "mailTransmission" => array(
+              'from_address' => '',
+              'from_name' => '★★★自由に編集してください★★★',
+              'to_address' => '{{メールアドレス}}',
+              'subject' => 'お問い合わせを受付いたしました'
+            ), // FIXME
+            "mailTemplate" => array(
+              'mail_type_cd' => 'CS001',
+              'template' => '--------------------------------------------------------------------
+このメールは自動返信にてお届けしています。
+本メールへの返信は受け付けておりませんのでご了承ください。
+--------------------------------------------------------------------
+{{会社名}}
+{{名前}}様
+
+このたびはお問い合わせを頂き、誠にありがとうございました。
+下記の内容でお問い合わせを承りました。
+
+---------------------------------------------------------------
+■会社名
+{{会社名}}
+
+■お名前
+{{名前}}
+
+■電話番号
+{{電話番号}}
+
+■メールアドレス
+{{メールアドレス}}
+
+■お問い合わせ内容
+{{問い合わせ内容}}
+---------------------------------------------------------------
+
+
+────────────────────────────
+
+★★★署名を自由に編集してください★★★
+
+────────────────────────────'
+            )
           ),
           "3" => array(
             "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "1",
             "mailType" => "1",
-            "mailTransmission" => array(), // FIXME
-            "mailTemplate" => array() // FIXME
+            "mailTransmission" => array(
+              'from_address' => '',
+              'from_name' => '{{会社名}}　{{名前}}',
+              'to_address' => '★★★貴社アドレスを設定して下さい★★★',
+              'subject' => 'お問い合わせ通知'
+            ), // FIXME
+            "mailTemplate" => array(
+              'mail_type_cd' => 'CS001',
+              'template' => '※このメールはお客様の設定によりsincloから自動送信されました。
+
+ご担当者様
+
+sincloのシナリオ設定によりメールを送信致しました。
+以下のメッセージ内容をご確認下さい。
+
+##SCENARIO_ALL_MESSAGE_BLOCK##
+
+------------------------------------------------------------------
+このメールにお心当たりのない方は、誠に恐れ入りますが
+下記連絡先までご連絡ください。
+sinclo@medialink-ml.co.jp
+------------------------------------------------------------------'
+            )
           ),
           "4" => array(
             "chatTextArea" => "2",
