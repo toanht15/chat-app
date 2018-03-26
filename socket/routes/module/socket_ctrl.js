@@ -501,6 +501,9 @@ function getMessageTypeBySenarioActionType(type) {
     case 3:
       result = 23;
       break;
+    case 7:
+      result = 27;
+      break;
   }
   return result;
 }
