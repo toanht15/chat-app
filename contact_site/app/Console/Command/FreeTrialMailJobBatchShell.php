@@ -26,7 +26,7 @@ class FreeTrialMailJobBatchShell extends AppShell
   const URL = "##URL##";
   const OTHER = "##OTHER##";
 
-  public $uses = ['MUser','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate','MCompany'];
+  public $uses = ['MUser','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate','MCompany','MAgreement'];
 
 
   private $component;
@@ -48,7 +48,7 @@ class FreeTrialMailJobBatchShell extends AppShell
     $this->log('TARGET schedule is '.$beginDate.' 〜 '.$endDate.' .', self::LOG_INFO);
 
     //ここから消す//
-       //何日後の何時にメールを飛ばすか取得
+    //何日後の何時にメールを飛ばすか取得
     $schedules = $this->MJobMailTemplate->find('all');
     //全企業取得
     $trialCompany = $this->MCompany->find('all',[
@@ -97,6 +97,7 @@ class FreeTrialMailJobBatchShell extends AppShell
     $jobMailTemplatesData = [];
     $trialCompanyIds = [];
     $companyIds = [];
+    $this->log('BEGIN sendmail schedule2.', self::LOG_INFO);
     //何日後の何時に当てはまる企業を抜粋
     foreach($schedules as $key => $val) {
         foreach($trialDay as $trial) {
@@ -109,6 +110,7 @@ class FreeTrialMailJobBatchShell extends AppShell
             $trialTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('-'.$val['MJobMailTemplate']['value'].'day',strtotime($trial['MAgreement']['trial_end_day'])));
           }
           $nowTime = date('Y-m-d H');
+          $this->log('BEGIN sendmail schedule3.', self::LOG_INFO);
           //現在の時刻と比較(無料トライアルの場合)
           if($trialTime == $nowTime && $val['MJobMailTemplate']['agreement_flg'] == 1) {
             $trialJobMailTemplatesData[$key]['id'] = $val['MJobMailTemplate']['id'];
@@ -174,6 +176,7 @@ class FreeTrialMailJobBatchShell extends AppShell
     if(empty($trialMailAdressData)) {
       $this->log('trialSchedule is not found.', self::LOG_INFO);
     } else {
+      $this->log('BEGIN sendmail schedule4.', self::LOG_INFO);
       foreach($trialJobMailTemplatesData as $key => $jobMailTemplate) {
         foreach($trialMailAdressData as $index => $mailAdress) {
           try {
