@@ -1,13 +1,13 @@
 <?php
 App::uses('AppModel', 'Model');
 /**
- * TChatbotScenario Model
+ * TChatbotScenarioSendFile Model
  *
  * @property MCompanies $MCompanies
  */
-class TChatbotScenarioUploadFile extends AppModel {
+class TChatbotScenarioSendFile extends AppModel {
 
-  public $name = "TChatbotScenarioUploadFile";
+  public $name = "TChatbotScenarioSendFile";
 
   public $validate = [
     'file_path' => [

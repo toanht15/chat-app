@@ -11,12 +11,21 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.changeFlg = false;
 
   // アクション設定の取得・初期化
-  var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
-  var setActionListTmp = (typeof(setActivity) === "string") ? JSON.parse(setActivity).scenarios : {};
   $scope.setActionList = [];
-  for (var key in setActionListTmp) {
-    if (setActionListTmp.hasOwnProperty(key)) {
-      $scope.setActionList.push(setActionListTmp[key]);
+  $scope.targetDeleteFileIds = [];
+  var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
+  if (typeof setActivity  === "string") {
+    var jsonData = JSON.parse(setActivity);
+    var setActionListTmp = jsonData.scenarios;
+    for (var key in setActionListTmp) {
+      if (setActionListTmp.hasOwnProperty(key)) {
+        $scope.setActionList.push(setActionListTmp[key]);
+      }
+    }
+
+    // 削除対象のファイルID一覧の取得
+    if (typeof jsonData.targetDeleteFileIds !== 'undefined' && jsonData.targetDeleteFileIds.length >= 1) {
+      $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
     }
   }
 
@@ -36,7 +45,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
-  // 一時保存データの読み込み
+  // 一時保存データのキー生成
   var scenarioId = document.getElementById('TChatbotScenarioId').value || 'tmp';
   $scope.storageKey = 'scenario_' + scenarioId;
 
@@ -63,7 +72,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 並び替え後、変数のチェックを行う
       var elms = event.target.querySelectorAll('li.set_action_item');
       $scope.setActionList.forEach(function(actionItem, index) {
-        validateAction(elms[index], $scope.setActionList, actionItem);
+        actionValidationCheck(elms[index], $scope.setActionList, actionItem);
       });
     }
   };
@@ -102,7 +111,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの削除
   this.removeItem = function(setActionId) {
+    var actionDetail = $scope.setActionList[setActionId];
+    if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' || actionDetail.tChatbotScenarioSendFileId !== null ) {
+      $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
+    }
+
     $scope.setActionList.splice(setActionId, 1);
+
+    // localStorageに一時保存を行う
+    localStorage.setItem($scope.storageKey, self.createJsonData(false));
   };
 
   // アクションの追加・削除を検知する
@@ -121,7 +138,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   });
 
-  // 各アクション内の変更を検知する
+  // 各アクション内の変更を検知し、プレビューのメッセージを表示更新する
   $scope.watchSetActionList = function(action, index) {
     // watchの破棄
     if (typeof $scope.watchActionList[index] !== 'undefined') {
@@ -190,11 +207,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     fd.append("file", blob, fileObj.name);
 
     var targetElm = document.querySelector('#action' + actionStep + '_setting .selectFileArea');
+    var actionDetail = $scope.setActionList[actionStep];
     targetElm.querySelector('li:first-child').style.display = 'none';
     targetElm.querySelector('.uploadProgress').classList.remove('hide');
 
     $.ajax({
-      url  : "<?= $this->Html->url('/File/uploadForScenario') ?>",
+      url  : "<?= $this->Html->url('/TChatbotScenario/remoteUploadFile') ?>",
       type : "POST",
       data : fd,
       cache       : false,
@@ -214,8 +232,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
     })
     .done(function(data, textStatus, jqXHR){
-      console.info(JSON.stringify(data));
-      $scope.setActionList[actionStep].file = data;
+      // 更新前のファイルIDを、削除リストに追加する
+      if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' && actionDetail.tChatbotScenarioSendFileId !== null) {
+        $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
+      }
+      // アップロードしたファイル情報で更新する
+      actionDetail = angular.merge(actionDetail, data.save_data);
+
+      // localStorageに一時保存を行う
+      localStorage.setItem($scope.storageKey, self.createJsonData(false));
     })
     .fail(function(jqXHR, textStatus, errorThrown){
       alert("fail");
@@ -225,7 +250,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       targetElm.querySelector('.uploadProgress').classList.add('hide');
       $scope.$apply();
     });
-  }
+  };
 
   // シミュレーターの起動
   this.openSimulator = function() {
@@ -236,7 +261,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   this.saveAct = function() {
     var validatedActivity = this.createJsonData(true);
-    var unvalidatedActivity = this.createJsonData(false);
 
     // localStorageから一時保存データを削除する
     localStorage.removeItem($scope.storageKey);
@@ -254,10 +278,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'シナリオ設定', 'moment');
     popupEvent.closePopup = function(){
+
+      // ファイルIDの削除リストを取得
+      $scope.setActionList.forEach(function(action) {
+        if (action.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+          $scope.targetDeleteFileIds.push(action.tChatbotScenarioSendFileId);
+        }
+      });
+
       $.ajax({
         type: 'post',
         data: {
-          id: document.getElementById('TChatbotScenarioId').value
+          id: document.getElementById('TChatbotScenarioId').value,
+          targetDeleteFileIds: JSON.stringify($scope.targetDeleteFileIds)
         },
         cache: false,
         url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
@@ -274,9 +307,136 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * createJsonData
+   * addActionItemList
+   * ヒアリング、選択肢、メール送信のリスト追加
+   * （選択肢・メール送信ではリストの末尾に、ヒアリングではリストの任意の箇所に追加する）
+   * @param String  actionStep  アクション番号
+   * @param Integer listIndex   ボタン押下されたリスト番号
+   */
+  this.addActionItemList = function($event, listIndex) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var targetClassName = $($event.target).parents('.itemListGroup')[0].className;
+    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+    var actionType = $scope.setActionList[actionStep].actionType;
+
+    if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+      var src = $scope.actionList[actionType].default.hearings[0];
+      var target = $scope.setActionList[actionStep].hearings;
+      src.inputType = src.inputType.toString();
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllHearingSettingView(actionStep);
+
+    } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+      var src = $scope.actionList[actionType].default.selection.options[0];
+      var target = $scope.setActionList[actionStep].selection.options;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllSelectOptionSetting(actionStep);
+
+    } else if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+      var target = $scope.setActionList[actionStep].toAddress;
+      if (target.length < 5) {
+        target.push(angular.copy(''));
+        this.controllMailSetting(actionStep);
+      }
+
+    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
+      if (/externalApiRequestHeader/.test(targetClassName)) {
+        var src = $scope.actionList[actionType].default.requestHeaders[0];
+        var target = $scope.setActionList[actionStep].requestHeaders;
+      } else {
+        var src = $scope.actionList[actionType].default.responseBodyMaps[0];
+        var target = $scope.setActionList[actionStep].responseBodyMaps;
+      }
+      target.push(angular.copy(src));
+      this.controllExternalApiSetting(actionStep);
+    }
+  };
+
+  // ヒアリング、選択肢、メール送信のリスト削除
+  this.removeActionItemList = function($event, listIndex) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var targetClassName = $($event.target).parents('.itemListGroup')[0].className;
+    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+    var actionType = $scope.setActionList[actionStep].actionType;
+
+    var targetObjList = "";
+    var selector = "";
+    var limitNum = 0;
+
+    if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+      targetObjList = $scope.setActionList[actionStep].hearings;
+      selector = '#action' + actionStep + '_setting .itemListGroup tr:nth-child(2n+2)';
+    } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+      targetObjList = $scope.setActionList[actionStep].selection.options;
+      selector = '#action' + actionStep + '_setting .itemListGroup li';
+    } else if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+      targetObjList = $scope.setActionList[actionStep].toAddress;
+      selector = '#action' + actionStep + '_setting .itemListGroup li';
+      limitNum = 5;
+    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
+      if (/externalApiRequestHeader/.test(targetClassName)) {
+        targetObjList = $scope.setActionList[actionStep].requestHeaders;
+        selector = '#action' + actionStep + '_setting .itemListGroup.externalApiRequestHeader tr';
+      } else {
+        targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
+        selector = '#action' + actionStep + '_setting .itemListGroup.externalApiResponseBody tr';
+      }
+    }
+
+    if (targetObjList !== "" && selector !== "") {
+      targetObjList.splice(listIndex, 1);
+
+      // 表示更新
+      $timeout(function() {
+        $scope.$apply();
+      }).then(function() {
+        self.controllListView(actionType, $(selector), targetObjList, limitNum)
+      });
+    }
+  };
+
+  /**
+   * ファイル送信設定の設定状態確認
+   * @param  Object  $action アクション詳細
+   * @return Boolean
+   */
+  this.isFileSet = function(action) {
+    return !!action.tChatbotScenarioSendFileId && !!action.file && !!action.file.download_url && !!action.file.file_size;
+  }
+
+  /**
+   * ファイル選択ダイアログの起動
+   */
+  this.selectFile = function($event) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var fileElm = document.querySelector('#' + targetActionId + ' .fileElm');
+
+    if (fileElm) {
+      // ファイルピッカー呼び出し
+      fileElm.click();
+    }
+  };
+
+  /**
+   * ファイル削除
+   */
+  this.removeFile = function($event) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+
+    // ファイルIDの削除リストへ追加
+    $scope.targetDeleteFileIds.push($scope.setActionList[actionStep].tChatbotScenarioSendFileId);
+
+    $scope.setActionList[actionStep].tChatbotScenarioSendFileId = null;
+    $scope.setActionList[actionStep].file = null;
+
+    // localStorageに一時保存を行う
+    localStorage.setItem($scope.storageKey, self.createJsonData(false));
+  }
+
+  /**
    * jsonデータを作る
-   * @param Boolean isCheckValidation アクションのバリデーションチェックを行うか
+   * @param Boolean isCheckValidation バリデーションチェックの実行フラグ
    */
   this.createJsonData = function(isCheckValidation) {
     var index = 0;
@@ -324,6 +484,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         activity.scenarios[index++] = action;
       };
     });
+
+    // ファイルIDの削除リストを追加する
+    if ($scope.targetDeleteFileIds.length >= 1) {
+      activity.targetDeleteFileIds = $scope.targetDeleteFileIds;
+    }
+
     return JSON.stringify(activity);
   };
 
@@ -472,11 +638,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param Object  action  アクションの詳細
    */
   this.trimDataSendFile = function(action) {
-    if (typeof action.file === 'undefined' ||
-      typeof action.file.file_path === 'undefined' || action.file.file_path === '' ||
-      typeof action.file.file_name === 'undefined' || action.file.file_name === '' ||
-      typeof action.file.file_size === 'undefined' || action.file.file_size === ''
-    ) {
+    if (!self.isFileSet(action)) {
       return null;
     }
     return action;
@@ -525,115 +687,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList);
     });
   };
-
-  /**
-   * addActionItemList
-   * ヒアリング、選択肢、メール送信のリスト追加
-   * （選択肢・メール送信ではリストの末尾に、ヒアリングではリストの任意の箇所に追加する）
-   * @param String  actionStep  アクション番号
-   * @param Integer listIndex   ボタン押下されたリスト番号
-   */
-  this.addActionItemList = function($event, listIndex) {
-    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
-    var targetClassName = $($event.target).parents('.itemListGroup')[0].className;
-    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
-    var actionType = $scope.setActionList[actionStep].actionType;
-
-    if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
-      var src = $scope.actionList[actionType].default.hearings[0];
-      var target = $scope.setActionList[actionStep].hearings;
-      target.splice(listIndex+1, 0, angular.copy(src));
-      this.controllHearingSettingView(actionStep);
-
-    } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-      var src = $scope.actionList[actionType].default.selection.options[0];
-      var target = $scope.setActionList[actionStep].selection.options;
-      target.splice(listIndex+1, 0, angular.copy(src));
-      this.controllSelectOptionSetting(actionStep);
-
-    } else if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
-      var target = $scope.setActionList[actionStep].toAddress;
-      if (target.length < 5) {
-        target.push(angular.copy(''));
-        this.controllMailSetting(actionStep);
-      }
-
-    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
-      if (/externalApiRequestHeader/.test(targetClassName)) {
-        var src = $scope.actionList[actionType].default.requestHeaders[0];
-        var target = $scope.setActionList[actionStep].requestHeaders;
-      } else {
-        var src = $scope.actionList[actionType].default.responseBodyMaps[0];
-        var target = $scope.setActionList[actionStep].responseBodyMaps;
-      }
-      target.push(angular.copy(src));
-      this.controllExternalApiSetting(actionStep);
-    }
-  };
-
-  // ヒアリング、選択肢、メール送信のリスト削除
-  this.removeActionItemList = function($event, listIndex) {
-    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
-    var targetClassName = $($event.target).parents('.itemListGroup')[0].className;
-    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
-    var actionType = $scope.setActionList[actionStep].actionType;
-
-    var targetObjList = "";
-    var selector = "";
-    var limitNum = 0;
-
-    if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
-      targetObjList = $scope.setActionList[actionStep].hearings;
-      selector = '#action' + actionStep + '_setting .itemListGroup tr:nth-child(2n+2)';
-    } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-      targetObjList = $scope.setActionList[actionStep].selection.options;
-      selector = '#action' + actionStep + '_setting .itemListGroup li';
-    } else if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
-      targetObjList = $scope.setActionList[actionStep].toAddress;
-      selector = '#action' + actionStep + '_setting .itemListGroup li';
-      limitNum = 5;
-    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
-      if (/externalApiRequestHeader/.test(targetClassName)) {
-        targetObjList = $scope.setActionList[actionStep].requestHeaders;
-        selector = '#action' + actionStep + '_setting .itemListGroup.externalApiRequestHeader tr';
-      } else {
-        targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
-        selector = '#action' + actionStep + '_setting .itemListGroup.externalApiResponseBody tr';
-      }
-    }
-
-    if (targetObjList !== "" && selector !== "") {
-      targetObjList.splice(listIndex, 1);
-
-      // 表示更新
-      $timeout(function() {
-        $scope.$apply();
-      }).then(function() {
-        self.controllListView(actionType, $(selector), targetObjList, limitNum)
-      });
-    }
-  };
-
-  /**
-   * ファイル選択ダイアログの起動
-   */
-  this.selectFile = function($event) {
-    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
-    var fileElm = document.querySelector('#' + targetActionId + ' .fileElm');
-
-    if (fileElm) {
-      // ファイルピッカー呼び出し
-      fileElm.click();
-    }
-  };
-  /**
-   * ファイル削除
-   */
-  this.removeFile = function($event) {
-    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
-    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
-    $scope.setActionList[actionStep].file = '';
-  }
 
   /**
    * controllListView
@@ -685,15 +738,41 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   angular.element(window).on('load', function(e) {
     var storageData = localStorage.getItem($scope.storageKey);
+    var jsonData = JSON.parse(storageData);
+
     if (typeof storageData !== 'undefined' && storageData !== null && storageData !== '') {
       if (window.confirm('一時保存されたシナリオがあります。\nデータを復旧しますか？')) {
+        // シナリオ設定の一時保存データの復旧
         $scope.setActionList = [];
-        angular.forEach(JSON.parse(storageData).scenarios, function(action) {
+        angular.forEach(jsonData.scenarios, function(action) {
           $scope.setActionList.push(action);
         });
+        // ファイルIDの削除リストを取得
+        if (typeof jsonData.targetDeleteFileIds !== 'undefined' && jsonData.targetDeleteFileIds !== null) {
+          $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
+        }
+
         $scope.$apply();
       } else {
-        localStorage.removeItem($scope.storageKey);
+        // ファイルIDの削除リストを取得
+        $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
+        angular.forEach(jsonData.scenarios, function(action) {
+          if (action.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+            $scope.targetDeleteFileIds.push(action.tChatbotScenarioSendFileId);
+          }
+        });
+
+        // ファイルIDの削除リストが存在する場合、現在のシナリオ設定で一時保存データを上書きする
+        if ($scope.targetDeleteFileIds.length >= 1) {
+          localStorage.setItem($scope.storageKey, self.createJsonData(false));
+        } else {
+          localStorage.removeItem($scope.storageKey);
+        }
+      }
+    } else {
+      // ファイルIDの削除リストが存在する場合、現在のシナリオ設定で一時保存データを上書きする
+      if ($scope.targetDeleteFileIds.length >= 1) {
+        localStorage.setItem($scope.storageKey, self.createJsonData(false));
       }
     }
 
@@ -771,10 +850,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var actionDetail = $scope.setActionList[$scope.actionStep];
 
       if ($scope.hearingIndex < actionDetail.hearings.length) {
-        // 入力内容のチェック
-        var inputType = actionDetail.hearings[$scope.hearingIndex].inputType
+        // 入力された文字列を改行ごとに分割し、適切な入力かチェックする
+        var inputType = actionDetail.hearings[$scope.hearingIndex].inputType;
         var regex = new RegExp($scope.inputTypeList[inputType].rule.replace(/^\/(.+)\/$/, "$1"));
-        if (regex.test(message)) {
+        var isMatched = message.split(/\r\n|\n/).every(function(string) {
+          return string.length >= 1 ? regex.test(string) : true;
+        });
+        if (isMatched) {
           // 変数の格納
           LocalStorageService.setItem(actionDetail.hearings[$scope.hearingIndex].variableName, message);
           // 次のアクション
@@ -1061,22 +1143,38 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   return {
     restrict: 'E',
     replace: true,
-    template: '<textarea></textarea>',
+    template: '<textarea style="font-size: 13px; padding: 5px; line-height: 1.5;"></textarea>',
     link: function(scope, element, attrs) {
+      var maxRow = element[0].dataset.maxRow || 10;                   // 表示可能な最大行数
+      var fontSize = parseFloat(element[0].style.fontSize, 10);       // 行数計算のため、templateにて設定したフォントサイズを取得
+      var paddingSize = parseFloat(element[0].style.padding, 10) * 2; // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得
+      var lineHeight = parseFloat(element[0].style.lineHeight, 10);   // 表示高さの計算のため、templateにて設定した行の高さを取得
       var elm = angular.element(element[0]);
-      var defaultHeight = element[0].scrollHeight;
-      var maxHeight = defaultHeight * 4;
 
-      var clearWatch = scope.$watch(attrs.ngModel, function(value) {
-        if (typeof value === 'undefined') {
-          return;
+      function autoResize() {
+        var clientWidth = elm[0].clientWidth - paddingSize;
+
+        // フォントサイズとテキストエリアの横幅を基に、行数を計算する
+        var textRow = 0;
+        elm[0].value.split('\n').forEach(function(string) {
+          var stringWidth = string.length * fontSize;
+          textRow += Math.max(Math.ceil(stringWidth/clientWidth), 1);
+        });
+
+        // 表示する行数に応じて、テキストエリアの高さを調整する
+        if (elm[0].value.length >= 1) {
+          textRow = (textRow + 1) > maxRow ? maxRow : textRow + 1;
         }
-        var textHeight = elm[0].scrollHeight;
-        if (textHeight > defaultHeight) {
-          elm[0].style.height = (textHeight > maxHeight ? maxHeight : textHeight) + 'px';
+        if (textRow > 1) {
+          elm[0].style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+        } else {
+          elm[0].style.height = '';
         }
-        clearWatch();
-      });
+      }
+
+      scope.$watch(attrs.ngModel, autoResize);
+      $(window).on('resize', autoResize);
+      elm[0].addEventListener('input', autoResize);
     }
   };
 })
@@ -1088,7 +1186,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var elm = angular.element(element[0]);
 
       scope.$watch(attrs.ngModel, function(actionItem) {
-        validateAction(elm[0], scope.$parent.setActionList, actionItem);
+        actionValidationCheck(elm[0], scope.$parent.setActionList, actionItem);
       }, true);
     }
   };
@@ -1118,6 +1216,14 @@ $(document).ready(function() {
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
       left: $(this).offset().left - 70 + 'px'
     });
+
+    // 表示サイズ調整
+    var targetWidth = $(this).data('tooltip-width');
+    if (!!targetWidth) {
+      targetObj.find('icon-annotation').css('width', targetWidth + 'px');
+    } else {
+      targetObj.find('icon-annotation').css('width', '18em');
+    }
   }).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
     $('.explainTooltip').find('icon-annotation').css('display','none');
   });
@@ -1206,7 +1312,7 @@ $(document).ready(function() {
 });
 
 // アクションのバリデーションとエラーメッセージの設定
-function validateAction(element, setActionList, actionItem) {
+function actionValidationCheck(element, setActionList, actionItem) {
   var messageList = [];
 
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
@@ -1297,11 +1403,7 @@ function validateAction(element, setActionList, actionItem) {
     }
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
-    if (typeof actionItem.file === 'undefined' ||
-      typeof actionItem.file.file_path === 'undefined' || actionItem.file.file_path === '' ||
-      typeof actionItem.file.file_name === 'undefined' || actionItem.file.file_name === '' ||
-      typeof actionItem.file.file_size === 'undefined' || actionItem.file.file_size === ''
-    ) {
+    if (!actionItem.tChatbotScenarioSendFileId && !actionItem.file && !actionItem.file.download_url && !actionItem.file.file_size) {
       messageList.push('ファイルが未選択です');
     }
   }

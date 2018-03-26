@@ -9,13 +9,15 @@
  * @property MMailTransmissionSetting $MMailTransmissionSetting
  * @property MMailTemplate $MMailTemplate
  * @property TExternalApiConnection $TExternalApiConnection
- * @property TChatbotScenarioUploadFile $TChatbotScenarioUploadFile
+ * @property TChatbotScenarioSendFile $TChatbotScenarioSendFile
  */
 
+App::uses('FileAppController', 'Controller');
 App::uses('ChatbotScenarioException', 'Lib/Error');
 
-class TChatbotScenarioController extends AppController {
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioUploadFile'];
+class TChatbotScenarioController extends FileAppController {
+
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -83,6 +85,9 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
     $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
     $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
+
+    // FileAppController
+    $this->fileTransferPrefix = "fileScenarioTransfer/";
   }
 
   /**
@@ -159,92 +164,158 @@ sinclo@medialink-ml.co.jp
   }
 
   /* *
-   * 削除
-   * @return void
+   * 削除(一覧ページから実行)
    * */
   public function remoteDelete(){
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
-    $ret = $this->TChatbotScenario->find('first', [
-      'fields' => 'TChatbotScenario.*',
-      'conditions' => [
-        'TChatbotScenario.del_flg' => 0,
-        'TChatbotScenario.id' => $id,
-        'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id'],
-        'TAutoMessage.t_chatbot_scenario_id' => NULL
-      ],
-      'joins' => [[
-        'type' => 'LEFT OUTER',
-        'table' => 't_auto_messages',
-        'alias' => 'TAutoMessage',
-        'conditions' => [
-          'TChatbotScenario.id = TAutoMessage.t_chatbot_scenario_id'
-        ]
-      ]],
-      'recursive' => -1
-    ]);
-    if ( count($ret) === 1 ) {
-      if ( $this->TChatbotScenario->logicalDelete($id) ) {
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+    $scenarioId = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
+    $targetDeleteFileIds = (isset($this->request->data['targetDeleteFileIds'])) ? json_decode($this->request->data['targetDeleteFileIds']) : [];
+
+    // 呼び出し設定されている場合は削除しない
+    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $callerInfo = $this->_getScenarioCallerInfo($scenarioId, $scenarioList);
+    if (!empty($callerInfo['TAutoMessage']) || !empty($callerInfo['TChatbotScenario'])) {
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      return;
+    }
+
+    $transactions = null;
+    try {
+      $transactions = $this->TransactionManager->begin();
+
+      if (!$this->TChatbotScenario->logicalDelete($scenarioId)) {
+        throw new ChatbotScenarioException('シナリオ削除エラー');
       }
-      else {
-        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+
+      // 関連するテーブルからレコードを削除する
+      // (メール送信設定は物理削除・論理削除共に行わない)
+      $activity = json_decode($scenarioData['TChatbotScenario']['activity']);
+      foreach ($activity->scenarios as $action) {
+
+        if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+          // 外部システム連携
+          if (!empty($action->tExternalApiConnectionId)) {
+            $this->TExternalApiConnection->logicalDelete($action->tExternalApiConnectionId);
+          }
+        } else
+        if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+          // ファイル送信
+          if (!empty($action->tChatbotScenarioSendFileId)) {
+            $targetDeleteFileIds[] = $action->tChatbotScenarioSendFileId;
+          }
+        }
       }
+
+      // ファイル送信設定を削除する
+      if (!empty($targetDeleteFileIds)) {
+        $this->_deleteInvalidSendFileData($targetDeleteFileIds);
+      }
+
+      $this->TransactionManager->commitTransaction($transactions);
+      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+
+    } catch (ChatbotScenarioException $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    } catch (Exception $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
   }
 
+  /* *
+   * 削除(編集ページから実行)
+   * */
   public function chkRemoteDelete(){
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
 
     $selectedList = $this->request->data['selectedList'];
-    $this->TChatbotScenario->begin();
-    $res = false;
+    $targetDeleteFileData = (isset($this->request->data['targetDeleteFileData'])) ? json_decode($this->request->data['targetDeleteFileData']) : [];
 
-    // オートメッセージで連携済みのシナリオは削除対象から外す
-    $linkedList = $this->TChatbotScenario->find('list', [
-        'fields' => 'TChatbotScenario.id',
-        'conditions' => [
-            'TChatbotScenario.del_flg' => 0,
-            'TChatbotScenario.id' => $selectedList,
-            'TChatbotScenario.m_companies_id' => $this->userInfo['MCompany']['id']
-        ],
-        'joins' => [
-          [
-            'type' => 'INNER',
-            'table' => 't_auto_messages',
-            'alias' => 'TAutoMessage',
-            'conditions' => [
-              'TChatbotScenario.id = TAutoMessage.t_chatbot_scenario_id'
-            ]
-          ]
-        ],
-        'recursive' => -1
-    ]);
-    $targetList = array_diff($selectedList, $linkedList);
-
-    $deletedList = [];
-    foreach ($targetList as $id) {
-      if ($this->TChatbotScenario->logicalDelete($id)) {
-        $deletedList[] = $id;
-        $res = true;
+    // 呼び出し設定されているシナリオは削除対象から外す
+    $targetList = [];
+    $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    foreach ($selectedList as $scenarioId) {
+      $callerInfo = $this->_getScenarioCallerInfo($scenarioId, $scenarioList);
+      if (empty($callerInfo['TAutoMessage']) && empty($callerInfo['TChatbotScenario'])) {
+        $targetList[] = $scenarioId;
       }
     }
 
-    if($res){
-      $this->TChatbotScenario->commit();
-      $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-    }
-    else {
-      $this->TChatbotScenario->rollback();
+    $res = false;
+    $deletedList = [];
+    $transaction = null;
+    try {
+      $transactions = $this->TransactionManager->begin();
+
+      foreach ($targetList as $scenarioId) {
+        if ($this->TChatbotScenario->logicalDelete($scenarioId)) {
+          $deletedList[] = $scenarioId;
+          $targetDeleteFileIds = [];
+          $res = true;
+
+          // 関連するテーブルからレコードを削除する
+          // (メール送信設定は物理削除・論理削除共に行わない)
+          $scenarioData = $this->TChatbotScenario->findById($scenarioId);
+          $activity = json_decode($scenarioData['TChatbotScenario']['activity']);
+          foreach ($activity->scenarios as $action) {
+
+            if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+              // 外部システム連携
+              if (!empty($action->tExternalApiConnectionId)) {
+                $this->TExternalApiConnection->logicalDelete($action->tExternalApiConnectionId);
+              }
+            } else
+            if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+              // ファイル送信
+              if (!empty($action->tChatbotScenarioSendFileId)) {
+                $targetDeleteFileIds[] = $action->tChatbotScenarioSendFileId;
+              }
+            }
+          }
+
+          // ファイル送信設定を削除
+          foreach ($targetDeleteFileData as $targetData) {
+            if ($scenarioId == $targetData->id) {
+              $targetDeleteFileIds = array_merge($targetDeleteFileIds, $targetData->targetDeleteFileIds);
+            }
+          }
+          if (!empty($targetDeleteFileIds)) {
+            $this->_deleteInvalidSendFileData($targetDeleteFileIds);
+          }
+        }
+      }
+
+      if($res){
+        $this->TransactionManager->commitTransaction($transactions);
+        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+      }
+      else {
+        $this->TransactionManager->rollbackTransaction($transactions);
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+      }
+
+      // 一時保存データを削除するため、実際に削除したシナリオIDを返す
+      echo json_encode($deletedList);
+    } catch (ChatbotScenarioException $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+    } catch (Exception $e) {
+      if ($transactions) {
+        $this->TransactionManager->rollbackTransaction($transactions);
+      }
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
-
-    // 実際に削除したシナリオIDを返す
-    echo json_encode($deletedList);
   }
 
   /* *
@@ -252,6 +323,7 @@ sinclo@medialink-ml.co.jp
    * @return void
    * */
   public function remoteCopyEntryForm() {
+    // ini_set('memory_limit', '-1');
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
@@ -268,32 +340,67 @@ sinclo@medialink-ml.co.jp
       $saveData = [];
 
       // シナリオ設定の詳細
-      $activity = json_decode($value['TChatbotScenario']['activity']);
-      $transaction = $this->TransactionManager->begin();
-      foreach ($activity->scenarios as $key => &$action) {
-        if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
-          // メール送信設定のコピー
-          $mailTransmissionData = $this->MMailTransmissionSetting->findById($action->mMailTransmissionId);
-          if (!empty($mailTransmissionData)) {
-            $this->MMailTransmissionSetting->create();
-            $mailTransmissionData['MMailTransmissionSetting']['id'] = null;
-            $this->MMailTransmissionSetting->set($mailTransmissionData);
-            $result = $this->MMailTransmissionSetting->save();
-            $action->mMailTransmissionId = $this->MMailTransmissionSetting->getLastInsertId();
-          }
-          // メールテンプレートのコピー
-          $mailTemplateData = $this->MMailTemplate->findById($action->mMailTemplateId);
-          if (!empty($mailTemplateData)) {
-            $this->MMailTemplate->create();
-            $mailTemplateData['MMailTemplate']['id'] = null;
-            $this->MMailTemplate->set($mailTemplateData);
-            $result = $this->MMailTemplate->save();
-            $action->mMailTemplateId = $this->MMailTemplate->getLastInsertId();
+      try {
+        $transaction = $this->TransactionManager->begin();
+        $activity = json_decode($value['TChatbotScenario']['activity']);
+        foreach ($activity->scenarios as $key => &$action) {
+          if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
+            // メール送信設定のコピー
+            $mailTransmissionData = $this->MMailTransmissionSetting->findById($action->mMailTransmissionId);
+            if (!empty($mailTransmissionData)) {
+              $this->MMailTransmissionSetting->create();
+              $mailTransmissionData['MMailTransmissionSetting']['id'] = null;
+              $this->MMailTransmissionSetting->set($mailTransmissionData);
+              $result = $this->MMailTransmissionSetting->save();
+              $action->mMailTransmissionId = $this->MMailTransmissionSetting->getLastInsertId();
+            }
+            // メールテンプレートのコピー
+            $mailTemplateData = $this->MMailTemplate->findById($action->mMailTemplateId);
+            if (!empty($mailTemplateData)) {
+              $this->MMailTemplate->create();
+              $mailTemplateData['MMailTemplate']['id'] = null;
+              $this->MMailTemplate->set($mailTemplateData);
+              $result = $this->MMailTemplate->save();
+              $action->mMailTemplateId = $this->MMailTemplate->getLastInsertId();
+            }
+          } else
+          if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
+            // 外部システム連携設定のコピー
+            $externalApiData = $this->TExternalApiConnection->findById($action->tExternalApiConnectionId);
+            if (!empty($externalApiData)) {
+              $this->TExternalApiConnection->create();
+              $externalApiData['TExternalApiConnection']['id'] = null;
+              $this->TExternalApiConnection->set($externalApiData);
+              $result = $this->TExternalApiConnection->save();
+              $action->tExternalApiConnectionId = $this->TExternalApiConnection->getLastInsertId();
+            }
+          } else
+          if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
+            // ファイル送信設定のコピー
+            $sendFileData = $this->TChatbotScenarioSendFile->findById($action->tChatbotScenarioSendFileId);
+            if (!empty($sendFileData)) {
+              // S3上のファイルコピー
+              $copyFile = $this->_copyFile($sendFileData['TChatbotScenarioSendFile']);
+
+              $this->TChatbotScenarioSendFile->create();
+              $sendFileData['TChatbotScenarioSendFile']['id'] = null;
+              $sendFileData['TChatbotScenarioSendFile']['file_path'] = $copyFile['file_path'];
+              $this->TChatbotScenarioSendFile->set($sendFileData);
+              $this->TChatbotScenarioSendFile->save();
+
+              // ダウンロードURLの生成
+              $lastInsertedId = $this->TChatbotScenarioSendFile->getLastInsertId();
+              $created = $this->TChatbotScenarioSendFile->field('created');
+              $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId);
+              $this->TChatbotScenarioSendFile->set([
+                'download_url' => $downloadUrl
+              ]);
+              $this->TChatbotScenarioSendFile->save();
+              $action->tChatbotScenarioSendFileId = $lastInsertedId;
+            }
           }
         }
-      }
 
-      try {
         $saveData['TChatbotScenario']['sort'] = $this->_getNextSort();
         $saveData['TChatbotScenario']['m_companies_id'] = $value['TChatbotScenario']['m_companies_id'];
         $saveData['TChatbotScenario']['name'] = $value['TChatbotScenario']['name'].'コピー';
@@ -413,11 +520,7 @@ sinclo@medialink-ml.co.jp
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-
-    // post, ajax以外の通信は弾く
-    if (!$this->request->is('post') || !$this->request->is('ajax')) {
-      return false;
-    }
+    $this->validatePostMethod();
 
     try {
       $id = (isset($this->request->data['id'])) ? $this->request->data['id']: '';
@@ -437,6 +540,57 @@ sinclo@medialink-ml.co.jp
         return false;
       }
     } catch (Exception $e) {
+      return false;
+    }
+  }
+
+  /**
+   * ファイルアップロード(アクション：ファイル送信)
+   */
+  public function remoteUploadFile() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+
+    $this->validatePostMethod();
+    $saveData = $this->params['form'];
+
+    try {
+      // S3へファイルアップロード
+      $saveData['file'] = $this->_uploadFile($saveData['file']);
+
+      $this->TChatbotScenarioSendFile->begin();
+
+      // ファイル情報は常にINSERTする(シナリオ保存・削除時に不要なファイル情報を削除する)
+      $this->TChatbotScenarioSendFile->create();
+      $this->TChatbotScenarioSendFile->set($saveData['file']);
+
+      $this->TChatbotScenarioSendFile->validates();
+      $errors = $this->TChatbotScenarioSendFile->validationErrors;
+      if (!empty($errors)) {
+        throw new ChatbotScenarioException('バリデーションエラー');
+      }
+
+      // ダウンロードURLの生成と送信ファイル設定の保存
+      $this->TChatbotScenarioSendFile->save();
+      $lastInsertedId = $this->TChatbotScenarioSendFile->getLastInsertId();
+      $created = $this->TChatbotScenarioSendFile->field('created');
+      $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId);
+      $this->TChatbotScenarioSendFile->set([
+        'download_url' => $downloadUrl
+      ]);
+      $this->TChatbotScenarioSendFile->save();
+      $this->TChatbotScenarioSendFile->commit();
+
+      $saveData['tChatbotScenarioSendFileId'] = $lastInsertedId;
+      $saveData['file']['download_url'] = $downloadUrl;
+      unset($saveData['file']['file_path']);
+
+      return json_encode([
+        'success' => true,
+        'save_data' => $saveData,
+      ]);
+    } catch (Exception $e) {
+      $this->TChatbotScenarioSendFile->rollback();
       return false;
     }
   }
@@ -585,9 +739,15 @@ sinclo@medialink-ml.co.jp
         } else
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
           // ファイル送信
-          $action = $this->_entryProcessForUploadFile($action);
+          unset($action->file);
         }
       }
+
+      // 無効なファイル送信設定を削除する
+      if (!empty($activity->targetDeleteFileIds)) {
+        $this->_deleteInvalidSendFileData($activity->targetDeleteFileIds, $activity->scenarios);
+      }
+      unset($activity->targetDeleteFileIds);
     }
 
     $saveData['TChatbotScenario']['activity'] = json_encode($activity);
@@ -755,41 +915,41 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
-   * ファイル送信の保存機能（トランザクションはこのメソッドの先祖で管理している）
-   * @param  Object $saveData アクション詳細
-   * @return Object           t_chatbot_scenarioに保存するアクション詳細
+   * ファイル送信設定の、画面上で削除された無効なデータを論理削除する
+   * @param  Array $targetDeleteFileIds 削除対象のファイルID一覧
+   * @param  Array $scenarios           有効なシナリオ設定
+   * @return Void
    */
-  private function _entryProcessForUploadFile($saveData) {
-    if (empty($saveData->tChatbotScenarioUploadFileId)) {
-      $this->TChatbotScenarioUploadFile->create();
-    } else {
-      $this->TChatbotScenarioUploadFile->read(null, $saveData->tChatbotScenarioUploadFileId);
-    }
-    $this->TChatbotScenarioUploadFile->set([
-      'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'file_path' => $saveData->file->file_path,
-      'file_name' => $saveData->file->file_name,
-      'file_size' => $saveData->file->file_size
-    ]);
-
-    $validate = $this->TChatbotScenarioUploadFile->validates();
-    $errors = $this->TChatbotScenarioUploadFile->validationErrors;
-
-    if(empty($errors)){
-      $this->TChatbotScenarioUploadFile->save();
-      if(empty($saveData->TChatbotScenarioUploadFile)) {
-        $saveData->tChatbotScenarioUploadFileId = $this->TChatbotScenarioUploadFile->getLastInsertId();
+  private function _deleteInvalidSendFileData($targetDeleteFileIds, $scenarios = []) {
+    // 有効なファイルIDを抽出する
+    $validIds = [];
+    foreach ($scenarios as $action) {
+      if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE ) {
+        $validIds[] = $action->tChatbotScenarioSendFileId;
       }
-    } else {
-      $exception = new ChatbotScenarioException('バリデーションエラー');
-      $exception->setErrors($errors);
-      $exception->setLastPage($nextPage);
-      throw $exception;
     }
 
-    // 保存済みの設定をオブジェクトから削除する
-    unset($saveData->file);
-    return $saveData;
+    // リストから、有効なファイルIDを除外する
+    $targetIds = [];
+    foreach (array_unique($targetDeleteFileIds) as $fileId) {
+      if (!empty($fileId) && array_search($fileId, $validIds) === FALSE) {
+        $targetIds[] = $fileId;
+      };
+    }
+
+    // 無効なファイル情報を削除する
+    $targetList = $this->TChatbotScenarioSendFile->find('all', [
+      'fields' => ['id', 'file_path'],
+      'conditions' => [
+        'TChatbotScenarioSendFile.id' => $targetIds,
+        'TChatbotScenarioSendFile.del_flg' => 0
+      ],
+      'recursive' => -1
+    ]);
+    foreach ($targetList as $file) {
+      $this->TChatbotScenarioSendFile->logicalDelete($file['TChatbotScenarioSendFile']['id']);
+      $this->_removeFile($file['TChatbotScenarioSendFile']['file_path']);
+    }
   }
 
   /**
@@ -1407,16 +1567,69 @@ sinclo@medialink-ml.co.jp
       } else
       if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
         // ファイル送信
-        if (!empty($action->tChatbotScenarioUploadFileId)) {
-          // $fileData = $this->TChatbotScenarioUploadFile->findById($action->tChatbotScenarioUploadFileId);
+        if (!empty($action->tChatbotScenarioSendFileId)) {
+          $fileData = $this->TChatbotScenarioSendFile->findById($action->tChatbotScenarioSendFileId);
           $action->file = [
-            'file_path' => 'fileScenarioTransfer/5a57481f4a7f5-20180315204525.png', //$fileData['TChatbotScenarioUploadFile']['file_path']
-            'file_name' => 'sweets_icecream_monaka.png', //$fileData['TChatbotScenarioUploadFile']['file_name'];
-            'file_size' => $this->prettyByte2Str(394681) //$fileData['TChatbotScenarioUploadFile']['file_size'];
+            'download_url' => $fileData['TChatbotScenarioSendFile']['download_url'],
+            'file_name' => $fileData['TChatbotScenarioSendFile']['file_name'],
+            'file_size' => $this->prettyByte2Str($fileData['TChatbotScenarioSendFile']['file_size']),
+            'extension' => $this->getExtension($fileData['TChatbotScenarioSendFile']['file_name'])
           ];
         }
       }
     }
     $json = json_encode($activity);
+  }
+
+  /**
+   * ファイルアップロード
+   * @param  Object ファイル情報
+   * @return Object アップロードしたファイル情報
+   */
+  private function _uploadFile($file) {
+    $saveFileName = $this->getFilenameForSave($file);
+    $filePath = $this->putFile($file, $saveFileName);
+
+    return [
+      'file_path' => $filePath,
+      'file_name' => $file['name'],
+      'file_size' => $this->prettyByte2Str($file['size']),
+      'extension' => $this->getExtension($file['name'])
+    ];
+  }
+
+  /**
+   * ファイル削除
+   * @param  String $file ファイルパス
+   * @return Void
+   */
+  private function _removeFile($filePath) {
+    $pos = strpos($filePath, $this->fileTransferPrefix);
+    if ($pos !== FALSE) {
+      $this->removeFile(substr($filePath, $pos));
+    }
+  }
+
+  /**
+   * ファイルのコピー(get/put)
+   * @param  Object $file コピー元のファイル情報
+   * @return Object       ファイル情報
+   */
+  private function _copyFile($file) {
+    $pos = strpos($file['file_path'], $this->fileTransferPrefix);
+    if ($pos === FALSE) {
+      return [];
+    }
+
+    $saveFileName = $this->getFilenameForSave(['name' => $file['file_name']]);
+    $fileData = $this->getFile(substr($file['file_path'], $pos));
+    $filePath = $this->putFile($fileData['fileObj']['Body'], $saveFileName);
+
+    return [
+      'file_path' => $filePath,
+      'file_name' => $file['file_name'],
+      'file_size' => $this->prettyByte2Str($file['file_size']),
+      'extension' => $this->getExtension($file['file_name'])
+    ];
   }
 }
