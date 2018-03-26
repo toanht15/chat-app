@@ -83,6 +83,15 @@ define('C_AFTER_APPLICATION_TO_CUSTOMER', 5); // 契約登録時 お客さん向
 define('C_AFTER_APPLICATION_TO_COMPANY', 6); // 契約登録時 会社向けメール
 define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // 契約登録後初期パスワード変更 お客さん向けメール
 
+// シナリオ設定－アクション種別コード
+define('C_SCENARIO_ACTION_TEXT', 1); // テキスト発言
+define('C_SCENARIO_ACTION_HEARING', 2); // ヒアリング
+define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
+define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
+define('C_SCENARIO_ACTION_CALL_SCENARIO', 5); // シナリオ呼び出し
+define('C_SCENARIO_ACTION_EXTERNAL_API', 6); // 外部システム連携
+define('C_SCENARIO_ACTION_SEND_FILE', 7); // ファイル送信
+
 //メール設定 MLにもメール送信するか
 define('C_SEND_MAIL_ML', 0); // 送信する
 define('C_NOT_SEND_MAIL_ML', 1); // 送信しない
@@ -119,3 +128,4 @@ $config['sendingMailML'] = [
     C_SEND_MAIL_ML => "する",
     C_NOT_SEND_MAIL_ML => "しない",
 ];
+
