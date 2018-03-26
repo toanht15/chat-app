@@ -26,7 +26,7 @@ class FreeTrialMailJobBatchShell extends AppShell
   const URL = "##URL##";
   const OTHER = "##OTHER##";
 
-  public $uses = ['MUser','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate','MCompany'];
+  public $uses = ['MUser','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate','MCompany','MAgreement'];
 
 
   private $component;
