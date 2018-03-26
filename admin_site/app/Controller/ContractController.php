@@ -455,6 +455,7 @@ class ContractController extends AppController
       $this->addDefaultChatPersonalSettings($targetCompanyId, $companyInfo);
       $this->addDefaultAutoMessages($targetCompanyId, $companyInfo);
       $this->addDefaultDictionaries($targetCompanyId, $companyInfo);
+      $this->addDefaultScenarioMessage($targetCompanyId, $companyInfo);
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
       // シェアリング => スタンダード
@@ -463,6 +464,7 @@ class ContractController extends AppController
       $this->addDefaultAutoMessages($targetCompanyId, $companyInfo);
       $this->addDefaultDictionaries($targetCompanyId, $companyInfo);
       $this->addDefaultMailTemplate($targetCompanyId, $companyInfo);
+      $this->addDefaultScenarioMessage($targetCompanyId, $companyInfo);
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0) {
       // シェアリング => プレミアム
@@ -471,6 +473,7 @@ class ContractController extends AppController
       $this->addDefaultAutoMessages($targetCompanyId, $companyInfo);
       $this->addDefaultDictionaries($targetCompanyId, $companyInfo);
       $this->addDefaultMailTemplate($targetCompanyId, $companyInfo);
+      $this->addDefaultScenarioMessage($targetCompanyId, $companyInfo);
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_FULL_PLAN_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0) {
       // プレミアム => ベーシック
