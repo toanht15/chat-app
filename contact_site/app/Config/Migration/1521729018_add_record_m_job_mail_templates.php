@@ -1,12 +1,12 @@
 <?php
-class AddRecordMJobMailTemplates extends CakeMigration {
+class AddRecordMSystemMailTemplate extends CakeMigration {
 
 /**
  * Migration description
  *
  * @var string
  */
-	public $description = '_add_record_m_job_mail_templates';
+	public $description = '_add_record_m_system_mail_templates';
 
 /**
  * Actions to be performed
@@ -36,8 +36,8 @@ class AddRecordMJobMailTemplates extends CakeMigration {
  */
 	public function after($direction) {
 	if(strcmp($direction, 'up') === 0) {
-	  $targetTable = 'MJobMailTemplate';
-      $MJobMailTemplate = ClassRegistry::init($targetTable);
+	  $targetTable = 'MSystemMailTemplate';
+      $MSystemMailTemplate = ClassRegistry::init($targetTable);
       $data[0][$targetTable]['id'] = 6;
       $data[0][$targetTable]['mail_type_cd'] = "'いきなり本契約申込時 会社向け";
       $data[0][$targetTable]['sender'] = "sinclo（シンクロ）";
@@ -75,8 +75,8 @@ sincloに本契約のお申込みがありました
 ■その他ご要望など
 ##OTHER##
 ";
-     $MJobMailTemplate->create();
-      if ($MJobMailTemplate->saveAll($data)) {
+     $MSystemMailTemplate->create();
+      if ($MSystemMailTemplate->saveAll($data)) {
         $this->callback->out('m_job_mail_template table inital data is added.');
       }
     }
