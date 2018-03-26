@@ -724,7 +724,7 @@ class ContractController extends AppController
     }
   }
 
-  private function addDefaultScenarioMessage($m_companies_id, $forceInsert = false) {
+  private function addDefaultScenarioMessage($m_companies_id, $companyInfo, $forceInsert = false) {
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
     $scenarios = $this->TChatbotScenario->find('all',array(
         'conditions' => array(
@@ -732,7 +732,7 @@ class ContractController extends AppController
         )
     ));
     if(empty($scenarios)) {
-      $default = $this->getDefaultAutomessageConfigurations();
+      $default = $this->getDefaultScenarioConfigurations();
       foreach($default as &$scenario) {
         $actions = &$scenario['activity']['scenarios'];
         foreach($actions as &$action) {
@@ -740,17 +740,21 @@ class ContractController extends AppController
             // メール転送設定とテンプレート設定を追加
             $this->MMailTransmissionSetting->create();
             $this->MMailTransmissionSetting->set(array(
+              'm_companies_id' => $m_companies_id,
               'from_address' => '',
               'from_name' => '★★★自由に編集してください★★★',
               'to_address' => '{{メールアドレス}}',
               'subject' => '資料請求ありがとうございます'
             ));
-            $this->MMailTransmissionSetting->save();
+            if(!$this->MMailTransmissionSetting->save()) {
+              throw new Exception('シナリオのメール送信設定登録に失敗しました');
+            }
             unset($action['mailTransmission']);
-            $action['mMailTransmissionId'] = $this->MMailTransmissionSetting->lastInsertedId();
+            $action['mMailTransmissionId'] = $this->MMailTransmissionSetting->getLastInsertId();
 
             $this->MMailTemplate->create();
             $this->MMailTemplate->set(array(
+              'm_companies_id' => $m_companies_id,
               'mail_type_cd' => 'CS001',
               'template' => '--------------------------------------------------------------------------------------------------------
 このメールは、資料請求の受け付け完了をお知らせする自動返信メールです。
@@ -791,18 +795,20 @@ class ContractController extends AppController
 
 ──────────────────────────────'
             ));
-            $this->MMailTemplate->save();
+            if(!$this->MMailTemplate->save()) {
+              throw new Exception('シナリオのメールテンプレート設定登録に失敗しました');
+            }
             unset($action['mailTransmission']);
-            $action['mMailTemplateId'] = $this->MMailTemplate->lastInsertedId();
+            $action['mMailTemplateId'] = $this->MMailTemplate->getLastInsertId();
           }
         }
         $this->TChatbotScenario->create();
         $this->TChatbotScenario->set(array(
           "m_companies_id" => $m_companies_id,
-          "name" => $item['name'],
-          "activity" => $this->convertActivityToJSON($item['activity']),
-          "del_flg" => $item['del_flg'],
-          "sort" => $item['sort']
+          "name" => $scenario['name'],
+          "activity" => $this->convertActivityToJSON($scenario['activity']),
+          "del_flg" => $scenario['del_flg'],
+          "sort" => $scenario['sort']
         ));
         $this->TChatbotScenario->save();
       }
@@ -888,9 +894,9 @@ class ContractController extends AppController
         $this->TChatbotScenario->create();
         $this->TChatbotScenario->set(array(
           "m_companies_id" => $m_companies_id,
-          "name" => $item['name'],
-          "activity" => $this->convertActivityToJSON($item['activity']),
-          "del_flg" => $item['del_flg'],
+          "name" => $scenario['name'],
+          "activity" => $this->convertActivityToJSON($scenario['activity']),
+          "del_flg" => $scenario['del_flg'],
           "sort" => $sortNum
         ));
         $this->TChatbotScenario->save();
