@@ -1,6 +1,8 @@
 <?php
 
-define('APP_MODE_DEV', true);
+if( !defined('APP_MODE_DEV') ){
+  define('APP_MODE_DEV', true);
+}
 
 // 正規表現
 define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
