@@ -322,6 +322,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var src = $scope.actionList[actionType].default.hearings[0];
       var target = $scope.setActionList[actionStep].hearings;
+      src.inputType = src.inputType.toString();
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllHearingSettingView(actionStep);
 
@@ -1171,12 +1172,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         }
       }
 
-      var clearWatch = scope.$watch(attrs.ngModel, function() {
-        autoResize();
-        clearWatch();
-      });
-      elm[0].addEventListener('input', autoResize);
+      scope.$watch(attrs.ngModel, autoResize);
       $(window).on('resize', autoResize);
+      elm[0].addEventListener('input', autoResize);
     }
   };
 })

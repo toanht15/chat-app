@@ -27,9 +27,15 @@
           <tr ng-repeat-start="(listId, hearingItem) in setItem.hearings track by $index">
             <td class="item_name"><input type="text" ng-model="hearingItem.variableName"></td>
             <td class="item_type">
-              <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList"></select>
+              <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList">
+              </seclet>
             </td>
             <td class="item_message" rowspan="2"><resize-textarea ng-model="hearingItem.message" rows="1" data-maxRow="10"></resize-textarea></td>
+            <td class="item_btn_block">
+              <div class="btnBlock">
+                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+              </div>
+            </td>
           </tr>
           <tr ng-repeat-end>
             <td class="item_detail_settings" colspan="2">
@@ -37,11 +43,6 @@
                 <label class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="<?= C_SCENARIO_INPUT_LF_TYPE_DISALLOW ?>">改行不可<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の複数行入力を規制します。（改行できなくする）">?</icon></span></label>
                 <label class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="<?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>">改行可<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の複数行入力を許可します。（改行を許可）">?</icon></span></label>
               </span>
-            </td>
-            <td class="item_btn_block">
-              <div class="btnBlock">
-                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
-              </div>
             </td>
           </tr>
         </tbody>
