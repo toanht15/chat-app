@@ -4416,7 +4416,7 @@
         },
         _getScenario: function(callback) {
           var self = sinclo.scenarioApi._anotherScenario;
-          var scenarioId = self._parent.get(self._parent._lKey.currentScenario).scenarioId;
+          var scenarioId = self._parent.get(self._parent._lKey.currentScenario).tChatbotScenarioId;
           emit('getScenario', {scenarioId: scenarioId}, callback);
         },
         _mergeScenario: function(result) {
