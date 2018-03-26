@@ -727,7 +727,15 @@ class ContractController extends AppController
     }
   }
 
-  private function addDefaultScenarioMessage($m_companies_id, $companyInfo, $forceInsert = false) {
+  /**
+   * シナリオのデフォルト設定を追加する
+   * ※ この処理はConsole/AddScenarioSampleShellでもコールするためpublicとなっている
+   * @param $m_companies_id
+   * @param $companyInfo
+   * @param bool $forceInsert
+   * @throws Exception
+   */
+  public function addDefaultScenarioMessage($m_companies_id, $companyInfo, $forceInsert = false) {
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
     $scenarios = $this->TChatbotScenario->find('all',array(
         'conditions' => array(
