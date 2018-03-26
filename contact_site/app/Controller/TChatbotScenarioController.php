@@ -574,7 +574,8 @@ sinclo@medialink-ml.co.jp
       $this->TChatbotScenarioSendFile->save();
       $lastInsertedId = $this->TChatbotScenarioSendFile->getLastInsertId();
       $created = $this->TChatbotScenarioSendFile->field('created');
-      $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId);
+      $expire = date('Y-m-d H:i:s', strtotime('+10 year', strtotime($created)));
+      $downloadUrl = $this->createDownloadUrl($expire, $lastInsertedId, true);
       $this->TChatbotScenarioSendFile->set([
         'download_url' => $downloadUrl
       ]);
@@ -1593,6 +1594,7 @@ sinclo@medialink-ml.co.jp
     $filePath = $this->putFile($file, $saveFileName);
 
     return [
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
       'file_path' => $filePath,
       'file_name' => $file['name'],
       'file_size' => $file['size']

@@ -3,6 +3,7 @@
  * FileAppController controller.
  * S3のファイル管理用コントローラー
  * @property TUploadTransferFile $TUploadTransferFile
+ * @property TChatbotScenarioSendFile $TChatbotScenarioSendFile
  */
 
 class FileAppController extends AppController
@@ -16,11 +17,13 @@ class FileAppController extends AppController
   const PARAM_TARGET_USER_ID = "targetUserId";
   const PARAM_PARAM = "param";
 
-  public $uses = ['TUploadTransferFile'];
+  public $uses = ['TUploadTransferFile', 'TChatbotScenarioSendFile'];
   public $components = ['Amazon'];
 
   // デフォルト設定
   protected $fileTransferPrefix = 'fileTransfer/';
+
+  protected $scenarioMode = false;
 
   public function beforeFilter() {
     parent::beforeFilter();
@@ -88,7 +91,11 @@ class FileAppController extends AppController
    * @return String               ファイル名を含む相対パス
    */
   protected function getSaveKey($saveFileName) {
-    return $this->fileTransferPrefix.$saveFileName;
+    if($this->scenarioMode) {
+      return $saveFileName;
+    } else {
+      return $this->fileTransferPrefix.$saveFileName;
+    }
   }
 
 
@@ -145,13 +152,17 @@ class FileAppController extends AppController
     return (time() - strtotime($created)) >= self::EXPIRE_SEC;
   }
 
-  protected function createDownloadUrl($created, $fileId) {
-    return C_NODE_SERVER_ADDR.'/File/download?param='.$this->encryptParameterForDownload($created, $fileId);
+  protected function createDownloadUrl($created, $fileId, $isScenarioDownload = false) {
+    return C_NODE_SERVER_ADDR.'/File/download?param='.$this->encryptParameterForDownload($created, $fileId, $isScenarioDownload);
   }
 
-  private function encryptParameterForDownload($created, $fileId) {
+  protected function setScenarioMode($isScenarioMode) {
+    $this->scenarioMode = $isScenarioMode;
+  }
+
+  private function encryptParameterForDownload($created, $fileId, $isScenarioDownload) {
     // ※結合順序注意！！
-    $param = $created.self::ENCRYPT_PARAM_DELIMITER.$fileId;
+    $param = $created.self::ENCRYPT_PARAM_DELIMITER.$fileId.self::ENCRYPT_PARAM_DELIMITER.$isScenarioDownload;
     $encrypted = Security::encrypt($param, self::ENCRYPT_SECRET_KEY);
     return rawurlencode(base64_encode($encrypted));
   }
@@ -162,6 +173,10 @@ class FileAppController extends AppController
       throw new Exception('復号失敗 : '.$val);
     }
     $explodeVal = explode(self::ENCRYPT_PARAM_DELIMITER, $decrypted);
+    $this->scenarioMode = !empty($explodeVal[2]) ? (bool)$explodeVal[2] : false;
+    if($this->scenarioMode) {
+      $this->fileTransferPrefix = 'fileScenarioTransfer/';
+    }
     return array(
       'created' => $explodeVal[0],
       'fileId' => $explodeVal[1]

@@ -3373,6 +3373,44 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       });
   });
 
+  socket.on('getScenarioDownloadInfo', function(data, ack){
+    var obj = JSON.parse(data);
+    pool.query('select * from t_chatbot_scenario_send_files where m_companies_id = ? and id = ? limit 0,1;', [companyList[obj.siteKey], obj.sendFileId],
+    function(err, row) {
+      if (err !== null && err !== '') {
+        console.log("getScenarioDownloadInfo select is failed. sendFileId : " + obj.sendFileId);
+        return;
+      }
+
+      if (row.length !== 0) {
+        var targetFileInfo = row[0];
+        var deleted = Boolean(Number(targetFileInfo.del_flg));
+        var sendData = {
+          success: true,
+        };
+        var today = new Date();
+        if(!deleted){
+          sendData = {
+            success: true,
+            downloadUrl: targetFileInfo.download_url,
+            fileName: targetFileInfo.file_name,
+            fileSize: targetFileInfo.file_size,
+            expired: formatDateParse(today.setDate(today.getDate() + 1))
+          };
+        } else {
+          sendData = {
+            success: true,
+            url: "",
+            name: "",
+            size: "",
+            deleted: true
+          };
+        }
+        ack(sendData);
+      }
+    });
+  });
+
   var replaceVariable = function(variables, message) {
     return message.replace(/{{(.+?)\}}/g, function(param) {
       var name = param.replace(/^{{(.+)}}$/, '$1');
