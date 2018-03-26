@@ -6903,24 +6903,30 @@ ul.naviBtn {
                   }
 
                   tbody {
-                    td {
-                      border: none;
-                      vertical-align: top;
-
-                      input[type="text"] {
-                        border-radius: 4px !important;
-                        border: 1px solid #909090 !important;
-                        width: calc(100% - 3px);
+                    tr {
+                      &:hover, &.on {
+                        background-color: #FFFFFF!important;
                       }
 
-                      textarea {
-                        width: calc(100% - 3px);
-                      }
+                      td {
+                        border: none;
+                        vertical-align: top;
 
-                      select {
-                        border-radius: 4px !important;
-                        border: 1px solid #909090 !important;
-                        width: calc(100% - 3px);
+                        input[type="text"] {
+                          border-radius: 4px !important;
+                          border: 1px solid #909090 !important;
+                          width: calc(100% - 3px);
+                        }
+
+                        textarea {
+                          width: calc(100% - 3px);
+                        }
+
+                        select {
+                          border-radius: 4px !important;
+                          border: 1px solid #909090 !important;
+                          width: calc(100% - 3px);
+                        }
                       }
                     }
                   }
