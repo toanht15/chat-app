@@ -738,13 +738,15 @@ class ContractController extends AppController
         foreach($actions as &$action) {
           if(strcmp($action['actionType'], 4) === 0) {
             // メール転送設定とテンプレート設定を追加
+            $mailTransmissionSetting = $action['mailTransmission'];
+            $mailTemplateSetting = $action['mailTemplate'];
             $this->MMailTransmissionSetting->create();
             $this->MMailTransmissionSetting->set(array(
               'm_companies_id' => $m_companies_id,
-              'from_address' => '',
-              'from_name' => '★★★自由に編集してください★★★',
-              'to_address' => '{{メールアドレス}}',
-              'subject' => '資料請求ありがとうございます'
+              'from_address' => $mailTransmissionSetting['from_address'],
+              'from_name' => $mailTransmissionSetting['from_name'],
+              'to_address' => $mailTransmissionSetting['to_address'],
+              'subject' => $mailTransmissionSetting['subject']
             ));
             if(!$this->MMailTransmissionSetting->save()) {
               throw new Exception('シナリオのメール送信設定登録に失敗しました');
@@ -755,45 +757,8 @@ class ContractController extends AppController
             $this->MMailTemplate->create();
             $this->MMailTemplate->set(array(
               'm_companies_id' => $m_companies_id,
-              'mail_type_cd' => 'CS001',
-              'template' => '--------------------------------------------------------------------------------------------------------
-このメールは、資料請求の受け付け完了をお知らせする自動返信メールです。
-本メールへの返信は受け付けておりませんのでご了承ください。
---------------------------------------------------------------------------------------------------------
-{{会社名}}
-{{名前}}様
-
-この度は、資料請求ありがとうございます。
-
-後ほど担当の者から資料をお送りさせて頂きますので少々お待ちください。
-
-
-──以下お問い合わせいただきました内容です──
-
-■会社名
-{{会社名}}
-
-■お名前
-{{名前}}
-
-■電話番号
-{{電話番号}}
-
-■メールアドレス
-{{メールアドレス}}
-
-■その他ご要望
-{{その他}}
-
-──────────ここまで─────────
-
-※本メールは自動返信にてお届けしています。
-
-──────────────────────────────
-
-★★★署名を自由に編集してください★★★
-
-──────────────────────────────'
+              'mail_type_cd' => $mailTemplateSetting['mail_type_cd'],
+              'template' => $mailTemplateSetting['template']
             ));
             if(!$this->MMailTemplate->save()) {
               throw new Exception('シナリオのメールテンプレート設定登録に失敗しました');
@@ -829,65 +794,36 @@ class ContractController extends AppController
       $default = $this->getDefaultScenarioConfigurations();
       foreach($default as &$scenario) {
         $actions = &$scenario['activity']['scenarios'];
-        foreach ($actions as &$action) {
-          if (strcmp($action['actionType'], 4) === 0) {
+        foreach($actions as &$action) {
+          if(strcmp($action['actionType'], 4) === 0) {
             // メール転送設定とテンプレート設定を追加
+            $mailTransmissionSetting = $action['mailTransmission'];
+            $mailTemplateSetting = $action['mailTemplate'];
             $this->MMailTransmissionSetting->create();
             $this->MMailTransmissionSetting->set(array(
-              'from_address' => '',
-              'from_name' => '★★★自由に編集してください★★★',
-              'to_address' => '{{メールアドレス}}',
-              'subject' => '資料請求ありがとうございます'
+              'm_companies_id' => $m_companies_id,
+              'from_address' => $mailTransmissionSetting['from_address'],
+              'from_name' => $mailTransmissionSetting['from_name'],
+              'to_address' => $mailTransmissionSetting['to_address'],
+              'subject' => $mailTransmissionSetting['subject']
             ));
-            $this->MMailTransmissionSetting->save();
+            if(!$this->MMailTransmissionSetting->save()) {
+              throw new Exception('シナリオのメール送信設定登録に失敗しました');
+            }
             unset($action['mailTransmission']);
-            $action['mMailTransmissionId'] = $this->MMailTransmissionSetting->lastInsertedId();
+            $action['mMailTransmissionId'] = $this->MMailTransmissionSetting->getLastInsertId();
 
             $this->MMailTemplate->create();
             $this->MMailTemplate->set(array(
-              'mail_type_cd' => 'CS001',
-              'template' => '--------------------------------------------------------------------------------------------------------
-このメールは、資料請求の受け付け完了をお知らせする自動返信メールです。
-本メールへの返信は受け付けておりませんのでご了承ください。
---------------------------------------------------------------------------------------------------------
-{{会社名}}
-{{名前}}様
-
-この度は、資料請求ありがとうございます。
-
-後ほど担当の者から資料をお送りさせて頂きますので少々お待ちください。
-
-
-──以下お問い合わせいただきました内容です──
-
-■会社名
-{{会社名}}
-
-■お名前
-{{名前}}
-
-■電話番号
-{{電話番号}}
-
-■メールアドレス
-{{メールアドレス}}
-
-■その他ご要望
-{{その他}}
-
-──────────ここまで─────────
-
-※本メールは自動返信にてお届けしています。
-
-──────────────────────────────
-
-★★★署名を自由に編集してください★★★
-
-──────────────────────────────'
+              'm_companies_id' => $m_companies_id,
+              'mail_type_cd' => $mailTemplateSetting['mail_type_cd'],
+              'template' => $mailTemplateSetting['template']
             ));
-            $this->MMailTemplate->save();
+            if(!$this->MMailTemplate->save()) {
+              throw new Exception('シナリオのメールテンプレート設定登録に失敗しました');
+            }
             unset($action['mailTransmission']);
-            $action['mMailTemplateId'] = $this->MMailTemplate->lastInsertedId();
+            $action['mMailTemplateId'] = $this->MMailTemplate->getLastInsertId();
           }
         }
         $sortNum = $sortNum + 1;
