@@ -64,6 +64,12 @@
   <?= $this->Form->input('MAgreements.agreement_end_day', array('div' => false, 'label' => false, 'maxlength' => 50,'type' => 'text','class' =>  $isTrial ? 'disabled' : '','readonly' => !$isTrial)) ?>
   <?php if (!empty($agreementerrors['MAgreements.agreement_end_day'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.agreement_end_day'][0]) . "</li>"; ?>
 </li>
+<!-- /* メモ */ -->
+<li>
+  <div class="labelArea fLeft"><span><label>メモ</label></span></div>
+  <?= $this->Form->input('MAgreements.memo', array('div' => false, 'label' => false, 'maxlength' => 20000, 'type' => 'textarea', 'cols' => 75, 'rows' => 15)) ?>
+  <?php if (!empty($agreementerrors['MAgreements.memo'])) echo "<li class='error-message'>" . h($agreementerrors['MAgreements.memo'][0]) . "</li>"; ?>
+</li>
 <!-- /* 初期管理者情報 */ -->
 <?php if ($this->params->action == 'add'): ?>
 <li>
