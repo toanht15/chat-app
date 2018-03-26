@@ -4,9 +4,13 @@
 sincloApp.service('LocalStorageService', function() {
 
   return {
+    /**
+     * ローカルストレージのデータ一括取得
+     * @param String storageKey ローカルストレージのキー
+     */
     getData: function(storageKey) {
       var storageData = localStorage.getItem(storageKey);
-      return JSON.parse(storageData);
+      return JSON.parse(storageData) || {};
     },
     /**
      * ローカルストレージのデータ取得
@@ -15,20 +19,29 @@ sincloApp.service('LocalStorageService', function() {
      */
     getItem: function(storageKey, key) {
       var storageData = localStorage.getItem(storageKey);
-      var jsonData = JSON.parse(storageData);
+      var jsonData = JSON.parse(storageData) || {};
       return jsonData[key];
     },
     /**
-     * ローカルストレージのデータ設定
+     * ローカルストレージのデータ一括更新
+     * @param String storageKey ローカルストレージのキー
+     * @param Object data       保存したいJSONデータ
+     */
+    setData: function(storageKey, data) {
+      localStorage.setItem(storageKey, data);
+    },
+    /**
+     * ローカルストレージのデータ追加・更新
      * @param String storageKey ローカルストレージのキー
      * @param Object param      追加したいJSONデータ
      */
-    setItem: function(storageKey, param) {
+    setItem: function(storageKey, params) {
       var storageData = localStorage.getItem(storageKey);
-      var jsonData = JSON.parse(storageData);
-      angular.forEach(param, function(value) {
-        jsonData[value[0]] = value[1];
-      });
+      var jsonData = JSON.parse(storageData) || {};
+
+      angular.forEach(params, function(param) {
+        jsonData[param.key] = param.value;
+      })
       localStorage.setItem(storageKey, JSON.stringify(jsonData));
     },
     /**
@@ -39,7 +52,7 @@ sincloApp.service('LocalStorageService', function() {
     removeItem: function(storageKey, key) {
       if (!!key) {
         var storageData = localStorage.getItem(storageKey);
-        var jsonData = JSON.parse(storageData);
+        var jsonData = JSON.parse(storageData) || {};
         delete jsonData[key];
         localStorage.setItem(storageKey, JSON.stringify(jsonData));
       }

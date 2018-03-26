@@ -114,7 +114,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var actionDetail = $scope.setActionList[setActionId];
     if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' && actionDetail.tChatbotScenarioSendFileId !== null ) {
       $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
-      LocalStorageService.setItem($scope.storageKey, {targetDeleteFileIds: $scope.targetDeleteFileIds});
+      LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value: $scope.targetDeleteFileIds}]);
     }
 
     $scope.setActionList.splice(setActionId, 1);
@@ -239,7 +239,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
       // アップロードしたファイルも削除候補として追加し、localStorageを更新する(一時保存しなかった場合に削除されるようにするため)
       $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
-      LocalStorageService.setItem($scope.storageKey, {targetDeleteFileIds: $scope.targetDeleteFileIds});
+      LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value: $scope.targetDeleteFileIds}]);
     })
     .fail(function(jqXHR, textStatus, errorThrown){
       alert("fail");
@@ -261,7 +261,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // シナリオ設定の一時保存
   this.saveTemporary = function() {
     $scope.changeFlg = false;
-    localStorage.setItem($scope.storageKey, this.createJsonData(false));
+    LocalStorageService.setData($scope.storageKey, this.createJsonData(false));
   };
 
   // シナリオ設定の保存
@@ -434,7 +434,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.setActionList[actionStep].file = null;
 
     // localStorageに一時保存を行う
-    LocalStorageService.setItem($scope.storageKey, {targetDeleteFileIds: $scope.targetDeleteFileIds});
+    LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value:$scope.targetDeleteFileIds}]);
   }
 
   /**
@@ -767,7 +767,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
           // ファイルIDの削除リストが存在する場合、現在のシナリオ設定で一時保存データを上書きする
           if (typeof $scope.targetDeleteFileIds !== 'undefined' && $scope.targetDeleteFileIds.length >= 1) {
-            LocalStorageService.setItem($scope.storageKey, {targetDeleteFileIds: $scope.targetDeleteFileIds});
+            LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value: $scope.targetDeleteFileIds}]);
             LocalStorageService.removeItem($scope.storageKey, 'scenarios');
           } else {
             LocalStorageService.remove($scope.storageKey);
@@ -851,8 +851,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (isMatched) {
           // 変数の格納
           var storageParam = [];
-          storageParam[actionDetail.hearings[$scope.hearingIndex].variableName] = message;
-          LocalStorageService.setItem('chatbotVariables', storageParam);
+          LocalStorageService.setItem('chatbotVariables', [{key: actionDetail.hearings[$scope.hearingIndex].variableName, value: message}]);
           // 次のアクション
           $scope.hearingIndex++;
           if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
@@ -882,8 +881,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       // 選択肢
       var storageParam = [];
-      storageParam[$scope.setActionList[$scope.actionStep].selection.variableName] = message;
-      LocalStorageService.setItem('chatbotVariables', storageParam);
+      LocalStorageService.setItem('chatbotVariables', [{key: $scope.setActionList[$scope.actionStep].selection.variableName, value: message}]);
       $scope.actionStep++;
       $scope.doAction();
     }
@@ -1134,7 +1132,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       console.info('successed calling external api.');
       var storageParam = [];
       data.result.forEach(function(param) {
-        storageParam[param.variableName] = param.value;
+        storageParam.push({key: param.variableName, value: param.value});
       });
       LocalStorageService.setItem('chatbotVariables', storageParam);
     }).fail(function(error) {
