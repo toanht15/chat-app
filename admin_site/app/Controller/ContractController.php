@@ -86,7 +86,7 @@ class ContractController extends AppController
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['add','remoteSaveForm']);
+    $this->Auth->allow(['index','add',  'remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
@@ -225,6 +225,7 @@ class ContractController extends AppController
           else {
             $mailBodyData = str_replace(self::BUSINESS_MODEL, "", $mailBodyData);
           }
+
           if(!empty($data['MAgreements']['application_department'])) {
             $mailBodyData = str_replace(self::DEPARTMENT, $data['MAgreements']['application_department'], $mailBodyData);
           }
