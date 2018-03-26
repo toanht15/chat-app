@@ -88,11 +88,31 @@ var actBtnShow = function(){
 
 //シナリオ設定の削除
 function openConfirmDialog(){
-  //チェックボックスのチェック状態の取得
   var list = Array.prototype.slice.call(document.querySelectorAll('#tchatbotscenario_list input[name^="selectTab"]:checked'), 0);
+
+  // 削除対象の取得
+  var targetDeleteFileData = [];
   var selectedList = list.map(function(elm) {
-    return Number(elm.value);
+    var scenarioId = Number(elm.value);
+
+    // 一時保存データ内の、ファイルIDの削除リストを取り出す
+    var storageData = localStorage.getItem('scenario_' + scenarioId);
+    if (storageData) {
+      var jsonData = JSON.parse(storageData);
+      var targetDeleteFileIds = jsonData.targetDeleteFileIds;
+      angular.forEach(jsonData.scenarios, function(action) {
+        if (action[1].actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+          if (typeof action[1].tChatbotScenarioSendFileId !== 'undefined' && action[1].tChatbotScenarioSendFileId !== null) {
+            targetDeleteFileIds.push(action[1].tChatbotScenarioSendFileId);
+          }
+        }
+      });
+      targetDeleteFileData.push({id: scenarioId, targetDeleteFileIds: jsonData.targetDeleteFileIds});
+    }
+
+    return scenarioId;
   });
+
   //現在のページ番号
   var index = Number("<?= $this->Paginator->params()["page"] ?>");
   //現在表示しているレコードの数
@@ -109,7 +129,8 @@ function openConfirmDialog(){
       type: 'post',
       cache: false,
       data: {
-        selectedList: selectedList
+        selectedList: selectedList,
+        targetDeleteFileData: JSON.stringify(targetDeleteFileData)
       },
       url: "<?= $this->Html->url('/TChatbotScenario/chkRemoteDelete') ?>",
       success: function(data){
