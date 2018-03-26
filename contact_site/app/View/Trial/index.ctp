@@ -215,197 +215,42 @@
     //loading画像
     loading.load.start();
 
-    //会社名チェック
-    $("#MCompanyCompanyName").blur(function(){
-      if($('#MCompanyCompanyName').val() == "") {
-        document.getElementById('companyName').style.display = "block";
-        companyNameValidate = 'false';
-      }
-      else {
-        document.getElementById('companyName').style.display = "none";
-        companyNameValidate = 'true';
-      }
-
-      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
-        $("#submitButton").prop('disabled', false);
-        $("#submitButton").css('background-color','#e65298');
-        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
-      }
-      else {
-        $("#submitButton").prop('disabled', true);
-        $("#submitButton").css('background-color','#b5b5b5');
-        document.getElementById('submitButton').value = ('未入力の項目があります');
-      }
-    });
-
-    //名前チェック
-    $("#MAgreementsApplicationName").blur(function(){
-      if($('#MAgreementsApplicationName').val() == "") {
-        document.getElementById('name').style.display = "block";
-        nameValidate = 'false';
-      }
-      else {
-        document.getElementById('name').style.display = "none";
-        nameValidate = 'true';
-      }
-
-      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
-        $("#submitButton").prop('disabled', false);
-        $("#submitButton").css('background-color','#e65298');
-        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
-      }
-      else {
-        $("#submitButton").prop('disabled', true);
-        $("#submitButton").css('background-color','#b5b5b5');
-        document.getElementById('submitButton').value = ('未入力の項目があります');
-      }
-    });
-
-    //会社用メールアドレスチェック
-    $("#ContractUserMailAddress").blur(function(){
-      if($('#ContractUserMailAddress').val() == "") {
-        document.getElementById('mailAddress').style.display = "block";
-        document.getElementById('mailFormat').style.display = "none";
-        document.getElementById('empty').style.display = "block";
-        document.getElementById('registered').style.display = "none";
-         mailAddressValidate = 'false';
-      }
-      else if($('#ContractUserMailAddress').val() !== "" && $('#ContractUserMailAddress').val().match(/.+@.+\..+/)==null){
-        document.getElementById('mailAddress').style.display = "block";
-        document.getElementById('empty').style.display = "none";
-        document.getElementById('mailFormat').style.display = "block";
-        document.getElementById('registered').style.display = "none";
-        mailAddressValidate = 'false';
-      }
-      else {
-        document.getElementById('mailAddress').style.display = "none";
-        document.getElementById('empty').style.display = "none";
-        document.getElementById('mailFormat').style.display = "none";
-        document.getElementById('registered').style.display = "none";
-        mailAddressValidate = 'true';
-      }
-
-      $.ajax({
-        type: "POST",
-        url: "<?= $this->Html->url('/Trial/check') ?>",
-        data: $('#ContractAddForm').serialize()
-      }).done(function(data){
-        console.log('data');
-        console.log(data);
-        if(data.trim() == '既に登録されているアドレスです。') {
-          loading.load.finish();
-          document.getElementById('mailAddress').style.display = "block";
-          document.getElementById('empty').style.display = "none";
-          document.getElementById('mailFormat').style.display = "none";
-          document.getElementById('registered').style.display = "block";
-          document.getElementById("registered").innerHTML="既に登録されているアドレスです。";
-          mailAddressValidate = 'false';
-        }
-        else if(data.trim() == 'フリーアドレスのご利用はできません。') {
-          loading.load.finish();
-          document.getElementById('mailAddress').style.display = "block";
-          document.getElementById('empty').style.display = "none";
-          document.getElementById('mailFormat').style.display = "none";
-          document.getElementById('registered').style.display = "block";
-          document.getElementById("registered").innerHTML = "フリーアドレスのご利用はできません。";
-          mailAddressValidate = 'false';
-        }
-        else if(data.trim() == '携帯電話のメールアドレスのご利用はできません。') {
-          loading.load.finish();
-          document.getElementById('mailAddress').style.display = "block";
-          document.getElementById('empty').style.display = "none";
-          document.getElementById('mailFormat').style.display = "none";
-          document.getElementById('registered').style.display = "block";
-          document.getElementById("registered").innerHTML = "携帯電話のメールアドレスのご利用はできません。";
-          mailAddressValidate = 'false';
-        }
-      });
-      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
-        $("#submitButton").prop('disabled', false);
-        $("#submitButton").css('background-color','#e65298');
-        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
-      }
-      else {
-        $("#submitButton").prop('disabled', true);
-        $("#submitButton").css('background-color','#b5b5b5');
-        document.getElementById('submitButton').value = ('未入力の項目があります');
-      }
-    });
-
-    //電話番号チェック
-    $("#MAgreementsTelephoneNumber").blur(function(){
-      var tel = document.getElementById('MAgreementsTelephoneNumber').value.replace(/[━.*‐.*―.*－.*\-.*ー.*\-]/gi,'');
-      if($('#MAgreementsTelephoneNumber').val() == "") {
-        document.getElementById('phoneNumber').style.display = "block";
-        document.getElementById('phoneNumberEmpty').style.display = "block";
-        document.getElementById('phoneNumberFormat').style.display = "none";
-        phoneNumberValidate = 'false';
-      }
-      else if($('#MAgreementsTelephoneNumber').val() !== "" && !tel.match(/^(0[5-9]0[0-9]{8}|0[1-9][1-9][0-9]{7})$/)) {
-        document.getElementById('phoneNumber').style.display = "block";
-        document.getElementById('phoneNumberEmpty').style.display = "none";
-        document.getElementById('phoneNumberFormat').style.display = "block";
-        phoneNumberValidate = 'false';
-      }
-      else {
-        document.getElementById('phoneNumber').style.display = "none";
-        document.getElementById('phoneNumberEmpty').style.display = "none";
-        document.getElementById('phoneNumberFormat').style.display = "none";
-        phoneNumberValidate = 'true';
-      }
-      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
-        $("#submitButton").prop('disabled', false);
-        $("#submitButton").css('background-color','#e65298');
-        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
-      }
-      else {
-        $("#submitButton").prop('disabled', true);
-        $("#submitButton").css('background-color','#b5b5b5');
-        document.getElementById('submitButton').value = ('未入力の項目があります');
-      }
-    });
-
-    //利用規約チェック
-    $("#agree").change(function(){
-      if ($(this).is(':checked')) {
-        document.getElementById('agreeEroor').style.display = "none";
-         agreeValidate = 'true';
-      }
-      else {
-        document.getElementById('agreeEroor').style.display = "block";
-        agreeValidate = 'false';
-      }
-      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
-        $("#submitButton").prop('disabled', false);
-        $("#submitButton").css('background-color','#e65298');
-        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
-      }
-      else {
-        $("#submitButton").prop('disabled', true);
-        $("#submitButton").css('background-color','#b5b5b5');
-        document.getElementById('submitButton').value = ('未入力の項目があります');
-      }
-    })
-  });
-
-  //登録する
-  function saveAct(){
-    //loading画像
-    loading.load.start();
-
     $.ajax({
       type: "POST",
       url: "<?= $this->Html->url('/Trial/add') ?>",
       data: $('#ContractAddForm').serialize()
     }).done(function(data){
-      socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}),function(){
-        location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
-      });
+      console.log('data');
+      console.log(data);
+      if(data.trim() == '既に登録されているアドレスです。') {
+        loading.load.finish();
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('registered').style.display = "block";
+        document.getElementById("registered").innerHTML="既に登録されているアドレスです。";
+      }
+      else if(data.trim() == 'フリーアドレスのご利用はできません。') {
+        loading.load.finish();
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('registered').style.display = "block";
+        document.getElementById("registered").innerHTML = "フリーアドレスのご利用はできません。";
+      }
+      else if(data.trim() == '携帯電話のメールアドレスのご利用はできません。') {
+        loading.load.finish();
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('registered').style.display = "block";
+        document.getElementById("registered").innerHTML = "携帯電話のメールアドレスのご利用はできません。";
+      }
+      else {
+        socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}),function(){
+          location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
+        });
+      }
     }).fail(function(data){
       loading.load.finish(); // ローディング終了
       var obj = JSON.parse(data.responseText);
