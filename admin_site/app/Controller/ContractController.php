@@ -1,9 +1,12 @@
 <?php
 /**
- * Created by PhpStorm.
+ * 企業用情報登録コントローラー
  * User: masashi_shimizu
  * Date: 2017/08/08
  * Time: 12:09
+ * @property TChatbotScenario $TChatbotScenario
+ * @property MMailTransmissionSetting $MMailTransmissionSetting
+ * @property MMailTemplate $MMailTemplate
  */
 
 App::uses('AppController', 'Controller');
@@ -24,8 +27,24 @@ class ContractController extends AppController
   const PHONE_NUMBER = "##PHONE_NUMBER##";
   const URL = "##URL##";
   const OTHER = "##OTHER##";
-  public $components = ['MailSender','Auth'];
-  public $uses = ['MCompany', 'MAgreements', 'MUser', 'MWidgetSetting', 'MChatSetting', 'TAutoMessages', 'TDictionaries', 'TDictionaryCategory', 'MMailTemplate', 'TransactionManager','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate'];
+  public $components = array('MailSender','Auth');
+  public $uses = array('MCompany',
+    'MAgreements',
+    'MUser',
+    'MWidgetSetting',
+    'MChatSetting',
+    'TAutoMessages',
+    'TDictionaries',
+    'TDictionaryCategory',
+    'MMailTemplate',
+    'MMailTransmissionSetting',
+    'TransactionManager',
+    'TMailTransmissionLog',
+    'MSystemMailTemplate',
+    'TSendSystemMailSchedule',
+    'MJobMailTemplate',
+    'TChatbotScenario'
+  );
 
   public $paginate = [
     'MCompany' => [
@@ -393,6 +412,7 @@ class ContractController extends AppController
       $this->addDefaultAutoMessages($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultDictionaries($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultMailTemplate($addedCompanyInfo['id'], $companyInfo);
+      $this->addDefaultScenarioMessage($addedCompanyInfo['id'], $companyInfo);
       $this->addCompanyJSFile($addedCompanyInfo['companyKey']);
     } catch (Exception $e) {
       $this->TransactionManager->rollback($transaction);
@@ -703,6 +723,180 @@ class ContractController extends AppController
     }
   }
 
+  private function addDefaultScenarioMessage($m_companies_id, $forceInsert = false) {
+    if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $scenarios = $this->TChatbotScenario->find('all',array(
+        'conditions' => array(
+          'm_companies_id' => $m_companies_id
+        )
+    ));
+    if(empty($scenarios)) {
+      $default = $this->getDefaultAutomessageConfigurations();
+      foreach($default as &$scenario) {
+        $actions = &$scenario['activity']['scenarios'];
+        foreach($actions as &$action) {
+          if(strcmp($action['actionType'], 4) === 0) {
+            // メール転送設定とテンプレート設定を追加
+            $this->MMailTransmissionSetting->create();
+            $this->MMailTransmissionSetting->set(array(
+              'from_address' => '',
+              'from_name' => '★★★自由に編集してください★★★',
+              'to_address' => '{{メールアドレス}}',
+              'subject' => '資料請求ありがとうございます'
+            ));
+            $this->MMailTransmissionSetting->save();
+            unset($action['mailTransmission']);
+            $action['mMailTransmissionId'] = $this->MMailTransmissionSetting->lastInsertedId();
+
+            $this->MMailTemplate->create();
+            $this->MMailTemplate->set(array(
+              'mail_type_cd' => 'CS001',
+              'template' => '--------------------------------------------------------------------------------------------------------
+このメールは、資料請求の受け付け完了をお知らせする自動返信メールです。
+本メールへの返信は受け付けておりませんのでご了承ください。
+--------------------------------------------------------------------------------------------------------
+{{会社名}}
+{{名前}}様
+
+この度は、資料請求ありがとうございます。
+
+後ほど担当の者から資料をお送りさせて頂きますので少々お待ちください。
+
+
+──以下お問い合わせいただきました内容です──
+
+■会社名
+{{会社名}}
+
+■お名前
+{{名前}}
+
+■電話番号
+{{電話番号}}
+
+■メールアドレス
+{{メールアドレス}}
+
+■その他ご要望
+{{その他}}
+
+──────────ここまで─────────
+
+※本メールは自動返信にてお届けしています。
+
+──────────────────────────────
+
+★★★署名を自由に編集してください★★★
+
+──────────────────────────────'
+            ));
+            $this->MMailTemplate->save();
+            unset($action['mailTransmission']);
+            $action['mMailTemplateId'] = $this->MMailTemplate->lastInsertedId();
+          }
+        }
+        $this->TChatbotScenario->create();
+        $this->TChatbotScenario->set(array(
+          "m_companies_id" => $m_companies_id,
+          "name" => $item['name'],
+          "activity" => $this->convertActivityToJSON($item['activity']),
+          "del_flg" => $item['del_flg'],
+          "sort" => $item['sort']
+        ));
+        $this->TChatbotScenario->save();
+      }
+    } else if($forceInsert) {
+      // 既存設定があることを考慮して今のソート番号を取得
+      $lastScenario = $this->TChatbotScenario->find('first', array(
+        'conditions' => array(
+          'm_companies_id' => $m_companies_id
+        ),
+        'order' => array(
+          'sort' => 'DESC'
+        )
+      ));
+      $sortNum = 0;
+      if(!empty($lastScenario)) {
+        $sortNum = (int)$lastScenario['TChatbotScenario']['sort'];
+      }
+      $default = $this->getDefaultScenarioConfigurations();
+      foreach($default as &$scenario) {
+        $actions = &$scenario['activity']['scenarios'];
+        foreach ($actions as &$action) {
+          if (strcmp($action['actionType'], 4) === 0) {
+            // メール転送設定とテンプレート設定を追加
+            $this->MMailTransmissionSetting->create();
+            $this->MMailTransmissionSetting->set(array(
+              'from_address' => '',
+              'from_name' => '★★★自由に編集してください★★★',
+              'to_address' => '{{メールアドレス}}',
+              'subject' => '資料請求ありがとうございます'
+            ));
+            $this->MMailTransmissionSetting->save();
+            unset($action['mailTransmission']);
+            $action['mMailTransmissionId'] = $this->MMailTransmissionSetting->lastInsertedId();
+
+            $this->MMailTemplate->create();
+            $this->MMailTemplate->set(array(
+              'mail_type_cd' => 'CS001',
+              'template' => '--------------------------------------------------------------------------------------------------------
+このメールは、資料請求の受け付け完了をお知らせする自動返信メールです。
+本メールへの返信は受け付けておりませんのでご了承ください。
+--------------------------------------------------------------------------------------------------------
+{{会社名}}
+{{名前}}様
+
+この度は、資料請求ありがとうございます。
+
+後ほど担当の者から資料をお送りさせて頂きますので少々お待ちください。
+
+
+──以下お問い合わせいただきました内容です──
+
+■会社名
+{{会社名}}
+
+■お名前
+{{名前}}
+
+■電話番号
+{{電話番号}}
+
+■メールアドレス
+{{メールアドレス}}
+
+■その他ご要望
+{{その他}}
+
+──────────ここまで─────────
+
+※本メールは自動返信にてお届けしています。
+
+──────────────────────────────
+
+★★★署名を自由に編集してください★★★
+
+──────────────────────────────'
+            ));
+            $this->MMailTemplate->save();
+            unset($action['mailTransmission']);
+            $action['mMailTemplateId'] = $this->MMailTemplate->lastInsertedId();
+          }
+        }
+        $sortNum = $sortNum + 1;
+        $this->TChatbotScenario->create();
+        $this->TChatbotScenario->set(array(
+          "m_companies_id" => $m_companies_id,
+          "name" => $item['name'],
+          "activity" => $this->convertActivityToJSON($item['activity']),
+          "del_flg" => $item['del_flg'],
+          "sort" => $sortNum
+        ));
+        $this->TChatbotScenario->save();
+      }
+    }
+  }
+
   private function addCompanyJSFile($companyKey) {
     $templateData = new File(C_COMPANY_JS_TEMPLATE_FILE);
     $contents = $templateData->read();
@@ -856,6 +1050,10 @@ class ContractController extends AppController
 
   private function getDefaultMailTemplateConfigurations() {
     return Configure::read('default.mail.templates');
+  }
+
+  private function getDefaultScenarioConfigurations() {
+    return Configure::read('default.scenario');
   }
 
   private function isChatEnable($m_contact_types_id) {
