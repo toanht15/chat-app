@@ -899,6 +899,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.actionInit = function() {
     $scope.actionStep = 0;
     $scope.hearingIndex = 0;
+    $scope.sendFileIndex = 0;
     $scope.actionTimer;
     $scope.hearingInputResult = true;
 
@@ -969,9 +970,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
           // ファイル送信
-          $scope.$broadcast('addReFileMessage', actionDetail.file);
-          $scope.actionStep++;
-          $scope.doAction();
+          if ($scope.sendFileIndex == 0 && !!actionDetail.message) {
+            $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message), 'action' + $scope.actionStep);
+            $scope.sendFileIndex++;
+            $scope.doAction();
+          } else {
+            $scope.$broadcast('addReFileMessage', actionDetail.file);
+            $scope.sendFileIndex = 0;
+            $scope.actionStep++;
+            $scope.doAction();
+          }
         }
       }, parseInt(time, 10) * 1000);
     } else {
