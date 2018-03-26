@@ -1591,6 +1591,7 @@ sinclo@medialink-ml.co.jp
     $filePath = $this->putFile($file, $saveFileName);
 
     return [
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
       'file_path' => $filePath,
       'file_name' => $file['name'],
       'file_size' => $this->prettyByte2Str($file['size']),
