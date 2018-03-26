@@ -5,6 +5,7 @@
  */
 class MChatNotificationsController extends AppController {
   public $uses = ['MChatNotification'];
+  public $components = ['ImageTrimming'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -112,19 +113,31 @@ class MChatNotificationsController extends AppController {
         $tmpFile = $uploadImage['tmp_name'];
         // ファイルの保存先フルパス＋ファイル名
         $saveFile = C_PATH_NOTIFICATION_IMG_SAVE_DIR."tmp".DS.$filename;
-        $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
-        $width = ImageSx($in); // 画像の幅を取得
-        $height = ImageSy($in); // 画像の高さを取得
-        $save_width = 200; // 幅の最低サイズ
-        $save_height = 200; // 高さの最低サイズ
-        $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
-        $out = ImageCreateTrueColor($save_width , $save_height);
-        //ブレンドモードを無効にする
-        imagealphablending($out, false);
-        //完全なアルファチャネル情報を保存するフラグをonにする
-        imagesavealpha($out, true);
-        ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
-        $this->imageOut($extension, $out, $saveFile);
+        if (!empty($this->request->data['Trimming']['info'])) {
+          $trimmingInfo = json_decode($this->request->data['Trimming']['info'], TRUE);
+          $component = new ImageTrimmingComponent();
+          $component->setFileData($uploadImage);
+          $component->setSavePath($saveFile);
+          $component->setX($trimmingInfo['x']);
+          $component->setY($trimmingInfo['y']);
+          $component->setWidth($trimmingInfo['width']);
+          $component->setHeight($trimmingInfo['height']);
+          $component->save();
+        } else {
+          $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
+          $width = ImageSx($in); // 画像の幅を取得
+          $height = ImageSy($in); // 画像の高さを取得
+          $save_width = 200; // 幅の最低サイズ
+          $save_height = 200; // 高さの最低サイズ
+          $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
+          $out = ImageCreateTrueColor($save_width , $save_height);
+          //ブレンドモードを無効にする
+          imagealphablending($out, false);
+          //完全なアルファチャネル情報を保存するフラグをonにする
+          imagesavealpha($out, true);
+          ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
+          $this->imageOut($extension, $out, $saveFile);
+        }
         $inputData['image'] = $filename;
       }
       else {

@@ -92,6 +92,7 @@ define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
 // 表示名種別
 define('C_WIDGET_SHOW_NAME', 1); // 表示名
 define('C_WIDGET_SHOW_COMP', 2); // 企業名
+define('C_WIDGET_SHOW_NONE', 3); // 表示しない
 
 // チャットデザインタイプ
 define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX', 1); // BOX型（サイズ固定）
@@ -141,10 +142,10 @@ define('C_MATCH_RULE_TEXT', '/.+/'); // 1文字以上のテキスト
 define('C_MATCH_RULE_NUMBER', '/^\d+$/');  // 1文字以上の数字
 define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
 
-define('C_MATCH_INPUT_RULE_ALL', '/./');  // 入力制限なし
-define('C_MATCH_INPUT_RULE_NUMBER', '/\d/');  // 数字入力
-define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.,;:@"]/'); // メールアドレス入力(半角英数記号入力)
-define('C_MATCH_INPUT_RULE_TEL', '/[\d+-]/'); // 電話番号入力（半角英数と一部記号入力）
+define('C_MATCH_INPUT_RULE_ALL', '/.*/');  // 入力制限なし
+define('C_MATCH_INPUT_RULE_NUMBER', '/[\d]*/');  // 数字入力
+define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.,;:@"]*/'); // メールアドレス入力(半角英数記号入力)
+define('C_MATCH_INPUT_RULE_TEL', '/[\d+-]*/'); // 電話番号入力（半角英数と一部記号入力）
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
@@ -421,7 +422,8 @@ $config['widgetPositionType'] = [
 /* ウィジェット設定 － 担当者表示名種別 */
 $config['widgetShowNameType'] = [
     C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
-    C_WIDGET_SHOW_COMP=> "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+    C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>",
+    C_WIDGET_SHOW_NONE => "表示しない"
 ];
 
 /* ウィジェット設定 － 吹き出しデザイン */
@@ -710,7 +712,7 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_SEND_FILE => [
     'label' => 'ファイル送信',
     'default' => [
-      'messageIntervalTimeSec' > '2',
+      'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
       'file' => ''
     ]
@@ -753,7 +755,7 @@ $config['chatbotScenarioSendMailType'] = [
   ],
   C_SCENARIO_MAIL_TYPE_CUSTOMIZE => [
     'label' => 'メール本文をカスタマイズする',
-    'tooltip' => '自由にメール本文を編集することが可能です。（変数の利用も可能です）'
+    'tooltip' => '自由にメール本文を編集することが可能です。<br>（変数の利用も可能です）'
   ]
 ];
 

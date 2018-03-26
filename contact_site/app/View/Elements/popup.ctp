@@ -251,6 +251,16 @@
             return popupEvent.close();
           };
           break;
+        case 'p-widget-trimming':
+          var trimmingBtn = _button("トリミング");
+          trimmingBtn.onclick = function() {
+            return popupEvent.doTrimming();
+          };
+          var cancelButton = _button("キャンセル");
+          cancelButton.onclick = function () {
+            return popupEvent.close();
+          };
+          break;
         case 'p-copy':
           var closeBtn = _button("コピーする");
           closeBtn.onclick = function () {
@@ -305,7 +315,6 @@
             return popupEvent.cancelClicked();
           };
           break;
-          z
         case 'p-dictionary-del':
           var closeBtn = _button("削除する");
           closeBtn.onclick = function () {

@@ -36,6 +36,7 @@ class MWidgetSetting extends AppModel {
       'message_text_color' => "messageTextColor",
       //4.その他文字色
       'other_text_color' => "otherTextColor",
+      'header_text_size' => "headerTextSize",
       //5.ウィジェット枠線色
       'widget_border_color' => "widgetBorderColor",
       //6.吹き出し枠線色
@@ -52,12 +53,14 @@ class MWidgetSetting extends AppModel {
       'c_name_text_color' => "cNameTextColor",
       //11.企業側吹き出し文字色
       're_text_color' => "reTextColor",
+      're_text_size' => "reTextSize",
       //12.企業側吹き出し背景色
       're_background_color' => "reBackgroundColor",
       //13.企業側吹き出し枠線色
       're_border_color' => "reBorderColor",
       //14.訪問者側吹き出し文字色
       'se_text_color' => "seTextColor",
+      'se_text_size' => "seTextSize",
       //15.訪問者側吹き出し背景色
       'se_background_color' => "seBackgroundColor",
       //16.訪問者側吹き出し枠線色

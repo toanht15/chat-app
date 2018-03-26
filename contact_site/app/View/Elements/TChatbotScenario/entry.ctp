@@ -14,7 +14,7 @@
     <ul>
       <!-- シナリオ名称 -->
       <li>
-        <label>シナリオ名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="シナリオ名称に設定します。">?</icon></span></label>
+        <label>シナリオ名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="シナリオ名称に設定します。" data-tooltip-width='160'>?</icon></span></label>
         <?= $this->ngForm->input('name', [
           'type' => 'text',
           'placeholder' => 'シナリオ名称を入力',
@@ -96,6 +96,7 @@
     <?=$this->Form->hidden('id')?>
     <div id="tchatbotscenario_actions" class="fotterBtnArea">
       <?=$this->Html->link('戻る','/TChatbotScenario/index/page:'.$lastPage, ['class'=>'whiteBtn btn-shadow'])?>
+      <a href="javascript:void(0)" ng-click="main.saveTemporary()" class="greenBtn btn-shadow">一時保存</a>
       <a href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>
       <?php
       $class = "";
