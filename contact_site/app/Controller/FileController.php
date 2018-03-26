@@ -64,12 +64,28 @@ class FileController extends FileAppController
   }
 
   private function getFileByFileId($fileId) {
-    $data = $this->TUploadTransferFile->findById($fileId);
-    $file = $this->getFile($this->getSaveKey($data['TUploadTransferFile']['saved_file_key']));
+    $data = null;
+    $file = null;
+    $result = array();
+    if($this->scenarioMode) {
+      $data = $this->TChatbotScenarioSendFile->findById($fileId);
+      $pos = strpos($data['TChatbotScenarioSendFile']['file_path'], $this->fileTransferPrefix);
+      if ($pos !== FALSE) {
+        $file = $this->getFile($this->getSaveKey(substr($data['TChatbotScenarioSendFile']['file_path'], $pos)));
+      }
+      $result = array(
+        'fileObj' => $file,
+        'record' => $data['TChatbotScenarioSendFile']
+      );
+    } else {
+      $data = $this->TUploadTransferFile->findById($fileId);
+      $file = $this->getFile($this->getSaveKey($data['TUploadTransferFile']['saved_file_key']));
+      $result = array(
+        'fileObj' => $file,
+        'record' => $data['TUploadTransferFile']
+      );
+    }
 
-    return array(
-      'fileObj' => $file,
-      'record' => $data['TUploadTransferFile']
-    );
+    return $result;
   }
 }

@@ -574,7 +574,7 @@ sinclo@medialink-ml.co.jp
       $this->TChatbotScenarioSendFile->save();
       $lastInsertedId = $this->TChatbotScenarioSendFile->getLastInsertId();
       $created = $this->TChatbotScenarioSendFile->field('created');
-      $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId);
+      $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId, true);
       $this->TChatbotScenarioSendFile->set([
         'download_url' => $downloadUrl
       ]);
