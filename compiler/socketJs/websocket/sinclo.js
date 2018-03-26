@@ -2066,7 +2066,9 @@
 
             if ( cs === "sinclo_re" ) {
               div.style.textAlign = "left";
-              content = "<span class='cName'>" + cName + "</span>";
+              if(Number(window.sincloInfo.widget.showName) !== 3) {
+                content = "<span class='cName'>" + cName + "</span>";
+              }
             } else if (cs === "sinclo_se") {
               div.style.textAlign = "right";
             }

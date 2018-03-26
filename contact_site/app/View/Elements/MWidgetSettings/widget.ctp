@@ -10,11 +10,12 @@
     #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
     #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
     #sincloBox div#descriptionSet { cursor: pointer; }
-    #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+    #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: {{header_text_size}}px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
     #sincloBox p#widgetTitle.spText{ text-indent: 1em; }
     #sincloBox p#widgetTitle.middleSize { font-size: 15px; }
     #sincloBox p#widgetTitle.largeSize { font-size: 15px; }
     #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+    #sincloBox div.widgetHeaderWrap:hover #widgetTitle { opacity: 0.75; }
     /*
           #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
       #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
@@ -54,6 +55,7 @@
     #sincloBox ul#chatTalk li.largeSize { font-size: 13px; }
     #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
     #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 5px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
+    #sincloBox ul#chatTalk li.sinclo_se { font-size: {{se_text_size}}px; }
     #sincloBox ul#chatTalk li.sinclo_se.details { background-color: {{getSeBackgroundColor()}}; }
     #sincloBox ul#chatTalk li.sinclo_se.notNone { border: 1px solid {{getTalkBorderColor('se')}}; }
     #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; border-bottom-right-radius: 0px; }
@@ -76,14 +78,14 @@
     #sincloBox ul#chatTalk li.boxType.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
     #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 15px }
     #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 10px }
-    #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: 13px; margin: 0 0 5px 0; }
-    #sincloBox ul#chatTalk li span.cName.middleSize { font-size: 14px }
-    #sincloBox ul#chatTalk li span.cName.largeSize { font-size: 14px }
+    #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: {{re_text_size+1}}px; margin: 0 0 5px 0; }
+    #sincloBox ul#chatTalk li span.cName.middleSize { font-size: {{re_text_size+1}}px; }
+    #sincloBox ul#chatTalk li span.cName.largeSize { font-size: {{re_text_size+1}}px; }
     #sincloBox ul#chatTalk li span.cName.details{ color: {{c_name_text_color}}!important;}
     #sincloBox ul#chatTalk li span.cName:not(.details){ color: {{main_color}}!important;}
     #sincloBox ul#chatTalk li span:not(.details){  color: {{message_text_color}}!important; }
-    #sincloBox ul#chatTalk li.sinclo_re span.details{ color: {{re_text_color}};}
-    #sincloBox ul#chatTalk li.sinclo_se span.details{ color: {{se_text_color}};}
+    #sincloBox ul#chatTalk li.sinclo_re span.details{ color: {{re_text_color}}; font-size: {{re_text_size}}px; }
+    #sincloBox ul#chatTalk li.sinclo_se span.details{ color: {{se_text_color}}; font-size: {{se_text_size}}px; }
     #sincloBox section#chatTab div { height: 75px!important; padding: 5px; }
     #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: {{other_text_color}}; margin: 0; resize: none; padding: 5px; }
     #sincloBox section#chatTab textarea#sincloChatMessage.details { color: {{message_box_text_color}}; background-color: {{message_box_background_color}}; }
@@ -182,41 +184,43 @@
     #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget_border_color}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
     #sincloBox #footer:not(.notNoneWidgetOutsideBorder) { border:none; }
   </style>
-  <!-- 画像 -->
-  <span id="mainImage" class="widgetOpener" ng-hide="spHeaderLightToggle() || mainImageToggle !== '1'">
+    <!-- 画像 -->
+    <span id="mainImage" class="widgetOpener" ng-hide="spHeaderLightToggle() || mainImageToggle !== '1'">
       <img ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
     </span>
-  <!-- 画像 -->
-  <div>
-    <!-- タイトル -->
-    <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: spHeaderLightToggle() || mainImageToggle !== '1',middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3', spText:showWidgetType === 3}">{{title}}</p>
-    <!-- タイトル -->
-  </div>
-  <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
-  <!--
-      <div id="addBtn" class="widgetOpener" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}" style="display: none;"></div>
-   -->
-  <div id="closeBtn" ng-click="switchWidget(4)" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
-  <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
-    <!-- サブタイトル -->
-    <!-- 仕様変更、常に高度な設定が当たっている状態とする -->
+  <div class="widgetHeaderWrap">
+    <!-- 画像 -->
+    <div>
+      <!-- タイトル -->
+      <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: spHeaderLightToggle() || mainImageToggle !== '1',middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3', spText:showWidgetType === 3}">{{title}}</p>
+      <!-- タイトル -->
+    </div>
+    <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
     <!--
-          <p ng-if="subTitleToggle == '1' && color_setting_type === '0' || color_setting_type === false"" id="widgetSubTitle" >{{sub_title}}</p>
-          <p ng-if="subTitleToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetSubTitle" class="details">{{sub_title}}</p>
+        <div id="addBtn" class="widgetOpener" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}" style="display: none;"></div>
      -->
-    <p ng-if="subTitleToggle == '1'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}" class="details">{{sub_title}}</p>
-    <p ng-if="subTitleToggle == '2'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}"></p>
-    <!-- サブタイトル -->
+    <div id="closeBtn" ng-click="switchWidget(4)" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
+    <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
+      <!-- サブタイトル -->
+      <!-- 仕様変更、常に高度な設定が当たっている状態とする -->
+      <!--
+            <p ng-if="subTitleToggle == '1' && color_setting_type === '0' || color_setting_type === false"" id="widgetSubTitle" >{{sub_title}}</p>
+            <p ng-if="subTitleToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetSubTitle" class="details">{{sub_title}}</p>
+       -->
+      <p ng-if="subTitleToggle == '1'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}" class="details">{{sub_title}}</p>
+      <p ng-if="subTitleToggle == '2'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}"></p>
+      <!-- サブタイトル -->
 
-    <!-- 説明文 -->
-    <!-- 仕様変更、常に高度な設定が当たっている状態とする -->
-    <!--
-          <p ng-if="descriptionToggle == '1' && color_setting_type === '0' || color_setting_type === false" id="widgetDescription" >{{description}}</p>
-          <p ng-if="descriptionToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetDescription" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{description}}</p>
-     -->
-    <p ng-if="descriptionToggle == '1'" id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{description}}</p>
-    <p ng-if="descriptionToggle == '2'" id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false }"></p>
-    <!-- 説明文 -->
+      <!-- 説明文 -->
+      <!-- 仕様変更、常に高度な設定が当たっている状態とする -->
+      <!--
+            <p ng-if="descriptionToggle == '1' && color_setting_type === '0' || color_setting_type === false" id="widgetDescription" >{{description}}</p>
+            <p ng-if="descriptionToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetDescription" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{description}}</p>
+       -->
+      <p ng-if="descriptionToggle == '1'" id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{description}}</p>
+      <p ng-if="descriptionToggle == '2'" id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false }"></p>
+      <!-- 説明文 -->
+    </div>
   </div>
   <div id="miniTarget">
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>

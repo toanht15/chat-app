@@ -5,8 +5,8 @@
  */
 class MWidgetSettingsController extends AppController {
   public $uses = ['MWidgetSetting','MOperatingHour'];
+  public $components = ['ImageTrimming'];
   public $helpers = ['ngForm'];
-
   public $coreSettings = null;
   public $styleSetting = [
     'common' => [
@@ -14,8 +14,8 @@ class MWidgetSettingsController extends AppController {
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
       /* カラー設定styat */
-      'color_setting_type','main_color','string_color','message_text_color','other_text_color','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
-      'chat_talk_background_color','c_name_text_color','re_text_color','re_background_color','re_border_color','re_border_none','se_text_color','se_background_color','se_border_color','se_border_none','chat_message_background_color',
+      'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
+      'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
       'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none'
       /* カラー設定end */
     ],
@@ -32,7 +32,7 @@ class MWidgetSettingsController extends AppController {
    * @return void
    * */
   public function index() {
-
+    //$image->resize('/img/Penguins.jpg?1517909330', 60, 60, true);
     if ( $this->request->is('post') ) {
       $errors = $this->_update($this->request->data);
       if ( empty($errors) ) {
@@ -343,23 +343,35 @@ class MWidgetSettingsController extends AppController {
     if ( $this->MWidgetSetting->validates() ) {
       if ( !empty($uploadImage) ) {
         $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
-        $filename = $this->userInfo['MCompany']['company_key'].'_'.date('YmdHis').'.'.$extension;
+        $filename = $this->userInfo['MCompany']['company_key'] . '_' . date('YmdHis') . '.' . $extension;
         $tmpFile = $uploadImage['tmp_name'];
         // ファイルの保存先フルパス＋ファイル名
-        $saveFile = C_PATH_WIDGET_IMG_DIR.DS.$filename;
-        $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
-        $width = ImageSx($in); // 画像の幅を取得
-        $height = ImageSy($in); // 画像の高さを取得
-        $save_width = 248; // 幅の最低サイズ
-        $save_height = 280; // 高さの最低サイズ
-        $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
-        $out = ImageCreateTrueColor($save_width , $save_height);
-        //ブレンドモードを無効にする
-        imagealphablending($out, false);
-        //完全なアルファチャネル情報を保存するフラグをonにする
-        imagesavealpha($out, true);
-        ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
-        $this->imageOut($extension, $out, $saveFile);
+        $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
+        if (!empty($inputData['Trimming']['info'])) {
+          $trimmingInfo = json_decode($inputData['Trimming']['info'], TRUE);
+          $component = new ImageTrimmingComponent();
+          $component->setFileData($uploadImage);
+          $component->setSavePath($saveFile);
+          $component->setX($trimmingInfo['x']);
+          $component->setY($trimmingInfo['y']);
+          $component->setWidth($trimmingInfo['width']);
+          $component->setHeight($trimmingInfo['height']);
+          $component->save();
+        } else {
+          $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
+          $width = ImageSx($in); // 画像の幅を取得
+          $height = ImageSy($in); // 画像の高さを取得
+          $save_width = 248; // 幅の最低サイズ
+          $save_height = 280; // 高さの最低サイズ
+          $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
+          $out = ImageCreateTrueColor($save_width , $save_height);
+          //ブレンドモードを無効にする
+          imagealphablending($out, false);
+          //完全なアルファチャネル情報を保存するフラグをonにする
+          imagesavealpha($out, true);
+          ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
+          $this->imageOut($extension, $out, $saveFile);
+        }
         $inputData['MWidgetSetting']['main_custom_image'] = $filename;
       }
       // ウィジェットのスタイル設定周りをJSON化
@@ -765,5 +777,72 @@ class MWidgetSettingsController extends AppController {
     }
     return $d;
   }
+
+/*$app->post('/cropper', function(Request $request){
+
+  $str =  str_random(7);
+
+  $crop =  value(function() use ($request, $str) {*/
+  public function trimming() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+
+    $this->log('入ってるかチェック',LOG_DEBUG);
+    $this->log($this->request->data,LOG_DEBUG);
+    $request = $this->request->data['image'];
+    $str = str_random(7);
+     // Laravelの場合は public_path()ヘルパー関数、Facadeが使えます
+     $image = Image::make('../public/img/art.jpg')
+             ->crop(
+                    $request->get('width'),
+                    $request->get('height'),
+                    $request->get('x'),
+                    $request->get('y')
+                  )
+             ->resize(256,256) // 256 * 256にリサイズ
+             // 画像の保存
+             ->save('../public/img/'. $str . '.jpg')
+             ->resize(128,128) //サムネイル用にリサイズ
+             ->save('../public/img/'. $str . '_t' . '.jpg');
+      // \File::delete('Your image File);
+      $this->log('ここまで来てない？',LOG_DEBUG);
+      $this->log($image,LOG_DEBUG);
+      return $image ?: false;
+      }
+
+  public function remoteTimmingInfo() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->render('/Elements/MWidgetSettings/remoteTimmingInfo');
+  }
+
+  public function cropper() {
+    header ('Content-Type: image/png');
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->log('入った',LOG_DEBUG);
+    $file1 = "/img/company_g.png?1490169962";                            //　元画像ファイル
+    $file2 = "/img/company_g.png?1490169963";                                //　画像保存先
+    $this->log('画像チェック12',LOG_DEBUG);
+    $this->log($file1 ,LOG_DEBUG);
+    $img = imagecreatefromjpeg($file1);                            //　元画像
+    $this->log('画像チェック2',LOG_DEBUG);
+    $w = array(100, 120);                                    //　切り出し開始位置,サイズ（横）
+    $h = array(110, 100);                                    //　切り出し開始位置,サイズ（縦）
+    $out = ImageCreateTrueColor($w[1], $h[1]);                        //　画像を生成
+    ImageCopyResampled($out, $img, 0, 0, $w[0], $h[0], $w[1], $h[1], $w[1], $h[1]);        //　サイズ変更・コピー
+    ImageJPEG($out, $file2);                                //　画像表示
+    ImageDestroy($img);
+    ImageDestroy($out);
+    $this->log('画像チェック',LOG_DEBUG);
+    $this->log($out,LOG_DEBUG);
+    $this->log($file2,LOG_DEBUG);
+
+  }
+
+
 
 }
