@@ -6875,6 +6875,7 @@ ul.naviBtn {
                 input[type="text"],
                 textarea {
                   width: calc(100% - 6.5em);
+                  resize: none;
                 }
 
                 input[type="checkbox"],

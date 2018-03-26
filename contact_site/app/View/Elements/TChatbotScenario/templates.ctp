@@ -4,7 +4,7 @@
     <li class="styleFlexbox">
       <span class="fb7em"><label>発言内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットに発言させたいテキストメッセージを設定します。">?</icon></span></label></span>
       <div>
-        <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="メッセージを入力してください" ng-required="true"></resize-textarea>
+        <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
       </div>
     </li>
   </ul>
@@ -29,7 +29,7 @@
             <td class="item_type">
               <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList"></select>
             </td>
-            <td class="item_message" rowspan="2"><textarea ng-model="hearingItem.message" rows="3"></textarea></td>
+            <td class="item_message" rowspan="2"><resize-textarea ng-model="hearingItem.message" rows="1" data-maxRow="10"></resize-textarea></td>
           </tr>
           <tr ng-repeat-end>
             <td class="item_detail_settings" colspan="2">
@@ -50,7 +50,7 @@
     <li class="styleFlexbox">
       <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の発言内容がタイプに当てはまらなかった場合（整合性チェックエラーの場合）に自動返信するメッセージを設定します。">?</icon></span></label></span>
       <div>
-        <resize-textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="4" placeholder="入力エラー時の返信メッセージを入力してください"></resize-textarea>
+        <resize-textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="1" placeholder="入力エラー時の返信メッセージを入力してください" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li>
@@ -59,7 +59,7 @@
         <li class="styleFlexbox">
           <span class="fb9em"><label>確認内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="確認メッセージとして送信するメッセージを設定します。<br><br>＜設定例＞<br>お名前　　　　：{&thinsp;{名前}&thinsp;}<br>電話番号　　　：{&thinsp;{電話番号}&thinsp;}<br>メールアドレス：{&thinsp;{メールアドレス}&thinsp;}<br>でよろしいでしょうか？">?</icon></span></label></span>
           <div>
-            <resize-textarea name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="4" placeholder="確認内容のメッセージを入力してください"></resize-textarea>
+            <resize-textarea name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="1" placeholder="確認内容のメッセージを入力してください" data-maxRow="10"></resize-textarea>
           </div>
         </li>
         <li class="styleFlexbox">
@@ -94,7 +94,7 @@
     <li class="styleFlexbox">
       <span class="fb7em"><label>質問内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットが自動送信する質問内容を設定します。<br><br>例）お客様の性別を選択して下さい。">?</icon></span></label></span>
       <div>
-        <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="4" placeholder="質問内容のメッセージを入力してください"></resize-textarea>
+        <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="1" placeholder="質問内容のメッセージを入力してください" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li>
@@ -143,7 +143,7 @@
       <span class="fb13em"><label>メール本文タイプ</label></span>
       <div>
         <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span></label>
-        <resize-textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="4" placeholder="メール本文を入力してください"></resize-textarea>
+        <resize-textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="1" placeholder="メール本文を入力してください" data-maxRow="10"></resize-textarea>
       </div>
     </li>
   </ul>
@@ -209,7 +209,7 @@
     <li class="styleFlexbox" ng-if="setItem.methodType == <?= C_SCENARIO_METHOD_TYPE_POST ?>">
       <span class="fb13em"><label>リクエストボディ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="外部連携先のサーバーにリクエストを送る際、リクエストボディとして送信されます。">?</icon></span></label></span>
       <div>
-        <resize-textarea ng-model="setItem.requestBody" cols="48" rows="4" placeholder="リクエストボディを設定してください"></resize-textarea>
+        <resize-textarea ng-model="setItem.requestBody" cols="48" rows="1" placeholder="リクエストボディを設定してください" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li class="styleFlexbox">

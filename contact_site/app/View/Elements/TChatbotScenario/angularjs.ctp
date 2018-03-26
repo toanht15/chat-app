@@ -1142,22 +1142,41 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   return {
     restrict: 'E',
     replace: true,
-    template: '<textarea></textarea>',
+    template: '<textarea style="font-size: 13px; padding: 5px; line-height: 1.5;"></textarea>',
     link: function(scope, element, attrs) {
+      var maxRow = element[0].dataset.maxRow || 10;                   // 表示可能な最大行数
+      var fontSize = parseFloat(element[0].style.fontSize, 10);       // 行数計算のため、templateにて設定したフォントサイズを取得
+      var paddingSize = parseFloat(element[0].style.padding, 10) * 2; // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得
+      var lineHeight = parseFloat(element[0].style.lineHeight, 10);   // 表示高さの計算のため、templateにて設定した行の高さを取得
       var elm = angular.element(element[0]);
-      var defaultHeight = element[0].scrollHeight;
-      var maxHeight = defaultHeight * 4;
 
-      var clearWatch = scope.$watch(attrs.ngModel, function(value) {
-        if (typeof value === 'undefined') {
-          return;
+      function autoResize() {
+        var clientWidth = elm[0].clientWidth - paddingSize;
+
+        // フォントサイズとテキストエリアの横幅を基に、行数を計算する
+        var textRow = 0;
+        elm[0].value.split('\n').forEach(function(string) {
+          var stringWidth = string.length * fontSize;
+          textRow += Math.max(Math.ceil(stringWidth/clientWidth), 1);
+        });
+
+        // 表示する行数に応じて、テキストエリアの高さを調整する
+        if (elm[0].value.length >= 1) {
+          textRow = (textRow + 1) > maxRow ? maxRow : textRow + 1;
         }
-        var textHeight = elm[0].scrollHeight;
-        if (textHeight > defaultHeight) {
-          elm[0].style.height = (textHeight > maxHeight ? maxHeight : textHeight) + 'px';
+        if (textRow > 1) {
+          elm[0].style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+        } else {
+          elm[0].style.height = '';
         }
+      }
+
+      var clearWatch = scope.$watch(attrs.ngModel, function() {
+        autoResize();
         clearWatch();
       });
+      elm[0].addEventListener('input', autoResize);
+      $(window).on('resize', autoResize);
     }
   };
 })
