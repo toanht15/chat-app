@@ -129,3 +129,4 @@ Configure::load("dictionaryDefaultConfiguration");
 Configure::load("autoMessageDefaultConfiguration");
 Configure::load("chatBasicDefaultConfiguration");
 Configure::load("mailTemplateDefaultConfiguration");
+Configure::load("scenarioDefaultConfiguration");
