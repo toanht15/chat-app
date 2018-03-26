@@ -2066,7 +2066,9 @@
 
             if ( cs === "sinclo_re" ) {
               div.style.textAlign = "left";
-              content = "<span class='cName'>" + cName + "</span>";
+              if(Number(window.sincloInfo.widget.showName) !== 3) {
+                content = "<span class='cName'>" + cName + "</span>";
+              }
             } else if (cs === "sinclo_se") {
               div.style.textAlign = "right";
             }
@@ -3591,7 +3593,8 @@
         selection: "3",
         mail: "4",
         anotherScenario: "5",
-        callExternalApi: "6"
+        callExternalApi: "6",
+        receiveFile: "7"
       },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
@@ -3838,6 +3841,10 @@
             self._callExternalApi._init(self);
             self._callExternalApi._process();
             break;
+          case self._actionType.receiveFile:
+            self._receiveFile._init(self);
+            self._receiveFile._process();
+            break;
         }
       },
       _isTheFiestScenaroAndSequence: function() {
@@ -3887,6 +3894,19 @@
           sinclo.chatApi.scDown();
           // ローカルに蓄積しておく
           self._putScenarioMessage(type, message, categoryNum, showTextArea, callback);
+        } else {
+          callback();
+        }
+      },
+      _showFileTypeMessage: function(type, resultDataSet, categoryNum, showTextArea, callback) {
+        var self = sinclo.scenarioApi;
+        resultDataSet.message = self._replaceVariable(resultDataSet.message);
+        if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
+          sinclo.chatApi.createSendFileMessage(resultDataSet, window.sincloInfo.widget.subTitle);
+          self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
+          sinclo.chatApi.scDown();
+          // ローカルに蓄積しておく
+          self._putScenarioMessage(type, JSON.stringify(resultDataSet), categoryNum, showTextArea, callback);
         } else {
           callback();
         }
@@ -4022,10 +4042,14 @@
       },
       _replaceVariable: function(message) {
         var self = sinclo.scenarioApi;
-        return message.replace(/{{(.+?)\}}/g, function(param) {
-          var name = param.replace(/^{{(.+)}}$/, '$1');
-          return self._getSavedVariable(name) || name;
-        });
+        if(message) {
+          return message.replace(/{{(.+?)\}}/g, function(param) {
+            var name = param.replace(/^{{(.+)}}$/, '$1');
+            return self._getSavedVariable(name) || name;
+          });
+        } else {
+          return "";
+        }
       },
       _getIntervalTimeSec: function() {
         var self = sinclo.scenarioApi;
@@ -4428,13 +4452,15 @@
         },
         _process: function() {
           var self = sinclo.scenarioApi._callExternalApi;
-          self._callApi(function(response){
-            Object.keys(response).forEach(function(elm, index, arr){
-              self._parent._saveVariable(response[elm].variableName, response[elm].value);
+          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            self._callApi(function (response) {
+              Object.keys(response).forEach(function (elm, index, arr) {
+                self._parent._saveVariable(response[elm].variableName, response[elm].value);
+              });
+              if (self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
             });
-            if(self._parent._goToNextScenario()) {
-              self._parent._process();
-            }
           });
         },
         _callApi: function(callback) {
@@ -4448,6 +4474,41 @@
           });
         }
       },
+      _receiveFile: { // 管理画面上ではファイル送信
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._receiveFile;
+          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            self._getDownloadInfo(function (result) {
+              if (result.success) {
+                if (result.deleted) {
+                  // FIXME
+                } else {
+                  var splitedFileName = result.downloadUrl.split('.');
+                  result.extension = splitedFileName[splitedFileName.length - 1].toLowerCase();
+                  self._parent._showFileTypeMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, result, 0, self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
+                    if(self._parent._goToNextScenario()) {
+                      self._parent._process();
+                    }
+                  });
+                }
+              }
+            });
+          });
+        },
+        _getDownloadInfo: function(callback) {
+          var self = sinclo.scenarioApi._receiveFile;
+          var sendFileId = self._parent.get(self._parent._lKey.currentScenario).tChatbotScenarioSendFileId;
+          emit('getScenarioDownloadInfo', {
+            sendFileId: sendFileId
+          }, function(result) {
+            callback(result);
+          });
+        }
+      }
     },
     // 外部連携API
     api: {
