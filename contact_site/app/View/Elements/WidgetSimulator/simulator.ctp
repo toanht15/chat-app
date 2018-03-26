@@ -141,6 +141,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         /* 二等辺三角形バージョン */
         /*#sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 5px; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }*/
         /*#sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }*/
+        #sincloBox ul#chatTalk li.sinclo_re { background-color: {{widget.makeFaintColor()}}; }
         #sincloBox ul#chatTalk li.sinclo_re.notNone { border: 1px solid {{widget.getTalkBorderColor('re')}}; }
         #sincloBox ul#chatTalk li.sinclo_re.balloonType { margin-left: 10px; padding-right: 20px; border-bottom-left-radius: 0px; }
         #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; z-index: 2; border: 5px solid transparent; border-right: 5px solid {{widget.makeFaintColor()}}; border-bottom: 5px solid {{widget.makeFaintColor()}}; }
@@ -168,7 +169,18 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 1px; left: 0px; width: 11px; height: 11px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 4px; left: 3px; width: 7px; height: 7px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:disabled + label { opacity: 0.5; }
-        #sincloBox section#chatTab div { height: 75px!important; padding: 5px; }
+
+        /* ファイル送信 */
+        #sincloBox ul#chatTalk li .sendFileContent { display: table; table-layout: fixed; width: 100%; height: 64px; white-space: pre-line; margin-bottom: 0; }
+        #sincloBox ul#chatTalk li .sendFileContent .sendFileThumbnailArea { display: table-cell; width: 64px; height: 64px; border: 1px solid #d9d9d9; }
+        #sincloBox ul#chatTalk li .sendFileContent .sendFileThumbnailArea::before { content: ""; height: 100%; vertical-align: middle; width: 0px; display: inline-block; }
+        #sincloBox ul#chatTalk li .sendFileContent .sendFileThumbnailArea .sendFileThumbnail { text-align: center; vertical-align: middle; display: inline-block; width: 100%; height: auto; margin-left: 0; margin-bottom: 0px; margin-right: auto; }
+        #sincloBox ul#chatTalk li .sendFileContent .sendFileThumbnailArea i.sendFileThumbnail { font-size: 4em; }
+        #sincloBox ul#chatTalk li .sendFileContent .sendFileMetaArea { display: table-cell; vertical-align: middle; margin-left: 10px; margin-bottom: 0px; }
+        #sincloBox ul#chatTalk li .sendFileContent .sendFileMetaArea .data { margin-left: 1em; margin-bottom: 5px; display: block; }
+        #sincloBox ul#chatTalk li .sendFileContent .sendFileMetaArea .data.sendFileSize { margin-bottom: 0px; }
+
+        #sincloBox section#chatTab > div { height: 75px!important; padding: 5px; }
         #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: {{widget.settings['other_text_color']}}; margin: 0; resize: none; padding: 5px; }
         #sincloBox section#chatTab textarea#sincloChatMessage.details { color: {{widget.settings['message_box_text_color']}}; background-color: {{widget.settings['message_box_background_color']}}; }
         #sincloBox section#chatTab textarea#sincloChatMessage.details.notNone { border: 1px solid {{widget.settings['message_box_border_color']}}!important; }
@@ -282,25 +294,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
    -->
       <div id="closeBtn" ng-class="{closeButtonSetting: widget.settings['close_button_mode_type'] === '2'}"></div>
       <div id='descriptionSet' class="widgetOpener notSelect" ng-hide="widget.spHeaderLightToggle() || widget.mainImageToggle == '2' && widget.subTitleToggle == '2' && widget.descriptionToggle == '2'">
-        <!-- サブタイトル -->
-  <!-- 仕様変更、常に高度な設定が当たっている状態とする -->
-  <!--
-        <p ng-if="subTitleToggle == '1' && color_setting_type === '0' || color_setting_type === false"" id="widgetSubTitle" >{{widget.settings['sub_title']}}</p>
-        <p ng-if="subTitleToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetSubTitle" class="details">{{widget.settings['sub_title']}}</p>
-   -->
-        <p ng-if="widget.subTitleToggle == '1'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}" class="details">{{widget.settings['sub_title']}}</p>
-        <p ng-if="widget.subTitleToggle == '2'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}"></p>
-        <!-- サブタイトル -->
 
+        <!-- サブタイトル -->
+        <p id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}" class="details">{{widget.subTitleToggle == '1' ? widget.settings['sub_title'] : ''}}</p>
         <!-- 説明文 -->
-  <!-- 仕様変更、常に高度な設定が当たっている状態とする -->
-  <!--
-        <p ng-if="descriptionToggle == '1' && color_setting_type === '0' || color_setting_type === false" id="widgetDescription" >{{widget.settings['description']}}</p>
-        <p ng-if="descriptionToggle == '1' && color_setting_type === '1' || color_setting_type === true" id="widgetDescription" class="details" ng-class="{ notNone:widget_inside_border_none === ''||widget_inside_border_none === false}">{{widget.settings['description']}}</p>
-   -->
-        <p ng-if="widget.descriptionToggle == '1'" id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false}">{{widget.settings['description']}}</p>
-        <p ng-if="widget.descriptionToggle == '2'" id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false }"></p>
-        <!-- 説明文 -->
+        <p id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false}">{{widget.descriptionToggle == '1' ? widget.settings['description'] : ''}}</p>
+
       </div>
       <div id="miniTarget">
       <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
@@ -312,11 +311,11 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
             <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-style="{backgroundColor:widget.makeFaintColor()}" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_name'] == 1" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="widget.settings['show_name'] == 2" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_name'] == 1" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="widget.settings['show_name'] == 2" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
-            <!-- <div style="height: auto!important; padding:0;">
-              <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:widget.makeFaintColor()}" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2}"><span class="cName details" ng-if="widget.settings['show_name'] == 1" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="widget.settings['show_name'] == 2" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}">{{widget.settings['sub_title']}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
-            </div> -->
+            <div style="height: auto!important; padding:0; display: none;">
+              <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_name'] == 1" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="widget.settings['show_name'] == 2" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+            </div>
           </ul>
   <!-- chat_message_copy 0 end -->
 
@@ -326,11 +325,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
               <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-style="{backgroundColor:widget.makeFaintColor()}" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['how_name'] == 1" ng-class="{middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="widget.settings['show_name'] == 2" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_name'] == 1" ng-class="{middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="widget.settings['show_name'] == 2" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
-            <!-- <div style="height: auto!important; padding:0;">
-              <li class="showAnimationSample sinclo_re chat_left" ng-style="{backgroundColor:widget.makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2}"><span class="cName details" ng-if="widget.settings['show_name'] == 1" ng-class="{middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="widget.settings['show_name'] == 2" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}">{{widget.settings['sub_title']}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
-            </div> -->
+            <!-- ファイル送信 -->
+            <div style="height: auto!important; padding:0; cursor: pointer; display: none;">
+              <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3',boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_name'] == 1" ng-class="{middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="widget.settings['show_name'] == 2" ng-class="{ middleSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '2',largeSize: widget.showWidgetType === 1 && widget.widgetSizeTypeToggle === '3'}">ファイルが送信されました</span><div class="sendFileContent"><div class="sendFileThumbnailArea"><img class="sendFileThumbnail" src="" width="64" height="64"><i class="fa fa-4x sendFileThumbnail" aria-hidden="true"></i></div><div class="sendFileMetaArea"><span class="data sendFileName details">ファイル名</span><span class="data sendFileSize details">ファイルサイズ</span></div></div></li>
+            </div>
           </ul>
   <!-- chat_message_copy 1 end -->
 
@@ -462,7 +462,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding: 0 0 0 15px; color:{{widget.settings['re_text_color']}}; min-height: 12px; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 1px; left: 0px; width: 11px; height: 11px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 4px; left: 3px; width: 7px; height: 7px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
-        #sincloBox section#chatTab div { height: 65px!important;  padding: 10px; }
+        #sincloBox section#chatTab > div { height: 65px!important;  padding: 10px; }
         #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: {{widget.settings['other_text_color']}}; margin: 0; resize: none; padding: 5px; }
         #sincloBox section#chatTab textarea#sincloChatMessage.details { color: {{widget.settings['message_box_text_color']}}; background-color: {{widget.settings['message_box_background_color']}}; }
         #sincloBox section#chatTab textarea#sincloChatMessage.details.notNone { border: 1px solid {{widget.settings['message_box_border_color']}}!important; }
@@ -507,10 +507,13 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
               <li class="sinclo_se chat_right details" ng-class="{notNone:widget.se_border_none === '' || widget.se_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}"><span class="details" >サイト訪問者側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-class="{notNone:widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}" ng-style="{backgroundColor:widget.makeFaintColor()}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+              <li class="sinclo_re chat_left" ng-class="{notNone:widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+            </div>
+            <div style="height: auto!important; padding:0; display: none;">
+              <li class="sinclo_re file_left" ng-class="{notNone:widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <!-- <div style="height: auto!important; padding:0;">
-              <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2}" ng-style="{backgroundColor:widget.makeFaintColor()}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
+              <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
             </div> -->
           </ul>
   <!-- chat_message_copy 0 end -->
@@ -521,10 +524,13 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
               <li class="sinclo_se chat_right details" ng-class="{notNone:widget.se_border_none === '' || widget.se_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}"><span class="details">サイト訪問者側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li id="sample_widget_re_message" class="sinclo_re chat_left" ng-class="{notNone:widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}" ng-style="{backgroundColor:widget.makeFaintColor()}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+              <li class="sinclo_re chat_left" ng-class="{notNone:widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+            </div>
+            <div style="height: auto!important; padding:0; display: none;">
+              <li class="sinclo_re file_left" ng-class="{notNone:widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <!-- <div style="height: auto!important; padding:0;">
-              <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2}" ng-style="{backgroundColor:widget.makeFaintColor()}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
+              <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
             </div> -->
           </ul>
   <!-- chat_message_copy 1 end -->

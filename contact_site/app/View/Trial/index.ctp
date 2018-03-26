@@ -25,71 +25,193 @@
     });
   }
 
+  $(function(){
+    var companyNameValidate = 'false';
+    var nameValidate = 'false';
+    var mailAddressValidate = 'false';
+    var phoneNumberValidate = 'false';
+    var agreeValidate = 'false';
+
+    //会社名チェック
+    $("#MCompanyCompanyName").blur(function(){
+      if($('#MCompanyCompanyName').val() == "") {
+        document.getElementById('companyName').style.display = "block";
+        companyNameValidate = 'false';
+      }
+      else {
+        document.getElementById('companyName').style.display = "none";
+        companyNameValidate = 'true';
+      }
+
+      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
+        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
+        $("#submitButton").prop('disabled', false);
+        $("#submitButton").css('background-color','#e65298');
+        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
+      }
+      else {
+        $("#submitButton").prop('disabled', true);
+        $("#submitButton").css('background-color','#b5b5b5');
+        document.getElementById('submitButton').value = ('未入力の項目があります');
+      }
+    });
+
+    //名前チェック
+    $("#MAgreementsApplicationName").blur(function(){
+      if($('#MAgreementsApplicationName').val() == "") {
+        document.getElementById('name').style.display = "block";
+        nameValidate = 'false';
+      }
+      else {
+        document.getElementById('name').style.display = "none";
+        nameValidate = 'true';
+      }
+
+      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
+        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
+        $("#submitButton").prop('disabled', false);
+        $("#submitButton").css('background-color','#e65298');
+        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
+      }
+      else {
+        $("#submitButton").prop('disabled', true);
+        $("#submitButton").css('background-color','#b5b5b5');
+        document.getElementById('submitButton').value = ('未入力の項目があります');
+      }
+    });
+
+    //会社用メールアドレスチェック
+    $("#ContractUserMailAddress").blur(function(){
+      if($('#ContractUserMailAddress').val() == "") {
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('empty').style.display = "block";
+        document.getElementById('registered').style.display = "none";
+         mailAddressValidate = 'false';
+      }
+      else if($('#ContractUserMailAddress').val() !== "" && $('#ContractUserMailAddress').val().match(/.+@.+\..+/)==null){
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "block";
+        document.getElementById('registered').style.display = "none";
+        mailAddressValidate = 'false';
+      }
+      else {
+        document.getElementById('mailAddress').style.display = "none";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('registered').style.display = "none";
+        mailAddressValidate = 'true';
+      }
+
+      $.ajax({
+        type: "POST",
+        url: "<?= $this->Html->url('/Trial/check') ?>",
+        data: $('#ContractAddForm').serialize()
+      }).done(function(data){
+        console.log('data');
+        console.log(data);
+        if(data.trim() == '既に登録されているアドレスです。') {
+          loading.load.finish();
+          document.getElementById('mailAddress').style.display = "block";
+          document.getElementById('empty').style.display = "none";
+          document.getElementById('mailFormat').style.display = "none";
+          document.getElementById('registered').style.display = "block";
+          document.getElementById("registered").innerHTML="既に登録されているアドレスです。";
+          mailAddressValidate = 'false';
+        }
+        else if(data.trim() == 'フリーアドレスのご利用はできません。') {
+          loading.load.finish();
+          document.getElementById('mailAddress').style.display = "block";
+          document.getElementById('empty').style.display = "none";
+          document.getElementById('mailFormat').style.display = "none";
+          document.getElementById('registered').style.display = "block";
+          document.getElementById("registered").innerHTML = "フリーアドレスのご利用はできません。";
+          mailAddressValidate = 'false';
+        }
+        else if(data.trim() == '携帯電話のメールアドレスのご利用はできません。') {
+          loading.load.finish();
+          document.getElementById('mailAddress').style.display = "block";
+          document.getElementById('empty').style.display = "none";
+          document.getElementById('mailFormat').style.display = "none";
+          document.getElementById('registered').style.display = "block";
+          document.getElementById("registered").innerHTML = "携帯電話のメールアドレスのご利用はできません。";
+          mailAddressValidate = 'false';
+        }
+      });
+      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
+        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
+        $("#submitButton").prop('disabled', false);
+        $("#submitButton").css('background-color','#e65298');
+        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
+      }
+      else {
+        $("#submitButton").prop('disabled', true);
+        $("#submitButton").css('background-color','#b5b5b5');
+        document.getElementById('submitButton').value = ('未入力の項目があります');
+      }
+    });
+
+    //電話番号チェック
+    $("#MAgreementsTelephoneNumber").blur(function(){
+      var tel = document.getElementById('MAgreementsTelephoneNumber').value.replace(/[━.*‐.*―.*－.*\-.*ー.*\-]/gi,'');
+      if($('#MAgreementsTelephoneNumber').val() == "") {
+        document.getElementById('phoneNumber').style.display = "block";
+        document.getElementById('phoneNumberEmpty').style.display = "block";
+        document.getElementById('phoneNumberFormat').style.display = "none";
+        phoneNumberValidate = 'false';
+      }
+      else if($('#MAgreementsTelephoneNumber').val() !== "" && !tel.match(/^(0[5-9]0[0-9]{8}|0[1-9][1-9][0-9]{7})$/)) {
+        document.getElementById('phoneNumber').style.display = "block";
+        document.getElementById('phoneNumberEmpty').style.display = "none";
+        document.getElementById('phoneNumberFormat').style.display = "block";
+        phoneNumberValidate = 'false';
+      }
+      else {
+        document.getElementById('phoneNumber').style.display = "none";
+        document.getElementById('phoneNumberEmpty').style.display = "none";
+        document.getElementById('phoneNumberFormat').style.display = "none";
+        phoneNumberValidate = 'true';
+      }
+      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
+        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
+        $("#submitButton").prop('disabled', false);
+        $("#submitButton").css('background-color','#e65298');
+        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
+      }
+      else {
+        $("#submitButton").prop('disabled', true);
+        $("#submitButton").css('background-color','#b5b5b5');
+        document.getElementById('submitButton').value = ('未入力の項目があります');
+      }
+    });
+
+    //利用規約チェック
+    $("#agree").change(function(){
+      if ($(this).is(':checked')) {
+        document.getElementById('agreeEroor').style.display = "none";
+         agreeValidate = 'true';
+      }
+      else {
+        document.getElementById('agreeEroor').style.display = "block";
+        agreeValidate = 'false';
+      }
+      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
+        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
+        $("#submitButton").prop('disabled', false);
+        $("#submitButton").css('background-color','#e65298');
+        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
+      }
+      else {
+        $("#submitButton").prop('disabled', true);
+        $("#submitButton").css('background-color','#b5b5b5');
+        document.getElementById('submitButton').value = ('未入力の項目があります');
+      }
+    })
+  });
+
   //登録する
   function saveAct(){
-    var validate = 'true';
-    if($('#MCompanyCompanyName').val() == "") {
-      document.getElementById('companyName').style.display = "block";
-      validate = 'false';
-    }
-    else {
-      document.getElementById('companyName').style.display = "none";
-    }
-    if($('#MAgreementsApplicationName').val() == "") {
-      document.getElementById('name').style.display = "block";
-      validate = 'false';
-    }
-    else {
-      document.getElementById('name').style.display = "none";
-    }
-    if($('#ContractUserMailAddress').val() == "") {
-      document.getElementById('mailAddress').style.display = "block";
-      document.getElementById('mailFormat').style.display = "none";
-      document.getElementById('empty').style.display = "block";
-      document.getElementById('registered').style.display = "none";
-      validate = 'false';
-    }
-    else if($('#ContractUserMailAddress').val() !== "" && $('#ContractUserMailAddress').val().match(/.+@.+\..+/)==null){
-      document.getElementById('mailAddress').style.display = "block";
-      document.getElementById('empty').style.display = "none";
-      document.getElementById('mailFormat').style.display = "block";
-      document.getElementById('registered').style.display = "none";
-      validate = 'false';
-    }
-    else {
-      document.getElementById('mailAddress').style.display = "none";
-      document.getElementById('empty').style.display = "none";
-      document.getElementById('mailFormat').style.display = "none";
-      document.getElementById('registered').style.display = "none";
-    }
-    var tel = document.getElementById('MAgreementsTelephoneNumber').value.replace(/[━.*‐.*―.*－.*\-.*ー.*\-]/gi,'');
-    if($('#MAgreementsTelephoneNumber').val() == "") {
-      document.getElementById('phoneNumber').style.display = "block";
-      document.getElementById('phoneNumberEmpty').style.display = "block";
-      document.getElementById('phoneNumberFormat').style.display = "none";
-      validate = 'false';
-    }
-    else if($('#MAgreementsTelephoneNumber').val() !== "" && !tel.match(/^(0[5-9]0[0-9]{8}|0[1-9][1-9][0-9]{7})$/)) {
-      document.getElementById('phoneNumber').style.display = "block";
-      document.getElementById('phoneNumberEmpty').style.display = "none";
-      document.getElementById('phoneNumberFormat').style.display = "block";
-      validate = 'false';
-    }
-    else {
-      document.getElementById('phoneNumber').style.display = "none";
-      document.getElementById('phoneNumberEmpty').style.display = "none";
-      document.getElementById('phoneNumberFormat').style.display = "none";
-    }
-    if(!$("#agree").prop('checked')) {
-      document.getElementById('agreeEroor').style.display = "block";
-      validate = 'false';
-    }
-    else {
-      document.getElementById('agreeEroor').style.display = "none";
-    }
-    if(validate == 'false') {
-      return false;
-    }
     //loading画像
     loading.load.start();
 
@@ -107,7 +229,7 @@
         document.getElementById('mailFormat').style.display = "none";
         document.getElementById('registered').style.display = "block";
         document.getElementById("registered").innerHTML="既に登録されているアドレスです。";
-       }
+      }
       else if(data.trim() == 'フリーアドレスのご利用はできません。') {
         loading.load.finish();
         document.getElementById('mailAddress').style.display = "block";
@@ -115,15 +237,25 @@
         document.getElementById('mailFormat').style.display = "none";
         document.getElementById('registered').style.display = "block";
         document.getElementById("registered").innerHTML = "フリーアドレスのご利用はできません。";
-       }
+      }
+      else if(data.trim() == '携帯電話のメールアドレスのご利用はできません。') {
+        loading.load.finish();
+        document.getElementById('mailAddress').style.display = "block";
+        document.getElementById('empty').style.display = "none";
+        document.getElementById('mailFormat').style.display = "none";
+        document.getElementById('registered').style.display = "block";
+        document.getElementById("registered").innerHTML = "携帯電話のメールアドレスのご利用はできません。";
+      }
       else {
         socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}),function(){
           location.href = "<?= $this->Html->url('/Trial/thanks') ?>";
         });
       }
     }).fail(function(data){
+      loading.load.finish(); // ローディング終了
       var obj = JSON.parse(data.responseText);
       alert(obj.message);
+      $("#submitButton").remove();
     });
   }
   /**
@@ -357,7 +489,10 @@
                     <div>
                       <div class="wrap">
                         <div class="eachElement">
-                          <p>※同業他社様、その他弊社の判断により、トライアル環境のご提供ができない場合がございます。<br>
+                          <p><div style = "display: inline-flex;"><div>※</div><div>同業他社様、その他弊社の判断により、トライアル環境のご提供ができない場合がございます。</div></div><br>
+                          <div style = "display: inline-flex; margin-top:9px;"><div>※</div><div>本フォームでご入力いただいた情報は、当社の営業活動および各種サービスに対するお問い合わせへの返答を目的として使用します。当社の個人情報の取り扱いについては
+                          <a href="https://www.medialink-ml.co.jp/privacy/" target="_blank">プライバシーポリシー</a>をご参照ください。</div></div></p>
+                          <div style = "margin-top: 1.6rem;width: 11em;margin-top: -0.3em;">
                           <?= $this->Form->input( 'agree', array(
                           'type' => 'checkbox',
                           'checked' => false,    // 初期表示で選択させる場合
@@ -365,7 +500,7 @@
                           'div' => false,        // div親要素の有無(true/false)
                           'style' => 'cursor:pointer'
                           )); ?>
-                          <span onclick = "openTermsOfService()" style = "color: #b2d251;text-decoration: underline;cursor:pointer;">利用規約</span>に同意する</p>
+                          <span onclick = "openTermsOfService()" style = "color: #b2d251;text-decoration: underline;cursor:pointer;">利用規約</span>に同意する<span class="ninja-forms-req-symbol">*</span></div></p>
                         </div>
                       </div>
                     </div>
@@ -377,7 +512,7 @@
                   <div class="eachRow submit-container  label-hidden  textbox-container">
                     <div class="wrap">
                       <div class="eachElement">
-                        <input id="submitButton" class="ninja-forms-field nf-element " type="button" value="無料トライアルを申し込む" onclick = "saveAct()">
+                        <input id="submitButton" disabled="disabled" class="ninja-forms-field nf-element " type="button" value="未入力の項目があります" onclick = "saveAct()">
                       </div>
                     </div>
                   <div class="nf-after-field"></div>

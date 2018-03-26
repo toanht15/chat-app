@@ -7,9 +7,30 @@ document.body.onload = function(){
       containment: "parent",
       cursor: 'move',
       cancel: '.sortable .cancel',
-      revert: 100
+      revert: 100,
+      helper: function(event, ui) {
+        // ドラッグ時に、helperの要素が小さくならないようにする
+        ui.children().each(function() {
+          $(this).width($(this).width());
+        });
+        return ui;
+      }
     });
     $(".sortable").sortable("disable");
+
+    // ツールチップの表示制御
+    $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
+      var targetObj = $('.explainTooltip');
+      targetObj.find('icon-annotation .detail').text($(this).data('tooltip'));
+      targetObj.find('icon-annotation').css('display','block');
+      targetObj.css({
+        top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
+        left: $(this).offset().left - 70 + 'px'
+      });
+    });
+    $(document).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
+      $('.explainTooltip').find('icon-annotation').css('display','none');
+    });
   });
 
   // 全選択用チェックボックス
@@ -67,11 +88,31 @@ var actBtnShow = function(){
 
 //シナリオ設定の削除
 function openConfirmDialog(){
-  //チェックボックスのチェック状態の取得
   var list = Array.prototype.slice.call(document.querySelectorAll('#tchatbotscenario_list input[name^="selectTab"]:checked'), 0);
+
+  // 削除対象の取得
+  var targetDeleteFileData = [];
   var selectedList = list.map(function(elm) {
-    return Number(elm.value);
+    var scenarioId = Number(elm.value);
+
+    // 一時保存データ内の、ファイルIDの削除リストを取り出す
+    var storageData = localStorage.getItem('scenario_' + scenarioId);
+    if (storageData) {
+      var jsonData = JSON.parse(storageData);
+      var targetDeleteFileIds = jsonData.targetDeleteFileIds;
+      angular.forEach(jsonData.scenarios, function(action) {
+        if (action[1].actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+          if (typeof action[1].tChatbotScenarioSendFileId !== 'undefined' && action[1].tChatbotScenarioSendFileId !== null) {
+            targetDeleteFileIds.push(action[1].tChatbotScenarioSendFileId);
+          }
+        }
+      });
+      targetDeleteFileData.push({id: scenarioId, targetDeleteFileIds: jsonData.targetDeleteFileIds});
+    }
+
+    return scenarioId;
   });
+
   //現在のページ番号
   var index = Number("<?= $this->Paginator->params()["page"] ?>");
   //現在表示しているレコードの数
@@ -88,10 +129,18 @@ function openConfirmDialog(){
       type: 'post',
       cache: false,
       data: {
-        selectedList: selectedList
+        selectedList: selectedList,
+        targetDeleteFileData: JSON.stringify(targetDeleteFileData)
       },
       url: "<?= $this->Html->url('/TChatbotScenario/chkRemoteDelete') ?>",
-      success: function(){
+      success: function(data){
+        // 削除済みデータに紐付く、シナリオの一時保存データを削除する
+        JSON.parse(data).forEach(function(param) {
+          var storageKey = 'scenario_' + param;
+          localStorage.removeItem(storageKey);
+        });
+
+        // ページ再読み込み
         $(".p-dictionary-del #popup-button a").prop("disabled", true);
         var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
         location.href = url + "/page:" + index;

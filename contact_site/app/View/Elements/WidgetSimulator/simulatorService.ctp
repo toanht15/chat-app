@@ -150,33 +150,19 @@ sincloApp.factory('SimulatorService', function() {
 //       }
       return defColor;
     },
-    makeFaintColor: function() {
-      var defColor = "#F1F5C8";
-      //仕様変更、常に高度な設定が当たっている状態とする
-      defColor = this._settings.re_background_color;
-//       if(self.widgetSettings..color_setting_type === '1'){
-//         defColor = self.widgetSettings..re_background_color;
-//       }
-//       else{
-//         if ( self.widgetSettings..main_color.indexOf("#") >= 0 ) {
-//           var code = self.widgetSettings..main_color.substr(1), r,g,b;
-//           if (code.length === 3) {
-//             r = String(code.substr(0,1)) + String(code.substr(0,1));
-//             g = String(code.substr(1,1)) + String(code.substr(1,1));
-//             b = String(code.substr(2)) + String(code.substr(2));
-//           }
-//           else {
-//             r = String(code.substr(0,2));
-//             g = String(code.substr(2,2));
-//             b = String(code.substr(4));
-//           }
-//           var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
-//           var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
-//           var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
-//           defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
-//         }
-//       }
-      return defColor;
+    /**
+     * 吹き出しの背景色設定
+     * @param Integer opacity 透明度(省略可)
+     * @return String         RGBAカラーコード
+     */
+    makeFaintColor: function(opacity) {
+      opacity = opacity || 1;
+      var colorCode = this._settings.re_background_color || "#F1F5C8";
+
+      var red   = parseInt(colorCode.substring(1,3), 16);
+      var green = parseInt(colorCode.substring(3,5), 16);
+      var blue  = parseInt(colorCode.substring(5,7), 16);
+      return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + opacity + ')';
     },
     //シンプル表示判定
     /*
@@ -369,7 +355,12 @@ sincloApp.factory('SimulatorService', function() {
       }
       return res;
     },
-    // 表示用HTMLへの変換
+    /**
+     * 表示用HTMLへの変換
+     * @param String val    変換したいメッセージ
+     * @param String prefix ラジオボタンに付与するプレフィックス
+     * @return String       変換したメッセージ
+     */
     createMessage: function(val, prefix) {
       if (val === '') return;
       prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
@@ -419,7 +410,65 @@ sincloApp.factory('SimulatorService', function() {
       }
 
       return content;
+    },
+    /**
+     * ファイル拡張子から、画像か判別する
+     * @param String extension ファイル拡張子
+     */
+    isImage: function(extension) {
+      return /jpeg|jpg|gif|png/.test(extension);
+    },
+    /**
+     * ファイルタイプ別ごとに、font-awesome用のクラスを出し分ける
+     * @param String extension ファイルの拡張子
+     */
+    selectIconClassFromExtension: function(extension) {
+      var selectedClass = "";
+      var icons = {
+        image:      'fa-file-image-o',
+        pdf:        'fa-file-pdf-o',
+        word:       'fa-file-word-o',
+        powerpoint: 'fa-file-powerpoint-o',
+        excel:      'fa-file-excel-o',
+        audio:      'fa-file-audio-o',
+        video:      'fa-file-video-o',
+        zip:        'fa-file-zip-o',
+        code:       'fa-file-code-o',
+        text:       'fa-file-text-o',
+        file:       'fa-file-o'
+      };
+      var extensions = {
+        gif: icons.image,
+        jpeg: icons.image,
+        jpg: icons.image,
+        png: icons.image,
+        pdf: icons.pdf,
+        doc: icons.word,
+        docx: icons.word,
+        ppt: icons.powerpoint,
+        pptx: icons.powerpoint,
+        xls: icons.excel,
+        xlsx: icons.excel,
+        aac: icons.audio,
+        mp3: icons.audio,
+        ogg: icons.audio,
+        avi: icons.video,
+        flv: icons.video,
+        mkv: icons.video,
+        mp4: icons.video,
+        gz: icons.zip,
+        zip: icons.zip,
+        css: icons.code,
+        html: icons.code,
+        js: icons.code,
+        txt: icons.text,
+        csv: icons.csv,
+        file: icons.file
+      };
+
+      return extensions[extension] || extensions['file'];
     }
+
   };
 });
 
