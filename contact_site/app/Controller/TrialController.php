@@ -49,6 +49,7 @@ class TrialController extends AppController {
     $data['MCompany']['options']['refCompanyData'] = 1;
     $data['MCompany']['m_contact_types_id'] = 1;
     $data['MCompany']['limit_users'] = 3;
+    $data['MCompany']['options']['chatbotScenario'] = true;
     $data['MAgreements']['trial_start_day'] = date('Y-m-d');
     $data['MAgreements']['trial_end_day'] = date('Y-m-d', strtotime('+13 day', time()));
     $data['MAgreements']['agreement_start_day'] = '';
