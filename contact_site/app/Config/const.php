@@ -753,7 +753,7 @@ $config['chatbotScenarioSendMailType'] = [
   ],
   C_SCENARIO_MAIL_TYPE_CUSTOMIZE => [
     'label' => 'メール本文をカスタマイズする',
-    'tooltip' => '自由にメール本文を編集することが可能です。（変数の利用も可能です）'
+    'tooltip' => '自由にメール本文を編集することが可能です。<br>（変数の利用も可能です）'
   ]
 ];
 

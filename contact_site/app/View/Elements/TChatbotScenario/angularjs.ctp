@@ -1216,6 +1216,14 @@ $(document).ready(function() {
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
       left: $(this).offset().left - 70 + 'px'
     });
+
+    // 表示サイズ調整
+    var targetWidth = $(this).data('tooltip-width');
+    if (!!targetWidth) {
+      targetObj.find('icon-annotation').css('width', targetWidth + 'px');
+    } else {
+      targetObj.find('icon-annotation').css('width', '18em');
+    }
   }).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
     $('.explainTooltip').find('icon-annotation').css('display','none');
   });
