@@ -100,7 +100,7 @@ function openConfirmDialog(){
     if (storageData) {
       var jsonData = JSON.parse(storageData);
       var targetDeleteFileIds = jsonData.targetDeleteFileIds;
-      Object.entries(jsonData.scenarios).forEach(function(action) {
+      angular.forEach(jsonData.scenarios, function(action) {
         if (action[1].actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
           if (typeof action[1].tChatbotScenarioSendFileId !== 'undefined' && action[1].tChatbotScenarioSendFileId !== null) {
             targetDeleteFileIds.push(action[1].tChatbotScenarioSendFileId);

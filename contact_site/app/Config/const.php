@@ -710,7 +710,7 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_SEND_FILE => [
     'label' => 'ファイル送信',
     'default' => [
-      'messageIntervalTimeSec' > '2',
+      'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
       'file' => ''
     ]

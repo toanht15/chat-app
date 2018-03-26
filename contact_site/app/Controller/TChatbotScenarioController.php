@@ -584,6 +584,8 @@ sinclo@medialink-ml.co.jp
 
       $saveData['tChatbotScenarioSendFileId'] = $lastInsertedId;
       $saveData['file']['download_url'] = $downloadUrl;
+      $saveData['file']['file_size'] = $this->prettyByte2Str($saveData['file']['file_size']);
+      $saveData['file']['extension'] = $this->getExtension($saveData['file']['file_name']);
       unset($saveData['file']['file_path']);
 
       return json_encode([
@@ -1595,8 +1597,7 @@ sinclo@medialink-ml.co.jp
       'm_companies_id' => $this->userInfo['MCompany']['id'],
       'file_path' => $filePath,
       'file_name' => $file['name'],
-      'file_size' => $this->prettyByte2Str($file['size']),
-      'extension' => $this->getExtension($file['name'])
+      'file_size' => $file['size']
     ];
   }
 

@@ -3,7 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate', 'ui.sortable']);
 
-sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
+sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService', 'LocalStorageService', function($scope, $timeout, SimulatorService, LocalStorageService) {
   //thisを変数にいれておく
   var self = this;
 
@@ -112,14 +112,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // アクションの削除
   this.removeItem = function(setActionId) {
     var actionDetail = $scope.setActionList[setActionId];
-    if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' || actionDetail.tChatbotScenarioSendFileId !== null ) {
+    if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' && actionDetail.tChatbotScenarioSendFileId !== null ) {
       $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
+      LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value: $scope.targetDeleteFileIds}]);
     }
 
     $scope.setActionList.splice(setActionId, 1);
-
-    // localStorageに一時保存を行う
-    localStorage.setItem($scope.storageKey, self.createJsonData(false));
   };
 
   // アクションの追加・削除を検知する
@@ -239,8 +237,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // アップロードしたファイル情報で更新する
       actionDetail = angular.merge(actionDetail, data.save_data);
 
-      // localStorageに一時保存を行う
-      localStorage.setItem($scope.storageKey, self.createJsonData(false));
+      // アップロードしたファイルも削除候補として追加し、localStorageを更新する(一時保存しなかった場合に削除されるようにするため)
+      $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
+      LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value: $scope.targetDeleteFileIds}]);
     })
     .fail(function(jqXHR, textStatus, errorThrown){
       alert("fail");
@@ -259,19 +258,23 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.$broadcast('switchSimulatorChatTextArea', true);
   };
 
-  this.saveAct = function() {
-    var validatedActivity = this.createJsonData(true);
-
-    // localStorageから一時保存データを削除する
-    localStorage.removeItem($scope.storageKey);
-
-    // アラート表示を行わないように、フラグを戻す
+  // シナリオ設定の一時保存
+  this.saveTemporary = function() {
     $scope.changeFlg = false;
+    LocalStorageService.setData($scope.storageKey, this.createJsonData(false));
+  };
 
-    $('#TChatbotScenarioActivity').val(validatedActivity);
+  // シナリオ設定の保存
+  this.saveAct = function() {
+    // localStorageから一時保存データを削除する
+    LocalStorageService.remove($scope.storageKey);
+
+    $scope.changeFlg = false;
+    $('#TChatbotScenarioActivity').val(this.createJsonData(true));
     submitAct();
   };
 
+  // シナリオ設定の削除
   this.removeAct = function(lastPage){
     // アラート表示を行わないように、フラグを戻す
     $scope.changeFlg = false;
@@ -296,7 +299,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
         success: function(){
           // 不要な一時保存データを削除する
-          localStorage.removeItem($scope.storageKey);
+          LocalStorageService.remove($scope.storageKey);
 
           // 一覧ページへ遷移する
           var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
@@ -431,7 +434,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.setActionList[actionStep].file = null;
 
     // localStorageに一時保存を行う
-    localStorage.setItem($scope.storageKey, self.createJsonData(false));
+    LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value:$scope.targetDeleteFileIds}]);
   }
 
   /**
@@ -486,7 +489,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
 
     // ファイルIDの削除リストを追加する
-    if ($scope.targetDeleteFileIds.length >= 1) {
+    if (typeof $scope.targetDeleteFileIds !== 'undefined' && $scope.targetDeleteFileIds.length >= 1) {
       activity.targetDeleteFileIds = $scope.targetDeleteFileIds;
     }
 
@@ -737,42 +740,39 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   angular.element(window).on('load', function(e) {
-    var storageData = localStorage.getItem($scope.storageKey);
-    var jsonData = JSON.parse(storageData);
 
-    if (typeof storageData !== 'undefined' && storageData !== null && storageData !== '') {
-      if (window.confirm('一時保存されたシナリオがあります。\nデータを復旧しますか？')) {
-        // シナリオ設定の一時保存データの復旧
-        $scope.setActionList = [];
-        angular.forEach(jsonData.scenarios, function(action) {
-          $scope.setActionList.push(action);
-        });
-        // ファイルIDの削除リストを取得
-        if (typeof jsonData.targetDeleteFileIds !== 'undefined' && jsonData.targetDeleteFileIds !== null) {
-          $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
-        }
-
-        $scope.$apply();
-      } else {
-        // ファイルIDの削除リストを取得
-        $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
-        angular.forEach(jsonData.scenarios, function(action) {
-          if (action.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
-            $scope.targetDeleteFileIds.push(action.tChatbotScenarioSendFileId);
-          }
-        });
-
-        // ファイルIDの削除リストが存在する場合、現在のシナリオ設定で一時保存データを上書きする
-        if ($scope.targetDeleteFileIds.length >= 1) {
-          localStorage.setItem($scope.storageKey, self.createJsonData(false));
-        } else {
-          localStorage.removeItem($scope.storageKey);
-        }
+    var storageData = LocalStorageService.getData($scope.storageKey);
+    if (typeof storageData !== 'undefined' && storageData !== null) {
+      if (typeof storageData.targetDeleteFileIds !== 'undefined' && storageData.targetDeleteFileIds.length >= 1) {
+        $scope.targetDeleteFileIds = storageData.targetDeleteFileIds;
       }
-    } else {
-      // ファイルIDの削除リストが存在する場合、現在のシナリオ設定で一時保存データを上書きする
-      if ($scope.targetDeleteFileIds.length >= 1) {
-        localStorage.setItem($scope.storageKey, self.createJsonData(false));
+
+      if (typeof storageData.scenarios !== 'undefined' && storageData.scenarios !== null && storageData.scenarios !== '') {
+        if (window.confirm('一時保存されたシナリオがあります。\nデータを復旧しますか？')) {
+          // シナリオ設定の一時保存データの復旧
+          $scope.setActionList = [];
+          angular.forEach(storageData.scenarios, function(action) {
+            $scope.setActionList.push(action);
+          });
+
+          $scope.$apply();
+          $scope.changeFlg = false;
+        } else {
+          // ファイルIDの削除リストを取得
+          angular.forEach(storageData.scenarios, function(action) {
+            if (action.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+              $scope.targetDeleteFileIds.push(action.tChatbotScenarioSendFileId);
+            }
+          });
+
+          // ファイルIDの削除リストが存在する場合、現在のシナリオ設定で一時保存データを上書きする
+          if (typeof $scope.targetDeleteFileIds !== 'undefined' && $scope.targetDeleteFileIds.length >= 1) {
+            LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value: $scope.targetDeleteFileIds}]);
+            LocalStorageService.removeItem($scope.storageKey, 'scenarios');
+          } else {
+            LocalStorageService.remove($scope.storageKey);
+          }
+        }
       }
     }
 
@@ -793,14 +793,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $scope.uploadFile(actionStep, fileObj, loadData);
       };
       fileReader.readAsArrayBuffer(fileObj);
-    });
-
-    // フォームからフォーカスが外れた際、localStorageに一時保存を行う
-    $(document).on('focusout', '.set_action_item input, .set_action_item textarea', function() {
-      if ($scope.changeFlg) {
-        var data = self.createJsonData(false);
-        localStorage.setItem($scope.storageKey, data);
-      }
     });
 
     // 変更を行っている場合、アラート表示を行う
@@ -858,7 +850,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         });
         if (isMatched) {
           // 変数の格納
-          LocalStorageService.setItem(actionDetail.hearings[$scope.hearingIndex].variableName, message);
+          var storageParam = [];
+          LocalStorageService.setItem('chatbotVariables', [{key: actionDetail.hearings[$scope.hearingIndex].variableName, value: message}]);
           // 次のアクション
           $scope.hearingIndex++;
           if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
@@ -887,8 +880,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     } else
     if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       // 選択肢
-      var actionDetail = $scope.setActionList[$scope.actionStep];
-      LocalStorageService.setItem(actionDetail.selection.variableName, message);
+      var storageParam = [];
+      LocalStorageService.setItem('chatbotVariables', [{key: $scope.setActionList[$scope.actionStep].selection.variableName, value: message}]);
       $scope.actionStep++;
       $scope.doAction();
     }
@@ -904,6 +897,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.actionInit = function() {
     $scope.actionStep = 0;
     $scope.hearingIndex = 0;
+    $scope.sendFileIndex = 0;
     $scope.actionTimer;
     $scope.hearingInputResult = true;
 
@@ -974,9 +968,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
           // ファイル送信
-          $scope.$broadcast('addReFileMessage', actionDetail.file);
-          $scope.actionStep++;
-          $scope.doAction();
+          if ($scope.sendFileIndex == 0 && !!actionDetail.message) {
+            $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message), 'action' + $scope.actionStep);
+            $scope.sendFileIndex++;
+            $scope.doAction();
+          } else {
+            $scope.$broadcast('addReFileMessage', actionDetail.file);
+            $scope.sendFileIndex = 0;
+            $scope.actionStep++;
+            $scope.doAction();
+          }
         }
       }, parseInt(time, 10) * 1000);
     } else {
@@ -1039,9 +1040,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     message = message ? message : '';
     return message.replace(/{{(.+?)\}}/g, function(param) {
       var name = param.replace(/^{{(.+)}}$/, '$1');
-      return LocalStorageService.getItem(name) || name;
+      return LocalStorageService.getItem('chatbotVariables', name) || name;
     });
-  }
+  };
 
   /**
    * 呼び出し先のシナリオ詳細を取得する
@@ -1066,7 +1067,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
 
         // 取得したシナリオのアクション情報を、setActionList内に詰める
-        Object.entries($scope.setActionList).every(function(param, key) {
+        var list = Array.prototype.slice.call($scope.setActionList);
+        list.every(function(param, key) {
           if (key == $scope.actionStep) {
             for (var exKey in activity.scenarios) {
               scenarios[idx++] = activity.scenarios[exKey];
@@ -1128,9 +1130,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       timeout: 10000
     }).done(function(data) {
       console.info('successed calling external api.');
+      var storageParam = [];
       data.result.forEach(function(param) {
-        LocalStorageService.setItem(param.variableName, param.value);
+        storageParam.push({key: param.variableName, value: param.value});
       });
+      LocalStorageService.setItem('chatbotVariables', storageParam);
     }).fail(function(error) {
       console.error('failed calling external api.', error.statusText);
     }).always(function() {
