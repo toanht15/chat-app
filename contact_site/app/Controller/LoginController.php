@@ -159,7 +159,7 @@ class LoginController extends AppController {
 
           $mailType = "false";
           //無料トライアルの場合
-          if($data['MCompany']['trial_flg'] == 1) {
+          if($companyData['MCompany']['trial_flg'] == 1) {
             foreach($mailTemplateData as $key => $mailTemplate) {
               if($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER) {
                 $mailType = $key;

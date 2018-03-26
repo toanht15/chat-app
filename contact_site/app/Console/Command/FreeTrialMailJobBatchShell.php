@@ -48,7 +48,7 @@ class FreeTrialMailJobBatchShell extends AppShell
     $this->log('TARGET schedule is '.$beginDate.' 〜 '.$endDate.' .', self::LOG_INFO);
 
     //ここから消す//
-    //何日後の何時にメールを飛ばすか取得
+        //何日後の何時にメールを飛ばすか取得
     $schedules = $this->MJobMailTemplate->find('all');
     //全企業取得
     $trialCompany = $this->MCompany->find('all',[
@@ -72,20 +72,18 @@ class FreeTrialMailJobBatchShell extends AppShell
     $trialDay = $this->MAgreement->find('all',[
       'fields' => [
         'm_companies_id',
-        'trial_start_day',
+        'application_day',
         'trial_end_day'
       ],
       'conditions' => [
         'm_companies_id' => $trialCompanyIds
       ]
     ]);
-    //本契約中の企業のトライアル期間を検出
+    //本契約中の企業の期間を検出
     $agreementDay = $this->MAgreement->find('all',[
       'fields' => [
         'm_companies_id',
-        'trial_start_day',
-        'trial_end_day',
-        'agreement_start_day',
+        'application_day',
         'agreement_end_day'
       ],
       'conditions' => [
@@ -100,10 +98,10 @@ class FreeTrialMailJobBatchShell extends AppShell
     $this->log('BEGIN sendmail schedule2.', self::LOG_INFO);
     //何日後の何時に当てはまる企業を抜粋
     foreach($schedules as $key => $val) {
-        foreach($trialDay as $trial) {
+        foreach($trialDay as $trialNumber => $trial) {
           //何日後の日付、時間
           if($val['MJobMailTemplate']['value_type'] == 0) {
-            $trialTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('+'.$val['MJobMailTemplate']['value'].'day',strtotime($trial['MAgreement']['trial_start_day'])));
+            $trialTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('+'.$val['MJobMailTemplate']['value'].'day',strtotime($trial['MAgreement']['application_day'])));
           }
           //何日前の日付、時間
           if($val['MJobMailTemplate']['value_type'] == 1) {
@@ -113,38 +111,37 @@ class FreeTrialMailJobBatchShell extends AppShell
           $this->log('BEGIN sendmail schedule3.', self::LOG_INFO);
           //現在の時刻と比較(無料トライアルの場合)
           if($trialTime == $nowTime && $val['MJobMailTemplate']['agreement_flg'] == 1) {
-            $trialJobMailTemplatesData[$key]['id'] = $val['MJobMailTemplate']['id'];
-            $trialJobMailTemplatesData[$key]['mail_type_cd'] = $val['MJobMailTemplate']['mail_type_cd'];
-            $trialJobMailTemplatesData[$key]['sender'] = $val['MJobMailTemplate']['sender'];
-            $trialJobMailTemplatesData[$key]['subject'] = $val['MJobMailTemplate']['subject'];
-            $trialJobMailTemplatesData[$key]['mail_body'] = $val['MJobMailTemplate']['mail_body'];
-            $trialJobMailTemplatesData[$key]['send_mail_ml_flg'] = $val['MJobMailTemplate']['send_mail_ml_flg'];
-            $trialJobMailTemplatesData[$key]['m_companies_id'] = $trial['MAgreement']['m_companies_id'];
+            $trialJobMailTemplatesData[$trialNumber]['id'] = $val['MJobMailTemplate']['id'];
+            $trialJobMailTemplatesData[$trialNumber]['mail_type_cd'] = $val['MJobMailTemplate']['mail_type_cd'];
+            $trialJobMailTemplatesData[$trialNumber]['sender'] = $val['MJobMailTemplate']['sender'];
+            $trialJobMailTemplatesData[$trialNumber]['subject'] = $val['MJobMailTemplate']['subject'];
+            $trialJobMailTemplatesData[$trialNumber]['mail_body'] = $val['MJobMailTemplate']['mail_body'];
+            $trialJobMailTemplatesData[$trialNumber]['send_mail_ml_flg'] = $val['MJobMailTemplate']['send_mail_ml_flg'];
+            $trialJobMailTemplatesData[$trialNumber]['m_companies_id'] = $trial['MAgreement']['m_companies_id'];
             $trialCompanyIds[] .= $trial['MAgreement']['m_companies_id'];
           }
         }
-        foreach($agreementDay as $agreement) {
-          if(empty($agreement['MAgreement']['trial_start_day']) && empty($agreement['MAgreement']['trial_end_day'])) {
-            if($val['MJobMailTemplate']['value_type'] == 0) {
-              //何日後の日付、時間
-              $agreementTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('+'.$val['MJobMailTemplate']['value'].'day',strtotime($agreement['MAgreement']['agreement_start_day'])));
-            }
-            if($val['MJobMailTemplate']['value_type'] == 1) {
-              //何日前の日付、時間
-              $agreementTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('-'.$val['MJobMailTemplate']['value'].'day',strtotime($agreement['MAgreement']['agreement_end_day'])));
-            }
-            $nowTime = date('Y-m-d H');
-            //現在の時刻と比較(いきなり本契約の場合)
-            if($agreementTime == $nowTime && $val['MJobMailTemplate']['agreement_flg'] == 2) {
-              $jobMailTemplatesData[$key]['id'] = $val['MJobMailTemplate']['id'];
-              $jobMailTemplatesData[$key]['mail_type_cd'] = $val['MJobMailTemplate']['mail_type_cd'];
-              $jobMailTemplatesData[$key]['sender'] = $val['MJobMailTemplate']['sender'];
-              $jobMailTemplatesData[$key]['subject'] = $val['MJobMailTemplate']['subject'];
-              $jobMailTemplatesData[$key]['mail_body'] = $val['MJobMailTemplate']['mail_body'];
-              $jobMailTemplatesData[$key]['send_mail_ml_flg'] = $val['MJobMailTemplate']['send_mail_ml_flg'];
-              $jobMailTemplatesData[$key]['m_companies_id'] = $agreement['MAgreement']['m_companies_id'];
-              $companyIds[] .= $agreement['MAgreement']['m_companies_id'];
-            }
+        foreach($agreementDay as $agreementNumber => $agreement) {
+          if($val['MJobMailTemplate']['value_type'] == 0) {
+            //何日後の日付、時間
+            $agreementTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('+'.$val['MJobMailTemplate']['value'].'day',strtotime($agreement['MAgreement']['application_day'])));
+          }
+          if($val['MJobMailTemplate']['value_type'] == 1) {
+            //何日前の日付、時間
+            $agreementTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('-'.$val['MJobMailTemplate']['value'].'day',strtotime($agreement['MAgreement']['agreement_end_day'])));
+          }
+          $nowTime = date('Y-m-d H');
+          //現在の時刻と比較(いきなり本契約の場合)
+          if($agreementTime == $nowTime && $val['MJobMailTemplate']['agreement_flg'] == 2) {
+            $jobMailTemplatesData[$agreementNumber]['id'] = $val['MJobMailTemplate']['id'];
+            $jobMailTemplatesData[$agreementNumber]['mail_type_cd'] = $val['MJobMailTemplate']['mail_type_cd'];
+            $jobMailTemplatesData[$agreementNumber]['sender'] = $val['MJobMailTemplate']['sender'];
+            $jobMailTemplatesData[$agreementNumber]['subject'] = $val['MJobMailTemplate']['subject'];
+            $jobMailTemplatesData[$agreementNumber]['mail_body'] = $val['MJobMailTemplate']['mail_body'];
+            $jobMailTemplatesData[$agreementNumber]['send_mail_ml_flg'] = $val['MJobMailTemplate']['send_mail_ml_flg'];
+            $jobMailTemplatesData[$agreementNumber]['m_companies_id'] = $agreement['MAgreement']['m_companies_id'];
+            $this->log($jobMailTemplatesData,LOG_DEBUG);
+            $companyIds[] = $agreement['MAgreement']['m_companies_id'];
           }
       }
     }
@@ -193,8 +190,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                   ]
                 ]);
                 $trialCompanyName = $trialCompanyName[0]['MCompany']['company_name'];
-                if((!empty($trialMailAdressData[$index-1]) && $trialMailAdressData[$index-1]['MUser']['m_companies_id'] != $mailAdress['MUser']['m_companies_id'] && $index != 0) ||
-                $index == 0) {
+                if($index == 0) {
                   $trialCompanyNames = $trialCompanyName;
                 }
                 else {
@@ -222,7 +218,7 @@ class FreeTrialMailJobBatchShell extends AppShell
             $this->log('send mail trial error !!!!', self::LOG_ERROR);
           }
         }
-        if($jobMailTemplate['send_mail_ml_flg'] == 0) {
+        if($jobMailTemplate['send_mail_ml_flg'] == 0 && $jobMailTemplate === end($trialJobMailTemplatesData)) {
           $this->component->setFrom(self::ML_MAIL_ADDRESS);
           $this->component->setFromName($jobMailTemplate['sender']);
           $this->component->setTo(self::ML_MAIL_ADDRESS);
@@ -240,7 +236,7 @@ class FreeTrialMailJobBatchShell extends AppShell
     if(empty($mailAdressData)) {
       $this->log('schedule is not found.', self::LOG_INFO);
     } else {
-      foreach($jobMailTemplatesData as $jobMailTemplate) {
+      foreach($jobMailTemplatesData as $key => $jobMailTemplate) {
         foreach($mailAdressData as $index => $mailAdress) {
           try {
             if($mailAdress['MUser']['m_companies_id'] == $jobMailTemplate['m_companies_id']) {
@@ -255,8 +251,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                   ]
                 ]);
                 $companyName = $companyName[0]['MCompany']['company_name'];
-                if((!empty($mailAdressData[$index-1]) && $mailAdressData[$index-1]['MUser']['m_companies_id'] != $mailAdress['MUser']['m_companies_id'] && $index != 0) ||
-                $index == 0) {
+                if($index == 0) {
                   $companyNames = $companyName;
                 }
                 else {
@@ -285,7 +280,7 @@ class FreeTrialMailJobBatchShell extends AppShell
             $this->log('send mail error !!!!', self::LOG_ERROR);
           }
         }
-        if($jobMailTemplate['send_mail_ml_flg'] == 0) {
+        if($jobMailTemplate['send_mail_ml_flg'] == 0 && $jobMailTemplate === end($jobMailTemplatesData)) {
           $this->component->setFrom(self::ML_MAIL_ADDRESS);
           $this->component->setFromName($jobMailTemplate['sender']);
           $this->component->setTo(self::ML_MAIL_ADDRESS);

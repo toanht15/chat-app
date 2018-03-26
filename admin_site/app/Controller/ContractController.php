@@ -67,7 +67,7 @@ class ContractController extends AppController
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['add','remoteSaveForm']);
+    $this->Auth->allow(['index','add','edit','remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
