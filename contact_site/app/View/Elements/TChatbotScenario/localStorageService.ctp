@@ -26,7 +26,7 @@ sincloApp.service('LocalStorageService', function() {
     setItem: function(storageKey, param) {
       var storageData = localStorage.getItem(storageKey);
       var jsonData = JSON.parse(storageData);
-      Object.entries(param).forEach(function(value) {
+      angular.forEach(param, function(value) {
         jsonData[value[0]] = value[1];
       });
       localStorage.setItem(storageKey, JSON.stringify(jsonData));
