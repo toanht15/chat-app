@@ -27,8 +27,7 @@
           <tr ng-repeat-start="(listId, hearingItem) in setItem.hearings track by $index">
             <td class="item_name"><input type="text" ng-model="hearingItem.variableName"></td>
             <td class="item_type">
-              <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList">
-              </seclet>
+              <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList"></seclet>
             </td>
             <td class="item_message" rowspan="2"><resize-textarea ng-model="hearingItem.message" rows="1" data-maxRow="10"></resize-textarea></td>
             <td class="item_btn_block">
