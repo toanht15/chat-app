@@ -203,7 +203,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * uploadFile ファイルアップロード
+   * ファイルアップロード
    * @param String  actionStep  アクション番号
    * @param File    fileObj     Fileオブジェクト
    * @param Blob    loadFile    Blobオブジェクト
@@ -307,7 +307,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         cache: false,
         url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
         success: function(){
-          // 不要な一時保存データを削除する
           LocalStorageService.remove($scope.storageKey);
 
           // 一覧ページへ遷移する
@@ -319,7 +318,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * addActionItemList
    * ヒアリング、選択肢、メール送信のリスト追加
    * （選択肢・メール送信ではリストの末尾に、ヒアリングではリストの任意の箇所に追加する）
    * @param String  actionStep  アクション番号
@@ -506,7 +504,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataText
    * テキスト発言のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -518,7 +515,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataHearing
    * ヒアリングのバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -546,7 +542,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataSelectOption
    * 選択肢のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -571,7 +566,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataSendMail
    * メール送信のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -597,7 +591,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataCallScenario
    * シナリオ呼び出しのバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -610,7 +603,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   /**
-   * trimDataExternalApi
    * 外部システム連携のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -645,7 +637,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   /**
-   * trimDataSendFile
    * ファイル送信のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -701,7 +692,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * controllListView
    * 選択肢、ヒアリング、メール送信のリストに対して、追加・削除ボタンの表示状態を更新する
    * @param String  actionType      アクション種別
    * @param Object  targetElmList   対象のリスト要素(jQueryオブジェクト)
@@ -927,7 +917,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * doAction
    * アクションの実行
    * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
    */
@@ -1170,12 +1159,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         });
 
         // 表示する行数に応じて、テキストエリアの高さを調整する
-        console.log(`row: ${textRow}`);
-        if (textRow > 1) {
-          elm[0].style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
-          console.log(`height: ${elm[0].style.height} ... ((${textRow} * (${fontSize} * ${lineHeight})) + ${paddingSize})`);
+        if (textRow > maxRow) {
+          elm[0].style.height = (maxRow * (fontSize*lineHeight)) + paddingSize + 'px';
+          elm[0].style.overflow = 'auto';
         } else {
-          elm[0].style.height = '';
+          elm[0].style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+          elm[0].style.overflow = 'hidden';
         }
       }
 
