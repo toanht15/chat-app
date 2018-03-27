@@ -1036,7 +1036,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       var descriptionLength = 15;
       switch (siz) {
        //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
-      case 1: //小
+        case 1: //小
           titleLength = 12;
           subTitleLength = 15;
           descriptionLength = 15;
@@ -1064,6 +1064,35 @@ sincloApp.controller('WidgetCtrl', function($scope){
 //       if(settingDescription.value.length > descriptionLength){
 //         $scope.description = settingDescription.value.substring(0, descriptionLength);
 //       }
+    }
+
+    $scope.revertStandardTextSize = function(target) {
+      var widgetSize = $scope.widgetSizeTypeToggle;
+      var size = 0;
+      switch(target + widgetSize) {
+        case 'header_text_size1':
+          size = 14;
+          break;
+        case 'header_text_size2':
+        case 'header_text_size3':
+          size = 15;
+          break;
+        case 're_text_size1':
+          size = 12;
+          break;
+        case 're_text_size2':
+        case 're_text_size3':
+          size = 13;
+          break;
+        case 'se_text_size1':
+          size = 12;
+          break;
+        case 'se_text_size2':
+        case 'se_text_size3':
+          size = 13;
+          break;
+      }
+      $scope[target] = size;
     }
 
     //最小化時のデザインがクリックされた時の動作
