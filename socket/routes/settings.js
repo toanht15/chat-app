@@ -146,6 +146,37 @@ router.get("/", function(req, res, next) {
                   spMaximizeSizeType = settings.spMaximizeSizeType;
                 }
 
+                var headerTextSize = 0;
+                var seTextSize = 0;
+                var reTextSize = 0;
+
+                switch(isNumeric(settings.widgetSizeType)) {
+                  case 1:
+                    headerTextSize = 14;
+                    seTextSize = 12;
+                    reTextSize = 12;
+                    break;
+                  case 2:
+                  case 3:
+                    headerTextSize = 15;
+                    seTextSize = 13;
+                    reTextSize = 13;
+                    break;
+                }
+
+                if(('headerTextSize' in settings)) {
+                  headerTextSize = settings.headerTextSize;
+                }
+
+                if(('seTextSize' in settings)) {
+                  seTextSize = settings.seTextSize;
+                }
+
+                if(('reTextSize' in settings)) {
+                  reTextSize = settings.reTextSize;
+                }
+
+
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
@@ -172,6 +203,7 @@ router.get("/", function(req, res, next) {
                   messageTextColor: messageTextColor,
                   //4.その他文字色
                   otherTextColor: otherTextColor,
+                  headerTextSize: headerTextSize,
                   //5.ウィジェット枠線色
                   widgetBorderColor: widgetBorderColor,
                   //6.吹き出し枠線色
@@ -188,12 +220,14 @@ router.get("/", function(req, res, next) {
                   cNameTextColor: settings.cNameTextColor,
                   //11.企業側吹き出し文字色
                   reTextColor: settings.reTextColor,
+                  reTextSize: reTextSize,
                   //12.企業側吹き出し背景色
                   reBackgroundColor: settings.reBackgroundColor,
                   //13.企業側吹き出し枠線色
                   reBorderColor: settings.reBorderColor,
                   //15.訪問者側吹き出し文字色
                   seTextColor: settings.seTextColor,
+                  seTextSize: seTextSize,
                   //16.訪問者側吹き出し背景色
                   seBackgroundColor: settings.seBackgroundColor,
                   //17.訪問者側吹き出し枠線色
