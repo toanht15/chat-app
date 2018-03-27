@@ -152,7 +152,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
 
       // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
-      if (searchObj(newObject, /^variableName$/).length > 1 && elms.length >= 1) {
+      var variables = searchObj(newObject, /^variableName$/);
+      if (!variables && variables.length > 1 && elms.length >= 1) {
         var elms = document.querySelectorAll('li.set_action_item');
         $scope.setActionList.forEach(function(actionItem, index) {
           actionValidationCheck(elms[index], $scope.setActionList, actionItem);
@@ -1154,7 +1155,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     link: function(scope, element, attrs) {
       var maxRow = element[0].dataset.maxRow || 10;                   // 表示可能な最大行数
       var fontSize = parseFloat(element[0].style.fontSize, 10);       // 行数計算のため、templateにて設定したフォントサイズを取得
-      var paddingSize = parseFloat(element[0].style.padding, 10) * 2; // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得
+      var paddingSize = parseFloat(element[0].style.padding, 10) * 2; // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
       var lineHeight = parseFloat(element[0].style.lineHeight, 10);   // 表示高さの計算のため、templateにて設定した行の高さを取得
       var elm = angular.element(element[0]);
 
@@ -1169,11 +1170,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         });
 
         // 表示する行数に応じて、テキストエリアの高さを調整する
-        if (elm[0].value.length >= 1) {
-          textRow = (textRow + 1) > maxRow ? maxRow : textRow + 1;
-        }
+        console.log(`row: ${textRow}`);
         if (textRow > 1) {
           elm[0].style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+          console.log(`height: ${elm[0].style.height} ... ((${textRow} * (${fontSize} * ${lineHeight})) + ${paddingSize})`);
         } else {
           elm[0].style.height = '';
         }
