@@ -1,5 +1,19 @@
 <script type="text/javascript">
 document.body.onload = function(){
+
+  // 一時保存データがあるシナリオに、編集中メッセージを追加する
+  var rows = document.querySelectorAll('#tchatbotscenario_list tbody tr').forEach(function(row) {
+    var storageKey = 'scenario_' + row.dataset.id;
+    var storageData = JSON.parse(localStorage.getItem(storageKey));
+    if (!!storageData && typeof storageData.scenarios !== 'undefined') {
+      var titleElm = row.querySelector('td.scenarioTitle');
+      var msgElm = document.createElement('span');
+      msgElm.className = 'scenarioEditingMessage';
+      msgElm.textContent = '（編集中）';
+      titleElm.appendChild(msgElm);
+    }
+  });
+
   $(document).ready(function(){
     $(".sortable").sortable({
       axis: "y",
