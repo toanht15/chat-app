@@ -70,7 +70,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $scope.$apply();
 
       // 並び替え後、変数のチェックを行う
-      var elms = event.target.querySelectorAll('li.set_action_item');
+      var elms = document.querySelectorAll('li.set_action_item');
       $scope.setActionList.forEach(function(actionItem, index) {
         actionValidationCheck(elms[index], $scope.setActionList, actionItem);
       });
@@ -149,6 +149,14 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 編集されたことを検知する
       if (!$scope.changeFlg && newObject !== oldObject) {
         $scope.changeFlg = true;
+      }
+
+      // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
+      if (searchObj(newObject, /^variableName$/).length > 1 && elms.length >= 1) {
+        var elms = document.querySelectorAll('li.set_action_item');
+        $scope.setActionList.forEach(function(actionItem, index) {
+          actionValidationCheck(elms[index], $scope.setActionList, actionItem);
+        });
       }
 
       // プレビューに要素がない場合、以降の処理は実行しない
@@ -1310,7 +1318,13 @@ $(document).ready(function() {
   });
 });
 
-// アクションのバリデーションとエラーメッセージの設定
+/**
+ * アクションのバリデーションとエラーメッセージの設定
+ * @param  Node   element       チェック対象のアクションの要素(エラー表示を行う)
+ * @param  Array  setActionList シナリオ設定のアクション一覧
+ * @param  Object actionItem    チェック対象のオブジェクト
+ * @return Void
+ */
 function actionValidationCheck(element, setActionList, actionItem) {
   var messageList = [];
 
