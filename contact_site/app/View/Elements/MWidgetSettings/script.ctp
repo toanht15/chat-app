@@ -1369,6 +1369,10 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.switchWidget(3);
     });
 
+    angular.element(window).on("focus", ".showNormal", function(e){
+      $scope.switchWidget(1);
+    });
+
     angular.element(window).on("focus", ".showHeader", function(e){
         if ( $scope.showWidgetType === 1 ) return false;
 //        if ( $scope.showWidgetType === 3 ) {
