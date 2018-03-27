@@ -366,8 +366,8 @@ var socket, // socket.io
             widgetTitlePadding: 7,
             widgetTitleHeight: 32,
             widgetTitleTop: 6,
-            widgetSubTitleHeight: 29,
-            widgetDescriptionHeight: 23,
+            widgetSubTitleHeight: 27,
+            widgetDescriptionHeight: 25,
             navigationHeight: 40,
             chatTalkHeight: 194,
             classFlexBoxRowHeight: 75,
@@ -390,8 +390,8 @@ var socket, // socket.io
             widgetTitlePadding: 7,
             widgetTitleHeight: 32,
             widgetTitleTop: 6,
-            widgetSubTitleHeight: 29,
-            widgetDescriptionHeight: 23,
+            widgetSubTitleHeight: 27,
+            widgetDescriptionHeight: 25,
             navigationHeight: 40,
             chatTalkHeight: 284,
             classFlexBoxRowHeight: 75,
@@ -414,8 +414,8 @@ var socket, // socket.io
             widgetTitlePadding: 7,
             widgetTitleHeight: 32,
             widgetTitleTop: 6,
-            widgetSubTitleHeight: 29,
-            widgetDescriptionHeight: 23,
+            widgetSubTitleHeight: 27,
+            widgetDescriptionHeight: 25,
             navigationHeight: 40,
             chatTalkHeight: 374,
             classFlexBoxRowHeight: 75,
@@ -1236,14 +1236,14 @@ var socket, // socket.io
         html += "      #sincloBox section { width: " + sizeList['boxWidth'] + "px }";
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 10px }';
-        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + colorList['mainColor'] + '; font-size: '+ widget.headerTextSize +'px;padding: '+ sizeList['widgetTitlePadding'] +'px 30px; height: '+ sizeList['widgetTitleHeight'] +'px }';
+        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + colorList['mainColor'] + '; font-size: '+ widget.headerTextSize +'px; padding-left: 30px; padding-right: 30px; height: '+ sizeList['widgetTitleHeight'] +'px; line-height: ' + sizeList['widgetTitleHeight'] + 'px;}';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
-        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: '+ sizeList['widgetSubTitleHeight'] +'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; }';
+        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: '+ sizeList['widgetSubTitleHeight'] +'px; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; }';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetSubTitle { border:none; }';
         }
-        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; height: '+ sizeList['widgetDescriptionHeight'] +'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; }';
+        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 77px; height: '+ sizeList['widgetDescriptionHeight'] +'px; line-height: ' + sizeList['widgetDescriptionHeight'] + 'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; }';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetDescription { border-left:none; border-right:none;}';
         }
