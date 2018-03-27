@@ -10,10 +10,8 @@
     #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
     #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
     #sincloBox div#descriptionSet { cursor: pointer; }
-    #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: {{header_text_size}}px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
+    #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: {{header_text_size}}px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size}}px;}
     #sincloBox p#widgetTitle.spText{ text-indent: 1em; }
-    #sincloBox p#widgetTitle.middleSize { font-size: 15px; }
-    #sincloBox p#widgetTitle.largeSize { font-size: 15px; }
     #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
     #sincloBox div.widgetHeaderWrap:hover #widgetTitle { opacity: 0.75; }
     /*
@@ -27,10 +25,10 @@
       #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
       #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
 */
-    #sincloBox p#widgetSubTitle { background-color: {{header_background_color}}; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #sincloBox p#widgetSubTitle { background-color: {{header_background_color}}; margin: 0; padding: 7px 0; text-align: left; border-width: 0 1px 0 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; font-weight: bold; color: {{main_color}}; height: 29px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size-2}}px; }
     #sincloBox p#widgetSubTitle:not(.notNoneWidgetOutsideBorder) { border:none; }
     #sincloBox p#widgetSubTitle.details { color: {{sub_title_text_color}}; }
-    #sincloBox p#widgetDescription { background-color: {{header_background_color}}; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; height: 23px; color: {{other_text_color}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #sincloBox p#widgetDescription { background-color: {{header_background_color}}; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 77px; height: 23px; color: {{other_text_color}}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size-2}}px; }
     #sincloBox p#widgetDescription:not(.notNoneWidgetOutsideBorder) { border-left:none; border-right:none; }
     #sincloBox p#widgetDescription.details { color: {{description_text_color}}; border-bottom-color: {{widget_inside_border_color}}; }
     #sincloBox p#widgetDescription.details:not(.notNone) { border-bottom:none }
