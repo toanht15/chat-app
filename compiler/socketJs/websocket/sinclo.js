@@ -1109,7 +1109,7 @@
           }
 
           // オートメッセージか、Sorryメッセージ、企業からのメッセージで表示名を使用しない場合
-          if ( Number(chat.messageType) === 3 || Number(chat.messageType) === 4 || Number(chat.messageType) === 21 || Number(chat.messageType) === 22 || Number(chat.messageType) === 23 || (Number(chat.messageType) === 2 && window.sincloInfo.widget.showName !== 1) ) {
+          if ( Number(chat.messageType) === 3 || Number(chat.messageType) === 4 || Number(chat.messageType) === 21 || Number(chat.messageType) === 22 || Number(chat.messageType) === 23 || Number(chat.messageType) === 27 || (Number(chat.messageType) === 2 && window.sincloInfo.widget.showName !== 1) ) {
             userName = window.sincloInfo.widget.subTitle;
           }
           else if ( Number(chat.messageType) === 2 ) {
@@ -1122,7 +1122,7 @@
             sinclo.hideTextarea();
           }
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
-          if( Number(chat.messageType) === 6 ) {
+          if( Number(chat.messageType) === 6 || Number(chat.messageType) === 27 ) {
             // ファイル送信チャット表示
             if(chat.deleteFlg === 0) {
               this.chatApi.createSendFileMessage(JSON.parse(chat.message), userName);
@@ -1240,7 +1240,8 @@
         if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
-            || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection) {
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           if(obj.tabId === userInfo.tabId) {
             this.chatApi.scDown();
             return false;
@@ -1252,7 +1253,7 @@
             return false;
           }
         }
-        if (obj.messageType === sinclo.chatApi.messageType.sendFile) {
+        if (obj.messageType === sinclo.chatApi.messageType.sendFile || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           sinclo.chatApi.call();
           this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
           this.chatApi.scDown();
@@ -1335,7 +1336,8 @@
       if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
         || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
         || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
-        || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection) {
+        || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
+        || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
         if(obj.tabId === userInfo.tabId) {
           this.chatApi.scDown();
           return false;
@@ -1343,6 +1345,12 @@
           // 別タブで表示したシナリオメッセージは表示する
           cn = "sinclo_re";
         }
+      }
+
+      if (obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
+        this.chatApi.createSendFileMessage(JSON.parse(obj.message), sincloInfo.widget.subTitle);
+        this.chatApi.scDown();
+        return false;
       }
 
       this.chatApi.createMessageUnread(cn, obj.message, sincloInfo.widget.subTitle);
@@ -1640,7 +1648,8 @@
             message: {
               text: 21,
               hearing: 22,
-              selection: 23
+              selection: 23,
+              receiveFile: 27,
             }
           }
         },
@@ -2134,7 +2143,10 @@
             thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(data.extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
 
-          var content = "<span class='cName'>ファイルが送信されました" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showName) !== 3 ? "ファイルが送信されました" : "") + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          if(check.isset(data.message) && data.message !== "") {
+            content += "<span>" + data.message + "</span>";
+          }
           content    += "<div class='sendFileContent'>";
           content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
           content    += "  <div class='sendFileMetaArea'>";
@@ -3665,10 +3677,12 @@
       _end: function() {
         // シナリオ終了
         var self = sinclo.scenarioApi;
-        self._saveProcessingState(false);
-        self._enablePreviousRadioButton();
-        self._unsetBaseObj();
-        self.setPlaceholderMessage(self.getPlaceholderMessage());
+        self._saveStoredMessage(function(){
+          self._saveProcessingState(false);
+          self._enablePreviousRadioButton();
+          self._unsetBaseObj();
+          self.setPlaceholderMessage(self.getPlaceholderMessage());
+        });
       },
       isProcessing: function() {
         var self = sinclo.scenarioApi;
@@ -4489,6 +4503,7 @@
                 } else {
                   var splitedFileName = result.downloadUrl.split('.');
                   result.extension = splitedFileName[splitedFileName.length - 1].toLowerCase();
+                  result.message = self._parent.get(self._parent._lKey.currentScenario).message;
                   self._parent._showFileTypeMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, result, 0, self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
                     if(self._parent._goToNextScenario()) {
                       self._parent._process();

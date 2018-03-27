@@ -538,6 +538,12 @@ class HistoriesController extends AppController {
         $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
       }
+      if($val['THistoryChatLog']['message_type'] == 27) {
+        $row['transmissionKind'] = 'シナリオメッセージ（ファイル送信）';
+        $row['transmissionPerson'] = "";
+        $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+        $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+      }
       if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
         $row['transmissionKind'] = '通知メッセージ';
         $row['transmissionPerson'] = "";
