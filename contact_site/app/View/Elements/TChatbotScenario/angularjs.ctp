@@ -1067,20 +1067,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
 
         // 取得したシナリオのアクション情報を、setActionList内に詰める
-        var list = Array.prototype.slice.call($scope.setActionList);
-        list.every(function(param, key) {
+        angular.forEach($scope.setActionList, function(scenario, key) {
           if (key == $scope.actionStep) {
             for (var exKey in activity.scenarios) {
               scenarios[idx++] = activity.scenarios[exKey];
             }
-            // 取得したシナリオを追加後、フラグを見て続けるか判断する
-            if (!isNext || isNext != '1') {
-              return false;
-            }
-          } else {
+          } else
+          if (isNext == 1 || key <= $scope.actionStep) {
             scenarios[idx++] = $scope.setActionList[key];
           }
-          return true;
         });
         $scope.setActionList = scenarios;
       } catch(e) {
