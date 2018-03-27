@@ -2659,11 +2659,12 @@ io.sockets.on('connection', function (socket) {
     if ( obj.active ) {
       if ( !isset(activeOperator[obj.siteKey][obj.userId]) ) {
         activeOperator[obj.siteKey][obj.userId] = socket.id;
-
+        console.log("【" + obj.siteKey + "】オペレータ 離席 => 待機 userId : " + obj.userId);
         if ( obj.hasOwnProperty('scNum') ) {
           if ( !scList.hasOwnProperty(obj.siteKey) ) { scList[obj.siteKey] = { user: {}, cnt: {} }; }
           scList[obj.siteKey].user[obj.userId] = obj.scNum;
           scList[obj.siteKey].cnt[obj.userId] = chatApi.calcScNum(obj, obj.userId);
+          console.log("【" + obj.siteKey + "】対応上限数設定 " + scList[obj.siteKey].cnt[obj.userId] + " / " + scList[obj.siteKey].user[obj.userId] +  " userId : " + obj.userId);
         }
       }
     }
@@ -2671,6 +2672,7 @@ io.sockets.on('connection', function (socket) {
     else {
       if ( isset(activeOperator[obj.siteKey][obj.userId]) ) {
         delete activeOperator[obj.siteKey][obj.userId];
+        console.log("【" + obj.siteKey + "】オペレータ 待機 => 離席 userId : " + obj.userId);
       }
       if ( scList.hasOwnProperty(obj.siteKey) && scList[obj.siteKey].cnt.hasOwnProperty(obj.userId) ) {
         delete scList[obj.siteKey].cnt[obj.userId];
@@ -2836,6 +2838,7 @@ console.log("chatStart-2: [" + logToken + "] " + JSON.stringify({ret: false, sit
             var userId = c_connectList[obj.siteKey][obj.tabId][keys[keys.length - 1]].userId;
             if ( scList[obj.siteKey].cnt.hasOwnProperty(userId) ) {
               scList[obj.siteKey].cnt[userId]--; // 対応人数を減算する
+              console.log("【" + obj.siteKey + "】chatStart::対応上限数設定 " + scList[obj.siteKey].cnt[userId] + " / " + scList[obj.siteKey].user[userId] +  " userId : " + userId);
             }
           }
           /* チャット対応上限の処理（対応人数減算の処理） */
@@ -2867,6 +2870,7 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
           if ( scList.hasOwnProperty(obj.siteKey) && scList[obj.siteKey].cnt.hasOwnProperty(obj.userId) ) {
             scList[obj.siteKey].cnt[obj.userId]++; // 対応人数を加算する
             scInfo = scList[obj.siteKey].cnt;
+            console.log("【" + obj.siteKey + "】chatStart::対応上限数設定 " + scList[obj.siteKey].cnt[obj.userId] + " / " + scList[obj.siteKey].user[obj.userId] +  " userId : " + obj.userId);
           }
           /* チャット対応上限の処理（対応人数加算の処理） */
 
@@ -2937,9 +2941,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     if ( scList.hasOwnProperty(obj.siteKey) && scList[obj.siteKey].cnt.hasOwnProperty(obj.userId) ) {
       if(scList[obj.siteKey].cnt[obj.userId] > 0) {
         scList[obj.siteKey].cnt[obj.userId]--; // 対応人数を減算する
+
       } else {
         scList[obj.siteKey].cnt[obj.userId] = 0;
       }
+      console.log("【" + obj.siteKey + "】chatEnd::対応上限数設定 " + scList[obj.siteKey].cnt[obj.userId] + " / " + scList[obj.siteKey].user[obj.userId] +  " userId : " + obj.userId);
     }
     /* チャット対応上限の処理（対応人数減算の処理） */
     scInfo = ( scList.hasOwnProperty(obj.siteKey) ) ? scList[obj.siteKey].cnt : {};
@@ -3985,6 +3991,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           // チャット対応上限のリセット
           if ( scList.hasOwnProperty(userInfo.siteKey) && scList[userInfo.siteKey].cnt.hasOwnProperty(userInfo.userId) ) {
+            console.log("【" + userInfo.siteKey + "】disconnect::対応上限数設定 " + scList[userInfo.siteKey].cnt[userInfo.userId] + " / " + scList[userInfo.siteKey].user[userInfo.userId] +  " userId : " + userInfo.userId);
             delete scList[userInfo.siteKey].cnt[userInfo.userId];
             delete scList[userInfo.siteKey].user[userInfo.userId];
           }
@@ -4081,6 +4088,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           // 応対数再計算
           if ( ('chat' in core) && scList.hasOwnProperty(info.siteKey) && scList[info.siteKey].cnt.hasOwnProperty(core.chat) ) {
             scList[info.siteKey].cnt[core.chat] = chatApi.calcScNum(info, core.chat);
+            console.log("【" + info.siteKey + "】cus::disconnect::対応上限数設定 " + scList[info.siteKey].cnt[core.chat] + " / " + scList[info.siteKey].user[core.chat] +  " userId : " + core.chat);
           }
           if ( 'syncFrameSessionId' in core ) {
             emit.toUser('unsetUser', {siteKey: info.siteKey, tabId: info.tabId}, core.syncFrameSessionId);
