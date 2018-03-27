@@ -51,7 +51,7 @@
     #sincloBox ul#chatTalk.details { background-color: {{chat_talk_background_color}}; }
     #sincloBox ul#chatTalk div.liLeft { text-align: left; }
     #sincloBox ul#chatTalk div.liRight { text-align: right; }
-    #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 8px; font-size: 12px; line-height: 1.4; white-space: pre; }
+    #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 10px; font-size: 12px; line-height: 1.4; white-space: pre; }
     #sincloBox ul#chatTalk li.middleSize { font-size: 13px; }
     #sincloBox ul#chatTalk li.largeSize { font-size: 13px; }
     #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
@@ -74,8 +74,8 @@
     /*#sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 5px; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid {{makeBalloonTriangleColor()}}; z-index: 2; }*/
     /*#sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }*/
     #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }
-    #sincloBox ul#chatTalk li.boxType.chat_right { border-bottom-right-radius: 0; margin-left: 10px }
-    #sincloBox ul#chatTalk li.boxType.chat_left { border-bottom-left-radius: 0; margin-right: 10px }
+    #sincloBox ul#chatTalk li.boxType.chat_right { border-radius: 12px 12px 0 12px; margin-left: auto; margin-right:10px; width: 80%; }
+    #sincloBox ul#chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-right: auto; margin-left:10px; width: 80%; }
     #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 15px }
     #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 10px }
     #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: {{re_text_size+1}}px; margin: 0 0 5px 0; }
@@ -84,6 +84,7 @@
     #sincloBox ul#chatTalk li span.cName.details{ color: {{c_name_text_color}}!important;}
     #sincloBox ul#chatTalk li span.cName:not(.details){ color: {{main_color}}!important;}
     #sincloBox ul#chatTalk li span:not(.details){  color: {{message_text_color}}!important; }
+    #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold;  }
     #sincloBox ul#chatTalk li.sinclo_re span.details{ color: {{re_text_color}}; font-size: {{re_text_size}}px; }
     #sincloBox ul#chatTalk li.sinclo_re span.details.sp{ font-size: 12px; }
     #sincloBox ul#chatTalk li.sinclo_se span.details{ color: {{se_text_color}}; font-size: {{se_text_size}}px; }
@@ -230,9 +231,14 @@
 
         <!-- chat_message_copy 0 stayt -->
         <ul id="chatTalk" class="details" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}" ng-if="chat_message_copy == '0'">
+          <div style="height: auto!important; padding:0;">
+            <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_automessage_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span class="details" ng-class="{sp:showWidgetType === 3}">これはオートメッセージです。<br>チャットで質問して下さい。</span></li>
+          </div>
           <div style="height: auto!important; padding:0;" ng-class="{liLeft: chat_message_design_type == 1, liRight: chat_message_design_type == 2}" >
             <li class="sinclo_se chat_right details" ng-class="{ notNone:se_border_none === '' || se_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ><span class="details" ng-class="{sp:showWidgetType === 3}">○○について質問したいのですが</span></li>
           </div>
+          <li class="sinclo_etc" ng-if="show_name == 1">－ <?=$userInfo['display_name']?>が入室しました －</li>
+          <li class="sinclo_etc" ng-if="show_name == 2||show_name == 3">－ オペレーターが入室しました －</li>
           <div style="height: auto!important; padding:0;">
             <li class="sinclo_re chat_left" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3',boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_name == 1" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">{{sub_title}}</span><span class="details" ng-class="{sp:showWidgetType === 3}">こんにちは</span></li>
           </div>

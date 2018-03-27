@@ -1171,24 +1171,25 @@ sincloApp.controller('WidgetCtrl', function($scope){
     });
 
     angular.element('#MWidgetSettingUploadImage').change(function(e){
-        var files = e.target.files;
-        if ( window.URL && files.length > 0 ) {
-            var file = files[files.length-1];
-            // jpeg/jpg/png
-            var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
-            if ( !reg.exec(file.type) ) {
-                $("#MWidgetSettingUploadImage").val("");
-                return false;
-            }
-            var url = window.URL.createObjectURL(file);
-
-          openTrimmingDialog(function(){
-            beforeTrimmingInit(url, $('#trim'));
-            trimmingInit($scope, null, 62 / 70);
-          });
-            // $scope.main_image = url;
-            // $scope.$apply();
+      var files = e.target.files;
+      if ( window.URL && files.length > 0 ) {
+        var file = files[files.length-1];
+        // jpeg/jpg/png
+        var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+        if ( !reg.exec(file.type) ) {
+            $("#MWidgetSettingUploadImage").val("");
+            $scope.uploadImageError = "画像はpng,jpeg,jpgのいずれかのみ利用可能です"
         }
+
+        var url = window.URL.createObjectURL(file);
+
+        openTrimmingDialog(function(){
+          beforeTrimmingInit(url, $('#trim'));
+          trimmingInit($scope, null, 62 / 70);
+        });
+          // $scope.main_image = url;
+          // $scope.$apply();
+      }
     });
 
     angular.element(window).on("click", ".widgetCtrl", function(e){
