@@ -74,7 +74,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           message: {
             text: 21,
             hearing: 22,
-            selection: 23
+            selection: 23,
+            receiveFile: 27
           }
         }
       },
@@ -1512,6 +1513,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>シナリオメッセージ(選択肢)</span>";
         content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.scenario.message.receiveFile ) {
+        // ファイル送信はmessageがJSONなのでparseする
+        message = JSON.parse(message);
+        cn = "sinclo_se";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+//        var chatName = widget.subTitle;
+//        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
+//          chatName = userList[Number(userId)];
+//        }
+        var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+        content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
+        if(!isExpired) {
+          li.style.cursor = "pointer";
+          li.addEventListener("click", function(event){window.open(message.downloadUrl)});
+        }
       }
       else  {
         cn = "sinclo_etc";

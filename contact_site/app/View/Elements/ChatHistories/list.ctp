@@ -326,7 +326,7 @@
                   <?php
                   }
                   else if($history['THistoryChatLog']['type'] == "") { ?>
-                    <li class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;display: flex;overflow: hidden;white-space: nowrap;"><div class ="chatTypeName" style = "border: 1px solid #9bbb59;background-color:#9bbb59;border-radius:4px;padding:1px 3px;width: 52px !important;">Manual</div><div class = "largeCharacters enter" style ="margin-left:3px;color:#9bbb59;">(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span></div></span>
+                    <li class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;display: flex;overflow: hidden;white-space: nowrap;"><div class ="chatTypeName" style = "border: 1px solid #9bbb59;background-color:#9bbb59;border-radius:4px;padding:1px 3px;width: 52px !important;">Manual</div><div class = "largeCharacters enter" style ="margin-left:3px;color:#9bbb59;">(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span></div></li>
                   <?php
                   }
                   else if($history['THistoryChatLog']['type'] == "未入室") { ?>
@@ -385,9 +385,9 @@
             <td class="tCenter pre" style = "width:10%"><div class = "campaignInfo"><?=$campaignParam?></div></td>
             <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;"><a href = "<?=h($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
             <td class="tCenter" style = "width:5%"><?php
-              if($history['THistoryChatLog']['eff'] != 0) {
+              if(!empty($history['THistoryChatLog']['eff']) && $history['THistoryChatLog']['eff'] != 0) {
                 echo $achievementType[2];
-              } else if($history['THistoryChatLog']['deny'] != 0) {
+              } else if(!empty($history['THistoryChatLog']['deny']) && $history['THistoryChatLog']['deny'] != 0) {
                 echo $achievementType[1];
               }
               if(isset($history['THistoryChatLog']['terminate']) && $history['THistoryChatLog']['terminate'] != 0 && $history['THistoryChatLog']['cv'] == 0) {
