@@ -86,7 +86,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   this.addItem = function(actionType) {
     if (actionType in $scope.actionList) {
       var item = $scope.actionList[actionType];
-      item.actionType = actionType;
+      item.actionType = actionType.toString();
       $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
 
       // 表示位置調整
