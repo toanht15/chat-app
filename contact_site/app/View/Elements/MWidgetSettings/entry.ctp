@@ -298,7 +298,7 @@ $headerNo = 1;
               [
                 'entity' => 'MWidgetSetting.other_text_color'
               ]) ?></span><br>
-              <span style="display: flex; height: 20px; width: 23em; justify-content: space-between; align-items: center;">
+              <span style="display: flex; height: 20px; width: 32em; justify-content: space-between; align-items: center;">
                 <label style=" flex-basis:154px; ">ヘッダー文字サイズ</label>
                 <?= $this->ngForm->input('header_text_size', [
                 'type' => 'number',
@@ -308,11 +308,12 @@ $headerNo = 1;
                 'label' => false,
                 'maxlength' => 7,
                 'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
-                'error' => false
+                'error' => false,
+                  'string-to-number' => true
               ],
               [
                 'entity' => 'MWidgetSetting.header_text_size'
-              ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;">px</span></span><br>
+              ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('header_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px;" >標準に戻す</span></span><br>
               <?php if($coreSettings[C_COMPANY_USE_CHAT]){?>
               <div>
                 <hr class="separator">
@@ -347,7 +348,7 @@ $headerNo = 1;
                 [
                   'entity' => 'MWidgetSetting.re_text_color'
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('re_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
-                <span style="display: flex; height: 20px; width: 23em; justify-content: space-between; align-items: center;">
+                <span style="display: flex; height: 20px; width: 32em; justify-content: space-between; align-items: center;">
                 <label style=" flex-basis:154px; ">企業側吹き出し文字サイズ</label>
                   <?= $this->ngForm->input('re_text_size', [
                     'type' => 'number',
@@ -357,11 +358,12 @@ $headerNo = 1;
                     'label' => false,
                     'maxlength' => 7,
                     'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
-                    'error' => false
+                    'error' => false,
+                    'string-to-number' => true
                   ],
                     [
                       'entity' => 'MWidgetSetting.re_text_size'
-                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;">px</span></span><br>
+                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('re_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px;" >標準に戻す</span></span><br>
                 <hr class="separator">
                 <!-- 16.訪問者側吹き出し背景色 -->
                 <span style="height: 35px;"><label>訪問者側吹き出し背景色</label><?= $this->ngForm->input('se_background_color', [
@@ -392,7 +394,7 @@ $headerNo = 1;
                   'entity' => 'MWidgetSetting.se_text_color'
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('se_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
               </div>
-                <span style="display: flex; height: 20px; width: 23em; justify-content: space-between; align-items: center;">
+                <span style="display: flex; height: 20px; width: 32em; justify-content: space-between; align-items: center;">
                 <label style=" flex-basis:154px; ">訪問者吹き出し文字サイズ</label>
                   <?= $this->ngForm->input('se_text_size', [
                     'type' => 'number',
@@ -402,11 +404,12 @@ $headerNo = 1;
                     'label' => false,
                     'maxlength' => 7,
                     'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
-                    'error' => false
+                    'error' => false,
+                    'string-to-number' => true
                   ],
                     [
                       'entity' => 'MWidgetSetting.se_text_size'
-                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;">px</span></span><br>
+                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('se_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px;" >標準に戻す</span></span><br>
               <!-- 5.ウィジェット枠線色 -->
 <!--
               <span style="height: 20px;"><label>ウィジェット枠線色</label><?= $this->ngForm->input('widget_border_color', [
