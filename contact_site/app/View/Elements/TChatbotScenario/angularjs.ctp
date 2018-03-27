@@ -1168,7 +1168,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         }
       }
 
+      autoResize();
       scope.$watch(attrs.ngModel, autoResize);
+      $(window).on('load', autoResize);
       $(window).on('resize', autoResize);
       elm[0].addEventListener('input', autoResize);
     }
