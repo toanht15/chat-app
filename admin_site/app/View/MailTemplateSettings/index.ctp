@@ -29,7 +29,7 @@
           <?php if($val['MJobMailTemplate']['agreement_flg'] == C_FREE_TRIAL_AGREEMENT) { ?>
           <td>無料トライアル契約</td>
           <?php } else if($val['MJobMailTemplate']['agreement_flg'] == C_AGREEMENT) { ?>
-          <td>いきなり本契約</td>
+          <td>本契約</td>
           <?php } ?>
           <?php if($val['MJobMailTemplate']['value_type'] == 0) { ?>
             <td><?=h($val['MJobMailTemplate']['value'])?>日後</td>
@@ -49,10 +49,10 @@
           <td>無料トライアル契約</td>
           <td>初期パスワード変更後</td>
         <?php } else if($val['MSystemMailTemplate']['id'] == 5) { ?>
-          <td>いきなり本契約</td>
+          <td>本契約</td>
           <td>契約申込み後</td>
         <?php } else if($val['MSystemMailTemplate']['id'] == 7) { ?>
-          <td>いきなり本契約</td>
+          <td>本契約</td>
           <td>初期パスワード変更後</td>
         <?php } ?>
         <td><?= h($val['MSystemMailTemplate']['subject'])?></td>
