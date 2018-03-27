@@ -953,7 +953,7 @@ $headerNo = 1;
                 </div>
                 <div id="picChooseDiv">
                   <div class="greenBtn btn-shadow" ng-click="showGallary()">ギャラリーから選択</div>
-                  <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage'); ?>画像をアップロード</div>
+                  <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage', array('accept' => '.png,.jpeg,.jpg')); ?>画像をアップロード</div>
                   <input type="hidden" name="data[Trimming][info]" ng-model="trimmingInfo" id="TrimmingInfo" />
                 </div>
               </div>
