@@ -377,7 +377,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       targetObjList = $scope.setActionList[actionStep].hearings;
-      selector = '#action' + actionStep + '_setting .itemListGroup tr:nth-child(2n+2)';
+      selector = '#action' + actionStep + '_setting .itemListGroup';
     } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       targetObjList = $scope.setActionList[actionStep].selection.options;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
@@ -660,7 +660,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
-      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup tr:nth-child(2n+2)');
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
       var targetObjList = $scope.setActionList[actionStep].hearings;
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
     });

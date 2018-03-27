@@ -6923,51 +6923,78 @@ ul.naviBtn {
                           border: 1px solid #909090 !important;
                           width: calc(100% - 3px);
                         }
-
-                        textarea {
-                          width: calc(100% - 3px);
-                        }
-
-                        select {
-                          border-radius: 4px !important;
-                          border: 1px solid #909090 !important;
-                          width: calc(100% - 3px);
-                        }
                       }
                     }
                   }
                 }
 
-                &.action_hearing table {
-                  tr:nth-child(2n+2) {
-                    height: 3.5em;
+                &.action_hearing .grid-container {
+                  width: 100%;
+                  height: 100%;
+                  display: -ms-grid;
+                  display: grid;
+                  grid-template-columns: 160px 118px 1fr 48px;
+                  -ms-grid-columns: 160px 118px 1fr 48px;
+                  grid-template-rows: 31px 1fr;
+                  -ms-grid-rows: 31px 1fr;
+                  grid-template-areas: 'g0 g1 g3 g4' 'g2 g2 g3 g4';
+
+                  &.grid-container-header {
+                    text-align: center;
+                  }
+                  &.grid-container-body {
+                    margin-bottom: 1em;
                   }
 
-                  .item_name {
-                    width: 13.5em;
+                  input[type="text"], select, textarea {
+                    border-radius: 4px !important;
+                    border: 1px solid #909090 !important;
+                    width: calc(100% - 5px);
                   }
-                  .item_type {
-                    width: 10em;
+
+                  .area-name {
+                    grid-area: g0;
+                    -ms-grid-column: 1;
+                    -ms-grid-row: 1;
                   }
-                  .item_message {
-                    width: auto;
+
+                  .area-type {
+                    grid-area: g1;
+                    -ms-grid-column: 2;
+                    -ms-grid-row: 1;
                   }
-                  .item_btn_block {
-                    width: 4em;
+
+                  .area-message {
+                    grid-area: g3;
+                    -ms-grid-column: 3;
+                    -ms-grid-row: 1;
+                    -ms-grid-row-span: 2;
+                  }
+
+                  .area-btn {
+                    grid-area: g4;
+                    -ms-grid-column: 4;
+                    -ms-grid-row: 1;
+                    -ms-grid-row-span: 2;
                     padding-left: 0;
                     vertical-align: top;
+
                     .btnBlock {
                       padding-left: 0;
                       width: 4em;
                     }
                   }
-                  .item_detail_settings {
-                    padding: 0.5em;
+
+                  .area-detail {
+                    grid-area: g2;
+                    -ms-grid-column: 1;
+                    -ms-grid-column-span: 2;
+                    -ms-grid-row: 2;
+
                     span {
-                      padding-bottom: 0;
+                      padding: 0;
                     }
                   }
-
                 }
 
                 &.action_external_api_connection table {
