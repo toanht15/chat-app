@@ -79,9 +79,9 @@ define('C_AFTER_FREE_APPLICATION_TO_CUSTOMER', 1); // 無料トライアル登�
 define('C_AFTER_FREE_APPLICATION_TO_COMPANY', 2); // 無料トライアル登録時 会社向けメール
 define('C_AFTER_FREE_PASSWORD_CHANGE_TO_COMPANY', 3); // 無料トライアル登録後初期パスワード変更 会社向けメール
 define('C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER', 4); // 無料トライアル登録後初期パスワード変更 お客さん向けメール
-define('C_AFTER_APPLICATION_TO_CUSTOMER', 5); // いきなり契約登録時 お客さん向けメール
-define('C_AFTER_APPLICATION_TO_COMPANY', 6); // いきなり契約登録時 会社向けメール
-define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // いきなり契約登録後初期パスワード変更 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_CUSTOMER', 5); // 契約登録時 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_COMPANY', 6); // 契約登録時 会社向けメール
+define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // 契約登録後初期パスワード変更 お客さん向けメール
 
 // シナリオ設定－アクション種別コード
 define('C_SCENARIO_ACTION_TEXT', 1); // テキスト発言
@@ -112,7 +112,7 @@ $config['businessModelType'] = [
 /* メール設定 － 契約 */
 $config['agreement'] = [
     C_FREE_TRIAL_AGREEMENT => "無料トライアル契約",
-    C_AGREEMENT => "いきなり本契約",
+    C_AGREEMENT => "本契約",
 ];
 
 /* メール設定 － いつ */
