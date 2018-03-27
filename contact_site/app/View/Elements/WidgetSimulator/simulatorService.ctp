@@ -410,7 +410,65 @@ sincloApp.factory('SimulatorService', function() {
       }
 
       return content;
+    },
+    /**
+     * ファイル拡張子から、画像か判別する
+     * @param String extension ファイル拡張子
+     */
+    isImage: function(extension) {
+      return /jpeg|jpg|gif|png/.test(extension);
+    },
+    /**
+     * ファイルタイプ別ごとに、font-awesome用のクラスを出し分ける
+     * @param String extension ファイルの拡張子
+     */
+    selectIconClassFromExtension: function(extension) {
+      var selectedClass = "";
+      var icons = {
+        image:      'fa-file-image-o',
+        pdf:        'fa-file-pdf-o',
+        word:       'fa-file-word-o',
+        powerpoint: 'fa-file-powerpoint-o',
+        excel:      'fa-file-excel-o',
+        audio:      'fa-file-audio-o',
+        video:      'fa-file-video-o',
+        zip:        'fa-file-zip-o',
+        code:       'fa-file-code-o',
+        text:       'fa-file-text-o',
+        file:       'fa-file-o'
+      };
+      var extensions = {
+        gif: icons.image,
+        jpeg: icons.image,
+        jpg: icons.image,
+        png: icons.image,
+        pdf: icons.pdf,
+        doc: icons.word,
+        docx: icons.word,
+        ppt: icons.powerpoint,
+        pptx: icons.powerpoint,
+        xls: icons.excel,
+        xlsx: icons.excel,
+        aac: icons.audio,
+        mp3: icons.audio,
+        ogg: icons.audio,
+        avi: icons.video,
+        flv: icons.video,
+        mkv: icons.video,
+        mp4: icons.video,
+        gz: icons.zip,
+        zip: icons.zip,
+        css: icons.code,
+        html: icons.code,
+        js: icons.code,
+        txt: icons.text,
+        csv: icons.csv,
+        file: icons.file
+      };
+
+      return extensions[extension] || extensions['file'];
     }
+
   };
 });
 

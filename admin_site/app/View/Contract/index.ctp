@@ -49,7 +49,20 @@
           $companyKey = $val['MCompany']['company_key'];
         ?>
         <tbody>
-          <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';">
+          <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';" <?php
+            switch(intval($val['MCompany']['trial_flg'])) {
+              case 0:
+                if(strtotime($val['MAgreement']['agreement_start_day']) < time()) {
+                  echo 'style="background-color: #999999;"';
+                }
+                break;
+              case 1:
+                if(strtotime($val['MAgreement']['trial_end_day']) < time()) {
+                  echo 'style="background-color: #999999;"';
+                }
+                break;
+            }
+            ?> >
             <td><a href="#" class="loginLink"><?=h($val['MCompany']['company_name'])?></a></td>
             <td><?=h($val['MCompany']['company_key'])?></td>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>

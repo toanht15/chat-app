@@ -120,11 +120,21 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
 
     // パラメーターを表示用に設定する
-    divElm.querySelector('li .sendFileThumbnailArea .sendFileThumbnail').src = fileObj.file_path; // TODO: downloadUrl に変更すること
+    var tmbImage =  divElm.querySelector('li .sendFileThumbnailArea img.sendFileThumbnail');
+    var tmbIcon =  divElm.querySelector('li .sendFileThumbnailArea i.sendFileThumbnail');
+    if ($scope.simulatorSettings.isImage(fileObj.extension)) {
+      tmbImage.src = fileObj.download_url;
+      tmbImage.style.display = "";
+      tmbIcon.style.display = "none";
+    } else {
+      tmbIcon.classList.add($scope.simulatorSettings.selectIconClassFromExtension(fileObj.extension));
+      tmbIcon.style.display = "";
+      tmbImage.style.display = "none";
+    }
     divElm.querySelector('li .sendFileMetaArea .sendFileName').innerHTML = fileObj.file_name;
-    divElm.querySelector('li .sendFileMetaArea .sendFileSize').innerHTML = (fileObj.file_size / 1024).toFixed(2) + 'KB';
+    divElm.querySelector('li .sendFileMetaArea .sendFileSize').innerHTML = fileObj.file_size;
     divElm.addEventListener('click', function() {
-      window.open(fileObj.uploadUrl); // TODO: downloadUrl に変更すること
+      window.open(fileObj.download_url);
     });
 
     // 要素を追加する
@@ -261,23 +271,43 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
   }
 
-  // 自由入力エリアのキーイベント
+  /**
+   * 自由入力エリアのキーイベント
+   */
   $(document).on('keypress', '#sincloChatMessage', function(e) {
-    // ヒアリング：改行不可（Enterキーでメッセージ送信）
     if (!$scope.allowInputLF && e.key === 'Enter') {
+      // ヒアリング：改行不可（Enterキーでメッセージ送信）
       $scope.visitorSendMessage();
       return false;
     } else
-    // ヒアリング：改行可（Shift+Enterキーでメッセージ送信）
     if ($scope.allowSendMessageByShiftEnter && e.key === 'Enter' && e.shiftKey) {
+      // ヒアリング：改行可（Shift+Enterキーでメッセージ送信）
       $scope.visitorSendMessage();
       return false;
     }
+  });
+  /**
+   * 自由入力エリアのテキスト入力イベント
+   */
+  $(document).on('input paste', '#sincloChatMessage', function(e) {
+    var targetElm = $('#sincloChatMessage');
+    var inputText = targetElm.val();
 
-    // 入力制限
     var regex = new RegExp($scope.inputRule);
-    if (!regex.test(e.key)) {
-      return false;
+    var changed = '';
+    // 入力された文字列を改行ごとに分割し、設定された正規表現のルールに則っているかチェックする
+    var isMatched = inputText.split(/\r\n|\n/).every(function(string) {
+      var matchResult = string.match(regex);
+      // 入力文字列が適切ではない場合、先頭から適切な文字列のみを取り出して処理を終了する
+      if (matchResult === null || matchResult[0] !== matchResult.input) {
+        changed += (matchResult === null || matchResult.index !== 0) ? '' : matchResult[0];
+        return false;
+      }
+      changed += string + '\n';
+      return true;
+    });
+    if (!isMatched) {
+      targetElm.val(changed);
     }
   });
 
