@@ -1034,7 +1034,7 @@ $headerNo = 1;
           <!-- 担当者表示 -->
           <!-- オートメッセージ企業名表示 -->
           <li>
-            <span class="require"><label>オートメッセージ企業名</label></span>
+            <span class="require"><label>オートメッセージの企業名</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_automessage_name', [
                   'type' => 'radio',
                   'options' => $widgetShowChoices,
