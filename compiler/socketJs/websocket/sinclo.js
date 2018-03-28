@@ -1109,11 +1109,25 @@
           }
 
           // オートメッセージか、Sorryメッセージ、企業からのメッセージで表示名を使用しない場合
-          if ( Number(chat.messageType) === 3 || Number(chat.messageType) === 4 || Number(chat.messageType) === 21 || Number(chat.messageType) === 22 || Number(chat.messageType) === 23 || (Number(chat.messageType) === 2 && window.sincloInfo.widget.showName !== 1) ) {
-            userName = window.sincloInfo.widget.subTitle;
+          console.log("window.sincloInfo.widget.showName: %s window.sincloInfo.widget.showAutomessageName: %s",window.sincloInfo.widget.showName,window.sincloInfo.widget.showAutomessageName);
+          if ( Number(chat.messageType) === 3
+            || Number(chat.messageType) === 4
+            || Number(chat.messageType) === 21
+            || Number(chat.messageType) === 22
+            || Number(chat.messageType) === 23
+            || Number(chat.messageType) === 27 ) {
+            if(window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = window.sincloInfo.widget.subTitle;
+            } else if(window.sincloInfo.widget.showAutomessageName === 3) {
+              userName = "";
+            }
           }
           else if ( Number(chat.messageType) === 2 ) {
-            userName = chat.userName;
+            if(window.sincloInfo.widget.showName === 2) {
+              userName = window.sincloInfo.widget.subTitle;
+            } else if(window.sincloInfo.widget.showName === 3) {
+              userName = "";
+            }
           }
 
           if(chat.showTextarea && chat.showTextarea === "1") {
@@ -1122,7 +1136,7 @@
             sinclo.hideTextarea();
           }
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
-          if( Number(chat.messageType) === 6 ) {
+          if( Number(chat.messageType) === 6 || Number(chat.messageType) === 27 ) {
             // ファイル送信チャット表示
             if(chat.deleteFlg === 0) {
               this.chatApi.createSendFileMessage(JSON.parse(chat.message), userName);
@@ -1231,7 +1245,17 @@
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
-          userName = sinclo.chatApi.opUser;
+          switch(sincloInfo.widget.showName) {
+            case 1:
+              userName = sinclo.chatApi.opUser;
+              break;
+            case 2:
+              userName = sincloInfo.widget.subTitle;
+              break;
+            case 3:
+              userName = "";
+              break;
+          }
         }
         else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
           cn = "sinclo_se";
@@ -1240,7 +1264,8 @@
         if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
-            || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection) {
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           if(obj.tabId === userInfo.tabId) {
             this.chatApi.scDown();
             return false;
@@ -1252,7 +1277,7 @@
             return false;
           }
         }
-        if (obj.messageType === sinclo.chatApi.messageType.sendFile) {
+        if (obj.messageType === sinclo.chatApi.messageType.sendFile || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           sinclo.chatApi.call();
           this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
           this.chatApi.scDown();
@@ -1335,7 +1360,8 @@
       if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
         || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
         || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
-        || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection) {
+        || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
+        || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
         if(obj.tabId === userInfo.tabId) {
           this.chatApi.scDown();
           return false;
@@ -1343,6 +1369,12 @@
           // 別タブで表示したシナリオメッセージは表示する
           cn = "sinclo_re";
         }
+      }
+
+      if (obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
+        this.chatApi.createSendFileMessage(JSON.parse(obj.message), sincloInfo.widget.subTitle);
+        this.chatApi.scDown();
+        return false;
       }
 
       this.chatApi.createMessageUnread(cn, obj.message, sincloInfo.widget.subTitle);
@@ -1640,7 +1672,8 @@
             message: {
               text: 21,
               hearing: 22,
-              selection: 23
+              selection: 23,
+              receiveFile: 27,
             }
           }
         },
@@ -1831,14 +1864,28 @@
             .off("click", "input[name^='sinclo-radio']");
           $("input[name^='sinclo-radio']").prop('disabled', true);
         },
+        toggleMessageArea: function() {
+          // シナリオのヒアリングモードのみ有効
+          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
+            if($('#miniFlexBoxHeight').hasClass('hide')) {
+              $('#miniFlexBoxHeight').removeClass('hide');
+              $('#miniSincloChatMessage').attr('type', 'number');
+            } else {
+              $('#miniFlexBoxHeight').addClass('hide');
+              $('#flexBoxHeight').removeClass('hide');
+              $('#miniSincloChatMessage').attr('type', 'text');
+            }
+          }
+        },
         addKeyDownEventToSendChat: function() {
+
           // 重複登録防止
-          $('#sincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
-          $('#sincloChatMessage').on("keydown", sinclo.chatApi.handleKeyDown);
+          $('#sincloChatMessage, #miniSincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
+          $('#sincloChatMessage, #miniSincloChatMessage').on("keydown", sinclo.chatApi.handleKeyDown);
         },
         removeKeyDownEventToSendChat: function() {
           if(!('chatTrigger' in window.sincloInfo.widget) || !(window.sincloInfo.widget.chatTrigger === 2)){
-            $('#sincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
+            $('#sincloChatMessage, #miniSincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
           }
         },
         handleKeyDown: function(e) {
@@ -2060,13 +2107,13 @@
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
             if ( check.isset(cName) === false ) {
-              cName = window.sincloInfo.widget.subTitle;
+              cName = "";
             }
             check.escape_html(cName); // エスケープ
 
             if ( cs === "sinclo_re" ) {
               div.style.textAlign = "left";
-              if(Number(window.sincloInfo.widget.showName) !== 3) {
+              if(cName !== "") {
                 content = "<span class='cName'>" + cName + "</span>";
               }
             } else if (cs === "sinclo_se") {
@@ -2134,7 +2181,10 @@
             thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(data.extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
 
-          var content = "<span class='cName'>ファイルが送信されました" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showName) !== 3 ? "ファイルが送信されました" : "") + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          if(check.isset(data.message) && data.message !== "") {
+            content += "<span>" + data.message + "</span>";
+          }
           content    += "<div class='sendFileContent'>";
           content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
           content    += "  <div class='sendFileMetaArea'>";
@@ -2932,7 +2982,11 @@
                   console.log("exists id : " + id + " or scenario is processing");
                   return;
                 }
-                sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, sincloInfo.widget.subTitle);
+                var userName = sincloInfo.widget.subTitle;
+                if(window.sinclo.widget.showAutomessageName === 3) {
+                  userName = "";
+                }
+                sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, "");
                 sinclo.chatApi.scDown();
                 var prev = sinclo.chatApi.autoMessages.getByArray();
 
@@ -3665,10 +3719,12 @@
       _end: function() {
         // シナリオ終了
         var self = sinclo.scenarioApi;
-        self._saveProcessingState(false);
-        self._enablePreviousRadioButton();
-        self._unsetBaseObj();
-        self.setPlaceholderMessage(self.getPlaceholderMessage());
+        self._saveStoredMessage(function(){
+          self._saveProcessingState(false);
+          self._enablePreviousRadioButton();
+          self._unsetBaseObj();
+          self.setPlaceholderMessage(self.getPlaceholderMessage());
+        });
       },
       isProcessing: function() {
         var self = sinclo.scenarioApi;
@@ -3889,7 +3945,8 @@
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
-          sinclo.chatApi.createMessage('sinclo_re', message, window.sincloInfo.widget.subTitle);
+          var name = (sincloInfo.widget.showAutomessageName === 3 ? "" : sincloInfo.widget.subTitle);
+          sinclo.chatApi.createMessage('sinclo_re', message, name, true);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
           // ローカルに蓄積しておく
@@ -3902,7 +3959,7 @@
         var self = sinclo.scenarioApi;
         resultDataSet.message = self._replaceVariable(resultDataSet.message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
-          sinclo.chatApi.createSendFileMessage(resultDataSet, window.sincloInfo.widget.subTitle);
+          sinclo.chatApi.createSendFileMessage(resultDataSet, "auto");
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
           // ローカルに蓄積しておく
@@ -4482,6 +4539,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._receiveFile;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._getDownloadInfo(function (result) {
               if (result.success) {
                 if (result.deleted) {
@@ -4489,6 +4547,7 @@
                 } else {
                   var splitedFileName = result.downloadUrl.split('.');
                   result.extension = splitedFileName[splitedFileName.length - 1].toLowerCase();
+                  result.message = self._parent.get(self._parent._lKey.currentScenario).message;
                   self._parent._showFileTypeMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, result, 0, self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
                     if(self._parent._goToNextScenario()) {
                       self._parent._process();

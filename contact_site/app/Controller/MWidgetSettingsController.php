@@ -20,7 +20,7 @@ class MWidgetSettingsController extends AppController {
       /* カラー設定end */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
+    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
   ];
 
   public function beforeRender(){
@@ -242,6 +242,7 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetDisplayType', Configure::read('WidgetDisplayType'));
     $this->set('widgetPositionType', Configure::read('widgetPositionType'));
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
+    $this->set('widgetShowAutomessageNameType', Configure::read('widgetShowAutomessageNameType'));
     $this->set('chatMessageDesignType', Configure::read('chatMessageDesignType'));
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
     $this->set('chatMessageCopy', Configure::read('chatMessageCopy'));
@@ -511,6 +512,9 @@ class MWidgetSettingsController extends AppController {
             }
             if ( strcmp($v, 'show_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
+            }
+            if ( strcmp($v, 'show_automessage_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_automessage_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
             }
             if ( strcmp($v, 'chat_message_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_message_design_type'] = C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX; // デフォルト値

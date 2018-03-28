@@ -1036,7 +1036,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       var descriptionLength = 15;
       switch (siz) {
        //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
-      case 1: //小
+        case 1: //小
           titleLength = 12;
           subTitleLength = 15;
           descriptionLength = 15;
@@ -1064,6 +1064,35 @@ sincloApp.controller('WidgetCtrl', function($scope){
 //       if(settingDescription.value.length > descriptionLength){
 //         $scope.description = settingDescription.value.substring(0, descriptionLength);
 //       }
+    }
+
+    $scope.revertStandardTextSize = function(target) {
+      var widgetSize = $scope.widgetSizeTypeToggle;
+      var size = 0;
+      switch(target + widgetSize) {
+        case 'header_text_size1':
+          size = 14;
+          break;
+        case 'header_text_size2':
+        case 'header_text_size3':
+          size = 15;
+          break;
+        case 're_text_size1':
+          size = 12;
+          break;
+        case 're_text_size2':
+        case 're_text_size3':
+          size = 13;
+          break;
+        case 'se_text_size1':
+          size = 12;
+          break;
+        case 'se_text_size2':
+        case 'se_text_size3':
+          size = 13;
+          break;
+      }
+      $scope[target] = size;
     }
 
     //最小化時のデザインがクリックされた時の動作
@@ -1137,30 +1166,30 @@ sincloApp.controller('WidgetCtrl', function($scope){
       });
     });
 
-    angular.element('#MWidgetSettingUploadImage').change(function(e){
-        var files = e.target.files;
-        if ( window.URL && files.length > 0 ) {
-            var file = files[files.length-1];
-            // 2MB以下である
-            if (file.size > 2000000) {
-                $("#MWidgetSettingUploadImage").val("");
-                return false;
-            }
-            // jpeg/jpg/png
-            var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
-            if ( !reg.exec(file.type) ) {
-                $("#MWidgetSettingUploadImage").val("");
-                return false;
-            }
-            var url = window.URL.createObjectURL(file);
+    angular.element('#fileTagWrap').click(function(e){
+      $("#MWidgetSettingUploadImage").val("");
+    });
 
-          openTrimmingDialog(function(){
-            beforeTrimmingInit(url, $('#trim'));
-            trimmingInit($scope, null, 62 / 70);
-          });
-            // $scope.main_image = url;
-            // $scope.$apply();
+    angular.element('#MWidgetSettingUploadImage').change(function(e){
+      var files = e.target.files;
+      if ( window.URL && files.length > 0 ) {
+        var file = files[files.length-1];
+        // jpeg/jpg/png
+        var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+        if ( !reg.exec(file.type) ) {
+            $("#MWidgetSettingUploadImage").val("");
+            $scope.uploadImageError = "画像はpng,jpeg,jpgのいずれかのみ利用可能です"
         }
+
+        var url = window.URL.createObjectURL(file);
+
+        openTrimmingDialog(function(){
+          beforeTrimmingInit(url, $('#trim'));
+          trimmingInit($scope, null, 62 / 70);
+        });
+          // $scope.main_image = url;
+          // $scope.$apply();
+      }
     });
 
     angular.element(window).on("click", ".widgetCtrl", function(e){
@@ -1340,6 +1369,10 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.switchWidget(3);
     });
 
+    angular.element(window).on("focus", ".showNormal", function(e){
+      $scope.switchWidget(1);
+    });
+
     angular.element(window).on("focus", ".showHeader", function(e){
         if ( $scope.showWidgetType === 1 ) return false;
 //        if ( $scope.showWidgetType === 3 ) {
@@ -1371,7 +1404,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     //位置調整
     $scope.$watch(function(){
-      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType, 'widgetSizeType': $scope.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.chat_radio_behavior, 'chat_trigger': $scope.chat_trigger, 'show_name': $scope.show_name, 'widget.showTab': $scope.widget.showTab, 'sp_maximize_size_type': $scope.sp_maximize_size_type};
+      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType, 'widgetSizeType': $scope.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.chat_radio_behavior, 'chat_trigger': $scope.chat_trigger, 'show_name': $scope.show_name, 'show_automessage_name': $scope.show_automessage_name, 'widget.showTab': $scope.widget.showTab, 'sp_maximize_size_type': $scope.sp_maximize_size_type};
     },
     function(){
       var main = document.getElementById("miniTarget");

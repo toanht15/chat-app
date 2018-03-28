@@ -73,6 +73,9 @@ gulp.task('js-minify-dev', function(){
   uglifyOpt.compress.drop_debugger = false;
   return gulp.src(path.js)
     .pipe(uglify(uglifyOpt))
+    .on('error', function(e){
+      console.log(e);
+    })
     .pipe(rename({
       extname: '.min.js'
     }))
