@@ -7,6 +7,7 @@
     #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
     #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; margin: 0;color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
     #sincloBox.open #minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+    #sincloBox div.widgetHeaderWrap:hover #widgetTitle { opacity: 0.75; }
     /*
           #sincloBox:not(.open) #addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
 */
@@ -67,12 +68,13 @@
     #sincloBox section#chatTab #messageBox.messageBox.details:not(.notNone){ border-top: none; }
     .disableCopy{ user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }
   </style>
-  <!-- chat_message_copy 0 stayt -->
-  <div ng-if="chat_message_copy == '0'">
-    <!-- タイトル -->
-    <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" >{{title}}</p>
-    <!-- タイトル -->
-  </div>
+  <div class="widgetHeaderWrap">
+    <!-- chat_message_copy 0 stayt -->
+    <div ng-if="chat_message_copy == '0'">
+      <!-- タイトル -->
+      <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" >{{title}}</p>
+      <!-- タイトル -->
+    </div>
   <!-- chat_message_copy 0 end -->
 
   <!-- chat_message_copy 1 stayt -->
@@ -84,6 +86,7 @@
   <!-- chat_message_copy 1 end -->
 
   <div id="minimizeBtn" class="widgetOpener"></div>
+  </div>
   <!--
       <div id="addBtn" class="widgetOpener"></div>
    -->
