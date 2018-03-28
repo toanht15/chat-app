@@ -1109,11 +1109,25 @@
           }
 
           // オートメッセージか、Sorryメッセージ、企業からのメッセージで表示名を使用しない場合
-          if ( Number(chat.messageType) === 3 || Number(chat.messageType) === 4 || Number(chat.messageType) === 21 || Number(chat.messageType) === 22 || Number(chat.messageType) === 23 || Number(chat.messageType) === 27 || (Number(chat.messageType) === 2 && window.sincloInfo.widget.showName !== 1) ) {
-            userName = window.sincloInfo.widget.subTitle;
+          console.log("window.sincloInfo.widget.showName: %s window.sincloInfo.widget.showAutomessageName: %s",window.sincloInfo.widget.showName,window.sincloInfo.widget.showAutomessageName);
+          if ( Number(chat.messageType) === 3
+            || Number(chat.messageType) === 4
+            || Number(chat.messageType) === 21
+            || Number(chat.messageType) === 22
+            || Number(chat.messageType) === 23
+            || Number(chat.messageType) === 27 ) {
+            if(window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = window.sincloInfo.widget.subTitle;
+            } else if(window.sincloInfo.widget.showAutomessageName === 3) {
+              userName = "";
+            }
           }
           else if ( Number(chat.messageType) === 2 ) {
-            userName = chat.userName;
+            if(window.sincloInfo.widget.showName === 2) {
+              userName = window.sincloInfo.widget.subTitle;
+            } else if(window.sincloInfo.widget.showName === 3) {
+              userName = "";
+            }
           }
 
           if(chat.showTextarea && chat.showTextarea === "1") {
@@ -1840,14 +1854,28 @@
             .off("click", "input[name^='sinclo-radio']");
           $("input[name^='sinclo-radio']").prop('disabled', true);
         },
+        toggleMessageArea: function() {
+          // シナリオのヒアリングモードのみ有効
+          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
+            if($('#miniFlexBoxHeight').hasClass('hide')) {
+              $('#miniFlexBoxHeight').removeClass('hide');
+              $('#miniSincloChatMessage').attr('type', 'number');
+            } else {
+              $('#miniFlexBoxHeight').addClass('hide');
+              $('#flexBoxHeight').removeClass('hide');
+              $('#miniSincloChatMessage').attr('type', 'text');
+            }
+          }
+        },
         addKeyDownEventToSendChat: function() {
+
           // 重複登録防止
-          $('#sincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
-          $('#sincloChatMessage').on("keydown", sinclo.chatApi.handleKeyDown);
+          $('#sincloChatMessage, #miniSincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
+          $('#sincloChatMessage, #miniSincloChatMessage').on("keydown", sinclo.chatApi.handleKeyDown);
         },
         removeKeyDownEventToSendChat: function() {
           if(!('chatTrigger' in window.sincloInfo.widget) || !(window.sincloInfo.widget.chatTrigger === 2)){
-            $('#sincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
+            $('#sincloChatMessage, #miniSincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
           }
         },
         handleKeyDown: function(e) {
@@ -2069,13 +2097,13 @@
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
             if ( check.isset(cName) === false ) {
-              cName = window.sincloInfo.widget.subTitle;
+              cName = "";
             }
             check.escape_html(cName); // エスケープ
 
             if ( cs === "sinclo_re" ) {
               div.style.textAlign = "left";
-              if(Number(window.sincloInfo.widget.showName) !== 3) {
+              if(cName !== "") {
                 content = "<span class='cName'>" + cName + "</span>";
               }
             } else if (cs === "sinclo_se") {
@@ -2944,7 +2972,11 @@
                   console.log("exists id : " + id + " or scenario is processing");
                   return;
                 }
-                sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, sincloInfo.widget.subTitle);
+                var userName = sincloInfo.widget.subTitle;
+                if(window.sinclo.widget.showAutomessageName === 3) {
+                  userName = "";
+                }
+                sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, "");
                 sinclo.chatApi.scDown();
                 var prev = sinclo.chatApi.autoMessages.getByArray();
 
@@ -3903,7 +3935,7 @@
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
-          sinclo.chatApi.createMessage('sinclo_re', message, window.sincloInfo.widget.subTitle);
+          sinclo.chatApi.createMessage('sinclo_re', message, "auto", true);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
           // ローカルに蓄積しておく
@@ -3916,7 +3948,7 @@
         var self = sinclo.scenarioApi;
         resultDataSet.message = self._replaceVariable(resultDataSet.message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
-          sinclo.chatApi.createSendFileMessage(resultDataSet, window.sincloInfo.widget.subTitle);
+          sinclo.chatApi.createSendFileMessage(resultDataSet, "auto");
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
           // ローカルに蓄積しておく
@@ -4496,6 +4528,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._receiveFile;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._getDownloadInfo(function (result) {
               if (result.success) {
                 if (result.deleted) {

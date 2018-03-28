@@ -176,12 +176,17 @@ router.get("/", function(req, res, next) {
                   reTextSize = settings.reTextSize;
                 }
 
+                var showAutomessageName = 2; // 企業名表示
+                if(('showAutomessageName' in settings)) {
+                  showAutomessageName = settings.showAutomessageName;
+                }
 
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
                   showTime: isNumeric(settings.showTime),
                   showName: isNumeric(settings.showName),
+                  showAutomessageName: isNumeric(showAutomessageName),
                   showPosition: isNumeric(settings.showPosition),
                   //ウィジットサイズ対応
                   widgetSizeType: isNumeric(settings.widgetSizeType),

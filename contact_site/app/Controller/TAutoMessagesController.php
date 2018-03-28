@@ -1362,6 +1362,9 @@ class TAutoMessagesController extends AppController {
             if ( strcmp($v, 'show_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
             }
+            if ( strcmp($v, 'show_automessage_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_automessage_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
+            }
             if ( strcmp($v, 'chat_message_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_message_design_type'] = C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX; // デフォルト値
             }
