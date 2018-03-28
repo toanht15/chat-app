@@ -1130,7 +1130,7 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('show_name') ) echo $this->Form->error('show_name', null, ['wrap' => 'li']); ?>
           <!-- 担当者表示 -->
-          <!-- 企業名表示（自動返信時） -->
+          <!-- オートメッセージ企業名表示 -->
           <li>
             <span class="require"><label>オートメッセージ企業名表示</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_automessage_name', [
@@ -1148,10 +1148,10 @@ $headerNo = 1;
                   ]) ?></label></pre>
           </li>
           <?php if ( $this->Form->isFieldError('show_automessage_name') ) echo $this->Form->error('show_automessage_name', null, ['wrap' => 'li']); ?>
-          <!-- 担当者表示 -->
+          <!-- オートメッセージ企業名表示 -->
           <!-- ウィジェットの表示   -->
           <li>
-            <span class="require"><label>有人チャット担当者表示</label></span>
+            <span class="require"><label>吹き出しの見出し表示</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_op_name', [
                   'type' => 'radio',
                   'options' => $normalChoices,
