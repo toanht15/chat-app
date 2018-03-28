@@ -405,6 +405,12 @@ $config['normalChoices'] = [
   C_SELECT_CAN_NOT => "しない"
 ];
 
+/* ウィジェット設定 ー Web接客コード */
+$config['widgetShowChoices'] = [
+  C_SELECT_CAN => "表示する",
+  C_SELECT_CAN_NOT => "表示しない"
+];
+
 /* ウィジェット設定 － 表示設定種別 */
 $config['WidgetDisplayType'] = [
     1 => "常に表示する",
