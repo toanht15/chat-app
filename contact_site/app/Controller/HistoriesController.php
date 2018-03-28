@@ -6,7 +6,7 @@
 class HistoriesController extends AppController {
   public $helpers = ['Time'];
   public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
-  public $components = ['Landscape'];
+  public $components = ['LandscapeLbcAPI'];
   public $paginate = [
     'THistory' => [
       'limit' => 100,

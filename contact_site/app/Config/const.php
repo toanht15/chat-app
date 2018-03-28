@@ -426,6 +426,12 @@ $config['widgetShowNameType'] = [
     C_WIDGET_SHOW_NONE => "表示しない"
 ];
 
+/* ウィジェット設定 － 表示名種別 */
+$config['widgetShowAutomessageNameType'] = [
+  C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>",
+  C_WIDGET_SHOW_NONE => "表示しない"
+];
+
 /* ウィジェット設定 － 吹き出しデザイン */
 $config['chatMessageDesignType'] = [
   C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX => "BOX型（サイズ固定）",

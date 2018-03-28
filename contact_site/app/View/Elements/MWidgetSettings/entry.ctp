@@ -302,6 +302,7 @@ $headerNo = 1;
                 <label style=" flex-basis:154px; ">ヘッダー文字サイズ</label>
                 <?= $this->ngForm->input('header_text_size', [
                 'type' => 'number',
+                'class' => 'showNormal',
                 'max-length' => '20',
                 'placeholder' => '',
                 'div' => false,
@@ -352,6 +353,7 @@ $headerNo = 1;
                 <label style=" flex-basis:154px; ">企業側吹き出し文字サイズ</label>
                   <?= $this->ngForm->input('re_text_size', [
                     'type' => 'number',
+                    'class' => 'showNormal',
                     'max-length' => '20',
                     'placeholder' => '',
                     'div' => false,
@@ -398,6 +400,7 @@ $headerNo = 1;
                 <label style=" flex-basis:154px; ">訪問者吹き出し文字サイズ</label>
                   <?= $this->ngForm->input('se_text_size', [
                     'type' => 'number',
+                    'class' => 'showNormal',
                     'max-length' => '20',
                     'placeholder' => '',
                     'div' => false,
@@ -950,12 +953,13 @@ $headerNo = 1;
                 </div>
                 <div id="picChooseDiv">
                   <div class="greenBtn btn-shadow" ng-click="showGallary()">ギャラリーから選択</div>
-                  <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage'); ?>画像をアップロード</div>
+                  <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage', array('accept' => '.png,.jpeg,.jpg')); ?>画像をアップロード</div>
                   <input type="hidden" name="data[Trimming][info]" ng-model="trimmingInfo" id="TrimmingInfo" />
                 </div>
               </div>
               <?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
               <?php if ($this->Form->isFieldError('uploadImage')) echo $this->Form->error('uploadImage', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
+              <span ng-if="uploadImageError">{{uploadImageError}}</span>
               <label class="pointer" for="showMainImage2"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage2" value="2" >画像を表示しない</label>
             </div>
           </li>
@@ -1105,6 +1109,25 @@ $headerNo = 1;
               ]) ?></label></pre>
           </li>
           <?php if ( $this->Form->isFieldError('show_name') ) echo $this->Form->error('show_name', null, ['wrap' => 'li']); ?>
+          <!-- 担当者表示 -->
+          <!-- 企業名表示（自動返信時） -->
+          <li>
+            <span class="require"><label>自動返信時企業名表示</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('show_automessage_name', [
+                  'type' => 'radio',
+                  'options' => $widgetShowAutomessageNameType,
+                  'legend' => false,
+                  'separator' => '</label><br><label class="pointer">',
+                  'class' => 'showChat',
+                  'div' => false,
+                  'label' => false,
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.show_automessage_name'
+                  ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('show_automessage_name') ) echo $this->Form->error('show_automessage_name', null, ['wrap' => 'li']); ?>
           <!-- 担当者表示 -->
           <!-- 吹き出しデザイン -->
           <li>
