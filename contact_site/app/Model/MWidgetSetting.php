@@ -9,7 +9,7 @@ class MWidgetSetting extends AppModel {
 
     public $name = "MWidgetSetting";
 
-    public $styleColumns = [
+    public $styleColumns = array(
       'show_timing' => "showTiming",
       'max_show_timing_site' => "maxShowTimingSite",
       'max_show_timing_page' => "maxShowTimingPage",
@@ -17,6 +17,7 @@ class MWidgetSetting extends AppModel {
       'max_show_time' => "maxShowTime",
       'max_show_time_page' => "maxShowTimePage",
       'show_position' => "showPosition",
+      'show_access_id' => "showAccessId",
       //ウィジットサイズ対応
       'widget_size_type' => "widgetSizeType",
       //ウィジットサイズ対応
@@ -98,6 +99,7 @@ class MWidgetSetting extends AppModel {
       'tel' => "tel",
       'show_name' => "showName",
       'show_automessage_name' => "showAutomessageName",
+      'show_op_name' => "showOpName",
       'chat_message_design_type' => "chatMessageDesignType",
       'chat_message_with_animation' => "chatMessageWithAnimation",
       'show_description' => "showDescription",
@@ -111,7 +113,7 @@ class MWidgetSetting extends AppModel {
       'sp_auto_open_flg' => "spAutoOpenFlg",
       'sp_maximize_size_type' => "spMaximizeSizeType",
       'content' => "content"
-    ];
+    );
 
     /**
      * Validation rules
