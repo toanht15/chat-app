@@ -134,7 +134,7 @@ $headerNo = 1;
           <!-- Web接客コード表示 -->
           <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && !$coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
           <li>
-            <span class="require"><label>Web接客コード表示</label></span>
+            <span class="require"><label>ウェブ接客コード表示</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_access_id', [
                   'type' => 'radio',
                   'options' => $widgetShowAccessId,
