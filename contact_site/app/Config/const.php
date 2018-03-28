@@ -1,6 +1,5 @@
 <?php
 /* 定数定義 */
-define('APP_MODE_DEV', true);
 define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
 // AWS: S3
@@ -403,6 +402,12 @@ $config['dictionaryType'] = [
 $config['normalChoices'] = [
   C_SELECT_CAN => "する",
   C_SELECT_CAN_NOT => "しない"
+];
+
+/* ウィジェット設定 ー Web接客コード */
+$config['widgetShowChoices'] = [
+  C_SELECT_CAN => "表示する",
+  C_SELECT_CAN_NOT => "表示しない"
 ];
 
 /* ウィジェット設定 － 表示設定種別 */
