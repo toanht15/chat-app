@@ -1140,22 +1140,24 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   return {
     restrict: 'E',
     replace: true,
-    template: '<textarea style="font-size: 13px; padding: 5px; line-height: 1.5;"></textarea>',
+    template: '<textarea style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea>',
     link: function(scope, element, attrs) {
-      var maxRow = element[0].dataset.maxRow || 10;                   // 表示可能な最大行数
-      var fontSize = parseFloat(element[0].style.fontSize, 10);       // 行数計算のため、templateにて設定したフォントサイズを取得
-      var paddingSize = parseFloat(element[0].style.padding, 10) * 2; // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
-      var lineHeight = parseFloat(element[0].style.lineHeight, 10);   // 表示高さの計算のため、templateにて設定した行の高さを取得
+      var maxRow = element[0].dataset.maxRow || 10;                       // 表示可能な最大行数
+      var fontSize = parseFloat(element[0].style.fontSize, 10);           // 行数計算のため、templateにて設定したフォントサイズを取得
+      var borderSize = parseFloat(element[0].style.borderWidth, 10) * 2;  // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
+      var paddingSize = parseFloat(element[0].style.padding, 10) * 2;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
+      var lineHeight = parseFloat(element[0].style.lineHeight, 10);       // 表示高さの計算のため、templateにて設定した行の高さを取得
       var elm = angular.element(element[0]);
 
       function autoResize() {
-        var clientWidth = elm[0].clientWidth - paddingSize;
+        // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
+        var areaWidth = elm[0].getBoundingClientRect().width - borderSize - paddingSize;
 
-        // フォントサイズとテキストエリアの横幅を基に、行数を計算する
+        // フォントサイズとテキストエリアのサイズを基に、行数を計算する
         var textRow = 0;
         elm[0].value.split('\n').forEach(function(string) {
           var stringWidth = string.length * fontSize;
-          textRow += Math.max(Math.ceil(stringWidth/clientWidth), 1);
+          textRow += Math.max(Math.ceil(stringWidth/areaWidth), 1);
         });
 
         // 表示する行数に応じて、テキストエリアの高さを調整する
