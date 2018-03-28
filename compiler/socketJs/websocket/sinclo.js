@@ -3945,7 +3945,8 @@
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
-          sinclo.chatApi.createMessage('sinclo_re', message, "auto", true);
+          var name = (sincloInfo.widget.showAutomessageName === 3 ? "" : sincloInfo.widget.subTitle);
+          sinclo.chatApi.createMessage('sinclo_re', message, name, true);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
           // ローカルに蓄積しておく
