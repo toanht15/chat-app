@@ -248,6 +248,7 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
     $this->set('chatMessageCopy', Configure::read('chatMessageCopy'));
     $this->set('normalChoices', Configure::read('normalChoices')); // はい・いいえ
+    $this->set('widgetShowChoices', Configure::read('widgetShowChoices')); // 表示する・表示しない
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
     $this->set('spMiximizeSizeType', Configure::read('widgetSpMiximizeSizeType'));

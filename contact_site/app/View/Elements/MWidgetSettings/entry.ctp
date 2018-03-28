@@ -1132,10 +1132,10 @@ $headerNo = 1;
           <!-- 担当者表示 -->
           <!-- オートメッセージ企業名表示 -->
           <li>
-            <span class="require"><label>オートメッセージ企業名表示</label></span>
+            <span class="require"><label>オートメッセージ企業名</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_automessage_name', [
                   'type' => 'radio',
-                  'options' => $normalChoices,
+                  'options' => $widgetShowChoices,
                   'legend' => false,
                   'separator' => '</label><br><label class="pointer">',
                   'class' => 'showChat',
@@ -1151,10 +1151,10 @@ $headerNo = 1;
           <!-- オートメッセージ企業名表示 -->
           <!-- ウィジェットの表示   -->
           <li>
-            <span class="require"><label>吹き出しの見出し表示</label></span>
+            <span class="require"><label>吹き出しの見出し</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_op_name', [
                   'type' => 'radio',
-                  'options' => $normalChoices,
+                  'options' => $widgetShowChoices,
                   'legend' => false,
                   'separator' => '</label><br><label class="pointer">',
                   'div' => false,
