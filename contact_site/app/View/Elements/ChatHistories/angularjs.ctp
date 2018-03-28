@@ -654,6 +654,7 @@
           }
 
           var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+          content += '<p>' + message.message + '</p>';
           content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
         }
       }
