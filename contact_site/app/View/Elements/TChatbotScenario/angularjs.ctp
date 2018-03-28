@@ -70,7 +70,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $scope.$apply();
 
       // 並び替え後、変数のチェックを行う
-      var elms = event.target.querySelectorAll('li.set_action_item');
+      var elms = document.querySelectorAll('li.set_action_item');
       $scope.setActionList.forEach(function(actionItem, index) {
         actionValidationCheck(elms[index], $scope.setActionList, actionItem);
       });
@@ -86,7 +86,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   this.addItem = function(actionType) {
     if (actionType in $scope.actionList) {
       var item = $scope.actionList[actionType];
-      item.actionType = actionType;
+      item.actionType = actionType.toString();
       $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
 
       // 表示位置調整
@@ -151,6 +151,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $scope.changeFlg = true;
       }
 
+      // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
+      var variables = searchObj(newObject, /^variableName$/);
+      if (!variables && variables.length > 1 && elms.length >= 1) {
+        var elms = document.querySelectorAll('li.set_action_item');
+        $scope.setActionList.forEach(function(actionItem, index) {
+          actionValidationCheck(elms[index], $scope.setActionList, actionItem);
+        });
+      }
+
       // プレビューに要素がない場合、以降の処理は実行しない
       if (document.getElementById('action' + index + '_preview') === null) {
         return;
@@ -194,7 +203,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * uploadFile ファイルアップロード
+   * ファイルアップロード
    * @param String  actionStep  アクション番号
    * @param File    fileObj     Fileオブジェクト
    * @param Blob    loadFile    Blobオブジェクト
@@ -298,7 +307,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         cache: false,
         url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
         success: function(){
-          // 不要な一時保存データを削除する
           LocalStorageService.remove($scope.storageKey);
 
           // 一覧ページへ遷移する
@@ -310,7 +318,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * addActionItemList
    * ヒアリング、選択肢、メール送信のリスト追加
    * （選択肢・メール送信ではリストの末尾に、ヒアリングではリストの任意の箇所に追加する）
    * @param String  actionStep  アクション番号
@@ -368,7 +375,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       targetObjList = $scope.setActionList[actionStep].hearings;
-      selector = '#action' + actionStep + '_setting .itemListGroup tr:nth-child(2n+2)';
+      selector = '#action' + actionStep + '_setting .itemListGroup';
     } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
       targetObjList = $scope.setActionList[actionStep].selection.options;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
@@ -497,7 +504,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataText
    * テキスト発言のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -509,7 +515,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataHearing
    * ヒアリングのバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -537,7 +542,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataSelectOption
    * 選択肢のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -562,7 +566,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataSendMail
    * メール送信のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -588,7 +591,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * trimDataCallScenario
    * シナリオ呼び出しのバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -601,7 +603,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   /**
-   * trimDataExternalApi
    * 外部システム連携のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -636,7 +637,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   /**
-   * trimDataSendFile
    * ファイル送信のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
@@ -651,7 +651,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
-      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup tr:nth-child(2n+2)');
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
       var targetObjList = $scope.setActionList[actionStep].hearings;
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
     });
@@ -692,7 +692,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * controllListView
    * 選択肢、ヒアリング、メール送信のリストに対して、追加・削除ボタンの表示状態を更新する
    * @param String  actionType      アクション種別
    * @param Object  targetElmList   対象のリスト要素(jQueryオブジェクト)
@@ -918,7 +917,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * doAction
    * アクションの実行
    * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
    */
@@ -1067,20 +1065,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
 
         // 取得したシナリオのアクション情報を、setActionList内に詰める
-        var list = Array.prototype.slice.call($scope.setActionList);
-        list.every(function(param, key) {
+        angular.forEach($scope.setActionList, function(scenario, key) {
           if (key == $scope.actionStep) {
             for (var exKey in activity.scenarios) {
               scenarios[idx++] = activity.scenarios[exKey];
             }
-            // 取得したシナリオを追加後、フラグを見て続けるか判断する
-            if (!isNext || isNext != '1') {
-              return false;
-            }
-          } else {
+          } else
+          if (isNext == 1 || key <= $scope.actionStep) {
             scenarios[idx++] = $scope.setActionList[key];
           }
-          return true;
         });
         $scope.setActionList = scenarios;
       } catch(e) {
@@ -1151,7 +1144,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     link: function(scope, element, attrs) {
       var maxRow = element[0].dataset.maxRow || 10;                   // 表示可能な最大行数
       var fontSize = parseFloat(element[0].style.fontSize, 10);       // 行数計算のため、templateにて設定したフォントサイズを取得
-      var paddingSize = parseFloat(element[0].style.padding, 10) * 2; // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得
+      var paddingSize = parseFloat(element[0].style.padding, 10) * 2; // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
       var lineHeight = parseFloat(element[0].style.lineHeight, 10);   // 表示高さの計算のため、templateにて設定した行の高さを取得
       var elm = angular.element(element[0]);
 
@@ -1166,17 +1159,18 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         });
 
         // 表示する行数に応じて、テキストエリアの高さを調整する
-        if (elm[0].value.length >= 1) {
-          textRow = (textRow + 1) > maxRow ? maxRow : textRow + 1;
-        }
-        if (textRow > 1) {
-          elm[0].style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+        if (textRow > maxRow) {
+          elm[0].style.height = (maxRow * (fontSize*lineHeight)) + paddingSize + 'px';
+          elm[0].style.overflow = 'auto';
         } else {
-          elm[0].style.height = '';
+          elm[0].style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+          elm[0].style.overflow = 'hidden';
         }
       }
 
+      autoResize();
       scope.$watch(attrs.ngModel, autoResize);
+      $(window).on('load', autoResize);
       $(window).on('resize', autoResize);
       elm[0].addEventListener('input', autoResize);
     }
@@ -1315,7 +1309,13 @@ $(document).ready(function() {
   });
 });
 
-// アクションのバリデーションとエラーメッセージの設定
+/**
+ * アクションのバリデーションとエラーメッセージの設定
+ * @param  Node   element       チェック対象のアクションの要素(エラー表示を行う)
+ * @param  Array  setActionList シナリオ設定のアクション一覧
+ * @param  Object actionItem    チェック対象のオブジェクト
+ * @return Void
+ */
 function actionValidationCheck(element, setActionList, actionItem) {
   var messageList = [];
 
