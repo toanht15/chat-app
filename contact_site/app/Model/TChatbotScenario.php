@@ -49,6 +49,10 @@ class TChatbotScenario extends AppModel {
       return false;
     }
     foreach ($activity['scenarios'] as $key => $action) {
+      if (!is_string($action['actionType'])) {
+        return false;
+      }
+
       if ($action['actionType'] == C_SCENARIO_ACTION_TEXT) {
         // テキスト入力
         if (empty($action['message'])) {
