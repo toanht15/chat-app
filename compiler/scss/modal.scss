@@ -393,6 +393,9 @@
                 font-weight: bold;
                 font-size: 13px;
                 margin: 0 0 5px 0;
+                &.scenarioSendFileMessage {
+                  font-weight: normal;
+                }
               }
 
               div.sendFileContent {

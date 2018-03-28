@@ -1245,7 +1245,17 @@
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
-          userName = sinclo.chatApi.opUser;
+          switch(sincloInfo.widget.showName) {
+            case 1:
+              userName = sinclo.chatApi.opUser;
+              break;
+            case 2:
+              userName = sincloInfo.widget.subTitle;
+              break;
+            case 3:
+              userName = "";
+              break;
+          }
         }
         else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
           cn = "sinclo_se";
@@ -3935,7 +3945,8 @@
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
-          sinclo.chatApi.createMessage('sinclo_re', message, "auto", true);
+          var name = (sincloInfo.widget.showAutomessageName === 3 ? "" : sincloInfo.widget.subTitle);
+          sinclo.chatApi.createMessage('sinclo_re', message, name, true);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
           // ローカルに蓄積しておく

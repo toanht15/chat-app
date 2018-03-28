@@ -154,6 +154,16 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 27) === 0 ) {
+      $className = "sinclo_auto";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = true;
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 98) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が入室しました -";
