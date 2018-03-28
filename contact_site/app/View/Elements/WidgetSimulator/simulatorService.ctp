@@ -68,15 +68,6 @@ sincloApp.factory('SimulatorService', function() {
     get message_box_border_none() {
       return this._settings['message_box_border_color'] === 'なし';
     },
-    get header_text_size() {
-      return Number(this._settings['header_text_size']);
-    },
-    get se_text_size() {
-      return Number(this._settings['se_text_size']);
-    },
-    get re_text_size() {
-      return Number(this._settings['re_text_size']);
-    },
     // 表示タブ
     set showTab(val) {
       this._showTab = val;
