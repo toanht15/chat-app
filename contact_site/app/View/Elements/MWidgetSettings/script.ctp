@@ -1027,14 +1027,14 @@ sincloApp.controller('WidgetCtrl', function($scope){
     }
 
     //ウィジェットサイズがクリックされた時の動作
-    $scope.clickWidgetSizeTypeToggle = function(siz){
+    $scope.clickWidgetSizeTypeToggle = function(size){
       var settingTitle = document.getElementById('MWidgetSettingTitle');
       var settingSubTitle = document.getElementById('MWidgetSettingSubTitle');
       var settingDescription = document.getElementById('MWidgetSettingDescription');
       var titleLength = 12;
       var subTitleLength = 15;
       var descriptionLength = 15;
-      switch (siz) {
+      switch (size) {
        //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
         case 1: //小
           titleLength = 12;
@@ -1064,6 +1064,9 @@ sincloApp.controller('WidgetCtrl', function($scope){
 //       if(settingDescription.value.length > descriptionLength){
 //         $scope.description = settingDescription.value.substring(0, descriptionLength);
 //       }
+      $scope.revertStandardTextSize('header_text_size');
+      $scope.revertStandardTextSize('re_text_size');
+      $scope.revertStandardTextSize('se_text_size');
     }
 
     $scope.revertStandardTextSize = function(target) {

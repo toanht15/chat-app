@@ -1116,17 +1116,17 @@
             || Number(chat.messageType) === 22
             || Number(chat.messageType) === 23
             || Number(chat.messageType) === 27 ) {
-            if(window.sincloInfo.widget.showAutomessageName === 2) {
-              userName = window.sincloInfo.widget.subTitle;
-            } else if(window.sincloInfo.widget.showAutomessageName === 3) {
+            if(check.isset(window.sincloInfo.widget.showAutomessageName) && window.sincloInfo.widget.showAutomessageName === 2) {
               userName = "";
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
             }
           }
           else if ( Number(chat.messageType) === 2 ) {
-            if(window.sincloInfo.widget.showName === 2) {
-              userName = window.sincloInfo.widget.subTitle;
-            } else if(window.sincloInfo.widget.showName === 3) {
+            if(check.isset(window.sincloInfo.widget.showOpName) && window.sincloInfo.widget.showOpName === 2) {
               userName = "";
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
             }
           }
 
@@ -2983,7 +2983,7 @@
                   return;
                 }
                 var userName = sincloInfo.widget.subTitle;
-                if(window.sinclo.widget.showAutomessageName === 3) {
+                if(window.sinclo.widget.showAutomessageName === 2) {
                   userName = "";
                 }
                 sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, "");
@@ -3945,7 +3945,7 @@
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
-          var name = (sincloInfo.widget.showAutomessageName === 3 ? "" : sincloInfo.widget.subTitle);
+          var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
           sinclo.chatApi.createMessage('sinclo_re', message, name, true);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();

@@ -1479,7 +1479,7 @@ var socket, // socket.io
       html += '      <input type="text" name="miniSincloChat" id="miniSincloChatMessage" maxlength="1000" placeholder=" ' + placeholder + ' "></input>';
       html += '      <a id="miniSincloChatSendBtn" class="notSelect" onclick="sinclo.chatApi.push()">送信</a>';
       html += '    </sinclo-div>';
-      if(!check.smartphone() && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document))) {
+      if(!check.smartphone() && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document) || (check.isset(widget.showAccessId) && widget.showAccessId === 1))) {
         html += '    <span id="sincloAccessInfo">ウェブ接客コード：' + userInfo.accessId + '</span>';
       }
       html += '    <audio id="sinclo-sound">';
