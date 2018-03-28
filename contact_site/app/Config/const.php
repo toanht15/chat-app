@@ -419,11 +419,16 @@ $config['widgetPositionType'] = [
     C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
 ];
 
+/* ウィジェット設定 ー Web接客コード */
+$config['widgetShowAccessId'] = [
+  C_SELECT_CAN => "表示する",
+  C_SELECT_CAN_NOT => "表示しない<br>　<s>※ウェブ接客コード（4桁のID）を電話口でヒアリングすることで、リアルタイムモニター上で</s><br><s>　  相手を特定することができます。（電話口の相手のウェブ行動履歴や流入経路の把握が可能）</s>"
+];
+
 /* ウィジェット設定 － 担当者表示名種別 */
 $config['widgetShowNameType'] = [
     C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
-    C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>",
-    C_WIDGET_SHOW_NONE => "表示しない"
+    C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
 ];
 
 /* ウィジェット設定 － 表示名種別 */

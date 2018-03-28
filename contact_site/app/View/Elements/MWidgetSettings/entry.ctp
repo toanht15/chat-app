@@ -131,6 +131,26 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('show_position') ) echo $this->Form->error('show_position', null, ['wrap' => 'li']); ?>
           <!-- 表示位置 -->
+          <!-- Web接客コード表示 -->
+          <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && !$coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+          <li>
+            <span class="require"><label>ウェブ接客コード表示</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('show_access_id', [
+                  'type' => 'radio',
+                  'options' => $widgetShowAccessId,
+                  'legend' => false,
+                  'separator' => '</label><br><label class="pointer">',
+                  'div' => false,
+                  'label' => false,
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.show_access_id'
+                  ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('show_access_id') ) echo $this->Form->error('show_access_id', null, ['wrap' => 'li']); ?>
+          <?php endif; ?>
+          <!-- Web接客コード表示 -->
         </ul>
       </section>
 
@@ -1112,10 +1132,10 @@ $headerNo = 1;
           <!-- 担当者表示 -->
           <!-- 企業名表示（自動返信時） -->
           <li>
-            <span class="require"><label>自動返信時企業名表示</label></span>
+            <span class="require"><label>オートメッセージ企業名表示</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_automessage_name', [
                   'type' => 'radio',
-                  'options' => $widgetShowAutomessageNameType,
+                  'options' => $normalChoices,
                   'legend' => false,
                   'separator' => '</label><br><label class="pointer">',
                   'class' => 'showChat',
@@ -1129,6 +1149,24 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('show_automessage_name') ) echo $this->Form->error('show_automessage_name', null, ['wrap' => 'li']); ?>
           <!-- 担当者表示 -->
+          <!-- ウィジェットの表示   -->
+          <li>
+            <span class="require"><label>有人チャット担当者表示</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('show_op_name', [
+                  'type' => 'radio',
+                  'options' => $normalChoices,
+                  'legend' => false,
+                  'separator' => '</label><br><label class="pointer">',
+                  'div' => false,
+                  'label' => false,
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.show_op_name'
+                  ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('sp_show_flg') ) echo $this->Form->error('sp_show_flg', null, ['wrap' => 'li']); ?>
+          <!-- ウィジェットの表示   -->
           <!-- 吹き出しデザイン -->
           <li>
             <span class="require"><label>吹き出しデザイン</label></span>
