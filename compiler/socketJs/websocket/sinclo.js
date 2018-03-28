@@ -2986,7 +2986,7 @@
                 if(window.sinclo.widget.showAutomessageName === 2) {
                   userName = "";
                 }
-                sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, "");
+                sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, userName);
                 sinclo.chatApi.scDown();
                 var prev = sinclo.chatApi.autoMessages.getByArray();
 

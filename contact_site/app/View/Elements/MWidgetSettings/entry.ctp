@@ -437,7 +437,7 @@ $headerNo = 1;
               <!-- 基本設定色end -->
               <!-- 0.通常設定・高度設定 -->
               <!-- 高度な設定を行う行わないを制御するチェックボックス -->
-              <pre style="margin-top: 136px; margin-left: -3px; margin-bottom: 5px;"><hr class="separator" style="margin: 5px 0 5px 0;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
+              <pre style="margin-top: <?php echo $coreSettings[C_COMPANY_USE_CHAT] ? "136" : "38"?>px; margin-left: -3px; margin-bottom: 5px;"><hr class="separator" style="margin: 5px 0 5px 0;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
                 'type' => 'checkbox',
                 'legend' => false,
                 'ng-checked' => 'color_setting_type === "'.COLOR_SETTING_TYPE_ON.'"',
@@ -1034,7 +1034,7 @@ $headerNo = 1;
           <!-- 担当者表示 -->
           <!-- オートメッセージ企業名表示 -->
           <li>
-            <span class="require"><label>オートメッセージ企業名</label></span>
+            <span class="require"><label>オートメッセージの企業名</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_automessage_name', [
                   'type' => 'radio',
                   'options' => $widgetShowChoices,
