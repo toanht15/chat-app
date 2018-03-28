@@ -1245,7 +1245,17 @@
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
-          userName = sinclo.chatApi.opUser;
+          switch(sincloInfo.widget.showName) {
+            case 1:
+              userName = sinclo.chatApi.opUser;
+              break;
+            case 2:
+              userName = sincloInfo.widget.subTitle;
+              break;
+            case 3:
+              userName = "";
+              break;
+          }
         }
         else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
           cn = "sinclo_se";
