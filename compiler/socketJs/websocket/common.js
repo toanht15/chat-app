@@ -843,6 +843,7 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-code-o:before { content: "\\f1c9" }';
         html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-text-o:before { content: "\\f0f6" }';
         // ------------ファイルフォントアイコン
+        html += '      #sincloBox ul#chatTalk li span.sendFileMessage { color: '+ colorList['reTextColor'] +' }';
         html += '      #sincloBox ul#chatTalk li div.sendFileContent { display: table; table-layout:fixed; width: 100%; height: 64px; white-space: pre-line; margin-bottom: 0; }';
         html += '      #sincloBox ul#chatTalk li div.sendFileContent * { color: '+ colorList['reTextColor'] +' }';
         html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea { display: table-cell; width: 64px; height: 64px; border: 1px solid #D9D9D9; }';
@@ -1062,6 +1063,8 @@ var socket, // socket.io
             html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
           }
           html += '#sincloBox ul#chatTalk li { border-radius: ' + (5 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (5 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; }';
+          html += '#sincloBox ul#chatTalk li.sinclo_se { font-size: ' + (12 * ratio) + 'px; }';
+          html += '#sincloBox ul#chatTalk li.sinclo_re { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li div.sendFileThumbnailArea { display: table-cell; width: ' + (64 * ratio) + 'px; height: ' + (64 * ratio) + 'px; border: 1px solid #D9D9D9; }';
           if(colorList['seBorderNone'] === 0){
             html += '#sincloBox ul#chatTalk li.sinclo_se { border: ' + (1 * ratio) + 'px solid '+ colorList['seBorderColor'] +'; }';

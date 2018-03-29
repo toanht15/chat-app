@@ -1558,7 +1558,7 @@
         // 縦の場合
         var widgetWidth = 0,
             ratio = 0;
-        document.getElementById("flexBoxHeight").style.display = 'none';
+        document.getElementById("flexBoxWrap").style.display = 'none';
         if ( $(window).height() > $(window).width() ) {
           console.log("ratio : " + ratio);
 
@@ -1576,7 +1576,7 @@
         }
         //横の場合
         else {
-          document.getElementById("flexBoxHeight").style.display = 'none';
+          document.getElementById("flexBoxWrap").style.display = 'none';
           var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
           document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
@@ -2188,7 +2188,7 @@
 
           var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showName) !== 3 ? "ファイルが送信されました" : "") + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
           if(check.isset(data.message) && data.message !== "") {
-            content += "<span>" + data.message + "</span>";
+            content += "<span class='sendFileMessage'>" + data.message + "</span>";
           }
           content    += "<div class='sendFileContent'>";
           content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
@@ -3599,7 +3599,7 @@
         "1": '.+',
         "2": '[0-9]+',
         "3": "^(([^<>()\\[\\]\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$",
-        "4": '^\\+?(\\d|-)*$'
+        "4": '^0[\\d+-]*'
       },
       _validChars: {
         "1": '.+',
@@ -4585,7 +4585,7 @@
                 if (result.deleted) {
                   // FIXME
                 } else {
-                  var splitedFileName = result.downloadUrl.split('.');
+                  var splitedFileName = result.fileName.split('.');
                   result.extension = splitedFileName[splitedFileName.length - 1].toLowerCase();
                   result.message = self._parent.get(self._parent._lKey.currentScenario).message;
                   self._parent._showFileTypeMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, result, 0, self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
