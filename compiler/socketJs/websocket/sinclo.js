@@ -2186,7 +2186,7 @@
             thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(data.extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
 
-          var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showName) !== 3 ? "ファイルが送信されました" : "") + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+          var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showAutomessageName) !== 2 ? "ファイルが送信されました" : "") + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
           if(check.isset(data.message) && data.message !== "") {
             content += "<span class='sendFileMessage'>" + data.message + "</span>";
           }
