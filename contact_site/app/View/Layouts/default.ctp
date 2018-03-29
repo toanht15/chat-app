@@ -186,8 +186,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     </script>
   </section>
 <?php endif; ?>
-<?php if ( strcmp($this->name, 'Trial') === 0 ) { ?>
-  <script type='text/javascript' src='https://ws2.sinclo.jp/client/5ab99fedc697f.js' data-hide='1'></script>
+<?php if ( strcmp($this->name, 'Trial') === 0 && $_SERVER['HTTP_HOST'] == 'ml1.sinclo.jp') { ?>
+  <script type='text/javascript' src='https://ws1.sinclo.jp/client/medialink.js' data-hide='1'></script>
 <?php } ?>
 </body>
 </html>
