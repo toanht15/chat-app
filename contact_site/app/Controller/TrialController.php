@@ -59,10 +59,18 @@ class TrialController extends AppController {
     ));
     $result = $socket->post(self::CONTRACT_ADD_URL,$data,array('header' => array('X-Forwarded-Port' => 443)));
 
+    if(json_decode($result->code) === 409) {
+      $this->response->statusCode(409);
+      return json_encode([
+        'success' => false,
+        'message' => 'メール送信に失敗しました。システム管理者にお問い合わせください。'
+      ]);
+    }
+
     $socket = new HttpSocket(array(
       'timeout' => self::API_CALL_TIMEOUT
     ));
-    $result = $socket->post(C_NODE_SERVER_ADDR.'/socketCtrl/refreshCompanyList',$data,array('header' => array('X-Forwarded-Port' => 443)));
+    $soketResult = $socket->post(C_NODE_SERVER_ADDR.'/socketCtrl/refreshCompanyList',$data,array('header' => array('X-Forwarded-Port' => 443)));
   }
 
   /* *
