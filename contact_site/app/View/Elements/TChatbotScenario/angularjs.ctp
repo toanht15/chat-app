@@ -430,15 +430,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   /**
    * ファイル削除
    */
-  this.removeFile = function($event) {
-    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
-    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
-
+  this.removeFile = function($event, actionId) {
     // ファイルIDの削除リストへ追加
-    $scope.targetDeleteFileIds.push($scope.setActionList[actionStep].tChatbotScenarioSendFileId);
+    $scope.targetDeleteFileIds.push($scope.setActionList[actionId].tChatbotScenarioSendFileId);
 
-    $scope.setActionList[actionStep].tChatbotScenarioSendFileId = null;
-    $scope.setActionList[actionStep].file = null;
+    $scope.setActionList[actionId].tChatbotScenarioSendFileId = null;
+    $scope.setActionList[actionId].file = null;
 
     // localStorageに一時保存を行う
     LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value:$scope.targetDeleteFileIds}]);
@@ -1401,15 +1398,9 @@ function actionValidationCheck(element, setActionList, actionItem) {
       messageList.push('連携先URLが未入力です');
     }
 
-    var validResponseBody = actionItem.responseBodyMaps.some(function(obj) {
-      return !!obj.variableName && !!obj.sourceKey;
-    });
-    if (!validResponseBody) {
-      messageList.push('レスポンスボディ情報が未入力です')
-    }
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
-    if (!actionItem.tChatbotScenarioSendFileId && !actionItem.file && !actionItem.file.download_url && !actionItem.file.file_size) {
+    if (!actionItem.tChatbotScenarioSendFileId || !actionItem.file || !actionItem.file.download_url || !actionItem.file.file_size) {
       messageList.push('ファイルが未選択です');
     }
   }
