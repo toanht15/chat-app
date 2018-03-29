@@ -85,7 +85,7 @@ class LoginController extends AppController {
           //トライアル期間終了日
           $trialEndDay = date("Y/m/d",strtotime($mAgreementData[0]['MAgreement']['trial_end_day']));
           if($userInfo['permission_level'] != 99 && strtotime($today) > strtotime($trialEndDay)){
-            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>"トライアル期間を過ぎています"]);
+            $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"トライアル期間を過ぎています"]);
             $this->render('index');
             return;
           }
@@ -109,6 +109,11 @@ class LoginController extends AppController {
           $this->TLogin->rollback();
         }
         return $this->redirect(['controller' => 'Customers', 'action' => 'index']);
+      }
+      else {
+        $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"メールアドレスまたはパスワードが正しくありません"]);
+        $this->render('index');
+        return;
       }
     }
     $this->request->data['MUser']['password'] = '';
@@ -203,16 +208,21 @@ class LoginController extends AppController {
           $sender->setSubject($mailTemplateData[2]['MSystemMailTemplate']['subject']);
           $mailBodyData = str_replace(self::COMPANY_NAME, $companyData['MCompany']['company_name'], $mailTemplateData[2]['MSystemMailTemplate']['mail_body']);
           $mailBodyData = str_replace(self::USER_NAME, $agreementData['MAgreement']['application_name'], $mailBodyData);
-          if($agreementData['MAgreement']['business_model'] == 1) {
-            $agreementData['MAgreement']['business_model'] = 'BtoB';
+          if(!empty($agreementData['MAgreement']['business_model'])) {
+            if($agreementData['MAgreement']['business_model'] == 1) {
+              $agreementData['MAgreement']['business_model'] = 'BtoB';
+            }
+            if($agreementData['MAgreement']['business_model'] == 2) {
+              $agreementData['MAgreement']['business_model'] = 'BtoC';
+            }
+            if($agreementData['MAgreement']['business_model'] == 3) {
+              $agreementData['MAgreement']['business_model'] = 'どちらも';
+            }
+            $mailBodyData = str_replace(self::BUSINESS_MODEL, $agreementData['MAgreement']['business_model'], $mailBodyData);
           }
-          if($agreementData['MAgreement']['business_model'] == 2) {
-            $agreementData['MAgreement']['business_model'] = 'BtoC';
+          else {
+            $mailBodyData = str_replace(self::BUSINESS_MODEL,"", $mailBodyData);
           }
-          if($agreementData['MAgreement']['business_model'] == 3) {
-            $agreementData['MAgreement']['business_model'] = 'どちらも';
-          }
-          $mailBodyData = str_replace(self::BUSINESS_MODEL, $agreementData['MAgreement']['business_model'], $mailBodyData);
           if(!empty($agreementData['MAgreement']['application_department'])) {
             $mailBodyData = str_replace(self::DEPARTMENT, $agreementData['MAgreement']['application_department'], $mailBodyData);
           }

@@ -305,7 +305,6 @@
             return popupEvent.cancelClicked();
           };
           break;
-          z
         case 'p-dictionary-del':
           var closeBtn = _button("削除する");
           closeBtn.onclick = function () {
