@@ -1,4 +1,5 @@
 <?php echo $this->element('TAutoMessages/angularjs'); ?>
+<?php echo $this->element('WidgetSimulator/simulatorService'); ?>
 
 <div class="form01" ng-app="sincloApp" ng-controller="MainController as main" ng-cloak>
   <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>

@@ -5,6 +5,7 @@ sincloApp.factory('SimulatorService', function() {
 
   return {
     _settings: {},
+    _coreSettingsChat: {},
     _showWidgetType: 1,
     _openFlg: true,
     _showTab: 'chat',
@@ -15,6 +16,15 @@ sincloApp.factory('SimulatorService', function() {
     },
     get settings() {
       return this._settings;
+    },
+    set coreSettingsChat(settings) {
+      this._coreSettingsChat = settings;
+    },
+    get coreSettingsChat() {
+      return this._coreSettingsChat;
+    },
+    set showWidgetType(type) {
+      this._showWidgetType = type;
     },
     get showWidgetType() {
       return this._showWidgetType;
@@ -108,7 +118,7 @@ sincloApp.factory('SimulatorService', function() {
         }
       }
       if( Number(num) !== 4 ){
-        if(coreSettingsChat){
+        if(this._coreSettingsChat){
           document.getElementById("switch_widget").value = num;
         }
       }
@@ -349,8 +359,7 @@ sincloApp.factory('SimulatorService', function() {
         else{
           $("#closeBtn").hide();
         }
-        var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
-        if(coreSettingsChat){
+        if(this._coreSettingsChat){
           document.getElementById("switch_widget").value = this.showWidgetType;
         }
       }
