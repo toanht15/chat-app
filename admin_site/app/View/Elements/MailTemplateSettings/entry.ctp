@@ -52,14 +52,15 @@
 </li>
 <!-- /* メール差出人 */ -->
 <li>
-  <div class="labelArea fLeft"><span class="require"><label>何時</label></span></div>
-  <?= $this->Form->input('MJobMailTemplate.time', array('div' => false, 'label' => false,'options' => range(0,24), 'maxlength' => 50,'type' => 'select')) ?>
+  <div class="labelArea fLeft"><span class="require"><label>メール差出人</label></span></div>
+  <?= $this->Form->input($model.'.sender', array('div' => false, 'label' => false,'type' => 'textarea','style' => 'width: 332px; height: 15px;')) ?>
+  <?php if (!empty($agreementerrors['MSystemMailTemplate.subject'])) echo "<li class='error-message'>" . h($agreementerrors['MSystemMailTemplate.subject'][0]) . "</li>"; ?>
 </li>
 <!-- /* メールタイトル */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>メールタイトル</label></span></div>
-  <?= $this->Form->input('MJobMailTemplate.subject', array('div' => false, 'label' => false,'type' => 'textarea')) ?>
-  <?php if (!empty($agreementerrors['MJobMailTemplate.subject'])) echo "<li class='error-message'>" . h($agreementerrors['MJobMailTemplate.subject'][0]) . "</li>"; ?>
+  <?= $this->Form->input($model.'.subject', array('div' => false, 'label' => false,'type' => 'textarea','style' => 'width: 332px; height: 15px;')) ?>
+  <?php if (!empty($agreementerrors['MSystemMailTemplate.subject'])) echo "<li class='error-message'>" . h($agreementerrors['MSystemMailTemplate.subject'][0]) . "</li>"; ?>
 </li>
 <!-- /* メール本文 */ -->
 <li>
