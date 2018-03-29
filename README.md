@@ -61,6 +61,8 @@ process.env.WS_PORT = '9090';
 <?php
 $config = [];
 
+define('APP_MODE_DEV', true);
+
 define('C_NODE_SERVER_ADDR', "//node.sinclo"); // Nodeサーバー
 define('C_NODE_SERVER_FILE_PORT', ""); // NodeサーバーのHTTP通信ポート
 define('C_NODE_SERVER_WS_PORT', ""); // WS通信ポート

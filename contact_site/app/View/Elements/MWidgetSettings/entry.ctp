@@ -131,6 +131,26 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('show_position') ) echo $this->Form->error('show_position', null, ['wrap' => 'li']); ?>
           <!-- 表示位置 -->
+          <!-- Web接客コード表示 -->
+          <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && !$coreSettings[C_COMPANY_USE_SYNCLO] ) :?>
+          <li>
+            <span class="require"><label>ウェブ接客コード表示</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('show_access_id', [
+                  'type' => 'radio',
+                  'options' => $widgetShowAccessId,
+                  'legend' => false,
+                  'separator' => '</label><br><label class="pointer">',
+                  'div' => false,
+                  'label' => false,
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.show_access_id'
+                  ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('show_access_id') ) echo $this->Form->error('show_access_id', null, ['wrap' => 'li']); ?>
+          <?php endif; ?>
+          <!-- Web接客コード表示 -->
         </ul>
       </section>
 
@@ -303,7 +323,8 @@ $headerNo = 1;
                 <?= $this->ngForm->input('header_text_size', [
                 'type' => 'number',
                 'class' => 'showNormal',
-                'max-length' => '20',
+                'min' => '12',
+                'max' => '20',
                 'placeholder' => '',
                 'div' => false,
                 'label' => false,
@@ -354,7 +375,8 @@ $headerNo = 1;
                   <?= $this->ngForm->input('re_text_size', [
                     'type' => 'number',
                     'class' => 'showNormal',
-                    'max-length' => '20',
+                    'min' => '10',
+                    'max' => '20',
                     'placeholder' => '',
                     'div' => false,
                     'label' => false,
@@ -395,13 +417,13 @@ $headerNo = 1;
                 [
                   'entity' => 'MWidgetSetting.se_text_color'
                 ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('se_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
-              </div>
                 <span style="display: flex; height: 20px; width: 32em; justify-content: space-between; align-items: center;">
                 <label style=" flex-basis:154px; ">訪問者吹き出し文字サイズ</label>
                   <?= $this->ngForm->input('se_text_size', [
                     'type' => 'number',
                     'class' => 'showNormal',
-                    'max-length' => '20',
+                    'min' => '10',
+                    'max' => '20',
                     'placeholder' => '',
                     'div' => false,
                     'label' => false,
@@ -413,45 +435,12 @@ $headerNo = 1;
                     [
                       'entity' => 'MWidgetSetting.se_text_size'
                     ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('se_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px;" >標準に戻す</span></span><br>
-              <!-- 5.ウィジェット枠線色 -->
-<!--
-              <span style="height: 20px;"><label>ウィジェット枠線色</label><?= $this->ngForm->input('widget_border_color', [
-                'type' => 'text',
-                'placeholder' => 'ウィジェット枠線色',
-                'ng-change' => "changeWidgetBorderColor()",
-                'div' => false,
-                'class' => 'jscolor {hash:true}',
-                'label' => false,
-                'maxlength' => 7,
-                'style' => 'width: 120px; position: relative; top: -23px; left: 155px;',
-                'error' => false
-              ],
-              [
-                'entity' => 'MWidgetSetting.widget_border_color'
-              ]) ?></span><br>
- -->
-              <!-- 6.吹き出し枠線色 -->
-<!--
-              <span style="height: 20px;"><label>吹き出し枠線色</label><?= $this->ngForm->input('chat_talk_border_color', [
-                'type' => 'text',
-                'placeholder' => '吹き出し枠線色',
-                'ng-change' => "changeChatTalkBorderColor()",
-                'div' => false,
-                'class' => 'jscolor {hash:true}',
-                'label' => false,
-                'maxlength' => 7,
-                'style' => "width: 120px; position: relative; left: 75px !important; margin: -5px 0 0 0;",
-                'error' => false
-              ],
-              [
-                'entity' => 'MWidgetSetting.chat_talk_border_color'
-              ]) ?></span><br>
- -->
+              </div>
               </div>
               <!-- 基本設定色end -->
               <!-- 0.通常設定・高度設定 -->
               <!-- 高度な設定を行う行わないを制御するチェックボックス -->
-              <pre style="margin-top: 136px; margin-left: -3px; margin-bottom: 5px;"><hr class="separator" style="margin: 5px 0 5px 0;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
+              <pre style="margin-top: <?php echo $coreSettings[C_COMPANY_USE_CHAT] ? "136" : "38"?>px; margin-left: -3px; margin-bottom: 5px;"><hr class="separator" style="margin: 5px 0 5px 0;"><label class="pointer"><?= $this->ngForm->input('color_setting_type', [
                 'type' => 'checkbox',
                 'legend' => false,
                 'ng-checked' => 'color_setting_type === "'.COLOR_SETTING_TYPE_ON.'"',
@@ -549,38 +538,6 @@ $headerNo = 1;
                   [
                     'entity' => 'MWidgetSetting.c_name_text_color'
                   ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('c_name_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
-                  <!-- 11.企業側吹き出し文字色 -->
-  <!--
-                  <span style="height: 35px;"><label>企業側吹き出し文字色　　</label><?= $this->ngForm->input('re_text_color', [
-                    'type' => 'text',
-                    'placeholder' => '企業側吹き出し文字色',
-                    'div' => false,
-                    'class' => 'jscolor {hash:true}',
-                    'label' => false,
-                    'maxlength' => 7,
-                    'error' => false,
-                    'style' => 'width: 120px; position: relative; left: 140px; top: -22px;'
-                  ],
-                  [
-                    'entity' => 'MWidgetSetting.re_text_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('re_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
-   -->
-                  <!-- 12.企業側吹き出し背景色 -->
-  <!--
-                  <span style="height: 35px;"><label>企業側吹き出し背景色　　</label><?= $this->ngForm->input('re_background_color', [
-                    'type' => 'text',
-                    'placeholder' => '企業側吹き出し背景色',
-                    'div' => false,
-                    'class' => 'jscolor {hash:true}',
-                    'label' => false,
-                    'maxlength' => 7,
-                    'error' => false,
-                    'style' => 'width: 120px; position: relative; left: 140px; top: -22px;'
-                  ],
-                  [
-                    'entity' => 'MWidgetSetting.re_background_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('re_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
-   -->
                   <!-- 13.企業側吹き出し枠線色 -->
                   <span style="height: 35px;"><label>企業側吹き出し枠線色</label>
                   <?php if($re_border_color_flg){?>
@@ -627,38 +584,6 @@ $headerNo = 1;
                     'entity' => 'MWidgetSetting.re_border_none'
                   ]) ?></label></pre>
                   <hr class="separator indent">
-                  <!-- 15.訪問者側吹き出し文字色 -->
-  <!--
-                  <span style="height: 35px;"><label>訪問者側吹き出し文字色</label><?= $this->ngForm->input('se_text_color', [
-                    'type' => 'text',
-                    'placeholder' => '訪問者側吹き出し文字色',
-                    'div' => false,
-                    'class' => 'jscolor {hash:true}',
-                    'label' => false,
-                    'maxlength' => 7,
-                    'error' => false,
-                    'style' => 'width: 120px; position: relative; left: 140px; top: -22px;'
-                  ],
-                  [
-                    'entity' => 'MWidgetSetting.se_text_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('se_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
-   -->
-                  <!-- 16.訪問者側吹き出し背景色 -->
-  <!--
-                  <span style="height: 35px;"><label>訪問者側吹き出し背景色</label><?= $this->ngForm->input('se_background_color', [
-                    'type' => 'text',
-                    'placeholder' => '訪問者側吹き出し背景色',
-                    'div' => false,
-                    'class' => 'jscolor {hash:true}',
-                    'label' => false,
-                    'maxlength' => 7,
-                    'error' => false,
-                    'style' => 'width: 120px; position: relative; left: 140px; top: -22px;'
-                  ],
-                  [
-                    'entity' => 'MWidgetSetting.se_background_color'
-                  ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('se_background_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 295px;" >標準に戻す</span></span>
-   -->
                   <!-- 17.訪問者側吹き出し枠線色 -->
                   <span style="height: 35px;"><label>訪問者側吹き出し枠線色</label>
                   <?php if($se_border_color_flg){?>
@@ -1110,12 +1035,12 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('show_name') ) echo $this->Form->error('show_name', null, ['wrap' => 'li']); ?>
           <!-- 担当者表示 -->
-          <!-- 企業名表示（自動返信時） -->
+          <!-- オートメッセージ企業名表示 -->
           <li>
-            <span class="require"><label>自動返信時企業名表示</label></span>
+            <span class="require"><label>オートメッセージの企業名</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_automessage_name', [
                   'type' => 'radio',
-                  'options' => $widgetShowAutomessageNameType,
+                  'options' => $widgetShowChoices,
                   'legend' => false,
                   'separator' => '</label><br><label class="pointer">',
                   'class' => 'showChat',
@@ -1128,7 +1053,25 @@ $headerNo = 1;
                   ]) ?></label></pre>
           </li>
           <?php if ( $this->Form->isFieldError('show_automessage_name') ) echo $this->Form->error('show_automessage_name', null, ['wrap' => 'li']); ?>
-          <!-- 担当者表示 -->
+          <!-- オートメッセージ企業名表示 -->
+          <!-- ウィジェットの表示   -->
+          <li>
+            <span class="require"><label>吹き出しの見出し</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('show_op_name', [
+                  'type' => 'radio',
+                  'options' => $widgetShowChoices,
+                  'legend' => false,
+                  'separator' => '</label><br><label class="pointer">',
+                  'div' => false,
+                  'label' => false,
+                  'error' => false
+                ],
+                  [
+                    'entity' => 'MWidgetSetting.show_op_name'
+                  ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('sp_show_flg') ) echo $this->Form->error('sp_show_flg', null, ['wrap' => 'li']); ?>
+          <!-- ウィジェットの表示   -->
           <!-- 吹き出しデザイン -->
           <li>
             <span class="require"><label>吹き出しデザイン</label></span>

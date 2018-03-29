@@ -11,7 +11,7 @@ class MWidgetSettingsController extends AppController {
   public $styleSetting = [
     'common' => [
       'show_timing', 'max_show_timing_site', 'max_show_timing_page',
-      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
+      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
       /* カラー設定styat */
       'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
@@ -20,7 +20,7 @@ class MWidgetSettingsController extends AppController {
       /* カラー設定end */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
+    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
   ];
 
   public function beforeRender(){
@@ -241,12 +241,14 @@ class MWidgetSettingsController extends AppController {
   private function _viewElement() {
     $this->set('widgetDisplayType', Configure::read('WidgetDisplayType'));
     $this->set('widgetPositionType', Configure::read('widgetPositionType'));
+    $this->set('widgetShowAccessId', Configure::read('widgetShowAccessId'));
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
     $this->set('widgetShowAutomessageNameType', Configure::read('widgetShowAutomessageNameType'));
     $this->set('chatMessageDesignType', Configure::read('chatMessageDesignType'));
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
     $this->set('chatMessageCopy', Configure::read('chatMessageCopy'));
     $this->set('normalChoices', Configure::read('normalChoices')); // はい・いいえ
+    $this->set('widgetShowChoices', Configure::read('widgetShowChoices')); // 表示する・表示しない
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
     $this->set('spMiximizeSizeType', Configure::read('widgetSpMiximizeSizeType'));
@@ -516,6 +518,9 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'show_automessage_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['show_automessage_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
             }
+            if ( strcmp($v, 'show_op_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_op_name'] = C_SELECT_CAN; // デフォルト値
+            }
             if ( strcmp($v, 'chat_message_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_message_design_type'] = C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX; // デフォルト値
             }
@@ -579,6 +584,10 @@ class MWidgetSettingsController extends AppController {
                 }
               }
             }
+            // デフォルト値（プレミアムプランのみ表示する）
+            if ( strcmp($v, 'show_access_id') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_access_id'] = C_SELECT_CAN_NOT;
+            }
             //ウィジットサイズタイプ
             if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_size_type'] = C_WIDGET_SIZE_TYPE_SMALL; // デフォルト値
@@ -626,6 +635,23 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'other_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['other_text_color'] = OTHER_TEXT_COLOR; // デフォルト値
             }
+            //ヘッダー文字サイズ
+            if ( strcmp($v, 'header_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['header_text_size'] = "14";
+                  break;
+                case 2:
+                case 3:
+                  $d['header_text_size'] = "15";
+                  break;
+                default:
+                  $d['header_text_size'] = "15"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
+            }
             //5.ウィジェット枠線色
             if ( strcmp($v, 'widget_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_border_color'] = WIDGET_BORDER_COLOR; // デフォルト値
@@ -667,6 +693,23 @@ class MWidgetSettingsController extends AppController {
             //11.企業側吹き出し文字色
             if ( strcmp($v, 're_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['re_text_color'] = RE_TEXT_COLOR; // デフォルト値
+            }
+            //企業側吹き出し文字サイズ
+            if ( strcmp($v, 're_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['re_text_size'] = "12";
+                  break;
+                case 2:
+                case 3:
+                  $d['re_text_size'] = "13";
+                  break;
+                default:
+                  $d['re_text_size'] = "13"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
             }
             //12.企業側吹き出し背景色
             if ( strcmp($v, 're_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
@@ -711,6 +754,23 @@ class MWidgetSettingsController extends AppController {
             //15.訪問者側吹き出し文字色
             if ( strcmp($v, 'se_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['se_text_color'] = SE_TEXT_COLOR; // デフォルト値
+            }
+            //訪問者側吹き出し文字サイズ
+            if ( strcmp($v, 'se_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['se_text_size'] = "12";
+                  break;
+                case 2:
+                case 3:
+                  $d['se_text_size'] = "13";
+                  break;
+                default:
+                  $d['se_text_size'] = "13"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
             }
             //16.訪問者側吹き出し背景色
             if ( strcmp($v, 'se_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
