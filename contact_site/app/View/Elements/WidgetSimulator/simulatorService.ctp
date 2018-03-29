@@ -63,6 +63,15 @@ sincloApp.factory('SimulatorService', function() {
     get chat_area_placeholder_sp() {
       return Number(this._settings['chat_trigger']) === 1 ? '（改行で送信）' : '';
     },
+    /**
+     * ウィジェットサイズ
+     */
+    get isMiddleSize() {
+      return this.showWidgetType === 1 && this.widgetSizeTypeToggle === '2';
+    },
+    get isLargeSize() {
+      return this.showWidgetType === 1 && this.widgetSizeTypeToggle === '3';
+    },
     // パラメータ取得(設定の有無)
     get widget_outside_border_none() {
       return this._settings['widget_border_color'] === 'なし';
@@ -420,15 +429,6 @@ sincloApp.factory('SimulatorService', function() {
       }
 
       return content;
-    },
-    /**
-     * ウィジェットサイズ
-     */
-    isMiddleSize: function() {
-      return this.showWidgetType === 1 && this.widgetSizeTypeToggle === '2';
-    },
-    isLargeSize: function() {
-      return this.showWidgetType === 1 && this.widgetSizeTypeToggle === '3';
     },
     /**
      * ファイル拡張子から、画像か判別する
