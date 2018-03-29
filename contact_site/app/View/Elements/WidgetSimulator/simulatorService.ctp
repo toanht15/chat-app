@@ -412,6 +412,15 @@ sincloApp.factory('SimulatorService', function() {
       return content;
     },
     /**
+     * ウィジェットサイズ
+     */
+    isMiddleSize: function() {
+      return this.showWidgetType === 1 && this.widgetSizeTypeToggle === '2';
+    },
+    isLargeSize: function() {
+      return this.showWidgetType === 1 && this.widgetSizeTypeToggle === '3';
+    },
+    /**
      * ファイル拡張子から、画像か判別する
      * @param String extension ファイル拡張子
      */
