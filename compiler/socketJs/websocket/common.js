@@ -914,7 +914,7 @@ var socket, // socket.io
         }
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { display: block; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: bold; font-size: 1.2em;}';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn span, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn span {color: ' + colorList['chatSendBtnTextColor'] + '; }';
-        if( window.sincloInfo.contract.sinclo || (window.sincloInfo.contract.hasOwnProperty("document") && window.sincloInfo.contract.document ) ) {
+        if( (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document) || (check.isset(widget.showAccessId) && widget.showAccessId === 1)) ) {
           if(widget.chatMessageCopy === 1) {
             html += '      #sincloBox section#chatTab #sincloAccessInfo { height: '+ sizeList['sincloAccessInfoHeight'] +'px; text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid ' + colorList['widgetInsideBorderColor'] + '; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }';
           }
