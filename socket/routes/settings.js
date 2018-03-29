@@ -87,6 +87,11 @@ router.get("/", function(req, res, next) {
                 if(('showTiming' in settings)) {
                   showTimingSetting = isNumeric(settings.showTiming);
                 }
+                // （チャットプランのみ）Web接客コード設定が存在しない場合は「表示しない」
+                var showAccessId = 2;
+                if(('showAccessId' in settings)) {
+                  showAccessId = isNumeric(settings.showAccessId);
+                }
                 // 吹き出しデザイン設定が存在しない場合は「BOX型（サイズ固定）」
                 var chatMessageDesignType = 1;
                 if(('chatMessageDesignType' in settings)) {
@@ -176,9 +181,16 @@ router.get("/", function(req, res, next) {
                   reTextSize = settings.reTextSize;
                 }
 
-                var showAutomessageName = 2; // 企業名表示
+                // オートメッセージ企業名表示設定が存在しない場合は「表示する」
+                var showAutomessageName = 1;
                 if(('showAutomessageName' in settings)) {
                   showAutomessageName = settings.showAutomessageName;
+                }
+
+                // 有人チャット担当者名表示設定が存在しない場合は「表示する」
+                var showOpName = 1;
+                if(('showOpName' in settings)) {
+                  showOpName = isNumeric(settings.showOpName);
                 }
 
                 sendData['widget'] = {
@@ -187,7 +199,9 @@ router.get("/", function(req, res, next) {
                   showTime: isNumeric(settings.showTime),
                   showName: isNumeric(settings.showName),
                   showAutomessageName: isNumeric(showAutomessageName),
+                  showOpName: isNumeric(showOpName),
                   showPosition: isNumeric(settings.showPosition),
+                  showAccessId: isNumeric(showAccessId),
                   //ウィジットサイズ対応
                   widgetSizeType: isNumeric(settings.widgetSizeType),
                   //ウィジットサイズ対応
