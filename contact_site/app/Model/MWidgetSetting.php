@@ -97,6 +97,7 @@ class MWidgetSetting extends AppModel {
       //閉じるボタン対応
       'tel' => "tel",
       'show_name' => "showName",
+      'show_automessage_name' => "showAutomessageName",
       'chat_message_design_type' => "chatMessageDesignType",
       'chat_message_with_animation' => "chatMessageWithAnimation",
       'show_description' => "showDescription",

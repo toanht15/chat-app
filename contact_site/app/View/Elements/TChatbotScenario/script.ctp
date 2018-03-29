@@ -1,5 +1,20 @@
 <script type="text/javascript">
 document.body.onload = function(){
+
+  // 一時保存データがあるシナリオに、編集中メッセージを追加する
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#tchatbotscenario_list tbody tr'));
+  rows.forEach(function(row) {
+    var storageKey = 'scenario_' + row.dataset.id;
+    var storageData = JSON.parse(localStorage.getItem(storageKey));
+    if (!!storageData && typeof storageData.scenarios !== 'undefined') {
+      var titleElm = row.querySelector('td.scenarioTitle');
+      var msgElm = document.createElement('span');
+      msgElm.className = 'scenarioEditingMessage';
+      msgElm.textContent = '（編集中）';
+      titleElm.appendChild(msgElm);
+    }
+  });
+
   $(document).ready(function(){
     $(".sortable").sortable({
       axis: "y",
@@ -99,11 +114,11 @@ function openConfirmDialog(){
     var storageData = localStorage.getItem('scenario_' + scenarioId);
     if (storageData) {
       var jsonData = JSON.parse(storageData);
-      var targetDeleteFileIds = jsonData.targetDeleteFileIds;
+      var targetDeleteFileIds = jsonData.targetDeleteFileIds || [];
       angular.forEach(jsonData.scenarios, function(action) {
-        if (action[1].actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
-          if (typeof action[1].tChatbotScenarioSendFileId !== 'undefined' && action[1].tChatbotScenarioSendFileId !== null) {
-            targetDeleteFileIds.push(action[1].tChatbotScenarioSendFileId);
+        if (action.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+          if (typeof action.tChatbotScenarioSendFileId !== 'undefined' && action.tChatbotScenarioSendFileId !== null) {
+            targetDeleteFileIds.push(action.tChatbotScenarioSendFileId);
           }
         }
       });
