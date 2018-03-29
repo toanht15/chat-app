@@ -10,6 +10,7 @@ sincloApp.factory('SimulatorService', function() {
     _showTab: 'chat',
     _sincloChatMessagefocusFlg: true,
     set settings(obj) {
+      console.log(obj);
       this._settings = obj;
     },
     get settings() {
