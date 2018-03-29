@@ -92,7 +92,6 @@
 
       </ul>
       <?=$this->ngForm->input('activity', ['type'=>'hidden'])?>
-      <?=$this->ngForm->input('widget.showTab', ['type' => 'hidden'], ['entity' => 'widget.showTab']) ?>
       <?=$this->ngForm->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
     </section>
 
@@ -331,7 +330,7 @@
 
       <div id="tautomessages_action_simulator" ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" ng-class="{middleSize: widgetSizeTypeToggle === '2', largeSize: widgetSizeTypeToggle === '3'}">
         <div>
-          <?= $this->element('TAutoMessages/simulator'); ?>
+          <?= $this->element('WidgetSimulator/simulator', ['isTabDisplay' => true, 'canVisitorSendMessage' => false]); ?>
         </div>
       </div><!-- /tautomessages_simulator -->
     </section>

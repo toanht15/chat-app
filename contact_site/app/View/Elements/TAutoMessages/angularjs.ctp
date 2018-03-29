@@ -168,18 +168,19 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         return true;
     };
 
+    // ウィジェットのプレビュー表示
     $scope.widget = SimulatorService;
     $scope.widget.settings = getWidgetSettings();
     $scope.widget.coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
 
     //位置調整
     $scope.$watch(function(){
-      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.widget.showWidgetType, 'widgetSizeType': $scope.widget.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.widget['chat_radio_behavior'], 'chat_trigger': $scope.widget['chat_trigger'], 'show_name': $scope.widget['show_name'], 'widget.showTab': $scope.widget.showTab};
+      return {'openFlg': $scope.widget.openFlg, 'showWidgetType': $scope.widget.showWidgetType, 'widgetSizeType': $scope.widget.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.widget.settings['chat_radio_behavior'], 'chat_trigger': $scope.widget.settings['chat_trigger'], 'show_name': $scope.widget.settings['show_name'], 'widget.showTab': $scope.widget.showTab};
     },
     function(){
       var main = document.getElementById("miniTarget");
       if ( !main ) return false;
-      if ( $scope.openFlg ) {
+      if ( $scope.widget.openFlg ) {
         setTimeout(function(){
           angular.element("#sincloBox").addClass("open");
           var height = 0;
@@ -226,14 +227,6 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       $scope.createMessage();
     }
 
-    //位置調整
-    $scope.$watch(function(){
-      return {'widgetSizeType': $scope.widget.widgetSizeTypeToggle};
-    },
-    function(){
-      $scope.widget.switchWidget(1); // 標準に切り替える
-    }, true);
-
     // シミュレーター上のメッセージ表示更新
     angular.element(window).on('load', function(e) {
       $('#TAutoMessageAction').on('keydown keyup', function(e) {
@@ -272,7 +265,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         });
       });
       $scope.$watch('main.chat_textarea', function(value) {
-        $scope.toggleChatTextareaView(value);
+        $scope.widget.isTextAreaOpen = value == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>;
       });
     });
     $scope.createMessage = function() {
@@ -330,43 +323,6 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         messageElement.innerHTML = content;
       } else {
         document.getElementById('sample_widget_re_message').style.display = "none";
-      }
-    }
-
-    // 自由入力エリアの表示・非表示切替
-    $scope.toggleChatTextareaView = function(value) {
-      var chatTalkHeight = 194;
-      var messageBoxHeight = 75;
-
-      switch($scope.widget.showWidgetType) {
-      case 1: // 表示タブ：通常
-        // ウィジェットサイズごとにサイズを変更する
-        if($scope.widget['widget_size_type'] == 2) {
-          chatTalkHeight = 274;
-        } else if($scope.widget['widget_size_type'] == 3) {
-          chatTalkHeight = 364;
-        }
-        // プレミアムプラン以外の場合、高さを調整する
-        <?php if ( !$coreSettings[C_COMPANY_USE_SYNCLO] && (!isset($coreSettings[C_COMPANY_USE_DOCUMENT]) || !$coreSettings[C_COMPANY_USE_DOCUMENT]) ): ?>
-          messageBoxHeight -= 3;
-        <?php endif; ?>
-        break;
-      case 2:  // 表示タブ：スマートフォン(横)
-        chatTalkHeight = 90;
-        messageBoxHeight = 62;
-        break;
-      case 3:  // 表示タブ：スマートフォン(縦)
-        chatTalkHeight = 184;
-        messageBoxHeight = 72;
-        break;
-      }
-
-      if (value == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>) {
-        document.getElementById('messageBox').style.display = "block";
-        document.getElementById('chatTalk').style.height = chatTalkHeight + "px";
-      } else {
-        document.getElementById('messageBox').style.display = "none";
-        document.getElementById('chatTalk').style.height = chatTalkHeight + messageBoxHeight + "px";
       }
     }
 }]);

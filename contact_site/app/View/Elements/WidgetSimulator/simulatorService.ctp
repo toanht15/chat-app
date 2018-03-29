@@ -10,8 +10,8 @@ sincloApp.factory('SimulatorService', function() {
     _openFlg: true,
     _showTab: 'chat',
     _sincloChatMessagefocusFlg: true,
+    _isTextAreaOpen: true,
     set settings(obj) {
-      console.log(obj);
       this._settings = obj;
     },
     get settings() {
@@ -29,8 +29,17 @@ sincloApp.factory('SimulatorService', function() {
     get showWidgetType() {
       return this._showWidgetType;
     },
+    set openFlg(status) {
+      this._openFlg = status;
+    },
     get openFlg() {
       return this._openFlg;
+    },
+    set isTextAreaOpen(status) {
+      this._isTextAreaOpen = status;
+    },
+    get isTextAreaOpen() {
+      return this._isTextAreaOpen;
     },
     // パラメータ取得(実際のパラメータと、取得時の名称が異なるもの)
     get widgetSizeTypeToggle() {
@@ -67,10 +76,10 @@ sincloApp.factory('SimulatorService', function() {
      * ウィジェットサイズ
      */
     get isMiddleSize() {
-      return this.showWidgetType === 1 && this.widgetSizeTypeToggle === '2';
+      return this._showWidgetType === 1 && this._settings['widget_size_type'] === '2';
     },
     get isLargeSize() {
-      return this.showWidgetType === 1 && this.widgetSizeTypeToggle === '3';
+      return this._showWidgetType === 1 && this._settings['widget_size_type'] === '3';
     },
     // パラメータ取得(設定の有無)
     get widget_outside_border_none() {
@@ -99,7 +108,8 @@ sincloApp.factory('SimulatorService', function() {
       this._sincloChatMessagefocusFlg = bool;
     },
     switchWidget: function(num) {
-      this.showWidgetType = num;
+      var self = this;
+      this._showWidgetType = num;
       this.sincloChatMessagefocusFlg = true;
       var sincloBox = document.getElementById("sincloBox");
 
@@ -114,7 +124,7 @@ sincloApp.factory('SimulatorService', function() {
           }
         }
         /* ウィジェットが最小化されていたら最大化する */
-        if ( !this.openFlg ) { // 最小化されている場合
+        if ( !this._openFlg ) { // 最小化されている場合
           var main = document.getElementById("miniTarget");  // 非表示対象エリア
           var height = 0;
           if(main){
@@ -131,11 +141,12 @@ sincloApp.factory('SimulatorService', function() {
           document.getElementById("switch_widget").value = num;
         }
       }
-      this.openFlg = true;
+      this._openFlg = true;
 
       setTimeout(function(){
-        $scope.createMessage();
-        $scope.toggleChatTextareaView($scope.main.chat_textarea);
+        var message = document.querySelector('#widget_simulator_wrapper #messageBox textarea').value;
+        self.createMessage(message, '');
+        this._isTextAreaOpen = false;
       },0);
     },
     // 関数
@@ -196,11 +207,11 @@ sincloApp.factory('SimulatorService', function() {
     spHeaderLightToggle: function(){
       switch (this.minimizedDesignToggle) {
       case "1": //シンプル表示しない
-        if(this.showWidgetType === 1){
+        if(this._showWidgetType === 1){
           //通常（PC）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -211,7 +222,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -225,7 +236,7 @@ sincloApp.factory('SimulatorService', function() {
           //スマホ（縦）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -236,7 +247,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -248,11 +259,11 @@ sincloApp.factory('SimulatorService', function() {
         }
         break;
       case "2": //スマホのみシンプル表示する
-        if(this.showWidgetType === 1){
+        if(this._showWidgetType === 1){
           //通常（PC）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -263,7 +274,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -277,7 +288,7 @@ sincloApp.factory('SimulatorService', function() {
           //スマホ（縦）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -288,7 +299,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -300,11 +311,11 @@ sincloApp.factory('SimulatorService', function() {
         }
         break;
       case "3": //すべての端末でシンプル表示する
-        if(this.showWidgetType === 1){
+        if(this._showWidgetType === 1){
           //通常（PC）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -315,7 +326,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -329,7 +340,7 @@ sincloApp.factory('SimulatorService', function() {
           //スマホ（縦）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -340,7 +351,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -352,7 +363,7 @@ sincloApp.factory('SimulatorService', function() {
         }
         break;
       }
-      if(this.openFlg){
+      if(this._openFlg){
         //最大化時
         $("#minimizeBtn").show();
         $("#addBtn").hide();
@@ -369,7 +380,7 @@ sincloApp.factory('SimulatorService', function() {
           $("#closeBtn").hide();
         }
         if(this._coreSettingsChat){
-          document.getElementById("switch_widget").value = this.showWidgetType;
+          document.getElementById("switch_widget").value = this._showWidgetType;
         }
       }
       return res;

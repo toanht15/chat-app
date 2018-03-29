@@ -6,11 +6,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   var self = this;
   $scope.simulatorSettings = SimulatorService;
 
-  $scope.isTabDisplay = document.getElementById('TChatbotScenarioIsTabDisplay').value || true;
-  $scope.canVisitorSendMessage = document.getElementById('TChatbotScenarioCanVisitorSendMessage').value || false;
+  $scope.isTabDisplay = document.querySelector('[id$="IsTabDisplay"]').value || true;
+  $scope.canVisitorSendMessage = document.querySelector('[id$="CanVisitorSendMessage"]').value || false;
 
-  // 自由入力エリアの表示状態
-  $scope.isTextAreaOpen = true;
   // 自由入力エリアの、改行入力の許可状態
   $scope.allowInputLF = true;
   // 自由入力エリアの、メッセージ送信の許可状態
@@ -162,7 +160,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * @param Boolean status 自由入力エリアの表示状態(true: 表示, false: 非表示）
    */
   $scope.$on('switchSimulatorChatTextArea', function(event, status) {
-    $scope.isTextAreaOpen = status;
+    $scope.simulatorSettings.isTextAreaOpen = status;
   });
 
   /**
@@ -199,7 +197,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * isTextAreaOpen
    * showWidgetTypeを元に自由入力エリアの表示を切り替える
    */
-  $scope.$watch('isTextAreaOpen', function() {
+  $scope.$watch('simulatorSettings.isTextAreaOpen', function() {
     var msgBoxElm = document.getElementById('messageBox');
     var chatTalkElm = document.getElementById('chatTalk');
     if (msgBoxElm === null || chatTalkElm === null) {
@@ -232,7 +230,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         break;
     }
 
-    if ($scope.isTextAreaOpen) {
+    if ($scope.simulatorSettings.isTextAreaOpen) {
       msgBoxElm.style.display = "";
       chatTalkElm.style.height = chatTalkHeight + "px";
     } else {
@@ -320,7 +318,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       var name = $(this).attr('name');
 
       // ウィジェット設定とテキストエリアの表示状態により、選択された文字列の処理を変更する
-      if ($scope.simulatorSettings.settings['chat_radio_behavior'] == <?= C_WIDGET_RADIO_CLICK_SEND ?> || !$scope.isTextAreaOpen) {
+      if ($scope.simulatorSettings.settings['chat_radio_behavior'] == <?= C_WIDGET_RADIO_CLICK_SEND ?> || !$scope.simulatorSettings.isTextAreaOpen) {
         // 即時送信
         $scope.addMessage('se', message)
         $scope.$emit('receiveVistorMessage', message, prefix)
