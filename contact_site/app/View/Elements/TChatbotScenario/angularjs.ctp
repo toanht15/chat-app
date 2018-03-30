@@ -1439,7 +1439,10 @@ function actionValidationCheck(element, setActionList, actionItem) {
       return actionItem !== action;
     });
 
-    usedVariableList.forEach(function(string) {
+    // 重複を排除して、エラーメッセージを追加する
+    usedVariableList.filter(function(value, index, arr) {
+      return arr.indexOf(value) == index;
+    }).forEach(function(string) {
       var variableName = string.replace(/{{([^}]+)}}/, '$1');
       messageList.push('変数名 "' + variableName + '" がこのアクションより前に設定されていません');
     });
