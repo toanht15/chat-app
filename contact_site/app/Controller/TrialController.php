@@ -37,6 +37,7 @@ class TrialController extends AppController {
     $businessModel = Configure::read('businessModelType');
     $this->set('businessModel',$businessModel);
     $this->set('title_for_layout', '無料トライアル登録画面');
+    session_destroy();
   }
 
   public function add() {
