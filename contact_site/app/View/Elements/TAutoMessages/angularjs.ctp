@@ -219,15 +219,13 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
       // ウィジェットのタブ切替時、シミュレーション上の吹き出しを表示更新する
       $scope.$on('switchWidget', function(event, type) {
-        setTimeout(function(){
-          var divElm = document.getElementById('sample_widget_re_message');
-          if (!divElm) {
-            var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
-            divElm.id = 'sample_widget_re_message';
-            document.getElementById('chatTalk').appendChild(divElm);
-          }
-          $scope.createMessage();
-        },0);
+        var divElm = document.getElementById('sample_widget_re_message');
+        if (!divElm) {
+          var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+          divElm.id = 'sample_widget_re_message';
+          document.getElementById('chatTalk').appendChild(divElm);
+        }
+        $scope.createMessage();
       });
 
       $(document).on('keyup', 'input[name^="keyword_"]', function(e){

@@ -303,7 +303,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
     $scope.simulatorSettings.openFlg = true;
 
-    $scope.$emit('switchWidget', type)
+    // タブ切替後も、自由入力エリアの表示内容を保持する
+    var textareaMessage = document.getElementById('sincloChatMessage').value;
+    $timeout(function(){
+      document.getElementById('sincloChatMessage').value = textareaMessage;
+      // タブ切替の通知
+      $scope.$emit('switchWidget', type)
+    },0);
   };
 
   /**
