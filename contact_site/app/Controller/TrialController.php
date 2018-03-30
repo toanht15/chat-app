@@ -71,7 +71,7 @@ class TrialController extends AppController {
     $socket = new HttpSocket(array(
       'timeout' => self::API_CALL_TIMEOUT
     ));
-    $soketResult = $socket->post(C_NODE_SERVER_ADDR.'/socketCtrl/refreshCompanyList',$data,array('header' => array('X-Forwarded-Port' => 443)));
+    $soketResult = $socket->get(C_NODE_SERVER_ADDR.'/socketCtrl/refreshCompanyList',$data,array('header' => array('X-Forwarded-Port' => 443)));
   }
 
   /* *
