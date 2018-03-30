@@ -6,9 +6,11 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   var self = this;
   $scope.simulatorSettings = SimulatorService;
 
-  $scope.isTabDisplay = document.querySelector('[id$="IsTabDisplay"]').value || true;
-  $scope.canVisitorSendMessage = document.querySelector('[id$="CanVisitorSendMessage"]').value || false;
+  $scope.isTabDisplay = document.querySelector('[id$="IsTabDisplay"]').value == true;
+  $scope.canVisitorSendMessage = document.querySelector('[id$="CanVisitorSendMessage"]').value == true;
 
+  // 自由入力エリアの表示状態
+  $scope.isTextAreaOpen = true;
   // 自由入力エリアの、改行入力の許可状態
   $scope.allowInputLF = true;
   // 自由入力エリアの、メッセージ送信の許可状態
@@ -160,7 +162,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * @param Boolean status 自由入力エリアの表示状態(true: 表示, false: 非表示）
    */
   $scope.$on('switchSimulatorChatTextArea', function(event, status) {
-    $scope.simulatorSettings.isTextAreaOpen = status;
+    $scope.isTextAreaOpen = status;
   });
 
   /**
@@ -197,49 +199,116 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * isTextAreaOpen
    * showWidgetTypeを元に自由入力エリアの表示を切り替える
    */
-  $scope.$watch('simulatorSettings.isTextAreaOpen', function() {
+  $scope.$watch('isTextAreaOpen', function() {
+    $scope.setTextAreaOpenToggle();
+  });
+  $scope.setTextAreaOpenToggle = function() {
     var msgBoxElm = document.getElementById('messageBox');
     var chatTalkElm = document.getElementById('chatTalk');
     if (msgBoxElm === null || chatTalkElm === null) {
       return;
     }
 
-    var chatTalkHeight = 194;
-    var messageBoxHeight = 75;
+    var chatTalkHeight = chatTalkElm.getBoundingClientRect().height;
+    var msgBoxHeight = msgBoxElm.getBoundingClientRect().height;
 
-    switch($scope.simulatorSettings.showWidgetType) {
-      case 1: // 表示タブ：通常
-        // ウィジェットサイズごとにサイズを変更する
-        if($scope.simulatorSettings.settings['widget_size_type'] == 2) {
-          chatTalkHeight = 284;
-        } else if($scope.simulatorSettings.settings['widget_size_type'] == 3) {
-          chatTalkHeight = 374;
-        }
-        // プレミアムプラン以外の場合、高さを調整する
-        <?php if ( !$coreSettings[C_COMPANY_USE_SYNCLO] && (!isset($coreSettings[C_COMPANY_USE_DOCUMENT]) || !$coreSettings[C_COMPANY_USE_DOCUMENT]) ): ?>
-          messageBoxHeight -= 3;
-        <?php endif; ?>
-        break;
-      case 2:  // 表示タブ：スマートフォン(横)
-        chatTalkHeight = 90;
-        messageBoxHeight = 62;
-        break;
-      case 3:  // 表示タブ：スマートフォン(縦)
-        chatTalkHeight = 184;
-        messageBoxHeight = 72;
-        break;
-    }
+    // ウェブ接客コードが非表示な場合に、発生してしまう差分を埋める
+    var offset = $scope.simulatorSettings.showWidgetType === 1 ? 0 : 3;
 
-    if ($scope.simulatorSettings.isTextAreaOpen) {
+    if ($scope.isTextAreaOpen) {
       msgBoxElm.style.display = "";
-      chatTalkElm.style.height = chatTalkHeight + "px";
+      chatTalkElm.style.height = (chatTalkHeight - msgBoxElm.dataset.originalHeight + offset) + "px";
     } else {
       msgBoxElm.style.display = "none";
-      chatTalkElm.style.height = chatTalkHeight + messageBoxHeight + "px";
+      msgBoxElm.dataset.originalHeight = msgBoxHeight;
+      chatTalkElm.style.height = (chatTalkHeight + msgBoxHeight - offset) + "px";
     }
 
     self.autoScroll();
-  });
+  };
+
+  //位置調整
+  $scope.$watch(function(){
+    return {'openFlg': $scope.simulatorSettings.openFlg, 'showWidgetType': $scope.simulatorSettings.showWidgetType, 'widgetSizeType': $scope.simulatorSettings.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.simulatorSettings.settings['chat_radio_behavior'], 'chat_trigger': $scope.simulatorSettings.settings['chat_trigger'], 'show_name': $scope.simulatorSettings.settings['show_name'], 'widget.showTab': $scope.simulatorSettings.showTab};
+  },
+  function(){
+    var main = document.getElementById("miniTarget");
+    if ( !main ) return false;
+    if ( $scope.simulatorSettings.openFlg ) {
+      $timeout(function() {
+        $scope.$apply();
+      }).then(function() {
+        angular.element("#sincloBox").addClass("open");
+        var height = 0;
+        for(var i = 0; main.children.length > i; i++){
+          height += main.children[i].offsetHeight;
+        }
+        main.style.height = height + "px";
+
+        var msgBox = document.getElementById('messageBox');
+        if (!$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
+          $scope.setTextAreaOpenToggle();
+        } else
+        if ($scope.isTextAreaOpen && msgBox.style.display === 'none') {
+          $scope.setTextAreaOpenToggle();
+        }
+      });
+    }
+    else {
+      angular.element("#sincloBox").removeClass("open");
+      main.style.height = "0";
+    }
+  }, true);
+
+  /**
+   * ウィジェットの表示タブ切替
+   * @param Integer type 表示タイプ(1:通常, 2:スマートフォン(横), 3:スマートフォン(縦))
+   */
+  $scope.switchWidget = function(type) {
+    var self = this;
+    $scope.simulatorSettings.showWidgetType = type;
+    var sincloBox = document.getElementById("sincloBox");
+
+    // chatTalkの高さをリセットする(自由入力エリアの表示/非表示切替で設定が追加されるため)
+    var chatTalkElm = document.getElementById('chatTalk');
+    chatTalkElm.style.height = '';
+
+    if ( Number(type) === 3 ) { // ｽﾏｰﾄﾌｫﾝ（縦）の表示
+      $scope.simulatorSettings.showTab = 'chat'; // 強制でチャットにする
+    }
+
+    if ( Number(type) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
+      if(sincloBox){
+        if(sincloBox.style.display == 'none'){
+          sincloBox.style.display = 'block';
+        }
+      }
+      /* ウィジェットが最小化されていたら最大化する */
+      if ( !$scope.simulatorSettings.openFlg ) { // 最小化されている場合
+        var main = document.getElementById("miniTarget");  // 非表示対象エリア
+        var height = 0;
+        if(main){
+          for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
+            if ( Number(type) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
+            height += main.children[i].offsetHeight;
+          }
+          main.style.height = height + "px";
+        }
+      }
+    }
+    if( Number(type) !== 4 ){
+      if($scope.simulatorSettings.coreSettingsChat){
+        document.getElementById("switch_widget").value = type;
+      }
+    }
+    $scope.simulatorSettings.openFlg = true;
+
+    setTimeout(function(){
+      var message = document.querySelector('#widget_simulator_wrapper #messageBox textarea').value;
+      $scope.simulatorSettings.createMessage(message, '');
+      // $scope.isTextAreaOpen = false;
+    },0);
+  };
 
   /**
    * メッセージ追加後のスクロールアニメーション
@@ -318,7 +387,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       var name = $(this).attr('name');
 
       // ウィジェット設定とテキストエリアの表示状態により、選択された文字列の処理を変更する
-      if ($scope.simulatorSettings.settings['chat_radio_behavior'] == <?= C_WIDGET_RADIO_CLICK_SEND ?> || !$scope.simulatorSettings.isTextAreaOpen) {
+      if ($scope.simulatorSettings.settings['chat_radio_behavior'] == <?= C_WIDGET_RADIO_CLICK_SEND ?> || !$scope.isTextAreaOpen) {
         // 即時送信
         $scope.addMessage('se', message)
         $scope.$emit('receiveVistorMessage', message, prefix)

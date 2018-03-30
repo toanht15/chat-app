@@ -24,34 +24,31 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
     }
 </style>
 
-<?php if ( $coreSettings[C_COMPANY_USE_CHAT] ){?>
-<section id="switch_widget" ng-cloak ng-class="{showBanner:widget.closeButtonModeTypeToggle === '1' && widget.closeButtonSettingToggle === '2' && widget.showWidgetType === 4}">
-  <ul class="ulTab" data-col=3 ng-hide="widget.closeButtonSettingToggle === '2'">
-    <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="widget.switchWidget(1)">通常</li>
-    <li ng-class="{choose: widget.showWidgetType === 3}" ng-click="widget.switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
-    <li ng-class="{choose: widget.showWidgetType === 2}" ng-click="widget.switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
-  </ul>
-  <ul class="ulTab showType4" data-col=3 ng-hide="widget.closeButtonSettingToggle !== '2'" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
-    <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="widget.switchWidget(1)">通常</li>
-    <li ng-class="{choose: widget.showWidgetType === 3}" ng-click="widget.switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
-    <li ng-class="{choose: widget.showWidgetType === 2}" ng-click="widget.switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
-  </ul>
-  <input type="hidden" id="switch_widget" value="">
-</section>
-<?php } else { ?>
-<section id="switch_widget" ng-cloak ng-hide="widget.closeButtonSettingToggle !== '2'" ng-class="{showBanner:closeButtonModeTypeToggle === '1' && widget.closeButtonSettingToggle === '2' && widget.showWidgetType === 4}">
-  <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
-    <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="widget.switchWidget(1)">通常</li>
-  </ul>
-  <input type="hidden" id="switch_widget" value="">
-</section>
-<?php }?>
-
 <div ng-controller="SimulatorController as simulator" ng-cloak id="widget_simulator_wrapper">
 
-  <div ng-if='isTabDisplay'>
-    <!-- シナリオ設定ではタブ表示を行わないため、いったん削除 -->
-  </div>
+  <!-- 通常/スマートフォン(縦)/スマートフォン(横)のタブ表示 -->
+  <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ){?>
+  <section id="switch_widget" ng-cloak ng-class="{showBanner:widget.closeButtonModeTypeToggle === '1' && widget.closeButtonSettingToggle === '2' && widget.showWidgetType === 4}" ng-if="isTabDisplay">
+    <ul class="ulTab" data-col=3 ng-hide="widget.closeButtonSettingToggle === '2'">
+      <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
+      <li ng-class="{choose: widget.showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
+      <li ng-class="{choose: widget.showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
+    </ul>
+    <ul class="ulTab showType4" data-col=3 ng-hide="widget.closeButtonSettingToggle !== '2'" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
+      <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
+      <li ng-class="{choose: widget.showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
+      <li ng-class="{choose: widget.showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
+    </ul>
+    <input type="hidden" id="switch_widget" value="">
+  </section>
+  <?php } else { ?>
+  <section id="switch_widget" ng-cloak ng-hide="widget.closeButtonSettingToggle !== '2'" ng-class="{showBanner:closeButtonModeTypeToggle === '1' && widget.closeButtonSettingToggle === '2' && widget.showWidgetType === 4}" ng-if="isTabDisplay">
+    <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
+      <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
+    </ul>
+    <input type="hidden" id="switch_widget" value="">
+  </section>
+  <?php }?>
 
   <section ng-cloak>
     <style>

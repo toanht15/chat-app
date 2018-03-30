@@ -9,7 +9,6 @@ sincloApp.factory('SimulatorService', function() {
     _showWidgetType: 1,
     _openFlg: true,
     _showTab: 'chat',
-    _sincloChatMessagefocusFlg: true,
     _isTextAreaOpen: true,
     set settings(obj) {
       this._settings = obj;
@@ -34,12 +33,6 @@ sincloApp.factory('SimulatorService', function() {
     },
     get openFlg() {
       return this._openFlg;
-    },
-    set isTextAreaOpen(status) {
-      this._isTextAreaOpen = status;
-    },
-    get isTextAreaOpen() {
-      return this._isTextAreaOpen;
     },
     // パラメータ取得(実際のパラメータと、取得時の名称が異なるもの)
     get widgetSizeTypeToggle() {
@@ -103,51 +96,6 @@ sincloApp.factory('SimulatorService', function() {
     },
     get showTab() {
       return this._showTab;
-    },
-    set sincloChatMessagefocusFlg(bool) {
-      this._sincloChatMessagefocusFlg = bool;
-    },
-    switchWidget: function(num) {
-      var self = this;
-      this._showWidgetType = num;
-      this.sincloChatMessagefocusFlg = true;
-      var sincloBox = document.getElementById("sincloBox");
-
-      if ( Number(num) === 3 ) { // ｽﾏｰﾄﾌｫﾝ（縦）の表示
-        this.showTab = 'chat'; // 強制でチャットにする
-      }
-
-      if ( Number(num) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
-        if(sincloBox){
-          if(sincloBox.style.display == 'none'){
-            sincloBox.style.display = 'block';
-          }
-        }
-        /* ウィジェットが最小化されていたら最大化する */
-        if ( !this._openFlg ) { // 最小化されている場合
-          var main = document.getElementById("miniTarget");  // 非表示対象エリア
-          var height = 0;
-          if(main){
-            for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
-              if ( Number(num) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
-              height += main.children[i].offsetHeight;
-            }
-            main.style.height = height + "px";
-          }
-        }
-      }
-      if( Number(num) !== 4 ){
-        if(this._coreSettingsChat){
-          document.getElementById("switch_widget").value = num;
-        }
-      }
-      this._openFlg = true;
-
-      setTimeout(function(){
-        var message = document.querySelector('#widget_simulator_wrapper #messageBox textarea').value;
-        self.createMessage(message, '');
-        this._isTextAreaOpen = false;
-      },0);
     },
     // 関数
     getSeBackgroundColor: function(){

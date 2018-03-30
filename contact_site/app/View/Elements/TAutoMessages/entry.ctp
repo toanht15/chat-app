@@ -328,7 +328,7 @@
         </ul>
       </div>
 
-      <div id="tautomessages_action_simulator" ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" ng-class="{middleSize: widgetSizeTypeToggle === '2', largeSize: widgetSizeTypeToggle === '3'}">
+      <div id="tautomessages_action_simulator" ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" ng-class="{middleSize: widget.isMiddleSize, largeSize: widget.isLargeSize}">
         <div>
           <?= $this->element('WidgetSimulator/simulator', ['isTabDisplay' => true, 'canVisitorSendMessage' => false]); ?>
         </div>

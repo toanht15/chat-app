@@ -173,29 +173,6 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
     $scope.widget.settings = getWidgetSettings();
     $scope.widget.coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
 
-    //位置調整
-    $scope.$watch(function(){
-      return {'openFlg': $scope.widget.openFlg, 'showWidgetType': $scope.widget.showWidgetType, 'widgetSizeType': $scope.widget.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.widget.settings['chat_radio_behavior'], 'chat_trigger': $scope.widget.settings['chat_trigger'], 'show_name': $scope.widget.settings['show_name'], 'widget.showTab': $scope.widget.showTab};
-    },
-    function(){
-      var main = document.getElementById("miniTarget");
-      if ( !main ) return false;
-      if ( $scope.widget.openFlg ) {
-        setTimeout(function(){
-          angular.element("#sincloBox").addClass("open");
-          var height = 0;
-          for(var i = 0; main.children.length > i; i++){
-              height += main.children[i].offsetHeight;
-          }
-          main.style.height = height + "px";
-        }, 0);
-      }
-      else {
-        angular.element("#sincloBox").removeClass("open");
-        main.style.height = "0";
-      }
-    }, true);
-
     $scope.addOption = function(type) {
       var sendMessage = document.getElementById('TAutoMessageAction');
       switch(type){
@@ -265,7 +242,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         });
       });
       $scope.$watch('main.chat_textarea', function(value) {
-        $scope.widget.isTextAreaOpen = value == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>;
+        $scope.$broadcast('switchSimulatorChatTextArea', value == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>);
       });
     });
     $scope.createMessage = function() {
@@ -624,16 +601,5 @@ $(document).ready(function(){
   });
   initializeFromMailAddressArea();
 });
-
-/* [ #2243 ] IE緊急対応 */
-// TODO 仮対応のため正式な対応をする
-var sincloChatMessagefocusFlg = true;
-$("body").on('focus', '#sincloChatMessage', function(e){
-  if ( sincloChatMessagefocusFlg ) {
-    e.target.value = "";
-    sincloChatMessagefocusFlg = false;
-  }
-});
-/* [ #2243 ] IE緊急対応 */
 
 </script>
