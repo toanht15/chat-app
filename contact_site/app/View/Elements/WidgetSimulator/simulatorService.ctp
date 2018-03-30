@@ -3,6 +3,26 @@
 
 sincloApp.factory('SimulatorService', function() {
 
+  var self = this;
+
+  this.escape_html = function() {
+    if(typeof unescapedString !== 'string') {
+      return unescapedString;
+    }
+    var string = unescapedString.replace(/(<br>|<br \/>)/gi, '\n');
+    string = string.replace(/[&'`"<>]/g, function(match) {
+      return {
+        '&': '&amp;',
+        "'": '&#x27;',
+        '`': '&#x60;',
+        '"': '&quot;',
+        '<': '&lt;',
+        '>': '&gt;',
+      }[match];
+    });
+    return string;
+  };
+
   return {
     _settings: {},
     _coreSettingsChat: {},
@@ -340,13 +360,15 @@ sincloApp.factory('SimulatorService', function() {
      * @return String       変換したメッセージ
      */
     createMessage: function(val, prefix) {
+
       if (val === '') return;
       prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
+      var isSmartphone = this._showWidgetType != 1;
       var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
 
       var strings = val.split('\n');
       var radioCnt = 1;
-      var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+      var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
       var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
       var radioName = prefix + "sinclo-radio" + messageIndex;
@@ -374,15 +396,15 @@ sincloApp.factory('SimulatorService', function() {
         var tel = str.match(telnoTagReg);
         if( tel !== null ) {
           var telno = tel[1];
-          // if(isSmartphone) {
-          //   // リンクとして有効化
-          //   var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
-          //   str = str.replace(tel[0], a);
-          // } else {
+          if(isSmartphone) {
+            // リンクとして有効化
+            var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
+            str = str.replace(tel[0], a);
+          } else {
             // ただの文字列にする
             var span = "<span class='telno'>" + telno + "</span>";
             str = str.replace(tel[0], span);
-          // }
+          }
         }
         content += str + "\n";
       }

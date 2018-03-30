@@ -101,9 +101,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox span#mainImage img { background-color: {{widget.settings['main_color']}}; }
         #sincloBox .pb07 { padding-bottom: 7px }
         #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
-        #sincloBox .sinclo_re a { color: {{widget.settings['re_text_color']}};}
-        #sincloBox .sinclo_se a { color: {{widget.settings['se_text_color']}};}
-        #sincloBox ul#chatTalk li.sinclo_re span.telno { color: {{widget.settings['re_text_color']}};}
+        #sincloBox .sinclo_re a { color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px; }
+        #sincloBox .sinclo_se a { color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
+        #sincloBox ul#chatTalk li.sinclo_re span.telno { color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px; }
         #sincloBox a:hover { color: {{widget.settings['main_color']}}; }
         #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
         #sincloBox div#descriptionSet { cursor: pointer; }

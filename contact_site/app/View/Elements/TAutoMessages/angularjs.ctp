@@ -204,11 +204,32 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       $scope.createMessage();
     }
 
-    // シミュレーター上のメッセージ表示更新
     angular.element(window).on('load', function(e) {
+
+      // 吹き出しの要素をクローンして、メッセージのシミュレーションを行えるように固有のIDを設定する
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+      divElm.id = 'sample_widget_re_message';
+      document.getElementById('chatTalk').appendChild(divElm);
+      $scope.createMessage();
+
+      // メッセージ入力に応じて、シミュレーション上の吹き出しを表示更新する
       $('#TAutoMessageAction').on('keydown keyup', function(e) {
         $scope.createMessage();
       });
+
+      // ウィジェットのタブ切替時、シミュレーション上の吹き出しを表示更新する
+      $scope.$on('switchWidget', function(event, type) {
+        setTimeout(function(){
+          var divElm = document.getElementById('sample_widget_re_message');
+          if (!divElm) {
+            var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+            divElm.id = 'sample_widget_re_message';
+            document.getElementById('chatTalk').appendChild(divElm);
+          }
+          $scope.createMessage();
+        },0);
+      });
+
       $(document).on('keyup', 'input[name^="keyword_"]', function(e){
         var val = $(this).val();
         console.log(val);
@@ -245,57 +266,16 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         $scope.$broadcast('switchSimulatorChatTextArea', value == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>);
       });
     });
+
     $scope.createMessage = function() {
-      var isSmartphone = $scope.widget.showWidgetType != 1;
-      var val = document.getElementById('TAutoMessageAction').value;
+      var val = document.getElementById('TAutoMessageAction').value || '';
       var messageElement = document.querySelector('#sample_widget_re_message .details:not(.cName)');
       if(!messageElement) return;
 
-      var strings = val.split('\n');
-      var radioCnt = 1;
-      var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
-      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-      var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
-      var radioName = "sinclo-radio0";
-      var content = "";
-
-      for (var i = 0; strings.length > i; i++) {
-        var str = escape_html(strings[i]);
-
-        // リンク
-        var link = str.match(linkReg);
-        if ( link !== null ) {
-            var url = link[0];
-            var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
-            str = str.replace(url, a);
-        }
-        // ラジオボタン
-        var radio = str.indexOf('[]');
-        if ( radio > -1 ) {
-            var value = str.slice(radio+2);
-            var name = value.replace(htmlTagReg, '');
-            str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-            str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
-        }
-        // 電話番号（スマホのみリンク化）
-        var tel = str.match(telnoTagReg);
-        if( tel !== null ) {
-          var telno = tel[1];
-          if(isSmartphone) {
-            // リンクとして有効化
-            var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
-            str = str.replace(tel[0], a);
-          } else {
-            // ただの文字列にする
-            var span = "<span class='telno'>" + telno + "</span>";
-            str = str.replace(tel[0], span);
-          }
-        }
-        content += str + "\n";
-      }
+      var content = $scope.widget.createMessage(val, 'automessage');
 
       // プレビューの吹き出し表示制御
-      if(content.length > 1) {
+      if(typeof content !== 'undefined' && content.length > 1) {
         document.getElementById('sample_widget_re_message').style.display = "";
         messageElement.innerHTML = content;
       } else {
@@ -444,24 +424,6 @@ sincloApp.directive('ngShowonhover',function() {
     };
 });
 
-function escape_html(unescapedString) {
-  if(typeof unescapedString !== 'string') {
-    return unescapedString;
-  }
-  var string = unescapedString.replace(/(<br>|<br \/>)/gi, '\n');
-  string = string.replace(/[&'`"<>]/g, function(match) {
-    return {
-      '&': '&amp;',
-      "'": '&#x27;',
-      '`': '&#x60;',
-      '"': '&quot;',
-      '<': '&lt;',
-      '>': '&gt;',
-    }[match];
-  });
-  return string;
-}
-
 function removeAct(lastPage){
     modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
     popupEvent.closePopup = function(){
@@ -510,9 +472,7 @@ $(document).ready(function(){
   // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
-    console.log(parentTdId);
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 170 + topPosition) + 'px',

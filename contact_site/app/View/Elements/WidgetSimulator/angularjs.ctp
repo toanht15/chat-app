@@ -303,11 +303,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
     $scope.simulatorSettings.openFlg = true;
 
-    setTimeout(function(){
-      var message = document.querySelector('#widget_simulator_wrapper #messageBox textarea').value;
-      $scope.simulatorSettings.createMessage(message, '');
-      // $scope.isTextAreaOpen = false;
-    },0);
+    $scope.$emit('switchWidget', type)
   };
 
   /**
