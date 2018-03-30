@@ -111,13 +111,23 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの削除
   this.removeItem = function(setActionId) {
-    var actionDetail = $scope.setActionList[setActionId];
+    var actionDetail = angular.copy($scope.setActionList[setActionId]);
     if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' && actionDetail.tChatbotScenarioSendFileId !== null ) {
       $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
       LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value: $scope.targetDeleteFileIds}]);
     }
-
     $scope.setActionList.splice(setActionId, 1);
+
+    // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
+    $timeout(function() {
+      var variables = searchObj(actionDetail, /^variableName$/);
+      if (variables.length >= 1) {
+        var elms = document.querySelectorAll('li.set_action_item');
+        for (var listIndex = setActionId; listIndex < elms.length; listIndex++) {
+          actionValidationCheck(elms[listIndex], $scope.setActionList, $scope.setActionList[listIndex]);
+        }
+      }
+    }, 0);
   };
 
   // アクションの追加・削除を検知する
