@@ -40,7 +40,7 @@
       }
 
       if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
+        && phoneNumberValidate == 'true') {
         $("#submitButton").prop('disabled', false);
         $("#submitButton").css('background-color','#e65298');
         document.getElementById('submitButton').value = ('無料トライアルを申し込む');
@@ -64,7 +64,7 @@
       }
 
       if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
+        && phoneNumberValidate == 'true') {
         $("#submitButton").prop('disabled', false);
         $("#submitButton").css('background-color','#e65298');
         document.getElementById('submitButton').value = ('無料トライアルを申し込む');
@@ -136,7 +136,7 @@
         }
       });
       if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
+        && phoneNumberValidate == 'true') {
         $("#submitButton").prop('disabled', false);
         $("#submitButton").css('background-color','#e65298');
         document.getElementById('submitButton').value = ('無料トライアルを申し込む');
@@ -170,7 +170,7 @@
         phoneNumberValidate = 'true';
       }
       if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
+        && phoneNumberValidate == 'true') {
         $("#submitButton").prop('disabled', false);
         $("#submitButton").css('background-color','#e65298');
         document.getElementById('submitButton').value = ('無料トライアルを申し込む');
@@ -186,28 +186,23 @@
     $("#agree").change(function(){
       if ($(this).is(':checked')) {
         document.getElementById('agreeEroor').style.display = "none";
-         agreeValidate = 'true';
       }
       else {
         document.getElementById('agreeEroor').style.display = "block";
-        agreeValidate = 'false';
-      }
-      if(companyNameValidate == 'true' && nameValidate == 'true' && mailAddressValidate == 'true'
-        && phoneNumberValidate == 'true' && agreeValidate == 'true') {
-        $("#submitButton").prop('disabled', false);
-        $("#submitButton").css('background-color','#e65298');
-        document.getElementById('submitButton').value = ('無料トライアルを申し込む');
-      }
-      else {
-        $("#submitButton").prop('disabled', true);
-        $("#submitButton").css('background-color','#b5b5b5');
-        document.getElementById('submitButton').value = ('未入力の項目があります');
       }
     })
   });
 
   //登録する
   function saveAct(){
+
+    if ($("#agree").is(':checked')) {
+    }
+    else {
+      document.getElementById('agreeEroor').style.display = "block";
+      return false;
+    }
+
     //loading画像
     loading.load.start();
 
@@ -458,7 +453,7 @@
                           <p><div style = "display: inline-flex;"><div>※</div><div>同業他社様、その他弊社の判断により、トライアル環境のご提供ができない場合がございます。</div></div><br>
                           <div style = "display: inline-flex; margin-top:9px;"><div>※</div><div>本フォームでご入力いただいた情報は、当社の営業活動および各種サービスに対するお問い合わせへの返答を目的として使用します。当社の個人情報の取り扱いについては
                           <a href="https://www.medialink-ml.co.jp/privacy/" target="_blank">プライバシーポリシー</a>をご参照ください。</div></div></p>
-                          <div style = "margin-top: 1.6rem;width: 11em;margin-top: -0.3em;">
+                          <div style = "margin-top: 1.6rem;width: 11em;margin-top: -0.3em;margin: 0 auto;">
                           <?= $this->Form->input( 'agree', array(
                           'type' => 'checkbox',
                           'checked' => false,    // 初期表示で選択させる場合
@@ -472,7 +467,7 @@
                     </div>
                     <div class="nf-after-field" id = "agreeEroor" style = "display:none;">
                       <div class="nf-input-limit"></div>
-                        <div class="nf-error-msg nf-error-required-error" style = "margin-bottom: -12px;text-align:left;margin-left: 35px;margin-top: -18px;">同意が必要です</div>
+                        <div class="nf-error-msg nf-error-required-error" style = "margin: 0 auto;">同意が必要です</div>
                     </div>
                   </div>
                   <div class="eachRow submit-container  label-hidden  textbox-container">
