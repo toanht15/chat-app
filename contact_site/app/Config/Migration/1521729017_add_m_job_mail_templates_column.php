@@ -26,9 +26,9 @@ class AddMJobMailTemplatesColumn extends CakeMigration {
 				'm_system_mail_templates' => array(
 					'sender' => array('type' => 'string', 'null' => false, 'default' => '（sinclo）', 'length' => 200, 'collate' => 'utf8_general_ci', 'charset' => 'utf8','after' => 'mail_type_cd'),
 				),
-				'drop_field' => array(
+			),
+			'drop_field' => array(
 					'm_job_mail_templates' => array('days_after')
-				),
 			),
 		),
 		'down' => array(

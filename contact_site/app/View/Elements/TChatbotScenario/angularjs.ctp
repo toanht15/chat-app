@@ -111,13 +111,23 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの削除
   this.removeItem = function(setActionId) {
-    var actionDetail = $scope.setActionList[setActionId];
+    var actionDetail = angular.copy($scope.setActionList[setActionId]);
     if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' && actionDetail.tChatbotScenarioSendFileId !== null ) {
       $scope.targetDeleteFileIds.push(actionDetail.tChatbotScenarioSendFileId);
       LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value: $scope.targetDeleteFileIds}]);
     }
-
     $scope.setActionList.splice(setActionId, 1);
+
+    // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
+    $timeout(function() {
+      var variables = searchObj(actionDetail, /^variableName$/);
+      if (variables.length >= 1) {
+        var elms = document.querySelectorAll('li.set_action_item');
+        for (var listIndex = setActionId; listIndex < elms.length; listIndex++) {
+          actionValidationCheck(elms[listIndex], $scope.setActionList, $scope.setActionList[listIndex]);
+        }
+      }
+    }, 0);
   };
 
   // アクションの追加・削除を検知する
@@ -153,11 +163,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
       // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
       var variables = searchObj(newObject, /^variableName$/);
-      if (!variables && variables.length > 1 && elms.length >= 1) {
+      if (variables.length >= 1) {
         var elms = document.querySelectorAll('li.set_action_item');
-        $scope.setActionList.forEach(function(actionItem, index) {
-          actionValidationCheck(elms[index], $scope.setActionList, actionItem);
-        });
+        for (var listIndex = index + 1; listIndex < elms.length; listIndex++) {
+          actionValidationCheck(elms[listIndex], $scope.setActionList, $scope.setActionList[listIndex]);
+        }
       }
 
       // プレビューに要素がない場合、以降の処理は実行しない
@@ -430,15 +440,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   /**
    * ファイル削除
    */
-  this.removeFile = function($event) {
-    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
-    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
-
+  this.removeFile = function($event, actionId) {
     // ファイルIDの削除リストへ追加
-    $scope.targetDeleteFileIds.push($scope.setActionList[actionStep].tChatbotScenarioSendFileId);
+    $scope.targetDeleteFileIds.push($scope.setActionList[actionId].tChatbotScenarioSendFileId);
 
-    $scope.setActionList[actionStep].tChatbotScenarioSendFileId = null;
-    $scope.setActionList[actionStep].file = null;
+    $scope.setActionList[actionId].tChatbotScenarioSendFileId = null;
+    $scope.setActionList[actionId].file = null;
 
     // localStorageに一時保存を行う
     LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value:$scope.targetDeleteFileIds}]);
@@ -809,7 +816,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
 
   $scope.widget = SimulatorService;
-  $scope.widget.settings = getWidgetSettings();
 
   /**
    * シミュレーションの起動(ダイアログ表示)
@@ -1378,11 +1384,11 @@ function actionValidationCheck(element, setActionList, actionItem) {
     }
 
     if (!actionItem.fromName) {
-      messageList.push('メールタイトルが未入力です');
+      messageList.push('差出人名が未入力です');
     }
 
     if (!actionItem.subject) {
-      messageList.push('差出人名が未入力です');
+      messageList.push('メールタイトルが未入力です');
     }
 
     if (actionItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?> && !actionItem.template) {
@@ -1401,15 +1407,9 @@ function actionValidationCheck(element, setActionList, actionItem) {
       messageList.push('連携先URLが未入力です');
     }
 
-    var validResponseBody = actionItem.responseBodyMaps.some(function(obj) {
-      return !!obj.variableName && !!obj.sourceKey;
-    });
-    if (!validResponseBody) {
-      messageList.push('レスポンスボディ情報が未入力です')
-    }
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
-    if (!actionItem.tChatbotScenarioSendFileId && !actionItem.file && !actionItem.file.download_url && !actionItem.file.file_size) {
+    if (!actionItem.tChatbotScenarioSendFileId || !actionItem.file || !actionItem.file.download_url || !actionItem.file.file_size) {
       messageList.push('ファイルが未選択です');
     }
   }
@@ -1439,7 +1439,10 @@ function actionValidationCheck(element, setActionList, actionItem) {
       return actionItem !== action;
     });
 
-    usedVariableList.forEach(function(string) {
+    // 重複を排除して、エラーメッセージを追加する
+    usedVariableList.filter(function(value, index, arr) {
+      return arr.indexOf(value) == index;
+    }).forEach(function(string) {
       var variableName = string.replace(/{{([^}]+)}}/, '$1');
       messageList.push('変数名 "' + variableName + '" がこのアクションより前に設定されていません');
     });
@@ -1472,7 +1475,7 @@ function searchObj (obj, regex) {
       resultList = resultList.concat(searchObj(obj[key], regex));
     }
 
-    if (typeof obj[key] === 'string' && regex.test(key)) {
+    if (typeof obj[key] === 'string' && obj[key].length >= 1 && regex.test(key)) {
       resultList.push(obj[key]);
     }
   }

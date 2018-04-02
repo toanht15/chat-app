@@ -35,16 +35,16 @@ class TChatbotScenarioController extends FileAppController {
   public $styleSetting = [
     'common' => [
       'show_timing', 'max_show_timing_site', 'max_show_timing_page',
-      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
+      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
       /* カラー設定styat */
-      'color_setting_type','main_color','string_color','message_text_color','other_text_color','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
-      'chat_talk_background_color','c_name_text_color','re_text_color','re_background_color','re_border_color','re_border_none','se_text_color','se_background_color','se_border_color','se_border_none','chat_message_background_color',
+      'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
+      'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
       'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none'
       /* カラー設定end */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg',],
+    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
   ];
 
   const SCENARIO_VARIABLES_TEMPLATE = "※このメールはお客様の設定によりsincloから自動送信されました。
@@ -1173,6 +1173,12 @@ sinclo@medialink-ml.co.jp
             if ( strcmp($v, 'show_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
             }
+            if ( strcmp($v, 'show_automessage_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_automessage_name'] = C_SELECT_CAN; // デフォルト値
+            }
+            if ( strcmp($v, 'show_op_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_op_name'] = C_SELECT_CAN; // デフォルト値
+            }
             if ( strcmp($v, 'chat_message_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_message_design_type'] = C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX; // デフォルト値
             }
@@ -1192,6 +1198,10 @@ sinclo@medialink-ml.co.jp
 
             if ( strcmp($v, 'sp_auto_open_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_auto_open_flg'] = C_CHECK_OFF; // デフォルト値
+            }
+
+            if ( strcmp($v, 'sp_maximize_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_maximize_size_type'] = C_SELECT_CAN; // デフォルト値
             }
 
             if ( isset($json[$v]) ) {
@@ -1231,6 +1241,10 @@ sinclo@medialink-ml.co.jp
                   $d["max_show_time_page"] = $json["max_show_time_page"];
                 }
               }
+            }
+            // デフォルト値（プレミアムプランのみ表示する）
+            if ( strcmp($v, 'show_access_id') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_access_id'] = C_SELECT_CAN_NOT;
             }
             //ウィジットサイズタイプ
             if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
@@ -1279,6 +1293,23 @@ sinclo@medialink-ml.co.jp
             if ( strcmp($v, 'other_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['other_text_color'] = OTHER_TEXT_COLOR; // デフォルト値
             }
+            //ヘッダー文字サイズ
+            if ( strcmp($v, 'header_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['header_text_size'] = "14";
+                  break;
+                case 2:
+                case 3:
+                  $d['header_text_size'] = "15";
+                  break;
+                default:
+                  $d['header_text_size'] = "15"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
+            }
             //5.ウィジェット枠線色
             if ( strcmp($v, 'widget_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_border_color'] = WIDGET_BORDER_COLOR; // デフォルト値
@@ -1320,6 +1351,23 @@ sinclo@medialink-ml.co.jp
             //11.企業側吹き出し文字色
             if ( strcmp($v, 're_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['re_text_color'] = RE_TEXT_COLOR; // デフォルト値
+            }
+            //企業側吹き出し文字サイズ
+            if ( strcmp($v, 're_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['re_text_size'] = "12";
+                  break;
+                case 2:
+                case 3:
+                  $d['re_text_size'] = "13";
+                  break;
+                default:
+                  $d['re_text_size'] = "13"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
             }
             //12.企業側吹き出し背景色
             if ( strcmp($v, 're_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
@@ -1364,6 +1412,23 @@ sinclo@medialink-ml.co.jp
             //15.訪問者側吹き出し文字色
             if ( strcmp($v, 'se_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['se_text_color'] = SE_TEXT_COLOR; // デフォルト値
+            }
+            //訪問者側吹き出し文字サイズ
+            if ( strcmp($v, 'se_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['se_text_size'] = "12";
+                  break;
+                case 2:
+                case 3:
+                  $d['se_text_size'] = "13";
+                  break;
+                default:
+                  $d['se_text_size'] = "13"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
             }
             //16.訪問者側吹き出し背景色
             if ( strcmp($v, 'se_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
