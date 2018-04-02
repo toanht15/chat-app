@@ -1012,7 +1012,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (hearingDetail.inputLFType == <?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>) {
         $scope.$broadcast('allowSendMessageByShiftEnter', true);
       } else {
-        $scope.$broadcast('allowInputLF', false);
+        $scope.$broadcast('allowInputLF', false, hearingDetail.inputType);
       }
       var strInputRule =$scope.inputTypeList[hearingDetail.inputType].inputRule;
       $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));

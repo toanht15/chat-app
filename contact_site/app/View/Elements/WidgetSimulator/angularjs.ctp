@@ -52,6 +52,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   $scope.$on('removeMessage', function(event) {
     document.querySelector('#sincloChatMessage').value = '';
+    document.querySelector('#miniSincloChatMessage').value = '';
     var elms = $('#chatTalk > div:not([style*="display: none;"])');
     angular.forEach(elms, function(elm) {
       document.querySelector('#chatTalk').removeChild(elm);
@@ -63,7 +64,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * サイト訪問者のメッセージ受信と、呼び出し元アクションへの通知
    */
   $scope.visitorSendMessage = function() {
-    var message = $('#sincloChatMessage').val()
+    var message = $('#sincloChatMessage').val() ? $('#sincloChatMessage').val() : $('#miniSincloChatMessage').val();
     if (typeof message === 'undefined' || message.trim() === '') {
       return;
     }
@@ -76,6 +77,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     $scope.addMessage('se', message);
     $('#sincloChatMessage').val('');
+    $('#miniSincloChatMessage').val('');
     $scope.$emit('receiveVistorMessage', message)
   };
 
@@ -152,8 +154,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   $scope.$on('setPlaceholder', function(event, message) {
     var elm = document.querySelector('#sincloChatMessage');
+    var miniElm = document.querySelector('#miniSincloChatMessage');
     $scope.defaultPlaceholder = elm.placeholder;
     elm.placeholder = message;
+    miniElm.placeholder = message;
   });
 
   /**
@@ -170,8 +174,20 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * （allowSendMessageByShiftEnterと同時に設定しないことを前提とする）
    * @param Boolean status 改行入力の許可状態
    */
-  $scope.$on('allowInputLF', function(event, status) {
+  $scope.$on('allowInputLF', function(event, status, inputType) {
+    console.log("$scope.$on('allowInputLF') inputType: %s", inputType);
+    var _inputType = {
+      "1": "text",
+      "2": "number",
+      "3": "email",
+      "4": "tel"
+    };
     $scope.allowInputLF = status === true;
+    if($scope.allowInputLF) {
+      $scope.hideMiniMessageArea();
+    } else {
+      $scope.showMiniMessageArea(_inputType[inputType]);
+    }
     self.setPlaceholder('（Enter/Shift+Enterで送信）');
   });
 
@@ -181,8 +197,15 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * @param Boolean status Shift+Enterでのメッセージ送信の許可状態
    */
   $scope.$on('allowSendMessageByShiftEnter', function(event, status) {
+    console.log("allowSendMessageByShiftEnter")
     $scope.allowSendMessageByShiftEnter = status === true;
+    if($scope.allowSendMessageByShiftEnter) {
+      $scope.hideMiniMessageArea();
+    } else {
+      $scope.showMiniMessageArea('tel');
+    }
     self.setPlaceholder('（Enterで改行/Shift+Enterで送信）');
+    $scope.$apply();
   });
 
   /**
@@ -196,6 +219,28 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   });
 
   /**
+   * 改行ありのtextarea入力欄を非表示にし、改行不可のinput[type="*"]を表示する
+   */
+  $scope.showMiniMessageArea = function(inputType) {
+    console.log("showMiniMessageArea");
+    $('#messageBox').addClass('sinclo-hide');
+    $('#miniFlexBoxHeight').removeClass('sinclo-hide');
+    $('#miniSincloChatMessage').get(0).type = 'text';
+    //$scope.setTextAreaOpenToggle();
+  };
+
+  /**
+   * 改行ありのtextarea入力欄を表示し、改行不可のinput[type="*"]を非表示にする
+   */
+  $scope.hideMiniMessageArea = function() {
+    console.log("hideMiniMessageArea");
+    $('#messageBox').removeClass('sinclo-hide');
+    $('#miniFlexBoxHeight').addClass('sinclo-hide');
+    $('#miniSincloChatMessage').get(0).type = 'text';
+    //$scope.setTextAreaOpenToggle();
+  };
+
+  /**
    * isTextAreaOpen
    * showWidgetTypeを元に自由入力エリアの表示を切り替える
    */
@@ -203,7 +248,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.setTextAreaOpenToggle();
   });
   $scope.setTextAreaOpenToggle = function() {
-    var msgBoxElm = document.getElementById('messageBox');
+    var msgBoxElm = document.getElementById('flexBoxWrap');
     var chatTalkElm = document.getElementById('chatTalk');
     if (msgBoxElm === null || chatTalkElm === null) {
       return;
@@ -245,7 +290,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         }
         main.style.height = height + "px";
 
-        var msgBox = document.getElementById('messageBox');
+        var msgBox = document.getElementById('flexBoxWrap');
         if (!$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
           $scope.setTextAreaOpenToggle();
         } else
@@ -343,7 +388,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   /**
    * 自由入力エリアのキーイベント
    */
-  $(document).on('keypress', '#sincloChatMessage', function(e) {
+  $(document).on('keypress', '#sincloChatMessage,#miniSincloChatMessage', function(e) {
     if (!$scope.allowInputLF && e.key === 'Enter') {
       // ヒアリング：改行不可（Enterキーでメッセージ送信）
       $scope.visitorSendMessage();
@@ -358,8 +403,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   /**
    * 自由入力エリアのテキスト入力イベント
    */
-  $(document).on('input paste', '#sincloChatMessage', function(e) {
-    var targetElm = $('#sincloChatMessage');
+  $(document).on('input paste', '#sincloChatMessage,#miniSincloChatMessage', function(e) {
+    var targetElm = $(this);
     var inputText = targetElm.val();
 
     var regex = new RegExp($scope.inputRule);
@@ -396,6 +441,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       } else {
         // テキストエリアへの入力
         document.querySelector('#sincloChatMessage').value = message;
+        document.querySelector('#miniSincloChatMessage').value = message;
       }
 
       // ラジオボタンを非活性にする

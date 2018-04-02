@@ -96,6 +96,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox * { font-size: 12px; }
         #sincloBox.middleSize  * { font-size: 13px; }
         #sincloBox.largeSize * { font-size: 13px; }
+        #sincloBox .sinclo-hide { display:none!important; }
         #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
         #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 10px; }
         #sincloBox span#mainImage img { background-color: {{widget.settings['main_color']}}; }
@@ -200,23 +201,25 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li .sendFileContent .sendFileMetaArea .data { margin-left: 1em; margin-bottom: 5px; display: block; }
         #sincloBox ul#chatTalk li .sendFileContent .sendFileMetaArea .data.sendFileSize { margin-bottom: 0px; }
 
-        #sincloBox section#chatTab > div { height: 75px!important; padding: 5px; }
-        #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: {{widget.settings['other_text_color']}}; margin: 0; resize: none; padding: 5px; }
-        #sincloBox section#chatTab textarea#sincloChatMessage.details { color: {{widget.settings['message_box_text_color']}}; background-color: {{widget.settings['message_box_background_color']}}; }
-        #sincloBox section#chatTab textarea#sincloChatMessage.details.notNone { border: 1px solid {{widget.settings['message_box_border_color']}}!important; }
-        #sincloBox section#chatTab textarea#sincloChatMessage.notNone { border-radius: 5px 0 0 5px!important; border: 1px solid {{widget.settings['chat_talk_border_color']}}!important; border-right-color: transparent!important; }
-        #sincloBox section#chatTab textarea#sincloChatMessage.notNone:focus { border-color: {{widget.settings['main_color']}}!important; outline: none!important; border-right-color: transparent!important; }
-        #sincloBox section#chatTab textarea#sincloChatMessage:not(.notNone){ border: none!important }
-        #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 20px 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: bold; font-size: 1.2em;}
-        #sincloBox section#chatTab #sincloChatSendBtn.details{ background-color: {{widget.settings['chat_send_btn_background_color']}}!important; }
-        #sincloBox section#chatTab #sincloChatSendBtn.middleSize{ padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
-        #sincloBox section#chatTab #sincloChatSendBtn.largeSize{ padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
-        #sincloBox section#chatTab #sincloChatSendBtn span { color: {{widget.settings['string_color']}} }
-        #sincloBox section#chatTab #sincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}} }
-        #sincloBox section#chatTab #messageBox.messageBox{border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
-        #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
-        #sincloBox section#chatTab #messageBox.messageBox.details{ background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
-        #sincloBox section#chatTab #messageBox.messageBox.details:not(.notNone){ border-top: none; }
+        #sincloBox section#chatTab #flexBoxWrap div#messageBox { height: 75px!important; padding: 5px; }
+        #sincloBox section#chatTab #flexBoxWrap div#miniFlexBoxHeight { height: 48px!important; padding: 5px; }
+        #sincloBox section#chatTab textarea#sincloChatMessage, #sincloBox section#chatTab input#miniSincloChatMessage { width: 80%; height: 100%; color: {{widget.settings['other_text_color']}}; margin: 0; resize: none; padding: 5px; }
+        #sincloBox section#chatTab input#miniSincloChatMessage { height: 36px; }
+        #sincloBox section#chatTab textarea#sincloChatMessage.details, #sincloBox section#chatTab input#miniSincloChatMessage.details { color: {{widget.settings['message_box_text_color']}}; background-color: {{widget.settings['message_box_background_color']}}; }
+        #sincloBox section#chatTab textarea#sincloChatMessage.details.notNone, #sincloBox section#chatTab input#miniSincloChatMessage.details.notNone { border: 1px solid {{widget.settings['message_box_border_color']}}!important; }
+        #sincloBox section#chatTab textarea#sincloChatMessage.notNone, #sincloBox section#chatTab input#miniSincloChatMessage.notNone { border-radius: 5px 0 0 5px!important; border: 1px solid {{widget.settings['chat_talk_border_color']}}!important; border-right-color: transparent!important; }
+        #sincloBox section#chatTab textarea#sincloChatMessage.notNone:focus, #sincloBox section#chatTab input#miniSincloChatMessage.notNone:focus { border-color: {{widget.settings['main_color']}}!important; outline: none!important; border-right-color: transparent!important; }
+        #sincloBox section#chatTab textarea#sincloChatMessage:not(.notNone), #sincloBox section#chatTab input#miniSincloChatMessage:not(.notNone) { border: none!important }
+        #sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { width: 20%; height: 100%; padding: 25px 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: bold; font-size: 1.2em;}
+        #sincloBox section#chatTab #miniSincloChatSendBtn { height: 36px; padding: 8px 0; }
+        #sincloBox section#chatTab #sincloChatSendBtn.details, #sincloBox section#chatTab #miniSincloChatSendBtn.details{ background-color: {{widget.settings['chat_send_btn_background_color']}}!important; }
+        #sincloBox section#chatTab #sincloChatSendBtn.middleSize, #sincloBox section#chatTab #miniSincloChatSendBtn.middleSize { padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
+        #sincloBox section#chatTab #sincloChatSendBtn.largeSize, #sincloBox section#chatTab #miniSincloChatSendBtn.largeSize { padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
+        #sincloBox section#chatTab #sincloChatSendBtn span, #sincloBox section#chatTab #miniSincloChatSendBtn span { color: {{widget.settings['string_color']}} }
+        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}} }
+        #sincloBox section#chatTab #messageBox.messageBox, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox {border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
+        #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder), #sincloBox section#chatTab #miniFlexBoxHeight.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
+        #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
       <?php endif; ?>
       <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
         #sincloBox section#callTab{height: 296.5px;}
@@ -297,6 +300,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
       <?php endif; ?>
         #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget.settings['widget_border_color']}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
         #sincloBox #footer:not(.notNoneWidgetOutsideBorder) { border:none; }
+        .disableCopy{ user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }
       </style>
       <!-- 画像 -->
       <span id="mainImage" class="widgetOpener" ng-hide="widget.spHeaderLightToggle() || widget.mainImageToggle !== '1'">
@@ -326,7 +330,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         <section id="chatTab" ng-hide="widget.showTab !== 'chat'" class="details" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
 
   <!-- chat_message_copy 0 stayt -->
-          <ul id="chatTalk" class="details" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}" ng-if="widget.settings['chat_message_copy'] == '0'">
+          <ul id="chatTalk" class="details" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, disableCopy: widget.settings['chat_message_copy']== '1'}">
             <div style="height: auto!important; padding:0; display: none;" ng-class="{liLeft: widget.settings['chat_message_design_type'] == 1, liRight: widget.settings['chat_message_design_type'] == 2}" >
             <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
             </div>
@@ -339,32 +343,16 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
           </ul>
   <!-- chat_message_copy 0 end -->
 
-  <!-- chat_message_copy 1 stayt -->
-          <ul id="chatTalk" class="details" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}" ng-if="widget.settings['chat_message_copy']== '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">
-            <div style="height: auto!important; padding:0; display: none;" ng-class="{liLeft: widget.settings['chat_message_design_type'] == 1, liRight: widget.settings['chat_message_design_type'] == 2}" >
-              <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
-            </div>
-            <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
-            </div>
-            <!-- ファイル送信 -->
-            <div style="height: auto!important; padding:0; cursor: pointer; display: none;">
-              <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">ファイルが送信されました</span><div class="sendFileContent"><div class="sendFileThumbnailArea"><img class="sendFileThumbnail" src="" width="64" height="64"><i class="fa fa-4x sendFileThumbnail" aria-hidden="true"></i></div><div class="sendFileMetaArea"><span class="data sendFileName details">ファイル名</span><span class="data sendFileSize details">ファイルサイズ</span></div></div></li>
-            </div>
-          </ul>
-  <!-- chat_message_copy 1 end -->
-
   <!-- chat_message_copy 0 stayt -->
-          <div id="messageBox" class="messageBox details" ng-if="widget.settings['chat_message_copy'] == '1'" ng-class="{ notNoneWidgetOutsideBorder:widget.settings['widget_outside_border_none'] === ''||widget.settings['widget_outside_border_none'] === false, notNone:widget.settings['widget_inside_border_none'] === ''||widget.settings['widget_inside_border_none'] === false }" style="user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none;">
-            <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:widget.message_box_border_none === ''||widget.message_box_border_none === false}" ng-attr-placeholder="メッセージを入力してください&#13;&#10;{{widget.chat_area_placeholder_pc}}"></textarea>
-            <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}" ng-click="canVisitorSendMessage && visitorSendMessage()"><span class="details">送信</span></a>
-          </div>
-  <!-- chat_message_copy 0 end -->
-
-  <!-- chat_message_copy 1 stayt -->
-          <div id="messageBox" class="messageBox details" ng-if="widget.settings['chat_message_copy'] == '0'" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false }">
-            <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:widget.message_box_border_none === ''||widget.message_box_border_none === false}" ng-attr-placeholder="メッセージを入力してください&#13;&#10;{{widget.chat_area_placeholder_pc}}"></textarea>
-            <a id="sincloChatSendBtn" class="notSelect details" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}" ng-click="canVisitorSendMessage && visitorSendMessage()"><span class="details">送信</span></a>
+          <div id="flexBoxWrap">
+            <div id="messageBox" class="messageBox details" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false }">
+              <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:widget.message_box_border_none === ''||widget.message_box_border_none === false}" ng-attr-placeholder="メッセージを入力してください{{widget.chat_area_placeholder_sp}}"></textarea>
+              <a id="sincloChatSendBtn" class="notSelect details" ng-click="canVisitorSendMessage && visitorSendMessage()"><span class="details">送信</span></a>
+            </div>
+            <div id="miniFlexBoxHeight" class="messageBox details sinclo-hide">
+              <input type="text" name="miniSincloChat" id="miniSincloChatMessage" class="details" ng-class="{ notNone:widget.message_box_border_none === ''||widget.message_box_border_none === false}" maxlength="1000" ng-attr-placeholder="メッセージを入力してください{{widget.chat_area_placeholder_sp}}"></input>
+              <a id="miniSincloChatSendBtn" class="notSelect details" ng-click="canVisitorSendMessage && visitorSendMessage()">送信</a>
+            </div>
           </div>
   <!-- chat_message_copy 1 end -->
 
@@ -411,13 +399,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
           </span>
         </section>
       <?php endif; ?>
-  <!-- chat_message_copy 0 stayt -->
-        <p id="footer" ng-if="widget.settings['chat_message_copy'] == '1'" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}" style="user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
-  <!-- chat_message_copy 0 end -->
-
-  <!-- chat_message_copy 1 stayt -->
-        <p id="footer" ng-if="widget.settings['chat_message_copy'] == '0'" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}" >Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
-  <!-- chat_message_copy 1 end -->
+        <p id="footer" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, disableCopy: widget.settings['chat_message_copy']== '1'}">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
       </div>
     </div>
 
@@ -490,40 +472,31 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab textarea#sincloChatMessage.notNone { border-radius: 5px 0 0 5px!important; border: 1px solid {{widget.settings['chat_talk_border_color']}}!important; border-right-color: transparent!important; }
         #sincloBox section#chatTab textarea#sincloChatMessage.notNone:focus { border-color: {{widget.settings['main_color']}}!important; outline: none!important; border-right-color: transparent!important; }
         #sincloBox section#chatTab textarea#sincloChatMessage:not(.notNone){ border: none!important }
-        #sincloBox section#chatTab #sincloChatSendBtn{ width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: bold; font-size: 1.2em;}
-        #sincloBox section#chatTab #sincloChatSendBtn.details{ background-color: {{widget.settings['chat_send_btn_background_color']}}!important; }
-        #sincloBox section#chatTab #sincloChatSendBtn span { color: {{widget.settings['string_color']}} }
-        #sincloBox section#chatTab #sincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}} }
-        #sincloBox section#chatTab #messageBox.messageBox{border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
-        #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder) { border:none }
-        #sincloBox section#chatTab #messageBox.messageBox.details{ background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
-        #sincloBox section#chatTab #messageBox.messageBox.details:not(.notNone){ border-top: none; }
+        #sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: bold; font-size: 1.2em;}
+        #sincloBox section#chatTab #miniSincloChatSendBtn { width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: bold; font-size: 1.2em;}
+        #sincloBox section#chatTab #sincloChatSendBtn.details, #sincloBox section#chatTab #miniSincloChatSendBtn.details { background-color: {{widget.settings['chat_send_btn_background_color']}}!important; }
+        #sincloBox section#chatTab #sincloChatSendBtn span, #sincloBox section#chatTab #miniSincloChatSendBtn span { color: {{widget.settings['string_color']}} }
+        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}} }
+        #sincloBox section#chatTab #messageBox.messageBox, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox {border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
+        #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder), #sincloBox section#chatTab #miniFlexBoxHeight.messageBox:not(.notNoneWidgetOutsideBorder) { border:none }
+        #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
+        #sincloBox section#chatTab #messageBox.messageBox.details:not(.notNone), #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details:not(.notNone) { border-top: none; }
+        .disableCopy{ user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }
       </style>
   <!-- chat_message_copy 0 stayt -->
       <div ng-if="widget.settings['chat_message_copy']== '0'">
         <!-- タイトル -->
-        <p id="widgetTitle" class="widgetOpener" ng-class="{center: widget.mainImageToggle == '2'}" >{{widget.settings['title']}}</p>
+        <p id="widgetTitle" class="widgetOpener" ng-class="{center: widget.mainImageToggle == '2', disableCopy: widget.settings['chat_message_copy'] == '1'}" >{{widget.settings['title']}}</p>
         <!-- タイトル -->
       </div>
   <!-- chat_message_copy 0 end -->
-
-  <!-- chat_message_copy 1 stayt -->
-      <div ng-if="widget.settings['chat_message_copy'] == '1'">
-        <!-- タイトル -->
-        <p id="widgetTitle" class="widgetOpener" ng-class="{center: widget.mainImageToggle == '2'}" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">{{widget.settings['title']}}</p>
-        <!-- タイトル -->
-      </div>
-  <!-- chat_message_copy 1 end -->
-
       <div id="minimizeBtn" class="widgetOpener"></div>
   <!--
       <div id="addBtn" class="widgetOpener"></div>
    -->
       <div id="miniTarget">
         <section id="chatTab" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}">
-
-  <!-- chat_message_copy 0 stayt -->
-          <ul id="chatTalk" class="details" ng-if="widget.settings['chat_message_copy'] == '0'">
+          <ul id="chatTalk" class="details" ng-if="widget.settings['chat_message_copy'] == '0'" ng-class="{disableCopy: widget.settings['chat_message_copy'] == '1'}">
             <div style="height: auto!important; padding:0; display: none;" ng-class="{liLeft: widget.settings['chat_message_design_type'] == 1, liRight: widget.settings['chat_message_design_type'] == 2}">
               <li class="sinclo_se chat_right details" ng-class="{notNone:widget.se_border_none === '' || widget.se_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}"><span class="details" >サイト訪問者側メッセージ</span></li>
             </div>
@@ -537,24 +510,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
               <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
             </div> -->
           </ul>
-  <!-- chat_message_copy 0 end -->
 
-  <!-- chat_message_copy 1 stayt -->
-          <ul id="chatTalk" class="details" ng-if="widget.settings['chat_message_copy'] == '1'" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;" >
-            <div style="height: auto!important; padding:0; display: none;" ng-class="{liLeft: widget.settings['chat_message_design_type'] == 1, liRight: widget.settings['chat_message_design_type'] == 2}">
-              <li class="sinclo_se chat_right details" ng-class="{notNone:widget.se_border_none === '' || widget.se_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}"><span class="details">サイト訪問者側メッセージ</span></li>
-            </div>
-            <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re chat_left" ng-class="{notNone:widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
-            </div>
-            <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re file_left" ng-class="{notNone:widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
-            </div>
-            <!-- <div style="height: auto!important; padding:0;">
-              <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>
-            </div> -->
-          </ul>
-  <!-- chat_message_copy 1 end -->
+
+
 
           <div id="messageBox" class="messageBox details" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false }">
             <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:widget.message_box_border_none === ''||widget.message_box_border_none === false}" ng-attr-placeholder="メッセージを入力してください{{widget.chat_area_placeholder_sp}}"></textarea>
