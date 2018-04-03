@@ -1583,6 +1583,18 @@
         }
       }
     },
+    resizeTextArea: function() {
+      if(!document.getElementById('flexBoxWrap')) return;
+      var flexBoxWrapHeight = $('#flexBoxWrap').height(), // 現在の入力サイズ
+          defaultChatTalkHeight = common.getSizeType(sincloInfo.widget.widgetSizeType)['chatTalkHeight'],
+          defaultFlexBoxRowHeight = common.getSizeType(sincloInfo.widget.widgetSizeType)['classFlexBoxRowHeight'];
+      console.log('現在：%s デフォ（チャット）：%s デフォ（入力）：%s', flexBoxWrapHeight, defaultChatTalkHeight, defaultFlexBoxRowHeight);
+      if(!check.smartphone()) {
+        document.getElementById("chatTalk").style.height = (defaultChatTalkHeight + (defaultFlexBoxRowHeight - flexBoxWrapHeight)) + 'px';
+      } else {
+
+      }
+    },
     syncApi: {
       init : function(type){
         if ( type === cnst.sync_type.outer ) {
@@ -1870,6 +1882,7 @@
             $('#flexBoxHeight').addClass('sinclo-hide');
             $('#miniFlexBoxHeight').removeClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
+            sinclo.resizeTextArea();
           }
         },
         hideMiniMessageArea: function() {
@@ -1878,6 +1891,7 @@
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
+            sinclo.resizeTextArea();
           }
         },
         addKeyDownEventToSendChat: function() {
@@ -1936,7 +1950,6 @@
           return msg;
         },
         setPlaceholderMessage: function(msg) {
-          console.log("HOGEHOGEHOGEHOGE");
           var message = document.getElementById('sincloChatMessage');
           if(message) {
 
@@ -4238,7 +4251,6 @@
           var self = sinclo.scenarioApi._hearing;
           var json = self._parent.get(self._state.currentSeq);
           var obj = json ? json : 0;
-          console.log("scenarioApi::hearing::_getCurrentSeq => " + obj);
           return obj;
         },
         _setRetryFlg: function () {
@@ -4272,6 +4284,8 @@
             console.log("BEGIN TIMER");
             if(sinclo.scenarioApi.isScenarioLFDisabled()) {
               sinclo.chatApi.showMiniMessageArea();
+            } else {
+              sinclo.chatApi.hideMiniMessageArea();
             }
             self._watcher = setInterval(function(){
               $('#sincloChatMessage').val(self._getValidChars($('#sincloChatMessage').val()));
@@ -4292,9 +4306,6 @@
           var self = sinclo.scenarioApi._hearing;
           if(self._watcher) {
             console.log("END TIMER");
-            if(sinclo.scenarioApi.isScenarioLFDisabled()) {
-              sinclo.chatApi.hideMiniMessageArea();
-            }
             clearInterval(self._watcher);
             self._watcher = null;
           }
