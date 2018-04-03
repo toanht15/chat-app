@@ -263,7 +263,7 @@
           <div class="uploadProgressArea"><span>アップロード中 ...</span><div class="uploadProgressRate"><span>アップロード中 ...</span></div></div>
         </li>
         <li>
-          <input type="file" class="hide fileElm"><span class="greenBtn btn-shadow" ng-click="main.selectFile($event)">ファイル選択</span><span class="btn-shadow" ng-class="{disOffgrayBtn: setItem.file == '', redBtn: setItem.file != ''}" ng-click="main.removeFile($event)">ファイル削除</span>
+          <input type="file" class="hide fileElm"><span class="greenBtn btn-shadow" ng-click="main.selectFile($event)">ファイル選択</span><span class="btn-shadow" ng-class="{disOffgrayBtn: !setItem.file, redBtn: !!setItem.file}" ng-click="!!setItem.file && main.removeFile($event, setActionId)">ファイル削除</span>
         </li>
       </ul>
     </li>

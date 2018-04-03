@@ -516,7 +516,7 @@ class MWidgetSettingsController extends AppController {
               $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
             }
             if ( strcmp($v, 'show_automessage_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['show_automessage_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
+              $d['show_automessage_name'] = C_SELECT_CAN; // デフォルト値
             }
             if ( strcmp($v, 'show_op_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['show_op_name'] = C_SELECT_CAN; // デフォルト値
