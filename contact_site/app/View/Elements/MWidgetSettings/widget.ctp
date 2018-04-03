@@ -13,13 +13,14 @@
     #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: {{header_text_size}}px; padding: 7px 30px 7px 70px; margin: 0; color: {{string_color}}; height: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size}}px;}
     #sincloBox p#widgetTitle.sp { font-size: 14px;}
     #sincloBox p#widgetTitle.spText{ text-indent: 1em; }
-    #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+    #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
     #sincloBox div.widgetHeaderWrap:hover #widgetTitle { opacity: 0.75; }
+    #sincloBox div.widgetHeaderWrap #titleWrap { position: relative; }
     /*
           #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
       #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
 */
-    #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; top: 7px; right: 6px; bottom: 6px; content: " "; width: 18px; height: 18px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+    #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50% - 9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
     #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
     /*
           #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
@@ -194,16 +195,16 @@
     </span>
   <div class="widgetHeaderWrap">
     <!-- 画像 -->
-    <div>
+    <div id="titleWrap">
       <!-- タイトル -->
       <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: spHeaderLightToggle() || mainImageToggle !== '1',middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3', spText:showWidgetType === 3, sp:showWidgetType === 3}">{{title}}</p>
       <!-- タイトル -->
+      <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
+      <div id="closeBtn" ng-click="switchWidget(4)" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
     </div>
-    <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
     <!--
         <div id="addBtn" class="widgetOpener" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}" style="display: none;"></div>
      -->
-    <div id="closeBtn" ng-click="switchWidget(4)" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
     <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2'">
       <!-- サブタイトル -->
       <!-- 仕様変更、常に高度な設定が当たっている状態とする -->
