@@ -240,7 +240,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           <td class="p10x tCenter" style="font-size: 1em; font-weight: bold;" width=" 5%">
             <?php
               if(isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2) {
-                echo '<span class="m10b">OFF</span>';
+                echo '<span class="m10b">－</span>';
               } else {
                 echo '<span class="m10b">ON</span>';
               }
