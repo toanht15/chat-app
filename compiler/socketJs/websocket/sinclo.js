@@ -4284,6 +4284,8 @@
             console.log("BEGIN TIMER");
             if(sinclo.scenarioApi.isScenarioLFDisabled()) {
               sinclo.chatApi.showMiniMessageArea();
+            } else {
+              sinclo.chatApi.hideMiniMessageArea();
             }
             self._watcher = setInterval(function(){
               $('#sincloChatMessage').val(self._getValidChars($('#sincloChatMessage').val()));
@@ -4304,9 +4306,6 @@
           var self = sinclo.scenarioApi._hearing;
           if(self._watcher) {
             console.log("END TIMER");
-            if(sinclo.scenarioApi.isScenarioLFDisabled()) {
-              sinclo.chatApi.hideMiniMessageArea();
-            }
             clearInterval(self._watcher);
             self._watcher = null;
           }
