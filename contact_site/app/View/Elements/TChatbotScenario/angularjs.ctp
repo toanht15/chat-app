@@ -1010,7 +1010,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 改行設定を元に、シミュレーターの設定変更
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
       if (hearingDetail.inputLFType == <?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>) {
-        $scope.$broadcast('allowSendMessageByShiftEnter', true);
+        $scope.$broadcast('allowSendMessageByShiftEnter', true, hearingDetail.inputType);
       } else {
         $scope.$broadcast('allowInputLF', false, hearingDetail.inputType);
       }

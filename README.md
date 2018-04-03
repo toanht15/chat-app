@@ -100,6 +100,24 @@ $ ./migration run up
 $ ./migration run down
 ```
 
+## AWS SDKの設定
+
+### AWS SDKをインストール ※ 事前にcomposerをインストールして下さい
+```
+$ cd /var/www/sinclo/contact_site/app/Plugin
+$ cd mkdir AmazonSDK
+$ cd ./AmazonSDK
+$ composer require aws/aws-sdk-php
+```
+
+## intervention/imageの設定
+
+### intervention/imageのインストール ※ 事前にcomposerをインストールして下さい
+```
+$ cd /var/www/sinclo/contact_site/Vendor/
+$ composer install
+```
+
 ## その他
 
 ### 企業側管理画面について
