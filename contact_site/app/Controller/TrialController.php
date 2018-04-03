@@ -37,6 +37,7 @@ class TrialController extends AppController {
     $businessModel = Configure::read('businessModelType');
     $this->set('businessModel',$businessModel);
     $this->set('title_for_layout', '無料トライアル登録画面');
+    session_destroy();
   }
 
   public function add() {
@@ -71,7 +72,7 @@ class TrialController extends AppController {
     $socket = new HttpSocket(array(
       'timeout' => self::API_CALL_TIMEOUT
     ));
-    $soketResult = $socket->post(C_NODE_SERVER_ADDR.'/socketCtrl/refreshCompanyList',$data,array('header' => array('X-Forwarded-Port' => 443)));
+    $soketResult = $socket->get(C_NODE_SERVER_ADDR.'/socketCtrl/refreshCompanyList',$data,array('header' => array('X-Forwarded-Port' => 443)));
   }
 
   /* *

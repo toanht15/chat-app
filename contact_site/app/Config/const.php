@@ -143,8 +143,8 @@ define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]
 
 define('C_MATCH_INPUT_RULE_ALL', '/.*/');  // 入力制限なし
 define('C_MATCH_INPUT_RULE_NUMBER', '/[\d]*/');  // 数字入力
-define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.,;:@"]*/'); // メールアドレス入力(半角英数記号入力)
-define('C_MATCH_INPUT_RULE_TEL', '/[\d+-]*/'); // 電話番号入力（半角英数と一部記号入力）
+define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.\-,;:@"]*/'); // メールアドレス入力(半角英数記号入力)
+define('C_MATCH_INPUT_RULE_TEL', '/^0[\d+-]*/'); // 電話番号入力（半角英数と一部記号入力）
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
