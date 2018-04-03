@@ -1866,7 +1866,7 @@
         },
         showMiniMessageArea: function() {
           // シナリオのヒアリングモードのみ有効
-          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
+          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').addClass('sinclo-hide');
             $('#miniFlexBoxHeight').removeClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
@@ -1874,7 +1874,7 @@
         },
         hideMiniMessageArea: function() {
           // シナリオのヒアリングモードのみ有効
-          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()) {
+          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
@@ -1936,6 +1936,7 @@
           return msg;
         },
         setPlaceholderMessage: function(msg) {
+          console.log("HOGEHOGEHOGEHOGE");
           var message = document.getElementById('sincloChatMessage');
           if(message) {
 
@@ -3753,6 +3754,12 @@
         }
         return result;
       },
+      isScenarioLFDisabled: function() {
+        var self = sinclo.scenarioApi;
+        return self.isProcessing()
+        && self._hearing.isHearingMode()
+        && self._hearing.isLFModeDisabled();
+      },
       /**
        * 入力がされたことを通知する
        * @param text 入力時のテキスト
@@ -3775,11 +3782,11 @@
           var currentSeq = self._hearing._getCurrentSeq();
           switch(currentSeq.inputLFType) {
             case "1": // 改行不可
-              msg = "メッセージを入力してください";
+              msg = "";
               if(check.smartphone()) {
-                msg += "\n（改行で送信）";
+                msg += "（改行で送信）";
               } else {
-                msg += "\n（Enter/Shift+Enterで送信）"
+                msg += "（Enter/Shift+Enterで送信）"
               }
               break;
             case "2":
@@ -4261,11 +4268,9 @@
         },
         _beginValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
-          var isScenarioLFDisabled = sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
-            && sinclo.scenarioApi._hearing.isHearingMode() && sinclo.scenarioApi._hearing.isLFModeDisabled();
           if(!self._watcher) {
             console.log("BEGIN TIMER");
-            if(isScenarioLFDisabled) {
+            if(sinclo.scenarioApi.isScenarioLFDisabled()) {
               sinclo.chatApi.showMiniMessageArea();
             }
             self._watcher = setInterval(function(){
@@ -4287,9 +4292,7 @@
           var self = sinclo.scenarioApi._hearing;
           if(self._watcher) {
             console.log("END TIMER");
-            var isScenarioLFDisabled = sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
-              && sinclo.scenarioApi._hearing.isHearingMode() && sinclo.scenarioApi._hearing.isLFModeDisabled();
-            if(isScenarioLFDisabled) {
+            if(sinclo.scenarioApi.isScenarioLFDisabled()) {
               sinclo.chatApi.hideMiniMessageArea();
             }
             clearInterval(self._watcher);
