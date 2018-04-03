@@ -107,16 +107,17 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li.sinclo_re span.telno { color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px; }
         #sincloBox a:hover { color: {{widget.settings['main_color']}}; }
         #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
+        #sincloBox #titleWrap { position: relative; }
         #sincloBox div#descriptionSet { cursor: pointer; }
         #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{widget.settings['radius_ratio']}}px {{widget.settings['radius_ratio']}}px 0 0; border: 1px solid {{widget.settings['main_color']}}; border-bottom:none; background-color: {{widget.settings['main_color']}}; text-align: center; padding: 7px 30px 7px 70px; margin: 0; color: {{widget.settings['string_color']}}; height: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{widget.settings['header_text_size']}}px; }
         #sincloBox p#widgetTitle.sp {font-size: 14px;}
         #sincloBox p#widgetTitle.spText{ text-indent: 1em; }
-        #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+        #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
   /*
         #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
         #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
   */
-        #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; top: 7px; right: 6px; bottom: 6px; content: " "; width: 18px; height: 18px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+        #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50%-9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
         #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
   /*
         #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
@@ -186,9 +187,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li.sinclo_se span.details{ color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
         #sincloBox ul#chatTalk li span.sinclo-radio { display: block; margin-top: 0.1em; margin-bottom: -1.25em; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding: 0 0 0 15px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.settings['re_text_size']}}px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 1px; left: 0px; width: 11px; height: 11px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 4px; left: 3px; width: 7px; height: 7px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding: 0 0 0 {{widget.settings['re_text_size']}}px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.settings['re_text_size']}}px; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: 50%; left: 0px; margin-top: -{{widget.settings['re_text_size']/2}}px; width: {{widget.settings['re_text_size']}}px; height: {{widget.settings['re_text_size']}}px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: 50%; left: {{widget.settings['re_text_size']/4}}px;; margin-top: -{{widget.settings['re_text_size']/4}}px; width: {{widget.settings['re_text_size']/2+1}}px; height: {{widget.settings['re_text_size']/2+1}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:disabled + label { opacity: 0.5;}
 
         /* ファイル送信 */
@@ -307,16 +308,17 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         <img ng-src="{{widget.settings['main_image']}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
       </span>
       <!-- 画像 -->
-      <div>
+      <div id="titleWrap">
         <!-- タイトル -->
         <p id="widgetTitle" class="widgetOpener notSelect" ng-class="{center: widget.spHeaderLightToggle() || widget.mainImageToggle !== '1',middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
         <!-- タイトル -->
+        <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
+        <div id="closeBtn" ng-class="{closeButtonSetting: widget.settings['close_button_mode_type'] === '2'}"></div>
       </div>
-      <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
+
   <!--
       <div id="addBtn" class="widgetOpener" ng-class="{closeButtonSetting: widget.settings['close_button_mode_type'] === '2'}" style="display: none;"></div>
    -->
-      <div id="closeBtn" ng-class="{closeButtonSetting: widget.settings['close_button_mode_type'] === '2'}"></div>
       <div id='descriptionSet' class="widgetOpener notSelect" ng-hide="widget.spHeaderLightToggle() || widget.mainImageToggle == '2' && widget.subTitleToggle == '2' && widget.descriptionToggle == '2'">
 
         <!-- サブタイトル -->
