@@ -20,7 +20,7 @@
 	"require": {
 		"php": ">=5.3.0",
 		"ext-mcrypt": "*",
-		"aws/aws-sdk-php": "^3.52",
+		"aws/aws-sdk-php": "^3.53",
 		"intervention/image": "2.x"
 	},
 	"require-dev": {

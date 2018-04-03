@@ -197,6 +197,10 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             }
             break;
           case C_AUTO_ACTION_TYPE_SELECTSCENARIO:
+            $allActionList[$id] = [
+              'type' => $val['TAutoMessage']['action_type'],
+              'detail' => $val['TChatbotScenario']['name']
+            ];
             $activity_detail = "<span class='actionValueLabel'>シナリオ</span><span class='actionValue'>" . h($val['TChatbotScenario']['name']) . "</span>";
             break;
         }
