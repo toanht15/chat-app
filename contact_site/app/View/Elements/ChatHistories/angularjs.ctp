@@ -307,6 +307,7 @@
       if ( type === chatApi.messageType.customer) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
+        forDeletionMessage = escape_html(forDeletionMessage);
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
@@ -336,12 +337,7 @@
       else if ( type === chatApi.messageType.company) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
-        if(message.indexOf('<') > -1){
-          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
-        }
-        if(message.indexOf('>') > -1) {
-          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
-        }
+        forDeletionMessage = escape_html(forDeletionMessage);
         cn = "sinclo_se";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -407,12 +403,7 @@
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
-        if(message.indexOf('<') > -1){
-          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
-        }
-        if(message.indexOf('>') > -1) {
-          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
-        }
+        forDeletionMessage = escape_html(forDeletionMessage);
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
@@ -472,6 +463,7 @@
       } else if ( type === chatApi.messageType.scenario.customer.hearing) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
+        forDeletionMessage = escape_html(forDeletionMessage);
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
@@ -499,6 +491,7 @@
       } else if ( type === chatApi.messageType.scenario.customer.selection ) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
+        forDeletionMessage = escape_html(forDeletionMessage);
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
@@ -523,16 +516,12 @@
           }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
-      } else if ( type === chatApi.messageType.scenario.message.text) {
+      }
+      else if ( type === chatApi.messageType.scenario.message.text) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
-        if(message.indexOf('<') > -1){
-          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
-        }
-        if(message.indexOf('>') > -1) {
-          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
-        }
+        forDeletionMessage = escape_html(forDeletionMessage);
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
@@ -560,12 +549,7 @@
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
-        if(message.indexOf('<') > -1){
-          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
-        }
-        if(message.indexOf('>') > -1) {
-          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
-        }
+        forDeletionMessage = escape_html(forDeletionMessage);
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
@@ -593,12 +577,7 @@
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
-        if(message.indexOf('<') > -1){
-          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
-        }
-        if(message.indexOf('>') > -1) {
-          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
-        }
+        forDeletionMessage = escape_html(forDeletionMessage);
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
