@@ -1935,16 +1935,14 @@
         },
         getPlaceholderMessage: function() {
           var msg = "メッセージを入力してください";
-          if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
-            if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.getPlaceholderMessage() !== "") {
-              msg = sinclo.scenarioApi.getPlaceholderMessage();
-            } else {
-              if ( check.smartphone() )  {
-                msg += "（改行で送信）";
-              }
-              else {
-                msg += "\n（Shift+Enterで改行/Enterで送信）";
-              }
+          if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.getPlaceholderMessage() !== "") {
+            msg = sinclo.scenarioApi.getPlaceholderMessage();
+          } else if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
+            if ( check.smartphone() )  {
+              msg += "（改行で送信）";
+            }
+            else {
+              msg += "\n（Shift+Enterで改行/Enterで送信）";
             }
           }
           return msg;
@@ -3792,7 +3790,7 @@
         var self = sinclo.scenarioApi;
         var msg = "";
         if(self._hearing.isHearingMode()) {
-          var currentSeq = self._hearing._getCurrentSeq();
+          var currentSeq = self._hearing._getCurrentHearingProcess();
           switch(currentSeq.inputLFType) {
             case "1": // 改行不可
               msg = "";
