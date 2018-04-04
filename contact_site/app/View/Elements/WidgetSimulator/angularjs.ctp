@@ -196,13 +196,19 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * （allowInputLFと同時に設定しないことを前提とする）
    * @param Boolean status Shift+Enterでのメッセージ送信の許可状態
    */
-  $scope.$on('allowSendMessageByShiftEnter', function(event, status) {
-    console.log("allowSendMessageByShiftEnter")
+  $scope.$on('allowSendMessageByShiftEnter', function(event, status, inputType) {
+    console.log("allowSendMessageByShiftEnter");
+    var _inputType = {
+      "1": "text",
+      "2": "number",
+      "3": "email",
+      "4": "tel"
+    };
     $scope.allowSendMessageByShiftEnter = status === true;
     if($scope.allowSendMessageByShiftEnter) {
       $scope.hideMiniMessageArea();
     } else {
-      $scope.showMiniMessageArea('tel');
+      $scope.showMiniMessageArea(_inputType[inputType]);
     }
     self.setPlaceholder('（Enterで改行/Shift+Enterで送信）');
     $scope.$apply();
@@ -225,8 +231,14 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     console.log("showMiniMessageArea");
     $('#messageBox').addClass('sinclo-hide');
     $('#miniFlexBoxHeight').removeClass('sinclo-hide');
-    $('#miniSincloChatMessage').get(0).type = 'text';
-    //$scope.setTextAreaOpenToggle();
+    $('#miniSincloChatMessage').get(0).type = inputType;
+    var msgBoxElm = document.getElementById('flexBoxWrap');
+    msgBoxElm.dataset.originalHeight = 48;
+    if($('#flexBoxWrap').is(':visible')) {
+      var chatTalkElm = document.getElementById('chatTalk');
+      var chatTalkHeight = chatTalkElm.getBoundingClientRect().height;
+      document.getElementById('chatTalk').style.height = chatTalkHeight + 27 + "px";
+    }
   };
 
   /**
@@ -237,7 +249,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $('#messageBox').removeClass('sinclo-hide');
     $('#miniFlexBoxHeight').addClass('sinclo-hide');
     $('#miniSincloChatMessage').get(0).type = 'text';
-    //$scope.setTextAreaOpenToggle();
+    var msgBoxElm = document.getElementById('flexBoxWrap');
+    msgBoxElm.dataset.originalHeight = 75;
+    if($('#flexBoxWrap').is(':visible')) {
+      var chatTalkElm = document.getElementById('chatTalk');
+      var chatTalkHeight = chatTalkElm.getBoundingClientRect().height;
+      document.getElementById('chatTalk').style.height = chatTalkHeight - 27 + "px";
+    }
   };
 
   /**
@@ -248,6 +266,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.setTextAreaOpenToggle();
   });
   $scope.setTextAreaOpenToggle = function() {
+    console.log("setTextAreaOpenToggle");
     var msgBoxElm = document.getElementById('flexBoxWrap');
     var chatTalkElm = document.getElementById('chatTalk');
     if (msgBoxElm === null || chatTalkElm === null) {
@@ -260,10 +279,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     // ウェブ接客コードが非表示な場合に、発生してしまう差分を埋める
     var offset = $scope.simulatorSettings.showWidgetType === 1 ? 0 : 3;
 
+    console.log("msgBoxElm.dataset.originalHeight : %s",msgBoxElm.dataset.originalHeight);
     if ($scope.isTextAreaOpen) {
+      console.log("SHOW");
       msgBoxElm.style.display = "";
       chatTalkElm.style.height = (chatTalkHeight - msgBoxElm.dataset.originalHeight + offset) + "px";
     } else {
+      console.log("HIDE");
       msgBoxElm.style.display = "none";
       msgBoxElm.dataset.originalHeight = msgBoxHeight;
       chatTalkElm.style.height = (chatTalkHeight + msgBoxHeight - offset) + "px";

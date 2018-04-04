@@ -402,6 +402,7 @@
       else if ( type === chatApi.messageType.autoSpeech ) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
+        var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
         forDeletionMessage = escape_html(forDeletionMessage);
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -515,7 +516,8 @@
           }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
-      } else if ( type === chatApi.messageType.scenario.message.text) {
+      }
+      else if ( type === chatApi.messageType.scenario.message.text) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
