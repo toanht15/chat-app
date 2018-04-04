@@ -52,7 +52,7 @@
           <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';" <?php
             switch(intval($val['MCompany']['trial_flg'])) {
               case 0:
-                if(strtotime($val['MAgreement']['agreement_start_day']) < time()) {
+                if(strtotime($val['MAgreement']['agreement_end_day']) < time()) {
                   echo 'style="background-color: #999999;"';
                 }
                 break;
