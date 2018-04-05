@@ -61,6 +61,8 @@ process.env.WS_PORT = '9090';
 <?php
 $config = [];
 
+define('APP_MODE_DEV', true);
+
 define('C_NODE_SERVER_ADDR', "//node.sinclo"); // Nodeサーバー
 define('C_NODE_SERVER_FILE_PORT', ""); // NodeサーバーのHTTP通信ポート
 define('C_NODE_SERVER_WS_PORT', ""); // WS通信ポート
@@ -96,6 +98,24 @@ $ Console/cake Migrations.migration run all -p
 $ ./migration status
 $ ./migration run up
 $ ./migration run down
+```
+
+## AWS SDKの設定
+
+### AWS SDKをインストール ※ 事前にcomposerをインストールして下さい
+```
+$ cd /var/www/sinclo/contact_site/app/Plugin
+$ cd mkdir AmazonSDK
+$ cd ./AmazonSDK
+$ composer require aws/aws-sdk-php
+```
+
+## intervention/imageの設定
+
+### intervention/imageのインストール ※ 事前にcomposerをインストールして下さい
+```
+$ cd /var/www/sinclo/contact_site/Vendor/
+$ composer install
 ```
 
 ## その他

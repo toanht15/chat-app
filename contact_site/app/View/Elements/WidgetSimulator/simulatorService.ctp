@@ -3,20 +3,53 @@
 
 sincloApp.factory('SimulatorService', function() {
 
+  var self = this;
+
+  this.escape_html = function() {
+    if(typeof unescapedString !== 'string') {
+      return unescapedString;
+    }
+    var string = unescapedString.replace(/(<br>|<br \/>)/gi, '\n');
+    string = string.replace(/[&'`"<>]/g, function(match) {
+      return {
+        '&': '&amp;',
+        "'": '&#x27;',
+        '`': '&#x60;',
+        '"': '&quot;',
+        '<': '&lt;',
+        '>': '&gt;',
+      }[match];
+    });
+    return string;
+  };
+
   return {
     _settings: {},
+    _coreSettingsChat: {},
     _showWidgetType: 1,
     _openFlg: true,
     _showTab: 'chat',
-    _sincloChatMessagefocusFlg: true,
+    _isTextAreaOpen: true,
     set settings(obj) {
       this._settings = obj;
     },
     get settings() {
       return this._settings;
     },
+    set coreSettingsChat(settings) {
+      this._coreSettingsChat = settings;
+    },
+    get coreSettingsChat() {
+      return this._coreSettingsChat;
+    },
+    set showWidgetType(type) {
+      this._showWidgetType = type;
+    },
     get showWidgetType() {
       return this._showWidgetType;
+    },
+    set openFlg(status) {
+      this._openFlg = status;
     },
     get openFlg() {
       return this._openFlg;
@@ -52,6 +85,15 @@ sincloApp.factory('SimulatorService', function() {
     get chat_area_placeholder_sp() {
       return Number(this._settings['chat_trigger']) === 1 ? '（改行で送信）' : '';
     },
+    /**
+     * ウィジェットサイズ
+     */
+    get isMiddleSize() {
+      return this._showWidgetType === 1 && this._settings['widget_size_type'] === '2';
+    },
+    get isLargeSize() {
+      return this._showWidgetType === 1 && this._settings['widget_size_type'] === '3';
+    },
     // パラメータ取得(設定の有無)
     get widget_outside_border_none() {
       return this._settings['widget_border_color'] === 'なし';
@@ -74,49 +116,6 @@ sincloApp.factory('SimulatorService', function() {
     },
     get showTab() {
       return this._showTab;
-    },
-    set sincloChatMessagefocusFlg(bool) {
-      this._sincloChatMessagefocusFlg = bool;
-    },
-    switchWidget: function(num) {
-      this.showWidgetType = num;
-      this.sincloChatMessagefocusFlg = true;
-      var sincloBox = document.getElementById("sincloBox");
-
-      if ( Number(num) === 3 ) { // ｽﾏｰﾄﾌｫﾝ（縦）の表示
-        this.showTab = 'chat'; // 強制でチャットにする
-      }
-
-      if ( Number(num) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
-        if(sincloBox){
-          if(sincloBox.style.display == 'none'){
-            sincloBox.style.display = 'block';
-          }
-        }
-        /* ウィジェットが最小化されていたら最大化する */
-        if ( !this.openFlg ) { // 最小化されている場合
-          var main = document.getElementById("miniTarget");  // 非表示対象エリア
-          var height = 0;
-          if(main){
-            for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
-              if ( Number(num) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
-              height += main.children[i].offsetHeight;
-            }
-            main.style.height = height + "px";
-          }
-        }
-      }
-      if( Number(num) !== 4 ){
-        if(coreSettingsChat){
-          document.getElementById("switch_widget").value = num;
-        }
-      }
-      this.openFlg = true;
-
-      setTimeout(function(){
-        $scope.createMessage();
-        $scope.toggleChatTextareaView($scope.main.chat_textarea);
-      },0);
     },
     // 関数
     getSeBackgroundColor: function(){
@@ -176,11 +175,11 @@ sincloApp.factory('SimulatorService', function() {
     spHeaderLightToggle: function(){
       switch (this.minimizedDesignToggle) {
       case "1": //シンプル表示しない
-        if(this.showWidgetType === 1){
+        if(this._showWidgetType === 1){
           //通常（PC）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -191,7 +190,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -205,7 +204,7 @@ sincloApp.factory('SimulatorService', function() {
           //スマホ（縦）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -216,7 +215,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -228,11 +227,11 @@ sincloApp.factory('SimulatorService', function() {
         }
         break;
       case "2": //スマホのみシンプル表示する
-        if(this.showWidgetType === 1){
+        if(this._showWidgetType === 1){
           //通常（PC）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -243,7 +242,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = false;
             }
@@ -257,7 +256,7 @@ sincloApp.factory('SimulatorService', function() {
           //スマホ（縦）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -268,7 +267,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -280,11 +279,11 @@ sincloApp.factory('SimulatorService', function() {
         }
         break;
       case "3": //すべての端末でシンプル表示する
-        if(this.showWidgetType === 1){
+        if(this._showWidgetType === 1){
           //通常（PC）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -295,7 +294,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -309,7 +308,7 @@ sincloApp.factory('SimulatorService', function() {
           //スマホ（縦）
           if(this.settings['sp_header_light_flg'] === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -320,7 +319,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           else{
             //最大時のシンプル表示(スマホ)しない
-            if(!this.openFlg){
+            if(!this._openFlg){
               //最小化中
               var res = true;
             }
@@ -332,7 +331,7 @@ sincloApp.factory('SimulatorService', function() {
         }
         break;
       }
-      if(this.openFlg){
+      if(this._openFlg){
         //最大化時
         $("#minimizeBtn").show();
         $("#addBtn").hide();
@@ -348,9 +347,8 @@ sincloApp.factory('SimulatorService', function() {
         else{
           $("#closeBtn").hide();
         }
-        var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
-        if(coreSettingsChat){
-          document.getElementById("switch_widget").value = this.showWidgetType;
+        if(this._coreSettingsChat){
+          document.getElementById("switch_widget").value = this._showWidgetType;
         }
       }
       return res;
@@ -362,13 +360,15 @@ sincloApp.factory('SimulatorService', function() {
      * @return String       変換したメッセージ
      */
     createMessage: function(val, prefix) {
+
       if (val === '') return;
       prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
+      var isSmartphone = this._showWidgetType != 1;
       var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
 
       var strings = val.split('\n');
       var radioCnt = 1;
-      var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+      var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
       var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
       var radioName = prefix + "sinclo-radio" + messageIndex;
@@ -396,21 +396,79 @@ sincloApp.factory('SimulatorService', function() {
         var tel = str.match(telnoTagReg);
         if( tel !== null ) {
           var telno = tel[1];
-          // if(isSmartphone) {
-          //   // リンクとして有効化
-          //   var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
-          //   str = str.replace(tel[0], a);
-          // } else {
+          if(isSmartphone) {
+            // リンクとして有効化
+            var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
+            str = str.replace(tel[0], a);
+          } else {
             // ただの文字列にする
             var span = "<span class='telno'>" + telno + "</span>";
             str = str.replace(tel[0], span);
-          // }
+          }
         }
         content += str + "\n";
       }
 
       return content;
+    },
+    /**
+     * ファイル拡張子から、画像か判別する
+     * @param String extension ファイル拡張子
+     */
+    isImage: function(extension) {
+      return /jpeg|jpg|gif|png/.test(extension);
+    },
+    /**
+     * ファイルタイプ別ごとに、font-awesome用のクラスを出し分ける
+     * @param String extension ファイルの拡張子
+     */
+    selectIconClassFromExtension: function(extension) {
+      var selectedClass = "";
+      var icons = {
+        image:      'fa-file-image-o',
+        pdf:        'fa-file-pdf-o',
+        word:       'fa-file-word-o',
+        powerpoint: 'fa-file-powerpoint-o',
+        excel:      'fa-file-excel-o',
+        audio:      'fa-file-audio-o',
+        video:      'fa-file-video-o',
+        zip:        'fa-file-zip-o',
+        code:       'fa-file-code-o',
+        text:       'fa-file-text-o',
+        file:       'fa-file-o'
+      };
+      var extensions = {
+        gif: icons.image,
+        jpeg: icons.image,
+        jpg: icons.image,
+        png: icons.image,
+        pdf: icons.pdf,
+        doc: icons.word,
+        docx: icons.word,
+        ppt: icons.powerpoint,
+        pptx: icons.powerpoint,
+        xls: icons.excel,
+        xlsx: icons.excel,
+        aac: icons.audio,
+        mp3: icons.audio,
+        ogg: icons.audio,
+        avi: icons.video,
+        flv: icons.video,
+        mkv: icons.video,
+        mp4: icons.video,
+        gz: icons.zip,
+        zip: icons.zip,
+        css: icons.code,
+        html: icons.code,
+        js: icons.code,
+        txt: icons.text,
+        csv: icons.csv,
+        file: icons.file
+      };
+
+      return extensions[extension] || extensions['file'];
     }
+
   };
 });
 

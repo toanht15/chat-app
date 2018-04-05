@@ -40,6 +40,7 @@
           <th style="width:8em;">開始日</th>
           <th style="width:8em;">終了日</th>
           <th style="width:8em;">登録日</th>
+          <th style="width:8em;">更新日</th>
         </tr>
       </thead>
       <?php foreach((array)$companyList as $key => $val): ?>
@@ -110,6 +111,7 @@
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ?  h($val['MAgreement']['trial_start_day']) : h($val['MAgreement']['agreement_start_day']) ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ?  h($val['MAgreement']['trial_end_day']) : h($val['MAgreement']['agreement_end_day']) ?></td>
             <td><?= !empty($val['MAgreement']['application_day']) ? h($val['MAgreement']['application_day']) : h(date('Y-m-d', strtotime($val['MCompany']['created']))); ?></td>
+            <td><?= !empty($val['MAgreement']['modified']) ? h(date('Y-m-d', strtotime($val['MAgreement']['modified']))) : ""; ?></td>
           </tr>
       </tbody>
     <?php endforeach; ?>

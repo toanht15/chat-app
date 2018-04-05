@@ -14,7 +14,7 @@
     <ul>
       <!-- シナリオ名称 -->
       <li>
-        <label>シナリオ名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="シナリオ名称に設定します。">?</icon></span></label>
+        <label>シナリオ名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="シナリオに名称を設定します。" data-tooltip-width='160'>?</icon></span></label>
         <?= $this->ngForm->input('name', [
           'type' => 'text',
           'placeholder' => 'シナリオ名称を入力',
@@ -54,11 +54,7 @@
         <!-- 外部システム連携 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。">外部システム連携</a>
         <!-- ファイル送信 -->
-        <?php if(isset($coreSettings[C_COMPANY_USE_SEND_FILE]) && $coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
-          <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルの設定を設定できるアクションです。">ファイル送信</a>
-        <?php else: ?>
-          <a ng-click="" class="grayBtn btn-shadow commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。">ファイル送信</a>
-        <?php endif; ?>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルを設定できるアクションです。">ファイル送信</a>
       </div>
     </div>
     <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">
@@ -96,6 +92,7 @@
     <?=$this->Form->hidden('id')?>
     <div id="tchatbotscenario_actions" class="fotterBtnArea">
       <?=$this->Html->link('戻る','/TChatbotScenario/index/page:'.$lastPage, ['class'=>'whiteBtn btn-shadow'])?>
+      <a href="javascript:void(0)" ng-click="main.saveTemporary()" class="greenBtn btn-shadow">一時保存</a>
       <a href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>
       <?php
       $class = "";

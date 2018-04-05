@@ -74,7 +74,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           message: {
             text: 21,
             hearing: 22,
-            selection: 23
+            selection: 23,
+            receiveFile: 27
           }
         }
       },
@@ -1336,7 +1337,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return custom;
     };
 
-    $scope.createTextOfSendFile = function(chat, url, name, size, extension, isExpired) {
+    $scope.createTextOfSendFile = function(chat, url, name, size, extension, isExpired, message) {
       var thumbnail = "";
       if (extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
         thumbnail = "<img src='" + url + "' class='sendFileThumbnail' width='64' height='64'>";
@@ -1344,7 +1345,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
       }
 
-      var content = "<span class='cName'>ファイル送信" + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+      var cName = (message) ? "シナリオメッセージ（ファイル送信）" : "ファイル送信";
+      var content = "<span class='cName'>" + cName + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
+      if(message && message !== "") {
+        content += "<span class='sendFileMessage'>" + message + "</span>";
+      }
       content    += "<div class='sendFileContent'>";
       content    += "  <div class='sendFileThumbnailArea'>" + thumbnail + "</div>";
       content    += "  <div class='sendFileMetaArea'>";
@@ -1512,6 +1517,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>シナリオメッセージ(選択肢)</span>";
         content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.scenario.message.receiveFile ) {
+        // ファイル送信はmessageがJSONなのでparseする
+        message = JSON.parse(message);
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+//        var chatName = widget.subTitle;
+//        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
+//          chatName = userList[Number(userId)];
+//        }
+        var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
+        content = $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired, message.message);
+        if(!isExpired) {
+          li.style.cursor = "pointer";
+          li.addEventListener("click", function(event){window.open(message.downloadUrl)});
+        }
       }
       else  {
         cn = "sinclo_etc";

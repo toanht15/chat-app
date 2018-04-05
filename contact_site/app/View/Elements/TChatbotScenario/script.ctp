@@ -1,5 +1,20 @@
 <script type="text/javascript">
 document.body.onload = function(){
+
+  // 一時保存データがあるシナリオに、編集中メッセージを追加する
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#tchatbotscenario_list tbody tr'));
+  rows.forEach(function(row) {
+    var storageKey = 'scenario_' + row.dataset.id;
+    var storageData = JSON.parse(localStorage.getItem(storageKey));
+    if (!!storageData && typeof storageData.scenarios !== 'undefined') {
+      var titleElm = row.querySelector('td.scenarioTitle');
+      var msgElm = document.createElement('span');
+      msgElm.className = 'scenarioEditingMessage';
+      msgElm.textContent = '（編集中）';
+      titleElm.appendChild(msgElm);
+    }
+  });
+
   $(document).ready(function(){
     $(".sortable").sortable({
       axis: "y",
@@ -88,11 +103,31 @@ var actBtnShow = function(){
 
 //シナリオ設定の削除
 function openConfirmDialog(){
-  //チェックボックスのチェック状態の取得
   var list = Array.prototype.slice.call(document.querySelectorAll('#tchatbotscenario_list input[name^="selectTab"]:checked'), 0);
+
+  // 削除対象の取得
+  var targetDeleteFileData = [];
   var selectedList = list.map(function(elm) {
-    return Number(elm.value);
+    var scenarioId = Number(elm.value);
+
+    // 一時保存データ内の、ファイルIDの削除リストを取り出す
+    var storageData = localStorage.getItem('scenario_' + scenarioId);
+    if (storageData) {
+      var jsonData = JSON.parse(storageData);
+      var targetDeleteFileIds = jsonData.targetDeleteFileIds || [];
+      angular.forEach(jsonData.scenarios, function(action) {
+        if (action.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
+          if (typeof action.tChatbotScenarioSendFileId !== 'undefined' && action.tChatbotScenarioSendFileId !== null) {
+            targetDeleteFileIds.push(action.tChatbotScenarioSendFileId);
+          }
+        }
+      });
+      targetDeleteFileData.push({id: scenarioId, targetDeleteFileIds: jsonData.targetDeleteFileIds});
+    }
+
+    return scenarioId;
   });
+
   //現在のページ番号
   var index = Number("<?= $this->Paginator->params()["page"] ?>");
   //現在表示しているレコードの数
@@ -109,7 +144,8 @@ function openConfirmDialog(){
       type: 'post',
       cache: false,
       data: {
-        selectedList: selectedList
+        selectedList: selectedList,
+        targetDeleteFileData: JSON.stringify(targetDeleteFileData)
       },
       url: "<?= $this->Html->url('/TChatbotScenario/chkRemoteDelete') ?>",
       success: function(data){

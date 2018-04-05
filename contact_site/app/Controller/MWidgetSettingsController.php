@@ -5,22 +5,22 @@
  */
 class MWidgetSettingsController extends AppController {
   public $uses = ['MWidgetSetting','MOperatingHour'];
+  public $components = ['ImageTrimming'];
   public $helpers = ['ngForm'];
-
   public $coreSettings = null;
   public $styleSetting = [
     'common' => [
       'show_timing', 'max_show_timing_site', 'max_show_timing_page',
-      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
+      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
       /* カラー設定styat */
-      'color_setting_type','main_color','string_color','message_text_color','other_text_color','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
-      'chat_talk_background_color','c_name_text_color','re_text_color','re_background_color','re_border_color','re_border_none','se_text_color','se_background_color','se_border_color','se_border_none','chat_message_background_color',
+      'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
+      'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
       'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none'
       /* カラー設定end */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name',  'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
+    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
   ];
 
   public function beforeRender(){
@@ -32,7 +32,7 @@ class MWidgetSettingsController extends AppController {
    * @return void
    * */
   public function index() {
-
+    //$image->resize('/img/Penguins.jpg?1517909330', 60, 60, true);
     if ( $this->request->is('post') ) {
       $errors = $this->_update($this->request->data);
       if ( empty($errors) ) {
@@ -241,11 +241,14 @@ class MWidgetSettingsController extends AppController {
   private function _viewElement() {
     $this->set('widgetDisplayType', Configure::read('WidgetDisplayType'));
     $this->set('widgetPositionType', Configure::read('widgetPositionType'));
+    $this->set('widgetShowAccessId', Configure::read('widgetShowAccessId'));
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
+    $this->set('widgetShowAutomessageNameType', Configure::read('widgetShowAutomessageNameType'));
     $this->set('chatMessageDesignType', Configure::read('chatMessageDesignType'));
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
     $this->set('chatMessageCopy', Configure::read('chatMessageCopy'));
     $this->set('normalChoices', Configure::read('normalChoices')); // はい・いいえ
+    $this->set('widgetShowChoices', Configure::read('widgetShowChoices')); // 表示する・表示しない
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
     $this->set('spMiximizeSizeType', Configure::read('widgetSpMiximizeSizeType'));
@@ -343,23 +346,35 @@ class MWidgetSettingsController extends AppController {
     if ( $this->MWidgetSetting->validates() ) {
       if ( !empty($uploadImage) ) {
         $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
-        $filename = $this->userInfo['MCompany']['company_key'].'_'.date('YmdHis').'.'.$extension;
+        $filename = $this->userInfo['MCompany']['company_key'] . '_' . date('YmdHis') . '.' . $extension;
         $tmpFile = $uploadImage['tmp_name'];
         // ファイルの保存先フルパス＋ファイル名
-        $saveFile = C_PATH_WIDGET_IMG_DIR.DS.$filename;
-        $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
-        $width = ImageSx($in); // 画像の幅を取得
-        $height = ImageSy($in); // 画像の高さを取得
-        $save_width = 248; // 幅の最低サイズ
-        $save_height = 280; // 高さの最低サイズ
-        $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
-        $out = ImageCreateTrueColor($save_width , $save_height);
-        //ブレンドモードを無効にする
-        imagealphablending($out, false);
-        //完全なアルファチャネル情報を保存するフラグをonにする
-        imagesavealpha($out, true);
-        ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
-        $this->imageOut($extension, $out, $saveFile);
+        $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
+        if (!empty($inputData['Trimming']['info'])) {
+          $trimmingInfo = json_decode($inputData['Trimming']['info'], TRUE);
+          $component = new ImageTrimmingComponent();
+          $component->setFileData($uploadImage);
+          $component->setSavePath($saveFile);
+          $component->setX($trimmingInfo['x']);
+          $component->setY($trimmingInfo['y']);
+          $component->setWidth($trimmingInfo['width']);
+          $component->setHeight($trimmingInfo['height']);
+          $component->save();
+        } else {
+          $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
+          $width = ImageSx($in); // 画像の幅を取得
+          $height = ImageSy($in); // 画像の高さを取得
+          $save_width = 248; // 幅の最低サイズ
+          $save_height = 280; // 高さの最低サイズ
+          $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
+          $out = ImageCreateTrueColor($save_width , $save_height);
+          //ブレンドモードを無効にする
+          imagealphablending($out, false);
+          //完全なアルファチャネル情報を保存するフラグをonにする
+          imagesavealpha($out, true);
+          ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
+          $this->imageOut($extension, $out, $saveFile);
+        }
         $inputData['MWidgetSetting']['main_custom_image'] = $filename;
       }
       // ウィジェットのスタイル設定周りをJSON化
@@ -500,6 +515,12 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'show_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
             }
+            if ( strcmp($v, 'show_automessage_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_automessage_name'] = C_SELECT_CAN; // デフォルト値
+            }
+            if ( strcmp($v, 'show_op_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_op_name'] = C_SELECT_CAN; // デフォルト値
+            }
             if ( strcmp($v, 'chat_message_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_message_design_type'] = C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX; // デフォルト値
             }
@@ -563,6 +584,10 @@ class MWidgetSettingsController extends AppController {
                 }
               }
             }
+            // デフォルト値（プレミアムプランのみ表示する）
+            if ( strcmp($v, 'show_access_id') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_access_id'] = C_SELECT_CAN_NOT;
+            }
             //ウィジットサイズタイプ
             if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_size_type'] = C_WIDGET_SIZE_TYPE_SMALL; // デフォルト値
@@ -610,6 +635,23 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'other_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['other_text_color'] = OTHER_TEXT_COLOR; // デフォルト値
             }
+            //ヘッダー文字サイズ
+            if ( strcmp($v, 'header_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['header_text_size'] = "14";
+                  break;
+                case 2:
+                case 3:
+                  $d['header_text_size'] = "15";
+                  break;
+                default:
+                  $d['header_text_size'] = "15"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
+            }
             //5.ウィジェット枠線色
             if ( strcmp($v, 'widget_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_border_color'] = WIDGET_BORDER_COLOR; // デフォルト値
@@ -651,6 +693,23 @@ class MWidgetSettingsController extends AppController {
             //11.企業側吹き出し文字色
             if ( strcmp($v, 're_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['re_text_color'] = RE_TEXT_COLOR; // デフォルト値
+            }
+            //企業側吹き出し文字サイズ
+            if ( strcmp($v, 're_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['re_text_size'] = "12";
+                  break;
+                case 2:
+                case 3:
+                  $d['re_text_size'] = "13";
+                  break;
+                default:
+                  $d['re_text_size'] = "13"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
             }
             //12.企業側吹き出し背景色
             if ( strcmp($v, 're_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
@@ -695,6 +754,23 @@ class MWidgetSettingsController extends AppController {
             //15.訪問者側吹き出し文字色
             if ( strcmp($v, 'se_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['se_text_color'] = SE_TEXT_COLOR; // デフォルト値
+            }
+            //訪問者側吹き出し文字サイズ
+            if ( strcmp($v, 'se_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['se_text_size'] = "12";
+                  break;
+                case 2:
+                case 3:
+                  $d['se_text_size'] = "13";
+                  break;
+                default:
+                  $d['se_text_size'] = "13"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
             }
             //16.訪問者側吹き出し背景色
             if ( strcmp($v, 'se_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
@@ -765,5 +841,72 @@ class MWidgetSettingsController extends AppController {
     }
     return $d;
   }
+
+/*$app->post('/cropper', function(Request $request){
+
+  $str =  str_random(7);
+
+  $crop =  value(function() use ($request, $str) {*/
+  public function trimming() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+
+    $this->log('入ってるかチェック',LOG_DEBUG);
+    $this->log($this->request->data,LOG_DEBUG);
+    $request = $this->request->data['image'];
+    $str = str_random(7);
+     // Laravelの場合は public_path()ヘルパー関数、Facadeが使えます
+     $image = Image::make('../public/img/art.jpg')
+             ->crop(
+                    $request->get('width'),
+                    $request->get('height'),
+                    $request->get('x'),
+                    $request->get('y')
+                  )
+             ->resize(256,256) // 256 * 256にリサイズ
+             // 画像の保存
+             ->save('../public/img/'. $str . '.jpg')
+             ->resize(128,128) //サムネイル用にリサイズ
+             ->save('../public/img/'. $str . '_t' . '.jpg');
+      // \File::delete('Your image File);
+      $this->log('ここまで来てない？',LOG_DEBUG);
+      $this->log($image,LOG_DEBUG);
+      return $image ?: false;
+      }
+
+  public function remoteTimmingInfo() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->render('/Elements/MWidgetSettings/remoteTimmingInfo');
+  }
+
+  public function cropper() {
+    header ('Content-Type: image/png');
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->log('入った',LOG_DEBUG);
+    $file1 = "/img/company_g.png?1490169962";                            //　元画像ファイル
+    $file2 = "/img/company_g.png?1490169963";                                //　画像保存先
+    $this->log('画像チェック12',LOG_DEBUG);
+    $this->log($file1 ,LOG_DEBUG);
+    $img = imagecreatefromjpeg($file1);                            //　元画像
+    $this->log('画像チェック2',LOG_DEBUG);
+    $w = array(100, 120);                                    //　切り出し開始位置,サイズ（横）
+    $h = array(110, 100);                                    //　切り出し開始位置,サイズ（縦）
+    $out = ImageCreateTrueColor($w[1], $h[1]);                        //　画像を生成
+    ImageCopyResampled($out, $img, 0, 0, $w[0], $h[0], $w[1], $h[1], $w[1], $h[1]);        //　サイズ変更・コピー
+    ImageJPEG($out, $file2);                                //　画像表示
+    ImageDestroy($img);
+    ImageDestroy($out);
+    $this->log('画像チェック',LOG_DEBUG);
+    $this->log($out,LOG_DEBUG);
+    $this->log($file2,LOG_DEBUG);
+
+  }
+
+
 
 }

@@ -51,7 +51,7 @@
           <div id="picChooseDiv">
             <div class="greenBtn btn-shadow" onclick="showGallary()">ギャラリーから選択</div>
             <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage'); ?>画像をアップロード</div>
-
+            <input type="hidden" name="data[Trimming][info]" id="TrimmingInfo" />
           </div>
         </div>
         <?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['ng-if'=>'mainImageToggle=="1"']); ?>

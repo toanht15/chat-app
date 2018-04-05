@@ -37,6 +37,7 @@ class TrialController extends AppController {
     $businessModel = Configure::read('businessModelType');
     $this->set('businessModel',$businessModel);
     $this->set('title_for_layout', '無料トライアル登録画面');
+    session_destroy();
   }
 
   public function add() {
@@ -49,6 +50,7 @@ class TrialController extends AppController {
     $data['MCompany']['options']['refCompanyData'] = 1;
     $data['MCompany']['m_contact_types_id'] = 1;
     $data['MCompany']['limit_users'] = 3;
+    $data['MCompany']['options']['chatbotScenario'] = true;
     $data['MAgreements']['trial_start_day'] = date('Y-m-d');
     $data['MAgreements']['trial_end_day'] = date('Y-m-d', strtotime('+13 day', time()));
     $data['MAgreements']['agreement_start_day'] = '';
@@ -58,6 +60,19 @@ class TrialController extends AppController {
       'timeout' => self::API_CALL_TIMEOUT
     ));
     $result = $socket->post(self::CONTRACT_ADD_URL,$data,array('header' => array('X-Forwarded-Port' => 443)));
+
+    if(json_decode($result->code) === 409) {
+      $this->response->statusCode(409);
+      return json_encode([
+        'success' => false,
+        'message' => 'メール送信に失敗しました。システム管理者にお問い合わせください。'
+      ]);
+    }
+
+    $socket = new HttpSocket(array(
+      'timeout' => self::API_CALL_TIMEOUT
+    ));
+    $soketResult = $socket->get(C_NODE_SERVER_ADDR.'/socketCtrl/refreshCompanyList',$data,array('header' => array('X-Forwarded-Port' => 443)));
   }
 
   /* *
