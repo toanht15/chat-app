@@ -1260,9 +1260,9 @@
             case 2:
               userName = sincloInfo.widget.subTitle;
               break;
-            case 3:
-              userName = "";
-              break;
+          }
+          if(isset(sincloInfo.widget.showOpName) && sincloInfo.widget.showOpName === 2) {
+            userName = "";
           }
         }
         else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
