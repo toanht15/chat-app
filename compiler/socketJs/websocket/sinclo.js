@@ -1872,6 +1872,9 @@
             $('#miniFlexBoxHeight').removeClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
             sinclo.resizeTextArea();
+            if(!check.smartphone()) {
+              $('#miniSincloChatMessage').focus();
+            }
           }
         },
         hideMiniMessageArea: function() {
@@ -1881,6 +1884,9 @@
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
             sinclo.resizeTextArea();
+            if(!check.smartphone()) {
+              $('#sincloChatMessage').focus();
+            }
           }
         },
         addKeyDownEventToSendChat: function() {
