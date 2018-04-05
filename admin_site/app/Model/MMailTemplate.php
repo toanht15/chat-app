@@ -10,4 +10,18 @@ class MMailTemplate extends AppModel {
 
   public $name = 'MMailTemplate';
 
+  /**
+   * Validation rules
+   *
+   * @var array
+   */
+  public $validate = [
+    'template' => [
+      'notBlank' => [
+        'rule' => 'notBlank',
+        'allowEmpty' => false,
+        'message' => 'テンプレートを設定してください'
+      ]
+    ]
+  ];
 }

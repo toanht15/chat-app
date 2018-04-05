@@ -1,6 +1,5 @@
 <?php
 /* 定数定義 */
-define('APP_MODE_DEV', true);
 define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
 // AWS: S3
@@ -92,6 +91,7 @@ define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
 // 表示名種別
 define('C_WIDGET_SHOW_NAME', 1); // 表示名
 define('C_WIDGET_SHOW_COMP', 2); // 企業名
+define('C_WIDGET_SHOW_NONE', 3); // 表示しない
 
 // チャットデザインタイプ
 define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX', 1); // BOX型（サイズ固定）
@@ -141,15 +141,16 @@ define('C_MATCH_RULE_TEXT', '/.+/'); // 1文字以上のテキスト
 define('C_MATCH_RULE_NUMBER', '/^\d+$/');  // 1文字以上の数字
 define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
 
-define('C_MATCH_INPUT_RULE_ALL', '/./');  // 入力制限なし
-define('C_MATCH_INPUT_RULE_NUMBER', '/\d/');  // 数字入力
-define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.,;:@"]/'); // メールアドレス入力(半角英数記号入力)
-define('C_MATCH_INPUT_RULE_TEL', '/[\d+-]/'); // 電話番号入力（半角英数と一部記号入力）
+define('C_MATCH_INPUT_RULE_ALL', '/.*/');  // 入力制限なし
+define('C_MATCH_INPUT_RULE_NUMBER', '/[\d]*/');  // 数字入力
+define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.\-,;:@"]*/'); // メールアドレス入力(半角英数記号入力)
+define('C_MATCH_INPUT_RULE_TEL', '/^0[\d+-]*/'); // 電話番号入力（半角英数と一部記号入力）
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
 define('C_MESSAGE_TYPE_ERROR', 2); // 処理失敗
 define('C_MESSAGE_TYPE_ALERT', 3); // 処理失敗
+define('C_MESSAGE_OUT_OF_TERM_TRIAL', 4); // トライアル期間終了
 // define('C_MESSAGE_TYPE_NOTICE', 3); // 通知（未実装）
 
 // ユーザー権限（リストあり：$config['Authority']）
@@ -350,6 +351,15 @@ define('C_FREE_B_TO_B', 1); // BtoB
 define('C_FREE_B_TO_C', 2); // BtoC
 define('C_FREE_BOTH', 3); // BtoB,BtoCどちらも
 
+//メール種別
+define('C_AFTER_FREE_APPLICATION_TO_CUSTOMER', 1); // 無料トライアル登録時 お客さん向けメール
+define('C_AFTER_FREE_APPLICATION_TO_COMPANY', 2); // 無料トライアル登録時 会社向けメール
+define('C_AFTER_FREE_PASSWORD_CHANGE_TO_COMPANY', 3); // 無料トライアル登録後初期パスワード変更 会社向けメール
+define('C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER', 4); // 無料トライアル登録後初期パスワード変更 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_CUSTOMER', 5); // いきなり契約登録時 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_COMPANY', 6); // いきなり契約登録時 会社向けメール
+define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // いきなり契約登録後初期パスワード変更 お客さん向けメール
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",
@@ -394,6 +404,12 @@ $config['normalChoices'] = [
   C_SELECT_CAN_NOT => "しない"
 ];
 
+/* ウィジェット設定 ー Web接客コード */
+$config['widgetShowChoices'] = [
+  C_SELECT_CAN => "表示する",
+  C_SELECT_CAN_NOT => "表示しない"
+];
+
 /* ウィジェット設定 － 表示設定種別 */
 $config['WidgetDisplayType'] = [
     1 => "常に表示する",
@@ -408,10 +424,22 @@ $config['widgetPositionType'] = [
     C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
 ];
 
+/* ウィジェット設定 ー Web接客コード */
+$config['widgetShowAccessId'] = [
+  C_SELECT_CAN => "表示する",
+  C_SELECT_CAN_NOT => "表示しない<br>　<s>※ウェブ接客コード（4桁のID）を電話口でヒアリングすることで、リアルタイムモニター上で</s><br><s>　  相手を特定することができます。（電話口の相手のウェブ行動履歴や流入経路の把握が可能）</s>"
+];
+
 /* ウィジェット設定 － 担当者表示名種別 */
 $config['widgetShowNameType'] = [
     C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
-    C_WIDGET_SHOW_COMP=> "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+    C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+];
+
+/* ウィジェット設定 － 表示名種別 */
+$config['widgetShowAutomessageNameType'] = [
+  C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>",
+  C_WIDGET_SHOW_NONE => "表示しない"
 ];
 
 /* ウィジェット設定 － 吹き出しデザイン */
@@ -700,7 +728,7 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_SEND_FILE => [
     'label' => 'ファイル送信',
     'default' => [
-      'messageIntervalTimeSec' > '2',
+      'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
       'file' => ''
     ]
@@ -743,7 +771,7 @@ $config['chatbotScenarioSendMailType'] = [
   ],
   C_SCENARIO_MAIL_TYPE_CUSTOMIZE => [
     'label' => 'メール本文をカスタマイズする',
-    'tooltip' => '自由にメール本文を編集することが可能です。（変数の利用も可能です）'
+    'tooltip' => '自由にメール本文を編集することが可能です。<br>（変数の利用も可能です）'
   ]
 ];
 

@@ -3,7 +3,7 @@
 
 var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate']);
 
-sincloApp.controller('MainController', function($scope) {
+sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($scope, SimulatorService) {
     //thisを変数にいれておく
     var self = this;
 
@@ -168,366 +168,10 @@ sincloApp.controller('MainController', function($scope) {
         return true;
     };
 
-    // ウィジェットのシミュレーター表示
-    var json = JSON.parse(document.getElementById('TAutoMessageWidgetSettings').value);
-    var widgetSettings = [];
-    for (var item in json) {
-      widgetSettings[item] = json[item];
-    }
-    $scope.widgetSettings = widgetSettings;
-
-    var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
-    $scope.main_image = $scope.widgetSettings['main_image'];
-
-    $scope.showWidgetType = 1; // デフォルト表示するウィジェット
-    $scope.openFlg = true;
-
-    $scope.widgetSizeTypeToggle = $scope.widgetSettings['widget_size_type'];
-    $scope.subTitleToggle = $scope.widgetSettings['show_subtitle'];
-    $scope.descriptionToggle = $scope.widgetSettings['show_description'];
-    $scope.mainImageToggle = $scope.widgetSettings['show_main_image'];
-    $scope.minimizedDesignToggle = $scope.widgetSettings['minimize_design_type'];
-    $scope.closeButtonSettingToggle = $scope.widgetSettings['close_button_setting'];
-    $scope.closeButtonModeTypeToggle = $scope.widgetSettings['close_button_mode_type'];
-    $scope.timeTextToggle = $scope.widgetSettings['display_time_flg'];
-
-    $scope.chat_message_copy = $scope.widgetSettings['chat_message_copy'];
-    $scope.chat_message_design_type = $scope.widgetSettings['chat_message_design_type'];
-    $scope.widget_outside_border_none = $scope.widgetSettings['widget_border_color'] === 'なし';
-    $scope.widget_inside_border_none = $scope.widgetSettings['widget_inside_border_color'] === 'なし';
-    $scope.re_border_none = $scope.widgetSettings['re_border_color'] === 'なし';
-    $scope.se_border_none = $scope.widgetSettings['se_border_color'] === 'なし';
-    $scope.show_name = <?=C_WIDGET_SHOW_COMP?>; // オートメッセージは企業名で表示する
-    $scope.message_box_border_none = $scope.widgetSettings['message_box_border_color'] === 'なし';
-
-    $scope.switchWidget = function(num){
-      $scope.showWidgetType = num;
-      sincloChatMessagefocusFlg = true;
-      var sincloBox = document.getElementById("sincloBox");
-
-      if ( Number(num) === 3 ) { // ｽﾏｰﾄﾌｫﾝ（縦）の表示
-        $scope.widget.showTab = 'chat'; // 強制でチャットにする
-      }
-
-      if ( Number(num) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
-        if(sincloBox){
-          if(sincloBox.style.display == 'none'){
-            sincloBox.style.display = 'block';
-          }
-        }
-        /* ウィジェットが最小化されていたら最大化する */
-        if ( !$scope.openFlg ) { // 最小化されている場合
-          var main = document.getElementById("miniTarget");  // 非表示対象エリア
-          var height = 0;
-          if(main){
-            for(var i = 0; main.children.length > i; i++){ // 非表示エリアのサイズを計測する
-              if ( Number(num) === 3 && main.children[i].id === 'navigation' ) continue; // SPの場合はナビゲーションは基本表示しない
-              height += main.children[i].offsetHeight;
-            }
-            main.style.height = height + "px";
-          }
-        }
-      }
-      if( Number(num) !== 4 ){
-        if(coreSettingsChat){
-          document.getElementById("switch_widget").value = num;
-        }
-      }
-      $scope.openFlg = true;
-
-      setTimeout(function(){
-        $scope.createMessage();
-        $scope.toggleChatTextareaView($scope.main.chat_textarea);
-      },0);
-    }
-
-    $scope.$watch('chat_trigger', function(){
-      if ( Number($scope.widgetSettings.chat_trigger) === 1 ) {
-        $scope.widgetSettings.chat_area_placeholder_pc = "（Shift+Enterで改行/Enterで送信）";
-        $scope.widgetSettings.chat_area_placeholder_sp = "（改行で送信）";
-      }
-      else {
-        $scope.widgetSettings.chat_area_placeholder_pc = "";
-        $scope.widgetSettings.chat_area_placeholder_sp = "";
-      }
-    });
-
-    $scope.makeFaintColor = function(){
-      var defColor = "#F1F5C8";
-      //仕様変更、常に高度な設定が当たっている状態とする
-      defColor = $scope.widgetSettings.re_background_color;
-//       if($scope.color_setting_type === '1'){
-//         defColor = $scope.re_background_color;
-//       }
-//       else{
-//         if ( $scope.main_color.indexOf("#") >= 0 ) {
-//           var code = $scope.main_color.substr(1), r,g,b;
-//           if (code.length === 3) {
-//             r = String(code.substr(0,1)) + String(code.substr(0,1));
-//             g = String(code.substr(1,1)) + String(code.substr(1,1));
-//             b = String(code.substr(2)) + String(code.substr(2));
-//           }
-//           else {
-//             r = String(code.substr(0,2));
-//             g = String(code.substr(2,2));
-//             b = String(code.substr(4));
-//           }
-//           var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
-//           var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
-//           var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
-//           defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
-//         }
-//       }
-      return defColor;
-    };
-
-    $scope.getTalkBorderColor = function(chk){
-      var defColor = "#E8E7E0";
-      //仕様変更、常に高度な設定が当たっている状態とする
-      if(chk === 're'){
-        defColor = $scope.widgetSettings.re_border_color;
-      }
-      else{
-        defColor = $scope.widgetSettings.se_border_color;
-      }
-//       if($scope.color_setting_type === '1'){
-//         if(chk === 're'){
-//           defColor = $scope.re_border_color;
-//         }
-//         else{
-//           defColor = $scope.se_border_color;
-//         }
-//       }
-//       else{
-//         defColor = $scope.chat_talk_border_color;
-//       }
-      return defColor;
-    }
-
-    $scope.getSeBackgroundColor = function(){
-      var defColor = "#FFFFFF";
-      //仕様変更、常に高度な設定が当たっている状態とする
-      defColor = $scope.widgetSettings.se_background_color;
-//       if($scope.color_setting_type === '1'){
-//         defColor = $scope.se_background_color;
-//       }
-      return defColor;
-    }
-
-    //シンプル表示判定
-    /*
-    * 最小化時のデザイン
-    * $scope.minimizedDesignToggle = 1/2/3:シンプル表示しない/スマホのみシンプル表示する/すべての端末でシンプル表示する
-    * $scope.showWidgetType = 1/3:通常/スマホ（縦）
-    * 最大時のシンプル表示(スマホ)
-    * $scope.sp_header_light_flg = 0/1:しない/する
-    * $scope.openFlg = true/false:最大化/最小化
-    */
-    $scope.spHeaderLightToggle = function(){
-      switch ($scope.minimizedDesignToggle) {
-      case "1": //シンプル表示しない
-        if($scope.showWidgetType === 1){
-          //通常（PC）
-          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
-            //最大時のシンプル表示(スマホ)する
-            if(!$scope.openFlg){
-              //最小化中
-              var res = false;
-            }
-            else{
-              //最大化中
-              var res = false;
-            }
-          }
-          else{
-            //最大時のシンプル表示(スマホ)しない
-            if(!$scope.openFlg){
-              //最小化中
-              var res = false;
-            }
-            else{
-              //最大化中
-              var res = false;
-            }
-          }
-        }
-        else{
-          //スマホ（縦）
-          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
-            //最大時のシンプル表示(スマホ)する
-            if(!$scope.openFlg){
-              //最小化中
-              var res = false;
-            }
-            else{
-              //最大化中
-              var res = true;
-            }
-          }
-          else{
-            //最大時のシンプル表示(スマホ)しない
-            if(!$scope.openFlg){
-              //最小化中
-              var res = false;
-            }
-            else{
-              //最大化中
-              var res = false;
-            }
-          }
-        }
-        break;
-      case "2": //スマホのみシンプル表示する
-        if($scope.showWidgetType === 1){
-          //通常（PC）
-          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
-            //最大時のシンプル表示(スマホ)する
-            if(!$scope.openFlg){
-              //最小化中
-              var res = false;
-            }
-            else{
-              //最大化中
-              var res = false;
-            }
-          }
-          else{
-            //最大時のシンプル表示(スマホ)しない
-            if(!$scope.openFlg){
-              //最小化中
-              var res = false;
-            }
-            else{
-              //最大化中
-              var res = false;
-            }
-          }
-        }
-        else{
-          //スマホ（縦）
-          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
-            //最大時のシンプル表示(スマホ)する
-            if(!$scope.openFlg){
-              //最小化中
-              var res = true;
-            }
-            else{
-              //最大化中
-              var res = true;
-            }
-          }
-          else{
-            //最大時のシンプル表示(スマホ)しない
-            if(!$scope.openFlg){
-              //最小化中
-              var res = true;
-            }
-            else{
-              //最大化中
-              var res = false;
-            }
-          }
-        }
-        break;
-      case "3": //すべての端末でシンプル表示する
-        if($scope.showWidgetType === 1){
-          //通常（PC）
-          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
-            //最大時のシンプル表示(スマホ)する
-            if(!$scope.openFlg){
-              //最小化中
-              var res = true;
-            }
-            else{
-              //最大化中
-              var res = false;
-            }
-          }
-          else{
-            //最大時のシンプル表示(スマホ)しない
-            if(!$scope.openFlg){
-              //最小化中
-              var res = true;
-            }
-            else{
-              //最大化中
-              var res = false;
-            }
-          }
-        }
-        else{
-          //スマホ（縦）
-          if($scope.widgetSettings.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
-            //最大時のシンプル表示(スマホ)する
-            if(!$scope.openFlg){
-              //最小化中
-              var res = true;
-            }
-            else{
-              //最大化中
-              var res = true;
-            }
-          }
-          else{
-            //最大時のシンプル表示(スマホ)しない
-            if(!$scope.openFlg){
-              //最小化中
-              var res = true;
-            }
-            else{
-              //最大化中
-              var res = false;
-            }
-          }
-        }
-        break;
-      }
-      if($scope.openFlg){
-        //最大化時
-        $("#minimizeBtn").show();
-        $("#addBtn").hide();
-        $("#closeBtn").hide();
-      }
-      else{
-        //最小化時
-        $("#addBtn").show();
-        $("#minimizeBtn").hide();
-        if($scope.closeButtonSettingToggle === '2'){
-          $("#closeBtn").show();
-        }
-        else{
-          $("#closeBtn").hide();
-        }
-        var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
-        if(coreSettingsChat){
-          document.getElementById("switch_widget").value = $scope.showWidgetType;
-        }
-      }
-      return res;
-    };
-
-    //位置調整
-    $scope.$watch(function(){
-      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType, 'widgetSizeType': $scope.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.widgetSettings.chat_radio_behavior, 'chat_trigger': $scope.chat_trigger, 'show_name': $scope.widgetSettings.show_name, 'widget.showTab': $scope.widget.showTab};
-    },
-    function(){
-      var main = document.getElementById("miniTarget");
-      if ( !main ) return false;
-      if ( $scope.openFlg ) {
-        setTimeout(function(){
-          angular.element("#sincloBox").addClass("open");
-          var height = 0;
-          for(var i = 0; main.children.length > i; i++){
-              height += main.children[i].offsetHeight;
-          }
-          main.style.height = height + "px";
-        }, 0);
-      }
-      else {
-        angular.element("#sincloBox").removeClass("open");
-        main.style.height = "0";
-      }
-    }, true);
+    // ウィジェットのプレビュー表示
+    $scope.widget = SimulatorService;
+    $scope.widget.settings = getWidgetSettings();
+    $scope.widget.coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
 
     $scope.addOption = function(type) {
       var sendMessage = document.getElementById('TAutoMessageAction');
@@ -560,19 +204,30 @@ sincloApp.controller('MainController', function($scope) {
       $scope.createMessage();
     }
 
-    //位置調整
-    $scope.$watch(function(){
-      return {'widgetSizeType': $scope.widgetSizeTypeToggle};
-    },
-    function(){
-      $scope.switchWidget(1); // 標準に切り替える
-    }, true);
-
-    // シミュレーター上のメッセージ表示更新
     angular.element(window).on('load', function(e) {
+
+      // 吹き出しの要素をクローンして、メッセージのシミュレーションを行えるように固有のIDを設定する
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+      divElm.id = 'sample_widget_re_message';
+      document.getElementById('chatTalk').appendChild(divElm);
+      $scope.createMessage();
+
+      // メッセージ入力に応じて、シミュレーション上の吹き出しを表示更新する
       $('#TAutoMessageAction').on('keydown keyup', function(e) {
         $scope.createMessage();
       });
+
+      // ウィジェットのタブ切替時、シミュレーション上の吹き出しを表示更新する
+      $scope.$on('switchWidget', function(event, type) {
+        var divElm = document.getElementById('sample_widget_re_message');
+        if (!divElm) {
+          var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+          divElm.id = 'sample_widget_re_message';
+          document.getElementById('chatTalk').appendChild(divElm);
+        }
+        $scope.createMessage();
+      });
+
       $(document).on('keyup', 'input[name^="keyword_"]', function(e){
         var val = $(this).val();
         console.log(val);
@@ -606,104 +261,26 @@ sincloApp.controller('MainController', function($scope) {
         });
       });
       $scope.$watch('main.chat_textarea', function(value) {
-        $scope.toggleChatTextareaView(value);
+        $scope.$broadcast('switchSimulatorChatTextArea', value == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>);
       });
     });
+
     $scope.createMessage = function() {
-      var isSmartphone = $scope.showWidgetType != 1;
-      var val = document.getElementById('TAutoMessageAction').value;
+      var val = document.getElementById('TAutoMessageAction').value || '';
       var messageElement = document.querySelector('#sample_widget_re_message .details:not(.cName)');
       if(!messageElement) return;
 
-      var strings = val.split('\n');
-      var radioCnt = 1;
-      var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
-      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-      var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
-      var radioName = "sinclo-radio0";
-      var content = "";
-
-      for (var i = 0; strings.length > i; i++) {
-        var str = escape_html(strings[i]);
-
-        // リンク
-        var link = str.match(linkReg);
-        if ( link !== null ) {
-            var url = link[0];
-            var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
-            str = str.replace(url, a);
-        }
-        // ラジオボタン
-        var radio = str.indexOf('[]');
-        if ( radio > -1 ) {
-            var value = str.slice(radio+2);
-            var name = value.replace(htmlTagReg, '');
-            str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-            str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
-        }
-        // 電話番号（スマホのみリンク化）
-        var tel = str.match(telnoTagReg);
-        if( tel !== null ) {
-          var telno = tel[1];
-          if(isSmartphone) {
-            // リンクとして有効化
-            var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
-            str = str.replace(tel[0], a);
-          } else {
-            // ただの文字列にする
-            var span = "<span class='telno'>" + telno + "</span>";
-            str = str.replace(tel[0], span);
-          }
-        }
-        content += str + "\n";
-      }
+      var content = $scope.widget.createMessage(val, 'automessage');
 
       // プレビューの吹き出し表示制御
-      if(content.length > 1) {
+      if(typeof content !== 'undefined' && content.length > 1) {
         document.getElementById('sample_widget_re_message').style.display = "";
         messageElement.innerHTML = content;
       } else {
         document.getElementById('sample_widget_re_message').style.display = "none";
       }
     }
-
-    // 自由入力エリアの表示・非表示切替
-    $scope.toggleChatTextareaView = function(value) {
-      var chatTalkHeight = 194;
-      var messageBoxHeight = 75;
-
-      switch($scope.showWidgetType) {
-      case 1: // 表示タブ：通常
-        // ウィジェットサイズごとにサイズを変更する
-        if($scope.widgetSettings.widget_size_type == 2) {
-          chatTalkHeight = 274;
-        } else if($scope.widgetSettings.widget_size_type == 3) {
-          chatTalkHeight = 364;
-        }
-        // プレミアムプラン以外の場合、高さを調整する
-        <?php if ( !$coreSettings[C_COMPANY_USE_SYNCLO] && (!isset($coreSettings[C_COMPANY_USE_DOCUMENT]) || !$coreSettings[C_COMPANY_USE_DOCUMENT]) ): ?>
-          messageBoxHeight -= 3;
-        <?php endif; ?>
-        break;
-      case 2:  // 表示タブ：スマートフォン(横)
-        chatTalkHeight = 90;
-        messageBoxHeight = 62;
-        break;
-      case 3:  // 表示タブ：スマートフォン(縦)
-        chatTalkHeight = 184;
-        messageBoxHeight = 72;
-        break;
-      }
-
-      if (value == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>) {
-        document.getElementById('messageBox').style.display = "block";
-        document.getElementById('chatTalk').style.height = chatTalkHeight + "px";
-      } else {
-        document.getElementById('messageBox').style.display = "none";
-        document.getElementById('chatTalk').style.height = chatTalkHeight + messageBoxHeight + "px";
-      }
-    }
-});
+}]);
 
 // http://stackoverflow.com/questions/17035621/what-is-the-angular-way-of-displaying-a-tooltip-lightbox
 sincloApp.directive('ngShowonhover',function() {
@@ -845,24 +422,6 @@ sincloApp.directive('ngShowonhover',function() {
     };
 });
 
-function escape_html(unescapedString) {
-  if(typeof unescapedString !== 'string') {
-    return unescapedString;
-  }
-  var string = unescapedString.replace(/(<br>|<br \/>)/gi, '\n');
-  string = string.replace(/[&'`"<>]/g, function(match) {
-    return {
-      '&': '&amp;',
-      "'": '&#x27;',
-      '`': '&#x60;',
-      '"': '&quot;',
-      '<': '&lt;',
-      '>': '&gt;',
-    }[match];
-  });
-  return string;
-}
-
 function removeAct(lastPage){
     modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
     popupEvent.closePopup = function(){
@@ -885,6 +444,20 @@ function submitAct(){
   $('#TAutoMessageEntryForm').submit();
 }
 
+/**
+ * ウィジェット設定取得
+ * @return Object
+ */
+function getWidgetSettings() {
+  var json = JSON.parse(document.getElementById('TAutoMessageWidgetSettings').value);
+  var widgetSettings = [];
+  for (var item in json) {
+    widgetSettings[item] = json[item];
+  }
+  widgetSettings.show_name = <?=C_WIDGET_SHOW_COMP?>; // 表示名を企業名に固定する
+  return widgetSettings;
+}
+
 //スクロール位置把握
 var topPosition = 0;
 window.onload = function() {
@@ -897,9 +470,7 @@ $(document).ready(function(){
   // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
-    console.log(parentTdId);
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 170 + topPosition) + 'px',
@@ -988,16 +559,5 @@ $(document).ready(function(){
   });
   initializeFromMailAddressArea();
 });
-
-/* [ #2243 ] IE緊急対応 */
-// TODO 仮対応のため正式な対応をする
-var sincloChatMessagefocusFlg = true;
-$("body").on('focus', '#sincloChatMessage', function(e){
-  if ( sincloChatMessagefocusFlg ) {
-    e.target.value = "";
-    sincloChatMessagefocusFlg = false;
-  }
-});
-/* [ #2243 ] IE緊急対応 */
 
 </script>

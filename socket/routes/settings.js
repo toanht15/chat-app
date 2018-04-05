@@ -87,6 +87,11 @@ router.get("/", function(req, res, next) {
                 if(('showTiming' in settings)) {
                   showTimingSetting = isNumeric(settings.showTiming);
                 }
+                // （チャットプランのみ）Web接客コード設定が存在しない場合は「表示しない」
+                var showAccessId = 2;
+                if(('showAccessId' in settings)) {
+                  showAccessId = isNumeric(settings.showAccessId);
+                }
                 // 吹き出しデザイン設定が存在しない場合は「BOX型（サイズ固定）」
                 var chatMessageDesignType = 1;
                 if(('chatMessageDesignType' in settings)) {
@@ -146,12 +151,57 @@ router.get("/", function(req, res, next) {
                   spMaximizeSizeType = settings.spMaximizeSizeType;
                 }
 
+                var headerTextSize = 0;
+                var seTextSize = 0;
+                var reTextSize = 0;
+
+                switch(isNumeric(settings.widgetSizeType)) {
+                  case 1:
+                    headerTextSize = 14;
+                    seTextSize = 12;
+                    reTextSize = 12;
+                    break;
+                  case 2:
+                  case 3:
+                    headerTextSize = 15;
+                    seTextSize = 13;
+                    reTextSize = 13;
+                    break;
+                }
+
+                if(('headerTextSize' in settings)) {
+                  headerTextSize = settings.headerTextSize;
+                }
+
+                if(('seTextSize' in settings)) {
+                  seTextSize = settings.seTextSize;
+                }
+
+                if(('reTextSize' in settings)) {
+                  reTextSize = settings.reTextSize;
+                }
+
+                // オートメッセージ企業名表示設定が存在しない場合は「表示する」
+                var showAutomessageName = 1;
+                if(('showAutomessageName' in settings)) {
+                  showAutomessageName = settings.showAutomessageName;
+                }
+
+                // 有人チャット担当者名表示設定が存在しない場合は「表示する」
+                var showOpName = 1;
+                if(('showOpName' in settings)) {
+                  showOpName = isNumeric(settings.showOpName);
+                }
+
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
                   showTime: isNumeric(settings.showTime),
                   showName: isNumeric(settings.showName),
+                  showAutomessageName: isNumeric(showAutomessageName),
+                  showOpName: isNumeric(showOpName),
                   showPosition: isNumeric(settings.showPosition),
+                  showAccessId: isNumeric(showAccessId),
                   //ウィジットサイズ対応
                   widgetSizeType: isNumeric(settings.widgetSizeType),
                   //ウィジットサイズ対応
@@ -172,6 +222,7 @@ router.get("/", function(req, res, next) {
                   messageTextColor: messageTextColor,
                   //4.その他文字色
                   otherTextColor: otherTextColor,
+                  headerTextSize: headerTextSize,
                   //5.ウィジェット枠線色
                   widgetBorderColor: widgetBorderColor,
                   //6.吹き出し枠線色
@@ -188,12 +239,14 @@ router.get("/", function(req, res, next) {
                   cNameTextColor: settings.cNameTextColor,
                   //11.企業側吹き出し文字色
                   reTextColor: settings.reTextColor,
+                  reTextSize: reTextSize,
                   //12.企業側吹き出し背景色
                   reBackgroundColor: settings.reBackgroundColor,
                   //13.企業側吹き出し枠線色
                   reBorderColor: settings.reBorderColor,
                   //15.訪問者側吹き出し文字色
                   seTextColor: settings.seTextColor,
+                  seTextSize: seTextSize,
                   //16.訪問者側吹き出し背景色
                   seBackgroundColor: settings.seBackgroundColor,
                   //17.訪問者側吹き出し枠線色

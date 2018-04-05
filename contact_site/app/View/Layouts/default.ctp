@@ -83,6 +83,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     if ( strcmp($this->name, 'Statistics') === 0 || strcmp($this->name, 'ChatHistories') === 0 ) {
       echo $this->Html->css("jquery.dataTables.css");
     }
+    if(strcmp($this->name, 'MWidgetSettings') === 0 || strcmp($this->name, 'MChatNotifications') === 0) {
+      echo $this->Html->css("//cdnjs.cloudflare.com/ajax/libs/cropper/1.0.0/cropper.min.css");
+    }
     if ( strcmp($this->name, 'Statistics') === 0) {
       echo $this->Html->css("//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css");
     }
@@ -105,6 +108,12 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->script("cidr2regex.js");
     echo $this->element("common-js");
     echo $this->Html->script("moment.min.js");
+    if(strcmp($this->name, 'MWidgetSettings') === 0 || strcmp($this->name, 'MChatNotifications') === 0) {
+      //echo $this->Html->script("cropper.min.js");
+      //cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
+      echo $this->Html->script("//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js");
+      echo $this->Html->script("//cdnjs.cloudflare.com/ajax/libs/cropper/1.0.0/cropper.min.js");
+    }
     if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->script("daterangepicker.js");
     }
@@ -186,6 +195,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     </script>
   </section>
 <?php endif; ?>
-
+<?php if ( strcmp($this->name, 'Trial') === 0 && $_SERVER['HTTP_HOST'] == 'ml1.sinclo.jp') { ?>
+  <script type='text/javascript' src='https://ws1.sinclo.jp/client/medialink.js' data-hide='1'></script>
+<?php } ?>
 </body>
 </html>

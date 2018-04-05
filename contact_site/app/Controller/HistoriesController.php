@@ -6,7 +6,7 @@
 class HistoriesController extends AppController {
   public $helpers = ['Time'];
   public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
-  public $components = ['Landscape'];
+  public $components = ['LandscapeLbcAPI'];
   public $paginate = [
     'THistory' => [
       'limit' => 100,
@@ -343,7 +343,7 @@ class HistoriesController extends AppController {
         if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
             && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
             && !empty($history['LandscapeData']['org_name'])
-            && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+            && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
         ) {
           $row['ip'] .= $history['LandscapeData']['org_name'];
         } else {
@@ -459,7 +459,7 @@ class HistoriesController extends AppController {
         if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
             && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
           && !empty($val['LandscapeData']['org_name'])
-          && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))) {
+          && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))) {
           $row['ip'] .= $val['LandscapeData']['org_name'];
         } else {
           $row['ip'] .= $val['THistory']['ip_address'];
@@ -537,6 +537,12 @@ class HistoriesController extends AppController {
       if($val['THistoryChatLog']['message_type'] == 23) {
         $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+      }
+      if($val['THistoryChatLog']['message_type'] == 27) {
+        $row['transmissionKind'] = 'シナリオメッセージ（ファイル送信）';
+        $row['transmissionPerson'] = "";
+        $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+        $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
       }
       if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
         $row['transmissionKind'] = '通知メッセージ';
@@ -986,7 +992,7 @@ class HistoriesController extends AppController {
       ];
       // MLの企業情報を閲覧できない企業であれば
       if(!$this->isViewableMLCompanyInfo()) {
-        $joinToLandscapeData['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+        $joinToLandscapeData['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
       }
     }
 
@@ -1024,7 +1030,7 @@ class HistoriesController extends AppController {
         ) {
         $chatStateList = $dbo2->buildStatement(
           [
-              'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 24 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ." GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+              'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ." GROUP BY t_histories_id ORDER BY t_histories_id desc)",
               'alias' => 'chat',
               'fields' => [
                 'chat.*',
@@ -1039,7 +1045,7 @@ class HistoriesController extends AppController {
     else {
       $chatStateList = $dbo2->buildStatement(
         [
-             'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 24 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+             'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
              'alias' => 'chat',
              'fields' => [
                'chat.*',
@@ -1168,7 +1174,7 @@ class HistoriesController extends AppController {
         [
           'type' => 'INNER',
           'table' => '(SELECT * FROM t_history_chat_logs '.
-               ' WHERE (m_users_id IS NOT NULL OR message_type = 5 OR (message_type >= 21 AND message_type <= 24))'.
+               ' WHERE (m_users_id IS NOT NULL OR message_type = 5 OR (message_type >= 21 AND message_type <= 27))'.
                '   AND t_histories_id IN (' . implode(",", $historyList) .')'.
                ' GROUP BY t_histories_id, m_users_id'.
                ')',
@@ -1209,7 +1215,8 @@ class HistoriesController extends AppController {
           || strcmp($val['THistoryChatLog']['message_type'], "21") === 0
           || strcmp($val['THistoryChatLog']['message_type'], "22") === 0
           || strcmp($val['THistoryChatLog']['message_type'], "23") === 0
-          || strcmp($val['THistoryChatLog']['message_type'], "24") === 0) {
+          || strcmp($val['THistoryChatLog']['message_type'], "24") === 0
+          || strcmp($val['THistoryChatLog']['message_type'], "27") === 0) {
           $chat[$val['THistory']['id']] = self::LABEL_AUTO_SPEECH_OPERATOR;
         }
       }
@@ -1427,7 +1434,7 @@ class HistoriesController extends AppController {
       ];
       // MLの企業情報を閲覧できない企業であれば
       if(!$this->isViewableMLCompanyInfo()) {
-        $landscapeJoinListCondition['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+        $landscapeJoinListCondition['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
       }
       $joinList[] = $landscapeJoinListCondition;
     }
@@ -1454,7 +1461,7 @@ class HistoriesController extends AppController {
         ];
         // MLの企業情報を閲覧できない企業であれば
         if(!$this->isViewableMLCompanyInfo()) {
-          $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+          $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
         }
         $companyData = $this->MLandscapeData->find('all', $companyConditions);
 

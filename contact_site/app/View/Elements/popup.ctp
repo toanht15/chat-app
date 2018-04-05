@@ -251,6 +251,16 @@
             return popupEvent.close();
           };
           break;
+        case 'p-widget-trimming':
+          var trimmingBtn = _button("トリミング");
+          trimmingBtn.onclick = function() {
+            return popupEvent.doTrimming();
+          };
+          var cancelButton = _button("キャンセル");
+          cancelButton.onclick = function () {
+            return popupEvent.close();
+          };
+          break;
         case 'p-copy':
           var closeBtn = _button("コピーする");
           closeBtn.onclick = function () {
@@ -305,7 +315,6 @@
             return popupEvent.cancelClicked();
           };
           break;
-          z
         case 'p-dictionary-del':
           var closeBtn = _button("削除する");
           closeBtn.onclick = function () {
@@ -467,18 +476,28 @@
             className = "success";
             break;
           case 2: // failure
-            className = "failure";
+            className = "outOfTermTrial";
             break;
           case 3: // alert
             alert(message);
             return false;
             break;
+          case 4: //trialOver
+          className = "outOfTermTrial";
+          break;
         }
         $("#shortMessage").text(message).attr('style', '').addClass(className);
         $("#shortMessage").removeClass('popup-off');
-        window.setTimeout(function () {
-          shortMessage.close();
-        }, 1500);
+        if(type != 4 && type != 2) {
+          window.setTimeout(function () {
+            shortMessage.close();
+          }, 1500);
+        }
+        else {
+          window.setTimeout(function () {
+            shortMessage.trialClose();
+          }, 300);
+        };
       },
       close: function () {
         $("#shortMessage").animate(
@@ -490,6 +509,25 @@
             window.setTimeout(function () {
               $('#shortMessage').prop('class', 'popup-off');
             }, 500);
+          }
+        );
+      },
+      trialClose: function () {
+        $(".outOfTermTrial").animate(
+          {
+            'top':'-5px'
+          },
+          700,
+          function () {
+            window.setTimeout(function () {
+              $(".outOfTermTrial").animate(
+                {
+                  'top':'-100px'
+                },700)
+              window.setTimeout(function () {
+                $('#shortMessage').prop('class', 'popup-off');
+              },1000)
+            }, 4000);
           }
         );
       }

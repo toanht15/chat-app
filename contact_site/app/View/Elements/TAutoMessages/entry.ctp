@@ -1,4 +1,5 @@
 <?php echo $this->element('TAutoMessages/angularjs'); ?>
+<?php echo $this->element('WidgetSimulator/simulatorService'); ?>
 
 <div class="form01" ng-app="sincloApp" ng-controller="MainController as main" ng-cloak>
   <?php $this->Form->inputDefaults(['label'=>false, 'div' => false, 'error' => false, 'legend' => false ]);?>
@@ -91,7 +92,6 @@
 
       </ul>
       <?=$this->ngForm->input('activity', ['type'=>'hidden'])?>
-      <?=$this->ngForm->input('widget.showTab', ['type' => 'hidden'], ['entity' => 'widget.showTab']) ?>
       <?=$this->ngForm->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
     </section>
 
@@ -328,9 +328,9 @@
         </ul>
       </div>
 
-      <div id="tautomessages_action_simulator" ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" ng-class="{middleSize: widgetSizeTypeToggle === '2', largeSize: widgetSizeTypeToggle === '3'}">
+      <div id="tautomessages_action_simulator" ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" ng-class="{middleSize: widget.isMiddleSize, largeSize: widget.isLargeSize}">
         <div>
-          <?= $this->element('TAutoMessages/simulator'); ?>
+          <?= $this->element('WidgetSimulator/simulator', ['isTabDisplay' => true, 'canVisitorSendMessage' => false]); ?>
         </div>
       </div><!-- /tautomessages_simulator -->
     </section>

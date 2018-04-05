@@ -9,7 +9,7 @@ class MWidgetSetting extends AppModel {
 
     public $name = "MWidgetSetting";
 
-    public $styleColumns = [
+    public $styleColumns = array(
       'show_timing' => "showTiming",
       'max_show_timing_site' => "maxShowTimingSite",
       'max_show_timing_page' => "maxShowTimingPage",
@@ -17,6 +17,7 @@ class MWidgetSetting extends AppModel {
       'max_show_time' => "maxShowTime",
       'max_show_time_page' => "maxShowTimePage",
       'show_position' => "showPosition",
+      'show_access_id' => "showAccessId",
       //ウィジットサイズ対応
       'widget_size_type' => "widgetSizeType",
       //ウィジットサイズ対応
@@ -36,6 +37,7 @@ class MWidgetSetting extends AppModel {
       'message_text_color' => "messageTextColor",
       //4.その他文字色
       'other_text_color' => "otherTextColor",
+      'header_text_size' => "headerTextSize",
       //5.ウィジェット枠線色
       'widget_border_color' => "widgetBorderColor",
       //6.吹き出し枠線色
@@ -52,12 +54,14 @@ class MWidgetSetting extends AppModel {
       'c_name_text_color' => "cNameTextColor",
       //11.企業側吹き出し文字色
       're_text_color' => "reTextColor",
+      're_text_size' => "reTextSize",
       //12.企業側吹き出し背景色
       're_background_color' => "reBackgroundColor",
       //13.企業側吹き出し枠線色
       're_border_color' => "reBorderColor",
       //14.訪問者側吹き出し文字色
       'se_text_color' => "seTextColor",
+      'se_text_size' => "seTextSize",
       //15.訪問者側吹き出し背景色
       'se_background_color' => "seBackgroundColor",
       //16.訪問者側吹き出し枠線色
@@ -94,6 +98,8 @@ class MWidgetSetting extends AppModel {
       //閉じるボタン対応
       'tel' => "tel",
       'show_name' => "showName",
+      'show_automessage_name' => "showAutomessageName",
+      'show_op_name' => "showOpName",
       'chat_message_design_type' => "chatMessageDesignType",
       'chat_message_with_animation' => "chatMessageWithAnimation",
       'show_description' => "showDescription",
@@ -107,7 +113,7 @@ class MWidgetSetting extends AppModel {
       'sp_auto_open_flg' => "spAutoOpenFlg",
       'sp_maximize_size_type' => "spMaximizeSizeType",
       'content' => "content"
-    ];
+    );
 
     /**
      * Validation rules

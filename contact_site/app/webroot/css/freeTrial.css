@@ -62,7 +62,7 @@ body .submit-container {
   border: 0;
   padding: 0;
   margin-top: 16px;
-  margin-top: 1.6rem
+  margin-top: 1.8rem
 }
 body .html-container:before,
 body .submit-container:before {
@@ -85,7 +85,7 @@ body input[type=submit] {
   font-size: 2.4rem
 }
 #submitButton {
-  background-color: #e65298;
+  background-color: #b5b5b5;
   border: 0;
   padding: 30px 120px;
   padding: 3rem 12rem;
@@ -109,10 +109,8 @@ body input[type=reset]:disabled,
 body input[type=reset]:disabled:hover,
 body input[type=submit]:disabled,
 body input[type=submit]:disabled:hover {
-  background-color: #f6f7f8;
-  border-width: 0;
-  color: #697886;
-  cursor: not-allowed
+  color:#fff;
+  cursor: default;
 }
 body .labelLeft .eachLabel {
   text-align: left;
@@ -607,7 +605,7 @@ input[type=search] {
   color: #fff
 }
 p {
-  margin: 0 0 1.382em;
+  /*margin: 0 0 1.382em;*/
   padding: 0
 }
 a {
@@ -1300,7 +1298,7 @@ img.alignright {
     font-size: 16px;
   }
   #submitButton {
-    background-color: #e65298;
+    background-color: #b5b5b5;
     border: 0;
     padding: 30px 120px;
     padding: 3rem 5rem;
@@ -4587,7 +4585,7 @@ div.lSSlideOuter ul.testimonials-list li {
     padding: 2rem 10rem
   }
   .wrap {
-    width: 92%;
+    width: 94%;
     max-width: 1280px;
     padding: 0
   }
