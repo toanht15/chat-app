@@ -1866,8 +1866,8 @@
           $("input[name^='sinclo-radio']").prop('disabled', true);
         },
         showMiniMessageArea: function() {
-          // シナリオのヒアリングモードのみ有効
-          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
+          // オペレータ未入室のシナリオのヒアリングモードのみ有効
+          if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').addClass('sinclo-hide');
             $('#miniFlexBoxHeight').removeClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
@@ -4281,7 +4281,9 @@
               sinclo.chatApi.hideMiniMessageArea();
             }
             self._watcher = setInterval(function(){
-              $('#sincloChatMessage').val(self._getValidChars($('#sincloChatMessage').val()));
+              if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+                $('#sincloChatMessage').val(self._getValidChars($('#sincloChatMessage').val()));
+              }
             },100);
           }
         },
