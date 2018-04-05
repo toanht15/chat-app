@@ -1,5 +1,4 @@
 <script type="text/javascript">
-<?= $this->element('TDocuments/loadScreen'); ?>
 
 loading.load.start();
 

@@ -103,10 +103,28 @@ $(document).ready(function(){
               $("#MChatNotificationUploadImage").val("");
               return false;
           }
-          var url = window.URL.createObjectURL(file);
-          changeImagePath(url, file.name);
+        var url = window.URL.createObjectURL(file);
+        changeImagePath(url, file.name);
+        openTrimmingDialog(function(){
+          beforeTrimmingInit(url, $('#picDiv img'));
+          trimmingInit(null, $('#TrimmingInfo'), 1);
+        });
       }
   });
+
+  function openTrimmingDialog(callback){
+    console.log('入ってるかチェック');
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
+      success: function(html){
+        modalOpen.call(window, html, 'p-widget-trimming', 'トリミング', 'moment');
+        callback();
+      }
+    });
+  }
 });
 
 document.body.onload = function(){
@@ -158,13 +176,15 @@ var actBtnShow = function(){
   if ( $('input[name="selectTab"]').is(":checked") ) {
     //一つでもチェックが入ったら
     //削除ボタン有効
-    document.getElementById("chat_notifications_dustbox_btn").className="btn-shadow disOffredBtn";
+    document.getElementById("chat_notifications_dustbox_btn").classList.remove("disOffgrayBtn");
+    document.getElementById("chat_notifications_dustbox_btn").classList.add("disOffredBtn");
     document.getElementById("chat_notifications_dustbox_btn").addEventListener('click', openConfirmDialog, false);
   }
   else {
     //一つもチェックが無かったら
     //削除ボタン無効
-    document.getElementById("chat_notifications_dustbox_btn").className="btn-shadow disOffgrayBtn";
+    document.getElementById("chat_notifications_dustbox_btn").classList.remove("disOffredBtn");
+    document.getElementById("chat_notifications_dustbox_btn").classList.add("disOffgrayBtn");
     document.getElementById("chat_notifications_dustbox_btn").removeEventListener('click', openConfirmDialog, false);
     $('#allCheck').prop('checked', false);
   }

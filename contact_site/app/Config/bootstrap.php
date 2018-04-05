@@ -119,6 +119,21 @@ CakeLog::config('apiLog', array(
     'size' => '10MB',
     'rotate' => 10,
 ));
+CakeLog::config('externalApiLog', array(
+  'engine' => 'File',
+  'types' => array('external-api-request', 'external-api-response', 'external-api-error'),
+  'file' => 'externalApiLog',
+  'size' => '10MB',
+  'rotate' => 10,
+));
+
+CakeLog::config('batchLog', array(
+  'engine' => 'File',
+  'types' => array('batch-info', 'batch-error'),
+  'file' => 'batchLog',
+  'size' => '10MB',
+  'rotate' => 10,
+));
 
 if (!isset($_SERVER['SERVER_NAME'])) {
     $_SERVER['SERVER_NAME'] = php_uname("n");

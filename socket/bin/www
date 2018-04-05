@@ -12,7 +12,7 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-var host = normalizePort(process.env.HOST || "node.sinclo");
+var host = normalizePort(process.env.HOST || "node.sinclo.local");
 var port = normalizePort(process.env.PORT || '8080');
 app.set('port', port);
 

@@ -7,6 +7,7 @@ $templateSelected = "";
 $madministratorsLists="";
 $tdictionariesLists="";
 $personalSettingsSelected="";
+$MailTemplateSettingsSelected = "";
 $tdictionaresSelected="";
 
 switch ($this->name) {
@@ -31,7 +32,11 @@ switch ($this->name) {
     if($this->name == 'PersonalSettings') {
     $personalSettingsSelected = "on";
   }
-
+  case 'MailTemplateSettings':
+    $settingSelected = "on";
+    if($this->name == 'MailTemplateSettings') {
+    $MailTemplateSettingsSelected = "on";
+  }
   case 'Contract':
     if($this->name == 'MAdministrators') {
       $madministratorsLists = "on";
@@ -48,6 +53,7 @@ switch ($this->name) {
       <li class="link <?=$agreements?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'index'))?>';">契約管理</li>
       <li class="nav-group <?=$settingSelected?>"><i class="fa fa-cog fa-lg" aria-hidden="true"></i>設定</li>
       <li class="link <?=$personalSettingsSelected?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'PersonalSettings', 'action' => 'index'))?>';">個人設定</a></li>
+      <li class="link <?=$MailTemplateSettingsSelected?>" onclick= "location.href = '<?=$this->Html->url(array('controller' => 'MailTemplateSettings', 'action' => 'index'))?>';">メール設定</a></li>
     </ul>
   </nav>
   <ul>

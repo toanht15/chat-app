@@ -145,6 +145,11 @@
         var self = this;
         this.addEventListener('mouseenter', function(e){
 
+          // クラスにcommontooltipを含まないとき、処理を実行しない(radio, checkbox, selectで二重表示されるため)
+          if (!/commontooltip/.test(e.target.className)) {
+            return;
+          }
+
           var $this = $(self);
           var text = $this.attr('data-text');
           var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
@@ -220,6 +225,11 @@
 
         if(!debug) {
           this.addEventListener('mouseleave',function(e){
+            // クラスにcommontooltipを含まないとき、処理を実行しない(radio, checkbox, selectで二重表示されるため)
+            if (!/commontooltip/.test(e.target.className)) {
+              return;
+            }
+
             $('body').find(".tooltips").remove();
           }, true); //radioボタンのdisableに対応するためuseCaptureを利用
         }

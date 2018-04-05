@@ -35,6 +35,9 @@ class htmlExHelper extends AppHelper {
             }
             else {
                 $a = "href='" . $this->Html->url($urlOpt['href']) . "'";
+                if ( !empty($urlOpt['onclick']) ) {
+                 $a .= " onclick='" . h($urlOpt['onclick']) . "'";
+               }
             }
             if ( !empty($urlOpt['target']) ) {
                 $a .= " target='" . h((string)$urlOpt['target']) . "'";
@@ -114,8 +117,15 @@ class htmlExHelper extends AppHelper {
       } else {
         $thumbnail = "<i class='fa " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
       }
-      $content.= "<span class='cName'>ファイル送信" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
-      $content.= "<div class='sendFileContent'>";
+      if(isset($value['message'])) { // TODO シナリオメッセージとオペレータからのファイル送信の判定がmessageがあるかどうか。messageが増えたらタイトルが変わる
+        $content .= "<span class='cName'>シナリオメッセージ（ファイル送信）" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
+      } else {
+        $content .= "<span class='cName'>ファイル送信" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
+      }
+      if(isset($value['message'])) {
+        $content .= "<span class='scenarioSendFileMessage'>".$value['message']."</span>";
+      }
+      $content .= "<div class='sendFileContent'>";
       $content.= "  <div class='sendFileThumbnailArea'>" . $thumbnail . "</div>";
       $content.= "  <div class='sendFileMetaArea'>";
       $content.= "    <span class='data sendFileName'>" . $value['fileName'] . "</span>";

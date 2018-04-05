@@ -20,7 +20,7 @@ process.on('uncaughtException', function(err) {
 });
 
 // socket
-var socket = require('./routes/module/socket_ctrl.js');
+var socket = require('./routes/module/socket_ctrl');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -43,6 +43,7 @@ app.use(express.static(path.join(__dirname, 'webroot')));
 app.use('/', routes);
 app.use('/users', users);
 app.use('/settings', settings);
+app.use('/socketCtrl', socket);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

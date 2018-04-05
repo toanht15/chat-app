@@ -132,7 +132,7 @@
         a {
           width: 30px;
           height: 30px;
-          padding: 5px;
+          padding: 4px;
           float: left;
           margin-right: 5px;
           border-radius: 15px;
@@ -231,6 +231,58 @@
              font-size: 1.1em;
            }
          }
+      }
+
+      @media (max-width: 767px) {
+        &.p-show-terms-of-service {
+           width: 300px;
+           font-size: 12px;
+
+          div#popup-main {
+           text-align: center;
+           overflow-y: scroll;
+           height:500px; }
+
+          div#popup-button {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+
+            a {
+              flex-basis: 140px;
+              height: 2em;
+              margin: 10px 5px 0px 5px;
+              padding: 0.25em 0;
+              font-size: 1.1em;
+            }
+          }
+        }
+      }
+
+      @media (min-width: 768px) {
+        &.p-show-terms-of-service {
+           width: 580px;
+           font-size: 12px;
+
+          div#popup-main {
+           text-align: center;
+           overflow-y: scroll;
+           height:500px; }
+
+          div#popup-button {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+
+            a {
+              flex-basis: 140px;
+              height: 2em;
+              margin: 10px 5px 0px 5px;
+              padding: 0.25em 0;
+              font-size: 1.1em;
+            }
+          }
+        }
       }
 
       &.p-cus-select-sharing-mode {
@@ -341,6 +393,9 @@
                 font-weight: bold;
                 font-size: 13px;
                 margin: 0 0 5px 0;
+                &.scenarioSendFileMessage {
+                  font-weight: normal;
+                }
               }
 
               div.sendFileContent {
@@ -804,6 +859,102 @@
         }
       }
 
+      /* 履歴-検索ダイアログ用　*/
+      &.p-widget-trimming {
+        width: 48em;
+
+        input#day_search {
+          cursor: pointer;
+        }
+
+        input#dateperiod {
+          background-image: url('/img/calender.png');
+          background-repeat: no-repeat;
+          background-position: right 10pt bottom 4pt;
+          background-size: 15px;
+          cursor: pointer;
+        }
+
+        & input.extinguish {
+          visibility: hidden;
+        }
+
+
+        #popup-main ul {
+          margin: 0;
+          padding: 0;
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+          -ms-flex-direction: column;
+          flex-direction: column;
+          width: 45em;
+
+          li {
+            display: -webkit-box;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            flex-direction: row;
+            border-bottom: 1px solid #FFF;
+
+            p {
+              width: 12em;
+              background-color: #AFAFAF;
+
+              span {
+                color: #FFF;
+              }
+            }
+
+            & > span {
+              background-color: #F0F0F0;
+              width: 33em;
+              display: block;
+
+              input[type='text'] {
+                width: 100%;
+                resize: none;
+              }
+            }
+
+            & > * {
+              padding: 0.5em;
+              margin: 0;
+            }
+          }
+        }
+
+        & #popup-button {
+          width: 18em;
+          margin: 0 auto;
+
+          .textBtn {
+            width: 6em;
+            margin: 0 0.5em;
+            float: left;
+          }
+        }
+      }
+
+      /* ウィジェット設定 - トリミング用 */
+      &.p-widget-trimming {
+        width: 840px;
+
+        & #popup-button {
+          width: 18em;
+          margin: 0 auto;
+
+          .textBtn {
+            width: 6em;
+            margin: 0 0.5em;
+            float: left;
+          }
+        }
+      }
+
       &.p-auto-importexcel-upload {
         width: 50em;
 
@@ -991,6 +1142,16 @@
     &:after {
       border-top: 12px solid #C18686;
     }
+  }
+  &.outOfTermTrial {
+    background-color: #4a4747;
+    width: 100%;
+    text-align: center;
+    top: -100px;
+    opacity: 0.8;
+    border-radius: 0;
+    height: 60px;
+    padding: 20px;
   }
 }
 
@@ -1256,6 +1417,30 @@
   width: 6em;
 }
 
+#tooltip_tautomessage_select_scenario.tooltips::after {
+  position: relative;
+  top: 24px !important;
+  left: 20px !important;
+}
+
+#tooltip_tchatbotscenario_add_btn.tooltips {
+  position: fixed;
+  left: 79px !important;
+  width: 6em;
+}
+
+#tooltip_tchatbotscenario_copy_btn.tooltips {
+  position: fixed;
+  left: 106px !important;
+  width: 9em;
+}
+
+#tooltip_tchatbotscenario_dustbox_btn.tooltips {
+  position: fixed;
+  left: 169px !important;
+  width: 6em;
+}
+
 #tooltip_history_csv_btn.tooltips {
   position: fixed;
   left: 73px !important;
@@ -1471,6 +1656,22 @@
   #chat_notifications_list{
     .t-link{
       padding: 20px 5px 5px;
+    }
+  }
+}
+
+/* チャットボットシナリオ設定レイアウト調整 */
+#tchatbotscenario_idx {
+  #tchatbotscenario_menu {
+    .btnSet {
+      position: relative;
+      top: 0px;
+      left: -3.5px;
+    }
+    .pointer {
+      position: absolute;
+      top: 138px;
+      left: 31px;
     }
   }
 }

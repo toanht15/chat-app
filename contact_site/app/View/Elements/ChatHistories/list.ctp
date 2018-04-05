@@ -171,7 +171,7 @@
       <?= $this->Html->link(
         '条件クリア',
         'javascript:void(0)',
-        ['escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()']);
+        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()'));
       ?>
     </ul>
   </div>
@@ -225,10 +225,10 @@
           CV(コンバージョン)のみ表示する
         </label>
       <?php endif; ?>
-      <?=$this->Form->create('History', ['action' => 'index']);?>
+      <?=$this->Form->create('History', array('action' => 'index'));?>
         <?=$this->Form->hidden('outputData')?>
       <?=$this->Form->end();?>
-      <?=  $this->Form->create('History',['id' => 'historySearch','type' => 'post','url' => '/Histories']); ?>
+      <?=  $this->Form->create('History', array('id' => 'historySearch','type' => 'post','url' => '/Histories')); ?>
     </div>
 </div>
 <div id = "list_body" style = "overflow-y: auto; overflow-x: hidden;">
@@ -243,7 +243,7 @@
           </div></th>
           <th style = "width:5%;display:none;" id = "ip">IPアドレス</th>
           <th style = "width:5%;display:none;" id = "visitor">訪問ユーザ</th>
-          <th class = "campaign" style = "width:3%">キャンペーン</th>
+          <th id = "campaign" style = "width:3%" >キャンペーン</th>
           <th id = "sendChatPageLabel" style = "width:13%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
           </div></th>
@@ -297,7 +297,7 @@
         <?php
         if ((isset($history['THistoryChatLog']['type']) && isset($data['History']['chat_type']) && isset($chatType) &&
         $history['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']]) || empty($chatType)) { ?>
-          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold" style="height:72px !important;">
+          <tr id = "<?=h($history['THistory']['id'])?>" ng-click="getOldChat('<?=h($history['THistory']['id'])?>', false)" onclick="openChatById('<?=h($history['THistory']['id'])?>');" class = "showBold trHeight" style="height:72px;">
             <td class="tCenter checkBox" onclick="event.stopPropagation();" style = "width:6%">
               <input type="checkbox" name="selectTab" id="selectTab<?=h($history['THistory']['id'])?>" value="<?=h($history['THistory']['id'])?>">
               <label for="selectTab<?=h($history['THistory']['id'])?>"></label>
@@ -326,7 +326,7 @@
                   <?php
                   }
                   else if($history['THistoryChatLog']['type'] == "") { ?>
-                    <li class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;display: flex;overflow: hidden;white-space: nowrap;"><div class ="chatTypeName" style = "border: 1px solid #9bbb59;background-color:#9bbb59;border-radius:4px;padding:1px 3px;width: 52px !important;">Manual</div><div class = "largeCharacters enter" style ="margin-left:3px;color:#9bbb59;">(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span></div></span>
+                    <li class = "largeCharacters" style = "color:#9bbb59; font-weight:bold;display: flex;overflow: hidden;white-space: nowrap;"><div class ="chatTypeName" style = "border: 1px solid #9bbb59;background-color:#9bbb59;border-radius:4px;padding:1px 3px;width: 52px !important;">Manual</div><div class = "largeCharacters enter" style ="margin-left:3px;color:#9bbb59;">(<?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?>)</span></div></li>
                   <?php
                   }
                   else if($history['THistoryChatLog']['type'] == "未入室") { ?>
@@ -343,10 +343,10 @@
                 <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
                 <?php endif; ?>
               <?php } else { ?>
-              <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3st
-              px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
+              <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;">
+              {{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
               <?php } ?>
-              <li style = "white-space: nowrap;overflow: hidden;"><div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></li></td>
+              <li style = "white-space: nowrap;overflow: hidden;height:20px;"><div style = "padding-top:1px;" class = "largeCharacters">{{ ui('<?=h($history['THistory']['ip_address'])?>','<?=$visitorsId?>') }}</div></li></td>
               <td class="tCenter eachKind" style = "width:5%;display:none;">
               <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
                 <?php
@@ -382,18 +382,18 @@
             </td>
             <td class="tLeft pre eachVisitor" style = "width:10%;display:none;">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
             <?php ?>
-            <td class="tCenter pre campaignInfo" style = "width:10%"><?=$campaignParam?></td>
+            <td class="tCenter pre" style = "width:10%"><div class = "campaignInfo"><?=$campaignParam?></div></td>
             <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;"><a href = "<?=h($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
             <td class="tCenter" style = "width:5%"><?php
-              if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
-                if (isset($history['THistoryChatLog']['achievementFlg'])){
-                  echo !empty($achievementType[h($history['THistoryChatLog']['achievementFlg'])]) ? $achievementType[h($history['THistoryChatLog']['achievementFlg'])] : "";
-                }
+              if(!empty($history['THistoryChatLog']['eff']) && $history['THistoryChatLog']['eff'] != 0) {
+                echo $achievementType[2];
+              } else if(!empty($history['THistoryChatLog']['deny']) && $history['THistoryChatLog']['deny'] != 0) {
+                echo $achievementType[1];
               }
-              else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {
-                if (isset($history['THistoryChatLog']['achievementFlg'])){
-                  echo $achievementType[2].nl2br("\n").$achievementType[0];
-                }
+              if(isset($history['THistoryChatLog']['terminate']) && $history['THistoryChatLog']['terminate'] != 0 && $history['THistoryChatLog']['cv'] == 0) {
+                echo '途中<br>離脱';
+              } else if($history['THistoryChatLog']['cv'] != 0) {
+                echo $achievementType[0];
               }
             ?></td>
             <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
@@ -533,6 +533,13 @@
             <dd id = "campaignParam"><?=$userCampaignParam?></dd>
           </li>
           <li>
+          <li>
+            <dt>参照元URL</dt>
+            <dd id = "referrer">
+            <a href="<?=h($defaultHistoryList['THistory']['referrer_url'])?>" target="history">
+            <span id = "referrerUrl"><?=h($defaultHistoryList['THistory']['referrer_url']) ?></span></a></dd>
+          </li>
+          <li>
             <dt>ランディングページ</dt>
             <dd id = "landing">
             <a href = "<?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing">
@@ -587,8 +594,8 @@
             </li>
           </ul>
           <div id="personal_action">
-              <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton']) ?>
-              <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton']) ?>
+              <?= $this->Html->link('元に戻す', 'javascript:void(0)', array('onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton')) ?>
+              <?= $this->Html->link('更新', 'javascript:void(0)', array('onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton')) ?>
           </div>
           <?php } ?>
         </div>
@@ -601,7 +608,7 @@ $customerId = "";
 if ( isset($mCusData['MCustomer']['id']) ) {
   $customerId = $mCusData['MCustomer']['id'];
 }
-echo $this->Form->input('customerId', ['type'=>'hidden','id' => 'customerId', 'value' => $customerId, 'label' => false, 'div'=> false]);
+echo $this->Form->input('customerId', array('type'=>'hidden','id' => 'customerId', 'value' => $customerId, 'label' => false, 'div'=> false));
 ?>
 
 <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>

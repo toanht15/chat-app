@@ -6,6 +6,25 @@
     <h1>企業一覧</h1>
   </div>
   <?= $this->Html->link('登録',['controller'=>'Contract', 'action' => 'add'],['escape' => false, 'id' => 'searchRefine','class' => 'action_btn']); ?>
+  <div id="paging">
+    <?php
+    echo $this->Paginator->prev(
+      $this->Html->image('paging.png', array('alt' => '前のページへ', 'width' => 25, 'height' => 25)),
+      array('escape' => false, 'class' => 'btn-shadow navyBtn tr180'),
+      null,
+      array('class' => 'grayBtn tr180')
+    );
+    ?>
+    <span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
+    <?php
+    echo $this->Paginator->next(
+      $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
+      array('escape' => false, 'class' => 'btn-shadow navyBtn'),
+      null,
+      array('escape' => false, 'class' => 'grayBtn')
+    );
+    ?>
+  </div>
   <div id='agreementList_list' class="p20trl">
     <table>
       <thead>
@@ -21,6 +40,7 @@
           <th style="width:8em;">開始日</th>
           <th style="width:8em;">終了日</th>
           <th style="width:8em;">登録日</th>
+          <th style="width:8em;">更新日</th>
         </tr>
       </thead>
       <?php foreach((array)$companyList as $key => $val): ?>
@@ -29,7 +49,20 @@
           $companyKey = $val['MCompany']['company_key'];
         ?>
         <tbody>
-          <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';">
+          <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';" <?php
+            switch(intval($val['MCompany']['trial_flg'])) {
+              case 0:
+                if(strtotime($val['MAgreement']['agreement_end_day']) < time()) {
+                  echo 'style="background-color: #999999;"';
+                }
+                break;
+              case 1:
+                if(strtotime($val['MAgreement']['trial_end_day']) < time()) {
+                  echo 'style="background-color: #999999;"';
+                }
+                break;
+            }
+            ?> >
             <td><a href="#" class="loginLink"><?=h($val['MCompany']['company_name'])?></a></td>
             <td><?=h($val['MCompany']['company_key'])?></td>
             <?php if(h($val['MCompany']['m_contact_types_id']) == 1){ ?>
@@ -63,6 +96,11 @@
                       echo '<p>【リアルタイムモニタ非表示】</p>';
                     }
                     break;
+                  case 'chatbotScenario':
+                    if($enabled) {
+                      echo '<p>【シナリオ設定】</p>';
+                    }
+                    break;
                 }
               }
             ?></td>
@@ -73,6 +111,7 @@
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ?  h($val['MAgreement']['trial_start_day']) : h($val['MAgreement']['agreement_start_day']) ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ?  h($val['MAgreement']['trial_end_day']) : h($val['MAgreement']['agreement_end_day']) ?></td>
             <td><?= !empty($val['MAgreement']['application_day']) ? h($val['MAgreement']['application_day']) : h(date('Y-m-d', strtotime($val['MCompany']['created']))); ?></td>
+            <td><?= !empty($val['MAgreement']['modified']) ? h(date('Y-m-d', strtotime($val['MAgreement']['modified']))) : ""; ?></td>
           </tr>
       </tbody>
     <?php endforeach; ?>

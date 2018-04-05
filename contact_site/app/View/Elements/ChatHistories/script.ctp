@@ -79,12 +79,14 @@ var actBtnShow = function(){
     //一つでもチェックが入ったら
     //CSVボタン有効
     if(authorityCsv == 1) {
-      document.getElementById("history_csv_btn").className="btn-shadow disOffgreenBtn";
+      document.getElementById("history_csv_btn").classList.remove("disOffgrayBtn");
+      document.getElementById("history_csv_btn").classList.add("disOffgreenBtn");
     }
     //document.getElementById("history_csv_btn").addEventListener('click', openCopyDialog, false);
     //削除ボタン有効
     if(authorityDelete == 1 && document.getElementById("history_dustbox_btn") != null ) {
-      document.getElementById("history_dustbox_btn").className="btn-shadow disOffredBtn";
+      document.getElementById("history_dustbox_btn").classList.remove("disOffgrayBtn");
+      document.getElementById("history_dustbox_btn").classList.add("disOffredBtn");
       document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
     }
     if(authorityCsv == 1 || authorityDelete == 1) {
@@ -116,12 +118,14 @@ var actBtnShow = function(){
     //一つもチェックが無かったら
     //CSVボタン無効
     if(authorityCsv == 1) {
-      document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+      document.getElementById("history_csv_btn").classList.remove("disOffgreenBtn");
+      document.getElementById("history_csv_btn").classList.add("disOffgrayBtn");
     }
     //document.getElementById("tautomessages_copy_btn").removeEventListener('click', openCopyDialog, false);
     //削除ボタン無効
     if(authorityDelete == 1 && document.getElementById("history_dustbox_btn") != null) {
-      document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+      document.getElementById("history_dustbox_btn").classList.remove("disOffredBtn");
+      document.getElementById("history_dustbox_btn").classList.add("disOffgrayBtn");
       document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);
     }
     if(authorityCsv == 1 || authorityDelete == 1) {
@@ -210,7 +214,6 @@ $(function(){
   var calcHeaderHeight = function() {
     return $('#history_menu').outerHeight() + $('div.btnSet').outerHeight() + $('label[for="g_chat"]').outerHeight() + $('.dataTables_scrollHead').outerHeight();
   };
-
   var tableObj = null;
   $(window).on('load', function() {
     document.getElementById("history_body_side").style.display = "block";
@@ -227,7 +230,7 @@ $(function(){
       responsive:true,
       scrollX: false,
       scrollY: true,
-      scrollCollapse: true,
+      scrollCollapse: false,
       paging: false,
       info: false,
       ordering: false,
@@ -235,7 +238,6 @@ $(function(){
         { width: 120, targets: 0 }
       ]
     });
-
     tableObj.on('draw', function(){
       if(<?= $screenFlg ?> == 1) {
         $(".info").css('width',$("#info").outerWidth());
@@ -277,9 +279,11 @@ $(function(){
       document.getElementById("selectTab"+Number(list[i].value)).checked = false;
     }
     if(document.getElementById("history_dustbox_btn") != null) {
-      document.getElementById("history_dustbox_btn").className="btn-shadow disOffgrayBtn";
+      document.getElementById("history_dustbox_btn").classList.remove("disOffredBtn");
+      document.getElementById("history_dustbox_btn").classList.add("disOffgrayBtn");
     }
-    document.getElementById("history_csv_btn").className="btn-shadow disOffgrayBtn";
+    document.getElementById("history_dustbox_btn").classList.remove("disOffgreenBtn");
+    document.getElementById("history_dustbox_btn").classList.add("disOffgrayBtn");
     $("#btnSet").css('display', 'none');
     //横並びの場合
     if(screenMode == 1) {
@@ -355,6 +359,7 @@ $(function(){
     document.getElementById('ip').style.display = "";
     document.getElementById('visitor').style.display = "";
     document.getElementById('responsible').style.display = "";
+    $("#info").css('width','0px');
     $(".eachInfo").css('display','none');
     $(".eachKind").css('display','');
     $(".eachFirstSpeechTime").css('display','');
@@ -365,6 +370,7 @@ $(function(){
     $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     $("#chatHistory").css('height','100%');
+    $(".trHeight").css('height','50px');
     $(".deleteChat").attr('data-balloon-position',45);
 
     $.ajax({
@@ -410,6 +416,7 @@ $(function(){
     $(".eachIpAddress").css('display','none');
     $(".eachVisitor").css('display','none');
     $(".responsible").css('display','none');
+    $(".trHeight").css('height','72px');
 
     $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
@@ -437,7 +444,7 @@ $(function(){
     else {
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
     }
-    $(".info").css('width',$("#info").outerWidth());
+     $(".info").css('width',$("#info").outerWidth());
     screenMode = 1;
     changeScreenMode = 1;
  });
@@ -457,10 +464,9 @@ $(function(){
       document.getElementById('verticalToggleMenu').style.display = "block";
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
       $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
-      //$("#chatHistory").css('height',window.innerHeight - 355);
       $("#chatHistory").css('height','100%');
       $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
-      $(".info").css('width',$("#info").outerWidth());;
+      $(".trHeight").css('height','72px');
     }
     //縦並びの場合$this.attr('data-balloon-position');
     if(<?= $screenFlg ?> == 2) {
@@ -491,6 +497,7 @@ $(function(){
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       $("#chatHistory").css('height','100%');
+      $(".trHeight").css('height','50px');
     }
 
     setTimeout(function(){
@@ -557,6 +564,13 @@ function openChatById(id) {
       document.getElementById("visitCounts").innerHTML= customerData.THistoryCount.cnt + "回";
       document.getElementById("platform").innerHTML= userAgentChk.pre(customerData.THistory.user_agent);
       document.getElementById("campaignParam").innerHTML= customerData.campaignParam;
+      if(customerData.THistory.referrer_url !== null) {
+        document.getElementById("referrerUrl").innerHTML = customerData.THistory.referrer_url;
+        $("#referrer a").attr("href", customerData.THistory.referrer_url);
+      }
+      else {
+        document.getElementById("referrerUrl").innerHTML= "";
+      }
       if(customerData.landingData !== null) {
         document.getElementById("landingPage").innerHTML= customerData.landingData.title;
         $("#landing a").attr("href", customerData.landingData.url);
@@ -626,6 +640,7 @@ function clearChatAndPersonalInfo() {
   document.getElementById("visitCounts").innerHTML= "";
   document.getElementById("platform").innerHTML= "";
   document.getElementById("campaignParam").innerHTML= "";
+  document.getElementById("referrerUrl").innerHTML= "";
   document.getElementById("landingPage").innerHTML= "";
   document.getElementById("chatSendingPage").innerHTML= "";
   document.getElementById("separationPage").innerHTML= "";

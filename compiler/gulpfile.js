@@ -1,29 +1,31 @@
 var gulp = require('gulp'),
-    sass = require('gulp-sass'),
-    cssnext = require('gulp-cssnext'),
-    jade = require('gulp-jade'),
-    path = {
-      css: '../contact_site/app/webroot/css/',
-      scss: './scss/',
-      adCss: '../admin_site/app/webroot/css/',
-      adScss: './admin_scss/',
-      js: 'socketJs/websocket/*.js',
-      minjs: '../socket/webroot/websocket/',
-      jade: '../socket/views/*.jade',
-      outOfJs: '../socket/webroot/',
-      socketSass: '../socket/public/stylesheets/',
-      outOfCssToSocket: '../socket/webroot/css/'
-    };
+  sass = require('gulp-sass'),
+  cssnext = require('gulp-cssnext'),
+  jade = require('gulp-jade'),
+  path = {
+    css: '../contact_site/app/webroot/css/',
+    scss: './scss/',
+    adCss: '../admin_site/app/webroot/css/',
+    adScss: './admin_scss/',
+    js: 'socketJs/websocket/*.js',
+    minjs: '../socket/webroot/websocket/',
+    jade: '../socket/views/*.jade',
+    outOfJs: '../socket/webroot/',
+    socketSass: '../socket/public/stylesheets/',
+    outOfCssToSocket: '../socket/webroot/css/'
+  };
 
 var uglify = require('gulp-uglify'),
-    rename = require("gulp-rename"),
-    uglifyOpt = {
-      mangle: true,
-      comments: false,
-      compress: {
-        drop_console: true
-      }
-    };
+  rename = require("gulp-rename"),
+  uglifyOpt = {
+    mangle: true,
+    output:{
+      comments: /^!/
+    },
+    compress: {
+      drop_console: true
+    }
+  };
 
 gulp.task('admin-scss-compile', function(){
   return gulp.src(path.adScss + '**/*.scss')

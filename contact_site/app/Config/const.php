@@ -1,6 +1,5 @@
 <?php
 /* 定数定義 */
-define('APP_MODE_DEV', true);
 define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
 // AWS: S3
@@ -10,10 +9,10 @@ define('C_AWS_S3_STORAGE', 'STANDARD'); // ウィジェット用参照先
 define('C_AWS_S3_HOSTNAME', 'https://s3-'.C_AWS_S3_REGION.'.amazonaws.com/'); // S3パス
 
 // AWS: SES
-define('C_AWS_SES_SMTP_SERVER_NAME', 'email-smtp.us-east-1.amazonaws.com');
+define('C_AWS_SES_SMTP_SERVER_NAME', 'medialink-ml.co.jp');
 define('C_AWS_SES_SMTP_PORT', '587');
-define('C_AWS_SES_SMTP_USER_NAME', 'AKIAJ67HG3PEJKXCEOAA');
-define('C_AWS_SES_SMTP_CREDENTIAL', 'ArIMSQ34vzldCknzesVVe/a8cDhYB5buPFyjzyo6tnVR');
+define('C_AWS_SES_SMTP_USER_NAME', 'sinclo@medialink-ml.co.jp');
+define('C_AWS_SES_SMTP_CREDENTIAL', 'Jwq28Gt5');
 
 // サムネイル用接頭辞
 define('C_PREFIX_DOCUMENT', 'thumb_'); // 資料
@@ -57,6 +56,11 @@ define('C_COMPANY_USE_SEND_FILE', 'sendFile'); // ファイル送信
 define('C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER', 'loginIpFilter'); // セキュリティ設定（IPフィルタ）
 define('C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE', 'importExcelAutoMessage'); // オートメッセージインポート（発言内容のみ）
 define('C_COMPANY_USE_OPERATOR_PRESENCE_VIEW', 'operatorPresenceView'); // オペレータ在席状況確認
+define('C_COMPANY_USE_REALTIME_MONITOR_POLLING_MODE', 'monitorPollingMode'); // リアルタイムモニタの情報取得方法変更（ポーリング式）
+define('C_COMPANY_USE_CHATBOT_SCENARIO', 'chatbotScenario');  // チャットボットシナリオ設定
+
+// リアルタイムモニタ - ポーリングモード定数
+define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
 
 // 簡易メッセージ入力機能種別
 define('C_DICTIONARY_TYPE_COMP', 1); // 企業で使用する
@@ -87,6 +91,7 @@ define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
 // 表示名種別
 define('C_WIDGET_SHOW_NAME', 1); // 表示名
 define('C_WIDGET_SHOW_COMP', 2); // 企業名
+define('C_WIDGET_SHOW_NONE', 3); // 表示しない
 
 // チャットデザインタイプ
 define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX', 1); // BOX型（サイズ固定）
@@ -132,11 +137,20 @@ define('C_MATCH_RULE_IMAGE_FILE', '/.(png|jpg|jpeg)$/i');
 define('C_MATCH_RULE_NUM_1', '/^(100|[0-9]{1,2})$/');
 define('C_MATCH_RULE_NUM_2', '/^(100|[1-9][0-9]|[1-9]{1})$/');
 define('C_MATCH_RULE_NUM_3', '/^(60|[1-5][0-9]|[1-9]{1})$/');
+define('C_MATCH_RULE_TEXT', '/.+/'); // 1文字以上のテキスト
+define('C_MATCH_RULE_NUMBER', '/^\d+$/');  // 1文字以上の数字
+define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
+
+define('C_MATCH_INPUT_RULE_ALL', '/.*/');  // 入力制限なし
+define('C_MATCH_INPUT_RULE_NUMBER', '/[\d]*/');  // 数字入力
+define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.\-,;:@"]*/'); // メールアドレス入力(半角英数記号入力)
+define('C_MATCH_INPUT_RULE_TEL', '/^0[\d+-]*/'); // 電話番号入力（半角英数と一部記号入力）
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
 define('C_MESSAGE_TYPE_ERROR', 2); // 処理失敗
 define('C_MESSAGE_TYPE_ALERT', 3); // 処理失敗
+define('C_MESSAGE_OUT_OF_TERM_TRIAL', 4); // トライアル期間終了
 // define('C_MESSAGE_TYPE_NOTICE', 3); // 通知（未実装）
 
 // ユーザー権限（リストあり：$config['Authority']）
@@ -161,6 +175,7 @@ define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
+define('C_AUTO_ACTION_TYPE_SELECTSCENARIO', 2);  // シナリオを選択する
 
 // オートメッセージ機能－ウィジェット種別コード
 define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
@@ -173,6 +188,38 @@ define('C_AUTO_CV_DISABLED', 2); // cv登録しない
 // オートメッセージ機能－テキストエリア種別コード
 define('C_AUTO_WIDGET_TEXTAREA_OPEN', 1); // 自由入力可
 define('C_AUTO_WIDGET_TEXTAREA_CLOSE', 2); // 自由入力不可
+
+// シナリオ設定－アクション種別コード
+define('C_SCENARIO_ACTION_TEXT', 1); // テキスト発言
+define('C_SCENARIO_ACTION_HEARING', 2); // ヒアリング
+define('C_SCENARIO_ACTION_SELECT_OPTION', 3); // 選択肢
+define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
+define('C_SCENARIO_ACTION_CALL_SCENARIO', 5); // シナリオ呼び出し
+define('C_SCENARIO_ACTION_EXTERNAL_API', 6); // 外部システム連携
+define('C_SCENARIO_ACTION_SEND_FILE', 7); // ファイル送信
+
+// シナリオ設定(ヒアリング)－入力タイプ種別コード
+define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
+define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
+define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
+define('C_SCENARIO_INPUT_TYPE_TEL', 4);
+
+/* シナリオ設定(ヒアリング) - 改行設定 */
+define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
+define('C_SCENARIO_INPUT_LF_TYPE_ALLOW', 2);
+
+/* シナリオ設定(ヒアリング) - メッセージ送信設定 */
+define('C_SCENARIO_SEND_MESSAGE_BY_ENTER', 1);
+define('C_SCENARIO_SEND_MESSAGE_BY_BUTTON', 2);
+
+/* シナリオ設定(メール送信) - メール送信タイプ */
+define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
+define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
+define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
+
+/* シナリオ設定(外部システム連携) - メソッド種別 */
+define('C_SCENARIO_METHOD_TYPE_GET', 1);
+define('C_SCENARIO_METHOD_TYPE_POST', 2);
 
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
@@ -292,6 +339,27 @@ define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
 //バナーテキスト初期値
 define('C_BANNER_TEXT', "チャットで相談");//バナー文言
 
+//トライアルフラグ
+define('C_TRIAL_FLG', 1);
+
+//初期パスワード変更フラグ
+define('C_NO_CHANGE_PASSWORD_FLG', 0); //変更してない
+define('C_CHANGE_PASSWORD_FLG', 1); //変更した
+
+//ビジネスモデル
+define('C_FREE_B_TO_B', 1); // BtoB
+define('C_FREE_B_TO_C', 2); // BtoC
+define('C_FREE_BOTH', 3); // BtoB,BtoCどちらも
+
+//メール種別
+define('C_AFTER_FREE_APPLICATION_TO_CUSTOMER', 1); // 無料トライアル登録時 お客さん向けメール
+define('C_AFTER_FREE_APPLICATION_TO_COMPANY', 2); // 無料トライアル登録時 会社向けメール
+define('C_AFTER_FREE_PASSWORD_CHANGE_TO_COMPANY', 3); // 無料トライアル登録後初期パスワード変更 会社向けメール
+define('C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER', 4); // 無料トライアル登録後初期パスワード変更 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_CUSTOMER', 5); // いきなり契約登録時 お客さん向けメール
+define('C_AFTER_APPLICATION_TO_COMPANY', 6); // いきなり契約登録時 会社向けメール
+define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // いきなり契約登録後初期パスワード変更 お客さん向けメール
+
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
     C_AUTHORITY_ADMIN => "管理者",
@@ -336,6 +404,12 @@ $config['normalChoices'] = [
   C_SELECT_CAN_NOT => "しない"
 ];
 
+/* ウィジェット設定 ー Web接客コード */
+$config['widgetShowChoices'] = [
+  C_SELECT_CAN => "表示する",
+  C_SELECT_CAN_NOT => "表示しない"
+];
+
 /* ウィジェット設定 － 表示設定種別 */
 $config['WidgetDisplayType'] = [
     1 => "常に表示する",
@@ -350,10 +424,22 @@ $config['widgetPositionType'] = [
     C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
 ];
 
+/* ウィジェット設定 ー Web接客コード */
+$config['widgetShowAccessId'] = [
+  C_SELECT_CAN => "表示する",
+  C_SELECT_CAN_NOT => "表示しない<br>　<s>※ウェブ接客コード（4桁のID）を電話口でヒアリングすることで、リアルタイムモニター上で</s><br><s>　  相手を特定することができます。（電話口の相手のウェブ行動履歴や流入経路の把握が可能）</s>"
+];
+
 /* ウィジェット設定 － 担当者表示名種別 */
 $config['widgetShowNameType'] = [
     C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
-    C_WIDGET_SHOW_COMP=> "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+    C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+];
+
+/* ウィジェット設定 － 表示名種別 */
+$config['widgetShowAutomessageNameType'] = [
+  C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>",
+  C_WIDGET_SHOW_NONE => "表示しない"
 ];
 
 /* ウィジェット設定 － 吹き出しデザイン */
@@ -534,7 +620,8 @@ $config['outMessageTriggerList'] = [
 
 /* オートメッセージ － アクション種別 */
 $config['outMessageActionType'] = [
-    C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る"
+    C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
+    C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを選択する"
 ];
 
 /* オートメッセージ － ウィジェット種別 */
@@ -553,6 +640,150 @@ $config['outMessageTextarea'] = [
 $config['outMessageCvType'] = [
     C_AUTO_CV_EFFECTIVENESS => "する",
     C_AUTO_CV_DISABLED => "しない"
+];
+
+/* シナリオ設定 - アクション種別 */
+$config['chatbotScenarioActionList'] = [
+  // テキスト発言
+  C_SCENARIO_ACTION_TEXT => [
+    'label' => 'テキスト発言',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'message' => ''
+    ]
+  ],
+  // ヒアリング
+  C_SCENARIO_ACTION_HEARING => [
+    'label' => 'ヒアリング',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '1',
+      'hearings' => [[
+        'variableName' => '',
+        'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
+        'message' => '',
+        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW
+      ]],
+      'errorMessage' => '',
+      'isConfirm' => '2',
+      'confirmMessage' => '',
+      'success' => '',
+      'cancel' => '',
+      'cv' => '2'
+    ]
+  ],
+  // 選択肢
+  C_SCENARIO_ACTION_SELECT_OPTION => [
+    'label' => '選択肢',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'selection' => [
+        'variableName' => '',
+        'options' => ['']
+      ]
+    ]
+  ],
+  // メール送信
+  C_SCENARIO_ACTION_SEND_MAIL => [
+    'label' => 'メール送信',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'toAddress' => [''],
+      'mailType' => C_SCENARIO_MAIL_TYPE_ALL_MESSAGE
+    ]
+  ],
+  // シナリオ呼び出し
+  C_SCENARIO_ACTION_CALL_SCENARIO => [
+    'label' => 'シナリオ呼び出し',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'scenarioId' => '',
+      'executeNextAction' => '2'
+    ]
+  ],
+  // 外部システム連携
+  C_SCENARIO_ACTION_EXTERNAL_API => [
+    'label' => '外部システム連携',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'methodType' => '1',
+      'requestHeaders' => [[
+        'name' => '',
+        'value' => ''
+      ]],
+      'requestBody' => '',
+      'responseType' => '0',
+      'responseBodyMaps' => [[
+        'sourceKey' => '',
+        'variableName' => ''
+      ]]
+    ]
+  ],
+  // ファイル送信
+  C_SCENARIO_ACTION_SEND_FILE => [
+    'label' => 'ファイル送信',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'file' => ''
+    ]
+  ]
+];
+
+/* シナリオ設定 - ヒアリング入力タイプ */
+$config['chatbotScenarioInputType'] = [
+  C_SCENARIO_INPUT_TYPE_TEXT => [
+    'label' => '@text',
+    'rule' => C_MATCH_RULE_TEXT,
+    'inputRule' => C_MATCH_INPUT_RULE_ALL
+  ],
+  C_SCENARIO_INPUT_TYPE_NUMBER => [
+    'label' => '@number',
+    'rule' => C_MATCH_RULE_NUMBER,
+    'inputRule' => C_MATCH_INPUT_RULE_NUMBER
+  ],
+  C_SCENARIO_INPUT_TYPE_EMAIL => [
+    'label' => '@email',
+    'rule' => C_MATCH_RULE_EMAIL,
+    'inputRule' => C_MATCH_INPUT_RULE_EMAIL
+  ],
+  C_SCENARIO_INPUT_TYPE_TEL => [
+    'label' => '@tel_number',
+    'rule' => C_MATCH_RULE_TEL,
+    'inputRule' => C_MATCH_INPUT_RULE_TEL
+  ]
+];
+
+/* シナリオ設定 - メール送信タイプ */
+$config['chatbotScenarioSendMailType'] = [
+  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => [
+    'label' => 'チャット内容をすべてメールする',
+    'tooltip' => 'それまでのすべてのチャットやり取り内容すべてをメールします。'
+  ],
+  C_SCENARIO_MAIL_TYPE_VARIABLES => [
+    'label' => '変数の値のみメールする',
+    'tooltip' => 'ヒアリングおよび選択肢にて入力（または選択）された内容をメールします。'
+  ],
+  C_SCENARIO_MAIL_TYPE_CUSTOMIZE => [
+    'label' => 'メール本文をカスタマイズする',
+    'tooltip' => '自由にメール本文を編集することが可能です。<br>（変数の利用も可能です）'
+  ]
+];
+
+/* シナリオ設定 - 外部システム連携のメソッド種別 */
+$config['chatbotScenarioApiMethodType'] = [
+  C_SCENARIO_METHOD_TYPE_GET => 'GET',
+  C_SCENARIO_METHOD_TYPE_POST => 'POST'
+];
+
+/* シナリオ設定 - 外部システム連携のレスポンス種別 */
+$config['chatbotScenarioApiResponseType'] = [
+  0 => 'JSON'
 ];
 
 /* 成果種別 */
@@ -583,4 +814,11 @@ $config['securityEnableLoginIpFilterSetting'] = [
     0 => "利用しない", // FIXME 定数化
     1 => "ホワイトリスト登録する",
     2 => "ブラックリスト登録する"
+];
+
+/* 無料トライアル設定 － ビジネスモデル */
+$config['businessModelType'] = [
+    C_FREE_B_TO_B => "BtoB",
+    C_FREE_B_TO_C => "BtoC",
+    C_FREE_BOTH => "どちらも"
 ];

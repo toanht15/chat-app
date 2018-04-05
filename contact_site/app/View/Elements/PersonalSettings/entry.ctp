@@ -84,7 +84,7 @@ if ( !empty($this->data['MUser']['settings']) ) {
         <!-- /* 操作 */ -->
         <section>
             <div id="personal_action">
-                <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow inlineSaveBtn']) ?>
+                <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'load.ev(saveAct)', 'class' => 'greenBtn btn-shadow inlineSaveBtn']) ?>
             </div>
         </section>
 

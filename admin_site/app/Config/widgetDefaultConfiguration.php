@@ -276,7 +276,12 @@ $config['default'] = [
       /**
        * 自動最大化の制御
        */
-      "spAutoOpenFlg"=>"1"
+      "spAutoOpenFlg"=>"1",
+
+      /**
+       * 最大化表示サイズ
+       */
+      "spMaximizeSizeType"=>"2"
     ],
     "sharing" => [
       /**

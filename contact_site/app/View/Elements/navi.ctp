@@ -40,6 +40,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar" class="card-shadow">
     <ul id="color-bar-right" class="fRight">
+      <?php if(!empty($trialTime)) { ?>
+        <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
+      <?php } ?>
         <li class="fLeft"><p><?= h($userInfo['display_name']) ?>さん</p></li>
         <li class="fRight" id="logout" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>
     </ul>
@@ -146,6 +149,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
           <?= $this->htmlEx->naviLink('ｵｰﾄﾒｯｾｰｼﾞ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
         </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('シナリオ設定', 'scenario_setting.png', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']]) ?>
+        </div>
       <?php endif; ?>
         <div class="icon">
           <?= $this->htmlEx->naviLink('定型文', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
@@ -165,10 +171,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <div data-sidebar-type="history" class="hide">
       <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('チャット履歴', 'chat_setting.png', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession']]) ?>
+          <?= $this->htmlEx->naviLink('チャット履歴', 'chat_setting.png', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('アクセス履歴', 'personal.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
+          <?= $this->htmlEx->naviLink('アクセス履歴', 'personal.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
         </div>
       <?php endif; ?>
       </div>
@@ -217,7 +223,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 
   });
 </script>
-<?php if(strcmp($_SERVER['SERVER_NAME'], '	sinclo.jp') === 0): ?>
+<?php if(strcmp($_SERVER['SERVER_NAME'], '  sinclo.jp') === 0): ?>
 <script type='text/javascript' src='https://ws1.sinclo.jp/client/5a2e2a75cb7e3.js' data-hide='1'></script>
 <script>
   document.addEventListener('sinclo:connected', function(evt) {

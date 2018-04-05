@@ -5,7 +5,7 @@
    */
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
-    public $components = ['Landscape'];
+    public $components = ['LandscapeLbcAPI'];
     public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
     public $paginate = [
       'THistory' => [
@@ -221,9 +221,9 @@
             'count(*) as cnt'
           ],
           'conditions' => [
-            'visitors_id = '.$tHistoryData['THistory']['visitors_id'],
+            'id <= '.$tHistoryData['THistory']['id'],
             'm_companies_id' => $this->userInfo['MCompany']['id'],
-            'id <= '.$tHistoryData['THistory']['id']
+            "visitors_id = '".$tHistoryData['THistory']['visitors_id']."'"
           ]
         ];
         /*必ず治す！！*/
@@ -586,7 +586,7 @@
           if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
               && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
               && !empty($history['LandscapeData']['org_name'])
-              && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+              && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
           ) {
             $row['ip'] = $history['LandscapeData']['org_name'];
           } else {
@@ -665,16 +665,6 @@
           'THistoryChatLog.created'
          ]
       ]);
-      foreach($historyList as $key => $value){
-        if(!empty($value['SpeechTime']['firstSpeechTime'])) {
-          $key_id[$key] = $value['SpeechTime']['firstSpeechTime'];
-        }
-        else {
-          $key_id[$key] = $value['THistoryChatLog2']['created'];
-          $historyList[$key]['SpeechTime']['firstSpeechTime'] = $value['THistoryChatLog2']['created'];
-        }
-      }
-      array_multisort($key_id , SORT_DESC ,$historyList);
 
       //$historyListに担当者を追加
       $userList = $this->_userList($historyList);
@@ -717,7 +707,7 @@
           if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
               && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
               && !empty($val['LandscapeData']['org_name'])
-              && ($this->isViewableMLCompanyInfo() || !LandscapeComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))
+              && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))
           ) {
             $row['ip'] .= $val['LandscapeData']['org_name'];
           } else {
@@ -741,7 +731,7 @@
         //ブラウザ
         $row['browser'] = $this->_userAgentCheckBrowser($val);
         //送信元ページ
-        if($val['THistoryChatLog']['message_type'] == 1) {
+        if($val['THistoryChatLog']['message_type'] == 1 || $val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 13) {
           $row['sourcePage'] = $val['THistoryStayLog']['url'];
         }
         else{
@@ -777,6 +767,32 @@
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
           $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
         }
+        if($val['THistoryChatLog']['message_type'] == 12) {
+          $row['transmissionKind'] = '訪問者（ヒアリング回答）';
+          $row['transmissionPerson'] = '';
+        }
+        if($val['THistoryChatLog']['message_type'] == 13) {
+         $row['transmissionKind'] = '訪問者（選択肢回答）';
+         $row['transmissionPerson'] = '';
+        }
+        if($val['THistoryChatLog']['message_type'] == 21) {
+         $row['transmissionKind'] = 'シナリオメッセージ（テキスト発言）';
+         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 22) {
+         $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
+         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 23) {
+         $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
+         $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 27) {
+          $row['transmissionKind'] = 'シナリオメッセージ（ファイル送信）';
+          $row['transmissionPerson'] = "";
+          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+        }
         if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
           $row['transmissionKind'] = '通知メッセージ';
           $row['transmissionPerson'] = "";
@@ -809,7 +825,7 @@
       //message,messagetypeを使うためTHistoryChatLogとjoin
       $returnData['joinList'][] =  [
         'type' => 'LEFT',
-        'table' => '(SELECT * FROM t_history_chat_logs ORDER BY t_histories_id, created)',
+        'table' => "(SELECT * FROM t_history_chat_logs where m_companies_id = " . $this->userInfo['m_companies_id'] . " ORDER BY t_histories_id, created)",
         'alias' => 'THistoryChatLog',
         'conditions' => [
           'THistoryChatLog.t_histories_id = THistory.id'
@@ -892,7 +908,22 @@
                 $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
               }
               $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
-            break;
+              break;
+            case 12: // 訪問者（シナリオ：ヒアリング回答）
+              $row = $this->_setData($date, "訪問者（ヒアリング回答）", "", $message);
+              break;
+            case 13: // 訪問者（シナリオ：選択肢回答）
+              $row = $this->_setData($date, "訪問者（選択肢回答）", "", $message);
+              break;
+            case 21: // シナリオメッセージ（テキスト発言）
+              $row = $this->_setData($date, "シナリオメッセージ（テキスト発言）", $this->userInfo['MCompany']['company_name'], $message);
+              break;
+            case 22: // シナリオメッセージ（ヒアリング）
+              $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'], $message);
+              break;
+            case 23: // シナリオメッセージ（選択肢）
+              $row = $this->_setData($date, "シナリオメッセージ（選択肢）", $this->userInfo['MCompany']['company_name'], $message);
+              break;
             case 98: // 入室メッセージ
             case 99: // 退室メッセージ
               $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");
@@ -1073,7 +1104,7 @@
             ];
             // MLの企業情報を閲覧できない企業であれば
             if(!$this->isViewableMLCompanyInfo()) {
-              $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+              $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
             }
             $companyData = $this->MLandscapeData->find('all', $companyConditions);
 
@@ -1248,7 +1279,7 @@
         ];
         // MLの企業情報を閲覧できない企業であれば
         if(!$this->isViewableMLCompanyInfo()) {
-          $joinToLandscapeData['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeComponent::ML_LBC_CODE;
+          $joinToLandscapeData['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
         }
       }
 
@@ -1281,18 +1312,38 @@
         else if(!empty($chatLogCond['chat.achievementFlg']) && $chatLogCond['chat.achievementFlg'] == 0) {
           $value = 'MIN';
         }
-        $chatStateList = $dbo2->buildStatement(
-          [
-            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
-            'alias' => 'chat',
-            'fields' => [
-              'chat.*',
-              '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
-            ],
-            'conditions' => $chatLogCond
-          ],
-          $this->THistoryChatLog
-        );
+
+        if (empty($data['THistoryChatLog']['responsible_name']) && empty($data['History']['company_name']) &&
+          empty($data['History']['customer_name']) && empty($data['History']['telephone_number']) && empty($data['History']['mail_address'])
+          && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) && empty($data['THistoryChatLog']['message'])) {
+          $chatStateList = $dbo2->buildStatement(
+             [
+               'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+               'alias' => 'chat',
+               'fields' => [
+                 'chat.*',
+                 '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus >= 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message >= 0 AND (se_cus >= 0 AND se_auto >= 0) THEN "自動返信" ELSE "" END ) AS type'
+               ],
+               'conditions' => $chatLogCond,
+               'limit' => 200
+             ],
+            $this->THistoryChatLog
+          );
+        }
+        else {
+          $chatStateList = $dbo2->buildStatement(
+             [
+               'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+               'alias' => 'chat',
+               'fields' => [
+                 'chat.*',
+                 '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus >= 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message >= 0 AND (se_cus >= 0 AND se_auto >= 0) THEN "自動返信" ELSE "" END ) AS type'
+               ],
+               'conditions' => $chatLogCond
+             ],
+            $this->THistoryChatLog
+          );
+        }
 
         $joinToChat = [
           'type' => 'INNER',
@@ -1302,11 +1353,19 @@
             'THistoryChatLog.t_histories_id = THistory.id'
           ]
         ];
+        if (empty($data['THistoryChatLog']['responsible_name']) && empty($data['History']['company_name']) &&
+          empty($data['History']['customer_name']) && empty($data['History']['telephone_number']) && empty($data['History']['mail_address'])
+          && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) && empty($data['THistoryChatLog']['message'])) {
+          $limit = "limit 200";
+        }
+        else {
+          $limit = " ";
+        }
 
         //初回チャット受信日時、最終発言後離脱時間
         $joinToSpeechChatTime = [
           'type' => 'LEFT',
-          'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
+          'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id ORDER BY t_histories_id desc '. $limit .')',
           'alias' => 'SpeechTime',
           'field' => 'created as SpeechTime',
           'conditions' => [
@@ -1317,7 +1376,7 @@
         //有人チャット受信日時
         $joinToNoticeChatTime = [
           'type' => 'LEFT',
-          'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 GROUP BY t_histories_id)',
+          'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs WHERE message_type = 1 AND notice_flg = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id ORDER BY t_histories_id desc '. $limit .')',
           'alias' => 'NoticeChatTime',
           'field' => 'created',
           'conditions' => [
@@ -1456,7 +1515,7 @@
         }
         $this->paginate['THistory']['joins'][] = $joinToChat;
         $this->paginate['THistory']['joins'][] = $joinToSpeechChatTime;
-         $this->paginate['THistory']['joins'][] = $joinToNoticeChatTime;
+        $this->paginate['THistory']['joins'][] = $joinToNoticeChatTime;
         if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
           $this->paginate['THistory']['joins'][] = $joinToCampaign;
         }
@@ -1472,6 +1531,7 @@
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+      //初回チャット受信日時順に並び替え
       foreach($historyList as $key => $value){
         if(!empty($value['SpeechTime']['firstSpeechTime'])) {
           $key_id[$key] = $value['SpeechTime']['firstSpeechTime'];
@@ -1534,74 +1594,6 @@
         'group' => 't_histories_id'
       ]);
       $this->log("END tHistoryStayLogList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-
-      $this->log("BEGIN noticeChatTime : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-      //有人チャット受信日時
-      /*$chatLogIdData = $this->THistoryChatLog->find('all', [
-        'table' => '(SELECT t_histories_id,t_history_stay_logs_id, message_type FROM t_history_chat_logs)',
-        'fields' => [
-          'id',
-          't_histories_id',
-          'message_type',
-          'created'
-        ],
-        'conditions' => [
-          't_histories_id' => $historyIdList,
-          'm_companies_id' =>$this->userInfo['MCompany']['id']
-        ],
-        'order' => 'created'
-      ]);
-
-      $noticeChatTime = [];
-      $saveNoticeChatTime = "";
-      $check = "";
-      foreach($chatLogIdData as $key => $val) {
-        if(!empty($chatLogIdData[$key - 1]) && ($chatLogIdData[$key - 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])) {
-          $check = "";
-        }
-        if($val['THistoryChatLog']['message_type'] == 1) {
-          //次のメッセージのt_hisotries_idチェック
-          if(!empty($chatLogIdData[$key + 1]) && !empty($chatLogIdData[$key + 2]) &&
-            $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id'] &&
-            $chatLogIdData[$key + 2]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
-            //message_type = 1の次のメッセージタイプが4,5ではないとき
-            if(($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5) &&
-              ($chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 2]['THistoryChatLog']['message_type'] != 5) &&
-               ($check != 'true')) {
-              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
-              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
-              $check = 'true';
-            }
-          }
-          //次のメッセージのt_hisotries_idチェック
-          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] == $val['THistoryChatLog']['t_histories_id']) {
-            //message_type = 1の次のメッセージタイプが4,5ではないとき
-            if($chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 4 && $chatLogIdData[$key + 1]['THistoryChatLog']['message_type'] != 5 && $check != 'true') {
-              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
-              $saveNoticeChatTime =  $val['THistoryChatLog']['created'];
-              $check = 'true';
-            }
-          }
-          //次のメッセージのt_hisotries_idチェック
-          else if(!empty($chatLogIdData[$key + 1]) && $chatLogIdData[$key + 1]['THistoryChatLog']['t_histories_id'] != $val['THistoryChatLog']['t_histories_id'])  {
-            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
-              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
-            }
-            else {
-              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
-            }
-          }
-          else if(empty($chatLogIdData[$key + 1]))  {
-            if($chatLogIdData[$key - 1]['THistoryChatLog']['message_type'] != 1 && $check != 'true') {
-              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $val['THistoryChatLog']['created'];
-            }
-            else {
-              $noticeChatTime[$val['THistoryChatLog']['t_histories_id']] = $saveNoticeChatTime;
-            }
-          }
-        }
-      }*/
-      $this->log("END noticeChatTime : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       $this->log("BEGIN chatSendingPageList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $chatSendingPageList = $this->THistoryStayLog->find('all', [
@@ -1777,7 +1769,7 @@
           [
             'type' => 'INNER',
             'table' => '(SELECT * FROM t_history_chat_logs '.
-                 ' WHERE (m_users_id IS NOT NULL OR message_type = 5)'.
+                 ' WHERE (m_users_id IS NOT NULL OR message_type = 5 OR (message_type >= 21 AND message_type <= 27))'.
                  '   AND t_histories_id IN (' . implode(",", $historyList) .')'.
                  ' GROUP BY t_histories_id, m_users_id'.
                  ')',
@@ -1814,7 +1806,12 @@
         else {
           if($val['MUser']['display_name'] !== null) {
             $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
-          } else if (strcmp($val['THistoryChatLog']['message_type'], "5") === 0) {
+          } else if (strcmp($val['THistoryChatLog']['message_type'], "5") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "21") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "22") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "23") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "24") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "27") === 0) {
             $chat[$val['THistory']['id']] = self::LABEL_AUTO_SPEECH_OPERATOR;
           }
         }
@@ -2274,11 +2271,11 @@
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 24 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
-            '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" ELSE "" END ) AS type'
+            '( CASE  WHEN chat.cmp = 0 AND notice > 0 AND chat.cus > 0 THEN "未入室" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry > 0 THEN "拒否" WHEN chat.cmp = 0 AND chat.cus > 0 AND chat.sry = 0 AND auto_speech > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 THEN "自動返信" WHEN chat.cmp = 0 AND chat.cus = 0 AND chat.sry = 0 AND auto_speech = 0 AND auto_message > 0 AND se_cus >= 0 AND se_auto >= 0 THEN "自動返信" ELSE "" END ) AS type'
           ],
           'conditions' => $chatLogCond
         ],

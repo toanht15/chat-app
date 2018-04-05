@@ -51,7 +51,7 @@
           <div id="picChooseDiv">
             <div class="greenBtn btn-shadow" onclick="showGallary()">ギャラリーから選択</div>
             <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage'); ?>画像をアップロード</div>
-
+            <input type="hidden" name="data[Trimming][info]" id="TrimmingInfo" />
           </div>
         </div>
         <?php if ($this->Form->isFieldError('main_image')) echo $this->Form->error('main_image', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
@@ -81,8 +81,8 @@
   <!-- /* 操作 */ -->
   <section>
       <div id="action_btn_area">
-          <?= $this->Html->link('戻る', ['controller'=>'MChatNotifications', 'action'=>'index'], ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
-          <?= $this->Html->link('保存', 'javascript:void(0)', ['onclick' => 'loading.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
+          <?= $this->Html->link('戻る', ['controller'=>'MChatNotifications', 'action'=>'index'], ['onclick' => 'load.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
+          <?= $this->Html->link('保存', 'javascript:void(0)', ['onclick' => 'load.ev(saveAct)', 'class' => 'greenBtn btn-shadow']) ?>
       </div>
   </section>
   <!-- /* 操作 */ -->

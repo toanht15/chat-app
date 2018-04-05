@@ -36,22 +36,23 @@
         <div id="presenceViewBody">
           <table>
             <tbody ng-cloak>
-            <tr class="tableRow" ng-repeat="operator in operatorList | orderOperatorStatus : this">
-              <td class="tableData operatorStatus">
-                <div class="statusWrap" ng-if="operator.status === 1">
-                  <i class="fa fa-check-circle presence-active icon" aria-hidden="true"></i>
-                  <span class="presence-active">待機中</span>
-                </div>
-                <div class="statusWrap" ng-if="operator.status === 0">
-                  <i class="fa fa-minus-circle presence-inactive icon" aria-hidden="true"></i>
-                  <span class="presence-inactive">離席中</span>
-                </div>
-                <div class="statusWrap" ng-if="isUndefined(operator.status)">
-                  <i class="fa fa-times-circle presence-offline icon" aria-hidden="true"></i>
-                  <span class="presence-offline">オフライン</span>
-                </div>
-              </td>
-              <td class="tableData displayName"><span class="displayNameSpace">{{operator.display_name}}</td>
+              <tr class="tableRow" ng-repeat="operator in operatorList | orderOperatorStatus : this">
+                <td class="tableData operatorStatus">
+                  <div class="statusWrap" ng-if="operator.status === 1">
+                    <i class="fa fa-check-circle presence-active icon" aria-hidden="true"></i>
+                    <span class="presence-active">待機中</span>
+                  </div>
+                  <div class="statusWrap" ng-if="operator.status === 0">
+                    <i class="fa fa-minus-circle presence-inactive icon" aria-hidden="true"></i>
+                    <span class="presence-inactive">離席中</span>
+                  </div>
+                  <div class="statusWrap" ng-if="isUndefined(operator.status)">
+                    <i class="fa fa-times-circle presence-offline icon" aria-hidden="true"></i>
+                    <span class="presence-offline">オフライン</span>
+                  </div>
+                </td>
+                <td class="tableData displayName"><span class="displayNameSpace">{{operator.display_name}}</span></td>
+              </tr>
             </tbody>
           </table>
         </div>

@@ -17,7 +17,7 @@ var getWidgetSettingSql  = "SELECT ws.*, com.core_settings, com.exclude_ips FROM
 
 var getTriggerListSql  = "SELECT am.* FROM t_auto_messages AS am ";
     getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
-    getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?);";
+    getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?);";
 
 /* GET home page. */
 router.get("/", function(req, res, next) {
@@ -87,6 +87,11 @@ router.get("/", function(req, res, next) {
                 if(('showTiming' in settings)) {
                   showTimingSetting = isNumeric(settings.showTiming);
                 }
+                // （チャットプランのみ）Web接客コード設定が存在しない場合は「表示しない」
+                var showAccessId = 2;
+                if(('showAccessId' in settings)) {
+                  showAccessId = isNumeric(settings.showAccessId);
+                }
                 // 吹き出しデザイン設定が存在しない場合は「BOX型（サイズ固定）」
                 var chatMessageDesignType = 1;
                 if(('chatMessageDesignType' in settings)) {
@@ -146,12 +151,57 @@ router.get("/", function(req, res, next) {
                   spMaximizeSizeType = settings.spMaximizeSizeType;
                 }
 
+                var headerTextSize = 0;
+                var seTextSize = 0;
+                var reTextSize = 0;
+
+                switch(isNumeric(settings.widgetSizeType)) {
+                  case 1:
+                    headerTextSize = 14;
+                    seTextSize = 12;
+                    reTextSize = 12;
+                    break;
+                  case 2:
+                  case 3:
+                    headerTextSize = 15;
+                    seTextSize = 13;
+                    reTextSize = 13;
+                    break;
+                }
+
+                if(('headerTextSize' in settings)) {
+                  headerTextSize = settings.headerTextSize;
+                }
+
+                if(('seTextSize' in settings)) {
+                  seTextSize = settings.seTextSize;
+                }
+
+                if(('reTextSize' in settings)) {
+                  reTextSize = settings.reTextSize;
+                }
+
+                // オートメッセージ企業名表示設定が存在しない場合は「表示する」
+                var showAutomessageName = 1;
+                if(('showAutomessageName' in settings)) {
+                  showAutomessageName = settings.showAutomessageName;
+                }
+
+                // 有人チャット担当者名表示設定が存在しない場合は「表示する」
+                var showOpName = 1;
+                if(('showOpName' in settings)) {
+                  showOpName = isNumeric(settings.showOpName);
+                }
+
                 sendData['widget'] = {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
                   showTime: isNumeric(settings.showTime),
                   showName: isNumeric(settings.showName),
+                  showAutomessageName: isNumeric(showAutomessageName),
+                  showOpName: isNumeric(showOpName),
                   showPosition: isNumeric(settings.showPosition),
+                  showAccessId: isNumeric(showAccessId),
                   //ウィジットサイズ対応
                   widgetSizeType: isNumeric(settings.widgetSizeType),
                   //ウィジットサイズ対応
@@ -172,6 +222,7 @@ router.get("/", function(req, res, next) {
                   messageTextColor: messageTextColor,
                   //4.その他文字色
                   otherTextColor: otherTextColor,
+                  headerTextSize: headerTextSize,
                   //5.ウィジェット枠線色
                   widgetBorderColor: widgetBorderColor,
                   //6.吹き出し枠線色
@@ -188,12 +239,14 @@ router.get("/", function(req, res, next) {
                   cNameTextColor: settings.cNameTextColor,
                   //11.企業側吹き出し文字色
                   reTextColor: settings.reTextColor,
+                  reTextSize: reTextSize,
                   //12.企業側吹き出し背景色
                   reBackgroundColor: settings.reBackgroundColor,
                   //13.企業側吹き出し枠線色
                   reBorderColor: settings.reBorderColor,
                   //15.訪問者側吹き出し文字色
                   seTextColor: settings.seTextColor,
+                  seTextSize: seTextSize,
                   //16.訪問者側吹き出し背景色
                   seBackgroundColor: settings.seBackgroundColor,
                   //17.訪問者側吹き出し枠線色
@@ -274,6 +327,7 @@ router.get("/", function(req, res, next) {
                 // チャット
                 if (core_settings.hasOwnProperty('chat') && core_settings['chat']) {
                   actionTypeList.push('1');
+                  actionTypeList.push('2');
                 }
 
                 // 画面同期
@@ -287,7 +341,7 @@ router.get("/", function(req, res, next) {
                   sendData['widget']['display_time_flg'] = isNumeric(settings.displayTimeFlg);
                 }
 
-                pool.query(getTriggerListSql, [siteKey, actionTypeList.join(",")],
+                pool.query(getTriggerListSql, [siteKey, actionTypeList[0], actionTypeList[1]],
                   function(err, rows){
                     now = new Date();
                     nowDay = now.getDay();
@@ -516,7 +570,8 @@ router.get("/", function(req, res, next) {
                             "sitekey": siteKey,
                             "activity": activityObj,
                             "action_type": isNumeric(rows[i].action_type),
-                            "send_mail_flg": isNumeric(rows[i].send_mail_flg)
+                            "send_mail_flg": isNumeric(rows[i].send_mail_flg),
+                            "scenario_id": isNumeric(rows[i].t_chatbot_scenario_id)
                           });
                         }
                         res.send(sendData);

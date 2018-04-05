@@ -1,6 +1,4 @@
 <script type="text/javascript">
-<?= $this->element('TDocuments/loadScreen'); ?>
-
 function timeChange()　{
   var chosenDateFormat = document.forms.StatisticsForChatForm.dateFormat;
 
