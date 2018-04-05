@@ -1126,13 +1126,17 @@
             if(check.isset(window.sincloInfo.widget.showOpName) && window.sincloInfo.widget.showOpName === 2) {
               userName = "";
             } else {
-              userName = window.sincloInfo.widget.subTitle;
+              if(window.sincloInfo.widget.showName === 1) {
+                userName = chat.userName;
+              } else {
+                userName = window.sincloInfo.widget.subTitle;
+              }
             }
           }
 
-          if(chat.showTextarea && chat.showTextarea === "1") {
+          if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "1") {
             sinclo.displayTextarea();
-          } else if(chat.showTextarea && chat.showTextarea === "2") {
+          } else if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "2") {
             sinclo.hideTextarea();
           }
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
@@ -1242,6 +1246,10 @@
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
 
+        if( sinclo.scenarioApi.isProcessing() ) {
+          sinclo.chatApi.hideMiniMessageArea();
+        }
+
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1252,9 +1260,9 @@
             case 2:
               userName = sincloInfo.widget.subTitle;
               break;
-            case 3:
-              userName = "";
-              break;
+          }
+          if(isset(sincloInfo.widget.showOpName) && sincloInfo.widget.showOpName === 2) {
+            userName = "";
           }
         }
         else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
@@ -1871,7 +1879,7 @@
           if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
-            $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
+            $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
             sinclo.resizeTextArea();
           }
         },

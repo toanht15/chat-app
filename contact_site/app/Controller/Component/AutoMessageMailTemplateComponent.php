@@ -144,6 +144,9 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 23:
         $message = $this->generateScenarioSelectionBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 27:
+        $message = $this->generateScenarioSendFileBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 98:
         $message = $this->generateOperatorEnteredBlockStr($chatLog['created'],$user['display_name']);
         break;
@@ -230,6 +233,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_SELECTION);
     $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateScenarioSendFileBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_FILE_TRANSFER);
+    $message .= $this->createFileTransferMessageContent($content);
     return $message;
   }
 
