@@ -1796,33 +1796,14 @@
               if(e) e.stopPropagation();
               sinclo.chatApi.clearPlaceholderMessage();
               if(check.smartphone()) {
-                //自由入力エリアが閉まっているか空いているかチェック
-                var textareaOpend = storage.l.get('textareaOpend');
-                //チャットのテキストエリア表示
-                if( textareaOpend == 'close') {
-                  sinclo.hideTextarea();
-                }
-                //チャットのテキストエリア非表示
-                else {
-                  sinclo.displayTextarea();
-                }
+                $(document).one('touchstart', function(e){
+                  $(document).trigger('blur');
+                });
               }
             })
             .on('blur', "#sincloChatMessage,#miniSincloChatMessage",function(e){
               if(e) e.stopPropagation();
               sinclo.chatApi.setPlaceholderMessage(sinclo.chatApi.getPlaceholderMessage());
-              if(check.smartphone()) {
-                //自由入力エリアが閉まっているか空いているかチェック
-                var textareaOpend = storage.l.get('textareaOpend');
-                //チャットのテキストエリア表示
-                if( textareaOpend == 'close') {
-                  sinclo.hideTextarea();
-                }
-                //チャットのテキストエリア非表示
-                else {
-                  sinclo.displayTextarea();
-                }
-              }
             })
             .on("click", "input[name^='sinclo-radio']", function(e){
               if(e) e.stopPropagation();
