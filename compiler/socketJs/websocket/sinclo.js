@@ -1261,7 +1261,7 @@
               userName = sincloInfo.widget.subTitle;
               break;
           }
-          if(isset(sincloInfo.widget.showOpName) && sincloInfo.widget.showOpName === 2) {
+          if(check.isset(sincloInfo.widget.showOpName) && sincloInfo.widget.showOpName === 2) {
             userName = "";
           }
         }
