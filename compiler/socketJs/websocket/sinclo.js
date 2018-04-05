@@ -3793,7 +3793,7 @@
           var currentSeq = self._hearing._getCurrentHearingProcess();
           switch(currentSeq.inputLFType) {
             case "1": // 改行不可
-              msg = "";
+              msg = "メッセージを入力してください";
               if(check.smartphone()) {
                 msg += "（改行で送信）";
               } else {
