@@ -1126,7 +1126,11 @@
             if(check.isset(window.sincloInfo.widget.showOpName) && window.sincloInfo.widget.showOpName === 2) {
               userName = "";
             } else {
-              userName = window.sincloInfo.widget.subTitle;
+              if(window.sincloInfo.widget.showName === 1) {
+                userName = chat.userName;
+              } else {
+                userName = window.sincloInfo.widget.subTitle;
+              }
             }
           }
 
