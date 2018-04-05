@@ -1130,9 +1130,9 @@
             }
           }
 
-          if(chat.showTextarea && chat.showTextarea === "1") {
+          if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "1") {
             sinclo.displayTextarea();
-          } else if(chat.showTextarea && chat.showTextarea === "2") {
+          } else if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "2") {
             sinclo.hideTextarea();
           }
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
@@ -1240,6 +1240,10 @@
         // スマートフォンの場合はメッセージ送信時に、到達確認タイマーをリセットする
         if ( sinclo.chatApi.sendErrCatchTimer !== null ) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
+        }
+
+        if( sinclo.scenarioApi.isProcessing() ) {
+          sinclo.chatApi.hideMiniMessageArea();
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.company) {
@@ -1871,7 +1875,7 @@
           if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
-            $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
+            $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
             sinclo.resizeTextArea();
           }
         },
