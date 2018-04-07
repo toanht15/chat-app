@@ -1027,6 +1027,9 @@
       //サイト訪問者側のテキストエリア表示
       sinclo.displayTextarea();
       storage.l.set('textareaOpend', 'open');
+      if(sinclo.scenarioApi.isProcessing()) {
+        sinclo.chatApi.hideMiniMessageArea();
+      }
 
       if ( sincloInfo.widget.showName === 1 ) {
         sinclo.chatApi.opUser = obj.userName;
@@ -1057,6 +1060,9 @@
       storage.s.set('operatorEntered', false); // オペレータが退室した
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
       storage.l.set('leaveFlg', 'true'); // オペレータが退室した
+      if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
+        sinclo.chatApi.showMiniMessageArea();
+      }
       var opUser = sinclo.chatApi.opUser;
       if ( check.isset(opUser) === false ) {
         opUser = "オペレーター";
