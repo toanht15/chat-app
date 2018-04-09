@@ -114,6 +114,11 @@ $config['default'] = [
       "otherTextColor" => "#666666",
 
       /**
+       * ヘッダー文字サイズ
+       */
+      "headerTextSize" => "15",
+
+      /**
        * 5.ウィジェット枠線色
        */
       "widgetBorderColor" => "#E8E7E0",
@@ -149,6 +154,11 @@ $config['default'] = [
       "reTextColor" => "#333333",
 
       /**
+       * 企業側吹き出し文字サイズ
+       */
+      "reTextSize" => "13",
+
+      /**
        * 12.企業側吹き出し背景色
        */
       "reBackgroundColor" => "#F6FAE6",
@@ -162,6 +172,11 @@ $config['default'] = [
        * 15.訪問者側吹き出し文字色
        */
       "seTextColor" => "#333333",
+
+      /**
+       * 訪問者側吹き出し文字サイズ
+       */
+      "seTextSize" => "13",
 
       /**
        * 16.訪問者側吹き出し背景色
@@ -241,9 +256,19 @@ $config['default'] = [
       "chatTrigger"=>"1",
 
       /**
-       * 担当者表示
+       * 入室・退室時の表示
        */
-      "showName"=>"2",
+      "showName"=>"1",
+
+      /**
+       * 自動メッセージの見出し
+       */
+      "showAutomessageName"=>"2",
+
+      /**
+       * 有人メッセージの見出し
+       */
+      "showOpName"=>"3",
 
       /**
        * 吹き出しデザイン
