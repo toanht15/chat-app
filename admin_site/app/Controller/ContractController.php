@@ -633,12 +633,15 @@ class ContractController extends AppController
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
     $default = $this->getDefaultChatBasicConfigurations();
     $this->MChatSetting->create();
-    $this->MChatSetting->set([
+    $this->MChatSetting->set(array(
       "m_companies_id" => $m_companies_id,
       "sc_flg" => $default['sc_flg'],
       "sc_default_num" => $default['sc_default_num'],
-      "sorry_message" => $default['sorry_message']
-    ]);
+      "outside_hours_sorry_message" => $default['outside_hours_sorry_message'],
+      "wating_call_sorry_message" => $default['wating_call_sorry_message'],
+      "no_standby_sorry_message" => $default['no_standby_sorry_message'],
+      "sorry_message" => ""
+    ));
     $this->MChatSetting->save();
   }
 
@@ -910,6 +913,8 @@ class ContractController extends AppController
         break;
       case C_CONTRACT_CHAT_PLAN_ID:
         $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['chat']);
+        // チャットスタンダードプランはウェブ接客コード表示を「表示する」にする
+        $val['showAccessId'] = 1; // デフォルト：keyなし
         break;
       case C_CONTRACT_SCREEN_SHARING_ID:
         $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['sharing']);
@@ -918,6 +923,8 @@ class ContractController extends AppController
         break;
       case C_CONTRACT_CHAT_BASIC_PLAN_ID:
         $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['chat']);
+        // チャットベーシックプランはウェブ接客コード表示を「表示する」にする
+        $val['showAccessId'] = 1; // デフォルト：keyなし
         break;
       default:
         throw Exception("不明なプランID: ".$m_contact_types_id);

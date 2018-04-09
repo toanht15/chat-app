@@ -11,7 +11,13 @@ $config['default'] = [
     'basic' => [
       'sc_flg' => 2,
       'sc_default_num' => 2,
-      'sorry_message' => '大変申し訳ございません。
+      'outside_hours_sorry_message' => '大変申し訳ございません。
+只今お答えすることが出来ません。
+しばらく経ってから再度お問い合わせください。',
+      'wating_call_sorry_message' => '大変申し訳ございません。
+只今お答えすることが出来ません。
+しばらく経ってから再度お問い合わせください。',
+      'no_standby_sorry_message' => '大変申し訳ございません。
 只今お答えすることが出来ません。
 しばらく経ってから再度お問い合わせください。'
     ]
