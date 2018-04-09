@@ -1497,7 +1497,7 @@ function openTrimmingDialog(callback){
     cache: false,
     url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
     success: function(html){
-      modalOpen.call(window, html, 'p-widget-trimming', 'トリミング', 'moment');
+      modalOpen.call(window, html, 'p-widget-image-trimming', 'トリミング', 'moment');
       callback();
     }
   });

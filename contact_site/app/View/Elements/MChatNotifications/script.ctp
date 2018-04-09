@@ -88,6 +88,10 @@ function changeImagePath(path, fileName){
 }
 
 $(document).ready(function(){
+  $('#fileTagWrap').on('click', function(e){
+    $('#MChatNotificationUploadImage').val("");
+  });
+
   $('#MChatNotificationUploadImage').change(function(e){
       var files = e.target.files;
       if ( window.URL && files.length > 0 ) {
@@ -120,7 +124,7 @@ $(document).ready(function(){
       cache: false,
       url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
       success: function(html){
-        modalOpen.call(window, html, 'p-widget-trimming', 'トリミング', 'moment');
+        modalOpen.call(window, html, 'p-widget-image-trimming', 'トリミング', 'moment');
         callback();
       }
     });
