@@ -93,6 +93,10 @@ define('C_WIDGET_SHOW_NAME', 1); // 表示名
 define('C_WIDGET_SHOW_COMP', 2); // 企業名
 define('C_WIDGET_SHOW_NONE', 3); // 表示しない
 
+// 表示名種別
+define('C_WIDGET_SHOW_AUTOMESSAGE_COMP', 1); // 企業名
+define('C_WIDGET_SHOW_AUTOMESSAGE_NONE', 2); // 表示しない
+
 // チャットデザインタイプ
 define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX', 1); // BOX型（サイズ固定）
 define('C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON', 2); // 吹き出し型（サイズ可変）
@@ -438,6 +442,13 @@ $config['widgetShowNameType'] = [
 
 /* ウィジェット設定 － 表示名種別 */
 $config['widgetShowAutomessageNameType'] = [
+  C_WIDGET_SHOW_AUTOMESSAGE_COMP => "企業名を表示する<br>　<s>※オートメッセージやSorryメッセージなど自動メッセージの吹き出しに企業名を表示します</s>",
+  C_WIDGET_SHOW_AUTOMESSAGE_NONE => "表示しない"
+];
+
+/* ウィジェット設定 － 表示名種別 */
+$config['widgetShowOpNameType'] = [
+  C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
   C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>",
   C_WIDGET_SHOW_NONE => "表示しない"
 ];

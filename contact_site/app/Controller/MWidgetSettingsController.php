@@ -244,6 +244,7 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetShowAccessId', Configure::read('widgetShowAccessId'));
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
     $this->set('widgetShowAutomessageNameType', Configure::read('widgetShowAutomessageNameType'));
+    $this->set('widgetShowOpNameType', Configure::read('widgetShowOpNameType'));
     $this->set('chatMessageDesignType', Configure::read('chatMessageDesignType'));
     $this->set('widgetSendActType', Configure::read('widgetSendActType'));
     $this->set('chatMessageCopy', Configure::read('chatMessageCopy'));
