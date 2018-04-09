@@ -1277,7 +1277,7 @@
         if ( sinclo.chatApi.sendErrCatchTimer !== null ) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
-        
+
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1981,10 +1981,11 @@
           return msg;
         },
         setPlaceholderMessage: function(msg) {
-          var message = document.getElementById('sincloChatMessage');
-          if(message) {
-
-            message.placeholder = msg;
+          if( !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false" ) {
+            var message = document.getElementById('sincloChatMessage');
+            if(message) {
+              message.placeholder = msg;
+            }
           }
         },
         clearPlaceholderMessage: function() {
@@ -3846,6 +3847,7 @@
         return msg;
       },
       setPlaceholderMessage: function(msg) {
+        // オペレータ入室中は変更しない
         if(msg !== "") {
           sinclo.chatApi.setPlaceholderMessage(msg);
         }
