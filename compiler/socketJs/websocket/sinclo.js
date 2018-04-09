@@ -1278,10 +1278,6 @@
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
 
-        if( sinclo.scenarioApi.isProcessing() ) {
-          sinclo.chatApi.hideMiniMessageArea();
-        }
-
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1985,10 +1981,11 @@
           return msg;
         },
         setPlaceholderMessage: function(msg) {
-          var message = document.getElementById('sincloChatMessage');
-          if(message) {
-
-            message.placeholder = msg;
+          if( !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false" ) {
+            var message = document.getElementById('sincloChatMessage');
+            if(message) {
+              message.placeholder = msg;
+            }
           }
         },
         clearPlaceholderMessage: function() {
@@ -3850,6 +3847,7 @@
         return msg;
       },
       setPlaceholderMessage: function(msg) {
+        // オペレータ入室中は変更しない
         if(msg !== "") {
           sinclo.chatApi.setPlaceholderMessage(msg);
         }
@@ -4369,10 +4367,10 @@
           self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._beginValidInputWatcher();
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
-              self._beginValidInputWatcher();
               self._parent._waitingInput(function (inputVal) {
                 sinclo.chatApi.removeKeyDownEventToSendChat();
                 self._parent._unWaitingInput();
