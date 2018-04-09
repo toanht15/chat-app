@@ -17,7 +17,21 @@ class MChatSetting extends AppModel {
         'message' => '０～９９以内で設定してください。'
       ]
     ],
-    'sorry_message' => [
+    'outside_hours_sorry_message' => [
+      'maxLength' => [
+        'rule' => ['maxLength', 300],
+        'allowEmpty' => false,
+        'message' => 'Sorryメッセージは３００文字以内で設定してください。'
+      ]
+    ],
+    'wating_call_sorry_message' => [
+      'maxLength' => [
+        'rule' => ['maxLength', 300],
+        'allowEmpty' => false,
+        'message' => 'Sorryメッセージは３００文字以内で設定してください。'
+      ]
+    ],
+    'no_standby_sorry_message' => [
       'maxLength' => [
         'rule' => ['maxLength', 300],
         'allowEmpty' => false,
