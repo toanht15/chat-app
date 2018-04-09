@@ -1031,12 +1031,16 @@
         sinclo.chatApi.hideMiniMessageArea();
       }
 
-      if ( sincloInfo.widget.showName === 1 ) {
-        sinclo.chatApi.opUser = obj.userName;
-        opUser = obj.userName;
-      }
-      else if ( sincloInfo.widget.showName === 2 && String(obj.hide) === "true" ) {
-        return false;
+      switch(sincloInfo.widget.showName) {
+        case 1:
+          sinclo.chatApi.opUser = obj.userName;
+          sinclo.chatApi.opUserName = obj.userName;
+          opUser = obj.userName;
+          break;
+        case 2:
+          sinclo.chatApi.opUserName = obj.userName;
+          opUser = "";
+          break;
       }
 
       if ( check.isset(opUser) === false ) {
@@ -1259,16 +1263,15 @@
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
-          switch(sincloInfo.widget.showName) {
+          switch(sincloInfo.widget.showOpName) {
             case 1:
-              userName = sinclo.chatApi.opUser;
+              userName = sinclo.chatApi.opUserName;
               break;
             case 2:
               userName = sincloInfo.widget.subTitle;
               break;
-          }
-          if(check.isset(sincloInfo.widget.showOpName) && sincloInfo.widget.showOpName === 2) {
-            userName = "";
+            case 3:
+              userName = "";
           }
         }
         else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
@@ -1681,6 +1684,7 @@
         historyId: null,
         unread: 0,
         opUser: "",
+        opUserName: "",
         messageType: {
           customer: 1,
           company: 2,
