@@ -928,28 +928,28 @@
         }
 
         & #popup-button {
-          width: 43em;
-          margin: 0 auto;
-
-          .textBtn {
-            width: 12em;
-            margin: 0 2.5em;
-            float: left;
-          }
-        }
-      }
-
-      /* ウィジェット設定 - トリミング用 */
-      &.p-widget-trimming {
-        width: 840px;
-
-        & #popup-button {
           width: 18em;
           margin: 0 auto;
 
           .textBtn {
             width: 6em;
             margin: 0 0.5em;
+            float: left;
+          }
+        }
+      }
+
+      /* ウィジェット設定 - トリミング用 */
+      &.p-widget-image-trimming {
+        width: 840px;
+
+        & #popup-button {
+          width: 43em;
+          margin: 0 auto;
+
+          .textBtn {
+            width: 12em;
+            margin: 0 2.5em;
             float: left;
           }
         }

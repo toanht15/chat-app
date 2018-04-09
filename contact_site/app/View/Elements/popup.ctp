@@ -251,7 +251,7 @@
             return popupEvent.close();
           };
           break;
-        case 'p-widget-trimming':
+        case 'p-widget-image-trimming':
           var trimmingBtn = _button("トリミング");
           trimmingBtn.onclick = function() {
             return popupEvent.doTrimming();

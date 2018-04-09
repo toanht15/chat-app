@@ -3037,7 +3037,7 @@
                   return;
                 }
                 var userName = sincloInfo.widget.subTitle;
-                if(window.sinclo.widget.showAutomessageName === 2) {
+                if(window.sincloInfo.widget.showAutomessageName === 2) {
                   userName = "";
                 }
                 sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, userName);
