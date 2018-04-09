@@ -927,9 +927,9 @@ io.sockets.on('connection', function (socket) {
               for (var i = 0; i < messages.length; i++) {
                 var date = messages[i].created;
                 date = new Date(date);
-                if ( ('userName' in messages[i]) && obj.showName !== 1 ) {
-                  delete messages[i].userName;
-                }
+                // if ( ('userName' in messages[i]) && obj.showName !== 1 ) {
+                //   delete messages[i].userName;
+                // }
                 setList[fullDateTime(messages[i].created)] = messages[i];
               }
               var autoMessages = [];
@@ -942,9 +942,9 @@ io.sockets.on('connection', function (socket) {
               for (var i = 0; i < autoMessages.length; i++) {
                 var date = autoMessages[i].created;
                 date = new Date(date);
-                if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
-                  delete autoMessages[i].userName;
-                }
+                // if ( ('userName' in autoMessages[i]) && obj.showName !== 1 ) {
+                //   delete autoMessages[i].userName;
+                // }
                 setList[fullDateTime(autoMessages[i].created) + '_'] = autoMessages[i];
               }
               var scenarioMessages = [];
@@ -2858,9 +2858,7 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
           var settings = JSON.parse(rows[0].style_settings);
           // 表示名をウィジェットで表示する場合
           var userName = rows[0].display_name;
-          if ( isset(settings.showName) && Number(settings.showName) === 1 ) {
-            sendData.userName = userName;
-          }
+          sendData.userName = userName;
 
           c_connectList[obj.siteKey][obj.tabId][now] = {messageType: type, type:"start", userName: userName, userId: obj.userId};
           //emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));

@@ -181,14 +181,14 @@ router.get("/", function(req, res, next) {
                   reTextSize = settings.reTextSize;
                 }
 
-                // オートメッセージ企業名表示設定が存在しない場合は「表示する」
+                // 自動メッセージの見出し設定が存在しない場合は「表示する」
                 var showAutomessageName = 1;
                 if(('showAutomessageName' in settings)) {
                   showAutomessageName = settings.showAutomessageName;
                 }
 
-                // 有人チャット担当者名表示設定が存在しない場合は「表示する」
-                var showOpName = 1;
+                // 有人メッセージの見出し設定が存在しない場合は「企業名を表示する」
+                var showOpName = isNumeric(settings.showName) ? isNumeric(settings.showName) : 2; // 企業名を表示する
                 if(('showOpName' in settings)) {
                   showOpName = isNumeric(settings.showOpName);
                 }
@@ -197,7 +197,7 @@ router.get("/", function(req, res, next) {
                   showTiming: showTimingSetting,
                   display_type: isNumeric(rows[0].display_type),
                   showTime: isNumeric(settings.showTime),
-                  showName: isNumeric(settings.showName),
+                  showName: isNumeric(settings.showName), // 入室・退室時の表示
                   showAutomessageName: isNumeric(showAutomessageName),
                   showOpName: isNumeric(showOpName),
                   showPosition: isNumeric(settings.showPosition),

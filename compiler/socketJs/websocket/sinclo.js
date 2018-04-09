@@ -1027,13 +1027,20 @@
       //サイト訪問者側のテキストエリア表示
       sinclo.displayTextarea();
       storage.l.set('textareaOpend', 'open');
-
-      if ( sincloInfo.widget.showName === 1 ) {
-        sinclo.chatApi.opUser = obj.userName;
-        opUser = obj.userName;
+      if(sinclo.scenarioApi.isProcessing()) {
+        sinclo.chatApi.hideMiniMessageArea();
       }
-      else if ( sincloInfo.widget.showName === 2 && String(obj.hide) === "true" ) {
-        return false;
+
+      switch(sincloInfo.widget.showName) {
+        case 1:
+          sinclo.chatApi.opUser = obj.userName;
+          sinclo.chatApi.opUserName = obj.userName;
+          opUser = obj.userName;
+          break;
+        case 2:
+          sinclo.chatApi.opUserName = obj.userName;
+          opUser = "";
+          break;
       }
 
       if ( check.isset(opUser) === false ) {
@@ -1057,6 +1064,9 @@
       storage.s.set('operatorEntered', false); // オペレータが退室した
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
       storage.l.set('leaveFlg', 'true'); // オペレータが退室した
+      if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
+        sinclo.chatApi.showMiniMessageArea();
+      }
       var opUser = sinclo.chatApi.opUser;
       if ( check.isset(opUser) === false ) {
         opUser = "オペレーター";
@@ -1122,16 +1132,29 @@
               userName = window.sincloInfo.widget.subTitle;
             }
           }
-          else if ( Number(chat.messageType) === 2 ) {
-            if(check.isset(window.sincloInfo.widget.showOpName) && window.sincloInfo.widget.showOpName === 2) {
-              userName = "";
-            } else {
-              if(window.sincloInfo.widget.showName === 1) {
-                userName = chat.userName;
-              } else {
-                userName = window.sincloInfo.widget.subTitle;
-              }
+          else if ( Number(chat.messageType) === sinclo.chatApi.messageType.company ) {
+            cn = "sinclo_re";
+            sinclo.chatApi.call();
+            console.log("sincloInfo.widget.showOpName : %s",sincloInfo.widget.showOpName);
+            switch(sincloInfo.widget.showOpName) {
+              case 1:
+                userName = sinclo.chatApi.opUserName;
+                break;
+              case 2:
+                userName = sincloInfo.widget.subTitle;
+                break;
+              case 3:
+                userName = "";
+                break;
+              default: // 設定が存在しない場合
+                if(sincloInfo.widget.showName === 1) {
+                  userName = sinclo.chatApi.opUserName;
+                } else {
+                  userName = sincloInfo.widget.subTitle;
+                }
+                break;
             }
+            console.log("userName : %s",userName);
           }
 
           if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "1") {
@@ -1174,16 +1197,25 @@
           this.chatApi.scDown();
         }
         else {
+          var opUser = "";
           if ( ('userName' in obj.chat.messages[key]) ) {
             sinclo.chatApi.opUser = obj.chat.messages[key].userName;
           }
+          console.log("chatMessageData :: sinclo.chatApi.opUser : %s", sinclo.chatApi.opUser);
           // 途中で設定が変更されたときの対策
-          if ( sincloInfo.widget.showName !== 1 ) {
-            sinclo.chatApi.opUser = "";
+          switch(sincloInfo.widget.showName) {
+            case 1:
+              sinclo.chatApi.opUserName = sinclo.chatApi.opUser;
+              opUser = sinclo.chatApi.opUserName;
+              break;
+            case 2:
+              sinclo.chatApi.opUserName = sinclo.chatApi.opUser;
+              sinclo.chatApi.opUser = "";
+              opUser = "";
+              break;
           }
-          var opUser = sinclo.chatApi.opUser;
 
-          if ( sinclo.chatApi.opUser === "" ) {
+          if ( opUser === "" ) {
             opUser = "オペレーター";
           }
           check.escape_html(opUser); // エスケープ
@@ -1253,17 +1285,26 @@
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
-          switch(sincloInfo.widget.showName) {
+          console.log("sendChatResult :: sincloInfo.widget.showOpName : %s",sincloInfo.widget.showOpName);
+          switch(sincloInfo.widget.showOpName) {
             case 1:
-              userName = sinclo.chatApi.opUser;
+              userName = sinclo.chatApi.opUserName;
               break;
             case 2:
               userName = sincloInfo.widget.subTitle;
               break;
+            case 3:
+              userName = "";
+              break;
+            default: // 設定が存在しない場合
+              if(sincloInfo.widget.showName === 1) {
+                userName = sinclo.chatApi.opUserName;
+              } else {
+                userName = sincloInfo.widget.subTitle;
+              }
+              break;
           }
-          if(check.isset(sincloInfo.widget.showOpName) && sincloInfo.widget.showOpName === 2) {
-            userName = "";
-          }
+          console.log("sendChatResult :: userName : %s",userName);
         }
         else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
           cn = "sinclo_se";
@@ -1675,6 +1716,7 @@
         historyId: null,
         unread: 0,
         opUser: "",
+        opUserName: "",
         messageType: {
           customer: 1,
           company: 2,
