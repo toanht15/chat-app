@@ -210,7 +210,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     } else {
       $scope.showMiniMessageArea(_inputType[inputType]);
     }
-    self.setPlaceholder('（Enterで改行/Shift+Enterで送信）');
+    self.setPlaceholder('\n（Enterで改行/Shift+Enterで送信）');
     $scope.$apply();
   });
 
@@ -229,16 +229,16 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   $scope.showMiniMessageArea = function(inputType) {
     console.log("showMiniMessageArea");
-    $('#messageBox').addClass('sinclo-hide');
-    $('#miniFlexBoxHeight').removeClass('sinclo-hide');
-    $('#miniSincloChatMessage').get(0).type = inputType;
-    var msgBoxElm = document.getElementById('flexBoxWrap');
-    msgBoxElm.dataset.originalHeight = 48;
-    if($('#flexBoxWrap').is(':visible')) {
+    if($('#messageBox').is(':visible')) {
       var chatTalkElm = document.getElementById('chatTalk');
       var chatTalkHeight = chatTalkElm.getBoundingClientRect().height;
       document.getElementById('chatTalk').style.height = chatTalkHeight + 27 + "px";
     }
+    $('#messageBox').addClass('sinclo-hide');
+    $('#miniSincloChatMessage').get(0).type = inputType;
+    $('#miniFlexBoxHeight').removeClass('sinclo-hide').find('#miniSincloChatMessage').focus();
+    var msgBoxElm = document.getElementById('flexBoxWrap');
+    msgBoxElm.dataset.originalHeight = 48;
   };
 
   /**
@@ -246,16 +246,16 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   $scope.hideMiniMessageArea = function() {
     console.log("hideMiniMessageArea");
-    $('#messageBox').removeClass('sinclo-hide');
-    $('#miniFlexBoxHeight').addClass('sinclo-hide');
-    $('#miniSincloChatMessage').get(0).type = 'text';
-    var msgBoxElm = document.getElementById('flexBoxWrap');
-    msgBoxElm.dataset.originalHeight = 75;
-    if($('#flexBoxWrap').is(':visible')) {
+    if($('#miniFlexBoxHeight').is(':visible')) {
       var chatTalkElm = document.getElementById('chatTalk');
       var chatTalkHeight = chatTalkElm.getBoundingClientRect().height;
       document.getElementById('chatTalk').style.height = chatTalkHeight - 27 + "px";
     }
+    $('#miniFlexBoxHeight').addClass('sinclo-hide');
+    $('#miniSincloChatMessage').get(0).type = 'text';
+    $('#messageBox').removeClass('sinclo-hide').find('#sincloChatMessage').focus();
+    var msgBoxElm = document.getElementById('flexBoxWrap');
+    msgBoxElm.dataset.originalHeight = 75;
   };
 
   /**
