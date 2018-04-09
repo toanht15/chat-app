@@ -920,6 +920,9 @@ class ContractController extends AppController
         $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['sharing']);
         // シェアリングプランはウィジェットサイズは小にする
         $val['widgetSizeType'] = "1";
+        $val['headerTextSize'] = "14";
+        $val['seTextSize'] = "12";
+        $val['reTextSize'] = "12";
         break;
       case C_CONTRACT_CHAT_BASIC_PLAN_ID:
         $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['chat']);
