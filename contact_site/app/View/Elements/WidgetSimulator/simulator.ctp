@@ -322,9 +322,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
       <div id='descriptionSet' class="widgetOpener notSelect" ng-hide="widget.spHeaderLightToggle() || widget.mainImageToggle == '2' && widget.subTitleToggle == '2' && widget.descriptionToggle == '2'">
 
         <!-- サブタイトル -->
-        <p id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}" class="details">{{widget.subTitleToggle == '1' ? widget.settings['sub_title'] : ''}}</p>
+        <p id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}" class="details">{{widget.subTitleToggle == '1' ? widget.settings['sub_title'] : '&thinsp;'}}</p>
         <!-- 説明文 -->
-        <p id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false}">{{widget.descriptionToggle == '1' ? widget.settings['description'] : ''}}</p>
+        <p id="widgetDescription" class="details" ng-class="{notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false}">{{widget.descriptionToggle == '1' ? widget.settings['description'] : '&thinsp;'}}</p>
 
       </div>
       <div id="miniTarget">
