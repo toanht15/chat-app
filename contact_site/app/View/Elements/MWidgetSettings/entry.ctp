@@ -1018,7 +1018,7 @@ $headerNo = 1;
           <!-- 消費者側送信アクション -->
           <!-- 担当者表示 -->
           <li>
-            <span class="require"><label>担当者表示</label></span>
+            <span class="require"><label>入室・退室時の表示</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_name', [
                 'type' => 'radio',
                 'options' => $widgetShowNameType,
@@ -1037,10 +1037,10 @@ $headerNo = 1;
           <!-- 担当者表示 -->
           <!-- オートメッセージ企業名表示 -->
           <li>
-            <span class="require"><label>オートメッセージの企業名</label></span>
+            <span class="require"><label>自動メッセージの見出し</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_automessage_name', [
                   'type' => 'radio',
-                  'options' => $widgetShowChoices,
+                  'options' => $widgetShowAutomessageNameType,
                   'legend' => false,
                   'separator' => '</label><br><label class="pointer">',
                   'class' => 'showChat',
@@ -1056,10 +1056,10 @@ $headerNo = 1;
           <!-- オートメッセージ企業名表示 -->
           <!-- ウィジェットの表示   -->
           <li>
-            <span class="require"><label>吹き出しの見出し</label></span>
+            <span class="require"><label>有人メッセージの見出し</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('show_op_name', [
                   'type' => 'radio',
-                  'options' => $widgetShowChoices,
+                  'options' => $widgetShowOpNameType,
                   'legend' => false,
                   'separator' => '</label><br><label class="pointer">',
                   'div' => false,
