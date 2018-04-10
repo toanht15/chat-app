@@ -155,7 +155,8 @@ sinclo@medialink-ml.co.jp
       )
     ),
       'del_flg' => 0,
-      'sort' => 1
+      'sort' => 1,
+      'relation_auto_message_index' => 5
     ),
     2 => array(
       'name' => '【サンプル】資料請求（一括ヒアリング）',
@@ -651,7 +652,8 @@ sinclo@medialink-ml.co.jp
         )
       ),
       'del_flg' => 0,
-      'sort' => 5
+      'sort' => 5,
+      'relation_auto_message_index' => 6
     )
   )
 );
