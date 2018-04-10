@@ -409,10 +409,10 @@ class ContractController extends AppController
       $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo);
       $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
-      $this->addDefaultAutoMessages($addedCompanyInfo['id'], $companyInfo);
+      $relationIdAssoc = $this->addDefaultScenarioMessage($addedCompanyInfo['id'], $companyInfo);
+      $this->addDefaultAutoMessages($addedCompanyInfo['id'], $companyInfo, $relationIdAssoc);
       $this->addDefaultDictionaries($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultMailTemplate($addedCompanyInfo['id'], $companyInfo);
-      $this->addDefaultScenarioMessage($addedCompanyInfo['id'], $companyInfo);
       $this->addCompanyJSFile($addedCompanyInfo['companyKey']);
     } catch (Exception $e) {
       $this->TransactionManager->rollback($transaction);
@@ -659,7 +659,7 @@ class ContractController extends AppController
     $this->MWidgetSetting->save();
   }
 
-  private function addDefaultAutoMessages($m_companies_id, $companyInfo) {
+  private function addDefaultAutoMessages($m_companies_id, $companyInfo, $addedRelationScenarioIds) {
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
     $autoMessages = $this->TAutoMessages->find('all',[
       'conditions' => array(
@@ -668,9 +668,9 @@ class ContractController extends AppController
     );
     if(empty($autoMessages)) {
       $default = $this->getDefaultAutomessageConfigurations();
-      foreach($default as $item) {
+      foreach($default as $index => $item) {
         $this->TAutoMessages->create();
-        $this->TAutoMessages->set([
+        $data = [
           "m_companies_id" => $m_companies_id,
           "name" => $item['name'],
           "trigger_type" => $item['trigger_type'],
@@ -678,7 +678,11 @@ class ContractController extends AppController
           "action_type" => $item['action_type'],
           "sort" => $item['sort'],
           "active_flg" => $item['active_type']
-        ]);
+        ];
+        if(array_key_exists($index, $addedRelationScenarioIds) && array_key_exists('t_chatbot_scenario_id', $item)) {
+          $data['t_chatbot_scenario_id'] = $addedRelationScenarioIds[$index];
+        }
+        $this->TAutoMessages->set($data);
         $this->TAutoMessages->save();
       }
     }
@@ -742,6 +746,7 @@ class ContractController extends AppController
    * @throws Exception
    */
   public function addDefaultScenarioMessage($m_companies_id, $companyInfo, $forceInsert = false) {
+    $autoMessageRelationAssoc = array();
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
     $scenarios = $this->TChatbotScenario->find('all',array(
         'conditions' => array(
@@ -793,6 +798,9 @@ class ContractController extends AppController
           "sort" => $scenario['sort']
         ));
         $this->TChatbotScenario->save();
+        if(array_key_exists('relation_auto_message_index', $scenario)) {
+          $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
+        }
       }
     } else if($forceInsert) {
       // 既存設定があることを考慮して今のソート番号を取得
@@ -853,8 +861,12 @@ class ContractController extends AppController
           "sort" => $sortNum
         ));
         $this->TChatbotScenario->save();
+        if(array_key_exists('relation_auto_message_index', $scenario)) {
+          $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
+        }
       }
     }
+    return $autoMessageRelationAssoc;
   }
 
   private function addCompanyJSFile($companyKey) {
