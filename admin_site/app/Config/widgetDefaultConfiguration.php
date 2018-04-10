@@ -268,7 +268,7 @@ $config['default'] = [
       /**
        * 有人メッセージの見出し
        */
-      "showOpName"=>"3",
+      "showOpName"=>"1",
 
       /**
        * 吹き出しデザイン
