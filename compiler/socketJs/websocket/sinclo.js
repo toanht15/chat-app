@@ -3846,6 +3846,8 @@
               }
               break;
           }
+        } else {
+          sinclo.chatApi.getPlaceholderMessage();
         }
         return msg;
       },
@@ -4367,10 +4369,10 @@
           var message = hearing.message;
           // クロージャー用
           var self = sinclo.scenarioApi._hearing;
-          self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._beginValidInputWatcher();
+            self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
