@@ -27,27 +27,32 @@ $config['default'] = array(
               array(
                 "variableName" => "会社名",
                 "inputType" => "1",
-                "message" => "会社名を入力して下さい。"
+                "message" => "会社名を入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "名前",
                 "inputType" => "1",
-                "message" => "お名前を入力して下さい。"
+                "message" => "お名前を入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "電話番号",
                 "inputType" => "4",
-                "message" => "電話番号を入力して下さい。"
+                "message" => "電話番号を入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "メールアドレス",
                 "inputType" => "3",
-                "message" => "メールアドレスを入力して下さい。"
+                "message" => "メールアドレスを入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "その他",
                 "inputType" => "1",
-                "message" => "その他ご要望などがあれば記載ください。（特にない場合は「なし」と入力してください）"
+                "message" => "その他ご要望などがあれば記載ください。（特にない場合は「なし」と入力してください）",
+                "inputLFType" => "2"
               )
             ),
             "errorMessage" => "入力が正しく確認できませんでした。",
@@ -177,7 +182,8 @@ sinclo@medialink-ml.co.jp
               array(
                 "variableName" => "顧客情報",
                 "inputType" => "1",
-                "message" => "お客様の会社名、お名前、電話番号、メールアドレスを入力して下さい。（メール署名をコピー＆ペーストで可）"
+                "message" => "お客様の会社名、お名前、電話番号、メールアドレスを入力して下さい。（メール署名をコピー＆ペーストで可）",
+                "inputLFType" => "2"
               )
             ),
             "errorMessage" => "入力が正しく確認できませんでした。",
@@ -196,7 +202,8 @@ sinclo@medialink-ml.co.jp
               array(
                 "variableName" => "その他要望など",
                 "inputType" => "1",
-                "message" => "その他ご要望などございましたらこちらにご記入ください。（特にない方は「なし」と入力してください。）"
+                "message" => "その他ご要望などございましたらこちらにご記入ください。（特にない方は「なし」と入力してください。）",
+                "inputLFType" => "2"
               )
             ),
             "errorMessage" => "入力が確認できませんでした。",
@@ -298,32 +305,38 @@ sinclo@medialink-ml.co.jp
               array(
                 "variableName" => "名前",
                 "inputType" => "1",
-                "message" => "お客様のお名前をフルネーム（漢字）で入力して下さい。"
+                "message" => "お客様のお名前をフルネーム（漢字）で入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "カナ",
                 "inputType" => "1",
-                "message" => "お客様のお名前のフリガナを入力して下さい。"
+                "message" => "お客様のお名前のフリガナを入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "生年月日",
                 "inputType" => "2",
-                "message" => "生年月日を8桁で入力してください。（例：1990年1月1日生まれの場合 → 19900101）"
+                "message" => "生年月日を8桁で入力してください。（例：1990年1月1日生まれの場合 → 19900101）",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "住所",
                 "inputType" => "1",
-                "message" => "住所を郵便番号から入力してください。"
+                "message" => "住所を郵便番号から入力してください。",
+                "inputLFType" => "2"
               ),
               array(
                 "variableName" => "電話番号",
                 "inputType" => "4",
-                "message" => "電話番号を入力してください。"
+                "message" => "電話番号を入力してください。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "メールアドレス",
                 "inputType" => "3",
-                "message" => "メールアドレスを入力してください。"
+                "message" => "メールアドレスを入力してください。",
+                "inputLFType" => "1"
               )
             ),
             "errorMessage" => "入力が正しく確認できませんでした。",
@@ -487,7 +500,8 @@ sinclo@medialink-ml.co.jp
               array(
                 "variableName" => "フリー入力",
                 "inputType" => "1",
-                "message" => "当サイトに対してご意見、ご要望などがございましたらご自由にご記入ください。（特にない場合は「なし」とご記入ください）（７／７）"
+                "message" => "当サイトに対してご意見、ご要望などがございましたらご自由にご記入ください。（特にない場合は「なし」とご記入ください）（７／７）",
+                "inputLFType" => "2"
               )
             ),
             "errorMessage" => "入力が確認できませんでした。",
@@ -529,27 +543,32 @@ sinclo@medialink-ml.co.jp
               array(
                 "variableName" => "会社名",
                 "inputType" => "1",
-                "message" => "お客様の会社名を入力して下さい。"
+                "message" => "お客様の会社名を入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "名前",
                 "inputType" => "1",
-                "message" => "お名前を入力して下さい。"
+                "message" => "お名前を入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "電話番号",
                 "inputType" => "4",
-                "message" => "電話番号を入力して下さい。"
+                "message" => "電話番号を入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "メールアドレス",
                 "inputType" => "3",
-                "message" => "メールアドレスを入力して下さい。"
+                "message" => "メールアドレスを入力して下さい。",
+                "inputLFType" => "1"
               ),
               array(
                 "variableName" => "問い合わせ内容",
                 "inputType" => "1",
-                "message" => "お問い合わせ内容を記入してください。"
+                "message" => "お問い合わせ内容を記入してください。",
+                "inputLFType" => "2"
               )
             ),
             "errorMessage" => "入力が正しく確認できませんでした。",
