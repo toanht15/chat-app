@@ -76,85 +76,166 @@ $config['default'] = [
           ]
         ],
         'widgetOpen' => 1,
-        'message' => 'ただいまスタッフが待機中です！
-ご不明な点などございましたら、お気軽にご質問ください。'
+        'message' => 'なにかお困りのことはございませんか？
+[] Aについて
+[] Bについて
+[] 資料請求
+[] その他',
+        "chatTextarea" => 1,
+        "cv" => 2
       ],
       'action_type' => 1,
       'active_type' => 0,
       'sort' => 3
     ],
     [
-      'name' => 'ページ滞在20秒後',
+      'name' => '発言内容（Aについて）',
       'trigger_type' => 0,
       'activity' => [
         'conditionType' => 1,
         'conditions' => [
-          "1" => [
+          "7" => [
             [
-              'stayTimeCheckType' => '1',
-              'stayTimeType' => '1',
-              'stayTimeRange' => '20'
+              "keyword_contains" => "Aについて",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "speechContentCond" => "1",
+              "triggerTimeSec" => 2,
+              "speechTriggerCond" => "2"
             ]
           ]
         ],
         'widgetOpen' => 1,
-        'message' => '★現在お電話でもお問合せ受付中★
-オペレータに相談してみませんか？お気軽にお問合せください！
-【電話受付窓口】
-xx-xxx-xxx（平日9:00-18:00）
-[] 電話で相談する
-[] まずはチャットで相談'
+        "message" => "Aについてですね。
+Aは・・・
+
+--------------------------------------------------
+[] メニューに戻る",
+      "chatTextarea" => 2,
+      "cv" => 2
       ],
       'action_type' => 1,
       'active_type' => 1,
       'sort' => 4
     ],
-
     [
-      'name' => 'ページ滞在30秒後',
+      'name' => '発言内容（Bについて）',
       'trigger_type' => 0,
       'activity' => [
         'conditionType' => 1,
         'conditions' => [
-          "1" => [
+          "7" => [
             [
-              'stayTimeCheckType' => '1',
-              'stayTimeType' => '1',
-              'stayTimeRange' => '30'
+              "keyword_contains" => "Bについて",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "speechContentCond" => "1",
+              "triggerTimeSec" => 2,
+              "speechTriggerCond" => "2"
             ]
           ]
         ],
         'widgetOpen' => 1,
-        'message' => '資料送付をご希望の際は、会社名・お名前・連絡先（メールアドレス）をご記入ください。'
+        "message" => "Bについてですね。
+Bは・・・
+
+--------------------------------------------------
+[] メニューに戻る",
+        "chatTextarea" => 2,
+        "cv" => 2
       ],
       'action_type' => 1,
       'active_type' => 1,
       'sort' => 5
     ],
     [
-      'name' => 'ページ滞在2分後',
+      'name' => '発言内容（資料請求）',
       'trigger_type' => 0,
       'activity' => [
         'conditionType' => 1,
         'conditions' => [
-          "1" => [
+          "7" => [
             [
-              'stayTimeCheckType' => '1',
-              'stayTimeType' => '2',
-              'stayTimeRange' => '2'
+              "keyword_contains" => "資料請求",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "speechContentCond" => "1",
+              "triggerTimeSec" => 2,
+              "speechTriggerCond" => "2"
+            ]
+          ]
+        ],
+        "widgetOpen" => 1,
+        "message" => "",
+        "chatTextarea" => 1,
+        "cv" => 2
+      ],
+      'action_type' => 2,
+      't_chatbot_scenario_id' => 0,
+      'active_type' => 1,
+      'sort' => 6
+    ],
+    [
+      'name' => '発言内容（その他）',
+      'trigger_type' => 0,
+      'activity' => [
+        'conditionType' => 1,
+        'conditions' => [
+          "7" => [
+            [
+              "keyword_contains" => "その他",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "speechContentCond" => "1",
+              "triggerTimeSec" => 2,
+              "speechTriggerCond" => "2"
+            ]
+          ]
+        ],
+        "widgetOpen" => 1,
+        "message" => "",
+        "chatTextarea" => 1,
+        "cv" => 2
+      ],
+      'action_type' => 2,
+      't_chatbot_scenario_id' => 0,
+      'active_type' => 1,
+      'sort' => 7
+    ],
+    [
+      'name' => '発言内容（メニューに戻る）',
+      'trigger_type' => 0,
+      'activity' => [
+        'conditionType' => 1,
+        'conditions' => [
+          "7" => [
+            [
+              "keyword_contains" => "メニューに戻る",
+              "keyword_contains_type" => "1",
+              "keyword_exclusions" => "",
+              "keyword_exclusions_type" => "1",
+              "speechContentCond" => "1",
+              "triggerTimeSec" => 2,
+              "speechTriggerCond" => "2"
             ]
           ]
         ],
         'widgetOpen' => 1,
-        'message' => 'なにかご不明な点はございませんか？下記より選択してください。
-[] ●●について
-[] ●●について
-[] ●●について
-[] その他'
+        "message" => "なにかお困りのことはございませんか？
+[] Aについて
+[] Bについて
+[] 資料請求
+[] その他",
+        "chatTextarea" => 2,
+        "cv" => 2
       ],
       'action_type' => 1,
       'active_type' => 1,
-      'sort' => 6
+      'sort' => 8
     ],
   ]
 ];
