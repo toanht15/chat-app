@@ -3828,11 +3828,6 @@
           switch(currentSeq.inputLFType) {
             case "1": // 改行不可
               msg = "メッセージを入力してください";
-              if(check.smartphone()) {
-                msg += "（改行で送信）";
-              } else {
-                msg += "（Enter/Shift+Enterで送信）"
-              }
               break;
             case "2":
               msg = "メッセージを入力してください";
