@@ -1,6 +1,5 @@
 <style>
 #tchatbotscenario_form_preview_body { background-color: {{widget.settings['chat_talk_background_color']}}; }
-#tchatbotscenario_form_preview_body { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important };
 #tchatbotscenario_form_preview_body .actionTitle { margin: 0; background-color: #FFFFFF;}
 #tchatbotscenario_form_preview_body .actionTitle.active { color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}};}
 
