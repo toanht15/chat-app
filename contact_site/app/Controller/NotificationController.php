@@ -99,7 +99,11 @@ class NotificationController extends AppController {
       $this->THistoryChatLog->save();
 
     } catch(Exception $e) {
-      $this->log('【MAIL_SEND_ERROR】Notification/autoMessages呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
+      if(strpos($e->getMessage(), 'Invalid email') === 0) {
+        $this->log('【MAIL_SEND_WARNING】メールアドレスが不正です。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
+      } else {
+        $this->log('【MAIL_SEND_ERROR】Notification/autoMessages呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
+      }
       $this->response->statusCode($e->getCode());
       return json_encode(array(
           'success' => false,
@@ -173,7 +177,12 @@ class NotificationController extends AppController {
       $this->TMailTransmissionLog->save();
 
     } catch(Exception $e) {
-      $this->log('【MAIL_SEND_ERROR】Notification/scenario呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
+      if(strpos($e->getMessage(), 'Invalid email') === 0) {
+        $this->log('【MAIL_SEND_WARNING】メールアドレスが不正です。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
+      } else {
+        $this->log('【MAIL_SEND_ERROR】Notification/scenario呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
+      }
+
       $this->response->statusCode($e->getCode());
       return json_encode(array(
         'success' => false,
