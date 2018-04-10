@@ -1986,12 +1986,20 @@
             if(message) {
               message.placeholder = msg;
             }
+            var miniMessage = document.getElementById('miniSincloChatMessage');
+            if(miniMessage) {
+              miniMessage.placeholder = msg;
+            }
           }
         },
         clearPlaceholderMessage: function() {
           var message = document.getElementById('sincloChatMessage');
           if(message) {
             message.placeholder = "";
+          }
+          var miniMessage = document.getElementById('miniSincloChatMessage');
+          if(miniMessage) {
+            miniMessage.placeholder = "";
           }
         },
         targetTextarea: null,
