@@ -3846,8 +3846,6 @@
               }
               break;
           }
-        } else {
-          sinclo.chatApi.getPlaceholderMessage();
         }
         return msg;
       },
