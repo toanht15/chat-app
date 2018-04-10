@@ -116,7 +116,7 @@ Aは・・・
       "cv" => 2
       ],
       'action_type' => 1,
-      'active_type' => 1,
+      'active_type' => 0,
       'sort' => 4
     ],
     [
@@ -147,7 +147,7 @@ Bは・・・
         "cv" => 2
       ],
       'action_type' => 1,
-      'active_type' => 1,
+      'active_type' => 0,
       'sort' => 5
     ],
     [
@@ -175,7 +175,7 @@ Bは・・・
       ],
       'action_type' => 2,
       't_chatbot_scenario_id' => 0,
-      'active_type' => 1,
+      'active_type' => 0,
       'sort' => 6
     ],
     [
@@ -203,7 +203,7 @@ Bは・・・
       ],
       'action_type' => 2,
       't_chatbot_scenario_id' => 0,
-      'active_type' => 1,
+      'active_type' => 0,
       'sort' => 7
     ],
     [
@@ -234,7 +234,7 @@ Bは・・・
         "cv" => 2
       ],
       'action_type' => 1,
-      'active_type' => 1,
+      'active_type' => 0,
       'sort' => 8
     ],
   ]
