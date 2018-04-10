@@ -73,7 +73,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.allowInputLF = true;
     $scope.allowSendMessageByShiftEnter = false;
     $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
-    self.setPlaceholder();
 
     $scope.addMessage('se', message);
     $('#sincloChatMessage').val('');
@@ -188,7 +187,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     } else {
       $scope.showMiniMessageArea(_inputType[inputType]);
     }
-    self.setPlaceholder('（Enter/Shift+Enterで送信）');
+    self.setPlaceholder('メッセージを入力してください');
   });
 
   /**
@@ -210,7 +209,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     } else {
       $scope.showMiniMessageArea(_inputType[inputType]);
     }
-    self.setPlaceholder('\n（Enterで改行/Shift+Enterで送信）');
+    self.setPlaceholder('メッセージを入力してください\n（Enterで改行/Shift+Enterで送信）');
     $scope.$apply();
   });
 
@@ -398,12 +397,15 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   this.setPlaceholder = function(message) {
     var elm = document.querySelector('#sincloChatMessage');
+    var miniElm = document.querySelector('#miniSincloChatMessage');
 
     if (typeof message === 'undefined' || message == null) {
       elm.placeholder = $scope.placeholder || elm.placeholder;
+      miniElm.placeholder = elm.placeholder;
     } else {
       $scope.placeholder = elm.placeholder;
-      elm.placeholder = elm.placeholder.replace(/(（.+）$)/, message);
+      elm.placeholder = message;
+      miniElm.placeholder = elm.placeholder;
     }
   }
 
