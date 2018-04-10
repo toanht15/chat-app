@@ -230,7 +230,7 @@ Bは・・・
 [] Bについて
 [] 資料請求
 [] その他",
-        "chatTextarea" => 2,
+        "chatTextarea" => 1,
         "cv" => 2
       ],
       'action_type' => 1,
