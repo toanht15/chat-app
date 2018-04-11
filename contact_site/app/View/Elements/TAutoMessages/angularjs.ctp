@@ -263,6 +263,10 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       $scope.$watch('main.chat_textarea', function(value) {
         $scope.$broadcast('switchSimulatorChatTextArea', value == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>);
       });
+      // 初期表示時にプレビューに反映されないため、一度呼ぶ
+      if($scope.main.chat_textarea) {
+        $scope.$broadcast('switchSimulatorChatTextArea', $scope.main.chat_textarea == <?= C_AUTO_WIDGET_TEXTAREA_OPEN ?>);
+      }
     });
 
     $scope.createMessage = function() {
