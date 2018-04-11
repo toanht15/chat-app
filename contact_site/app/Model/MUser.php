@@ -195,7 +195,8 @@ class MUser extends AppModel {
       'mail.ru',
       'inbox.ru',
       'list.ru',
-      'bk.ru'
+      'bk.ru',
+      'dqnwara.com'
     );
 
     // 携帯電話ドメイン

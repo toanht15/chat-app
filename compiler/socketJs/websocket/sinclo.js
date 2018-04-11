@@ -4325,7 +4325,11 @@
             }
             self._watcher = setInterval(function(){
               if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
-                $('#sincloChatMessage').val(self._getValidChars($('#sincloChatMessage').val()));
+                if(sinclo.scenarioApi.isScenarioLFDisabled()) {
+                  $('#miniSincloChatMessage').val(self._getValidChars($('#miniSincloChatMessage').val()));
+                } else {
+                  $('#sincloChatMessage').val(self._getValidChars($('#sincloChatMessage').val()));
+                }
               }
             },100);
           }

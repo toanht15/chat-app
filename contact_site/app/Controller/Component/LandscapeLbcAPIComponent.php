@@ -199,10 +199,12 @@ class LandscapeLbcAPIComponent extends LandscapeAPIComponent
 
   private function findDataFromAPI() {
     $this->callApi();
+    $apiResult = $this->apiData;
+    $this->apiData = json_decode($apiResult->body(), TRUE);
     $this->log('request param => ' . var_export($this->parameter, TRUE), 'request');
     $this->log('response param => ' . var_export($this->apiData, TRUE), 'response');
     if (empty($this->apiData) || strcmp($this->apiData['result_code'], LandscapeAPIComponent::STATUS_ERR) === 0) {
-      throw new Exception('API呼び出し時にエラーを取得しました => body: ' . $result->body(), 502);
+      throw new Exception('API呼び出し時にエラーを取得しました => body: ' . $apiResult->body(), 502);
     } else if (empty($this->apiData['lbc_code'])) {
       // データは無いが当該IPからアクセスされると何度もAPIをコールしてしまうためIPアドレスのみデータを入れる
       // throw new Exception('検索条件に該当するデータが存在しません => body: '.$result->body(), 404);
