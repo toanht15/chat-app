@@ -53,7 +53,7 @@ class ImageTrimmingComponent extends Component {
   }
 
   protected function createImageManager() {
-    $this->manager = new ImageManager(array('driver' => 'Imagick'));
+    $this->manager = new ImageManager(array('driver' => 'gd'));
   }
 
   protected function crop() {

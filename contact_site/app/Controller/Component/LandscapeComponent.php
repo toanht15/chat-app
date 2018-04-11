@@ -4,12 +4,12 @@ App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Vali
 
 /**
  * Class LandscapeComponent
- * @property \app\Model\MLandscapeData $MLandscapeData
+ * @property MLandscapeData $MLandscapeData
  */
 class LandscapeComponent extends Component
 {
   const API_CALL_TIMEOUT = 5;
-  const LANDSCAPE_DATA_EXPIRE_SEC = 60 * 60 * 24 * 90; // 90日
+  const LANDSCAPE_DATA_EXPIRE_SEC = 7776000; // 90日
 
   const PATTERN_IP = "/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/";
   const PATTERN_LBC_CODE = "/^[0-9]+$/";
