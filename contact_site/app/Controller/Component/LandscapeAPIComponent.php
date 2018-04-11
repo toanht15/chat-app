@@ -36,7 +36,11 @@ class LandscapeAPIComponent extends Component
     $request = array(
       'header' => $this->header
     );
-    $this->apiData = $socket->get($this->apiUrl, $this->parameter, $request);
+    if(!empty($this->header)) {
+      $this->apiData = $socket->get($this->apiUrl, $this->parameter, $request);
+    } else {
+      $this->apiData = $socket->get($this->apiUrl, $this->parameter);
+    }
     //$this->apiData = $socket->get('https://api.kantan-touroku.com/lbc_renkei/parse_info?cmd=parse&cid=kttRzcMcssGxq4znx2f&callback=callback_get_info&in_text=%E2%96%A1%E2%96%A0%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%94%81%E2%96%A0%E2%96%A1%0A%E3%83%A1%E3%83%',null,$request);
   }
 
