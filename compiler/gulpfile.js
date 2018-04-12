@@ -2,6 +2,7 @@ var gulp = require('gulp'),
   sass = require('gulp-sass'),
   cssnext = require('gulp-cssnext'),
   jade = require('gulp-jade'),
+  gzip = require('gulp-gzip'),
   path = {
     css: '../contact_site/app/webroot/css/',
     scss: './scss/',
@@ -34,6 +35,7 @@ gulp.task('admin-scss-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
+    .pipe(gzip({ gzipOptions: { level: 9 } }))
     .pipe(gulp.dest(path.adCss));
 });
 
@@ -44,6 +46,7 @@ gulp.task('contact-scss-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
+    .pipe(gzip({ gzipOptions: { level: 9 } }))
     .pipe(gulp.dest(path.css));
 });
 
@@ -55,6 +58,7 @@ gulp.task('socket-sass-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
+    .pipe(gzip({ gzipOptions: { level: 9 } }))
     .pipe(gulp.dest(path.outOfCssToSocket));
 });
 
@@ -64,6 +68,7 @@ gulp.task('js-minify', function(){
     .pipe(rename({
       extname: '.min.js'
     }))
+    .pipe(gzip({ gzipOptions: { level: 9 } }))
     .pipe(gulp.dest(path.minjs));
 });
 
@@ -76,6 +81,7 @@ gulp.task('js-minify-dev', function(){
     .pipe(rename({
       extname: '.min.js'
     }))
+    .pipe(gzip({ gzipOptions: { level: 9 } }))
     .pipe(gulp.dest(path.minjs));
 });
 
