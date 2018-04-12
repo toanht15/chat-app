@@ -11,12 +11,12 @@
   "dependencies": {
     "gulp": "~3.9.0",
     "gulp-cssnext": "~1.0.1",
+    "gulp-gzip": "~1.4.2",
     "gulp-jade": "~1.1.0",
-    "gulp-uglify": "~3.0.0",
     "gulp-rename": "~1.2.2",
-    "node-sass": "^4.5.2"
+    "gulp-sass": "^4.0.1",
+    "gulp-uglify": "~3.0.0",
+    "node-sass": "^4.8.3"
   },
-  "devDependencies": {
-    "gulp-sass": "^3.1.0"
-  }
+  "devDependencies": {}
 }
