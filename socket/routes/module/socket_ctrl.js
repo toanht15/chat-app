@@ -5,6 +5,7 @@ var database = require('../database');
 var api = require('../api');
 var uuid = require('node-uuid');
 var request = require('request');
+var common = require('./common');
 
 // mysql
 var mysql = require('mysql'),
