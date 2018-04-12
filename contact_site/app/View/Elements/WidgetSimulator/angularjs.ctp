@@ -166,6 +166,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   $scope.$on('switchSimulatorChatTextArea', function(event, status) {
     $scope.isTextAreaOpen = status;
+    $timeout(function(){
+      $scope.$apply();
+    },0);
   });
 
   /**
