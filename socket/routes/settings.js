@@ -597,10 +597,10 @@ router.post("/reload/widgetSettings", function(req, res, next) {
     if(req.get('host').indexOf('127.0.0.1') === -1) {
       throw new ReferenceError('想定したURLでのコールではありません');
     }
-    if (  !('query' in req) || (('query' in req) && !('sitekey' in req['query'])) ) {
+    if (  !('body' in req) || (('body' in req) && !('sitekey' in req['body'])) ) {
       throw new Error('Forbidden');
     }
-    common.reloadWidgetSettings(req['query']['sitekey']);
+    common.reloadWidgetSettings(req['body']['sitekey']);
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
@@ -634,10 +634,10 @@ router.post("/reload/autoMessages", function(req, res, next) {
     if(req.get('host').indexOf('127.0.0.1') === -1) {
       throw new ReferenceError('想定したURLでのコールではありません');
     }
-    if (  !('query' in req) || (('query' in req) && !('sitekey' in req['query'])) ) {
+    if (  !('body' in req) || (('body' in req) && !('sitekey' in req['body'])) ) {
       throw new Error('Forbidden');
     }
-    common.reloadAutoMessageSettings(req['query']['sitekey']);
+    common.reloadAutoMessageSettings(req['body']['sitekey']);
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
@@ -671,10 +671,10 @@ router.post("/reload/operationHour", function(req, res, next) {
     if(req.get('host').indexOf('127.0.0.1') === -1) {
       throw new ReferenceError('想定したURLでのコールではありません');
     }
-    if (  !('query' in req) || (('query' in req) && !('sitekey' in req['query'])) ) {
+    if (  !('body' in req) || (('body' in req) && !('sitekey' in req['body'])) ) {
       throw new Error('Forbidden');
     }
-    common.reloadOperationHourSettings(req['query']['sitekey']);
+    common.reloadOperationHourSettings(req['body']['sitekey']);
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;

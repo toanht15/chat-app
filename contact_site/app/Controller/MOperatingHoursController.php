@@ -4,6 +4,7 @@
  * 営業時間設定
  */
 class MOperatingHoursController extends AppController {
+  public $componens = ['NodeSettingsReload'];
   public $uses = ['MOperatingHour','MWidgetSetting','TAutoMessage'];
 
   public function beforeFilter(){
@@ -76,6 +77,7 @@ class MOperatingHoursController extends AppController {
       $this->MOperatingHour->begin();
         if ( $this->MOperatingHour->save() ) {
           $this->MOperatingHour->commit();
+          NodeSettingsReloadComponent::reloadOperationHour($this->userInfo['MCompany']['company_key']);
           $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
           $this->redirect(['controller' => $this->name, 'action' => 'index']);
         }

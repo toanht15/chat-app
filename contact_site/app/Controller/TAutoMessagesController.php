@@ -17,7 +17,7 @@ class TAutoMessagesController extends AppController {
   const TEMPLATE_FILE_NAME = "template.xlsm";
 
   public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting', 'TChatbotScenario'];
-  public $components = ['AutoMessageExcelParser'];
+  public $components = ['AutoMessageExcelParser', 'NodeSettingsReloadComponent'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
@@ -238,6 +238,7 @@ class TAutoMessagesController extends AppController {
     ]);
     if ( count($ret) === 1 ) {
       if ( $this->TAutoMessage->logicalDelete($id) ) {
+        NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
       }
       else {
@@ -273,6 +274,7 @@ class TAutoMessagesController extends AppController {
     }
     if($res){
       $this->TAutoMessage->commit();
+      NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
     }
     else {
@@ -425,6 +427,7 @@ class TAutoMessagesController extends AppController {
           if( $this->TAutoMessage->save($saveData,false) ) {
             $this->MMailTransmissionSetting->commit();
             $this->TAutoMessage->commit();
+            NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
             $this->Session->delete('dstoken');
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
           }
@@ -701,6 +704,7 @@ class TAutoMessagesController extends AppController {
         $this->TransactionManager->commitTransaction($transactions);
         $result['success'] = true;
         $result['showPageNum'] = $nextPage;
+        NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
       } else {
         $result['errorMessage'] = []; // FIXME 何行目の何列がどうダメなのか返す
       }
@@ -923,6 +927,7 @@ class TAutoMessagesController extends AppController {
       $changeEditData = json_encode($changeEditData);
       $saveData['TAutoMessage']['activity'] = $changeEditData;
       if( $this->TAutoMessage->save($saveData,false) ) {
+        NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
       }
     }
     else {
