@@ -20,16 +20,17 @@ log4js.configure('./log4js_setting.json'); // 設定ファイル読み込み
 var syslogger = log4js.getLogger('system'); // リクエスト用のロガー取得
 /* ================= */
 
-function initialize() {
+function initialize(siteKey) {
   // コール順厳守
-  loadWidgetSettings();
-  loadAutoMessageSettings();
-  loadOperatingHourSettings();
+  loadWidgetSettings(siteKey);
+  loadAutoMessageSettings(siteKey);
+  loadOperatingHourSettings(siteKey);
   loadPublicHoliday();
 }
 
 function exports() {
   'use strict';
+  module.exports.reloadSettings = initialize;
   module.exports.companySettings = companySettings;
   module.exports.siteKeyIdMap = siteKeyIdMap;
   module.exports.widgetSettings = widgetSettings;
@@ -44,6 +45,7 @@ function loadWidgetSettings(siteKey) {
   'use strict';
   var getWidgetSettingSql  = 'SELECT ws.*, com.id as m_companies_id, com.company_key, com.core_settings, com.exclude_ips FROM m_widget_settings AS ws';
   if(siteKey) {
+    syslogger.info("loadWidgetSettings target : " + siteKey);
     getWidgetSettingSql += ' INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = ws.m_companies_id )';
     getWidgetSettingSql += ' WHERE ws.del_flg = 0 ORDER BY id DESC LIMIT 1;';
     pool.query(getWidgetSettingSql, siteKey,
@@ -106,6 +108,7 @@ function loadAutoMessageSettings(siteKey) {
   'use strict';
   var getTriggerListSql  = "SELECT am.*, company_key FROM t_auto_messages AS am ";
   if(siteKey) {
+    syslogger.info("loadAutoMessageSettings target : " + siteKey);
     getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
     getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?);";
     pool.query(getTriggerListSql, [siteKey, '1', '2'],
@@ -114,7 +117,7 @@ function loadAutoMessageSettings(siteKey) {
           syslogger.error('Unable load AutoMessage settings. siteKey : ' + siteKey);
           return;
         }
-        if(row && row.length > 0) {
+        if(rows && rows.length > 0) {
           autoMessageSettings[siteKey] = rows;
           syslogger.info("Load AutoMessage setting OK. siteKey : " + siteKey);
         }
@@ -149,6 +152,7 @@ function loadOperatingHourSettings(siteKey) {
   'use strict';
   var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
   if(siteKey) {
+    syslogger.info("loadOperatingHourSettings target : " + siteKey);
     pool.query(getOperatingHourSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
       function(err, row){
         if(err) {
