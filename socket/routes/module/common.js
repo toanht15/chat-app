@@ -31,6 +31,9 @@ function initialize(siteKey) {
 function exports() {
   'use strict';
   module.exports.reloadSettings = initialize;
+  module.exports.reloadWidgetSettings = loadWidgetSettings;
+  module.exports.reloadAutoMessageSettings = loadAutoMessageSettings;
+  module.exports.reloadOperationHourSettings = loadAutoMessageSettings;
   module.exports.companySettings = companySettings;
   module.exports.siteKeyIdMap = siteKeyIdMap;
   module.exports.widgetSettings = widgetSettings;
