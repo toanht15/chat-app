@@ -22,11 +22,17 @@
       var showData = [];
 
       if ( mCustomerInfoList.hasOwnProperty(id) && mCustomerInfoList[id] !== "" && mCustomerInfoList[id] != null && mCustomerInfoList[id] !== undefined ) {
+          console.log('Company');
+          console.log(mCustomerInfoList[id]);
         var c = JSON.parse(mCustomerInfoList[id]);
+        console.log('json');
+        console.log(c);
         if ( ('company' in c) && c.company.length > 0 ) {
           showData.push(c.company); // 会社名
         }
         if ( ('name' in c) && c.name.length > 0 ) {
+          console.log('cName');
+          console.log(c.name);
           showData.push(c.name); // 名前
         }
       }

@@ -39,6 +39,11 @@ class LoginController extends AppController {
    * @return void
    * */
   public function index() {
+    $this->log('token',LOG_DEBUG);
+    $this->log($this->params->pass[0],LOG_DEBUG);
+    if($this->params->pass[0] == 'error') {
+      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>"アクセストークンが不正です"]);
+    }
     $this->set('isLogin', false);
     $this->Session->destroy();
   }

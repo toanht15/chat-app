@@ -25,6 +25,9 @@ function customerInfoSave(historyId) {
   customerId = document.getElementById('customerId').value;
   visitorsId = $('#visitorsId').text();
 
+  console.log('infoData');
+  console.log($(".infoData"));
+
   $(".infoData").each(function(i){
     if(i <= 4) {
       dataList[$(this).data('key')] = this.value;

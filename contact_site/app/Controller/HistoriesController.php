@@ -126,6 +126,8 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
+    $this->log('data',LOG_DEBUG);
+    $this->log($this->request->data,LOG_DEBUG);
     $ret = true;
     $data = $this->params->query;
     if ( !isset($data['visitorsId']) ) return false;
@@ -884,6 +886,10 @@ class HistoriesController extends AppController {
 
       //ipアドレス
       if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
+        //「%」が含まれていた場合
+        if(strpos($data['History']['ip_address'],'%') !== false){
+          $data['History']['ip_address'] = str_replace('%', '\\%', $data['History']['ip_address']);
+        }
         $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%'.$data['History']['ip_address'].'%';
       }
       //開始日
@@ -898,6 +904,10 @@ class HistoriesController extends AppController {
       // 担当者に関する検索条件
       $joinType = 'LEFT';
       if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
+        //「%」が含まれていた場合
+        if(strpos($data['THistoryChatLog']['responsible_name'],'%') !== false){
+          $data['THistoryChatLog']['responsible_name'] = str_replace('%', '\\%', $data['THistoryChatLog']['responsible_name']);
+        }
         $userCond['display_name LIKE'] = "%".$data['THistoryChatLog']['responsible_name']."%";
         $joinType = 'INNER';
       }
@@ -911,6 +921,10 @@ class HistoriesController extends AppController {
 
       // 検索条件にメッセージがある場合
       if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
+      //「%」が含まれていた場合
+        if(strpos($data['THistoryChatLog']['message'],'%') !== false){
+          $data['THistoryChatLog']['message'] = str_replace('%', '\\%', $data['THistoryChatLog']['message']);
+        }
         // メッセージ条件に対応した履歴のリストを取得するサブクエリを作成
         $message = $this->THistoryChatLog->getDataSource();
         $hisIdsForMessageQuery = $message->buildStatement(
@@ -1297,61 +1311,63 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $id = $this->request->data['id'];
-    $now = date('Y/m/d H:i:s');
-    $userName = $this->userInfo['display_name'];
+    if($this->userInfo['permission_level'] == 1) {
+      $id = $this->request->data['id'];
+      $now = date('Y/m/d H:i:s');
+      $userName = $this->userInfo['display_name'];
 
-    $params = [
-      'fields' => [
-        'id'
-      ],
-      'conditions' => [
-        'THistoryChatLog.id' => $id,
-        'THistoryChatLog.delete_flg' => 0
-      ]
-    ];
-    //対象の履歴が既に削除されていないかチェック
-    $checkDeleteHistory = $this->THistoryChatLog->find('first', $params);
-
-    if(!empty($checkDeleteHistory)) {
       $params = [
         'fields' => [
-          'm_companies_id'
+          'id'
         ],
         'conditions' => [
-          'THistoryChatLog.id' => $id
+          'THistoryChatLog.id' => $id,
+          'THistoryChatLog.delete_flg' => 0
         ]
       ];
+      //対象の履歴が既に削除されていないかチェック
+      $checkDeleteHistory = $this->THistoryChatLog->find('first', $params);
 
-      //m_companies_id
-      $m_companies_id = $this->THistoryChatLog->find('first', $params)['THistoryChatLog']['m_companies_id'];
+      if(!empty($checkDeleteHistory)) {
+        $params = [
+          'fields' => [
+            'm_companies_id'
+          ],
+          'conditions' => [
+            'THistoryChatLog.id' => $id
+          ]
+        ];
 
-      if($m_companies_id == $this->userInfo['MCompany']['id']) {
-        $saveData = [];
-        $saveData = $this->THistoryChatLog->read(null, $id);
-        $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
-        $saveData['THistoryChatLog']['delete_flg'] = 1;
-        $saveData['THistoryChatLog']['deleted'] = $now;
-        $saveData['THistoryChatLog']['deleted_user_id'] = $this->userInfo['id'];
+        //m_companies_id
+        $m_companies_id = $this->THistoryChatLog->find('first', $params)['THistoryChatLog']['m_companies_id'];
 
-        $this->THistoryChatLog->set($saveData);
-        $this->THistoryChatLog->begin();
-        if ( $this->THistoryChatLog->save() ) {
-          $this->THistoryChatLog->commit();
-          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+        if($m_companies_id == $this->userInfo['MCompany']['id']) {
+          $saveData = [];
+          $saveData = $this->THistoryChatLog->read(null, $id);
+          $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
+          $saveData['THistoryChatLog']['delete_flg'] = 1;
+          $saveData['THistoryChatLog']['deleted'] = $now;
+          $saveData['THistoryChatLog']['deleted_user_id'] = $this->userInfo['id'];
+
+          $this->THistoryChatLog->set($saveData);
+          $this->THistoryChatLog->begin();
+          if ( $this->THistoryChatLog->save() ) {
+            $this->THistoryChatLog->commit();
+            $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+          }
+          else {
+            $this->THistoryChatLog->rollback();
+            $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+          }
         }
         else {
-          $this->THistoryChatLog->rollback();
           $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
         }
       }
       else {
-        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+        // すでに存在しない履歴のため変更済みとしてエラーを返す
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deletedHistory'));
       }
-    }
-    else {
-      // すでに存在しない履歴のため変更済みとしてエラーを返す
-      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deletedHistory'));
     }
   }
 
@@ -1499,6 +1515,10 @@ class HistoriesController extends AppController {
     }
 
     if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
+      //「%」が含まれていた場合
+      if(strpos($data['History']['ip_address'],'%') !== false){
+        $data['History']['ip_address'] = str_replace('%', '\\%', $data['History']['ip_address']);
+      }
       $conditions[] = [
         'THistory.ip_address LIKE' => '%'.$data['History']['ip_address'].'%',
       ];
@@ -1522,6 +1542,10 @@ class HistoriesController extends AppController {
     $joinType = 'LEFT';
     // 担当者に関する検索条件
     if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
+      //「%」が含まれていた場合
+      if(strpos($data['THistoryChatLog']['responsible_name'],'%') !== false){
+        $data['THistoryChatLog']['responsible_name'] = str_replace('%', '\\%', $data['THistoryChatLog']['responsible_name']);
+      }
       $userCond['display_name LIKE'] = "%".$data['THistoryChatLog']['responsible_name']."%";
       $joinType = 'INNER';
     }
@@ -1533,6 +1557,10 @@ class HistoriesController extends AppController {
 
     // 検索条件にメッセージがある場合
     if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
+      //「%」が含まれていた場合
+      if(strpos($data['THistoryChatLog']['message'],'%') !== false){
+        $data['THistoryChatLog']['message'] = str_replace('%', '\\%', $data['THistoryChatLog']['message']);
+      }
       // メッセージ条件に対応した履歴のリストを取得するサブクエリを作成
       $message = $this->THistoryChatLog->getDataSource();
       $hisIdsForMessageQuery = $message->buildStatement(

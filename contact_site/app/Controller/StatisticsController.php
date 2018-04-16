@@ -55,6 +55,8 @@ class StatisticsController extends AppController {
    * */
   public function forChat() {
     if($this->request->is('post')) {
+      $this->log('統計data',LOG_DEBUG);
+      $this->log($this->request->data,LOG_DEBUG);
       if ($this->THistory->validates() ) {
         $date = $this->request->data['dateFormat'];
         //月別の場合
@@ -165,6 +167,8 @@ class StatisticsController extends AppController {
     if(!empty($this->params['url']['item'])) {
       $item = $this->params['url']['item'];
     }
+    $this->log('統計チェック',LOG_DEBUG);
+    $this->log($this->params['url'],LOG_DEBUG);
     //m_companies_idチェック
     if(isset($userId) && isset($this->userInfo['MCompany']['id'])) {
       $users = $this->getUserInfo('userId',$userId);

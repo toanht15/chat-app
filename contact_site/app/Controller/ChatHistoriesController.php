@@ -227,7 +227,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params);
+        //$tHistoryCountData = $this->THistory->find('first', $params);
+        $tHistoryCountData = 2;
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -280,8 +281,11 @@
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
+      $this->log('おおおおおい',LOG_DEBUG);
+      $this->log($this->params->query,LOG_DEBUG);
       $ret = true;
       $data = $this->params->query;
+      $this->log($data,LOG_DEBUG);
       if ( !isset($data['visitorsId']) ) return false;
 
       $inputData = []; // 顧客情報リスト
@@ -312,6 +316,7 @@
 
       if ( $this->MCustomer->save() ) {
         $this->MCustomer->commit();
+         $this->log($this->THistoryChatLog->getDataSource()->getLog(),LOG_DEBUG);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       }
       else {
@@ -1179,8 +1184,12 @@
           }
         }
 
-        //ipアドレス
+        //ipアドレスに関する検索条件
         if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
+          //「%」が含まれていた場合
+          if(strpos($data['History']['ip_address'],'%') !== false){
+            $data['History']['ip_address'] = str_replace('%', '\\%', $data['History']['ip_address']);
+          }
           $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%'.$data['History']['ip_address'].'%';
         }
         //開始日
@@ -1195,6 +1204,10 @@
         // 担当者に関する検索条件
         $joinType = 'LEFT';
         if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
+          //「%」が含まれていた場合
+          if(strpos($data['THistoryChatLog']['responsible_name'],'%') !== false){
+            $data['THistoryChatLog']['responsible_name'] = str_replace('%', '\\%', $data['THistoryChatLog']['responsible_name']);
+          }
           $userCond['display_name LIKE'] = "%".$data['THistoryChatLog']['responsible_name']."%";
           $joinType = 'INNER';
         }
@@ -1221,6 +1234,10 @@
 
         // 検索条件にメッセージがある場合
         if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
+          //「%」が含まれていた場合
+          if(strpos($data['THistoryChatLog']['message'],'%') !== false){
+            $data['THistoryChatLog']['message'] = str_replace('%', '\\%', $data['THistoryChatLog']['message']);
+          }
           // メッセージ条件に対応した履歴のリストを取得するサブクエリを作成
           $message = $this->THistoryChatLog->getDataSource();
           $hisIdsForMessageQuery = $message->buildStatement(
@@ -1482,6 +1499,10 @@
 
         // チャット送信ページに関する検索条件
         if ( isset($data['THistoryChatLog']['send_chat_page']) && $data['THistoryChatLog']['send_chat_page'] !== "" ) {
+          //「%」が含まれていた場合
+          if(strpos($data['THistoryChatLog']['send_chat_page'],'%') !== false){
+            $data['THistoryChatLog']['send_chat_page'] = str_replace('%', '\\%', $data['THistoryChatLog']['send_chat_page']);
+          }
           $stayLogsIdList = $this->THistoryChatLog->find('all', [
             'table' => '(SELECT t_histories_id,t_history_stay_logs_id, message_type FROM t_history_chat_logs)',
             'fields' => [
@@ -1553,6 +1574,7 @@
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
       //初回チャット受信日時順に並び替え
       foreach($historyList as $key => $value){
         if(!empty($value['SpeechTime']['firstSpeechTime'])) {
@@ -1739,7 +1761,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        $tHistoryCountData = 2;
       }
       else {
         $tHistoryCountData = "";
@@ -1931,38 +1954,40 @@
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
-      $selectedList = $this->request->data['id'];
+      if($this->userInfo['permission_level'] == 1) {
+        $selectedList = $this->request->data['id'];
 
-      $this->THistoryChatLog->begin();
-      $res = true;
-      foreach($selectedList as $key => $val){
-        $id = (isset($val)) ? $val: "";
-        $ret = $this->THistoryChatLog->find('first', [
-            'fields' => 'THistoryChatLog.*',
-            'conditions' => [
-                'THistoryChatLog.t_histories_id' => $id,
-                'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id']
-            ],
-            'recursive' => -1
-        ]);
-        if (!empty($ret)) {
-          $param = [
-            't_histories_id' => $id,
-            'm_companies_id' => $this->userInfo['MCompany']['id']
-          ];
-          if (!$this->THistoryChatLog->deleteAll($param) ) {
-            $res = false;
+        $this->THistoryChatLog->begin();
+        $res = true;
+        foreach($selectedList as $key => $val){
+          $id = (isset($val)) ? $val: "";
+          $ret = $this->THistoryChatLog->find('first', [
+              'fields' => 'THistoryChatLog.*',
+              'conditions' => [
+                  'THistoryChatLog.t_histories_id' => $id,
+                  'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id']
+              ],
+              'recursive' => -1
+          ]);
+          if (!empty($ret)) {
+            $param = [
+              't_histories_id' => $id,
+              'm_companies_id' => $this->userInfo['MCompany']['id']
+            ];
+            if (!$this->THistoryChatLog->deleteAll($param) ) {
+              $res = false;
+            }
           }
         }
-      }
 
-      if($res){
-        $this->THistoryChatLog->commit();
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-      }
-      else {
-        $this->THistoryChatLog->rollback();
-        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+        if($res){
+          $this->THistoryChatLog->commit();
+          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+        }
+        else {
+          $this->THistoryChatLog->rollback();
+          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+        }
       }
     }
 
@@ -2150,6 +2175,10 @@
 
       //IPアドレス
       if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
+        //「%」が含まれていた場合
+        if(strpos($data['History']['ip_address'],'%') !== false){
+          $data['History']['ip_address'] = str_replace('%', '\\%', $data['History']['ip_address']);
+        }
         $conditions[] = [
           'THistory.ip_address LIKE' => '%'.$data['History']['ip_address'].'%',
         ];
@@ -2173,6 +2202,10 @@
       $joinType = 'INNER';
       // 担当者に関する検索条件
       if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
+        //「%」が含まれていた場合
+        if(strpos($data['THistoryChatLog']['responsible_name'],'%') !== false){
+          $data['THistoryChatLog']['responsible_name'] = str_replace('%', '\\%', $data['THistoryChatLog']['responsible_name']);
+        }
         $userCond['display_name LIKE'] = "%".$data['THistoryChatLog']['responsible_name']."%";
         $joinType = 'INNER';
       }
@@ -2197,6 +2230,10 @@
 
       // 検索条件にメッセージがある場合
       if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
+        //「%」が含まれていた場合
+        if(strpos($data['THistoryChatLog']['message'],'%') !== false){
+          $data['THistoryChatLog']['message'] = str_replace('%', '\\%', $data['THistoryChatLog']['message']);
+        }
         // メッセージ条件に対応した履歴のリストを取得するサブクエリを作成
         $message = $this->THistoryChatLog->getDataSource();
         $hisIdsForMessageQuery = $message->buildStatement(
@@ -2424,6 +2461,10 @@
 
         // チャット送信ページに関する検索条件
         if ( isset($data['THistoryChatLog']['send_chat_page']) && $data['THistoryChatLog']['send_chat_page'] !== "" ) {
+          //「%」が含まれていた場合
+          if(strpos($data['THistoryChatLog']['send_chat_page'],'%') !== false){
+            $data['THistoryChatLog']['send_chat_page'] = str_replace('%', '\\%', $data['THistoryChatLog']['send_chat_page']);
+          }
           $stayLogsIdList = $this->THistoryChatLog->find('all', [
             'table' => '(SELECT t_histories_id,t_history_stay_logs_id, message_type FROM t_history_chat_logs)',
             'fields' => [
@@ -2759,63 +2800,66 @@
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
-      $id = $this->request->data['id'];
-      $now = date('Y/m/d H:i:s');
-      $userName = $this->userInfo['display_name'];
+      //管理者権限チェック
+      if($this->userInfo['permission_level'] == 1) {
+        $id = $this->request->data['id'];
+        $now = date('Y/m/d H:i:s');
+        $userName = $this->userInfo['display_name'];
 
-      $params = [
-        'fields' => [
-          'id'
-        ],
-        'conditions' => [
-          'THistoryChatLog.id' => $id,
-          'THistoryChatLog.delete_flg' => 0
-        ]
-      ];
-      //対象の履歴が既に削除されていないかチェック
-      $checkDeleteHistory = $this->THistoryChatLog->find('first', $params);
-
-      if(!empty($checkDeleteHistory)) {
         $params = [
           'fields' => [
-            'm_companies_id'
+            'id'
           ],
           'conditions' => [
-            'THistoryChatLog.id' => $id
+            'THistoryChatLog.id' => $id,
+            'THistoryChatLog.delete_flg' => 0
           ]
         ];
+        //対象の履歴が既に削除されていないかチェック
+        $checkDeleteHistory = $this->THistoryChatLog->find('first', $params);
 
-        //m_companies_id
-        $m_companies_id = $this->THistoryChatLog->find('first', $params)['THistoryChatLog']['m_companies_id'];
+        if(!empty($checkDeleteHistory)) {
+          $params = [
+            'fields' => [
+              'm_companies_id'
+            ],
+            'conditions' => [
+              'THistoryChatLog.id' => $id
+            ]
+          ];
 
-        if($m_companies_id == $this->userInfo['MCompany']['id']) {
-          $saveData = [];
-          $saveData = $this->THistoryChatLog->read(null, $id);
-          $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
-          $saveData['THistoryChatLog']['delete_flg'] = 1;
-          $saveData['THistoryChatLog']['deleted'] = $now;
-          $saveData['THistoryChatLog']['deleted_user_id'] = $this->userInfo['id'];
+          //m_companies_id
+          $m_companies_id = $this->THistoryChatLog->find('first', $params)['THistoryChatLog']['m_companies_id'];
 
-          $this->THistoryChatLog->set($saveData);
-          $this->THistoryChatLog->begin();
-          if ( $this->THistoryChatLog->save() ) {
-            $this->THistoryChatLog->commit();
-            $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+          if($m_companies_id == $this->userInfo['MCompany']['id']) {
+            $saveData = [];
+            $saveData = $this->THistoryChatLog->read(null, $id);
+            $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
+            $saveData['THistoryChatLog']['delete_flg'] = 1;
+            $saveData['THistoryChatLog']['deleted'] = $now;
+            $saveData['THistoryChatLog']['deleted_user_id'] = $this->userInfo['id'];
+
+            $this->THistoryChatLog->set($saveData);
+            $this->THistoryChatLog->begin();
+            if ( $this->THistoryChatLog->save() ) {
+              $this->THistoryChatLog->commit();
+              $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
+            }
+            else {
+              $this->THistoryChatLog->rollback();
+              $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+            }
           }
           else {
-            $this->THistoryChatLog->rollback();
             $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
           }
         }
         else {
-          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
+          // すでに存在しない履歴のため変更済みとしてエラーを返す
+          $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deletedHistory'));
         }
+        return $this->request->data['historyId'];
       }
-      else {
-        // すでに存在しない履歴のため変更済みとしてエラーを返す
-        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deletedHistory'));
-      }
-      return $this->request->data['historyId'];
     }
 
     private function _lastSpeechTimeList($historyList) {
