@@ -2,7 +2,6 @@ var gulp = require('gulp'),
   sass = require('gulp-sass'),
   cssnext = require('gulp-cssnext'),
   jade = require('gulp-jade'),
-  gzip = require('gulp-gzip'),
   path = {
     css: '../contact_site/app/webroot/css/',
     scss: './scss/',
@@ -35,8 +34,7 @@ gulp.task('admin-scss-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
-    .pipe(gulp.dest(path.adCss))
-    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.adCss }));
+    .pipe(gulp.dest(path.adCss));
 });
 
 gulp.task('contact-scss-compile', function(){
@@ -46,8 +44,7 @@ gulp.task('contact-scss-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
-    .pipe(gulp.dest(path.css))
-    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.css }));
+    .pipe(gulp.dest(path.css));
 });
 
 
@@ -58,8 +55,7 @@ gulp.task('socket-sass-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
-    .pipe(gulp.dest(path.outOfCssToSocket))
-    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.outOfCssToSocket }));
+    .pipe(gulp.dest(path.outOfCssToSocket));
 });
 
 gulp.task('js-minify', function(){
@@ -68,8 +64,7 @@ gulp.task('js-minify', function(){
     .pipe(rename({
       extname: '.min.js'
     }))
-    .pipe(gulp.dest(path.minjs))
-    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.minjs }));
+    .pipe(gulp.dest(path.minjs));
 });
 
 gulp.task('js-minify-dev', function(){
@@ -81,8 +76,7 @@ gulp.task('js-minify-dev', function(){
     .pipe(rename({
       extname: '.min.js'
     }))
-    .pipe(gulp.dest(path.minjs))
-    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.minjs }));
+    .pipe(gulp.dest(path.minjs));
 });
 
 gulp.task('scss-compile', ['admin-scss-compile','contact-scss-compile','socket-sass-compile'] );
