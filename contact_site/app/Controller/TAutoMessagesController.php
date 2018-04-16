@@ -72,6 +72,12 @@ class TAutoMessagesController extends AppController {
     $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
   }
 
+  public function afterFilter() {
+    if($this->request->is('put') || $this->request->is('post')) {
+      NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
+    }
+  }
+
   /**
    * 一覧画面
    * @return void
@@ -238,7 +244,6 @@ class TAutoMessagesController extends AppController {
     ]);
     if ( count($ret) === 1 ) {
       if ( $this->TAutoMessage->logicalDelete($id) ) {
-        NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
       }
       else {
@@ -274,7 +279,6 @@ class TAutoMessagesController extends AppController {
     }
     if($res){
       $this->TAutoMessage->commit();
-      NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
     }
     else {
@@ -427,7 +431,6 @@ class TAutoMessagesController extends AppController {
           if( $this->TAutoMessage->save($saveData,false) ) {
             $this->MMailTransmissionSetting->commit();
             $this->TAutoMessage->commit();
-            NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
             $this->Session->delete('dstoken');
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
           }
@@ -704,7 +707,6 @@ class TAutoMessagesController extends AppController {
         $this->TransactionManager->commitTransaction($transactions);
         $result['success'] = true;
         $result['showPageNum'] = $nextPage;
-        NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
       } else {
         $result['errorMessage'] = []; // FIXME 何行目の何列がどうダメなのか返す
       }
@@ -750,7 +752,7 @@ class TAutoMessagesController extends AppController {
       $nextPage = $this->_entryProcess($saveData);;
       $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-      $this->redirect('/TAutoMessages/index/page:'.$nextPage);
+      $this->redirect('/TAutoMessages/index/page:'.$nextPage, null, false);
     } catch(AutoMessageException $e) {
       $this->TransactionManager->rollbackTransaction($transactions);
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
@@ -927,7 +929,6 @@ class TAutoMessagesController extends AppController {
       $changeEditData = json_encode($changeEditData);
       $saveData['TAutoMessage']['activity'] = $changeEditData;
       if( $this->TAutoMessage->save($saveData,false) ) {
-        NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
       }
     }
     else {

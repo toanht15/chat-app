@@ -18,11 +18,11 @@ class NodeSettingsReloadComponent extends Component
   }
 
   public static function reloadAutoMessages($companyKey) {
-
+    self::callApi(self::AUTO_MESSAGE_SETTINGS_API, $companyKey);
   }
 
   public static function reloadOperationHour($companyKey) {
-
+    self::callApi(self::OPERATION_HOUR_SETTINGS_API, $companyKey);
   }
 
   private static function callApi($url, $siteKey) {

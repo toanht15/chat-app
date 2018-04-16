@@ -26,6 +26,7 @@ function initialize(siteKey) {
   loadAutoMessageSettings(siteKey);
   loadOperatingHourSettings(siteKey);
   loadPublicHoliday();
+  syslogger.info("ALL DATA LOADING IS SUCCESSFUL =====");
 }
 
 function exports() {
@@ -33,13 +34,7 @@ function exports() {
   module.exports.reloadSettings = initialize;
   module.exports.reloadWidgetSettings = loadWidgetSettings;
   module.exports.reloadAutoMessageSettings = loadAutoMessageSettings;
-  module.exports.reloadOperationHourSettings = loadAutoMessageSettings;
-  module.exports.companySettings = companySettings;
-  module.exports.siteKeyIdMap = siteKeyIdMap;
-  module.exports.widgetSettings = widgetSettings;
-  module.exports.autoMessageSettings = autoMessageSettings;
-  module.exports.publicHolidaySettings = publicHolidaySettings;
-  module.exports.operationHourSettings = operationHourSettings;
+  module.exports.reloadOperationHourSettings = loadOperatingHourSettings;
   module.exports.mysql = mysql;
   module.exports.pool = pool;
 }
@@ -71,6 +66,9 @@ function loadWidgetSettings(siteKey) {
           widgetSettings[siteKey]['display_type'] = row[0].display_type;
           widgetSettings[siteKey]['style_settings'] = JSON.parse(row[0].style_settings);
           syslogger.info("Load Widget setting OK. siteKey : " + siteKey);
+          module.exports.companySettings = companySettings;
+          module.exports.siteKeyIdMap = siteKeyIdMap;
+          module.exports.widgetSettings = widgetSettings;
         }
       }
     );
@@ -101,6 +99,9 @@ function loadWidgetSettings(siteKey) {
             widgetSettings[targetSiteKey].style_settings = JSON.parse(row.style_settings);
           });
           syslogger.info('Load ALL Widget settings is successful.');
+          module.exports.companySettings = companySettings;
+          module.exports.siteKeyIdMap = siteKeyIdMap;
+          module.exports.widgetSettings = widgetSettings;
         }
       }
     );
@@ -123,6 +124,7 @@ function loadAutoMessageSettings(siteKey) {
         if(rows && rows.length > 0) {
           autoMessageSettings[siteKey] = rows;
           syslogger.info("Load AutoMessage setting OK. siteKey : " + siteKey);
+          module.exports.autoMessageSettings = autoMessageSettings;
         }
       }
     );
@@ -145,6 +147,7 @@ function loadAutoMessageSettings(siteKey) {
             autoMessageSettings[targetSiteKey].push(row);
           });
           syslogger.info('Load ALL Auto Message settings is successful.');
+          module.exports.autoMessageSettings = autoMessageSettings;
         }
       }
     );
@@ -165,6 +168,7 @@ function loadOperatingHourSettings(siteKey) {
         if(row && row.length > 0) {
           operationHourSettings[siteKey] = row;
           syslogger.info("Load Operating-hour setting OK. siteKey : " + siteKey);
+          module.exports.operationHourSettings = operationHourSettings;
         }
       }
     );
@@ -186,6 +190,7 @@ function loadOperatingHourSettings(siteKey) {
             operationHourSettings[targetSiteKey] = row;
           });
           syslogger.info('Load ALL Operating-hour settings is successful.');
+          module.exports.operationHourSettings = operationHourSettings;
         }
       }
     );
@@ -209,6 +214,7 @@ function loadPublicHoliday() {
           publicHolidaySettings[row.year].push(row);
         });
         syslogger.info('Load ALL Operating-hour settings is successful.');
+        module.exports.publicHolidaySettings = publicHolidaySettings;
       }
     }
   );
