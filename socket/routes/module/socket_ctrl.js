@@ -3746,6 +3746,15 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           console.log("scList : " + JSON.stringify(scList[obj.targetKey]));
           console.log("End --------------------------------------------------------");
           break;
+        case 11: // view  socket.emit('settingReload', JSON.stringify({type:11, targetKey: "demo", targetKey: "master"}));
+          var targetKey = obj.targetKey;
+          console.log("getCommonMemoryList --------------------------------------------------");
+          console.log("common.companySettings : " + JSON.stringify(common.companySettings[targetKey]));
+          console.log("common.widgetSettings : " + JSON.stringify(common.widgetSettings[targetKey]));
+          console.log("common.autoMessageSettings : " + JSON.stringify(common.autoMessageSettings[targetKey]));
+          console.log("common.operationHourSettings : " + JSON.stringify(common.operationHourSettings[targetKey]));
+          console.log("End --------------------------------------------------------");
+          break;
         default:
           break;
       }

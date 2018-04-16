@@ -17,7 +17,7 @@ class TAutoMessagesController extends AppController {
   const TEMPLATE_FILE_NAME = "template.xlsm";
 
   public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting', 'TChatbotScenario'];
-  public $components = ['AutoMessageExcelParser', 'NodeSettingsReloadComponent'];
+  public $components = ['AutoMessageExcelParser', 'NodeSettingsReload'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
