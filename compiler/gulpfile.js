@@ -35,8 +35,8 @@ gulp.task('admin-scss-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
-    .pipe(gzip({ gzipOptions: { level: 9 } }))
-    .pipe(gulp.dest(path.adCss));
+    .pipe(gulp.dest(path.adCss))
+    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.adCss }));
 });
 
 gulp.task('contact-scss-compile', function(){
@@ -46,8 +46,8 @@ gulp.task('contact-scss-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
-    .pipe(gzip({ gzipOptions: { level: 9 } }))
-    .pipe(gulp.dest(path.css));
+    .pipe(gulp.dest(path.css))
+    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.css }));
 });
 
 
@@ -58,8 +58,8 @@ gulp.task('socket-sass-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
-    .pipe(gzip({ gzipOptions: { level: 9 } }))
-    .pipe(gulp.dest(path.outOfCssToSocket));
+    .pipe(gulp.dest(path.outOfCssToSocket))
+    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.outOfCssToSocket }));
 });
 
 gulp.task('js-minify', function(){
@@ -68,8 +68,8 @@ gulp.task('js-minify', function(){
     .pipe(rename({
       extname: '.min.js'
     }))
-    .pipe(gzip({ gzipOptions: { level: 9 } }))
-    .pipe(gulp.dest(path.minjs));
+    .pipe(gulp.dest(path.minjs))
+    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.minjs }));
 });
 
 gulp.task('js-minify-dev', function(){
@@ -81,8 +81,8 @@ gulp.task('js-minify-dev', function(){
     .pipe(rename({
       extname: '.min.js'
     }))
-    .pipe(gzip({ gzipOptions: { level: 9 } }))
-    .pipe(gulp.dest(path.minjs));
+    .pipe(gulp.dest(path.minjs))
+    .pipe(gzip({ gzipOptions: { level: 9 }, deleteMode: path.minjs }));
 });
 
 gulp.task('scss-compile', ['admin-scss-compile','contact-scss-compile','socket-sass-compile'] );
