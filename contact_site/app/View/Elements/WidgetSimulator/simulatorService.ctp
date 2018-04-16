@@ -104,6 +104,9 @@ sincloApp.factory('SimulatorService', function() {
     get re_border_none() {
       return this._settings['re_border_color'] === 'なし';
     },
+    get re_text_size() {
+      return Number(this._settings['re_text_size']);
+    },
     get se_border_none() {
       return this._settings['se_border_color'] === 'なし';
     },
