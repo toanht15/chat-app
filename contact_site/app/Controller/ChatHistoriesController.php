@@ -227,8 +227,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params);
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params);
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -281,11 +280,8 @@
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
-      $this->log('おおおおおい',LOG_DEBUG);
-      $this->log($this->params->query,LOG_DEBUG);
       $ret = true;
       $data = $this->params->query;
-      $this->log($data,LOG_DEBUG);
       if ( !isset($data['visitorsId']) ) return false;
 
       $inputData = []; // 顧客情報リスト
@@ -316,7 +312,6 @@
 
       if ( $this->MCustomer->save() ) {
         $this->MCustomer->commit();
-         $this->log($this->THistoryChatLog->getDataSource()->getLog(),LOG_DEBUG);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       }
       else {
@@ -1761,8 +1756,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
       }
       else {
         $tHistoryCountData = "";

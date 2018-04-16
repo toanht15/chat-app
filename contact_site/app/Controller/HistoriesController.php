@@ -126,8 +126,6 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->log('data',LOG_DEBUG);
-    $this->log($this->request->data,LOG_DEBUG);
     $ret = true;
     $data = $this->params->query;
     if ( !isset($data['visitorsId']) ) return false;

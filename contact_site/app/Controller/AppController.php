@@ -158,7 +158,7 @@ class AppController extends Controller {
     $this->coreSettings = $this->mergeCoreSettings(json_decode($this->userInfo['MCompany']['core_settings'], true));
     $this->set('coreSettings', $this->coreSettings);
 
-    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA] ) {
+    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
       $this->userInfo['accessToken'] = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
       $this->Session->write('global.userInfo.accessToken');
     }

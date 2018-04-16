@@ -58,8 +58,6 @@ class MUsersController extends AppController {
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->MUser->recursive = -1;
       $this->request->data = $this->MUser->read(null, $this->request->data['id']);
-      $this->log('dataMUsers',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       if($this->request->data['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id']  && $this->request->data['MUser']['del_flg'] != 1
         && $this->request->data['MUser']['permission_level'] != 99) {
         $token = md5(uniqid(rand()));
@@ -182,13 +180,9 @@ class MUsersController extends AppController {
    * */
   public function remoteDeleteUser() {
     Configure::write('debug', 0);
-    $this->log('requestData',LOG_DEBUG);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->MUser->recursive = -1;
-    $this->log('requestData',LOG_DEBUG);
-    $this->log($this->request->data,LOG_DEBUG);
-    $this->request->data['selectedList'][0] = 5;
     $data = $this->MUser->find('all', [
       'fields' => [
         'id',
@@ -199,14 +193,10 @@ class MUsersController extends AppController {
         'id' => $this->request->data['selectedList']
       ]
     ]);
-    $this->log('ユーザdata',LOG_DEBUG);
-    $this->log($data,LOG_DEBUG);
     $this->MUser->begin();
     $res = true;
     foreach($data as $key => $val){
-      $this->log('data1',LOG_DEBUG);
       if($val['MUser']['permission_level'] != 99 && $val['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id']) {
-        $this->log('data2',LOG_DEBUG);
         if (! $this->MUser->delete($val['MUser']['id']) ) {
           $res = false;
         }

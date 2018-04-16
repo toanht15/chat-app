@@ -105,8 +105,6 @@ class TDictionariesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->log('saveData',LOG_DEBUG);
-    $this->log($this->request->data,LOG_DEBUG);
     $saveData = [];
     $errorMessage = [];
     //追加（新規）
@@ -330,8 +328,6 @@ class TDictionariesController extends AppController {
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
-      $this->log('data',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $data = $this->request->data;
       //カテゴリーIDチェック
       $selectedCategory = $this->getCategoryEntityFromId($data['selectedCategory']);
@@ -407,8 +403,6 @@ class TDictionariesController extends AppController {
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
-      $this->log('III',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $data = $this->request->data;
       //カテゴリーIDチェック
       $selectedCategory = $this->getCategoryEntityFromId($data['selectedCategory']);
@@ -457,8 +451,6 @@ class TDictionariesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->log('data',LOG_DEBUG);
-    $this->log($this->request->data,LOG_DEBUG);
     $saveData = [];
     $errorMessage = [];
     if($this->Session->read('dstoken') == $this->request->data['dstoken']){
@@ -558,8 +550,6 @@ class TDictionariesController extends AppController {
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
-      $this->log('data',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $data = $this->request->data;
 
       //カテゴリーIDチェック
@@ -622,8 +612,6 @@ class TDictionariesController extends AppController {
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
-      $this->log('deleteData',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $this->TDictionaryCategory->recursive = -1;
       $data = $this->request->data;
       $this->TDictionaryCategory->begin();
@@ -830,8 +818,6 @@ class TDictionariesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->log('delete',LOG_DEBUG);
-    $this->log($this->request->data,LOG_DEBUG);
     $this->TDictionary->recursive = -1;
     $selectedList = $this->request->data['selectedList'];
     $isDeleteCategory = $this->request->data['isDeleteCategory'];
