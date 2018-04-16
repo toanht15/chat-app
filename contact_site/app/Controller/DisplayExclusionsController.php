@@ -5,7 +5,7 @@
  */
 class DisplayExclusionsController extends AppController {
   public $uses = ['MCompany'];
-  public $components = ['NodeSettingsReloadComponent'];
+  public $components = ['NodeSettingsReload'];
 
   public function beforeFilter(){
     parent::beforeFilter();
