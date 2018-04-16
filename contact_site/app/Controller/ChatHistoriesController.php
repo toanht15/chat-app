@@ -1068,9 +1068,9 @@
       switch ($type) {
         //履歴一覧ボタンをクリックした場合
         case 1:
-          $historyConditions['History']['start_day'] = date("Y/m/d",strtotime("-30 day"));
+          $historyConditions['History']['start_day'] = date("Y/m/d",strtotime("-6 day"));
           $historyConditions['History']['finish_day'] = date("Y/m/d");
-          $historyConditions['History']['period'] = '過去一ヵ月間';
+          $historyConditions['History']['period'] = '過去一週間';
         break;
         //条件クリアをクリックした場合
         case 2:
