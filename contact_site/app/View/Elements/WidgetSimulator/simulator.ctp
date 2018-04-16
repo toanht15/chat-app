@@ -149,11 +149,11 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk.details { background-color: {{widget.settings['chat_talk_background_color']}}; }
         #sincloBox ul#chatTalk div.liLeft { text-align: left; }
         #sincloBox ul#chatTalk div.liRight { text-align: right; }
-        #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 8px; font-size: 12px; line-height: 1.4; white-space: pre; }
+        #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 10px 15px; font-size: 12px; line-height: 1.4; white-space: pre; }
         #sincloBox ul#chatTalk li.middleSize { font-size: 13px; }
         #sincloBox ul#chatTalk li.largeSize { font-size: 13px; }
         #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
-        #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 5px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
+        #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
         #sincloBox ul#chatTalk li.sinclo_se.details { background-color: {{widget.getSeBackgroundColor()}}; }
         #sincloBox ul#chatTalk li.sinclo_se.notNone { border: 1px solid {{widget.getTalkBorderColor('se')}}; }
         #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; border-bottom-right-radius: 0px; }
@@ -188,8 +188,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.sinclo-radio { display: block; margin-top: 0.1em; margin-bottom: -1.25em; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding: 0 0 0 {{widget.re_text_size+4}}px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: {{widget.radioButtonBeforeTop}}px; left: 0px; margin-top: -{{widget.radioButtonBeforeTop}}px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 1px solid {{widget.settings['re_text_color']}}; border-radius: 50%; background-color: {{widget.getTalkBorderColor('re')}}; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: {{widget.radioButtonAfterTop}}px; left: {{widget.radioButtonAfterLeft}}px;; margin-top: -{{widget.radioButtonAfterMarginTop}}px; width: {{widget.re_text_size-6}}px; height: {{widget.re_text_size-6}}px; background: {{widget.settings['re_text_color']}}; border-radius: 50%; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: {{widget.radioButtonBeforeTop}}px; left: 0px; margin-top: -{{widget.radioButtonBeforeTop}}px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: {{widget.radioButtonAfterTop}}px; left: {{widget.radioButtonAfterLeft}}px;; margin-top: -{{widget.radioButtonAfterMarginTop}}px; width: {{widget.re_text_size-6}}px; height: {{widget.re_text_size-6}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:disabled + label { opacity: 0.5;}
 
         /* ファイル送信 */
@@ -434,11 +434,11 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
         #sincloBox ul#chatTalk { width: 100%; height: 100px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
         #sincloBox ul#chatTalk.details { background-color: {{widget.settings['chat_talk_background_color']}}; }
-        #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 3px; font-size: 11px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
+        #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 10px 15px; font-size: 11px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
         #sincloBox ul#chatTalk div.liLeft { text-align: left; }
         #sincloBox ul#chatTalk div.liRight { text-align: right; }
         #sincloBox ul#chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
-        #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 5px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
+        #sincloBox ul#chatTalk li.balloonType { display: inline-block; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
         #sincloBox ul#chatTalk li.sinclo_se.details { background-color: {{widget.getSeBackgroundColor()}}; }
         #sincloBox ul#chatTalk li.sinclo_se.notNone { border: 1px solid {{widget.getTalkBorderColor('se')}}; }
         #sincloBox ul#chatTalk li.sinclo_se.balloonType { margin-right: 15px; border-bottom-right-radius: 0px; }
@@ -465,8 +465,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.sinclo-radio { display: block; margin-top: 0.1em; margin-bottom: -1.25em; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding: 0 0 0 15px; color:{{widget.settings['re_text_color']}}; min-height: 12px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 1px; left: 0px; width: 11px; height: 11px; border: 1px solid {{widget.settings['re_text_color']}}; border-radius: 50%; background-color: widget.getTalkBorderColor('re'); }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 4px; left: 3px; width: 7px; height: 7px; background: {{widget.settings['re_text_color']}}; border-radius: 50%; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 1px; left: 0px; width: 11px; height: 11px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 4px; left: 3px; width: 7px; height: 7px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox section#chatTab > div { height: 65px!important;  padding: 10px; }
         #sincloBox section#chatTab textarea#sincloChatMessage { width: 80%; height: 100%; color: {{widget.settings['other_text_color']}}; margin: 0; resize: none; padding: 5px; }
         #sincloBox section#chatTab textarea#sincloChatMessage.details { color: {{widget.settings['message_box_text_color']}}; background-color: {{widget.settings['message_box_background_color']}}; }
