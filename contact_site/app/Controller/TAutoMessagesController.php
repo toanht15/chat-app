@@ -607,7 +607,7 @@ class TAutoMessagesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $inputData = $this->request->query;
+    $inputData = $this->request->data;
     $case = gettype($inputData['status']);
     $activeFlg = 1;
     if ($case === "boolean" && $inputData['status'] || $case === "string" && strcmp($inputData['status'], 'true') === 0) {
