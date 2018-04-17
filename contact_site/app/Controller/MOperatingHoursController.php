@@ -38,6 +38,9 @@ class MOperatingHoursController extends AppController {
     }
 
     if($this->request->is('post')) {
+      if(!$this->coreSettings[C_COMPANY_USE_OPERATING_HOUR]) {
+        $this->redirect("/");
+      }
       $saveData = $this->MOperatingHour->read(null, $operatingHourData['MOperatingHour']['id']);
 
       if(isset($this->request->data['MOperatingHour']['outputData'])) {
