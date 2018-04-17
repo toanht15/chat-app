@@ -13,6 +13,7 @@
         var mailAddress = document.getElementById('MUserMailAddress').value;
         var password = document.getElementById('MUserNewPassword').value;
         var permissionLevel = document.getElementById('MUserPermissionLevel').value;
+        var accessToken = "<?=$token?>";
         $.ajax({
             type: "post",
             url: "<?=$this->Html->url('/MUsers/remoteSaveEntryForm')?>",
@@ -22,7 +23,8 @@
                 displayName: displayName,
                 mailAddress: mailAddress,
                 password: password,
-                permissionLevel: permissionLevel
+                permissionLevel: permissionLevel,
+                accessToken: accessToken
             },
             cache: false,
             dataType: "JSON",
@@ -34,7 +36,6 @@
                 if ( keys.length === 0 ) {
                     var url = "<?= $this->Html->url('/MUsers/index') ?>";
                     location.href = url + "/page:" + page;
-//                    location.href = "<?=$this->Html->url(array('controller' => 'MUsers', 'action' => 'index'))?>";
                     return false;
                 }
                 for (var i = 0; i < keys.length; i++) {
@@ -60,7 +61,8 @@
                 }
             },
             error: function(data) {
-              console.log('error');
+              var url = "<?= $this->Html->url('/MUsers/index') ?>";
+              location.href = url + "/page:" + page;
             }
         });
     };
