@@ -60,6 +60,7 @@ class TrialController extends AppController {
     if(!$this->MUser->validates()) {
       // 画面に返す
       $this->response->statusCode(409);
+      return;
     }
 
     $socket = new HttpSocket(array(
