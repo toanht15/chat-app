@@ -218,8 +218,6 @@ class AppController extends Controller {
 
     /* 管理者権限かどうかを渡す */
     $this->set('adminFlg', (strcmp($this->userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ));
-    $this->log('チェック',LOG_DEBUG);
-    $this->log($this->coreSettings,LOG_DEBUG);
     /* 契約ごと使用可能ページ */
     switch($this->name){
       case "TAutoMessages":

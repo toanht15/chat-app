@@ -893,7 +893,7 @@ class TAutoMessagesController extends AppController {
     $this->TAutoMessage->set($saveData);
 
     // action_typeごとに不要なバリデーションルールを削除する
-    //$this->TAutoMessage->checkBeforeValidates($saveData['TAutoMessage']['action_type']);
+    $this->TAutoMessage->checkBeforeValidates($saveData['TAutoMessage']['action_type']);
 
     $validate = $this->TAutoMessage->validates();
     $errors = $this->TAutoMessage->validationErrors;
