@@ -109,6 +109,10 @@ class TAutoMessagesController extends AppController {
    * */
   public function add() {
     if ( $this->request->is('post') ) {
+      if(!empty($this->request->data['TAutoMessage']['t_chatbot_scenario_id']) &&
+        !$this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) {
+        $this->redirect("/");
+      }
       $this->_entry($this->request->data);
     }
 
@@ -145,6 +149,10 @@ class TAutoMessagesController extends AppController {
    * */
   public function edit($id=null) {
     if ($this->request->is('put')) {
+      if(!empty($this->request->data['TAutoMessage']['t_chatbot_scenario_id']) &&
+        !$this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) {
+        $this->redirect("/");
+      }
       $this->_entry($this->request->data);
     }
     else {
