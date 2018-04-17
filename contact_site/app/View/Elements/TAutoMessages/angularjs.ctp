@@ -429,6 +429,7 @@ sincloApp.directive('ngShowonhover',function() {
 function removeAct(lastPage){
     modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
     popupEvent.closePopup = function(){
+      loading.load.start();
         $.ajax({
             type: 'post',
             data: {
@@ -445,6 +446,7 @@ function removeAct(lastPage){
 }
 
 function submitAct(){
+  loading.load.start();
   $('#TAutoMessageEntryForm').submit();
 }
 
