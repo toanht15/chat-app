@@ -56,6 +56,12 @@ class TrialController extends AppController {
     $data['MAgreements']['agreement_start_day'] = '';
     $data['MAgreements']['agreement_end_day'] = '';
 
+    $this->MUser->set($data['MUser']);
+    if(!$this->MUser->validates()) {
+      // 画面に返す
+      $this->response->statusCode(409);
+    }
+
     $socket = new HttpSocket(array(
       'timeout' => self::API_CALL_TIMEOUT
     ));
