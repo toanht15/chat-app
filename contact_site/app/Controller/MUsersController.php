@@ -81,8 +81,6 @@ class MUsersController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->log('requestData',LOG_DEBUG);
-    $this->log($this->request->data,LOG_DEBUG);
     $tmpData = [];
     $saveData = [];
     $insertFlg = true;
@@ -90,13 +88,8 @@ class MUsersController extends AppController {
     if ( !$this->request->is('ajax') ) return false;
 
     $token = $this->Session->read('token');
-    $this->log('トークン見る',LOG_DEBUG);
-    $this->log($token,LOG_DEBUG);
-    $this->log($this->request->data['accessToken'],LOG_DEBUG);
     //トークンチェック
     if($this->request->data['accessToken'] == $token) {
-      $this->log('見ろ見ろ',LOG_DEBUG);
-
       if (!empty($this->request->data['userId'])) {
         $this->MUser->recursive = -1;
         $tmpData = $this->MUser->read(null, $this->request->data['userId']);
