@@ -163,6 +163,7 @@ var balloonApi = {
 
 // 有効/無効処理のリクエスト
 var sendActiveRequest = function(data){
+  loading.load.start();
   $.ajax({
     type: 'GET',
     url: '/TAutoMessages/changeStatus',
@@ -275,6 +276,7 @@ function openCopyDialog(){
   }
   modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
+    loading.load.start();
     $.ajax({
       type: 'post',
       cache: false,

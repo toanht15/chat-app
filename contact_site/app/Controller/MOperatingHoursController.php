@@ -4,11 +4,19 @@
  * 営業時間設定
  */
 class MOperatingHoursController extends AppController {
+  public $components = ['NodeSettingsReload'];
   public $uses = ['MOperatingHour','MWidgetSetting','TAutoMessage'];
 
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', '営業時間設定');
+  }
+
+  public function afterFilter() {
+    parent::afterFilter();
+    if($this->request->is('post') || $this->request->is('put')) {
+      NodeSettingsReloadComponent::reloadOperationHour($this->userInfo['MCompany']['company_key']);
+    }
   }
 
   /* *
@@ -80,7 +88,7 @@ class MOperatingHoursController extends AppController {
         if ( $this->MOperatingHour->save() ) {
           $this->MOperatingHour->commit();
           $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-          $this->redirect(['controller' => $this->name, 'action' => 'index']);
+          $this->redirect(['controller' => $this->name, 'action' => 'index'], null, false);
         }
         else {
           $this->MOperatingHour->rollback();
@@ -101,7 +109,7 @@ class MOperatingHoursController extends AppController {
         $this->MOperatingHour->begin();
         if ( $this->MOperatingHour->save() ) {
           $this->MOperatingHour->commit();
-          $this->redirect(['controller' => $this->name, 'action' => 'index']);
+          $this->redirect(['controller' => $this->name, 'action' => 'index'], null, false);
         }
         else {
           $this->MOperatingHour->rollback();

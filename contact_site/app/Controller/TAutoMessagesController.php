@@ -17,7 +17,7 @@ class TAutoMessagesController extends AppController {
   const TEMPLATE_FILE_NAME = "template.xlsm";
 
   public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting', 'TChatbotScenario'];
-  public $components = ['AutoMessageExcelParser'];
+  public $components = ['AutoMessageExcelParser', 'NodeSettingsReload'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
@@ -70,6 +70,12 @@ class TAutoMessagesController extends AppController {
       $operatingHourData['MOperatingHour']['active_flg'] = 2;
     }
     $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+  }
+
+  public function afterFilter() {
+    if($this->request->is('put') || $this->request->is('post')) {
+      NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
+    }
   }
 
   /**
@@ -754,7 +760,7 @@ class TAutoMessagesController extends AppController {
       $nextPage = $this->_entryProcess($saveData);;
       $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-      $this->redirect('/TAutoMessages/index/page:'.$nextPage);
+      $this->redirect('/TAutoMessages/index/page:'.$nextPage, null, false);
     } catch(AutoMessageException $e) {
       $this->TransactionManager->rollbackTransaction($transactions);
       $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);

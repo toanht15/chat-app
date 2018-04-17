@@ -278,6 +278,8 @@ class AppController extends Controller {
     }
   }
 
+  public function afterFilter(){}
+
   /**
    * checkPort プロトコルチェック
    * @return void
