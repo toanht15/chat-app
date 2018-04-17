@@ -218,7 +218,6 @@ class AppController extends Controller {
 
     /* 管理者権限かどうかを渡す */
     $this->set('adminFlg', (strcmp($this->userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ));
-
     /* 契約ごと使用可能ページ */
     switch($this->name){
       case "TAutoMessages":
@@ -242,20 +241,8 @@ class AppController extends Controller {
         break;
       case "TDictionaries":
         if ( (!(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT]))||
-          (!(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
-          && isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]
+          (!(isset($this->coreSettings[C_COMPANY_USE_DICTIONARY_CATEGORY]) && $this->coreSettings[C_COMPANY_USE_DICTIONARY_CATEGORY])
           && $this->action == 'remoteSaveCategoryEntryForm')) {
-          $this->redirect("/");
-        }
-        break;
-      case "TCampaigns":
-      case "MOperatingHours":
-        if ( isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) {
-          $this->redirect("/");
-        }
-        break;
-      case "TChatbotScenario":
-        if ( !isset($this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) {
           $this->redirect("/");
         }
         break;

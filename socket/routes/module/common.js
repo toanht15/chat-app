@@ -2,6 +2,7 @@ var database = require('../database');
 /* EXPORT TARGET VARIABLES */
 var companySettings = {},
     siteKeyIdMap = {},
+    idSiteKeyMap = {},
     widgetSettings = {},
     autoMessageSettings = {},
     publicHolidaySettings = {},
@@ -22,11 +23,15 @@ var syslogger = log4js.getLogger('system'); // リクエスト用のロガー取
 
 function initialize(siteKey) {
   // コール順厳守
-  loadWidgetSettings(siteKey);
-  loadAutoMessageSettings(siteKey);
-  loadOperatingHourSettings(siteKey);
-  loadPublicHoliday();
-  syslogger.info("ALL DATA LOADING IS SUCCESSFUL =====");
+  loadWidgetSettings(siteKey,function(){
+    loadAutoMessageSettings(siteKey, function(){
+      loadOperatingHourSettings(siteKey, function(){
+        loadPublicHoliday(function(){
+          syslogger.info("ALL DATA LOADING IS SUCCESSFUL =====");
+        });
+      });
+    });
+  });
 }
 
 function exports() {
@@ -39,7 +44,7 @@ function exports() {
   module.exports.pool = pool;
 }
 
-function loadWidgetSettings(siteKey) {
+function loadWidgetSettings(siteKey, callback) {
   'use strict';
   var getWidgetSettingSql  = 'SELECT ws.*, com.id as m_companies_id, com.company_key, com.core_settings, com.exclude_ips FROM m_widget_settings AS ws';
   if(siteKey) {
@@ -60,7 +65,8 @@ function loadWidgetSettings(siteKey) {
             widgetSettings[siteKey] = {};
           }
           companySettings[siteKey]['id'] = row[0].m_companies_id;
-          siteKeyIdMap[row[0].m_companies_id] = siteKey;
+          siteKeyIdMap[siteKey] = row[0].m_companies_id;
+          idSiteKeyMap[row[0].m_companies_id] = siteKey;
           companySettings[siteKey]['core_settings'] = JSON.parse(row[0].core_settings);
           companySettings[siteKey]['exclude_ips'] = row[0].exclude_ips;
           widgetSettings[siteKey]['display_type'] = row[0].display_type;
@@ -68,8 +74,10 @@ function loadWidgetSettings(siteKey) {
           syslogger.info("Load Widget setting OK. siteKey : " + siteKey);
           module.exports.companySettings = companySettings;
           module.exports.siteKeyIdMap = siteKeyIdMap;
+          module.exports.idSiteKeyMap = idSiteKeyMap;
           module.exports.widgetSettings = widgetSettings;
         }
+        if(callback) callback();
       }
     );
   } else {
@@ -92,7 +100,8 @@ function loadWidgetSettings(siteKey) {
               widgetSettings[targetSiteKey] = {};
             }
             companySettings[targetSiteKey].id = row.m_companies_id;
-            siteKeyIdMap[row.m_companies_id] = targetSiteKey;
+            siteKeyIdMap[targetSiteKey] = row.m_companies_id;
+            idSiteKeyMap[row.m_companies_id] = targetSiteKey;
             companySettings[targetSiteKey].core_settings = JSON.parse(row.core_settings);
             companySettings[targetSiteKey].exclude_ips = row.exclude_ips;
             widgetSettings[targetSiteKey].display_type = row.display_type;
@@ -101,14 +110,16 @@ function loadWidgetSettings(siteKey) {
           syslogger.info('Load ALL Widget settings is successful.');
           module.exports.companySettings = companySettings;
           module.exports.siteKeyIdMap = siteKeyIdMap;
+          module.exports.idSiteKeyMap = idSiteKeyMap;
           module.exports.widgetSettings = widgetSettings;
         }
+        if(callback) callback();
       }
     );
   }
 }
 
-function loadAutoMessageSettings(siteKey) {
+function loadAutoMessageSettings(siteKey, callback) {
   'use strict';
   var getTriggerListSql  = "SELECT am.*, company_key FROM t_auto_messages AS am ";
   if(siteKey) {
@@ -126,6 +137,7 @@ function loadAutoMessageSettings(siteKey) {
           syslogger.info("Load AutoMessage setting OK. siteKey : " + siteKey);
           module.exports.autoMessageSettings = autoMessageSettings;
         }
+        if(callback) callback();
       }
     );
   } else {
@@ -149,12 +161,13 @@ function loadAutoMessageSettings(siteKey) {
           syslogger.info('Load ALL Auto Message settings is successful.');
           module.exports.autoMessageSettings = autoMessageSettings;
         }
+        if(callback) callback();
       }
     );
   }
 }
 
-function loadOperatingHourSettings(siteKey) {
+function loadOperatingHourSettings(siteKey, callback) {
   'use strict';
   var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
   if(siteKey) {
@@ -170,6 +183,7 @@ function loadOperatingHourSettings(siteKey) {
           syslogger.info("Load Operating-hour setting OK. siteKey : " + siteKey);
           module.exports.operationHourSettings = operationHourSettings;
         }
+        if(callback) callback();
       }
     );
   } else {
@@ -183,7 +197,7 @@ function loadOperatingHourSettings(siteKey) {
         }
         if(rows && rows.length > 0) {
           rows.forEach(function(row){
-            var targetSiteKey = siteKeyIdMap[row.m_companies_id];
+            var targetSiteKey = idSiteKeyMap[row.m_companies_id];
             if(!operationHourSettings[targetSiteKey]) {
               operationHourSettings[targetSiteKey] = {};
             }
@@ -192,12 +206,13 @@ function loadOperatingHourSettings(siteKey) {
           syslogger.info('Load ALL Operating-hour settings is successful.');
           module.exports.operationHourSettings = operationHourSettings;
         }
+        if(callback) callback();
       }
     );
   }
 }
 
-function loadPublicHoliday() {
+function loadPublicHoliday(callback) {
   var getPublicHolidaySQL = "SELECT * FROM public_holidays;";
   publicHolidaySettings = {};
   pool.query(getPublicHolidaySQL,
@@ -213,9 +228,10 @@ function loadPublicHoliday() {
           }
           publicHolidaySettings[row.year].push(row);
         });
-        syslogger.info('Load ALL Operating-hour settings is successful.');
+        syslogger.info('Load Public-holiday settings is successful.');
         module.exports.publicHolidaySettings = publicHolidaySettings;
       }
+      if(callback) callback();
     }
   );
 }
