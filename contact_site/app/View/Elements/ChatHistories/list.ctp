@@ -574,23 +574,23 @@
             <li>
             <?php $this->log('mCusData',LOG_DEBUG); $this->log($mCusData,LOG_DEBUG); ?>
               <label for="ng-customer-company">会社名</label>
-              <input type="text"  data-key='company' class="infoData" id="ng-customer-company" value ="<?= !empty($mCusData['informations']['company']) ? $mCusData['informations']['company'] : "" ?>" ng-blur="saveCusInfo('company', customData)"  placeholder="会社名を追加" />
+              <?= $this->Form->input('company_name',['label'=>false,'div' => false,'class' => 'infoData','type' => 'text','value' => !empty($mCusData['informations']['company']) ? $mCusData['informations']['company'] : "",'placeholder' => "会社名を追加",'data-key' => 'company']) ?></span>
             </li>
             <li>
               <label for="ng-customer-name">名前</label>
-              <input type="text" data-key='name' class = "infoData" id="ng-customer-name" value ="<?= !empty($mCusData['informations']['name']) ? $mCusData['informations']['name'] : "" ?>" ng-blur="saveCusInfo('name', customData)" placeholder="名前を追加">
+              <?= $this->Form->input('name',['label'=>false,'div' => false,'class' => 'infoData','type' => 'text','value' => !empty($mCusData['informations']['name']) ? $mCusData['informations']['name'] : "",'placeholder' => "名前を追加",'data-key' => 'name']) ?></span>
             </li>
             <li>
               <label for="ng-customer-tel">電話番号</label>
-              <input type="text" data-key='tel' class = "infoData" id="ng-customer-tel" value ="<?= !empty($mCusData['informations']['tel']) ? $mCusData['informations']['tel'] : "" ?>" ng-blur="saveCusInfo('tel', customData)"  placeholder="電話番号を追加" />
+              <?= $this->Form->input('tel',['label'=>false,'div' => false,'class' => 'infoData','type' => 'text','value' => !empty($mCusData['informations']['tel']) ? $mCusData['informations']['tel'] : "",'placeholder' => "電話番号を追加",'data-key' => 'tel']) ?></span>
             </li>
             <li>
               <label for="ng-customer-mail">メールアドレス</label>
-              <input type="text" data-key='mail' class = "infoData" id="ng-customer-mail" value ="<?= !empty($mCusData['informations']['mail']) ? $mCusData['informations']['mail'] : "" ?>" ng-blur="saveCusInfo('mail', customData)" placeholder="メールアドレスを追加" />
+              <?= $this->Form->input('mail',['label'=>false,'div' => false,'class' => 'infoData','type' => 'text','value' => !empty($mCusData['informations']['mail']) ? $mCusData['informations']['mail'] : "",'placeholder' => "メールアドレスを追加",'data-key' => 'mail']) ?></span>
             </li>
             <li>
               <label for="ng-customer-memo" style = "width:60% !important">メモ</label>
-              <textarea rows="7" data-key='memo' class = "infoData" id="ng-customer-memo" placeholder="メモを追加"><?= !empty($mCusData) ? $mCusData['informations']['memo'] : "" ?></textarea>
+              <?= $this->Form->input('memo',['rows' => 7,'label'=>false,'div' => false,'class' => 'infoData','type' => 'textarea','value' => !empty($mCusData) ? $mCusData['informations']['memo'] : "",'placeholder' => "メモを追加",'data-key' => 'memo']) ?></span>
             </li>
           </ul>
           <div id="personal_action">

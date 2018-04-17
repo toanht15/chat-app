@@ -15,7 +15,7 @@ if ( !empty($this->data['MUser']['settings']) ) {
   }
 }
 ?>
-<?= $this->Form->create('MUser', array('type' => 'post', 'url' => array('controller' => 'PersonalSettings', 'action' => 'index'))); ?>
+<?= $this->Form->create('MUser', array('type' => 'post', 'url' => array('controller' => 'PersonalSettings', 'action' => 'index'),'name' => 'MUserIndexForm')); ?>
     <div class="form01">
         <!-- /* 基本情報 */ -->
         <section>

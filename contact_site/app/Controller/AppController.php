@@ -200,8 +200,12 @@ class AppController extends Controller {
       switch($this->name){
         // 管理者権限のみのページ
         case "MUsers":
+        case "MOperatingHours":
         case "MWidgetSettings":
+        case "MSecuritySettings":
+        case "MChatSettings":
         case "TAutoMessages":
+        case "TChatbotScenario":
         case "TCampaigns":
         case "DisplayExclusions":
         case "MFileTransferSetting":
@@ -217,7 +221,6 @@ class AppController extends Controller {
 
     /* 契約ごと使用可能ページ */
     switch($this->name){
-      case "TDictionaries":
       case "TAutoMessages":
       case "MChatNotifications":
       case "MChatSettings":
@@ -234,6 +237,25 @@ class AppController extends Controller {
       case "Statistics":
         if ( !(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
           && isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN] ) {
+          $this->redirect("/");
+        }
+        break;
+      case "TDictionaries":
+        if ( (!(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT]))||
+          (!(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
+          && isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]
+          && $this->action == 'remoteSaveCategoryEntryForm')) {
+          $this->redirect("/");
+        }
+        break;
+      case "TCampaigns":
+      case "MOperatingHours":
+        if ( isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) {
+          $this->redirect("/");
+        }
+        break;
+      case "TChatbotScenario":
+        if ( !isset($this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) {
           $this->redirect("/");
         }
         break;
