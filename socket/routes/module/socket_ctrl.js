@@ -260,6 +260,7 @@ function makeToken(){
 };
 
 var companyList = {};
+var initialized = false;
 function getCompanyList(){
   pool.query('select * from m_companies;', function(err, rows){
     if ( err !== null && err !== '' ) return false; // DB接続断対応
@@ -272,9 +273,12 @@ function getCompanyList(){
       if(!(row.company_key in customerList)) {
         console.log("new customerList : " + row.company_key);
         customerList[row.company_key] = {};
-        common.reloadSettings(row.company_key);
+        if(initialized) {
+          common.reloadSettings(row.company_key);
+        }
       }
     }
+    initialized = true;
   });
 }
 getCompanyList();
@@ -1343,6 +1347,7 @@ io.sockets.on('connection', function (socket) {
     sendCheck: function(d, callback){ return this.scCheck(2, d, callback) }, // Sorryメッセージ送信チェック
     scCheck: function(type, d, callback){
       var companyId = companyList[d.siteKey];
+      var siteKey = d.siteKey;
 
       var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg,sorry_message, outside_hours_sorry_message, wating_call_sorry_message, no_standby_sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
       pool.query(getUserSQL, [companyId], function(err, rows){
@@ -1355,15 +1360,15 @@ io.sockets.on('connection', function (socket) {
         var check = "";
         dateParse = Date.parse(now);
         date = now.getFullYear() + "/" + (now.getMonth()+1) + "/" + now.getDate() + " ";
-        if(common.operationHourSettings[common.siteKeyIdMap[companyId]] != "") {
-          for(var i=0; i<common.operationHourSettings[common.siteKeyIdMap[companyId]].length; i++){
-            dayType = JSON.parse(common.operationHourSettings[common.siteKeyIdMap[companyId]][i].type);
+        if(common.operationHourSettings[siteKey] != "") {
+          for(var i=0; i<common.operationHourSettings[siteKey].length; i++){
+            dayType = JSON.parse(common.operationHourSettings[siteKey][i].type);
             //営業時間設定の条件が「毎日」の場合
             if(dayType == 1) {
               var day = { 0:'sun', 1:'mon', 2:'tue', 3:'wed', 4:'thu', 5:'fri', 6:'sat'};
               day = day[nowDay];
-              timeData = JSON.parse(common.operationHourSettings[common.siteKeyIdMap[companyId]][i].time_settings).everyday[day];
-              publicHolidayData = JSON.parse(common.operationHourSettings[common.siteKeyIdMap[companyId]][i].time_settings).everyday['pub'];
+              timeData = JSON.parse(common.operationHourSettings[siteKey][i].time_settings).everyday[day];
+              publicHolidayData = JSON.parse(common.operationHourSettings[siteKey][i].time_settings).everyday['pub'];
             }
             //営業時間設定の条件が「平日・週末」の場合
             else {
@@ -1374,10 +1379,10 @@ io.sockets.on('connection', function (socket) {
               else {
                 var day = 'weekend';
               }
-              timeData = JSON.parse(common.operationHourSettings[common.siteKeyIdMap[companyId]][i].time_settings).weekly[day];
-              publicHolidayData = JSON.parse(common.operationHourSettings[common.siteKeyIdMap[companyId]][i].time_settings).weekly['weekpub'];
+              timeData = JSON.parse(common.operationHourSettings[siteKey][i].time_settings).weekly[day];
+              publicHolidayData = JSON.parse(common.operationHourSettings[siteKey][i].time_settings).weekly['weekpub'];
             }
-            active_flg = JSON.parse(common.operationHourSettings[common.siteKeyIdMap[companyId]][i].active_flg);
+            active_flg = JSON.parse(common.operationHourSettings[siteKey][i].active_flg);
           }
         }
         if( rows && rows[0] ) {
@@ -1406,9 +1411,9 @@ io.sockets.on('connection', function (socket) {
           else if( type ==2 && rows[0].display_type === 3) {
             //営業時間を利用する場合
             if(active_flg == 1) {
-              for(var i2=0; i2<common.publicHolidaySettings[common.siteKeyIdMap[companyId]].length; i2++) {
+              for(var i2=0; i2<common.publicHolidaySettings[siteKey].length; i2++) {
                 //祝日の場合
-                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[common.siteKeyIdMap[companyId]][i2].month +'/'+ common.publicHolidaySettings[common.siteKeyIdMap[companyId]][i2].day) {
+                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[siteKey][i2].month +'/'+ common.publicHolidaySettings[siteKey][i2].day) {
                   //祝日の営業時間設定が「休み」でない場合
                   if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                     for(var i=0; i<publicHolidayData.length; i++){
@@ -1463,8 +1468,8 @@ io.sockets.on('connection', function (socket) {
           // ウィジェット表示のジャッジの場合、営業時間内のみ表示するの場合、営業時間内の場合はtrue
           if ( type === 1 && rows[0].display_type === 4 && active_flg == 1) {
             // 祝日の場合
-            for(var i2=0; i2<common.publicHolidaySettings[common.siteKeyIdMap[companyId]].length; i2++) {
-              if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[common.siteKeyIdMap[companyId]][i2].month +'/'+ common.publicHolidaySettings[common.siteKeyIdMap[companyId]][i2].day) {
+            for(var i2=0; i2<common.publicHolidaySettings[siteKey].length; i2++) {
+              if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[siteKey][i2].month +'/'+ common.publicHolidaySettings[siteKey][i2].day) {
                 if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                   for(var i=0; i<publicHolidayData.length; i++){
                     var endTime = publicHolidayData[i].end;
@@ -1512,8 +1517,8 @@ io.sockets.on('connection', function (socket) {
             // 営業時間設定を利用している場合
             if (active_flg === 1) {
               //祝日の場合
-              for(var i2=0; i2<common.publicHolidaySettings[common.siteKeyIdMap[companyId]].length; i2++) {
-                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[common.siteKeyIdMap[companyId]][i2].month +'/'+ common.publicHolidaySettings[common.siteKeyIdMap[companyId]][i2].day) {
+              for(var i2=0; i2<common.publicHolidaySettings[siteKey].length; i2++) {
+                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[siteKey][i2].month +'/'+ common.publicHolidaySettings[siteKey][i2].day) {
                   check = true;
                   //祝日の営業時間設定が「休み」でない場合
                   if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
@@ -1626,9 +1631,9 @@ io.sockets.on('connection', function (socket) {
             }
             //営業時間設定を利用している場合
             if (active_flg === 1) {
-              for(var i2=0; i2<common.publicHolidaySettings[common.siteKeyIdMap[companyId]].length; i2++) {
+              for(var i2=0; i2<common.publicHolidaySettings[siteKey].length; i2++) {
                 //祝日の場合
-                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[common.siteKeyIdMap[companyId]][i2].month +'/'+ common.publicHolidaySettings[common.siteKeyIdMap[companyId]][i2].day) {
+                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[siteKey][i2].month +'/'+ common.publicHolidaySettings[siteKey][i2].day) {
                   check = true;
                   //祝日の営業時間設定が「休み」でない場合
                   if(publicHolidayData[0].start　!= "" && publicHolidayData[0].end != "") {
