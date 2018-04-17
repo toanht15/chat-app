@@ -53,13 +53,16 @@ class MUsersController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->_viewElement();
-    //$this->request->
     $this->set('page', $this->request->data['index']);
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->MUser->recursive = -1;
       $this->request->data = $this->MUser->read(null, $this->request->data['id']);
-      if($this->request->data['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id']  && $this->request->data['MUser']['del_flg'] != 1) {
+      if($this->request->data['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id']  && $this->request->data['MUser']['del_flg'] != 1
+        && $this->request->data['MUser']['permission_level'] != 99) {
+        $token = md5(uniqid(rand()));
+        $this->set('token', $token);
+        $this->Session->write('token', $token);
         $this->render('/MUsers/remoteEntryUser');
       }
       else {
@@ -82,66 +85,77 @@ class MUsersController extends AppController {
     $saveData = [];
     $insertFlg = true;
     $errorMessage = null;
-
     if ( !$this->request->is('ajax') ) return false;
 
-    if (!empty($this->request->data['userId'])) {
-      $this->MUser->recursive = -1;
-      $tmpData = $this->MUser->read(null, $this->request->data['userId']);
-      if($tmpData['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $tmpData['MUser']['permission_level'] != 99 && $tmpData['MUser']['del_flg'] != 1) {
-        $insertFlg = false;
+    $token = $this->Session->read('token');
+    //トークンチェック
+    if($this->request->data['accessToken'] == $token) {
+
+      if (!empty($this->request->data['userId'])) {
+        $this->MUser->recursive = -1;
+        $tmpData = $this->MUser->read(null, $this->request->data['userId']);
+        if($tmpData['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $tmpData['MUser']['permission_level'] != 99 && $tmpData['MUser']['del_flg'] != 1) {
+          $insertFlg = false;
+        }
+        else {
+          $this->response->statusCode(403); //Forbidden
+          return;
+        }
       }
       else {
-        $this->response->statusCode(403); //Forbidden
-        return;
+        $this->MUser->create();
+
+        // アカウント数チェック
+        if (!$this->_checkAcoundNum()) {
+          $errorMessage = ['other' => ["契約しているアカウント数をオーバーしています"]];
+        }
       }
-    }
-    else {
-      $this->MUser->create();
 
-      // アカウント数チェック
-      if (!$this->_checkAcoundNum()) {
-        $errorMessage = ['other' => ["契約しているアカウント数をオーバーしています"]];
-      }
-    }
+      $this->log('userData2',LOG_DEBUG);
+      $tmpData['MUser']['user_name'] = $this->request->data['userName'];
+      $tmpData['MUser']['display_name'] = $this->request->data['displayName'];
+      $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
+      $tmpData['MUser']['permission_level'] = $this->request->data['permissionLevel'];
 
-    $tmpData['MUser']['user_name'] = $this->request->data['userName'];
-    $tmpData['MUser']['display_name'] = $this->request->data['displayName'];
-    $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
-    $tmpData['MUser']['permission_level'] = $this->request->data['permissionLevel'];
-
-    if ( !$insertFlg && empty($this->request->data['password']) ) {
-      unset($this->MUser->validate['password']);
-    }
-    else {
-      $tmpData['MUser']['new_password'] = $this->request->data['password'];
-    }
-
-    // チャットアカウント用処理（アカウント登録時のみ）
-    if ( !isset($tmpData['MUser']['id']) && isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT] ) {
-      $tmpData['MUser']['settings'] = $this->_setChatSetting($tmpData);
-    }
-    // const
-    $this->MUser->set($tmpData);
-
-    $this->MUser->begin();
-
-    // バリデーションチェックでエラーが出た場合
-    if ( empty($errorMessage) && $this->MUser->validates() ) {
-      $saveData = $tmpData;
-      $saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-      if ( $this->MUser->save($saveData, false) ) {
-        $this->MUser->commit();
-        $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      if ( !$insertFlg && empty($this->request->data['password']) ) {
+        unset($this->MUser->validate['password']);
       }
       else {
-        $this->MUser->rollback();
+        $tmpData['MUser']['new_password'] = $this->request->data['password'];
       }
+
+      // チャットアカウント用処理（アカウント登録時のみ）
+      if ( !isset($tmpData['MUser']['id']) && isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+        $tmpData['MUser']['settings'] = $this->_setChatSetting($tmpData);
+      }
+      $this->log('userData3',LOG_DEBUG);
+      // const
+      $this->MUser->set($tmpData);
+
+      $this->MUser->begin();
+
+      // バリデーションチェックでエラーが出た場合
+      if ( empty($errorMessage) && $this->MUser->validates() ) {
+        $this->log('userData4',LOG_DEBUG);
+        $saveData = $tmpData;
+        $saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+        if ( $this->MUser->save($saveData, false) ) {
+          $this->MUser->commit();
+          $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+        }
+        else {
+          $this->log('userData5',LOG_DEBUG);
+          $this->MUser->rollback();
+        }
+      }
+      if ( empty($errorMessage) ) {
+        $errorMessage = $this->MUser->validationErrors;
+      }
+      return new CakeResponse(['body' => json_encode($errorMessage)]);
     }
-    if ( empty($errorMessage) ) {
-      $errorMessage = $this->MUser->validationErrors;
+    else {
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
     }
-    return new CakeResponse(['body' => json_encode($errorMessage)]);
   }
 
   /**
@@ -169,12 +183,23 @@ class MUsersController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $this->MUser->recursive = -1;
-    $selectedList = $this->request->data['selectedList'];
+    $data = $this->MUser->find('all', [
+      'fields' => [
+        'id',
+        'm_companies_id',
+        'permission_level'
+      ],
+      'conditions' => [
+        'id' => $this->request->data['selectedList']
+      ]
+    ]);
     $this->MUser->begin();
     $res = true;
-    foreach($selectedList as $key => $val){
-      if (! $this->MUser->delete($val) ) {
-        $res = false;
+    foreach($data as $key => $val){
+      if($val['MUser']['permission_level'] != 99 && $val['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id']) {
+        if (! $this->MUser->delete($val['MUser']['id']) ) {
+          $res = false;
+        }
       }
     }
     if($res){
@@ -185,6 +210,7 @@ class MUsersController extends AppController {
       $this->MUser->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
+    //}
 //     if ( $this->MUser->logicalDelete($this->request->data['id']) ) {
 //       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
 //     }

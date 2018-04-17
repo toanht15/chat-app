@@ -73,7 +73,6 @@ gulp.task('socket-sass-compile', function(){
       console.log(err.message);
     })
     .pipe(cssnext())
-    .pipe(gzip({ gzipOptions: { level: 9 } }))
     .pipe(gulp.dest(path.outOfCssToSocket));
 });
 
@@ -89,7 +88,6 @@ gulp.task('minify-js', function(){
     .pipe(rename({
       extname: '.min.js'
     }))
-    .pipe(gzip({ gzipOptions: { level: 9 } }))
     .pipe(gulp.dest(path.minjs));
 });
 

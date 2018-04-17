@@ -20,9 +20,16 @@ class PersonalSettingsController extends AppController {
   public function index() {
     $this->MUser->recursive = -1;
     if ( $this->request->is('post') ) {
-      $errors = $this->_update($this->request->data);
-      if ( empty($errors) ) {
-        $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
+      $token = $this->Session->read('token');
+      //トークンチェック
+      if($this->request->data['accessToken'] == $token) {
+        $errors = $this->_update($this->request->data);
+        if ( empty($errors) ) {
+          $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
+        }
+        else {
+          $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+        }
       }
       else {
         $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
@@ -30,6 +37,9 @@ class PersonalSettingsController extends AppController {
     }
     else {
       $this->data = $this->MUser->read(null, $this->userInfo['id']);
+      $token = md5(uniqid(rand()));
+      $this->set('token', $token);
+      $this->Session->write('token', $token);
     }
     $this->set('mChatSetting', $this->MChatSetting->coFind('first', [], false));
   }
