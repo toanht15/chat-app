@@ -4,12 +4,12 @@
 #tchatbotscenario_form_preview_body .actionTitle.active { color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}};}
 
 #tchatbotscenario_form_preview_body .chatTalk { width: 100%; padding: 5px 5px 10px 5px; list-style-type: none; margin: 0px}
-#tchatbotscenario_form_preview_body .chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 8px; font-size: 12px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
+#tchatbotscenario_form_preview_body .chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 10px 15px; font-size: 12px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
 #tchatbotscenario_form_preview_body .chatTalk li { word-break: break-all; white-space: pre-wrap; }
 #tchatbotscenario_form_preview_body .chatTalk li.boxType { word-wrap: break-word; word-break: break-all; }
 #tchatbotscenario_form_preview_body .chatTalk li.boxType { display: block; }
 #tchatbotscenario_form_preview_body .chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-left: 10px; width: 80%; margin-right: auto; }
-#tchatbotscenario_form_preview_body .chatTalk li.balloonType { display: inline-block; position: relative; padding: 5px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
+#tchatbotscenario_form_preview_body .chatTalk li.balloonType { display: inline-block; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re {  background-color: {{widget.makeFaintColor()}}; font-size: {{widget.settings['re_text_size']}}px; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
 #tchatbotscenario_form_preview_body .sinclo_re a { color: {{widget.settings['re_text_color']}}; background-color: {{widget.makeFaintColor()}};}
@@ -24,9 +24,9 @@
 #tchatbotscenario_form_preview_body .chatTalk li span.cName.details{ color: {{widget.settings['c_name_text_color']}}!important;}
 
 #tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
-#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding: 0 0 0 {{widget.settings['re_text_size']}}px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.settings['re_text_size']}}px; }
-#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: {{widget.settings['re_text_size']/2}}px; left: 0px; margin-top: -{{widget.settings['re_text_size']/2}}px; width: {{widget.settings['re_text_size']}}px; height: {{widget.settings['re_text_size']}}px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
-#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: {{widget.settings['re_text_size']/2}}px; left: {{widget.settings['re_text_size']/4}}px;; margin-top: -{{widget.settings['re_text_size']/4}}px; width: {{widget.settings['re_text_size']/2+1}}px; height: {{widget.settings['re_text_size']/2+1}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
+#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; padding: 0 0 0 {{widget.re_text_size+4}}px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; }
+#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: {{widget.radioButtonBeforeTop}}px; left: 0px; margin-top: -{{widget.radioButtonBeforeTop}}px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 1px solid #999; border-radius: 50%; background-color: #FFF; }
+#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: {{widget.radioButtonAfterTop}}px; left: {{widget.radioButtonAfterLeft}}px;; margin-top: -{{widget.radioButtonAfterMarginTop}}px; width: {{widget.re_text_size-6}}px; height: {{widget.re_text_size-6}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re span.telno { color: {{widget.settings['re_text_color']}};}
 #tchatbotscenario_form_preview_body a:hover { color: {{widget.settings['main_color']}}; }
 

@@ -104,6 +104,21 @@ sincloApp.factory('SimulatorService', function() {
     get re_border_none() {
       return this._settings['re_border_color'] === 'なし';
     },
+    get re_text_size() {
+      return Number(this._settings['re_text_size']);
+    },
+    get radioButtonBeforeTop() {
+      return Math.ceil((Number(this.re_text_size)/2));
+    },
+    get radioButtonAfterTop() {
+      return Math.ceil((Number(this.re_text_size)/2));
+    },
+    get radioButtonAfterLeft() {
+      return (this.re_text_size/2 - ((this.re_text_size-6)/2))+1;
+    },
+    get radioButtonAfterMarginTop() {
+      return Math.round(this.re_text_size/2)-4;
+    },
     get se_border_none() {
       return this._settings['se_border_color'] === 'なし';
     },
