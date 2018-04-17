@@ -83,6 +83,7 @@ define('C_WIDGET_AUTO_OPEN_TYPE_ON', 3); // 常に自動で最大化する
 define('C_WIDGET_AUTO_OPEN_TYPE_SITE', 1); // サイト訪問後
 define('C_WIDGET_AUTO_OPEN_TYPE_PAGE', 4); // ページ訪問後
 define('C_WIDGET_AUTO_OPEN_TYPE_OFF', 2); // 常に最大化しない
+define('C_WIDGET_AUTO_OPEN_MINIMIZE', 5); // ページ訪問後
 
 // 表示位置種別
 define('C_WIDGET_POSITION_RIGHT_BOTTOM', 1); // 右下

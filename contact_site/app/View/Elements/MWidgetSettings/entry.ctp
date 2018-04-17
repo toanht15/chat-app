@@ -105,6 +105,7 @@ $headerNo = 1;
                 <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>">自動で最大化する</label><br>
                 <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" ><?=$maxShowTimeTagBySite?></label><br>
                 <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" ><?=$maxShowTimeTagByPage?></label><br>
+                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_MINIMIZE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_MINIMIZE?>" value="<?=C_WIDGET_AUTO_OPEN_MINIMIZE?>">小さなバナーを表示する</label><br>
                 <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>">最大化しない</label>
               </div>
             </div>
