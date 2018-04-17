@@ -242,15 +242,13 @@ class AppController extends Controller {
         break;
       case "TDictionaries":
         if ( (!(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT]))||
-          (!(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
-          && isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]
+          (!(isset($this->coreSettings[C_COMPANY_USE_DICTIONARY_CATEGORY]) && $this->coreSettings[C_COMPANY_USE_DICTIONARY_CATEGORY])
           && $this->action == 'remoteSaveCategoryEntryForm')) {
           $this->redirect("/");
         }
         break;
-      case "TCampaigns":
       case "MOperatingHours":
-        if ( isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) {
+        if ( !isset($this->coreSettings[C_COMPANY_USE_OPERATING_HOUR]) && $this->coreSettings[C_COMPANY_USE_OPERATING_HOUR]) {
           $this->redirect("/");
         }
         break;
