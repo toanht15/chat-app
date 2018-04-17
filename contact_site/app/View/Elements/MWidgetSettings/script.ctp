@@ -1438,6 +1438,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     $scope.saveAct = function (){
       // 保存ボタンが押されたらconfirmを出さない
+      loading.load.start();
       $scope.changeFlg = false;
         $('#widgetShowTab').val($scope.widget.showTab);
         $('#MWidgetSettingMainImage').val($scope.main_image);
