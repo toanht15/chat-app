@@ -5,6 +5,7 @@
  */
 class DisplayExclusionsController extends AppController {
   public $uses = ['MCompany'];
+  public $components = ['NodeSettingsReload'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -51,6 +52,7 @@ class DisplayExclusionsController extends AppController {
       // 保存処理
       if ( $this->MCompany->save() ) {
         $this->MCompany->commit();
+        NodeSettingsReloadComponent::reloadWidgetSettings($this->userInfo['MCompany']['company_key']);
       }
       else {
         $this->MCompany->rollback();

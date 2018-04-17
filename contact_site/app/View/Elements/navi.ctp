@@ -196,42 +196,37 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 
 <script type="text/javascript">
   var nowOpenType = "";
-    $(".setting-icon").click(function(){
-      var type = $(this).data("type");
-      if (nowOpenType === type) {
-        $("#sidebar-sub").removeClass('open');
-        $("#sidebar-sub > div").addClass("hide");
-        nowOpenType = "";
-      }
-      else {
-        if ( $("#sidebar-sub").is(".open") ) {
-          $("#sidebar-sub").removeClass('open');
-          $("#sidebar-sub > div").addClass("hide");
-          setTimeout(function(){
-            $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
-            $("#sidebar-sub").addClass('open');
-            nowOpenType = type;
-          }, 100);
-        }
-        else {
-          $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
-          $("#sidebar-sub").addClass('open');
-          nowOpenType = type;
-        }
-
-      }
-
+  $("#sidebar-main .icon:not(.settings-icon)").mouseenter(function(){
+    if(nowOpenType !== "") {
+      $("#sidebar-sub").removeClass('open');
+      $("#sidebar-sub > div").addClass("hide");
+      nowOpenType = "";
+    }
+  });
+  $(".setting-icon").mouseenter(function(){
+    console.log("mouseenter");
+    var type = $(this).data("type");
+    if ( $("#sidebar-sub").is(".open") ) {
+      $("#sidebar-sub").removeClass('open');
+      $("#sidebar-sub > div").addClass("hide");
+      setTimeout(function(){
+        $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
+        $("#sidebar-sub").addClass('open');
+        nowOpenType = type;
+      }, 100);
+    }
+    else {
+      $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
+      $("#sidebar-sub").addClass('open');
+      nowOpenType = type;
+    }
+  });
+  $('#header').mouseleave(function(){
+    console.log("mouseleave");
+    if(nowOpenType !== "") {
+      $("#sidebar-sub").removeClass('open');
+      $("#sidebar-sub > div").addClass("hide");
+      nowOpenType = "";
+    }
   });
 </script>
-<?php if(strcmp($_SERVER['SERVER_NAME'], '  sinclo.jp') === 0): ?>
-<script type='text/javascript' src='https://ws1.sinclo.jp/client/5a2e2a75cb7e3.js' data-hide='1'></script>
-<script>
-  document.addEventListener('sinclo:connected', function(evt) {
-// この部分が動作したタイミングは
-// sincloの接続処理が完了して番号を取得できる状態となっている
-    var accessId = window.sinclo.api.getAccessId();
-// 上記のaccessIdの値を表示したい箇所に挿入
-    $('#supportNumberArea').text(accessId);
-  });
-</script>
-<?php endif; ?>
