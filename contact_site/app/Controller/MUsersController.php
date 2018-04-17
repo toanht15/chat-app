@@ -54,15 +54,15 @@ class MUsersController extends AppController {
     $this->layout = 'ajax';
     $this->_viewElement();
     $this->set('page', $this->request->data['index']);
+    $token = md5(uniqid(rand()));
+    $this->set('token', $token);
+    $this->Session->write('token', $token);
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->MUser->recursive = -1;
       $this->request->data = $this->MUser->read(null, $this->request->data['id']);
       if($this->request->data['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id']  && $this->request->data['MUser']['del_flg'] != 1
         && $this->request->data['MUser']['permission_level'] != 99) {
-        $token = md5(uniqid(rand()));
-        $this->set('token', $token);
-        $this->Session->write('token', $token);
         $this->render('/MUsers/remoteEntryUser');
       }
       else {
@@ -81,6 +81,8 @@ class MUsersController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
+    $this->log('requestData',LOG_DEBUG);
+    $this->log($this->request->data,LOG_DEBUG);
     $tmpData = [];
     $saveData = [];
     $insertFlg = true;
@@ -88,8 +90,12 @@ class MUsersController extends AppController {
     if ( !$this->request->is('ajax') ) return false;
 
     $token = $this->Session->read('token');
+    $this->log('トークン見る',LOG_DEBUG);
+    $this->log($token,LOG_DEBUG);
+    $this->log($this->request->data['accessToken'],LOG_DEBUG);
     //トークンチェック
     if($this->request->data['accessToken'] == $token) {
+      $this->log('見ろ見ろ',LOG_DEBUG);
 
       if (!empty($this->request->data['userId'])) {
         $this->MUser->recursive = -1;
@@ -111,7 +117,6 @@ class MUsersController extends AppController {
         }
       }
 
-      $this->log('userData2',LOG_DEBUG);
       $tmpData['MUser']['user_name'] = $this->request->data['userName'];
       $tmpData['MUser']['display_name'] = $this->request->data['displayName'];
       $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
@@ -128,7 +133,6 @@ class MUsersController extends AppController {
       if ( !isset($tmpData['MUser']['id']) && isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT] ) {
         $tmpData['MUser']['settings'] = $this->_setChatSetting($tmpData);
       }
-      $this->log('userData3',LOG_DEBUG);
       // const
       $this->MUser->set($tmpData);
 
@@ -136,7 +140,6 @@ class MUsersController extends AppController {
 
       // バリデーションチェックでエラーが出た場合
       if ( empty($errorMessage) && $this->MUser->validates() ) {
-        $this->log('userData4',LOG_DEBUG);
         $saveData = $tmpData;
         $saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
         if ( $this->MUser->save($saveData, false) ) {
@@ -144,7 +147,6 @@ class MUsersController extends AppController {
           $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         }
         else {
-          $this->log('userData5',LOG_DEBUG);
           $this->MUser->rollback();
         }
       }
