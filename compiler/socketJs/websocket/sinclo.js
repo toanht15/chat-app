@@ -2185,7 +2185,7 @@
                     // ラジオボタン
                     var radio = str.indexOf('[]');
                     if ( radio > -1 ) {
-                        var name = str.slice(radio+2);
+                        var name = str.slice(radio+2).trim();
                         str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
                         str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
                     }
