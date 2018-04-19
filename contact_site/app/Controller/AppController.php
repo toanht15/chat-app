@@ -200,8 +200,12 @@ class AppController extends Controller {
       switch($this->name){
         // 管理者権限のみのページ
         case "MUsers":
+        case "MOperatingHours":
         case "MWidgetSettings":
+        case "MSecuritySettings":
+        case "MChatSettings":
         case "TAutoMessages":
+        case "TChatbotScenario":
         case "TCampaigns":
         case "DisplayExclusions":
         case "MFileTransferSetting":
@@ -214,10 +218,8 @@ class AppController extends Controller {
 
     /* 管理者権限かどうかを渡す */
     $this->set('adminFlg', (strcmp($this->userInfo['permission_level'], C_AUTHORITY_SUPER) === 0 || strcmp($this->userInfo['permission_level'], C_AUTHORITY_ADMIN) === 0 ));
-
     /* 契約ごと使用可能ページ */
     switch($this->name){
-      case "TDictionaries":
       case "TAutoMessages":
       case "MChatNotifications":
       case "MChatSettings":
@@ -234,6 +236,13 @@ class AppController extends Controller {
       case "Statistics":
         if ( !(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT])
           && isset($this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN]) && $this->coreSettings[C_COMPANY_CHAT_BASIC_PLAN] ) {
+          $this->redirect("/");
+        }
+        break;
+      case "TDictionaries":
+        if ( (!(isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT]))||
+          (!(isset($this->coreSettings[C_COMPANY_USE_DICTIONARY_CATEGORY]) && $this->coreSettings[C_COMPANY_USE_DICTIONARY_CATEGORY])
+          && $this->action == 'remoteSaveCategoryEntryForm')) {
           $this->redirect("/");
         }
         break;
@@ -268,6 +277,8 @@ class AppController extends Controller {
       }
     }
   }
+
+  public function afterFilter(){}
 
   /**
    * checkPort プロトコルチェック

@@ -5,7 +5,7 @@
  */
 class MWidgetSettingsController extends AppController {
   public $uses = ['MWidgetSetting','MOperatingHour'];
-  public $components = ['ImageTrimming'];
+  public $components = ['ImageTrimming', 'NodeSettingsReload'];
   public $helpers = ['ngForm'];
   public $coreSettings = null;
   public $styleSetting = [
@@ -22,6 +22,8 @@ class MWidgetSettingsController extends AppController {
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
     'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
   ];
+
+
 
   public function beforeRender(){
     $this->set('title_for_layout', 'ウィジェット設定');
@@ -398,6 +400,7 @@ class MWidgetSettingsController extends AppController {
             unlink($file);
           }
         }
+        NodeSettingsReloadComponent::reloadWidgetSettings($this->userInfo['MCompany']['company_key']);
       }
       else {
         $this->MWidgetSetting->rollback();

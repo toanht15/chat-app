@@ -16,6 +16,13 @@
   });
 
   function saveAct(){
+    var addData = document.createElement('input');
+    // データを設定
+    addData.setAttribute('type', 'hidden');
+    addData.setAttribute('name', 'accessToken');
+    addData.setAttribute('value', "<?=$token?>");
+    // 要素を追加
+    document.MUserIndexForm.appendChild(addData);
     $('#MUserIndexForm').submit();
   }
 
@@ -24,13 +31,13 @@
 <div id='personal_idx' class="card-shadow">
 
 <div id='personal_title'>
-	<div class="fLeft"><?= $this->Html->image('personal_g.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-	<h1>個人設定</h1>
+  <div class="fLeft"><?= $this->Html->image('personal_g.png', array('alt' => '個人設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+  <h1>個人設定</h1>
 </div>
 
 <div id='personal_form' class="p20x">
 
-	<?= $this->element('PersonalSettings/entry'); ?>
+  <?= $this->element('PersonalSettings/entry'); ?>
 
 </div><!-- /personal_menu -->
 
