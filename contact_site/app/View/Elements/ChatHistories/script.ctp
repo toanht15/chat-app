@@ -597,34 +597,34 @@ function openChatById(id) {
       document.getElementById("pageCount").innerHTML= customerData.pageCount[0].count;
       $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
       if(customerData.informations.company !== undefined) {
-        document.getElementById("ng-customer-company").value = customerData.informations.company;
+        document.getElementById("HistoryCompanyName").value = customerData.informations.company;
       }
       else {
-        document.getElementById("ng-customer-company").value = "";
+        document.getElementById("HistoryCompanyName").value = "";
       }
       if(customerData.informations.name !== undefined) {
-        document.getElementById("ng-customer-name").value = customerData.informations.name;
+        document.getElementById("HistoryName").value = customerData.informations.name;
       }
       else {
-        document.getElementById("ng-customer-name").value = "";
+        document.getElementById("HistoryName").value = "";
       }
       if(customerData.informations.tel !== undefined) {
-        document.getElementById("ng-customer-tel").value = customerData.informations.tel;
+        document.getElementById("HistoryTel").value = customerData.informations.tel;
       }
       else {
-        document.getElementById("ng-customer-tel").value = "";
+        document.getElementById("HistoryTel").value = "";
       }
       if(customerData.informations.mail !== undefined) {
-        document.getElementById("ng-customer-mail").value = customerData.informations.mail;
+        document.getElementById("HistoryMail").value = customerData.informations.mail;
       }
       else {
-        document.getElementById("ng-customer-mail").value = "";
+        document.getElementById("HistoryMail").value = "";
       }
       if(customerData.informations.memo !== undefined) {
-        document.getElementById("ng-customer-memo").value = customerData.informations.memo;
+        document.getElementById("HistoryMemo").value = customerData.informations.memo;
       }
       else {
-        document.getElementById("ng-customer-memo").value = "";
+        document.getElementById("HistoryMemo").value = "";
       }
       document.getElementById('customerId').value = customerData.MCustomer.id;
     }
@@ -645,11 +645,11 @@ function clearChatAndPersonalInfo() {
   document.getElementById("chatSendingPage").innerHTML= "";
   document.getElementById("separationPage").innerHTML= "";
   document.getElementById("pageCount").innerHTML= "";
-  document.getElementById("ng-customer-company").value= "";
-  document.getElementById("ng-customer-name").value= "";
-  document.getElementById("ng-customer-tel").value= "";
-  document.getElementById("ng-customer-mail").value= "";
-  document.getElementById("ng-customer-memo").value= "";
+  document.getElementById("HistoryCompanyName").value= "";
+  document.getElementById("HistoryName").value= "";
+  document.getElementById("HistoryTel").value= "";
+  document.getElementById("HistoryMail").value= "";
+  document.getElementById("HistoryMemo").value= "";
   document.getElementById('customerId').value= "";
 }
 </script>

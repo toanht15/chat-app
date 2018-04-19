@@ -247,8 +247,10 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
 <!-- /* 操作 */ -->
   <?= $this->Form->end(); ?>
   <div id="m_widget_setting_action" class="fotterBtnArea">
+  <?php if($coreSettings[C_COMPANY_USE_OPERATING_HOUR]): ?>
     <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()','class' => 'whiteBtn btn-shadow']) ?>
     <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
     <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
+  <?php endif; ?>
   </div>
 </div>

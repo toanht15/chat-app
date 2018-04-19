@@ -26,13 +26,19 @@ class PersonalSettingsController extends AppController {
         $errors = $this->_update($this->request->data);
         if ( empty($errors) ) {
           $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
+          $this->Session->read('token');
+          $this->set('token', $token);
         }
         else {
           $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+          $this->Session->read('token');
+          $this->set('token', $token);
         }
       }
       else {
         $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+        $this->Session->read('token');
+        $this->set('token', $token);
       }
     }
     else {

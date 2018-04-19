@@ -165,7 +165,7 @@ var balloonApi = {
 var sendActiveRequest = function(data){
   loading.load.start();
   $.ajax({
-    type: 'GET',
+    type: 'POST',
     url: '/TAutoMessages/changeStatus',
     cache: false,
     data: data,
