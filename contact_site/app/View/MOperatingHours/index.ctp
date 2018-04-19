@@ -19,7 +19,7 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
     <div class ="content">
       <div>
         <label style="display:inline-block;color: #595959;"
-        <?php echo ($widgetData == C_WIDGET_DISPLAY_CODE_TIME || $check == true) ? 'class=commontooltip' : '';?>
+        <?php echo ($widgetData == C_WIDGET_DISPLAY_CODE_TIME || $coreSettings[C_COMPANY_USE_OPERATING_HOUR] || $check == true) ? 'class=commontooltip' : '';?>
         <?php echo ($check == 'included' && $coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'data-text=オートメッセージ設定の「条件設定」に「営業時間設定」が含まれているメッセージがあります' : '';?>
         <?php echo ($widgetData == C_WIDGET_DISPLAY_CODE_TIME && $coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'data-text=ウィジェット設定の「表示する条件」を「営業時間内のみ表示する」から変更してください' : '';?>
         <?php echo (($widgetData == C_WIDGET_DISPLAY_CODE_TIME || $check == 'included') && $coreSettings[C_COMPANY_USE_OPERATING_HOUR]) ? 'data-balloon-position=31.5' : '';?>

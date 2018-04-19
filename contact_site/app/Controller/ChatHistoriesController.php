@@ -3,7 +3,6 @@
    * ChatHistoriesController controller.
    * チャット履歴一覧画面
    */
-  App::import('Sanitize');
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
     public $components = ['LandscapeLbcAPI'];
@@ -1573,7 +1572,6 @@
       }
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
-      $this->log($this->THistory->getDataSource()->getLog(),LOG_DEBUG);
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       //初回チャット受信日時順に並び替え
