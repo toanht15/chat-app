@@ -1000,7 +1000,7 @@ var socket, // socket.io
           html += '#sincloBox * { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
           html += '#sincloBox section#navigation ul { width: ' + widgetWidth + 'px }';
-          html += '#sincloBox span#mainImage { top: ' + (7 * ratio) + 'px; left: ' + (10 * ratio) + 'px; }';
+          html += '#sincloBox span#mainImage { top: ' + (7 * ratio) + 'px; left: ' + (7 * ratio) + 'px; }';
           html += '#sincloBox sinclo-div#widgetHeader:after { top: ' + (32 * ratio) + 'px }';
           html += '#sincloBox p#widgetTitle { border-radius: ' + (widget.radiusRatio * ratio) + 'px ' + (widget.radiusRatio * ratio) + 'px 0 0; border: ' + (1 * ratio) + 'px solid ' + colorList['mainColor'] + '; font-size: ' + (14 * ratio) + 'px; padding: ' + (7 * ratio) + 'px ' + (30 * ratio) + 'px; height: ' + (32 * ratio) + 'px; }';
           if(widget.widgetSizeType !== 1){
@@ -1232,7 +1232,7 @@ var socket, // socket.io
 //        html += "      #sincloBox section#navigation ul { width: " + widgetWidth + "px }";
         html += "      #sincloBox section { width: " + sizeList['boxWidth'] + "px }";
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
-        html += '      #sincloBox span#mainImage { top: 7px; left: 10px }';
+        html += '      #sincloBox span#mainImage { top: 7px; left: 7px }';
         html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + colorList['mainColor'] + '; font-size: '+ widget.headerTextSize +'px; padding: 8px 30px 8px 30px; height: auto; line-height: ' + widget.headerTextSize + 'px;}';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';

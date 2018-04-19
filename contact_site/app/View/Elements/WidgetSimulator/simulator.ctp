@@ -98,7 +98,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox.largeSize * { font-size: 13px; }
         #sincloBox .sinclo-hide { display:none!important; }
         #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
-        #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 10px; }
+        #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 7px; }
         #sincloBox span#mainImage img { background-color: {{widget.settings['main_color']}}; }
         #sincloBox .pb07 { padding-bottom: 7px }
         #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
