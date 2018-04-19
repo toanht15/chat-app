@@ -22,7 +22,9 @@ class MSecuritySettingsController extends AppController
    */
   public function edit() {
     if($this->request->is('post')) {
-      $this->upsert();
+      if ( (isset($this->coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $this->coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) ) {
+        $this->upsert();
+      }
     } else {
       $this->renderView();
     }
