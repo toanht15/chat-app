@@ -22,8 +22,6 @@ class MSecuritySettingsController extends AppController
    */
   public function edit() {
     if($this->request->is('post')) {
-      $this->log('data',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       if ( (isset($this->coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $this->coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) ) {
         $this->upsert();
       }
@@ -35,8 +33,6 @@ class MSecuritySettingsController extends AppController
 
   private function upsert() {
     try {
-      $this->log('data',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       if (empty($this->request->data['MSecuritySettings']['id'])) {
         $this->insert();
       } else {
