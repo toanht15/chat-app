@@ -796,7 +796,7 @@ var socket, // socket.io
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { cursor:pointer; z-index: 2; position: absolute; }';
       html += '      #sincloBox span#mainImage img { background-color: ' + colorList['mainColor'] + ' }';
-      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border-bottom:none; background-color: ' + colorList['mainColor'] + ';text-align: center; margin: 0; color: ' + colorList['stringColor'] + ' }';
+      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border: 1px solid ' + colorList['mainColor'] + '; border-bottom:none; background-color: ' + colorList['mainColor'] + ';text-align: center; margin: 0; color: ' + colorList['stringColor'] + ' }';
       html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; }';
       html += '      #sincloBox div#minimizeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/minimize.png"); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
@@ -1234,7 +1234,7 @@ var socket, // socket.io
         html += "      #sincloBox section { width: " + sizeList['boxWidth'] + "px }";
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 8px }';
-        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; border: 1px solid ' + colorList['mainColor'] + '; font-size: '+ widget.headerTextSize +'px; padding: 8px 26px 8px 30px; height: auto; line-height: ' + widget.headerTextSize + 'px;}';
+        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 26px 7px 30px; height: auto; line-height: ' + widget.headerTextSize + 'px;}';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
         html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 74px; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: '+ sizeList['widgetSubTitleHeight'] +'px; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; }';
