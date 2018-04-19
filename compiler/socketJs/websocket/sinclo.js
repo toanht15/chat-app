@@ -48,12 +48,15 @@
         var elm = $('#sincloBox');
         //実際にバナーではないか
         var bannerAct = storage.s.get('bannerAct');
+        if(bannerAct === "true") {
+          sinclo.operatorInfo.clickBanner();
+        }
         //非表示の状態
         var closeAct = storage.s.get('closeAct');
-        if(bannerAct !== "true" && closeAct !== "true"){
+        if(closeAct !== "true"){
           //アニメーションさせる
           //最小化時と最大化時の状態を取得
-          var abridgementType = common.getAbridgementType()
+          var abridgementType = common.getAbridgementType();
           if ( String(flg) === "false" ) {
             //最大化時ボタン表示
             common.whenMaximizedBtnShow();
@@ -2043,14 +2046,43 @@
           console.log("chatApi.widgetOpen start");
           this.beforeWidgetOpen();
           var widgetOpen = storage.s.get('widgetOpen');
-          if ( !(('showTime' in window.sincloInfo.widget) && ('maxShowTime' in window.sincloInfo.widget) && String(window.sincloInfo.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) ) return false;
+          if ( !(('showTime' in window.sincloInfo.widget)
+            && ('maxShowTime' in window.sincloInfo.widget)
+            && String(window.sincloInfo.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) ) return false;
           var showTime = String(window.sincloInfo.widget.showTime);
+          var displayStyleType = String(window.sincloInfo.widget.displayStyleType);
           var maxShowTime = Number(window.sincloInfo.widget.maxShowTime) * 1000;
-          if ( showTime === "2" ) return false; // 常に最大化しない
+          switch(displayStyleType) {
+            case "1": // 最大化
+              if(typeof(widgetOpen) === 'undefined') {
+                var flg = sinclo.widget.condifiton.get();
+                if ( String(flg) === "false" ) {
+                  storage.s.set('widgetOpen', true);
+                  if(!common.widgetHandler.isShown()) {
+                    storage.s.set('preWidgetOpened', true);
+                  }
+                  if ( !(check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) {
+                    sinclo.operatorInfo.ev();
+                  }
+                }
+              }
+              break;
+            case "2": // 最小化
+              break;
+            case "3": // バナー表示
+              if(!storage.s.get('bannerAct')) {
+                console.log("SHOW INITIAL BANNER MODE");
+                //バナー表示にする
+                sinclo.operatorInfo.onBanner();
+              }
+              return false;
+          }
+
+          if ( showTime === "5" ) return false; // 初期表示のままにする
           if ( showTime === "1" ) { // サイト訪問後
             if (widgetOpen) return false;
           }
-          // 常に最大化する、ページ訪問時（showTime === 3,4）
+          // ページ訪問時（showTime === 4）
           window.setTimeout(function(){
             console.log("ウィジェット最大化条件発動");
             var flg = sinclo.widget.condifiton.get();

@@ -155,6 +155,7 @@
           var baloonPosition = $this.attr('data-balloon-position'); // 吹き出しの＜の部分
           var baloonWidth = $this.attr('data-balloon-width'); // 吹き出しの＜の部分
           var textCenter = $this.attr('data-text-center'); // 吹き出しの＜の部分
+          var contentPositionTop = $this.attr('data-content-position-top') ? Number($this.attr('data-content-position-top')) : 39;
           var contentPositionLeft = $this.attr('data-content-position-left') ? Number($this.attr('data-content-position-left')) : 0;
           var noleft = $this.attr('noleft');
           var operatingHours = $this.attr('operatingHours');
@@ -169,7 +170,7 @@
             var toppx = 54;
           }
           else {
-            var toppx = 39;
+            var toppx = contentPositionTop;
           }
           if(brcount > 1){
             toppx = toppx+((brcount-1)*15);
