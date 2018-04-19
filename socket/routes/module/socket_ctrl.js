@@ -1411,9 +1411,9 @@ io.sockets.on('connection', function (socket) {
           else if( type ==2 && rows[0].display_type === 3) {
             //営業時間を利用する場合
             if(active_flg == 1) {
-              for(var i2=0; i2<common.publicHolidaySettings[siteKey].length; i2++) {
+              for(var i2=0; i2<common.publicHolidaySettings.length; i2++) {
                 //祝日の場合
-                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[siteKey][i2].month +'/'+ common.publicHolidaySettings[siteKey][i2].day) {
+                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[i2].month +'/'+ common.publicHolidaySettings[i2].day) {
                   //祝日の営業時間設定が「休み」でない場合
                   if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                     for(var i=0; i<publicHolidayData.length; i++){
@@ -1468,8 +1468,8 @@ io.sockets.on('connection', function (socket) {
           // ウィジェット表示のジャッジの場合、営業時間内のみ表示するの場合、営業時間内の場合はtrue
           if ( type === 1 && rows[0].display_type === 4 && active_flg == 1) {
             // 祝日の場合
-            for(var i2=0; i2<common.publicHolidaySettings[siteKey].length; i2++) {
-              if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[siteKey][i2].month +'/'+ common.publicHolidaySettings[siteKey][i2].day) {
+            for(var i2=0; i2<common.publicHolidaySettings.length; i2++) {
+              if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[i2].month +'/'+ common.publicHolidaySettings[i2].day) {
                 if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                   for(var i=0; i<publicHolidayData.length; i++){
                     var endTime = publicHolidayData[i].end;
@@ -1517,8 +1517,8 @@ io.sockets.on('connection', function (socket) {
             // 営業時間設定を利用している場合
             if (active_flg === 1) {
               //祝日の場合
-              for(var i2=0; i2<common.publicHolidaySettings[siteKey].length; i2++) {
-                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[siteKey][i2].month +'/'+ common.publicHolidaySettings[siteKey][i2].day) {
+              for(var i2=0; i2<common.publicHolidaySettings.length; i2++) {
+                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[i2].month +'/'+ common.publicHolidaySettings[i2].day) {
                   check = true;
                   //祝日の営業時間設定が「休み」でない場合
                   if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
@@ -1631,9 +1631,9 @@ io.sockets.on('connection', function (socket) {
             }
             //営業時間設定を利用している場合
             if (active_flg === 1) {
-              for(var i2=0; i2<common.publicHolidaySettings[siteKey].length; i2++) {
+              for(var i2=0; i2<common.publicHolidaySettings.length; i2++) {
                 //祝日の場合
-                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[siteKey][i2].month +'/'+ common.publicHolidaySettings[siteKey][i2].day) {
+                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[i2].month +'/'+ common.publicHolidaySettings[i2].day) {
                   check = true;
                   //祝日の営業時間設定が「休み」でない場合
                   if(publicHolidayData[0].start　!= "" && publicHolidayData[0].end != "") {
