@@ -149,7 +149,7 @@ class MWidgetSetting extends AppModel {
         ],
         'show_time' => [
             'numberRange' => [
-              'rule' => '/^([1-4])$/',
+              'rule' => '/^([1-5])$/',
               'message' => '選択肢から選び、設定してください'
             ]
         ],
