@@ -79,11 +79,11 @@ define('C_WIDGET_DISPLAY_CODE_HIDE', 3); // 表示しない
 define('C_WIDGET_DISPLAY_CODE_TIME', 4); // 営業時間内のみ表示する
 
 // 自動表示条件種別
-define('C_WIDGET_AUTO_OPEN_TYPE_ON', 3); // 常に自動で最大化する
+define('C_WIDGET_AUTO_OPEN_TYPE_ON', 3); // 常に自動で最大化する　※ 現在利用なし（旧IF）
 define('C_WIDGET_AUTO_OPEN_TYPE_SITE', 1); // サイト訪問後
 define('C_WIDGET_AUTO_OPEN_TYPE_PAGE', 4); // ページ訪問後
-define('C_WIDGET_AUTO_OPEN_TYPE_OFF', 2); // 常に最大化しない
-define('C_WIDGET_AUTO_OPEN_MINIMIZE', 5); // ページ訪問後
+define('C_WIDGET_AUTO_OPEN_TYPE_OFF', 2); // 常に最大化しない　※ 現在利用なし（旧IF）
+define('C_WIDGET_AUTO_OPEN_TYPE_NONE', 5); // 初期表示のままにする
 
 // 表示位置種別
 define('C_WIDGET_POSITION_RIGHT_BOTTOM', 1); // 右下
@@ -261,6 +261,11 @@ define('C_CHAT_SORRY', 4); // sorryメッセージ
 define('C_YES', 1); // 可
 define('C_IMPROPER', 2); // 不可
 
+//ウィジット初期表示スタイル
+define('C_WIDGET_DISPLAY_STYLE_TYPE_MAX', 1); // 最大化
+define('C_WIDGET_DISPLAY_STYLE_TYPE_MIN', 2); // 最小化
+define('C_WIDGET_DISPLAY_STYLE_TYPE_BANNER', 3); // 小さなバナー
+
 //ウィジットサイズタイプ
 define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
 define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
@@ -421,6 +426,13 @@ $config['WidgetDisplayType'] = [
     4 => "営業時間内のみ表示する",
     2 => "オペレーターが待機中の時のみ表示する",
     3 => "表示しない"
+];
+
+/* ウィジェット設定 － 表示設定種別 */
+$config['WidgetDisplayStyleType'] = [
+  1 => "最大化して表示する",
+  2 => "最小化して表示する",
+  3 => "小さなバナーを表示する"
 ];
 
 /* ウィジェット設定 － 表示位置種別 */

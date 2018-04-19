@@ -10,7 +10,7 @@ class MWidgetSettingsController extends AppController {
   public $coreSettings = null;
   public $styleSetting = [
     'common' => [
-      'show_timing', 'max_show_timing_site', 'max_show_timing_page',
+      'display_style_type', 'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
       /* カラー設定styat */
@@ -242,6 +242,7 @@ class MWidgetSettingsController extends AppController {
 
   private function _viewElement() {
     $this->set('widgetDisplayType', Configure::read('WidgetDisplayType'));
+    $this->set('widgetDisplayStyleType', Configure::read('WidgetDisplayStyleType'));
     $this->set('widgetPositionType', Configure::read('widgetPositionType'));
     $this->set('widgetShowAccessId', Configure::read('widgetShowAccessId'));
     $this->set('widgetShowNameType', Configure::read('widgetShowNameType'));
@@ -567,6 +568,19 @@ class MWidgetSettingsController extends AppController {
             }
             break;
           case 'common':
+            // 旧IFマージ
+            if ( strcmp($v, "show_time") === 0 && isset($json[$v]) ) {
+              if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_ON) === 0 ) {
+                $json['display_style_type'] = C_WIDGET_DISPLAY_STYLE_TYPE_MAX;
+                $d['display_style_type'] = C_WIDGET_DISPLAY_STYLE_TYPE_MAX;
+                $d['show_time'] = C_WIDGET_AUTO_OPEN_TYPE_OFF; // 初期表示のままにする
+              }
+              else if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_OFF) === 0 ) {
+                $json['display_style_type'] = C_WIDGET_DISPLAY_STYLE_TYPE_MIN;
+                $d['display_style_type'] = C_WIDGET_DISPLAY_STYLE_TYPE_MIN;
+                $d['show_time'] = C_WIDGET_AUTO_OPEN_TYPE_OFF; // 初期表示のままにする
+              }
+            }
             if ( strcmp($v, "max_show_timing_site") === 0 || strcmp($v, "max_show_timing_page") === 0 ) { continue; }
             if ( strcmp($v, "show_timing") === 0 && isset($json[$v]) ) {
               if ( strcmp($json[$v], C_WIDGET_SHOW_TIMING_SITE) === 0 ) {
@@ -593,6 +607,14 @@ class MWidgetSettingsController extends AppController {
                 }
               }
             }
+            if ( strcmp($v, 'display_style_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['display_style_type'] = strval(C_WIDGET_DISPLAY_STYLE_TYPE_MIN); // デフォルト値
+              if(isset($d['show_time']) && is_numeric($d['show_time']) && strcmp($d['show_time'], 1) === 0) {
+                $d['display_style_type'] = strval(C_WIDGET_DISPLAY_STYLE_TYPE_MAX); // 常に最大化する設定がされていたらこちらにする
+              }
+              break;
+            }
+
             // デフォルト値（プレミアムプランのみ表示する）
             if ( strcmp($v, 'show_access_id') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['show_access_id'] = C_SELECT_CAN_NOT;
