@@ -178,9 +178,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-left: 10px; width: 80%; margin-right: auto; }
         #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 15px }
         #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 10px }
-        #sincloBox ul#chatTalk li span.cName { display: block; color: {{widget.settings['main_color']}}!important; font-weight: bold; font-size: 13px; margin: 0 0 5px 0; }
-        #sincloBox ul#chatTalk li span.cName.middleSize { font-size: 14px }
-        #sincloBox ul#chatTalk li span.cName.largeSize { font-size: 14px }
+        #sincloBox ul#chatTalk li span.cName { display: block; color: {{widget.settings['main_color']}}!important; font-weight: bold; font-size: {{widget.re_text_size]}}px; margin: 0 0 5px 0; }
+        #sincloBox ul#chatTalk li span.cName.middleSize { font-size: {{widget.re_text_size]}}px }
+        #sincloBox ul#chatTalk li span.cName.largeSize { font-size: {{widget.re_text_size]}}px }
         #sincloBox ul#chatTalk li span.cName.details{ color: {{widget.settings['c_name_text_color']}}!important;}
         #sincloBox ul#chatTalk li span.cName:not(.details){ color: {{widget.settings['main_color']}}!important;}
         #sincloBox ul#chatTalk li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; }

@@ -1267,7 +1267,7 @@ var socket, // socket.io
           if(colorList['reBorderNone'] === 0){
             html += '      #sincloBox ul#chatTalk li.sinclo_re { border: 1px solid '+ colorList['reBorderColor'] +'; }';
           }
-          html += '      #sincloBox ul#chatTalk li span.cName { font-size: '+ (Number(widget.reTextSize) + 1) +'px; margin: 0 0 5px 0 }';
+          html += '      #sincloBox ul#chatTalk li span.cName { font-size: '+ (Number(widget.reTextSize)) +'px; margin: 0 0 5px 0 }';
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { height: '+ sizeList['classFlexBoxRowHeight'] +'px!important; padding: 5px }';
           html += '      #sincloBox section#chatTab sinclo-div#miniFlexBoxHeight { height: 48px!important; padding: 5px }';
           html += '      #sincloBox section#chatTab sinclo-chat-alert { display: none; position: absolute; background-color: rgba(0,0,0,0.6); box-shadow: 0px 0px 4px 4px rgba(0,0,0,0.1); color: #FFF; text-align: center; cursor: pointer; }';

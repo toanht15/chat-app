@@ -79,9 +79,9 @@
     #sincloBox ul#chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-right: auto; margin-left:10px; width: 80%; }
     #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 15px }
     #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 10px }
-    #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: {{re_text_size+1}}px; margin: 0 0 5px 0; }
-    #sincloBox ul#chatTalk li span.cName.middleSize { font-size: {{re_text_size+1}}px; }
-    #sincloBox ul#chatTalk li span.cName.largeSize { font-size: {{re_text_size+1}}px; }
+    #sincloBox ul#chatTalk li span.cName { display: block; color: {{main_color}}!important; font-weight: bold; font-size: {{re_text_size}}px; margin: 0 0 5px 0; }
+    #sincloBox ul#chatTalk li span.cName.middleSize { font-size: {{re_text_size}}px; }
+    #sincloBox ul#chatTalk li span.cName.largeSize { font-size: {{re_text_size}}px; }
     #sincloBox ul#chatTalk li span.cName.details{ color: {{c_name_text_color}}!important;}
     #sincloBox ul#chatTalk li span.cName:not(.details){ color: {{main_color}}!important;}
     #sincloBox ul#chatTalk li span:not(.details){  color: {{message_text_color}}!important; }
