@@ -8,6 +8,19 @@ $headerNo = 1;
       <section>
         <?= $this->Form->input('id', ['type' => 'hidden']); ?>
         <ul class="settingList">
+          <!-- 表示設定 -->
+          <li>
+            <span class="require"><label>表示する条件</label></span>
+            <pre><label class="pointer"><?= $this->Form->input('display_type', ['type' => 'radio',  'options' => $widgetDisplayType, 'legend' => false, 'separator' => '</label><br><label class="pointer">', 'label' => false, 'error' => false, 'div' => false]) ?></label>
+            </pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('display_type') ) echo $this->Form->error('display_type', null, ['wrap' => 'li']); ?>
+          <!-- 初期表示時のスタイル -->
+          <li>
+            <span class="require"><label>初期表示時のスタイル</label></span>
+            <pre><label class="pointer"><?= $this->Form->input('display_style_type', ['type' => 'radio',  'options' => $widgetDisplayStyleType, 'legend' => false, 'separator' => '</label><br><label class="pointer">', 'label' => false, 'error' => false, 'div' => false]) ?></label>
+            </pre>
+          </li>
           <!-- 表示するタイミング -->
           <li>
             <span class="require"><label>表示するタイミング</label></span>
@@ -58,13 +71,6 @@ $headerNo = 1;
           <?php if ( $this->Form->isFieldError('max_show_timing_site') ) echo $this->Form->error('max_show_timing_site', null, ['wrap' => 'li']); ?>
           <?php if ( $this->Form->isFieldError('max_show_timing_page') ) echo $this->Form->error('max_show_timing_page', null, ['wrap' => 'li']); ?>
           <!-- 表示設定 -->
-          <li>
-            <span class="require"><label>表示する条件</label></span>
-            <pre><label class="pointer"><?= $this->Form->input('display_type', ['type' => 'radio',  'options' => $widgetDisplayType, 'legend' => false, 'separator' => '</label><br><label class="pointer">', 'label' => false, 'error' => false, 'div' => false]) ?></label>
-            </pre>
-          </li>
-          <?php if ( $this->Form->isFieldError('display_type') ) echo $this->Form->error('display_type', null, ['wrap' => 'li']); ?>
-          <!-- 表示設定 -->
           <!-- 最大化時間設定 -->
           <li>
             <span><label>最大化する条件</label></span>
@@ -102,10 +108,9 @@ $headerNo = 1;
                 'entity' => 'MWidgetSetting.max_show_time_page'
               ]); ?>
               <div ng-init="showTime='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_time'))?>'">
-                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_ON?>">自動で最大化する</label><br>
                 <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" ><?=$maxShowTimeTagBySite?></label><br>
                 <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" ><?=$maxShowTimeTagByPage?></label><br>
-                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_OFF?>">最大化しない</label>
+                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_NONE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_NONE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_NONE?>">初期表示のままにする</label>
               </div>
             </div>
           </li>
