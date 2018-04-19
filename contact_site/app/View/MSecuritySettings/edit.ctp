@@ -81,7 +81,7 @@
     <?php $this->Form->end(); ?>
   </div>
   <div id="msecuritysettings_action" class="fotterBtnArea">
-    <?php if($coreSettings[C_COMPANY_USE_SEND_FILE]): ?>
+    <?php if($coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]): ?>
     <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['id' => 'reloadBtn','class' => 'whiteBtn btn-shadow']) ?>
     <?= $this->Html->link('更新', 'javascript:void(0)', ['id' => 'updateBtn', 'class' => 'greenBtn btn-shadow']) ?>
     <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
