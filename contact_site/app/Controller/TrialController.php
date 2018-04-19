@@ -108,7 +108,7 @@ class TrialController extends AppController {
     }
   }
 
-   /* *
+ /* *
   * 利用規約
   * @return void
   * */
