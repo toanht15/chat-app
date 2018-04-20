@@ -58,6 +58,7 @@ function loadWidgetSettings(siteKey, callback) {
           return;
         }
         if(row && row.length > 0) {
+          initializeSettings(siteKey);
           if(companySettings[siteKey]) {
             companySettings[siteKey] = {};
           }
@@ -93,6 +94,7 @@ function loadWidgetSettings(siteKey, callback) {
         if(rows && rows.length > 0) {
           rows.forEach(function(row){
             var targetSiteKey = row.company_key;
+            initializeSettings(targetSiteKey);
             if(!companySettings[targetSiteKey]) {
               companySettings[targetSiteKey] = {};
             }
@@ -116,6 +118,15 @@ function loadWidgetSettings(siteKey, callback) {
         if(callback) callback();
       }
     );
+  }
+}
+
+function initializeSettings(siteKey) {
+  if(autoMessageSettings[siteKey]) {
+    autoMessageSettings[siteKey] = [];
+  }
+  if(publicHolidaySettings[siteKey]) {
+    companySettings[siteKey] = [];
   }
 }
 
