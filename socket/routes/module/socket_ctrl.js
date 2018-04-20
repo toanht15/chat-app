@@ -262,7 +262,7 @@ function makeToken(){
 var companyList = {};
 var initialized = false;
 function getCompanyList(){
-  pool.query('select * from m_companies;', function(err, rows){
+  pool.query('select * from m_companies where del_flg = 0;', function(err, rows){
     if ( err !== null && err !== '' ) return false; // DB接続断対応
     var key = Object.keys(rows);
     for ( var i = 0; key.length > i; i++ ) {
@@ -273,7 +273,8 @@ function getCompanyList(){
       if(!(row.company_key in customerList)) {
         console.log("new customerList : " + row.company_key);
         customerList[row.company_key] = {};
-        if(initialized) {
+        if(!initialized) {
+          console.log("RELOAD SETTING : " + row.company_key);
           common.reloadSettings(row.company_key);
         }
       }

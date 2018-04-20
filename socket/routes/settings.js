@@ -351,8 +351,6 @@ router.get("/", function(req, res, next) {
           var dateParse = Date.parse(now);
           var date = now.getFullYear() + "/" + (now.getMonth()+1) + "/" + now.getDate() + " ";
           var today = (now.getMonth()+1) + '/' + now.getDate();
-          var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
-          var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
           for(var i=0; i<common.autoMessageSettings[siteKey].length; i++){
             if ( !(common.autoMessageSettings[siteKey][i].trigger_type in sendData['messages']) ) {
               sendData['messages'] = [];
