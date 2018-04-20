@@ -227,8 +227,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params);
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params);
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -1107,8 +1106,6 @@
       //履歴検索機能
       if ($this->Session->check('Thistory')) {
         $data = $this->Session->read('Thistory');
-        $this->log('data',LOG_DEBUG);
-        $this->log($data,LOG_DEBUG);
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
         if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
@@ -1353,12 +1350,11 @@
         else if(!empty($chatLogCond['chat.achievementFlg']) && $chatLogCond['chat.achievementFlg'] == 0) {
           $value = 'MIN';
         }
-        $this->log('chatLogCond',LOG_DEBUG);
-        $this->log($chatLogCond,LOG_DEBUG);
 
         if (empty($data['THistoryChatLog']['responsible_name']) && empty($data['History']['company_name']) &&
           empty($data['History']['customer_name']) && empty($data['History']['telephone_number']) && empty($data['History']['mail_address'])
           && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) && empty($data['THistoryChatLog']['message'])) {
+          $this->log('ここに入っております！',LOG_DEBUG);
           $chatStateList = $dbo2->buildStatement(
              [
                'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
@@ -1399,7 +1395,7 @@
         if (empty($data['THistoryChatLog']['responsible_name']) && empty($data['History']['company_name']) &&
           empty($data['History']['customer_name']) && empty($data['History']['telephone_number']) && empty($data['History']['mail_address'])
           && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) && empty($data['THistoryChatLog']['message'])) {
-          $limit = "limit 200";
+          $limit = "LIMIT 200";
         }
         else {
           $limit = " ";
@@ -1577,7 +1573,6 @@
       }
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
-       $this->log($this->THistory->getDataSource()->getLog(),LOG_DEBUG);
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       //初回チャット受信日時順に並び替え
@@ -1766,8 +1761,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
       }
       else {
         $tHistoryCountData = "";
