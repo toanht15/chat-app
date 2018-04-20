@@ -18,8 +18,11 @@ $headerNo = 1;
           <!-- 初期表示時のスタイル -->
           <li>
             <span class="require"><label>初期表示時のスタイル</label></span>
-            <pre><label class="pointer"><?= $this->Form->input('display_style_type', ['type' => 'radio',  'options' => $widgetDisplayStyleType, 'legend' => false, 'separator' => '</label><br><label class="pointer">', 'label' => false, 'error' => false, 'div' => false]) ?></label>
-            </pre>
+            <div ng-init="widgetDisplayTypeToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'display_style_type'))?>'">
+              <label class="pointer choose" for="displayStyleType1"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="showNormalMaximized()" id="displayStyleType1" class="showHeader" value="1" ><?= $widgetDisplayStyleType[1] ?></label><br>
+              <label class="pointer choose" for="displayStyleType2"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="showNormalMinimized()" id="displayStyleType2" class="showHeader" value="2" ><?= $widgetDisplayStyleType[2] ?></label><br>
+              <label class="pointer choose" for="displayStyleType3"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="switchWidget(4)" id="displayStyleType3" class="showHeader" value="3" ><?= $widgetDisplayStyleType[3] ?></label><br>
+            </div>
           </li>
           <!-- 表示するタイミング -->
           <li>
