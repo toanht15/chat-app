@@ -260,8 +260,7 @@ function makeToken(){
 };
 
 var companyList = {};
-var initialized = false;
-function getCompanyList(){
+function getCompanyList(forceReload){
   pool.query('select * from m_companies where del_flg = 0;', function(err, rows){
     if ( err !== null && err !== '' ) return false; // DB接続断対応
     var key = Object.keys(rows);
@@ -273,19 +272,20 @@ function getCompanyList(){
       if(!(row.company_key in customerList)) {
         console.log("new customerList : " + row.company_key);
         customerList[row.company_key] = {};
-        if(!initialized) {
-          console.log("RELOAD SETTING : " + row.company_key);
-          common.reloadSettings(row.company_key);
-        }
+        console.log("LOAD SETTING : " + row.company_key);
+        common.reloadSettings(row.company_key);
+      }
+      if(!common.companySettings[row.company_key]) {
+        console.log("LOAD NEW COMPANY SETTINGS : " + row.company_key);
+        common.reloadSettings(row.company_key);
       }
     }
-    initialized = true;
   });
 }
 getCompanyList();
 
 router.get('/refreshCompanyList', function(req, res, next){
-  getCompanyList();
+  getCompanyList(true);
   res.send("OK");
   res.status(200);
 });
