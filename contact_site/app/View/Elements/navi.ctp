@@ -196,27 +196,36 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 
 <script type="text/javascript">
   var nowOpenType = "";
-  $("#sidebar-main .icon:not(.settings-icon)").mouseenter(function(){
+  $("#sidebar-main .icon:not(.setting-icon)").mouseenter(function(){
+    console.log("#sidebar-main .icon:not(.setting-icon)");
     if(nowOpenType !== "") {
       $("#sidebar-sub").removeClass('open');
       $("#sidebar-sub > div").addClass("hide");
       nowOpenType = "";
     }
   });
+
+  var lock = false;
   $(".setting-icon").mouseenter(function(){
     console.log("mouseenter");
     var type = $(this).data("type");
     if ( $("#sidebar-sub").is(".open") ) {
+      lock = true;
       $("#sidebar-sub").removeClass('open');
       $("#sidebar-sub > div").addClass("hide");
       setTimeout(function(){
-        $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
+        console.log(1);
+        var showTarget = $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
+        $("#sidebar-sub div[data-sidebar-type]").not(showTarget).addClass("hide");
         $("#sidebar-sub").addClass('open');
         nowOpenType = type;
+        lock = false;
       }, 100);
     }
     else {
-      $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
+      if(lock) return;
+      var showTarget = $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
+      $("#sidebar-sub div[data-sidebar-type]").not(showTarget).addClass("hide");
       $("#sidebar-sub").addClass('open');
       nowOpenType = type;
     }
