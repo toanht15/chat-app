@@ -18,6 +18,11 @@ sincloApp.directive('stringToNumber', function() {
   };
 });
 
+$(document).on('DOMContentLoaded', function(){
+  // 初期表示時のウィジェット設定反映のために画面がチラつくため一時的に非表示
+  $('#m_widget_simulator').css('visibility', 'hidden');
+});
+
 sincloApp.controller('WidgetCtrl', function($scope){
     var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
@@ -1098,6 +1103,17 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope[target] = size;
     }
 
+    $scope.showNormalMaximized = function(){
+      $scope.switchWidget(1);
+      $scope.openFlg = true;
+    }
+
+    //通常モードにし最小化表示する
+    $scope.showNormalMinimized = function(){
+      $scope.switchWidget(1);
+      $scope.openFlg = false;
+    }
+
     //最小化時のデザインがクリックされた時の動作
     $scope.clickMinimizedDesignToggle = function(tag){
       if($scope.showWidgetType !== tag){
@@ -1161,6 +1177,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $('#MWidgetSettingDisplayType4').parent().attr('operatingHours', 'widgetHoursPage');
     }
 
+    // 表示切り替え時のチラ付きを抑えるためにいったん非表示にする
+
     angular.element(window).on('load',function(e){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
       // formのどこかを変更したらフラグを立てる
@@ -1185,6 +1203,27 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.closeBtnDisableWhenShowBannerEnable();
       }
       addTooltipEvent();
+
+      switch(Number($scope.widgetDisplayTypeToggle)) {
+        case 1:
+          $scope.showNormalMaximized();
+          break;
+
+        case 2:
+          $scope.showNormalMinimized();
+          break;
+
+        case 3:
+          $scope.switchWidget(4);
+          break;
+
+        default:
+          // 最大化
+          $scope.showNormalMaximized();
+          break;
+      }
+      $scope.$apply();
+      $('#m_widget_simulator').css('visibility', 'visible');
     });
 
     $scope.closeBtnDisableWhenShowBannerEnable = function() {
