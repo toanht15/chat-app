@@ -122,10 +122,10 @@ function loadWidgetSettings(siteKey, callback) {
 }
 
 function initializeSettings(siteKey) {
-  if(autoMessageSettings[siteKey]) {
+  if(!autoMessageSettings[siteKey]) {
     autoMessageSettings[siteKey] = [];
   }
-  if(publicHolidaySettings[siteKey]) {
+  if(!publicHolidaySettings[siteKey]) {
     companySettings[siteKey] = [];
   }
 }
