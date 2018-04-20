@@ -28,7 +28,9 @@ class MFileTransferSettingController extends AppController
 
   public function edit() {
     if($this->request->is('post')) {
-      $this->upsert();
+      if(isset($this->coreSettings[C_COMPANY_USE_SEND_FILE]) && $this->coreSettings[C_COMPANY_USE_SEND_FILE]) {
+        $this->upsert();
+      }
     } else {
       $this->renderView();
     }

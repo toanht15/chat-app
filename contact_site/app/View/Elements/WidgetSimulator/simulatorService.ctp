@@ -402,7 +402,7 @@ sincloApp.factory('SimulatorService', function() {
         // ラジオボタン
         var radio = str.indexOf('[]');
         if ( radio > -1 ) {
-            var value = str.slice(radio+2);
+            var value = str.slice(radio+2).trim();
             var name = value.replace(htmlTagReg, '');
             str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
             str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";

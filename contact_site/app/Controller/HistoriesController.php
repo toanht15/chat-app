@@ -1157,6 +1157,8 @@ class HistoriesController extends AppController {
       ]
     ]);
 
+    $data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
+    $data['History']['finish_day'] = htmlspecialchars($data['History']['finish_day']);
     $this->set('data', $data);
     $this->set('historyList', $historyList);
     $this->set('stayList', $stayList);
@@ -1309,7 +1311,8 @@ class HistoriesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    if($this->userInfo['permission_level'] == 1) {
+    if($this->userInfo['permission_level'] == 1 &&
+      isset($this->coreSettings[C_COMPANY_USE_HISTORY_DELETE]) && $this->coreSettings[C_COMPANY_USE_HISTORY_DELETE]) {
       $id = $this->request->data['id'];
       $now = date('Y/m/d H:i:s');
       $userName = $this->userInfo['display_name'];
@@ -1366,6 +1369,9 @@ class HistoriesController extends AppController {
         // すでに存在しない履歴のため変更済みとしてエラーを返す
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deletedHistory'));
       }
+    }
+    else {
+      $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
   }
 

@@ -1171,13 +1171,20 @@ sinclo@medialink-ml.co.jp
               $d['chat_trigger'] = C_WIDGET_SEND_ACT_PUSH_KEY; // デフォルト値
             }
             if ( strcmp($v, 'show_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['show_name'] = C_WIDGET_SHOW_COMP; // デフォルト値
+              $d['show_name'] = strval(C_WIDGET_SHOW_COMP); // デフォルト値
+              break;
             }
             if ( strcmp($v, 'show_automessage_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['show_automessage_name'] = C_SELECT_CAN; // デフォルト値
+              $d['show_automessage_name'] = strval(C_SELECT_CAN); // デフォルト値
+              break;
             }
             if ( strcmp($v, 'show_op_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['show_op_name'] = C_SELECT_CAN; // デフォルト値
+              if(isset($d['show_name']) && is_numeric($d['show_name'])) {
+                $d['show_op_name'] = $d['show_name']; // 設定値が存在しない場合は既存使用に依存する
+              } else {
+                $d['show_op_name'] = strval(C_WIDGET_SHOW_COMP); // デフォルト値
+              }
+              break;
             }
             if ( strcmp($v, 'chat_message_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_message_design_type'] = C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX; // デフォルト値
