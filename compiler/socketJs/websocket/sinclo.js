@@ -2078,7 +2078,7 @@
                 //バナー表示にする
                 sinclo.operatorInfo.onBanner();
               }
-              return false;
+              break;
           }
 
           if ( showTime === "5" ) return false; // 初期表示のままにする
