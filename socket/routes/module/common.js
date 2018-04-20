@@ -125,8 +125,8 @@ function initializeSettings(siteKey) {
   if(!autoMessageSettings[siteKey]) {
     autoMessageSettings[siteKey] = [];
   }
-  if(!publicHolidaySettings[siteKey]) {
-    companySettings[siteKey] = [];
+  if(!operationHourSettings[siteKey]) {
+    operationHourSettings[siteKey] = [];
   }
 }
 
