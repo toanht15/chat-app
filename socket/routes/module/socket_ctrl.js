@@ -272,8 +272,6 @@ function getCompanyList(forceReload){
       if(!(row.company_key in customerList)) {
         console.log("new customerList : " + row.company_key);
         customerList[row.company_key] = {};
-        console.log("LOAD SETTING : " + row.company_key);
-        common.reloadSettings(row.company_key);
       }
       if(!common.companySettings[row.company_key]) {
         console.log("LOAD NEW COMPANY SETTINGS : " + row.company_key);
