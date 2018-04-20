@@ -2095,8 +2095,8 @@
                 storage.s.set('preWidgetOpened', true);
               }
               if(storage.s.get('bannerAct') === 'true') {
-                //バナー表示だった場合最大化する
-                sinclo.operatorInfo.clickBanner();
+                //バナー表示だった場合最小化状態で表示
+                sinclo.operatorInfo.clickBanner(true);
               }
               if ( !(check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) {
                 sinclo.operatorInfo.ev();
