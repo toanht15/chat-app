@@ -135,18 +135,20 @@
     <?php } ?>
   }
 
+  var tooltipEventTimer = null;
   function addTooltipEvent() {
-    setTimeout(function(){
+    $(".commontooltip").off('mouseenter').off('mouseleave');
+    tooltipEventTimer = setTimeout(function(){
+      console.log('addTooltipEvent');
       // 共通ツールチップの配置（内容はdata-textで指定する）
       $(".commontooltip").each(function(index){
         // サイズ調整用
         var debug = $(this).attr('data-debug');
-        $(this).off('mouseenter').off('mouseleave');
         var self = this;
         this.addEventListener('mouseenter', function(e){
 
           // クラスにcommontooltipを含まないとき、処理を実行しない(radio, checkbox, selectで二重表示されるため)
-          if (!/commontooltip/.test(e.target.className)) {
+          if (!/commontooltip/.test(e.target.className) || $('.tooltips').length === 1) {
             return;
           }
 
@@ -237,6 +239,7 @@
       });
     },1);
   }
+
 
   $(document).ready(function(){
     /* Angularの描画 */

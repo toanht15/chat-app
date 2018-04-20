@@ -266,141 +266,143 @@ class HistoriesController extends AppController {
     ini_set('memory_limit', '-1'); // 無制限
     $name = "sinclo-history";
 
-    //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
-    $this->printProcessTimetoLog('BEGIN _searchConditions');
-    $returnData = $this->_searchConditions();
-    $this->printProcessTimetoLog('BEGIN $this->THistory->find');
-    $historyList = $this->THistory->find('all', [
-      'order' => [
-        'THistory.access_date' => 'desc',
-        'THistory.id' => 'desc'
-      ],
-      'fields' => [
-        '*'
-      ],
-      'joins' =>  $returnData['joinList'],
-      'conditions' => $returnData['conditions']
-    ]);
-    //$historyListに担当者を追加
-    $this->printProcessTimetoLog('BEGIN $this->_userList($historyList)');
-    $userList = $this->_userList($historyList);
-    //THistoryChatLogの「firstURL」と「count」をと取ってくる
-    $this->printProcessTimetoLog('BEGIN $this->_stayList($userList)');
-    $stayList = $this->_stayList($userList);
-    //最終発言時間を取得
-    $this->printProcessTimetoLog('BEGIN $this->_lastSpeechTimeList($historyList)');
-    $lastSpeechList = $this->_lastSpeechTimeList($historyList);
+    if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
+      //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
+      $this->printProcessTimetoLog('BEGIN _searchConditions');
+      $returnData = $this->_searchConditions();
+      $this->printProcessTimetoLog('BEGIN $this->THistory->find');
+      $historyList = $this->THistory->find('all', [
+        'order' => [
+          'THistory.access_date' => 'desc',
+          'THistory.id' => 'desc'
+        ],
+        'fields' => [
+          '*'
+        ],
+        'joins' =>  $returnData['joinList'],
+        'conditions' => $returnData['conditions']
+      ]);
+      //$historyListに担当者を追加
+      $this->printProcessTimetoLog('BEGIN $this->_userList($historyList)');
+      $userList = $this->_userList($historyList);
+      //THistoryChatLogの「firstURL」と「count」をと取ってくる
+      $this->printProcessTimetoLog('BEGIN $this->_stayList($userList)');
+      $stayList = $this->_stayList($userList);
+      //最終発言時間を取得
+      $this->printProcessTimetoLog('BEGIN $this->_lastSpeechTimeList($historyList)');
+      $lastSpeechList = $this->_lastSpeechTimeList($historyList);
 
-    // ヘッダー
-    $csv[] = [
-      "日時",
-      "IPアドレス",
-      "訪問ユーザ",
-      "プラットフォーム",
-      "ブラウザ",
-      "キャンペーン",
-      "流入ページタイトル",
-      "閲覧ページ数",
-      "参照元URL",
-      "滞在時間"
-    ];
+      // ヘッダー
+      $csv[] = [
+        "日時",
+        "IPアドレス",
+        "訪問ユーザ",
+        "プラットフォーム",
+        "ブラウザ",
+        "キャンペーン",
+        "流入ページタイトル",
+        "閲覧ページ数",
+        "参照元URL",
+        "滞在時間"
+      ];
 
-    if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
-      $csv[0][] = "最終発言後離脱時間";
-      $csv[0][] = "成果";
-      $csv[0][] = "チャット担当者";
-    }
-
-    //除外パラメーターリスト
-    $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
-
-    $campaignList = $this->TCampaign->getList();
-    foreach($userList as $key => $history){
-      $campaignParam = "";
-      $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-      if ( $tmp !== "" ) {
-        foreach($campaignList as $k => $v){
-          if ( strpos($tmp, $k) !== false ) {
-            if ( $campaignParam !== "" ) {
-              $campaignParam .= "\n";
-            }
-            $campaignParam .= $v;
-          }
-        }
-      }
-      $row = [];
-      // 日時
-      $dateTime = date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s");
-      $row['date'] = $dateTime;
-      // IPアドレス
-      if ($history['THistory']['ip_address'] !== "" ) {
-        if(empty($row['ip'])) {
-          $row['ip'] = "";
-        }
-        if ( $row['ip'] !== "" ){
-          $row['ip'] .= "\n";
-        }
-        if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
-            && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
-            && !empty($history['LandscapeData']['org_name'])
-            && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
-        ) {
-          $row['ip'] .= $history['LandscapeData']['org_name'];
-        } else {
-          $row['ip'] .= $history['THistory']['ip_address'];
-        }
-      }
-      // 訪問ユーザ
-      $row['customer'] = "";
-      if ( !empty($history['MCustomer']['informations']) ) {
-        $informations = (array)json_decode($history['MCustomer']['informations']);
-        if ( isset($informations['company']) && $informations['company'] !== "" ) {
-          $row['customer'] .= $informations['company'];
-        }
-        if (isset($informations['name']) && $informations['name'] !== "" ) {
-          if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
-          $row['customer'] .= $informations['name'];
-        }
-      }
-
-      // OS
-      $row['os'] = $this->_userAgentCheckOs($history);
-      // ブラウザ
-      $row['browser'] = $this->_userAgentCheckBrowser($history);
-      //キャンペーン
-      $row['campaign'] = $campaignParam;
-      //ランディングページ
-      $row['landing'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['title'];
-      // 閲覧ページ数
-      $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
-      // 参照元URL
-      $params = $excludeList['params'];
-      $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
-      // 滞在時間
-      $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
       if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
-        // 最終発言
-        $row['lastSpeechTime'] = $this->calcTime(!empty($lastSpeechList[$history['THistory']['id']]) ? $lastSpeechList[$history['THistory']['id']] : "", $history['THistory']['out_date']);
-        // 成果
-        $row['achievement'] = "";
-        if($history['THistoryChatLog2']['eff'] == 0 || $history['THistoryChatLog2']['cv'] == 0 ) {
-          if (isset($history['THistoryChatLog2']['achievementFlg'])){
-            $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
-          }
-        }
-        else if ($history['THistoryChatLog2']['eff'] != 0 && $history['THistoryChatLog2']['cv'] != 0) {
-          if (isset($history['THistoryChatLog2']['achievementFlg'])){
-            $row['achievement'] = Configure::read('achievementType')[2].','.Configure::read('achievementType')[0];
-          }
-        }
-        //　担当者
-        $row['user'] =  $history['User'];
+        $csv[0][] = "最終発言後離脱時間";
+        $csv[0][] = "成果";
+        $csv[0][] = "チャット担当者";
       }
 
-      $csv[] = $row;
+      //除外パラメーターリスト
+      $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
+
+      $campaignList = $this->TCampaign->getList();
+      foreach($userList as $key => $history){
+        $campaignParam = "";
+        $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+        if ( $tmp !== "" ) {
+          foreach($campaignList as $k => $v){
+            if ( strpos($tmp, $k) !== false ) {
+              if ( $campaignParam !== "" ) {
+                $campaignParam .= "\n";
+              }
+              $campaignParam .= $v;
+            }
+          }
+        }
+        $row = [];
+        // 日時
+        $dateTime = date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s");
+        $row['date'] = $dateTime;
+        // IPアドレス
+        if ($history['THistory']['ip_address'] !== "" ) {
+          if(empty($row['ip'])) {
+            $row['ip'] = "";
+          }
+          if ( $row['ip'] !== "" ){
+            $row['ip'] .= "\n";
+          }
+          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+              && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+              && !empty($history['LandscapeData']['org_name'])
+              && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+          ) {
+            $row['ip'] .= $history['LandscapeData']['org_name'];
+          } else {
+            $row['ip'] .= $history['THistory']['ip_address'];
+          }
+        }
+        // 訪問ユーザ
+        $row['customer'] = "";
+        if ( !empty($history['MCustomer']['informations']) ) {
+          $informations = (array)json_decode($history['MCustomer']['informations']);
+          if ( isset($informations['company']) && $informations['company'] !== "" ) {
+            $row['customer'] .= $informations['company'];
+          }
+          if (isset($informations['name']) && $informations['name'] !== "" ) {
+            if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
+            $row['customer'] .= $informations['name'];
+          }
+        }
+
+        // OS
+        $row['os'] = $this->_userAgentCheckOs($history);
+        // ブラウザ
+        $row['browser'] = $this->_userAgentCheckBrowser($history);
+        //キャンペーン
+        $row['campaign'] = $campaignParam;
+        //ランディングページ
+        $row['landing'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['title'];
+        // 閲覧ページ数
+        $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
+        // 参照元URL
+        $params = $excludeList['params'];
+        $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
+        // 滞在時間
+        $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
+        if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+          // 最終発言
+          $row['lastSpeechTime'] = $this->calcTime(!empty($lastSpeechList[$history['THistory']['id']]) ? $lastSpeechList[$history['THistory']['id']] : "", $history['THistory']['out_date']);
+          // 成果
+          $row['achievement'] = "";
+          if($history['THistoryChatLog2']['eff'] == 0 || $history['THistoryChatLog2']['cv'] == 0 ) {
+            if (isset($history['THistoryChatLog2']['achievementFlg'])){
+              $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
+            }
+          }
+          else if ($history['THistoryChatLog2']['eff'] != 0 && $history['THistoryChatLog2']['cv'] != 0) {
+            if (isset($history['THistoryChatLog2']['achievementFlg'])){
+              $row['achievement'] = Configure::read('achievementType')[2].','.Configure::read('achievementType')[0];
+            }
+          }
+          //　担当者
+          $row['user'] =  $history['User'];
+        }
+
+        $csv[] = $row;
+      }
+      $this->_outputCSV($name, $csv);
+      $this->printProcessTimetoLog('END   outputCSVOfHistory');
     }
-    $this->_outputCSV($name, $csv);
-    $this->printProcessTimetoLog('END   outputCSVOfHistory');
   }
 
   public function outputCSVOfChatHistory(){
@@ -408,161 +410,163 @@ class HistoriesController extends AppController {
     ini_set("max_execution_time", 180);
     ini_set('memory_limit', '-1'); // 無制限
 
-    //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
-    $returnData = $this->_searchConditions();
-    //$returnData:チャット履歴CSV出力に必要なTHistoryChatLog、MUser、THistoryStayLogとjoinする
-    $returnData = $this->_searchConditionsChat($returnData);
+    if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
+      //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
+      $returnData = $this->_searchConditions();
+      //$returnData:チャット履歴CSV出力に必要なTHistoryChatLog、MUser、THistoryStayLogとjoinする
+      $returnData = $this->_searchConditionsChat($returnData);
 
-    $historyList = $this->THistory->find('all', [
-      'fields' => '*',
-      'joins' => $returnData['joinList'],
-      'conditions' => $returnData['conditions'],
-      'order' => [
-        'THistory.access_date' => 'desc',
-        'THistory.id' => 'desc',
-        'THistoryChatLog.created'
-       ]
-    ]);
+      $historyList = $this->THistory->find('all', [
+        'fields' => '*',
+        'joins' => $returnData['joinList'],
+        'conditions' => $returnData['conditions'],
+        'order' => [
+          'THistory.access_date' => 'desc',
+          'THistory.id' => 'desc',
+          'THistoryChatLog.created'
+         ]
+      ]);
 
-    //$historyListに担当者を追加
-    $userList = $this->_userList($historyList);
+      //$historyListに担当者を追加
+      $userList = $this->_userList($historyList);
 
-    $name = "sinclo-chat-history";
+      $name = "sinclo-chat-history";
 
-    // ヘッダー
-    $csv[] = [
-      "訪問日時",
-      "IPアドレス",
-      "訪問ユーザ",
-      "プラットフォーム",
-      "ブラウザ",
-      "送信元ページ",
-      "送信日時",
-      "送信種別",
-      "送信者",
-      "メッセージ",
-      "担当者"
-     ];
-    foreach($userList as $val){
-      $row = [];
-      // 日時
-      $dateTime = $val['THistory']['access_date'];
-      $row['date'] = $dateTime;
-      //IPアドレス
-      if ($val['THistory']['ip_address'] !== "" ) {
-        if(empty($row['ip'])) {
-          $row['ip'] = "";
+      // ヘッダー
+      $csv[] = [
+        "訪問日時",
+        "IPアドレス",
+        "訪問ユーザ",
+        "プラットフォーム",
+        "ブラウザ",
+        "送信元ページ",
+        "送信日時",
+        "送信種別",
+        "送信者",
+        "メッセージ",
+        "担当者"
+       ];
+      foreach($userList as $val){
+        $row = [];
+        // 日時
+        $dateTime = $val['THistory']['access_date'];
+        $row['date'] = $dateTime;
+        //IPアドレス
+        if ($val['THistory']['ip_address'] !== "" ) {
+          if(empty($row['ip'])) {
+            $row['ip'] = "";
+          }
+          if ( $row['ip'] !== "" ){
+            $row['ip'] .= "\n";
+          }
+          if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+              && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
+            && !empty($val['LandscapeData']['org_name'])
+            && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))) {
+            $row['ip'] .= $val['LandscapeData']['org_name'];
+          } else {
+            $row['ip'] .= $val['THistory']['ip_address'];
+          }
         }
-        if ( $row['ip'] !== "" ){
-          $row['ip'] .= "\n";
+        //訪問ユーザ
+        $row['customer'] = "";
+        if ( !empty($val['MCustomer']['informations']) ) {
+          $informations = (array)json_decode($val['MCustomer']['informations']);
+          if ( isset($informations['company']) && $informations['company'] !== "" ) {
+            $row['customer'] .= $informations['company'];
+          }
+          if (isset($informations['name']) && $informations['name'] !== "" ) {
+            if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
+            $row['customer'] .= $informations['name'];
+          }
         }
-        if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
-            && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
-          && !empty($val['LandscapeData']['org_name'])
-          && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($val['LandscapeData']['lbc_code']))) {
-          $row['ip'] .= $val['LandscapeData']['org_name'];
-        } else {
-          $row['ip'] .= $val['THistory']['ip_address'];
+        // OS
+        $row['os'] = $this->_userAgentCheckOs($val);
+        //ブラウザ
+        $row['browser'] = $this->_userAgentCheckBrowser($val);
+        //送信元ページ
+        if($val['THistoryChatLog']['message_type'] == 1) {
+          $row['sourcePage'] = $val['THistoryStayLog']['url'];
         }
-      }
-      //訪問ユーザ
-      $row['customer'] = "";
-      if ( !empty($val['MCustomer']['informations']) ) {
-        $informations = (array)json_decode($val['MCustomer']['informations']);
-        if ( isset($informations['company']) && $informations['company'] !== "" ) {
-          $row['customer'] .= $informations['company'];
+        else{
+          $row['sourcePage'] = '';
         }
-        if (isset($informations['name']) && $informations['name'] !== "" ) {
-          if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
-          $row['customer'] .= $informations['name'];
-        }
-      }
-      // OS
-      $row['os'] = $this->_userAgentCheckOs($val);
-      //ブラウザ
-      $row['browser'] = $this->_userAgentCheckBrowser($val);
-      //送信元ページ
-      if($val['THistoryChatLog']['message_type'] == 1) {
-        $row['sourcePage'] = $val['THistoryStayLog']['url'];
-      }
-      else{
-        $row['sourcePage'] = '';
-      }
-      // 送信日時
-      $row['pageCnt'] =  substr(preg_replace("/[\n,]+/", " ", $val['THistoryChatLog']['created']),0,20);
+        // 送信日時
+        $row['pageCnt'] =  substr(preg_replace("/[\n,]+/", " ", $val['THistoryChatLog']['created']),0,20);
 
-      // 送信種別
-      if($val['THistoryChatLog']['message_type'] == 1) {
-        $row['transmissionKind'] = '訪問者';
-        $row['transmissionPerson'] = '';
+        // 送信種別
+        if($val['THistoryChatLog']['message_type'] == 1) {
+          $row['transmissionKind'] = '訪問者';
+          $row['transmissionPerson'] = '';
+        }
+        if($val['THistoryChatLog']['message_type'] == 2) {
+          $row['transmissionKind'] = 'オペレーター';
+          $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
+        }
+        if($val['THistoryChatLog']['message_type'] == 3) {
+          $row['transmissionKind'] = 'オートメッセージ';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 4) {
+          $row['transmissionKind'] = 'Sorryメッセージ';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 5) {
+          $row['transmissionKind'] = '自動返信';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 6) {
+          $row['transmissionKind'] = 'ファイル送信';
+          $row['transmissionPerson'] = $val['MUser']['display_name'];
+          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+        }
+        if($val['THistoryChatLog']['message_type'] == 12) {
+          $row['transmissionKind'] = '訪問者（ヒアリング回答）';
+          $row['transmissionPerson'] = '';
+        }
+        if($val['THistoryChatLog']['message_type'] == 13) {
+          $row['transmissionKind'] = '訪問者（選択肢回答）';
+          $row['transmissionPerson'] = '';
+        }
+        if($val['THistoryChatLog']['message_type'] == 21) {
+          $row['transmissionKind'] = 'シナリオメッセージ（テキスト発言）';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 22) {
+          $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 23) {
+          $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 27) {
+          $row['transmissionKind'] = 'シナリオメッセージ（ファイル送信）';
+          $row['transmissionPerson'] = "";
+          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+        }
+        if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
+          $row['transmissionKind'] = '通知メッセージ';
+          $row['transmissionPerson'] = "";
+          $val['THistoryChatLog']['message'] = '-'.$val['MUser']['display_name'].'が'.$val['THistoryChatLog']['message'].'しました-';
+        }
+        // チャットメッセージ
+        if($val['THistoryChatLog']['delete_flg'] == 1) {
+          $row['message'] = "(このメッセージは ".$val['THistoryChatLog']['deleted']." に ".$val['DeleteMUser']['display_name']." さんによって削除されました。)";
+        }
+        else {
+          $row['message'] = $val['THistoryChatLog']['message'];
+        }
+        // チャット担当者
+        if($val['THistoryChatLog']['message_type'] == 2 || $val['THistoryChatLog']['message_type'] == 6) {
+          $row['user'] = $val['User'];
+        }
+        $csv[] = $row;
       }
-      if($val['THistoryChatLog']['message_type'] == 2) {
-        $row['transmissionKind'] = 'オペレーター';
-        $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
-      }
-      if($val['THistoryChatLog']['message_type'] == 3) {
-        $row['transmissionKind'] = 'オートメッセージ';
-        $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
-      }
-      if($val['THistoryChatLog']['message_type'] == 4) {
-        $row['transmissionKind'] = 'Sorryメッセージ';
-        $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
-      }
-      if($val['THistoryChatLog']['message_type'] == 5) {
-        $row['transmissionKind'] = '自動返信';
-        $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
-      }
-      if($val['THistoryChatLog']['message_type'] == 6) {
-        $row['transmissionKind'] = 'ファイル送信';
-        $row['transmissionPerson'] = $val['MUser']['display_name'];
-        $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-        $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
-      }
-      if($val['THistoryChatLog']['message_type'] == 12) {
-        $row['transmissionKind'] = '訪問者（ヒアリング回答）';
-        $row['transmissionPerson'] = '';
-      }
-      if($val['THistoryChatLog']['message_type'] == 13) {
-        $row['transmissionKind'] = '訪問者（選択肢回答）';
-        $row['transmissionPerson'] = '';
-      }
-      if($val['THistoryChatLog']['message_type'] == 21) {
-        $row['transmissionKind'] = 'シナリオメッセージ（テキスト発言）';
-        $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
-      }
-      if($val['THistoryChatLog']['message_type'] == 22) {
-        $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
-        $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
-      }
-      if($val['THistoryChatLog']['message_type'] == 23) {
-        $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
-        $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
-      }
-      if($val['THistoryChatLog']['message_type'] == 27) {
-        $row['transmissionKind'] = 'シナリオメッセージ（ファイル送信）';
-        $row['transmissionPerson'] = "";
-        $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-        $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
-      }
-      if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
-        $row['transmissionKind'] = '通知メッセージ';
-        $row['transmissionPerson'] = "";
-        $val['THistoryChatLog']['message'] = '-'.$val['MUser']['display_name'].'が'.$val['THistoryChatLog']['message'].'しました-';
-      }
-      // チャットメッセージ
-      if($val['THistoryChatLog']['delete_flg'] == 1) {
-        $row['message'] = "(このメッセージは ".$val['THistoryChatLog']['deleted']." に ".$val['DeleteMUser']['display_name']." さんによって削除されました。)";
-      }
-      else {
-        $row['message'] = $val['THistoryChatLog']['message'];
-      }
-      // チャット担当者
-      if($val['THistoryChatLog']['message_type'] == 2 || $val['THistoryChatLog']['message_type'] == 6) {
-        $row['user'] = $val['User'];
-      }
-      $csv[] = $row;
+      $this->_outputCSV($name, $csv);
     }
-    $this->_outputCSV($name, $csv);
   }
 
     /**
