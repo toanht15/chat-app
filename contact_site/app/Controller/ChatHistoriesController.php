@@ -227,7 +227,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params);
+        //$tHistoryCountData = $this->THistory->find('first', $params);
+        $tHistoryCountData = 2;
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -1106,6 +1107,8 @@
       //履歴検索機能
       if ($this->Session->check('Thistory')) {
         $data = $this->Session->read('Thistory');
+        $this->log('data',LOG_DEBUG);
+        $this->log($data,LOG_DEBUG);
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
         if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
@@ -1350,6 +1353,8 @@
         else if(!empty($chatLogCond['chat.achievementFlg']) && $chatLogCond['chat.achievementFlg'] == 0) {
           $value = 'MIN';
         }
+        $this->log('chatLogCond',LOG_DEBUG);
+        $this->log($chatLogCond,LOG_DEBUG);
 
         if (empty($data['THistoryChatLog']['responsible_name']) && empty($data['History']['company_name']) &&
           empty($data['History']['customer_name']) && empty($data['History']['telephone_number']) && empty($data['History']['mail_address'])
@@ -1572,6 +1577,7 @@
       }
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
+       $this->log($this->THistory->getDataSource()->getLog(),LOG_DEBUG);
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       //初回チャット受信日時順に並び替え
@@ -1760,7 +1766,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        $tHistoryCountData = 2;
       }
       else {
         $tHistoryCountData = "";
