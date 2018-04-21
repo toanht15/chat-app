@@ -210,11 +210,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     }, 100);
   });
 
-  var lock = false;
   $(".setting-icon").mouseenter(function(){
     var type = $(this).data("type");
     if ( $("#sidebar-sub").is(".open") ) {
-      lock = true;
       $("#sidebar-sub").removeClass('open');
       $("#sidebar-sub > div").addClass("hide");
       setTimeout(function(){
@@ -222,17 +220,13 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
         $("#sidebar-sub").addClass('open');
         nowOpenType = type;
-        lock = false;
       }, 100);
     }
     else {
-      if(lock) return;
-      lock = true;
       $("#sidebar-sub > div").addClass("hide");
       $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
       $("#sidebar-sub").addClass('open');
       nowOpenType = type;
-      lock = false;
     }
   });
   $('#header').mouseleave(function(){
