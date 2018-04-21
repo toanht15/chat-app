@@ -193,30 +193,33 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <!-- /*  統計 */ -->
 </div>
 <!-- /* サイドバー２（ここまで） */ -->
-
 <script type="text/javascript">
   var nowOpenType = "";
+
+  var hideTimer = null;
   $("#sidebar-main .icon:not(.setting-icon)").mouseenter(function(){
     console.log("#sidebar-main .icon:not(.setting-icon)");
-    if(nowOpenType !== "") {
+    if(hideTimer) {
+      clearTimeout(hideTimer);
+      hideTimer = null;
+    }
+    setTimeout(function(){
       $("#sidebar-sub").removeClass('open');
       $("#sidebar-sub > div").addClass("hide");
       nowOpenType = "";
-    }
+    }, 100);
   });
 
   var lock = false;
   $(".setting-icon").mouseenter(function(){
-    console.log("mouseenter");
     var type = $(this).data("type");
     if ( $("#sidebar-sub").is(".open") ) {
       lock = true;
       $("#sidebar-sub").removeClass('open');
       $("#sidebar-sub > div").addClass("hide");
       setTimeout(function(){
-        console.log(1);
-        var showTarget = $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
-        $("#sidebar-sub div[data-sidebar-type]").not(showTarget).addClass("hide");
+        $("#sidebar-sub > div").addClass("hide");
+        $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
         $("#sidebar-sub").addClass('open');
         nowOpenType = type;
         lock = false;
@@ -224,14 +227,15 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     }
     else {
       if(lock) return;
-      var showTarget = $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
-      $("#sidebar-sub div[data-sidebar-type]").not(showTarget).addClass("hide");
+      lock = true;
+      $("#sidebar-sub > div").addClass("hide");
+      $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
       $("#sidebar-sub").addClass('open');
       nowOpenType = type;
+      lock = false;
     }
   });
   $('#header').mouseleave(function(){
-    console.log("mouseleave");
     if(nowOpenType !== "") {
       $("#sidebar-sub").removeClass('open');
       $("#sidebar-sub > div").addClass("hide");
