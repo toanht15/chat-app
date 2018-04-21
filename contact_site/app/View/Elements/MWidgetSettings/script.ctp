@@ -1193,10 +1193,6 @@ sincloApp.controller('WidgetCtrl', function($scope){
       if(Number($scope.closeButtonSettingToggle) !== 2 || Number($scope.closeButtonModeTypeToggle) !== 1) {
         $scope.showTimeBannerSettingDisable();
       }
-
-      if(Number($scope.showTime) === 5) {
-        $scope.closeBtnDisableWhenShowBannerEnable();
-      }
     });
 
     $scope.closeBtnDisableWhenShowBannerEnable = function() {
@@ -1205,11 +1201,14 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $('#closeButtonSetting1').parent().addClass("commontooltip");
       $('#closeButtonSetting1').parent().attr('data-text', '「最大化する条件」が「小さなバナーを表示する」<br>に設定されているため、変更できません。');
       $('#closeButtonSetting1').parent().attr('data-content-position-top', '39');
-      $('#closeButtonSetting1').parent().attr('data-balloon-position', '27.5');
+      $('#closeButtonSetting1').parent().attr('data-balloon-position', '36.5');
+      $('#closeButtonSetting1').parent().attr('data-balloon-width', '300');
       $("#closeButtonModeType2").parent().addClass("commontooltip");
       $('#closeButtonModeType2').parent().attr('data-text', '「最大化する条件」が「小さなバナーを表示する」<br>に設定されているため、変更できません。');
       $('#closeButtonModeType2').parent().attr('data-content-position-top', '39');
-      $('#closeButtonModeType2').parent().attr('data-balloon-position', '27.5');
+      $('#closeButtonModeType2').parent().attr('data-balloon-position', '4.5');
+      $('#closeButtonModeType2').parent().attr('data-balloon-width', '300');
+
       addTooltipEvent();
     }
 
