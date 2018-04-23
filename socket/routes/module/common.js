@@ -59,10 +59,10 @@ function loadWidgetSettings(siteKey, callback) {
         }
         if(row && row.length > 0) {
           initializeSettings(siteKey);
-          if(companySettings[siteKey]) {
+          if(!companySettings[siteKey]) {
             companySettings[siteKey] = {};
           }
-          if(widgetSettings[siteKey]) {
+          if(!widgetSettings[siteKey]) {
             widgetSettings[siteKey] = {};
           }
           companySettings[siteKey]['id'] = row[0].m_companies_id;
