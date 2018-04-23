@@ -1303,6 +1303,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
     $('ul.settingList input').on('mousedown', function() {
       if (!$(this).hasClass('ignore-click-event')) {
         $scope.switchWidget(1);
+        $scope.$apply();
       }
     });
 
