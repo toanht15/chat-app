@@ -224,8 +224,6 @@ class PaginatorComponent extends Component {
 					$extra['joins'][0] = str_replace("LIMIT ".(($page-1)*100).",".($page*100), "", $extra['joins'][0]);
 				}
 			}
-			$this->log('extract2',LOG_DEBUG);
-			$this->log($extra,LOG_DEBUG);
 			/*ここまで*/
 			$count = $object->find('count', array_merge($parameters, $extra));
 		}
