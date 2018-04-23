@@ -14,6 +14,7 @@ class MWidgetSetting extends AppModel {
       'max_show_timing_site' => "maxShowTimingSite",
       'max_show_timing_page' => "maxShowTimingPage",
       'show_time' => "showTime",
+      'display_style_type' => "displayStyleType",
       'max_show_time' => "maxShowTime",
       'max_show_time_page' => "maxShowTimePage",
       'show_position' => "showPosition",
@@ -82,7 +83,7 @@ class MWidgetSetting extends AppModel {
       'widget_inside_border_color' => "widgetInsideBorderColor",
       /* カラー設定end */
 
-        'show_main_image' => "showMainImage",
+      'show_main_image' => "showMainImage",
       'main_image' => "mainImage",
       'radius_ratio' => "radiusRatio",
       //背景の影
@@ -149,9 +150,15 @@ class MWidgetSetting extends AppModel {
         ],
         'show_time' => [
             'numberRange' => [
-              'rule' => '/^([1-4])$/',
+              'rule' => '/^([1-5])$/',
               'message' => '選択肢から選び、設定してください'
             ]
+        ],
+        'display_style_type' => [
+          'numberRange' => [
+            'rule' => '/^([1-3])$/',
+            'message' => '選択肢から選び、設定してください'
+          ]
         ],
         'max_show_time' => [
             'isMaxShowTime' => [

@@ -604,7 +604,7 @@ class ContractController extends AppController
     if(!$this->MUser->validates()) {
       $this->MAgreements->rollback();
       $this->MUser->rollback();
-      throw new Exception($errors);
+      throw new Exception(json_encode($this->MUser->validationErrors, JSON_UNESCAPED_UNICODE));
     }
     else {
       $this->MUser->save();

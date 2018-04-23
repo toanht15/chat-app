@@ -180,9 +180,15 @@ router.get("/", function(req, res, next) {
           showOpName = isNumeric(settings.showOpName);
         }
 
+        var displayStyleType = 2; // 最小化
+        if(('displayStyleType' in settings)) {
+          displayStyleType = isNumeric(settings.displayStyleType);
+        }
+
         sendData['widget'] = {
           showTiming: showTimingSetting,
           display_type: isNumeric(common.companySettings[siteKey].display_type),
+          displayStyleType: displayStyleType,
           showTime: isNumeric(settings.showTime),
           showName: isNumeric(settings.showName), // 入室・退室時の表示
           showAutomessageName: isNumeric(showAutomessageName),
@@ -280,18 +286,29 @@ router.get("/", function(req, res, next) {
 
         var actionTypeList = [];
         // ウィジェット表示設定
-        if ( Number(sendData.widget.showTime) === 1 ) { // サイト訪問時
-          if (('maxShowTime' in settings) && settings['maxShowTime']) {
-            sendData.widget['maxShowTime'] = settings['maxShowTime'];
-          }
-        }
-        else if ( Number(sendData.widget.showTime) === 4 ) { // ページ訪問時
-          if (('maxShowTimePage' in settings) && settings['maxShowTimePage']) {
-            sendData.widget['maxShowTime'] = settings['maxShowTimePage'];
-          }
-        }
-        else if ( Number(sendData.widget.showTime) === 3 ) { // 常に最大化
-          sendData.widget['maxShowTime'] = 0;
+        switch(Number(sendData.widget.showTime)) {
+          case 1: // サイト訪問時
+            if (('maxShowTime' in settings) && settings['maxShowTime']) {
+              sendData.widget['maxShowTime'] = settings['maxShowTime'];
+            }
+            break;
+          case 2: // 常に最大化しない　※ 旧IF
+            sendData.widget['displayStyleType'] = 2; // 最小化 sendDataには後続処理で入れる
+            sendData.widget['showTime'] = 5; // 初期表示のままにする
+            break;
+          case 3: // 常に最大化する　※ 旧IF
+            sendData.widget['maxShowTime'] = 0;
+            sendData.widget['displayStyleType'] = 1; // 最大化 sendDataには後続処理で入れる
+            sendData.widget['showTime'] = 5; // 初期表示のままにする
+            break;
+          case 4: // ページ訪問時
+            if (('maxShowTimePage' in settings) && settings['maxShowTimePage']) {
+              sendData.widget['maxShowTime'] = settings['maxShowTimePage'];
+            }
+            break;
+          case 5: // 初期表示のままにする
+            sendData.widget['maxShowTime'] = 0;
+            break;
         }
 
         // ウィジェット表示タイミング
@@ -306,7 +323,8 @@ router.get("/", function(req, res, next) {
           }
         }
         else if ( Number(sendData.widget.showTiming) === 3
-               || Number(sendData.widget.showTiming) === 4 ) { // 初回オートメッセージ受信 or 常に表示
+               || Number(sendData.widget.showTiming) === 4
+               || Number(sendData.widget.showTiming) === 5) { // 初回オートメッセージ受信 or 常に表示 or 小さなバナー表示
           sendData.widget['maxShowTimingSite'] = 0;
           sendData.widget['maxShowTimingPage'] = 0;
         }
@@ -333,8 +351,6 @@ router.get("/", function(req, res, next) {
           var dateParse = Date.parse(now);
           var date = now.getFullYear() + "/" + (now.getMonth()+1) + "/" + now.getDate() + " ";
           var today = (now.getMonth()+1) + '/' + now.getDate();
-          var getOperatingHourSQL = "SELECT * FROM m_operating_hours where m_companies_id = ?;";
-          var getPublicHolidaySQL = "SELECT * FROM public_holidays where year = ?;";
           for(var i=0; i<common.autoMessageSettings[siteKey].length; i++){
             if ( !(common.autoMessageSettings[siteKey][i].trigger_type in sendData['messages']) ) {
               sendData['messages'] = [];

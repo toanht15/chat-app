@@ -18,6 +18,11 @@ sincloApp.directive('stringToNumber', function() {
   };
 });
 
+$(document).on('DOMContentLoaded', function(){
+  // 初期表示時のウィジェット設定反映のために画面がチラつくため一時的に非表示
+  $('#m_widget_simulator').css('visibility', 'hidden');
+});
+
 sincloApp.controller('WidgetCtrl', function($scope){
     var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
@@ -1098,6 +1103,17 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope[target] = size;
     }
 
+    $scope.showNormalMaximized = function(){
+      $scope.switchWidget(1);
+      $scope.openFlg = true;
+    }
+
+    //通常モードにし最小化表示する
+    $scope.showNormalMinimized = function(){
+      $scope.switchWidget(1);
+      $scope.openFlg = false;
+    }
+
     //最小化時のデザインがクリックされた時の動作
     $scope.clickMinimizedDesignToggle = function(tag){
       if($scope.showWidgetType !== tag){
@@ -1121,6 +1137,15 @@ sincloApp.controller('WidgetCtrl', function($scope){
       jq.prop('disabled',true).parent().css('color','#ccc');
       jq.next().css('color','#ccc');
     };
+
+    $scope.$watch('showTime', function(){
+      if($scope.showTime === "5") {
+        // 小さなバナー表示
+        $scope.closeBtnDisableWhenShowBannerEnable();
+      } else {
+        $scope.closeBtnEnableWhenShowBannerDisable();
+      }
+    });
 
     $scope.$watch('showTiming', function(){
       switch($scope.showTiming) {
@@ -1152,6 +1177,8 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $('#MWidgetSettingDisplayType4').parent().attr('operatingHours', 'widgetHoursPage');
     }
 
+    // 表示切り替え時のチラ付きを抑えるためにいったん非表示にする
+
     angular.element(window).on('load',function(e){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
       // formのどこかを変更したらフラグを立てる
@@ -1167,7 +1194,76 @@ sincloApp.controller('WidgetCtrl', function($scope){
           return '行った変更が保存されない可能性があります。';
         }
       });
+
+      if(Number($scope.closeButtonSettingToggle) !== 2 || Number($scope.closeButtonModeTypeToggle) !== 1) {
+        $scope.showTimeBannerSettingDisable();
+      }
+
+      if(Number($scope.showTime) === 5) {
+        $scope.closeBtnDisableWhenShowBannerEnable();
+      }
+      addTooltipEvent();
+
+      switch(Number($scope.widgetDisplayTypeToggle)) {
+        case 1:
+          $scope.showNormalMaximized();
+          break;
+
+        case 2:
+          $scope.showNormalMinimized();
+          break;
+
+        case 3:
+          $scope.switchWidget(4);
+          break;
+
+        default:
+          // 最大化
+          $scope.showNormalMaximized();
+          break;
+      }
+      $scope.$apply();
+      $('#m_widget_simulator').css('visibility', 'visible');
     });
+
+    $scope.closeBtnDisableWhenShowBannerEnable = function() {
+      $scope.settingShowTimeRadioButtonDisable($('#closeButtonSetting1'));
+      $scope.settingShowTimeRadioButtonDisable($('#closeButtonModeType2'));
+      $('#closeButtonSetting1').parent().addClass("commontooltip");
+      $('#closeButtonSetting1').parent().attr('data-text', '「最大化する条件」が「小さなバナーを表示する」<br>に設定されているため、変更できません。');
+      $('#closeButtonSetting1').parent().attr('data-content-position-top', '39');
+      $('#closeButtonSetting1').parent().attr('data-balloon-position', '27.5');
+      $("#closeButtonModeType2").parent().addClass("commontooltip");
+      $('#closeButtonModeType2').parent().attr('data-text', '「最大化する条件」が「小さなバナーを表示する」<br>に設定されているため、変更できません。');
+      $('#closeButtonModeType2').parent().attr('data-content-position-top', '39');
+      $('#closeButtonModeType2').parent().attr('data-balloon-position', '27.5');
+    }
+
+    $scope.closeBtnEnableWhenShowBannerDisable = function() {
+      $scope.settingShowTimeRadioButtonEnable($('#closeButtonSetting1'));
+      $scope.settingShowTimeRadioButtonEnable($('#closeButtonModeType2'));
+      $('#closeButtonSetting1').parent().removeClass("commontooltip");
+      $('#closeButtonSetting1').parent().removeAttr('data-text');
+      $('#closeButtonSetting1').parent().removeAttr('data-content-position-top');
+      $('#closeButtonSetting1').parent().removeAttr('data-balloon-position');
+      $("#closeButtonModeType2").parent().removeClass("commontooltip");
+      $('#closeButtonModeType2').parent().removeAttr('data-text');
+      $('#closeButtonModeType2').parent().removeAttr('data-content-position-top');
+      $('#closeButtonModeType2').parent().removeAttr('data-balloon-position');
+    }
+
+  $scope.showTimeBannerSettingEnable = function() {
+
+  }
+
+  $scope.showTimeBannerSettingDisable = function() {
+      $scope.settingShowTimeRadioButtonDisable($('#showTime5'));
+      $("#showTime5").parent().addClass("commontooltip");
+      $('#showTime5').parent().attr('data-text', '「閉じるボタン」を有効にし<br>「小さなバナー表示」を選択するとご利用いただけます。');
+      $('#showTime5').parent().attr('data-content-position-top', '39');
+      $('#showTime5').parent().attr('data-balloon-position', '27.5');
+      $('#showTime5').parent().attr('data-balloon-width', '340');
+    }
 
     angular.element('#fileTagWrap').click(function(e){
       $("#MWidgetSettingUploadImage").val("");
@@ -1192,6 +1288,31 @@ sincloApp.controller('WidgetCtrl', function($scope){
         });
           // $scope.main_image = url;
           // $scope.$apply();
+      }
+    });
+
+    angular.element('input[name="data[MWidgetSetting][close_button_setting]"]').on('change', function(e){
+      switch($('#' + this.id).val()) {
+        case "1":
+          // 無効
+          $scope.settingShowTimeRadioButtonDisable($('#showTime5'));
+          $("#showTime5").parent().addClass("commontooltip");
+          $('#showTime5').parent().attr('data-text', '「閉じるボタン」を有効にし<br>「小さなバナー表示」を選択するとご利用いただけます。');
+          $('#showTime5').parent().attr('data-content-position-top', '39');
+          $('#showTime5').parent().attr('data-balloon-position', '27.5');
+          $('#showTime5').parent().attr('data-balloon-width', '340');
+          break;
+        case "2":
+          // 有効
+          if($('#closeButtonModeType1').is(':checked')) {
+            $scope.settingShowTimeRadioButtonEnable($('#showTime5'));
+            $("#showTime5").parent().removeClass("commontooltip");
+            $('#showTime5').parent().removeAttr('data-text');
+            $('#showTime5').parent().removeAttr('data-content-position-top');
+            $('#showTime5').parent().removeAttr('data-balloon-position');
+            $('#showTime5').parent().removeAttr('data-balloon-width');
+          }
+          break;
       }
     });
 
