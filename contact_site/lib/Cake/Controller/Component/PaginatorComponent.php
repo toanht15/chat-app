@@ -195,7 +195,7 @@ class PaginatorComponent extends Component {
 			}
 			/*20180315 チャット履歴、アクセス履歴性能改善のため導入 henmi*/
 			if($object->name == 'THistory' && $page !== 1) {
-				$extra['joins'][0] = str_replace("LIMIT 100", "LIMIT ".(($page-1)*100).",".($page*100), $extra['joins'][0]);
+				$extra['joins'][0] = str_replace("LIMIT 100", "", $extra['joins'][0]);
 			}
 			/*ここまで*/
 			$results = $object->find($type, array_merge($parameters, $extra));
@@ -224,6 +224,8 @@ class PaginatorComponent extends Component {
 					$extra['joins'][0] = str_replace("LIMIT ".(($page-1)*100).",".($page*100), "", $extra['joins'][0]);
 				}
 			}
+			$this->log('extract2',LOG_DEBUG);
+			$this->log($extra,LOG_DEBUG);
 			/*ここまで*/
 			$count = $object->find('count', array_merge($parameters, $extra));
 		}
