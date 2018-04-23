@@ -48,12 +48,9 @@
         var elm = $('#sincloBox');
         //実際にバナーではないか
         var bannerAct = storage.s.get('bannerAct');
-        if(bannerAct === "true") {
-          sinclo.operatorInfo.clickBanner();
-        }
         //非表示の状態
         var closeAct = storage.s.get('closeAct');
-        if(closeAct !== "true"){
+        if(bannerAct !== "true" && closeAct !== "true"){
           //アニメーションさせる
           //最小化時と最大化時の状態を取得
           var abridgementType = common.getAbridgementType();
@@ -3106,6 +3103,9 @@
                         storage.s.set('preWidgetOpened', true);
                       } else if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                         console.log("オートメッセージ最大化処理");
+                        if(storage.s.get("bannerAct") === "true") {
+                          sinclo.operatorInfo.clickBanner(true);
+                        }
                         sinclo.operatorInfo.ev();
                       }
                     }
@@ -3123,6 +3123,9 @@
                 var flg = sinclo.widget.condifiton.get();
                 if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                   console.log("シナリオ最大化処理");
+                  if(storage.s.get("bannerAct") === "true") {
+                    sinclo.operatorInfo.clickBanner(true);
+                  }
                   sinclo.operatorInfo.ev();
                 }
               }
