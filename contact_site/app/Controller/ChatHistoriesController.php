@@ -227,8 +227,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params);
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params);
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -1566,7 +1565,6 @@
       }
       $this->log("BEGIN historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
       $historyList = $this->paginate('THistory');
-      $this->log($this->paginate,LOG_DEBUG);
       $this->log("END historyList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       //初回チャット受信日時順に並び替え
@@ -1755,8 +1753,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
       }
       else {
         $tHistoryCountData = "";
