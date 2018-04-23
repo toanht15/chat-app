@@ -26,7 +26,7 @@ $headerNo = 1;
           </li>
           <!-- 表示するタイミング -->
           <li>
-            <span class="require"><label>表示するタイミング</label></span>
+            <span class="require"><label>初期表示するタイミング</label></span>
             <div>
               <?php $maxShowWidgetTimingTagBySite = $this->ngForm->input('max_show_timing_site', [
                   'type' => 'number',
@@ -76,7 +76,7 @@ $headerNo = 1;
           <!-- 表示設定 -->
           <!-- 最大化時間設定 -->
           <li>
-            <span><label>最大化する条件</label></span>
+            <span><label>自動で最大化する条件</label></span>
             <div>
               <?php $maxShowTimeTagBySite = $this->ngForm->input('max_show_time', [
                 'type' => 'number',
@@ -113,7 +113,7 @@ $headerNo = 1;
               <div ng-init="showTime='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_time'))?>'">
                 <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_SITE?>" ><?=$maxShowTimeTagBySite?></label><br>
                 <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_PAGE?>" ><?=$maxShowTimeTagByPage?></label><br>
-                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_NONE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_NONE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_NONE?>">初期表示のままにする</label>
+                <label class="pointer padding" for="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_NONE?>"><input type="radio" name="data[MWidgetSetting][show_time]" ng-model="showTime" id="showTime<?=C_WIDGET_AUTO_OPEN_TYPE_NONE?>" value="<?=C_WIDGET_AUTO_OPEN_TYPE_NONE?>">自動で最大化しない</label>
               </div>
             </div>
           </li>
@@ -270,7 +270,7 @@ $headerNo = 1;
                 'placeholder' => 'メインカラー',
                 'ng-change' => "changeMainColor()",
                 'div' => false,
-                'class' => 'jscolor {hash:true}',
+                'class' => 'jscolor {hash:true} ignore-click-event',
                 'label' => false,
                 'maxlength' => 7,
                 'style' => "width: 120px; position: relative; left: 88px !important; margin: -5px 0 0 0;",
@@ -285,7 +285,7 @@ $headerNo = 1;
                 'placeholder' => 'タイトルバー文字色',
                 'ng-change' => "changeStringColor()",
                 'div' => false,
-                'class' => 'jscolor {hash:true}',
+                'class' => 'jscolor {hash:true} ignore-click-event',
                 'label' => false,
                 'maxlength' => 7,
                 'style' => 'width: 120px; position: relative; top: -23px; left: 155px;',
