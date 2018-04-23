@@ -1351,7 +1351,7 @@
           $value = 'MIN';
         }
 
-        if (empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
+        if (empty($data['History']['chat_type']) && empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
           && empty($data['History']['company_name']) && empty($data['History']['customer_name']) && empty($data['History']['telephone_number'])
           && empty($data['History']['mail_address']) && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) &&
           empty($data['THistoryChatLog']['message'])) {
