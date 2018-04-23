@@ -73,7 +73,7 @@ class LoginController extends AppController {
           ],
         ]);
         $mUserData = $this->MUser->find('all', [
-          'fields' => 'change_password_flg',
+          'fields' => array('id','change_password_flg'),
           'conditions' => [
             'm_companies_id' => $userInfo['MCompany']['id'],
             'mail_address' => $this->request->data['MUser']['mail_address']
@@ -94,6 +94,8 @@ class LoginController extends AppController {
           $this->Session->write('editPass', 'true');
           $this->redirect(['action' => 'editPassword']);
         }
+        // ログイン失敗カウントを消す
+        $this->MUser->resetErrorCount($mUserData[0]['MUser']);
         $loginInfo['TLogin']['m_companies_id'] = $userInfo['MCompany']['id'];
         $loginInfo['TLogin']['m_users_id'] = $userInfo['id'];
         $loginInfo['TLogin']['ip_address'] = $ipAddress;
@@ -111,7 +113,23 @@ class LoginController extends AppController {
         return $this->redirect(['controller' => 'Customers', 'action' => 'index']);
       }
       else {
-        $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"メールアドレスまたはパスワードが正しくありません"]);
+        // ログイン失敗カウントを増やす
+        $options = array('conditions' => array('MUser.mail_address' => $this->request->data['MUser']['mail_address']));
+        $lockedUser = $this->MUser->find('first', $options);
+        if(!empty($lockedUser) && $lockedUser['MUser']['error_count'] >= self::CONTINUOUS_ERROR_COUNT) {
+          if(strtotime($lockedUser['MUser']['locked_datetime']) + self::RETRY_INTERVAL_AFTER_LOCKED_SEC > time()) {
+            $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"このアカウントはロックされています。しばらく経ってからやり直してください"]);
+          } else {
+            // ロック情報をリセットして再帰的に呼び出し
+            $this->MUser->resetErrorCount($lockedUser['MUser']);
+            $this->login();
+          }
+        } else {
+          if(!empty($lockedUser)) {
+            $this->MUser->incrementErrorCount($lockedUser['MUser']);
+          }
+          $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"メールアドレスまたはパスワードが正しくありません"]);
+        }
         $this->render('index');
         return;
       }

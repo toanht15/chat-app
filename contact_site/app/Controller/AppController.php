@@ -31,6 +31,9 @@ App::uses('Controller', 'Controller');
  * @link    http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
+  const CONTINUOUS_ERROR_COUNT = 10;
+  const RETRY_INTERVAL_AFTER_LOCKED_SEC = 60;
+
   public $components = [
     'Session',
     'Auth' => [
@@ -44,7 +47,8 @@ class AppController extends Controller {
           'userModel' => 'MUser',
           'fields' => ['username' => 'mail_address'],
           'scope' => [
-            'MUser.del_flg' => 0
+            'MUser.del_flg' => 0,
+            'MUser.error_count <' => self::CONTINUOUS_ERROR_COUNT
           ]
         ]
       ]
