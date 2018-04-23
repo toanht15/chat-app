@@ -3761,6 +3761,13 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           console.log("common.operationHourSettings : " + JSON.stringify(common.operationHourSettings[targetKey]));
           console.log("End --------------------------------------------------------");
           break;
+        case 12: // update all DB-setting  socket.emit('settingReload', JSON.stringify({type:12, targetKey: "demo", targetKey: "master"}));
+          var targetKey = obj.targetKey;
+          console.log("BEGIN RELOAD DB-settings --------------------------------------------------");
+          console.log("TARGET : " + targetKey);
+          common.reloadSettings(targetKey);
+          console.log("END   RELOAD DB-settings --------------------------------------------------");
+          break;
         default:
           break;
       }
