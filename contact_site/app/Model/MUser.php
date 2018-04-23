@@ -377,4 +377,23 @@ class MUser extends AppModel {
       }
       return true;
     }
+
+    public function incrementErrorCount($target) {
+      if($target['error_count'] + 1 >= 10) {
+        $target['locked_datetime'] = date('Y-m-d H:i:s', time());
+      } else {
+        $target['locked_datetime'] = null;
+      }
+      $data = array('id' => $target['id'], 'error_count' => $target['error_count'] + 1, 'locked_datetime' => $target['locked_datetime']);
+      $fields = array('error_count','locked_datetime');
+      $this->save($data, false, $fields);
+    }
+
+  public function resetErrorCount($target) {
+    $target['locked_datetime'] = null;
+    $target['error_count'] = 0;
+    $data = array('id' => $target['id'], 'error_count' => $target['error_count'], 'locked_datetime' => $target['locked_datetime']);
+    $fields = array('error_count','locked_datetime');
+    $this->save($data, false, $fields);
+  }
 }

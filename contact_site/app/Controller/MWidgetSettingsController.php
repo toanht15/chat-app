@@ -575,12 +575,14 @@ class MWidgetSettingsController extends AppController {
               if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_ON) === 0 ) {
                 $json['display_style_type'] = C_WIDGET_DISPLAY_STYLE_TYPE_MAX;
                 $d['display_style_type'] = C_WIDGET_DISPLAY_STYLE_TYPE_MAX;
-                $d['show_time'] = C_WIDGET_AUTO_OPEN_TYPE_OFF; // 初期表示のままにする
+                $json['show_time'] = C_WIDGET_AUTO_OPEN_TYPE_NONE;
+                $d['show_time'] = C_WIDGET_AUTO_OPEN_TYPE_NONE; // 自動で最大化しない
               }
               else if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_OFF) === 0 ) {
                 $json['display_style_type'] = C_WIDGET_DISPLAY_STYLE_TYPE_MIN;
                 $d['display_style_type'] = C_WIDGET_DISPLAY_STYLE_TYPE_MIN;
-                $d['show_time'] = C_WIDGET_AUTO_OPEN_TYPE_OFF; // 初期表示のままにする
+                $json['show_time'] = C_WIDGET_AUTO_OPEN_TYPE_NONE;
+                $d['show_time'] = C_WIDGET_AUTO_OPEN_TYPE_NONE; // 自動で最大化しない
               }
             }
             if ( strcmp($v, "max_show_timing_site") === 0 || strcmp($v, "max_show_timing_page") === 0 ) { continue; }

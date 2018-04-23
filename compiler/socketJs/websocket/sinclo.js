@@ -214,7 +214,7 @@
         $("#sincloBannerBox").show();
       },
       //バナーがクリックされた時の挙動
-      clickBanner: function() {
+      clickBanner: function(showMinimize) {
         //バナー非表示状態になった
         storage.s.set('bannerAct', false);
         $("#sincloWidgetBox").show();
@@ -240,7 +240,9 @@
         //最小化時ボタン表示
         common.whenMinimizedBtnShow();
         sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
-        sinclo.operatorInfo.ev();
+        if(!showMinimize) {
+          sinclo.operatorInfo.ev();
+        }
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();
@@ -2054,9 +2056,10 @@
           var maxShowTime = Number(window.sincloInfo.widget.maxShowTime) * 1000;
           switch(displayStyleType) {
             case "1": // 最大化
-              if(typeof(widgetOpen) === 'undefined') {
+              if(!widgetOpen) {
                 var flg = sinclo.widget.condifiton.get();
                 if ( String(flg) === "false" ) {
+                  console.log("SHOW WIDGET MAXIMIZE");
                   storage.s.set('widgetOpen', true);
                   if(!common.widgetHandler.isShown()) {
                     storage.s.set('preWidgetOpened', true);
@@ -2075,7 +2078,7 @@
                 //バナー表示にする
                 sinclo.operatorInfo.onBanner();
               }
-              return false;
+              break;
           }
 
           if ( showTime === "5" ) return false; // 初期表示のままにする
@@ -2090,6 +2093,10 @@
               storage.s.set('widgetOpen', true);
               if(!common.widgetHandler.isShown()) {
                 storage.s.set('preWidgetOpened', true);
+              }
+              if(storage.s.get('bannerAct') === 'true') {
+                //バナー表示だった場合最小化状態で表示
+                sinclo.operatorInfo.clickBanner(true);
               }
               if ( !(check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) {
                 sinclo.operatorInfo.ev();
