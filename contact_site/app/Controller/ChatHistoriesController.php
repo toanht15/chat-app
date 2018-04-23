@@ -227,7 +227,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params);
+        //$tHistoryCountData = $this->THistory->find('first', $params);
+        $tHistoryCountData = 2;
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -1351,7 +1352,7 @@
           $value = 'MIN';
         }
 
-        if (empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
+        if (empty($data['History']['chat_type']) && empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
           && empty($data['History']['company_name']) && empty($data['History']['customer_name']) && empty($data['History']['telephone_number'])
           && empty($data['History']['mail_address']) && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) &&
           empty($data['THistoryChatLog']['message'])) {
@@ -1753,7 +1754,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        $tHistoryCountData = 2;
       }
       else {
         $tHistoryCountData = "";
