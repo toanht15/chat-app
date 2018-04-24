@@ -108,11 +108,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
       var towByteCount = 0;
 
       if(text.length === 0) {
-        $('#sincloBanner').css("width","48px");
+        $('#sincloBanner').css("width","44px");
         $('#bannertext').css("margin-right", "0px");
         return;
       } else {
-        $('#bannertext').css("margin-right", "44px");
+        $('#bannertext').css("margin-right", "5px");
       }
 
       for (var i=0; i<text.length; i++){
