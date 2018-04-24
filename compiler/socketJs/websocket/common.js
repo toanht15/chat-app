@@ -751,15 +751,15 @@ var socket, // socket.io
         case 1: // 右下
           showPosition = "bottom: 0; right: 10px;";
           chatPosition = {
-            se: "margin-left: 33px;",
-            re: "margin-right: 33px;"
+            se: "margin-left: 10px;",
+            re: "margin-right: 10px;"
           };
           break;
         case 2: // 左下
           showPosition = "bottom: 0; left: 10px;";
           chatPosition = {
-            se: "margin-left: 33px;",
-            re: "margin-right: 33px;"
+            se: "margin-left: 10px;",
+            re: "margin-right: 10px;"
           };
           break;
       }
