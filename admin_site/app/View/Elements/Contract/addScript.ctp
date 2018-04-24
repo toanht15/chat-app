@@ -1,6 +1,8 @@
 <script type = "text/javascript">
+
 function saveAct(){
   //document.getElementById('ContractAddForm').submit();
+  $(".button #addButton").attr('onclick',"javascript:double(this)");
   $.ajax({
     type: "POST",
     url: $('#ContractAddForm').attr('action'),
