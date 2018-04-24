@@ -751,30 +751,30 @@ var socket, // socket.io
         case 1: // 右下
           showPosition = "bottom: 0; right: 10px;";
           chatPosition = {
-            se: "margin-left: 10px;",
-            re: "margin-right: 10px;"
+            se: "margin-left: 33px;",
+            re: "margin-right: 33px;"
           };
           break;
         case 2: // 左下
           showPosition = "bottom: 0; left: 10px;";
           chatPosition = {
-            se: "margin-left: 10px;",
-            re: "margin-right: 10px;"
+            se: "margin-left: 33px;",
+            re: "margin-right: 33px;"
           };
           break;
       }
 
       switch ( Number(widget.chatMessageDesignType) ) {
         case 1: //BOX型
-          chatPosition.se = "margin-left: 70px; margin-right: 10px;  border-bottom-right-radius: 0;";
-          chatPosition.re = "margin-left: 10px; margin-right: 70px; border-bottom-left-radius: 0;";
+          chatPosition.se = "margin-left: 33px; margin-right: 10px;  border-bottom-right-radius: 0;";
+          chatPosition.re = "margin-left: 10px; margin-right: 33px; border-bottom-left-radius: 0;";
           break;
         case 2: //吹き出し型
           // 何もしない
           break;
         default: //BOX型
-          chatPosition.se = "margin-left: 70px; margin-right: 10px;  border-bottom-right-radius: 0;";
-          chatPosition.re = "margin-left: 10px; margin-right: 70px; border-bottom-left-radius: 0;";
+          chatPosition.se = "margin-left: 33px; margin-right: 10px;  border-bottom-right-radius: 0;";
+          chatPosition.re = "margin-left: 10px; margin-right: 33px; border-bottom-left-radius: 0;";
           break;
       }
 
@@ -968,6 +968,7 @@ var socket, // socket.io
         html += '      #sincloBanner.sincloBanner i{ color: '+ widget.stringColor +'; }';
         html += '      #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 10px; cursor: pointer; }';
         html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 13px; cursor: pointer; }';
+        html += '      #sincloBanner #bannerIcon { width: 24px; height: 24px; opacity: 1; margin: 0px 5px; }';
         html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ colorList['stringColor'] +'; font-size: 12.5px; cursor: pointer; vertical-align: middle; margin-right: 5px; }';
         html += '      #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
         //スマホだったらpxの書き換え
@@ -1140,8 +1141,9 @@ var socket, // socket.io
             html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
             html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
             html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (10 * ratio) +'px 0 '+ (3 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .notext{ padding: 0 ' + (7 * ratio) + 'px 0 ' + (3 * ratio) + 'px; cursor: pointer; }';
+            html += '      #sincloBanner #bannerIcon { width: ' + Math.ceil(24 * ratio) + 'px; height: ' + Math.ceil(24 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
+            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; vertical-align: middle; margin-right: ' + (5 * ratio) + 'px; }';
+            html += '      #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
           }
         }
         /* 横の場合 */
@@ -1233,8 +1235,9 @@ var socket, // socket.io
             html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
             html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
             html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
+            html += '      #sincloBanner #bannerIcon { width: ' + Math.ceil(24 * ratio) + 'px; height: ' + Math.ceil(24 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
             html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (10 * ratio) +'px 0 '+ (3 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .notext{ padding: 0 ' + (7 * ratio) + 'px 0 ' + (3 * ratio) + 'px; cursor: pointer; }';
+            html += '      #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
           }
         }
       }
@@ -1369,7 +1372,7 @@ var socket, // socket.io
       var html = "";
       html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
       html += '    <div id="sincloBannerText" class="sincloBannerText">';
-      html += '      <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 24px; height: 24px; opacity: 1; margin: 0px 5px;" xml:space="preserve">\n' +
+      html += '      <svg version="1.1" id="bannerIcon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve">\n' +
                       '<style type="text/css">\n' +
                       '\t.st0{fill:' + sincloInfo.widget.stringColor + ';}\n' +
                       '</style>\n' +
