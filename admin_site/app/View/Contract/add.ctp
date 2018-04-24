@@ -20,7 +20,7 @@
             <section>
               <div class="button">
                 <?= $this->Html->link('一覧',['controller'=>'Contract', 'action' => 'index'],['escape' => false, 'id' => 'searchRefine','class' => 'normal_btn']); ?>
-                <?= $this->Html->link('登録', 'javascript:void(0)', ['escape' => false, 'id' => 'searchRefine','class' => 'action_btn','onclick' => 'saveAct()']); ?>
+                <?= $this->Html->link('登録', 'javascript:void(0)', ['escape' => false, 'id' => 'addButton','class' => 'action_btn','onclick' => 'saveAct()']); ?>
               </div>
             </section>
           </ul>
