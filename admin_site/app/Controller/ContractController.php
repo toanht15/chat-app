@@ -14,8 +14,8 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
-  const ML_MAIL_ADDRESS_AND_ALEX = "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const USER_NAME = "##USER_NAME##";
@@ -138,14 +138,14 @@ class ContractController extends AppController
             }
           }
         }
-        $this->log($data,LOG_DEBUG);
+
+        //過去に登録したユーザーで削除したデータがあるかチェック
         $userData = $this->MUser->find('all',[
           'conditions' => array(
             'MUser.mail_address' => $data['Contract']['user_mail_address'],
             'MUser.del_flg' => '1'
           )]
         );
-        $this->log($userData,LOG_DEBUG);
 
         if($mailType !== "false" && empty($userData)) {
           $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
@@ -645,9 +645,9 @@ class ContractController extends AppController
       "m_companies_id" => $m_companies_id,
       "sc_flg" => $default['sc_flg'],
       "sc_default_num" => $default['sc_default_num'],
-      //"outside_hours_sorry_message" => $default['outside_hours_sorry_message'],
-      //"wating_call_sorry_message" => $default['wating_call_sorry_message'],
-      //"no_standby_sorry_message" => $default['no_standby_sorry_message'],
+      "outside_hours_sorry_message" => $default['outside_hours_sorry_message'],
+      "wating_call_sorry_message" => $default['wating_call_sorry_message'],
+      "no_standby_sorry_message" => $default['no_standby_sorry_message'],
       "sorry_message" => ""
     ));
     $this->MChatSetting->save();
