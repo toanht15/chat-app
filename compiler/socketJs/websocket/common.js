@@ -693,6 +693,22 @@ var socket, // socket.io
         }
       }
     },
+    toRGBCode: function(colorCode) {
+      if ( colorCode.indexOf("#") >= 0 ) {
+        var code = colorCode.substr(1), r,g,b;
+        if (code.length === 3) {
+          r = String(code.substr(0,1)) + String(code.substr(0,1));
+          g = String(code.substr(1,1)) + String(code.substr(1,1));
+          b = String(code.substr(2)) + String(code.substr(2));
+        }
+        else {
+          r = String(code.substr(0,2));
+          g = String(code.substr(2,2));
+          b = String(code.substr(4));
+        }
+        return "rgb(" + parseInt(r,16) + ", " + parseInt(g,16) + ", " + parseInt(b,16) + ")";
+      }
+    },
     widgetCssTemplate: function(widget){
       // システムで出力するテキストのカラー
       var systemTextColor = "#666666";
@@ -772,7 +788,7 @@ var socket, // socket.io
       /* 共通スタイル */
       html += '      @media print{ sinclo { display:none!important; } }';
       //アイコンフォント用
-      html += '      @font-face { font-family: "SincloFont"; src: url("https://cdn.jsdelivr.net/fontawesome/4.7.0/fonts/fontawesome-webfont.eot?v=4.7.0"); src: url("https://cdn.jsdelivr.net/fontawesome/4.7.0/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0") format("embedded-opentype"), url("https://cdn.jsdelivr.net/fontawesome/4.7.0/fonts/fontawesome-webfont.woff?v=4.7.0") format("woff"), url("https://cdn.jsdelivr.net/fontawesome/4.7.0/fonts/fontawesome-webfont.ttf?v=4.7.0") format("truetype"), url("https://cdn.jsdelivr.net/fontawesome/4.7.0/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular") format("svg"); font-weight: normal; font-style: normal }';
+      html += '      @font-face { font-family: "SincloFont"; src: url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?v=4.7.0"); src: url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0") format("embedded-opentype"), url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff?v=4.7.0") format("woff"), url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf?v=4.7.0") format("truetype"), url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular") format("svg"); font-weight: normal; font-style: normal }';
       html += '      #sincloBox .sinclo-fa { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
       //アイコンフォント用
       html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0);}';
@@ -948,12 +964,12 @@ var socket, // socket.io
         html += '      #sincloBanner .sinclo-fa { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
         html += '      #sincloBanner .sinclo-fa.fa-comment:before { content: "\\f075" }';
         html += '      #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 42px; width : -webkit-fit-content !important; width : -moz-fit-content !important; width : fit-content !important; background-color: '+ colorList['mainColor'] +'; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; color: '+ colorList['stringColor'] +'; margin: auto; filter:alpha(opacity=90); -moz-opacity: 0.9; opacity: 0.9; cursor: pointer; }';
-        html += '      #sincloBanner.sincloBannerText{ line-height: 42px; height: auto!important; width: auto!important; padding:0; }';
+        html += '      #sincloBanner .sincloBannerText{ display: flex; justify-content: center; align-items: center; height: 100%; width: auto!important; margin: 0 5px; }';
         html += '      #sincloBanner.sincloBanner i{ color: '+ widget.stringColor +'; }';
         html += '      #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 10px; cursor: pointer; }';
         html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 13px; cursor: pointer; }';
-        html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ colorList['stringColor'] +'; font-size: 12.5px; padding: 0 10px 0 3px; cursor: pointer; }';
-        html += '      #sincloBanner.sincloBanner .notext{ padding: 0 7px 0 3px; cursor: pointer; }';
+        html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ colorList['stringColor'] +'; font-size: 12.5px; cursor: pointer; vertical-align: middle; margin-right: 5px; }';
+        html += '      #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
         //スマホだったらpxの書き換え
 //        if ( check.smartphone() ) {
 //          widgetWidth = $(window).width() - 20;
@@ -1352,8 +1368,19 @@ var socket, // socket.io
       }
       var html = "";
       html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
-      html += '    <div id="sincloBannerText" class="sincloBannerText" style="height: auto!important; width: auto!important; '+ paddingpx +'">';
-      html += '      <i id="sinclo-comment" class="sinclo-fa fa-comment sinclo-comment' + (widget.bannertext.length !== 0 ? '' : '-notext') + '"></i><span class="' + (widget.bannertext.length !== 0 ? 'bannertext' : 'notext') + '">'+ check.escape_html(widget.bannertext) +'</span>';
+      html += '    <div id="sincloBannerText" class="sincloBannerText">';
+      html += '      <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 24px; height: 24px; opacity: 1; margin: 0px 5px;" xml:space="preserve">\n' +
+                      '<style type="text/css">\n' +
+                      '\t.st0{fill:' + sincloInfo.widget.stringColor + ';}\n' +
+                      '</style>\n' +
+                      '<g>\n' +
+                      '\t<path class="st0" d="M257.135,19.179C103.967,19.179,0,97.273,0,218.763c0,74.744,31.075,134.641,91.108,173.176\n' +
+                      '\t\tc4.004,2.572,8.728,2.962,6.955,10.365c-7.16,29.935-19.608,83.276-19.608,83.276c-0.527,2.26,0.321,4.618,2.162,6.03\n' +
+                      '\t\tc1.84,1.402,4.334,1.607,6.38,0.507c0,0,87.864-52.066,99.583-58.573c27.333-15.625,50.878-18.654,68.558-18.654\n' +
+                      '\t\tC376.619,414.89,512,366.282,512,217.458C512,102.036,418.974,19.179,257.135,19.179z" style="fill: ' + common.toRGBCode(sincloInfo.widget.stringColor) + ';"></path>\n' +
+                      '</g>\n' +
+                    '</svg>';
+      html += '      <span class="' + (widget.bannertext.length !== 0 ? 'bannertext' : 'notext') + '">'+ check.escape_html(widget.bannertext) +'</span>';
       html += '    </div>';
       html += '  </div>';
       return html;

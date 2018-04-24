@@ -108,8 +108,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
       var towByteCount = 0;
 
       if(text.length === 0) {
-        $('#sincloBanner').css("width","38px");
+        $('#sincloBanner').css("width","44px");
+        $('#bannertext').css("margin-right", "0px");
         return;
+      } else {
+        $('#bannertext').css("margin-right", "5px");
       }
 
       for (var i=0; i<text.length; i++){
@@ -123,14 +126,14 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
 
       //いったん文字数でのサイズ調整を行い、その後spanタグの長さで調整（span内で文字が折り返さないように）
-      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 40;
+      var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 50;
       $('#sincloBanner').css("width", bannerWidth + "px");
 
       var targetSpan = $('#bannertext').get(0);
 
       if(targetSpan) {
         console.log(targetSpan.offsetWidth);
-        bannerWidth = targetSpan.offsetWidth + 40;
+        bannerWidth = targetSpan.offsetWidth + 50;
         $('#sincloBanner').css("width", bannerWidth + "px");
       }
     }
