@@ -1,11 +1,11 @@
 <script type = "text/javascript">
 
-var check = "false";
+var check = false;
 
 function saveAct(){
   //document.getElementById('ContractAddForm').submit();
-  if(check == "false") {
-    check = "true";
+  if(check == false) {
+    check = true;
     $.ajax({
       type: "POST",
       url: $('#ContractAddForm').attr('action'),
