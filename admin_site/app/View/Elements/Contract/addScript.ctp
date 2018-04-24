@@ -18,6 +18,7 @@ function saveAct(){
     }).fail(function(data){
       var obj = JSON.parse(data.responseText);
       alert(obj.message);
+      check = false;
     });
   }
 }
