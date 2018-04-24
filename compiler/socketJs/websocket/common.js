@@ -751,30 +751,30 @@ var socket, // socket.io
         case 1: // 右下
           showPosition = "bottom: 0; right: 10px;";
           chatPosition = {
-            se: "margin-left: 10px;",
-            re: "margin-right: 10px;"
+            se: "margin-left: 33px;",
+            re: "margin-right: 33px;"
           };
           break;
         case 2: // 左下
           showPosition = "bottom: 0; left: 10px;";
           chatPosition = {
-            se: "margin-left: 10px;",
-            re: "margin-right: 10px;"
+            se: "margin-left: 33px;",
+            re: "margin-right: 33px;"
           };
           break;
       }
 
       switch ( Number(widget.chatMessageDesignType) ) {
         case 1: //BOX型
-          chatPosition.se = "margin-left: 37px; margin-right: 10px;  border-bottom-right-radius: 0;";
-          chatPosition.re = "margin-left: 10px; margin-right: 37px; border-bottom-left-radius: 0;";
+          chatPosition.se = "margin-left: 33px; margin-right: 10px;  border-bottom-right-radius: 0;";
+          chatPosition.re = "margin-left: 10px; margin-right: 33px; border-bottom-left-radius: 0;";
           break;
         case 2: //吹き出し型
           // 何もしない
           break;
         default: //BOX型
-          chatPosition.se = "margin-left: 37px; margin-right: 10px;  border-bottom-right-radius: 0;";
-          chatPosition.re = "margin-left: 10px; margin-right: 37px; border-bottom-left-radius: 0;";
+          chatPosition.se = "margin-left: 33px; margin-right: 10px;  border-bottom-right-radius: 0;";
+          chatPosition.re = "margin-left: 10px; margin-right: 33px; border-bottom-left-radius: 0;";
           break;
       }
 
