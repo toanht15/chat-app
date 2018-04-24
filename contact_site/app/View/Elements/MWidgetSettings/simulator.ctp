@@ -205,28 +205,6 @@
   <?= $this->element('MWidgetSettings/widget'); ?>
   <!-- バナー -->
   <style>
-    @font-face {
-      font-family: 'SincloFont';
-      src: url('/fonts/fontawesome-webfont.eot?v=4.0.3');
-      src: url('/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
-      font-weight: normal;
-      font-style: normal
-    }
-
-    .sinclo-fa {
-      display: inline-block;
-      font-family: SincloFont;
-      font-style: normal;
-      font-weight: normal;
-      line-height: 1;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      cursor: pointer;
-    }
-
-    .sinclo-fa .fa-comment:before {
-      content: "\f075"
-    }
     #sincloBanner {
       position: relative;
       z-index: 1;
@@ -244,10 +222,12 @@
       cursor: pointer;
     }
     #sincloBannerText{
-      line-height: 42px;
-      height: auto!important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
       width: auto!important;
-      padding:0;
+      margin: 0 5px;
     }
     #sincloBanner i{
       color: {{string_color}};
@@ -259,15 +239,24 @@
       cursor: pointer;
     }
     #sincloBanner, #bannertext{
-      font-size: 12.5px;
-      padding: 0 0 0 3px;
-      cursor: pointer;
       color: {{string_color}};
+      font-size: 12.5px;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-right: 5px;
     }
   </style>
   <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
     <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
-      <div ng-click="bannerSwitchWidget()"><i id="sinclo-comment" class="sinclo-fa fa-comment"></i><span id="bannertext">{{bannertext}}</span></div>
+      <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 24px; height: 24px; opacity: 1; margin: 0px 5px; flex-basis: 24px;" xml:space="preserve">
+        <style type="text/css">
+          .st0{fill:{{string_color}};}
+        </style>
+        <g>
+          <path class="st0" d="M257.135,19.179C103.967,19.179,0,97.273,0,218.763c0,74.744,31.075,134.641,91.108,173.176 c4.004,2.572,8.728,2.962,6.955,10.365c-7.16,29.935-19.608,83.276-19.608,83.276c-0.527,2.26,0.321,4.618,2.162,6.03 c1.84,1.402,4.334,1.607,6.38,0.507c0,0,87.864-52.066,99.583-58.573c27.333-15.625,50.878-18.654,68.558-18.654 C376.619,414.89,512,366.282,512,217.458C512,102.036,418.974,19.179,257.135,19.179z" style="fill:{{string_color}}"></path>
+        </g>
+      </svg>
+      <span id="bannertext">{{bannertext}}</span>
     </div>
   </div>
   <!-- バナー -->
