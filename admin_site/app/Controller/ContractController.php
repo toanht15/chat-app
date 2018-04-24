@@ -139,15 +139,7 @@ class ContractController extends AppController
           }
         }
 
-        //過去に登録したユーザーで削除したデータがあるかチェック
-        $userData = $this->MUser->find('all',[
-          'conditions' => array(
-            'MUser.mail_address' => $data['Contract']['user_mail_address'],
-            'MUser.del_flg' => '1'
-          )]
-        );
-
-        if($mailType !== "false" && empty($userData)) {
+        if($mailType !== "false") {
           $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
           if(!empty($data['MAgreements']['application_name'])) {
             $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
@@ -206,7 +198,7 @@ class ContractController extends AppController
           }
         }
 
-        if($mailType !== 'false' && empty($userData)) {
+        if($mailType !== 'false') {
           //会社向け
           $sender = new MailSenderComponent();
           $sender->setFrom($data['Contract']['user_mail_address']);
