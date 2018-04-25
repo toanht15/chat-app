@@ -766,15 +766,15 @@ var socket, // socket.io
 
       switch ( Number(widget.chatMessageDesignType) ) {
         case 1: //BOX型
-          chatPosition.se = "margin-left: 23px; margin-right: 10px;  border-bottom-right-radius: 0;";
-          chatPosition.re = "margin-left: 10px; margin-right: 23px; border-bottom-left-radius: 0;";
+          chatPosition.se = "margin-left: 33px; margin-right: 10px;  border-bottom-right-radius: 0;";
+          chatPosition.re = "margin-left: 10px; margin-right: 33px; border-bottom-left-radius: 0;";
           break;
         case 2: //吹き出し型
           // 何もしない
           break;
         default: //BOX型
-          chatPosition.se = "margin-left: 23px; margin-right: 10px;  border-bottom-right-radius: 0;";
-          chatPosition.re = "margin-left: 10px; margin-right: 23px; border-bottom-left-radius: 0;";
+          chatPosition.se = "margin-left: 33px; margin-right: 10px;  border-bottom-right-radius: 0;";
+          chatPosition.re = "margin-left: 10px; margin-right: 33px; border-bottom-left-radius: 0;";
           break;
       }
 
