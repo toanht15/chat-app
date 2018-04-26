@@ -766,15 +766,46 @@ var socket, // socket.io
 
       switch ( Number(widget.chatMessageDesignType) ) {
         case 1: //BOX型
-          chatPosition.se = "margin-left: 23px; margin-right: 10px;  border-bottom-right-radius: 0;";
-          chatPosition.re = "margin-left: 10px; margin-right: 23px; border-bottom-left-radius: 0;";
+          if(Number(widget.widgetSizeType) == 1) {
+            chatPosition.se = "margin-left: 37.5px; margin-right: 10px;  border-bottom-right-radius: 0;";
+            chatPosition.re = "margin-left: 10px; margin-right: 17.5px; border-bottom-left-radius: 0;";
+          }
+          if(Number(widget.widgetSizeType) == 2) {
+            chatPosition.se = "margin-left: 45px; margin-right: 10px;  border-bottom-right-radius: 0;";
+            chatPosition.re = "margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;";
+          }
+          if(Number(widget.widgetSizeType) == 3) {
+            chatPosition.se = "margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;";
+            chatPosition.re = "margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;";
+          }
           break;
         case 2: //吹き出し型
-          // 何もしない
+          if(Number(widget.widgetSizeType) == 1) {
+            chatPosition.se = "margin-left: 37.5px;";
+            chatPosition.re = "margin-right: 17.5px;";
+          }
+          if(Number(widget.widgetSizeType) == 2) {
+            chatPosition.se = "margin-left: 45px;";
+            chatPosition.re = "margin-right: 21px;";
+          }
+          if(Number(widget.widgetSizeType) == 3) {
+            chatPosition.se = "margin-left: 52.7px;";
+            chatPosition.re = "margin-right: 24.6px;";
+          }
           break;
         default: //BOX型
-          chatPosition.se = "margin-left: 23px; margin-right: 10px;  border-bottom-right-radius: 0;";
-          chatPosition.re = "margin-left: 10px; margin-right: 23px; border-bottom-left-radius: 0;";
+          if(Number(widget.widgetSizeType) == 1) {
+            chatPosition.se = "margin-left: 37.5px; margin-right: 10px;  border-bottom-right-radius: 0;";
+            chatPosition.re = "margin-left: 10px; margin-right: 17.5px; border-bottom-left-radius: 0;";
+          }
+          if(Number(widget.widgetSizeType) == 2) {
+            chatPosition.se = "margin-left: 45px; margin-right: 10px;  border-bottom-right-radius: 0;";
+            chatPosition.re = "margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;";
+          }
+          if(Number(widget.widgetSizeType) == 3) {
+            chatPosition.se = "margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;";
+            chatPosition.re = "margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;";
+          }
           break;
       }
 
@@ -906,8 +937,8 @@ var socket, // socket.io
           }
         } else {
           // BOX型
-          html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: '+ colorList['seBackgroundColor'] + '; color:' + colorList['seTextColor'] + '; font-size: '+ widget.seTextSize +'px; }';
-          html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + colorList['reBackgroundColor'] + '; color:' + colorList['reTextColor'] + '; font-size: '+ widget.reTextSize +'px; }';
+          html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + 'background-color: '+ colorList['seBackgroundColor'] + '; color:' + colorList['seTextColor'] + '; font-size: '+ widget.seTextSize +'px; display: inline-block; position: relative;}';
+          html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + colorList['reBackgroundColor'] + '; color:' + colorList['reTextColor'] + '; font-size: '+ widget.reTextSize +'px; display: inline-block; position: relative;}';
         }
         if (widget.chatMessageWithAnimation === 1) {
           html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:rightEffect; -moz-animation-name:rightEffect; -o-animation-name:rightEffect; -ms-animation-name:rightEffect; animation-name:rightEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:forwards; -moz-animation-fill-mode:forwards; -o-animation-fill-mode:forwards; -ms-animation-fill-mode:forwards; animation-fill-mode:forwards; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }';
@@ -1291,7 +1322,7 @@ var socket, // socket.io
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
           html += '      #sincloBox ul#chatTalk { height: '+ sizeList['chatTalkHeight'] +'px; padding: 5px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
-          html += '      #sincloBox ul#chatTalk li { border-radius: 12px; margin: 5px 0 0 0; padding: 10px 10px; }';
+          html += '      #sincloBox ul#chatTalk li { border-radius: 12px; margin: 5px 0 0 0; padding: 10px 15px; }';
           if(colorList['seBorderNone'] === 0){
             html += '      #sincloBox ul#chatTalk li.sinclo_se { border: 1px solid '+ colorList['seBorderColor'] +'; }';
           }
