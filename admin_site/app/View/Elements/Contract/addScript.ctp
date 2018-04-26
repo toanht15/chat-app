@@ -1,19 +1,26 @@
 <script type = "text/javascript">
+
+var check = false;
+
 function saveAct(){
   //document.getElementById('ContractAddForm').submit();
-  $.ajax({
-    type: "POST",
-    url: $('#ContractAddForm').attr('action'),
-    data: $('#ContractAddForm').serialize()
-  }).done(function(data){
-    socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}));
-    setTimeout(function(){
-      location.href = "<?= $this->Html->url('/Contract/index') ?>"
-    },1000);
-  }).fail(function(data){
-    var obj = JSON.parse(data.responseText);
-    alert(obj.message);
-  });
+  if(check == false) {
+    check = true;
+    $.ajax({
+      type: "POST",
+      url: $('#ContractAddForm').attr('action'),
+      data: $('#ContractAddForm').serialize()
+    }).done(function(data){
+      socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}));
+      setTimeout(function(){
+        location.href = "<?= $this->Html->url('/Contract/index') ?>"
+      },1000);
+    }).fail(function(data){
+      var obj = JSON.parse(data.responseText);
+      alert(obj.message);
+      check = false;
+    });
+  }
 }
 
 //削除処理
