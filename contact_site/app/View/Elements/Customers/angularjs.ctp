@@ -925,14 +925,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           delete $scope.operatorList[key].status;
         });
 
-        Object.keys($scope.onlineOperatorList).forEach(function(key){
-          if($scope.activeOperatorList[key]) {
-            $scope.operatorList[key].status = 1;
-          } else {
-            $scope.operatorList[key].status = 0;
-          }
-          $('#offline'+key).css('display','none');
-        });
+        if($scope.onlineOperatorList) {
+          Object.keys($scope.onlineOperatorList).forEach(function(key){
+            if($scope.activeOperatorList[key]) {
+              $scope.operatorList[key].status = 1;
+            } else {
+              $scope.operatorList[key].status = 0;
+            }
+            $('#offline'+key).css('display','none');
+          });
+        }
       }
     }
     
