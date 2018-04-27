@@ -1,4 +1,5 @@
 <?php
+define('APP_MODE_DEV', true);
 /* 定数定義 */
 define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
@@ -468,7 +469,7 @@ $config['widgetShowOpNameType'] = [
 
 /* ウィジェット設定 － 吹き出しデザイン */
 $config['chatMessageDesignType'] = [
-  C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX => "BOX型（サイズ固定）",
+  C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX => "BOX型（サイズ可変）",
   C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON => "吹き出し型（サイズ可変）"
 ];
 

@@ -298,6 +298,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   //位置調整
   $scope.$watch(function(){
+    //console.log('チェック');
+    //console.log( $scope.simulatorSettings);
     return {'openFlg': $scope.simulatorSettings.openFlg, 'showWidgetType': $scope.simulatorSettings.showWidgetType, 'widgetSizeType': $scope.simulatorSettings.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.simulatorSettings.settings['chat_radio_behavior'], 'chat_trigger': $scope.simulatorSettings.settings['chat_trigger'], 'show_name': $scope.simulatorSettings.settings['show_name'], 'widget.showTab': $scope.simulatorSettings.showTab};
   },
   function(){
@@ -344,6 +346,11 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     if ( Number(type) === 3 ) { // ｽﾏｰﾄﾌｫﾝ（縦）の表示
       $scope.simulatorSettings.showTab = 'chat'; // 強制でチャットにする
+      $("#sincloBox ul#chatTalk li.boxType.chat_left").css('margin-right','17.5px');
+    }
+
+    if ( Number(type) === 1 ) { // 通常の表示
+      $("#sincloBox ul#chatTalk li.boxType.chat_left").css('margin-right','');
     }
 
     if ( Number(type) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する

@@ -94,6 +94,9 @@ sincloApp.factory('SimulatorService', function() {
     get isLargeSize() {
       return this._showWidgetType === 1 && this._settings['widget_size_type'] === '3';
     },
+    get isSmartphoneSize() {
+      return this._showWidgetType === 3;
+    },
     // パラメータ取得(設定の有無)
     get widget_outside_border_none() {
       return this._settings['widget_border_color'] === 'なし';
