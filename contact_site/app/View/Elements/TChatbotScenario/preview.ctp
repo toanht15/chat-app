@@ -6,8 +6,7 @@
 #tchatbotscenario_form_preview_body .chatTalk { width: 100%; padding: 5px 5px 10px 5px; list-style-type: none; margin: 0px}
 #tchatbotscenario_form_preview_body .chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 10px 10px; font-size: 12px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
 #tchatbotscenario_form_preview_body .chatTalk li { word-break: break-all; white-space: pre-wrap; }
-#tchatbotscenario_form_preview_body .chatTalk li.boxType { display: inline-block !important; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
-#tchatbotscenario_form_preview_body .chatTalk li.boxType { display: block; }
+#tchatbotscenario_form_preview_body .chatTalk li.boxType { display: inline-block; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
 #tchatbotscenario_form_preview_body .chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-left: 10px; margin-right: 17.5px; }
 #tchatbotscenario_form_preview_body .chatTalk li.boxType.chat_left.middleSize { border-radius: 12px 12px 12px 0; margin-left: 10px; margin-right: 21px; }
 #tchatbotscenario_form_preview_body .chatTalk li.boxType.chat_left.largeSize { border-radius: 12px 12px 12px 0; margin-left: 10px; margin-right: 24.6px; }
@@ -52,7 +51,7 @@
     </div>
     <!-- ヒアリング -->
     <div ng-repeat="(index, hearings) in setItem.hearings">
-      <li ng-show="hearings.message" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}}</span></li>
+      <li ng-if="hearings.message" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}}</span></li>
     </div>
     <!-- エラーメッセージ -->
     <div>

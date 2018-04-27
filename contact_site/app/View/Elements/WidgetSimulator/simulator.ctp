@@ -343,13 +343,13 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
   <!-- chat_message_copy 0 stayt -->
           <ul id="chatTalk" class="details" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, disableCopy: widget.settings['chat_message_copy']== '1'}">
             <div style="height: auto!important; padding:0; display: none;" ng-class="{liBoxRight: widget.settings['chat_message_design_type'] == 1, liRight: widget.settings['chat_message_design_type'] == 2}" >
-            <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,smartphoneSize: widget.isSmartphoneSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
+            <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, smartphoneSize: widget.isSmartphoneSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,smartphoneSize: widget.isSmartphoneSize, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+              <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
           </ul>
   <!-- chat_message_copy 0 end -->
@@ -405,7 +405,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
           <div id="telContent" ng-class="{middleSize: widget.widgetSizeTypeToggle === '2',largeSize: widget.widgetSizeTypeToggle === '3'}"><div class="tblBlock"><span ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['content']}}</span></div></div>
           <!-- テキスト -->
 
-          <span id="accessIdArea" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.showWidgetType === 1 && widgetSizeTypeToggle === '3', smartphoneSize: widget.showWidgetType === 3}">
+          <span id="accessIdArea" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
           ●●●●
           </span>
         </section>
