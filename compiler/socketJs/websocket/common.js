@@ -1232,11 +1232,6 @@ var socket, // socket.io
             // html += '#sincloBox ul#chatTalk li.sinclo_se:after { bottom: 0.4em; }';
             // html += '#sincloBox ul#chatTalk li.sinclo_re:before { bottom: 0.35em; left: -18px; }';
             // html += '#sincloBox ul#chatTalk li.sinclo_re:after { bottom: 0.4em; }';
-            html += '      #sincloBox ul#chatTalk li.sinclo_se { ' + chatPosition.se + ';  }';
-          }
-          if (widget.chatMessageDesignType === 1) {
-            //BOX型の場合
-            html += '      #sincloBox ul#chatTalk li.sinclo_se { margin-left:20px;  }';
           }
           if(colorList['seBorderNone'] === 0){
             html += '      #sincloBox ul#chatTalk li.sinclo_se:after {border-left: 5px solid '+ colorList['seBorderColor'] +'; border-bottom: 5px solid '+ colorList['seBorderColor'] +'; }';
