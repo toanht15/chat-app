@@ -102,7 +102,6 @@
       text-indent: 0;
       text-align: start;
       letter-spacing: normal;
-      line-height: normal;
       text-decoration: none;
       float: none;
       direction: ltr;
