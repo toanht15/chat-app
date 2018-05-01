@@ -344,6 +344,11 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     if ( Number(type) === 3 ) { // ｽﾏｰﾄﾌｫﾝ（縦）の表示
       $scope.simulatorSettings.showTab = 'chat'; // 強制でチャットにする
+      $("#sincloBox ul#chatTalk li.boxType.chat_left").css('margin-right','17.5px');
+    }
+
+    if ( Number(type) === 1 ) { // 通常の表示
+      $("#sincloBox ul#chatTalk li.boxType.chat_left").css('margin-right','');
     }
 
     if ( Number(type) !== 2 ) { // ｽﾏｰﾄﾌｫﾝ（横）以外は最大化する
