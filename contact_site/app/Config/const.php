@@ -469,7 +469,7 @@ $config['widgetShowOpNameType'] = [
 
 /* ウィジェット設定 － 吹き出しデザイン */
 $config['chatMessageDesignType'] = [
-  C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX => "BOX型（サイズ固定）",
+  C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX => "BOX型（サイズ可変）",
   C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON => "吹き出し型（サイズ可変）"
 ];
 
