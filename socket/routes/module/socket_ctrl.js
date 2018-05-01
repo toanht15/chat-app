@@ -3102,11 +3102,18 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           }
         };
         for (var i = 0; obj.messageList.length > i; i++) {
-            var message = obj.messageList[i];
-            pool.query("SELECT *, ? as inputed, ? as auto_message_type FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto, message.chatId, companyList[obj.siteKey]], loop);
-            if(message.chatId in sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages) {
-              sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId]['applied'] = true;
-            }
+          var message = obj.messageList[i];
+          pool.query("SELECT *, ? as inputed, ? as auto_message_type FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto, message.chatId, companyList[obj.siteKey]], loop);
+          var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
+          if(message.chatId in sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId]['applied'] = true;
+          } else if(isset(sincloSession) && isset(sincloSession.autoMessages)) {
+            message.created = new Date();
+            message.sort = fullDateTime(message.created);
+            message.applied = true;
+            message.messageType = chatApi.cnst.observeType.auto;
+            sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId] = message;
+          }
         }
       }
     });
