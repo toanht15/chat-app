@@ -1412,9 +1412,9 @@ io.sockets.on('connection', function (socket) {
           else if( type ==2 && rows[0].display_type === 3) {
             //営業時間を利用する場合
             if(active_flg == 1) {
-              for(var i2=0; i2<common.publicHolidaySettings.length; i2++) {
+              for(var i2=0; i2<common.publicHolidaySettingsArray.length; i2++) {
                 //祝日の場合
-                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[i2].month +'/'+ common.publicHolidaySettings[i2].day) {
+                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettingsArray[i2].month +'/'+ common.publicHolidaySettingsArray[i2].day) {
                   //祝日の営業時間設定が「休み」でない場合
                   if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                     for(var i=0; i<publicHolidayData.length; i++){
@@ -1469,8 +1469,8 @@ io.sockets.on('connection', function (socket) {
           // ウィジェット表示のジャッジの場合、営業時間内のみ表示するの場合、営業時間内の場合はtrue
           if ( type === 1 && rows[0].display_type === 4 && active_flg == 1) {
             // 祝日の場合
-            for(var i2=0; i2<common.publicHolidaySettings.length; i2++) {
-              if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[i2].month +'/'+ common.publicHolidaySettings[i2].day) {
+            for(var i2=0; i2<common.publicHolidaySettingsArray.length; i2++) {
+              if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettingsArray[i2].month +'/'+ common.publicHolidaySettingsArray[i2].day) {
                 if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
                   for(var i=0; i<publicHolidayData.length; i++){
                     var endTime = publicHolidayData[i].end;
@@ -1518,8 +1518,8 @@ io.sockets.on('connection', function (socket) {
             // 営業時間設定を利用している場合
             if (active_flg === 1) {
               //祝日の場合
-              for(var i2=0; i2<common.publicHolidaySettings.length; i2++) {
-                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[i2].month +'/'+ common.publicHolidaySettings[i2].day) {
+              for(var i2=0; i2<common.publicHolidaySettingsArray.length; i2++) {
+                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettingsArray[i2].month +'/'+ common.publicHolidaySettingsArray[i2].day) {
                   check = true;
                   //祝日の営業時間設定が「休み」でない場合
                   if(publicHolidayData[0].start != "" && publicHolidayData[0].end != "") {
@@ -1632,9 +1632,9 @@ io.sockets.on('connection', function (socket) {
             }
             //営業時間設定を利用している場合
             if (active_flg === 1) {
-              for(var i2=0; i2<common.publicHolidaySettings.length; i2++) {
+              for(var i2=0; i2<common.publicHolidaySettingsArray.length; i2++) {
                 //祝日の場合
-                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettings[i2].month +'/'+ common.publicHolidaySettings[i2].day) {
+                if((now.getMonth()+1) +'/'+ now.getDate() == common.publicHolidaySettingsArray[i2].month +'/'+ common.publicHolidaySettingsArray[i2].day) {
                   check = true;
                   //祝日の営業時間設定が「休み」でない場合
                   if(publicHolidayData[0].start　!= "" && publicHolidayData[0].end != "") {
@@ -3102,11 +3102,18 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           }
         };
         for (var i = 0; obj.messageList.length > i; i++) {
-            var message = obj.messageList[i];
-            pool.query("SELECT *, ? as inputed, ? as auto_message_type FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto, message.chatId, companyList[obj.siteKey]], loop);
-            if(message.chatId in sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages) {
-              sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId]['applied'] = true;
-            }
+          var message = obj.messageList[i];
+          pool.query("SELECT *, ? as inputed, ? as auto_message_type FROM t_auto_messages WHERE id = ?  AND m_companies_id = ? AND del_flg = 0 AND active_flg = 0 AND action_type = 1", [message.created, message.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto, message.chatId, companyList[obj.siteKey]], loop);
+          var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
+          if(message.chatId in sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId]['applied'] = true;
+          } else if(isset(sincloSession) && isset(sincloSession.autoMessages)) {
+            message.created = new Date();
+            message.sort = fullDateTime(message.created);
+            message.applied = true;
+            message.messageType = chatApi.cnst.observeType.auto;
+            sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId] = message;
+          }
         }
       }
     });
