@@ -47,10 +47,11 @@ function exports() {
 
 function loadWidgetSettings(siteKey, callback) {
   'use strict';
-  var getWidgetSettingSql  = 'SELECT ws.*, com.id as m_companies_id, com.company_key, com.core_settings, com.exclude_ips FROM m_widget_settings AS ws';
+  var getWidgetSettingSql  = 'SELECT ws.*, com.id as m_companies_id, com.trial_flg as trial_flg, ma.trial_end_day as trial_end_day, com.company_key, com.core_settings, com.exclude_ips FROM m_widget_settings AS ws';
   if(siteKey) {
     syslogger.info("loadWidgetSettings target : " + siteKey);
     getWidgetSettingSql += ' INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = ws.m_companies_id )';
+    getWidgetSettingSql += ' LEFT JOIN (SELECT * FROM m_agreements) AS ma  ON ( com.id = ma.m_companies_id )';
     getWidgetSettingSql += ' WHERE ws.del_flg = 0 ORDER BY id DESC LIMIT 1;';
     pool.query(getWidgetSettingSql, siteKey,
       function(err, row){
@@ -71,6 +72,8 @@ function loadWidgetSettings(siteKey, callback) {
           idSiteKeyMap[row[0].m_companies_id] = siteKey;
           companySettings[siteKey]['core_settings'] = JSON.parse(row[0].core_settings);
           companySettings[siteKey]['exclude_ips'] = row[0].exclude_ips;
+          companySettings[siteKey]['trial_flg'] = row[0].trial_flg === 1 ? true : false;
+          companySettings[siteKey]['trial_end_day'] = row[0].trial_end_day ? row[0].trial_end_day : false;
           widgetSettings[siteKey]['display_type'] = row[0].display_type;
           widgetSettings[siteKey]['style_settings'] = JSON.parse(row[0].style_settings);
           syslogger.info("Load Widget setting OK. siteKey : " + siteKey);
@@ -85,10 +88,12 @@ function loadWidgetSettings(siteKey, callback) {
   } else {
     // All
     getWidgetSettingSql += ' INNER JOIN (SELECT * FROM m_companies WHERE del_flg = 0 ) AS com  ON ( com.id = ws.m_companies_id )';
+    getWidgetSettingSql += ' LEFT JOIN (SELECT * FROM m_agreements) AS ma  ON ( com.id = ma.m_companies_id )';
     getWidgetSettingSql += ' WHERE ws.del_flg = 0;';
     pool.query(getWidgetSettingSql,
       function(err, rows){
         if(err) {
+
           syslogger.error('Unable load ALL Widget settings.');
           return;
         }
@@ -107,6 +112,8 @@ function loadWidgetSettings(siteKey, callback) {
             idSiteKeyMap[row.m_companies_id] = targetSiteKey;
             companySettings[targetSiteKey].core_settings = JSON.parse(row.core_settings);
             companySettings[targetSiteKey].exclude_ips = row.exclude_ips;
+            companySettings[targetSiteKey]['trial_flg'] = row.trial_flg === 1 ? true : false;
+            companySettings[targetSiteKey]['trial_end_day'] = row.trial_end_day ? row.trial_end_day : false;
             widgetSettings[targetSiteKey].display_type = row.display_type;
             widgetSettings[targetSiteKey].style_settings = JSON.parse(row.style_settings);
           });
