@@ -49,7 +49,6 @@ router.get("/", function(req, res, next) {
                 }
                 return num;
             }
-    var m_companies_id = common.companySettings[siteKey].id;
 
     try {
       // IPアドレス制限
