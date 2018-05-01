@@ -1080,6 +1080,7 @@
     },
     chatMessageData:function(d){
       console.log("chatMessgeData");
+      console.log("DATA : %s",d);
       var obj = JSON.parse(d);
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;

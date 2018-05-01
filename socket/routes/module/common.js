@@ -6,6 +6,7 @@ var companySettings = {},
     widgetSettings = {},
     autoMessageSettings = {},
     publicHolidaySettings = {},
+    publicHolidaySettingsArray = [],
     operationHourSettings = {},
     mysql = require('mysql'),
     pool = mysql.createPool({
@@ -226,6 +227,7 @@ function loadOperatingHourSettings(siteKey, callback) {
 function loadPublicHoliday(callback) {
   var getPublicHolidaySQL = "SELECT * FROM public_holidays;";
   publicHolidaySettings = {};
+  publicHolidaySettingsArray = [];
   pool.query(getPublicHolidaySQL,
     function(err, rows){
       if(err) {
@@ -238,9 +240,12 @@ function loadPublicHoliday(callback) {
             publicHolidaySettings[row.year] = [];
           }
           publicHolidaySettings[row.year].push(row);
+          publicHolidaySettingsArray.push(row);
         });
         syslogger.info('Load Public-holiday settings is successful.');
         module.exports.publicHolidaySettings = publicHolidaySettings;
+        module.exports.publicHolidaySettingsArray = publicHolidaySettingsArray;
+        syslogger.info(JSON.stringify(publicHolidaySettingsArray));
       }
       if(callback) callback();
     }
