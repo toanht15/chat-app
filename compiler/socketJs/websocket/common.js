@@ -849,7 +849,7 @@ var socket, // socket.io
         ' line-height: normal;' +
         ' text-decoration: none;' +
         ' float: none;' +
-        ' direction: normal;' +
+        ' direction: ltr;' +
         ' width: auto;' +
         ' max-width: none;' +
         ' min-width: 0;' +
