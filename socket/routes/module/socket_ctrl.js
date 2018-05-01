@@ -261,7 +261,7 @@ function makeToken(){
 
 var companyList = {};
 var initialized = false;
-function getCompanyList(){
+function getCompanyList(forceReload){
   pool.query('select * from m_companies where del_flg = 0;', function(err, rows){
     if ( err !== null && err !== '' ) return false; // DB接続断対応
     var key = Object.keys(rows);
@@ -280,6 +280,9 @@ function getCompanyList(){
       }
     }
     initialized = true;
+    if(forceReload) {
+      common.reloadSettings();
+    }
   });
 }
 getCompanyList();
@@ -3648,7 +3651,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       switch (obj.type) {
         case 1: // get new company ( sample: socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"})); )
           console.log('before', companyList);
-          getCompanyList();
+          getCompanyList(obj.forceReload);
           console.log('after', companyList);
           break;
         case 2: // del company ( sample: socket.emit('settingReload', JSON.stringify({type:2, targetKey: "demo", siteKey: "master"})); )
