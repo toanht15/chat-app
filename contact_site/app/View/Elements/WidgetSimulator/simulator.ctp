@@ -93,6 +93,138 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
     </style>
     <div id="sincloBox" ng-if="widget.showWidgetType !== 2" ng-hide="widget.showWidgetType === 4" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
       <style>
+        /* http://meyerweb.com/eric/tools/css/reset/
+       v2.0 | 20110126
+       License: none (public domain)
+     */
+        #sincloBox div,
+        #sincloBox span,
+        #sincloBox applet,
+        #sincloBox object,
+        #sincloBox iframe,
+        #sincloBox h1,
+        #sincloBox h2,
+        #sincloBox h3,
+        #sincloBox h4,
+        #sincloBox h5,
+        #sincloBox h6,
+        #sincloBox p,
+        #sincloBox blockquote,
+        #sincloBox pre,
+        #sincloBox a,
+        #sincloBox abbr,
+        #sincloBox acronym,
+        #sincloBox address,
+        #sincloBox big,
+        #sincloBox cite,
+        #sincloBox code,
+        #sincloBox del,
+        #sincloBox dfn,
+        #sincloBox em,
+        #sincloBox img,
+        #sincloBox ins,
+        #sincloBox kbd,
+        #sincloBox q,
+        #sincloBox s,
+        #sincloBox samp,
+        #sincloBox small,
+        #sincloBox strike,
+        #sincloBox strong,
+        #sincloBox sub,
+        #sincloBox sup,
+        #sincloBox tt,
+        #sincloBox var,
+        #sincloBox b,
+        #sincloBox u,
+        #sincloBox i,
+        #sincloBox center,
+        #sincloBox dl,
+        #sincloBox dt,
+        #sincloBox dd,
+        #sincloBox ol,
+        #sincloBox ul,
+        #sincloBox li,
+        #sincloBox fieldset,
+        #sincloBox form,
+        #sincloBox label,
+        #sincloBox legend,
+        #sincloBox table,
+        #sincloBox caption,
+        #sincloBox tbody,
+        #sincloBox tfoot,
+        #sincloBox thead,
+        #sincloBox tr,
+        #sincloBox th,
+        #sincloBox td,
+        #sincloBox article,
+        #sincloBox aside,
+        #sincloBox canvas,
+        #sincloBox details,
+        #sincloBox embed,
+        #sincloBox figure,
+        #sincloBox figcaption,
+        #sincloBox footer,
+        #sincloBox header,
+        #sincloBox hgroup,
+        #sincloBox menu,
+        #sincloBox nav,
+        #sincloBox output,
+        #sincloBox ruby,
+        #sincloBox section,
+        #sincloBox summary,
+        #sincloBox time,
+        #sincloBox mark,
+        #sincloBox audio,
+        #sincloBox video
+        {
+          /* sinclo-particular values */
+          color: #333333;
+          line-height: 1.3;
+          /* sinclo-particular values */
+          margin: 0;
+          padding: 0;
+          border: 0;
+          font: inherit;
+          font-size: inherit;
+          text-align: left;
+          vertical-align: baseline;
+          box-sizing: border-box;
+          border-width: medium;
+          -webkit-font-smoothing: subpixel-antialiased;
+          font-weight: normal;
+          text-indent: 0;
+          text-align: start;
+          letter-spacing: normal;
+          line-height: normal;
+          text-decoration: none;
+          float: none;
+          direction: ltr;
+          width: auto;
+          max-width: none;
+          min-width: 0;
+          height: auto;
+          max-height: none;
+          min-height: 0;
+          word-spacing: normal;
+          vertical-align: baseline;
+          background: initial;
+          top: auto;
+          left: auto;
+          right: auto;
+          bottom: auto;
+          border: initial;
+          box-shadow: none;
+          text-shadow: none;
+          position: static;
+          font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;
+        }
+        /* HTML5 display-role reset for older browsers */
+        #sincloBox article, #sincloBox aside, #sincloBox details, #sincloBox figcaption, #sincloBox figure, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox section { display: block; }
+        #sincloBox ol, #sincloBox ul { list-style: none; }
+        #sincloBox blockquote, #sincloBox q { quotes: none; }
+        #sincloBox blockquote:before, #sincloBox blockquote:after, #sincloBox q:before, #sincloBox q:after { content: ''; content: none; }
+        #sincloBox table { border-collapse: collapse; border-spacing: 0; }
+        /* END OF reset-css */
         #sincloBox * { font-size: 12px; }
         #sincloBox.middleSize  * { font-size: 13px; }
         #sincloBox.largeSize * { font-size: 13px; }
