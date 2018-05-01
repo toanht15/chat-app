@@ -66,6 +66,20 @@ router.get("/", function(req, res, next) {
         }
       }
       if ( 'style_settings' in common.widgetSettings[siteKey] ) {
+        if(common.companySettings[siteKey].trial_flg) {
+          // トライアル終了日を確認
+          var nowTimestamp = (new Date()).getTime(),
+              trialEndDay = new Date(common.companySettings[siteKey].trial_end_day);
+          // 正しくは23時59分59秒なのでセットする
+          trialEndDay.setHours(23);
+          trialEndDay.setMinutes(59);
+          trialEndDay.setSeconds(59);
+          if (nowTimestamp > trialEndDay.getTime()) {
+            sendData.status = false;
+            res.send(sendData);
+            return false;
+          }
+        }
         var core_settings = common.companySettings[siteKey].core_settings;
         var settings = common.widgetSettings[siteKey].style_settings;
         sendData['contract'] = core_settings;

@@ -11,7 +11,7 @@ function saveAct(){
       url: $('#ContractAddForm').attr('action'),
       data: $('#ContractAddForm').serialize()
     }).done(function(data){
-      socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}));
+      socket.emit('settingReload', JSON.stringify({type:1, forceReload: true, siteKey: "master"}));
       setTimeout(function(){
         location.href = "<?= $this->Html->url('/Contract/index') ?>"
       },1000);

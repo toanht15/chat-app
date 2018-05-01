@@ -7,7 +7,6 @@ function saveEdit(){
     url: $('#MailTemplateSettingsEditForm').attr('action'),
     data: $('#MailTemplateSettingsEditForm').serialize()
   }).done(function(data){
-    socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"}));
     setTimeout(function(){
       location.href = "<?= $this->Html->url('/MailTemplateSettings/index') ?>"
     },1000);
