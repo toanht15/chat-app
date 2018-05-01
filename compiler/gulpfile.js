@@ -129,7 +129,7 @@ gulp.task('watch', function(){
   gulp.watch([path.adScss + '**/*.scss'], ['admin-scss-compile', 'compress-gzip-admin-css']);
   gulp.watch([path.scss + '**/*.scss'], ['contact-scss-compile', 'compress-gzip-contact-css']);
   gulp.watch([path.socketSass + '**/*.sass'], ['socket-sass-compile', 'compress-gzip-socket-css']);
-  gulp.watch([path.js], ['minify-js-dev', 'compress-gzip-js']);
+  gulp.watch([path.js], ['js-minify-dev']);
   gulp.watch([path.jade], ['jade-compile', 'compress-gzip-jade']);
 });
 
