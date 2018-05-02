@@ -825,48 +825,43 @@ var socket, // socket.io
       /* http://meyerweb.com/eric/tools/css/reset/
          v2.0 | 20110126
          License: none (public domain)
+         ※ ここの値は気軽に編集しないこと
       */
       html += '      #sincloBox div, #sincloBox span, #sincloBox applet, #sincloBox object, #sincloBox iframe, #sincloBox h1, #sincloBox h2, #sincloBox h3, #sincloBox h4, #sincloBox h5, #sincloBox h6, #sincloBox p, #sincloBox blockquote, #sincloBox pre, #sincloBox a, #sincloBox abbr, #sincloBox acronym, #sincloBox address, #sincloBox big, #sincloBox cite, #sincloBox code, #sincloBox del, #sincloBox dfn, #sincloBox em, #sincloBox img, #sincloBox ins, #sincloBox kbd, #sincloBox q, #sincloBox s, #sincloBox samp, #sincloBox small, #sincloBox strike, #sincloBox strong, #sincloBox sub, #sincloBox sup, #sincloBox tt, #sincloBox var, #sincloBox b, #sincloBox u, #sincloBox i, #sincloBox center, #sincloBox dl, #sincloBox dt, #sincloBox dd, #sincloBox ol, #sincloBox ul, #sincloBox li, #sincloBox fieldset, #sincloBox form, #sincloBox label, #sincloBox legend, #sincloBox table, #sincloBox caption, #sincloBox tbody, #sincloBox tfoot, #sincloBox thead, #sincloBox tr, #sincloBox th, #sincloBox td, #sincloBox article, #sincloBox aside, #sincloBox canvas, #sincloBox details, #sincloBox embed, #sincloBox figure, #sincloBox figcaption, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox output, #sincloBox ruby, #sincloBox section, #sincloBox summary, #sincloBox time, #sincloBox mark, #sincloBox audio, #sincloBox video' +
         ' { ' +
-        // sinclo-perticular values
-        ' color: #333333;' +
-        ' line-height: 1.3;' +
-        // sinclo-perticular values
-        ' margin: 0;' +
-        ' padding: 0;' +
-        ' border: 0;' +
-        ' font: inherit;' +
-        ' font-size: inherit;' +
-        ' text-align: left;' +
-        ' vertical-align: baseline;' +
-        ' box-sizing: border-box;' +
-        ' border-width: medium;' +
-        ' -webkit-font-smoothing: subpixel-antialiased;' +
-        ' font-weight: normal;' +
-        ' text-indent: 0;' +
-        ' text-align: start;' +
-        ' letter-spacing: normal;' +
-        ' text-decoration: none;' +
-        ' float: none;' +
-        ' direction: ltr;' +
-        ' width: auto;' +
-        ' max-width: none;' +
-        ' min-width: 0;' +
-        ' height: auto;' +
-        ' max-height: none;' +
-        ' min-height: 0;' +
-        ' word-spacing: normal;' +
-        ' vertical-align: baseline;' +
-        ' background: initial;' +
-        ' top: auto;' +
-        ' left: auto;' +
-        ' right: auto;' +
-        ' bottom: auto;' +
-        ' border: initial;' +
-        ' box-shadow: none;' +
-        ' text-shadow: none;' +
-        ' position: static;' +
-        ' font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;' +
+        '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica,Helvetica Neue,Arial,Verdana;' +
+        '  font-size: inherit;' +
+        '  font-weight: normal;' +
+        '  font-variant: normal;' +
+        '  line-height: 1.3;' + // sinclo-particular value
+        '  position: static;' +
+        '  top: auto;' +
+        '  right: auto;' +
+        '  bottom: auto;' +
+        '  left: auto;' +
+        '  float: none;' +
+        '  box-sizing: border-box;' +
+        '  width: auto;' +
+        '  min-width: 0;' +
+        '  max-width: none;' +
+        '  height: auto;' +
+        '  min-height: 0;' +
+        '  max-height: none;' +
+        '  margin: 0;' +
+        '  padding: 0;' +
+        '  text-align: start;' +
+        '  vertical-align: baseline;' +
+        '  text-decoration: none;' +
+        '  text-indent: 0;' +
+        '  letter-spacing: normal;' +
+        '  word-spacing: normal;' +
+        '  color: #333;' + // sinclo-particular value
+        '  border: 0;' +
+        '  background: initial;' +
+        '  box-shadow: none;' +
+        '  text-shadow: none;' +
+        '  -webkit-font-smoothing: subpixel-antialiased;' +
+        '  direction: ltr;' +
         ' }';
       /* HTML5 display-role reset for older browsers */
       html += '      #sincloBox article, #sincloBox aside, #sincloBox details, #sincloBox figcaption, #sincloBox figure, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox section { display: block; }';
