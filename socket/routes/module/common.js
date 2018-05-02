@@ -198,6 +198,8 @@ function loadOperatingHourSettings(siteKey, callback) {
           return;
         }
         if(row && row.length > 0) {
+          syslogger.info(JSON.stringify(row));
+          // row = array
           operationHourSettings[siteKey] = row;
           syslogger.info("Load Operating-hour setting OK. siteKey : " + siteKey);
           module.exports.operationHourSettings = operationHourSettings;
@@ -216,11 +218,12 @@ function loadOperatingHourSettings(siteKey, callback) {
         }
         if(rows && rows.length > 0) {
           rows.forEach(function(row){
+            syslogger.info(JSON.stringify(row));
             var targetSiteKey = idSiteKeyMap[row.m_companies_id];
-            if(!operationHourSettings[targetSiteKey]) {
-              operationHourSettings[targetSiteKey] = {};
-            }
-            operationHourSettings[targetSiteKey] = row;
+            // いったん初期化する
+            operationHourSettings[targetSiteKey] = [];
+            // row = object
+            operationHourSettings[targetSiteKey].push(row);
           });
           syslogger.info('Load ALL Operating-hour settings is successful.');
           module.exports.operationHourSettings = operationHourSettings;
