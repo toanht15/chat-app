@@ -830,10 +830,8 @@ var socket, // socket.io
       html += '      #sincloBox div, #sincloBox span, #sincloBox applet, #sincloBox object, #sincloBox iframe, #sincloBox h1, #sincloBox h2, #sincloBox h3, #sincloBox h4, #sincloBox h5, #sincloBox h6, #sincloBox p, #sincloBox blockquote, #sincloBox pre, #sincloBox a, #sincloBox abbr, #sincloBox acronym, #sincloBox address, #sincloBox big, #sincloBox cite, #sincloBox code, #sincloBox del, #sincloBox dfn, #sincloBox em, #sincloBox img, #sincloBox ins, #sincloBox kbd, #sincloBox q, #sincloBox s, #sincloBox samp, #sincloBox small, #sincloBox strike, #sincloBox strong, #sincloBox sub, #sincloBox sup, #sincloBox tt, #sincloBox var, #sincloBox b, #sincloBox u, #sincloBox i, #sincloBox center, #sincloBox dl, #sincloBox dt, #sincloBox dd, #sincloBox ol, #sincloBox ul, #sincloBox li, #sincloBox fieldset, #sincloBox form, #sincloBox label, #sincloBox legend, #sincloBox table, #sincloBox caption, #sincloBox tbody, #sincloBox tfoot, #sincloBox thead, #sincloBox tr, #sincloBox th, #sincloBox td, #sincloBox article, #sincloBox aside, #sincloBox canvas, #sincloBox details, #sincloBox embed, #sincloBox figure, #sincloBox figcaption, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox output, #sincloBox ruby, #sincloBox section, #sincloBox summary, #sincloBox time, #sincloBox mark, #sincloBox audio, #sincloBox video' +
         ' { ' +
         '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica,Helvetica Neue,Arial,Verdana;' +
-        '  font-size: inherit;' +
         '  font-weight: normal;' +
         '  font-variant: normal;' +
-        '  line-height: 1.3;' + // sinclo-particular value
         '  position: static;' +
         '  top: auto;' +
         '  right: auto;' +
