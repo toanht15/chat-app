@@ -362,8 +362,8 @@ router.get("/", function(req, res, next) {
           var now = new Date();
           var nowDay = now.getDay();
           var dateParse = Date.parse(now);
-          var date = now.getFullYear() + "/" + (now.getMonth()+1) + "/" + now.getDate() + " ";
-          var today = (now.getMonth()+1) + '/' + now.getDate();
+          var date = now.getFullYear() + "/" + ("0"+(now.getMonth()+1)).slice(-2) +'/'+ ("0"+(now.getDate())).slice(-2) + " ";
+          var today = ("0"+(now.getMonth()+1)).slice(-2) +'/'+ ("0"+(now.getDate())).slice(-2);
           for(var i=0; i<common.autoMessageSettings[siteKey].length; i++){
             if ( !(common.autoMessageSettings[siteKey][i].trigger_type in sendData['messages']) ) {
               sendData['messages'] = [];
