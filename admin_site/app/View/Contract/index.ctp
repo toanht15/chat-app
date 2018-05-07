@@ -1,5 +1,5 @@
 <?php
-  App::import('Vendor', 'util/companyExpireChecker');
+  App::uses('CompanyExpireChecker', 'vendor/util');
 ?>
 <?= $this->element('Contract/script'); ?>
 
