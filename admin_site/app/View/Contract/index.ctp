@@ -56,8 +56,10 @@
             switch(intval($val['MCompany']['trial_flg'])) {
               case 0:
                 if(CompanyExpireChecker::isExpireAgreementDay($val['MAgreement']['agreement_end_day'])) {
+                  // 契約期間切れの場合
                   echo 'style="background-color: #999999;"';
                 } else if (CompanyExpireChecker::isWarningApplicationDay($val['MAgreement']['agreement_end_day'])) {
+                  // 契約期間切れからn日前の場合
                   echo 'style="background-color: #FFFF00;"';
                 }
                 break;
