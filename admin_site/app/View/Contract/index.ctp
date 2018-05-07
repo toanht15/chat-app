@@ -1,3 +1,6 @@
+<?php
+  App::import('Vendor', 'util/companyExpireChecker');
+?>
 <?= $this->element('Contract/script'); ?>
 
 <div id='agreementList_idx'>
@@ -52,12 +55,14 @@
           <tr ondblclick= "location.href = '<?=$this->Html->url(array('controller' => 'Contract', 'action' => 'edit', $val['MCompany']['id']))?>';" <?php
             switch(intval($val['MCompany']['trial_flg'])) {
               case 0:
-                if(strtotime($val['MAgreement']['agreement_end_day']) < time()) {
+                if(CompanyExpireChecker::isExpireAgreementDay($val['MAgreement']['agreement_end_day'])) {
                   echo 'style="background-color: #999999;"';
+                } else if (CompanyExpireChecker::isWarningApplicationDay($val['MAgreement']['agreement_end_day'])) {
+                  echo 'style="background-color: #FFFF00;"';
                 }
                 break;
               case 1:
-                if(strtotime($val['MAgreement']['trial_end_day']) < time()) {
+                if(CompanyExpireChecker::isExpireTrialDay($val['MAgreement']['trial_end_day'])) {
                   echo 'style="background-color: #999999;"';
                 }
                 break;
