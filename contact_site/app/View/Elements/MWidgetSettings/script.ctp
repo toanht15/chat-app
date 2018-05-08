@@ -1070,6 +1070,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope.revertStandardTextSize('header_text_size');
       $scope.revertStandardTextSize('re_text_size');
       $scope.revertStandardTextSize('se_text_size');
+      $scope.resizeWidgetHeightByWindowHeight();
     }
 
     $scope.revertStandardTextSize = function(target) {
@@ -1187,6 +1188,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
         console.log("changed");
         $scope.changeFlg = true;
       });
+      $(window).on('resize', function(e){
+        $scope.resizeWidgetHeightByWindowHeight();
+      });
+      $scope.resizeWidgetHeightByWindowHeight();
+
       $(window).on('beforeunload', function(e) {
         if($scope.changeFlg) {
           return '行った変更が保存されない可能性があります。';
@@ -1197,6 +1203,66 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.showTimeBannerSettingDisable();
       }
     });
+
+    $scope.resizeWidgetHeightByWindowHeight = function() {
+      var windowHeight = $(window).innerHeight();
+      var minCurrentWidgetHeight = $scope.getMaxWidgetHeight() * 0.5;
+      var currentWidgetHeight = $('#sincloBox').height();
+      var maxCurrentWidgetHeight = $scope.getMaxWidgetHeight();
+
+      $('#miniTarget').height('auto');
+
+      if (windowHeight * 0.75 < currentWidgetHeight) {
+        var delta = currentWidgetHeight - (windowHeight * 0.75) + 10;
+        $('#chatTalk').height($('#chatTalk').height() - delta);
+        // 更新
+        currentWidgetHeight = $('#sincloBox').height();
+        if(currentWidgetHeight > maxCurrentWidgetHeight) {
+          $('#chatTalk').height($scope.getMaxChatTalkHeight());
+        }
+        if(currentWidgetHeight <= minCurrentWidgetHeight) {
+          $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
+        }
+      } else {
+        var delta = (windowHeight * 0.75) - currentWidgetHeight - 10;
+        $('#chatTalk').height($('#chatTalk').height() + delta);
+        // 更新
+        currentWidgetHeight = $('#sincloBox').height();
+        if(currentWidgetHeight > maxCurrentWidgetHeight) {
+          $('#chatTalk').height($scope.getMaxChatTalkHeight());
+        }
+        if(currentWidgetHeight <= minCurrentWidgetHeight) {
+          $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
+        }
+      }
+    };
+
+    $scope.getMaxWidgetHeight = function() {
+      switch(Number($scope.widgetSizeTypeToggle)) {
+        case 1:
+          return 405;
+        case 2:
+          return 496;
+        case 3:
+          return 596;
+        default:
+          return 496;
+      }
+    };
+
+    $scope.getMaxChatTalkHeight = function() {
+      switch(Number($scope.widgetSizeTypeToggle)) {
+        case 1:
+          // 小
+          return 194;
+        case 2:
+          return 284;
+        case 3:
+          return 374;
+        default:
+          return 284;
+      }
+    };
 
     $scope.closeBtnDisableWhenShowBannerEnable = function() {
       $scope.settingShowTimeRadioButtonDisable($('#closeButtonSetting1'));
