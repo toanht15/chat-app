@@ -26,7 +26,22 @@ class TrialController extends AppController {
   public function beforeFilter(){
     parent::beforeFilter();
     $this->Auth->allow(['index','add','thanks','check','remoteTermsOfService']);
-    $this->header('Access-Control-Allow-Origin: http://127.0.0.1:81/Contract/add');
+    //開発環境
+    if(Configure::read('debug') == 2) {
+      header('Access-Control-Allow-Origin: *');
+    }
+    //テスト環境
+    if(Configure::read('debug') != 2 && $_SERVER['HTTP_HOST'] == 'ml1.sinclo.jp') {
+      if($_SERVER['HTTP_ORIGIN'] == 'http://127.0.0.1:81/Contract/add' || $_SERVER['HTTP_ORIGIN'] == 'http://192.168.1.120/sinclo/lp/trial.php') {
+        header("Access-Control-Allow-Origin: ".$_SERVER['HTTP_ORIGIN']);
+      }
+    }
+    //本番環境
+    if(Configure::read('debug') != 2 && $_SERVER['HTTP_HOST'] == 'sinclo.jp') {
+     if($_SERVER['HTTP_ORIGIN'] == 'http://127.0.0.1:81/Contract/add' || $_SERVER['HTTP_ORIGIN'] == 'https://sinclo.medialink-ml.co.jp/lp/trial.php') {
+        header("Access-Control-Allow-Origin: ".$_SERVER['HTTP_ORIGIN']);
+      }
+    }
   }
 
   /* *
