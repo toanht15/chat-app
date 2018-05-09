@@ -144,7 +144,7 @@ function loadAutoMessageSettings(siteKey, callback) {
   if(siteKey) {
     syslogger.info("loadAutoMessageSettings target : " + siteKey);
     getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";
-    getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?);";
+    getTriggerListSql += " WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?) ORDER BY am.sort asc;";
     pool.query(getTriggerListSql, [siteKey, '1', '2'],
       function(err, rows){
         if(err) {
@@ -162,7 +162,7 @@ function loadAutoMessageSettings(siteKey, callback) {
   } else {
     // All
     getTriggerListSql += ' INNER JOIN (SELECT * FROM m_companies WHERE del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )';
-    getTriggerListSql += ' WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?);';
+    getTriggerListSql += ' WHERE am.active_flg = 0 AND am.del_flg = 0 AND am.action_type IN (?,?) ORDER BY am.sort asc;';
     pool.query(getTriggerListSql, ['1', '2'],
       function(err, rows){
         if(err) {
