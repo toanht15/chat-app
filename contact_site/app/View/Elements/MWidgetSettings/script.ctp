@@ -1177,7 +1177,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
     }
 
     // 表示切り替え時のチラ付きを抑えるためにいったん非表示にする
-
+    $scope.currentWindowHeight = $(window).height();
     angular.element(window).on('load',function(e){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
       // formのどこかを変更したらフラグを立てる
@@ -1205,36 +1205,31 @@ sincloApp.controller('WidgetCtrl', function($scope){
     });
 
     $scope.resizeWidgetHeightByWindowHeight = function() {
-      var windowHeight = $(window).innerHeight();
-      var minCurrentWidgetHeight = $scope.getMaxWidgetHeight() * 0.5;
-      var currentWidgetHeight = $('#sincloBox').height();
-      var maxCurrentWidgetHeight = $scope.getMaxWidgetHeight();
+      var windowHeight = $(window).innerHeight(),
+          minCurrentWidgetHeight = $scope.getMinWidgetHeight(),
+          currentWidgetHeight = $('#sincloBox').height(),
+          maxCurrentWidgetHeight = $scope.getMaxWidgetHeight(),
+          delta = windowHeight - $scope.currentWindowHeight;
 
-      $('#miniTarget').height('auto');
-
-      if (windowHeight * 0.75 < currentWidgetHeight) {
-        var delta = currentWidgetHeight - (windowHeight * 0.75) + 10;
-        $('#chatTalk').height($('#chatTalk').height() - delta);
-        // 更新
-        currentWidgetHeight = $('#sincloBox').height();
-        if(currentWidgetHeight > maxCurrentWidgetHeight) {
-          $('#chatTalk').height($scope.getMaxChatTalkHeight());
-        }
-        if(currentWidgetHeight <= minCurrentWidgetHeight) {
-          $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
-        }
-      } else {
-        var delta = (windowHeight * 0.75) - currentWidgetHeight - 10;
-        $('#chatTalk').height($('#chatTalk').height() + delta);
-        // 更新
-        currentWidgetHeight = $('#sincloBox').height();
-        if(currentWidgetHeight > maxCurrentWidgetHeight) {
-          $('#chatTalk').height($scope.getMaxChatTalkHeight());
-        }
-        if(currentWidgetHeight <= minCurrentWidgetHeight) {
-          $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
-        }
+      if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
+        delta = (windowHeight * 0.7) - currentWidgetHeight;
       }
+
+      // 変更後サイズ
+      var afterWidgetHeight = $('#sincloBox').height() + delta;
+      if(delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
+        console.log('1 %s', delta);
+        $('#chatTalk').height($scope.getMaxChatTalkHeight());
+      } else if(delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
+        console.log('2-1 %s ', delta, minCurrentWidgetHeight, $scope.getMaxChatTalkHeight() * 0.5);
+        $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
+        console.log('2-2 %s ', $('#sincloBox').height());
+      } else if(windowHeight * 0.7 < currentWidgetHeight || windowHeight * 0.7 >= afterWidgetHeight) {
+        console.log('3 %s', delta);
+        $('#chatTalk').height($('#chatTalk').height() + delta);
+      }
+
+      $scope.currentWindowHeight = windowHeight;
     };
 
     $scope.getMaxWidgetHeight = function() {
@@ -1247,6 +1242,19 @@ sincloApp.controller('WidgetCtrl', function($scope){
           return 596;
         default:
           return 496;
+      }
+    };
+
+    $scope.getMinWidgetHeight = function() {
+      switch(Number($scope.widgetSizeTypeToggle)) {
+        case 1:
+          return 318;
+        case 2:
+          return 364;
+        case 3:
+          return 409;
+        default:
+          return 364;
       }
     };
 
