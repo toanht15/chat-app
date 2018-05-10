@@ -1219,19 +1219,26 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
       // 変更後サイズ
       var afterWidgetHeight = $('#sincloBox').height() + delta;
+      var changed = false;
       if(delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
         console.log('1 %s', delta);
+        changed = true;
         $('#chatTalk').height($scope.getMaxChatTalkHeight());
       } else if(delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
         console.log('2-1 %s ', delta, minCurrentWidgetHeight, $scope.getMaxChatTalkHeight() * 0.5);
+        changed = true;
         $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
         console.log('2-2 %s ', $('#sincloBox').height());
       } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
         console.log('3 %s', delta);
+        changed = true;
         $('#chatTalk').height($('#chatTalk').height() + delta);
       }
 
       $scope.currentWindowHeight = windowHeight;
+      if(changed) {
+        $(document).trigger('onWidgetSizeChanged');
+      }
     };
 
     $scope.getMaxWidgetHeight = function() {
