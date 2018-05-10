@@ -1189,7 +1189,9 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.changeFlg = true;
       });
       $(window).on('resize', function(e){
-        $scope.resizeWidgetHeightByWindowHeight();
+        if($scope.showWidgetType === 1) {
+          $scope.resizeWidgetHeightByWindowHeight();
+        }
       });
       $scope.resizeWidgetHeightByWindowHeight();
 
@@ -1224,7 +1226,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
         console.log('2-1 %s ', delta, minCurrentWidgetHeight, $scope.getMaxChatTalkHeight() * 0.5);
         $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
         console.log('2-2 %s ', $('#sincloBox').height());
-      } else if(windowHeight * 0.7 < currentWidgetHeight || windowHeight * 0.7 >= afterWidgetHeight) {
+      } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
         console.log('3 %s', delta);
         $('#chatTalk').height($('#chatTalk').height() + delta);
       }
