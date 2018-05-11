@@ -1070,6 +1070,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope.revertStandardTextSize('header_text_size');
       $scope.revertStandardTextSize('re_text_size');
       $scope.revertStandardTextSize('se_text_size');
+      $scope.resizeWidgetHeightByWindowHeight();
     }
 
     $scope.revertStandardTextSize = function(target) {
@@ -1176,7 +1177,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
     }
 
     // 表示切り替え時のチラ付きを抑えるためにいったん非表示にする
-
+    $scope.currentWindowHeight = $(window).height();
     angular.element(window).on('load',function(e){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
       // formのどこかを変更したらフラグを立てる
@@ -1187,6 +1188,13 @@ sincloApp.controller('WidgetCtrl', function($scope){
         console.log("changed");
         $scope.changeFlg = true;
       });
+      $(window).on('resize', function(e){
+        if($scope.showWidgetType === 1) {
+          $scope.resizeWidgetHeightByWindowHeight();
+        }
+      });
+      $scope.resizeWidgetHeightByWindowHeight();
+
       $(window).on('beforeunload', function(e) {
         if($scope.changeFlg) {
           return '行った変更が保存されない可能性があります。';
@@ -1197,6 +1205,81 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $scope.showTimeBannerSettingDisable();
       }
     });
+
+    $scope.resizeWidgetHeightByWindowHeight = function() {
+      var windowHeight = $(window).innerHeight(),
+          minCurrentWidgetHeight = $scope.getMinWidgetHeight(),
+          currentWidgetHeight = $('#sincloBox').height(),
+          maxCurrentWidgetHeight = $scope.getMaxWidgetHeight(),
+          delta = windowHeight - $scope.currentWindowHeight;
+
+      if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
+        delta = (windowHeight * 0.7) - currentWidgetHeight;
+      }
+
+      // 変更後サイズ
+      var afterWidgetHeight = $('#sincloBox').height() + delta;
+      var changed = false;
+      if(delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
+        console.log('1 %s', delta);
+        changed = true;
+        $('#chatTalk').height($scope.getMaxChatTalkHeight());
+      } else if(delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
+        console.log('2-1 %s ', delta, minCurrentWidgetHeight, $scope.getMaxChatTalkHeight() * 0.5);
+        changed = true;
+        $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
+        console.log('2-2 %s ', $('#sincloBox').height());
+      } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
+        console.log('3 %s', delta);
+        changed = true;
+        $('#chatTalk').height($('#chatTalk').height() + delta);
+      }
+
+      $scope.currentWindowHeight = windowHeight;
+      if(changed) {
+        $(document).trigger('onWidgetSizeChanged');
+      }
+    };
+
+    $scope.getMaxWidgetHeight = function() {
+      switch(Number($scope.widgetSizeTypeToggle)) {
+        case 1:
+          return 405;
+        case 2:
+          return 496;
+        case 3:
+          return 596;
+        default:
+          return 496;
+      }
+    };
+
+    $scope.getMinWidgetHeight = function() {
+      switch(Number($scope.widgetSizeTypeToggle)) {
+        case 1:
+          return 318;
+        case 2:
+          return 364;
+        case 3:
+          return 409;
+        default:
+          return 364;
+      }
+    };
+
+    $scope.getMaxChatTalkHeight = function() {
+      switch(Number($scope.widgetSizeTypeToggle)) {
+        case 1:
+          // 小
+          return 194;
+        case 2:
+          return 284;
+        case 3:
+          return 374;
+        default:
+          return 284;
+      }
+    };
 
     $scope.closeBtnDisableWhenShowBannerEnable = function() {
       $scope.settingShowTimeRadioButtonDisable($('#closeButtonSetting1'));

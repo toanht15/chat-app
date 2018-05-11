@@ -836,6 +836,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }, 0);
   });
 
+  $(document).on('onWidgetSizeChanged', function(e){
+    $('#simulator_popup').css({
+      width: $('#sincloBox').outerWidth() + 28 + 'px',
+      height: $('#sincloBox').outerHeight() + 101 + 'px'
+    });
+  });
+
   // シミュレーションで受け付けた受信メッセージ
   $scope.$on('receiveVistorMessage', function(event, message, prefix) {
     // 対応するアクションがない場合は何もしない
