@@ -84,45 +84,37 @@
     #sincloBox audio,
     #sincloBox video
     {
-      /* sinclo-particular values */
-      color: #333333;
-      line-height: 1.3;
-      /* sinclo-particular values */
-      margin: 0;
-      padding: 0;
-      border: 0;
-      font: inherit;
-      font-size: inherit;
-      text-align: left;
-      vertical-align: baseline;
-      box-sizing: border-box;
-      border-width: medium;
-      -webkit-font-smoothing: subpixel-antialiased;
+      font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica,Helvetica Neue,Arial,Verdana;
       font-weight: normal;
-      text-indent: 0;
-      text-align: start;
-      letter-spacing: normal;
-      text-decoration: none;
-      float: none;
-      direction: ltr;
-      width: auto;
-      max-width: none;
-      min-width: 0;
-      height: auto;
-      max-height: none;
-      min-height: 0;
-      word-spacing: normal;
-      vertical-align: baseline;
-      background: initial;
+      font-variant: normal;
+      position: static;
       top: auto;
-      left: auto;
       right: auto;
       bottom: auto;
-      border: initial;
+      left: auto;
+      float: none;
+      box-sizing: border-box;
+      width: auto;
+      min-width: 0;
+      max-width: none;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      margin: 0;
+      padding: 0;
+      text-align: start;
+      vertical-align: baseline;
+      text-decoration: none;
+      text-indent: 0;
+      letter-spacing: normal;
+      word-spacing: normal;
+      color: #333; /* sinclo-particular value */
+      border: 0;
+      background: initial;
       box-shadow: none;
       text-shadow: none;
-      position: static;
-      font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana;
+      -webkit-font-smoothing: subpixel-antialiased;
+      direction: ltr;
     }
     /* HTML5 display-role reset for older browsers */
     #sincloBox article, #sincloBox aside, #sincloBox details, #sincloBox figcaption, #sincloBox figure, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox section { display: block; }

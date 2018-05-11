@@ -1562,10 +1562,10 @@
     displayTextarea : function(){
       if(!document.getElementById("flexBoxWrap")) return;
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
-      document.getElementById("flexBoxWrap").style.display = '';
-      if(chatTalk.clientHeight == 269 || chatTalk.clientHeight == 359 || chatTalk.clientHeight == 449) {
+      if(!check.smartphone() && document.getElementById("flexBoxWrap").style.display === 'none') {
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
       }
+      document.getElementById("flexBoxWrap").style.display = '';
       //スマホの場合
       if ( check.smartphone() ) {
         // 縦の場合
@@ -1597,7 +1597,7 @@
     hideTextarea : function(){
       if(!document.getElementById("flexBoxWrap")) return;
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
-      if(chatTalk.clientHeight == 194 || chatTalk.clientHeight == 284 || chatTalk.clientHeight == 374) {
+      if(!check.smartphone() && document.getElementById("flexBoxWrap").style.display === '') {
         document.getElementById("flexBoxWrap").style.display = 'none';
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
       }
