@@ -1924,6 +1924,7 @@ io.sockets.on('connection', function (socket) {
                 if ( !scList.hasOwnProperty(res.siteKey) ) { scList[res.siteKey] = { user: { }, cnt: {} }; }
                 scList[res.siteKey].user[data.userId] = data.scNum;
                 scList[res.siteKey].cnt[data.userId] = chatApi.calcScNum(res, data.userId);
+                console.log("【" + res.siteKey + "】新規：対応上限数設定 " + scList[res.siteKey].cnt[data.userId] + " / " + scList[res.siteKey].user[data.userId] +  " userId : " + data.userId);
 
                 data.scInfo = scList[res.siteKey].cnt;
               }

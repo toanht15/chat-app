@@ -124,8 +124,14 @@ if ( window.hasOwnProperty('io') ) {
     data.data.opFlg = true;
     if($('#operatorStatus').hasClass('opWait')) {
       data.data.status = "1";
+      <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+      data.data.scNum = Number("<?=$scNum?>");
+      <?php endif; ?>
     } else if($('#operatorStatus').hasClass('opStop')) {
       data.data.status = "0";
+      <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && isset($scNum) && strcmp(intval($scFlg), C_SC_ENABLED) === 0 ) :  ?>
+      data.data.scNum = 0;
+      <?php endif; ?>
     } else {
       data.data.status = "<?=$opStatus?>";
     }
