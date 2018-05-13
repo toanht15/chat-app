@@ -3,6 +3,7 @@ var gulp = require('gulp'),
   cssnext = require('gulp-cssnext'),
   jade = require('gulp-jade'),
   gzip = require('gulp-gzip'),
+  sourcemaps = require('gulp-sourcemaps'),
   runSequence = require('run-sequence'),
   path = {
     css: '../contact_site/app/webroot/css/',
@@ -96,10 +97,13 @@ gulp.task('minify-js-dev', function(){
   uglifyOpt.compress.drop_console = false;
   uglifyOpt.compress.drop_debugger = false;
   return gulp.src(path.js)
+    .pipe(sourcemaps.init())
+    .pipe(gulp.dest(path.minjs))
     .pipe(uglify(uglifyOpt))
     .pipe(rename({
       extname: '.min.js'
     }))
+    .pipe(sourcemaps.write('maps'))
     .pipe(gulp.dest(path.minjs));
 });
 
