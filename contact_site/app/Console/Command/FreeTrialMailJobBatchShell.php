@@ -70,22 +70,12 @@ class FreeTrialMailJobBatchShell extends AppShell
     }
     //トライアル中の企業のトライアル期間を検出
     $trialDay = $this->MAgreement->find('all',[
-      'fields' => [
-        'm_companies_id',
-        'application_day',
-        'trial_end_day'
-      ],
       'conditions' => [
         'm_companies_id' => $trialCompanyIds
       ]
     ]);
     //本契約中の企業の期間を検出
-    $agreementDay = $this->MAgreement->find('all',[
-      'fields' => [
-        'm_companies_id',
-        'application_day',
-        'agreement_end_day'
-      ],
+    $agreementDay = $this->MAgreement->find('all',
       'conditions' => [
         'm_companies_id' => $companyIds
       ]
@@ -182,9 +172,6 @@ class FreeTrialMailJobBatchShell extends AppShell
               if((!empty($trialMailAdressData[$index-1]) && $trialMailAdressData[$index-1]['MUser']['m_companies_id'] != $mailAdress['MUser']['m_companies_id'] && $index != 0) ||
               $index == 0) {
                 $trialCompanyName = $this->MCompany->find('all',[
-                  'fields' => [
-                    'company_name'
-                  ],
                   'conditions' => [
                     'id' => $mailAdress['MUser']['m_companies_id']
                   ]
@@ -200,10 +187,20 @@ class FreeTrialMailJobBatchShell extends AppShell
               $id = $jobMailTemplate['id'];
               $to = $mailAdress['MUser']['mail_address'];
               $sender = $jobMailTemplate['sender'];
-              $jobMailTemplate['mail_body'] = str_replace(self::COMPANY_NAME, $trialCompanyName, $jobMailTemplate['mail_body']);
-              $jobMailTemplate['mail_body'] = str_replace(self::USER_NAME, $mailAdress['MUser']['user_name'], $jobMailTemplate['mail_body']);
               $body = $jobMailTemplate['mail_body'];
               $subject = $jobMailTemplate['subject'];
+
+              $agreementData = $this->MAgreement->find('all',[
+                'conditions' => [
+                  'm_companies_id' => $mailAdress['MUser']['m_companies_id']
+                ]
+              ]);
+              $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
+              $replaceData = array(
+                'MCompany' => $trialCompanyName[0]['MCompany'],
+                'MAgreement' => $agreementData['MAgreement']
+              );
+              $body = $this->replaceAllMailConstString($replaceData, $body);
               $this->log("Sending mail to ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
               $this->component->setFrom(self::ML_MAIL_ADDRESS);
               $this->component->setFromName($sender);
@@ -211,8 +208,6 @@ class FreeTrialMailJobBatchShell extends AppShell
               $this->component->setBody($body);
               $this->component->setSubject($subject);
               $this->component->send();
-              $jobMailTemplate['mail_body'] = str_replace($trialCompanyName, self::COMPANY_NAME, $jobMailTemplate['mail_body']);
-              $jobMailTemplate['mail_body'] = str_replace($mailAdress['MUser']['user_name'], self::USER_NAME, $jobMailTemplate['mail_body']);
             }
           } catch(Exception $e) {
             $this->log('send mail trial error !!!!', self::LOG_ERROR);
@@ -222,9 +217,17 @@ class FreeTrialMailJobBatchShell extends AppShell
           $this->component->setFrom(self::ML_MAIL_ADDRESS);
           $this->component->setFromName($jobMailTemplate['sender']);
           $this->component->setTo(self::ML_MAIL_ADDRESS);
-          //送信した会社名をMLに送る
-          $jobMailTemplate['mail_body'] = str_replace(self::COMPANY_NAME, $trialCompanyNames, $jobMailTemplate['mail_body']);
-          $jobMailTemplate['mail_body'] = str_replace(self::USER_NAME, "", $jobMailTemplate['mail_body']);
+          $agreementData = $this->MAgreement->find('all',[
+            'conditions' => [
+              'm_companies_id' => $mailAdress['MUser']['m_companies_id']
+            ]
+          ]);
+          $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
+          $replaceData = array(
+            'MCompany' => $trialCompanyName[0]['MCompany'],
+            'MAgreement' => $agreementData['MAgreement']
+          );
+          $body = $this->replaceAllMailConstString($replaceData, $jobMailTemplate['mail_body']);
           $body = $jobMailTemplate['mail_body'];
           $this->component->setBody($body);
           $this->component->setSubject($jobMailTemplate['subject']);
@@ -261,10 +264,17 @@ class FreeTrialMailJobBatchShell extends AppShell
               $id = $jobMailTemplate['id'];
               $to = $mailAdress['MUser']['mail_address'];
               $sender = $jobMailTemplate['sender'];
-              $jobMailTemplate['mail_body'] = str_replace(self::COMPANY_NAME, $companyName, $jobMailTemplate['mail_body']);
-              $jobMailTemplate['mail_body'] = str_replace(self::USER_NAME, $mailAdress['MUser']['user_name'], $jobMailTemplate['mail_body']);
-              $body = $jobMailTemplate['mail_body'];
-              $body = $jobMailTemplate['mail_body'];
+              $agreementData = $this->MAgreement->find('all',[
+                'conditions' => [
+                  'm_companies_id' => $mailAdress['MUser']['m_companies_id']
+                ]
+              ]);
+              $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
+              $replaceData = array(
+                'MCompany' => $trialCompanyName[0]['MCompany'],
+                'MAgreement' => $agreementData['MAgreement']
+              );
+              $body = $this->replaceAllMailConstString($replaceData, $jobMailTemplate['mail_body']);
               $subject = $jobMailTemplate['subject'];
               $this->log("Sending mail to ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
               $this->component->setFrom(self::ML_MAIL_ADDRESS);
@@ -273,8 +283,6 @@ class FreeTrialMailJobBatchShell extends AppShell
               $this->component->setBody($body);
               $this->component->setSubject($subject);
               $this->component->send();
-              $jobMailTemplate['mail_body'] = str_replace($companyName, self::COMPANY_NAME, $jobMailTemplate['mail_body']);
-              $jobMailTemplate['mail_body'] = str_replace($mailAdress['MUser']['user_name'], self::USER_NAME, $jobMailTemplate['mail_body']);
             }
           } catch(Exception $e) {
             $this->log('send mail error !!!!', self::LOG_ERROR);
@@ -284,10 +292,19 @@ class FreeTrialMailJobBatchShell extends AppShell
           $this->component->setFrom(self::ML_MAIL_ADDRESS);
           $this->component->setFromName($jobMailTemplate['sender']);
           $this->component->setTo(self::ML_MAIL_ADDRESS);
-          //送信した会社名をMLに送る
-          $jobMailTemplate['mail_body'] = str_replace(self::COMPANY_NAME, $companyNames, $jobMailTemplate['mail_body']);
-          $jobMailTemplate['mail_body'] = str_replace(self::USER_NAME, "", $jobMailTemplate['mail_body']);
-          $body = $jobMailTemplate['mail_body'];
+
+          $agreementData = $this->MAgreement->find('all',[
+            'conditions' => [
+              'm_companies_id' => $mailAdress['MUser']['m_companies_id']
+            ]
+          ]);
+          $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
+          $replaceData = array(
+            'MCompany' => $trialCompanyName[0]['MCompany'],
+            'MAgreement' => $agreementData['MAgreement']
+          );
+          $body = $this->replaceAllMailConstString($replaceData, $jobMailTemplate['mail_body']);
+
           $this->component->setBody($body);
           $this->component->setSubject($jobMailTemplate['subject']);
           $this->component->send();
@@ -296,4 +313,100 @@ class FreeTrialMailJobBatchShell extends AppShell
     }
     $this->log('END   sendmail schedule.', self::LOG_INFO);
   }
+
+  private function replaceAllMailConstString($data, $mailTemplateData) {
+    if(!empty($data['MAgreement']['business_model'])) {
+      if($data['MAgreement']['business_model'] == 1) {
+        $data['MAgreement']['business_model'] = 'BtoB';
+      }
+      if($data['MAgreement']['business_model'] == 2) {
+        $data['MAgreement']['business_model'] = 'BtoC';
+      }
+      if($data['MAgreement']['business_model'] == 3) {
+        $data['MAgreement']['business_model'] = 'どちらも';
+      }
+    }
+    $mailBodyData = $this->replaceConstToString($data['MCompany']['company_name'],self::COMPANY_NAME, $mailTemplateData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_name'], self::USER_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['business_model'], self::BUSINESS_MODEL, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_department'], self::DEPARTMENT, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_position'], self::POSITION, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['user_mail_address'], self::MAIL_ADDRESS, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['telephone_number'], self::PHONE_NUMBER, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['installation_url'], self::URL, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getPlanNameStr($data), self::PLAN_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getBeginDate($data), self::BEGIN_DATE, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getEndDate($data), self::END_DATE, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getOptionCompanyInfoEnabled($data), self::OPTION_COMPANY_INFO, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getOptionChatbotScenario($data), self::OPTION_SCENARIO, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getOptionLaCoBrowse($data), self::OPTION_CAPTURE, $mailBodyData);
+
+    return $mailBodyData;
+  }
+
+  private function replaceConstToString($string, $const, $body) {
+    if(!empty($string)) {
+      return str_replace($const, $string, $body);
+    }
+    else {
+      return str_replace($const, "", $body);
+    }
+  }
+
+  private function getPlanNameStr($data) {
+    $planId = $data['MCompany']['m_contact_types_id'];
+    swtich(intval($planId)) {
+      case 1:
+        return 'プレミアムプラン';
+      case 2:
+        return 'スタンダードプラン';
+      case 3:
+        return 'シェアリングプラン';
+      case 4:
+        return 'ベーシックプラン';
+      default:
+        return '不明なプラン';
+    }
+  }
+
+  private function getBeginDate($data) {
+    if(intval($data['MCompany']['trial_flg']) === 1) {
+      return $data['MAgreement']['trial_start_day'];
+    } else {
+      return $data['MAgreement']['agreement_start_day'];
+    }
+  }
+
+  private function getEndDate($data) {
+    if(intval($data['MCompany']['trial_flg']) === 1) {
+      return $data['MAgreement']['trial_end_day'];
+    } else {
+      return $data['MAgreement']['agreement_end_day'];
+    }
+  }
+
+  private function getOptionCompanyInfoEnabled($data) {
+    if(!empty($data['MCompany']['options']['refCompanyData'])) {
+      return '企業情報付与オプション：あり';
+    } else {
+      return '企業情報付与オプション：なし';
+    }
+  }
+
+  private function getOptionChatbotScenario($data) {
+    if(!empty($data['MCompany']['options']['chatbotScenario'])) {
+      return 'チャットボットシナリオオプション：あり';
+    } else {
+      return 'チャットボットシナリオオプション：なし';
+    }
+  }
+
+  private function getOptionLaCoBrowse($data) {
+    if(!empty($data['MCompany']['options']['laCoBrowse'])) {
+      return '画面キャプチャオプション：あり';
+    } else {
+      return '画面キャプチャオプション：なし';
+    }
+  }
+}
 }

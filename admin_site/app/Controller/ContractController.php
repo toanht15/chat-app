@@ -27,6 +27,14 @@ class ContractController extends AppController
   const PHONE_NUMBER = "##PHONE_NUMBER##";
   const URL = "##URL##";
   const OTHER = "##OTHER##";
+  const PLAN_NAME = "##PLAN_NAME##";
+  const BEGIN_DATE = "##BEGIN_DATE##";
+  const END_DATE = "##END_DATE##";
+  const USABLE_USER_COUNT = "##USABLE_USER_COUNT##";
+  const OPTION_COMPANY_INFO = "##OPTION_COMPANY_INFO##";
+  const OPTION_SCENARIO = "##OPTION_SCENALIO##";
+  const OPTION_CAPTURE = "##OPTION_CAPTURE##";
+
   public $components = array('MailSender','Auth');
   public $uses = array('MCompany',
     'MAgreements',
@@ -140,12 +148,7 @@ class ContractController extends AppController
         }
 
         if($mailType !== "false") {
-          $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
-          if(!empty($data['MAgreements']['application_name'])) {
-            $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
-          }
-          $mailBodyData = str_replace(self::PASSWORD, $data['Contract']['user_password'], $mailBodyData);
-          $mailBodyData = str_replace(self::MAIL_ADDRESS, $data['Contract']['user_mail_address'], $mailBodyData);
+          $mailBodyData = $this->replaceAllMailConstString($data, $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
           // 送信前にログを生成
           $this->TMailTransmissionLog->create();
           $this->TMailTransmissionLog->set(array(
@@ -208,54 +211,9 @@ class ContractController extends AppController
           $sender->setFromName($data['MCompany']['company_name'].'　'.$data['MAgreements']['application_name']);
           $sender->setTo(self::ML_MAIL_ADDRESS_AND_ALEX);
           $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
-          $mailBodyData = str_replace(self::COMPANY_NAME, $data['MCompany']['company_name'], $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
-          $mailBodyData = str_replace(self::USER_NAME, $data['MAgreements']['application_name'], $mailBodyData);
-          if(!empty($data['MAgreements']['business_model'])) {
-            if($data['MAgreements']['business_model'] == 1) {
-              $data['MAgreements']['business_model'] = 'BtoB';
-            }
-            if($data['MAgreements']['business_model'] == 2) {
-              $data['MAgreements']['business_model'] = 'BtoC';
-            }
-            if($data['MAgreements']['business_model'] == 3) {
-              $data['MAgreements']['business_model'] = 'どちらも';
-            }
-            $mailBodyData = str_replace(self::BUSINESS_MODEL, $data['MAgreements']['business_model'], $mailBodyData);
-          }
-          else {
-            $mailBodyData = str_replace(self::BUSINESS_MODEL, "", $mailBodyData);
-          }
-          if(!empty($data['MAgreements']['application_department'])) {
-            $mailBodyData = str_replace(self::DEPARTMENT, $data['MAgreements']['application_department'], $mailBodyData);
-          }
-          else {
-            $mailBodyData = str_replace(self::DEPARTMENT, "", $mailBodyData);
-          }
-          if(!empty($data['MAgreements']['application_position'])) {
-            $mailBodyData = str_replace(self::POSITION, $data['MAgreements']['application_position'], $mailBodyData);
-          }
-          else {
-            $mailBodyData = str_replace(self::POSITION, "", $mailBodyData);
-          }
-          $mailBodyData = str_replace(self::MAIL_ADDRESS, $data['Contract']['user_mail_address'], $mailBodyData);
-          if(!empty($data['MAgreements']['telephone_number'])) {
-            $mailBodyData = str_replace(self::PHONE_NUMBER, $data['MAgreements']['telephone_number'], $mailBodyData);
-          }
-          else {
-            $mailBodyData = str_replace(self::PHONE_NUMBER, "", $mailBodyData);
-          }
-          if(!empty($data['MAgreements']['installation_url'])) {
-            $mailBodyData = str_replace(self::URL, $data['MAgreements']['installation_url'], $mailBodyData);
-          }
-          else {
-            $mailBodyData = str_replace(self::URL, "", $mailBodyData);
-          }
-          if(!empty($data['MAgreements']['note'])) {
-            $mailBodyData = str_replace(self::OTHER, $data['MAgreements']['note'], $mailBodyData);
-          }
-          else {
-            $mailBodyData = str_replace(self::OTHER, "", $mailBodyData);
-          }
+
+          $mailBodyData = $this->replaceAllMailConstString($data, $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
+
           $sender->setBody($mailBodyData);
           $sender->send();
           return json_encode(array(
@@ -277,6 +235,101 @@ class ContractController extends AppController
     else {
       $businessModel = Configure::read('businessModelType');
       $this->set('businessModel',$businessModel);
+    }
+  }
+
+  private function replaceAllMailConstString($data, $mailTemplateData) {
+    if(!empty($data['MAgreements']['business_model'])) {
+      if($data['MAgreements']['business_model'] == 1) {
+        $data['MAgreements']['business_model'] = 'BtoB';
+      }
+      if($data['MAgreements']['business_model'] == 2) {
+        $data['MAgreements']['business_model'] = 'BtoC';
+      }
+      if($data['MAgreements']['business_model'] == 3) {
+        $data['MAgreements']['business_model'] = 'どちらも';
+      }
+    }
+    $mailBodyData = $this->replaceConstToString($data['MCompany']['company_name'],self::COMPANY_NAME, $mailTemplateData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['application_name'], self::USER_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['business_model'], self::BUSINESS_MODEL, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['Contract']['application_department'], self::DEPARTMENT, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['Contract']['application_position'], self::POSITION, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['Contract']['user_mail_address'], self::MAIL_ADDRESS, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['telephone_number'], self::PHONE_NUMBER, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['installation_url'], self::URL, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getPlanNameStr($data), self::PLAN_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getBeginDate($data), self::BEGIN_DATE, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getEndDate($data), self::END_DATE, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getOptionCompanyInfoEnabled($data), self::OPTION_COMPANY_INFO, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getOptionChatbotScenario($data), self::OPTION_SCENARIO, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($this->getOptionLaCoBrowse($data), self::OPTION_CAPTURE, $mailBodyData);
+
+    return $mailBodyData;
+  }
+
+  private function replaceConstToString($string, $const, $body) {
+    if(!empty($string)) {
+      return str_replace($const, $string, $body);
+    }
+    else {
+      return str_replace($const, "", $body);
+    }
+  }
+
+  private function getPlanNameStr($data) {
+    $planId = $data['MCompany']['m_contact_types_id'];
+    swtich(intval($planId)) {
+      case 1:
+        return 'プレミアムプラン';
+      case 2:
+        return 'スタンダードプラン';
+      case 3:
+        return 'シェアリングプラン';
+      case 4:
+        return 'ベーシックプラン';
+      default:
+        return '不明なプラン';
+    }
+  }
+
+  private function getBeginDate($data) {
+    if(intval($data['MCompany']['trial_flg']) === 1) {
+      return $data['MAgreement']['trial_start_day'];
+    } else {
+      return $data['MAgreement']['agreement_start_day'];
+    }
+  }
+
+  private function getEndDate($data) {
+    if(intval($data['MCompany']['trial_flg']) === 1) {
+      return $data['MAgreement']['trial_end_day'];
+    } else {
+      return $data['MAgreement']['agreement_end_day'];
+    }
+  }
+
+  private function getOptionCompanyInfoEnabled($data) {
+    if(!empty($data['MCompany']['options']['refCompanyData'])) {
+      return '企業情報付与オプション：あり';
+    } else {
+      return '企業情報付与オプション：なし';
+    }
+  }
+
+  private function getOptionChatbotScenario($data) {
+    if(!empty($data['MCompany']['options']['chatbotScenario'])) {
+      return 'チャットボットシナリオオプション：あり';
+    } else {
+      return 'チャットボットシナリオオプション：なし';
+    }
+  }
+
+  private function getOptionLaCoBrowse($data) {
+    if(!empty($data['MCompany']['options']['laCoBrowse'])) {
+      return '画面キャプチャオプション：あり';
+    } else {
+      return '画面キャプチャオプション：なし';
     }
   }
 
