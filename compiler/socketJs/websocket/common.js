@@ -1962,7 +1962,7 @@ var socket, // socket.io
           $('#chatTalk').height(common.widgetHandler._getMaxChatTalkHeight());
         } else if (delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
           console.log('2 %s %s %s', delta,afterWidgetHeight, minCurrentWidgetHeight);
-          $('#chatTalk').height(common.widgetHandler._getMaxChatTalkHeight() * 0.5);
+          $('#chatTalk').height(common.widgetHandler._getMinChatTalkHeight());
         } else if ((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
           console.log('3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
           $('#chatTalk').height($('#chatTalk').height() + delta);
@@ -2009,11 +2009,25 @@ var socket, // socket.io
             return 284 + offset;
         }
       },
+      _getMinChatTalkHeight: function() {
+        var offset = common.widgetHandler._getMessageAreaOffset(true);
+        switch(Number(sincloInfo.widget.widgetSizeType)) {
+          case 1:
+            // 小
+            return 97 + offset;
+          case 2:
+            return 142+ offset;
+          case 3:
+            return 187 + offset;
+          default:
+            return 142 + offset;
+        }
+      },
       _getMessageAreaOffset: function(forChatTalkOffset) {
         if(!$('#flexBoxWrap').is(':visible')) {
           // 非表示
           if(forChatTalkOffset) {
-            return 50;
+            return 75;
           } else {
             return 0;
           }
