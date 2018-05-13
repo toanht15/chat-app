@@ -1770,6 +1770,7 @@ var socket, // socket.io
       _currentWindowHeight: $(window).height(),
       // 通常呼び出し時はfalse or 引数指定なし（undefined）で呼び出す
       show: function(reCreateWidget) {
+        console.log("widgetHandler::show");
         /**
          * 表示条件（OR）
          * １：すでに表示されていた場合（common.widgetHandler.isShown()）
@@ -1927,7 +1928,7 @@ var socket, // socket.io
         return siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0;
       },
       beginToWatchResizeEvent: function() {
-        if(true) {
+        if(!check.smartphone()) {
           console.log("widgetHandler::beginToWatchResizeEvent");
           $(window).on('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
           // いったんリサイズ処理を走らせる
@@ -1968,42 +1969,60 @@ var socket, // socket.io
         common.widgetHandler._currentWindowHeight = windowHeight;
       },
       _getMaxWidgetHeight: function() {
+        var offset = common.widgetHandler._getMessageAreaOffset();
         switch(Number(sincloInfo.widget.widgetSizeType)) {
           case 1:
-            return 405;
+            return 405 - offset;
           case 2:
-            return 496;
+            return 496 - offset;
           case 3:
-            return 596;
+            return 596 - offset;
           default:
-            return 496;
+            return 496 - offset;
         }
       },
       _getMinWidgetHeight: function() {
-
-
+        var offset = common.widgetHandler._getMessageAreaOffset();
         switch(Number(sincloInfo.widget.widgetSizeType)) {
           case 1:
-            return 318;
+            return 318 - offset;
           case 2:
-            return 364;
+            return 364 - offset;
           case 3:
-            return 409;
+            return 409 - offset;
           default:
-            return 364;
+            return 364 - offset;
         }
       },
       _getMaxChatTalkHeight: function() {
+        var offset = common.widgetHandler._getMessageAreaOffset(true);
         switch(Number(sincloInfo.widget.widgetSizeType)) {
           case 1:
             // 小
-            return 194;
+            return 194 + offset;
           case 2:
-            return 284;
+            return 284 + offset;
           case 3:
-            return 374;
+            return 374 + offset;
           default:
-            return 284;
+            return 284 + offset;
+        }
+      },
+      _getMessageAreaOffset: function(forChatTalkOffset) {
+        if(!$('#flexBoxWrap').is(':visible')) {
+          // 非表示
+          if(forChatTalkOffset) {
+            return 50;
+          } else {
+            return 0;
+          }
+        } else if($('#flexBoxHeight').is(':visible')) {
+          return 0;
+        } else if($('#miniFlexBoxHeight').is(':visible')) {
+          return 27;
+        } else {
+          // とりあえず表示されている状態
+          return 0;
         }
       }
     },
