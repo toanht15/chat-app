@@ -1854,6 +1854,7 @@ var socket, // socket.io
               }
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
+              common.widgetHandler.beginToWatchResizeEvent();
             }
           }
           else{
