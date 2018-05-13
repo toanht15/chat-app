@@ -1563,6 +1563,7 @@
       if(!document.getElementById("flexBoxWrap")) return;
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && document.getElementById("flexBoxWrap").style.display === 'none') {
+
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
       }
       document.getElementById("flexBoxWrap").style.display = '';
