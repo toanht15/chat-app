@@ -9,13 +9,19 @@ class LoginController extends AppController {
   const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
-  const USER_NAME = "##USER_NAME##";
   const PASSWORD = "##PASSWORD##";
   const BUSINESS_MODEL = "##BUSINESS_MODEL##";
+  /** 申込者 */
   const DEPARTMENT = "##DEPARTMENT##";
   const POSITION = "##POSITION##";
+  const USER_NAME = "##USER_NAME##";
   const MAIL_ADDRESS = "##MAIL_ADDRESS##";
   const PHONE_NUMBER = "##PHONE_NUMBER##";
+  /** 管理者 */
+  const ADMIN_DEPARTMENT = "##ADMIN_DEPARTMENT##";
+  const ADMIN_POSITION = "##ADMIN_POSITION##";
+  const ADMIN_USER_NAME = "##ADMIN_USER_NAME##";
+  const ADMIN_MAIL_ADDRESS = "##ADMIN_MAIL_ADDRESS##";
   const URL = "##URL##";
   const OTHER = "##OTHER##";
   const PLAN_NAME = "##PLAN_NAME##";
@@ -443,13 +449,18 @@ class LoginController extends AppController {
       }
     }
     $mailBodyData = $this->replaceConstToString($data['MCompany']['company_name'],self::COMPANY_NAME, $mailTemplateData);
-    $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_name'], self::USER_NAME, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['business_model'], self::BUSINESS_MODEL, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_department'], self::DEPARTMENT, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_position'], self::POSITION, $mailBodyData);
-    $mailBodyData = $this->replaceConstToString($data['MAgreement']['user_mail_address'], self::MAIL_ADDRESS, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_name'], self::USER_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_mail_address'], self::MAIL_ADDRESS, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['administrator_department'], self::ADMIN_DEPARTMENT, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['administrator_position'], self::ADMIN_POSITION, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['administrator_name'], self::ADMIN_USER_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['administrator_mail_address'], self::ADMIN_MAIL_ADDRESS, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['telephone_number'], self::PHONE_NUMBER, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['installation_url'], self::URL, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MCompany']['limit_users'], self::USABLE_USER_COUNT, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getPlanNameStr($data), self::PLAN_NAME, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getBeginDate($data), self::BEGIN_DATE, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getEndDate($data), self::END_DATE, $mailBodyData);
@@ -471,7 +482,7 @@ class LoginController extends AppController {
 
   private function getPlanNameStr($data) {
     $planId = $data['MCompany']['m_contact_types_id'];
-    swtich(intval($planId)) {
+    switch(intval($planId)) {
       case 1:
         return 'プレミアムプラン';
       case 2:
@@ -502,7 +513,7 @@ class LoginController extends AppController {
   }
 
   private function getOptionCompanyInfoEnabled($data) {
-    if(!empty($data['MCompany']['options']['refCompanyData'])) {
+    if(!empty($data['MCompany']['options']['refCompanyData']) || json_decode($data['MCompany']['core_settings'], TRUE)['refCompanyData']) {
       return '企業情報付与オプション：あり';
     } else {
       return '企業情報付与オプション：なし';
@@ -510,7 +521,7 @@ class LoginController extends AppController {
   }
 
   private function getOptionChatbotScenario($data) {
-    if(!empty($data['MCompany']['options']['chatbotScenario'])) {
+    if(!empty($data['MCompany']['options']['chatbotScenario']) || json_decode($data['MCompany']['core_settings'], TRUE)['chatbotScenario']) {
       return 'チャットボットシナリオオプション：あり';
     } else {
       return 'チャットボットシナリオオプション：なし';
@@ -518,8 +529,8 @@ class LoginController extends AppController {
   }
 
   private function getOptionLaCoBrowse($data) {
-    if(!empty($data['MCompany']['options']['laCoBrowse'])) {
-      return '画面キャプチャオプション：あり';
+    if(!empty($data['MCompany']['options']['laCoBrowse']) || json_decode($data['MCompany']['core_settings'], TRUE)['laCoBrowse']) {
+      return '画面キャプチャオプション：あり（最大同時セッション数：'.$data['MCompany']['la_limit_users'].'）';
     } else {
       return '画面キャプチャオプション：なし';
     }

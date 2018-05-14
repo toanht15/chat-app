@@ -63,10 +63,10 @@ $(function(){
     //変数メールアドレス・パスワード
     if(($(this)[0]['id'] == 'MJobMailTemplateAgreementFlg1' && document.form.elements[6].checked == true) ||
      ($(this)[0]['id'] == 'MJobMailTemplateAgreementFlg2' && document.form.elements[6].checked == true) || $(this)[0]['id'] == 'MailTemplateSettingsTimeToSendMail1') {
-      $("#variable").css('display', 'block');
+      $(".initialVariable").css('display', 'block');
     }
     else {
-      $("#variable").css('display', 'none');
+      $(".initialVariable").css('display', 'none');
     }
   });
 

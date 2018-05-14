@@ -25,6 +25,13 @@ class FreeTrialMailJobBatchShell extends AppShell
   const PHONE_NUMBER = "##PHONE_NUMBER##";
   const URL = "##URL##";
   const OTHER = "##OTHER##";
+  const PLAN_NAME = "##PLAN_NAME##";
+  const BEGIN_DATE = "##BEGIN_DATE##";
+  const END_DATE = "##END_DATE##";
+  const USABLE_USER_COUNT = "##USABLE_USER_COUNT##";
+  const OPTION_COMPANY_INFO = "##OPTION_COMPANY_INFO##";
+  const OPTION_SCENARIO = "##OPTION_SCENALIO##";
+  const OPTION_CAPTURE = "##OPTION_CAPTURE##";
 
   public $uses = ['MUser','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate','MCompany','MAgreement'];
 
@@ -408,5 +415,4 @@ class FreeTrialMailJobBatchShell extends AppShell
       return '画面キャプチャオプション：なし';
     }
   }
-}
 }

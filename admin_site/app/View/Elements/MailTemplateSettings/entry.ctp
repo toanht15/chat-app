@@ -65,21 +65,34 @@
 <!-- /* メール本文 */ -->
 <li>
   <div class="labelArea fLeft"><span class="require"><label>メール本文</label></span></div>
-  <?= $this->Form->input($model.'.mail_body', array('div' => false, 'label' => false,'type' => 'textarea','style' => 'width: 334px; height: 286px;')) ?>
+  <?= $this->Form->input($model.'.mail_body', array('div' => false, 'label' => false,'type' => 'textarea','style' => 'width: 334px; height: 603px;')) ?>
   <div style = "margin-left:30px;">
-    ##COMPANY_NAME##：　会社名<br>
-    ##USER_NAME##：　名前<br>
-    <?php if($value == C_AFTER_APPLICATION) { ?>
-      <span id = "variable" style = "font-weight:normal;">
-        ##MAIL_ADDRESS##：　メールアドレス<br>
-        ##PASSWORD##：　パスワード
-      </span>
-    <?php } else { ?>
-      <span id = "variable" style = "font-weight:normal;display:none;">
-        ##MAIL_ADDRESS##：　メールアドレス<br>
-        ##PASSWORD##：　パスワード
-      </span>
-    <?php } ?>
-
+    <table>
+      <thead style="background-color: #596d8f; color: #FFF">
+        <tr><td>変数名</td><td>説明</td></tr>
+      </thead>
+      <tbody>
+        <tr><td>##COMPANY_NAME##</td><td>会社名</td></tr>
+        <tr class="initialVariable"><td>##PASSWORD##</td><td>パスワード</td></tr>
+        <tr><td>##BUSINESS_MODEL##</td><td>ビジネスモデル</td></tr>
+        <tr><td>##DEPARTMENT##</td><td>申込者：部署</td></tr>
+        <tr><td>##POSITION##</td><td>申込者：役職</td></tr>
+        <tr><td>##USER_NAME##</td><td>申込者：お名前</td></tr>
+        <tr><td>##MAIL_ADDRESS##</td><td>申込者：メールアドレス</td></tr>
+        <tr><td>##ADMIN_DEPARTMENT##</td><td>管理者：部署</td></tr>
+        <tr><td>##ADMIN_POSITION##</td><td>管理者：役職</td></tr>
+        <tr><td>##ADMIN_USER_NAME##</td><td>管理者：お名前</td></tr>
+        <tr><td>##ADMIN_MAIL_ADDRESS##</td><td>管理者：メールアドレス</td></tr>
+        <tr><td>##PHONE_NUMBER##</td><td>電話番号</td></tr>
+        <tr><td>##URL##</td><td>サイトURL</td></tr>
+        <tr><td>##PLAN_NAME##</td><td>プラン名</td></tr>
+        <tr><td>##BEGIN_DATE##</td><td>開始日</td></tr>
+        <tr><td>##END_DATE##</td><td>終了日</td></tr>
+        <tr><td>##USABLE_USER_COUNT##</td><td>利用可能ID数</td></tr>
+        <tr><td>##OPTION_COMPANY_INFO##</td><td>オプション：企業情報付与</td></tr>
+        <tr><td>##OPTION_SCENALIO##</td><td>オプション：チャットボットシナリオ</td></tr>
+        <tr><td>##OPTION_CAPTURE##</td><td>オプション：画面キャプチャ共有</td></tr>
+      </tbody>
+    </table>
   </div>
 </li>

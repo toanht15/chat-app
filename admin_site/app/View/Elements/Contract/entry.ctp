@@ -14,7 +14,7 @@
   <!-- /* ビジネスモデル */ -->
   <li>
     <div class="labelArea fLeft"><span class="require"><label>ビジネスモデル</label></span></div>
-    <?= $this->Form->input('MAgreements.business_model', array('type' => 'radio','legend' => false,'options' => $businessModel, 'label' => 'BtoB','default' => false,'value' => 1)) ?>
+    <?= $this->Form->input('MAgreements.business_model', array('type' => 'radio','legend' => false,'options' => $businessModel, 'label' => 'BtoB','default' => '1')) ?>
   </li>
   <!-- /* 導入を検討しているサイトURL */ -->
   <li>
@@ -51,10 +51,10 @@
     <?= $this->Form->input('MAgreements.telephone_number', array('div' => false, 'label' => false, 'class' => 'text-input', 'maxlength' => 50)) ?>
   </li>
 
-  <li>
-    <h2>担当者情報</h2>
+  <li style="display: flex; align-items: center;">
+    <h2>管理者情報</h2>
     <?php if ($this->params->action == 'add'): ?>
-    <?= $this->Form->input('same_as_application', array('type' => 'checkbox', 'div' => false, 'label' => '申込者情報と同じ')) ?>
+    <?= $this->Form->input('same_as_application', array('type' => 'checkbox', 'div' => false, 'label' => '申込者情報と同じ', 'style' => "margin-left:0.5em;")) ?>
     <?php endif; ?>
   </li>
   <!-- /* 部署名 */ -->

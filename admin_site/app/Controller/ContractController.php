@@ -18,13 +18,19 @@ class ContractController extends AppController
   const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
-  const USER_NAME = "##USER_NAME##";
   const PASSWORD = "##PASSWORD##";
   const BUSINESS_MODEL = "##BUSINESS_MODEL##";
+  /** 申込者 */
   const DEPARTMENT = "##DEPARTMENT##";
   const POSITION = "##POSITION##";
+  const USER_NAME = "##USER_NAME##";
   const MAIL_ADDRESS = "##MAIL_ADDRESS##";
   const PHONE_NUMBER = "##PHONE_NUMBER##";
+  /** 管理者 */
+  const ADMIN_DEPARTMENT = "##ADMIN_DEPARTMENT##";
+  const ADMIN_POSITION = "##ADMIN_POSITION##";
+  const ADMIN_USER_NAME = "##ADMIN_USER_NAME##";
+  const ADMIN_MAIL_ADDRESS = "##ADMIN_MAIL_ADDRESS##";
   const URL = "##URL##";
   const OTHER = "##OTHER##";
   const PLAN_NAME = "##PLAN_NAME##";
@@ -156,7 +162,7 @@ class ContractController extends AppController
             'mail_type_cd' => 'TL001',
             'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
             'from_name' => $mailTemplateData[$mailType]['MSystemMailTemplate']['sender'],
-            'to_address' => $data['Contract']['user_mail_address'],
+            'to_address' => $data['MAgreements']['application_mail_address'],
             'subject' => $mailTemplateData[$mailType]['MSystemMailTemplate']['subject'],
             'body' => $mailBodyData,
             'send_flg' => 0
@@ -168,7 +174,7 @@ class ContractController extends AppController
           $sender = new MailSenderComponent();
           $sender->setFrom(self::ML_MAIL_ADDRESS);
           $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
-          $sender->setTo($data['MAgreements']['department_mail_address']);
+          $sender->setTo($data['MAgreements']['application_mail_address']);
           $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
           $sender->setBody($mailBodyData);
           $sender->send();
@@ -251,19 +257,26 @@ class ContractController extends AppController
       }
     }
     $mailBodyData = $this->replaceConstToString($data['MCompany']['company_name'],self::COMPANY_NAME, $mailTemplateData);
-    $mailBodyData = $this->replaceConstToString($data['MAgreements']['application_name'], self::USER_NAME, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['business_model'], self::BUSINESS_MODEL, $mailBodyData);
-    $mailBodyData = $this->replaceConstToString($data['Contract']['application_department'], self::DEPARTMENT, $mailBodyData);
-    $mailBodyData = $this->replaceConstToString($data['Contract']['application_position'], self::POSITION, $mailBodyData);
-    $mailBodyData = $this->replaceConstToString($data['Contract']['user_mail_address'], self::MAIL_ADDRESS, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['application_department'], self::DEPARTMENT, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['application_position'], self::POSITION, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['application_name'], self::USER_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['application_mail_address'], self::MAIL_ADDRESS, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['administrator_department'], self::ADMIN_DEPARTMENT, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['administrator_position'], self::ADMIN_POSITION, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['administrator_name'], self::ADMIN_USER_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['administrator_mail_address'], self::ADMIN_MAIL_ADDRESS, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['telephone_number'], self::PHONE_NUMBER, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['installation_url'], self::URL, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MCompany']['limit_users'], self::USABLE_USER_COUNT, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['Contract']['user_password'], self::PASSWORD, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getPlanNameStr($data), self::PLAN_NAME, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getBeginDate($data), self::BEGIN_DATE, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getEndDate($data), self::END_DATE, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getOptionCompanyInfoEnabled($data), self::OPTION_COMPANY_INFO, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getOptionChatbotScenario($data), self::OPTION_SCENARIO, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getOptionLaCoBrowse($data), self::OPTION_CAPTURE, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreements']['note'], self::OTHER, $mailBodyData);
 
     return $mailBodyData;
   }
@@ -295,17 +308,17 @@ class ContractController extends AppController
 
   private function getBeginDate($data) {
     if(intval($data['MCompany']['trial_flg']) === 1) {
-      return $data['MAgreement']['trial_start_day'];
+      return $data['MAgreements']['trial_start_day'];
     } else {
-      return $data['MAgreement']['agreement_start_day'];
+      return $data['MAgreements']['agreement_start_day'];
     }
   }
 
   private function getEndDate($data) {
     if(intval($data['MCompany']['trial_flg']) === 1) {
-      return $data['MAgreement']['trial_end_day'];
+      return $data['MAgreements']['trial_end_day'];
     } else {
-      return $data['MAgreement']['agreement_end_day'];
+      return $data['MAgreements']['agreement_end_day'];
     }
   }
 
@@ -327,7 +340,7 @@ class ContractController extends AppController
 
   private function getOptionLaCoBrowse($data) {
     if(!empty($data['MCompany']['options']['laCoBrowse'])) {
-      return '画面キャプチャオプション：あり';
+      return '画面キャプチャオプション：あり（最大同時セッション数：'.$data['MCompany']['la_limit_users'].'）';
     } else {
       return '画面キャプチャオプション：なし';
     }
@@ -684,12 +697,12 @@ class ContractController extends AppController
     $userInfo["user_name"] = 'テストユーザー';
     $userInfo["user_display_name"] = 'テストユーザー';
     $mailAddress = '';
-    if(!empty($userInfo["user_mail_address"]))
-    {
+    if(!empty($agreementInfo['administrator_mail_address'])) {
+      $mailAddress = $agreementInfo['administrator_mail_address'];
+    } else if(!empty($userInfo["user_mail_address"])) {
       $mailAddress = $userInfo["user_mail_address"];
-    } else if(!empty($agreementInfo['application_mail_address'])) {
-      $mailAddress = $agreementInfo['application_mail_address'];
     }
+
     $errors = [];
     $tmpData = [
         "m_companies_id" => $m_companies_id,

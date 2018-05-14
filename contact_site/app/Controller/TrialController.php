@@ -73,6 +73,7 @@ class TrialController extends AppController {
     $data['MAgreements']['agreement_end_day'] = '';
     $data['MAgreements']['administrator_department'] = $data['MAgreements']['application_department'];
     $data['MAgreements']['administrator_position'] = $data['MAgreements']['application_position'];
+    $data['MAgreements']['administrator_name'] = $data['MAgreements']['application_name'];
     $data['MAgreements']['administrator_mail_address'] = $data['MAgreements']['application_mail_address'] = $data['Contract']['user_mail_address'];
     $this->MUser->set($data['MUser']);
     if(!$this->MUser->validates()) {
