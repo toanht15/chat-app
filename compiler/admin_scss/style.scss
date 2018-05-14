@@ -294,6 +294,10 @@ div#sidebar {
         outline: none;
         border-color: $high-light-color;
       }
+
+      &.text-input {
+        width: 25em;
+      }
     }
     select {
       &:focus {

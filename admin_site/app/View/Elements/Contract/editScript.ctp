@@ -35,4 +35,22 @@
     };
   }
 
+  $(function(){
+    $('#MCompanyOptionsLaCoBrowse').on('change', function(){
+      if($(this).is(':checked')) {
+        $('#MCompanyLaLimitUsers').prop('disabled', false).css('background-color', "#FFF");
+        $('#laLimitUsers').show();
+      } else {
+        $('#MCompanyLaLimitUsers').prop('disabled', true).css('background-color', "#999");
+        $('#laLimitUsers').hide();
+      }
+    });
+    if($('#MCompanyOptionsLaCoBrowse').is(':checked')) {
+      $('#MCompanyLaLimitUsers').prop('disabled', false).css('background-color', "#FFF");
+      $('#laLimitUsers').show();
+    } else {
+      $('#MCompanyLaLimitUsers').prop('disabled', true).css('background-color', "#999");
+      $('#laLimitUsers').hide();
+    }
+  });
 </script>

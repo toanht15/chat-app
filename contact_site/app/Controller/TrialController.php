@@ -7,7 +7,8 @@ App::uses('HttpSocket', 'Network/Http', 'Component', 'Controller', 'Utility/Vali
 class TrialController extends AppController {
 
   const CONTRACT_ADD_URL = "http://127.0.0.1:81/Contract/add";
-  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+//  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS= "masashi.shimizu@medialink-ml.co.jp";
   const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
@@ -70,7 +71,10 @@ class TrialController extends AppController {
     $data['MAgreements']['trial_end_day'] = date('Y-m-d', strtotime('+13 day', time()));
     $data['MAgreements']['agreement_start_day'] = '';
     $data['MAgreements']['agreement_end_day'] = '';
-
+    $data['MAgreements']['administrator_department'] = $data['MAgreements']['application_department'];
+    $data['MAgreements']['administrator_position'] = $data['MAgreements']['application_position'];
+    $data['MAgreements']['administrator_name'] = $data['MAgreements']['application_name'];
+    $data['MAgreements']['administrator_mail_address'] = $data['MAgreements']['application_mail_address'] = $data['Contract']['user_mail_address'];
     $this->MUser->set($data['MUser']);
     if(!$this->MUser->validates()) {
       $this->log('登録時バリデーションエラー：'.var_export($this->MUser->validationErrors, TRUE).'　データ：'.var_export($data['MUser'], TRUE), LOG_WARNING);
