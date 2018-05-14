@@ -13,17 +13,17 @@
         $("#value").text("何日前");
       }
       $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][2]['name'] = "data[MJobMailTemplate][mail_type_cd]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][13]['name'] = "data[MJobMailTemplate][sender]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][14]['name'] = "data[MJobMailTemplate][subject]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][15]['name'] = "data[MJobMailTemplate][mail_body]";
+      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][20]['name'] = "data[MJobMailTemplate][sender]";
+      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][21]['name'] = "data[MJobMailTemplate][subject]";
+      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][22]['name'] = "data[MJobMailTemplate][mail_body]";
     }
     else {
       $(".daysAfter").css('display', 'none');
       $(".daysAfter.sendTarget").css('display', 'none');
       $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][2]['name'] = "data[MSystemMailTemplate][mail_type_cd]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][13]['name'] = "data[MSystemMailTemplate][sender]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][14]['name'] = "data[MSystemMailTemplate][subject]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][15]['name'] = "data[MSystemMailTemplate][mail_body]";
+      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][20]['name'] = "data[MSystemMailTemplate][sender]";
+      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][21]['name'] = "data[MSystemMailTemplate][subject]";
+      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][22]['name'] = "data[MSystemMailTemplate][mail_body]";
     }
     ///変数メールアドレス・パスワード
     if(($(self)[0]['id'] == 'MJobMailTemplateAgreementFlg1' && document.form.elements[6].checked == true) ||
