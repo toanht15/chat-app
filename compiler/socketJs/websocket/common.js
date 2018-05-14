@@ -1820,6 +1820,7 @@ var socket, // socket.io
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
             common.widgetHandler.stopToWatchResizeEvent();
+            common.widgetHandler.beginToWatchResizeEvent();
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
             //最小化
@@ -1854,7 +1855,6 @@ var socket, // socket.io
               }
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
-              common.widgetHandler.beginToWatchResizeEvent();
             }
           }
           else{
@@ -1872,7 +1872,6 @@ var socket, // socket.io
               //最小化時ボタン表示
               common.whenMinimizedBtnShow();
               sinclo.chatApi.unlockPageScroll();
-              common.widgetHandler.stopToWatchResizeEvent();
             }
             else{
               console.log("saidaika");
@@ -1888,7 +1887,6 @@ var socket, // socket.io
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
               sinclo.chatApi.lockPageScroll();
-              common.widgetHandler.beginToWatchResizeEvent();
             }
           }
         }
@@ -1944,7 +1942,9 @@ var socket, // socket.io
       },
       _handleResizeEvent: function() {
         console.log("widgetHandler::_handleResizeEvent");
-        $('#sincloBox').css('height', 'auto');
+        if(storage.s.get('widgetMaximized') === "true") {
+          $('#sincloBox').css('height', 'auto');
+        }
         var windowHeight = $(window).innerHeight(),
           minCurrentWidgetHeight = common.widgetHandler._getMinWidgetHeight(),
           currentWidgetHeight = $('#sincloBox').height(),
