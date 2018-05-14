@@ -1806,6 +1806,8 @@ var socket, // socket.io
           //ヘッダ非表示（シンプル表示）
           common.abridgementTypehide();
           common.widgetHandler.saveShownFlg();
+          common.widgetHandler.stopToWatchResizeEvent();
+          common.widgetHandler.beginToWatchResizeEvent();
           // テキストエリアの表示非表示
           if(!storage.l.get("textareaOpend") || storage.l.get("textareaOpend")  === "open") {
             sinclo.displayTextarea();
@@ -1819,8 +1821,6 @@ var socket, // socket.io
           if(!reCreateWidget && dataOpenflg === "false") {
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
-            common.widgetHandler.stopToWatchResizeEvent();
-            common.widgetHandler.beginToWatchResizeEvent();
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
             //最小化
