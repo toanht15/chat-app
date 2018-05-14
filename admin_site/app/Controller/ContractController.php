@@ -644,15 +644,22 @@ class ContractController extends AppController
     if(empty($agreementInfo['memo'])) {
       $agreementInfo['memo'] = "";
     }
-    $mailAddress = '';
-    if(!empty($userInfo["user_mail_address"]))
-    {
-      $mailAddress = $userInfo["user_mail_address"];
-    } else if(!empty($agreementInfo['application_mail_address'])) {
-      $mailAddress = $agreementInfo['application_mail_address'];
+
+    $applicationMailAddress = '';
+    if(!empty($agreementInfo['application_mail_address'])) {
+      $applicationMailAddress = $agreementInfo['application_mail_address'];
+    } else if(!empty($userInfo["user_mail_address"])) {
+      $applicationMailAddress = $userInfo["user_mail_address"];
     }
 
-    $this->MAgreements->set([
+    $administratorMailAddress = '';
+    if(!empty($agreementInfo['administrator_mail_address'])) {
+      $administratorMailAddress = $agreementInfo['administrator_mail_address'];
+    } else if(!empty($userInfo["user_mail_address"])) {
+      $administratorMailAddress = $userInfo["user_mail_address"];
+    }
+
+      $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
       'company_name' => $companyInfo['company_name'],
       'business_model' => $agreementInfo['business_model'],
@@ -664,11 +671,11 @@ class ContractController extends AppController
       'application_department' => $agreementInfo['application_department'],
       'application_position' => $agreementInfo['application_position'],
       'application_name' => $agreementInfo['application_name'],
-      'application_mail_address' => $mailAddress,
-      'administrator_department' => $agreementInfo['application_department'],
-      'administrator_position' => $agreementInfo['application_position'],
-      'administrator_name' => $agreementInfo['application_name'],
-      'administrator_mail_address' => $mailAddress,
+      'application_mail_address' => $applicationMailAddress,
+      'administrator_department' => $agreementInfo['administrator_department'],
+      'administrator_position' => $agreementInfo['administrator_position'],
+      'administrator_name' => $agreementInfo['administrator_name'],
+      'administrator_mail_address' => $administratorMailAddress,
       'installation_url' => $agreementInfo['installation_url'],
       'admin_password' => $password,
       'telephone_number' => $agreementInfo['telephone_number'],
@@ -699,8 +706,6 @@ class ContractController extends AppController
     $mailAddress = '';
     if(!empty($agreementInfo['administrator_mail_address'])) {
       $mailAddress = $agreementInfo['administrator_mail_address'];
-    } else if(!empty($userInfo["user_mail_address"])) {
-      $mailAddress = $userInfo["user_mail_address"];
     }
 
     $errors = [];
