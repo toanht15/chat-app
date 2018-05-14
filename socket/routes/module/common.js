@@ -169,6 +169,8 @@ function loadAutoMessageSettings(siteKey, callback) {
           syslogger.error('Unable load ALL AutoMessage settings.');
           return;
         }
+        // いったんクリアする
+        autoMessageSettings = {};
         if(rows && rows.length > 0) {
           rows.forEach(function(row){
             var targetSiteKey = row.company_key;
@@ -244,6 +246,8 @@ function loadPublicHoliday(callback) {
         syslogger.error('Unable load ALL Operating-hour settings.');
         return;
       }
+      publicHolidaySettings = {};
+      publicHolidaySettingsArray = [];
       if(rows && rows.length > 0) {
         rows.forEach(function(row){
           if(!publicHolidaySettings[row.year]) {
