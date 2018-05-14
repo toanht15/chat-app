@@ -168,7 +168,7 @@ class ContractController extends AppController
           $sender = new MailSenderComponent();
           $sender->setFrom(self::ML_MAIL_ADDRESS);
           $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
-          $sender->setTo($data['Contract']['user_mail_address']);
+          $sender->setTo($data['MAgreements']['department_mail_address']);
           $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
           $sender->setBody($mailBodyData);
           $sender->send();
@@ -204,7 +204,7 @@ class ContractController extends AppController
         if($mailType !== 'false') {
           //会社向け
           $sender = new MailSenderComponent();
-          $sender->setFrom($data['Contract']['user_mail_address']);
+          $sender->setFrom($data['MAgreements']['application_mail_address']);
           if(empty($data['MAgreements']['application_name'])) {
             $data['MAgreements']['application_name'] = '';
           }
@@ -279,7 +279,7 @@ class ContractController extends AppController
 
   private function getPlanNameStr($data) {
     $planId = $data['MCompany']['m_contact_types_id'];
-    swtich(intval($planId)) {
+    switch(intval($planId)) {
       case 1:
         return 'プレミアムプラン';
       case 2:
@@ -356,11 +356,17 @@ class ContractController extends AppController
       $companySaveData['MCompany']['id'] = $companyEditData['MCompany']['id'];
       // 画面キャプチャ共有とリアルタイムモニタ表示は設定を引き継ぐ
       $coreSetting = json_decode($companyEditData['MCompany']['core_settings'], TRUE);
-      $saveData['MCompany']['options']['laCoBrowse'] = !empty($coreSetting['laCoBrowse']) ? $coreSetting['laCoBrowse'] : false;
       $saveData['MCompany']['options']['hideRealtimeMonitor'] = !empty($coreSetting['hideRealtimeMonitor']) ? $coreSetting['hideRealtimeMonitor'] : false;
       $saveData['MCompany']['options']['monitorPollingMode'] = !empty($coreSetting['monitorPollingMode']) ? $coreSetting['monitorPollingMode'] : false;
       $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']['options']);
       $this->MCompany->save($companySaveData,false);
+      // 有効・無効でJSファイルの中身が変わるので書き換える
+      if(!$saveData['MCompany']['options']['laCoBrowse']) {
+        $companySaveData['la_limit_users'] = 0;
+      }
+      if($coreSetting['laCoBrowse'] !== boolval($saveData['MCompany']['options']['laCoBrowse'])) {
+        $this->addCompanyJSFile($companyEditData['MCompany']['company_key'], $saveData['MCompany']['options']['laCoBrowse']);
+      }
 
       if(empty($agreementEditData)) {
         $this->MAgreements->create();
@@ -369,7 +375,17 @@ class ContractController extends AppController
           'trial_start_day' => $saveData['MAgreements']['application_day'],
           'trial_end_day' => $saveData['MAgreements']['application_day'],
           'agreement_start_day' => $saveData['MAgreements']['agreement_start_day'],
-          'agreement_end_day' => $saveData['MAgreements']['agreement_end_day']
+          'agreement_end_day' => $saveData['MAgreements']['agreement_end_day'],
+          'application_department' => $saveData['MAgreements']['application_department'],
+          'application_position' => $saveData['MAgreements']['application_position'],
+          'application_name' => $saveData['MAgreements']['application_name'],
+          'application_mail_address' => $saveData['MAgreements']['application_mail_address'],
+          'administrator_department' => $saveData['MAgreements']['administrator_department'],
+          'administrator_position' => $saveData['MAgreements']['administrator_position'],
+          'administrator_name' => $saveData['MAgreements']['administrator_name'],
+          'administrator_mail_address' => $saveData['MAgreements']['administrator_mail_address'],
+          'installation_url' => $saveData['MAgreements']['installation_url'],
+          'business_model' => $saveData['MAgreements']['business_model'],
         ]);
         $this->MAgreements->save();
       } else {
@@ -386,6 +402,7 @@ class ContractController extends AppController
       // オプションを別領域に設定
       $editData['MCompany']['options']['refCompanyData'] = json_decode($editData['MCompany']['core_settings'],TRUE)['refCompanyData'];
       $editData['MCompany']['options']['chatbotScenario'] = json_decode($editData['MCompany']['core_settings'],TRUE)['chatbotScenario'];
+      $editData['MCompany']['options']['laCoBrowse'] = json_decode($editData['MCompany']['core_settings'],TRUE)['laCoBrowse'];
 
       // ここまで
       $agreementData = $this->MAgreements->find('first',[
@@ -396,8 +413,11 @@ class ContractController extends AppController
 
       $editData = array_merge($editData, $agreementData);
 
+      $businessModel = Configure::read('businessModelType');
+      $this->set('businessModel',$businessModel);
       $this->set('companyId', $editData['MCompany']['id']);//削除に必要なもの
       $this->set('companyKey', $editData['MCompany']['company_key']);//削除に必要なもの
+
       $this->request->data = $editData;
     }
   }
@@ -459,14 +479,14 @@ class ContractController extends AppController
       $transaction = $this->TransactionManager->begin();
       $addedCompanyInfo = $this->createCompany($companyInfo);
       $this->createAgreementInfo($addedCompanyInfo, $companyInfo,$userInfo,$agreementInfo);
-      $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo);
+      $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo, $agreementInfo);
       $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
       $relationIdAssoc = $this->addDefaultScenarioMessage($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultAutoMessages($addedCompanyInfo['id'], $companyInfo, $relationIdAssoc);
       $this->addDefaultDictionaries($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultMailTemplate($addedCompanyInfo['id'], $companyInfo);
-      $this->addCompanyJSFile($addedCompanyInfo['companyKey']);
+      $this->addCompanyJSFile($addedCompanyInfo['companyKey'], $addedCompanyInfo['core_settings']['laCoBrowse']);
     } catch (Exception $e) {
       $this->TransactionManager->rollback($transaction);
       throw $e;
@@ -545,22 +565,29 @@ class ContractController extends AppController
   private function createCompany($companyInfo) {
     try {
       $companyKey = $this->generateCompanyKey();
-      $this->MCompany->create();
-      $this->MCompany->set([
+      $insertData = [
         "company_name" => $companyInfo['company_name'],
         "company_key" => $companyKey,
         "m_contact_types_id" => $companyInfo['m_contact_types_id'],
         "limit_users" => $companyInfo['limit_users'],
         "core_settings" => $this->getCoreSettingsFromContactTypesId($companyInfo['m_contact_types_id'], $companyInfo['options']),
         "trial_flg" => $companyInfo['trial_flg']
-      ]);
+      ];
+      if ($companyInfo['options']['laCoBrowse']) {
+        $insertData['la_limit_users'] = $companyInfo['la_limit_users'];
+      } else {
+        $insertData['la_limit_users'] = 0;
+      }
+      $this->MCompany->create();
+      $this->MCompany->set($insertData);
       $this->MCompany->save();
     } catch(Exception $e) {
       throw $e;
     }
     return [
         'id' => $this->MCompany->getLastInsertID(),
-        'companyKey' => $companyKey
+        'companyKey' => $companyKey,
+        'core_settings' => json_decode($this->getCoreSettingsFromContactTypesId($companyInfo['m_contact_types_id'], $companyInfo['options']), TRUE)
     ];
   }
 
@@ -604,8 +631,17 @@ class ContractController extends AppController
     if(empty($agreementInfo['memo'])) {
       $agreementInfo['memo'] = "";
     }
+    $mailAddress = '';
+    if(!empty($userInfo["user_mail_address"]))
+    {
+      $mailAddress = $userInfo["user_mail_address"];
+    } else if(!empty($agreementInfo['application_mail_address'])) {
+      $mailAddress = $agreementInfo['application_mail_address'];
+    }
+
     $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
+      'company_name' => $companyInfo['company_name'],
       'business_model' => $agreementInfo['business_model'],
       'application_day' => date("Y-m-d"), // FIXME（自動発行）
       'trial_start_day' => $agreementInfo['trial_start_day'],
@@ -615,6 +651,11 @@ class ContractController extends AppController
       'application_department' => $agreementInfo['application_department'],
       'application_position' => $agreementInfo['application_position'],
       'application_name' => $agreementInfo['application_name'],
+      'application_mail_address' => $mailAddress,
+      'administrator_department' => $agreementInfo['application_department'],
+      'administrator_position' => $agreementInfo['application_position'],
+      'administrator_name' => $agreementInfo['application_name'],
+      'administrator_mail_address' => $mailAddress,
       'installation_url' => $agreementInfo['installation_url'],
       'admin_password' => $password,
       'telephone_number' => $agreementInfo['telephone_number'],
@@ -639,15 +680,22 @@ class ContractController extends AppController
     $this->MUser->save();
   }
 
-  private function createFirstAdministratorUser($m_companies_id, $userInfo) {
+  private function createFirstAdministratorUser($m_companies_id, $userInfo, $agreementInfo) {
     $userInfo["user_name"] = 'テストユーザー';
     $userInfo["user_display_name"] = 'テストユーザー';
+    $mailAddress = '';
+    if(!empty($userInfo["user_mail_address"]))
+    {
+      $mailAddress = $userInfo["user_mail_address"];
+    } else if(!empty($agreementInfo['application_mail_address'])) {
+      $mailAddress = $agreementInfo['application_mail_address'];
+    }
     $errors = [];
     $tmpData = [
         "m_companies_id" => $m_companies_id,
         "user_name" => $userInfo["user_name"],
         "display_name" => $userInfo["user_display_name"],
-        "mail_address" => $userInfo["user_mail_address"],
+        "mail_address" => $mailAddress,
         "change_password_flg" => !empty($userInfo['no_change_password_flg']) ? $userInfo['no_change_password_flg'] : C_NO_CHANGE_PASSWORD_FLG,
         "permission_level" => C_AUTHORITY_ADMIN,
         "new_password" => $userInfo["user_password"]
@@ -922,15 +970,20 @@ class ContractController extends AppController
     return $autoMessageRelationAssoc;
   }
 
-  private function addCompanyJSFile($companyKey) {
-    $templateData = new File(C_COMPANY_JS_TEMPLATE_FILE);
+  private function addCompanyJSFile($companyKey, $isLaCoBrowseEnabled) {
+    $path = C_COMPANY_JS_TEMPLATE_FILE;
+    if($isLaCoBrowseEnabled) {
+      $path = C_COMPANY_LA_JS_TEMPLATE_FILE;
+    }
+    $templateData = new File($path);
     $contents = $templateData->read();
     $companyKeyReplaced = str_replace('##COMPANY_KEY##', $companyKey, $contents);
-    $replacedContents = str_replace('##NODE_SERVER_URL##',C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT, $companyKeyReplaced);
+    $nodeServerReplaced = str_replace('##NODE_SERVER_URL##',C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT, $companyKeyReplaced);
+    $replacedContents = str_replace('##LA_SERVER_URL##',C_LA_SERVER_ADDR, $nodeServerReplaced);
     // 書き換えた内容を<companyKey>.jsで保存
     $saveFile = new File(C_COMPANY_JS_FILE_DIR.'/'.$companyKey.'.js', true, 0644);
     $saveFile->open('w');
-    $saveFile->append($replacedContents);
+    $saveFile->write($replacedContents);
     $saveFile->close();
   }
 

@@ -217,11 +217,11 @@ class FreeTrialMailJobBatchShell extends AppShell
           $this->component->setFrom(self::ML_MAIL_ADDRESS);
           $this->component->setFromName($jobMailTemplate['sender']);
           $this->component->setTo(self::ML_MAIL_ADDRESS);
-          $agreementData = $this->MAgreement->find('all',[
-            'conditions' => [
+          $agreementData = $this->MAgreement->find('all', array(
+            'conditions' => array(
               'm_companies_id' => $mailAdress['MUser']['m_companies_id']
-            ]
-          ]);
+            )
+          ));
           $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
           $replaceData = array(
             'MCompany' => $trialCompanyName[0]['MCompany'],
@@ -293,11 +293,11 @@ class FreeTrialMailJobBatchShell extends AppShell
           $this->component->setFromName($jobMailTemplate['sender']);
           $this->component->setTo(self::ML_MAIL_ADDRESS);
 
-          $agreementData = $this->MAgreement->find('all',[
-            'conditions' => [
+          $agreementData = $this->MAgreement->find('all', array(
+            'conditions' => array(
               'm_companies_id' => $mailAdress['MUser']['m_companies_id']
-            ]
-          ]);
+            )
+          ));
           $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
           $replaceData = array(
             'MCompany' => $trialCompanyName[0]['MCompany'],
@@ -355,7 +355,7 @@ class FreeTrialMailJobBatchShell extends AppShell
 
   private function getPlanNameStr($data) {
     $planId = $data['MCompany']['m_contact_types_id'];
-    swtich(intval($planId)) {
+    switch(intval($planId)) {
       case 1:
         return 'プレミアムプラン';
       case 2:

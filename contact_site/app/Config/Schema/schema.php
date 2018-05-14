@@ -29,6 +29,7 @@ class AppSchema extends CakeSchema {
 	public $m_agreements = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => 'ID'),
 		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'comment' => '企業マスタID'),
+		'company_name' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '企業マスタID', 'charset' => 'utf8'),
 		'business_model' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 		'application_day' => array('type' => 'date', 'null' => false, 'default' => null, 'comment' => '申込日'),
 		'agreement_start_day' => array('type' => 'date', 'null' => false, 'default' => null, 'comment' => '契約開始日'),
@@ -37,10 +38,12 @@ class AppSchema extends CakeSchema {
 		'trial_end_day' => array('type' => 'date', 'null' => true, 'default' => null),
 		'application_department' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 50, 'collate' => 'utf8_general_ci', 'comment' => '申し込み情報部署名', 'charset' => 'utf8'),
 		'application_position' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'comment' => '申し込み情報役職名', 'charset' => 'utf8'),
-		'application_name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'comment' => '申し込み情報名前', 'charset' => 'utf8'),
+		'application_name' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'comment' => '申し込み情報名前', 'charset' => 'utf8'),
+		'application_mail_address' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'comment' => '申込み時メールアドレス', 'charset' => 'utf8'),
 		'administrator_department' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 50, 'collate' => 'utf8_general_ci', 'comment' => '管理者情報部署名', 'charset' => 'utf8'),
 		'administrator_position' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'comment' => '管理者情報役職名', 'charset' => 'utf8'),
-		'administrator_name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 20, 'collate' => 'utf8_general_ci', 'comment' => '管理者情報名前', 'charset' => 'utf8'),
+		'administrator_name' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'comment' => '管理者情報名前', 'charset' => 'utf8'),
+		'administrator_mail_address' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'comment' => '管理者情報メールアドレス', 'charset' => 'utf8'),
 		'installation_site_name' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 100, 'collate' => 'utf8_general_ci', 'comment' => '設置サイト名', 'charset' => 'utf8'),
 		'installation_url' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 200, 'collate' => 'utf8_general_ci', 'comment' => '設置サイトURL', 'charset' => 'utf8'),
 		'admin_password' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 100, 'collate' => 'utf8_general_ci', 'comment' => 'スーパー管理者用パスワード', 'charset' => 'utf8'),
@@ -180,18 +183,6 @@ class AppSchema extends CakeSchema {
 		'deleted_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
-		),
-		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
-	);
-
-	public $m_ip_informations = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-		'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
-		'ip_address' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 39, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'company_name' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 200, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
-		'indexes' => array(
-			'PRIMARY' => array('column' => 'id', 'unique' => 1),
-			'idx_m_ip_informations_m_companies_id_ip_address' => array('column' => array('m_companies_id', 'ip_address'), 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
