@@ -1933,7 +1933,7 @@ var socket, // socket.io
           console.log("widgetHandler::beginToWatchResizeEvent");
           $(window).on('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
           // いったんリサイズ処理を走らせる
-          this._handleResizeEvent();
+          common.widgetHandler._handleResizeEvent();
         }
       },
       stopToWatchResizeEvent: function() {
@@ -1944,6 +1944,7 @@ var socket, // socket.io
       },
       _handleResizeEvent: function() {
         console.log("widgetHandler::_handleResizeEvent");
+        $('#sincloBox').css('height', 'auto');
         var windowHeight = $(window).innerHeight(),
           minCurrentWidgetHeight = common.widgetHandler._getMinWidgetHeight(),
           currentWidgetHeight = $('#sincloBox').height(),
