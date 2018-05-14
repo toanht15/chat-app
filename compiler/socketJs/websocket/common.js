@@ -1819,7 +1819,7 @@ var socket, // socket.io
           if(!reCreateWidget && dataOpenflg === "false") {
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
-            this.stopToWatchResizeEvent();
+            common.widgetHandler.stopToWatchResizeEvent();
             //ログ書き込み用にメッセージ送信
             emit("sendWidgetShown",{widget:true});
             //最小化
@@ -1872,7 +1872,7 @@ var socket, // socket.io
               //最小化時ボタン表示
               common.whenMinimizedBtnShow();
               sinclo.chatApi.unlockPageScroll();
-              this.stopToWatchResizeEvent();
+              common.widgetHandler.stopToWatchResizeEvent();
             }
             else{
               console.log("saidaika");
@@ -1888,7 +1888,7 @@ var socket, // socket.io
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
               sinclo.chatApi.lockPageScroll();
-              this.beginToWatchResizeEvent();
+              common.widgetHandler.beginToWatchResizeEvent();
             }
           }
         }
