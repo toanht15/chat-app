@@ -46,7 +46,7 @@
   <?= $this->Form->input('MJobMailTemplate.time', array('div' => false, 'label' => false,'options' => array(9,12,15,19), 'maxlength' => 50,'type' => 'select')) ?>
 </li>
 <!-- オプション -->
-<li class="daysAfter" style="display:flex">
+<li class="daysAfter sendTarget" style="display:flex">
   <span><label>送信対象</label></span>
   <div>
     <?= $this->Form->input('MJobMailTemplate.send_mail_application_user_flg', array('type' => 'checkbox', 'default' => false, 'label'=>'申込者に送る', 'div' => ['id' => 'sendApplicationUserFlg'])) ?>
