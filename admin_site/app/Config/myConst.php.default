@@ -1,6 +1,10 @@
 <?php
 $config = [];
 
+define('APP_MODE_DEV', true);
+
 define('C_NODE_SERVER_ADDR', "//node.sinclo"); // Nodeサーバー
 define('C_NODE_SERVER_FILE_PORT', ""); // NodeサーバーのHTTP通信ポート
 define('C_NODE_SERVER_WS_PORT', ""); // WS通信ポート
+
+define('C_LA_SERVER_ADDR', "https://la1.sinclo.jp"); // 画面キャプチャ共有用
