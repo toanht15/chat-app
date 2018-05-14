@@ -45,6 +45,15 @@
   <div class="labelArea fLeft"><span class="require"><label>何時</label></span></div>
   <?= $this->Form->input('MJobMailTemplate.time', array('div' => false, 'label' => false,'options' => array(9,12,15,19), 'maxlength' => 50,'type' => 'select')) ?>
 </li>
+<!-- オプション -->
+<li class="daysAfter" style="display:flex">
+  <span><label>送信対象</label></span>
+  <div>
+    <?= $this->Form->input('MJobMailTemplate.send_mail_application_user_flg', array('type' => 'checkbox', 'default' => false, 'label'=>'申込者に送る', 'div' => ['id' => 'sendApplicationUserFlg'])) ?>
+    <?= $this->Form->input('MJobMailTemplate.send_mail_administrator_user_flg', array('type' => 'checkbox', 'default' => false, 'label'=>'管理者に送る', 'div' => ['id' => 'sendAdministratorUserFlg'])) ?>
+    <?= $this->Form->input('MJobMailTemplate.send_mail_sinclo_all_users_flg', array('type' => 'checkbox', 'default' => false, 'label'=>'sincloのユーザー一覧にいる全員に送る', 'div' => ['id' => 'sendSincloAllUserFlg'])) ?>
+  </div>
+</li>
 <!-- /* メディアリンクにメールを飛ばす */ -->
 <li class = 'daysAfter' style = "display:none;">
  <div class="labelArea fLeft"><span class="require"><label>MLにもメール送信<br>する</label></span></div>

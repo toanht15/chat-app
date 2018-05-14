@@ -16,13 +16,18 @@ class FreeTrialMailJobBatchShell extends AppShell
   const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
 
   const COMPANY_NAME = "##COMPANY_NAME##";
-  const USER_NAME = "##USER_NAME##";
-  const PASSWORD = "##PASSWORD##";
   const BUSINESS_MODEL = "##BUSINESS_MODEL##";
+  /** 申込者 */
   const DEPARTMENT = "##DEPARTMENT##";
   const POSITION = "##POSITION##";
+  const USER_NAME = "##USER_NAME##";
   const MAIL_ADDRESS = "##MAIL_ADDRESS##";
   const PHONE_NUMBER = "##PHONE_NUMBER##";
+  /** 管理者 */
+  const ADMIN_DEPARTMENT = "##ADMIN_DEPARTMENT##";
+  const ADMIN_POSITION = "##ADMIN_POSITION##";
+  const ADMIN_USER_NAME = "##ADMIN_USER_NAME##";
+  const ADMIN_MAIL_ADDRESS = "##ADMIN_MAIL_ADDRESS##";
   const URL = "##URL##";
   const OTHER = "##OTHER##";
   const PLAN_NAME = "##PLAN_NAME##";
@@ -82,7 +87,7 @@ class FreeTrialMailJobBatchShell extends AppShell
       ]
     ]);
     //本契約中の企業の期間を検出
-    $agreementDay = $this->MAgreement->find('all',
+    $agreementDay = $this->MAgreement->find('all',[
       'conditions' => [
         'm_companies_id' => $companyIds
       ]
@@ -114,6 +119,9 @@ class FreeTrialMailJobBatchShell extends AppShell
             $trialJobMailTemplatesData[$trialNumber]['subject'] = $val['MJobMailTemplate']['subject'];
             $trialJobMailTemplatesData[$trialNumber]['mail_body'] = $val['MJobMailTemplate']['mail_body'];
             $trialJobMailTemplatesData[$trialNumber]['send_mail_ml_flg'] = $val['MJobMailTemplate']['send_mail_ml_flg'];
+            $trialJobMailTemplatesData[$trialNumber]['send_mail_application_user_flg'] = $val['MJobMailTemplate']['send_mail_application_user_flg'];
+            $trialJobMailTemplatesData[$trialNumber]['send_mail_administrator_user_flg'] = $val['MJobMailTemplate']['send_mail_administrator_user_flg'];
+            $trialJobMailTemplatesData[$trialNumber]['send_mail_sinclo_all_users_flg'] = $val['MJobMailTemplate']['send_mail_sinclo_all_users_flg'];
             $trialJobMailTemplatesData[$trialNumber]['m_companies_id'] = $trial['MAgreement']['m_companies_id'];
             $trialCompanyIds[] .= $trial['MAgreement']['m_companies_id'];
           }
@@ -136,12 +144,28 @@ class FreeTrialMailJobBatchShell extends AppShell
             $jobMailTemplatesData[$agreementNumber]['subject'] = $val['MJobMailTemplate']['subject'];
             $jobMailTemplatesData[$agreementNumber]['mail_body'] = $val['MJobMailTemplate']['mail_body'];
             $jobMailTemplatesData[$agreementNumber]['send_mail_ml_flg'] = $val['MJobMailTemplate']['send_mail_ml_flg'];
+            $jobMailTemplatesData[$agreementNumber]['send_mail_application_user_flg'] = $val['MJobMailTemplate']['send_mail_application_user_flg'];
+            $jobMailTemplatesData[$agreementNumber]['send_mail_administrator_user_flg'] = $val['MJobMailTemplate']['send_mail_administrator_user_flg'];
+            $jobMailTemplatesData[$agreementNumber]['send_mail_sinclo_all_users_flg'] = $val['MJobMailTemplate']['send_mail_sinclo_all_users_flg'];
             $jobMailTemplatesData[$agreementNumber]['m_companies_id'] = $agreement['MAgreement']['m_companies_id'];
             $this->log($jobMailTemplatesData,LOG_DEBUG);
             $companyIds[] = $agreement['MAgreement']['m_companies_id'];
           }
       }
     }
+
+    $trialAgreementsList = $this->MAgreement->find('all',[
+      'conditions' => [
+        'm_companies_id' => $trialCompanyIds
+      ]
+    ]);
+
+    $agreementsList = $this->MAgreement->find('all',[
+      'conditions' => [
+        'm_companies_id' => $companyIds
+      ]
+    ]);
+
     //トライアル中の企業のユーザーのメールアドレスを検出
     $trialMailAdressData = $this->MUser->find('all',[
       'fields' => [
@@ -172,49 +196,100 @@ class FreeTrialMailJobBatchShell extends AppShell
     } else {
       $this->log('BEGIN sendmail schedule4.', self::LOG_INFO);
       foreach($trialJobMailTemplatesData as $key => $jobMailTemplate) {
+        $isApplicationUserSended = false;
+        $isAdminUserSended = false;
         foreach($trialMailAdressData as $index => $mailAdress) {
           try {
             if($mailAdress['MUser']['m_companies_id'] == $jobMailTemplate['m_companies_id']) {
+              $trialCompanyName = [];
               //m_companies_idが変わるごとに会社名取得
               if((!empty($trialMailAdressData[$index-1]) && $trialMailAdressData[$index-1]['MUser']['m_companies_id'] != $mailAdress['MUser']['m_companies_id'] && $index != 0) ||
               $index == 0) {
-                $trialCompanyName = $this->MCompany->find('all',[
+                $trialCompanyData = $this->MCompany->find('all',[
                   'conditions' => [
                     'id' => $mailAdress['MUser']['m_companies_id']
                   ]
                 ]);
-                $trialCompanyName = $trialCompanyName[0]['MCompany']['company_name'];
+                $trialCompanyName = $trialCompanyData[0]['MCompany']['company_name'];
                 if($index == 0) {
                   $trialCompanyNames = $trialCompanyName;
                 }
                 else {
                   $trialCompanyNames .= ','.$trialCompanyName;
                 }
+                $isApplicationUserSended = false;
+                $isAdminUserSended = false;
               }
-              $id = $jobMailTemplate['id'];
-              $to = $mailAdress['MUser']['mail_address'];
-              $sender = $jobMailTemplate['sender'];
-              $body = $jobMailTemplate['mail_body'];
-              $subject = $jobMailTemplate['subject'];
+              if(!$isApplicationUserSended && $jobMailTemplate['send_mail_application_user_flg']) {
+                $id = $jobMailTemplate['id'];
+                $to = $this->getRecordFromCompanyId($trialAgreementsList, $mailAdress['MUser']['m_companies_id'])['application_mail_address'];
+                $sender = $jobMailTemplate['sender'];
+                $body = $jobMailTemplate['mail_body'];
+                $subject = $jobMailTemplate['subject'];
 
-              $agreementData = $this->MAgreement->find('all',[
-                'conditions' => [
-                  'm_companies_id' => $mailAdress['MUser']['m_companies_id']
-                ]
-              ]);
-              $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
-              $replaceData = array(
-                'MCompany' => $trialCompanyName[0]['MCompany'],
-                'MAgreement' => $agreementData['MAgreement']
-              );
-              $body = $this->replaceAllMailConstString($replaceData, $body);
-              $this->log("Sending mail to ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
-              $this->component->setFrom(self::ML_MAIL_ADDRESS);
-              $this->component->setFromName($sender);
-              $this->component->setTo($to);
-              $this->component->setBody($body);
-              $this->component->setSubject($subject);
-              $this->component->send();
+                $agreementData = $this->getRecordFromCompanyId($trialAgreementsList, $mailAdress['MUser']['m_companies_id']);
+                $replaceData = array(
+                  'MCompany' => $trialCompanyData[0]['MCompany'],
+                  'MAgreement' => $agreementData
+                );
+                $body = $this->replaceAllMailConstString($replaceData, $body);
+                $this->log("【TRIAL】Sending mail to Application User: ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
+                $this->component->setFrom(self::ML_MAIL_ADDRESS);
+                $this->component->setFromName($sender);
+                $this->component->setTo($to);
+                $this->component->setBody($body);
+                $this->component->setSubject($subject);
+                $this->component->send();
+                $isApplicationUserSended = true;
+              }
+              if(!$isAdminUserSended && $jobMailTemplate['send_mail_administrator_user_flg']) {
+                $id = $jobMailTemplate['id'];
+                $to = $this->getRecordFromCompanyId($trialAgreementsList, $mailAdress['MUser']['m_companies_id'])['administrator_mail_address'];
+                $sender = $jobMailTemplate['sender'];
+                $body = $jobMailTemplate['mail_body'];
+                $subject = $jobMailTemplate['subject'];
+
+                $agreementData = $this->getRecordFromCompanyId($trialAgreementsList, $mailAdress['MUser']['m_companies_id']);
+                $replaceData = array(
+                  'MCompany' => $trialCompanyData[0]['MCompany'],
+                  'MAgreement' => $agreementData
+                );
+                $body = $this->replaceAllMailConstString($replaceData, $body);
+                $this->log("【TRIAL】Sending mail to Administrator User: ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
+                $this->component->setFrom(self::ML_MAIL_ADDRESS);
+                $this->component->setFromName($sender);
+                $this->component->setTo($to);
+                $this->component->setBody($body);
+                $this->component->setSubject($subject);
+                $this->component->send();
+                $isAdminUserSended = true;
+              }
+              if($jobMailTemplate['send_mail_sinclo_all_users_flg'] !== 0) {
+                $id = $jobMailTemplate['id'];
+                $to = $mailAdress['MUser']['mail_address'];
+                $sender = $jobMailTemplate['sender'];
+                $body = $jobMailTemplate['mail_body'];
+                $subject = $jobMailTemplate['subject'];
+
+                $agreementData = $this->MAgreement->find('all', [
+                  'conditions' => [
+                    'm_companies_id' => $mailAdress['MUser']['m_companies_id']
+                  ]
+                ]);
+                $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
+                $replaceData = array(
+                  'MCompany' => $trialCompanyData[0]['MCompany'],
+                  'MAgreement' => $agreementData['MAgreement']
+                );
+                $body = $this->replaceAllMailConstString($replaceData, $body);
+                $this->log("【TRIAL】Sending mail to sinclo User: " . $to . " subject : " . $subject . " JOB ID: " . $id, self::LOG_INFO);
+                $this->component->setFrom(self::ML_MAIL_ADDRESS);
+                $this->component->setFromName($sender);
+                $this->component->setTo($to);
+                $this->component->setBody($body);
+                $this->component->setSubject($subject);
+                $this->component->send();
+              }
             }
           } catch(Exception $e) {
             $this->log('send mail trial error !!!!', self::LOG_ERROR);
@@ -231,7 +306,7 @@ class FreeTrialMailJobBatchShell extends AppShell
           ));
           $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
           $replaceData = array(
-            'MCompany' => $trialCompanyName[0]['MCompany'],
+            'MCompany' => $trialCompanyData[0]['MCompany'],
             'MAgreement' => $agreementData['MAgreement']
           );
           $body = $this->replaceAllMailConstString($replaceData, $jobMailTemplate['mail_body']);
@@ -247,12 +322,15 @@ class FreeTrialMailJobBatchShell extends AppShell
       $this->log('schedule is not found.', self::LOG_INFO);
     } else {
       foreach($jobMailTemplatesData as $key => $jobMailTemplate) {
+        $isApplicationUserSended = false;
+        $isAdminUserSended = false;
         foreach($mailAdressData as $index => $mailAdress) {
           try {
             if($mailAdress['MUser']['m_companies_id'] == $jobMailTemplate['m_companies_id']) {
+              $companyData = [];
               if((!empty($mailAdressData[$index-1]) && $mailAdressData[$index-1]['MUser']['m_companies_id'] != $mailAdress['MUser']['m_companies_id'] && $index != 0) ||
               $index == 0) {
-                $companyName = $this->MCompany->find('all',[
+                $companyData = $this->MCompany->find('all',[
                   'fields' => [
                     'company_name'
                   ],
@@ -260,36 +338,83 @@ class FreeTrialMailJobBatchShell extends AppShell
                     'id' => $mailAdress['MUser']['m_companies_id']
                   ]
                 ]);
-                $companyName = $companyName[0]['MCompany']['company_name'];
+                $companyName = $companyData[0]['MCompany']['company_name'];
                 if($index == 0) {
                   $companyNames = $companyName;
                 }
                 else {
                   $companyNames .= ','.$companyName;
                 }
+                $isApplicationUserSended = false;
+                $isAdminUserSended = false;
               }
-              $id = $jobMailTemplate['id'];
-              $to = $mailAdress['MUser']['mail_address'];
-              $sender = $jobMailTemplate['sender'];
-              $agreementData = $this->MAgreement->find('all',[
-                'conditions' => [
-                  'm_companies_id' => $mailAdress['MUser']['m_companies_id']
-                ]
-              ]);
-              $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
-              $replaceData = array(
-                'MCompany' => $trialCompanyName[0]['MCompany'],
-                'MAgreement' => $agreementData['MAgreement']
-              );
-              $body = $this->replaceAllMailConstString($replaceData, $jobMailTemplate['mail_body']);
-              $subject = $jobMailTemplate['subject'];
-              $this->log("Sending mail to ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
-              $this->component->setFrom(self::ML_MAIL_ADDRESS);
-              $this->component->setFromName($sender);
-              $this->component->setTo($to);
-              $this->component->setBody($body);
-              $this->component->setSubject($subject);
-              $this->component->send();
+              if(!$isApplicationUserSended && $jobMailTemplate['send_mail_application_user_flg']) {
+                $id = $jobMailTemplate['id'];
+                $to = $this->getRecordFromCompanyId($agreementsList, $mailAdress['MUser']['m_companies_id'])['application_mail_address'];
+                $sender = $jobMailTemplate['sender'];
+                $body = $jobMailTemplate['mail_body'];
+                $subject = $jobMailTemplate['subject'];
+
+                $agreementData = $this->getRecordFromCompanyId($agreementsList, $mailAdress['MUser']['m_companies_id']);
+                $replaceData = array(
+                  'MCompany' => $companyData[0]['MCompany'],
+                  'MAgreement' => $agreementData
+                );
+                $body = $this->replaceAllMailConstString($replaceData, $body);
+                $this->log("Sending mail to Application User: ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
+                $this->component->setFrom(self::ML_MAIL_ADDRESS);
+                $this->component->setFromName($sender);
+                $this->component->setTo($to);
+                $this->component->setBody($body);
+                $this->component->setSubject($subject);
+                $this->component->send();
+                $isApplicationUserSended = true;
+              }
+              if(!$isAdminUserSended && $jobMailTemplate['send_mail_administrator_user_flg']) {
+                $id = $jobMailTemplate['id'];
+                $to = $this->getRecordFromCompanyId($agreementsList, $mailAdress['MUser']['m_companies_id'])['administrator_mail_address'];
+                $sender = $jobMailTemplate['sender'];
+                $body = $jobMailTemplate['mail_body'];
+                $subject = $jobMailTemplate['subject'];
+
+                $agreementData = $this->getRecordFromCompanyId($agreementsList, $mailAdress['MUser']['m_companies_id']);
+                $replaceData = array(
+                  'MCompany' => $companyData[0]['MCompany'],
+                  'MAgreement' => $agreementData
+                );
+                $body = $this->replaceAllMailConstString($replaceData, $body);
+                $this->log("Sending mail to Administrator User: ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
+                $this->component->setFrom(self::ML_MAIL_ADDRESS);
+                $this->component->setFromName($sender);
+                $this->component->setTo($to);
+                $this->component->setBody($body);
+                $this->component->setSubject($subject);
+                $this->component->send();
+                $isAdminUserSended = true;
+              }
+              if($jobMailTemplate['send_mail_sinclo_all_users_flg'] !== 0) {
+                $id = $jobMailTemplate['id'];
+                $to = $mailAdress['MUser']['mail_address'];
+                $sender = $jobMailTemplate['sender'];
+                $agreementData = $this->MAgreement->find('all',[
+                  'conditions' => [
+                    'm_companies_id' => $mailAdress['MUser']['m_companies_id']
+                  ]
+                ]);
+                $replaceData = array(
+                  'MCompany' => $companyData[0]['MCompany'],
+                  'MAgreement' => $agreementData['MAgreement']
+                );
+                $body = $this->replaceAllMailConstString($replaceData, $jobMailTemplate['mail_body']);
+                $subject = $jobMailTemplate['subject'];
+                $this->log("Sending mail to sinclo User : ".$to." subject : ".$subject." JOB ID: ".$id, self::LOG_INFO);
+                $this->component->setFrom(self::ML_MAIL_ADDRESS);
+                $this->component->setFromName($sender);
+                $this->component->setTo($to);
+                $this->component->setBody($body);
+                $this->component->setSubject($subject);
+                $this->component->send();
+              }
             }
           } catch(Exception $e) {
             $this->log('send mail error !!!!', self::LOG_ERROR);
@@ -307,7 +432,7 @@ class FreeTrialMailJobBatchShell extends AppShell
           ));
           $agreementData['MAgreement']['user_mail_address'] = $mailAdress['MUser']['mail_address'];
           $replaceData = array(
-            'MCompany' => $trialCompanyName[0]['MCompany'],
+            'MCompany' => $companyData[0]['MCompany'],
             'MAgreement' => $agreementData['MAgreement']
           );
           $body = $this->replaceAllMailConstString($replaceData, $jobMailTemplate['mail_body']);
@@ -334,13 +459,18 @@ class FreeTrialMailJobBatchShell extends AppShell
       }
     }
     $mailBodyData = $this->replaceConstToString($data['MCompany']['company_name'],self::COMPANY_NAME, $mailTemplateData);
-    $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_name'], self::USER_NAME, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['business_model'], self::BUSINESS_MODEL, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_department'], self::DEPARTMENT, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_position'], self::POSITION, $mailBodyData);
-    $mailBodyData = $this->replaceConstToString($data['MAgreement']['user_mail_address'], self::MAIL_ADDRESS, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_name'], self::USER_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['application_mail_address'], self::MAIL_ADDRESS, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['administrator_department'], self::ADMIN_DEPARTMENT, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['administrator_position'], self::ADMIN_POSITION, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['administrator_name'], self::ADMIN_USER_NAME, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['administrator_mail_address'], self::ADMIN_MAIL_ADDRESS, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['telephone_number'], self::PHONE_NUMBER, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['installation_url'], self::URL, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MCompany']['limit_users'], self::USABLE_USER_COUNT, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getPlanNameStr($data), self::PLAN_NAME, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getBeginDate($data), self::BEGIN_DATE, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getEndDate($data), self::END_DATE, $mailBodyData);
@@ -378,22 +508,22 @@ class FreeTrialMailJobBatchShell extends AppShell
 
   private function getBeginDate($data) {
     if(intval($data['MCompany']['trial_flg']) === 1) {
-      return $data['MAgreement']['trial_start_day'];
+      return $data['MAgreement']['trial_start_day'] ? $data['MAgreement']['trial_start_day'] : "";
     } else {
-      return $data['MAgreement']['agreement_start_day'];
+      return $data['MAgreement']['agreement_start_day'] ? $data['MAgreement']['agreement_start_day'] : "";
     }
   }
 
   private function getEndDate($data) {
     if(intval($data['MCompany']['trial_flg']) === 1) {
-      return $data['MAgreement']['trial_end_day'];
+      return $data['MAgreement']['trial_end_day'] ? $data['MAgreement']['trial_end_day'] : "";
     } else {
-      return $data['MAgreement']['agreement_end_day'];
+      return $data['MAgreement']['agreement_end_day'] ? $data['MAgreement']['agreement_end_day'] : "";
     }
   }
 
   private function getOptionCompanyInfoEnabled($data) {
-    if(!empty($data['MCompany']['options']['refCompanyData'])) {
+    if(!empty($data['MCompany']['options']['refCompanyData']) || json_decode($data['MCompany']['core_settings'], TRUE)['refCompanyData']) {
       return '企業情報付与オプション：あり';
     } else {
       return '企業情報付与オプション：なし';
@@ -401,7 +531,7 @@ class FreeTrialMailJobBatchShell extends AppShell
   }
 
   private function getOptionChatbotScenario($data) {
-    if(!empty($data['MCompany']['options']['chatbotScenario'])) {
+    if(!empty($data['MCompany']['options']['chatbotScenario']) || json_decode($data['MCompany']['core_settings'], TRUE)['chatbotScenario']) {
       return 'チャットボットシナリオオプション：あり';
     } else {
       return 'チャットボットシナリオオプション：なし';
@@ -409,10 +539,19 @@ class FreeTrialMailJobBatchShell extends AppShell
   }
 
   private function getOptionLaCoBrowse($data) {
-    if(!empty($data['MCompany']['options']['laCoBrowse'])) {
-      return '画面キャプチャオプション：あり';
+    if(!empty($data['MCompany']['options']['laCoBrowse']) || json_decode($data['MCompany']['core_settings'], TRUE)['laCoBrowse']) {
+      return '画面キャプチャオプション：あり（最大同時セッション数：'.$data['MCompany']['la_limit_users'].'）';
     } else {
       return '画面キャプチャオプション：なし';
     }
+  }
+
+  private function getRecordFromCompanyId($array, $m_companies_id) {
+    foreach($array as $index => $record) {
+      foreach($record as $tableName => $data) {
+        if(strcmp($data['m_companies_id'], $m_companies_id) === 0) return $data;
+      }
+    }
+    return [];
   }
 }
