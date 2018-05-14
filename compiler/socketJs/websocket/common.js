@@ -1947,7 +1947,7 @@ var socket, // socket.io
         }
         var windowHeight = $(window).innerHeight(),
           minCurrentWidgetHeight = common.widgetHandler._getMinWidgetHeight(),
-          currentWidgetHeight = $('#sincloBox').height(),
+          currentWidgetHeight = $('#sincloWidgetBox').height(),
           maxCurrentWidgetHeight = common.widgetHandler._getMaxWidgetHeight(),
           delta = windowHeight - common.widgetHandler._currentWindowHeight;
 
@@ -1956,7 +1956,7 @@ var socket, // socket.io
         }
 
         // 変更後サイズ
-        var afterWidgetHeight = $('#sincloBox').height() + delta;
+        var afterWidgetHeight = $('#sincloWidgetBox').height() + delta;
         var changed = false;
         if (delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
           console.log('1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
