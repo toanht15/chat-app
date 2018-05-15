@@ -212,7 +212,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                     ]
                   ]);
                   $trialCompanyName = $trialCompanyData[0]['MCompany']['company_name'];
-                  if ($index == 0) {
+                  if (empty($trialCompanyNames)) {
                     $trialCompanyNames = $trialCompanyName;
                   } else {
                     $trialCompanyNames .= ',' . $trialCompanyName;
@@ -337,7 +337,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                     ]
                   ]);
                   $companyName = $companyData[0]['MCompany']['company_name'];
-                  if ($index == 0) {
+                  if (empty($companyNames)) {
                     $companyNames = $companyName;
                   } else {
                     $companyNames .= ',' . $companyName;

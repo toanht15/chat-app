@@ -274,7 +274,7 @@ $config['default'] = [
        * 吹き出しデザイン
        * 1: BOX型、2: 吹き出し型
        */
-      "chatMessageDesignType"=>"2",
+      "chatMessageDesignType"=>"1",
 
       /**
        * メッセージ表示時アニメーション
