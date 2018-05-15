@@ -264,7 +264,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                 $this->component->send();
                 $isAdminUserSended = true;
               }
-              if($jobMailTemplate['send_mail_sinclo_all_users_flg'] !== 0) {
+              if($jobMailTemplate['send_mail_sinclo_all_users_flg']) {
                 $id = $jobMailTemplate['id'];
                 $to = $mailAdress['MUser']['mail_address'];
                 $sender = $jobMailTemplate['sender'];
@@ -392,7 +392,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                 $this->component->send();
                 $isAdminUserSended = true;
               }
-              if($jobMailTemplate['send_mail_sinclo_all_users_flg'] !== 0) {
+              if($jobMailTemplate['send_mail_sinclo_all_users_flg']) {
                 $id = $jobMailTemplate['id'];
                 $to = $mailAdress['MUser']['mail_address'];
                 $sender = $jobMailTemplate['sender'];
