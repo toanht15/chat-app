@@ -71,7 +71,9 @@ class AppController extends Controller {
     }
 
     // 未ログインの場合は以降の処理を通さない
-    if (!$this->Auth->user()) return false;
+    if (strcmp($this->name, 'Login') !== 0 && !$this->Auth->user()) {
+      $this->redirect('/Login/login');
+    }
 
     // 通知メッセージをセット
     if ($this->Session->check('global.message')) {
