@@ -1071,6 +1071,9 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope.revertStandardTextSize('re_text_size');
       $scope.revertStandardTextSize('se_text_size');
       $scope.resizeWidgetHeightByWindowHeight();
+      setTimeout(function(){
+        $('#miniTarget').css('height', 'auto');
+      },0);
     }
 
     $scope.revertStandardTextSize = function(target) {
