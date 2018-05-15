@@ -404,73 +404,108 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       maxCurrentWidgetHeight = $scope.getMaxWidgetHeight(),
       delta = windowHeight - $scope.currentWindowHeight;
 
-    if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
+    if (windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
       delta = (windowHeight * 0.7) - currentWidgetHeight;
     }
 
     // 変更後サイズ
     var afterWidgetHeight = $('#sincloBox').height() + delta;
     var changed = false;
-    if(delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
-      console.log('1 %s', delta);
+    if (delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
+      console.log('1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
       changed = true;
       $('#chatTalk').height($scope.getMaxChatTalkHeight());
-    } else if(delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
-      console.log('2-1 %s ', delta, minCurrentWidgetHeight, $scope.getMaxChatTalkHeight() * 0.5);
+    } else if (delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
+      console.log('2 %s %s %s', delta,afterWidgetHeight, minCurrentWidgetHeight);
       changed = true;
-      $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
-      console.log('2-2 %s ', $('#sincloBox').height());
-    } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
-      console.log('3 %s', delta);
+      $('#chatTalk').height($scope.getMinChatTalkHeight());
+    } else if ((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
+      console.log('3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
       changed = true;
       $('#chatTalk').height($('#chatTalk').height() + delta);
     }
-
     $scope.currentWindowHeight = windowHeight;
+
     if(changed) {
       $(document).trigger('onWidgetSizeChanged');
     }
   };
 
   $scope.getMaxWidgetHeight = function() {
-    switch(Number($scope.simulatorSettings.widgetSizeTypeToggle)) {
+    var offset = $scope.getMessageAreaOffset();
+    switch(Number($scope.widgetSizeTypeToggle)) {
       case 1:
-        return 405;
+        return 405 - offset;
       case 2:
-        return 496;
+        return 496 - offset;
       case 3:
-        return 596;
+        return 596 - offset;
       default:
-        return 496;
+        return 496 - offset;
     }
   };
 
   $scope.getMinWidgetHeight = function() {
-    switch(Number($scope.simulatorSettings.widgetSizeTypeToggle)) {
+    var offset = $scope.getMessageAreaOffset();
+    switch(Number($scope.widgetSizeTypeToggle)) {
       case 1:
-        return 318;
+        return 318 - offset;
       case 2:
-        return 364;
+        return 364 - offset;
       case 3:
-        return 409;
+        return 409 - offset;
       default:
-        return 364;
+        return 364 - offset;
     }
   };
 
   $scope.getMaxChatTalkHeight = function() {
-    switch(Number($scope.simulatorSettings.widgetSizeTypeToggle)) {
+    var offset = $scope.getMessageAreaOffset();
+    switch(Number($scope.widgetSizeTypeToggle)) {
       case 1:
         // 小
-        return 194;
+        return 194 + offset;
       case 2:
-        return 284;
+        return 284 + offset;
       case 3:
-        return 374;
+        return 374 + offset;
       default:
-        return 284;
+        return 284 + offset;
     }
   };
+
+  $scope.getMinChatTalkHeight = function() {
+    var offset = $scope._getMessageAreaOffset(true);
+    switch(Number($scope.widgetSizeType)) {
+      case 1:
+        // 小
+        return 97 + offset;
+      case 2:
+        return 142+ offset;
+      case 3:
+        return 187 + offset;
+      default:
+        return 142 + offset;
+    }
+  };
+
+  $scope.getMessageAreaOffset = function(forChatTalkOffset) {
+    if(!$('#flexBoxWrap').is(':visible')) {
+      // 非表示
+      if(forChatTalkOffset) {
+        return 75;
+      } else {
+        return 0;
+      }
+    } else if($('#messageBox').is(':visible')) {
+      return 0;
+    } else if($('#miniFlexBoxHeight').is(':visible')) {
+      return 27;
+    } else {
+      // とりあえず表示されている状態
+      return 0;
+    }
+  }
 
   /**
    * メッセージ追加後のスクロールアニメーション
