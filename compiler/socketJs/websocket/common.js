@@ -1927,7 +1927,7 @@ var socket, // socket.io
         return siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0;
       },
       beginToWatchResizeEvent: function() {
-        if(!check.smartphone()) {
+        if(!check.smartphone() && window.sincloInfo.contract.chat) {
           console.log("widgetHandler::beginToWatchResizeEvent");
           $(window).on('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
           // いったんリサイズ処理を走らせる
@@ -1935,7 +1935,7 @@ var socket, // socket.io
         }
       },
       stopToWatchResizeEvent: function() {
-        if(!check.smartphone()) {
+        if(!check.smartphone() && window.sincloInfo.contract.chat) {
           console.log("widgetHandler::stopToWatchResizeEvent");
           $(window).off('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
         }
