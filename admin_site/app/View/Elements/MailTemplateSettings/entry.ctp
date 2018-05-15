@@ -86,8 +86,8 @@
         <tr><td>##BUSINESS_MODEL##</td><td>ビジネスモデル</td></tr>
         <tr><td>##DEPARTMENT##</td><td>申込者：部署</td></tr>
         <tr><td>##POSITION##</td><td>申込者：役職</td></tr>
-        <tr><td>##USER_NAME##</td><td>申込者：お名前</td></tr>
-        <tr><td>##MAIL_ADDRESS##</td><td>申込者：メールアドレス</td></tr>
+        <tr><td>##USER_NAME##</td><td>申込者：お名前<br>（sincloのユーザー送信時は各人の「氏名」）</td></tr>
+        <tr><td>##MAIL_ADDRESS##</td><td>申込者：メールアドレス<br>（sincloのユーザー送信時は各人の「メールアドレス」）</td></tr>
         <tr><td>##ADMIN_DEPARTMENT##</td><td>管理者：部署</td></tr>
         <tr><td>##ADMIN_POSITION##</td><td>管理者：役職</td></tr>
         <tr><td>##ADMIN_USER_NAME##</td><td>管理者：お名前</td></tr>
