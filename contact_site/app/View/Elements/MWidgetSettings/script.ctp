@@ -1071,6 +1071,9 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope.revertStandardTextSize('re_text_size');
       $scope.revertStandardTextSize('se_text_size');
       $scope.resizeWidgetHeightByWindowHeight();
+      setTimeout(function(){
+        $('#miniTarget').css('height', 'auto');
+      },0);
     }
 
     $scope.revertStandardTextSize = function(target) {
@@ -1207,6 +1210,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
     });
 
     $scope.resizeWidgetHeightByWindowHeight = function() {
+      <?php if($this->coreSettings[C_COMPANY_USE_CHAT]): ?>
       var windowHeight = $(window).innerHeight(),
           minCurrentWidgetHeight = $scope.getMinWidgetHeight(),
           currentWidgetHeight = $('#sincloBox').height(),
@@ -1239,6 +1243,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       if(changed) {
         $(document).trigger('onWidgetSizeChanged');
       }
+      <?php endif; ?>
     };
 
     $scope.getMaxWidgetHeight = function() {

@@ -1539,7 +1539,7 @@ var socket, // socket.io
 
       html += '    <sinclo-div style="height: 50px;margin: 15px 25px">';
       // アイコン
-      html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + colorList['mainColor'] + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="' + window.sincloInfo.site.files + '/img/call.png" style="margin: 6px 12px"></span>';
+      html += '    <span style="display: block; width: 50px; height: 50px; float: left; background-color: ' + colorList['mainColor'] + '; border-radius: 25px; padding: 3px;"><img width="19.5" height="33" src="' + window.sincloInfo.site.files + '/img/call.png" style="width: 19.5px; height: 33px; margin: 6px 12px"></span>';
       // 受付電話番号
       if ( Number(widget.display_time_flg) === 1 ) {
           html += '    <pre id="telNumber" style="font-size: '+ sizeList['d18font'] +'px; padding: 5px 0px 0px; height: 30px">' + check.escape_html(widget.tel) + '</pre>';
@@ -1927,7 +1927,7 @@ var socket, // socket.io
         return siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0;
       },
       beginToWatchResizeEvent: function() {
-        if(!check.smartphone()) {
+        if(!check.smartphone() && window.sincloInfo.contract.chat) {
           console.log("widgetHandler::beginToWatchResizeEvent");
           $(window).on('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
           // いったんリサイズ処理を走らせる
@@ -1935,7 +1935,7 @@ var socket, // socket.io
         }
       },
       stopToWatchResizeEvent: function() {
-        if(!check.smartphone()) {
+        if(!check.smartphone() && window.sincloInfo.contract.chat) {
           console.log("widgetHandler::stopToWatchResizeEvent");
           $(window).off('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
         }
