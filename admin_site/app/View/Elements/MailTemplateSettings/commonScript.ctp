@@ -12,22 +12,23 @@
       if($(self)[0]['id'] == 'MailTemplateSettingsTimeToSendMail4') {
         $("#value").text("何日前");
       }
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][2]['name'] = "data[MJobMailTemplate][mail_type_cd]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][20]['name'] = "data[MJobMailTemplate][sender]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][21]['name'] = "data[MJobMailTemplate][subject]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][22]['name'] = "data[MJobMailTemplate][mail_body]";
+      $('#MJobMailTemplateMailTypeCd, #MSystemMailTemplateMailTypeCd').attr('name', 'data[MJobMailTemplate][mail_type_cd]');
+      $('#MJobMailTemplateSender, #MSystemMailTemplateSender').attr('name', 'data[MJobMailTemplate][sender]');
+      $('#MJobMailTemplateSubject, #MSystemMailTemplateSubject').attr('name', 'data[MJobMailTemplate][subject]');
+      $('#MJobMailTemplateMailBody, #MSystemMailTemplateMailBody').attr('name', 'data[MJobMailTemplate][mail_body]');
     }
     else {
       $(".daysAfter").css('display', 'none');
       $(".daysAfter.sendTarget").css('display', 'none');
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][2]['name'] = "data[MSystemMailTemplate][mail_type_cd]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][20]['name'] = "data[MSystemMailTemplate][sender]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][21]['name'] = "data[MSystemMailTemplate][subject]";
-      $('#MailTemplateSettingsAddForm, #MailTemplateSettingsEditForm')[0][22]['name'] = "data[MSystemMailTemplate][mail_body]";
+      $('#MJobMailTemplateMailTypeCd, #MSystemMailTemplateMailTypeCd').attr('name', 'data[MSystemMailTemplate][mail_type_cd]');
+      $('#MJobMailTemplateSender, #MSystemMailTemplateSender').attr('name', 'data[MSystemMailTemplate][sender]');
+      $('#MJobMailTemplateSubject, #MSystemMailTemplateSubject').attr('name', 'data[MSystemMailTemplate][subject]');
+      $('#MJobMailTemplateMailBody, #MSystemMailTemplateMailBody').attr('name', 'data[MSystemMailTemplate][mail_body]');
     }
     ///変数メールアドレス・パスワード
-    if(($(self)[0]['id'] == 'MJobMailTemplateAgreementFlg1' && document.form.elements[6].checked == true) ||
-      ($(self)[0]['id'] == 'MJobMailTemplateAgreementFlg2' && document.form.elements[6].checked == true) || $(self)[0]['id'] == 'MailTemplateSettingsTimeToSendMail1') {
+    if(($(self)[0]['id'] == 'MJobMailTemplateAgreementFlg1' && $('#MailTemplateSettingsTimeToSendMail1').is(':checked')) ||
+      ($(self)[0]['id'] == 'MJobMailTemplateAgreementFlg2' && $('#MailTemplateSettingsTimeToSendMail1').is(':checked'))
+      || $(self)[0]['id'] == 'MailTemplateSettingsTimeToSendMail1') {
       $(".initialVariable").css('display', '');
     }
     else {

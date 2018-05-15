@@ -199,6 +199,9 @@ class AppSchema extends CakeSchema {
 		'mail_body' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'メール本文', 'charset' => 'utf8'),
 		'agreement_flg' => array('type' => 'integer', 'null' => false, 'default' => '1', 'unsigned' => false),
 		'send_mail_ml_flg' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
+		'send_mail_application_user_flg' => array('type' => 'boolean', 'null' => true, 'default' => '0'),
+		'send_mail_administrator_user_flg' => array('type' => 'boolean', 'null' => true, 'default' => '0'),
+		'send_mail_sinclo_all_users_flg' => array('type' => 'boolean', 'null' => true, 'default' => '0'),
 		'indexes' => array(
 			'PRIMARY' => array('column' => 'id', 'unique' => 1)
 		),
