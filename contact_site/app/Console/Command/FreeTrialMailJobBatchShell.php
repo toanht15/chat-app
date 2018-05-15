@@ -271,7 +271,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                 $body = $jobMailTemplate['mail_body'];
                 $subject = $jobMailTemplate['subject'];
 
-                $agreementData = $this->MAgreement->find('all', [
+                $agreementData = $this->MAgreement->find('first', [
                   'conditions' => [
                     'm_companies_id' => $mailAdress['MUser']['m_companies_id']
                   ]
@@ -299,7 +299,7 @@ class FreeTrialMailJobBatchShell extends AppShell
           $this->component->setFrom(self::ML_MAIL_ADDRESS);
           $this->component->setFromName($jobMailTemplate['sender']);
           $this->component->setTo(self::ML_MAIL_ADDRESS);
-          $agreementData = $this->MAgreement->find('all', array(
+          $agreementData = $this->MAgreement->find('first', array(
             'conditions' => array(
               'm_companies_id' => $mailAdress['MUser']['m_companies_id']
             )
@@ -310,7 +310,6 @@ class FreeTrialMailJobBatchShell extends AppShell
             'MAgreement' => $agreementData['MAgreement']
           );
           $body = $this->replaceAllMailConstString($replaceData, $jobMailTemplate['mail_body']);
-          $body = $jobMailTemplate['mail_body'];
           $this->component->setBody($body);
           $this->component->setSubject($jobMailTemplate['subject']);
           $this->component->send();
@@ -331,9 +330,6 @@ class FreeTrialMailJobBatchShell extends AppShell
               if((!empty($mailAdressData[$index-1]) && $mailAdressData[$index-1]['MUser']['m_companies_id'] != $mailAdress['MUser']['m_companies_id'] && $index != 0) ||
               $index == 0) {
                 $companyData = $this->MCompany->find('all',[
-                  'fields' => [
-                    'company_name'
-                  ],
                   'conditions' => [
                     'id' => $mailAdress['MUser']['m_companies_id']
                   ]
@@ -425,7 +421,7 @@ class FreeTrialMailJobBatchShell extends AppShell
           $this->component->setFromName($jobMailTemplate['sender']);
           $this->component->setTo(self::ML_MAIL_ADDRESS);
 
-          $agreementData = $this->MAgreement->find('all', array(
+          $agreementData = $this->MAgreement->find('first', array(
             'conditions' => array(
               'm_companies_id' => $mailAdress['MUser']['m_companies_id']
             )
