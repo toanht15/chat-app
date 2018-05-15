@@ -1210,6 +1210,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
     });
 
     $scope.resizeWidgetHeightByWindowHeight = function() {
+      <?php if($this->coreSettings[C_COMPANY_USE_CHAT]): ?>
       var windowHeight = $(window).innerHeight(),
           minCurrentWidgetHeight = $scope.getMinWidgetHeight(),
           currentWidgetHeight = $('#sincloBox').height(),
@@ -1242,6 +1243,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
       if(changed) {
         $(document).trigger('onWidgetSizeChanged');
       }
+      <?php endif; ?>
     };
 
     $scope.getMaxWidgetHeight = function() {
