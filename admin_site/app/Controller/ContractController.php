@@ -41,7 +41,7 @@ class ContractController extends AppController
   const OPTION_SCENARIO = "##OPTION_SCENALIO##";
   const OPTION_CAPTURE = "##OPTION_CAPTURE##";
 
-  public $components = array('MailSender','Auth');
+  public $components = array('MailSender');
   public $uses = array('MCompany',
     'MAgreements',
     'MUser',
