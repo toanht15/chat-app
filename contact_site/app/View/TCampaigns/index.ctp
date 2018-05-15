@@ -21,7 +21,7 @@
               'alt' => '登録',
               'id' => 'tcampaigns_add_btn',
               'id' => $coreSettings[C_COMPANY_USE_CAMPAIGN] ? "tcampaigns_add_btn" : "tcampaigns_disable_btn",
-              'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_CAMPAIGN] ? " btn-shadow disOffgreenBtn commontooltip" : " grayBtn commontooltip disabled"),
+              'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_CAMPAIGN] ? " btn-shadow disOffgreenBtn commontooltip" : " disOffgrayBtn  commontooltip disabled"),
               'data-text' => $coreSettings[C_COMPANY_USE_CAMPAIGN] ? "新規追加" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
               'disabled' => !$coreSettings[C_COMPANY_USE_CAMPAIGN],
               'data-balloon-position' => '45',

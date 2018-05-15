@@ -183,10 +183,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
       <div data-sidebar-type="statistics" class="hide">
         <div class="icon">
-          <?= $this->htmlEx->naviLink('チャット', 'chat_setting.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat']]) ?>
+          <?= $this->htmlEx->naviLink('チャット', 'chat_setting.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()']) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('オペレータ', 'personal.png', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator']]) ?>
+          <?= $this->htmlEx->naviLink('オペレータ', 'personal.png', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()']) ?>
         </div>
       </div>
     <?php endif; ?>
