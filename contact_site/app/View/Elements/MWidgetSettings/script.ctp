@@ -1210,14 +1210,17 @@ sincloApp.controller('WidgetCtrl', function($scope){
     });
 
     $scope.resizeWidgetHeightByWindowHeight = function() {
-      <?php if($coreSettings[C_COMPANY_USE_CHAT]): ?>
       if($('#miniTarget').height() > 0) {
         $('#miniTarget').css('height', 'auto');
+      }
+      if($('#callTab').length > 0) {
+        $('#callTab').css('height', 'auto');
       }
       var windowHeight = $(window).innerHeight(),
           minCurrentWidgetHeight = $scope._getMinWidgetHeight(),
           currentWidgetHeight = $('#titleWrap').height() + $('#descriptionSet').height() + $('#miniTarget').height(),
           maxCurrentWidgetHeight = $scope._getMaxWidgetHeight(),
+          changeTarget = ($('#chatTab').length > 0) ? $('#chatTalk') : $('#telContent'),
           delta = windowHeight - $scope.currentWindowHeight;
 
       if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
@@ -1230,28 +1233,27 @@ sincloApp.controller('WidgetCtrl', function($scope){
       if(delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
         console.log('1 %s', delta);
         changed = true;
-        $('#chatTalk').height($scope._getMaxChatTalkHeight());
+        changeTarget.height($scope._getMaxChatTalkHeight());
       } else if(delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
         console.log('2-1 %s ', delta, minCurrentWidgetHeight, $scope._getMinChatTalkHeight());
         changed = true;
-        $('#chatTalk').height($scope._getMinChatTalkHeight());
+        changeTarget.height($scope._getMinChatTalkHeight());
         console.log('2-2 %s ', $('#sincloBox').height());
       } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
         console.log('3 %s', delta);
         changed = true;
-        $('#chatTalk').height($('#chatTalk').height() + delta);
+        changeTarget.height(changeTarget.height() + delta);
       }
 
       $scope.currentWindowHeight = windowHeight;
       if(changed) {
         $(document).trigger('onWidgetSizeChanged');
       }
-      <?php endif; ?>
     };
 
     $scope._getMaxWidgetHeight = function() {
       var offset = $scope._getMessageAreaOffset();
-      switch(Number($scope.widgetSizeType)) {
+      switch(Number($scope.widgetSizeTypeToggle)) {
         case 1:
           return 405 - offset;
         case 2:
@@ -1265,7 +1267,7 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     $scope._getMinWidgetHeight = function() {
       var offset = $scope._getMessageAreaOffset();
-      switch(Number($scope.widgetSizeType)) {
+      switch(Number($scope.widgetSizeTypeToggle)) {
         case 1:
           return 318 - offset;
         case 2:
@@ -1279,31 +1281,61 @@ sincloApp.controller('WidgetCtrl', function($scope){
 
     $scope._getMaxChatTalkHeight = function() {
       var offset = $scope._getMessageAreaOffset(true);
-      switch(Number($scope.widgetSizeType)) {
-        case 1:
-          // 小
-          return 194 + offset;
-        case 2:
-          return 284 + offset;
-        case 3:
-          return 374 + offset;
-        default:
-          return 284 + offset;
+      if($('#chatTab').length > 0) {
+        switch (Number($scope.widgetSizeTypeToggle)) {
+          case 1:
+            // 小
+            return 194 + offset;
+          case 2:
+            return 284 + offset;
+          case 3:
+            return 374 + offset;
+          default:
+            return 284 + offset;
+        }
+      } else {
+        // シェアリング
+        switch (Number($scope.widgetSizeTypeToggle)) {
+          case 1:
+            // 小
+            return 119;
+          case 2:
+            return 202;
+          case 3:
+            return 280;
+          default:
+            return 202;
+        }
       }
     };
 
     $scope._getMinChatTalkHeight = function() {
       var offset = $scope._getMessageAreaOffset(true);
-      switch(Number($scope.widgetSizeType)) {
-        case 1:
-          // 小
-          return 97 + offset;
-        case 2:
-          return 142+ offset;
-        case 3:
-          return 187 + offset;
-        default:
-          return 142 + offset;
+      if($('#chatTab').length > 0) {
+        switch (Number($scope.widgetSizeTypeToggle)) {
+          case 1:
+            // 小
+            return 97 + offset;
+          case 2:
+            return 142 + offset;
+          case 3:
+            return 187 + offset;
+          default:
+            return 142 + offset;
+        }
+      } else {
+        // シェアリング
+        switch (Number($scope.widgetSizeTypeToggle)) {
+          case 1:
+            // 小
+            return 32;
+          case 2:
+            return 76;
+          case 3:
+            return 121;
+          default:
+            return 76;
+        }
       }
     };
 
