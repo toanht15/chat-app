@@ -57,15 +57,15 @@
               case 0:
                 if(CompanyExpireChecker::isExpireAgreementDay($val['MAgreement']['agreement_end_day'])) {
                   // 契約期間切れの場合
-                  echo 'style="background-color: #999999;"';
+                  echo 'style="background-color: #ccc;"';
                 } else if (CompanyExpireChecker::isWarningApplicationDay($val['MAgreement']['agreement_end_day'])) {
                   // 契約期間切れからn日前の場合
-                  echo 'style="background-color: #FFFF00;"';
+                  echo 'style="background-color: #FFFF99;"';
                 }
                 break;
               case 1:
                 if(CompanyExpireChecker::isExpireTrialDay($val['MAgreement']['trial_end_day'])) {
-                  echo 'style="background-color: #999999;"';
+                  echo 'style="background-color: #ccc;"';
                 }
                 break;
             }
