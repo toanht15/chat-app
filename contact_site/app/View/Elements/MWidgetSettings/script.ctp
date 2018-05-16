@@ -1070,6 +1070,11 @@ sincloApp.controller('WidgetCtrl', function($scope){
       $scope.revertStandardTextSize('header_text_size');
       $scope.revertStandardTextSize('re_text_size');
       $scope.revertStandardTextSize('se_text_size');
+      if($('#chatTalk').length > 0) {
+        $('#chatTalk').css('height', '');
+      } else {
+        $('#telContent').css('height', '');
+      }
       $scope.resizeWidgetHeightByWindowHeight();
       setTimeout(function(){
         $('#miniTarget').css('height', 'auto');
