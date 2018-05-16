@@ -1957,7 +1957,6 @@ var socket, // socket.io
 
         // 変更後サイズ
         var afterWidgetHeight = $('#sincloWidgetBox').height() + delta;
-        var changed = false;
         if (delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
           console.log('1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
           $('#chatTalk').height(common.widgetHandler._getMaxChatTalkHeight());
@@ -2025,20 +2024,29 @@ var socket, // socket.io
         }
       },
       _getMessageAreaOffset: function(forChatTalkOffset) {
+        var invisibleUIOffset = 0;
+        if(!forChatTalkOffset) {
+          if(!$('#sincloAccessInfo').is(':visible')) {
+            invisibleUIOffset += 26.5;
+          }
+          if(!$('#widgetSubTitle').is(':visible') && !$('#widgetDescription').is(':visible')) {
+            invisibleUIOffset += 53;
+          }
+        }
         if(!$('#flexBoxWrap').is(':visible')) {
           // 非表示
           if(forChatTalkOffset) {
             return 75;
           } else {
-            return 0;
+            return 0 + invisibleUIOffset;
           }
         } else if($('#flexBoxHeight').is(':visible')) {
-          return 0;
+          return 0 + invisibleUIOffset;
         } else if($('#miniFlexBoxHeight').is(':visible')) {
-          return 27;
+          return 27 + invisibleUIOffset;
         } else {
           // とりあえず表示されている状態
-          return 0;
+          return 0 + invisibleUIOffset;
         }
       }
     },

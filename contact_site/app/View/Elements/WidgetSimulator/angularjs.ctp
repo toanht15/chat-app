@@ -399,28 +399,29 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   $scope.resizeWidgetHeightByWindowHeight = function() {
     var windowHeight = $(window).innerHeight(),
-      minCurrentWidgetHeight = $scope.getMinWidgetHeight(),
-      currentWidgetHeight = $('#sincloBox').height(),
-      maxCurrentWidgetHeight = $scope.getMaxWidgetHeight(),
+      minCurrentWidgetHeight = $scope._getMinWidgetHeight(),
+      currentWidgetHeight = $('#titleWrap').height() + $('#descriptionSet').height() + $('#miniTarget').height(),
+      maxCurrentWidgetHeight = $scope._getMaxWidgetHeight(),
       delta = windowHeight - $scope.currentWindowHeight;
 
-    if (windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
+    if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
       delta = (windowHeight * 0.7) - currentWidgetHeight;
     }
 
     // 変更後サイズ
-    var afterWidgetHeight = $('#sincloBox').height() + delta;
+    var afterWidgetHeight = currentWidgetHeight + delta;
     var changed = false;
-    if (delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
-      console.log('1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
+    if(delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
+      console.log('1 %s', delta);
       changed = true;
-      $('#chatTalk').height($scope.getMaxChatTalkHeight());
-    } else if (delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
-      console.log('2 %s %s %s', delta,afterWidgetHeight, minCurrentWidgetHeight);
+      $('#chatTalk').height($scope._getMaxChatTalkHeight());
+    } else if(delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
+      console.log('2-1 %s ', delta, minCurrentWidgetHeight, $scope._getMinChatTalkHeight());
       changed = true;
-      $('#chatTalk').height($scope.getMinChatTalkHeight());
-    } else if ((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
-      console.log('3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
+      $('#chatTalk').height($scope._getMinChatTalkHeight());
+      console.log('2-2 %s ', $('#sincloBox').height());
+    } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
+      console.log('3 %s', delta);
       changed = true;
       $('#chatTalk').height($('#chatTalk').height() + delta);
     }
@@ -431,9 +432,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
   };
 
-  $scope.getMaxWidgetHeight = function() {
-    var offset = $scope.getMessageAreaOffset();
-    switch(Number($scope.widgetSizeTypeToggle)) {
+  $scope._getMaxWidgetHeight = function() {
+    var offset = $scope._getMessageAreaOffset();
+    switch(Number($scope.widgetSizeType)) {
       case 1:
         return 405 - offset;
       case 2:
@@ -445,9 +446,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
   };
 
-  $scope.getMinWidgetHeight = function() {
-    var offset = $scope.getMessageAreaOffset();
-    switch(Number($scope.widgetSizeTypeToggle)) {
+  $scope._getMinWidgetHeight = function() {
+    var offset = $scope._getMessageAreaOffset();
+    switch(Number($scope.widgetSizeType)) {
       case 1:
         return 318 - offset;
       case 2:
@@ -459,9 +460,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
   };
 
-  $scope.getMaxChatTalkHeight = function() {
-    var offset = $scope.getMessageAreaOffset();
-    switch(Number($scope.widgetSizeTypeToggle)) {
+  $scope._getMaxChatTalkHeight = function() {
+    var offset = $scope._getMessageAreaOffset(true);
+    switch(Number($scope.widgetSizeType)) {
       case 1:
         // 小
         return 194 + offset;
@@ -474,7 +475,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
   };
 
-  $scope.getMinChatTalkHeight = function() {
+  $scope._getMinChatTalkHeight = function() {
     var offset = $scope._getMessageAreaOffset(true);
     switch(Number($scope.widgetSizeType)) {
       case 1:
@@ -489,23 +490,30 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
   };
 
-  $scope.getMessageAreaOffset = function(forChatTalkOffset) {
+  $scope._getMessageAreaOffset = function(forChatTalkOffset) {
+    var invisibleUIOffset = 0;
+    if(!forChatTalkOffset) {
+      if(!$('#sincloAccessInfo').is(':visible')) {
+        invisibleUIOffset += 26.5;
+      }
+      invisibleUIOffset +=  53 - $('#descriptionSet').height();
+    }
     if(!$('#flexBoxWrap').is(':visible')) {
       // 非表示
       if(forChatTalkOffset) {
         return 75;
       } else {
-        return 0;
+        return 0 + invisibleUIOffset;
       }
     } else if($('#messageBox').is(':visible')) {
-      return 0;
+      return 0 + invisibleUIOffset;
     } else if($('#miniFlexBoxHeight').is(':visible')) {
-      return 27;
+      return 27 + invisibleUIOffset;
     } else {
       // とりあえず表示されている状態
-      return 0;
+      return 0 + invisibleUIOffset;
     }
-  }
+  };
 
   /**
    * メッセージ追加後のスクロールアニメーション
