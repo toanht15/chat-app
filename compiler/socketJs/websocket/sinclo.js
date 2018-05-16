@@ -1915,6 +1915,7 @@
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
             sinclo.resizeTextArea();
             if(!check.smartphone()) {
+              common.widgetHandler._handleResizeEvent();
               $('#miniSincloChatMessage').focus();
             }
           }
@@ -1927,6 +1928,7 @@
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
             sinclo.resizeTextArea();
             if(!check.smartphone()) {
+              common.widgetHandler._handleResizeEvent();
               $('#sincloChatMessage').focus();
             }
           }

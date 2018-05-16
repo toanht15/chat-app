@@ -2043,7 +2043,11 @@ var socket, // socket.io
         } else if($('#flexBoxHeight').is(':visible')) {
           return 0 + invisibleUIOffset;
         } else if($('#miniFlexBoxHeight').is(':visible')) {
-          return 27 + invisibleUIOffset;
+          if(forChatTalkOffset) {
+            return 27 + invisibleUIOffset;
+          } else {
+            return 0 + invisibleUIOffset;
+          }
         } else {
           // とりあえず表示されている状態
           return 0 + invisibleUIOffset;
