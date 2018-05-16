@@ -498,7 +498,14 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       }
       invisibleUIOffset +=  53 - $('#descriptionSet').height();
     }
-    if($('#messageBox').is(':visible')) {
+    if(!$('#flexBoxWrap').is(':visible')) {
+      // 非表示
+      if(forChatTalkOffset) {
+        return 75;
+      } else {
+        return 0 + invisibleUIOffset;
+      }
+    } else if($('#messageBox').is(':visible')) {
       return 0 + invisibleUIOffset;
     } else if($('#miniFlexBoxHeight').is(':visible')) {
       return 27 + invisibleUIOffset;
