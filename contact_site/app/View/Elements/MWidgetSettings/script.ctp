@@ -1215,9 +1215,9 @@ sincloApp.controller('WidgetCtrl', function($scope){
         $('#miniTarget').css('height', 'auto');
       }
       var windowHeight = $(window).innerHeight(),
-          minCurrentWidgetHeight = $scope.getMinWidgetHeight(),
-          currentWidgetHeight = $('#sincloBox').height(),
-          maxCurrentWidgetHeight = $scope.getMaxWidgetHeight(),
+          minCurrentWidgetHeight = $scope._getMinWidgetHeight(),
+          currentWidgetHeight = $('#titleWrap').height() + $('#descriptionSet').height() + $('#miniTarget').height(),
+          maxCurrentWidgetHeight = $scope._getMaxWidgetHeight(),
           delta = windowHeight - $scope.currentWindowHeight;
 
       if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
@@ -1225,16 +1225,16 @@ sincloApp.controller('WidgetCtrl', function($scope){
       }
 
       // 変更後サイズ
-      var afterWidgetHeight = $('#sincloBox').height() + delta;
+      var afterWidgetHeight = currentWidgetHeight + delta;
       var changed = false;
       if(delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
         console.log('1 %s', delta);
         changed = true;
-        $('#chatTalk').height($scope.getMaxChatTalkHeight());
+        $('#chatTalk').height($scope._getMaxChatTalkHeight());
       } else if(delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
-        console.log('2-1 %s ', delta, minCurrentWidgetHeight, $scope.getMaxChatTalkHeight() * 0.5);
+        console.log('2-1 %s ', delta, minCurrentWidgetHeight, $scope._getMinChatTalkHeight());
         changed = true;
-        $('#chatTalk').height($scope.getMaxChatTalkHeight() * 0.5);
+        $('#chatTalk').height($scope._getMinChatTalkHeight());
         console.log('2-2 %s ', $('#sincloBox').height());
       } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
         console.log('3 %s', delta);
@@ -1249,43 +1249,79 @@ sincloApp.controller('WidgetCtrl', function($scope){
       <?php endif; ?>
     };
 
-    $scope.getMaxWidgetHeight = function() {
-      switch(Number($scope.widgetSizeTypeToggle)) {
+    $scope._getMaxWidgetHeight = function() {
+      var offset = $scope._getMessageAreaOffset();
+      switch(Number($scope.widgetSizeType)) {
         case 1:
-          return 405;
+          return 405 - offset;
         case 2:
-          return 496;
+          return 496 - offset;
         case 3:
-          return 596;
+          return 596 - offset;
         default:
-          return 496;
+          return 496 - offset;
       }
     };
 
-    $scope.getMinWidgetHeight = function() {
-      switch(Number($scope.widgetSizeTypeToggle)) {
+    $scope._getMinWidgetHeight = function() {
+      var offset = $scope._getMessageAreaOffset();
+      switch(Number($scope.widgetSizeType)) {
         case 1:
-          return 318;
+          return 318 - offset;
         case 2:
-          return 364;
+          return 364 - offset;
         case 3:
-          return 409;
+          return 409 - offset;
         default:
-          return 364;
+          return 364 - offset;
       }
     };
 
-    $scope.getMaxChatTalkHeight = function() {
-      switch(Number($scope.widgetSizeTypeToggle)) {
+    $scope._getMaxChatTalkHeight = function() {
+      var offset = $scope._getMessageAreaOffset(true);
+      switch(Number($scope.widgetSizeType)) {
         case 1:
           // 小
-          return 194;
+          return 194 + offset;
         case 2:
-          return 284;
+          return 284 + offset;
         case 3:
-          return 374;
+          return 374 + offset;
         default:
-          return 284;
+          return 284 + offset;
+      }
+    };
+
+    $scope._getMinChatTalkHeight = function() {
+      var offset = $scope._getMessageAreaOffset(true);
+      switch(Number($scope.widgetSizeType)) {
+        case 1:
+          // 小
+          return 97 + offset;
+        case 2:
+          return 142+ offset;
+        case 3:
+          return 187 + offset;
+        default:
+          return 142 + offset;
+      }
+    };
+
+    $scope._getMessageAreaOffset = function(forChatTalkOffset) {
+      var invisibleUIOffset = 0;
+      if(!forChatTalkOffset) {
+        if(!$('#sincloAccessInfo').is(':visible')) {
+          invisibleUIOffset += 26.5;
+        }
+        invisibleUIOffset +=  53 - $('#descriptionSet').height();
+      }
+      if($('#messageBox').is(':visible')) {
+        return 0 + invisibleUIOffset;
+      } else if($('#miniFlexBoxHeight').is(':visible')) {
+        return 27 + invisibleUIOffset;
+      } else {
+        // とりあえず表示されている状態
+        return 0 + invisibleUIOffset;
       }
     };
 
