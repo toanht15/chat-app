@@ -901,7 +901,7 @@ var socket, // socket.io
         html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; position: absolute; top: calc(50% - 8px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       }
 
-      html += '      #sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
+      html += '      #sincloBox div#sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
       html += '      #sincloBox section { display: none; padding: 0!important; top:0px!important; }';
       html += '      #sincloBox .flexBox { position: relative; display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column }';
@@ -1037,17 +1037,17 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul li.selected::before{ color: ' + colorList['mainColor'] + '; }';
       //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
       if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
-        html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
-        html += '      #sincloBanner .sinclo-fa { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
-        html += '      #sincloBanner .sinclo-fa.fa-comment:before { content: "\\f075" }';
-        html += '      #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 42px; width : -webkit-fit-content !important; width : -moz-fit-content !important; width : fit-content !important; background-color: '+ colorList['mainColor'] +'; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; color: '+ colorList['stringColor'] +'; margin: auto; filter:alpha(opacity=90); -moz-opacity: 0.9; opacity: 0.9; cursor: pointer; }';
-        html += '      #sincloBanner .sincloBannerText{ display: flex; justify-content: center; align-items: center; height: 100%; width: auto!important; margin: 0 5px; }';
-        html += '      #sincloBanner.sincloBanner i{ color: '+ widget.stringColor +'; }';
-        html += '      #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 10px; cursor: pointer; }';
-        html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 13px; cursor: pointer; }';
-        html += '      #sincloBanner #bannerIcon { width: 24px; height: 24px; opacity: 1; margin: 0px 5px; }';
-        html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ colorList['stringColor'] +'; font-size: 12.5px; cursor: pointer; vertical-align: middle; margin-right: 5px; }';
-        html += '      #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
+        html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fa { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fa.fa-comment:before { content: "\\f075" }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 42px; width : -webkit-fit-content !important; width : -moz-fit-content !important; width : fit-content !important; background-color: '+ colorList['mainColor'] +'; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; color: '+ colorList['stringColor'] +'; margin: auto; filter:alpha(opacity=90); -moz-opacity: 0.9; opacity: 0.9; cursor: pointer; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner .sincloBannerText{ display: flex; justify-content: center; align-items: center; height: 100%; width: auto!important; margin: 0 5px; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner i{ color: '+ widget.stringColor +'; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .sinclo-comment{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 10px; cursor: pointer; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .sinclo-comment-notext{ transform: scale( 1 , 1.4 ); font-size: 17.5px; padding: 0 2px 0 13px; cursor: pointer; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner #bannerIcon { width: 24px; height: 24px; opacity: 1; margin: 0px 5px; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .bannertext{ color: '+ colorList['stringColor'] +'; font-size: 12.5px; cursor: pointer; vertical-align: middle; margin-right: 5px; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
         //スマホだったらpxの書き換え
 //        if ( check.smartphone() ) {
 //          widgetWidth = $(window).width() - 20;
@@ -1090,7 +1090,7 @@ var socket, // socket.io
           } else {
             html += '#sincloBox { width: ' + widgetWidth + 'px; }';
           }
-          html += '#sincloWidgetBox { box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
+          html += '#sincloBox div#sincloWidgetBox { box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
           html += '#sincloBox * { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
           html += '#sincloBox section#navigation ul { width: ' + widgetWidth + 'px }';
@@ -1214,13 +1214,13 @@ var socket, // socket.io
           html += '#sincloBox section#navigation ul li::before { margin-right: ' + (5 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; }';
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
-            html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
-            html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
-            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
-            html += '      #sincloBanner #bannerIcon { width: ' + Math.ceil(24 * ratio) + 'px; height: ' + Math.ceil(24 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
-            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; vertical-align: middle; margin-right: ' + (5 * ratio) + 'px; }';
-            html += '      #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
+            html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner #bannerIcon { width: ' + Math.ceil(24 * ratio) + 'px; height: ' + Math.ceil(24 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; vertical-align: middle; margin-right: ' + (5 * ratio) + 'px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .notext{ cursor: pointer; }';
           }
         }
         /* 横の場合 */
@@ -1228,7 +1228,7 @@ var socket, // socket.io
           var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
           var hRatio = chatAreaHeight * 0.07;
           html += '#sincloBox { left:0; right:0; bottom: 0; }';
-          html += '#sincloWidgetBox { box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow  + 'px rgba(0,0,0,0.1);}';
+          html += '#sincloBox div#sincloWidgetBox { box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow  + 'px rgba(0,0,0,0.1);}';
           html += '#sincloBox * { font-size: ' + hRatio + 'px }';
           if(widget.chatMessageCopy === 1) {
             html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.35em 2em 0; font-size: 1.2em;  user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; }';
@@ -1308,20 +1308,20 @@ var socket, // socket.io
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
             var ratio = 1.9;
-            html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
-            html += '      #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
-            html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
-            html += '      #sincloBanner #bannerIcon { width: ' + Math.ceil(24 * ratio) + 'px; height: ' + Math.ceil(24 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
-            html += '      #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (10 * ratio) +'px 0 '+ (3 * ratio) +'px; }';
-            html += '      #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
+            html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; }';
+            html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+            html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
+            html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
+            html += '      #sincloBox div#sincloBannerBox #sincloBanner #bannerIcon { width: ' + Math.ceil(24 * ratio) + 'px; height: ' + Math.ceil(24 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
+            html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (12.5 * ratio) +'px; padding: 0 '+ (10 * ratio) +'px 0 '+ (3 * ratio) +'px; }';
+            html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
           }
         }
       }
       /* PC版 */
       else {
 //        html += "      #sincloBox { width: " + widgetWidth + "px }";
-        html += "      #sincloWidgetBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px " + widget.boxShadow + "px " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0;}";
+        html += "      #sincloBox div#sincloWidgetBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px " + widget.boxShadow + "px " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0;}";
         html += '      #sincloBox * { line-height: 1.4; font-size: '+ sizeList['d12font'] +'px; }';
         html += '      #sincloBox sinclo-div#widgetHeader:after { top: 32px }';
 //        html += "      #sincloBox section { width: " + widgetWidth + "px }";
