@@ -8,7 +8,7 @@ class ScriptSettingsController extends AppController {
   public function beforeFilter(){
     parent::beforeFilter();
     $this->Auth->allow(['index','demopage','testpage','testpage2','testpage3','testpage4','testpage5','testpage6',
-      'testpage7','testpage8','testpage9','testpage10','confirm']);
+      'testpage7','testpage8','testpage9','confirm']);
   }
 
   public function beforeRender(){
