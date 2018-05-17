@@ -15,8 +15,6 @@
  */
 $naviElm = "";
 $contentStyle = "";
-$this->log('action',LOG_DEBUG);
-$this->log($this->action,LOG_DEBUG);
 if( (strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
   && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'ScriptSettings') !== 0) ||
   (strcmp($this->name, 'ScriptSettings') === 0 && strcmp($this->action, 'index') === 0)) {
@@ -155,7 +153,6 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
 </head>
 <body>
   <div id="container">
-   <?php if( strcmp($this->action, 'testpage') !== 0) { ?>
     <div id="header">
       <?php if( (strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
       && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'ScriptSettings') !== 0) ||
@@ -163,7 +160,6 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>
-    <?php } ?>
     <div id="content" style="<?=$contentStyle?>">
       <?= $this->element('popupOverlap') ?>
       <?= $this->element('popup') ?>
