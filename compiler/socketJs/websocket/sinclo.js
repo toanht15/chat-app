@@ -1562,7 +1562,7 @@
     displayTextarea : function(){
       if(!document.getElementById("flexBoxWrap")) return;
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
-      if(!check.smartphone() && document.getElementById("flexBoxWrap").style.display === 'none') {
+      if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
 
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
       }
@@ -1598,7 +1598,7 @@
     hideTextarea : function(){
       if(!document.getElementById("flexBoxWrap")) return;
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
-      if(!check.smartphone() && document.getElementById("flexBoxWrap").style.display === '') {
+      if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === '') {
         document.getElementById("flexBoxWrap").style.display = 'none';
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
       }
@@ -1928,7 +1928,7 @@
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
             sinclo.resizeTextArea();
             if(!check.smartphone()) {
-              common.widgetHandler._handleResizeEvent();
+              common.widgetHandler._handleResizeEvent();Z
               $('#sincloChatMessage').focus();
             }
           }
@@ -3107,7 +3107,8 @@
                         storage.s.set('preWidgetOpened', true);
                       } else if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                         console.log("オートメッセージ最大化処理");
-                        if(storage.s.get("bannerAct") === "true") {
+                        if(storag
+                          e.s.get("bannerAct") === "true") {
                           sinclo.operatorInfo.clickBanner(true);
                         }
                         sinclo.operatorInfo.ev();
