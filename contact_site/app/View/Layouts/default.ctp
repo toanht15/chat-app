@@ -77,7 +77,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     if ( strcmp($this->name, 'TAutoMessages') === 0 || strcmp($this->name, 'MOperatingHours') === 0) {
       echo $this->Html->css("clockpicker.css");
     }
-    echo $this->Html->css("style.css");
+    if ( strcmp($this->name, 'ScriptSettings') !== 0 || strcmp($this->action, 'index') === 0) {
+      echo $this->Html->css("style.css");
+    }
     echo $this->Html->css("modal.css");
     if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->css("daterangepicker.css");

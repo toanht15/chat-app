@@ -930,15 +930,15 @@ input:not([type]), input[type="email" i], input[type="number" i], input[type="pa
     padding: 1px 0px;
 }
 input {
-    -webkit-appearance: textfield !important;
-    background-color: white !important;
-    -webkit-rtl-ordering: logical !important;
-    cursor: text !important;
+    -webkit-appearance: textfield;
+    background-color: white;
+    -webkit-rtl-ordering: logical;
+    cursor: text;
     padding: 1px;
-    border-width: 2px !important;
-    border-style: inset !important;
-    border-color: initial !important;
-    border-image: initial !important;
+    border-width: 2px;
+    border-style: inset;
+    border-color: initial;
+    border-image: initial;
 }
 select {
     padding: 0;
@@ -952,63 +952,63 @@ select {
     cursor: pointer;
 }
 input[type="checkbox" i] {
-    margin: 3px 3px 3px 4px !important;
+    margin: 3px 3px 3px 4px;
 }
 input[type="checkbox" i] {
-    -webkit-appearance: checkbox !important;
-    box-sizing: border-box !important;
+    -webkit-appearance: checkbox;
+    box-sizing: border-box;
 }
 input[type="radio" i] {
-    background-color: initial !important;
-    cursor: default !important;
-    margin: 3px 0.5ex !important;
-    padding: initial !important;
-    border: initial !important;
-    -webkit-appearance: radio !important;
+    background-color: initial;
+    cursor: default;
+    margin: 3px 0.5ex;
+    padding: initial;
+    border: initial;
+    -webkit-appearance: radio;
 }
 input[type="checkbox" i] {
-    background-color: initial !important;
-    cursor: default !important;
-    margin: 3px 0.5ex !important;
-    padding: initial !important;
-    border: initial !important;
+    background-color: initial;
+    cursor: default;
+    margin: 3px 0.5ex;
+    padding: initial;
+    border: initial;
 }
 input, textarea, select, button {
-    text-rendering: auto !important;
-    color: initial !important;
-    letter-spacing: normal !important;
-    word-spacing: normal !important;
-    text-transform: none !important;
-    text-indent: 0px !important;
-    text-shadow: none !important;
-    display: inline-block !important;
-    text-align: start !important;
-    margin: 0em !important;
-    font: 400 13.3333px Arial !important;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    margin: 0em;
+    font: 400 13.3333px Arial;
 }
 input, textarea, select, button, meter, progress {
-    -webkit-writing-mode: horizontal-tb !important;
+    -webkit-writing-mode: horizontal-tb;
 }
 input[type="button" i], input[type="submit" i], input[type="reset" i], input[type="file" i]::-webkit-file-upload-button, button {
-    padding: 1px 6px !important;
+    padding: 1px 6px;
 }
 input[type="button" i], input[type="submit" i], input[type="reset" i], input[type="file" i]::-webkit-file-upload-button, button {
-    align-items: flex-start !important;
-    text-align: center !important;
-    cursor: default !important;
-    color: buttontext !important;
-    background-color: buttonface !important;
-    box-sizing: border-box !important;
-    padding: 2px 6px 3px !important;
-    border-width: 2px !important;
-    border-style: outset !important;
-    border-color: buttonface !important;
-    border-image: initial !important;
+    align-items: flex-start;
+    text-align: center;
+    cursor: default;
+    color: buttontext;
+    background-color: buttonface;
+    box-sizing: border-box;
+    padding: 2px 6px 3px;
+    border-width: 2px;
+    border-style: outset;
+    border-color: buttonface;
+    border-image: initial;
 }
 input[type="button" i], input[type="submit" i], input[type="reset" i] {
-    -webkit-appearance: push-button !important;
-    user-select: none !important;
-    white-space: pre !important;
+    -webkit-appearance: push-button;
+    user-select: none;
+    white-space: pre;
 }
 * {
   box-sizing: unset;
