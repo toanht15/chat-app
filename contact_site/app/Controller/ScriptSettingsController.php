@@ -8,7 +8,13 @@ class ScriptSettingsController extends AppController {
   public function beforeFilter(){
     parent::beforeFilter();
     $this->Auth->allow(['index','demopage','testpage','testpage2','testpage3','testpage4','testpage5','testpage6',
-      'testpage7','testpage8','testpage9','confirm']);
+      'testpage7','testpage8','testpage9','testpage10','confirm']);
+    if(isset($this->coreSettings[C_COMPANY_USE_SYNCLO]) && $this->coreSettings[C_COMPANY_USE_SYNCLO]) {
+      $this->set('plan', 'synclo');
+    }
+    else {
+      $this->set('plan', 'chat');
+    }
   }
 
   public function beforeRender(){
@@ -41,6 +47,9 @@ class ScriptSettingsController extends AppController {
       else if(strpos($url,'/testpage9') !== false){
         $start = mb_strpos(Router::url(), '/testpage9')+11;
       }
+      else if(strpos($url,'/testpage10') !== false){
+        $start = mb_strpos(Router::url(), '/testpage10')+12;
+      }
       else if(strpos($url,'/confirm') !== false){
         $start = mb_strpos(Router::url(), '/confirm')+9;
       }
@@ -69,17 +78,27 @@ class ScriptSettingsController extends AppController {
   }
 
   public function testpage(){
+    Configure::write('debug', 0);
     $this->set('title_for_layout', '目次');
     $this->set('layoutNumber', 1);
   }
 
   public function testpage2(){
+    Configure::write('debug', 0);
     $this->set('layoutNumber', 2);
-    $this->set('title_for_layout', "ウィジェット非表示タグ");
+    $this->set('title_for_layout', "プラン・費用");
     $this->render('testpage');
   }
 
   public function testpage3(){
+    Configure::write('debug', 0);
+    $this->set('layoutNumber', 3);
+    $this->set('title_for_layout', "制作の流れ");
+    $this->render('testpage');
+  }
+
+  public function testpage4(){
+    Configure::write('debug', 0);
     $option = array(
       '都道府県選択' => '都道府県選択',
       '北海道' => '北海道',
@@ -130,50 +149,57 @@ class ScriptSettingsController extends AppController {
       '鹿児島県' => '鹿児島県',
       '沖縄県' => '沖縄県'
     );
-    $this->set('layoutNumber', 3);
+    $this->set('layoutNumber', 4);
     $this->set('title_for_layout', "フォーム用タグ");
     $this->set('option', $option);
     $this->render('testpage');
   }
 
-  public function testpage4(){
-    $this->set('layoutNumber', 4);
+  public function testpage5(){
+    Configure::write('debug', 0);
+    $this->set('layoutNumber', 5);
     $this->set('title_for_layout', "会社概要");
     $this->render('testpage');
   }
 
-  public function testpage5(){
-    $this->set('layoutNumber', 5);
+  public function testpage6(){
+    Configure::write('debug', 0);
+    $this->set('layoutNumber', 6);
     $this->set('title_for_layout', "制作実績");
     $this->render('testpage');
   }
 
-  public function testpage6(){
-    $this->set('layoutNumber', 6);
+  public function testpage7(){
+    Configure::write('debug', 0);
+    $this->set('layoutNumber', 7);
     $this->set('title_for_layout', "スタッフ紹介");
     $this->render('testpage');
   }
 
-  public function testpage7(){
-    $this->set('layoutNumber', 7);
+  public function testpage8(){
+    Configure::write('debug', 0);
+    $this->set('layoutNumber', 8);
     $this->set('title_for_layout', "リンク集");
     $this->render('testpage');
   }
 
-  public function testpage8(){
-    $this->set('layoutNumber', 8);
+  public function testpage9(){
+    Configure::write('debug', 0);
+    $this->set('layoutNumber', 9);
     $this->set('title_for_layout', "よく頂く質問");
     $this->render('testpage');
   }
 
-  public function testpage9(){
-    $this->set('layoutNumber', 9);
+  public function testpage10(){
+    Configure::write('debug', 0);
+    $this->set('layoutNumber', 10);
     $this->set('title_for_layout', "キャンペーン情報");
     $this->render('testpage');
   }
 
   public function confirm(){
-    $this->set('layoutNumber', 10);
+    Configure::write('debug', 0);
+    $this->set('layoutNumber', 11);
     if ( !isset($this->data['ScriptSettings']) ) {
       $this->request->data['ScriptSettings'] = [];
     }

@@ -9,12 +9,143 @@
 
 <section>
 
-<h2>ウィジェット非表示タグの特徴</h2>
+<h2>プラン・費用</h2>
+
 <section class="list">
-<p style = "margin-left:0px;">画面同期を行う対象のページにしつつ、<br>
-ウィジェットの表示をさせないためのタグです。</p>
+<a href="#">
+<figure><?= $this->Html->image('sample1.jpg', array('alt' => "写真の説明", "class" => "mb15")) ?></figure>
+<h4>プランA</h4>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+<table class="ta1">
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+</table>
+</a>
 </section>
 
+<section class="list">
+<a href="#">
+<figure><?= $this->Html->image('sample1.jpg', array('alt' => "写真の説明", "class" => "mb15")) ?></figure>
+<h4>プランB</h4>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+<table class="ta1">
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+</table>
+</a>
+</section>
+
+<section class="list">
+<a href="#">
+<figure><?= $this->Html->image('sample1.jpg', array('alt' => "写真の説明", "class" => "mb15")) ?></figure>
+<h4>プランC</h4>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+<table class="ta1">
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+</table>
+</a>
+</section>
+
+<?php if($plan == 'synclo') { ?>
+<section class="list">
+<a href="#">
+<figure><?= $this->Html->image('sample1.jpg', array('alt' => "写真の説明", "class" => "mb15")) ?></figure>
+<h4>プランD</h4>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+<table class="ta1">
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+</table>
+</a>
+</section>
+
+<section class="list">
+<a href="#">
+<figure><?= $this->Html->image('sample1.jpg', array('alt' => "写真の説明", "class" => "mb15")) ?></figure>
+<h4>プランE</h4>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+<table class="ta1">
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+</table>
+</a>
+</section>
+
+
+<section class="list">
+<a href="#">
+<figure><?= $this->Html->image('sample1.jpg', array('alt' => "写真の説明", "class" => "mb15")) ?></figure>
+<h4>プランF</h4>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+<table class="ta1">
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+<tr>
+<th>見出し</th>
+<td>ここに説明など入れて下さい。サンプルテキスト。</td>
+</tr>
+</table>
+</a>
+</section>
+<?php } ?>
+</section>
 </div>
 <!--/main-->
 
