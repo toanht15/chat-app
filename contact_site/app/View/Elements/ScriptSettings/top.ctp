@@ -10,17 +10,19 @@
 <!--PC用（481px以上端末）メニュー-->
 <nav id="menubar">
 <ul>
-<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>">目次<span>Home</span></a></li>
-<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2',$company_key))?>">ウィジェット非表示タグ<span>Widget</span></a></li>
-<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3',$company_key))?>">フォーム用タグ <span>Form</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>">ホーム<span>Home</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2',$company_key))?>">プラン・費用<span>Plan</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3',$company_key))?>">制作の流れ<span>Flow</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage4',$company_key))?>">フォーム用タグ <span>Form</span></a></li>
 </ul>
 </nav>
 <!--スマホ用（480px以下端末）メニュー-->
 <nav id="menubar-s">
 <ul>
-<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>">目次<span>Home</span></a></li>
-<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2',$company_key))?>">ウィジェット非表示タグ<span>Widget</span></a></li>
-<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3',$company_key))?>">フォーム用タグ<span>Form</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>">ホーム<span>Home</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2',$company_key))?>">プラン・費用<span>Plan</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3',$company_key))?>">制作の流れ<span>Flow</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage4',$company_key))?>">フォーム用タグ<span>Form</span></a></li>
 </ul>
 </nav>
 </div>
@@ -34,7 +36,7 @@
 
 <section>
 
-<h2>モニタリングでは以下のことが可能です</h2>
+<h2>画面共有では以下のことが可能です</h2>
 <section class="list">
 <p style = "margin-left:0px;">○ページ同期（ページ遷移にも対応）</p>
 <p style = "margin-left:0px;">○スクロールの共有</p>
