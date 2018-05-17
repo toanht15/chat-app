@@ -92,7 +92,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
   <h2><?= mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．デモサイト</h2>
   <section>
     <pre>下記サイトにてウィジェットの確認やsincloの動作確認、事前トレーニングを行うことができます。</pre>
-    【 <?= $this->Html->link('デモサイトへ', array('controller' => 'ScriptSettings', 'action' => 'testpage'), array('target' => '_demo', 'class' => 'underL')) ?> 】
+    【 <?= $this->Html->link('デモサイトへ', array('controller' => 'ScriptSettings', 'action' => 'testpage',$companyKey), array('target' => '_demo', 'class' => 'underL')) ?> 】
   </section>
 </div>
 
