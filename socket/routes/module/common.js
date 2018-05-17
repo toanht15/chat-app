@@ -155,6 +155,10 @@ function loadAutoMessageSettings(siteKey, callback) {
           autoMessageSettings[siteKey] = rows;
           syslogger.info("Load AutoMessage setting OK. siteKey : " + siteKey);
           module.exports.autoMessageSettings = autoMessageSettings;
+        } else {
+          syslogger.info('siteKey: %s automessage is not found.',siteKey);
+          autoMessageSettings[siteKey] = [];
+          module.exports.autoMessageSettings = autoMessageSettings;
         }
         if(callback) callback();
       }
@@ -178,6 +182,12 @@ function loadAutoMessageSettings(siteKey, callback) {
               autoMessageSettings[targetSiteKey] = [];
             }
             autoMessageSettings[targetSiteKey].push(row);
+          });
+          Object.keys(companySettings).forEach(function(elm, index, arr){
+            if(!autoMessageSettings[elm]) {
+              syslogger.info('siteKey: %s automessage is not found.',elm);
+              autoMessageSettings[elm] = [];
+            }
           });
           syslogger.info('Load ALL Auto Message settings is successful.');
           module.exports.autoMessageSettings = autoMessageSettings;
@@ -205,6 +215,10 @@ function loadOperatingHourSettings(siteKey, callback) {
           operationHourSettings[siteKey] = row;
           syslogger.info("Load Operating-hour setting OK. siteKey : " + siteKey);
           module.exports.operationHourSettings = operationHourSettings;
+        } else {
+          syslogger.info('siteKey: %s operationHourSettings is not found.',siteKey);
+          operationHourSettings[siteKey] = [];
+          module.exports.operationHourSettings = operationHourSettings;
         }
         if(callback) callback();
       }
@@ -226,6 +240,12 @@ function loadOperatingHourSettings(siteKey, callback) {
             operationHourSettings[targetSiteKey] = [];
             // row = object
             operationHourSettings[targetSiteKey].push(row);
+          });
+          Object.keys(companySettings).forEach(function(elm, index, arr){
+            if(!operationHourSettings[elm]) {
+              syslogger.info('siteKey: %s operationHourSettings is not found.',elm);
+              operationHourSettings[elm] = [];
+            }
           });
           syslogger.info('Load ALL Operating-hour settings is successful.');
           module.exports.operationHourSettings = operationHourSettings;
