@@ -3107,8 +3107,7 @@
                         storage.s.set('preWidgetOpened', true);
                       } else if ( Number(cond.widgetOpen) === 1 && String(flg) === "false" ) {
                         console.log("オートメッセージ最大化処理");
-                        if(storag
-                          e.s.get("bannerAct") === "true") {
+                        if(storage.s.get("bannerAct") === "true") {
                           sinclo.operatorInfo.clickBanner(true);
                         }
                         sinclo.operatorInfo.ev();
