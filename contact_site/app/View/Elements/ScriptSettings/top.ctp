@@ -1,5 +1,13 @@
 <header id = "top">
 <div class="inner">
+<?php
+  if($plan == 'chat'){
+    $name = "お問い合わせ";
+  }
+  else if($plan == 'sharing'){
+    $name = "フォーム用タグ";
+  }
+?>
 <h1 id="logo"><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>"><?= $this->Html->image('logo.png', array('alt' => "Sample Company")) ?></a></h1>
 <p id="tel">TEL:0120-000-000<span>AM9:00〜PM6:00　水曜定休</span></p>
 </div>
@@ -13,7 +21,7 @@
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>">ホーム<span>Home</span></a></li>
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2',$company_key))?>">プラン・費用<span>Plan</span></a></li>
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3',$company_key))?>">制作の流れ<span>Flow</span></a></li>
-<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage4',$company_key))?>">フォーム用タグ <span>Form</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage4',$company_key))?>"><?= $name ?><span>Form</span></a></li>
 </ul>
 </nav>
 <!--スマホ用（480px以下端末）メニュー-->
@@ -22,7 +30,7 @@
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>">ホーム<span>Home</span></a></li>
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2',$company_key))?>">プラン・費用<span>Plan</span></a></li>
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3',$company_key))?>">制作の流れ<span>Flow</span></a></li>
-<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage4',$company_key))?>">フォーム用タグ<span>Form</span></a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage4',$company_key))?>"><?= $name ?><span>Form</span></a></li>
 </ul>
 </nav>
 </div>
@@ -34,6 +42,61 @@
 
 <div id="main">
 
+<?php
+  if($plan == 'chat'){
+?>
+
+<section>
+
+<section id="new">
+<h2 id="newinfo_hdr" class="close">更新情報・お知らせ</h2>
+<dl id="newinfo">
+<dt>20XX/00/00</dt>
+<dd>サンプルテキスト。サンプルテキスト。サンプルテキスト。<span class="newicon">NEW</span></dd>
+<dt>20XX/00/00</dt>
+<dd>サンプルテキスト。サンプルテキスト。サンプルテキスト。</dd>
+<dt>20XX/00/00</dt>
+<dd>サンプルテキスト。サンプルテキスト。サンプルテキスト。</dd>
+<dt>20XX/00/00</dt>
+<dd>サンプルテキスト。サンプルテキスト。サンプルテキスト。</dd>
+<dt>20XX/00/00</dt>
+<dd>サンプルテキスト。サンプルテキスト。サンプルテキスト。</dd>
+<dt>20XX/00/00</dt>
+<dd>サンプルテキスト。サンプルテキスト。サンプルテキスト。</dd>
+<dt>20XX/00/00</dt>
+<dd>サンプルテキスト。サンプルテキスト。サンプルテキスト。</dd>
+</dl>
+</section>
+
+<section>
+<h2>サンプルテキスト。サンプルテキスト。サンプルテキスト。</h2>
+
+<h3>サンプルテキスト。サンプルテキスト。サンプルテキスト。</h3>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+<p><span class="color1">■<strong>サンプルテキスト。サンプルテキスト。サンプルテキスト。</strong></span><br>
+サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+<p><span class="color1">■<strong>サンプルテキスト。サンプルテキスト。サンプルテキスト。</strong></span><br>
+サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+
+<h3>サンプルテキスト。サンプルテキスト。サンプルテキスト。</h3>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+
+<h3>サンプルテキスト。サンプルテキスト。サンプルテキスト。</h3>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+
+</section>
+
+<section>
+<h2>サンプルテキスト。サンプルテキスト。サンプルテキスト。</h2>
+<p>サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
+</section>
+
+</section>
+
+<?php
+  }
+  else if($plan == 'sharing'){
+?>
 <section>
 
 <h2>画面共有では以下のことが可能です</h2>
@@ -47,7 +110,7 @@
 <br>他ページにて上記動作を試してみてください。
 
 </section>
-
+<?php } ?>
 </div>
 <!--/main-->
 
