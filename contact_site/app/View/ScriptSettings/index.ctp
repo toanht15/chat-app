@@ -24,8 +24,6 @@
 <?php
 $headerNo = 1;
 $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイト" ;
-$this->log('プラン！',LOG_DEBUG);
-$this->log($plan,LOG_DEBUG);
 ?>
 <div id='script_setting_idx' class="card-shadow">
 
