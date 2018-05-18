@@ -62,7 +62,7 @@ class ScriptSettingsController extends AppController {
       $this->set("company_key", substr($url, $start));
     }
     $fileName = C_NODE_SERVER_ADDR . C_NODE_SERVER_FILE_PORT . "/client/" . $company_key . ".js";
-    $plan = $this->MCompany->find('all', [
+    $plan = $this->MCompany->find('first', [
       'fields' => [
         'core_settings'
       ],
@@ -70,7 +70,7 @@ class ScriptSettingsController extends AppController {
         'company_key' => $company_key
       ]
     ]);
-    $plan = json_decode($plan[0]['MCompany']['core_settings']);
+    $plan = json_decode($plan['MCompany']['core_settings']);
     //ベーシック、スタンダード
     if($plan->chat == 1 && empty($plan->synclo)) {
       $plan = "chat";
