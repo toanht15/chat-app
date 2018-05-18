@@ -5,6 +5,8 @@
  */
 class ScriptSettingsController extends AppController {
 
+  public $uses = ['MCompany'];
+
   public function beforeFilter(){
     parent::beforeFilter();
     $this->Auth->allow(['index','demopage','testpage','testpage2','testpage3','testpage4','testpage5','testpage6',
@@ -50,16 +52,34 @@ class ScriptSettingsController extends AppController {
       else if(strpos($url,'/testpage10') !== false){
         $start = mb_strpos(Router::url(), '/testpage10')+12;
       }
-      else if(strpos($url,'/confirm') !== false){
-        $start = mb_strpos(Router::url(), '/confirm')+9;
-      }
       else if(strpos($url,'/testpage') !== false){
         $start = mb_strpos(Router::url(), '/testpage')+10;
+      }
+      else if(strpos($url,'/confirm') !== false){
+        $start = mb_strpos(Router::url(), '/confirm')+9;
       }
       $company_key = substr($url, $start);
       $this->set("company_key", substr($url, $start));
     }
     $fileName = C_NODE_SERVER_ADDR . C_NODE_SERVER_FILE_PORT . "/client/" . $company_key . ".js";
+    $plan = $this->MCompany->find('first', [
+      'fields' => [
+        'core_settings'
+      ],
+      'conditions' => [
+        'company_key' => $company_key
+      ]
+    ]);
+    $plan = json_decode($plan['MCompany']['core_settings']);
+    //ベーシック、スタンダード
+    if($plan->chat == 1 && empty($plan->synclo)) {
+      $plan = "chat";
+    }
+    //シェアリング、プレミアム
+    else if(($plan->chat == 1 && $plan->synclo == 1) || (empty($plan->chat) && $plan->synclo == 1)) {
+      $plan = "sharing";
+    }
+    $this->set("plan", $plan);
     $this->set("fileName", $fileName);
     $this->set("optList", [
       'sexes' => ["男性", "女性"],

@@ -2,12 +2,9 @@
     <style>body { overflow: auto!important; }</style>
 <?php switch($layoutNumber){ ?>
 <?php   case 1: ?>
-  <?php if($plan == 'chat') {
-    echo $this->element('ScriptSettings/chatTop');
-  }
-  else {
+  <?php
     echo $this->element('ScriptSettings/top');
-  } ?>
+  ?>
     <?php echo $this->Html->script($fileName, ['data-show-always' => 1]); ?>
 <?php     break; ?>
 <?php   case 2: ?>
@@ -19,12 +16,7 @@
      <?php echo $this->Html->script($fileName, ['data-form' => 1, 'data-show-always' => 1]); ?>
 <?php     break; ?>
 <?php   case 4: ?>
-  <?php if($plan == 'chat') {
-    echo $this->element('ScriptSettings/chatContact');
-  }
-  else {
-    echo $this->element('ScriptSettings/contact');
-  } ?>
+  <?= $this->element('ScriptSettings/contact'); ?>
      <?php echo $this->Html->script($fileName, ['data-form' => 1, 'data-show-always' => 1]); ?>
 <?php     break; ?>
 <?php   case 5: ?>
