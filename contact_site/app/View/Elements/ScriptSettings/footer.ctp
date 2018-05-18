@@ -1,18 +1,18 @@
 <footer>
-
+<?php
+  if($plan == 'chat'){
+    $name = "お問い合わせ";
+  }
+  else if($plan == 'sharing'){
+    $name = "フォーム用タグ";
+  }
+?>
 <div id="footermenu">
 <ul>
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>">ホーム</a></li>
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage2',$company_key))?>">プラン・費用</a></li>
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage3',$company_key))?>">制作の流れ</a></li>
-<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage4',$company_key))?>">
-<?php if($plan == 'chat') { ?>
-  お問い合わせ
-<?php }
-  else { ?>
-  フォーム用タグ
-<?php } ?>
-</a></li>
+<li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage4',$company_key))?>"><?= $name ?></a></li>
 </ul>
 <ul>
 <li><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage5',$company_key))?>">会社概要</a></li>

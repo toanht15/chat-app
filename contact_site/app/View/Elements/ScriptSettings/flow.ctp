@@ -33,7 +33,9 @@
 <p>サンプルテキスト。サンプルテキスト。サンプルテキスト。</p>
 </section>
 
-<?php if($plan == 'synclo') { ?>
+<?php
+  if($plan == 'sharing'){
+?>
 <p class="c"><?= $this->Html->image('arrow.png', array('alt' => "")) ?></p>
 
 <section class="list">
