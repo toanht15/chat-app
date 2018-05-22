@@ -78,6 +78,19 @@ router.get("/", function(req, res, next) {
             res.send(sendData);
             return false;
           }
+        } else {
+          // 契約終了日を確認
+          var nowTimestamp = (new Date()).getTime(),
+            agreementEndDay = new Date(common.companySettings[siteKey].agreement_end_day);
+          // 正しくは23時59分59秒なのでセットする
+          agreementEndDay.setHours(23);
+          agreementEndDay.setMinutes(59);
+          agreementEndDay.setSeconds(59);
+          if (nowTimestamp > agreementEndDay.getTime()) {
+            sendData.status = false;
+            res.send(sendData);
+            return false;
+          }
         }
         var core_settings = common.companySettings[siteKey].core_settings;
         var settings = common.widgetSettings[siteKey].style_settings;
