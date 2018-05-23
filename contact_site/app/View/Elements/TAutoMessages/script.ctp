@@ -555,7 +555,6 @@ var uploadFile = function(fileObj, loadFile) {
 $(document).ready(function(){
   // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
-    console.log('チェック');
     var parentTdId = $(this).parent().parent().attr('id');
     console.log(parentTdId);
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
@@ -568,7 +567,6 @@ $(document).ready(function(){
   });
 
   $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
-    console.log('チェック');
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');

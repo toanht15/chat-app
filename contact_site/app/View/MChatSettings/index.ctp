@@ -47,6 +47,7 @@ function reloadAct(){
 
 function addOption(type,sorryMessageName){
     sendMessage = document.getElementById(sorryMessageName);
+    //変数追加
     addVariable(type,sendMessage);
 }
 

@@ -153,8 +153,6 @@ class TAutoMessagesController extends AppController {
         (!(isset($this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]))) {
         $this->redirect("/");
       }
-      $this->log('saveData1',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $this->_entry($this->request->data);
     }
     else {
@@ -197,7 +195,6 @@ class TAutoMessagesController extends AppController {
       $this->request->data['TAutoMessage']['widget_open'] = (!empty($json['widgetOpen'])) ? $json['widgetOpen'] : "";
       $this->request->data['TAutoMessage']['chat_textarea'] = (!empty($json['chatTextarea'])) ? $json['chatTextarea'] : "";
       $this->request->data['TAutoMessage']['cv'] = (!empty($json['cv'])) ? $json['cv'] : "";
-      $this->request->data['TAutoMessage']['link'] = (!empty($json['link'])) ? $json['link'] : "";
       if (array_key_exists('send_mail_flg', $editData[0]['TAutoMessage'])) {
         $this->request->data['TAutoMessage']['send_mail_flg'] = $editData[0]['TAutoMessage']['send_mail_flg'];
         $transmissionData = $this->MMailTransmissionSetting->findById($editData[0]['TAutoMessage']['m_mail_transmission_settings_id']);
@@ -982,8 +979,6 @@ class TAutoMessagesController extends AppController {
     $this->set('outMessageTextarea', Configure::read('outMessageTextarea'));
     //cv
     $this->set('outMessageCvType', Configure::read('outMessageCvType'));
-    //リンク
-    $this->set('outMessageLinkType', Configure::read('outMessageLinkType'));
     // 有効無効
     $this->set('outMessageAvailableType', Configure::read('outMessageAvailableType'));
     // 画像パス

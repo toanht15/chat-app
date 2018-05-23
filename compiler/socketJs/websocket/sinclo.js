@@ -2232,7 +2232,6 @@
                         str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
                     }
                 }
-
                 // リンク
                 var link = str.match(linkReg);
                 var linkNewtab = str.match(linkNewtabReg);
@@ -2284,7 +2283,6 @@
                     str = str.replace(tel[0], span);
                   }
                 }
-
                 content += str + "\n";
             }
 

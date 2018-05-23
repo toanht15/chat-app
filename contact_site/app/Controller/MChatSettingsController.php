@@ -131,7 +131,6 @@ class MChatSettingsController extends AppController {
     $userRet = true;
     if ( !empty($saveData) ) {
       $userRet = $this->MUser->saveAll($saveData, ['validate' => 'only']);
-      $this->log( $userRet,LOG_DEBUG);
     }
 
     // ユーザーデータの一括バリデーションチェック
@@ -141,7 +140,7 @@ class MChatSettingsController extends AppController {
     }
 
     // 保存処理
-      if ( $this->MChatSetting->save() && $this->MUser->saveAll($saveData) ) {
+    if ( $this->MChatSetting->save() && $this->MUser->saveAll($saveData) ) {
       // 双方コミットし、true を返す
       $this->MChatSetting->commit();
       $this->MUser->commit();

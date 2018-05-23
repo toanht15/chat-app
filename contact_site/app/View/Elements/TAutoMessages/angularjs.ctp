@@ -175,6 +175,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
     $scope.addOption = function(type) {
       var sendMessage = document.getElementById('TAutoMessageAction');
+      //変数追加
       sendMessage = addVariable(type,sendMessage);
       $scope.action = sendMessage.value;
       // シミュレーター上のメッセージ表示更新
@@ -452,11 +453,8 @@ window.onload = function() {
 $(document).ready(function(){
   // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
-    console.log('チェックしよう');
     var parentTdId = $(this).parent().parent().attr('id');
-    console.log(parentTdId);
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    //console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 170 + topPosition) + 'px',
