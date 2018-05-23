@@ -1,4 +1,5 @@
 <?php
+define('APP_MODE_DEV', true);
 /* 定数定義 */
 define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
@@ -190,6 +191,10 @@ define('C_AUTO_WIDGET_TYPE_CLOSE', 2); // 自動で最大化しない
 // オートメッセージ機能－cv種別コード
 define('C_AUTO_CV_EFFECTIVENESS', 1); // cv登録する
 define('C_AUTO_CV_DISABLED', 2); // cv登録しない
+
+// オートメッセージ機能－リンク種別
+define('C_AUTO_LINK_ANOTHER_TAB', 1); // 別タブ表示
+define('C_AUTO_LINK_TRANSITION', 2); // ページ遷移
 
 // オートメッセージ機能－テキストエリア種別コード
 define('C_AUTO_WIDGET_TEXTAREA_OPEN', 1); // 自由入力可
@@ -666,6 +671,13 @@ $config['outMessageCvType'] = [
     C_AUTO_CV_EFFECTIVENESS => "する",
     C_AUTO_CV_DISABLED => "しない"
 ];
+
+/* オートメッセージ － リンク */
+$config['outMessageLinkType'] = [
+    C_AUTO_LINK_ANOTHER_TAB => "別タブ表示",
+    C_AUTO_LINK_TRANSITION => "ページ遷移"
+];
+
 
 /* シナリオ設定 - アクション種別 */
 $config['chatbotScenarioActionList'] = [

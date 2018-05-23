@@ -47,30 +47,7 @@ function reloadAct(){
 
 function addOption(type,sorryMessageName){
     sendMessage = document.getElementById(sorryMessageName);
-    switch(type){
-        case 1:
-            if (sendMessage.value.length > 0) {
-                sendMessage.value += "\n";
-            }
-            sendMessage.value += "[] ";
-            sendMessage.focus();
-            break;
-        case 2:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
-          }
-          sendMessage.value += "<telno></telno>";
-          sendMessage.focus();
-          // 開始と終了タブの真ん中にカーソルを配置する
-          if (sendMessage.createTextRange) {
-            var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-8);
-            range.select();
-          } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
-          }
-          break;
-    }
+    addVariable(type,sendMessage);
 }
 
 //スクロール位置把握
@@ -197,6 +174,8 @@ $(document).ready(function(){
             <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
               <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
               <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn linkNewTabButton settingOutsideHoursPhone" onclick="addOption(3,'MChatSettingOutsideHoursSorryMessage')" id = "secondSpeechLabel">リンク（別タブ表示）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn linkMovingButton settingOutsideHoursPhone" onclick="addOption(4,'MChatSettingOutsideHoursSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon questionBalloonPosition15"><icon class = "questionBtn">?</icon></div></span>
             <?=$this->Form->textarea('outside_hours_sorry_message')?>
             <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>
@@ -204,6 +183,8 @@ $(document).ready(function(){
             <pre id = "wating_call">(2)対応上限数を超えてのチャットが受信された場合</pre>
               <span class="greenBtn btn-shadow actBtn choiseButton settingWatingCallChoice" onclick="addOption(1,'MChatSettingWatingCallSorryMessage')">選択肢を追加する</span>
               <span class="greenBtn btn-shadow actBtn phoneButton settingWatingCallPhone" onclick="addOption(2,'MChatSettingWatingCallSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn linkNewTabButton settingWatingCallPhone" onclick="addOption(3,'MChatSettingWatingCallSorryMessage')" id = "secondSpeechLabel">リンク（別タブ表示）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn linkMovingButton settingWatingCallPhone" onclick="addOption(4,'MChatSettingWatingCallSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon questionBalloonPosition15"><icon class = "questionBtn">?</icon></div></span>
             <?=$this->Form->textarea('wating_call_sorry_message')?>
             <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>
@@ -211,6 +192,8 @@ $(document).ready(function(){
             <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
               <span class="greenBtn btn-shadow actBtn choiseButton" onclick="addOption(1,'MChatSettingNoStandbySorryMessage')">選択肢を追加する</span>
               <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingNoStandbySorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn linkNewTabButton" onclick="addOption(3,'MChatSettingNoStandbySorryMessage')" id = "secondSpeechLabel">リンク（別タブ表示）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn linkMovingButton" onclick="addOption(4,'MChatSettingNoStandbySorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon questionBalloonPosition15"><icon class = "questionBtn">?</icon></div></span>
             <?=$this->Form->textarea('no_standby_sorry_message')?>
             <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
           </li>
@@ -228,6 +211,20 @@ $(document).ready(function(){
       <icon-annotation>
         <ul>
           <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id='secondSpeechTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>このボタンを押すと挿入される＜link-newtab＞タグの間にURLを記入すると、リンクが別タブで開くようになります</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id='thirdSpeechTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>このボタンを押すと挿入される＜link-moving＞タグの間にURLを記入すると、リンクがページ遷移で開くようになります</span></li>
         </ul>
       </icon-annotation>
     </div>

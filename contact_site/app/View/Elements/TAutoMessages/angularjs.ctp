@@ -175,30 +175,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
     $scope.addOption = function(type) {
       var sendMessage = document.getElementById('TAutoMessageAction');
-      switch(type){
-        case 1:
-          if (sendMessage.value.length > 0) {
-              sendMessage.value += "\n";
-          }
-          sendMessage.value += "[] ";
-          sendMessage.focus();
-          break;
-        case 2:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
-          }
-          sendMessage.value += "<telno></telno>";
-          sendMessage.focus();
-          // 開始と終了タブの真ん中にカーソルを配置する
-          if (sendMessage.createTextRange) {
-            var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-8);
-            range.select();
-          } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
-          }
-          break;
-      }
+      sendMessage = addVariable(type,sendMessage);
       $scope.action = sendMessage.value;
       // シミュレーター上のメッセージ表示更新
       $scope.createMessage();
@@ -475,8 +452,11 @@ window.onload = function() {
 $(document).ready(function(){
   // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    console.log('チェックしよう');
     var parentTdId = $(this).parent().parent().attr('id');
+    console.log(parentTdId);
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    //console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
       top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 170 + topPosition) + 'px',

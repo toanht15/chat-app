@@ -358,7 +358,6 @@ router.get("/", function(req, res, next) {
           sendData['widget']['time_text'] = settings.timeText;
           sendData['widget']['display_time_flg'] = isNumeric(settings.displayTimeFlg);
         }
-
           var now = new Date();
           var nowDay = now.getDay();
           var dateParse = Date.parse(now);

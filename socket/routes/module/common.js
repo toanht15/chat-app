@@ -141,6 +141,7 @@ function initializeSettings(siteKey) {
 function loadAutoMessageSettings(siteKey, callback) {
   'use strict';
   var getTriggerListSql  = "SELECT am.*, company_key FROM t_auto_messages AS am ";
+  console.log('common');
   if(siteKey) {
     syslogger.info("loadAutoMessageSettings target : " + siteKey);
     getTriggerListSql += " INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = am.m_companies_id )";

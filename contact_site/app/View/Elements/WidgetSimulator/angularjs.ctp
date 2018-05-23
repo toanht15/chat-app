@@ -172,6 +172,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     },0);
   });
 
+
   /**
    * 自由入力エリアの改行入力の許可状態を一時的に切り替える
    * （allowSendMessageByShiftEnterと同時に設定しないことを前提とする）
