@@ -375,7 +375,6 @@ sincloApp.factory('SimulatorService', function() {
      * @return String       変換したメッセージ
      */
     createMessage: function(val, prefix) {
-
       if (val === '') return;
       prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
       var isSmartphone = this._showWidgetType != 1;
@@ -385,20 +384,14 @@ sincloApp.factory('SimulatorService', function() {
       var radioCnt = 1;
       var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+      var linkNewtabReg = RegExp(/&lt;link-newtab&gt;([\s\S]*?)&lt;\/link-newtab&gt;/);
+      var linkMovingReg = RegExp(/&lt;link-moving&gt;([\s\S]*?)&lt;\/link-moving&gt;/);
       var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
       var radioName = prefix + "sinclo-radio" + messageIndex;
       var content = "";
 
       for (var i = 0; strings.length > i; i++) {
         var str = escape_html(strings[i]);
-
-        // リンク
-        var link = str.match(linkReg);
-        if ( link !== null ) {
-            var url = link[0];
-            var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
-            str = str.replace(url, a);
-        }
         // ラジオボタン
         var radio = str.indexOf('[]');
         if ( radio > -1 ) {
@@ -407,20 +400,8 @@ sincloApp.factory('SimulatorService', function() {
             str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
             str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
         }
-        // 電話番号（スマホのみリンク化）
-        var tel = str.match(telnoTagReg);
-        if( tel !== null ) {
-          var telno = tel[1];
-          if(isSmartphone) {
-            // リンクとして有効化
-            var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
-            str = str.replace(tel[0], a);
-          } else {
-            // ただの文字列にする
-            var span = "<span class='telno'>" + telno + "</span>";
-            str = str.replace(tel[0], span);
-          }
-        }
+        //リンク、電話番号
+        str = replaceVariable(str,linkReg,linkNewtabReg,linkMovingReg,telnoTagReg,isSmartphone);
         content += str + "\n";
       }
 

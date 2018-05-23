@@ -6220,7 +6220,7 @@ ul.naviBtn {
               border-left: 9px solid transparent;
               border-right: 9px solid transparent;
               position: absolute;
-              bottom: -10px;
+              bottom: -55px;
               left: 9px;
               z-index: 1;
             }
@@ -6232,7 +6232,7 @@ ul.naviBtn {
               border-left: 9px solid transparent;
               border-right: 9px solid transparent;
               position: absolute;
-              bottom: -8px;
+              bottom: -53px;
               left: 9px;
               z-index: 3;
             }
@@ -8567,6 +8567,21 @@ ul.naviBtn {
       text-align: center;
       cursor: pointer;
       margin: -1.4em 0 0 12em;
+    }
+
+    .linkNewTabButton {
+      width: 12em;
+      text-align: center;
+      cursor: pointer;
+      margin: 1em 0 0 1em;
+      display:inline-block;
+    }
+
+    .linkMovingButton {
+      width: 12em;
+      text-align: center;
+      cursor: pointer;
+      margin: -1.4em 0 0 14em;
     }
 
     .questionBalloon {
