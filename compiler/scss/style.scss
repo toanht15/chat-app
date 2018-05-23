@@ -8570,7 +8570,7 @@ ul.naviBtn {
     }
 
     .linkNewTabButton {
-      width: 12em;
+      width: 11.7em;
       text-align: center;
       cursor: pointer;
       margin: 1em 0 0 1em;
@@ -8578,10 +8578,30 @@ ul.naviBtn {
     }
 
     .linkMovingButton {
-      width: 12em;
+      width: 11.7em;
       text-align: center;
       cursor: pointer;
-      margin: -1.4em 0 0 14em;
+      margin: -1.4em 0 0 13.6em;
+    }
+
+    /*safariの場合*/
+    @media screen and (-webkit-min-device-pixel-ratio:0) {
+      ::i-block-chrome, .contents-block {
+        .linkNewTabButton {
+          width: 12.5em !important;
+          text-align: center;
+          cursor: pointer;
+          margin: 1em 0 0 1em;
+          display:inline-block;
+        }
+
+        .linkMovingButton {
+          width: 12.5em !important;
+          text-align: center;
+          cursor: pointer;
+          margin: -1.4em 0 0 14.5em !important;
+        }
+      }
     }
 
     .questionBalloon {
