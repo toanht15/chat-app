@@ -175,30 +175,8 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
     $scope.addOption = function(type) {
       var sendMessage = document.getElementById('TAutoMessageAction');
-      switch(type){
-        case 1:
-          if (sendMessage.value.length > 0) {
-              sendMessage.value += "\n";
-          }
-          sendMessage.value += "[] ";
-          sendMessage.focus();
-          break;
-        case 2:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
-          }
-          sendMessage.value += "<telno></telno>";
-          sendMessage.focus();
-          // 開始と終了タブの真ん中にカーソルを配置する
-          if (sendMessage.createTextRange) {
-            var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-8);
-            range.select();
-          } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
-          }
-          break;
-      }
+      //変数追加
+      sendMessage = addVariable(type,sendMessage);
       $scope.action = sendMessage.value;
       // シミュレーター上のメッセージ表示更新
       $scope.createMessage();

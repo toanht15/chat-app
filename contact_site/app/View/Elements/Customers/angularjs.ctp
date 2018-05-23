@@ -937,7 +937,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
       }
     }
-    
+
     $scope.openHistory = function(monitor){
         var retList = {};
         $.ajax({
@@ -1304,8 +1304,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
       var strings = message.split('\n');
+      var isSmartphone = this._showWidgetType != 1;
       var custom = "";
       var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
+      var linkNewtabReg = RegExp(/&lt;link-newtab&gt;([\s\S]*?)&lt;\/link-newtab&gt;/);
+      var linkMovingReg = RegExp(/&lt;link-moving&gt;([\s\S]*?)&lt;\/link-moving&gt;/);
       var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
@@ -1318,21 +1321,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
           str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
         }
-        // リンク
-        var link = str.match(linkReg);
-        if ( link !== null ) {
-          var url = link[0];
-          var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
-          str = str.replace(url, a);
-        }
-        // 電話番号（スマホのみリンク化）
-        var tel = str.match(telnoTagReg);
-        if( tel !== null ) {
-          var telno = tel[1];
-          // ただの文字列にする
-          var span = "<span class='telno'>" + telno + "</span>";
-          str = str.replace(tel[0], span);
-        }
+        //リンク、電話番号
+        str = replaceVariable(str,linkReg,linkNewtabReg,linkMovingReg,telnoTagReg,isSmartphone);
         custom += str + "\n";
 
       }

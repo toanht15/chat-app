@@ -2203,6 +2203,8 @@
             var radioCnt = 1;
             var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
             var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+            var linkNewtabReg = RegExp(/&lt;link-newtab&gt;([\s\S]*?)&lt;\/link-newtab&gt;/);
+            var linkMovingReg = RegExp(/&lt;link-moving&gt;([\s\S]*?)&lt;\/link-moving&gt;/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
             if ( check.isset(cName) === false ) {
@@ -2232,10 +2234,40 @@
                 }
                 // リンク
                 var link = str.match(linkReg);
-                if ( link !== null ) {
-                    var url = link[0];
-                    var a = "<a href='" + url + "' target='_blank'>" + url + "</a>";
-                    str = str.replace(url, a);
+                var linkNewtab = str.match(linkNewtabReg);
+                var linkMoving = str.match(linkMovingReg);
+                if ( link !== null || linkNewtab !== null || linkMoving !== null) {
+                    //リンク（別タブ表示）
+                    if ( linkNewtab !== null) {
+                      var target = "target=_blank";
+                      if(link !== null) {
+                        var a = "<a href='" + linkNewtab[1] + "'" + target + ">" + linkNewtab[1] + "</a>";
+                      }
+                      else {
+                        // ただの文字列にする
+                        var a = "<span class='link'>"+ linkNewtab[1] + "</span>";
+                      }
+                      str = str.replace(linkNewtab[0], a);
+                    }
+                    //リンク（ページ遷移）
+                    else if(linkMoving !== null) {
+                      var target = "";
+                      if(link !== null) {
+                        var a = "<a href='" + linkMoving[1] + "'" + target + ">" + linkMoving[1] + "</a>";
+                      }
+                      else {
+                        // ただの文字列にする
+                        var a = "<span class='link'>"+ linkMoving[1] + "</span>";
+                      }
+                      str = str.replace(linkMoving[0], a);
+                    }
+                    //URLのみのリンクの場合
+                    else {
+                      var target = "target=_blank";
+                      var url = link[0];
+                      var a = "<a href='" + url + "'" + target + ">" + url + "</a>";
+                      str = str.replace(url, a);
+                    }
                 }
                 // 電話番号（スマホのみリンク化）
                 var tel = str.match(telnoTagReg);
