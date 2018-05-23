@@ -902,7 +902,7 @@ var socket, // socket.io
         html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; position: absolute; top: calc(50% - 8px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       }
 
-      html += '      #sincloBox div#sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
+      html += '      #sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
       html += '      #sincloBox section { display: none; padding: 0!important; top:0px!important; }';
       html += '      #sincloBox .flexBox { position: relative; display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column }';
@@ -1091,7 +1091,7 @@ var socket, // socket.io
           } else {
             html += '#sincloBox { width: ' + widgetWidth + 'px; }';
           }
-          html += '#sincloBox div#sincloWidgetBox { box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
+          html += '#sincloWidgetBox { box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0 0;}';
           html += '#sincloBox * { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
           html += '#sincloBox section#navigation ul { width: ' + widgetWidth + 'px }';
