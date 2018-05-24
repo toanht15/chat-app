@@ -379,13 +379,8 @@ sincloApp.factory('SimulatorService', function() {
       prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
       var isSmartphone = this._showWidgetType != 1;
       var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
-
       var strings = val.split('\n');
       var radioCnt = 1;
-      var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
-      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-      var linkNewtabReg = RegExp(/&lt;link-newtab&gt;([\s\S]*?)&lt;\/link-newtab&gt;/);
-      var linkMovingReg = RegExp(/&lt;link-moving&gt;([\s\S]*?)&lt;\/link-moving&gt;/);
       var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
       var radioName = prefix + "sinclo-radio" + messageIndex;
       var content = "";
@@ -401,7 +396,7 @@ sincloApp.factory('SimulatorService', function() {
             str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
         }
         //リンク、電話番号
-        str = replaceVariable(str,linkReg,linkNewtabReg,linkMovingReg,telnoTagReg,isSmartphone);
+        str = replaceVariable(str,isSmartphone);
         content += str + "\n";
       }
 

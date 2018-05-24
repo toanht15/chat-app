@@ -208,10 +208,6 @@
       var strings = message.split('\n');
       var custom = "";
       var isSmartphone = this._showWidgetType != 1;
-      var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
-      var linkNewtabReg = RegExp(/&lt;link-newtab&gt;([\s\S]*?)&lt;\/link-newtab&gt;/);
-      var linkMovingReg = RegExp(/&lt;link-moving&gt;([\s\S]*?)&lt;\/link-moving&gt;/);
-      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
       for (var i = 0; strings.length > i; i++) {
@@ -224,7 +220,7 @@
               str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
           }
           //リンク、電話番号
-          str = replaceVariable(str,linkReg,linkNewtabReg,linkMovingReg,telnoTagReg,isSmartphone);
+          str = replaceVariable(str,isSmartphone);
           custom += str + "\n";
         }
       return custom;
@@ -298,7 +294,6 @@
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
         forDeletionMessage = escape_html(forDeletionMessage);
-        console.log(forDeletionMessage);
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
