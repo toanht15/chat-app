@@ -1306,10 +1306,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var strings = message.split('\n');
       var isSmartphone = this._showWidgetType != 1;
       var custom = "";
-      var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
-      var linkNewtabReg = RegExp(/&lt;link-newtab&gt;([\s\S]*?)&lt;\/link-newtab&gt;/);
-      var linkMovingReg = RegExp(/&lt;link-moving&gt;([\s\S]*?)&lt;\/link-moving&gt;/);
-      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
       for (var i = 0; strings.length > i; i++) {
@@ -1322,7 +1318,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
         }
         //リンク、電話番号
-        str = replaceVariable(str,linkReg,linkNewtabReg,linkMovingReg,telnoTagReg,isSmartphone);
+        str = replaceVariable(str,isSmartphone);
         custom += str + "\n";
 
       }

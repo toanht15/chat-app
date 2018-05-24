@@ -89,7 +89,11 @@ function addVariable(type,sendMessage){
     return sendMessage;
 }
 
-function replaceVariable(str,linkReg,linkNewtabReg,linkMovingReg,telnoTagReg,isSmartphone){
+function replaceVariable(str,isSmartphone){
+  var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+  var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+  var linkNewtabReg = RegExp(/&lt;link-newtab&gt;([\s\S]*?)&lt;\/link-newtab&gt;/);
+  var linkMovingReg = RegExp(/&lt;link-moving&gt;([\s\S]*?)&lt;\/link-moving&gt;/);
   // リンク
   var link = str.match(linkReg);
   var linkNewtab = str.match(linkNewtabReg);
