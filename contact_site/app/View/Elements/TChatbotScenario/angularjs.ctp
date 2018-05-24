@@ -39,6 +39,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.inputAttributeList = <?php echo json_encode($chatbotScenarioAttributeType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiMethodType = <?php echo json_encode($chatbotScenarioApiMethodType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiResponseType = <?php echo json_encode($chatbotScenarioApiResponseType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
@@ -85,8 +86,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // アクションの追加
   this.addItem = function(actionType) {
     if (actionType in $scope.actionList) {
+      console.log('よかった');
       var item = $scope.actionList[actionType];
       item.actionType = actionType.toString();
+      console.log(item.actionType);
       $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
 
       // 表示位置調整
@@ -148,6 +151,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // 各アクション内の変更を検知し、プレビューのメッセージを表示更新する
   $scope.watchSetActionList = function(action, index) {
+    console.log($scope.watchActionList[index]);
     // watchの破棄
     if (typeof $scope.watchActionList[index] !== 'undefined') {
       $scope.watchActionList[index]();
