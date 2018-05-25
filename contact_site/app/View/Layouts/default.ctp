@@ -15,8 +15,9 @@
  */
 $naviElm = "";
 $contentStyle = "";
-if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-  && strcmp($this->action, 'loadingHtml') !== 0) {
+if( (strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
+  && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'ScriptSettings') !== 0) ||
+  (strcmp($this->name, 'ScriptSettings') === 0 && strcmp($this->action, 'index') === 0)) {
   $naviElm = $this->element('navi');
   $contentStyle = "position: absolute; top: 60px; left: 60px; right: 0; bottom: 0";
 }
@@ -45,9 +46,13 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
   <?php echo $this->Html->charset(); ?>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <title>
-    <?php echo $this->fetch('title'); ?> | sinclo
+    <?php if(strcmp($this->name, 'ScriptSettings') == 0 && strcmp($this->action, 'index') !== 0) {
+      echo $this->fetch('title'); ?>
+    <?php }
+    else { ?>
+      <?php echo $this->fetch('title'); ?> | sinclo
+    <?php } ?>
   </title>
   <?php
     echo $this->Html->meta('icon');
@@ -72,7 +77,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     if ( strcmp($this->name, 'TAutoMessages') === 0 || strcmp($this->name, 'MOperatingHours') === 0) {
       echo $this->Html->css("clockpicker.css");
     }
-    echo $this->Html->css("style.css");
+    if ( strcmp($this->name, 'ScriptSettings') !== 0 || strcmp($this->action, 'index') === 0) {
+      echo $this->Html->css("style.css");
+    }
     echo $this->Html->css("modal.css");
     if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
       echo $this->Html->css("daterangepicker.css");
@@ -85,6 +92,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     }
     if ( strcmp($this->name, 'Statistics') === 0) {
       echo $this->Html->css("//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css");
+    }
+    if ( strcmp($this->name, 'ScriptSettings') === 0 && strcmp($this->action, 'index') !== 0) {
+      echo $this->Html->css("demo.css");
     }
     echo $this->Html->script("//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js");
     if (strcmp($this->name, "Customers") === 0) {
@@ -133,6 +143,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     if ( strcmp($this->name, 'ChatHistories') === 0 ) {
       echo $this->Html->css('jquery.splitter.css');
       echo $this->Html->script("jquery.splitter.js");
+    }
+    if ( strcmp($this->name, 'ScriptSettings') === 0 && strcmp($this->action, 'index') !== 0) {
+      echo $this->Html->script("openclose.js");
     } ?>
 
 <script type="text/javascript">
@@ -143,8 +156,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
 <body>
   <div id="container">
     <div id="header">
-      <?php if( strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
-      && strcmp($this->action, 'loadingHtml') !== 0) : ?>
+      <?php if( (strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnotherWindow') !== 0
+      && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'ScriptSettings') !== 0) ||
+      (strcmp($this->name, 'ScriptSettings') === 0 && strcmp($this->action, 'index') === 0)) : ?>
         <?= $this->element('navi') ?>
       <?php endif ;?>
     </div>
