@@ -4076,7 +4076,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           if ( isset(rows) && isset(rows[0]) ) {
             var now = formatDateParse();
-            timeUpdate(rows[0].id, {}, now);
+            timeUpdate(rows[0].id, {}, now, function(){});
           }
         });
 
