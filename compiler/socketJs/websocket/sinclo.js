@@ -587,6 +587,7 @@
         };
 
         if ( document.getElementById('sincloBox') === null ) return false;
+        if (obj.stayLogsId) sinclo.chatApi.stayLogsId = obj.stayLogsId;
 
         createStartTimer = window.setInterval(function(){
           if (window.sincloInfo.widget.showTiming !== 4 || (window.sincloInfo.widgetDisplay && !sinclo.trigger.flg)) {
@@ -1714,6 +1715,7 @@
         saveFlg: false,
         online: false, // 現在の対応状況
         historyId: null,
+        stayLogsId: null,
         unread: 0,
         opUser: "",
         opUserName: "",
@@ -2534,6 +2536,7 @@
               setTimeout(function(){
                 emit('sendChat', {
                   historyId: sinclo.chatApi.historyId,
+                  stayLogsId: sinclo.chatApi.stayLogsId,
                   chatMessage: value,
                   mUserId: null,
                   messageType: messageType,
