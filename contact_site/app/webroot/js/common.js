@@ -110,8 +110,6 @@ function replaceVariable(str,isSmartphone){
       if ( linkTabReg !== null) {
         if(link !== null) {
           var a = "<a href=\"" + linkTabReg[1] + "\">" + linkTabReg[2] + "</a>";
-          console.log('eeeeeeee');
-          console.log(a);
         }
         else {
           // ただの文字列にする
