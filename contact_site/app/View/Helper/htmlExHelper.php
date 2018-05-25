@@ -98,7 +98,7 @@ class htmlExHelper extends AppHelper {
             }
             $linkData = [];
             if ( preg_match('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $tmp) ) {
-                if ( preg_match('/<a ([\s\S]*?)>([\s\S]*?)<\/a>/', $tmp)) {
+                if ( preg_match('/<a ([\s\S]*?)<\/a>/', $tmp)) {
                   //リンクテキスト
                   $title = preg_replace(['/<a ([\s\S]*?)">/','/<\/a>/'],['',''],$tmp);
                   //URL

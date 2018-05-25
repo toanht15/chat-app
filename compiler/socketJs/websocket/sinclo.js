@@ -2256,7 +2256,7 @@
                 }
                 // リンク
                 var link = str.match(linkReg);
-                var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+                var linkTabReg = RegExp(/<a ([\s\S]*?)<\/a>/);
                 var linkTabReg = unEscapeStr.match(linkTabReg);
                 if ( link !== null || linkTabReg !== null) {
                     if ( linkTabReg !== null) {
