@@ -2203,8 +2203,6 @@
             var radioCnt = 1;
             var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
             var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-            var linkNewtabReg = RegExp(/&lt;a href=([\s\S]*?)target=&quot;_blank&quot;&gt;([\s\S]*?)&lt;\/a&gt;/);
-            var linkMovingReg = RegExp(/&lt;a href=([\s\S]*?)&gt;([\s\S]*?)&lt;\/a&gt;/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
             if ( check.isset(cName) === false ) {
@@ -2222,6 +2220,12 @@
             }
             for (var i = 0; strings.length > i; i++) {
                 var str = check.escape_html(strings[i]);
+                var unEscapeStr = str
+                  .replace(/(&lt;)/g, '<')
+                  .replace(/(&gt;)/g, '>')
+                  .replace(/(&quot;)/g, '"')
+                  .replace(/(&#39;)/g, "'")
+                  .replace(/(&amp;)/g, '&');
 
                 if ( cs === "sinclo_re" ) {
                     // ラジオボタン
@@ -2234,40 +2238,25 @@
                 }
                 // リンク
                 var link = str.match(linkReg);
-                var linkNewtab = str.match(linkNewtabReg);
-                var linkMoving = str.match(linkMovingReg);
-                if ( link !== null || linkNewtab !== null || linkMoving !== null) {
-                  //リンク（ページ遷移）
-                  if(linkMoving !== null) {
-                    var target = "";
-                    if(link !== null) {
-                      var a = "<a href='" + linkMoving[1] + "'" + target + ">" + linkMoving[2] + "</a>";
+                var linkTabReg = RegExp(/<a href="([\s\S]*?)">([\s\S]*?)<\/a>/);
+                var linkTabReg = unEscapeStr.match(linkTabReg);
+                if ( link !== null || linkTabReg !== null) {
+                    if ( linkTabReg !== null) {
+                      if(link !== null) {
+                        var a = "<a href=\"" + linkTabReg[1] + "\">" + linkTabReg[2] + "</a>";
+                      }
+                      else {
+                        // ただの文字列にする
+                        var a = "<span class='link'>"+ linkTabReg[2] + "</span>";
+                      }
+                      str = linkTabReg[1].replace(linkTabReg[1], a);
                     }
+                    //URLのみのリンクの場合
                     else {
-                      // ただの文字列にする
-                      var a = "<span class='link'>"+ linkMoving[2] + "</span>";
+                      var url = link[0];
+                      var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
+                      str = str.replace(url, a);
                     }
-                    str = linkMoving[0].replace(linkMoving[0], a);
-                  }
-                  //リンク（新規ページ）
-                  if ( linkNewtab !== null) {
-                    var target = "target=_blank";
-                    if(link !== null) {
-                      var a = "<a href='" + linkNewtab[1] + "'" + target + ">" + linkNewtab[2] + "</a>";
-                    }
-                    else {
-                      // ただの文字列にする
-                      var a = "<span class='link'>"+ linkNewtab[2] + "</span>";
-                    }
-                    str = linkNewtab[1].replace(linkNewtab[1], a);
-                  }
-                  //URLのみのリンクの場合
-                  else {
-                    var target = "target=_blank";
-                    var url = link[0];
-                    var a = "<a href='" + url + "'" + target + ">" + url + "</a>";
-                    str = str.replace(url, a);
-                  }
                 }
                 // 電話番号（スマホのみリンク化）
                 var tel = str.match(telnoTagReg);

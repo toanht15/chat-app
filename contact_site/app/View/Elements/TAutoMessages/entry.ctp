@@ -330,14 +330,14 @@
           <div id='secondSpeechTooltip' class="explainTooltip">
             <icon-annotation>
               <ul>
-                <li><span>このボタンを押すと挿入される＜link-newtab＞タグの間にURLを記入すると、リンクをクリックした際に新規ページで開きます</span></li>
+                <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURL」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます</span></li>
               </ul>
             </icon-annotation>
           </div>
           <div id='thirdSpeechTooltip' class="explainTooltip">
             <icon-annotation>
               <ul>
-                <li><span>このボタンを押すと挿入される＜link-moving＞タグの間にURLを記入すると、リンクをクリックした際にページ遷移します</span></li>
+                <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURL」の個所にURLを記入すると、リンクをクリックした際にページ遷移します</span></li>
               </ul>
             </icon-annotation>
           </div>
