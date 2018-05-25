@@ -1646,7 +1646,21 @@
       $this->log("END chatSendingPageList : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
       $this->log("BEGIN detailChatPagesData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-      if(!empty($historyIdList[0])) {
+      if(!empty($this->request->query['id']) && is_numeric($this->request->query['id'])) {
+        $detailChatPagesData = $this->THistoryStayLog->find('all', [
+          'fields' => [
+            'id',
+            't_histories_id',
+            'url',
+            'title'
+          ],
+          'conditions' => [
+            't_histories_id' => $this->request->query['id']
+          ],
+          'order' => array('created' => 'desc'),
+          'limit' => 1
+        ]);
+      } else if(!empty($historyIdList[0])) {
         $detailChatPagesData = $this->THistoryStayLog->find('all', [
           'fields' => [
             'id',
