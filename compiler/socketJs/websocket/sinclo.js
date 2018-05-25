@@ -516,7 +516,6 @@
         userInfo.setTabId();
       }
 
-      obj.sincloSessionIdIsNew = true;
       if ( obj.sincloSessionIdIsNew || (!check.isset(userInfo.sincloSessionId) && check.isset(obj.sincloSessionId)) ) {
         if(obj.sincloSessionIdIsNew) console.log("sincloSessionIdIsNew");
         userInfo.oldSincloSessionId = userInfo.sincloSessionId ? userInfo.sincloSessionId : "";
@@ -1379,7 +1378,6 @@
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
-        console.log('ストレージチェック2');
       }
     },
     sendReqAutoChatMessages: function(d){

@@ -316,7 +316,7 @@
                   <?php } ?>
                 </div>
                   <?php
-                   if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "自動返信")
+                   if ((!empty($history['THistoryChatLog']['type']) && $history['THistoryChatLog']['type'] == "Auto")
                     || ($history['THistoryChatLog']['cmp'] == 0 && $history['THistoryChatLog']['sry'] == 0 && $history['THistoryChatLog']['cus'] == 0)) { ?>
                     <li class = "largeCharacters" style = "color:#4bacc6; font-weight:bold;display: flex;overflow: hidden;white-space: nowrap;"><div class ="chatTypeName" style = "border: 1px solid #4bacc6;background-color:#4bacc6;border-radius:4px;padding:1px 3px;">Auto</div><div class = "largeCharacters enter" style ="margin-left:3px;color:#4bacc6"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo '('.$chatUserList[$history['THistory']['id']].')'; } ?></div></li>
                   <?php

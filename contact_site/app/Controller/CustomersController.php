@@ -272,6 +272,8 @@ class CustomersController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = null;
+    $this->log('data',LOG_DEBUG);
+    $this->log($this->request->data,LOG_DEBUG);
     $ret = false;
     // 空チェック
     if ( !empty($this->request->data['v']) && !empty($this->request->data['i'])) {
