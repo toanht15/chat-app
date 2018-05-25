@@ -83,7 +83,7 @@ class ContractController extends AppController
           ],
         ],
         [
-          'type' => 'inner',
+          'type' => 'left',
           'table' => '(SELECT id,m_companies_id,mail_address,password,count(m_companies_id) AS user_account FROM  m_users WHERE del_flg != 1 AND permission_level != 99 GROUP BY m_companies_id)',
           'alias' => 'MUser',
           'conditions' => [
@@ -94,6 +94,9 @@ class ContractController extends AppController
       'conditions' => [
           'MCompany.del_flg != ' => 1,
       ],
+      'group' => [
+        'MCompany.id'
+      ]
     ]
   ];
 

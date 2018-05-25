@@ -587,6 +587,7 @@
         };
 
         if ( document.getElementById('sincloBox') === null ) return false;
+        if (obj.stayLogsId) sinclo.chatApi.stayLogsId = obj.stayLogsId;
 
         createStartTimer = window.setInterval(function(){
           if (window.sincloInfo.widget.showTiming !== 4 || (window.sincloInfo.widgetDisplay && !sinclo.trigger.flg)) {
@@ -1561,6 +1562,12 @@
     },
     displayTextarea : function(){
       if(!document.getElementById("flexBoxWrap")) return;
+      if((check.isset(window.sincloInfo.custom)
+        && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
+        && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+        sinclo.hideTextarea();
+        return;
+      }
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
 
@@ -1714,6 +1721,7 @@
         saveFlg: false,
         online: false, // 現在の対応状況
         historyId: null,
+        stayLogsId: null,
         unread: 0,
         opUser: "",
         opUserName: "",
@@ -1908,6 +1916,11 @@
           $("input[name^='sinclo-radio']").prop('disabled', true);
         },
         showMiniMessageArea: function() {
+          if((check.isset(window.sincloInfo.custom)
+            && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+            return;
+          }
           // オペレータ未入室のシナリオのヒアリングモードのみ有効
           if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').addClass('sinclo-hide');
@@ -1921,6 +1934,11 @@
           }
         },
         hideMiniMessageArea: function() {
+          if((check.isset(window.sincloInfo.custom)
+            && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+            return;
+          }
           // シナリオのヒアリングモードのみ有効
           if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').removeClass('sinclo-hide');
@@ -1928,7 +1946,7 @@
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
             sinclo.resizeTextArea();
             if(!check.smartphone()) {
-              common.widgetHandler._handleResizeEvent();Z
+              common.widgetHandler._handleResizeEvent();
               $('#sincloChatMessage').focus();
             }
           }
@@ -2523,6 +2541,7 @@
               setTimeout(function(){
                 emit('sendChat', {
                   historyId: sinclo.chatApi.historyId,
+                  stayLogsId: sinclo.chatApi.stayLogsId,
                   chatMessage: value,
                   mUserId: null,
                   messageType: messageType,

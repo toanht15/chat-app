@@ -208,7 +208,7 @@ var timeCalculator = function(obj){
   return Number(req);
 };
 
-function timeUpdate(historyId, obj, time){
+function timeUpdate(historyId, obj, time, callback){
   var insertStayData = {
     t_histories_id: historyId,
     title: ('title' in obj) ? obj.title : "",
@@ -220,7 +220,10 @@ function timeUpdate(historyId, obj, time){
 
   pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', historyId,
     function(err, rows){
-      if ( err !== null && err !== '' ) return false; // DB接続断対応
+      if ( err !== null && err !== '' ) {
+        callback(false);
+        return false;
+      } // DB接続断対応
       if ( isset(rows) && isset(rows[0]) ) {
         // UPDATE
         var stayTime = calcTime(rows[0].created, time);
@@ -239,9 +242,16 @@ function timeUpdate(historyId, obj, time){
         }
       );
 
-      if ( insertStayData.url === '' || insertStayData.url === rows[0].url ) return false;
+      if ( insertStayData.url === '' || insertStayData.url === rows[0].url ) {
+        callback(rows[0].id);
+        return true;
+      }
       pool.query("INSERT INTO t_history_stay_logs SET ?", insertStayData,
         function (error,results,fields){
+          if ( insertStayData.url === '' || insertStayData.url === rows[0].url ) {
+            callback(results.insertId);
+            return true;
+          }
         }
       );
     }
@@ -825,9 +835,11 @@ var db = {
             sincloCore[obj.siteKey][obj.sincloSessionId].historyId = rows[0].id;
           }
           sincloCore[obj.siteKey][obj.tabId].historyId = rows[0].id;
-          timeUpdate(rows[0].id, obj, now);
-          obj.historyId = rows[0].id;
-          emit.toMine('setHistoryId', obj, s);
+          timeUpdate(rows[0].id, obj, now,function(stayLogsId){
+            obj.historyId = rows[0].id;
+            obj.stayLogsId = stayLogsId;
+            emit.toMine('setHistoryId', obj, s);
+          });
         }
         else {
           //insert
@@ -851,9 +863,11 @@ var db = {
                 sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
               }
               sincloCore[obj.siteKey][obj.tabId].historyId = historyId;
-              timeUpdate(historyId, obj, now);
-              obj.historyId = historyId;
-              emit.toMine('setHistoryId', obj, s);
+              timeUpdate(historyId, obj, now, function(stayLogsId){
+                obj.historyId = historyId;
+                obj.stayLogsId = stayLogsId;
+                emit.toMine('setHistoryId', obj, s);
+              });
             }
           );
         }
@@ -1002,7 +1016,7 @@ io.sockets.on('connection', function (socket) {
         function(err, rows){
           if ( err !== null && err !== '' ) return false; // DB接続断対応
           if ( rows && rows[0] ) {
-            insertData.t_history_stay_logs_id = rows[0].id;
+            insertData.t_history_stay_logs_id = isset(d.stayLogsId) ? d.stayLogsId : rows[0].id;
           }
           insertData.created = (('created' in d)) ? new Date(d.created) : new Date();
 
@@ -4062,7 +4076,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
           if ( isset(rows) && isset(rows[0]) ) {
             var now = formatDateParse();
-            timeUpdate(rows[0].id, {}, now);
+            timeUpdate(rows[0].id, {}, now, function(){});
           }
         });
 
