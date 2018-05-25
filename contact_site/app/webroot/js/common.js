@@ -101,7 +101,7 @@ function unEscapeHTML(str) {
 function replaceVariable(str,isSmartphone){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-  var linkTabReg = RegExp(/<a href="([\s\S]*?)">([\s\S]*?)<\/a>/);
+  var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
   var unEscapeStr = unEscapeHTML(str);
   // リンク
   var link = str.match(linkReg);
@@ -109,7 +109,7 @@ function replaceVariable(str,isSmartphone){
   if ( link !== null || linkTabReg !== null) {
       if ( linkTabReg !== null) {
         if(link !== null) {
-          var a = "<a href=\"" + linkTabReg[1] + "\">" + linkTabReg[2] + "</a>";
+          var a = linkTabReg[0];
         }
         else {
           // ただの文字列にする
