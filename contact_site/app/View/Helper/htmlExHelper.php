@@ -76,8 +76,12 @@ class htmlExHelper extends AppHelper {
         return $this->timepad($hour) . ":" . $this->timepad($min) . ":" . $this->timepad($sec);
     }
 
+    private function addLinkNewTab($matches){
+      return "<a href='".$matches[0]."' target='_blank'>".$matches[1]."</a>";
+    }
+
     private function addLink($matches){
-        return "<a href='".$matches[0]."' target='_blank'>".$matches[0]."</a>";
+      return "<a href='".$matches[0]."'>".$matches[1]."</a>";
     }
 
     public function makeChatView($value, $isSendFile = false){
@@ -92,9 +96,30 @@ class htmlExHelper extends AppHelper {
                 $str = "<input type='radio' id='radio".$key."' disabled=''>";
                 $str .= "<label class='pointer' for='radio".$key."'>".trim(preg_replace("/^\[\]/", "", $tmp))."</label>";
             }
+            $linkData = [];
             if ( preg_match('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $tmp) ) {
-                $ret = preg_replace_callback('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', [$this, 'addLink'], $tmp);
-                $str = preg_replace('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $ret, $tmp);
+                if ( preg_match('/<a href=([\s\S]*?) target="_blank">([\s\S]*?)<\/a>/', $tmp)) {
+                  //リンクテキスト
+                  $title = preg_replace(['/<a href=([\s\S]*?) target="_blank">/','/<\/a>/'],['',''],$tmp);
+                  //URL
+                  $tmp = preg_replace(['/<a href=/','/target="_blank">([\s\S]*?)<\/a>/'],['',''],$tmp);
+                  $linkData[0] = $tmp;
+                  $linkData[1] = $title;
+                  $str = $this->addLinkNewTab($linkData);
+                }
+                else if ( preg_match('/<a href=([\s\S]*?)>([\s\S]*?)<\/a>/', $tmp)) {
+                  //リンクテキスト
+                  $title = preg_replace(['/<a href=([\s\S]*?)">/','/<\/a>/'],['',''],$tmp);
+                  //URL
+                  $tmp = preg_replace(['/<a href=/','/>([\s\S]*?)<\/a>/'],['',''],$tmp);
+                  $linkData[0] = $tmp;
+                  $linkData[1] = $title;
+                  $str = $this->addLink($linkData);
+                }
+                else {
+                  $ret = preg_replace_callback('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', [$this, 'addLinkNewTab'], $tmp);
+                  $str = preg_replace('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $ret, $tmp);
+                }
             }
             if ( preg_match('/<telno>([\s\S]*?)<\/telno>/', $tmp)) {
                 $ret = "<span style='font-weight: normal;'>". preg_replace('/^<telno>|<\/telno>$/', "", $tmp) . "</span>";

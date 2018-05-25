@@ -47,7 +47,7 @@ function exports() {
 
 function loadWidgetSettings(siteKey, callback) {
   'use strict';
-  var getWidgetSettingSql  = 'SELECT ws.*, com.id as m_companies_id, com.trial_flg as trial_flg, ma.trial_end_day as trial_end_day, com.company_key, com.core_settings, com.exclude_ips FROM m_widget_settings AS ws';
+  var getWidgetSettingSql  = 'SELECT ws.*, com.id as m_companies_id, com.trial_flg as trial_flg, ma.trial_end_day as trial_end_day, ma.agreement_end_day as agreement_end_day, com.company_key, com.core_settings, com.exclude_ips FROM m_widget_settings AS ws';
   if(siteKey) {
     syslogger.info("loadWidgetSettings target : " + siteKey);
     getWidgetSettingSql += ' INNER JOIN (SELECT * FROM m_companies WHERE company_key = ? AND del_flg = 0 ) AS com  ON ( com.id = ws.m_companies_id )';
@@ -74,6 +74,7 @@ function loadWidgetSettings(siteKey, callback) {
           companySettings[siteKey]['exclude_ips'] = row[0].exclude_ips;
           companySettings[siteKey]['trial_flg'] = row[0].trial_flg === 1 ? true : false;
           companySettings[siteKey]['trial_end_day'] = row[0].trial_end_day ? row[0].trial_end_day : false;
+          companySettings[siteKey]['agreement_end_day'] = row[0].agreement_end_day ? row[0].agreement_end_day : false;
           widgetSettings[siteKey]['display_type'] = row[0].display_type;
           widgetSettings[siteKey]['style_settings'] = JSON.parse(row[0].style_settings);
           syslogger.info("Load Widget setting OK. siteKey : " + siteKey);
@@ -114,10 +115,12 @@ function loadWidgetSettings(siteKey, callback) {
             companySettings[targetSiteKey].exclude_ips = row.exclude_ips;
             companySettings[targetSiteKey]['trial_flg'] = row.trial_flg === 1 ? true : false;
             companySettings[targetSiteKey]['trial_end_day'] = row.trial_end_day ? row.trial_end_day : false;
+            companySettings[targetSiteKey]['agreement_end_day'] = row.agreement_end_day ? row.agreement_end_day : false;
             widgetSettings[targetSiteKey].display_type = row.display_type;
             widgetSettings[targetSiteKey].style_settings = JSON.parse(row.style_settings);
           });
           syslogger.info('Load ALL Widget settings is successful.');
+          syslogger.info(JSON.stringify(companySettings));
           module.exports.companySettings = companySettings;
           module.exports.siteKeyIdMap = siteKeyIdMap;
           module.exports.idSiteKeyMap = idSiteKeyMap;
