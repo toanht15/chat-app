@@ -1076,7 +1076,7 @@ class HistoriesController extends AppController {
 
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id ='. $this->userInfo['m_companies_id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id)',
+        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id ='. $this->userInfo['m_companies_id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id desc)',
         'alias' => 'LastSpeechTime',
         'field' => 'created as lastSpeechTime',
         'conditions' => [
@@ -1094,9 +1094,7 @@ class HistoriesController extends AppController {
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
-    $this->log('historyList',LOG_DEBUG);
     $historyList = $this->paginate('THistory');
-    $this->log('historyList終了',LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
@@ -1148,7 +1146,6 @@ class HistoriesController extends AppController {
     $this->set('campaignList', $this->TCampaign->getList());
     /* 除外情報取得 */
     $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
-    $this->log('全て終了',LOG_DEBUG);
   }
 
   /**
