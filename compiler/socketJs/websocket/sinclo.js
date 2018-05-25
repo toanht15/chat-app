@@ -1561,6 +1561,12 @@
     },
     displayTextarea : function(){
       if(!document.getElementById("flexBoxWrap")) return;
+      if((check.isset(window.sincloInfo.custom)
+        && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
+        && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+        sinclo.hideTextarea();
+        return;
+      }
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
 
@@ -1908,6 +1914,11 @@
           $("input[name^='sinclo-radio']").prop('disabled', true);
         },
         showMiniMessageArea: function() {
+          if((check.isset(window.sincloInfo.custom)
+            && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+            return;
+          }
           // オペレータ未入室のシナリオのヒアリングモードのみ有効
           if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').addClass('sinclo-hide');
@@ -1921,6 +1932,11 @@
           }
         },
         hideMiniMessageArea: function() {
+          if((check.isset(window.sincloInfo.custom)
+            && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+            return;
+          }
           // シナリオのヒアリングモードのみ有効
           if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').removeClass('sinclo-hide');
