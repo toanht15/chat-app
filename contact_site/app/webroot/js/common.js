@@ -59,7 +59,7 @@ function addVariable(type,sendMessage){
           if (sendMessage.value.length > 0) {
             sendMessage.value += "\n";
           }
-          sendMessage.value += "<link-newtab></link-newtab>";
+          sendMessage.value += "<a href=ここにURL>ここにリンクテキスト</a>";
           sendMessage.focus();
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
@@ -74,7 +74,7 @@ function addVariable(type,sendMessage){
           if (sendMessage.value.length > 0) {
             sendMessage.value += "\n";
           }
-          sendMessage.value += "<link-moving></link-moving>";
+          sendMessage.value += '<a href=ここにURL target="_blank">ここにリンクテキスト</a>';
           sendMessage.focus();
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
@@ -92,36 +92,36 @@ function addVariable(type,sendMessage){
 function replaceVariable(str,isSmartphone){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-  var linkNewtabReg = RegExp(/&lt;link-newtab&gt;([\s\S]*?)&lt;\/link-newtab&gt;/);
-  var linkMovingReg = RegExp(/&lt;link-moving&gt;([\s\S]*?)&lt;\/link-moving&gt;/);
+  var linkNewtabReg = RegExp(/&lt;a href=([\s\S]*?)target=&quot;_blank&quot;&gt;([\s\S]*?)&lt;\/a&gt;/);
+  var linkMovingReg = RegExp(/&lt;a href=([\s\S]*?)&gt;([\s\S]*?)&lt;\/a&gt;/);
   // リンク
   var link = str.match(linkReg);
   var linkNewtab = str.match(linkNewtabReg);
   var linkMoving = str.match(linkMovingReg);
   if ( link !== null || linkNewtab !== null || linkMoving !== null) {
-      //リンク（別タブ表示）
+      //リンク（ページ遷移）
+      if(linkMoving !== null) {
+        var target = "";
+        if(link !== null) {
+          var a = "<a href='" + linkMoving[1] + "'" + target + ">" + linkMoving[2] + "</a>";
+        }
+        else {
+          // ただの文字列にする
+          var a = "<span class='link'>"+ linkMoving[2] + "</span>";
+        }
+        str = linkMoving[0].replace(linkMoving[0], a);
+      }
+      //リンク（新規ページ）
       if ( linkNewtab !== null) {
         var target = "target=_blank";
         if(link !== null) {
-          var a = "<a href='" + linkNewtab[1] + "'" + target + ">" + linkNewtab[1] + "</a>";
+          var a = "<a href='" + linkNewtab[1] + "'" + target + ">" + linkNewtab[2] + "</a>";
         }
         else {
           // ただの文字列にする
-          var a = "<span class='link'>"+ linkNewtab[1] + "</span>";
+          var a = "<span class='link'>"+ linkNewtab[2] + "</span>";
         }
-        str = str.replace(linkNewtab[0], a);
-      }
-      //リンク（ページ遷移）
-      else if(linkMoving !== null) {
-        var target = "";
-        if(link !== null) {
-          var a = "<a href='" + linkMoving[1] + "'" + target + ">" + linkMoving[1] + "</a>";
-        }
-        else {
-          // ただの文字列にする
-          var a = "<span class='link'>"+ linkMoving[1] + "</span>";
-        }
-        str = str.replace(linkMoving[0], a);
+        str = linkNewtab[1].replace(linkNewtab[1], a);
       }
       //URLのみのリンクの場合
       else {

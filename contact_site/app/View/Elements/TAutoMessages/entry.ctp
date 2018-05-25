@@ -153,8 +153,8 @@
                 <label class="require">メッセージ</label>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(1)">選択肢を追加する</span>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(3)" id = "secondSpeechLabel">リンク(別タブ表示)<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(4)" id = "thirdSpeechLabel">リンク(ページ遷移)<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(3)" id = "thirdSpeechLabel">リンク(ページ遷移)<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(4)" id = "secondSpeechLabel">リンク(新規ページ)<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
               </span>
               <?=$this->Form->textarea('action', ['maxlength'=>1000, 'cols' => 48, 'rows' => 15, 'ng-init' => 'decodeHtmlSpecialChar("'.h(!empty($this->data['TAutoMessage']['action']) ? $this->data['TAutoMessage']['action'] : "").'")', 'ng-model' => 'action'])?>
               <?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
@@ -330,14 +330,14 @@
           <div id='secondSpeechTooltip' class="explainTooltip">
             <icon-annotation>
               <ul>
-                <li><span>このボタンを押すと挿入される＜link-newtab＞タグの間にURLを記入すると、クリックした際に別タブで開くようになります</span></li>
+                <li><span>このボタンを押すと挿入される＜link-newtab＞タグの間にURLを記入すると、リンクをクリックした際に新規ページで開きます</span></li>
               </ul>
             </icon-annotation>
           </div>
           <div id='thirdSpeechTooltip' class="explainTooltip">
             <icon-annotation>
               <ul>
-                <li><span>このボタンを押すと挿入される＜link-moving＞タグの間にURLを記入すると、クリックした際にページ遷移で開くようになります</span></li>
+                <li><span>このボタンを押すと挿入される＜link-moving＞タグの間にURLを記入すると、リンクをクリックした際にページ遷移します</span></li>
               </ul>
             </icon-annotation>
           </div>
