@@ -59,7 +59,7 @@ function addVariable(type,sendMessage){
           if (sendMessage.value.length > 0) {
             sendMessage.value += "\n";
           }
-          sendMessage.value += '<a href="ここにURL">ここにリンクテキスト</a>';
+          sendMessage.value += '<a href="ここにURLを記載">ここにリンクテキスト</a>';
           sendMessage.focus();
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
@@ -74,7 +74,7 @@ function addVariable(type,sendMessage){
           if (sendMessage.value.length > 0) {
             sendMessage.value += "\n";
           }
-          sendMessage.value += '<a href="ここにURL" target="_blank">ここにリンクテキスト</a>';
+          sendMessage.value += '<a href="ここにURLを記載" target="_blank">ここにリンクテキスト</a>';
           sendMessage.focus();
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
