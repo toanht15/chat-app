@@ -82,6 +82,7 @@ sinclo@medialink-ml.co.jp
     $this->set('title_for_layout', 'シナリオ設定');
     $this->chatbotScenarioActionList = Configure::read('chatbotScenarioActionList');
     $this->chatbotScenarioInputType = Configure::read('chatbotScenarioInputType');
+    $this->chatbotScenarioAttributeType = Configure::read('chatbotScenarioAttributeType');
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
     $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
     $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
@@ -964,6 +965,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioActionList', $this->chatbotScenarioActionList);
     // 入力タイプ種別
     $this->set('chatbotScenarioInputType', $this->chatbotScenarioInputType);
+    // 属性タイプ種別
+    $this->set('chatbotScenarioAttributeType', $this->chatbotScenarioAttributeType);
     // メール送信タイプ種別
     $this->set('chatbotScenarioSendMailType', $this->chatbotScenarioSendMailType);
     // API通信メソッド種別
