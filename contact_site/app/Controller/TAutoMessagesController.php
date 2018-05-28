@@ -757,7 +757,7 @@ class TAutoMessagesController extends AppController {
     $transactions = null;
     try {
       $transactions = $this->TransactionManager->begin();
-      $nextPage = $this->_entryProcess($saveData);;
+      $nextPage = $this->_entryProcess($saveData);
       $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       $this->redirect('/TAutoMessages/index/page:'.$nextPage, null, false);

@@ -80,7 +80,7 @@ class LoginController extends AppController {
           ],
         ]);
         $mAgreementData = $this->MAgreement->find('all', [
-          'fields' => 'trial_end_day',
+          'fields' => array('trial_end_day', 'agreement_end_day'),
           'conditions' => [
             'm_companies_id' => $userInfo['MCompany']['id']
           ],
@@ -92,9 +92,11 @@ class LoginController extends AppController {
             'mail_address' => $this->request->data['MUser']['mail_address']
           ],
         ]);
+
+        $today = date("Y/m/d");
+
         if(!empty($trialCompany)) {
           //今日の日程
-          $today = date("Y/m/d");
           //トライアル期間終了日
           $trialEndDay = date("Y/m/d",strtotime($mAgreementData[0]['MAgreement']['trial_end_day']));
           if($userInfo['permission_level'] != 99 && strtotime($today) > strtotime($trialEndDay)){
@@ -102,7 +104,16 @@ class LoginController extends AppController {
             $this->render('index');
             return;
           }
+        } else {
+          // 本契約期間終了日
+          $agreementEndDay = date("Y/m/d",strtotime($mAgreementData[0]['MAgreement']['agreement_end_day']));
+          if($userInfo['permission_level'] != 99 && strtotime($today) > strtotime($agreementEndDay)) {
+            $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"契約期間を過ぎています"]);
+            $this->render('index');
+            return;
+          }
         }
+
         if($mUserData[0]['MUser']['change_password_flg'] == C_NO_CHANGE_PASSWORD_FLG) {
           $this->Session->write('editPass', 'true');
           $this->redirect(['action' => 'editPassword']);
