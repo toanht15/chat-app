@@ -247,11 +247,9 @@ function timeUpdate(historyId, obj, time, callback){
         return true;
       }
       pool.query("INSERT INTO t_history_stay_logs SET ?", insertStayData,
-        function (error,results,fields){
-          if ( insertStayData.url === '' || insertStayData.url === rows[0].url ) {
-            callback(results.insertId);
-            return true;
-          }
+        function (error,results,fields) {
+          callback(results.insertId);
+          return true;
         }
       );
     }
@@ -857,7 +855,7 @@ var db = {
 
           pool.query("INSERT INTO t_histories SET ?", insertData,
             function (error,results,fields){
-              if ( error !== null && error !== '' ) return false; // DB接続断対応
+              if (error && (error !== null && error !== '')) return false; // DB接続断対応
               var historyId = results.insertId;
               if(isset(obj.sincloSessionId)) {
                 sincloCore[obj.siteKey][obj.sincloSessionId].historyId = historyId;
