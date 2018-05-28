@@ -105,17 +105,17 @@ function replaceVariable(str,isSmartphone){
   var unEscapeStr = unEscapeHTML(str);
   // リンク
   var link = str.match(linkReg);
-  var linkTabReg = unEscapeStr.match(linkTabReg);
-  if ( link !== null || linkTabReg !== null) {
-      if ( linkTabReg !== null) {
+  var linkTab = unEscapeStr.match(linkTabReg);
+  if ( link !== null || linkTab !== null) {
+      if ( linkTab !== null) {
         if(link !== null) {
-          var a = linkTabReg[0];
+          var a = linkTab[0];
         }
         else {
           // ただの文字列にする
-          var a = "<span class='link'>"+ linkTabReg[2] + "</span>";
+          var a = "<span class='link'>"+ linkTab[2] + "</span>";
         }
-        str = linkTabReg[1].replace(linkTabReg[1], a);
+        str = linkTab[1].replace(linkTab[1], a);
       }
       //URLのみのリンクの場合
       else {
