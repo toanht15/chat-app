@@ -111,7 +111,7 @@
                 }
               }
             ?></td>
-            <td><?= h($val['MUser']['user_account'])?> / <?=h($val['MCompany']['limit_users'])?></td>
+            <td><?= h(!empty($val['MUser']['user_account']) ? $val['MUser']['user_account'] : 0)?> / <?=h($val['MCompany']['limit_users'])?></td>
             <td class="adminId"><?= h($val['AdminUser']['mail_address']) ?></td>
             <td class="adminPass"><?= h($val['MAgreement']['admin_password']) ?></td>
             <td><?= intval($val['MCompany']['trial_flg']) === 1 ? "トライアル" : "本契約" ?></td>

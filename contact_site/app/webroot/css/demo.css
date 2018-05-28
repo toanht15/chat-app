@@ -13,7 +13,7 @@ body {
   font-family:"ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif; /*フォント種類*/
   font-size: 14px;  /*文字サイズ*/
   line-height: 2;   /*行間*/
-  background: #f8f5ee;  /*背景色*/
+  background: #fff;  /*背景色*/
   -webkit-text-size-adjust: none;
   overflow-x: hidden;
 }
@@ -31,7 +31,7 @@ a {
   transition: 0.5s;     /*同上*/
 }
 a:hover {
-  color: #6bae26;     /*マウスオン時の文字色*/
+  color: #4f4439;     /*マウスオン時の文字色*/
   text-decoration: none;    /*マウスオン時にリンクの下線を消す設定*/
 }
 
@@ -40,8 +40,8 @@ a:hover {
 /*ヘッダーブロック*/
 header {
   width: 100%;  /*画面横一杯使う為に100%指定*/
-  background: #6bae26;  /*背景色（古いブラウザ用）*/
-  background: radial-gradient(circle 400px at 20% -100px,#6bae26,#3e7e0b);  /*ロゴ背後の光を含めた背景色。circleは円形。400pxはサイズ。左から20%、上から-100pxの場所に配置。*/
+  background: #4f4439;  /*背景色（古いブラウザ用）*/
+  background: radial-gradient(circle 400px at 20% -100px,#4f4439,#2a241e)  /*ロゴ背後の光を含めた背景色。circleは円形。400pxはサイズ。左から20%、上から-100pxの場所に配置。*/
 }
 /*サイト幅にしたheader内のブロック*/
 header .inner {
@@ -127,7 +127,7 @@ header .inner {
 #menubar li,
 #menubar-s li {
   float: left;  /*左に回り込み*/
-  width: 33.3%;   /*メニュー幅*/
+  width: 25%;   /*メニュー幅*/
   text-align: center; /*内容をセンタリング*/
 }
 #menubar li:first-child {
@@ -148,9 +148,9 @@ header .inner {
 #menubar-s span {
   display: block;
   font-size: 10px;  /*文字サイズ*/
-  color: #6bae26;   /*文字色*/
+  color: #4f4439;   /*文字色*/
   margin: -5px 0px 0px; /*ボックスの外側にあけるスペース。上、左右、下。*/
-  border-bottom: 3px solid #6bae26; /*下線の幅、線種、色*/
+  border-bottom: 3px solid #4f4439; /*下線の幅、線種、色*/
   padding-bottom: 10px; /*下へのボックス内の余白*/
 }
 /*マウスオン時と、現在表示中*/
@@ -205,7 +205,7 @@ header .inner {
   font-size: 100%;
   color: #FFF;    /*文字色*/
   padding: 8px 15px;  /*上下、左右への余白*/
-  background: #6bae26;  /*背景色（古いブラウザ用）*/
+  background: #4f4439;  /*背景色（古いブラウザ用）*/
   -webkit-box-shadow: 1px 1px 2px rgba(0,0,0,0.2);  /*影の設定。右へ、下へ、ぼかし幅。rgbaは色設定で0,0,0は黒。0.2が透明度。*/
   box-shadow: 1px 1px 2px rgba(0,0,0,0.2);      /*同上*/
   border-radius: 4px; /*角丸のサイズ*/
@@ -276,7 +276,7 @@ header .inner {
 /*ボックス内のh4タグ設定*/
 #main section.list h4 {
   font-size: 17px;  /*文字サイズ*/
-  color: #6bae26;   /*文字色*/
+  color: #4f4439;   /*文字色*/
   margin-left: 34%; /*左の写真とのバランスをとって設定*/
 }
 /*ボックス内の矢印マーク設定*/
@@ -296,7 +296,7 @@ header .inner {
 }
 /*マウスオン時*/
 #main section.list a:hover::before {
-  background: #6bae26;  /*背景色*/
+  background: #4f4439;  /*背景色*/
   color: #fff;      /*文字色*/
 }
 /*コンパクトタイプのボックス用　追加設定*/
@@ -378,7 +378,7 @@ header .inner {
 }
 /*subコンテンツのh2タグの１文字目への設定*/
 #sub h2::first-letter {
-  border-left: 3px solid #6bae26; /*左側のアクセント用ラインの幅、線種、色*/
+  border-left: 3px solid #4f4439; /*左側のアクセント用ラインの幅、線種、色*/
   padding-left: 10px;
 }
 
@@ -441,7 +441,7 @@ header .inner {
 ---------------------------------------------------------------------------*/
 footer {
   clear: both;
-  background: #6bae26;  /*背景色*/
+  background: #4f4439;  /*背景色*/
   color: #fff;      /*文字色*/
   font-size: 85%;     /*文字サイズ*/
 }
@@ -554,12 +554,12 @@ footer .pr {
 /*質問の設定*/
 .faq dt,
 .link dt {
-  color: #6bae26; /*文字色*/
+  color: #4f4439; /*文字色*/
   font-weight: bold;  /*太字*/
 }
 .faq dt a,
 .link dt a {
-  color: #6bae26;
+  color: #4f4439;
 }
 /*回答の設定*/
 .faq dd,
@@ -646,7 +646,7 @@ h2 span.option2 {
 .mb15,.mb1em {margin-bottom: 15px;}
 .clear {clear: both;}
 ul.disc {padding: 0em 25px 1em;list-style: disc;}
-.color1 {color: #6bae26;}
+.color1 {color: #4f4439;}
 .pr {font-size: 10px;}
 .wl {width: 96%;}
 .ws {width: 50%;}
@@ -872,10 +872,10 @@ header #logo img {
 /*トップページ内「更新情報・お知らせ」ブロック
 ---------------------------------------------------------------------------*/
 section#new h2.open {
-  background: #6bae26 url(../images/btn_minus.png) no-repeat right center/34px 34px;
+  background: #4f4439 url(../images/btn_minus.png) no-repeat right center/34px 34px;
 }
 section#new h2.close {
-  background: #6bae26 url(../images/btn_plus.png) no-repeat right center/34px 34px;
+  background: #4f4439 url(../images/btn_plus.png) no-repeat right center/34px 34px;
 }
 
 /*テーブル
@@ -930,15 +930,15 @@ input:not([type]), input[type="email" i], input[type="number" i], input[type="pa
     padding: 1px 0px;
 }
 input {
-    -webkit-appearance: textfield !important;
-    background-color: white !important;
-    -webkit-rtl-ordering: logical !important;
-    cursor: text !important;
+    -webkit-appearance: textfield;
+    background-color: white;
+    -webkit-rtl-ordering: logical;
+    cursor: text;
     padding: 1px;
-    border-width: 2px !important;
-    border-style: inset !important;
-    border-color: initial !important;
-    border-image: initial !important;
+    border-width: 2px;
+    border-style: inset;
+    border-color: initial;
+    border-image: initial;
 }
 select {
     padding: 0;
@@ -952,63 +952,63 @@ select {
     cursor: pointer;
 }
 input[type="checkbox" i] {
-    margin: 3px 3px 3px 4px !important;
+    margin: 3px 3px 3px 4px;
 }
 input[type="checkbox" i] {
-    -webkit-appearance: checkbox !important;
-    box-sizing: border-box !important;
+    -webkit-appearance: checkbox;
+    box-sizing: border-box;
 }
 input[type="radio" i] {
-    background-color: initial !important;
-    cursor: default !important;
-    margin: 3px 0.5ex !important;
-    padding: initial !important;
-    border: initial !important;
-    -webkit-appearance: radio !important;
+    background-color: initial;
+    cursor: default;
+    margin: 3px 0.5ex;
+    padding: initial;
+    border: initial;
+    -webkit-appearance: radio;
 }
 input[type="checkbox" i] {
-    background-color: initial !important;
-    cursor: default !important;
-    margin: 3px 0.5ex !important;
-    padding: initial !important;
-    border: initial !important;
+    background-color: initial;
+    cursor: default;
+    margin: 3px 0.5ex;
+    padding: initial;
+    border: initial;
 }
 input, textarea, select, button {
-    text-rendering: auto !important;
-    color: initial !important;
-    letter-spacing: normal !important;
-    word-spacing: normal !important;
-    text-transform: none !important;
-    text-indent: 0px !important;
-    text-shadow: none !important;
-    display: inline-block !important;
-    text-align: start !important;
-    margin: 0em !important;
-    font: 400 13.3333px Arial !important;
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    text-align: start;
+    margin: 0em;
+    font: 400 13.3333px Arial;
 }
 input, textarea, select, button, meter, progress {
-    -webkit-writing-mode: horizontal-tb !important;
+    -webkit-writing-mode: horizontal-tb;
 }
 input[type="button" i], input[type="submit" i], input[type="reset" i], input[type="file" i]::-webkit-file-upload-button, button {
-    padding: 1px 6px !important;
+    padding: 1px 6px;
 }
 input[type="button" i], input[type="submit" i], input[type="reset" i], input[type="file" i]::-webkit-file-upload-button, button {
-    align-items: flex-start !important;
-    text-align: center !important;
-    cursor: default !important;
-    color: buttontext !important;
-    background-color: buttonface !important;
-    box-sizing: border-box !important;
-    padding: 2px 6px 3px !important;
-    border-width: 2px !important;
-    border-style: outset !important;
-    border-color: buttonface !important;
-    border-image: initial !important;
+    align-items: flex-start;
+    text-align: center;
+    cursor: default;
+    color: buttontext;
+    background-color: buttonface;
+    box-sizing: border-box;
+    padding: 2px 6px 3px;
+    border-width: 2px;
+    border-style: outset;
+    border-color: buttonface;
+    border-image: initial;
 }
 input[type="button" i], input[type="submit" i], input[type="reset" i] {
-    -webkit-appearance: push-button !important;
-    user-select: none !important;
-    white-space: pre !important;
+    -webkit-appearance: push-button;
+    user-select: none;
+    white-space: pre;
 }
 * {
   box-sizing: unset;
