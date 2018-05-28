@@ -786,11 +786,11 @@ $config['chatbotScenarioActionList'] = [
     ]
   ]
   ,
-  // ファイル送信
+  // ファイル受信
   C_SCENARIO_ACTION_RECEIVE_FILE => [
     'label' => 'ファイル受信',
     'default' => [
-      'message' => 'ここにファイルをドロップ
+      'dropAreaMessage' => 'ここにファイルをドロップ
 してください',
       'receiveFileType' => '1',
       'extendedReceiveFileExtensions' => '',
