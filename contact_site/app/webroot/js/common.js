@@ -101,7 +101,7 @@ function unEscapeHTML(str) {
 function replaceVariable(str,isSmartphone){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-  var linkTabReg = RegExp(/<a ([\s\S]*?)<\/a>/);
+  var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
   var unEscapeStr = unEscapeHTML(str);
   // リンク
   var link = str.match(linkReg);
