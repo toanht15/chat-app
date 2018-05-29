@@ -734,7 +734,6 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'inputAttributeList' => C_SCENARIO_INPUT_TYPE_TEXT,
       'scenarioId' => '',
       'executeNextAction' => '2'
     ]
@@ -819,8 +818,8 @@ $config['chatbotScenarioAttributeType'] = [
   ],
   C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR => [
     'label' => '@cssセレクタ',
-    'rule' => C_MATCH_RULE_EMAIL,
-    'inputRule' => C_MATCH_INPUT_RULE_EMAIL
+    'rule' => C_MATCH_RULE_TEXT,
+    'inputRule' => C_MATCH_INPUT_RULE_ALL
   ]
 ];
 
