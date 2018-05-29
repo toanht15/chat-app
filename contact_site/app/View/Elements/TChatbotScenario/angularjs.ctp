@@ -124,7 +124,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var variables = searchObj(actionDetail, /^variableName$/);
       if (variables.length >= 1) {
         var elms = document.querySelectorAll('li.set_action_item');
-        for (var listIndex  = setActionId; listIndex < elms.length; listIndex++) {
+        for (var listIndex = setActionId; listIndex < elms.length; listIndex++) {
           actionValidationCheck(elms[listIndex], $scope.setActionList, $scope.setActionList[listIndex]);
         }
       }
