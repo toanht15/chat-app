@@ -149,8 +149,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // 各アクション内の変更を検知し、プレビューのメッセージを表示更新する
   $scope.watchSetActionList = function(action, index) {
-    console.log('ここまできている');
-    console.log($scope.watchActionList[index]);
     // watchの破棄
     if (typeof $scope.watchActionList[index] !== 'undefined') {
       $scope.watchActionList[index]();
@@ -345,8 +343,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var src = $scope.actionList[actionType].default.hearings[0];
       var target = $scope.setActionList[actionStep].hearings;
-      console.log('target');
-      console.log(target);
       src.inputType = src.inputType.toString();
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllHearingSettingView(actionStep);
@@ -753,7 +749,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
         $(targetElm).find('.btnBlock .deleteBtn').show();
       } else {
-        console.log('削除ボタンのみ表示');
         // 削除ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
         $(targetElm).find('.btnBlock .deleteBtn').show();
