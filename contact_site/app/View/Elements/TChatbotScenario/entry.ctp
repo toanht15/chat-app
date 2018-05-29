@@ -52,7 +52,7 @@
         <!-- シナリオ呼び出し -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>)" class="greenBtn btn-shadow commontooltip" data-text="呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。">シナリオ呼び出し</a>
         <!-- 属性地取得 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>)" class="greenBtn btn-shadow commontooltip" data-text="呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。">属性値取得</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>)" class="greenBtn btn-shadow commontooltip" data-text="ページからid属性またはname属性で指定された項目の値を取得するためのアクションです。">属性値取得</a>
         <!-- 外部システム連携 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。">外部システム連携</a>
         <!-- ファイル送信 -->

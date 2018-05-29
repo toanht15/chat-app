@@ -86,10 +86,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // アクションの追加
   this.addItem = function(actionType) {
     if (actionType in $scope.actionList) {
-      console.log('よかった');
       var item = $scope.actionList[actionType];
       item.actionType = actionType.toString();
-      console.log(item.actionType);
       $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
 
       // 表示位置調整
@@ -126,7 +124,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var variables = searchObj(actionDetail, /^variableName$/);
       if (variables.length >= 1) {
         var elms = document.querySelectorAll('li.set_action_item');
-        for (var listIndex = setActionId; listIndex < elms.length; listIndex++) {
+        for (var controllListViewndex = setActionId; listIndex < elms.length; listIndex++) {
           actionValidationCheck(elms[listIndex], $scope.setActionList, $scope.setActionList[listIndex]);
         }
       }
@@ -151,6 +149,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // 各アクション内の変更を検知し、プレビューのメッセージを表示更新する
   $scope.watchSetActionList = function(action, index) {
+    console.log('ここまできている');
     console.log($scope.watchActionList[index]);
     // watchの破棄
     if (typeof $scope.watchActionList[index] !== 'undefined') {
@@ -346,6 +345,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var src = $scope.actionList[actionType].default.hearings[0];
       var target = $scope.setActionList[actionStep].hearings;
+      console.log('target');
+      console.log(target);
       src.inputType = src.inputType.toString();
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllHearingSettingView(actionStep);
@@ -362,6 +363,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         target.push(angular.copy(''));
         this.controllMailSetting(actionStep);
       }
+
+    } else if (actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+      var src = $scope.actionList[actionType].default.getAttributes[0];
+      var target = $scope.setActionList[actionStep].getAttributes;
+      src.type = src.type.toString();
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllAttributeSettingView(actionStep);
 
     } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
       if (/externalApiRequestHeader/.test(targetClassName)) {
@@ -397,6 +405,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       targetObjList = $scope.setActionList[actionStep].toAddress;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
       limitNum = 5;
+    } else if (actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+      targetObjList = $scope.setActionList[actionStep].getAttributes;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
     } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
       if (/externalApiRequestHeader/.test(targetClassName)) {
         targetObjList = $scope.setActionList[actionStep].requestHeaders;
@@ -688,6 +699,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
+  this.controllAttributeSettingView = function(actionStep) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
+      var targetObjList = $scope.setActionList[actionStep].getAttributes;
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
+    });
+  };
+
   this.controllExternalApiSetting = function( actionStep) {
     $timeout(function(){
       $scope.$apply();
@@ -703,7 +724,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   /**
-   * 選択肢、ヒアリング、メール送信のリストに対して、追加・削除ボタンの表示状態を更新する
+   * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
    * @param String  actionType      アクション種別
    * @param Object  targetElmList   対象のリスト要素(jQueryオブジェクト)
    * @param Object  targetObjList   対象のリストオブジェクト
@@ -722,8 +743,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         // リストが一件のみの場合、追加ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
         $(targetElm).find('.btnBlock .deleteBtn').hide();
-      } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-        // リストが複数件ある場合、ヒアリング・選択肢アクションは、追加・削除ボタンを表示する
+      } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>
+        || actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+        // リストが複数件ある場合、ヒアリング・選択肢・属性値アクションは、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
         $(targetElm).find('.btnBlock .deleteBtn').show();
       } else if (index == elmNum -1 && index != limitNum-1) {
@@ -731,6 +753,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
         $(targetElm).find('.btnBlock .deleteBtn').show();
       } else {
+        console.log('削除ボタンのみ表示');
         // 削除ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
         $(targetElm).find('.btnBlock .deleteBtn').show();
@@ -1410,6 +1433,16 @@ function actionValidationCheck(element, setActionList, actionItem) {
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
     if (actionItem.scenarioId === '' || actionItem.scenarioId === null) {
       messageList.push('シナリオを選択してください');
+    }
+
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+    if (!actionItem.getAttributes[0].variableName) {
+      messageList.push('変数名が未入力です');
+    }
+
+    if (!actionItem.getAttributes[0].attributeValue) {
+      messageList.push('属性値が未入力です');
     }
 
   } else
