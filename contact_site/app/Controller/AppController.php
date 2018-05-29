@@ -32,7 +32,7 @@ App::uses('Controller', 'Controller');
  */
 class AppController extends Controller {
   const CONTINUOUS_ERROR_COUNT = 10;
-  const RETRY_INTERVAL_AFTER_LOCKED_SEC = 60;
+  const RETRY_INTERVAL_AFTER_LOCKED_SEC = 300;
 
   public $components = [
     'Session',

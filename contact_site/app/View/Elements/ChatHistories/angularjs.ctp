@@ -207,8 +207,7 @@
     $scope.createTextOfMessage = function(chat, message, opt) {
       var strings = message.split('\n');
       var custom = "";
-      var linkReg = RegExp(/http(s)?:\/\/[!-~.a-z]*/);
-      var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+      var isSmartphone = this._showWidgetType != 1;
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
       for (var i = 0; strings.length > i; i++) {
@@ -220,21 +219,8 @@
               str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
               str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
           }
-          // リンク
-          var link = str.match(linkReg);
-          if ( link !== null ) {
-              var url = link[0];
-              var a = "<a href='" + url + "' target='_blank'>"  + url + "</a>";
-              str = str.replace(url, a);
-          }
-          // 電話番号（スマホのみリンク化）
-          var tel = str.match(telnoTagReg);
-          if( tel !== null ) {
-            var telno = tel[1];
-            // ただの文字列にする
-            var span = "<span class='telno'>" + telno + "</span>";
-            str = str.replace(tel[0], span);
-          }
+          //リンク、電話番号
+          str = replaceVariable(str,isSmartphone);
           custom += str + "\n";
         }
       return custom;
