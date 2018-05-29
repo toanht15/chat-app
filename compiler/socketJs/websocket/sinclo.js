@@ -34,7 +34,7 @@
         var flg = sinclo.widget.condifiton.get();
         //ウィジェットを開いた回数
         if(String(flg) === "true" && typeof ga == "function"){
-          ga('send', 'event', 'sinclo', 'クリック', location.href);
+          ga('send', 'event', 'sinclo', 'clickMaximize', location.href, 1);
         }
       },
       ev: function() {
@@ -1057,7 +1057,7 @@
         //OPが入室した数
         //入室数についてはタブでカウントする
         if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-          ga('send', 'event', 'sinclo', 'チャット対応', sinclo.chatApi.opUser);
+          ga('send', 'event', 'sinclo', 'manualChat', sinclo.chatApi.opUser, 1);
         }
       }
     },
@@ -1347,7 +1347,7 @@
             //sorryメッセージを出した数
             //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
             if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-              ga('send', 'event', 'sinclo', 'チャット拒否', location.href);
+              ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
             }
           }
           return false;
@@ -2519,7 +2519,7 @@
             //サイト訪問者がチャット送信した初回のタイミング
             if ( !check.isset(firstChatEmit) ) {
               if(typeof ga == "function"){
-                ga('send', 'event', 'sinclo', 'チャット送信', location.href);
+                ga('send', 'event', 'sinclo', 'sendChat', location.href, 1);
               }
               messageRequestFlg = flg;
             }
