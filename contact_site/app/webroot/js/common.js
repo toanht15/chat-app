@@ -64,10 +64,10 @@ function addVariable(type,sendMessage){
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-14);
+            range.move('character', sendMessage.value.length-11);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-14);
+            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-11);
           }
           break;
         case 4:
@@ -79,10 +79,10 @@ function addVariable(type,sendMessage){
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-14);
+            range.move('character', sendMessage.value.length-11);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-14);
+            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-11);
           }
           break;
     }

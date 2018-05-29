@@ -8617,44 +8617,46 @@ ul.naviBtn {
       width: 11.5em;
       text-align: center;
       cursor: pointer;
-      margin: 1em 0 0 1em;
+      margin: 1.3em 0 0 1em;
     }
 
     .phoneButton {
       width: 11.5em;
       text-align: center;
       cursor: pointer;
-      margin: 1em 0 0 1em;
+      margin: 0.6em 0 0 1em;
     }
 
     .linkNewTabButton {
       width: 11.7em;
       text-align: center;
       cursor: pointer;
-      margin: 1em 0 0 1em;
+      margin: 0.6em 0 0 1em;
     }
 
     .linkMovingButton {
       width: 11.7em;
       text-align: center;
       cursor: pointer;
-      margin: 1em 0 0 1em;
+      margin: 0.6em 0 0 1em;
       display:inline-block;
     }
 
     /*safariの場合*/
-    _::-webkit-full-page-media, _:future, :root .linkNewTabButton {
-        width: 12.5em !important;
-        text-align: center;
-        cursor: pointer;
-        margin: 1em 0 0 1em;
-        display:inline-block;
-    }
-    _::-webkit-full-page-media, _:future, :root .linkMovingButton {
-        width: 12.5em !important;
-        text-align: center;
-        cursor: pointer;
-        margin: -1.4em 0 0 14.5em !important;
+    @media screen and (-webkit-min-device-pixel-ratio:0) {
+      ::i-block-chrome, .linkNewTabButton {
+          width: 12.5em !important;
+          text-align: center;
+          cursor: pointer;
+          margin: 0.6em 0 0 1em;
+          display:inline-block;
+      }
+      ::i-block-chrome, .linkMovingButton {
+          width: 12.5em !important;
+          text-align: center;
+          cursor: pointer;
+          margin: 0.6em 0 0 1em !important;
+      }
     }
 
     .questionBalloon {
