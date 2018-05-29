@@ -47,6 +47,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   });
 
   /**
+   *
+   */
+  $scope.$on('addSeReceiveFileUI', function(event, dropAreaMessage, calcelable, cancelLabel) {
+    $scope.addReceiveFileUI(dropAreaMessage, calcelable, cancelLabel);
+  });
+
+  /**
    * removeMessage
    * メッセージの消去（コピー元となる非表示要素を残して削除する）
    */
@@ -144,6 +151,66 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $('#chatTalk div:last-child').show();
 
     self.autoScroll()
+  };
+
+  /**
+   * addReceiveFileUI
+   * シミュレーター上へのファイル受信用UI表示追加
+   */
+  $scope.addReceiveFileUI = function(dropAreaMessage, cancelEnabled, cancelButtonLabel) {
+    // ベースとなる要素をクローン
+    var divElm = document.querySelector('#chatTalk div > li.sinclo_re.recv_file_left').parentNode.cloneNode(true);
+
+    divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-message').innerHTML = dropAreaMessage;
+    divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-message').innerHTML = dropAreaMessage;
+    divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-button a').addEventListener('click', $scope.onClickSelectFileButton);
+    // 要素を追加する
+    document.getElementById('chatTalk').appendChild(divElm);
+    $('#chatTalk div:last-child').show();
+
+
+    self.autoScroll();
+  }
+
+  $scope.onClickSelectFileButton = function(event) {
+    var targetInput = $(event.target).parents('div.selectFileArea').find('.receiveFileInput');
+    if(targetInput.length === 1) {
+      var self = this;
+      targetInput.val(null);
+      targetInput.trigger('click');
+      targetInput.on('change', function(e){
+        var fileObj = this.files.item(0);
+        var fileReader = new FileReader();
+
+        fileReader.onload = function(fileEv) {
+          if(!fileObj.name){
+            return;
+          }
+          var loadData = fileEv.target.result;
+          $scope.showPreview(self, fileObj, loadData);
+        };
+        fileReader.readAsArrayBuffer(fileObj);
+      });
+    }
+  };
+
+  $scope.showPreview = function(target, fileObj, loadData) {
+    $(target).parents('li.sinclo_re.recv_file_left').parent().hide();
+
+    // ベースとなる要素をクローン
+    var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
+    var imgElm = document.createElement('img');
+
+    var fileReader = new FileReader();
+    fileReader.onload = function(e) {
+      imgElm.src = this.result;
+      divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(imgElm);
+      // 要素を追加する
+      document.getElementById('chatTalk').appendChild(divElm);
+      $('#chatTalk div:last-child').show();
+      self.autoScroll();
+    };
+    fileReader.readAsDataURL(fileObj);
   };
 
   /**
