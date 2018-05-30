@@ -74,10 +74,16 @@ class ScriptSettingsController extends AppController {
     //ベーシック、スタンダード
     if($plan->chat == 1 && empty($plan->synclo)) {
       $plan = "chat";
+      if($this->action == "testpage4") {
+        $this->set('title_for_layout', "お問い合わせ");
+      }
     }
     //シェアリング、プレミアム
     else if(($plan->chat == 1 && $plan->synclo == 1) || (empty($plan->chat) && $plan->synclo == 1)) {
       $plan = "sharing";
+      if($this->action == "testpage4") {
+        $this->set('title_for_layout', "フォーム用タグ");
+      }
     }
     $this->set("plan", $plan);
     $this->set("fileName", $fileName);
@@ -170,7 +176,6 @@ class ScriptSettingsController extends AppController {
       '沖縄県' => '沖縄県'
     );
     $this->set('layoutNumber', 4);
-    $this->set('title_for_layout', "フォーム用タグ");
     $this->set('option', $option);
     $this->render('testpage');
   }

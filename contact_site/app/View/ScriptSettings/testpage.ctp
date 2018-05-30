@@ -13,11 +13,18 @@
 <?php     break; ?>
 <?php   case 3: ?>
   <?= $this->element('ScriptSettings/flow'); ?>
-     <?php echo $this->Html->script($fileName, ['data-form' => 1, 'data-show-always' => 1]); ?>
+     <?php echo $this->Html->script($fileName, ['data-show-always' => 1]); ?>
 <?php     break; ?>
 <?php   case 4: ?>
   <?= $this->element('ScriptSettings/contact'); ?>
-     <?php echo $this->Html->script($fileName, ['data-form' => 1, 'data-show-always' => 1]); ?>
+    <?php
+      if($plan == "sharing") {
+        echo $this->Html->script($fileName, ['data-form' => 1, 'data-show-always' => 1]);
+      }
+      else if($plan == "chat") {
+        echo $this->Html->script($fileName, ['data-show-always' => 1]);
+      }
+    ?>
 <?php     break; ?>
 <?php   case 5: ?>
   <?= $this->element('ScriptSettings/company'); ?>
