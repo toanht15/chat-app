@@ -1057,7 +1057,7 @@
         //OPが入室した数
         //入室数についてはタブでカウントする
         if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-          ga('send', 'event', 'sinclo', 'manualChat', sinclo.chatApi.opUser, 1);
+          ga('send', 'event', 'sinclo', 'manualChat', sinclo.chatApi.opUserName, 1);
         }
       }
     },
