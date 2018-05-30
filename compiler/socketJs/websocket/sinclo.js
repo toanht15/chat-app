@@ -3807,7 +3807,8 @@
         mail: "4",
         anotherScenario: "5",
         callExternalApi: "6",
-        receiveFile: "7"
+        receiveFile: "7",
+        getAttributeValue: "8"
       },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
@@ -4065,6 +4066,10 @@
           case self._actionType.receiveFile:
             self._receiveFile._init(self);
             self._receiveFile._process();
+            break;
+          case self._actionType.getAttributeValue:
+            self._getAttributeValue._init(self);
+            self._getAttributeValue._process();
             break;
         }
       },
@@ -4759,6 +4764,52 @@
           }, function(result) {
             callback(result);
           });
+        }
+      },
+      _getAttributeValue: {
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._getAttributeValue;
+          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._getValueFromAttribute(function (result) {
+              if(self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
+            });
+          });
+        },
+        _getValueFromAttribute: function(callback) {
+          var self = sinclo.scenarioApi._getAttributeValue;
+          var attributeSettings = self._parent.get(self._parent._lKey.currentScenario).getAttributes;
+          for(var i=0; i < attributeSettings.length; i++) {
+            self._parent._saveVariable(attributeSettings[i].variableName, self._getValue(attributeSettings[i].type, attributeSettings[i].attributeValue));
+          }
+          callback();
+        },
+        _getValue: function(type, selector) {
+          var self = sinclo.scenarioApi._getAttributeValue;
+          switch(Number(type)) {
+            case 1: // ID
+              return self._getText($('#' + selector));
+            case 2: // name
+              return self._getText($('[name="' + selector + '"]')); // FIXME あやしい
+            case 3: // CSS-selector
+              return self._getText($(selector));
+              break;
+          }
+        },
+        _getText: function(jqObject) {
+          if(jqObject.text() !== "") {
+            return jqObject.text();
+          } else if(jqObject.val() !== "") {
+            return jqObject.val();
+          } else {
+            return "";
+          }
         }
       }
     },
