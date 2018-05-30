@@ -232,8 +232,8 @@ define('C_SCENARIO_METHOD_TYPE_POST', 2);
 
 // シナリオ設定(属性値取得)－属性別
 define('C_SCENARIO_ATTRIBUTE_TYPE_ID', 1);
-define('C_SCENARIO_INPUATTRIBUTE_TYPE_NAME', 2);
-define('C_SCENARIO_INPUATTRIBUTE_TYPE_SELECTOR', 3);
+define('C_SCENARIO_ATTRIBUTE_TYPE_NAME', 2);
+define('C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR', 3);
 
 // シナリオ設定(ファイル受信)－ファイル形式
 define('C_SCENARIO_RECEIVE_FILE_TYPE_BASIC', 1);
@@ -738,7 +738,6 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'inputAttributeList' => C_SCENARIO_INPUT_TYPE_TEXT,
       'scenarioId' => '',
       'executeNextAction' => '2'
     ]
@@ -748,14 +747,12 @@ $config['chatbotScenarioActionList'] = [
     'label' => '属性値取得',
     'default' => [
       'messageIntervalTimeSec' => '2',
-      'inputAttribute' => C_SCENARIO_ATTRIBUTE_TYPE_ID,
-      'chatTextArea' => '1',
-      'hearings' => [[
+      'chatTextArea' => '2',
+      'getAttributes' => [[
         'variableName' => '',
-        'inputAttribute' => C_SCENARIO_ATTRIBUTE_TYPE_ID,
-        'message' => '',
-        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW
-      ]],
+        'type' => C_SCENARIO_ATTRIBUTE_TYPE_ID,
+        'attributeValue' => '',
+      ]]
     ]
   ],  // 外部システム連携
   C_SCENARIO_ACTION_EXTERNAL_API => [
@@ -831,15 +828,15 @@ $config['chatbotScenarioAttributeType'] = [
     'rule' => C_MATCH_RULE_TEXT,
     'inputRule' => C_MATCH_INPUT_RULE_ALL
   ],
-  C_SCENARIO_INPUATTRIBUTE_TYPE_NAME => [
+  C_SCENARIO_ATTRIBUTE_TYPE_NAME => [
     'label' => '@name',
     'rule' => C_MATCH_RULE_NUMBER,
     'inputRule' => C_MATCH_INPUT_RULE_NUMBER
   ],
-  C_SCENARIO_INPUATTRIBUTE_TYPE_SELECTOR => [
+  C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR => [
     'label' => '@cssセレクタ',
-    'rule' => C_MATCH_RULE_EMAIL,
-    'inputRule' => C_MATCH_INPUT_RULE_EMAIL
+    'rule' => C_MATCH_RULE_TEXT,
+    'inputRule' => C_MATCH_INPUT_RULE_ALL
   ]
 ];
 
