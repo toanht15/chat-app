@@ -115,7 +115,7 @@ function replaceVariable(str,isSmartphone){
           // ただの文字列にする
           var a = "<span class='link'>"+ linkTab[2] + "</span>";
         }
-        str = linkTab[1].replace(linkTab[1], a);
+        str = unEscapeStr.replace(linkTab[0], a);
       }
       //URLのみのリンクの場合
       else {
