@@ -175,6 +175,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $scope.onClickSelectFileButton = function(event) {
     var targetInput = $(event.target).parents('div.selectFileArea').find('.receiveFileInput');
     if(targetInput.length === 1) {
+      targetInput.off('change');
       var self = this;
       targetInput.val(null);
       targetInput.trigger('click');
@@ -209,12 +210,61 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         document.getElementById('chatTalk').removeChild(divElm);
         $(target).parents('li.sinclo_re.recv_file_left').parent().show();
       });
+      divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function(e){
+        var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
+        if(comment) {
+          comment = "no comment";
+        }
+        $scope.uploadFile(comment, fileObj, loadData);
+      });
       // 要素を追加する
       document.getElementById('chatTalk').appendChild(divElm);
       $('#chatTalk div:last-child').show();
       self.autoScroll();
     };
     fileReader.readAsDataURL(fileObj);
+  };
+
+  // ファイル送信
+  $scope.uploadFile = function(comment, fileObj, loadFile) {
+    var fd = new FormData();
+    var blob = new Blob([loadFile], {type: fileObj.type});
+    fd.append("k", "<?= $companyKey; ?>");
+    fd.append("c", comment)
+    fd.append("f", blob, fileObj.name);
+
+    $.ajax({
+      url  : "<?= $this->Html->url('/FC/pu') ?>",
+      type : "POST",
+      data : fd,
+      cache       : false,
+      contentType : false,
+      processData : false,
+      dataType    : "json",
+      xhr : function(){
+        var XHR = $.ajaxSettings.xhr();
+        /*
+        if(XHR.upload){
+          XHR.upload.addEventListener('progress',function(e){
+            $scope.uploadProgress = parseInt(e.loaded/e.total*10000)/100;
+            console.log($scope.uploadProgress);
+            if($scope.uploadProgress === 100) {
+              $('#uploadMessage').css('display', 'none');
+              $('#processingMessage').css('display', 'block');
+            }
+            $scope.$apply();
+          }, false);
+        }
+        */
+        return XHR;
+      }
+    })
+      .done(function(data, textStatus, jqXHR){
+        console.log(JSON.stringify(data));
+      })
+      .fail(function(jqXHR, textStatus, errorThrown){
+        alert("fail");
+      });
   };
 
   /**
