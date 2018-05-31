@@ -172,7 +172,7 @@
         <div class='area-type'>
           <select ng-model="getAttributes.type" ng-init="getAttributes.type = getAttributes.type.toString()" ng-options="index as type.label for (index, type) in inputAttributeList"></select>
         </div>
-        <div class='area-message'><input type = "textarea" ng-model="getAttributes.attributeValue" rows="1" data-maxRow="10" class = "textarea-message"></input></div>
+        <div class='area-message'><input type = "text" ng-model="getAttributes.attributeValue" rows="1" data-maxRow="10" class = "textarea-message"></input></div>
         <div class='area-btn'>
           <div class="btnBlock">
             <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>

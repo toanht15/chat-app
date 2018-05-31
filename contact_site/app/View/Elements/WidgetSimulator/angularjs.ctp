@@ -205,6 +205,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     fileReader.onload = function(e) {
       imgElm.src = this.result;
       divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(imgElm);
+      divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function(e){
+        document.getElementById('chatTalk').removeChild(divElm);
+        $(target).parents('li.sinclo_re.recv_file_left').parent().show();
+      });
       // 要素を追加する
       document.getElementById('chatTalk').appendChild(divElm);
       $('#chatTalk div:last-child').show();
