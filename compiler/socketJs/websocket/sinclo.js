@@ -34,7 +34,7 @@
         var flg = sinclo.widget.condifiton.get();
         //ウィジェットを開いた回数
         if(String(flg) === "true" && typeof ga == "function"){
-          ga('send', 'event', 'sinclo', 'クリック', location.href);
+          ga('send', 'event', 'sinclo', 'clickMaximize', location.href, 1);
         }
       },
       ev: function() {
@@ -1057,7 +1057,7 @@
         //OPが入室した数
         //入室数についてはタブでカウントする
         if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-          ga('send', 'event', 'sinclo', 'チャット対応', sinclo.chatApi.opUser);
+          ga('send', 'event', 'sinclo', 'manualChat', sinclo.chatApi.opUserName, 1);
         }
       }
     },
@@ -1347,7 +1347,7 @@
             //sorryメッセージを出した数
             //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
             if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-              ga('send', 'event', 'sinclo', 'チャット拒否', location.href);
+              ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
             }
           }
           return false;
@@ -2221,8 +2221,6 @@
             var radioCnt = 1;
             var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
             var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-            var linkNewtabReg = RegExp(/&lt;a href=([\s\S]*?)target=&quot;_blank&quot;&gt;([\s\S]*?)&lt;\/a&gt;/);
-            var linkMovingReg = RegExp(/&lt;a href=([\s\S]*?)&gt;([\s\S]*?)&lt;\/a&gt;/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
             if ( check.isset(cName) === false ) {
@@ -2240,6 +2238,12 @@
             }
             for (var i = 0; strings.length > i; i++) {
                 var str = check.escape_html(strings[i]);
+                var unEscapeStr = str
+                  .replace(/(&lt;)/g, '<')
+                  .replace(/(&gt;)/g, '>')
+                  .replace(/(&quot;)/g, '"')
+                  .replace(/(&#39;)/g, "'")
+                  .replace(/(&amp;)/g, '&');
 
                 if ( cs === "sinclo_re" ) {
                     // ラジオボタン
@@ -2252,40 +2256,25 @@
                 }
                 // リンク
                 var link = str.match(linkReg);
-                var linkNewtab = str.match(linkNewtabReg);
-                var linkMoving = str.match(linkMovingReg);
-                if ( link !== null || linkNewtab !== null || linkMoving !== null) {
-                  //リンク（ページ遷移）
-                  if(linkMoving !== null) {
-                    var target = "";
-                    if(link !== null) {
-                      var a = "<a href='" + linkMoving[1] + "'" + target + ">" + linkMoving[2] + "</a>";
+                var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+                var linkTab = unEscapeStr.match(linkTabReg);
+                if ( link !== null || linkTab !== null) {
+                    if ( linkTab !== null) {
+                      if(link !== null) {
+                        var a = linkTab[0];
+                      }
+                      else {
+                        // ただの文字列にする
+                        var a = "<span class='link'>"+ linkTab[2] + "</span>";
+                      }
+                      str = linkTab[1].replace(linkTab[1], a);
                     }
+                    //URLのみのリンクの場合
                     else {
-                      // ただの文字列にする
-                      var a = "<span class='link'>"+ linkMoving[2] + "</span>";
+                      var url = link[0];
+                      var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
+                      str = str.replace(url, a);
                     }
-                    str = linkMoving[0].replace(linkMoving[0], a);
-                  }
-                  //リンク（新規ページ）
-                  if ( linkNewtab !== null) {
-                    var target = "target=_blank";
-                    if(link !== null) {
-                      var a = "<a href='" + linkNewtab[1] + "'" + target + ">" + linkNewtab[2] + "</a>";
-                    }
-                    else {
-                      // ただの文字列にする
-                      var a = "<span class='link'>"+ linkNewtab[2] + "</span>";
-                    }
-                    str = linkNewtab[1].replace(linkNewtab[1], a);
-                  }
-                  //URLのみのリンクの場合
-                  else {
-                    var target = "target=_blank";
-                    var url = link[0];
-                    var a = "<a href='" + url + "'" + target + ">" + url + "</a>";
-                    str = str.replace(url, a);
-                  }
                 }
                 // 電話番号（スマホのみリンク化）
                 var tel = str.match(telnoTagReg);
@@ -2530,7 +2519,7 @@
             //サイト訪問者がチャット送信した初回のタイミング
             if ( !check.isset(firstChatEmit) ) {
               if(typeof ga == "function"){
-                ga('send', 'event', 'sinclo', 'チャット送信', location.href);
+                ga('send', 'event', 'sinclo', 'sendChat', location.href, 1);
               }
               messageRequestFlg = flg;
             }

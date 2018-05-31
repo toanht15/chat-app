@@ -320,7 +320,7 @@
             ]); ?></label>
           </li>
           <!-- 状態 -->
-          <div id='lastSpeechTooltip' class="explainTooltip">
+          <div id='lastSpeechTooltip' class="explainTelTooltip">
             <icon-annotation>
               <ul>
                 <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>
@@ -330,14 +330,14 @@
           <div id='secondSpeechTooltip' class="explainTooltip">
             <icon-annotation>
               <ul>
-                <li><span>このボタンを押すと挿入される＜link-newtab＞タグの間にURLを記入すると、リンクをクリックした際に新規ページで開きます</span></li>
+                <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます</span></li>
               </ul>
             </icon-annotation>
           </div>
           <div id='thirdSpeechTooltip' class="explainTooltip">
             <icon-annotation>
               <ul>
-                <li><span>このボタンを押すと挿入される＜link-moving＞タグの間にURLを記入すると、リンクをクリックした際にページ遷移します</span></li>
+                <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します</span></li>
               </ul>
             </icon-annotation>
           </div>

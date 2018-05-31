@@ -753,7 +753,7 @@ class ContractController extends AppController
 
   private function addDefaultChatPersonalSettings($m_companies_id, $companyInfo) {
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
-    $default = $this->getDefaultChatBasicConfigurations();
+    $default = $this->getDefaultChatBasicConfigurations($companyInfo['options']['chatbotScenario']);
     $this->MChatSetting->create();
     $this->MChatSetting->set(array(
       "m_companies_id" => $m_companies_id,
@@ -789,7 +789,7 @@ class ContractController extends AppController
       )]
     );
     if(empty($autoMessages)) {
-      $default = $this->getDefaultAutomessageConfigurations();
+      $default = $this->getDefaultAutomessageConfigurations($companyInfo['options']['chatbotScenario']);
       foreach($default as $index => $item) {
         $this->TAutoMessages->create();
         $data = [
@@ -1142,16 +1142,24 @@ class ContractController extends AppController
     return $val;
   }
 
-  private function getDefaultChatBasicConfigurations() {
-    return Configure::read('default.chat.basic');
+  private function getDefaultChatBasicConfigurations($withScenarioOptions) {
+    if($withScenarioOptions) {
+      return Configure::read('default.chat.basic_with_scenario');
+    } else {
+      return Configure::read('default.chat.basic_without_scenario');
+    }
   }
 
   private function getDefaultDictionaryConfigurations() {
     return Configure::read('default.dictionary');
   }
 
-  private function getDefaultAutomessageConfigurations() {
-    return Configure::read('default.autoMessages');
+  private function getDefaultAutomessageConfigurations($withScenarioOptions) {
+    if($withScenarioOptions) {
+      return Configure::read('default.autoMessages_with_scenario');
+    } else {
+      return Configure::read('default.autoMessages_without_scenario');
+    }
   }
 
   private function getDefaultMailTemplateConfigurations() {

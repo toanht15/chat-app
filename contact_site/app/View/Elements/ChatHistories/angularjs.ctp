@@ -362,6 +362,9 @@
         if(message.indexOf('>') > -1) {
           forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
         }
+        if(message.indexOf('"') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/"/g, "");
+        }
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
