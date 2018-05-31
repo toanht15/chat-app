@@ -39,6 +39,26 @@ class FCController extends FileAppController
     return $this->saveUploadFile($sitekey, $file, $saveFileName, $filePath, $comment);
   }
 
+  public function pus() {
+    $this->autoRender = false;
+
+    $this->validatePostMethod();
+    // パラメータ取得
+    $file = $this->params['form']['f'];
+    $sitekey = $this->request->data(self::PARAM_SITE_KEY);
+    $comment = $this->request->data(self::PARAM_COMMENT);
+    $saveFileName = $this->getFilenameForSave($file);
+
+    return json_encode(array(
+      'success' => true,
+      'downloadUrl' => 'dummy',
+      'fileName' => $file['name'],
+      'fileSize' => $file['size'],
+      'extension' => $this->getExtension($file['name']),
+      'comment' => $comment
+    ));
+  }
+
   public function gd($uuid) {
     try {
       $this->autoRender = false;
@@ -63,32 +83,6 @@ class FCController extends FileAppController
       }
       echo $str;
     }
-  }
-
-  private function getFileByFileId($fileId) {
-    $data = null;
-    $file = null;
-    $result = array();
-    if($this->scenarioMode) {
-      $data = $this->TChatbotScenarioSendFile->findById($fileId);
-      $pos = strpos($data['TChatbotScenarioSendFile']['file_path'], $this->fileTransferPrefix);
-      if ($pos !== FALSE) {
-        $file = $this->getFile($this->getSaveKey(substr($data['TChatbotScenarioSendFile']['file_path'], $pos)));
-      }
-      $result = array(
-        'fileObj' => $file,
-        'record' => $data['TChatbotScenarioSendFile']
-      );
-    } else {
-      $data = $this->TUploadTransferFile->findById($fileId);
-      $file = $this->getFile($this->getSaveKey($data['TUploadTransferFile']['saved_file_key']));
-      $result = array(
-        'fileObj' => $file,
-        'record' => $data['TUploadTransferFile']
-      );
-    }
-
-    return $result;
   }
 
   private function validParameters() {

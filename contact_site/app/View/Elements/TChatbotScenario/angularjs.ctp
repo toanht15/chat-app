@@ -919,6 +919,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       LocalStorageService.setItem('chatbotVariables', [{key: $scope.setActionList[$scope.actionStep].selection.variableName, value: message}]);
       $scope.actionStep++;
       $scope.doAction();
+    } else
+    if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
+      $scope.actionStep++;
+      $scope.doAction();
     }
   });
 

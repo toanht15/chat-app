@@ -160,15 +160,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $scope.addReceiveFileUI = function(dropAreaMessage, cancelEnabled, cancelButtonLabel) {
     // ベースとなる要素をクローン
     var divElm = document.querySelector('#chatTalk div > li.sinclo_re.recv_file_left').parentNode.cloneNode(true);
-
-    divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-message').innerHTML = dropAreaMessage;
-    divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-message').innerHTML = dropAreaMessage;
-    divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-button a').addEventListener('click', $scope.onClickSelectFileButton);
+    var dropAreaMessageElm = divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-message');
+    var selectFileButtonElm = divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-button a');
+    dropAreaMessageElm.innerHTML = dropAreaMessage;
+    selectFileButtonElm.addEventListener('click', $scope.onClickSelectFileButton);
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
     $('#chatTalk div:last-child').show();
-
-
     self.autoScroll();
   }
 
@@ -212,10 +210,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       });
       divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function(e){
         var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
-        if(comment) {
+        if(!comment) {
           comment = "no comment";
         }
-        $scope.uploadFile(comment, fileObj, loadData);
+        $scope.uploadFile(divElm, comment, fileObj, loadData);
       });
       // 要素を追加する
       document.getElementById('chatTalk').appendChild(divElm);
@@ -226,7 +224,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   };
 
   // ファイル送信
-  $scope.uploadFile = function(comment, fileObj, loadFile) {
+  $scope.uploadFile = function(targetDivElm, comment, fileObj, loadFile) {
     var fd = new FormData();
     var blob = new Blob([loadFile], {type: fileObj.type});
     fd.append("k", "<?= $companyKey; ?>");
@@ -234,7 +232,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     fd.append("f", blob, fileObj.name);
 
     $.ajax({
-      url  : "<?= $this->Html->url('/FC/pu') ?>",
+      url  : "<?= $this->Html->url('/FC/pus') ?>",
       type : "POST",
       data : fd,
       cache       : false,
@@ -261,6 +259,15 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     })
       .done(function(data, textStatus, jqXHR){
         console.log(JSON.stringify(data));
+        var commentLabel = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentLabel');
+        var commentArea = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea');
+        var actionButtonWrap = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap');
+        commentArea.innerHTML = "";
+        actionButtonWrap.remove();
+        var commentElm = document.createElement('p');
+        commentLabel.innerHTML = "＜コメント＞";
+        commentArea.innerHTML = data.comment;
+        $scope.$emit('receiveVistorMessage', "");
       })
       .fail(function(jqXHR, textStatus, errorThrown){
         alert("fail");
