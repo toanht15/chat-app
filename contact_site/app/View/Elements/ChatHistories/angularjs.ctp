@@ -414,7 +414,6 @@
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       } else if ( type === chatApi.messageType.sendFile ) {
-        console.log('ファイル送信入ってるよ！');
         cn = "sinclo_se";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -446,8 +445,6 @@
           }
 
           var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
-          console.log('isExpired');
-          console.log(isExpired);
           content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
         }
       } else if ( type === chatApi.messageType.scenario.customer.hearing) {

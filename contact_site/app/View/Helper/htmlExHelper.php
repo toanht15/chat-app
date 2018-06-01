@@ -85,14 +85,10 @@ class htmlExHelper extends AppHelper {
     }
 
     public function makeChatView($value, $isSendFile = false,$isRecieveFile = false){
-        $this->log('sendfile',LOG_DEBUG);
-        $this->log($isSendFile,LOG_DEBUG);
-        $this->log($isRecieveFile,LOG_DEBUG);
         if($isSendFile) {
           return $this->makeSendChatView($value);
         }
         if($isRecieveFile) {
-          $this->log('ここに入ってきているはず',LOG_DEBUG);
           return $this->makeRecieveChatView($value);
         }
         $content = null;
@@ -142,8 +138,6 @@ class htmlExHelper extends AppHelper {
 
       // ファイル送信メッセージはJSONが入ってくる
       $value = json_decode($value, TRUE);
-      $this->log('value',LOG_DEBUG);
-      $this->log($value,LOG_DEBUG);
 
       $thumbnail = "";
       if(preg_match('/(jpeg|jpg|gif|png)$/', $value['extension']) && !$this->isExpire($value['expired'])) {
@@ -172,7 +166,6 @@ class htmlExHelper extends AppHelper {
     }
 
     private function makeRecieveChatView($value){
-      $this->log('ここに入ってきているよ',LOG_DEBUG);
       $content = "";
       $height = "";
 
@@ -207,8 +200,6 @@ class htmlExHelper extends AppHelper {
       $content .= "</div>";
       //li.style.cursor = "pointer";
       //li.addEventListener("click", function(event){window.open(message.downloadUrl)});
-      $this->log('content',LOG_DEBUG);
-      $this->log($content,LOG_DEBUG);
       return $content;
     }
 

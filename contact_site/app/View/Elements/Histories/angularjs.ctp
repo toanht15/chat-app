@@ -119,7 +119,6 @@
 
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
     window.openChatById = function(id){
-      console.log('アクセス履歴見るよ');
       $.ajax({
         type: 'GET',
         url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteGetChatLogs')) ?>",

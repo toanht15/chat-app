@@ -407,7 +407,7 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
-    ini_set("max_execution_time", 1800);
+    ini_set("max_execution_time", 180);
     ini_set('memory_limit', '-1'); // 無制限
 
     if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
