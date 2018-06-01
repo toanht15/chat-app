@@ -407,7 +407,7 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
-    ini_set("max_execution_time", 180);
+    ini_set("max_execution_time", 1800);
     ini_set('memory_limit', '-1'); // 無制限
 
     if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
@@ -546,6 +546,13 @@ class HistoriesController extends AppController {
           $row['transmissionPerson'] = "";
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
           $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+        }
+        if($val['THistoryChatLog']['message_type'] == 29) {
+          $row['transmissionKind'] = 'シナリオメッセージ（ファイル受信）';
+          $row['transmissionPerson'] = "";
+          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['fileName'];
         }
         if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
           $row['transmissionKind'] = '通知メッセージ';

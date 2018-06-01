@@ -84,9 +84,16 @@ class htmlExHelper extends AppHelper {
       return "<a href='".$matches[0]."'>".$matches[1]."</a>";
     }
 
-    public function makeChatView($value, $isSendFile = false){
+    public function makeChatView($value, $isSendFile = false,$isRecieveFile = false){
+        $this->log('sendfile',LOG_DEBUG);
+        $this->log($isSendFile,LOG_DEBUG);
+        $this->log($isRecieveFile,LOG_DEBUG);
         if($isSendFile) {
           return $this->makeSendChatView($value);
+        }
+        if($isRecieveFile) {
+          $this->log('ここに入ってきているはず',LOG_DEBUG);
+          return $this->makeRecieveChatView($value);
         }
         $content = null;
 
@@ -135,6 +142,8 @@ class htmlExHelper extends AppHelper {
 
       // ファイル送信メッセージはJSONが入ってくる
       $value = json_decode($value, TRUE);
+      $this->log('value',LOG_DEBUG);
+      $this->log($value,LOG_DEBUG);
 
       $thumbnail = "";
       if(preg_match('/(jpeg|jpg|gif|png)$/', $value['extension']) && !$this->isExpire($value['expired'])) {
@@ -144,7 +153,8 @@ class htmlExHelper extends AppHelper {
       }
       if(isset($value['message'])) { // TODO シナリオメッセージとオペレータからのファイル送信の判定がmessageがあるかどうか。messageが増えたらタイトルが変わる
         $content .= "<span class='cName'>シナリオメッセージ（ファイル送信）" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
-      } else {
+      }
+      else {
         $content .= "<span class='cName'>ファイル送信" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
       }
       if(isset($value['message'])) {
@@ -158,6 +168,47 @@ class htmlExHelper extends AppHelper {
       $content.= "  </div>";
       $content.= "</div>";
 
+      return $content;
+    }
+
+    private function makeRecieveChatView($value){
+      $this->log('ここに入ってきているよ',LOG_DEBUG);
+      $content = "";
+      $height = "";
+
+      // ファイル送信メッセージはJSONが入ってくる
+      $value = json_decode($value, TRUE);
+
+      $thumbnail = "";
+      if(preg_match('/(jpeg|jpg|gif|png)$/', $value['extension'])) {
+        $thumbnail = "<img src='" . $value['downloadUrl'] . "' class='recieveFileThumbnail' width='64' height='64'>";
+      } else {
+        $thumbnail = "<i class='fa " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
+        $height = "style = 'height:64px'";
+      }
+      if(isset($value['message'])) { // TODO シナリオメッセージとオペレータからのファイル送信の判定がmessageがあるかどうか。messageが増えたらタイトルが変わる
+        $content .= "<span class='cName'>シナリオメッセージ（ファイル送信）" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
+      }
+      else {
+        $content .= "<span class='cName'>シナリオメッセージ（ファイル受信）</span>";
+      }
+      if(isset($value['message'])) {
+        $content .= "<span class='scenarioRecieveFileMessage'>".$value['message']."</span>";
+      }
+
+      $content .= "<div class='recieveFileContent'>";
+      $content .= "  <div class='recieveFileThumbnailArea' ".$height.">" . $thumbnail . "</div>";
+      $content .= "  <div class='recieveFileMetaArea'>";
+      $content .= "  <br>";
+      $content .= "    <span class='data revieveFileSize'> ＜コメント＞";
+      $content .= "  <br>";
+      $content .= $value['comment'] . "</span>";
+      $content .= "  </div>";
+      $content .= "</div>";
+      //li.style.cursor = "pointer";
+      //li.addEventListener("click", function(event){window.open(message.downloadUrl)});
+      $this->log('content',LOG_DEBUG);
+      $this->log($content,LOG_DEBUG);
       return $content;
     }
 

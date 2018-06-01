@@ -227,7 +227,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params);
+        //$tHistoryCountData = $this->THistory->find('first', $params);
+        $tHistoryCountData = 2;
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -806,6 +807,12 @@
             $row['transmissionPerson'] = "";
             $json = json_decode($val['THistoryChatLog']['message'], TRUE);
             $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+          }
+          if($val['THistoryChatLog']['message_type'] == 29) {
+            $row['transmissionKind'] = 'シナリオメッセージ（ファイル受信）';
+            $row['transmissionPerson'] = "";
+            $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+            $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['fileName'];
           }
           if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
             $row['transmissionKind'] = '通知メッセージ';
@@ -1767,7 +1774,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        $tHistoryCountData = 2;
       }
       else {
         $tHistoryCountData = "";
@@ -1923,6 +1931,7 @@
      * */
     public function openEntryDelete(){
       Configure::write('debug', 0);
+      $this->log('ここに入っている');
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
       $data = $this->request->data;
