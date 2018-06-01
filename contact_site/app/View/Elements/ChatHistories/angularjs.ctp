@@ -651,8 +651,6 @@
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
           content += $scope.createTextOfRecieveFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, message.comment);
-          li.style.cursor = "pointer";
-          li.addEventListener("click", function(event){window.open(message.downloadUrl)});
         }
       }
       else {
@@ -676,6 +674,11 @@
       li.innerHTML = content;
       div.appendChild(li);
       $(elem).append(div);
+      //チャット受信 ダウンロードできるようにする
+      if(type == chatApi.messageType.scenario.message.sendFile && $('.recieveFileContent').length !== 0) {
+        $('.recieveFileContent')[$('.recieveFileContent').length-1].style.cursor = "pointer";
+        $('.recieveFileContent')[$('.recieveFileContent').length-1].addEventListener("click", function(event){window.open(message.downloadUrl)});
+      }
     };
 
     $scope.createTextOfSendFile = function(chat, url, name, size, extension, isExpired) {
