@@ -386,10 +386,11 @@
             <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;">
             <?php
             //サイト訪問者の発言がある場合
-            if(!empty($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url']) &&
-            !empty($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'])) { ?>
-              <a href = "<?=h($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
+            if(!empty($forChatSendingPageList[$history['SpeechTime']['firstSpeechStayLogId']]['THistoryStayLog']['url']) &&
+            !empty($forChatSendingPageList[$history['SpeechTime']['firstSpeechStayLogId']]['THistoryStayLog']['title'])) { ?>
+              <a href = "<?=h($forChatSendingPageList[$history['SpeechTime']['firstSpeechStayLogId']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['SpeechTime']['firstSpeechStayLogId']]['THistoryStayLog']['title'] ?></a>
             <?php } ?>
+            </td>
             <td class="tCenter" style = "width:5%"><?php
               if(!empty($history['THistoryChatLog']['eff']) && $history['THistoryChatLog']['eff'] != 0) {
                 echo $achievementType[2];
@@ -449,7 +450,7 @@
         <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #FFFFFF;">チャット内容</span>
         <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #c3d69b;">チャット内容</span>
       </li>
-      <li ng-class="{on:switchDetailMode===2}" ng-click="setDetailMode(2)" style = "margin-top:0; margin-bottom:0; width:9em !important;">
+      <li ng-class="{on:switchDetailMode===2}" ng-click="setDetailMode(2  )" style = "margin-top:0; margin-bottom:0; width:9em !important;">
         <span ng-if="switchDetailMode===1" style="margin: 0; padding: 5px 0; color: #c3d69b;">詳細情報</span>
         <span ng-if="switchDetailMode===2" style="margin: 0; padding: 5px 0; color: #FFFFFF;">詳細情報</span>
       </li>
@@ -561,9 +562,10 @@
               <a href = "<?=h($forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing">
               <span id = "chatSendingPage"><?= $forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></span></a></dd>
             <?php }
-            else { ?>
+            else {
+              //サイト訪問者の発言がない場合 ?>
               <span id = "chatSendingPage"></span>
-             <?php } ?>
+            <?php } ?>
           </li>
           <li>
             <dt>離脱ページ</dt>
