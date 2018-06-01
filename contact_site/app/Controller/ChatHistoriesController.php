@@ -807,6 +807,12 @@
             $json = json_decode($val['THistoryChatLog']['message'], TRUE);
             $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
           }
+          if($val['THistoryChatLog']['message_type'] == 29) {
+            $row['transmissionKind'] = 'シナリオメッセージ（ファイル受信）';
+            $row['transmissionPerson'] = "";
+            $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+            $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['fileName'];
+          }
           if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
             $row['transmissionKind'] = '通知メッセージ';
             $row['transmissionPerson'] = "";
@@ -1396,7 +1402,7 @@
         //初回チャット受信日時、最終発言後離脱時間
         $joinToSpeechChatTime = [
           'type' => 'LEFT',
-          'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id ORDER BY t_histories_id desc)',
+          'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id = '. $this->userInfo['MCompany']['id'] .' GROUP BY t_histories_id ORDER BY t_histories_id)',
           'alias' => 'SpeechTime',
           'field' => 'created as SpeechTime',
           'conditions' => [
@@ -1540,7 +1546,7 @@
         }
 
         $this->paginate['THistory']['fields'][] = 'THistoryChatLog.*';
-        $this->paginate['THistory']['fields'][] = 'SpeechTime.created as SpeechTime,SpeechTime.firstSpeechTime';
+        $this->paginate['THistory']['fields'][] = 'SpeechTime.created as SpeechTime,SpeechTime.firstSpeechTime,SpeechTime.t_history_stay_logs_id as firstSpeechStayLogId';
         $this->paginate['THistory']['fields'][] = 'NoticeChatTime.created';
         if ( isset($data['History']['campaign']) && $data['History']['campaign'] !== "") {
           $this->paginate['THistory']['fields'][] = 'Campaign.title,Campaign.url';
@@ -1614,7 +1620,7 @@
           }
         }
         $historyIdList[] = $val['THistory']['id'];
-        $historyStayLogIdList[] = $val['THistoryChatLog']['t_history_stay_logs_id'];
+        $historyStayLogIdList[] = $val['SpeechTime']['firstSpeechStayLogId'];
         $customerIdList[$val['THistory']['visitors_id']] = true;
       }
       $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
@@ -1923,6 +1929,7 @@
      * */
     public function openEntryDelete(){
       Configure::write('debug', 0);
+      $this->log('ここに入っている');
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
       $data = $this->request->data;
