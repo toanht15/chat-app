@@ -35,7 +35,7 @@ $(function(){
 <div id = "modalShortMessage">
 </div>
 <ul>
-<?php $number = 0; ?>
+<?php $number = -1; ?>
 <?php foreach($THistoryChatLog as $key => $val): ?>
   <?php
     $className = "";
@@ -216,8 +216,9 @@ $(function(){
   <?php } ?>
   <script type="text/javascript">
   $(function(){
-    var number = "<?=$number?>" -1;
-    if(number !== -1) {
+    var number = "<?=$number?>";
+    var message_type = "<?=$val['THistoryChatLog']['message_type']?>";
+    if(message_type == 29 && number !== -1) {
       $('.recieveFileContent')[number].style.cursor = "pointer";
       $('.recieveFileContent')[number].addEventListener("click", function(event){window.open("<?=$downloadUrl?>")});
     }
