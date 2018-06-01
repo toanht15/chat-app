@@ -179,16 +179,7 @@ class htmlExHelper extends AppHelper {
         $thumbnail = "<i class='fa " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         $height = "style = 'height:64px'";
       }
-      if(isset($value['message'])) { // TODO シナリオメッセージとオペレータからのファイル送信の判定がmessageがあるかどうか。messageが増えたらタイトルが変わる
-        $content .= "<span class='cName'>シナリオメッセージ（ファイル送信）" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
-      }
-      else {
-        $content .= "<span class='cName'>シナリオメッセージ（ファイル受信）</span>";
-      }
-      if(isset($value['message'])) {
-        $content .= "<span class='scenarioRecieveFileMessage'>".$value['message']."</span>";
-      }
-
+      $content .= "<span class='cName'>シナリオメッセージ（ファイル受信）</span>";
       $content .= "<div class='recieveFileContent'>";
       $content .= "  <div class='recieveFileThumbnailArea' ".$height.">" . $thumbnail . "</div>";
       $content .= "  <div class='recieveFileMetaArea'>";
@@ -198,8 +189,6 @@ class htmlExHelper extends AppHelper {
       $content .= $value['comment'] . "</span>";
       $content .= "  </div>";
       $content .= "</div>";
-      //li.style.cursor = "pointer";
-      //li.addEventListener("click", function(event){window.open(message.downloadUrl)});
       return $content;
     }
 

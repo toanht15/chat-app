@@ -811,7 +811,7 @@
             $row['transmissionKind'] = 'シナリオメッセージ（ファイル受信）';
             $row['transmissionPerson'] = "";
             $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-            $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['fileName'];
+            $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['downloadUrl'];
           }
           if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
             $row['transmissionKind'] = '通知メッセージ';

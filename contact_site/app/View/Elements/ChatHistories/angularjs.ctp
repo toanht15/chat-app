@@ -632,10 +632,6 @@
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
         var created = chat.created.replace(" ","%");
-//        var chatName = widget.subTitle;
-//        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
-//          chatName = userList[Number(userId)];
-//        }
         if(chat.delete_flg == 1) {
           var deleteUser = userList[Number(chat.deleted_user_id)];
           content = "<span class='cName' style = 'color:#bdbdbd !important; font-size:"+fontSize+"'>シナリオメッセージ（ファイル受信）" + "</span>";
