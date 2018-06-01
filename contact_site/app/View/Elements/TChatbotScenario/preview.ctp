@@ -23,6 +23,12 @@
 #tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left.middleSize { margin-right: 21px }
 #tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left.largeSize { margin-right: 24.6px }
 
+#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re div.receiveFileContent { text-align: center; border: 1px dashed {{widget.settings['re_text_color']}}; padding: 0 25px; }
+#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { width: 60%; height: auto; padding: 5px 35px; border-radius: 0; cursor: pointer; margin: 0 auto; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: bold; }
+#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }
+#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }
+#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re div.cancelReceiveFileArea a { cursor: pointer; text-decoration: underline; }
+
 #tchatbotscenario_form_preview_body .chatTalk li span.cName { display: block; color: {{widget.settings['main_color']}}!important; font-weight: bold; font-size: {{widget.settings['re_text_size']}}px; margin: 0 0 5px 0; }
 #tchatbotscenario_form_preview_body .chatTalk li span.cName.details{ color: {{widget.settings['c_name_text_color']}}!important;}
 
@@ -64,6 +70,10 @@
     <!-- ファイル送信 -->
     <div>
       <li ng-if="setItem.file.download_url && setItem.file.file_name && setItem.file.file_size" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">ファイルが送信されました</span><div class="sendFileContent"><div class="sendFileThumbnailArea"><img ng-if="widget.isImage(setItem.file.extension)" ng-src="{{setItem.file.download_url}}" class="sendFileThumbnail" width="64" height="64"><i ng-if="!widget.isImage(setItem.file.extension)" ng-class="widget.selectIconClassFromExtension(setItem.file.extension)" class="fa fa-4x sendFileThumbnail" aria-hidden="true"></i></div><div class="sendFileMetaArea"><span class="data sendFileName details">{{setItem.file.file_name}}</span><span class="data sendFileSize details">{{setItem.file.file_size}}</span></div></div></li>
+    </div>
+    <!-- ファイル受信 -->
+    <div>
+      <li ng-show="setItem.dropAreaMessage" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p>{{setItem.dropAreaMessage}}</p><p><i class="fa fa-5x fa-cloud-upload"></i></p><p>または</p><p><a class="select-file-button">ファイルを選択</a></p></div></div><div class="cancelReceiveFileArea"><a>{{setItem.cancelLabel}}</a></div></li>
     </div>
   </ul>
 </section>

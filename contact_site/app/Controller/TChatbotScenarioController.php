@@ -86,6 +86,7 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
     $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
     $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
+    $this->chatbotScenarioReceiveFileTypeList = Configure::read('chatbotScenarioReceiveFileTypeList');
 
     // FileAppController
     $this->fileTransferPrefix = "fileScenarioTransfer/";
@@ -973,6 +974,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioApiMethodType', $this->chatbotScenarioApiMethodType);
     // API通信レスポンス種別
     $this->set('chatbotScenarioApiResponseType', $this->chatbotScenarioApiResponseType);
+    // ファイル受信ファイル形式種別
+    $this->set('chatbotScenarioReceiveFileTypeList', $this->chatbotScenarioReceiveFileTypeList);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);

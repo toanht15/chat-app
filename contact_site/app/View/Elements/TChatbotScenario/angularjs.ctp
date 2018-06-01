@@ -43,6 +43,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiMethodType = <?php echo json_encode($chatbotScenarioApiMethodType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiResponseType = <?php echo json_encode($chatbotScenarioApiResponseType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.receiveFileTypeList = <?php echo json_encode($chatbotScenarioReceiveFileTypeList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
@@ -1010,6 +1011,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             $scope.sendFileIndex = 0;
             $scope.actionStep++;
             $scope.doAction();
+          }
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
+          if(actionDetail.dropAreaMessage) {
+            $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled, actionDetail.cancelLabel);
           }
         }
       }, parseInt(time, 10) * 1000);

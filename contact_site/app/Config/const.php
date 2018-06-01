@@ -235,6 +235,10 @@ define('C_SCENARIO_ATTRIBUTE_TYPE_ID', 1);
 define('C_SCENARIO_ATTRIBUTE_TYPE_NAME', 2);
 define('C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR', 3);
 
+// シナリオ設定(ファイル受信)－ファイル形式
+define('C_SCENARIO_RECEIVE_FILE_TYPE_BASIC', 1);
+define('C_SCENARIO_RECEIVE_FILE_TYPE_EXTENDED', 2);
+
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
@@ -778,6 +782,19 @@ $config['chatbotScenarioActionList'] = [
       'file' => ''
     ]
   ]
+  ,
+  // ファイル受信
+  C_SCENARIO_ACTION_RECEIVE_FILE => [
+    'label' => 'ファイル受信',
+    'default' => [
+      'dropAreaMessage' => 'ここにファイルをドロップ
+してください',
+      'receiveFileType' => '1',
+      'extendedReceiveFileExtensions' => '',
+      'cancelEnabled' => true,
+      'cancelLabel' => 'ファイル送信をキャンセルする'
+    ]
+  ]
 ];
 
 /* シナリオ設定 - ヒアリング入力タイプ */
@@ -836,6 +853,20 @@ $config['chatbotScenarioSendMailType'] = [
   C_SCENARIO_MAIL_TYPE_CUSTOMIZE => [
     'label' => 'メール本文をカスタマイズする',
     'tooltip' => '自由にメール本文を編集することが可能です。<br>（変数の利用も可能です）'
+  ]
+];
+
+/* シナリオ設定 - メール送信タイプ */
+$config['chatbotScenarioReceiveFileTypeList'] = [
+  C_SCENARIO_RECEIVE_FILE_TYPE_BASIC => [
+    'label' => '一般的なファイルに限定',
+    'annotation' => '※PDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限されます。',
+    'tooltip' => 'それまでのすべてのチャットやり取り内容すべてをメールします。'
+  ],
+  C_SCENARIO_RECEIVE_FILE_TYPE_EXTENDED => [
+    'label' => '拡張設定',
+    'annotation' => '※送信可能なファイルの拡張子を指定します。複数の拡張子を指定する場合はカンマ（,）で区切ります。',
+    'tooltip' => 'ヒアリングおよび選択肢にて入力（または選択）された内容をメールします。'
   ]
 ];
 

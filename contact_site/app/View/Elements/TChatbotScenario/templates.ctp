@@ -172,7 +172,7 @@
         <div class='area-type'>
           <select ng-model="getAttributes.type" ng-init="getAttributes.type = getAttributes.type.toString()" ng-options="index as type.label for (index, type) in inputAttributeList"></select>
         </div>
-        <div class='area-message'><input type = "textarea" ng-model="getAttributes.attributeValue" rows="1" data-maxRow="10" class = "textarea-message"></input></div>
+        <div class='area-message'><input type = "text" ng-model="getAttributes.attributeValue" rows="1" data-maxRow="10" class = "textarea-message"></input></div>
         <div class='area-btn'>
           <div class="btnBlock">
             <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
@@ -292,6 +292,36 @@
         </li>
         <li>
           <input type="file" class="hide fileElm"><span class="greenBtn btn-shadow" ng-click="main.selectFile($event)">ファイル選択</span><span class="btn-shadow" ng-class="{disOffgrayBtn: !setItem.file, redBtn: !!setItem.file}" ng-click="!!setItem.file && main.removeFile($event, setActionId)">ファイル削除</span>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+
+<?php /* ファイル受信 */ ?>
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>" class="set_action_item_body action_send_file">
+  <ul>
+    <li class="styleFlexbox">
+      <span class="fb9em"><label>発言内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットに発言させたいテキストメッセージを設定します。">?</icon></span></label></span>
+      <div>
+        <resize-textarea name="dropAreaMessage" ng-model="setItem.dropAreaMessage" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
+      </div>
+    </li>
+    <li class="styleFlexbox">
+      <span class="fb9em"><label>ファイル形式</label></span>
+      <div>
+        <label ng-repeat="(key, item) in receiveFileTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_receive_file_type" value="{{key}}" ng-model="setItem.receiveFileType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}" data-tooltip-width='240'>?</icon></span><p class="radio-annotation"><s>{{item.annotation}}</s></p></label>
+        <input type="text" name="extendedReceiveFileExtensions" ng-model="setItem.extendedReceiveFileExtensions" ng-if="setItem.receiveFileType == 2">
+      </div>
+    </li>
+    <li>
+      <label class="pointer"><input type="checkbox" ng-model="setItem.cancelEnabled" ng-init="setItem.isConfirm = setItem.isConfirm == 1">キャンセルできるようにする<span class="questionBalloon"><icon class="questionBtn" data-tooltip="質問内容を全て聞き終えた後に、サイト訪問者に確認メッセージを送ることが出来ます。" data-tooltip-width='300'>?</icon></span></label>
+      <ul ng-if="setItem.cancelEnabled == true" class="indentDown">
+        <li class="styleFlexbox">
+          <span class="fb9em"><label>名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="確認メッセージとして送信するメッセージを設定します。<br><br>＜設定例＞<br>お名前　　　　：{&thinsp;{名前}&thinsp;}<br>電話番号　　　：{&thinsp;{電話番号}&thinsp;}<br>メールアドレス：{&thinsp;{メールアドレス}&thinsp;}<br>でよろしいでしょうか？" data-tooltip-width='300'>?</icon></span></label></span>
+          <div>
+            <input type="text" name="cancelLabel" ng-model="setItem.cancelLabel">
+          </div>
         </li>
       </ul>
     </li>
