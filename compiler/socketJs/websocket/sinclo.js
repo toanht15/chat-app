@@ -3769,7 +3769,23 @@
         scenarioMessageType: "s_scenarioMessageType",
         previousChatMessageLength: "s_prevChatMessageLength"
       },
-      defaultVal: null,
+      defaultVal: {
+        "s_id": 0,
+        "s_currentdata": {},
+        "s_processing": {},
+        "s_waiting": false,
+        "s_variables": {},
+        "s_messages": [],
+        "s_allowSave": false,
+        "s_scenarios": {},
+        "s_scenarioLength": 0,
+        "s_currentScenario": 0,
+        "s_currentScenarioSeqNum": 0,
+        "s_storedVariableKeys": [],
+        "s_sendCustomerMessageType": 1,
+        "s_showSequenceList": {},
+        "s_scenarioMessageType": 3
+      },
       _events: {
         inputCompleted: "sinclo:scenario:inputComplete"
       },
