@@ -3888,6 +3888,7 @@
       _end: function() {
         // シナリオ終了
         var self = sinclo.scenarioApi;
+        self._resetDefaultVal();
         self._saveStoredMessage(function(){
           self._saveProcessingState(false);
           self._enablePreviousRadioButton();
