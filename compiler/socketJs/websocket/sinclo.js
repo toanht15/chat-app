@@ -3769,23 +3769,7 @@
         scenarioMessageType: "s_scenarioMessageType",
         previousChatMessageLength: "s_prevChatMessageLength"
       },
-      defaultVal: {
-        "s_id": 0,
-        "s_currentdata": {},
-        "s_processing": {},
-        "s_waiting": false,
-        "s_variables": {},
-        "s_messages": [],
-        "s_allowSave": false,
-        "s_scenarios": {},
-        "s_scenarioLength": 0,
-        "s_currentScenario": 0,
-        "s_currentScenarioSeqNum": 0,
-        "s_storedVariableKeys": [],
-        "s_sendCustomerMessageType": 1,
-        "s_showSequenceList": {},
-        "s_scenarioMessageType": 3
-      },
+      defaultVal: null,
       _events: {
         inputCompleted: "sinclo:scenario:inputComplete"
       },
@@ -3832,6 +3816,7 @@
       },
       init: function(id, scenarioObj){
         var self = sinclo.scenarioApi;
+        self._resetDefaultVal();
         if(self.isProcessing()) {
 
         } else {
@@ -3858,6 +3843,26 @@
           console.log("self.set(self._lKey.showSequenceSet " + {});
           console.log("self.set(self._lKey.previousChatMessageLength " + 0);
         }
+      },
+      _resetDefaultVal: function() {
+        var self = sinclo.scenarioApi;
+        self.defaultVal = {
+          "s_id": 0,
+          "s_currentdata": {},
+          "s_processing": {},
+          "s_waiting": false,
+          "s_variables": {},
+          "s_messages": [],
+          "s_allowSave": false,
+          "s_scenarios": {},
+          "s_scenarioLength": 0,
+          "s_currentScenario": 0,
+          "s_currentScenarioSeqNum": 0,
+          "s_storedVariableKeys": [],
+          "s_sendCustomerMessageType": 1,
+          "s_showSequenceList": {},
+          "s_scenarioMessageType": 3
+        };
       },
       begin: function() {
         this._disablePreviousRadioButton();
