@@ -159,16 +159,232 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   $scope.addReceiveFileUI = function(dropAreaMessage, cancelEnabled, cancelButtonLabel) {
     // ベースとなる要素をクローン
-    var divElm = document.querySelector('#chatTalk div > li.sinclo_re.recv_file_left').parentNode.cloneNode(true);
-    var dropAreaMessageElm = divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-message');
-    var selectFileButtonElm = divElm.querySelector('li.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-button a');
+    var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left.recv_file_left').parentNode.cloneNode(true);
+    var dropAreaElm = divElm.querySelector('li.chat_left.recv_file_left div.receiveFileContent div.selectFileArea');
+    var dropAreaMessageElm = divElm.querySelector('li.chat_left.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-message');
+    var selectFileButtonElm = divElm.querySelector('li.chat_left.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-button a');
+    var selectInputElm = $(divElm).find('.receiveFileInput');
     dropAreaMessageElm.innerHTML = dropAreaMessage;
-    selectFileButtonElm.addEventListener('click', $scope.onClickSelectFileButton);
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
+    $scope.fileUploader.init($(document.querySelector('#chatTalk')), $(dropAreaElm), $(selectFileButtonElm), $(selectInputElm));
     $('#chatTalk div:last-child').show();
     self.autoScroll();
-  }
+  };
+
+  // ===========
+  // ファイル送信
+  // ===========
+  $scope.fileUploader = {
+    isDisable: false,
+    dragging: false,
+    dragArea: null,
+    droppable: null,
+    selectFileBtn: null,
+    selectInput: null,
+    fileObj: null,
+    loadData: null,
+
+    init: function(dragArea, droppable, selectFileButton, selectInput) {
+      this.dragArea = dragArea;
+      this.droppable = droppable;
+      this.selectFileBtn = selectFileButton;
+      this.selectInput = selectInput;
+      if(window.FileReader) {
+        this._addDragAndDropEvents();
+      } else {
+        this.isDisable = true;
+      }
+      this._addSelectFileEvents();
+    },
+    _addDragAndDropEvents: function() {
+      this.dragArea.on("dragenter", this._enterEvent);
+      this.dragArea.on("dragover", this._overEvent);
+      this.dragArea.on("dragleave", this._leaveEvent);
+      this.dragArea.on("drop", function(){ $scope.fileUploader.droppable.css('display', 'none'); event.preventDefault(); event.stopPropagation(); return false;});
+      this.droppable.on("drop", this._handleDroppedFile);
+    },
+    _addSelectFileEvents: function() {
+      this.selectFileBtn.on('click', function(event){
+        $scope.fileUploader.selectInput.trigger('click');
+      });
+      this.selectInput.on("click", function(event){
+        $scope.fileUploader._hideInvalidError();
+        $(this).val(null);
+      }).on("change",function(event){
+        if($scope.fileUploader.selectInput[0].files[0]) {
+          var self = this;
+          $scope.fileUploader.fileObj = $scope.fileUploader.selectInput[0].files[0];
+          // ファイルの内容は FileReader で読み込みます.
+          var fileReader = new FileReader();
+          fileReader.onload = function (event) {
+            if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
+              $scope.fileUploader._showInvalidError();
+              return;
+            }
+            // event.target.result に読み込んだファイルの内容が入っています.
+            // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+            $scope.fileUploader.loadData = event.target.result;
+            $scope.fileUploader._showPreview(self, $scope.fileUploader.fileObj, $scope.fileUploader.loadData);
+          };
+          fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
+        }
+      });
+    },
+    _enterEvent: function(event) {
+      $scope.fileUploader.dragging = true;
+      $scope.fileUploader._cancelEvent(event);
+      return false;
+    },
+    _overEvent: function(event) {
+      $scope.fileUploader.dragging = false;
+      $scope.fileUploader.droppable.css('opacity', '0.8');
+      $scope.fileUploader._cancelEvent(event);
+      return false;
+    },
+    _leaveEvent: function(event) {
+      if($scope.fileUploader.dragging) {
+        $scope.fileUploader.dragging = false;
+      } else {
+        $scope.fileUploader.droppable.css('opacity', '1.0');
+      }
+      $scope.fileUploader._cancelEvent(event);
+      return false;
+    },
+    _handleDroppedFile: function(event) {
+      $scope.fileUploader.droppable.css('display', 'none');
+      $scope.fileUploader._hideInvalidError();
+      // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
+      $scope.fileUploader.fileObj = event.originalEvent.dataTransfer.files[0];
+
+      var self = this;
+      // ファイルの内容は FileReader で読み込みます.
+      var fileReader = new FileReader();
+      fileReader.onload = function(event) {
+        if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
+          $scope.fileUploader._showInvalidError();
+          return;
+        }
+        // event.target.result に読み込んだファイルの内容が入っています.
+        // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+        $scope.fileUploader.loadData = event.target.result;
+        $scope.showPreview(self, $scope.fileUploader.fileObj, $scope.fileUploader.loadData);
+      }
+      fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
+
+      // デフォルトの処理をキャンセルします.
+      $scope.fileUploader._cancelEvent(event);
+      return false;
+    },
+    _cancelEvent: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    _validExtension: function(filename) {
+      /*
+      var split = filename.split(".");
+      var targetExtension = split[split.length-1];
+      var regex = new RegExp(this.allowExtensions.join("|"), 'i');
+      return regex.test(targetExtension);
+      */
+      return true;
+    },
+    _showInvalidError: function() {
+      var span = document.createElement("span");
+      span.classList.add('errorMsg');
+      span.textContent = "指定のファイルは送信を許可されていません。";
+      $("#sendMessageArea").append(span);
+    },
+    _hideInvalidError: function() {
+      $('#sendMessageArea').find('span.errorMsg').remove();
+    },
+    _showConfirmDialog: function(message) {
+      modalOpen.call(window, message, 'p-cus-file-upload', '確認', 'moment');
+      popupEvent.closePopup = function() {
+        $scope.uploadFile($scope.fileUploader.fileObj, $scope.fileUploader.loadData);
+        popupEvent.close();
+      };
+    },
+    _showPreview: function(target, fileObj, loadData) {
+      $(target).parents('li.sinclo_re.recv_file_left').parent().hide();
+
+      // ベースとなる要素をクローン
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
+      var imgElm = document.createElement('img');
+
+      var fileReader = new FileReader();
+      fileReader.onload = function (e) {
+        imgElm.src = this.result;
+        divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(imgElm);
+        divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function (e) {
+          document.getElementById('chatTalk').removeChild(divElm);
+          $(target).parents('li.sinclo_re.recv_file_left').parent().show();
+        });
+        divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function (e) {
+          var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
+          if (!comment) {
+            comment = "no comment";
+          }
+          $scope.fileUploader._uploadFile(divElm, comment, fileObj, loadData);
+        });
+        // 要素を追加する
+        document.getElementById('chatTalk').appendChild(divElm);
+        $('#chatTalk div:last-child').show();
+        self.autoScroll();
+      };
+      fileReader.readAsDataURL(fileObj);
+    },
+    _uploadFile: function(targetDivElm, comment, fileObj, loadFile) {
+      var fd = new FormData();
+      var blob = new Blob([loadFile], {type: fileObj.type});
+      fd.append("k", "<?= $companyKey; ?>");
+      fd.append("c", comment)
+      fd.append("f", blob, fileObj.name);
+
+      $.ajax({
+        url  : "<?= $this->Html->url('/FC/pus') ?>",
+        type : "POST",
+        data : fd,
+        cache       : false,
+        contentType : false,
+        processData : false,
+        dataType    : "json",
+        xhr : function(){
+          var XHR = $.ajaxSettings.xhr();
+          /*
+          if(XHR.upload){
+            XHR.upload.addEventListener('progress',function(e){
+              $scope.uploadProgress = parseInt(e.loaded/e.total*10000)/100;
+              console.log($scope.uploadProgress);
+              if($scope.uploadProgress === 100) {
+                $('#uploadMessage').css('display', 'none');
+                $('#processingMessage').css('display', 'block');
+              }
+              $scope.$apply();
+            }, false);
+          }
+          */
+          return XHR;
+        }
+      })
+      .done(function(data, textStatus, jqXHR){
+        console.log(JSON.stringify(data));
+        var commentLabel = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentLabel');
+        var commentArea = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea');
+        var actionButtonWrap = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap');
+        commentArea.innerHTML = "";
+        actionButtonWrap.remove();
+        commentLabel.innerHTML = "＜コメント＞";
+        commentArea.innerHTML = data.comment;
+        $scope.$emit('receiveVistorMessage', "");
+      })
+      .fail(function(jqXHR, textStatus, errorThrown){
+        alert("fail");
+      });
+    }
+  };
+
+
 
   $scope.onClickSelectFileButton = function(event) {
     var targetInput = $(event.target).parents('div.selectFileArea').find('.receiveFileInput');
