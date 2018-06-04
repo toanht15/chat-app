@@ -342,9 +342,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }
         #sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea a { cursor: pointer; text-decoration: underline; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { font-size: 5em; color: {{widget.settings['re_text_color']}}; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent { background-color: #FFF; padding: 5px; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img { max-width: 100%; max-height: 50%; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { width: 100%; height: 80px; resize: none; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 100%; height: 80px; resize: none; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 230px; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a:hover { opacity: .8; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.cancel-file-button { width: 105px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: bold; word-break: keep-all; }
@@ -467,7 +468,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
   <!--
       <div id="addBtn" class="widgetOpener" ng-class="{closeButtonSetting: widget.settings['close_button_mode_type'] === '2'}" style="display: none;"></div>
    -->
-      <div id='descriptionSethoge' class="widgetOpener notSelect" ng-hide="widget.spHeaderLightToggle() || widget.mainImageToggle == '2' && widget.subTitleToggle == '2' && widget.descriptionToggle == '2'">
+      <div id='descriptionSet' class="widgetOpener notSelect" ng-hide="widget.spHeaderLightToggle() || widget.mainImageToggle == '2' && widget.subTitleToggle == '2' && widget.descriptionToggle == '2'">
 
         <!-- サブタイトル -->
         <p id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false}" class="details">{{widget.subTitleToggle == '1' ? widget.settings['sub_title'] : '&thinsp;'}}</p>
