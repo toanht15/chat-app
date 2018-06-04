@@ -8,6 +8,7 @@ var socket, // socket.io
     syncEvent, // 画面同期関連関数
     popup, // ポップアップ関連関数
     vcPopup, // ビデオ表示用ポップアップ関連関数
+    uploadFileSelectorModal, // ファイル受信用
     sinclo, // リアルタイム通信補助関数
     sincloVideo; // ビデオ通信補助関数
 
@@ -3621,6 +3622,131 @@ var socket, // socket.io
         vcPopup.startDragY = e.screenY;
         return false;
       }
+  };
+
+  uploadFileSelectorModal = {
+    dragging: false,
+    set: function(fromID, toID) {
+      var html = '';
+      var sincloData = {
+        from: fromID,
+        to: toID,
+      };
+      html += '  <style>';
+      html += '    #sincloVcPopupFrame {';
+      html += '        border: 0.15em solid #ABABAB;';
+      html += '        width: 27em;';
+      html += '        opacity: 0;';
+      html += '        background-color: #EDEDED;';
+      html += '        color: #3C3C3C;';
+      html += '        margin: auto;';
+      html += '        position: absolute;';
+      html += '        top: 0;';
+      html += '        left: 0;';
+      html += '        box-shadow: 0 35px 42px rgba(141, 141, 141, 0.8);';
+      html += '        border-radius: 5px;';
+      html += '        box-sizing: border-box;';
+      html += '    }';
+      html += '    #sincloVcPopBar {';
+      html += '        height: 2.45em;';
+      html += '        background: linear-gradient(#EDEDED, #D2D2D2);';
+      html += '        border-bottom: 0.15em solid #989898;';
+      html += '        border-radius: 5px 5px 0 0;';
+      html += '    }';
+      html += '    #sincloVcLogo {';
+      html += '        padding: 0.5em 1em;';
+      html += '    }';
+      html += '    #sincloVcMessage {';
+      html += '        padding-right: 1em;';
+      html += '    }';
+      html += '    sinclo-h3 {';
+      html += '        font-weight: bold;';
+      html += '        display: block;';
+      html += '        font-size: 1.2em;';
+      html += '        height: 1.2em;';
+      html += '        margin: 0.4em 0;';
+      html += '    }';
+      html += '    sinclo-div {';
+      html += '        display: block;';
+      html += '    }';
+      html += '    sinclo-content {';
+      html += '        display: block;';
+      html += '        font-size: 0.9em;';
+      html += '        margin: 0.5em 0;';
+      html += '        line-height: 2em;';
+      html += '    }';
+      html += '    #sincloVcPopMain {';
+      html += '        display: table;';
+      html += '    }';
+      html += '    sinclo-div#sincloVcPopMain sinclo-div {';
+      html += '        display: table-cell;';
+      html += '        vertical-align: top;';
+      html += '    }';
+      html += '    #sincloVcPopAct {';
+      html += '        width: 100%;';
+      html += '        height: 2em;';
+      html += '        text-align: center;';
+      html += '        padding: 0.5em 0;';
+      html += '        box-sizing: content-box;';
+      html += '    }';
+      html += '    #sincloVcPopAct sinclo-a {';
+      html += '        background-color: #FFF;';
+      html += '        padding: 5px 10px;';
+      html += '        text-decoration: none;';
+      html += '        border-radius: 5px;';
+      html += '        border: 1px solid #959595;';
+      html += '        margin: 10px;';
+      html += '        font-size: 1em;';
+      html += '        box-shadow: 0 0 2px rgba(75, 75, 75, 0.3);';
+      html += '        font-weight: bold;';
+      html += '    }';
+      html += '    #sincloVcPopAct sinclo-a:hover {';
+      html += '        cursor: pointer;';
+      html += '    }';
+      html += '    #sincloVcPopAct sinclo-a:hover,  #sincloVcPopAct sinclo-a:focus {';
+      html += '        outline: none;';
+      html += '    }';
+      html += '    #sincloVcPopAct sinclo-a#sincloPopupOk {';
+      html += '       background: linear-gradient(to top, #D5FAFF, #80BEEA, #D5FAFF);';
+      html += '    }';
+      html += '    #sincloVcPopAct sinclo-a#sincloPopupNg {';
+      html += '       background-color: #FFF';
+      html += '    }';
+      html += '    #sincloVcPopAct sinclo-a#sincloPopupNg:hover, #sincloVcPopAct sinclo-a#sincloPopupNg:focus {';
+      html += '       background-color: ##DCDCDC';
+      html += '    }';
+      html += '  </style>';
+      html += '  <sinclo-div id="sincloVcPopupFrame">';
+      html += '    <sinclo-div id="sincloVcPopBar">';
+      html += '      <sinclo-div id="sincloVcLogo"><img src="' + sincloInfo.site.files + '/img/mark.png" width="18" height="18"></sinclo-div>';
+      html += '    </sinclo-div>';
+      html += '    <sinclo-div id="sincloVcPopMain">';
+      html += '      <sinclo-div id="sincloVcMessage">';
+      html += '          <iframe id="sincloVcView" src="' + url + '" width="320" height="240"/>';
+      html += '      </sinclo-div>';
+      html += '    </sinclo-div>';
+      html += '  </sinclo-div>';
+
+      $("body").append(html);
+
+      var height = 0;
+      $("#sincloVcPopupFrame > sinclo-div").each(function(e){
+        height += this.offsetHeight;
+      });
+
+      $("#sincloVcPopupFrame").height(height).css("opacity", 1);
+      $("#sincloVcPopupFrame *").on('mousedown', vcPopup.dragOn);
+      $("#sincloVcPopupFrame *").on('mouseup', vcPopup.dragOff);
+      $("#sincloVcPopupFrame *").on('mousemove', vcPopup.drag);
+    },
+    remove: function(){
+      var elm = document.getElementById('sincloVcPopup');
+      if (elm) {
+        elm.parentNode.removeChild(elm);
+      }
+    },
+    ok: function(){ return true; },
+    no: function(){ this.remove(); }
   };
 
   var init = function(){
