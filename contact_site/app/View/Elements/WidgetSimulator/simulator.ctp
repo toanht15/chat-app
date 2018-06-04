@@ -335,7 +335,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li .sendFileContent .sendFileMetaArea .data.sendFileSize { margin-bottom: 0px; }
 
         /* ファイル受信 */
-        #sincloBox #chatTalk li.sinclo_re div.receiveFileContent { border: 1px dashed {{widget.settings['re_text_color']}}; padding: 0 25px; }
+        #sincloBox #chatTalk li.sinclo_re div.receiveFileContent { border: 1px dashed {{widget.settings['re_text_color']}}; padding: 0 42px; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin: 1em 0; text-align: center; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { width: 60%; height: auto; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: bold; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }
