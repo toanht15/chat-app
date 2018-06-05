@@ -2645,7 +2645,7 @@
         sound: null,
         call: function(){
             // デスクトップ通知用
-            if ( this.sound ) {
+            if ( this.sound && !check.smartphone() ) {
                 this.sound.play();
             }
         },
