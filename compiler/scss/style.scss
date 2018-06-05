@@ -6158,7 +6158,7 @@ ul.naviBtn {
               display: inline-block;
 
               ul {
-                height: 361px;
+                height: 397px;
                 border: 1px solid #969696;
                 overflow-x: hidden;
                 overflow-y: auto;
@@ -8609,6 +8609,16 @@ ul.naviBtn {
       margin-top: 1em;
     }
 
+    #MChatSettingNoStandbySorryMessage2 {
+      width: 30em;
+      height: 8em;
+      resize: none;
+      font-size: 1em;
+      padding: 0.5em;
+      margin-top: 1em;
+      margin-left: 1.8em;
+    }
+
     .summarized {
       margin-left:10px;
     }
@@ -9904,4 +9914,7 @@ ul#anotherWindow_color-bar-right {
 }
 .fa-chevron-left:before {
   content: "";
+}
+.remove {
+  background-image: url('/img/close_b.png');
 }

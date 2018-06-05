@@ -13,7 +13,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
+      database: process.env.DB_NAME || 'sinclo_db2'
     });
 
 // log4js
@@ -1055,6 +1055,8 @@ io.sockets.on('connection', function (socket) {
 
                 // 応対可能かチェック(対応できるのであれば trueが返る)
                 chatApi.sendCheck(d, function(err, ret){
+                  console.log('ソーリーメッセージ');
+                  console.log(ret);
                   sendData.opFlg = ret.opFlg;
                   // 書き込みが成功したら顧客側に結果を返す
                   //emit.toUser('sendChatResult', sendData, sId);
@@ -1106,6 +1108,20 @@ io.sockets.on('connection', function (socket) {
 
                   //通知された場合
                   if(ret.opFlg === true && d.notifyToCompany) {
+                    console.log('通知されましたー！');
+                    console.log(ret);
+                    console.log(d);
+                    console.log('chatApi');
+                    console.log(chatApi);
+                    if(ret.inFlg == 1) {
+                      var obj = d;
+                      setTimeout(function(){
+                        obj.chatMessage = ret.message;
+                        obj.messageType = chatApi.cnst.observeType.autoSpeech;
+                        obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
+                        chatApi.set(obj);
+                      },ret.seconds*1000);
+                    }
                     pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
                       [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields){}
                     );
@@ -1364,9 +1380,12 @@ io.sockets.on('connection', function (socket) {
     scCheck: function(type, d, callback){
       var companyId = companyList[d.siteKey];
       var siteKey = d.siteKey;
+      console.log('こんにちはだよ');
 
-      var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg,sorry_message, outside_hours_sorry_message, wating_call_sorry_message, no_standby_sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
+      var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg,in_flg,sorry_message, outside_hours_sorry_message, wating_call_sorry_message, no_standby_sorry_message,initial_notification_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
       pool.query(getUserSQL, [companyId], function(err, rows){
+        console.log('rowsだよおおお');
+        console.log(rows);
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var ret = false, message = null;
         now = new Date();
@@ -1618,12 +1637,27 @@ io.sockets.on('connection', function (socket) {
             }
             //営業時間設定を利用していない場合
             else {
+              console.log('営業時間利用していないよー');
               //オペレータが待機している場合
               if ( (rows[0].display_type === 2 && getOperatorCnt(d.siteKey) > 0) ||
                 (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                 (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
               ) {
-                ret = true;
+                console.log('はははっはは');
+                console.log(rows[0]);
+                if(rows[0].in_flg == 2) {
+                  ret = true;
+                }
+                else {
+                  var seconds = JSON.parse(rows[0].initial_notification_message).seconds;
+                  var initial_notification_message = JSON.parse(rows[0].initial_notification_message).message;
+                  console.log('はいやー');
+                  console.log(seconds);
+                  console.log(initial_notification_message);
+                  ret = true;
+                  message = initial_notification_message;
+                  return callback(true, {opFlg: ret, message: message,inFlg: rows[0].in_flg, seconds: seconds});
+                }
               }
               //オペレータが待機していない場合
               else {

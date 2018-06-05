@@ -168,7 +168,74 @@ $(document).ready(function(){
         </div>
       </section>
       <section>
-        <h3 class="require">２．Sorryメッセージ</h3>
+        <h3>２．初回通知メッセージ</h3>
+        <div class="content">
+          <pre>このメッセージはサイト訪問者からのメッセージが通知された初回のみ、N秒後に自動送信されます</pre>
+          <label style="display:inline-block;">
+              <?php
+                $settings = [
+                  'type' => 'radio',
+                  'options' => $scFlgOpt,
+                  'default' => 1,
+                  'legend' => false,
+                  'separator' => '</label><br><label style="display:inline-block;">',
+                  'label' => false,
+                  'div' => false,
+                  'class' => 'pointer'
+                ];
+                echo $this->Form->input('MChatSetting.sc_flg2',$settings);
+              ?>
+          </label>
+          <li style = "padding: 0 0 19px 0; border-bottom: 1px solid #C3D69B; width:50em; margin-top:1.2em;">
+          <h4 style = "background-color: #ECF4DA;cursor: pointer;border-color: #C3D69B;border-style: solid;border-width: 1px 0 0 0;margin: 0;font-weight: bold;">
+          <span class="removeArea" style = "width: 2em;float: left;text-align: center;padding: 9px 0.75em;height: 34px;">
+            <i></i></span>
+              <span style = "display: block;margin-left: 2.5em;padding: 9px 9px 9px 0.25em;height: 34px;" class="labelArea ng-binding" ng-click="main.openList('#triggerItem_' + $id)">滞在時間<!-- ngIf: !itemForm.$valid --></span>
+              </h4>
+              <div>
+                <input name="data[MWidgetSetting][max_show_timing_site]" ng-disabled="showTiming !== &quot;1&quot;" string-to-number="" maxlength="4" style="width: 3.5em;margin-left: 2em;margin-top: 14px;" max="3600" min="0" ng-model="max_show_timing_site" ng-init="max_show_timing_site=&quot;2&quot;;" type="number" value="2" id="MWidgetSettingMaxShowTimingSite" required="required" class="ng-valid ng-valid-min ng-valid-max ng-valid-required ng-valid-maxlength ng-dirty ng-valid-number ng-touched">秒後
+                </div>
+              <span style = "display:flex;margin-top: 5px;">
+                <?=$this->Form->textarea('no_standby_sorry_message2')?>
+                <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+                <span class = "summarized">
+                  <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
+                  <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+                  <span class="greenBtn btn-shadow actBtn linkMovingButton settingOutsideHoursPhone" onclick="addOption(3,'MChatSettingOutsideHoursSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon questionBalloonPosition15"><icon class = "questionBtn">?</icon></div></span>
+                  <span class="greenBtn btn-shadow actBtn linkNewTabButton settingOutsideHoursPhone" onclick="addOption(4,'MChatSettingOutsideHoursSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
+                </span>
+              </span>
+              <div style = "margin-top:17px;">
+              <img src="/img/add.png" alt="登録" class="btn-shadow disOffgreenBtn" width="25" height="25" style="padding: 2px !important; display: block;margin-left: 1.9em;margin-top: 14px;">
+            </div>
+          </li>
+          <li style = "padding: 0 0 19px 0; border-bottom: 1px solid #C3D69B; width:50em;">
+          <h4 style = "background-color: #ECF4DA;    cursor: pointer;margin: 0;font-weight: bold;">
+          <span class="removeArea" style = "width: 2em;float: left;text-align: center;padding: 9px 0.75em;height: 34px;">
+            <i class="remove" style = "border: 1px solid #878787;background-color: #FFFFFF;background-size: 12px;background-repeat: no-repeat;width: 16px;height: 16px;border-radius: 15px;display: block;background-position: 1px;"></i></span>
+              <span style = "display: block;margin-left: 2.5em;padding: 9px 9px 9px 0.25em;height: 34px;" class="labelArea ng-binding" ng-click="main.openList('#triggerItem_' + $id)">滞在時間<!-- ngIf: !itemForm.$valid --></span>
+              </h4>
+              <div>
+                <input name="data[MWidgetSetting][max_show_timing_site]" ng-disabled="showTiming !== &quot;1&quot;" string-to-number="" maxlength="4" style="width: 3.5em;margin-left: 2em;margin-top: 14px;" max="3600" min="0" ng-model="max_show_timing_site" ng-init="max_show_timing_site=&quot;2&quot;;" type="number" value="2" id="MWidgetSettingMaxShowTimingSite" required="required" class="ng-valid ng-valid-min ng-valid-max ng-valid-required ng-valid-maxlength ng-dirty ng-valid-number ng-touched">秒後
+                </div>
+              <span style = "display:flex;margin-top: 5px;">
+                <?=$this->Form->textarea('no_standby_sorry_message2')?>
+                <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
+                <span class = "summarized">
+                  <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
+                  <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+                  <span class="greenBtn btn-shadow actBtn linkMovingButton settingOutsideHoursPhone" onclick="addOption(3,'MChatSettingOutsideHoursSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon questionBalloonPosition15"><icon class = "questionBtn">?</icon></div></span>
+                  <span class="greenBtn btn-shadow actBtn linkNewTabButton settingOutsideHoursPhone" onclick="addOption(4,'MChatSettingOutsideHoursSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
+                </span>
+              </span>
+              <div style = "margin-top:17px;">
+              <img src="/img/add.png" alt="登録" class="btn-shadow disOffgreenBtn" width="25" height="25" style="padding: 2px !important; display: block;margin-left: 1.9em;margin-top: 14px;">
+            </div>
+          </li>
+        </div>
+      </section>
+      <section>
+        <h3 class="require">3．Sorryメッセージ</h3>
         <div class="content">
           <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
           <li style = "padding: 0 0 15px 0;">

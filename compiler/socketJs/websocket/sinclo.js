@@ -1377,6 +1377,8 @@
       }
       //通知した際に自由入力エリア表示
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
+        console.log('通知来たよ');
+        console.log(d);
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
       }
