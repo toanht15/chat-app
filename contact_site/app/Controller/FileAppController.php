@@ -177,11 +177,11 @@ class FileAppController extends AppController
     // ※結合順序注意！！
     $param = $created.self::ENCRYPT_PARAM_DELIMITER.$fileId.self::ENCRYPT_PARAM_DELIMITER.$isScenarioDownload;
     $encrypted = Security::encrypt($param, self::ENCRYPT_SECRET_KEY);
-    return rawurlencode(base64_encode($encrypted));
+    return rawurlencode($this->urlSafeBase64Encode($encrypted));
   }
 
   protected function decryptParameterForDownload($val) {
-    $decrypted = Security::decrypt(base64_decode(rawurldecode($val)), self::ENCRYPT_SECRET_KEY);
+    $decrypted = Security::decrypt($this->urlSafeBase64Decode(rawurldecode($val)), self::ENCRYPT_SECRET_KEY);
     if(empty($decrypted)) {
       throw new Exception('復号失敗 : '.$val);
     }
@@ -198,5 +198,15 @@ class FileAppController extends AppController
 
   protected function getExtension($filename) {
     return mb_strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+  }
+
+  protected function urlSafeBase64Encode($str) {
+    $val = base64_encode($str);
+    return str_replace(array('+', '/', '='), array('_', '-', '.'), $val);
+  }
+
+  protected function urlSafeBase64Decode($str) {
+    $val = str_replace(array('_','-', '.'), array('+', '/', '='), $str);
+    return base64_decode($val);
   }
 }

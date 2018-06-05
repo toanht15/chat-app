@@ -919,6 +919,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       LocalStorageService.setItem('chatbotVariables', [{key: $scope.setActionList[$scope.actionStep].selection.variableName, value: message}]);
       $scope.actionStep++;
       $scope.doAction();
+    } else
+    if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
+      $scope.actionStep++;
+      $scope.doAction();
     }
   });
 
@@ -1012,6 +1016,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             $scope.actionStep++;
             $scope.doAction();
           }
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+          $scope.actionStep++;
+          $scope.doAction();
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
           if(actionDetail.dropAreaMessage) {

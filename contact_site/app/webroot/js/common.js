@@ -59,75 +59,68 @@ function addVariable(type,sendMessage){
           if (sendMessage.value.length > 0) {
             sendMessage.value += "\n";
           }
-          sendMessage.value += "<a href=ここにURL>ここにリンクテキスト</a>";
+          sendMessage.value += '<a href="ここにURLを記載">リンクテキスト</a>';
           sendMessage.focus();
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-14);
+            range.move('character', sendMessage.value.length-22);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-14);
+            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-22);
           }
           break;
         case 4:
           if (sendMessage.value.length > 0) {
             sendMessage.value += "\n";
           }
-          sendMessage.value += '<a href=ここにURL target="_blank">ここにリンクテキスト</a>';
+          sendMessage.value += '<a href="ここにURLを記載" target="_blank">リンクテキスト</a>';
           sendMessage.focus();
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-14);
+            range.move('character', sendMessage.value.length-38);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-14);
+            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-38);
           }
           break;
     }
     return sendMessage;
 }
 
+function unEscapeHTML(str) {
+  return str
+    .replace(/(&lt;)/g, '<')
+    .replace(/(&gt;)/g, '>')
+    .replace(/(&quot;)/g, '"')
+    .replace(/(&#39;)/g, "'")
+    .replace(/(&amp;)/g, '&');
+};
+
 function replaceVariable(str,isSmartphone){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-  var linkNewtabReg = RegExp(/&lt;a href=([\s\S]*?)target=&quot;_blank&quot;&gt;([\s\S]*?)&lt;\/a&gt;/);
-  var linkMovingReg = RegExp(/&lt;a href=([\s\S]*?)&gt;([\s\S]*?)&lt;\/a&gt;/);
+  var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+  var unEscapeStr = unEscapeHTML(str);
   // リンク
   var link = str.match(linkReg);
-  var linkNewtab = str.match(linkNewtabReg);
-  var linkMoving = str.match(linkMovingReg);
-  if ( link !== null || linkNewtab !== null || linkMoving !== null) {
-      //リンク（ページ遷移）
-      if(linkMoving !== null) {
-        var target = "";
+  var linkTab = unEscapeStr.match(linkTabReg);
+  if ( link !== null || linkTab !== null) {
+      if ( linkTab !== null) {
         if(link !== null) {
-          var a = "<a href='" + linkMoving[1] + "'" + target + ">" + linkMoving[2] + "</a>";
+          var a = linkTab[0];
         }
         else {
           // ただの文字列にする
-          var a = "<span class='link'>"+ linkMoving[2] + "</span>";
+          var a = "<span class='link'>"+ linkTab[2] + "</span>";
         }
-        str = linkMoving[0].replace(linkMoving[0], a);
-      }
-      //リンク（新規ページ）
-      if ( linkNewtab !== null) {
-        var target = "target=_blank";
-        if(link !== null) {
-          var a = "<a href='" + linkNewtab[1] + "'" + target + ">" + linkNewtab[2] + "</a>";
-        }
-        else {
-          // ただの文字列にする
-          var a = "<span class='link'>"+ linkNewtab[2] + "</span>";
-        }
-        str = linkNewtab[1].replace(linkNewtab[1], a);
+        str = unEscapeStr.replace(linkTab[0], a);
       }
       //URLのみのリンクの場合
       else {
-        var target = "target=_blank";
         var url = link[0];
-        var a = "<a href='" + url + "'" + target + ">" + url + "</a>";
+        var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
         str = str.replace(url, a);
       }
   }

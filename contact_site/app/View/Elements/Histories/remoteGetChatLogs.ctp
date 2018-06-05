@@ -79,6 +79,7 @@ $(function(){
       $id = $val['THistoryChatLog']['id'];
       $historyId = $val['THistoryChatLog']['t_histories_id'];
       $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $deleteMessage = str_replace('"', '', $deleteMessage);
       $created = $val['THistoryChatLog']['created'];
       $deleted = $val['THistoryChatLog']['deleted'];
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
@@ -91,6 +92,7 @@ $(function(){
       $id = $val['THistoryChatLog']['id'];
       $historyId = $val['THistoryChatLog']['t_histories_id'];
       $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $deleteMessage = str_replace('"', '', $deleteMessage);
       $created = $val['THistoryChatLog']['created'];
       $deleted = $val['THistoryChatLog']['deleted'];
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];

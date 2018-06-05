@@ -976,6 +976,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioApiResponseType', $this->chatbotScenarioApiResponseType);
     // ファイル受信ファイル形式種別
     $this->set('chatbotScenarioReceiveFileTypeList', $this->chatbotScenarioReceiveFileTypeList);
+    // ファイル受信用にcompany_keyをsetしておく
+    $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);

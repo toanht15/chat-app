@@ -81,7 +81,7 @@ class htmlExHelper extends AppHelper {
     }
 
     private function addLink($matches){
-      return "<a href='".$matches[0]."'>".$matches[1]."</a>";
+      return "<a ".$matches[0].">".$matches[1]."</a>";
     }
 
     public function makeChatView($value, $isSendFile = false,$isRecieveFile = false){
@@ -101,23 +101,8 @@ class htmlExHelper extends AppHelper {
             }
             $linkData = [];
             if ( preg_match('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $tmp) ) {
-                if ( preg_match('/<a href=([\s\S]*?) target="_blank">([\s\S]*?)<\/a>/', $tmp)) {
-                  //リンクテキスト
-                  $title = preg_replace(['/<a href=([\s\S]*?) target="_blank">/','/<\/a>/'],['',''],$tmp);
-                  //URL
-                  $tmp = preg_replace(['/<a href=/','/target="_blank">([\s\S]*?)<\/a>/'],['',''],$tmp);
-                  $linkData[0] = $tmp;
-                  $linkData[1] = $title;
-                  $str = $this->addLinkNewTab($linkData);
-                }
-                else if ( preg_match('/<a href=([\s\S]*?)>([\s\S]*?)<\/a>/', $tmp)) {
-                  //リンクテキスト
-                  $title = preg_replace(['/<a href=([\s\S]*?)">/','/<\/a>/'],['',''],$tmp);
-                  //URL
-                  $tmp = preg_replace(['/<a href=/','/>([\s\S]*?)<\/a>/'],['',''],$tmp);
-                  $linkData[0] = $tmp;
-                  $linkData[1] = $title;
-                  $str = $this->addLink($linkData);
+                if ( preg_match('/<a ([\s\S]*?)<\/a>/', $tmp)) {
+                  $str = $tmp;
                 }
                 else {
                   $ret = preg_replace_callback('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', [$this, 'addLinkNewTab'], $tmp);
