@@ -2925,12 +2925,12 @@
         _uploadFile: function(targetDivElm, comment, fileObj, loadFile) {
           var fd = new FormData();
           var blob = new Blob([loadFile], {type: fileObj.type});
-          fd.append("k", "<?= $companyKey; ?>");
+          fd.append("k", sincloInfo.site.key);
           fd.append("c", comment)
           fd.append("f", blob, fileObj.name);
 
           $.ajax({
-            url  : "<?= $this->Html->url('/FC/pus') ?>",
+            url  : sincloInfo.site.socket + "/FC/pu",
             type : "POST",
             data : fd,
             cache       : false,
@@ -2964,7 +2964,10 @@
               actionButtonWrap.remove();
               commentLabel.innerHTML = "＜コメント＞";
               commentArea.innerHTML = data.comment;
-              sinclo.chatApi.$emit('receiveVistorMessage', "");
+              targetDivElm.querySelector('li.sinclo_se.recv_file_right').addEventListener('click', function(e){
+                window.open(data.downloadUrl);
+              });
+              emit('')
             })
             .fail(function(jqXHR, textStatus, errorThrown){
               alert("fail");

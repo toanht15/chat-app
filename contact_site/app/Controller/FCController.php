@@ -20,7 +20,10 @@ class FCController extends FileAppController
   public function beforeFilter() {
     parent::beforeFilter();
     $this->Auth->allow(array('pu','gd'));
-
+    $this->response->header('Access-Control-Allow-Origin','*');
+    $this->response->header('Access-Control-Allow-Methods','GET, POST');
+    $this->response->header('Access-Control-Allow-Headers','X-Requested-With');
+    $this->response->header('Access-Control-Allow-Headers','Content-Type');
     // FileAppController
     $this->fileTransferPrefix = "receivedFile/";
   }
@@ -118,7 +121,7 @@ class FCController extends FileAppController
         'comment' => $comment
       ));
     } catch(Exception $e) {
-      $this->TUploadTransferFile->rollback();
+      $this->TReceiveVisitorFile->rollback();
       $this->log('ファイル保存時にエラーが発生しました。 message : '.$e->getMessage());
       throw $e;
     }
