@@ -1384,19 +1384,21 @@ var socket, // socket.io
           html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent { border: 1px dashed ' + widget.reTextColor + '; padding: 0 42px; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 0.5; }'
           html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin:0; text-align: center; }';
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display:block; width:100%; height: auto; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: ' + widget.mainColor + '!important; color: ' + widget.stringColor + '; font-weight: bold; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display:block; width:100%; height: auto; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: ' + widget.mainColor + '!important; color: ' + widget.stringColor + '; font-weight: normal; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea a { cursor: pointer; text-decoration: underline; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { font-size: 5em; color: ' + widget.reTextColor + '; }';
-          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent { background-color: #FFF; padding: 5px; }';
+          html += '#sincloBox #chatTalk li.sinclo_se.recv_chat_right {padding: 0 15px;}';
+          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent { line-height: 0.5; background-color: #FFF; padding: 5px; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea { line-height: 0.5; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img { max-width: 100%; max-height: 50%; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 100%; height: 80px; resize: none; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 230px; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a:hover { opacity: .8; }';
-          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.cancel-file-button { width: 105px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: bold; word-break: keep-all; }';
-          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.send-file-button { width: 105px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #64AAC3!important; color: #FFF; font-weight: bold; word-break: keep-all; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.cancel-file-button { width: 105px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: normal; word-break: keep-all; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.send-file-button { width: 105px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #64AAC3!important; color: #FFF; font-weight: normal; word-break: keep-all; }';
         }
         // 画面同期を使用する際
         if ( window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document) ) {

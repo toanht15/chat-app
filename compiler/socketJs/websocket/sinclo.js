@@ -2385,6 +2385,7 @@
             $(li.querySelector('div.receiveFileContent div.selectFileArea')),
             $(li.querySelector('div.receiveFileContent div.selectFileArea p.drop-area-button a.select-file-button')),
             $(li.querySelector('div.receiveFileContent div.selectFileArea input.receiveFileInput')));
+          this.scDown();
         },
         _selectFontIconClassFromExtension: function(ext) {
           var selectedClass = "",
@@ -2844,7 +2845,7 @@
             // event.target.result に読み込んだファイルの内容が入っています.
             // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
             sinclo.chatApi.fileUploader.loadData = event.target.result;
-            sinclo.chatApi.showPreview(self, sinclo.chatApi.fileUploader.fileObj, sinclo.chatApi.fileUploader.loadData);
+            sinclo.chatApi.fileUploader._showPreview(self, sinclo.chatApi.fileUploader.fileObj, sinclo.chatApi.fileUploader.loadData);
           }
           fileReader.readAsArrayBuffer(sinclo.chatApi.fileUploader.fileObj);
 
@@ -2881,11 +2882,23 @@
             popupEvent.close();
           };
         },
-        _showPreview: function(target, fileObj, loadData) {
-          $(target).parents('li.sinclo_re.recv_file_left').parent().hide();
+        _showPreview: function(targetElm, fileObj, loadData) {
+          $(targetElm).parents('li.sinclo_re').parent().hide();
 
           // ベースとなる要素をクローン
-          var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
+          var divElm = document.createElement('div');
+            divElm.innerHTML = "  <li class=\"sinclo_se chat_right recv_file_right details\">" +
+                               "    <div class=\"receiveFileContent\">" +
+                               "      <div class=\"selectFileArea\">" +
+                               "        <p class=\"preview\"></p><p class=\"commentLabel\">コメント</p>" +
+                               "        <p class=\"commentarea\"><textarea></textarea></p>" +
+                               "      </div>" +
+                               "      <div class=\"actionButtonWrap\">" +
+                               "        <a class=\"cancel-file-button\">選択し直す</a>" +
+                               "        <a class=\"send-file-button\">送信する</a>" +
+                               "      </div>" +
+                               "    </div>" +
+                               "  </li>";
           var imgElm = document.createElement('img');
 
           var fileReader = new FileReader();
@@ -2893,8 +2906,8 @@
             imgElm.src = this.result;
             divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(imgElm);
             divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function (e) {
-              document.getElementById('chatTalk').removeChild(divElm);
-              $(target).parents('li.sinclo_re.recv_file_left').parent().show();
+              document.getElementById('chatTalk').querySelector('sinclo-chat').removeChild(divElm);
+              $(targetElm).parents('li.sinclo_re').parent().show();
             });
             divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function (e) {
               var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
@@ -2904,9 +2917,8 @@
               sinclo.chatApi.fileUploader._uploadFile(divElm, comment, fileObj, loadData);
             });
             // 要素を追加する
-            document.getElementById('chatTalk').appendChild(divElm);
-            $('#chatTalk div:last-child').show();
-            self.autoScroll();
+            document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
+            sinclo.chatApi.scDown();
           };
           fileReader.readAsDataURL(fileObj);
         },
