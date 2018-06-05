@@ -302,16 +302,22 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>" class="set_action_item_body action_send_file">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb9em"><label>発言内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットに発言させたいテキストメッセージを設定します。">?</icon></span></label></span>
+      <span class="fb11em"><label>発言内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットに発言させたいテキストメッセージを設定します。">?</icon></span></label></span>
       <div>
         <resize-textarea name="dropAreaMessage" ng-model="setItem.dropAreaMessage" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li class="styleFlexbox">
-      <span class="fb9em"><label>ファイル形式</label></span>
+      <span class="fb11em"><label>ファイル形式</label></span>
       <div>
         <label ng-repeat="(key, item) in receiveFileTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_receive_file_type" value="{{key}}" ng-model="setItem.receiveFileType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}" data-tooltip-width='240'>?</icon></span><p class="radio-annotation"><s>{{item.annotation}}</s></p></label>
         <input type="text" name="extendedReceiveFileExtensions" ng-model="setItem.extendedReceiveFileExtensions" ng-if="setItem.receiveFileType == 2">
+      </div>
+    </li>
+    <li class="styleFlexbox">
+      <span class="fb11em" style="white-space:normal;"><label>ファイルエラー時の<br>返信メッセージ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="ファイル選択時にエラーだった場合のメッセージを設定します。">?</icon></span></label></span>
+      <div style="display:flex; align-items: center;">
+        <resize-textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li>

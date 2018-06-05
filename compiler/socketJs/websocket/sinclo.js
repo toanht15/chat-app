@@ -2814,7 +2814,7 @@
           this.dragArea.on("dragenter", this._enterEvent);
           this.dragArea.on("dragover", this._overEvent);
           this.dragArea.on("dragleave", this._leaveEvent);
-          this.dragArea.on("drop", function(){ sinclo.chatApi.fileUploader.droppable.css('display', 'none'); event.preventDefault(); event.stopPropagation(); return false;});
+          this.dragArea.on("drop", function(){ event.preventDefault(); event.stopPropagation(); return false;});
           this.droppable.on("drop", this._handleDroppedFile);
         },
         _addSelectFileEvents: function() {
@@ -2900,13 +2900,10 @@
           var regex = new RegExp(this.allowExtensions.join("|"), 'i');
           return regex.test(targetExtension);
           */
-          return true;
+          return false;
         },
         _showInvalidError: function() {
-          var span = document.createElement("span");
-          span.classList.add('errorMsg');
-          span.textContent = "指定のファイルは送信を許可されていません。";
-          $("#sendMessageArea").append(span);
+          $(document).trigger(sinclo.scenarioApi._events.fileUploaded, false);
         },
         _hideInvalidError: function() {
           $('#sendMessageArea').find('span.errorMsg').remove();
@@ -3006,7 +3003,7 @@
               notifyToCompany: false,
               isScenarioMessage: true
             }, function() {
-              $(document).trigger(sinclo.scenarioApi._events.fileUploaded);
+              $(document).trigger(sinclo.scenarioApi._events.fileUploaded, true);
             });
           })
           .fail(function(jqXHR, textStatus, errorThrown){
@@ -5119,9 +5116,14 @@
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
             var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel);
-            self._waitUserAction(function(){
-              if(self._parent._goToNextScenario()) {
-                self._parent._process();
+            self._waitUserAction(function(event, result){
+              alert(result);
+              if(result) {
+                if(self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
+              } else {
+                self._showError();
               }
             });
           });
@@ -5129,7 +5131,18 @@
         _waitUserAction: function(callback) {
           var self = sinclo.scenarioApi._sendFile;
           $(document).on(self._parent._events.fileUploaded, callback);
-        }
+        },
+        _showError: function() {
+          var self = sinclo.scenarioApi._sendFile;
+          var errorMessage = self._parent.get(self._parent._lKey.currentScenario).errorMessage;
+          self._parent._doing(self._parent._getIntervalTimeSec(), function(){
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._parent.get(self._state.currentSeq) + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
+              self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._parent.get(self._state.currentSeq));
+              self._process();
+            });
+          });
+        },
       }
     },
     // 外部連携API
