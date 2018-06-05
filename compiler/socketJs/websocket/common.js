@@ -1389,7 +1389,7 @@ var socket, // socket.io
           html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea a { cursor: pointer; text-decoration: underline; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { font-size: 5em; color: ' + widget.reTextColor + '; }';
-          html += '#sincloBox #chatTalk li.sinclo_se.recv_chat_right {padding: 0 15px;}';
+          html += '#sincloBox #chatTalk li.sinclo_se.recv_file_right {padding: 0 10px; line-height: 0.5; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent { line-height: 0.5; background-color: #FFF; padding: 5px; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea { line-height: 0.5; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }';

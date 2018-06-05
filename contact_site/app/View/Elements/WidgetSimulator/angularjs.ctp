@@ -310,6 +310,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
       // ベースとなる要素をクローン
       var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
+      divElm.style.textAlign = "right";
       var imgElm = document.createElement('img');
 
       var fileReader = new FileReader();
