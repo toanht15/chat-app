@@ -724,8 +724,6 @@
       content    += "    <span class='message'>"+ comment + "</span>";
       content    += "  </div>";
       content    += "</div>";
-      console.log('content');
-      console.log(content);
       return content;
     };
 

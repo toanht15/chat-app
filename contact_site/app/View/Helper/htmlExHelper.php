@@ -169,6 +169,7 @@ class htmlExHelper extends AppHelper {
       $content .= "<div class='recieveFileContent'>";
       $content .= "  <div class='recieveFileThumbnailArea' ".$height.">" . $thumbnail . "</div>";
       $content .= "  <div class='recieveFileMetaArea'>";
+      $content .= "     <br>";
       $content .= "     <span class='comment'> ＜コメント＞</span>";
       $content .= "     <span class='message'>". $value['comment'] ."</span>";
       $content .= "  </div>";
