@@ -483,6 +483,16 @@
                       margin-bottom: 0px;
                     }
                   }
+                  span.comment {
+                    display:block;
+                    font-weight: normal;
+                    font-size: 12px;
+                  }
+                  span.message {
+                    white-space: pre-wrap !important;
+                    font-weight: normal;
+                    font-size: 12px;
+                  }
                 }
               }
             }
