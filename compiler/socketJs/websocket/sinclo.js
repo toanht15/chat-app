@@ -1176,6 +1176,9 @@
             else if(chat.deleteFlg === 1) {
               this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
+          } else if(Number(chat.messageType) === 19) {
+            var result = JSON.parse(chat.message);
+            this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
           } else {
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
@@ -1329,6 +1332,14 @@
         if (obj.messageType === sinclo.chatApi.messageType.sendFile || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           sinclo.chatApi.call();
           this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
+          this.chatApi.scDown();
+          return false;
+        }
+
+        if (obj.messageType === sinclo.chatApi.messageType.scenario.customer.sendFile) {
+          sinclo.chatApi.call();
+          var result = JSON.parse(obj.chatMessage);
+          this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
           this.chatApi.scDown();
           return false;
         }
@@ -1737,7 +1748,8 @@
           scenario: {
             customer: {
               hearing: 12,
-              selection: 13
+              selection: 13,
+              sendFile: 19
             },
             message: {
               text: 21,
@@ -2387,6 +2399,30 @@
             $(li.querySelector('div.receiveFileContent div.selectFileArea input.receiveFileInput')));
           this.scDown();
         },
+        createSentFileMessage: function(comment, downloadUrl, extension) {
+          var divElm = document.createElement('div');
+          divElm.style.textAlign = "right";
+          var thumbnail = "";
+          if (extension.match(/(jpeg|jpg|gif|png)$/) != null) {
+            thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail' width='64' height='64'>";
+          } else {
+            thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+          }
+          divElm.innerHTML = "  <li class=\"sinclo_se chat_right recv_file_right details\">" +
+            "    <div class=\"receiveFileContent\">" +
+            "      <div class=\"selectFileArea\">" +
+            "        <p class=\"preview\">" + thumbnail + "</p>" +
+            "        <p class=\"commentLabel\">＜コメント＞</p>" +
+            "        <p class=\"commentarea\">" + comment + "</p>" +
+            "      </div>" +
+            "    </div>" +
+            "  </li>";
+          divElm.querySelector('li.sinclo_se.recv_file_right').addEventListener('click', function(e){
+            window.open(downloadUrl);
+          });
+          // 要素を追加する
+          document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
+        },
         _selectFontIconClassFromExtension: function(ext) {
           var selectedClass = "",
             icons = {
@@ -2899,6 +2935,7 @@
                                "      </div>" +
                                "    </div>" +
                                "  </li>";
+            divElm.style.textAlign = "right";
           var imgElm = document.createElement('img');
 
           var fileReader = new FileReader();
@@ -2955,23 +2992,26 @@
               return XHR;
             }
           })
-            .done(function(data, textStatus, jqXHR){
-              console.log(JSON.stringify(data));
-              var commentLabel = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentLabel');
-              var commentArea = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea');
-              var actionButtonWrap = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap');
-              commentArea.innerHTML = "";
-              actionButtonWrap.remove();
-              commentLabel.innerHTML = "＜コメント＞";
-              commentArea.innerHTML = data.comment;
-              targetDivElm.querySelector('li.sinclo_se.recv_file_right').addEventListener('click', function(e){
-                window.open(data.downloadUrl);
-              });
-              emit('')
-            })
-            .fail(function(jqXHR, textStatus, errorThrown){
-              alert("fail");
+          .done(function(data, textStatus, jqXHR){
+            console.log(JSON.stringify(data));
+            document.getElementById('chatTalk').querySelector('sinclo-chat').removeChild(targetDivElm);
+            emit('sendChat', {
+              historyId: sinclo.chatApi.historyId,
+              stayLogsId: sinclo.chatApi.stayLogsId,
+              chatMessage: JSON.stringify(data),
+              mUserId: null,
+              messageType: 19,
+              messageRequestFlg: 0,
+              isAutoSpeech : false,
+              notifyToCompany: false,
+              isScenarioMessage: true
+            }, function() {
+              $(document).trigger(sinclo.scenarioApi._events.fileUploaded);
             });
+          })
+          .fail(function(jqXHR, textStatus, errorThrown){
+            alert("fail");
+          });
         }
       }
     },
@@ -4133,7 +4173,6 @@
           self._saveProcessingState(false);
           self._enablePreviousRadioButton();
           self._unsetBaseObj();
-          self._resetDefaultVal();
           self.setPlaceholderMessage(self.getPlaceholderMessage());
         });
       },
@@ -5081,7 +5120,9 @@
             var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel);
             self._waitUserAction(function(){
-
+              if(self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
             });
           });
         },
