@@ -130,6 +130,20 @@ $(function(){
       $isSendFile = false;
       $isRecieveFile = false;
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 19) === 0 ) {
+      $className = "sinclo_se";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = "＜コメント＞".json_decode($val['THistoryChatLog']['message'])->comment;
+      $deleteMessage = preg_replace( '/[\n\r]+/', ' ', $deleteMessage);
+      $downloadUrl = json_decode($val['THistoryChatLog']['message'])->downloadUrl;
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = true;
+      $number = $number + 1;
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 21) === 0 ) {
       $className = "sinclo_auto";
       $name = "シナリオメッセージ（テキスト発言）";
@@ -177,19 +191,6 @@ $(function(){
       $isSendFile = true;
       $isRecieveFile = false;
     }
-    else if ( strcmp($val['THistoryChatLog']['message_type'], 29) === 0 ) {
-      $className = "sinclo_se";
-      $id = $val['THistoryChatLog']['id'];
-      $historyId = $val['THistoryChatLog']['t_histories_id'];
-      $deleteMessage = "＜コメント＞".json_decode($val['THistoryChatLog']['message'])->comment;
-      $downloadUrl = json_decode($val['THistoryChatLog']['message'])->downloadUrl;
-      $created = $val['THistoryChatLog']['created'];
-      $deleted = $val['THistoryChatLog']['deleted'];
-      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
-      $isSendFile = false;
-      $isRecieveFile = true;
-      $number = $number + 1;
-    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 98) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が入室しました -";
@@ -218,7 +219,7 @@ $(function(){
   $(function(){
     var number = "<?=$number?>";
     var message_type = "<?=$val['THistoryChatLog']['message_type']?>";
-    if(message_type == 29 && number !== -1) {
+    if(message_type == 19 && number !== -1) {
       $('.recieveFileContent')[number].style.cursor = "pointer";
       $('.recieveFileContent')[number].addEventListener("click", function(event){window.open("<?=$downloadUrl?>")});
     }

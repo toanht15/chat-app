@@ -247,14 +247,14 @@
           scenario: {
             customer: {
               hearing: 12,
-              selection: 13
+              selection: 13,
+              sendFile: 19
             },
             message: {
               text: 21,
               hearing: 22,
               selection: 23,
-              receiveFile: 27,
-              sendFile: 29
+              receiveFile: 27
             }
           }
         }
@@ -624,7 +624,7 @@
           content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
         }
       }
-      else if ( type === chatApi.messageType.scenario.message.sendFile ) {
+      else if ( type === chatApi.messageType.scenario.customer.sendFile ) {
         cn = "sinclo_se";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -642,6 +642,8 @@
           // ファイル送信はmessageがJSONなのでparseする
           message = JSON.parse(message);
           var forDeletionMessage = "＜コメント＞"+message.comment;
+          forDeletionMessage = forDeletionMessage.replace(/\r?\n?\s+/g,"");
+          forDeletionMessage = escape_html(forDeletionMessage);
           content = "<span class='cName' style = 'font-size:"+fontSize+"'>シナリオメッセージ（ファイル受信）" + "</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1 && coreSettings == 1) {
@@ -675,7 +677,7 @@
       div.appendChild(li);
       $(elem).append(div);
       //チャット受信 ダウンロードできるようにする
-      if(type == chatApi.messageType.scenario.message.sendFile && $('.recieveFileContent').length !== 0) {
+      if(type == chatApi.messageType.scenario.customer.sendFile && $('.recieveFileContent').length !== 0) {
         $('.recieveFileContent')[$('.recieveFileContent').length-1].style.cursor = "pointer";
         $('.recieveFileContent')[$('.recieveFileContent').length-1].addEventListener("click", function(event){window.open(message.downloadUrl)});
       }
@@ -711,17 +713,16 @@
         thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         height = "style = 'height:64px;'"
       }
-
       var content    = "<div class='recieveFileContent'>";
       content    += "  <div class='recieveFileThumbnailArea'"+ height +">" + thumbnail + "</div>";
       content    += "  <div class='recieveFileMetaArea'>";
       content    += "  <br>";
-      content    += "    <span class='data revieveFileSize'> ＜コメント＞";
-      content    += "  <br>";
-      content    += comment + "</span>";
+      content    += "    <span class='comment'> ＜コメント＞</span>";
+      content    += "    <span class='message'>"+ comment + "</span>";
       content    += "  </div>";
       content    += "</div>";
-
+      console.log('content');
+      console.log(content);
       return content;
     };
 

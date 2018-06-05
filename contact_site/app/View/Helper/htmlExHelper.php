@@ -166,6 +166,7 @@ class htmlExHelper extends AppHelper {
     }
 
     private function makeRecieveChatView($value){
+      $this->log('ファイル受信～',LOG_DEBUG);
       $content = "";
       $height = "";
 
@@ -183,10 +184,8 @@ class htmlExHelper extends AppHelper {
       $content .= "<div class='recieveFileContent'>";
       $content .= "  <div class='recieveFileThumbnailArea' ".$height.">" . $thumbnail . "</div>";
       $content .= "  <div class='recieveFileMetaArea'>";
-      $content .= "  <br>";
-      $content .= "    <span class='data revieveFileSize'> ＜コメント＞";
-      $content .= "  <br>";
-      $content .= $value['comment'] . "</span>";
+      $content .= "     <span class='comment'> ＜コメント＞</span>";
+      $content .= "     <span class='message'>". $value['comment'] ."</span>";
       $content .= "  </div>";
       $content .= "</div>";
       return $content;
