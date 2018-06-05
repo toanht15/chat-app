@@ -224,7 +224,7 @@ class ScriptSettingsController extends AppController {
       $this->request->data['ScriptSettings'] = [];
     }
     $this->set('data', $this->request->data['ScriptSettings']);
-    $this->set('title_for_layout', "フォーム確認");
+    $this->set('title_for_layout', "sincloデモ｜フォーム確認");
     $this->render('testpage');
   }
 }
