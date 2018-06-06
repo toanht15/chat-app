@@ -168,6 +168,15 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     var dropAreaMessageElm = divElm.querySelector('li.chat_left.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-message');
     var selectFileButtonElm = divElm.querySelector('li.chat_left.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-button a');
     var selectInputElm = $(divElm).find('.receiveFileInput');
+    if(cancelEnabled) {
+      var cancelButtonElm = divElm.querySelector('li.chat_left.recv_file_left div.cancelReceiveFileArea a');
+      cancelButtonElm.innerHTML = cancelButtonLabel;
+      cancelButtonElm.addEventListener('click', function(){
+        document.getElementById('chatTalk').removeChild(divElm);
+        $scope.addMessage('se', "ファイル送信をキャンセルしました");
+        $scope.$emit('receiveVistorMessage', "");
+      });
+    }
     dropAreaMessageElm.innerHTML = dropAreaMessage;
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
