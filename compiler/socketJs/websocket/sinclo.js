@@ -2748,7 +2748,7 @@
         sound: null,
         call: function(){
             // デスクトップ通知用
-            if ( this.sound ) {
+            if ( this.sound && !check.smartphone() ) {
                 this.sound.play();
             }
         },
@@ -4178,6 +4178,7 @@
       },
       init: function(id, scenarioObj){
         var self = sinclo.scenarioApi;
+        self._resetDefaultVal();
         if(self.isProcessing()) {
 
         } else {
@@ -4205,6 +4206,26 @@
           console.log("self.set(self._lKey.previousChatMessageLength " + 0);
         }
       },
+      _resetDefaultVal: function() {
+        var self = sinclo.scenarioApi;
+        self.defaultVal = {
+          "s_id": 0,
+          "s_currentdata": {},
+          "s_processing": {},
+          "s_waiting": false,
+          "s_variables": {},
+          "s_messages": [],
+          "s_allowSave": false,
+          "s_scenarios": {},
+          "s_scenarioLength": 0,
+          "s_currentScenario": 0,
+          "s_currentScenarioSeqNum": 0,
+          "s_storedVariableKeys": [],
+          "s_sendCustomerMessageType": 1,
+          "s_showSequenceList": {},
+          "s_scenarioMessageType": 3
+        };
+      },
       begin: function() {
         this._disablePreviousRadioButton();
         this._saveProcessingState(true);
@@ -4213,6 +4234,7 @@
       _end: function() {
         // シナリオ終了
         var self = sinclo.scenarioApi;
+        self._resetDefaultVal();
         self._saveStoredMessage(function(){
           self._saveProcessingState(false);
           self._enablePreviousRadioButton();
