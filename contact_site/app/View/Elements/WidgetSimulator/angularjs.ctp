@@ -173,7 +173,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       cancelButtonElm.innerHTML = cancelButtonLabel;
       cancelButtonElm.addEventListener('click', function(){
         document.getElementById('chatTalk').removeChild(divElm);
-        $scope.addMessage('se', "ファイル送信をキャンセルしました");
+        $scope.addMessage('se', "ファイル送信をキャンセル");
         $scope.$emit('receiveVistorMessage', "");
       });
     }
