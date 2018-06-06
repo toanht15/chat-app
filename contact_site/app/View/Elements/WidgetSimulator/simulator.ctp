@@ -93,7 +93,6 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         font-weight: 300;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        cursor: pointer;
       }
 
       #sincloBox .sinclo-fal.fa-4x {
@@ -349,19 +348,21 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         /* ファイル受信 */
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent { border: 1px dashed {{widget.settings['re_text_color']}}; padding: 0 42px; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin: 1em 0; text-align: center; }
-        #sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { width: 60%; height: auto; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: bold; }
+        #sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { width: 60%; height: auto; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: normal; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }
         #sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }
         #sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea a { cursor: pointer; text-decoration: underline; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { font-size: 3em; color: {{widget.settings['re_text_color']}}; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent { background-color: #FFF; padding: 5px; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img { max-width: 100%; max-height: 50%; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 100%; height: 80px; resize: none; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 230px; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img { max-width: 190px; max-height: 100px; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 97%; height: 80px; resize: none; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea:focus { outline: none!important; border-color: {{widget.settings['re_text_color']}}!important;}
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 190px; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a:hover { opacity: .8; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.cancel-file-button { width: 105px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: bold; word-break: keep-all; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.send-file-button { width: 105px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #64AAC3!important; color: #FFF; font-weight: bold; word-break: keep-all; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.cancel-file-button { width: 90px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: normal; word-break: keep-all; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.send-file-button { width: 90px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #64AAC3!important; color: #FFF; font-weight: normal; word-break: keep-all; }
 
         #sincloBox section#chatTab #flexBoxWrap div#messageBox { height: 75px!important; padding: 5px; }
         #sincloBox section#chatTab #flexBoxWrap div#miniFlexBoxHeight { height: 48px!important; padding: 5px; }
@@ -506,7 +507,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
             <div style="height: auto!important; padding:0; display: none;">
               <li class="sinclo_re chat_left recv_file_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="drop-area-message"></p><p class="drop-area-icon"><i class="sinclo-fal fa-cloud-upload"></i></p><p>または</p><p class="drop-area-button"><a class="select-file-button">ファイルを選択</a></p><input type="file" class="receiveFileInput" name="receiveFileInput" style="display:none"></div></div><div class="cancelReceiveFileArea"><a>{{setItem.cancelLabel}}</a></div></li>
             </div>
-            <div style="height: auto!important; padding:0; display: none;">
+            <div style="height: auto!important; padding:0; display: none; text-align: right;">
               <li class="sinclo_se chat_right recv_file_right details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><div class="receiveFileContent"><div class="selectFileArea"><p class="preview"></p><p class="commentLabel">コメント</p><p class="commentarea"><textarea></textarea></p></div><div class="actionButtonWrap"><a class="cancel-file-button">選択し直す</a><a class="send-file-button">送信する</a></div></div></li>
             </div>
           </ul>
@@ -689,7 +690,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
               <li class="sinclo_re chat_left recv_file_left" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="drop-area-message"></p><p class="drop-area-icon"><i class="fa fa-5x fa-cloud-upload"></i></p><p>または</p><p class="drop-area-button"><a class="select-file-button">ファイルを選択</a></p><input type="file" class="receiveFileInput" name="receiveFileInput"></div></div><div class="cancelReceiveFileArea"><a>{{setItem.cancelLabel}}</a></div></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_se chat_right recv_file_right" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="preview"></p><p class="commentLabel">コメント</p><p class="commentarea"><textarea style="width:90%; height: auto;"></textarea></p><input type="file" class="receiveFileInput" name="receiveFileInput"></div></div><div class="actionButtonWrap"><a class="cancel-file-button">選択し直す</a><a class="send-file-button">送信する</a></div></li>
+              <li class="sinclo_se chat_right recv_file_right" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="preview"></p><p class="commentLabel">コメント</p><p class="commentarea"><textarea style="width:90%; height: auto;"></textarea></p><div class="actionButtonWrap"><a class="cancel-file-button">選択し直す</a><a class="send-file-button">送信する</a></div><input type="file" class="receiveFileInput" name="receiveFileInput"></div></div></li>
             </div>
             <!-- <div style="height: auto!important; padding:0;">
               <li class="showAnimationSample sinclo_re chat_left" ng-class="{notNone:re_border_none === '' || re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2}"><span class="cName details" >{{widget.settings['sub_title']}}</span><span class="details">○○についてですね<br>どのようなご質問でしょうか？</span></li>

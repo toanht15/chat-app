@@ -210,7 +210,7 @@ input[type='text'], input[type='number'], input[type='password']{
 }
 
 textarea {
-  border-radius: 5px!important;
+  border-radius: 5px;
   border: 1px solid $line-color!important;
   padding: 5px;
   &:focus {

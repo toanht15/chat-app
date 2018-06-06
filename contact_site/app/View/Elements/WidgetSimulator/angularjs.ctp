@@ -223,7 +223,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
           var fileReader = new FileReader();
           fileReader.onload = function (event) {
             if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
-              $scope.fileUploader._showInvalidError();
+              $scope.$emit('onErrorSelectFile');
               return;
             }
             // event.target.result に読み込んだファイルの内容が入っています.
@@ -266,7 +266,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       var fileReader = new FileReader();
       fileReader.onload = function(event) {
         if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
-          $scope.fileUploader._showInvalidError();
+          $scope.$emit('onErrorSelectFile');
           return;
         }
         // event.target.result に読み込んだファイルの内容が入っています.
@@ -294,7 +294,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     },
     _getAllowExtension: function() {
       var base = ["pdf","pptx","ppt","jpg","png","gif"];
-      debugger;
       switch(Number($scope.extensionType)) {
         case 1:
           return base;
@@ -360,6 +359,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         var commentArea = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea');
         var actionButtonWrap = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap');
         commentArea.innerHTML = "";
+        commentArea.style.textAlign = "left";
         actionButtonWrap.remove();
         commentLabel.innerHTML = "＜コメント＞";
         commentArea.innerHTML = data.comment;

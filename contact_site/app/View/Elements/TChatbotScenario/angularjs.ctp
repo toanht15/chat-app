@@ -1024,6 +1024,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
           if(actionDetail.dropAreaMessage) {
             $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled, actionDetail.cancelLabel, actionDetail.receiveFileType, actionDetail.extendedReceiveFileExtensions);
+            $scope.$on('onErrorSelectFile', function(){
+              var message = actionDetail.errorMessage;
+              $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
+              $scope.doAction();
+            });
           }
         }
       }, parseInt(time, 10) * 1000);
