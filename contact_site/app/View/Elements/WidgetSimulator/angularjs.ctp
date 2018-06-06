@@ -328,55 +328,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         $scope.uploadFile($scope.fileUploader.fileObj, $scope.fileUploader.loadData);
         popupEvent.close();
       };
-    },
-    _uploadFile: function(targetDivElm, comment, fileObj, loadFile) {
-      var fd = new FormData();
-      var blob = new Blob([loadFile], {type: fileObj.type});
-      fd.append("k", "<?= $companyKey; ?>");
-      fd.append("c", comment)
-      fd.append("f", blob, fileObj.name);
-
-      $.ajax({
-        url  : "<?= $this->Html->url('/FC/pus') ?>",
-        type : "POST",
-        data : fd,
-        cache       : false,
-        contentType : false,
-        processData : false,
-        dataType    : "json",
-        xhr : function(){
-          var XHR = $.ajaxSettings.xhr();
-          /*
-          if(XHR.upload){
-            XHR.upload.addEventListener('progress',function(e){
-              $scope.uploadProgress = parseInt(e.loaded/e.total*10000)/100;
-              console.log($scope.uploadProgress);
-              if($scope.uploadProgress === 100) {
-                $('#uploadMessage').css('display', 'none');
-                $('#processingMessage').css('display', 'block');
-              }
-              $scope.$apply();
-            }, false);
-          }
-          */
-          return XHR;
-        }
-      })
-      .done(function(data, textStatus, jqXHR){
-        console.log(JSON.stringify(data));
-        var commentLabel = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentLabel');
-        var commentArea = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea');
-        var actionButtonWrap = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap');
-        commentArea.innerHTML = "";
-        commentArea.style.textAlign = "left";
-        actionButtonWrap.remove();
-        commentLabel.innerHTML = "＜コメント＞";
-        commentArea.innerHTML = data.comment;
-        $scope.$emit('receiveVistorMessage', "");
-      })
-      .fail(function(jqXHR, textStatus, errorThrown){
-        alert("fail");
-      });
     }
   };
 
@@ -413,6 +364,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     function afterDesideThumbnail(elm) {
       divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(elm);
+      divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea').style.textAlign = 'center';
       divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function(e){
         document.getElementById('chatTalk').removeChild(divElm);
         $(target).parents('li.sinclo_re.recv_file_left').parent().show();
@@ -489,8 +441,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         var commentArea = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea');
         var actionButtonWrap = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap');
         commentArea.innerHTML = "";
+        commentArea.style.textAlign = "left";
         actionButtonWrap.remove();
-        var commentElm = document.createElement('p');
         commentLabel.innerHTML = "＜コメント＞";
         commentArea.innerHTML = data.comment;
         $scope.$emit('receiveVistorMessage', "");
