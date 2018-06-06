@@ -3037,7 +3037,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   });
 
   //新着チャット
-  socket.on("sendChat", function(d){
+  socket.on("sendChat", function(d,ack){
     var obj = JSON.parse(d);
     //応対件数検索、登録
     getConversationCountUser(obj.userId,function(results) {
@@ -3065,6 +3065,39 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
       }
     });
+    if(ack) ack();
+  });
+
+  //新着チャット
+  socket.on("sendFile", function(d, ack){
+    var obj = JSON.parse(d);
+    //応対件数検索、登録
+    getConversationCountUser(obj.userId,function(results) {
+      if(results !== null) {
+        //カウント数が取れなかった場合
+        if (Object.keys(results) && Object.keys(results).length == 0) {
+          obj.messageDistinction = 1;
+        }
+        //カウント数が取れた場合
+        else {
+          obj.messageDistinction = results[0].conversation_count;
+        }
+        //リクエストメッセージの場合
+        if(obj.messageRequestFlg == 1){
+          //消費者が初回メッセージを送る前にオペレータが入室した場合
+          pool.query('SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',[obj.userId,obj.historyId,obj.messageDistinction], function (err, result) {
+            if(Object.keys(results) && Object.keys(result).length !== 0) {
+              obj.messageRequestFlg = 0;
+            }
+            chatApi.set(obj);
+          });
+        }
+        else {
+          chatApi.set(obj);
+        }
+      }
+    });
+    if(ack) ack();
   });
 
   // オートチャット
