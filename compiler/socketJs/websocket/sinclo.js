@@ -2408,7 +2408,7 @@
               emit('sendChat', {
                 historyId: sinclo.chatApi.historyId,
                 stayLogsId: sinclo.chatApi.stayLogsId,
-                chatMessage: "ファイル送信をキャンセルしました",
+                chatMessage: "ファイル送信をキャンセル",
                 mUserId: null,
                 messageType: 19,
                 messageRequestFlg: 0,
