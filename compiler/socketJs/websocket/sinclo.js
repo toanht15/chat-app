@@ -1177,8 +1177,12 @@
               this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           } else if(Number(chat.messageType) === 19) {
-            var result = JSON.parse(chat.message);
-            this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
+            if(check.isJSON(chat.message)) {
+              var result = JSON.parse(chat.message);
+              this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
+            } else {
+              this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+            }
           } else {
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
@@ -1338,9 +1342,14 @@
 
         if (obj.messageType === sinclo.chatApi.messageType.scenario.customer.sendFile) {
           sinclo.chatApi.call();
-          var result = JSON.parse(obj.chatMessage);
-          this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
-          this.chatApi.scDown();
+          if(check.isJSON(obj.chatMessage)) {
+            var result = JSON.parse(obj.chatMessage);
+            this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
+            this.chatApi.scDown();
+          } else {
+            cn = "sinclo_se";
+            this.chatApi.createMessage(cn, obj.chatMessage, "");
+          }
           return false;
         }
 
@@ -2385,13 +2394,32 @@
           content    += "  </div>";
           content    += "</div>";
           if(cancelable) {
-            content  += "<div class='cancelReceiveFileArea'></div>";
+            content  += "<div class='cancelReceiveFileArea'>";
             content  += "  <a>" + cancelLabel + "</a>";
             content  += "</div>";
           }
 
           li.className = 'sinclo_re effect_left';
           li.innerHTML = content;
+
+          if(cancelable) {
+            li.querySelector('div.cancelReceiveFileArea a').addEventListener('click', function(){
+              chatList.removeChild(div);
+              emit('sendChat', {
+                historyId: sinclo.chatApi.historyId,
+                stayLogsId: sinclo.chatApi.stayLogsId,
+                chatMessage: "ファイル送信をキャンセルしました",
+                mUserId: null,
+                messageType: 19,
+                messageRequestFlg: 0,
+                isAutoSpeech : false,
+                notifyToCompany: false,
+                isScenarioMessage: true
+              }, function() {
+                $(document).trigger(sinclo.scenarioApi._events.fileUploaded, true);
+              });
+            });
+          }
 
           sinclo.chatApi.fileUploader.init($('#sincloBox'),
             $(li.querySelector('div.receiveFileContent div.selectFileArea')),
@@ -2925,10 +2953,10 @@
                                "      <div class=\"selectFileArea\">" +
                                "        <p class=\"preview\"></p><p class=\"commentLabel\">コメント</p>" +
                                "        <p class=\"commentarea\"><textarea></textarea></p>" +
-                               "      </div>" +
-                               "      <div class=\"actionButtonWrap\">" +
-                               "        <a class=\"cancel-file-button\">選択し直す</a>" +
-                               "        <a class=\"send-file-button\">送信する</a>" +
+                               "        <div class=\"actionButtonWrap\">" +
+                               "          <a class=\"cancel-file-button\">選択し直す</a>" +
+                               "          <a class=\"send-file-button\">送信する</a>" +
+                               "        </div>" +
                                "      </div>" +
                                "    </div>" +
                                "  </li>";

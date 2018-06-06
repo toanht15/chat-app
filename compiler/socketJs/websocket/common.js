@@ -1393,7 +1393,8 @@ var socket, // socket.io
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent { line-height: 0.5; background-color: #FFF; padding: 5px; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea { line-height: 0.5; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }';
-          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img { max-width: 100%; max-height: 50%; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img { max-width: 190px; max-height: 100px; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 100%; height: 80px; resize: none; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 230px; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a:hover { opacity: .8; }';
@@ -2584,6 +2585,18 @@ var socket, // socket.io
         return ( Object.keys(a).length !== 0 );
       }
       return true;
+    },
+    isJSON: function(arg) {
+      arg = (typeof arg === "function") ? arg() : arg;
+      if (typeof arg  !== "string") {
+        return false;
+      }
+      try {
+        arg = (!JSON) ? eval("(" + arg + ")") : JSON.parse(arg);
+        return true;
+      } catch (e) {
+        return false;
+      }
     },
     // エスケープ用
     // http://qiita.com/saekis/items/c2b41cd8940923863791
