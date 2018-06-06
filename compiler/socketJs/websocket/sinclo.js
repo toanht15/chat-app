@@ -2381,7 +2381,7 @@
           div.appendChild(li);
           chatList.appendChild(div);
 
-          var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showAutomessageName) !== 2 ? "ここに企業名" : "") + "</span>";
+          var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showAutomessageName) !== 2 ? sincloInfo.widget.subTitle : "") + "</span>";
           content    += "<div class='receiveFileContent'>";
           content    += "  <div class='selectFileArea'>";
           content    += "    <p class='drop-area-message'>" + message + "</p>";
