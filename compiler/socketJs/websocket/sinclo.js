@@ -2443,7 +2443,7 @@
             "      <div class=\"selectFileArea\">" +
             "        <p class=\"preview\">" + thumbnail + "</p>" +
             "        <p class=\"commentLabel\">＜コメント＞</p>" +
-            "        <p class=\"commentarea\">" + comment + "</p>" +
+            "        <p class=\"commentarea\" style='text-align: left;'>" + comment + "</p>" +
             "      </div>" +
             "    </div>" +
             "  </li>";
@@ -2985,6 +2985,7 @@
           fileReader.onload = function (e) {
             imgElm.src = this.result;
             divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(imgElm);
+            divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea').style.textAlign = 'center';
             divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function (e) {
               document.getElementById('chatTalk').querySelector('sinclo-chat').removeChild(divElm);
               $(targetElm).parents('li.sinclo_re').parent().show();
