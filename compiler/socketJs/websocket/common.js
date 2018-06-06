@@ -820,8 +820,9 @@ var socket, // socket.io
       /* 共通スタイル */
       html += '      @media print{ sinclo { display:none!important; } }';
       //アイコンフォント用
-      html += '      @font-face { font-family: "SincloFont"; src: url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?v=4.7.0"); src: url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0") format("embedded-opentype"), url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.woff?v=4.7.0") format("woff"), url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.ttf?v=4.7.0") format("truetype"), url("https://netdna.bootstrapcdn.com/font-awesome/4.7.0/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular") format("svg"); font-weight: normal; font-style: normal }';
-      html += '      #sincloBox .sinclo-fa { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
+      html += '      @font-face { font-family: "Font Awesome 5 Pro"; font-style: normal; font-weight: 300; src: url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.eot"); src: url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.eot?#iefix") format("embedded-opentype"), url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.woff2") format("woff2"), url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.woff") format("woff"), url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.ttf") format("truetype"), url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.svg#fontawesome") format("svg"); }';
+      html += '      @font-face { font-family: SincloFont; font-style: normal; font-weight: 900; src: url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.eot"); src: url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.woff2") format("woff2"), url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.woff") format("woff"), url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.ttf") format("truetype"), url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.svg#fontawesome") format("svg"); }';
+      html += '      #sincloBox .sinclo-fal { font-family: "Font Awesome 5 Pro"; display: inline-block; font-style: normal; font-weight: 300; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }';
       //アイコンフォント用
       /* http://meyerweb.com/eric/tools/css/reset/
          v2.0 | 20110126
@@ -920,18 +921,18 @@ var socket, // socket.io
         html += '      @keyframes fadeIn { 0% { opacity :0; } 100% { opacity :1; } }';
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.sincloInfo.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         // ファイルフォントアイコン-----------
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-4x { font-size:4em; }'
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-o:before { content: "\\f016" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-image-o:before { content: "\\f1c5" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-pdf-o:before { content: "\\f1c1" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-word-o:before { content: "\\f1c2" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-powerpoint-o:before { content: "\\f1c4" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-excel-o:before { content: "\\f1c3" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-audio-o:before { content: "\\f1c7" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-video-o:before { content: "\\f1c8" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-zip-o:before { content: "\\f1c6" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-code-o:before { content: "\\f1c9" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fa.fa-file-text-o:before { content: "\\f0f6" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-4x { font-size:4em; }'
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file:before { content: "\\f016" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-image:before { content: "\\f1c5" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-pdf:before { content: "\\f1c1" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-word:before { content: "\\f1c2" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-powerpoint:before { content: "\\f1c4" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-excel:before { content: "\\f1c3" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-audio:before { content: "\\f1c7" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-video:before { content: "\\f1c8" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-zip:before { content: "\\f1c6" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-code:before { content: "\\f1c9" }';
+        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-text:before { content: "\\f0f6" }';
         // ------------ファイルフォントアイコン
         html += '      #sincloBox ul#chatTalk li span.sendFileMessage { color: '+ colorList['reTextColor'] +' }';
         html += '      #sincloBox ul#chatTalk li div.sendFileContent { display: table; table-layout:fixed; width: 100%; height: 64px; white-space: pre-line; margin-bottom: 0; }';
@@ -1040,8 +1041,8 @@ var socket, // socket.io
       //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
       if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
         html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; }';
-        html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fa { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
-        html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fa.fa-comment:before { content: "\\f075" }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fal { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fal.fa-comment:before { content: "\\f075" }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 42px; width : -webkit-fit-content !important; width : -moz-fit-content !important; width : fit-content !important; background-color: '+ colorList['mainColor'] +'; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; color: '+ colorList['stringColor'] +'; margin: auto; filter:alpha(opacity=90); -moz-opacity: 0.9; opacity: 0.9; cursor: pointer; }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner .sincloBannerText{ display: flex; justify-content: center; align-items: center; height: 100%; width: auto!important; margin: 0 5px; }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner i{ color: '+ widget.stringColor +'; }';
@@ -1380,22 +1381,24 @@ var socket, // socket.io
           html += '      #sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding: 20px 0; height: 100%; border: 1px solid ' + colorList['chatSendBtnBackgroundColor'] + '; }';
           html += '      #sincloBox section#chatTab #miniSincloChatSendBtn { padding: 8px 0; height: 100%; border: 1px solid ' + colorList['chatSendBtnBackgroundColor'] + '; }';
 
-          /* ファイル受信 */
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent { border: 1px dashed ' + widget.reTextColor + '; padding: 0 42px; }';
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 0.5; }'
+          /* ファイル受信  */
+          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent { border: 1px dashed ' + widget.reTextColor + '; padding: 0 42px; line-height: 0.5; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 6.5px; }'
           html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin:0; text-align: center; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-button { line-height: 0px; margin: 8px 0; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display:block; width:100%; height: auto; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: ' + widget.mainColor + '!important; color: ' + widget.stringColor + '; font-weight: normal; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }';
           html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea a { cursor: pointer; text-decoration: underline; }';
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { font-size: 5em; color: ' + widget.reTextColor + '; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { font-size: 3em; color: ' + widget.reTextColor + '; }';
           html += '#sincloBox #chatTalk li.sinclo_se.recv_file_right {padding: 0 10px; line-height: 0.5; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent { line-height: 0.5; background-color: #FFF; padding: 5px; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea { line-height: 0.5; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img { max-width: 190px; max-height: 100px; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; }';
-          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 100%; height: 80px; resize: none; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 97%; height: 80px; resize: none; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea:focus { outline: none!important; border-color: ' + widget.seBackgroundColor + '!important;}'
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 230px; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a:hover { opacity: .8; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.cancel-file-button { width: 105px; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: normal; word-break: keep-all; }';

@@ -2371,7 +2371,7 @@
           li.className = 'sinclo_re effect_left';
           li.innerHTML = content;
         },
-        createSelectUploadFileMessage: function(message, cancelable, cancelLabel) {
+        createSelectUploadFileMessage: function(message, cancelable, cancelLabel, extensionType, extendedExtensions) {
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
           div.style.cursor = "pointer";
@@ -2385,7 +2385,7 @@
           content    += "<div class='receiveFileContent'>";
           content    += "  <div class='selectFileArea'>";
           content    += "    <p class='drop-area-message'>" + message + "</p>";
-          content    += "    <p class='drop-area-icon'><i class='sinclo-fa fa-cloud-upload'></i></p>";
+          content    += "    <p class='drop-area-icon'><i class='sinclo-fal fa-cloud-upload'></i></p>";
           content    += "    <p>または</p>";
           content    += "    <p class='drop-area-button'>";
           content    += "      <a class='select-file-button'>ファイルを選択</a>";
@@ -2424,7 +2424,9 @@
           sinclo.chatApi.fileUploader.init($('#sincloBox'),
             $(li.querySelector('div.receiveFileContent div.selectFileArea')),
             $(li.querySelector('div.receiveFileContent div.selectFileArea p.drop-area-button a.select-file-button')),
-            $(li.querySelector('div.receiveFileContent div.selectFileArea input.receiveFileInput')));
+            $(li.querySelector('div.receiveFileContent div.selectFileArea input.receiveFileInput')),
+            extensionType,
+            extendedExtensions);
           this.scDown();
         },
         createSentFileMessage: function(comment, downloadUrl, extension) {
@@ -2454,17 +2456,17 @@
         _selectFontIconClassFromExtension: function(ext) {
           var selectedClass = "",
             icons = {
-              image: 'fa-file-image-o',
-              pdf: 'fa-file-pdf-o',
-              word: 'fa-file-word-o',
-              powerpoint: 'fa-file-powerpoint-o',
-              excel: 'fa-file-excel-o',
-              audio: 'fa-file-audio-o',
-              video: 'fa-file-video-o',
-              zip: 'fa-file-zip-o',
-              code: 'fa-file-code-o',
-              text: 'fa-file-text-o',
-              file: 'fa-file-o'
+              image: 'fa-file-image',
+              pdf: 'fa-file-pdf',
+              word: 'fa-file-word',
+              powerpoint: 'fa-file-powerpoint',
+              excel: 'fa-file-excel',
+              audio: 'fa-file-audio',
+              video: 'fa-file-video',
+              zip: 'fa-file-zip',
+              code: 'fa-file-code',
+              text: 'fa-file-text',
+              file: 'fa-file'
             },
             extensions = {
               gif: icons.image,
@@ -2825,12 +2827,16 @@
         selectInput: null,
         fileObj: null,
         loadData: null,
+        extensionType: null,
+        extendedExtensions: null,
 
-        init: function(dragArea, droppable, selectFileButton, selectInput) {
+        init: function(dragArea, droppable, selectFileButton, selectInput, extensionType, extendedExtensions) {
           this.dragArea = dragArea;
           this.droppable = droppable;
           this.selectFileBtn = selectFileButton;
           this.selectInput = selectInput;
+          this.extensionType = extensionType;
+          this.extendedExtensions = extendedExtensions;
           if(window.FileReader) {
             this._addDragAndDropEvents();
           } else {
@@ -2922,13 +2928,25 @@
           e.stopPropagation();
         },
         _validExtension: function(filename) {
-          /*
+          var allowExtensions = sinclo.chatApi.fileUploader._getAllowExtension();
+
           var split = filename.split(".");
           var targetExtension = split[split.length-1];
-          var regex = new RegExp(this.allowExtensions.join("|"), 'i');
+          var regex = new RegExp(allowExtensions.join("|"), 'i');
           return regex.test(targetExtension);
-          */
           return false;
+        },
+        _getAllowExtension: function() {
+          var base = ["pdf","pptx","ppt","jpg","png","gif"];
+          switch(Number(sinclo.chatApi.fileUploader.extensionType)) {
+            case 1:
+              return base;
+            case 2:
+              var extendSettings = sinclo.chatApi.fileUploader.extendedExtensions;
+              return base.concat(extendSettings);
+            default:
+              return base;
+          }
         },
         _showInvalidError: function() {
           $(document).trigger(sinclo.scenarioApi._events.fileUploaded, false);
@@ -5143,9 +5161,10 @@
             var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
             var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
-            sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel);
+            var extensionType = self._parent.get(self._parent._lKey.currentScenario).extensionType;
+            var extendedExtensions = self._parent.get(self._parent._lKey.currentScenario).extendedReceiveFileExtensions.split(',');
+            sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(function(event, result){
-              alert(result);
               if(result) {
                 if(self._parent._goToNextScenario()) {
                   self._parent._process();
@@ -5163,10 +5182,10 @@
         _showError: function() {
           var self = sinclo.scenarioApi._sendFile;
           var errorMessage = self._parent.get(self._parent._lKey.currentScenario).errorMessage;
-          self._parent._doing(self._parent._getIntervalTimeSec(), function(){
+          self._parent._doing(0, function(){
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
-            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._parent.get(self._state.currentSeq) + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
-              self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._parent.get(self._state.currentSeq));
+            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, 1 + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
+              self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), 1);
               self._process();
             });
           });
