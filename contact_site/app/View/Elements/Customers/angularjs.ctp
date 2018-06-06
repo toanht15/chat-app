@@ -69,7 +69,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         scenario: {
           customer: {
             hearing: 12,
-            selection: 13
+            selection: 13,
+            sendFile: 19
           },
           message: {
             text: 21,
@@ -1349,20 +1350,41 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return content;
     };
 
+    $scope.createTextOfReceivedFile = function(comment, downloadUrl, extension) {
+      var divElm = document.createElement('div');
+      divElm.style.textAlign = "right";
+      var thumbnail = "";
+      if (extension.match(/(jpeg|jpg|gif|png)$/) != null) {
+        thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail' width='64' height='64'>";
+      } else {
+        thumbnail = "<i class='sinclo-fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+      }
+      divElm.innerHTML =
+        "    <div class=\"receiveFileContent\" style='line-height:0; margin-bottom:0;'>" +
+        "      <div class=\"selectFileArea\" style='margin-bottom:0;'>" +
+        "        <p class=\"preview\" style='margin:0; text-align: center;'>" + thumbnail + "</p>" +
+        "        <p class=\"commentLabel\" style='margin:0;'>＜コメント＞</p>" +
+        "        <p class=\"commentarea\">" + comment + "</p>" +
+        "      </div>" +
+        "    </div>";
+
+      return divElm.innerHTML;
+    };
+
     function selectFontIconClassFromExtension(ext) {
       var selectedClass = "",
         icons = {
-          image:      'fa-file-image-o',
-          pdf:        'fa-file-pdf-o',
-          word:       'fa-file-word-o',
-          powerpoint: 'fa-file-powerpoint-o',
-          excel:      'fa-file-excel-o',
-          audio:      'fa-file-audio-o',
-          video:      'fa-file-video-o',
-          zip:        'fa-file-zip-o',
-          code:       'fa-file-code-o',
-          text:       'fa-file-text-o',
-          file:       'fa-file-o'
+          image:      'fa-file-image',
+          pdf:        'fa-file-pdf',
+          word:       'fa-file-word',
+          powerpoint: 'fa-file-powerpoint',
+          excel:      'fa-file-excel',
+          audio:      'fa-file-audio',
+          video:      'fa-file-video',
+          zip:        'fa-file-zip',
+          code:       'fa-file-code',
+          text:       'fa-file-text',
+          file:       'fa-file'
         },
         extensions = {
           gif: icons.image,
@@ -1522,6 +1544,33 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if(!isExpired) {
           li.style.cursor = "pointer";
           li.addEventListener("click", function(event){window.open(message.downloadUrl)});
+        }
+      } else if ( type === chatApi.messageType.scenario.customer.sendFile ) {
+        if(isJSON(message)) {
+          // ファイル送信はmessageがJSONなのでparseする
+          message = JSON.parse(message);
+          cn = "sinclo_re";
+          div.style.textAlign = 'left';
+          div.style.height = 'auto';
+          div.style.padding = '0';
+          //        var chatName = widget.subTitle;
+          //        if ( Number(widget.showName) === <?//=C_WIDGET_SHOW_NAME?>// ) {
+          //          chatName = userList[Number(userId)];
+          //        }
+          content = $scope.createTextOfReceivedFile(message.comment, message.downloadUrl, message.extension);
+          if (!isExpired) {
+            li.style.cursor = "pointer";
+            li.addEventListener("click", function (event) {
+              window.open(message.downloadUrl)
+            });
+          }
+        } else {
+          cn = "sinclo_re";
+          div.style.textAlign = 'left';
+          div.style.height = 'auto';
+          div.style.padding = '0';
+          content = "<span class='cName'>シナリオメッセージ(ファイル受信)</span>";
+          content += $scope.createTextOfMessage(chat, message);
         }
       }
       else  {

@@ -203,6 +203,9 @@ define('C_SCENARIO_ACTION_SEND_MAIL', 4); // メール送信
 define('C_SCENARIO_ACTION_CALL_SCENARIO', 5); // シナリオ呼び出し
 define('C_SCENARIO_ACTION_EXTERNAL_API', 6); // 外部システム連携
 define('C_SCENARIO_ACTION_SEND_FILE', 7); // ファイル送信
+define('C_SCENARIO_ACTION_GET_ATTRIBUTE', 8); // 属性値取得
+define('C_SCENARIO_ACTION_RECEIVE_FILE', 9); // ファイル受信
+define('C_SCENARIO_ACTION_BRANCH_ON_CONDITION', 10); // 条件分岐
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -226,6 +229,15 @@ define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
 /* シナリオ設定(外部システム連携) - メソッド種別 */
 define('C_SCENARIO_METHOD_TYPE_GET', 1);
 define('C_SCENARIO_METHOD_TYPE_POST', 2);
+
+// シナリオ設定(属性値取得)－属性別
+define('C_SCENARIO_ATTRIBUTE_TYPE_ID', 1);
+define('C_SCENARIO_ATTRIBUTE_TYPE_NAME', 2);
+define('C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR', 3);
+
+// シナリオ設定(ファイル受信)－ファイル形式
+define('C_SCENARIO_RECEIVE_FILE_TYPE_BASIC', 1);
+define('C_SCENARIO_RECEIVE_FILE_TYPE_EXTENDED', 2);
 
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
@@ -730,7 +742,19 @@ $config['chatbotScenarioActionList'] = [
       'executeNextAction' => '2'
     ]
   ],
-  // 外部システム連携
+  // 属性値取得
+  C_SCENARIO_ACTION_GET_ATTRIBUTE => [
+    'label' => '属性値取得',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'getAttributes' => [[
+        'variableName' => '',
+        'type' => C_SCENARIO_ATTRIBUTE_TYPE_ID,
+        'attributeValue' => '',
+      ]]
+    ]
+  ],  // 外部システム連携
   C_SCENARIO_ACTION_EXTERNAL_API => [
     'label' => '外部システム連携',
     'default' => [
@@ -756,6 +780,19 @@ $config['chatbotScenarioActionList'] = [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
       'file' => ''
+    ]
+  ]
+  ,
+  // ファイル受信
+  C_SCENARIO_ACTION_RECEIVE_FILE => [
+    'label' => 'ファイル受信',
+    'default' => [
+      'dropAreaMessage' => 'ここにファイルをドロップ
+してください',
+      'receiveFileType' => '1',
+      'extendedReceiveFileExtensions' => '',
+      'cancelEnabled' => true,
+      'cancelLabel' => 'ファイル送信をキャンセルする'
     ]
   ]
 ];
@@ -784,6 +821,25 @@ $config['chatbotScenarioInputType'] = [
   ]
 ];
 
+/* シナリオ設定 - 属性タイプ */
+$config['chatbotScenarioAttributeType'] = [
+  C_SCENARIO_ATTRIBUTE_TYPE_ID => [
+    'label' => '@id',
+    'rule' => C_MATCH_RULE_TEXT,
+    'inputRule' => C_MATCH_INPUT_RULE_ALL
+  ],
+  C_SCENARIO_ATTRIBUTE_TYPE_NAME => [
+    'label' => '@name',
+    'rule' => C_MATCH_RULE_NUMBER,
+    'inputRule' => C_MATCH_INPUT_RULE_NUMBER
+  ],
+  C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR => [
+    'label' => '@cssセレクタ',
+    'rule' => C_MATCH_RULE_TEXT,
+    'inputRule' => C_MATCH_INPUT_RULE_ALL
+  ]
+];
+
 /* シナリオ設定 - メール送信タイプ */
 $config['chatbotScenarioSendMailType'] = [
   C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => [
@@ -797,6 +853,20 @@ $config['chatbotScenarioSendMailType'] = [
   C_SCENARIO_MAIL_TYPE_CUSTOMIZE => [
     'label' => 'メール本文をカスタマイズする',
     'tooltip' => '自由にメール本文を編集することが可能です。<br>（変数の利用も可能です）'
+  ]
+];
+
+/* シナリオ設定 - メール送信タイプ */
+$config['chatbotScenarioReceiveFileTypeList'] = [
+  C_SCENARIO_RECEIVE_FILE_TYPE_BASIC => [
+    'label' => '一般的なファイルに限定',
+    'annotation' => '※PDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限されます。',
+    'tooltip' => 'それまでのすべてのチャットやり取り内容すべてをメールします。'
+  ],
+  C_SCENARIO_RECEIVE_FILE_TYPE_EXTENDED => [
+    'label' => '拡張設定',
+    'annotation' => '※送信可能なファイルの拡張子を指定します。複数の拡張子を指定する場合はカンマ（,）で区切ります。',
+    'tooltip' => 'ヒアリングおよび選択肢にて入力（または選択）された内容をメールします。'
   ]
 ];
 
