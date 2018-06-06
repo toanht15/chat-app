@@ -71,23 +71,35 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         width: 400px;
       }
       /* タブアイコンフォント化対応start */
-      @font-face {
-        font-family: 'SincloFont';
-        src: url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?v=4.0.3'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3') format('embedded-opentype'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.woff?v=4.0.3') format('woff'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.ttf?v=4.0.3') format('truetype'), url('https://netdna.bootstrapcdn.com/font-awesome/4.0.3/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular') format('svg');
-        font-weight: normal;
-        font-style: normal
-      }
 
-      #sincloBox .sinclo-fa {
-        display: inline-block;
+      @font-face {
+        font-family: 'Font Awesome 5 Pro';
+        font-style: normal;
+        font-weight: 300;
+        src: url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-light-300.eot");
+        src: url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-light-300.eot?#iefix") format("embedded-opentype"), url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-light-300.woff2") format("woff2"), url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-light-300.woff") format("woff"), url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-light-300.ttf") format("truetype"), url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-light-300.svg#fontawesome") format("svg"); }
+
+      @font-face {
         font-family: SincloFont;
         font-style: normal;
-        font-weight: normal;
-        line-height: 1;
+        font-weight: 900;
+        src: url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-solid-900.eot");
+        src: url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-solid-900.woff2") format("woff2"), url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-solid-900.woff") format("woff"), url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-solid-900.ttf") format("truetype"), url("<?= C_NODE_SERVER_ADDR ?>/webfonts/fa-solid-900.svg#fontawesome") format("svg"); }
+
+      #sincloBox .sinclo-fal {
+        font-family: 'Font Awesome 5 Pro';
+        display: inline-block;
+        font-style: normal;
+        font-weight: 300;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         cursor: pointer;
       }
+
+      #sincloBox .sinclo-fal.fa-4x {
+        font-size: 4em;
+      }
+
       /* タブアイコンフォント化対応end */
     </style>
     <div id="sincloBox" ng-if="widget.showWidgetType !== 2" ng-hide="widget.showWidgetType === 4" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
@@ -341,7 +353,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }
         #sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }
         #sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea a { cursor: pointer; text-decoration: underline; }
-        #sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { font-size: 5em; color: {{widget.settings['re_text_color']}}; }
+        #sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { font-size: 3em; color: {{widget.settings['re_text_color']}}; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent { background-color: #FFF; padding: 5px; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img { max-width: 100%; max-height: 50%; }
@@ -492,7 +504,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
               <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re chat_left recv_file_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="drop-area-message"></p><p class="drop-area-icon"><i class="fal fa-cloud-upload"></i></p><p>または</p><p class="drop-area-button"><a class="select-file-button">ファイルを選択</a></p><input type="file" class="receiveFileInput" name="receiveFileInput" style="display:none"></div></div><div class="cancelReceiveFileArea"><a>{{setItem.cancelLabel}}</a></div></li>
+              <li class="sinclo_re chat_left recv_file_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="drop-area-message"></p><p class="drop-area-icon"><i class="sinclo-fal fa-cloud-upload"></i></p><p>または</p><p class="drop-area-button"><a class="select-file-button">ファイルを選択</a></p><input type="file" class="receiveFileInput" name="receiveFileInput" style="display:none"></div></div><div class="cancelReceiveFileArea"><a>{{setItem.cancelLabel}}</a></div></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
               <li class="sinclo_se chat_right recv_file_right details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><div class="receiveFileContent"><div class="selectFileArea"><p class="preview"></p><p class="commentLabel">コメント</p><p class="commentarea"><textarea></textarea></p></div><div class="actionButtonWrap"><a class="cancel-file-button">選択し直す</a><a class="send-file-button">送信する</a></div></div></li>

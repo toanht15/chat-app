@@ -49,7 +49,11 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   /**
    *
    */
-  $scope.$on('addSeReceiveFileUI', function(event, dropAreaMessage, calcelable, cancelLabel) {
+  $scope.extensionType = null;
+  $scope.extendedExtensions = null;
+  $scope.$on('addSeReceiveFileUI', function(event, dropAreaMessage, calcelable, cancelLabel, extensionType, extendedExtensions) {
+    $scope.extensionType = extensionType;
+    $scope.extendedExtensions = extendedExtensions.split(",");
     $scope.addReceiveFileUI(dropAreaMessage, calcelable, cancelLabel);
   });
 
@@ -225,7 +229,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
             // event.target.result に読み込んだファイルの内容が入っています.
             // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
             $scope.fileUploader.loadData = event.target.result;
-            $scope.fileUploader._showPreview(self, $scope.fileUploader.fileObj, $scope.fileUploader.loadData);
+            $scope.showPreview(self, $scope.fileUploader.fileObj, $scope.fileUploader.loadData);
           };
           fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
         }
@@ -281,13 +285,25 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       e.stopPropagation();
     },
     _validExtension: function(filename) {
-      /*
+      var allowExtensions = this._getAllowExtension();
+
       var split = filename.split(".");
       var targetExtension = split[split.length-1];
-      var regex = new RegExp(this.allowExtensions.join("|"), 'i');
+      var regex = new RegExp(allowExtensions.join("|"), 'i');
       return regex.test(targetExtension);
-      */
-      return true;
+    },
+    _getAllowExtension: function() {
+      var base = ["pdf","pptx","ppt","jpg","png","gif"];
+      debugger;
+      switch(Number($scope.extensionType)) {
+        case 1:
+          return base;
+        case 2:
+          var extendSettings = $scope.extendedExtensions;
+          return base.concat(extendSettings);
+        default:
+          return base;
+      }
     },
     _showInvalidError: function() {
       var span = document.createElement("span");
@@ -304,36 +320,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         $scope.uploadFile($scope.fileUploader.fileObj, $scope.fileUploader.loadData);
         popupEvent.close();
       };
-    },
-    _showPreview: function(target, fileObj, loadData) {
-      $(target).parents('li.sinclo_re.recv_file_left').parent().hide();
-
-      // ベースとなる要素をクローン
-      var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
-      divElm.style.textAlign = "right";
-      var imgElm = document.createElement('img');
-
-      var fileReader = new FileReader();
-      fileReader.onload = function (e) {
-        imgElm.src = this.result;
-        divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(imgElm);
-        divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function (e) {
-          document.getElementById('chatTalk').removeChild(divElm);
-          $(target).parents('li.sinclo_re.recv_file_left').parent().show();
-        });
-        divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function (e) {
-          var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
-          if (!comment) {
-            comment = "no comment";
-          }
-          $scope.fileUploader._uploadFile(divElm, comment, fileObj, loadData);
-        });
-        // 要素を追加する
-        document.getElementById('chatTalk').appendChild(divElm);
-        $('#chatTalk div:last-child').show();
-        self.autoScroll();
-      };
-      fileReader.readAsDataURL(fileObj);
     },
     _uploadFile: function(targetDivElm, comment, fileObj, loadFile) {
       var fd = new FormData();
@@ -385,8 +371,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
   };
 
-
-
   $scope.onClickSelectFileButton = function(event) {
     var targetInput = $(event.target).parents('div.selectFileArea').find('.receiveFileInput');
     if(targetInput.length === 1) {
@@ -415,12 +399,11 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     // ベースとなる要素をクローン
     var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
-    var imgElm = document.createElement('img');
+    var split = fileObj.name.split(".");
+    var targetExtension = split[split.length-1];
 
-    var fileReader = new FileReader();
-    fileReader.onload = function(e) {
-      imgElm.src = this.result;
-      divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(imgElm);
+    function afterDesideThumbnail(elm) {
+      divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(elm);
       divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function(e){
         document.getElementById('chatTalk').removeChild(divElm);
         $(target).parents('li.sinclo_re.recv_file_left').parent().show();
@@ -436,8 +419,25 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       document.getElementById('chatTalk').appendChild(divElm);
       $('#chatTalk div:last-child').show();
       self.autoScroll();
-    };
-    fileReader.readAsDataURL(fileObj);
+      $scope.$apply();
+    }
+
+    if(SimulatorService.isImage(targetExtension)) {
+      var imgElm = document.createElement('img');
+      var fileReader = new FileReader();
+      fileReader.onload = function(e) {
+        imgElm.src = this.result;
+        afterDesideThumbnail(imgElm);
+      };
+      fileReader.readAsDataURL(fileObj);
+    } else {
+      var iconElm = document.createElement('i');
+      iconElm.classList.add('sinclo-fal');
+      iconElm.classList.add('fa-4x');
+      iconElm.classList.add(SimulatorService.selectIconClassFromExtension(targetExtension));
+      iconElm.setAttribute("aria-hidden","true");
+      afterDesideThumbnail(iconElm);
+    }
   };
 
   // ファイル送信
