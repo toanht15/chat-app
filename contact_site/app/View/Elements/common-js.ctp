@@ -80,6 +80,19 @@
     }
   }
 
+  function isJSON (arg) {
+    arg = (typeof arg === "function") ? arg() : arg;
+    if (typeof arg  !== "string") {
+      return false;
+    }
+    try {
+      arg = (!JSON) ? eval("(" + arg + ")") : JSON.parse(arg);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   // エスケープ用
   // http://qiita.com/saekis/items/c2b41cd8940923863791
   function escape_html (string) {

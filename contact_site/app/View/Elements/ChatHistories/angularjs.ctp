@@ -634,8 +634,12 @@
         div.style.padding = '0';
         div.style.borderBottom = '1px solid #bfbfbf';
         div.style.marginTop = '6px';
-        var created = chat.created.replace(" ","%");
-        if(chat.delete_flg == 1) {
+        var created = chat.created.replace(" ", "%");
+        if (chat.delete_flg != 1 && !isJSON(message)) {
+          content = "<span class='cName' style = 'font-size:"+fontSize+"'>シナリオメッセージ（ファイル受信）" + "</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>" + message + "</span>";
+        } else if(chat.delete_flg == 1) {
           var deleteUser = userList[Number(chat.deleted_user_id)];
           content = "<span class='cName' style = 'color:#bdbdbd !important; font-size:"+fontSize+"'>シナリオメッセージ（ファイル受信）" + "</span>";
           content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"'>"+chat.created+"</span>";

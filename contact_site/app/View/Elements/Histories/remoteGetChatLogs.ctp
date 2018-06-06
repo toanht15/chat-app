@@ -133,18 +133,33 @@ $(function(){
       $isRecieveFile = false;
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 19) === 0 ) {
-      $className = "sinclo_se";
-      $id = $val['THistoryChatLog']['id'];
-      $historyId = $val['THistoryChatLog']['t_histories_id'];
-      $deleteMessage = "＜コメント＞".json_decode($val['THistoryChatLog']['message'])->comment;
-      $deleteMessage = preg_replace( '/[\n\r]+/', ' ', $deleteMessage);
-      $downloadUrl = json_decode($val['THistoryChatLog']['message'])->downloadUrl;
-      $created = $val['THistoryChatLog']['created'];
-      $deleted = $val['THistoryChatLog']['deleted'];
-      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
-      $isSendFile = false;
-      $isRecieveFile = true;
-      $number = $number + 1;
+      if(!json_decode($val['THistoryChatLog']['message'])) {
+        $className = "sinclo_se";
+        $name = "シナリオメッセージ（ファイル受信）";
+        $id = $val['THistoryChatLog']['id'];
+        $historyId = $val['THistoryChatLog']['t_histories_id'];
+        $deleteMessage = $val['THistoryChatLog']['message'];
+        $created = $val['THistoryChatLog']['created'];
+        $deleted = $val['THistoryChatLog']['deleted'];
+        $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+        $isSendFile = false;
+        $isRecieveFile = false;
+        $number = $number + 1;
+      } else {
+        $className = "sinclo_se";
+        $name = "シナリオメッセージ（ファイル受信）";
+        $id = $val['THistoryChatLog']['id'];
+        $historyId = $val['THistoryChatLog']['t_histories_id'];
+        $deleteMessage = "＜コメント＞".json_decode($val['THistoryChatLog']['message'])->comment;
+        $deleteMessage = preg_replace( '/[\n\r]+/', ' ', $deleteMessage);
+        $downloadUrl = json_decode($val['THistoryChatLog']['message'])->downloadUrl;
+        $created = $val['THistoryChatLog']['created'];
+        $deleted = $val['THistoryChatLog']['deleted'];
+        $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+        $isSendFile = false;
+        $isRecieveFile = true;
+        $number = $number + 1;
+      }
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 21) === 0 ) {
       $className = "sinclo_auto";
