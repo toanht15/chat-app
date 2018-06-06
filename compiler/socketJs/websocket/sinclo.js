@@ -2979,12 +2979,11 @@
                                "    </div>" +
                                "  </li>";
             divElm.style.textAlign = "right";
-          var imgElm = document.createElement('img');
+          var split = fileObj.name.split(".");
+          var targetExtension = split[split.length-1];
 
-          var fileReader = new FileReader();
-          fileReader.onload = function (e) {
-            imgElm.src = this.result;
-            divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(imgElm);
+          function afterDesideThumbnail(elm) {
+            divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(elm);
             divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea').style.textAlign = 'center';
             divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function (e) {
               document.getElementById('chatTalk').querySelector('sinclo-chat').removeChild(divElm);
@@ -3000,8 +2999,24 @@
             // 要素を追加する
             document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
             sinclo.chatApi.scDown();
-          };
-          fileReader.readAsDataURL(fileObj);
+          }
+
+          if(targetExtension.match(/(jpeg|jpg|gif|png)$/) != null) {
+            var imgElm = document.createElement('img');
+            var fileReader = new FileReader();
+            fileReader.onload = function(e) {
+              imgElm.src = this.result;
+              afterDesideThumbnail(imgElm);
+            };
+            fileReader.readAsDataURL(fileObj);
+          } else {
+            var iconElm = document.createElement('i');
+            iconElm.classList.add('sinclo-fal');
+            iconElm.classList.add('fa-4x');
+            iconElm.classList.add(sinclo.chatApi._selectFontIconClassFromExtension(targetExtension));
+            iconElm.setAttribute("aria-hidden","true");
+            afterDesideThumbnail(iconElm);
+          }
         },
         _uploadFile: function(targetDivElm, comment, fileObj, loadFile) {
           var fd = new FormData();
