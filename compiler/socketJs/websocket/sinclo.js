@@ -2438,7 +2438,7 @@
           } else {
             thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
-          divElm.innerHTML = "  <li class=\"sinclo_se chat_right recv_file_right details\">" +
+          divElm.innerHTML = "  <li class=\"sinclo_se effect_right chat_right recv_file_right details\">" +
             "    <div class=\"receiveFileContent\">" +
             "      <div class=\"selectFileArea\">" +
             "        <p class=\"preview\">" + thumbnail + "</p>" +
@@ -2966,7 +2966,7 @@
 
           // ベースとなる要素をクローン
           var divElm = document.createElement('div');
-            divElm.innerHTML = "  <li class=\"sinclo_se chat_right recv_file_right details\">" +
+            divElm.innerHTML = "  <li class=\"sinclo_se effect_right chat_right recv_file_right details\">" +
                                "    <div class=\"receiveFileContent\">" +
                                "      <div class=\"selectFileArea\">" +
                                "        <p class=\"preview\"></p><p class=\"commentLabel\">コメント</p>" +
