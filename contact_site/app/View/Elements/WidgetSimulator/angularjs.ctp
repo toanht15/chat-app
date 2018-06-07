@@ -251,7 +251,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     },
     _overEvent: function(event) {
       $scope.fileUploader.dragging = false;
-      $scope.fileUploader.droppable.css('opacity', '0.8');
+      $scope.fileUploader.droppable.css('opacity', '0.5');
       $scope.fileUploader._cancelEvent(event);
       return false;
     },
@@ -379,6 +379,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       // 要素を追加する
       document.getElementById('chatTalk').appendChild(divElm);
       $('#chatTalk div:last-child').show();
+      var targetTextarea = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea');
+      $scope.changeResizableTextarea(targetTextarea);
       self.autoScroll();
       $scope.$apply();
     }
@@ -399,6 +401,41 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       iconElm.setAttribute("aria-hidden","true");
       afterDesideThumbnail(iconElm);
     }
+  };
+
+  $scope.changeResizableTextarea = function(elm) {
+    var maxRow = 5;                       // 表示可能な最大行数
+    var fontSize = parseFloat(elm.style.fontSize, 10);           // 行数計算のため、templateにて設定したフォントサイズを取得
+    var borderSize = parseFloat(elm.style.borderWidth, 10) * 2;  // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
+    var paddingSize = parseFloat(elm.style.padding, 10) * 2;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
+    var lineHeight = parseFloat(elm.style.lineHeight, 10);       // 表示高さの計算のため、templateにて設定した行の高さを取得
+
+    function autoResize() {
+      console.log("autoResize");
+      // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
+      var areaWidth = elm.getBoundingClientRect().width - borderSize - paddingSize;
+
+      // フォントサイズとテキストエリアのサイズを基に、行数を計算する
+      var textRow = 0;
+      elm.value.split('\n').forEach(function(string) {
+        var stringWidth = string.length * fontSize;
+        textRow += Math.max(Math.ceil(stringWidth/areaWidth), 1);
+      });
+
+      // 表示する行数に応じて、テキストエリアの高さを調整する
+      if (textRow > maxRow) {
+        elm.style.height = (maxRow * (fontSize*lineHeight)) + paddingSize + 'px';
+        elm.style.overflow = 'auto';
+        self.autoScroll();
+      } else {
+        elm.style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+        elm.style.overflow = 'hidden';
+        self.autoScroll();
+      }
+    }
+
+    autoResize();
+    elm.addEventListener('input', autoResize);
   };
 
   // ファイル送信
