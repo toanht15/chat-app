@@ -2386,9 +2386,9 @@
           content    += "  <div class='selectFileArea'>";
           content    += "    <p class='drop-area-message'>" + message + "</p>";
           content    += "    <p class='drop-area-icon'><i class='sinclo-fal fa-cloud-upload'></i></p>";
-          content    += "    <p>または</p>";
+          content    += "<p>または</p>";
           content    += "    <p class='drop-area-button'>";
-          content    += "      <a class='select-file-button'>ファイルを選択</a>";
+          content    += "<a class='select-file-button'>ファイルを選択</a>";
           content    += "    </p>";
           content    += "    <input type='file' class='receiveFileInput' name='receiveFileInput' style='display:none'>"
           content    += "  </div>";

@@ -1002,8 +1002,8 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 0; }'
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin: 6.5px 0; text-align: center; color:' + widget.reTextColor + '; font-weight: bold; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-button { line-height: 0px; margin: 6.5px 0 13px; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display:inline-block; width:75%; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: ' + widget.reTextColor + '!important; color: ' + widget.reBackgroundColor + '; font-weight: normal; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; line-height: 0px; margin: 6.5px 0 13px; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display:inline-block; width:75%; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; text-align: center; background-color: ' + widget.reTextColor + '!important; color: ' + widget.reBackgroundColor + '; font-weight: normal; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea a { font-size: ' + (widget.reTextSize - 1) + 'px; cursor: pointer; text-decoration: underline; }';
@@ -1111,6 +1111,8 @@ var socket, // socket.io
         else {
           html += '#sincloBox section#chatTab sinclo-chat-alert { display:none }';
         }
+
+        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { font-size: 16px; }';
 
         /* 縦の場合 */
         if ( $(window).height() > $(window).width() ) {
