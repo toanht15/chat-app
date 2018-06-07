@@ -907,6 +907,7 @@ io.sockets.on('connection', function (socket) {
         auto: 3,
         sorry: 4,
         autoSpeech: 5,
+        notification: 7,
         start: 98,
         end: 99
       },
@@ -1108,19 +1109,22 @@ io.sockets.on('connection', function (socket) {
 
                   //通知された場合
                   if(ret.opFlg === true && d.notifyToCompany) {
-                    console.log('通知されましたー！');
-                    console.log(ret);
-                    console.log(d);
-                    console.log('chatApi');
-                    console.log(chatApi);
-                    if(ret.inFlg == 1) {
+                    var data = JSON.parse(ret.data);
+                    //初回通知メッセージ利用するの場合
+                    //初回通知メッセージの場合
+                    if(ret.inFlg == 1 && d.notificationFlg == 1) {
                       var obj = d;
-                      setTimeout(function(){
-                        obj.chatMessage = ret.message;
-                        obj.messageType = chatApi.cnst.observeType.autoSpeech;
-                        obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
-                        chatApi.set(obj);
-                      },ret.seconds*1000);
+                      for (var i = 0; i < Object.keys(data).length; i++) {
+                        (function(pram) {
+                          var message = data[i].message;
+                          setTimeout(function(){
+                            obj.chatMessage = data[pram].message;
+                            obj.messageType = chatApi.cnst.observeType.notification;
+                            obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
+                            chatApi.set(obj);
+                          },data[pram].seconds*1000);
+                        })(i);
+                      }
                     }
                     pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
                       [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields){}
@@ -1649,14 +1653,14 @@ io.sockets.on('connection', function (socket) {
                   ret = true;
                 }
                 else {
-                  var seconds = JSON.parse(rows[0].initial_notification_message).seconds;
-                  var initial_notification_message = JSON.parse(rows[0].initial_notification_message).message;
+                  //var data = JSON.parse(rows[0].initial_notification_message);
+                  var data = rows[0].initial_notification_message;
+                  //var initial_notification_message = JSON.parse(rows[0].initial_notification_message).message;
                   console.log('はいやー');
-                  console.log(seconds);
-                  console.log(initial_notification_message);
+                  console.log(data);
+                  //console.log(initial_notification_message);
                   ret = true;
-                  message = initial_notification_message;
-                  return callback(true, {opFlg: ret, message: message,inFlg: rows[0].in_flg, seconds: seconds});
+                  return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
                 }
               }
               //オペレータが待機していない場合

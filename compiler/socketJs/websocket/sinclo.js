@@ -1091,6 +1091,7 @@
         if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
         var chat = obj.chat.messages[key], userName;
         if ( Number(chat.messageType) < 90 ) {
+          console.log('自動返信7');
           var cn = (Number(chat.messageType) === 1 || Number(chat.messageType) === 12 || Number(chat.messageType) === 13) ? "sinclo_se" : "sinclo_re";
           if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
               this.chatApi.unread++;
@@ -1137,6 +1138,7 @@
             }
           }
           else if ( Number(chat.messageType) === sinclo.chatApi.messageType.company ) {
+            console.log('自動返信3');
             cn = "sinclo_re";
             sinclo.chatApi.call();
             console.log("sincloInfo.widget.showOpName : %s",sincloInfo.widget.showOpName);
@@ -1283,6 +1285,7 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.company) {
+          console.log('自動返信4');
           cn = "sinclo_re";
           sinclo.chatApi.call();
           console.log("sendChatResult :: sincloInfo.widget.showOpName : %s",sincloInfo.widget.showOpName);
@@ -1310,18 +1313,28 @@
           cn = "sinclo_se";
           elm.value = "";
         }
+        console.log('自動返信12');
+        console.log(obj.messageType);
+        console.log(sinclo.chatApi.messageType.notification);
         if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
+            //|| obj.messageType === sinclo.chatApi.messageType.notification
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
+          console.log('自動返信13');
+          console.log(obj.tabId);
+          console.log(userInfo.tabId);
           if(obj.tabId === userInfo.tabId) {
+            console.log('自動返信10');
             this.chatApi.scDown();
             return false;
-          } else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
+          } else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech || obj.messageType === sinclo.chatApi.messageType.notification) {
+            console.log('自動返信');
             // 別タブで送信された自動返信は表示する
             cn = "sinclo_re";
           } else {
+            console.log('自動返信11');
             // 別タブで送信されたオートメッセージは何もしない
             return false;
           }
@@ -1333,13 +1346,15 @@
           return false;
         }
 
-        if (obj.messageType === sinclo.chatApi.messageType.sorry) {
+        if (obj.messageType === sinclo.chatApi.messageType.sorry ) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
           this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
           if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
+            console.log('自動返信17');
             this.chatApi.notify(obj.chatMessage);
           } else {
+            console.log('自動返信18');
             this.chatApi.scDown();
           }
           // チャットの契約をしている場合
@@ -1350,6 +1365,13 @@
               ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
             }
           }
+          return false;
+        }
+        if (obj.messageType === sinclo.chatApi.messageType.notification ) {
+          cn = "sinclo_re";
+          sinclo.chatApi.call();
+          this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
+          this.chatApi.scDown();
           return false;
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
@@ -1381,6 +1403,7 @@
         console.log(d);
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
+        storage.s.set('notificationFlg', 0);
       }
     },
     sendReqAutoChatMessages: function(d){
@@ -1398,6 +1421,7 @@
         console.log("resAutoChatMessage : " + JSON.stringify(d));
         var obj = JSON.parse(d);
         if(!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
+          console.log('自動返信8');
           sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
         }
         sinclo.chatApi.autoMessages.push(obj.chatId, obj);
@@ -1417,6 +1441,7 @@
           this.chatApi.scDown();
           return false;
         } else {
+          console.log('自動返信2');
           // 別タブで表示したシナリオメッセージは表示する
           cn = "sinclo_re";
         }
@@ -1734,6 +1759,7 @@
           sorry: 4,
           autoSpeech: 5,
           sendFile: 6,
+          notification: 7,
           start: 98,
           end: 99,
           scenario: {
@@ -2211,6 +2237,7 @@
           }
         },
         createMessage: function(cs, val, cName, isScenarioMsg){
+            console.log('ここには入っている');
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
             var div = document.createElement('div');
             var li = document.createElement('li');
@@ -2415,10 +2442,13 @@
         },
         scDownTimer: null,
         scDown: function(){
+          console.log('ここが決め場');
           if ( this.scDownTimer ) {
+            console.log('ここが決め場1');
             clearTimeout(this.scDownTimer);
           }
           this.scDownTimer = setTimeout(function(){
+          console.log('ここが決め場3');
           var chatTalk = document.getElementById('chatTalk');
             $('#sincloBox #chatTalk').animate({
               scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
@@ -2539,7 +2569,12 @@
                 // シナリオ中の返答はオペレータへの通知をしない
                 isScenarioMessage = true;
               }
-
+              if(storage.s.get('notificationFlg') == 0) {
+                notificationFlg = 0;
+              }
+              else {
+                notificationFlg = 1;
+              }
               setTimeout(function(){
                 emit('sendChat', {
                   historyId: sinclo.chatApi.historyId,
@@ -2548,6 +2583,7 @@
                   mUserId: null,
                   messageType: messageType,
                   messageRequestFlg: messageRequestFlg,
+                  notificationFlg: notificationFlg,
                   isAutoSpeech : result,
                   notifyToCompany: !result,
                   isScenarioMessage: isScenarioMessage
@@ -4102,6 +4138,7 @@
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
+          console.log('自動返信6');
           sinclo.chatApi.createMessage('sinclo_re', message, name, true);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
