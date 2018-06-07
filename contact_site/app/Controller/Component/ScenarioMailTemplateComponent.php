@@ -16,6 +16,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
 
   const MAIL_TYPE_CD = 'CS001';
 
+  const RECEIVE_FILE_VARIABLE_KEY = 's_sendfile_data';
+
   /**
    * @var Integer
    * 1: チャット内容を全てメールする
@@ -47,6 +49,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
 
   public function replaceVariables($message) {
     foreach($this->variables as $variable => $value) {
+      if(strcmp($variable, self::RECEIVE_FILE_VARIABLE_KEY) === 0) continue;
       $message = preg_replace("/{{(".$variable.")\}}/", $value, $message);
     }
     return $message;
@@ -91,6 +94,14 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
       $this->scenarioMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
     }
+    if(!empty($this->variables[self::RECEIVE_FILE_VARIABLE_KEY])) {
+      $data = json_decode($this->variables[self::RECEIVE_FILE_VARIABLE_KEY], TRUE);
+      foreach($data as $obj) {
+        $this->scenarioMessageBlock .= self::MESSAGE_SEPARATOR."\n";
+        $this->scenarioMessageBlock .= "ダウンロードＵＲＬ：".$obj['downloadUrl']."\n";
+        $this->scenarioMessageBlock .= "コメント：\n".$obj['comment']."\n";
+      }
+    }
   }
 
   private function createMessages() {
@@ -102,6 +113,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   private function createVariablesMessageBlock() {
     $this->scenarioMessageBlock .= self::MESSAGE_SEPARATOR."\n";
     foreach($this->variables as $variableName => $value) {
+      if(strcmp($variableName, self::RECEIVE_FILE_VARIABLE_KEY) === 0) continue;
       $this->scenarioMessageBlock .= $variableName."：".$value."\n";
     }
   }
