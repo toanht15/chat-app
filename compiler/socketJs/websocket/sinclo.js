@@ -2386,9 +2386,9 @@
           content    += "  <div class='selectFileArea'>";
           content    += "    <p class='drop-area-message'>" + message + "</p>";
           content    += "    <p class='drop-area-icon'><i class='sinclo-fal fa-cloud-upload'></i></p>";
-          content    += "    <p>または</p>";
+          content    += "<p>または</p>";
           content    += "    <p class='drop-area-button'>";
-          content    += "      <a class='select-file-button'>ファイルを選択</a>";
+          content    += "<a class='select-file-button'>ファイルを選択</a>";
           content    += "    </p>";
           content    += "    <input type='file' class='receiveFileInput' name='receiveFileInput' style='display:none'>"
           content    += "  </div>";
@@ -2961,13 +2961,18 @@
         _showPreview: function(targetElm, fileObj, loadData) {
           $(targetElm).parents('li.sinclo_re').parent().hide();
 
-          // ベースとなる要素をクローン
+          var textareaFontSize = 13;
+          if(check.smartphone()) {
+            // iOSの場合フォントサイズを16px以上にしないとフォーカス時に画面が拡大してしまう
+            textareaFontSize = 16;
+          }
+
           var divElm = document.createElement('div');
             divElm.innerHTML = "  <li class=\"sinclo_se effect_right chat_right recv_file_right details\">" +
                                "    <div class=\"receiveFileContent\">" +
                                "      <div class=\"selectFileArea\">" +
                                "        <p class=\"preview\"></p><p class=\"commentLabel\">コメント</p>" +
-                               "        <p class=\"commentarea\"><textarea style=\"font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;\"></textarea></p>" +
+                               "        <p class=\"commentarea\"><textarea style=\"font-size: " + textareaFontSize + "px; border-width: 1px; padding: 5px; line-height: 1.5;\"></textarea></p>" +
                                "        <div class=\"actionButtonWrap\">" +
                                "          <a class=\"cancel-file-button\">選択し直す</a>" +
                                "          <a class=\"send-file-button\">送信する</a>" +
