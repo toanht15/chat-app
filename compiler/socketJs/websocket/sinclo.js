@@ -3097,7 +3097,7 @@
               notifyToCompany: false,
               isScenarioMessage: true
             }, function() {
-              $(document).trigger(sinclo.scenarioApi._events.fileUploaded, true, {downloadUrl: data.downloadUrl, comment: data.comment});
+              $(document).trigger(sinclo.scenarioApi._events.fileUploaded, [true, {'downloadUrl': data.downloadUrl, 'comment': data.comment}]);
             });
           })
           .fail(function(jqXHR, textStatus, errorThrown){
@@ -5236,6 +5236,7 @@
             var extendedExtensions = self._parent.get(self._parent._lKey.currentScenario).extendedReceiveFileExtensions.split(',');
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(function(event, result, data){
+              debugger;
               if(result) {
                 if(data) {
                   self._pushDownloadUrlData(data);
@@ -5262,6 +5263,7 @@
           }
           dataObj.push(obj);
           self._parent._saveVariable(self._downloadUrlKey, JSON.stringify(dataObj));
+          debugger;
         },
         _showError: function() {
           var self = sinclo.scenarioApi._sendFile;
