@@ -2961,13 +2961,18 @@
         _showPreview: function(targetElm, fileObj, loadData) {
           $(targetElm).parents('li.sinclo_re').parent().hide();
 
-          // ベースとなる要素をクローン
+          var textareaFontSize = 13;
+          if(check.smartphone()) {
+            // iOSの場合フォントサイズを16px以上にしないとフォーカス時に画面が拡大してしまう
+            textareaFontSize = 16;
+          }
+
           var divElm = document.createElement('div');
             divElm.innerHTML = "  <li class=\"sinclo_se effect_right chat_right recv_file_right details\">" +
                                "    <div class=\"receiveFileContent\">" +
                                "      <div class=\"selectFileArea\">" +
                                "        <p class=\"preview\"></p><p class=\"commentLabel\">コメント</p>" +
-                               "        <p class=\"commentarea\"><textarea style=\"font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;\"></textarea></p>" +
+                               "        <p class=\"commentarea\"><textarea style=\"font-size: " + textareaFontSize + "px; border-width: 1px; padding: 5px; line-height: 1.5;\"></textarea></p>" +
                                "        <div class=\"actionButtonWrap\">" +
                                "          <a class=\"cancel-file-button\">選択し直す</a>" +
                                "          <a class=\"send-file-button\">送信する</a>" +
