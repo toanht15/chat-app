@@ -2395,11 +2395,11 @@
           content    += "</div>";
           if(cancelable) {
             content  += "<div class='cancelReceiveFileArea'>";
-            content  += "  <a>" + cancelLabel + "</a>";
+            content  += "<a>" + cancelLabel + "</a>";
             content  += "</div>";
           }
 
-          li.className = 'sinclo_re effect_left';
+          li.className = 'sinclo_re effect_left recv_file_left';
           li.innerHTML = content;
 
           if(cancelable) {
@@ -2447,9 +2447,6 @@
             "      </div>" +
             "    </div>" +
             "  </li>";
-          divElm.querySelector('li.sinclo_se.recv_file_right').addEventListener('click', function(e){
-            window.open(downloadUrl);
-          });
           // 要素を追加する
           document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
         },
@@ -2970,7 +2967,7 @@
                                "    <div class=\"receiveFileContent\">" +
                                "      <div class=\"selectFileArea\">" +
                                "        <p class=\"preview\"></p><p class=\"commentLabel\">コメント</p>" +
-                               "        <p class=\"commentarea\"><textarea></textarea></p>" +
+                               "        <p class=\"commentarea\"><textarea style=\"font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;\"></textarea></p>" +
                                "        <div class=\"actionButtonWrap\">" +
                                "          <a class=\"cancel-file-button\">選択し直す</a>" +
                                "          <a class=\"send-file-button\">送信する</a>" +
@@ -2998,6 +2995,7 @@
             });
             // 要素を追加する
             document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
+            sinclo.chatApi.fileUploader._changeResizableTextarea(divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea'));
             sinclo.chatApi.scDown();
           }
 
@@ -3017,6 +3015,40 @@
             iconElm.setAttribute("aria-hidden","true");
             afterDesideThumbnail(iconElm);
           }
+        },
+        _changeResizableTextarea: function(elm) {
+          var maxRow = 5;                       // 表示可能な最大行数
+          var fontSize = parseFloat(elm.style.fontSize, 10);           // 行数計算のため、templateにて設定したフォントサイズを取得
+          var borderSize = parseFloat(elm.style.borderWidth, 10) * 2;  // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
+          var paddingSize = parseFloat(elm.style.padding, 10) * 2;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
+          var lineHeight = parseFloat(elm.style.lineHeight, 10);       // 表示高さの計算のため、templateにて設定した行の高さを取得
+
+          function autoResize() {
+            console.log("autoResize");
+            // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
+            var areaWidth = elm.getBoundingClientRect().width - borderSize - paddingSize;
+
+            // フォントサイズとテキストエリアのサイズを基に、行数を計算する
+            var textRow = 0;
+            elm.value.split('\n').forEach(function(string) {
+              var stringWidth = string.length * fontSize;
+              textRow += Math.max(Math.ceil(stringWidth/areaWidth), 1);
+            });
+
+            // 表示する行数に応じて、テキストエリアの高さを調整する
+            if (textRow > maxRow) {
+              elm.style.height = (maxRow * (fontSize*lineHeight)) + paddingSize + 'px';
+              elm.style.overflow = 'auto';
+              sinclo.chatApi.scDown();
+            } else {
+              elm.style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+              elm.style.overflow = 'hidden';
+              sinclo.chatApi.scDown();
+            }
+          }
+
+          autoResize();
+          elm.addEventListener('input', autoResize);
         },
         _uploadFile: function(targetDivElm, comment, fileObj, loadFile) {
           var fd = new FormData();
@@ -3065,7 +3097,7 @@
               notifyToCompany: false,
               isScenarioMessage: true
             }, function() {
-              $(document).trigger(sinclo.scenarioApi._events.fileUploaded, true);
+              $(document).trigger(sinclo.scenarioApi._events.fileUploaded, true, {downloadUrl: data.downloadUrl, comment: data.comment});
             });
           })
           .fail(function(jqXHR, textStatus, errorThrown){
@@ -5189,6 +5221,7 @@
       },
       _sendFile: {
         _parent: null,
+        _downloadUrlKey: "s_sendfile_data",
         _init: function(parent) {
           this._parent = parent;
         },
@@ -5202,8 +5235,11 @@
             var extensionType = self._parent.get(self._parent._lKey.currentScenario).extensionType;
             var extendedExtensions = self._parent.get(self._parent._lKey.currentScenario).extendedReceiveFileExtensions.split(',');
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
-            self._waitUserAction(function(event, result){
+            self._waitUserAction(function(event, result, data){
               if(result) {
+                if(data) {
+                  self._pushDownloadUrlData(data);
+                }
                 if(self._parent._goToNextScenario()) {
                   self._parent._process();
                 }
@@ -5216,6 +5252,16 @@
         _waitUserAction: function(callback) {
           var self = sinclo.scenarioApi._sendFile;
           $(document).on(self._parent._events.fileUploaded, callback);
+        },
+        _pushDownloadUrlData: function(obj) {
+          var self = sinclo.scenarioApi._sendFile;
+          var data = self._parent._getSavedVariable(self._downloadUrlKey);
+          var dataObj = [];
+          if(check.isJSON(data)) {
+            dataObj = JSON.parse(data);
+          }
+          dataObj.push(obj);
+          self._parent._saveVariable(self._downloadUrlKey, JSON.stringify(dataObj));
         },
         _showError: function() {
           var self = sinclo.scenarioApi._sendFile;
