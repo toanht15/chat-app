@@ -1176,6 +1176,13 @@
             else if(chat.deleteFlg === 1) {
               this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
+          } else if(Number(chat.messageType) === 19) {
+            if(check.isJSON(chat.message)) {
+              var result = JSON.parse(chat.message);
+              this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
+            } else {
+              this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+            }
           } else {
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
@@ -1330,6 +1337,19 @@
           sinclo.chatApi.call();
           this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
           this.chatApi.scDown();
+          return false;
+        }
+
+        if (obj.messageType === sinclo.chatApi.messageType.scenario.customer.sendFile) {
+          sinclo.chatApi.call();
+          if(check.isJSON(obj.chatMessage)) {
+            var result = JSON.parse(obj.chatMessage);
+            this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
+            this.chatApi.scDown();
+          } else {
+            cn = "sinclo_se";
+            this.chatApi.createMessage(cn, obj.chatMessage, "");
+          }
           return false;
         }
 
@@ -1737,7 +1757,8 @@
           scenario: {
             customer: {
               hearing: 12,
-              selection: 13
+              selection: 13,
+              sendFile: 19
             },
             message: {
               text: 21,
@@ -2267,7 +2288,7 @@
                         // ただの文字列にする
                         var a = "<span class='link'>"+ linkTab[2] + "</span>";
                       }
-                      str = linkTab[1].replace(linkTab[1], a);
+                      str = unEscapeStr.replace(linkTab[0], a);
                     }
                     //URLのみのリンクの場合
                     else {
@@ -2350,20 +2371,99 @@
           li.className = 'sinclo_re effect_left';
           li.innerHTML = content;
         },
+        createSelectUploadFileMessage: function(message, cancelable, cancelLabel, extensionType, extendedExtensions) {
+          var chatList = document.getElementsByTagName('sinclo-chat')[0];
+          var div = document.createElement('div');
+          div.style.cursor = "pointer";
+          var li = document.createElement('li');
+          var thumbnail = "";
+
+          div.appendChild(li);
+          chatList.appendChild(div);
+
+          var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showAutomessageName) !== 2 ? sincloInfo.widget.subTitle : "") + "</span>";
+          content    += "<div class='receiveFileContent'>";
+          content    += "  <div class='selectFileArea'>";
+          content    += "    <p class='drop-area-message'>" + message + "</p>";
+          content    += "    <p class='drop-area-icon'><i class='sinclo-fal fa-cloud-upload'></i></p>";
+          content    += "<p>または</p>";
+          content    += "    <p class='drop-area-button'>";
+          content    += "<a class='select-file-button'>ファイルを選択</a>";
+          content    += "    </p>";
+          content    += "    <input type='file' class='receiveFileInput' name='receiveFileInput' style='display:none'>"
+          content    += "  </div>";
+          content    += "</div>";
+          if(cancelable) {
+            content  += "<div class='cancelReceiveFileArea'>";
+            content  += "<a>" + cancelLabel + "</a>";
+            content  += "</div>";
+          }
+
+          li.className = 'sinclo_re effect_left recv_file_left';
+          li.innerHTML = content;
+
+          if(cancelable) {
+            li.querySelector('div.cancelReceiveFileArea a').addEventListener('click', function(){
+              chatList.removeChild(div);
+              emit('sendChat', {
+                historyId: sinclo.chatApi.historyId,
+                stayLogsId: sinclo.chatApi.stayLogsId,
+                chatMessage: "ファイル送信をキャンセル",
+                mUserId: null,
+                messageType: 19,
+                messageRequestFlg: 0,
+                isAutoSpeech : false,
+                notifyToCompany: false,
+                isScenarioMessage: true
+              }, function() {
+                $(document).trigger(sinclo.scenarioApi._events.fileUploaded, true);
+              });
+            });
+          }
+
+          sinclo.chatApi.fileUploader.init($('#sincloBox'),
+            $(li.querySelector('div.receiveFileContent div.selectFileArea')),
+            $(li.querySelector('div.receiveFileContent div.selectFileArea p.drop-area-button a.select-file-button')),
+            $(li.querySelector('div.receiveFileContent div.selectFileArea input.receiveFileInput')),
+            extensionType,
+            extendedExtensions);
+          this.scDown();
+        },
+        createSentFileMessage: function(comment, downloadUrl, extension) {
+          var divElm = document.createElement('div');
+          divElm.style.textAlign = "right";
+          var thumbnail = "";
+          if (extension.match(/(jpeg|jpg|gif|png)$/) != null) {
+            thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail' width='64' height='64'>";
+          } else {
+            thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+          }
+          divElm.innerHTML = "  <li class=\"sinclo_se effect_right chat_right recv_file_right details\">" +
+            "    <div class=\"receiveFileContent\">" +
+            "      <div class=\"selectFileArea\">" +
+            "        <p class=\"preview\">" + thumbnail + "</p>" +
+            "        <p class=\"commentLabel\">＜コメント＞</p>" +
+            "        <p class=\"commentarea\" style='text-align: left;'>" + comment + "</p>" +
+            "      </div>" +
+            "    </div>" +
+            "  </li>";
+          // 要素を追加する
+          document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
+        },
         _selectFontIconClassFromExtension: function(ext) {
           var selectedClass = "",
             icons = {
-              image: 'fa-file-image-o',
-              pdf: 'fa-file-pdf-o',
-              word: 'fa-file-word-o',
-              powerpoint: 'fa-file-powerpoint-o',
-              excel: 'fa-file-excel-o',
-              audio: 'fa-file-audio-o',
-              video: 'fa-file-video-o',
-              zip: 'fa-file-zip-o',
-              code: 'fa-file-code-o',
-              text: 'fa-file-text-o',
-              file: 'fa-file-o'
+              image: 'fa-file-image',
+              pdf: 'fa-file-pdf',
+              word: 'fa-file-word',
+              powerpoint: 'fa-file-powerpoint',
+              excel: 'fa-file-excel',
+              audio: 'fa-file-audio',
+              video: 'fa-file-video',
+              zip: 'fa-file-zip',
+              code: 'fa-file-code',
+              text: 'fa-file-text',
+              file: 'fa-file'
             },
             extensions = {
               gif: icons.image,
@@ -2645,7 +2745,7 @@
         sound: null,
         call: function(){
             // デスクトップ通知用
-            if ( this.sound ) {
+            if ( this.sound && !check.smartphone() ) {
                 this.sound.play();
             }
         },
@@ -2714,7 +2814,302 @@
         triggeredAutoSpeechExists: function(id) {
           var array = this._getAutoSpeechTriggeredList();
           return array.indexOf(id) >= 0;
+        },
+      fileUploader: {
+        isDisable: false,
+        dragging: false,
+        dragArea: null,
+        droppable: null,
+        selectFileBtn: null,
+        selectInput: null,
+        fileObj: null,
+        loadData: null,
+        extensionType: null,
+        extendedExtensions: null,
+
+        init: function(dragArea, droppable, selectFileButton, selectInput, extensionType, extendedExtensions) {
+          this.dragArea = dragArea;
+          this.droppable = droppable;
+          this.selectFileBtn = selectFileButton;
+          this.selectInput = selectInput;
+          this.extensionType = extensionType;
+          this.extendedExtensions = extendedExtensions;
+          if(window.FileReader) {
+            this._addDragAndDropEvents();
+          } else {
+            this.isDisable = true;
+          }
+          this._addSelectFileEvents();
+        },
+        _addDragAndDropEvents: function() {
+          this.dragArea.on("dragenter", this._enterEvent);
+          this.dragArea.on("dragover", this._overEvent);
+          this.dragArea.on("dragleave", this._leaveEvent);
+          this.dragArea.on("drop", function(){ event.preventDefault(); event.stopPropagation(); return false;});
+          this.droppable.on("drop", this._handleDroppedFile);
+        },
+        _addSelectFileEvents: function() {
+          this.selectFileBtn.on('click', function(event){
+            sinclo.chatApi.fileUploader.selectInput.trigger('click');
+          });
+          this.selectInput.on("click", function(event){
+            sinclo.chatApi.fileUploader._hideInvalidError();
+            $(this).val(null);
+          }).on("change",function(event){
+            if(sinclo.chatApi.fileUploader.selectInput[0].files[0]) {
+              var self = this;
+              sinclo.chatApi.fileUploader.fileObj = sinclo.chatApi.fileUploader.selectInput[0].files[0];
+              // ファイルの内容は FileReader で読み込みます.
+              var fileReader = new FileReader();
+              fileReader.onload = function (event) {
+                if(!sinclo.chatApi.fileUploader._validExtension(sinclo.chatApi.fileUploader.fileObj.name)) {
+                  sinclo.chatApi.fileUploader._showInvalidError();
+                  return;
+                }
+                // event.target.result に読み込んだファイルの内容が入っています.
+                // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+                sinclo.chatApi.fileUploader.loadData = event.target.result;
+                sinclo.chatApi.fileUploader._showPreview(self, sinclo.chatApi.fileUploader.fileObj, sinclo.chatApi.fileUploader.loadData);
+              };
+              fileReader.readAsArrayBuffer(sinclo.chatApi.fileUploader.fileObj);
+            }
+          });
+        },
+        _enterEvent: function(event) {
+          sinclo.chatApi.fileUploader.dragging = true;
+          sinclo.chatApi.fileUploader._cancelEvent(event);
+          return false;
+        },
+        _overEvent: function(event) {
+          sinclo.chatApi.fileUploader.dragging = false;
+          sinclo.chatApi.fileUploader.droppable.css('opacity', '0.8');
+          sinclo.chatApi.fileUploader._cancelEvent(event);
+          return false;
+        },
+        _leaveEvent: function(event) {
+          if(sinclo.chatApi.fileUploader.dragging) {
+            sinclo.chatApi.fileUploader.dragging = false;
+          } else {
+            sinclo.chatApi.fileUploader.droppable.css('opacity', '1.0');
+          }
+          sinclo.chatApi.fileUploader._cancelEvent(event);
+          return false;
+        },
+        _handleDroppedFile: function(event) {
+          sinclo.chatApi.fileUploader.droppable.css('display', 'none');
+          sinclo.chatApi.fileUploader._hideInvalidError();
+          // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
+          sinclo.chatApi.fileUploader.fileObj = event.originalEvent.dataTransfer.files[0];
+
+          var self = this;
+          // ファイルの内容は FileReader で読み込みます.
+          var fileReader = new FileReader();
+          fileReader.onload = function(event) {
+            if(!sinclo.chatApi.fileUploader._validExtension(sinclo.chatApi.fileUploader.fileObj.name)) {
+              sinclo.chatApi.fileUploader._showInvalidError();
+              return;
+            }
+            // event.target.result に読み込んだファイルの内容が入っています.
+            // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+            sinclo.chatApi.fileUploader.loadData = event.target.result;
+            sinclo.chatApi.fileUploader._showPreview(self, sinclo.chatApi.fileUploader.fileObj, sinclo.chatApi.fileUploader.loadData);
+          }
+          fileReader.readAsArrayBuffer(sinclo.chatApi.fileUploader.fileObj);
+
+          // デフォルトの処理をキャンセルします.
+          sinclo.chatApi.fileUploader._cancelEvent(event);
+          return false;
+        },
+        _cancelEvent: function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+        },
+        _validExtension: function(filename) {
+          var allowExtensions = sinclo.chatApi.fileUploader._getAllowExtension();
+
+          var split = filename.split(".");
+          var targetExtension = split[split.length-1];
+          var regex = new RegExp(allowExtensions.join("|"), 'i');
+          return regex.test(targetExtension);
+          return false;
+        },
+        _getAllowExtension: function() {
+          var base = ["pdf","pptx","ppt","jpg","png","gif"];
+          switch(Number(sinclo.chatApi.fileUploader.extensionType)) {
+            case 1:
+              return base;
+            case 2:
+              var extendSettings = sinclo.chatApi.fileUploader.extendedExtensions;
+              return base.concat(extendSettings);
+            default:
+              return base;
+          }
+        },
+        _showInvalidError: function() {
+          $(document).trigger(sinclo.scenarioApi._events.fileUploaded, false);
+        },
+        _hideInvalidError: function() {
+          $('#sendMessageArea').find('span.errorMsg').remove();
+        },
+        _showConfirmDialog: function(message) {
+          modalOpen.call(window, message, 'p-cus-file-upload', '確認', 'moment');
+          popupEvent.closePopup = function() {
+            sinclo.chatApi.uploadFile(sinclo.chatApi.fileUploader.fileObj, sinclo.chatApi.fileUploader.loadData);
+            popupEvent.close();
+          };
+        },
+        _showPreview: function(targetElm, fileObj, loadData) {
+          $(targetElm).parents('li.sinclo_re').parent().hide();
+
+          var textareaFontSize = 13;
+          if(check.smartphone()) {
+            // iOSの場合フォントサイズを16px以上にしないとフォーカス時に画面が拡大してしまう
+            textareaFontSize = 16;
+          }
+
+          var divElm = document.createElement('div');
+            divElm.innerHTML = "  <li class=\"sinclo_se effect_right chat_right recv_file_right details\">" +
+                               "    <div class=\"receiveFileContent\">" +
+                               "      <div class=\"selectFileArea\">" +
+                               "        <p class=\"preview\"></p><p class=\"commentLabel\">コメント</p>" +
+                               "        <p class=\"commentarea\"><textarea style=\"font-size: " + textareaFontSize + "px; border-width: 1px; padding: 5px; line-height: 1.5;\"></textarea></p>" +
+                               "        <div class=\"actionButtonWrap\">" +
+                               "          <a class=\"cancel-file-button\">選択し直す</a>" +
+                               "          <a class=\"send-file-button\">送信する</a>" +
+                               "        </div>" +
+                               "      </div>" +
+                               "    </div>" +
+                               "  </li>";
+            divElm.style.textAlign = "right";
+          var split = fileObj.name.split(".");
+          var targetExtension = split[split.length-1];
+
+          function afterDesideThumbnail(elm) {
+            divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(elm);
+            divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea').style.textAlign = 'center';
+            divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function (e) {
+              document.getElementById('chatTalk').querySelector('sinclo-chat').removeChild(divElm);
+              $(targetElm).parents('li.sinclo_re').parent().show();
+            });
+            divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function (e) {
+              var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
+              if (!comment) {
+                comment = "no comment";
+              }
+              sinclo.chatApi.fileUploader._uploadFile(divElm, comment, fileObj, loadData);
+            });
+            // 要素を追加する
+            document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
+            sinclo.chatApi.fileUploader._changeResizableTextarea(divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea'));
+            sinclo.chatApi.scDown();
+          }
+
+          if(targetExtension.match(/(jpeg|jpg|gif|png)$/) != null) {
+            var imgElm = document.createElement('img');
+            var fileReader = new FileReader();
+            fileReader.onload = function(e) {
+              imgElm.src = this.result;
+              afterDesideThumbnail(imgElm);
+            };
+            fileReader.readAsDataURL(fileObj);
+          } else {
+            var iconElm = document.createElement('i');
+            iconElm.classList.add('sinclo-fal');
+            iconElm.classList.add('fa-4x');
+            iconElm.classList.add(sinclo.chatApi._selectFontIconClassFromExtension(targetExtension));
+            iconElm.setAttribute("aria-hidden","true");
+            afterDesideThumbnail(iconElm);
+          }
+        },
+        _changeResizableTextarea: function(elm) {
+          var maxRow = 5;                       // 表示可能な最大行数
+          var fontSize = parseFloat(elm.style.fontSize, 10);           // 行数計算のため、templateにて設定したフォントサイズを取得
+          var borderSize = parseFloat(elm.style.borderWidth, 10) * 2;  // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
+          var paddingSize = parseFloat(elm.style.padding, 10) * 2;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
+          var lineHeight = parseFloat(elm.style.lineHeight, 10);       // 表示高さの計算のため、templateにて設定した行の高さを取得
+
+          function autoResize() {
+            console.log("autoResize");
+            // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
+            var areaWidth = elm.getBoundingClientRect().width - borderSize - paddingSize;
+
+            // フォントサイズとテキストエリアのサイズを基に、行数を計算する
+            var textRow = 0;
+            elm.value.split('\n').forEach(function(string) {
+              var stringWidth = string.length * fontSize;
+              textRow += Math.max(Math.ceil(stringWidth/areaWidth), 1);
+            });
+
+            // 表示する行数に応じて、テキストエリアの高さを調整する
+            if (textRow > maxRow) {
+              elm.style.height = (maxRow * (fontSize*lineHeight)) + paddingSize + 'px';
+              elm.style.overflow = 'auto';
+              sinclo.chatApi.scDown();
+            } else {
+              elm.style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+              elm.style.overflow = 'hidden';
+              sinclo.chatApi.scDown();
+            }
+          }
+
+          autoResize();
+          elm.addEventListener('input', autoResize);
+        },
+        _uploadFile: function(targetDivElm, comment, fileObj, loadFile) {
+          var fd = new FormData();
+          var blob = new Blob([loadFile], {type: fileObj.type});
+          fd.append("k", sincloInfo.site.key);
+          fd.append("c", comment)
+          fd.append("f", blob, fileObj.name);
+
+          $.ajax({
+            url  : sincloInfo.site.socket + "/FC/pu",
+            type : "POST",
+            data : fd,
+            cache       : false,
+            contentType : false,
+            processData : false,
+            dataType    : "json",
+            xhr : function(){
+              var XHR = $.ajaxSettings.xhr();
+              /*
+              if(XHR.upload){
+                XHR.upload.addEventListener('progress',function(e){
+                  sinclo.chatApi.uploadProgress = parseInt(e.loaded/e.total*10000)/100;
+                  console.log(sinclo.chatApi.uploadProgress);
+                  if(sinclo.chatApi.uploadProgress === 100) {
+                    $('#uploadMessage').css('display', 'none');
+                    $('#processingMessage').css('display', 'block');
+                  }
+                  sinclo.chatApi.$apply();
+                }, false);
+              }
+              */
+              return XHR;
+            }
+          })
+          .done(function(data, textStatus, jqXHR){
+            console.log(JSON.stringify(data));
+            document.getElementById('chatTalk').querySelector('sinclo-chat').removeChild(targetDivElm);
+            emit('sendChat', {
+              historyId: sinclo.chatApi.historyId,
+              stayLogsId: sinclo.chatApi.stayLogsId,
+              chatMessage: JSON.stringify(data),
+              mUserId: null,
+              messageType: 19,
+              messageRequestFlg: 0,
+              isAutoSpeech : false,
+              notifyToCompany: false,
+              isScenarioMessage: true
+            }, function() {
+              $(document).trigger(sinclo.scenarioApi._events.fileUploaded, [true, {'downloadUrl': data.downloadUrl, 'comment': data.comment}]);
+            });
+          })
+          .fail(function(jqXHR, textStatus, errorThrown){
+            alert("fail");
+          });
         }
+      }
     },
     trigger: {
         flg: false,
@@ -3787,7 +4182,8 @@
         "s_scenarioMessageType": 3
       },
       _events: {
-        inputCompleted: "sinclo:scenario:inputComplete"
+        inputCompleted: "sinclo:scenario:inputComplete",
+        fileUploaded: "sinclo:scenario:fileUploaded"
       },
       _actionType: {
         speakText: "1",
@@ -3796,7 +4192,9 @@
         mail: "4",
         anotherScenario: "5",
         callExternalApi: "6",
-        receiveFile: "7"
+        receiveFile: "7",
+        getAttributeValue: "8",
+        sendFile: "9"
       },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
@@ -3832,6 +4230,7 @@
       },
       init: function(id, scenarioObj){
         var self = sinclo.scenarioApi;
+        self._resetDefaultVal();
         if(self.isProcessing()) {
 
         } else {
@@ -3859,6 +4258,26 @@
           console.log("self.set(self._lKey.previousChatMessageLength " + 0);
         }
       },
+      _resetDefaultVal: function() {
+        var self = sinclo.scenarioApi;
+        self.defaultVal = {
+          "s_id": 0,
+          "s_currentdata": {},
+          "s_processing": {},
+          "s_waiting": false,
+          "s_variables": {},
+          "s_messages": [],
+          "s_allowSave": false,
+          "s_scenarios": {},
+          "s_scenarioLength": 0,
+          "s_currentScenario": 0,
+          "s_currentScenarioSeqNum": 0,
+          "s_storedVariableKeys": [],
+          "s_sendCustomerMessageType": 1,
+          "s_showSequenceList": {},
+          "s_scenarioMessageType": 3
+        };
+      },
       begin: function() {
         this._disablePreviousRadioButton();
         this._saveProcessingState(true);
@@ -3867,6 +4286,7 @@
       _end: function() {
         // シナリオ終了
         var self = sinclo.scenarioApi;
+        self._resetDefaultVal();
         self._saveStoredMessage(function(){
           self._saveProcessingState(false);
           self._enablePreviousRadioButton();
@@ -4054,6 +4474,14 @@
           case self._actionType.receiveFile:
             self._receiveFile._init(self);
             self._receiveFile._process();
+            break;
+          case self._actionType.getAttributeValue:
+            self._getAttributeValue._init(self);
+            self._getAttributeValue._process();
+            break;
+          case self._actionType.sendFile:
+            self._sendFile._init(self);
+            self._sendFile._process();
             break;
         }
       },
@@ -4749,6 +5177,110 @@
             callback(result);
           });
         }
+      },
+      _getAttributeValue: {
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._getAttributeValue;
+          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._getValueFromAttribute(function (result) {
+              if(self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
+            });
+          });
+        },
+        _getValueFromAttribute: function(callback) {
+          var self = sinclo.scenarioApi._getAttributeValue;
+          var attributeSettings = self._parent.get(self._parent._lKey.currentScenario).getAttributes;
+          for(var i=0; i < attributeSettings.length; i++) {
+            self._parent._saveVariable(attributeSettings[i].variableName, self._getValue(attributeSettings[i].type, attributeSettings[i].attributeValue));
+          }
+          callback();
+        },
+        _getValue: function(type, selector) {
+          var self = sinclo.scenarioApi._getAttributeValue;
+          switch(Number(type)) {
+            case 1: // ID
+              return self._getText($('#' + selector));
+            case 2: // name
+              return self._getText($('[name="' + selector + '"]')); // FIXME あやしい
+            case 3: // CSS-selector
+              return self._getText($(selector));
+              break;
+          }
+        },
+        _getText: function(jqObject) {
+          if(jqObject.text() !== "") {
+            return jqObject.text();
+          } else if(jqObject.val() !== "") {
+            return jqObject.val();
+          } else {
+            return "";
+          }
+        }
+      },
+      _sendFile: {
+        _parent: null,
+        _downloadUrlKey: "s_sendfile_data",
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._sendFile;
+          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
+            var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
+            var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
+            var extensionType = self._parent.get(self._parent._lKey.currentScenario).extensionType;
+            var extendedExtensions = self._parent.get(self._parent._lKey.currentScenario).extendedReceiveFileExtensions.split(',');
+            sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
+            self._waitUserAction(function(event, result, data){
+              debugger;
+              if(result) {
+                if(data) {
+                  self._pushDownloadUrlData(data);
+                }
+                if(self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
+              } else {
+                self._showError();
+              }
+            });
+          });
+        },
+        _waitUserAction: function(callback) {
+          var self = sinclo.scenarioApi._sendFile;
+          $(document).on(self._parent._events.fileUploaded, callback);
+        },
+        _pushDownloadUrlData: function(obj) {
+          var self = sinclo.scenarioApi._sendFile;
+          var data = self._parent._getSavedVariable(self._downloadUrlKey);
+          var dataObj = [];
+          if(check.isJSON(data)) {
+            dataObj = JSON.parse(data);
+          }
+          dataObj.push(obj);
+          self._parent._saveVariable(self._downloadUrlKey, JSON.stringify(dataObj));
+          debugger;
+        },
+        _showError: function() {
+          var self = sinclo.scenarioApi._sendFile;
+          var errorMessage = self._parent.get(self._parent._lKey.currentScenario).errorMessage;
+          self._parent._doing(0, function(){
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, 1 + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
+              self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), 1);
+              self._process();
+            });
+          });
+        },
       }
     },
     // 外部連携API

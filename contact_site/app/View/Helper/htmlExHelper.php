@@ -84,9 +84,12 @@ class htmlExHelper extends AppHelper {
       return "<a ".$matches[0].">".$matches[1]."</a>";
     }
 
-    public function makeChatView($value, $isSendFile = false){
+    public function makeChatView($value, $isSendFile = false,$isRecieveFile = false){
         if($isSendFile) {
           return $this->makeSendChatView($value);
+        }
+        if($isRecieveFile) {
+          return $this->makeRecieveChatView($value);
         }
         $content = null;
 
@@ -99,13 +102,7 @@ class htmlExHelper extends AppHelper {
             $linkData = [];
             if ( preg_match('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $tmp) ) {
                 if ( preg_match('/<a ([\s\S]*?)<\/a>/', $tmp)) {
-                  //リンクテキスト
-                  $title = preg_replace(['/<a ([\s\S]*?)">/','/<\/a>/'],['',''],$tmp);
-                  //URL
-                  $tmp = preg_replace(['/<a /','/>([\s\S]*?)<\/a>/'],['',''],$tmp);
-                  $linkData[0] = $tmp;
-                  $linkData[1] = $title;
-                  $str = $this->addLink($linkData);
+                  $str = $tmp;
                 }
                 else {
                   $ret = preg_replace_callback('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', [$this, 'addLinkNewTab'], $tmp);
@@ -135,7 +132,8 @@ class htmlExHelper extends AppHelper {
       }
       if(isset($value['message'])) { // TODO シナリオメッセージとオペレータからのファイル送信の判定がmessageがあるかどうか。messageが増えたらタイトルが変わる
         $content .= "<span class='cName'>シナリオメッセージ（ファイル送信）" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
-      } else {
+      }
+      else {
         $content .= "<span class='cName'>ファイル送信" . ($this->isExpire($value['expired']) ? "（ダウンロード有効期限切れ）" : "") . "</span>";
       }
       if(isset($value['message'])) {
@@ -149,6 +147,33 @@ class htmlExHelper extends AppHelper {
       $content.= "  </div>";
       $content.= "</div>";
 
+      return $content;
+    }
+
+    private function makeRecieveChatView($value){
+      $this->log('ファイル受信～',LOG_DEBUG);
+      $content = "";
+      $height = "";
+
+      // ファイル送信メッセージはJSONが入ってくる
+      $value = json_decode($value, TRUE);
+
+      $thumbnail = "";
+      if(preg_match('/(jpeg|jpg|gif|png)$/', $value['extension'])) {
+        $thumbnail = "<img src='" . $value['downloadUrl'] . "' class='recieveFileThumbnail' width='64' height='64'>";
+      } else {
+        $thumbnail = "<i class='fa " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
+        $height = "style = 'height:64px'";
+      }
+      $content .= "<span class='cName'>シナリオメッセージ（ファイル受信）</span>";
+      $content .= "<div class='recieveFileContent'>";
+      $content .= "  <div class='recieveFileThumbnailArea' ".$height.">" . $thumbnail . "</div>";
+      $content .= "  <div class='recieveFileMetaArea'>";
+      $content .= "     <br>";
+      $content .= "     <span class='comment'> ＜コメント＞</span>";
+      $content .= "     <span class='message'>". $value['comment'] ."</span>";
+      $content .= "  </div>";
+      $content .= "</div>";
       return $content;
     }
 
