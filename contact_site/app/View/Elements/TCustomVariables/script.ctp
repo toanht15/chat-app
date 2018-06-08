@@ -1,4 +1,31 @@
 <script type="text/javascript">
+
+$(document).ready(function(){
+  // ツールチップの表示制御
+  $(document).off('mouseenter','.variable_helpBtn').on('mouseenter','.variable_helpBtn', function(event){
+    var targetObj = $('.explainTooltip1');
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: ( -(targetObj.find('ul').outerHeight()) - 28) + 'px',
+      left: (targetObj.find('ul').outerWidth() - 94) + 'px'
+    });
+  });
+  $(document).off('mouseleave','.variable_helpBtn').on('mouseleave','.variable_helpBtn', function(event){
+    $('.explainTooltip1').find('icon-annotation').css('display','none');
+  });
+
+  $(document).off('mouseenter','.selecter_helpBtn').on('mouseenter','.selecter_helpBtn', function(event){
+    var targetObj = $('.explainTooltip2');
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: ( -(targetObj.find('ul').outerHeight()) + 18) + 'px',
+      left:(targetObj.find('ul').outerWidth() - 94) + 'px'
+    });
+  });
+  $(document).off('mouseleave','.selecter_helpBtn').on('mouseleave','.selecter_helpBtn', function(event){
+    $('.explainTooltip2').find('icon-annotation').css('display','none');
+  });
+});
 function openAddDialog(){
 	//並べ替えチェックボックスが入っているときはリンク無効とする
 	if (!document.getElementById("sort").checked) {
@@ -18,17 +45,15 @@ function openEditDialog(id){
 	}
 }
 function openEntryDialog(setting){
-	var type = setting.type;
 	$.ajax({
 		type: 'post',
 		data: setting, // type:1 => type, type:2 => type, id
 		dataType: 'html',
 		cache: false,
 		url: "<?= $this->Html->url('/TCustomVariables/remoteOpenEntryForm') ?>",
-		success: function(html){
-			modalOpen.call(window, html, 'p-tcustomvariables-entry', 'カスタム変数設定', 'moment');
-		}
-	});
+	}).done(function(html){
+		modalOpen.call(window, html, 'p-tcustomvariables-entry', 'カスタム変数設定', 'moment');
+	})
 }
 
 document.body.onload = function(){
@@ -129,7 +154,7 @@ var isCheck = function(){
 	actBtnShow();
 };
 
-//キャンペーンの削除
+//カスタム変数の削除
 function openConfirmDialog(){
 	//チェックボックスのチェック状態の取得
 	var list = document.querySelectorAll('input[name^="selectTab"]:checked');
@@ -145,7 +170,7 @@ function openConfirmDialog(){
 			data: {
 				selectedList: selectedList
 			},
-			url: "<?= $this->Html->url('/TCampaigns/remoteDeleteUser') ?>",
+			url: "<?= $this->Html->url('/TCustomVariables/remoteDeleteUser') ?>",
 			success: function(){
 				location.href = "<?= $this->Html->url('/TCustomVariables/index') ?>";
 			},
@@ -170,7 +195,7 @@ var toExecutableOnce = function(f){
 	};
 };
 
-//キャンペーンコピー処理
+//カスタム変数コピー処理
 function openCopyDialog(){
 	var list = document.querySelectorAll('input[name^="selectTab"]:checked');
 	var selectedList = [];
@@ -185,7 +210,7 @@ function openCopyDialog(){
 			data: {
 				selectedList: selectedList
 			},
-			url: "<?= $this->Html->url('/TCampaigns/remoteCopyEntryForm') ?>",
+			url: "<?= $this->Html->url('/TCustomVariables/remoteCopyEntryForm') ?>",
 			success: function(){
 				location.href = "<?= $this->Html->url('/TCustomVariables/index') ?>";
 			},
@@ -198,7 +223,7 @@ function openCopyDialog(){
 	});
 }
 
-//キャンペーン設定のソートモード
+//カスタム変数のソートモード
 function toggleSort(){
 	if (!document.getElementById("sort").checked) {
 		confirmSort();
@@ -209,12 +234,12 @@ function toggleSort(){
 		actBtnShow();
 		//ソートモードon
 		$(".sortable").addClass("move").sortable("enable");
-		//キャンペーン設定ソートモードメッセージ表示
+		//カスタム変数ソートモードメッセージ表示
 		document.getElementById("sortText").style.display="none";
 		document.getElementById("sortTextMessage").style.display="";
 
 		//各ボタン及び動作をモード中は動かなくする
-		//キャンペーン設定登録ボタン押下不可
+		//カスタム変数登録ボタン押下不可
 		document.getElementById("tcustomvariables_add_btn").classList.remove("disOffgreenBtn");
 		document.getElementById("tcustomvariables_add_btn").classList.add("disOffgrayBtn");
 		//コピーボタン無効
@@ -233,7 +258,7 @@ function toggleSort(){
 	}
 }
 
-//キャンペーン設定のソート順を保存
+//カスタム変数のソート順を保存
 var confirmSort = function(){
 	modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', 'カスタム変数並び替えの保存', 'moment');
 	popupEvent.saveClicked = function(){
@@ -248,12 +273,12 @@ var confirmSort = function(){
 	});
 };
 
-//キャンペーン設定ソートを保存
+//カスタム変数ソートを保存
 var saveToggleSort = toExecutableOnce(function(){
 	var list = getSort();
 	$.ajax({
 		type: "POST",
-		url: "<?= $this->Html->url(['controller' => 'TCampaigns', 'action' => 'remoteSaveSort']) ?>",
+		url: "<?= $this->Html->url(['controller' => 'TCustomVariables', 'action' => 'remoteSaveSort']) ?>",
 		data: {
 			list : list
 		},
@@ -265,7 +290,7 @@ var saveToggleSort = toExecutableOnce(function(){
 	});
 });
 
-	//キャンペーン設定のソート順を取得
+	//カスタム変数のソート順を取得
 	var getSort = function(){
 		var list = [];
 		$(".sortable tr").each(function(e){
@@ -274,5 +299,4 @@ var saveToggleSort = toExecutableOnce(function(){
 		list = $.grep(list, function(e){return e;});
 		return JSON.parse(JSON.stringify(list));
 	};
-
-	</script>
+</script>

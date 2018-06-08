@@ -1,10 +1,10 @@
 <?php
 /**
- * TCampaignsController
- * キャンペーン設定
+ * TCustomVariable
+ * カスタム変数
  */
 class TCustomVariablesController extends AppController {
-  public $uses = ['TCampaign'];
+  public $uses = ['TCustomVariable'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -16,9 +16,8 @@ class TCustomVariablesController extends AppController {
    * @return void
    * */
   public function index() {
-    //$this->set('tCampaignList', $this->TCampaign->find('all', $this->_setParams()));
-    $documentList = $this->TCampaign->find('all', $this->_setParams());
-    $this->set('settingList', $documentList);
+    $documentList = $this->TCustomVariable->find('all', $this->_setParams());
+    $this->set('tCustomVariableList', $documentList);
   }
 
   /* *
@@ -31,7 +30,7 @@ class TCustomVariablesController extends AppController {
     $this->layout = 'ajax';
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
-      $this->request->data = $this->TCampaign->read(null, $this->request->data['id']);
+      $this->request->data = $this->TCustomVariable->read(null, $this->request->data['id']);
     }
     $this->render('/Elements/TCustomVariables/remoteEntry');
   }
@@ -40,69 +39,70 @@ class TCustomVariablesController extends AppController {
    * @return void
    * */
   public function remoteSaveEntryForm() {
+  	ini_set('display_errors',1);
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $saveData = [];
     $errorMessage = [];
 
-    if (!empty($this->request->data['campaignId'])) {
-      $this->TCampaign->recursive = -1;
-      $saveData = $this->TCampaign->read(null, $this->request->data['campaignId']);
+    if (!empty($this->request->data['customvariableId'])) {
+      $this->TCustomVariable->recursive = -1;
+      $saveData = $this->TCustomVariable->read(null, $this->request->data['customvariableId']);
     }
     else {
-      $this->TCampaign->create();
+      $this->TCustomVariable->create();
       $params = [
           'fields' => [
-              'TCampaign.sort'
+              'TCustomVariable.sort'
           ],
           'conditions' => [
-              'TCampaign.m_companies_id' => $this->userInfo['MCompany']['id']
+              'TCustomVariable.m_companies_id' => $this->userInfo['MCompany']['id']
           ],
           'order' => [
-              'TCampaign.sort' => 'desc',
-              'TCampaign.id' => 'desc'
+              'TCustomVariable.sort' => 'desc',
+              'TCustomVariable.id' => 'desc'
           ],
           'limit' => 1,
           'recursive' => -1
       ];
-      $lastData = $this->TCampaign->find('first', $params);
+      $lastData = $this->TCustomVariable->find('first', $params);
       if($lastData){
-        if($lastData['TCampaign']['sort'] === '0'
-            || $lastData['TCampaign']['sort'] === 0
-            || $lastData['TCampaign']['sort'] === null){
+        if($lastData['TCustomVariable']['sort'] === '0'
+            || $lastData['TCustomVariable']['sort'] === 0
+            || $lastData['TCustomVariable']['sort'] === null){
               //ソート順が登録されていなかったらソート順をセットする
               if(! $this->remoteSetSort()){
                 $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
                 return false;
               }
               //もう一度ソートの最大値を取り直す
-              $lastData = $this->TCampaign->find('first', $params);
+              $lastData = $this->TCustomVariable->find('first', $params);
         }
       }
       $nextSort = 1;
       if (!empty($lastData)) {
-        $nextSort = intval($lastData['TCampaign']['sort']) + 1;
+        $nextSort = intval($lastData['TCustomVariable']['sort']) + 1;
       }
-      $saveData['TCampaign']['sort'] = $nextSort;
+      $saveData['TCustomVariable']['sort'] = $nextSort;
     }
-    $saveData['TCampaign']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $saveData['TCampaign']['name'] = $this->request->data['name'];
-    $saveData['TCampaign']['parameter'] = $this->request->data['parameter'];
-    $saveData['TCampaign']['comment'] = $this->request->data['comment'];
+    $saveData['TCustomVariable']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+    $saveData['TCustomVariable']['variable_name'] = $this->request->data['variable_name'];
+    $saveData['TCustomVariable']['attribute_value'] = $this->request->data['attribute_value'];
+    $saveData['TCustomVariable']['comment'] = $this->request->data['comment'];
     // const
-    $this->TCampaign->set($saveData);
-    $this->TCampaign->begin();
+    $this->TCustomVariable->set($saveData);
+    $this->TCustomVariable->begin();
 
     // バリデーションチェックでエラーが出た場合
-    if ( $this->TCampaign->save() ) {
-      $this->TCampaign->commit();
+    if ( $this->TCustomVariable->save() ) {
+      $this->TCustomVariable->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
     }
     else {
-      $this->TCampaign->rollback();
+      $this->TCustomVariable->rollback();
     }
-    $errorMessage = $this->TCampaign->validationErrors;
+    $errorMessage = $this->TCustomVariable->validationErrors;
     return new CakeResponse(['body' => json_encode($errorMessage)]);
   }
 
@@ -114,29 +114,23 @@ class TCustomVariablesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $this->TCampaign->recursive = -1;
+    $this->TCustomVariable->recursive = -1;
     $selectedList = $this->request->data['selectedList'];
-    $this->TCampaign->begin();
+    $this->TCustomVariable->begin();
     $res = true;
     foreach($selectedList as $key => $val){
-      if (! $this->TCampaign->delete($val) ) {
+      if (! $this->TCustomVariable->delete($val) ) {
         $res = false;
       }
     }
     if($res){
-      $this->TCampaign->commit();
+      $this->TCustomVariable->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
     }
     else{
-      $this->TCampaign->rollback();
+      $this->TCustomVariable->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
-//     if ( $this->TCampaign->delete($this->request->data['id']) ) {
-//       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-//     }
-//     else {
-//       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
-//     }
   }
 
   /* *
@@ -147,64 +141,63 @@ class TCustomVariablesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-//    $this->TCampaign->recursive = -1;
     $selectedList = $this->request->data['selectedList'];
-    //コピー元のキャンペーンリスト取得
+    //コピー元のカスタム変数リスト取得
     foreach($selectedList as $value){
-      $copyData[] = $this->TCampaign->read(null, $value);
+      $copyData[] = $this->TCustomVariable->read(null, $value);
     }
     $errorMessage = [];
-    //コピー元のキャンペーンリストの数だけ繰り返し
+    //コピー元のカスタム変数リストの数だけ繰り返し
     $res = true;
     foreach($copyData as $value){
-      $this->TCampaign->create();
+      $this->TCustomVariable->create();
       $saveData = [];
       $params = [
           'fields' => [
-              'TCampaign.sort'
+              'TCustomVariable.sort'
           ],
           'conditions' => [
-              'TCampaign.m_companies_id' => $this->userInfo['MCompany']['id']
+              'TCustomVariable.m_companies_id' => $this->userInfo['MCompany']['id']
           ],
           'order' => [
-              'TCampaign.sort' => 'desc',
-              'TCampaign.id' => 'desc'
+              'TCustomVariable.sort' => 'desc',
+              'TCustomVariable.id' => 'desc'
           ],
           'limit' => 1,
           'recursive' => -1
       ];
-      $lastData = $this->TCampaign->find('first', $params);
-      if($lastData['TCampaign']['sort'] === '0'
-          || $lastData['TCampaign']['sort'] === 0
-          || $lastData['TCampaign']['sort'] === null){
+      $lastData = $this->TCustomVariable->find('first', $params);
+      if($lastData['TCustomVariable']['sort'] === '0'
+          || $lastData['TCustomVariable']['sort'] === 0
+          || $lastData['TCustomVariable']['sort'] === null){
             //ソート順が登録されていなかったらソート順をセットする
             if(! $this->remoteSetSort()){
               $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
               return false;
             }
             //もう一度ソートの最大値を取り直す
-            $lastData = $this->TCampaign->find('first', $params);
+            $lastData = $this->TCustomVariable->find('first', $params);
       }
       $nextSort = 1;
       if (!empty($lastData)) {
-        $nextSort = intval($lastData['TCampaign']['sort']) + 1;
+        $nextSort = intval($lastData['TCustomVariable']['sort']) + 1;
       }
-      $saveData['TCampaign']['sort'] = $nextSort;
-      $saveData['TCampaign']['m_companies_id'] = $value['TCampaign']['m_companies_id'];
-      $saveData['TCampaign']['name'] = $value['TCampaign']['name'].'コピー';
-      $saveData['TCampaign']['parameter'] = $value['TCampaign']['parameter'];
-      $saveData['TCampaign']['comment'] = $value['TCampaign']['comment'];
-      $this->TCampaign->set($saveData);
-      $this->TCampaign->begin();
+      $saveData['TCustomVariable']['sort'] = $nextSort;
+      $saveData['TCustomVariable']['m_companies_id'] = $value['TCustomVariable']['m_companies_id'];
+      $saveData['TCustomVariable']['variable_name'] = $value['TCustomVariable']['variable_name'].'コピー';
+      $saveData['TCustomVariable']['attribute_value'] = $value['TCustomVariable']['attribute_value'];
+      $saveData['TCustomVariable']['comment'] = $value['TCustomVariable']['comment'];
+      $this->TCustomVariable->set($saveData);
+      $this->TCustomVariable->begin();
       // バリデーションチェックでエラーが出た場合
       if($res){
-        if (! $this->TCampaign->save() ) {
+        if (! $this->TCustomVariable->save() ) {
           $res = false;
-          $errorMessage = $this->TCampaign->validationErrors;
-          $this->TCampaign->rollback();
+          $errorMessage = $this->TCustomVariable->validationErrors;
+          $this->TCustomVariable->rollback();
         }
         else{
-          $this->TCampaign->commit();
+          $this->TCustomVariable->commit();
           $this->Session->delete('dstoken');
           $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         }
@@ -213,7 +206,7 @@ class TCustomVariablesController extends AppController {
   }
 
   /**
-   * 資料設定ソート順更新
+   * カスタム変数ソート順更新
    *
    * */
   public function remoteSaveSort(){
@@ -222,17 +215,17 @@ class TCustomVariablesController extends AppController {
     $this->layout = 'ajax';
     if ( !$this->request->is('ajax') ) return false;
     if ( !empty($this->params->data['list']) ) {
-      $this->TCampaign->begin();
+      $this->TCustomVariable->begin();
       $list = $this->params->data['list'];
       $this->log($list,LOG_DEBUG);
       /* 現在の並び順を取得 */
       $params = $this->_setParams();
       $params['fields'] = [
-          'TCampaign.id',
-          'TCampaign.sort'
+          'TCustomVariable.id',
+          'TCustomVariable.sort'
       ];
       unset($params['limit']);
-      $prevSort = $this->TCampaign->find('list', $params);
+      $prevSort = $this->TCustomVariable->find('list', $params);
       //新しくソート順を設定したため、空で来ることがある
       $reset_flg = false;
       foreach($prevSort as $key => $val){
@@ -257,51 +250,51 @@ class TCustomVariablesController extends AppController {
         $id = $list[$i];
         if ( isset($prevSort[$id]) ) {
           $saveData = [
-              'TCampaign' => [
+              'TCustomVariable' => [
                   'id' => $id,
                   'sort' => $prevSortKeys[$i]
               ]
           ];
-          if (!$this->TCampaign->validates()) {
+          if (!$this->TCustomVariable->validates()) {
             $ret = false;
             break;
           }
-          if (!$this->TCampaign->save($saveData)) {
+          if (!$this->TCustomVariable->save($saveData)) {
             $ret = false;
             break;
           }
         } else {
-          // 送信された資料設定と現在DBに存在する資料設定に差がある場合
-          $this->TCampaign->rollback();
+          // 送信されたカスタム変数と現在DBに存在するカスタム変数に差がある場合
+          $this->TCustomVariable->rollback();
           $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.configChanged'));
           return;
         }
       }
       if ($ret) {
-        $this->TCampaign->commit();
+        $this->TCustomVariable->commit();
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       }
       else {
-        $this->TCampaign->rollback();
+        $this->TCustomVariable->rollback();
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
       }
     }
   }
 
   /**
-   * 資料設定ソート順を現在のID順でセット
+   * カスタム変数ソート順を現在のID順でセット
    *
    * */
   public function remoteSetSort(){
-    $this->TCampaign->begin();
+    $this->TCustomVariable->begin();
     /* 現在の並び順を取得 */
     $params = $this->_setParams();
     $params['fields'] = [
-        'TCampaign.id',
-        'TCampaign.sort'
+        'TCustomVariable.id',
+        'TCustomVariable.sort'
     ];
     unset($params['limit']);
-    $prevSort = $this->TCampaign->find('list', $params);
+    $prevSort = $this->TCustomVariable->find('list', $params);
     //ソート順のリセットはID順とする
     $i = 1;
     foreach($prevSort as $key => $val){
@@ -315,27 +308,27 @@ class TCustomVariablesController extends AppController {
     foreach($prevSort as $key => $val){
       $id = $key;
       $saveData = [
-          'TCampaign' => [
+          'TCustomVariable' => [
               'id' => $id,
               'sort' => $prevSortKeys[$i]
           ]
       ];
-      if (!$this->TCampaign->validates()) {
+      if (!$this->TCustomVariable->validates()) {
         $ret = false;
         break;
       }
-      if (!$this->TCampaign->save($saveData)) {
+      if (!$this->TCustomVariable->save($saveData)) {
         $ret = false;
         break;
       }
       $i++;
     }
     if ($ret) {
-      $this->TCampaign->commit();
+      $this->TCustomVariable->commit();
       return true;
     }
     else {
-      $this->TCampaign->rollback();
+      $this->TCustomVariable->rollback();
       return false;
     }
   }
@@ -343,14 +336,14 @@ class TCustomVariablesController extends AppController {
   private function _setParams(){
     $params = [
       'order' => [
-        'TCampaign.sort' => 'asc',
-        'TCampaign.id' => 'asc'
+        'TCustomVariable.sort' => 'asc',
+        'TCustomVariable.id' => 'asc'
       ],
       'fields' => [
-        'TCampaign.*'
+        'TCustomVariable.*'
       ],
       'conditions' => [
-        'TCampaign.m_companies_id' => $this->userInfo['MCompany']['id']
+        'TCustomVariable.m_companies_id' => $this->userInfo['MCompany']['id']
       ],
       'recursive' => -1
     ];

@@ -12,6 +12,7 @@
     <span class="pre">お客様のサイト（sincloタグが埋め込まれたページ）内にて、id属性またはname属性で指定された項目の値を取得することが可能です。（ECサイトや会員制サイトで会員番号や会員名などを取得可）
     取得した値はオートメッセージの条件で利用したり、リアルタイムモニターや履歴に自動で付与することが可能です。</span>
   </div>
+
   <div id='tcustomvaliables_menu' style= 'padding-left: 20px;'>
     <ul class="fLeft" >
       <div class="btnSet">
@@ -71,25 +72,25 @@
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
         <th width=" 5%">No</th>
         <th class="tCenter">カスタム変数名</th>
-        <th width=" 7%">属性種別</th>
-        <th class="tCenter">属性値</th>
+        <th class="tCenter">CSSセレクタ</th>
         <th class="tCenter">コメント</th>
       </tr>
       </thead>
       <tbody class="sortable">
-      <tr class="pointer" data-id="" data-sort="" onclick="openEditDialog()">
+      <?php foreach((array)$tCustomVariableList as $key => $val): ?>
+      <tr class="pointer" data-id="<?=$val['TCustomVariable']['id']?>" data-sort="<?=$val['TCustomVariable']['sort']?>" onclick="openEditDialog('<?=$val['TCustomVariable']['id']?>')">
         <td class="tCenter" onclick="event.stopPropagation();">
-          <input type="checkbox" name="selectTab" id="selectTab0" value="1">
-          <label for="selectTab0"></label>
+          <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCustomVariable']['id']?>">
+          <label for="selectTab<?=$key?>"></label>
         </td>
-        <td width="5%" class="tCenter">1</td>
-        <td class="tCenter">会員番号</td>
-        <td class="tCenter">id</td>
-        <td class="tCenter">lblMemberID</td>
-        <td class="tCenter">会員番号を表します</td>
+        <td width="5%" class="tCenter"><?=$val['TCustomVariable']['id']?></td>
+        <td class="tCenter"><?=$val['TCustomVariable']['variable_name']?></td>
+        <td class="tCenter"><?=$val['TCustomVariable']['attribute_value']?></td>
+        <td class="tCenter"><?=$val['TCustomVariable']['comment']?></td>
       </tr>
-      <?php if ( count($settingList) === 0 ) :?>
-        <td class="tCenter" colspan="4">チャット通知設定が設定されていません</td>
+      <?php endforeach; ?>
+      <?php if ( count($tCustomVariableList) === 0 ) :?>
+        <td class="tCenter" colspan="5">カスタム変数が設定されていません</td>
       <?php endif; ?>
       </tbody>
     </table>
