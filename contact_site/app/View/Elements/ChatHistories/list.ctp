@@ -383,7 +383,14 @@
             <td class="tLeft pre eachVisitor" style = "width:10%;display:none;">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
             <?php ?>
             <td class="tCenter pre" style = "width:10%"><div class = "campaignInfo"><?=$campaignParam?></div></td>
-            <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;"><a href = "<?=h($forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></a></td>
+            <td class="pre" style = "font-size:11px;padding:8px 5px !important;width:32%;">
+            <?php
+            //サイト訪問者の発言がある場合
+            if(!empty($forChatSendingPageList[$history['SpeechTime']['firstSpeechStayLogId']]['THistoryStayLog']['url']) &&
+            !empty($forChatSendingPageList[$history['SpeechTime']['firstSpeechStayLogId']]['THistoryStayLog']['title'])) { ?>
+              <a href = "<?=h($forChatSendingPageList[$history['SpeechTime']['firstSpeechStayLogId']]['THistoryStayLog']['url'])?>" target = "landing"><?= $forChatSendingPageList[$history['SpeechTime']['firstSpeechStayLogId']]['THistoryStayLog']['title'] ?></a>
+            <?php } ?>
+            </td>
             <td class="tCenter" style = "width:5%"><?php
               if(!empty($history['THistoryChatLog']['eff']) && $history['THistoryChatLog']['eff'] != 0) {
                 echo $achievementType[2];
@@ -548,8 +555,17 @@
           <li>
             <dt>チャット送信ページ</dt>
             <dd id = "chatSending">
-            <a href = "<?=h($forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing">
-            <span id = "chatSendingPage"><?= $forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></span></a></dd>
+            <?php
+            //サイト訪問者の発言がある場合
+            if(!empty($forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url']) &&
+            !empty($forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'])) { ?>
+              <a href = "<?=h($forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['url'])?>" target = "landing">
+              <span id = "chatSendingPage"><?= $forChatSendingPageList[$defaultHistoryList['THistoryChatLog']['t_history_stay_logs_id']]['THistoryStayLog']['title'] ?></span></a></dd>
+            <?php }
+            else {
+              //サイト訪問者の発言がない場合 ?>
+              <span id = "chatSendingPage"></span>
+            <?php } ?>
           </li>
           <li>
             <dt>離脱ページ</dt>
