@@ -4,6 +4,8 @@
     var variable_name = document.getElementById('TCustomVariableVariableName').value;
     var attribute_value = document.getElementById('TCustomVariableAttributeValue').value;
     var comment = document.getElementById('TCustomVariableComment').value;
+
+    //非同期通信処理
     $.ajax({
       type: "post",
       url: "<?=$this->Html->url('/TCustomVariables/remoteSaveEntryForm')?>",
@@ -49,6 +51,8 @@
 
 
 </script>
+
+<!-- 表示されるフォーム画面 -->
 <?= $this->Form->create('TCustomVariable', array('action' => 'add')); ?>
   <div class="form01">
     <?= $this->Form->input('id', array('type' => 'hidden')); ?>

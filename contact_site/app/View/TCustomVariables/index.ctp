@@ -1,6 +1,10 @@
 <?php echo $this->Html->script("jquery-ui.min.js"); ?>
 <?= $this->element('TCustomVariables/script') ?>
 
+<?php
+$params = $this->Paginator->params();
+$prevCnt = ($params['page'] - 1) * $params['limit'];
+?>
 <div id='tcustomvariables_idx' class="card-shadow">
 
   <div id='tcustomvariables_title'>
@@ -63,7 +67,26 @@
       </div>
       <!-- カスタム変数の並び替えモード -->
     </ul>
-  </div>
+    <div id="paging" class="fRight" style= 'padding-right: 20px;'>
+      <?php
+        echo $this->Paginator->prev(
+          $this->Html->image('paging.png', array('alt' => '前のページへ', 'width' => 25, 'height' => 25)),
+          array('escape' => false, 'class' => 'btn-shadow greenBtn tr180'),
+          null,
+          array('class' => 'grayBtn tr180')
+        );
+        ?>
+        <span style="width: auto!important;padding: 10px 0 0;"> <?php echo $this->Paginator->counter('{:page} / {:pages}'); ?> </span>
+        <?php
+        echo $this->Paginator->next(
+          $this->Html->image('paging.png', array('alt' => '次のページへ', 'width'=>25, 'height'=>25)),
+          array('escape' => false, 'class' => 'btn-shadow greenBtn'),
+          null,
+          array('escape' => false, 'class' => 'grayBtn')
+        );
+        ?>
+      </div>
+    </div>
 
   <div id='tcustomvariables_list' class="p20x">
     <table>
@@ -76,21 +99,23 @@
         <th class="tCenter">コメント</th>
       </tr>
       </thead>
-      <tbody class="sortable">
-      <?php foreach((array)$tCustomVariableList as $key => $val): ?>
+    <tbody class="sortable">
+      <?php $allCondList = []; ?>
+      <?php $allActionList = []; ?>
+      <?php foreach((array)$tCustomVariableList as $key => $val):?>
       <tr class="pointer" data-id="<?=$val['TCustomVariable']['id']?>" data-sort="<?=$val['TCustomVariable']['sort']?>" onclick="openEditDialog('<?=$val['TCustomVariable']['id']?>')">
         <td class="tCenter" onclick="event.stopPropagation();">
           <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCustomVariable']['id']?>">
           <label for="selectTab<?=$key?>"></label>
         </td>
-        <td width="5%" class="tCenter"><?=$val['TCustomVariable']['id']?></td>
+        <td width="5%" class="tCenter"><?=$prevCnt + h($key+1)?></td>
         <td class="tCenter"><?=$val['TCustomVariable']['variable_name']?></td>
         <td class="tCenter"><?=$val['TCustomVariable']['attribute_value']?></td>
         <td class="tCenter"><?=$val['TCustomVariable']['comment']?></td>
       </tr>
       <?php endforeach; ?>
       <?php if ( count($tCustomVariableList) === 0 ) :?>
-        <td class="tCenter" colspan="5">カスタム変数が設定されていません</td>
+        <tr class="cancel"><td class="tCenter" colspan="5">カスタム変数が設定されていません</td></tr>
       <?php endif; ?>
       </tbody>
     </table>
