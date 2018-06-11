@@ -39,7 +39,7 @@ router.get("/", function(req, res, next) {
     }
     var siteKey = req['query']['sitekey'];
     var accessType = req['query']['accessType'];
-    var sendData = { status: true, widget: {},chat: {}, messages: {}, contract: {}  };
+    var sendData = { status: true, widget: {},chat: {}, messages: {}, contract: {} };
 
     function isNumeric(str){
                 var num = Number(str);
@@ -597,8 +597,8 @@ router.get("/", function(req, res, next) {
               "scenario_id": isNumeric(common.autoMessageSettings[siteKey][i].t_chatbot_scenario_id)
             });
           }
-          sendData.widget['in_flg'] = common.chatSettings[siteKey].in_flg;
-          sendData.widget['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
+          sendData.chat['in_flg'] = common.chatSettings[siteKey].in_flg;
+          sendData.chat['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
           res.send(sendData);
       }
       else {

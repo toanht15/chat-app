@@ -2,6 +2,8 @@
   // -----------------------------------------------------------------------------
   //   websocket通信
   // -----------------------------------------------------------------------------
+  console.log('sincloInfo');
+  console.log(sincloInfo);
   var $ = jquery;
   sinclo = {
     widget: {
@@ -116,7 +118,6 @@
             height = this.header.offsetHeight;
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
-            close.chatApi.unlockPageScroll();
           }
             elm.animate({
               height: height + "px"
@@ -1311,7 +1312,6 @@
           elm.value = "";
         }
         if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
-            //|| obj.messageType === sinclo.chatApi.messageType.notification
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
@@ -1319,7 +1319,7 @@
           if(obj.tabId === userInfo.tabId) {
             this.chatApi.scDown();
             return false;
-          } else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech || obj.messageType === sinclo.chatApi.messageType.notification) {
+          } else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
             // 別タブで送信された自動返信は表示する
             cn = "sinclo_re";
           } else {
@@ -1334,7 +1334,7 @@
           return false;
         }
 
-        if (obj.messageType === sinclo.chatApi.messageType.sorry ) {
+        if (obj.messageType === sinclo.chatApi.messageType.sorry) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
           this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
@@ -1355,7 +1355,7 @@
         }
         //初回通知メッセージを利用している場合
         if (obj.notification === true) {
-          data = JSON.parse(sincloInfo.widget.initial_notification_message);
+          data = JSON.parse(sincloInfo.chat.initial_notification_message);
           for (var i = 0; i < Object.keys(data).length; i++) {
             (function(pram) {
               setTimeout(function(){
@@ -1395,7 +1395,7 @@
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
-        storage.s.set('initialNotification', true);
+        storage.s.set('initialNotification', false);
       }
     },
     sendReqAutoChatMessages: function(d){
@@ -2555,11 +2555,13 @@
                 // シナリオ中の返答はオペレータへの通知をしない
                 isScenarioMessage = true;
               }
-              if(storage.s.get('initialNotification') == 0) {
-                initialNotification = 0;
+              //初回通知メッセージの場合
+              if(storage.s.get('initialNotification') == null) {
+                initialNotification = true;
               }
-              else {
-                initialNotification = 1;
+              //初回通知メッセージではない場合
+              else if(storage.s.get('initialNotification') === 'false'){
+                initialNotification = false;
               }
               setTimeout(function(){
                 emit('sendChat', {
