@@ -4194,7 +4194,8 @@
         callExternalApi: "6",
         receiveFile: "7",
         getAttributeValue: "8",
-        sendFile: "9"
+        sendFile: "9",
+        branchOnCond: "10"
       },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
@@ -4482,6 +4483,10 @@
           case self._actionType.sendFile:
             self._sendFile._init(self);
             self._sendFile._process();
+            break;
+          case self._actionType.branchOnCond:
+            self._branchOnCond._init(self);
+            self._branchOnCond._process();
             break;
         }
       },
@@ -5281,6 +5286,140 @@
             });
           });
         },
+      },
+      _branchOnCond: {
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._branchOnCond;
+          // 即時で実行
+          self._parent._doing(0, function () {
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            var targetValKey = self._parent.get(self._parent._lKey.currentScenario).referenceVariable;
+            var conditions = self._parent.get(self._parent._lKey.currentScenario).conditionList;
+            for(var i=0; i<conditions.length; i++) {
+              if(self._isMatch(targetValKey, conditions[i])) {
+                self._doAction(conditions[i]);
+                return;
+              }
+            }
+            if(self._parent.get(self._parent._lKey.currentScenario).elseEnabled) {
+              self._doAction(self._parent.get(self._parent._lKey.currentScenario).elseAction);
+              return;
+            }
+            // ここに到達したら次のシナリオへ
+            if(self._parent._goToNextScenario()) {
+              self._parent._process();
+            }
+          });
+        },
+        _isMatch: function(targetValKey, condition) {
+          var self = sinclo.scenarioApi._branchOnCond;
+          var targetValue = self._parent._getSavedVariable(targetValKey);
+          switch(Number(condition.matchValueType)) {
+            case 1: // いずれかを含む場合
+              return self._matchCaseInclude(targetValue, self._splitMatchValue(condition.matchValue));
+            case 2: // いずれも含まない場合
+              return self._matchCaseExclude(targetValue, self._splitMatchValue(condition.matchValue));
+            default:
+              return false;
+          }
+        },
+        _doAction: function(condition, callback) {
+          var self = sinclo.scenarioApi._branchOnCond;
+          switch(Number(condition.actionType)) {
+            case 1:
+              // テキスト発言
+              self._parent._doing(self._parent._getIntervalTimeSec(), function(){
+                self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, condition.action.message, 0, self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function(){
+                  if(self._parent._goToNextScenario()) {
+                    self._parent._process();
+                  }
+                });
+              });
+              break;
+            case 2:
+              // シナリオ呼び出し
+              emit('getScenario', {scenarioId: condition.callScenarioId}, function(result){
+
+              });
+              break;
+            case 3:
+              // シナリオ終了
+              self._parent._end();
+              break;
+            case 4:
+              // 何もしない（次のアクションへ）
+              if(self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
+              break;
+          }
+        },
+        _splitMatchValue: function(val) {
+          var splitedArray = [];
+          val.split('"').forEach(function(currentValue, index, array){
+            if(array.length > 1) {
+              if(index !== 0 && index % 2 === 1) {
+                // 偶数個：そのまま文字列で扱う
+                if(currentValue !== "") {
+                  splitedArray.push(currentValue);
+                }
+              } else {
+                if(currentValue) {
+                  var trimValue = currentValue.trim(),
+                    splitValue = trimValue.replace(/　/g, " ").split(" ");
+                  splitedArray = splitedArray.concat($.grep(splitValue, function(e){return e !== "";}));
+                }
+              }
+            } else {
+              var trimValue = currentValue.trim(),
+                splitValue = trimValue.replace(/　/g, " ").split(" ");
+              splitedArray = splitedArray.concat($.grep(splitValue, function(e){return e !== "";}));
+            }
+          });
+          return splitedArray;
+        },
+        _matchCaseInclude: function(val, words) {
+          console.log("_matchCaseInclude : %s <=> %s",words, val);
+          var result = false;
+          for(var i=0; i < words.length; i++) {
+            if(words[i] === "") {
+              continue;
+            }
+
+            var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            var preg = new RegExp(word);
+            result = preg.test(val);
+
+            if(result) { // いずれかを含む
+              break;
+            }
+          }
+          return result;
+        },
+        _matchCaseExclude: function(val, words) {
+          for(var i=0; i < words.length; i++) {
+            if(words[i] === "") {
+              if (words.length > 1 && i === words.length - 1) {
+                break;
+              }
+              continue;
+            } else {
+              var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+              var preg = new RegExp(word);
+              exclusionResult = preg.test(val);
+              if(exclusionResult) {
+                // 含んでいる場合はNG
+                return false;
+              }
+            }
+          }
+          //最後まで含んでいなかったらOK
+          return true;
+        }
       }
     },
     // 外部連携API

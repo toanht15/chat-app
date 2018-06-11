@@ -6882,6 +6882,33 @@ ul.naviBtn {
               border: 1px solid #B7B7B7;
               margin-top: 20px;
 
+              hr.separator {
+                border-color: #C3D69B;
+                border-style: solid;
+                border-width: 1px 0 0 0;
+                margin: 0;
+                background-color: #FFF;
+                padding-bottom: 12px;
+              }
+
+              h5.condition-separator {
+                cursor: pointer;
+                font-size: inherit;
+                border-color: #C3D69B;
+                border-style: solid;
+                border-width: 1px 0 1px 0;
+                margin: 0 0 10px 0;
+                background-color: #ECF4DA;
+                font-weight: bold;
+
+                span.labelArea {
+                  display: block;
+                  margin-left: .5em;
+                  padding: 9px 9px 9px 0.25em;
+                  height: 34px;
+                }
+              }
+
               &:last-child {
                 margin-bottom: 20px;
               }
@@ -7218,6 +7245,10 @@ ul.naviBtn {
 
                 .styleFlexbox {
                   display: flex;
+
+                  &.direction-column {
+                    flex-direction: column;
+                  }
 
                   > .fb13em {
                     flex-basis: 13em;

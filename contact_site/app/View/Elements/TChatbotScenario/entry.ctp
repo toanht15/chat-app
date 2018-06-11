@@ -8,6 +8,7 @@
   <input type="hidden" name="lastPage" value="<?= $lastPage?>">
   <?=$this->Form->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
   <?=$this->Form->input('scenarioList', ['type' => 'hidden','value' => json_encode($this->data['scenarioList'])])?>
+  <?=$this->Form->input('scenarioListForBranchOnCond', ['type' => 'hidden','value' => json_encode($this->data['scenarioListForBranchOnCond'])])?>
 
   <section id="tchatbotscenario_form_basic_settings" class="p10x">
     <h3 class="tchatbotscenario_form_subtitle">基本設定</h3>
@@ -48,6 +49,7 @@
         <!-- 選択肢 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SELECT_OPTION ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。">選択肢</a>
         <!-- 条件分岐 -->
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>)" class="greenBtn btn-shadow commontooltip" data-text="変数の値により処理を分岐させるためのアクションです。">条件分岐</a>
         <!-- シナリオ呼び出し -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>)" class="greenBtn btn-shadow commontooltip" data-text="呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。">シナリオ呼び出し</a>
         <!-- 属性地取得 -->
