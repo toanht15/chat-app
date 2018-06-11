@@ -2334,7 +2334,7 @@
           div.appendChild(li);
           chatList.appendChild(div);
 
-          if (data.extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
+          if (data.extension.match(/(jpeg|jpg|gif|png)$/i) != null && !isExpired) {
             thumbnail = "<img src='" + data.downloadUrl + "' class='sendFileThumbnail' width='64' height='64'>";
           } else {
             thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(data.extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
@@ -2433,7 +2433,7 @@
           var divElm = document.createElement('div');
           divElm.style.textAlign = "right";
           var thumbnail = "";
-          if (extension.match(/(jpeg|jpg|gif|png)$/) != null) {
+          if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
             thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail' width='64' height='64'>";
           } else {
             thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
@@ -3004,7 +3004,7 @@
             sinclo.chatApi.scDown();
           }
 
-          if(targetExtension.match(/(jpeg|jpg|gif|png)$/) != null) {
+          if(targetExtension.match(/(jpeg|jpg|gif|png)$/i) != null) {
             var imgElm = document.createElement('img');
             var fileReader = new FileReader();
             fileReader.onload = function(e) {
