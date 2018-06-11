@@ -17,6 +17,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const SEND_NAME_SORRY_MESSAGE = '自動応答（sorry）';
   const SEND_NAME_AUTO_SPEECH_MESSAGE = '自動返信';
   const SEND_NAME_FILE_TRANSFER = 'ファイル送信';
+  const SEND_NAME_FILE_RECEIVE = 'ファイル受信';
   const SEND_NAME_SCENARIO_TEXT = 'シナリオメッセージ（テキスト発言）';
   const SEND_NAME_SCENARIO_HEARING = 'シナリオメッセージ（ヒアリング）';
   const SEND_NAME_SCENARIO_SELECTION = 'シナリオメッセージ（選択肢）';
@@ -135,6 +136,9 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 13:
         $message = $this->generateConsumerScenarioSelectionMessageBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 19:
+        $message = $this->generateFileReceiveBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 21:
         $message = $this->generateScenarioTextBlockStr($chatLog['created'],$chatLog['message']);
         break;
@@ -184,6 +188,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_FILE_TRANSFER);
     $message .= $this->createFileTransferMessageContent($content);
+    return $message;
+  }
+
+  protected function generateFileReceiveBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_FILE_RECEIVE);
+    $message .= $this->createReceiveFileMessageContent($content);
     return $message;
   }
 
@@ -290,6 +301,14 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     $message = "";
     $content = json_decode($content, TRUE);
     $message .= "　ファイル名【".$content['fileName']."】\n";
+    return $message;
+  }
+
+  protected function createReceiveFileMessageContent($content) {
+    $message = "";
+    $content = json_decode($content, TRUE);
+    $message .= "ダウンロードＵＲＬ：".$content['downloadUrl']."】\n";
+    $message .= "コメント：\n".$content['downloadUrl']."】\n";
     return $message;
   }
 
