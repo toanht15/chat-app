@@ -13,7 +13,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db2'
+      database: process.env.DB_NAME || 'sinclo_db'
     });
 
 // log4js
@@ -1057,13 +1057,12 @@ io.sockets.on('connection', function (socket) {
                 // 応対可能かチェック(対応できるのであれば trueが返る)
                 chatApi.sendCheck(d, function(err, ret){
                   sendData.opFlg = ret.opFlg;
-                  if(ret.opFlg === true && d.notifyToCompany) {
                     //初回通知メッセージ利用するの場合
                     //初回通知メッセージの場合
-                    if(ret.inFlg == 1 && d.notificationFlg == 1) {
+                  if(ret.opFlg === true && d.notifyToCompany
+                    && ret.inFlg == 1 && d.initialNotification == true) {
                       sendData.notification = true;
                     }
-                  }
                   // 書き込みが成功したら顧客側に結果を返す
                   var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
                   sendData.sincloSessionId = sincloSessionId;
@@ -1112,17 +1111,16 @@ io.sockets.on('connection', function (socket) {
                   }
 
                   //通知された場合
-                  if(ret.opFlg === true && d.notifyToCompany) {
+                  if(ret.opFlg === true && d.notifyToCompany
+                    && ret.inFlg == 1 && d.initialNotification == true) {
                     var data = JSON.parse(ret.data);
                     //初回通知メッセージ利用するの場合
                     //初回通知メッセージの場合
-                    if(ret.inFlg == 1 && d.notificationFlg == 1) {
-                      for (var i = 0; i < Object.keys(data).length; i++) {
-                        d.chatMessage = data[i].message;
-                        d.messageType = chatApi.cnst.observeType.notification;
-                        d.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
-                        chatApi.set(d);
-                      }
+                    for (var i = 0; i < Object.keys(data).length; i++) {
+                      d.chatMessage = data[i].message;
+                      d.messageType = chatApi.cnst.observeType.notification;
+                      d.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
+                      chatApi.set(d);
                     }
                     pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
                       [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields){}
@@ -1569,10 +1567,12 @@ io.sockets.on('connection', function (socket) {
                           (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                           (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                         ) {
+                          //初回通知メッセージを利用しない場合
                           if(rows[0].in_flg == 2) {
                               ret = true;
                             }
-                            else {
+                            //初回通知メッセージを利用する場合
+                            else if(rows[0].in_flg == 1) {
                               var data = rows[0].initial_notification_message;
                               ret = true;
                               return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
@@ -1623,10 +1623,12 @@ io.sockets.on('connection', function (socket) {
                         (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                         (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                       ) {
+                        //初回通知メッセージを利用しない場合
                         if(rows[0].in_flg == 2) {
                             ret = true;
                           }
-                          else {
+                          //初回通知メッセージを利用する場合
+                          else if(rows[0].in_flg == 1) {
                             var data = rows[0].initial_notification_message;
                             ret = true;
                             return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
@@ -1655,10 +1657,12 @@ io.sockets.on('connection', function (socket) {
                 (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                 (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
               ) {
+                //初回通知メッセージを利用しない場合
                 if(rows[0].in_flg == 2) {
                   ret = true;
                 }
-                else {
+                //初回通知メッセージを利用する場合
+                else if(rows[0].in_flg == 1) {
                   var data = rows[0].initial_notification_message;
                   ret = true;
                   return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
@@ -1711,10 +1715,12 @@ io.sockets.on('connection', function (socket) {
                             if ( userIds.length !== 0 ) {
                               for (var i3 = 0; i3 < userIds.length; i3++) {
                                 if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                                  //初回通知メッセージを利用しない場合
                                   if(rows[0].in_flg == 2) {
                                     ret = true;
                                   }
-                                  else {
+                                  //初回通知メッセージを利用する場合
+                                  else if(rows[0].in_flg == 1) {
                                     var data = rows[0].initial_notification_message;
                                     ret = true;
                                     return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
@@ -1779,10 +1785,12 @@ io.sockets.on('connection', function (socket) {
                           if ( userIds.length !== 0 ) {
                             for (var i2 = 0; i2 < userIds.length; i2++) {
                               if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                                //初回通知メッセージを利用しない場合
                                 if(rows[0].in_flg == 2) {
                                   ret = true;
                                 }
-                                else {
+                                //初回通知メッセージを利用する場合
+                                else if(rows[0].in_flg == 1) {
                                   var data = rows[0].initial_notification_message;
                                   ret = true;
                                   return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
@@ -1825,10 +1833,12 @@ io.sockets.on('connection', function (socket) {
                   if ( userIds.length !== 0 ) {
                     for (var i = 0; i < userIds.length; i++) {
                       if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
+                        //初回通知メッセージを利用しない場合
                         if(rows[0].in_flg == 2) {
                           ret = true;
                         }
-                        else {
+                        //初回通知メッセージを利用する場合
+                        else if(rows[0].in_flg == 1) {
                           var data = rows[0].initial_notification_message;
                           ret = true;
                           return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});

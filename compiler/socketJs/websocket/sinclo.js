@@ -115,6 +115,7 @@
             }
             height = this.header.offsetHeight;
             sinclo.widget.condifiton.set(false, true);
+            sinclo.chatApi.unlockPageScroll();
             close.chatApi.unlockPageScroll();
           }
             elm.animate({
@@ -1394,7 +1395,7 @@
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
-        storage.s.set('notificationFlg', 0);
+        storage.s.set('initialNotification', true);
       }
     },
     sendReqAutoChatMessages: function(d){
@@ -2545,9 +2546,6 @@
               if(result && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 storage.s.set('chatAct', false); // オートメッセージを表示しない
               }
-              if(result == true) {
-                console.log('条件達成');
-              }
 
               var isScenarioMessage = false;
               console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
@@ -2557,11 +2555,11 @@
                 // シナリオ中の返答はオペレータへの通知をしない
                 isScenarioMessage = true;
               }
-              if(storage.s.get('notificationFlg') == 0) {
-                notificationFlg = 0;
+              if(storage.s.get('initialNotification') == 0) {
+                initialNotification = 0;
               }
               else {
-                notificationFlg = 1;
+                initialNotification = 1;
               }
               setTimeout(function(){
                 emit('sendChat', {
@@ -2571,7 +2569,7 @@
                   mUserId: null,
                   messageType: messageType,
                   messageRequestFlg: messageRequestFlg,
-                  notificationFlg: notificationFlg,
+                  initialNotification: initialNotification,
                   isAutoSpeech : result,
                   notifyToCompany: !result,
                   isScenarioMessage: isScenarioMessage
@@ -2749,6 +2747,7 @@
         orTriggeredId: [],
         processing: false,
         init: function(){
+          console.log("sinclo.trigger.init");
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
             this.flg = true;
             var messages = window.sincloInfo.messages;
