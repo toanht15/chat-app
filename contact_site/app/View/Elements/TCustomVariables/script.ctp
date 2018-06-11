@@ -276,11 +276,13 @@ var confirmSort = function(){
 //カスタム変数ソートを保存
 var saveToggleSort = toExecutableOnce(function(){
 	var list = getSort();
+	var sortNolist = getSortNo();
 	$.ajax({
 		type: "POST",
 		url: "<?= $this->Html->url(['controller' => 'TCustomVariables', 'action' => 'remoteSaveSort']) ?>",
 		data: {
-			list : list
+			list : list,
+			sortNolist : sortNolist
 		},
 		dataType: "html",
 		success: function(){
@@ -298,5 +300,15 @@ var saveToggleSort = toExecutableOnce(function(){
 		});
 		list = $.grep(list, function(e){return e;});
 		return JSON.parse(JSON.stringify(list));
+	};
+
+	var getSortNo = function(){
+		  var sortlist = [];
+		  $(".sortable tr").each(function(e){
+		    sortlist.push($(this).data('sort'));
+		  });
+		  sortlist = $.grep(sortlist, function(e){return e;});
+		  //console.log(sortlist);この時点ではソート順を取得できている(後で消す)
+		  return JSON.parse(JSON.stringify(sortlist));
 	};
 </script>

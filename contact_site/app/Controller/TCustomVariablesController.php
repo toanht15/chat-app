@@ -58,48 +58,47 @@ class TCustomVariablesController extends AppController {
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $saveData = [];
+    $saveData['TCustomVariable']['m_compaines_id'] = $this->userInfo['MCompany']['id'];
     $errorMessage = [];
 
-    if (!empty($this->request->data['customvariableId'])) {
-      $this->TCustomVariable->recursive = -1;
-      $saveData = $this->TCustomVariable->read(null, $this->request->data['customvariableId']);
-    }
-    else {
+    if (empty($saveData['TCustomVariable']['id'])){
       $this->TCustomVariable->create();
       $params = [
-          'fields' => [
-              'TCustomVariable.sort'
-          ],
-          'conditions' => [
-              'TCustomVariable.m_companies_id' => $this->userInfo['MCompany']['id']
-          ],
-          'order' => [
-              'TCustomVariable.sort' => 'desc',
-              'TCustomVariable.id' => 'desc'
-          ],
-          'limit' => 1,
-          'recursive' => -1
+        'fields' => [
+          'TCustomVariable.sort'
+        ],
+        'conditions' => [
+          'TCustomVariable.m_companies_id' => $this->userInfo['MCompany']['id']
+        ],
+        'order' => [
+          'TCustomVariable.sort' => 'desc',
+          'TCustomVariable.id' => 'desc'
+        ],
+        'limit' => 1,
+        'recursive' => -1
       ];
+
       $lastData = $this->TCustomVariable->find('first', $params);
       if($lastData){
         if($lastData['TCustomVariable']['sort'] === '0'
-            || $lastData['TCustomVariable']['sort'] === 0
-            || $lastData['TCustomVariable']['sort'] === null){
-              //ソート順が登録されていなかったらソート順をセットする
-              if(! $this->remoteSetSort()){
-                $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-                return false;
-              }
-              //もう一度ソートの最大値を取り直す
-              $lastData = $this->TCustomVariable->find('first', $params);
+        || $lastData['TCustomVariable']['sort'] === 0
+        || $lastData['TCustomVariable']['sort'] === null){
+          //ソート順が登録されていなかったらソート順をセットする
+          if(! $this->remoteSetSort()){
+            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+            return false;
+          }
+          //もう一度ソートの最大値を取り直す
+          $lastData = $this->TCustomVariable->find('first', $params);
         }
       }
       $nextSort = 1;
       if (!empty($lastData)) {
+      	//今現在登録されているsort値の最大に1を足した値を保存するための処理
         $nextSort = intval($lastData['TCustomVariable']['sort']) + 1;
       }
       $saveData['TCustomVariable']['sort'] = $nextSort;
+
     }
     $saveData['TCustomVariable']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     $saveData['TCustomVariable']['variable_name'] = $this->request->data['variable_name'];
@@ -233,6 +232,8 @@ class TCustomVariablesController extends AppController {
       $this->TCustomVariable->begin();
       $list = $this->params->data['list'];
       $sortNoList = $this->params->data['sortNolist'];
+      sort($sortNoList);
+
       $this->log($list,LOG_DEBUG);
       /* 現在の並び順を取得 */
       $params = $this->paginate['TCustomVariable'];
@@ -252,9 +253,12 @@ class TCustomVariablesController extends AppController {
         }
       }
       if($reset_flg){
-        //ソート順のリセットはID順とする
+      	//ソート順が登録されていなかった場合の処理
+      	if(! $this->remoteSetSort()){
+      		$this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+      		return false;
         }
-        $prevSort = $this->TCustomVariable->find('list', $params);
+        //$prevSort = $this->TCustomVariable->find('list', $params);243行目付近で定義されているので不要?
         //この時点では$sortNoListが空の為作成する
         if(empty($sortNoList)){
         	for ($i = 0; count($list) > $i; $i++) {
@@ -268,11 +272,11 @@ class TCustomVariablesController extends AppController {
       $ret = true;
       for ($i = 0; count($list) > $i; $i++) {
         $id = $list[$i];
-        if ( isset($prevSort[$id]) ) {
+        if(isset($prevSort[$id])){
           $saveData = [
               'TCustomVariable' => [
                   'id' => $id,
-                  'sort' => $prevSortKeys[$i]
+                  'sort' => $sortNoList[$i]
               ]
           ];
           if (!$this->TCustomVariable->validates()) {
@@ -299,6 +303,7 @@ class TCustomVariablesController extends AppController {
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
       }
     }
+  }
 
 
   /**
@@ -308,7 +313,7 @@ class TCustomVariablesController extends AppController {
   public function remoteSetSort(){
     $this->TCustomVariable->begin();
     /* 現在の並び順を取得 */
-    $this->paginate['TCustomVariable']['conditions']['TCustomVariable.m_companies_id'] = $this->userInfo['MCompany']['Id'];
+    $this->paginate['TCustomVariable']['conditions']['TCustomVariable.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $params = [
       'fields' => [
         'TCustomVariable.sort'
@@ -323,7 +328,7 @@ class TCustomVariablesController extends AppController {
       'limit' => 1,
       'recursive' => -1
     ];
-    $params['fields'] = [
+   $params['fields'] = [
       'TCustomVariable.id',
       'TCustomVariable.sort'
     ];
