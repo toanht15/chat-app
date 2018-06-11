@@ -2558,7 +2558,7 @@
                 initialNotification = true;
               }
               //初回通知メッセージではない場合
-              else if(storage.s.get('initialNotification') === 'false'){
+              else if(Boolean(storage.s.get('initialNotification')) == false) {
                 initialNotification = false;
               }
               setTimeout(function(){
