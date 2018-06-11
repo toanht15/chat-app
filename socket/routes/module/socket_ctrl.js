@@ -1113,11 +1113,11 @@ io.sockets.on('connection', function (socket) {
                   //通知された場合
                   if(ret.opFlg === true && d.notifyToCompany
                     && ret.inFlg == 1 && d.initialNotification == true) {
-                    var data = JSON.parse(ret.data);
+                    var notificationData = JSON.parse(ret.notificationData);
                     //初回通知メッセージ利用するの場合
                     //初回通知メッセージの場合
-                    for (var i = 0; i < Object.keys(data).length; i++) {
-                      d.chatMessage = data[i].message;
+                    for (var i = 0; i < Object.keys(notificationData).length; i++) {
+                      d.chatMessage = notificationData[i].message;
                       d.messageType = chatApi.cnst.observeType.notification;
                       d.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
                       chatApi.set(d);
@@ -1567,17 +1567,9 @@ io.sockets.on('connection', function (socket) {
                           (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                           (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                         ) {
-                          //初回通知メッセージを利用しない場合
-                          if(rows[0].in_flg == 2) {
-                              ret = true;
-                            }
-                            //初回通知メッセージを利用する場合
-                            else if(rows[0].in_flg == 1) {
-                              var data = rows[0].initial_notification_message;
-                              ret = true;
-                              return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
-                          }
-                          break;
+                          //初回通知メッセージ
+                          var datas = chatApi.inCheck(rows);
+                          return callback(true, {opFlg: datas[0], notificationData: datas[1],inFlg: rows[0].in_flg});
                         }
                         //オペレータが待機していない場合
                         else {
@@ -1623,17 +1615,9 @@ io.sockets.on('connection', function (socket) {
                         (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                         (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                       ) {
-                        //初回通知メッセージを利用しない場合
-                        if(rows[0].in_flg == 2) {
-                            ret = true;
-                          }
-                          //初回通知メッセージを利用する場合
-                          else if(rows[0].in_flg == 1) {
-                            var data = rows[0].initial_notification_message;
-                            ret = true;
-                            return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
-                        }
-                        break;
+                        //初回通知メッセージ
+                        var datas = chatApi.inCheck(rows);
+                        return callback(true, {opFlg: datas[0], notificationData: datas[1],inFlg: rows[0].in_flg});
                       }
                       //オペレータが待機していない場合
                       else {
@@ -1657,16 +1641,9 @@ io.sockets.on('connection', function (socket) {
                 (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                 (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
               ) {
-                //初回通知メッセージを利用しない場合
-                if(rows[0].in_flg == 2) {
-                  ret = true;
-                }
-                //初回通知メッセージを利用する場合
-                else if(rows[0].in_flg == 1) {
-                  var data = rows[0].initial_notification_message;
-                  ret = true;
-                  return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
-                }
+                //初回通知メッセージ
+                var datas = chatApi.inCheck(rows);
+                return callback(true, {opFlg: datas[0], notificationData: datas[1],inFlg: rows[0].in_flg});
               }
               //オペレータが待機していない場合
               else {
@@ -1715,17 +1692,9 @@ io.sockets.on('connection', function (socket) {
                             if ( userIds.length !== 0 ) {
                               for (var i3 = 0; i3 < userIds.length; i3++) {
                                 if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                                  //初回通知メッセージを利用しない場合
-                                  if(rows[0].in_flg == 2) {
-                                    ret = true;
-                                  }
-                                  //初回通知メッセージを利用する場合
-                                  else if(rows[0].in_flg == 1) {
-                                    var data = rows[0].initial_notification_message;
-                                    ret = true;
-                                    return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
-                                  }
-                                break;
+                                //初回通知メッセージ
+                                var datas = chatApi.inCheck(rows);
+                                return callback(true, {opFlg: datas[0], notificationData: datas[1],inFlg: rows[0].in_flg});
                               }
                               //上限数を超えている場合
                               if(ret != true) {
@@ -1785,17 +1754,9 @@ io.sockets.on('connection', function (socket) {
                           if ( userIds.length !== 0 ) {
                             for (var i2 = 0; i2 < userIds.length; i2++) {
                               if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                                //初回通知メッセージを利用しない場合
-                                if(rows[0].in_flg == 2) {
-                                  ret = true;
-                                }
-                                //初回通知メッセージを利用する場合
-                                else if(rows[0].in_flg == 1) {
-                                  var data = rows[0].initial_notification_message;
-                                  ret = true;
-                                  return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
-                                }
-                              break;
+                              //初回通知メッセージ
+                              var datas = chatApi.inCheck(rows);
+                              return callback(true, {opFlg: datas[0], notificationData: datas[1],inFlg: rows[0].in_flg});
                             }
                             //上限数を超えている場合
                             if(ret != true) {
@@ -1833,17 +1794,9 @@ io.sockets.on('connection', function (socket) {
                   if ( userIds.length !== 0 ) {
                     for (var i = 0; i < userIds.length; i++) {
                       if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                        //初回通知メッセージを利用しない場合
-                        if(rows[0].in_flg == 2) {
-                          ret = true;
-                        }
-                        //初回通知メッセージを利用する場合
-                        else if(rows[0].in_flg == 1) {
-                          var data = rows[0].initial_notification_message;
-                          ret = true;
-                          return callback(true, {opFlg: ret, data: data,inFlg: rows[0].in_flg});
-                        }
-                      break;
+                      //初回通知メッセージ
+                      var datas = chatApi.inCheck(rows);
+                      return callback(true, {opFlg: datas[0], notificationData: datas[1],inFlg: rows[0].in_flg});
                     }
                     //上限数を超えている場合
                     if(ret != true) {
@@ -1869,6 +1822,18 @@ io.sockets.on('connection', function (socket) {
           return callback(false, {ret: ret, message: null});
         }
       });
+    },
+    inCheck: function(rows){
+      //初回通知メッセージを利用しない場合
+      if(rows[0].in_flg == 2) {
+        ret = true;
+      }
+      //初回通知メッセージを利用する場合
+      else if(rows[0].in_flg == 1) {
+        var notificationData = rows[0].initial_notification_message;
+        ret = true;
+        return [ret,notificationData];
+      }
     }
   };
 
