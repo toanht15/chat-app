@@ -1393,7 +1393,7 @@
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
-        storage.s.set('initialNotification', false);
+        storage.s.set('initialNotification', 'wrong');
       }
     },
     sendReqAutoChatMessages: function(d){
@@ -2558,7 +2558,7 @@
                 initialNotification = true;
               }
               //初回通知メッセージではない場合
-              else if(Boolean(storage.s.get('initialNotification')) == false) {
+              else if(storage.s.get('initialNotification') === 'wrong') {
                 initialNotification = false;
               }
               setTimeout(function(){
