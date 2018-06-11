@@ -95,12 +95,14 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
       $this->scenarioMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
     }
     if(!empty($this->variables[self::RECEIVE_FILE_VARIABLE_KEY])) {
+      $this->scenarioMessageBlock .= "\n";
       $data = json_decode($this->variables[self::RECEIVE_FILE_VARIABLE_KEY], TRUE);
       foreach($data as $obj) {
-        $this->scenarioMessageBlock .= self::MESSAGE_SEPARATOR."\n";
+        $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n";
         $this->scenarioMessageBlock .= "ダウンロードＵＲＬ：".$obj['downloadUrl']."\n";
         $this->scenarioMessageBlock .= "コメント：\n".$obj['comment']."\n";
       }
+      $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n\n";
     }
   }
 
