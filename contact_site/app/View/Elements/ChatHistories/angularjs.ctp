@@ -692,7 +692,7 @@
 
     $scope.createTextOfSendFile = function(chat, url, name, size, extension, isExpired) {
       var thumbnail = "";
-      if (extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
+      if (extension.match(/(jpeg|jpg|gif|png)$/i) != null && !isExpired) {
         thumbnail = "<img src='" + url + "' class='sendFileThumbnail' width='64' height='64'>";
       } else {
         thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
@@ -714,7 +714,7 @@
     $scope.createTextOfRecieveFile = function(chat, url, name, size, extension, comment) {
       var thumbnail = "";
       var height = "";
-      if (extension.match(/(jpeg|jpg|gif|png)$/) != null) {
+      if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
         thumbnail = "<img src='" + url + "' class='recieveFileThumbnail'>";
       } else {
         thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";

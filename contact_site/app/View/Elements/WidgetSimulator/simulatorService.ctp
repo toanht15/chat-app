@@ -407,7 +407,7 @@ sincloApp.factory('SimulatorService', function() {
      * @param String extension ファイル拡張子
      */
     isImage: function(extension) {
-      return /jpeg|jpg|gif|png/.test(extension);
+      return /jpeg|jpg|gif|png/i.test(extension);
     },
     /**
      * ファイルタイプ別ごとに、font-awesome用のクラスを出し分ける
