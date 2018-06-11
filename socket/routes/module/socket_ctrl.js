@@ -3129,7 +3129,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   // オートチャット
   socket.on("sendAutoChat", function(d){
-    console.log('おおおおおおーとチャット');
     var obj = JSON.parse(d);
     //応対数検索、登録
     getConversationCountUser(obj.userId,function(results) {

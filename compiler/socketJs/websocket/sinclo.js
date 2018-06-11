@@ -2,8 +2,6 @@
   // -----------------------------------------------------------------------------
   //   websocket通信
   // -----------------------------------------------------------------------------
-  console.log('はいはい！');
-  console.log(sincloInfo);
   var $ = jquery;
   sinclo = {
     widget: {
@@ -1092,7 +1090,6 @@
         if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
         var chat = obj.chat.messages[key], userName;
         if ( Number(chat.messageType) < 90 ) {
-          console.log('自動返信7');
           var cn = (Number(chat.messageType) === 1 || Number(chat.messageType) === 12 || Number(chat.messageType) === 13) ? "sinclo_se" : "sinclo_re";
           if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
               this.chatApi.unread++;
@@ -1139,7 +1136,6 @@
             }
           }
           else if ( Number(chat.messageType) === sinclo.chatApi.messageType.company ) {
-            console.log('自動返信3');
             cn = "sinclo_re";
             sinclo.chatApi.call();
             console.log("sincloInfo.widget.showOpName : %s",sincloInfo.widget.showOpName);
@@ -1396,8 +1392,6 @@
       }
       //通知した際に自由入力エリア表示
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
-        console.log('通知来たよ');
-        console.log(d);
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
         storage.s.set('notificationFlg', 0);
@@ -1418,7 +1412,6 @@
         console.log("resAutoChatMessage : " + JSON.stringify(d));
         var obj = JSON.parse(d);
         if(!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
-          console.log('自動返信8');
           sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
         }
         sinclo.chatApi.autoMessages.push(obj.chatId, obj);
@@ -1438,7 +1431,6 @@
           this.chatApi.scDown();
           return false;
         } else {
-          console.log('自動返信2');
           // 別タブで表示したシナリオメッセージは表示する
           cn = "sinclo_re";
         }
@@ -2234,7 +2226,6 @@
           }
         },
         createMessage: function(cs, val, cName, isScenarioMsg){
-            console.log('ここには入っている');
             var chatList = document.getElementsByTagName('sinclo-chat')[0];
             var div = document.createElement('div');
             var li = document.createElement('li');
@@ -2522,8 +2513,6 @@
           this.pushFlg = false;
         },
         send: function(value){
-          console.log('チャット送る');
-          console.log(value);
           var messageType = sinclo.chatApi.messageType.customer;
           // 自動返信の処理中でなければ
           if(!sinclo.trigger.processing) {
@@ -2553,8 +2542,6 @@
             }
 
             sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
-              console.log('あえいいいい');
-              console.log(result);
               if(result && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 storage.s.set('chatAct', false); // オートメッセージを表示しない
               }
@@ -2571,11 +2558,9 @@
                 isScenarioMessage = true;
               }
               if(storage.s.get('notificationFlg') == 0) {
-                console.log('大事1');
                 notificationFlg = 0;
               }
               else {
-                console.log('大事2');
                 notificationFlg = 1;
               }
               setTimeout(function(){
@@ -2764,27 +2749,20 @@
         orTriggeredId: [],
         processing: false,
         init: function(){
-            console.log("sinclo.trigger.init");
-            console.log('へいよお');
             if ( !('messages' in window.sincloInfo) || (('messages' in window.sincloInfo) && typeof(window.sincloInfo.messages) !== "object" ) ) return false;
             this.flg = true;
             var messages = window.sincloInfo.messages;
             console.log("MESSAGES : " + JSON.stringify(messages));
 
             var andFunc = function(conditionKey, condition, key, ret){
-                console.log('ここだよおおおお');
-                console.log(messages);
                 if(conditionKey === 7) {
                   // 自動返信のトリガーの場合は処理中フラグを立てる
                   sinclo.trigger.processing = true;
                 }
                 console.log("AND FUNC key: " + key + " ret: " + ret);
                 var message = messages[key];
-                console.log('retとは！');
-                console.log(ret);
                 if (typeof(ret) === 'number') {
                     setTimeout(function(){
-                      console.log('ここがマジで重要だと思う');
                       sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
                       sinclo.trigger.processing = false;
                       // if(conditionKe大変申し訳ございません。 y === 7) {
@@ -2856,7 +2834,6 @@
             for( var i = 0; messages.length > i; i++ ){
                 // AND
                 if ( Number(messages[i].activity.conditionType) === 1 ) {
-                    console.log('ここに注目');
                     this.setAndSetting(i, messages[i].activity, andFunc);
                 }
                 // OR
@@ -3082,7 +3059,6 @@
             callback(null, null, key, ret);
         },
         setAutoMessage: function(id, cond, sendMail){
-            console.log('ええええええええ');
             if(sincloInfo.widget.showTiming === 3) {
               console.log("オートメッセージ表示処理発動");
               // 初回オートメッセージ表示時にフラグを立てる
@@ -3160,7 +3136,6 @@
             }
         },
         setAction: function(id, type, cond, sendMail, scenarioId){
-            console.log('セットアクション！');
             console.log("setAction id : " + id + " type : " + type + " cond : " + JSON.stringify(cond));
             // TODO 今のところはメッセージ送信のみ、拡張予定
             var chatActFlg = storage.s.get('chatAct');
@@ -4150,7 +4125,6 @@
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
-          console.log('自動返信6');
           sinclo.chatApi.createMessage('sinclo_re', message, name, true);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();

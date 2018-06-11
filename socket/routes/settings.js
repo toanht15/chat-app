@@ -729,9 +729,6 @@ router.post("/reload/operationHour", function(req, res, next) {
 
 router.post("/reload/chatSettings", function(req, res, next) {
 
-  console.log('res');
-  console.log(res);
-
   /* Cross-Origin */
   // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
 
