@@ -2934,7 +2934,7 @@
           return false;
         },
         _getAllowExtension: function() {
-          var base = ["pdf","pptx","ppt","jpg","png","gif"];
+          var base = ["pdf","pptx","ppt","jpg","jpeg","png","gif"];
           switch(Number(sinclo.chatApi.fileUploader.extensionType)) {
             case 1:
               return base;
