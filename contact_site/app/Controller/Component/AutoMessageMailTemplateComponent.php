@@ -307,8 +307,8 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected function createReceiveFileMessageContent($content) {
     $message = "";
     $content = json_decode($content, TRUE);
-    $message .= "ダウンロードＵＲＬ：".$content['downloadUrl']."】\n";
-    $message .= "コメント：\n".$content['downloadUrl']."】\n";
+    $message .= "ダウンロードＵＲＬ：".$content['downloadUrl']."\n";
+    $message .= "コメント：\n".$content['comment']."\n";
     return $message;
   }
 
