@@ -26,6 +26,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
 
   const DATETIME_FORMAT = 'Y/m/d H:i:s';
   const MESSAGE_SEPARATOR = '=================================================================';
+  const RECEIVE_FILE_MESSAGE_SEPARATOR = '--------------------------------------------------------------------------------------------------------';
   const CAMPAIGN_SEPARATOR = "｜";
 
   const MAIL_TYPE_CD = 'AM001';
