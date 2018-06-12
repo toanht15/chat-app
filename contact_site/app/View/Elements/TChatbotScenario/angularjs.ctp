@@ -38,12 +38,22 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   }
 
+  // 登録済みシナリオ一覧（条件分岐用）
+  var scenarioJsonListForBranchOnCond = JSON.parse(document.getElementById('TChatbotScenarioScenarioListForBranchOnCond').value);
+  this.scenarioListForBranchOnCond = [];
+  for (var key in scenarioJsonListForBranchOnCond) {
+    if (scenarioJsonListForBranchOnCond.hasOwnProperty(key)) {
+      this.scenarioListForBranchOnCond.push({'id': scenarioJsonListForBranchOnCond[key].TChatbotScenario.id, 'name': scenarioJsonListForBranchOnCond[key].TChatbotScenario.name});
+    }
+  }
+
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.inputAttributeList = <?php echo json_encode($chatbotScenarioAttributeType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiMethodType = <?php echo json_encode($chatbotScenarioApiMethodType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiResponseType = <?php echo json_encode($chatbotScenarioApiResponseType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.receiveFileTypeList = <?php echo json_encode($chatbotScenarioReceiveFileTypeList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.processActionTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionActionType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
@@ -378,6 +388,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
       target.push(angular.copy(src));
       this.controllExternalApiSetting(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+      var src = $scope.actionList[actionType].default.conditionList[0];
+      var target = $scope.setActionList[actionStep].conditionList;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllBranchOnConditionSettingView(actionStep);
     }
   };
 
@@ -717,6 +732,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup.externalApiResponseBody tr');
       targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList);
+    });
+  };
+
+  this.controllBranchOnConditionSettingView = function(actionStep) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
+      var targetObjList = $scope.setActionList[actionStep].conditionList;
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 5)
     });
   };
 
