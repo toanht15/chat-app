@@ -53,6 +53,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.apiMethodType = <?php echo json_encode($chatbotScenarioApiMethodType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiResponseType = <?php echo json_encode($chatbotScenarioApiResponseType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.receiveFileTypeList = <?php echo json_encode($chatbotScenarioReceiveFileTypeList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.matchValueTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionMatchValueType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.processActionTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionActionType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
@@ -1065,6 +1066,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               return;
             }
           }
+          // どの条件にもマッチしなかった場合
+          if(actionDetail.elseEnabled) {
+            $scope.doBranchOnCondAction(actionDetail.elseAction);
+          }
         }
       }, parseInt(time, 10) * 1000);
     } else {
@@ -1167,7 +1172,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       } else {
         var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
         var preg = new RegExp(word);
-        exclusionResult = preg.test(val);
+        var exclusionResult = preg.test(val);
         if(exclusionResult) {
           // 含んでいる場合はNG
           return false;

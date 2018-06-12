@@ -239,7 +239,11 @@ define('C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR', 3);
 define('C_SCENARIO_RECEIVE_FILE_TYPE_BASIC', 1);
 define('C_SCENARIO_RECEIVE_FILE_TYPE_EXTENDED', 2);
 
-// シナリオ設定条件分岐)−実行するアクション
+// シナリオ設定（条件分岐)−変数の値一致条件
+define('C_SCENARIO_VARIABLE_CONDITION_IN', 1);
+define('C_SCENARIO_VARIABLE_CONDITION_NOT_IN', 2);
+
+// シナリオ設定（条件分岐)−実行するアクション
 define('C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT', 1);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO', 2);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE', 3);
@@ -910,6 +914,16 @@ $config['chatbotScenarioApiMethodType'] = [
 /* シナリオ設定 - 外部システム連携のレスポンス種別 */
 $config['chatbotScenarioApiResponseType'] = [
   0 => 'JSON'
+];
+
+/* シナリオ設定 - 条件分岐 - 実行するアクション */
+$config['chatbotScenarioBranchOnConditionMatchValueType'] = [
+  C_SCENARIO_VARIABLE_CONDITION_IN => [
+    'label' => 'のいずれかを含む'
+  ],
+  C_SCENARIO_VARIABLE_CONDITION_NOT_IN => [
+    'label' => 'のいずれも含まない場合'
+  ]
 ];
 
 /* シナリオ設定 - 条件分岐 - 実行するアクション */
