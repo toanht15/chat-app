@@ -36,6 +36,7 @@
             <label class="pointer"><input type="radio" ng-model="hearingItem.inputLFType" ng-value="<?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>">改行可<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の複数行入力を許可します。<br>（改行を許可）" data-tooltip-width='220'>?</icon></span></label>
           </span>
         </div>
+        <hr class="separator"/>
       </div>
     </li>
     <li class="styleFlexbox">
@@ -137,6 +138,7 @@
         <resize-textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="1" placeholder="メール本文を入力してください" data-maxRow="10"></resize-textarea>
       </div>
     </li>
+    <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.sendWithDownloadURL" ng-init="setItem.sendWithDownloadURL">添付ファイルがある場合、ダウンロードURLをメール本文に記載する</label>
   </ul>
 </div>
 
@@ -161,21 +163,22 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>" class="set_action_item_body action_hearing">
   <ul>
     <li>
-    <div  ng-repeat="(listId, getAttributes) in setItem.getAttributes track by $index">
       <div class='grid-container grid-container-header'>
         <div class='area-name'>変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の回答内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{&thinsp;{変数名}&thinsp;}と指定することで利用することが可能です。<br><br>例）変数名：名前　⇒　{&thinsp;{名前}&thinsp;}様からのお問い合わせを受付いたしました。" data-tooltip-width='300'>?</icon></span></div>
         <div class='area-message'>CSSセレクタ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットが自動送信する質問内容を設定します。<br><br>例）お名前を入力して下さい。" data-tooltip-width='285'>?</icon></span></div>
       </div>
-      <div class='grid-container grid-container-body itemListGroup'>
-        <div class='area-name'><input type="text" ng-model="getAttributes.variableName"></div>
-        <input type="hidden" ng-model="getAttributes.type" ng-init="getAttributes.type=3" value="3"/>
-        <div class='area-selector'><input type = "text" ng-model="getAttributes.attributeValue" rows="1" data-maxRow="10" class = "textarea-message"></input></div>
-        <div class='area-btn'>
-          <div class="btnBlock">
-            <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+      <div  class='styleFlexbox' ng-repeat="(listId, getAttributes) in setItem.getAttributes track by $index">
+        <div class='grid-container grid-container-body itemListGroup'>
+          <div class='area-name'><input type="text" ng-model="getAttributes.variableName"></div>
+          <input type="hidden" ng-model="getAttributes.type" ng-init="getAttributes.type=3" value="3"/>
+          <div class='area-selector'><input type = "text" ng-model="getAttributes.attributeValue" rows="1" data-maxRow="10" class = "textarea-message"></input></div>
+          <div class='area-btn'>
+            <div class="btnBlock">
+              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+            </div>
           </div>
+          <hr class="separator"/>
         </div>
-      </div>
       </div>
     </li>
   </ul>
@@ -346,7 +349,7 @@
           <span class="labelArea">条件{{$index+1}}</span>
         </h5>
       </div>
-      <ul>
+      <ul class="condition">
         <li class="styleFlexbox">
           <span class="fb13em indentDown"><label>変数の値が</label></span>
           <input type="text" ng-model="condition.matchValue">
@@ -358,12 +361,19 @@
         </li>
         <li class="styleFlexbox">
           <div class="fb13em indentDown">実行するアクション</div>
-          <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = condition.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
-          <resize-textarea ng-model="condition.action.message" ng-if="condition.actionType == 1"></resize-textarea>
-          <select ng-model="condition.action.callScenarioId" ng-if="condition.actionType == 2" ng-init="condition.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioListForBranchOnCond">
-            <option value="">シナリオを選択してください</option>
-            <option value="self">このシナリオ</option>
-          </select>
+          <div class="conditionTypeSelect">
+            <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = condition.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
+          </div>
+          <div class="conditionAction" ng-if="condition.actionType == 1">
+            <resize-textarea ng-model="condition.action.message" placeholder="メッセージを入力してください"></resize-textarea>
+          </div>
+          <div class="conditionAction" ng-if="condition.actionType == 2">
+            <select ng-model="condition.action.callScenarioId" ng-init="condition.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioListForBranchOnCond">
+              <option value="">シナリオを選択してください</option>
+              <option value="self">このシナリオ</option>
+            </select>
+          </div>
+          <div class="conditionAction" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
           <div class='area-btn'>
             <div class="btnBlock">
               <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
@@ -376,14 +386,22 @@
       <div>
         <hr class="separator"/>
         <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.elseEnabled" ng-init="setItem.elseEnabled = true">上記を満たさない場合に実行するアクション<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャット履歴の「成果」に「途中離脱」または「CV」として自動登録します。<br><br>【途中離脱】ヒアリング途中で終了した場合<br>【CV】全項目のヒアリングが完了した場合（入力内容の確認を行う場合は「OK」が選択された場合）" data-tooltip-width='300'>?</icon></span></label>
-        <ul ng-if="setItem.elseEnabled == true">
+
+        <ul class="condition else" ng-if="setItem.elseEnabled == true">
           <li class="styleFlexbox">
-            <select class="m10r" ng-model="setItem.elseAction.actionType" ng-init="setItem.elseAction.actionType = setItem.elseAction.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
-            <resize-textarea ng-model="setItem.elseAction.action.message" ng-if="setItem.elseAction.actionType == 1"></resize-textarea>
-            <select ng-model="setItem.elseAction.action.callScenarioId" ng-if="setItem.elseAction.actionType == 2" ng-init="setItem.elseAction.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioList">
-              <option value="">シナリオを選択してください</option>
-              <option value="self">このシナリオ</option>
-            </select>
+            <div class="conditionTypeSelect">
+              <select class="m10r" ng-model="setItem.elseAction.actionType" ng-init="setItem.elseAction.actionType = setItem.elseAction.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
+            </div>
+            <div class="conditionAction elseCondition" ng-if="setItem.elseAction.actionType == 1">
+              <resize-textarea ng-model="setItem.elseAction.action.message" placeholder="メッセージを入力してください"></resize-textarea>
+            </div>
+            <div class="conditionAction elseCondition" ng-if="setItem.elseAction.actionType == 2">
+              <select ng-model="setItem.elseAction.action.callScenarioId" ng-if="setItem.elseAction.actionType == 2" ng-init="setItem.elseAction.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioList">
+                <option value="">シナリオを選択してください</option>
+                <option value="self">このシナリオ</option>
+              </select>
+            </div>
+            <div class="conditionAction elseCondition" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
           </li>
         </ul>
       </div>

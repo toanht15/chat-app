@@ -4802,7 +4802,6 @@
           dataObj[i].sent = true;
         }
         self._saveVariable(self._sendFile._downloadUrlKey, JSON.stringify(dataObj));
-        debugger;
       },
       _hearing: {
         _parent: null,
@@ -5114,6 +5113,7 @@
             mailType: self._parent.get(self._parent._lKey.currentScenario).mailType,
             transmissionId: self._parent.get(self._parent._lKey.currentScenario).mMailTransmissionId,
             templateId: self._parent.get(self._parent._lKey.currentScenario).mMailTemplateId,
+            withDownloadURL: self._isNeedToAddDownloadURL(),
             variables: targetVariables
           };
 
@@ -5123,6 +5123,11 @@
           if(self._parent._goToNextScenario()) {
             self._parent._process();
           }
+        },
+        _isNeedToAddDownloadURL: function() {
+          var self = sinclo.scenarioApi._mail;
+          var isNeed = self._parent.get(self._parent._lKey.currentScenario).sendWithDownloadURL;
+          return (isNeed) ? isNeed : false;
         }
       },
       _anotherScenario: {
