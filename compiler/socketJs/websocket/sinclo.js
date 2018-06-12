@@ -4678,7 +4678,19 @@
         var self = sinclo.scenarioApi;
         var resultSet = {};
         self.get(self._lKey.storedVariableKeys).forEach(function(elm, index, array){
-          resultSet[elm] = self._getSavedVariable(elm);
+          if(elm === self._sendFile._downloadUrlKey) {
+            // いったん取り出す
+            var sendFileArray = JSON.parse(self._getSavedVariable(elm));
+            var targetFileArray = [];
+            for(var i=0; i<sendFileArray.length; i++) {
+              if(!sendFileArray[i].sent) {
+                targetFileArray.push(sendFileArray[i]);
+              }
+              resultSet[elm] = JSON.stringify(targetFileArray);
+            }
+          } else {
+            resultSet[elm] = self._getSavedVariable(elm);
+          }
         });
         return resultSet;
       },
@@ -4774,6 +4786,23 @@
         });
         self.set(self._lKey.scenarios, newScenarioObj);
         self.set(self._lKey.scenarioLength, Object.keys(newScenarioObj).length);
+      },
+      /**
+       * メール送信したアップロード済み情報をフラグ付けする
+       * @private
+       */
+      _applyAllDataSent: function() {
+        var self = sinclo.scenarioApi;
+        var data = self._getSavedVariable(self._sendFile._downloadUrlKey);
+        var dataObj = [];
+        if(check.isJSON(data)) {
+          dataObj = JSON.parse(data);
+        }
+        for(var i=0; i < dataObj.length; i++) {
+          dataObj[i].sent = true;
+        }
+        self._saveVariable(self._sendFile._downloadUrlKey, JSON.stringify(dataObj));
+        debugger;
       },
       _hearing: {
         _parent: null,
@@ -5088,7 +5117,9 @@
             variables: targetVariables
           };
 
-          emit('processSendMail', sendData, function(ev) {});
+          emit('processSendMail', sendData, function(ev) {
+            self._parent._applyAllDataSent();
+          });
           if(self._parent._goToNextScenario()) {
             self._parent._process();
           }
