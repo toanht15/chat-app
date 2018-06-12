@@ -227,7 +227,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params);
+        //$tHistoryCountData = $this->THistory->find('first', $params);
+        $tHistoryCountData = 2;
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -1767,7 +1768,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        $tHistoryCountData = 2;
       }
       else {
         $tHistoryCountData = "";

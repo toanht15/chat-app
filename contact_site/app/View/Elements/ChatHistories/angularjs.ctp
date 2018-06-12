@@ -228,6 +228,8 @@
 
     // 【チャット】チャット枠の構築
     $scope.createMessage = function(elem, chat){
+      console.log('chatApi');
+      console.log(chat);
       var chatApi = {
         connect: false,
         tabId: null,
@@ -242,6 +244,7 @@
           sorry: 4,
           autoSpeech: 5,
           sendFile: 6,
+          notification: 7,
           start: 98,
           end: 99,
           scenario: {
@@ -388,7 +391,7 @@
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
-      else if ( type === chatApi.messageType.autoSpeech ) {
+      else if ( type === chatApi.messageType.autoSpeech || type === chatApi.messageType.notification) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
@@ -449,7 +452,8 @@
           var isExpired = Math.floor((new Date()).getTime() / 1000) >=  (Date.parse( message.expired.replace( /-/g, '/') ) / 1000);
           content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
         }
-      } else if ( type === chatApi.messageType.scenario.customer.hearing) {
+      }
+       else if ( type === chatApi.messageType.scenario.customer.hearing) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
         forDeletionMessage = escape_html(forDeletionMessage);
