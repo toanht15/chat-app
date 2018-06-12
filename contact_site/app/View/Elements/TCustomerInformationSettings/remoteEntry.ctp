@@ -1,5 +1,8 @@
 <script type="text/javascript">
   //保存時の処理を行う必要があるので内部開発をするときに随時変更していく
+
+  //特定項目を選択した際に、追加メニュー分の高さを確保する
+  //特定項目から選択が外れた場合は、その分の高さを削減する
   $(function () {
     $('#CustomVariableForm').on('click', function(e){
       if($(this).prop('checked')) {
@@ -27,6 +30,27 @@
             selectflag = 0;
         }
       }
+    });
+    //ツールチップの表示制御
+    var topPosition = 0;
+    $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+      console.log('aiueo');
+      var parentTdId = $(this).parent().attr('id');
+      console.log(parentTdId);
+      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+      console.log(targetObj);
+      targetObj.find('icon-annotation').css('display','block');
+      //jQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
+      targetObj.css({
+        top: ($(this).get(0).offsetTop - targetObj.find('ul').outerHeight() - 32 + topPosition) + 'px',
+        left: $(this).get(0).offsetLeft - 6 + 'px'
+      });
+    });
+
+    $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+      var parentTdId = $(this).parent().attr('id');
+      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+      targetObj.find('icon-annotation').css('display','none');
     });
   });
 
@@ -95,7 +119,7 @@
           項目名
         </label>
         <div class="questionBallon" id="filterType1Label">
-          <icon class="questionBtn variable_helpBtn">?</icon>
+          <icon class="questionBtn">?</icon>
         </div>
         <?= $this->Form->input('項目名', ['div' => false, 'label' => false, 'maxlength' => 100,'style' => 'margin-left: 15px;']) ?>
       </span>
@@ -105,8 +129,8 @@
         <label class="require">
           タイプ
         </label>
-        <div class="questionBallon" id="filterType1Label">
-          <icon class="questionBtn variable_helpBtn">?</icon>
+        <div class="questionBallon" id="filterType2Label">
+          <icon class="questionBtn">?</icon>
         </div>
         <?= $this->Form->input('タイプ名',
         ['type' => 'select',
@@ -134,8 +158,8 @@
           <input type="checkbox" id="ViewItemForm" style="position:relative; top:-1px; margin-left:15px"/>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>
-        <div class="questionBallon" id="filterType1Label">
-          <icon class="questionBtn variable_helpBtn">?</icon>
+        <div class="questionBallon" id="filterType3Label">
+          <icon class="questionBtn">?</icon>
         </div>
       </span>
     </div>
@@ -145,8 +169,8 @@
           <input type="checkbox" id="MailableForm" style="position:relative; top:-1px; margin-left:15px"/>
           メール送信時にメール本文に記載する
         </label>
-        <div class="questionBallon" id="filterType1Label">
-          <icon class="questionBtn variable_helpBtn">?</icon>
+        <div class="questionBallon" id="filterType4Label">
+          <icon class="questionBtn">?</icon>
         </div>
       </span>
     </div>
@@ -156,8 +180,8 @@
           <input type="checkbox" id="CustomVariableForm" style="position:relative; top:-1px; margin-left:15px"/>
           カスタム変数の値を自動的に登録する
         </label>
-        <div class="questionBallon" id="filterType1Label">
-          <icon class="questionBtn variable_helpBtn">?</icon>
+        <div class="questionBallon" id="filterType5Label">
+          <icon class="questionBtn">?</icon>
         </div>
       </span>
     </div>
@@ -166,8 +190,8 @@
         <label class="require">
           カスタム変数
         </label>
-        <div class="questionBallon" id="filterType1Label">
-          <icon class="questionBtn variable_helpBtn">?</icon>
+        <div class="questionBallon" id="filterType6Label">
+          <icon class="questionBtn">?</icon>
         </div>
         <?php $customvariablelist = array_column($tCustomVariableList, 'TCustomerInformationSetting');?>
         <?php $variablelist = array_column($customvariablelist, 'variable_name');?>
@@ -185,4 +209,47 @@
       <span style="margin-top: 8px;">コメント</span>
       <?= $this->Form->textarea('コメント変数', ['placeholder' => 'コメント', 'div' => false, 'label' => false, 'maxlength' => 300,'style' => 'margin-top: 8px; padding: 10px;']) ?>
     </div>
+    <div id="filterType1Tooltip" class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span class="detail">項目名のヘルプです。</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id="filterType2Tooltip" class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span class="detail">タイプのヘルプです。</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id="filterType3Tooltip" class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span class="detail">CheckBox1のヘルプです。</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id="filterType4Tooltip" class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span class="detail">CheckBox2のヘルプです。</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id="filterType5Tooltip" class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span class="detail">CheckBox3のヘルプです。</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id="filterType6Tooltip" class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span class="detail">カスタム変数のヘルプです。</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+  </div>
 <?= $this->Form->end(); ?>

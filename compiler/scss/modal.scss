@@ -1539,7 +1539,7 @@
     }
   }
 
-  .explainTooltip1, .explainTooltip2{
+ .explainTooltip{
     z-index: 10;
     position: absolute;
 
@@ -1548,6 +1548,7 @@
       height: 2.1em;
       display: none;
 
+      /* 矢印 */
       &:before {
         content: " ";
         border: none;
@@ -1595,34 +1596,6 @@
     }
   }
 
-  .explainTooltip1 {
-    icon-annotation {
-      /* 矢印 */
-      &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -42px;
-        left: 5px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -40px;
-        left: 5px;
-        z-index: 3;
-      }
-    }
-  }
 
   .form01 > div {
     display: -webkit-box;

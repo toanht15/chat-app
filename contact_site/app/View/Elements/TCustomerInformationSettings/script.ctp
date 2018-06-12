@@ -2,30 +2,26 @@
 
 $(document).ready(function(){
   // ツールチップの表示制御
-  $(document).off('mouseenter','.variable_helpBtn').on('mouseenter','.variable_helpBtn', function(event){
-    var targetObj = $('.explainTooltip1');
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    console.log('aiueo');
+    var parentTdId = $(this).parent().attr('id');
+    console.log(parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: ( -(targetObj.find('ul').outerHeight()) - 28) + 'px',
-      left: (targetObj.find('ul').outerWidth() - 94) + 'px'
+      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70 + topPosition) + 'px',
+      left: $(this).offset().left - 65 + 'px'
     });
-  });
-  $(document).off('mouseleave','.variable_helpBtn').on('mouseleave','.variable_helpBtn', function(event){
-    $('.explainTooltip1').find('icon-annotation').css('display','none');
   });
 
-  $(document).off('mouseenter','.selecter_helpBtn').on('mouseenter','.selecter_helpBtn', function(event){
-    var targetObj = $('.explainTooltip2');
-    targetObj.find('icon-annotation').css('display','block');
-    targetObj.css({
-      top: ( -(targetObj.find('ul').outerHeight()) + 18) + 'px',
-      left:(targetObj.find('ul').outerWidth() - 94) + 'px'
-    });
-  });
-  $(document).off('mouseleave','.selecter_helpBtn').on('mouseleave','.selecter_helpBtn', function(event){
-    $('.explainTooltip2').find('icon-annotation').css('display','none');
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
   });
 });
+
 function openAddDialog(){
 	//並べ替えチェックボックスが入っているときはリンク無効とする
 	if (!document.getElementById("sort").checked) {
