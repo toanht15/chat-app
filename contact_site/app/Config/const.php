@@ -239,6 +239,12 @@ define('C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR', 3);
 define('C_SCENARIO_RECEIVE_FILE_TYPE_BASIC', 1);
 define('C_SCENARIO_RECEIVE_FILE_TYPE_EXTENDED', 2);
 
+// シナリオ設定条件分岐)−実行するアクション
+define('C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT', 1);
+define('C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO', 2);
+define('C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE', 3);
+define('C_SCENARIO_PROCESS_ACTION_TYPE_NONE', 4);
+
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
@@ -795,6 +801,31 @@ $config['chatbotScenarioActionList'] = [
       'cancelLabel' => 'ファイル送信をキャンセルする'
     ]
   ]
+  ,
+  // 条件分岐
+  C_SCENARIO_ACTION_BRANCH_ON_CONDITION => [
+    'label' => '条件分岐',
+    'default' => [
+      'referenceVariable' => "",
+      'conditionList' => [
+        [
+          "matchValue" => "",
+          "matchValueType" => "1", // のいずれかを含む場合
+          "actionType" => "1", //テキスト発言
+          "action" => [
+            "message" => "メッセージを入力してください"
+          ]
+        ]
+      ],
+      'elseEnabled' => 1,
+      'elseAction' => [
+        "actionType" => "1",
+        "action" => [
+          "message" => "メッセージを入力してください"
+        ]
+      ]
+    ]
+  ]
 ];
 
 /* シナリオ設定 - ヒアリング入力タイプ */
@@ -879,6 +910,22 @@ $config['chatbotScenarioApiMethodType'] = [
 /* シナリオ設定 - 外部システム連携のレスポンス種別 */
 $config['chatbotScenarioApiResponseType'] = [
   0 => 'JSON'
+];
+
+/* シナリオ設定 - 条件分岐 - 実行するアクション */
+$config['chatbotScenarioBranchOnConditionActionType'] = [
+  C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT => [
+    'label' => 'テキスト発言'
+  ],
+  C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO => [
+    'label' => 'シナリオ呼び出し'
+  ],
+  C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE => [
+    'label' => 'シナリオを終了'
+  ],
+  C_SCENARIO_PROCESS_ACTION_TYPE_NONE => [
+    'label' => '何もしない（次処理へ）'
+  ]
 ];
 
 /* 成果種別 */
