@@ -41,9 +41,9 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     $this->variables = $variables;
   }
 
-  public function createMessageBody() {
+  public function createMessageBody($withDownloadURL = false) {
     $this->readTemplate();
-    $this->prepareScenarioMessageBlock();
+    $this->prepareScenarioMessageBlock($withDownloadURL);
     $this->setScenarioMessageBlock();
   }
 
@@ -55,14 +55,14 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     return $message;
   }
 
-  private function prepareScenarioMessageBlock() {
+  private function prepareScenarioMessageBlock($withDownloadURL) {
     switch($this->type) {
       case "1":
-        $this->createMetaDataMessage();
+        $this->createMetaDataMessage($withDownloadURL);
         $this->createMessages();
         break;
       case "2":
-        $this->createMetaDataMessage();
+        $this->createMetaDataMessage($withDownloadURL);
         $this->createVariablesMessageBlock();
         break;
       case "3":
@@ -87,14 +87,14 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   /**
    * @override
    */
-  protected function createMetaDataMessage() {
+  protected function createMetaDataMessage($withDownloadURL) {
     $this->scenarioMessageBlock  = "シナリオ実行ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
     $this->scenarioMessageBlock .= "シナリオ実行ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
     $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
     if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
       $this->scenarioMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
     }
-    if(!empty($this->variables[self::RECEIVE_FILE_VARIABLE_KEY])) {
+    if($withDownloadURL && !empty($this->variables[self::RECEIVE_FILE_VARIABLE_KEY])) {
       $this->scenarioMessageBlock .= "\n";
       $data = json_decode($this->variables[self::RECEIVE_FILE_VARIABLE_KEY], TRUE);
       foreach($data as $obj) {

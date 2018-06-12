@@ -665,6 +665,7 @@ function sendSenarioMail(obj, callback) {
     "mailType": obj.mailType,
     "transmissionId": obj.transmissionId,
     "templateId": obj.templateId,
+    "withDownloadURL": obj.withDownloadURL,
     "variables": obj.variables
   }));
   req.end();

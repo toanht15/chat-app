@@ -137,6 +137,7 @@
         <resize-textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="1" placeholder="メール本文を入力してください" data-maxRow="10"></resize-textarea>
       </div>
     </li>
+    <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.sendWithDownloadURL" ng-init="setItem.sendWithDownloadURL">添付ファイルがある場合、ダウンロードURLをメール本文に記載する</label>
   </ul>
 </div>
 
