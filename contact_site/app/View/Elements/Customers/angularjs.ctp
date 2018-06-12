@@ -1329,10 +1329,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.createTextOfSendFile = function(chat, url, name, size, extension, isExpired, message) {
       var thumbnail = "";
       if (extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
-        console.log('こちらに入っているか');
         thumbnail = "<img src='" + url + "' class='sendFileThumbnail' width='64' height='64'>";
       } else {
-        console.log('どちらに入っているか');
         thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
       }
 
@@ -1353,7 +1351,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     function selectFontIconClassFromExtension(ext) {
-      console.log('ここだね');
       var selectedClass = "",
         icons = {
           image:      'fa-file-image-o',
@@ -1445,7 +1442,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         content += $scope.createTextOfMessage(chat, message);
       }
       else if ( type === chatApi.messageType.autoSpeech || type === chatApi.messageType.notification) {
-        console.log('ここに入っておるはず');
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
         div.style.height = 'auto';

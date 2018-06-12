@@ -1407,8 +1407,6 @@
       }
       //通知した際に自由入力エリア表示
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
-        console.log('ちぇええええっく');
-        console.log(obj);
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
         storage.s.set('initialNotification', 'false');
@@ -2573,12 +2571,10 @@
               }
               //初回通知メッセージの場合
               if(storage.s.get('initialNotification') === null || storage.s.get('initialNotification') === 'true') {
-                console.log('うおおおおおおおおおお');
                 initialNotification = true;
               }
               //初回通知メッセージではない場合
               else if(storage.s.get('initialNotification') === 'false') {
-                console.log('あはあああああ');
                 initialNotification = false;
               }
               else {
