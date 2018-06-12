@@ -1377,7 +1377,7 @@
   height: 450px!important;
 
   #filterType1Label {
-    margin-left: 56.6px!important;
+    margin-right: 36.6px;
   }
 
   .questionBallon {
@@ -1510,6 +1510,153 @@
   #popup-button {
     width: 15em;
     margin: 0 auto;
+
+    .textBtn {
+      width: 5em;
+      margin: 0 0.5em;
+      float: left;
+    }
+  }
+}
+
+/* 訪問ユーザー情報設定 */
+.p-tcustomerinformationsettings-entry {
+  width: 600px;
+
+
+  .questionBallon {
+    display: inline-block;
+    margin-left: 20px;
+    text-align: center;
+
+    .questionBtn {
+      border-radius: 20px;
+      width: 1.3em;
+      height: 1.3em;
+      font-size: 12px !important;
+      line-height: 12px;
+      padding: 0.1em;
+    }
+  }
+
+  .explainTooltip1, .explainTooltip2{
+    z-index: 10;
+    position: absolute;
+
+    icon-annotation {
+      width: 16em;
+      height: 2.1em;
+      display: none;
+
+      &:before {
+        content: " ";
+        border: none;
+        border-top: 10px solid rgba(0, 0, 0, 0.13);
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -42px;
+        left: 5px;
+        z-index: 1;
+      }
+
+      &:after {
+        content: " ";
+        border: none;
+        border-top: 10px solid white;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -40px;
+        left: 5px;
+        z-index: 3;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        background-color: #FFF;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
+        padding: 0.5em;
+        font-weight: normal;
+        border-radius: 5px;
+
+        img {
+          margin-bottom: -0.2em;
+          width:1em;
+          height:1em;
+        }
+
+        span {
+          font-size: 0.9em;
+        }
+      }
+    }
+  }
+
+  .explainTooltip1 {
+    icon-annotation {
+      /* 矢印 */
+      &:before {
+        content: " ";
+        border: none;
+        border-top: 10px solid rgba(0, 0, 0, 0.13);
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -42px;
+        left: 5px;
+        z-index: 1;
+      }
+
+      &:after {
+        content: " ";
+        border: none;
+        border-top: 10px solid white;
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -40px;
+        left: 5px;
+        z-index: 3;
+      }
+    }
+  }
+
+  .form01 > div {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin: 20px 0;
+
+    textarea {
+      margin: 0px;
+      height: 140px;
+      resize: none;
+      border-radius: 15px!important;
+      overflow: auto;
+    }
+
+    input[type='text'] {
+      margin-left: 15px;
+      width: 75%;
+      padding: 5px 10px;
+      border: none;
+      border-bottom: 1px solid #909090;
+    }
+  }
+
+  #popup-button {
+    width: 15em;
+    margin: 0 auto;
+    position: absolute;
+    bottom: -3.5%;
+    left: 35%;
 
     .textBtn {
       width: 5em;

@@ -5,7 +5,7 @@
  * @property TCustomerInformationSettings $TCustomerInformationSettings
  */
 class TCustomerInformationSettingsController extends AppController {
-  public $uses = ['TCustomerInformationSettings'];
+  public $uses = ['TCustomerInformationSetting'];
   //DB作成後復元
   /*public $paginate = [
     'TCustomerInformationSettings' => [
@@ -42,13 +42,18 @@ class TCustomerInformationSettingsController extends AppController {
    * @return void
    * */
   public function remoteOpenEntryForm() {
-    Configure::write('debug', 0);
+  	ini_set('display_errors',1);
+    Configure::write('debug', 2);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->request->data = $this->TCustomerInformationSetting->read(null, $this->request->data['id']);
     }
+    //一時的にこのクラスからモデルを呼び出していることになっているが、
+    //作成後は追加でTCustomVariablesモデルを呼び出して別途関数を作成
+    $documentList = $this->TCustomerInformationSetting->find('all', $this->_setParams());
+    $this->set('tCustomVariableList', $documentList);
     $this->render('/Elements/TCustomerInformationSettings/remoteEntry');
   }
   /* *
