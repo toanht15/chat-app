@@ -175,6 +175,9 @@
           var noleft = $this.attr('noleft');
           var operatingHours = $this.attr('operatingHours');
           var $tooltip = $('<div class="tooltips">'+text+'</div>');
+          if($(this).hasClass('smallfont')) {
+            $tooltip.addClass('smallfont');
+          }
           //行数をカウント
           var id = $this.attr('id');
           var brcount = (text.split("<br>")).length;

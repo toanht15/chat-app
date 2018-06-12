@@ -80,6 +80,10 @@ li {
   border-radius: 0.5em;
   text-align: left;
   padding: 1em;
+
+  &.smallfont {
+    font-size: 0.8em;
+  }
 }
 .tooltips:after {
   content: "";
@@ -6858,10 +6862,12 @@ ul.naviBtn {
               align-content: space-between;
 
               a {
-                width: 10em;
-                padding: 10px;
+                width: 8em;
+                padding: 8px;
                 text-align: center;
                 margin: 0 5px 5px 0;
+                font-size: 0.8em;
+                text-weight: normal;
               }
             }
           }
