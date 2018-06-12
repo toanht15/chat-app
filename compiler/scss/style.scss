@@ -7083,6 +7083,12 @@ ul.naviBtn {
                   }
                   &.grid-container-body {
                     margin-bottom: 1em;
+                    hr.separator {
+                      margin-top: 12px;
+                      padding-bottom: 0;
+                      grid-column: 1/5;
+                      width: 101%;
+                    }
                   }
 
                   input[type="text"], select, textarea {
