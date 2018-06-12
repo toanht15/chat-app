@@ -353,7 +353,7 @@
         <li class="styleFlexbox">
           <span class="fb13em indentDown"><label>変数の値が</label></span>
           <input type="text" ng-model="condition.matchValue">
-          <select class="m10r10l"><option>のいずれかを含む場合</option></select>
+          <select class="m10r10l" ng-model="condition.matchValueType" ng-init="condition.matchValueType = condition.matchValueType.toString()" ng-options="index as type.label for (index, type) in matchValueTypeList"></select>
         </li>
         <li class="styleFlexbox m10b">
           <span class="fb13em indentDown"><label></label></span>
