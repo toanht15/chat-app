@@ -2987,10 +2987,12 @@
           function afterDesideThumbnail(elm) {
             divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(elm);
             divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea').style.textAlign = 'center';
+            $(divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button')).off('click');
             divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function (e) {
               document.getElementById('chatTalk').querySelector('sinclo-chat').removeChild(divElm);
               $(targetElm).parents('li.sinclo_re').parent().show();
             });
+            $(divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button')).off('click');
             divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function (e) {
               var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
               if (!comment) {
@@ -4748,13 +4750,13 @@
         $(document).off(self._events.inputCompleted);
         self._saveWaitingInputState(false);
       },
-      _mergeScenario: function(result) {
+      _mergeScenario: function(result, executableNextAction) {
         var targetScenario = result.activity.scenarios;
         var self = sinclo.scenarioApi;
         var scenarioObj = self.get(self._lKey.scenarios);
         var scenarioSeqNum = self.get(self._lKey.currentScenarioSeqNum);
         var newScenarioObj = {};
-        var executeNextAction = self._isExecutableNextAction();
+        var executeNextAction = executableNextAction;
         var currentIndex = 0;
         Object.keys(scenarioObj).some(function(elm, index){
           if(index === scenarioSeqNum) {
@@ -4772,11 +4774,6 @@
         });
         self.set(self._lKey.scenarios, newScenarioObj);
         self.set(self._lKey.scenarioLength, Object.keys(newScenarioObj).length);
-      },
-      _isExecutableNextAction: function() {
-        var self = sinclo.scenarioApi;
-        var result = self.get(self._lKey.currentScenario).executeNextAction;
-        return (result && "1".indexOf(result) >= 0);
       },
       _hearing: {
         _parent: null,
@@ -5105,7 +5102,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._anotherScenario;
           self._getScenario(function(result){
-            self._parent._mergeScenario(result);
+            self._parent._mergeScenario(result, self._isExecutableNextAction());
             if(self._parent._goToNextScenario(true)) {
               self._parent._process();
             }
@@ -5115,6 +5112,11 @@
           var self = sinclo.scenarioApi._anotherScenario;
           var scenarioId = self._parent.get(self._parent._lKey.currentScenario).tChatbotScenarioId;
           emit('getScenario', {scenarioId: scenarioId}, callback);
+        },
+        _isExecutableNextAction: function() {
+          var self = sinclo.scenarioApi._anotherScenario;
+          var result = self._parent.get(self._parent._lKey.currentScenario).executeNextAction;
+          return (result && "1".indexOf(result) >= 0);
         }
       },
       _callExternalApi: {
@@ -5261,7 +5263,7 @@
         },
         _waitUserAction: function(callback) {
           var self = sinclo.scenarioApi._sendFile;
-          $(document).on(self._parent._events.fileUploaded, callback);
+          $(document).one(self._parent._events.fileUploaded, callback);
         },
         _pushDownloadUrlData: function(obj) {
           var self = sinclo.scenarioApi._sendFile;
@@ -5348,7 +5350,7 @@
               }
               emit('getScenario', {scenarioId: targetScenarioId}, function(result){
                 // FIXME 無理やり実装（今は後続アクションがなくなる）
-                self._parent._mergeScenario(result);
+                self._parent._mergeScenario(result, false);
                 if(self._parent._goToNextScenario(true)) {
                   self._parent._process();
                 }
