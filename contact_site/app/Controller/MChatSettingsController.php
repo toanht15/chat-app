@@ -19,8 +19,6 @@ class MChatSettingsController extends AppController {
 
     // 更新処理
     if ( $this->request->is('post') ) {
-      $this->log('dataaaaa',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       // 保存処理関数へ
       if ($this->_update($this->request->data)){
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
@@ -58,7 +56,6 @@ class MChatSettingsController extends AppController {
       $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
-      $this->log($this->request->data,LOG_DEBUG);
       if(empty($operatingHourData)) {
         $operatingHourData['MOperatingHour']['active_flg'] = 2;
       }
@@ -156,7 +153,6 @@ class MChatSettingsController extends AppController {
     foreach($data as $key => $value){
       if(empty($this->request->data['MChatSetting']['initial_notification_message'.($key+1)]) ||
         mb_strlen($this->request->data['MChatSetting']['initial_notification_message'.($key+1)]) > 300) {
-        $this->log('入っている',LOG_DEBUG);
         $inRet = false;
       }
     }
@@ -164,7 +160,6 @@ class MChatSettingsController extends AppController {
     // ユーザーデータの一括バリデーションチェック
     // 何れかのバリデーションチェックでfalseだった場合は処理を中止する
     if ( !$userRet || !$ret || !$inRet) {
-      $this->log('中に入った',LOG_DEBUG);
       return false;
     }
 

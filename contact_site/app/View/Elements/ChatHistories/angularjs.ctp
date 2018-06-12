@@ -228,8 +228,6 @@
 
     // 【チャット】チャット枠の構築
     $scope.createMessage = function(elem, chat){
-      console.log('chatApi');
-      console.log(chat);
       var chatApi = {
         connect: false,
         tabId: null,
