@@ -1066,6 +1066,7 @@
       storage.s.set('operatorEntered', false); // オペレータが退室した
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
       storage.l.set('leaveFlg', 'true'); // オペレータが退室した
+      storage.s.set('initialNotification', 'true'); // 初回通知メッセージ
       if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
         sinclo.chatApi.showMiniMessageArea();
       }
@@ -1125,6 +1126,7 @@
           console.log("window.sincloInfo.widget.showName: %s window.sincloInfo.widget.showAutomessageName: %s",window.sincloInfo.widget.showName,window.sincloInfo.widget.showAutomessageName);
           if ( Number(chat.messageType) === 3
             || Number(chat.messageType) === 4
+            || Number(chat.messageType) === 7
             || Number(chat.messageType) === 21
             || Number(chat.messageType) === 22
             || Number(chat.messageType) === 23
@@ -1356,9 +1358,23 @@
           data = JSON.parse(sincloInfo.chat.initial_notification_message);
           for (var i = 0; i < Object.keys(data).length; i++) {
             (function(pram) {
-              setTimeout(function(){
-                sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
-                sinclo.chatApi.scDown();
+                setTimeout(function() {
+                if(storage.s.get('operatorEntered') !== 'true') {
+                  sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
+                  sinclo.chatApi.scDown();
+                  var sendData = {
+                    chatId: obj.chatId,
+                    siteKey: obj.siteKey,
+                    tabId: obj.tabId,
+                    chatMessage: data[pram].message,
+                    messageType: sinclo.chatApi.messageType.notification,
+                    messageDistinction: obj.messageDistinction,
+                    chatId: obj.chatId,
+                    mUserId: obj.mUserId,
+                    userId: obj.userId,
+                  }
+                  emit("sendInitialNotificationChat", {messageList: sendData});
+                }
               },data[pram].seconds*1000);
             })(i);
           }
@@ -1391,9 +1407,11 @@
       }
       //通知した際に自由入力エリア表示
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
+        console.log('ちぇええええっく');
+        console.log(obj);
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
-        storage.s.set('initialNotification', 'wrong');
+        storage.s.set('initialNotification', 'false');
       }
     },
     sendReqAutoChatMessages: function(d){
@@ -2554,11 +2572,16 @@
                 isScenarioMessage = true;
               }
               //初回通知メッセージの場合
-              if(storage.s.get('initialNotification') == null) {
+              if(storage.s.get('initialNotification') === null || storage.s.get('initialNotification') === 'true') {
+                console.log('うおおおおおおおおおお');
                 initialNotification = true;
               }
               //初回通知メッセージではない場合
-              else if(storage.s.get('initialNotification') === 'wrong') {
+              else if(storage.s.get('initialNotification') === 'false') {
+                console.log('あはあああああ');
+                initialNotification = false;
+              }
+              else {
                 initialNotification = false;
               }
               setTimeout(function(){
