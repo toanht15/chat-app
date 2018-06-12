@@ -813,7 +813,7 @@ $config['chatbotScenarioActionList'] = [
           "matchValueType" => "1", // のいずれかを含む場合
           "actionType" => "1", //テキスト発言
           "action" => [
-            "message" => "メッセージを入力してください"
+            "message" => ""
           ]
         ]
       ],
@@ -821,7 +821,7 @@ $config['chatbotScenarioActionList'] = [
       'elseAction' => [
         "actionType" => "1",
         "action" => [
-          "message" => "メッセージを入力してください"
+          "message" => ""
         ]
       ]
     ]
