@@ -2,9 +2,8 @@
 <?= $this->element('TCustomerInformationSettings/script') ?>
 
 <?php
-//DB作成後復元
-//$params = $this->Paginator->params();
-//$prevCnt = ($params['page'] - 1) * $params['limit'];
+$params = $this->Paginator->params();
+$prevCnt = ($params['page'] - 1) * $params['limit'];
 ?>
 <div id='tcustomerinformationsettings_idx' class="card-shadow">
 
@@ -68,7 +67,6 @@
       </div>
       <!-- 訪問ユーザー情報の並び替えモード -->
     </ul>
-    <!--************データベース作成後、paginateを有効にする*************
     <div id="paging" class="fRight" style= 'padding-right: 20px;'>
       <?php
         echo $this->Paginator->prev(
@@ -87,7 +85,7 @@
           array('escape' => false, 'class' => 'grayBtn')
         );
         ?>
-      </div> -->
+      </div>
     </div>
 
   <div id='tcustomerinformationsettings_list' class="p20x">
@@ -105,37 +103,27 @@
       </tr>
       </thead>
     <tbody class="sortable">
-      <!--データを登録しだいコメントアウトタグ削除、下記の仮td群を削除 <?php $allCondList = []; ?>
+      <?php $allCondList = []; ?>
       <?php $allActionList = []; ?>
-      <?php foreach((array)$tCustomVariableList as $key => $val):?>
-      <tr class="pointer" data-id="<?=$val['TCustomVariable']['id']?>" data-sort="<?=$val['TCustomVariable']['sort']?>" onclick="openEditDialog('<?=$val['TCustomVariable']['id']?>')">
+      <?php foreach((array)$tCustomerInformationSettingList as $key => $val):?>
+      <tr class="pointer" data-id="<?=$val['TCustomerInformationSetting']['id']?>" data-sort="<?=$val['TCustomerInformationSetting']['sort']?>" onclick="openEditDialog('<?=$val['TCustomerInformationSetting']['id']?>')">
+         <!-- この記述が無いとチェックボックスをクリックしてもedit画面が開いてしまう -->
         <td class="tCenter" onclick="event.stopPropagation()">
-          <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCustomVariable']['id']?>">
+          <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCustomerInformationSetting']['id']?>">
           <label for="selectTab<?=$key?>"></label>
         </td>
         <td width="5%" class="tCenter"><?=$prevCnt + h($key+1)?></td>
-        <td class="tCenter"><?=$val['TCustomVariable']['variable_name']?></td>
-        <td class="tCenter"><?=$val['TCustomVariable']['attribute_value']?></td>
-        <td class="tCenter"><?=$val['TCustomVariable']['comment']?></td>
+        <td class="tCenter"><?=$val['TCustomerInformationSetting']['item_name']?></td>
+        <td class="tCenter"><?=$val['TCustomerInformationSetting']['input_type']?></td>
+        <td class="tCenter"><?=$val['TCustomerInformationSetting']['show_realtime_monitor_flg']?></td>
+        <td class="tCenter"><?=$val['TCustomerInformationSetting']['show_send_mail_flg']?></td>
+        <td class="tCenter"><?=$val['TCustomerInformationSetting']['sync_custom_variable_flg']?></td>
+        <td class="tCenter"><?=$val['TCustomerInformationSetting']['comment']?></td>
       </tr>
       <?php endforeach; ?>
-      <?php if ( count($tCustomVariableList) === 0 ) :?>
-        <tr class="cancel"><td class="tCenter" colspan="5">カスタム変数が設定されていません</td></tr>
-      <?php endif; ?>-->
-      <!-- Editが使用できない為一時的にAddを採用 -->
-      <tr class="pointer" onclick="openAddDialog()">
-      <!-- この記述が無いとチェックボックスをクリックしてもedit画面が開いてしまう -->
-        <td class="tCenter" onclick="event.stopPropagation()">
-          <input type="checkbox" name="selectTab" id="selectTab0" value="">
-          <label for="selectTab0"></label>
-        </td>
-        <td class="tCenter">1</td>
-        <td class="tCenter">会社名</th>
-        <td class="tCenter">テキストボックス</th>
-        <td class="tCenter">チェックマーク</th>
-        <td class="tCenter">チェックマーク</th>
-        <td class="tCenter">カスタム変数が入ります</th>
-        <td class="tCenter">会社名</th>
+      <?php if ( count($tCustomerInformationSettingList) === 0 ) :?>
+        <tr class="cancel"><td class="tCenter" colspan="8">カスタム変数が設定されていません</td></tr>
+      <?php endif; ?>
       </tbody>
     </table>
   </div>

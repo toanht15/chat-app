@@ -200,6 +200,7 @@ function openCopyDialog(){
 	}
 	modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', '訪問ユーザー情報設定', 'moment');
 	popupEvent.closePopup = toExecutableOnce(function(){
+		//selectedListには何番目と何番目が入っているかが格納されている。
 		$.ajax({
 			type: 'post',
 			cache: false,

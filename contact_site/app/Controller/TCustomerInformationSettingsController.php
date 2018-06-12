@@ -5,9 +5,8 @@
  * @property TCustomerInformationSettings $TCustomerInformationSettings
  */
 class TCustomerInformationSettingsController extends AppController {
-  public $uses = ['TCustomerInformationSetting'];
-  //DB作成後復元
-  /*public $paginate = [
+  public $uses = ['TCustomerInformationSetting','TCustomVariable'];
+  public $paginate = [
     'TCustomerInformationSettings' => [
       'limit' => 100,
       'order' => [
@@ -17,7 +16,7 @@ class TCustomerInformationSettingsController extends AppController {
       'fields' => ['TCustomerInformationSettings.*'],
       'recursive' => -1
     ]
-  ];*/
+  ];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -31,10 +30,9 @@ class TCustomerInformationSettingsController extends AppController {
   public function index() {
   	Configure::write('debug', 2);
   	//DB作成後復元
-  	//$this->paginate['TCustomerInformationSetting']['conditions']['TCustomerInformationSetting.m_companies_id'] = $this->userInfo['MCompany']['id'];
-    //$data = $this->paginate('TCustomerInformationSetting');
-  	//$documentList = $this->TCustomerInformationSetting->find('all', $this->_setParams());
-    $this->set('TCustomerInformationSettingList', $data);
+  	$this->paginate['TCustomerInformationSetting']['conditions']['TCustomerInformationSetting.m_companies_id'] = $this->userInfo['MCompany']['id'];
+    $data = $this->paginate('TCustomerInformationSetting');
+    $this->set('tCustomerInformationSettingList', $data);
   }
 
   /* *
@@ -50,9 +48,7 @@ class TCustomerInformationSettingsController extends AppController {
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->request->data = $this->TCustomerInformationSetting->read(null, $this->request->data['id']);
     }
-    //一時的にこのクラスからモデルを呼び出していることになっているが、
-    //作成後は追加でTCustomVariablesモデルを呼び出して別途関数を作成
-    $documentList = $this->TCustomerInformationSetting->find('all', $this->_setParams());
+    $documentList = $this->TCustomVariable->find('all', $this->_setParamsVariable());
     $this->set('tCustomVariableList', $documentList);
     $this->render('/Elements/TCustomerInformationSettings/remoteEntry');
   }
@@ -61,7 +57,8 @@ class TCustomerInformationSettingsController extends AppController {
    * @return void
    * */
   public function remoteSaveEntryForm() {
-  	ini_set('display_errors',1);
+    ini_set("display_errors", 'On');
+    error_reporting(E_ALL);
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
@@ -108,8 +105,13 @@ class TCustomerInformationSettingsController extends AppController {
 
     }
     $saveData['TCustomerInformationSetting']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-    $saveData['TCustomerInformationSetting']['variable_name'] = $this->request->data['variable_name'];
-    $saveData['TCustomerInformationSetting']['attribute_value'] = $this->request->data['attribute_value'];
+    $saveData['TCustomerInformationSetting']['item_name'] = $this->request->data['item_name'];
+    $saveData['TCustomerInformationSetting']['input_type'] = $this->request->data['input_type'];
+    $saveData['TCustomerInformationSetting']['input_option'] = $this->request->data['input_option'];
+    $saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = $this->request->data['show_realtime_monitor_flg'];
+    $saveData['TCustomerInformationSetting']['show_send_mail_flg'] = $this->request->data['show_send_mail_flg'];
+    $saveData['TCustomerInformationSetting']['sync_custom_variable_flg'] = $this->request->data['sync_custom_variable_flg'];
+    $saveData['TCustomerInformationSetting']['t_custom_variables_id'] = $this->request->data['t_custom_variables_id'];
     $saveData['TCustomerInformationSetting']['comment'] = $this->request->data['comment'];
     // const
     $this->TCustomerInformationSetting->set($saveData);
@@ -163,12 +165,12 @@ class TCustomerInformationSettingsController extends AppController {
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $selectedList = $this->request->data['selectedList'];
-    //コピー元のカスタム変数リスト取得
+    //コピー元の訪問ユーザー情報リスト取得
     foreach($selectedList as $value){
       $copyData[] = $this->TCustomerInformationSetting->read(null, $value);
     }
     $errorMessage = [];
-    //コピー元のカスタム変数リストの数だけ繰り返し
+    //コピー元の訪問ユーザー情報リストの数だけ繰り返し
     $res = true;
     foreach($copyData as $value){
       $this->TCustomerInformationSetting->create();
@@ -203,11 +205,16 @@ class TCustomerInformationSettingsController extends AppController {
       if (!empty($lastData)) {
         $nextSort = intval($lastData['TCustomerInformationSetting']['sort']) + 1;
       }
-      $saveData['TCustomerInformationSetting']['sort'] = $nextSort;
+      //$saveData['TCustomerInformationSetting']['sort'] = $nextSort;
       $saveData['TCustomerInformationSetting']['m_companies_id'] = $value['TCustomerInformationSetting']['m_companies_id'];
-      $saveData['TCustomerInformationSetting']['variable_name'] = $value['TCustomerInformationSetting']['variable_name'].'コピー';
-      $saveData['TCustomerInformationSetting']['attribute_value'] = $value['TCustomerInformationSetting']['attribute_value'];
-      $saveData['TCustomerInformationSetting']['comment'] = $value['TCustomerInformationSetting']['comment'];
+      $saveData['TCustomerInformationSetting']['item_name'] = $value['item_name'].'コピー';
+      $saveData['TCustomerInformationSetting']['input_type'] = $valuea['input_type'];
+      //$saveData['TCustomerInformationSetting']['input_option'] = $value['input_option'];
+      //$saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = $value['show_realtime_monitor_flg'];
+      //$saveData['TCustomerInformationSetting']['show_send_mail_flg'] = $valuee['show_send_mail_flg'];
+      //$saveData['TCustomerInformationSetting']['sync_custom_variable_flg'] = $value['sync_custom_variable_flg'];
+      //$saveData['TCustomerInformationSetting']['t_custom_variables_id'] = $value['t_custom_variables_id'];
+      $saveData['TCustomerInformationSetting']['comment'] = $value['comment'];
       $this->TCustomerInformationSetting->set($saveData);
       $this->TCustomerInformationSetting->begin();
       // バリデーションチェックでエラーが出た場合
@@ -382,7 +389,7 @@ class TCustomerInformationSettingsController extends AppController {
   private function _setParams(){
     $params = [
       'order' => [
-        'TCustomerInformationSetting.sort' => 'asc',
+        //'TCustomerInformationSetting.sort' => 'asc',
         'TCustomerInformationSetting.id' => 'asc'
       ],
       'fields' => [
@@ -393,6 +400,23 @@ class TCustomerInformationSettingsController extends AppController {
       ],
       'recursive' => -1
     ];
+    return $params;
+  }
+
+  private function _setParamsVariable(){
+  $params = [
+    'order' => [
+      'TCustomVariable.sort' => 'asc',
+      'TCustomVariable.id' => 'asc'
+    ],
+    'fields' => [
+      'TCustomVariable.*'
+     ],
+     'conditions' => [
+       'TCustomVariable.m_companies_id' => $this->userInfo['MCompany']['id']
+     ],
+     'recursive' => -1
+     ];
     return $params;
   }
 }
