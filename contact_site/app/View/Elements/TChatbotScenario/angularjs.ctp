@@ -1055,12 +1055,128 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               $scope.doAction();
             });
           }
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+          // 指定の変数を取得
+          var value = LocalStorageService.getItem('chatbotVariables', actionDetail.referenceVariable);
+          for(var i=0; i<actionDetail.conditionList.length; i++) {
+            if($scope.isMatch(value, actionDetail.conditionList[i])) {
+              $scope.doBranchOnCondAction(actionDetail.conditionList[i]);
+              return;
+            }
+          }
         }
       }, parseInt(time, 10) * 1000);
     } else {
       $scope.actionStop();
     }
   }
+
+  $scope.isMatch = function(targetValue, condition) {
+    switch(Number(condition.matchValueType)) {
+      case 1: // いずれかを含む場合
+        return $scope.matchCaseInclude(targetValue, $scope.splitMatchValue(condition.matchValue));
+      case 2: // いずれも含まない場合
+        return $scope.matchCaseExclude(targetValue, $scope.splitMatchValue(condition.matchValue));
+      default:
+        return false;
+    }
+  };
+
+  $scope.doBranchOnCondAction = function(condition, callback) {
+    switch(Number(condition.actionType)) {
+      case 1:
+        $scope.$broadcast('addReMessage', $scope.replaceVariable(condition.action.message), 'action' + $scope.actionStep);
+        $scope.actionStep++;
+        $scope.doAction();
+        break;
+      case 2:
+        // シナリオ呼び出し
+        var targetScenarioId = condition.action.callScenarioId;
+        console.log("targetScenarioId : %s",targetScenarioId);
+        if(targetScenarioId === "self") {
+          $scope.actionStep = 0;
+          $scope.doAction();
+        } else {
+          self.getScenarioDetail(targetScenarioId, false);
+        }
+        break;
+      case 3:
+        $scope.actionStop();
+        // シナリオ終了
+        break;
+      case 4:
+        $scope.actionStep++;
+        $scope.doAction();
+        // 何もしない（次のアクションへ）
+        break;
+    }
+  };
+
+  $scope.splitMatchValue = function(val) {
+    var splitedArray = [];
+    val.split('"').forEach(function(currentValue, index, array){
+      if(array.length > 1) {
+        if(index !== 0 && index % 2 === 1) {
+          // 偶数個：そのまま文字列で扱う
+          if(currentValue !== "") {
+            splitedArray.push(currentValue);
+          }
+        } else {
+          if(currentValue) {
+            var trimValue = currentValue.trim(),
+              splitValue = trimValue.replace(/　/g, " ").split(" ");
+            splitedArray = splitedArray.concat($.grep(splitValue, function(e){return e !== "";}));
+          }
+        }
+      } else {
+        var trimValue = currentValue.trim(),
+          splitValue = trimValue.replace(/　/g, " ").split(" ");
+        splitedArray = splitedArray.concat($.grep(splitValue, function(e){return e !== "";}));
+      }
+    });
+    return splitedArray;
+  };
+
+  $scope.matchCaseInclude = function(val, words) {
+    console.log("_matchCaseInclude : %s <=> %s",words, val);
+    var result = false;
+    for(var i=0; i < words.length; i++) {
+      if(words[i] === "") {
+        continue;
+      }
+
+      var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      var preg = new RegExp(word);
+      result = preg.test(val);
+
+      if(result) { // いずれかを含む
+        break;
+      }
+    }
+    return result;
+  };
+
+  $scope.matchCaseExclude = function(val, words) {
+    for(var i=0; i < words.length; i++) {
+      if(words[i] === "") {
+        if (words.length > 1 && i === words.length - 1) {
+          break;
+        }
+        continue;
+      } else {
+        var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        var preg = new RegExp(word);
+        exclusionResult = preg.test(val);
+        if(exclusionResult) {
+          // 含んでいる場合はNG
+          return false;
+        }
+      }
+    }
+    //最後まで含んでいなかったらOK
+    return true;
+  };
 
   /**
    * ヒアリングアクションの実行
