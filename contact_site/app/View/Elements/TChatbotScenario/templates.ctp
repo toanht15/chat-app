@@ -349,7 +349,7 @@
           <span class="labelArea">条件{{$index+1}}</span>
         </h5>
       </div>
-      <ul>
+      <ul class="condition">
         <li class="styleFlexbox">
           <span class="fb13em indentDown"><label>変数の値が</label></span>
           <input type="text" ng-model="condition.matchValue">
@@ -361,12 +361,19 @@
         </li>
         <li class="styleFlexbox">
           <div class="fb13em indentDown">実行するアクション</div>
-          <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = condition.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
-          <resize-textarea ng-model="condition.action.message" ng-if="condition.actionType == 1" placeholder="メッセージを入力してください"></resize-textarea>
-          <select ng-model="condition.action.callScenarioId" ng-if="condition.actionType == 2" ng-init="condition.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioListForBranchOnCond">
-            <option value="">シナリオを選択してください</option>
-            <option value="self">このシナリオ</option>
-          </select>
+          <div class="conditionTypeSelect">
+            <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = condition.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
+          </div>
+          <div class="conditionAction" ng-if="condition.actionType == 1">
+            <resize-textarea ng-model="condition.action.message" placeholder="メッセージを入力してください"></resize-textarea>
+          </div>
+          <div class="conditionAction" ng-if="condition.actionType == 2">
+            <select ng-model="condition.action.callScenarioId" ng-init="condition.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioListForBranchOnCond">
+              <option value="">シナリオを選択してください</option>
+              <option value="self">このシナリオ</option>
+            </select>
+          </div>
+          <div class="conditionAction" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
           <div class='area-btn'>
             <div class="btnBlock">
               <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
@@ -379,14 +386,22 @@
       <div>
         <hr class="separator"/>
         <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.elseEnabled" ng-init="setItem.elseEnabled = true">上記を満たさない場合に実行するアクション<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャット履歴の「成果」に「途中離脱」または「CV」として自動登録します。<br><br>【途中離脱】ヒアリング途中で終了した場合<br>【CV】全項目のヒアリングが完了した場合（入力内容の確認を行う場合は「OK」が選択された場合）" data-tooltip-width='300'>?</icon></span></label>
-        <ul ng-if="setItem.elseEnabled == true">
+
+        <ul class="condition else" ng-if="setItem.elseEnabled == true">
           <li class="styleFlexbox">
-            <select class="m10r" ng-model="setItem.elseAction.actionType" ng-init="setItem.elseAction.actionType = setItem.elseAction.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
-            <resize-textarea ng-model="setItem.elseAction.action.message" ng-if="setItem.elseAction.actionType == 1" placeholder="メッセージを入力してください"></resize-textarea>
-            <select ng-model="setItem.elseAction.action.callScenarioId" ng-if="setItem.elseAction.actionType == 2" ng-init="setItem.elseAction.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioList">
-              <option value="">シナリオを選択してください</option>
-              <option value="self">このシナリオ</option>
-            </select>
+            <div class="conditionTypeSelect">
+              <select class="m10r" ng-model="setItem.elseAction.actionType" ng-init="setItem.elseAction.actionType = setItem.elseAction.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
+            </div>
+            <div class="conditionAction elseCondition" ng-if="setItem.elseAction.actionType == 1">
+              <resize-textarea ng-model="setItem.elseAction.action.message" placeholder="メッセージを入力してください"></resize-textarea>
+            </div>
+            <div class="conditionAction elseCondition" ng-if="setItem.elseAction.actionType == 2">
+              <select ng-model="setItem.elseAction.action.callScenarioId" ng-if="setItem.elseAction.actionType == 2" ng-init="setItem.elseAction.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioList">
+                <option value="">シナリオを選択してください</option>
+                <option value="self">このシナリオ</option>
+              </select>
+            </div>
+            <div class="conditionAction elseCondition" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
           </li>
         </ul>
       </div>

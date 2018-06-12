@@ -7240,6 +7240,33 @@ ul.naviBtn {
                   }
                 }
 
+                &.action_branch_on_condition {
+                  ul.condition {
+                    &.else {
+                      padding-top: 0.5em;
+                    }
+                    li {
+                      div.conditionTypeSelect {
+                        flex-grow: 0;
+                      }
+                      div.conditionAction {
+                        flex-grow: 1;
+                        textarea {
+                          width: 100%;
+                        }
+                        &.elseCondition {
+                          textarea {
+                            width: calc(100% - 13.5em);
+                          }
+                        }
+                      }
+                      select {
+                        height: initial;
+                      }
+                    }
+                  }
+                }
+
                 div > label:last-of-type:not(:last-child) {
                   padding-bottom: 0.5em;
                 }
