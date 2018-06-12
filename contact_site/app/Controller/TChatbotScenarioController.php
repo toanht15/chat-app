@@ -87,6 +87,7 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
     $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
     $this->chatbotScenarioReceiveFileTypeList = Configure::read('chatbotScenarioReceiveFileTypeList');
+    $this->chatbotScenarioBranchOnConditionMatchValueType = Configure::read('chatbotScenarioBranchOnConditionMatchValueType');
     $this->chatbotScenarioBranchOnConditionActionType = Configure::read('chatbotScenarioBranchOnConditionActionType');
 
     // FileAppController
@@ -992,6 +993,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioApiResponseType', $this->chatbotScenarioApiResponseType);
     // ファイル受信ファイル形式種別
     $this->set('chatbotScenarioReceiveFileTypeList', $this->chatbotScenarioReceiveFileTypeList);
+    // 条件分岐変数値マッチ条件
+    $this->set('chatbotScenarioBranchOnConditionMatchValueType', $this->chatbotScenarioBranchOnConditionMatchValueType);
     // 条件分岐アクション種別
     $this->set('chatbotScenarioBranchOnConditionActionType', $this->chatbotScenarioBranchOnConditionActionType);
     // ファイル受信用にcompany_keyをsetしておく
