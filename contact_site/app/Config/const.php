@@ -938,7 +938,7 @@ $config['chatbotScenarioBranchOnConditionActionType'] = [
     'label' => 'シナリオを終了'
   ],
   C_SCENARIO_PROCESS_ACTION_TYPE_NONE => [
-    'label' => '何もしない（次処理へ）'
+    'label' => '次のアクションへ'
   ]
 ];
 
