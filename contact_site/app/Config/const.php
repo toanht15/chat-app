@@ -821,7 +821,7 @@ $config['chatbotScenarioActionList'] = [
           ]
         ]
       ],
-      'elseEnabled' => 1,
+      'elseEnabled' => 0,
       'elseAction' => [
         "actionType" => "1",
         "action" => [
@@ -932,13 +932,13 @@ $config['chatbotScenarioBranchOnConditionActionType'] = [
     'label' => 'テキスト発言'
   ],
   C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO => [
-    'label' => 'シナリオ呼び出し'
+    'label' => 'シナリオ呼出'
   ],
   C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE => [
     'label' => 'シナリオを終了'
   ],
   C_SCENARIO_PROCESS_ACTION_TYPE_NONE => [
-    'label' => '何もしない（次処理へ）'
+    'label' => '次のアクションへ'
   ]
 ];
 

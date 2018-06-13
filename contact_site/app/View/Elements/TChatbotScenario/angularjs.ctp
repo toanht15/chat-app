@@ -429,6 +429,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
         selector = '#action' + actionStep + '_setting .itemListGroup.externalApiResponseBody tr';
       }
+    } else if (actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+      targetObjList = $scope.setActionList[actionStep].conditionList;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
     }
 
     if (targetObjList !== "" && selector !== "") {
@@ -765,20 +768,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (elmNum == 1 && index == 0) {
         // リストが一件のみの場合、追加ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        $(targetElm).find('.btnBlock .deleteBtn').hide();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').hide();
       } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>
         || actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
         // リストが複数件ある場合、ヒアリング・選択肢・属性値アクションは、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       } else if (index == elmNum -1 && index != limitNum-1) {
         // リストの最後の一件の場合、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       } else {
         // 削除ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       }
     });
   };
@@ -986,6 +989,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * アクションの実行
    * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
    */
+  $scope.receiveFileEventListener = null;
   $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
       var actionDetail = $scope.setActionList[$scope.actionStep];
@@ -1050,10 +1054,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
           if(actionDetail.dropAreaMessage) {
             $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled, actionDetail.cancelLabel, actionDetail.receiveFileType, actionDetail.extendedReceiveFileExtensions);
-            $scope.$on('onErrorSelectFile', function(){
+            if($scope.receiveFileEventListener) {
+              $scope.receiveFileEventListener();
+            }
+            $scope.receiveFileEventListener = $scope.$on('onErrorSelectFile', function(){
               var message = actionDetail.errorMessage;
-              $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
-              $scope.doAction();
+              $scope.$broadcast('addReErrorMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
             });
           }
         } else
@@ -1103,7 +1109,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           $scope.actionStep = 0;
           $scope.doAction();
         } else {
-          self.getScenarioDetail(targetScenarioId, false);
+          self.getScenarioDetail(targetScenarioId, condition.action.executeNextAction == 1);
         }
         break;
       case 3:
