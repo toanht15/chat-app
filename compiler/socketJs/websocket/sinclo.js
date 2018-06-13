@@ -2996,7 +2996,7 @@
             divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function (e) {
               var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
               if (!comment) {
-                comment = "no comment";
+                comment = "（なし）";
               }
               sinclo.chatApi.fileUploader._uploadFile(divElm, comment, fileObj, loadData);
             });
