@@ -1,10 +1,8 @@
 <script type="text/javascript">
-  //保存時の処理を行う必要があるので内部開発をするときに随時変更していく
-
   //特定項目を選択した際に、追加メニュー分の高さを確保する
   //特定項目から選択が外れた場合は、その分の高さを削減する
   $(function () {
-    $('#TCustomerInformationSettingSyncCustomVariablesFlg').on('click', function(e){
+    $('#TCustomerInformationSettingSyncCustomVariableFlg').on('click', function(e){
       if($(this).prop('checked')) {
         $('#CustomVariableWrap').css('display','');
         var popup = $('#popup-frame');
@@ -23,6 +21,15 @@
       popup.height(popup.height()+57);
       selectflag = 1;
     }
+
+    //エディット時に、既にカスタム変数チェックボックスが選択されている場合
+    if(document.getElementById('TCustomerInformationSettingSyncCustomVariableFlg').checked){
+    	$('#CustomVariableWrap').css('display','');
+        var popup = $('#popup-frame');
+        popup.height(popup.height()+40);
+     }
+
+
     $('#SelectListForm').change(function(e){
       if(document.getElementById('TCustomerInformationSettingInputType').value == 3){
         $('#SelectListWrap').css('display','');
@@ -65,7 +72,6 @@
     if(input_type == 2){
       var input_option = document.getElementById('TCustomerInformationSettingInputOption').value;
     }
-    console.log($("#TCustomerInformationSettingShowSendMailFlg").prop('checked'));
     var show_realtime_monitor_flg = 0;
     var show_send_mail_flg = 0;
     var sync_custom_variable_flg = 0;
@@ -76,10 +82,10 @@
     if($("#TCustomerInformationSettingShowSendMailFlg").prop('checked')){
         show_send_mail_flg = 1;
     }
+
     if($("#TCustomerInformationSettingSyncCustomVariableFlg").prop('checked')){
         var sync_custom_variable_flg = 1;
-        //カスタム変数のidを取得するために何かしらの処理を行う必要性がある
-        //t_custom_variable_id = document.getElementById('TCustomerInformationSettingTCustomVariablesId').value;
+        t_custom_variables_id = document.getElementById('TCustomerInformationSettingTCustomVariablesId').value;
     }
     var comment = document.getElementById('TCustomerInformationSettingComment').value;
 
@@ -132,10 +138,6 @@
       }
     });
   };
-
-
-
-
 </script>
 
 <!-- 表示されるフォーム画面 -->
@@ -188,7 +190,7 @@
     <div>
       <span>
         <label for="TCustomerInformationSettingShowRealtimeMonitorFlg" style="cursor:pointer; margin-bottom: 1em">
-          <input type="checkbox" id="TCustomerInformationSettingShowRealtimeMonitorFlg" style="position:relative; top:2px; margin-left:15px"/>
+          <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => ""])?>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>
         <div class="questionBallon" id="filterType3Label">
@@ -199,7 +201,7 @@
     <div>
       <span>
         <label for="TCustomerInformationSettingShowSendMailFlg" style="cursor:pointer; margin-bottom: 1em">
-          <input type="checkbox" id="TCustomerInformationSettingShowSendMailFlg" style="position:relative; top:2px; margin-left:15px"/>
+          <?= $this->Form->input('show_send_mail_flg',['type' => 'checkbox', 'div' => false, 'label' => ""])?>
           メール送信時にメール本文に記載する
         </label>
         <div class="questionBallon" id="filterType4Label">
@@ -209,8 +211,8 @@
     </div>
     <div>
       <span>
-        <label for="TCustomerInformationSettingSyncCustomVariablesFlg" style="cursor:pointer; margin-bottom: 1em">
-          <input type="checkbox" id="TCustomerInformationSettingSyncCustomVariablesFlg" style="position:relative; top:2px; margin-left:15px"/>
+        <label for="TCustomerInformationSettingSyncCustomVariableFlg" style="cursor:pointer; margin-bottom: 1em">
+          <?= $this->Form->input('sync_custom_variable_flg',['type' => 'checkbox', 'div' => false, 'label' => ""])?>
           カスタム変数の値を自動的に登録する
         </label>
         <div class="questionBallon" id="filterType5Label">
@@ -226,11 +228,9 @@
         <div class="questionBallon" id="filterType6Label">
           <icon class="questionBtn">?</icon>
         </div>
-        <?php $customvariablelist = array_column($tCustomVariableList, 'TCustomVariable');?>
-        <?php $variablelist = array_column($customvariablelist, 'variable_name');?>
-        <?= $this->Form->input('t_custom_variables',
+        <?= $this->Form->input('t_custom_variables_id',
         ['type' => 'select',
-        'options' => $variablelist,
+        'options' => $variableList,
         'div' => false,
         'label' => false,
         'maxlength' => 100,

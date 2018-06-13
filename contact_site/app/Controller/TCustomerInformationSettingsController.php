@@ -32,6 +32,8 @@ class TCustomerInformationSettingsController extends AppController {
   	//DB作成後復元
   	$this->paginate['TCustomerInformationSetting']['conditions']['TCustomerInformationSetting.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TCustomerInformationSetting');
+    $documentList = $this->TCustomVariable->find('list', $this->_setParamsVariable());
+    $this->set('variableList',$documentList);
     $this->set('tCustomerInformationSettingList', $data);
   }
 
@@ -48,8 +50,8 @@ class TCustomerInformationSettingsController extends AppController {
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->request->data = $this->TCustomerInformationSetting->read(null, $this->request->data['id']);
     }
-    $documentList = $this->TCustomVariable->find('all', $this->_setParamsVariable());
-    $this->set('tCustomVariableList', $documentList);
+    $documentList = $this->TCustomVariable->find('list', $this->_setParamsVariable());
+    $this->set('variableList',$documentList);
     $this->render('/Elements/TCustomerInformationSettings/remoteEntry');
   }
   /* *
@@ -410,7 +412,8 @@ class TCustomerInformationSettingsController extends AppController {
       'TCustomVariable.id' => 'asc'
     ],
     'fields' => [
-      'TCustomVariable.*'
+      'TCustomVariable.id',
+      'TCustomVariable.variable_name'
      ],
      'conditions' => [
        'TCustomVariable.m_companies_id' => $this->userInfo['MCompany']['id']

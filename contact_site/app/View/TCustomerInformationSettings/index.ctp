@@ -149,12 +149,12 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         </td>
         <td class="tCenter">
           <?php
-            if($val['TCustomerInformationSetting']['sync_custom_variable_flg'] == 1){
-              echo '<span><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;font-size:24px;"></i></span>';
-            }else{
-              echo '<span class="m10b"></span>';
-            }
-          ?>
+          if($val['TCustomerInformationSetting']['sync_custom_variable_flg'] == 0){
+          echo '<span class="m10b"></span>';
+          }else{
+          echo  $variableList[$val['TCustomerInformationSetting']['t_custom_variables_id']];
+          }
+        ?>
         </td>
         <td class="tCenter"><?=$val['TCustomerInformationSetting']['comment']?></td>
       </tr>
