@@ -177,7 +177,7 @@
               <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
             </div>
           </div>
-          <hr class="separator"/>
+          <hr class="separator" ng-if="!$last"/>
         </div>
       </div>
     </li>
@@ -346,6 +346,7 @@
     <li class="styleFlexbox direction-column itemListGroup" ng-repeat="(listId, condition) in setItem.conditionList track by $index">
       <div>
         <h5 class="condition-separator">
+          <span class="removeArea"><i class="remove deleteBtn" ng-click="main.removeActionItemList($event, listId)"></i></span>
           <span class="labelArea">条件{{$index+1}}</span>
         </h5>
       </div>
@@ -374,13 +375,13 @@
             </select>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
-          <div class='area-btn'>
-            <div class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
-            </div>
-          </div>
         </li>
       </ul>
+      <div class='area-btn'>
+        <div class="btnBlock">
+          <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a>
+        </div>
+      </div>
     </li>
     <li>
       <div>

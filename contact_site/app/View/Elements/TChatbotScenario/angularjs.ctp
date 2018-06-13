@@ -768,20 +768,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (elmNum == 1 && index == 0) {
         // リストが一件のみの場合、追加ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        $(targetElm).find('.btnBlock .deleteBtn').hide();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').hide();
       } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>
         || actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
         // リストが複数件ある場合、ヒアリング・選択肢・属性値アクションは、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       } else if (index == elmNum -1 && index != limitNum-1) {
         // リストの最後の一件の場合、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       } else {
         // 削除ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       }
     });
   };

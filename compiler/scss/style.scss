@@ -6923,11 +6923,48 @@ ul.naviBtn {
                 background-color: #ECF4DA;
                 font-weight: bold;
 
-                span.labelArea {
+                span {
+                  &.removeArea {
+                    width: 2em;
+                    float: left;
+                    text-align: center;
+                    padding: 9px 0.75em;
+                    height: 34px;
+                  }
+                  &.labelArea  {
+                    display: block;
+                    margin-left: 2.5em;
+                    padding: 9px 9px 9px 0.25em;
+                    height: 34px;
+                  }
+                }
+
+                i {
+                  background-size: 12px;
+                  background-repeat: no-repeat;
+                  width: 16px;
+                  height: 16px;
+                  border-radius: 15px;
                   display: block;
-                  margin-left: .5em;
-                  padding: 9px 9px 9px 0.25em;
-                  height: 34px;
+                  background-position: 1px;
+
+                  &.remove {
+                    border: 1px solid #878787;
+                    background-color: #FFFFFF;
+                    background-image: url("/img/close_b.png");
+
+                    &:hover {
+                      background-color: #CFCFCF;
+                    }
+                  }
+
+                  &.error {
+                    float: right;
+                    background-image: url("/img/exclamation_mark.png");
+                    background-color: #FF8E9E;
+                    width: 15px;
+                    height: 15px;
+                  }
                 }
               }
 
@@ -6971,7 +7008,6 @@ ul.naviBtn {
                     background-color: #D69B9B;
                     width: 15px;
                     height: 15px;
-
                   }
                 }
               }
@@ -7268,7 +7304,7 @@ ul.naviBtn {
                       div.conditionAction {
                         flex-grow: 1;
                         textarea {
-                          width: 100%;
+                          width:  calc(100% - 1em);
                         }
                         &.elseCondition {
                           textarea {
