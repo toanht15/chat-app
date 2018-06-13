@@ -937,7 +937,6 @@ io.sockets.on('connection', function (socket) {
     get: function(obj){ // 最初にデータを取得するとき
         var chatData = {historyId: null, messages: []};
         var historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
-        console.log(historyId);
         if ( historyId ) {
             chatData.historyId = historyId;
 
@@ -950,8 +949,6 @@ io.sockets.on('connection', function (socket) {
             pool.query(sql, [chatData.historyId], function(err, rows){
               if ( err !== null && err !== '' ) return false; // DB接続断対応
               var messages = ( isset(rows) ) ? rows : [];
-              console.log('メッセージ');
-              console.log(messages);
               var setList = {};
               for (var i = 0; i < messages.length; i++) {
                 var date = messages[i].created;
@@ -994,8 +991,6 @@ io.sockets.on('connection', function (socket) {
                 date = new Date(date);
                 setList[fullDateTime(date) + "_"] = scenarioMessages[i];
               }
-              console.log('チャットデータ1');
-              console.log(chatData);
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
               console.log(chatData);
@@ -1004,7 +999,6 @@ io.sockets.on('connection', function (socket) {
         }
         else {
             obj.chat = chatData;
-            console.log('チャットデータ2');
             emit.toMine('chatMessageData', obj, socket);
         }
     },

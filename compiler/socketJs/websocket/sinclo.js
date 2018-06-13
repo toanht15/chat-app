@@ -1186,7 +1186,6 @@
             //通知した場合
             if(chat.noticeFlg == 1 && firstCheck == true) {
               var now = new Date();
-              console.log(now);
               var targetDate = new Date(storage.s.get('notificationTime'));
               //現在時刻から通知された時間の差
               var diff = (now.getTime() - targetDate.getTime()) / 1000;
@@ -1391,7 +1390,6 @@
         }
         //初回通知メッセージを利用している場合
         if (obj.notification === true) {
-          console.log('ここまできている');
           storage.s.set('notificationTime',obj.created);
           data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
           for (var i = 0; i < Object.keys(data).length; i++) {
