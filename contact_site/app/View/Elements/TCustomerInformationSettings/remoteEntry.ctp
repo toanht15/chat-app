@@ -2,49 +2,56 @@
   //特定項目を選択した際に、追加メニュー分の高さを確保する
   //特定項目から選択が外れた場合は、その分の高さを削減する
   $(function () {
-    $('#TCustomerInformationSettingSyncCustomVariableFlg').on('click', function(e){
-      if($(this).prop('checked')) {
-        $('#CustomVariableWrap').css('display','');
-        var popup = $('#popup-frame');
-        popup.height(popup.height()+40);
-      }else{
-        $('#CustomVariableWrap').css('display','none');
-        var popup = $('#popup-frame');
-        popup.height(popup.height()-40);
-      }
-    });
+
+	//選択状況によりウィンドウサイズが変化する処理
+    var popupframe = $('#popup-frame');
+    var popupbutton = $('#popup-button');
+
     var selectflag = 0;
     //エディット時に、既にプルダウンが選ばれていた場合の処理
     if(document.getElementById('TCustomerInformationSettingInputType').value == 3){
       $('#SelectListWrap').css('display','');
-      var popup = $('#popup-frame');
-      popup.height(popup.height()+57);
+      popupframe.height(popupframe.height()+57);
+      popupbutton.height(popupbutton.height()+4);
       selectflag = 1;
     }
 
     //エディット時に、既にカスタム変数チェックボックスが選択されている場合
     if(document.getElementById('TCustomerInformationSettingSyncCustomVariableFlg').checked){
-    	$('#CustomVariableWrap').css('display','');
-        var popup = $('#popup-frame');
-        popup.height(popup.height()+40);
-     }
+        $('#CustomVariableWrap').css('display','');
+        popupframe.height(popupframe.height()+40);
+        popupbutton.height(popupbutton.height()+3);
+    }
 
+    $('#TCustomerInformationSettingSyncCustomVariableFlg').on('click', function(e){
+        if($(this).prop('checked')) {
+          $('#CustomVariableWrap').css('display','');
+          popupframe.height(popupframe.height()+40);
+          popupbutton.height(popupbutton.height()+3);
+        }else{
+          $('#CustomVariableWrap').css('display','none');
+          popupframe.height(popupframe.height()-40);
+          popupbutton.height(popupbutton.height()-3);
+        }
+      });
 
     $('#SelectListForm').change(function(e){
       if(document.getElementById('TCustomerInformationSettingInputType').value == 3){
         $('#SelectListWrap').css('display','');
-        var popup = $('#popup-frame');
-        popup.height(popup.height()+57);
+        popupframe.height(popupframe.height()+57);
+        popupbutton.height(popupbutton.height()+4);
         selectflag = 1;
       }else{
         $('#SelectListWrap').css('display','none');
         if(selectflag == 1){
-          var popup = $('#popup-frame');
-          popup.height(popup.height()-57);
+          popupframe.height(popupframe.height()-57);
+          popupbutton.height(popupbutton.height()-4);
           selectflag = 0;
         }
       }
     });
+
+
     //ツールチップの表示制御
     var topPosition = 0;
     $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
@@ -179,19 +186,18 @@
       </span>
     </div>
     <div id="SelectListWrap" style="display: none; margin:0px!important">
-      <span style="padding-left: 110px">
+      <span style="padding-left: 97px">
         <label class="require" style="vertical-align: 7px;">
           プルダウンリスト
         </label>
-      <?= $this->Form->textarea('input_option', ['placeholder' => '', 'div' => false, 'label' => false, 'maxlength' => 300,'style' =>
-        'box-sizing: content-box; height: 1.2em; border-radius: 5px!important; margin-top: 8px; padding: 1px;']) ?>
+      <?= $this->Form->textarea('input_option', ['placeholder' => '', 'div' => false, 'label' => false, 'maxlength' => 300]) ?>
       </span>
-      <p style="font-size: 10px; margin: 0px; padding-left: 217px">※リスト表示する内容を改行して複数入力してください</p>
+      <p style="font-size: 10px; margin: 0px; padding-left: 203px">※リスト表示する内容を改行して複数入力してください</p>
     </div>
     <div>
       <span>
-        <label for="TCustomerInformationSettingShowRealtimeMonitorFlg" style="cursor:pointer; margin-bottom: 1em">
-          <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'style' => 'top:3px;'])?>
+        <label class="forcheckbox" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
+          <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => ""])?>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>
         <div class="questionBallon" id="filterType3Label">
@@ -201,7 +207,7 @@
     </div>
     <div>
       <span>
-        <label for="TCustomerInformationSettingShowSendMailFlg" style="cursor:pointer; margin-bottom: 1em">
+        <label class="forcheckbox" for="TCustomerInformationSettingShowSendMailFlg">
           <?= $this->Form->input('show_send_mail_flg',['type' => 'checkbox', 'div' => false, 'label' => ""])?>
           メール送信時にメール本文に記載する
         </label>
@@ -212,8 +218,8 @@
     </div>
     <div>
       <span>
-        <label for="TCustomerInformationSettingSyncCustomVariableFlg" style="cursor:pointer; margin-bottom: 1em">
-          <?= $this->Form->input('sync_custom_variable_flg',['type' => 'checkbox', 'div' => false, 'label' => ""])?>
+        <label class="forcheckbox" for="TCustomerInformationSettingSyncCustomVariableFlg">
+          <?= $this->Form->input('sync_custom_variable_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => empty($variableList)])?>
           カスタム変数の値を自動的に登録する
         </label>
         <div class="questionBallon" id="filterType5Label">
@@ -222,7 +228,7 @@
       </span>
     </div>
     <div id="CustomVariableWrap" style="display: none">
-      <span style="padding-left: 34px">
+      <span style="margin-left:19px">
         <label class="require">
           カスタム変数
         </label>
@@ -241,7 +247,7 @@
     </div>
     <div>
       <span style="margin-top: 8px;">コメント</span>
-      <?= $this->Form->textarea('comment', ['placeholder' => 'コメント', 'div' => false, 'label' => false, 'maxlength' => 300,'style' => 'margin-top: 8px; padding: 10px;']) ?>
+      <?= $this->Form->textarea('comment', ['placeholder' => 'コメント', 'div' => false, 'label' => false, 'maxlength' => 300]) ?>
     </div>
     <div id="filterType1Tooltip" class="explainTooltip">
       <icon-annotation>

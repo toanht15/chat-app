@@ -1382,7 +1382,7 @@
 
   .questionBallon {
     display: inline-block;
-    margin-left: 20px;
+    margin-left: 6px;
     text-align: center;
 
     .questionBtn {
@@ -1526,7 +1526,7 @@
 
   .questionBallon {
     display: inline-block;
-    margin-left: 20px;
+    margin-left: 6px;
     text-align: center;
 
     .questionBtn {
@@ -1608,11 +1608,20 @@
     margin: 20px 0;
 
     textarea {
-      margin: 0px;
+      margin-top: 8px;
+      padding: 10px;
       height: 140px;
       resize: none;
       border-radius: 15px!important;
       overflow: auto;
+
+      &#TCustomerInformationSettingInputOption{
+        box-sizing: content-box;
+        height: 1.2em;
+        border-radius: 5px!important;
+        margin-top: 8px;
+        padding: 1px;
+      }
     }
 
     input[type='text'] {
@@ -1622,14 +1631,27 @@
       border: none;
       border-bottom: 1px solid #909090;
     }
+
+    input[type="checkbox"]{
+      position: relative;
+      top: 3px;
+      margin-left: 0px;
+    }
+
+    .forcheckbox{
+      cursor:pointer;
+      margin-bottom: 1em;
+    }
+
+  }
+
+  #popup-main{
+    padding-bottom: 8px!important;
   }
 
   #popup-button {
     width: 15em;
     margin: 0 auto;
-    position: absolute;
-    bottom: -3.5%;
-    left: 35%;
 
     .textBtn {
       width: 5em;
