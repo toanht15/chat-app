@@ -4743,11 +4743,10 @@ ul.naviBtn {
 
       ul {
         margin: 0;
-        padding: 0;
         text-align: left;
         background-color: #FFF;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
+        padding: 10px 10px;
         font-weight: normal;
         border-radius: 5px;
 
@@ -4758,7 +4757,8 @@ ul.naviBtn {
         }
 
         span {
-          font-size: 0.9em;
+          font-size: 1em;
+          line-height: 1.5;
         }
       }
     }
@@ -4804,11 +4804,10 @@ ul.naviBtn {
 
       ul {
         margin: 0;
-        padding: 0;
         text-align: left;
         background-color: #FFF;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
+        padding: 10px 10px;
         font-weight: normal;
         border-radius: 5px;
 
@@ -4819,7 +4818,8 @@ ul.naviBtn {
         }
 
         span {
-          font-size: 0.9em;
+          font-size: 1em;
+          line-height: 1.5;
         }
       }
     }
@@ -5078,11 +5078,10 @@ ul.naviBtn {
 
       ul {
         margin: 0;
-        padding: 0;
         text-align: left;
         background-color: #FFF;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
+        padding: 10px 10px;
         font-weight: normal;
         border-radius: 5px;
 
@@ -5093,7 +5092,8 @@ ul.naviBtn {
         }
 
         span {
-          font-size: 0.9em;
+          font-size: 1em;
+          line-height: 1.5;
         }
       }
     }
@@ -5850,11 +5850,10 @@ ul.naviBtn {
 
             ul {
               margin: 0;
-              padding: 0;
               text-align: left;
               background-color: #FFF;
               box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-              padding: 0.5em;
+              padding: 10px 10px;
               font-weight: normal;
               border-radius: 5px;
 
@@ -5865,7 +5864,8 @@ ul.naviBtn {
               }
 
               span {
-                font-size: 0.9em;
+                font-size: 1em;
+                line-height: 1.5;
               }
             }
           }
@@ -6300,11 +6300,10 @@ ul.naviBtn {
 
             ul {
               margin: 0;
-              padding: 0;
               text-align: left;
               background-color: #FFF;
               box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-              padding: 0.5em;
+              padding: 10px 10px;
               font-weight: normal;
               border-radius: 5px;
 
@@ -6315,7 +6314,8 @@ ul.naviBtn {
               }
 
               span {
-                font-size: 0.9em;
+                font-size: 1em;
+                line-height: 1.5;
               }
             }
           }
@@ -6354,11 +6354,10 @@ ul.naviBtn {
 
             ul {
               margin: 0;
-              padding: 0;
               text-align: left;
               background-color: #FFF;
               box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-              padding: 0.5em;
+              padding: 10px 10px;
               font-weight: normal;
               border-radius: 5px;
 
@@ -6369,7 +6368,8 @@ ul.naviBtn {
               }
 
               span {
-                font-size: 0.9em;
+                font-size: 1em;
+                line-height: 1.5;
               }
             }
           }
@@ -6911,6 +6911,9 @@ ul.naviBtn {
                 margin: 0;
                 background-color: #FFF;
                 padding-bottom: 12px;
+                &.pb6p {
+                  padding-bottom: 5px;
+                }
               }
 
               h5.condition-separator {
@@ -7027,6 +7030,10 @@ ul.naviBtn {
               .set_action_item_body {
                 background-color: #ffffff;
                 padding: 1.5em;
+
+                input[type="text"] {
+                  font-size: 13px;
+                }
 
                 > ul {
 
@@ -7304,6 +7311,7 @@ ul.naviBtn {
                       div.conditionAction {
                         flex-grow: 1;
                         label.executeNextActionCheck {
+                          padding-top: 6px;
                           display: block;
                         }
                         textarea {
@@ -7342,6 +7350,16 @@ ul.naviBtn {
 
                   &.direction-column {
                     flex-direction: column;
+                    padding-bottom: 2px;
+                  }
+
+                  > .fb15em {
+                    flex-basis: 15em;
+                    min-width: 15em;
+                    white-space: nowrap;
+                    & + * {
+                      flex-grow: 1;
+                    }
                   }
 
                   > .fb13em {
@@ -7600,11 +7618,10 @@ ul.naviBtn {
 
       ul {
         margin: 0;
-        padding: 0;
         text-align: left;
         background-color: #FFF;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
+        padding: 10px 10px;
         font-weight: normal;
         border-radius: 5px;
 
@@ -7615,7 +7632,8 @@ ul.naviBtn {
         }
 
         span {
-          font-size: 0.9em;
+          font-size: 1em;
+          line-height: 1.5;
         }
       }
     }
@@ -7817,11 +7835,10 @@ ul.naviBtn {
 
       ul {
         margin: 0;
-        padding: 0;
         text-align: left;
         background-color: #FFF;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
+        padding: 10px 10px;
         font-weight: normal;
         border-radius: 5px;
 
@@ -7832,7 +7849,8 @@ ul.naviBtn {
         }
 
         span {
-          font-size: 0.9em;
+          font-size: 1em;
+          line-height: 1.5;
         }
       }
     }
