@@ -1109,7 +1109,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           $scope.actionStep = 0;
           $scope.doAction();
         } else {
-          self.getScenarioDetail(targetScenarioId, false);
+          self.getScenarioDetail(targetScenarioId, condition.action.executeNextAction == 1);
         }
         break;
       case 3:

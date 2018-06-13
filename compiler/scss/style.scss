@@ -7303,6 +7303,9 @@ ul.naviBtn {
                       }
                       div.conditionAction {
                         flex-grow: 1;
+                        label.executeNextActionCheck {
+                          display: block;
+                        }
                         textarea {
                           width:  calc(100% - 1em);
                         }
@@ -7389,6 +7392,8 @@ ul.naviBtn {
                   > ul {
                     flex-grow: 1;
                   }
+
+
                 }
 
                 .indentDown {

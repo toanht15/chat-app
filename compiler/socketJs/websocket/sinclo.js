@@ -5420,8 +5420,7 @@
                 targetScenarioId = self._parent.get(self._parent._lKey.scenarioId);
               }
               emit('getScenario', {scenarioId: targetScenarioId}, function(result){
-                // FIXME 無理やり実装（今は後続アクションがなくなる）
-                self._parent._mergeScenario(result, false);
+                self._parent._mergeScenario(result, condition.action.executeNextAction);
                 if(self._parent._goToNextScenario(true)) {
                   self._parent._process();
                 }

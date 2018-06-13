@@ -373,6 +373,7 @@
               <option value="">シナリオを選択してください</option>
               <option value="self">このシナリオ</option>
             </select>
+            <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="condition.action.executeNextAction" ng-init="condition.action.executeNextAction = condition.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。" data-tooltip-width='300'>?</icon></span></label>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
         </li>
@@ -400,6 +401,7 @@
                 <option value="">シナリオを選択してください</option>
                 <option value="self">このシナリオ</option>
               </select>
+              <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="setItem.elseAction.action.executeNextAction" ng-init="setItem.elseAction.action.executeNextAction = setItem.elseAction.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。" data-tooltip-width='300'>?</icon></span></label>
             </div>
             <div class="conditionAction elseCondition" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
           </li>
