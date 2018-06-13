@@ -379,6 +379,7 @@
         </li>
       </ul>
       <div class='area-btn'>
+        <hr class="separator pb6p" ng-if="$last && listId != '4'"/>
         <div class="btnBlock">
           <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a>
         </div>

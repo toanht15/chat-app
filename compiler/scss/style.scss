@@ -6911,6 +6911,9 @@ ul.naviBtn {
                 margin: 0;
                 background-color: #FFF;
                 padding-bottom: 12px;
+                &.pb6p {
+                  padding-bottom: 5px;
+                }
               }
 
               h5.condition-separator {
@@ -7304,6 +7307,7 @@ ul.naviBtn {
                       div.conditionAction {
                         flex-grow: 1;
                         label.executeNextActionCheck {
+                          padding-top: 6px;
                           display: block;
                         }
                         textarea {
