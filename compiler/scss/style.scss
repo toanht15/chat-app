@@ -6228,6 +6228,10 @@ ul.naviBtn {
                     background-color: #BFBFBF;
                   }
 
+                  &.selectedLi {
+                    background-color: #ECF4DA;
+                  }
+
                   &:not(.disableLi):hover {
                     background-color: $list-color;
                   }
