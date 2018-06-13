@@ -160,7 +160,7 @@
 </div>
 
 <?php /* 属性値取得 */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>" class="set_action_item_body action_hearing">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>" class="set_action_item_body action_hearing" ng-init="main.controllAttributeSettingView(setActionId)">
   <ul>
     <li>
       <div class='grid-container grid-container-header'>
@@ -177,7 +177,7 @@
               <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
             </div>
           </div>
-          <hr class="separator"/>
+          <hr class="separator" ng-if="!$last"/>
         </div>
       </div>
     </li>
@@ -335,7 +335,7 @@
 </div>
 
 <?php /* 条件分岐 */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>" class="set_action_item_body action_branch_on_condition">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>" class="set_action_item_body action_branch_on_condition" ng-init="main.controllBranchOnConditionSettingView(setActionId)">
   <ul>
     <li class="styleFlexbox">
       <span class="fb13em"><label>参照する変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信先のメールアドレスを設定します。<br>（変数の利用も可能です）" data-tooltip-width='210'>?</icon></span></label></span>
@@ -346,6 +346,7 @@
     <li class="styleFlexbox direction-column itemListGroup" ng-repeat="(listId, condition) in setItem.conditionList track by $index">
       <div>
         <h5 class="condition-separator">
+          <span class="removeArea"><i class="remove deleteBtn" ng-click="main.removeActionItemList($event, listId)"></i></span>
           <span class="labelArea">条件{{$index+1}}</span>
         </h5>
       </div>
@@ -372,21 +373,21 @@
               <option value="">シナリオを選択してください</option>
               <option value="self">このシナリオ</option>
             </select>
+            <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="condition.action.executeNextAction" ng-init="condition.action.executeNextAction = condition.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。" data-tooltip-width='300'>?</icon></span></label>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
-          <div class='area-btn'>
-            <div class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
-            </div>
-          </div>
         </li>
       </ul>
+      <div class='area-btn'>
+        <div class="btnBlock">
+          <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a>
+        </div>
+      </div>
     </li>
     <li>
       <div>
         <hr class="separator"/>
-        <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.elseEnabled" ng-init="setItem.elseEnabled = true">上記を満たさない場合に実行するアクション<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャット履歴の「成果」に「途中離脱」または「CV」として自動登録します。<br><br>【途中離脱】ヒアリング途中で終了した場合<br>【CV】全項目のヒアリングが完了した場合（入力内容の確認を行う場合は「OK」が選択された場合）" data-tooltip-width='300'>?</icon></span></label>
-
+        <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.elseEnabled" ng-init="setItem.elseEnabled = false">上記を満たさない場合に実行するアクション<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャット履歴の「成果」に「途中離脱」または「CV」として自動登録します。<br><br>【途中離脱】ヒアリング途中で終了した場合<br>【CV】全項目のヒアリングが完了した場合（入力内容の確認を行う場合は「OK」が選択された場合）" data-tooltip-width='300'>?</icon></span></label>
         <ul class="condition else" ng-if="setItem.elseEnabled == true">
           <li class="styleFlexbox">
             <div class="conditionTypeSelect">
@@ -400,6 +401,7 @@
                 <option value="">シナリオを選択してください</option>
                 <option value="self">このシナリオ</option>
               </select>
+              <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="setItem.elseAction.action.executeNextAction" ng-init="setItem.elseAction.action.executeNextAction = setItem.elseAction.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。" data-tooltip-width='300'>?</icon></span></label>
             </div>
             <div class="conditionAction elseCondition" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
           </li>

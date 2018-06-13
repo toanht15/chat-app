@@ -45,23 +45,23 @@
         <!-- テキスト発言 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_TEXT ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットに発言させたいテキストメッセージを設定できるアクションです。">テキスト発言</a>
         <!-- ヒアリング -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)" class="greenBtn btn-shadow commontooltip smallfont"  data-balloon-width="625" data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。<br>ヒアリング項目は複数設定することが可能で、下記タイプを指定することが可能です。<br>＜タイプ＞<br>@text：自由入力<br>@number：数値<br>@email：メールアドレス<br>@tel_number：電話番号<br><br>例えば[@email]を選択すると、メールアドレスとしての整合性チェック（正規表現チェック）を行い、<br>不正な内容な場合はもう一度同じ質問をユーザに投げかけてくれます。">ヒアリング</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">ヒアリング</a>
         <!-- 選択肢 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SELECT_OPTION ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。">選択肢</a>
         <!-- 条件分岐 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>)" class="greenBtn btn-shadow commontooltip" data-text="変数の値により処理を分岐させるためのアクションです。">条件分岐</a>
-        <!-- シナリオ呼び出し -->
+        <!-- シナリオ呼出 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>)" class="greenBtn btn-shadow commontooltip" data-text="呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。">シナリオ呼出</a>
-        <!-- 属性地取得 -->
+        <!-- 属性値取得 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>)" class="greenBtn btn-shadow commontooltip" data-text="ページからCSSセレクタで指定された項目の値を取得するためのアクションです。">属性値取得</a>
         <!-- ファイル受信 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_RECEIVE_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="サイト訪問者からのファイル送信を受け付けるアクションです。">ファイル受信</a>
         <!-- ファイル送信 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットが自動送信させるファイルを設定できるアクションです。">ファイル送信</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルを設定できるアクションです。">ファイル送信</a>
         <!-- 外部連携 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="外部システムに対してAPIの呼び出しができるアクションです。">外部連携</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。">外部連携</a>
         <!-- メール送信 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)" class="greenBtn btn-shadow commontooltip" data-balloon-width="600" data-text="下記いずれかの内容のメールを送信するアクションです。<br>宛先、差出人名、メールタイトルを自由に設定することが可能です。<br>・メール内容をすべてメールする：それまでのすべてのチャットやり取り内容をメールします<br>・変数の値のみメールする：ヒアリングおよび選択肢にて入力（または選択）された内容をメールします<br>・メール本文をカスタマイズする：自由にメール本文を編集することが可能です">メール送信</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)" class="greenBtn btn-shadow commontooltip" data-text="メールを送信するアクションです。宛先、差出人名、メールタイトル、メール本文を自由に設定することが可能です。">メール送信</a>
       </div>
     </div>
     <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">
