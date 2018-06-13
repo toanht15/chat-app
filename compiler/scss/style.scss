@@ -112,7 +112,7 @@ table {
   }
 
   tr:hover, tr.on {
-    background-color: rgba(195, 214, 155, 0.1) !important;
+    background-color: rgba(195, 214, 155, 0.1);
   }
 
   th, td {
@@ -5219,6 +5219,9 @@ ul.naviBtn {
 
   .bgGrey {
     background-color: #DEDEDE;
+    &:hover {
+      background-color: #EEEEEE;
+    }
   }
 
   .lineCtrl {
@@ -5672,6 +5675,9 @@ ul.naviBtn {
 
     .bgGrey {
       background-color: #DEDEDE;
+      &:hover {
+        background-color: #EEEEEE;
+      }
     }
 
     .lineCtrl {
@@ -6229,10 +6235,10 @@ ul.naviBtn {
                   }
 
                   &.selectedLi {
-                    background-color: #ECF4DA;
+                    background-color: rgb(235, 246, 249);
                   }
 
-                  &:not(.disableLi):hover {
+                  &:not(.disableLi):not(.selectedLi):hover {
                     background-color: $list-color;
                   }
 
@@ -6443,6 +6449,9 @@ ul.naviBtn {
 
     .bgGrey {
       background-color: #DEDEDE;
+      &:hover {
+        background-color: #EEEEEE;
+      }
     }
 
     .lineCtrl {
@@ -6541,6 +6550,9 @@ ul.naviBtn {
 
       .bgGrey {
         background-color: #DEDEDE;
+        &:hover {
+          background-color: #EEEEEE;
+        }
       }
 
       .lineCtrl {
@@ -7867,6 +7879,9 @@ ul.naviBtn {
 
     .bgGrey {
       background-color: #DEDEDE;
+      &:hover {
+        background-color: #EEEEEE;
+      }
     }
 
     .lineCtrl {
@@ -8411,6 +8426,9 @@ ul.naviBtn {
 
     .bgGrey {
       background-color: #DEDEDE;
+      &:hover {
+        background-color: #EEEEEE;
+      }
     }
 
     .lineCtrl {
