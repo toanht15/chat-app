@@ -114,7 +114,21 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         </td>
         <td width="5%" class="tCenter"><?=$prevCnt + h($key+1)?></td>
         <td class="tCenter"><?=$val['TCustomerInformationSetting']['item_name']?></td>
-        <td class="tCenter"><?=$val['TCustomerInformationSetting']['input_type']?></td>
+        <td class="tCenter">
+          <?php
+            switch($val['TCustomerInformationSetting']['input_type']){
+              case '1':
+                echo '<span>テキストボックス</span>';
+                break;
+              case '2':
+                echo '<span>テキストエリア</span>';
+                break;
+              case '3':
+                echo '<span>プルダウン</span>';
+                break;
+              }
+          ?>
+        </td>
         <td class="tCenter">
           <?php
             if($val['TCustomerInformationSetting']['show_realtime_monitor_flg'] == 1){

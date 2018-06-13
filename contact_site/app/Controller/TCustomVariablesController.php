@@ -54,14 +54,16 @@ class TCustomVariablesController extends AppController {
    * @return void
    * */
   public function remoteSaveEntryForm() {
-  	ini_set('display_errors',1);
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $saveData['TCustomVariable']['m_compaines_id'] = $this->userInfo['MCompany']['id'];
+    $saveData = [];
     $errorMessage = [];
 
-    if (empty($saveData['TCustomVariable']['id'])){
+    if (!empty($this->request->data['customvariableId'])) {
+      $this->TCustomVariable->recursive = -1;
+      $saveData = $this->TCustomVariable->read(null, $this->request->data['customvariableId']);
+    }else{
       $this->TCustomVariable->create();
       $params = [
         'fields' => [

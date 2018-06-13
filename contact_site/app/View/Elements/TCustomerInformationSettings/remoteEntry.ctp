@@ -16,8 +16,15 @@
       }
     });
     var selectflag = 0;
+    //エディット時に、既にプルダウンが選ばれていた場合の処理
+    if(document.getElementById('TCustomerInformationSettingInputType').value == 3){
+      $('#SelectListWrap').css('display','');
+      var popup = $('#popup-frame');
+      popup.height(popup.height()+57);
+      selectflag = 1;
+    }
     $('#SelectListForm').change(function(e){
-      if(document.getElementById('TCustomerInformationSettingInputType').value == 2){
+      if(document.getElementById('TCustomerInformationSettingInputType').value == 3){
         $('#SelectListWrap').css('display','');
         var popup = $('#popup-frame');
         popup.height(popup.height()+57);
@@ -25,9 +32,9 @@
       }else{
         $('#SelectListWrap').css('display','none');
         if(selectflag == 1){
-            var popup = $('#popup-frame');
-            popup.height(popup.height()-57);
-            selectflag = 0;
+          var popup = $('#popup-frame');
+          popup.height(popup.height()-57);
+          selectflag = 0;
         }
       }
     });
