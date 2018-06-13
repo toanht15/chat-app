@@ -5,6 +5,7 @@
  */
 class MChatSettingsController extends AppController {
   public $uses = ['MChatSetting', 'MUser','MOperatingHour'];
+  public $components = ['NodeSettingsReload'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -171,6 +172,7 @@ class MChatSettingsController extends AppController {
       // 双方コミットし、true を返す
       $this->MChatSetting->commit();
       $this->MUser->commit();
+      NodeSettingsReloadComponent::reloadChatSettings($this->userInfo['MCompany']['company_key']);
       return true;
     }
     else {

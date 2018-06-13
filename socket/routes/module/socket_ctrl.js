@@ -937,11 +937,12 @@ io.sockets.on('connection', function (socket) {
     get: function(obj){ // 最初にデータを取得するとき
         var chatData = {historyId: null, messages: []};
         var historyId = getSessionId(obj.siteKey, obj.tabId, 'historyId');
+        console.log(historyId);
         if ( historyId ) {
             chatData.historyId = historyId;
 
             var sql  = "SELECT";
-                sql += " chat.id, chat.message, chat.message_type as messageType, chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
+                sql += " chat.id, chat.message, chat.message_type as messageType, chat.message_distinction as messageDistinction,chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.visitors_id as visitorsId,chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg,chat.notice_flg as noticeFlg, chat.created ";
                 sql += "FROM t_history_chat_logs AS chat ";
                 sql += "LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ";
                 sql += "WHERE t_histories_id = ? ORDER BY created";
@@ -949,6 +950,8 @@ io.sockets.on('connection', function (socket) {
             pool.query(sql, [chatData.historyId], function(err, rows){
               if ( err !== null && err !== '' ) return false; // DB接続断対応
               var messages = ( isset(rows) ) ? rows : [];
+              console.log('メッセージ');
+              console.log(messages);
               var setList = {};
               for (var i = 0; i < messages.length; i++) {
                 var date = messages[i].created;
@@ -991,13 +994,17 @@ io.sockets.on('connection', function (socket) {
                 date = new Date(date);
                 setList[fullDateTime(date) + "_"] = scenarioMessages[i];
               }
+              console.log('チャットデータ1');
+              console.log(chatData);
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
+              console.log(chatData);
               emit.toMine('chatMessageData', obj, socket);
             });
         }
         else {
             obj.chat = chatData;
+            console.log('チャットデータ2');
             emit.toMine('chatMessageData', obj, socket);
         }
     },
@@ -1070,6 +1077,7 @@ io.sockets.on('connection', function (socket) {
                     sendData.userId = d.userId;
                   }
                   // 書き込みが成功したら顧客側に結果を返す
+                  //emit.toUser('sendChatResult', sendData, sId);
                   var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
                   sendData.sincloSessionId = sincloSessionId;
                   emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
@@ -3151,7 +3159,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       tabId: obj.messageList.tabId,
       chatMessage: obj.messageList.chatMessage,
       messageType: obj.messageList.messageType,
-      messageDistinction: obj.messageList.messageDistinction,
       messageDistinction: obj.messageList.messageDistinction,
       chatId: obj.messageList.chatId,
       mUserId: obj.messageList.mUserId,

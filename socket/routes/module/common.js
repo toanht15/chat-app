@@ -298,7 +298,7 @@ function loadChatSettings(siteKey, callback) {
   var getChatSQL = "SELECT * FROM m_chat_settings where m_companies_id = ?;";
   if(siteKey) {
   syslogger.info("loadChatSettings target : " + siteKey);
-   pool.query(getChatSql, siteKey,
+   pool.query(getChatSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
       function(err, row){
         if(err) {
           syslogger.error('Unable load chat settings. siteKey : ' + siteKey);
@@ -307,7 +307,7 @@ function loadChatSettings(siteKey, callback) {
         if(row && row.length > 0) {
           syslogger.info(JSON.stringify(row));
           // row = array
-          chatSettings[siteKey] = row;
+          chatSettings[siteKey] = row[0];
           syslogger.info("Load chat setting OK. siteKey : " + siteKey);
           module.exports.chatSettings = chatSettings;
         } else {

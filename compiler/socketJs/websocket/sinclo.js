@@ -1391,6 +1391,7 @@
         }
         //初回通知メッセージを利用している場合
         if (obj.notification === true) {
+          console.log('ここまできている');
           storage.s.set('notificationTime',obj.created);
           data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
           for (var i = 0; i < Object.keys(data).length; i++) {

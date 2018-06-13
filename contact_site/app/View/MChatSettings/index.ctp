@@ -269,9 +269,9 @@ function checkValidate() {
         </div>
       </section>
       <section>
-        <h3>２．初回通知メッセージ</h3>
+        <h3>２．初回チャット通知メッセージ</h3>
         <div class="content">
-          <pre>このメッセージはサイト訪問者からのメッセージが通知された初回のみ、N秒後に自動送信されます</pre>
+          <pre>このメッセージはチャットがオペレータに通知された際に、初回のみ設定した秒後に自動送信されます</pre>
           <label style="display:inline-block;">
               <?php
                 $settings = [
