@@ -8,12 +8,3 @@
 <?= $this->element('TChatbotScenario/template/send_file'); ?>
 <?= $this->element('TChatbotScenario/template/external_api_connection'); ?>
 <?= $this->element('TChatbotScenario/template/send_mail'); ?>
-
-
-
-
-
-
-
-
-
