@@ -75,7 +75,7 @@
             <span id="pushImg"></span>
             <div>
               <ul>
-                <li ng-repeat="(key, item) in main.tmpList" ng-class="{disableLi:main.checkDisabled(key)}" ng-click="main.addItem(key)">{{item.label}}</li>
+                <li ng-repeat="(key, item) in main.tmpList" ng-class="{selectedLi:main.checkSelected(key),disableLi:main.checkDisabled(key)}" ng-click="main.addItem(key)">{{item.label}}</li>
               </ul>
             </div>
           </div>
