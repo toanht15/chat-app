@@ -2,6 +2,8 @@
   // -----------------------------------------------------------------------------
   //   websocket通信
   // -----------------------------------------------------------------------------
+  console.log('シンクロ情報');
+  console.log(sincloInfo);
   var $ = jquery;
   sinclo = {
     widget: {
@@ -1087,6 +1089,8 @@
       this.chatApi.historyId = obj.chat.historyId;
       var keys = Object.keys(obj.chat.messages);
       var prevMessageBlock = null;
+      var firstCheck = true;
+      console.log('ページ遷移');
       for (var key in obj.chat.messages) {
         if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
         var chat = obj.chat.messages[key], userName;
@@ -1177,7 +1181,42 @@
             else if(chat.deleteFlg === 1) {
               this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
-          } else {
+          }
+          else if(Number(chat.messageType) === 7){
+            return false;
+          }
+          else {
+            //通知した場合
+            if(chat.noticeFlg == 1 && firstCheck == true) {
+              var now = new Date();
+              console.log(now);
+              var targetDate = new Date(storage.s.get('notificationTime'));
+              //現在時刻から通知された時間の差
+              var diff = (now.getTime() - targetDate.getTime()) / 1000;
+              data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
+              for (var i = 0; i < Object.keys(data).length; i++) {
+                (function(pram) {
+                  setTimeout(function() {
+                    //オペレータが入室していなかった場合
+                    if(storage.s.get('operatorEntered') !== 'true') {
+                      sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
+                      sinclo.chatApi.scDown();
+                      var sendData = {
+                        siteKey: obj.siteKey,
+                        tabId: obj.tabId,
+                        chatMessage: data[pram].message,
+                        messageType: sinclo.chatApi.messageType.notification,
+                        messageDistinction: chat.messageDistinction,
+                        mUserId: chat.userId,
+                        userId: chat.visitorsId,
+                      }
+                      emit("sendInitialNotificationChat", {messageList: sendData});
+                    }
+                  },(data[pram].seconds-diff)*1000);
+                  firstCheck = false;
+                })(i);
+              }
+            }
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
           // シナリオ実行中であればラジオボタンを非活性にする。
@@ -1355,10 +1394,15 @@
         }
         //初回通知メッセージを利用している場合
         if (obj.notification === true) {
-          data = JSON.parse(sincloInfo.chat.initial_notification_message);
+          storage.s.set('notificationTime',obj.created);
+          data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
+          console.log('大きなバグだ');
+          console.log(data);
           for (var i = 0; i < Object.keys(data).length; i++) {
             (function(pram) {
                 setTimeout(function() {
+                  console.log('大きなバグだ');
+                  console.log(data[pram].seconds);
                 if(storage.s.get('operatorEntered') !== 'true') {
                   sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
                   sinclo.chatApi.scDown();
@@ -1427,6 +1471,7 @@
         console.log("resAutoChatMessage : " + JSON.stringify(d));
         var obj = JSON.parse(d);
         if(!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
+          console.log('ページ遷移4');
           sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
         }
         sinclo.chatApi.autoMessages.push(obj.chatId, obj);
@@ -4139,6 +4184,7 @@
         }
       },
       _showMessage: function(type, message, categoryNum, showTextArea, callback) {
+        console.log('ページ遷移2222222222222');
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {

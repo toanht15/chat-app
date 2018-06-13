@@ -188,13 +188,11 @@ function checkValidate() {
       }
   });
   $('.validation').bind('mouseleave', function() {
-    console.log('こっちか2？');
       balloon.hide();
   });
 
   $(document).on('keyup', '.notificationTextarea', function(e) {
     if($(this).val() !== "" && $(this).val().length < 300) {
-      console.log('こっちか？');
       $(this).closest('li').find('.validation').hide();
     }
     else {

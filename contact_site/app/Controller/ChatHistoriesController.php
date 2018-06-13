@@ -226,7 +226,7 @@
             "visitors_id = '".$tHistoryData['THistory']['visitors_id']."'"
           ]
         ];
-        /*必ず治す！！ */
+        /*必ず治す！！*/
         $tHistoryCountData = $this->THistory->find('first', $params);
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
