@@ -989,6 +989,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * アクションの実行
    * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
    */
+  $scope.receiveFileEventListener = null;
   $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
       var actionDetail = $scope.setActionList[$scope.actionStep];
@@ -1053,9 +1054,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
           if(actionDetail.dropAreaMessage) {
             $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled, actionDetail.cancelLabel, actionDetail.receiveFileType, actionDetail.extendedReceiveFileExtensions);
-            $scope.$on('onErrorSelectFile', function(){
+            if($scope.receiveFileEventListener) {
+              $scope.receiveFileEventListener();
+            }
+            $scope.receiveFileEventListener = $scope.$on('onErrorSelectFile', function(){
               var message = actionDetail.errorMessage;
-              $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
+              $scope.$broadcast('addReErrorMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
             });
           }
         } else

@@ -28,6 +28,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.addMessage('re', message, prefix);
   });
 
+  $scope.$on('addReErrorMessage', function(event, message, prefix) {
+    $scope.addMessage('re', message, prefix, 'deleteme');
+  });
+
   /**
    * addSeMessage
    * サイト訪問者側メッセージの追加 TODO: 現在使用されていないため、仮実装状態
@@ -99,7 +103,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * @param String message  追加するメッセージ
    * @param String prefix   ラジオボタンに付与するプレフィックス
    */
-  $scope.addMessage = function(type, message, prefix) {
+  $scope.addMessage = function(type, message, prefix, appendClass) {
     // ベースとなる要素をクローンし、メッセージを挿入する
     if (type === 're') {
       var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
@@ -108,6 +112,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
     var formattedMessage = $scope.simulatorSettings.createMessage(message, prefix);
     divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
+
+    if(appendClass) {
+      divElm.classList.add(appendClass);
+    }
 
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
@@ -238,6 +246,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
             // event.target.result に読み込んだファイルの内容が入っています.
             // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
             $scope.fileUploader.loadData = event.target.result;
+            // プレビュー表示前にエラーを消す
+            $('#chatTalk').find('.deleteme').remove();
             $scope.showPreview(self, $scope.fileUploader.fileObj, $scope.fileUploader.loadData);
           };
           fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
@@ -355,51 +365,78 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   };
 
   $scope.showPreview = function(target, fileObj, loadData) {
-    $(target).parents('li.sinclo_re.recv_file_left').parent().hide();
+    $scope.effectScene(false, $(target).parents('li.sinclo_re.recv_file_left').parent(), function(){
+      // ベースとなる要素をクローン
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
+      var split = fileObj.name.split(".");
+      var targetExtension = split[split.length-1];
 
-    // ベースとなる要素をクローン
-    var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
-    var split = fileObj.name.split(".");
-    var targetExtension = split[split.length-1];
+      function afterDesideThumbnail(elm) {
+        divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(elm);
+        divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea').style.textAlign = 'center';
+        divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function(e){
+          $scope.effectScene(false, $(divElm), function(){
+            document.getElementById('chatTalk').removeChild(divElm);
+            $(target).parents('li.sinclo_re.recv_file_left').parent().show();
+          });
+        });
+        divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function(e){
+          $scope.effectScene(false, $(divElm), function(){
+            var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
+            if(!comment) {
+              comment = "（なし）";
+            }
+            $scope.uploadFile(divElm, comment, fileObj, loadData);
+          });
+        });
+        // 要素を追加する
+        document.getElementById('chatTalk').appendChild(divElm);
+        $('#chatTalk div:last-child').show();
+        var targetTextarea = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea');
+        $scope.changeResizableTextarea(targetTextarea);
+        self.autoScroll();
+        $scope.$apply();
+      }
 
-    function afterDesideThumbnail(elm) {
-      divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(elm);
-      divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea').style.textAlign = 'center';
-      divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function(e){
-        document.getElementById('chatTalk').removeChild(divElm);
-        $(target).parents('li.sinclo_re.recv_file_left').parent().show();
-      });
-      divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function(e){
-        var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
-        if(!comment) {
-          comment = "（なし）";
-        }
-        $scope.uploadFile(divElm, comment, fileObj, loadData);
-      });
-      // 要素を追加する
-      document.getElementById('chatTalk').appendChild(divElm);
-      $('#chatTalk div:last-child').show();
-      var targetTextarea = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea');
-      $scope.changeResizableTextarea(targetTextarea);
-      self.autoScroll();
-      $scope.$apply();
+      if(SimulatorService.isImage(targetExtension)) {
+        var imgElm = document.createElement('img');
+        imgElm.classList.add($scope.selectPreviewImgClass());
+        var fileReader = new FileReader();
+        fileReader.onload = function(e) {
+          imgElm.src = this.result;
+          afterDesideThumbnail(imgElm);
+        };
+        fileReader.readAsDataURL(fileObj);
+      } else {
+        var iconElm = document.createElement('i');
+        iconElm.classList.add('sinclo-fal');
+        iconElm.classList.add('fa-4x');
+        iconElm.classList.add(SimulatorService.selectIconClassFromExtension(targetExtension));
+        iconElm.setAttribute("aria-hidden","true");
+        afterDesideThumbnail(iconElm);
+      }
+    });
+  };
+
+  $scope.selectPreviewImgClass = function() {
+    var widgetSizeType = Number($scope.simulatorSettings.widgetSizeTypeToggle);
+    switch(widgetSizeType) {
+      case 1:
+        return 'small';
+      case 2:
+        return 'middle';
+      case 3:
+        return 'large';
+      default:
+        return 'middle';
     }
+  };
 
-    if(SimulatorService.isImage(targetExtension)) {
-      var imgElm = document.createElement('img');
-      var fileReader = new FileReader();
-      fileReader.onload = function(e) {
-        imgElm.src = this.result;
-        afterDesideThumbnail(imgElm);
-      };
-      fileReader.readAsDataURL(fileObj);
+  $scope.effectScene = function(isBack, jqObj, callback){
+    if(isBack) {
+      jqObj.fadeIn('fast', callback);
     } else {
-      var iconElm = document.createElement('i');
-      iconElm.classList.add('sinclo-fal');
-      iconElm.classList.add('fa-4x');
-      iconElm.classList.add(SimulatorService.selectIconClassFromExtension(targetExtension));
-      iconElm.setAttribute("aria-hidden","true");
-      afterDesideThumbnail(iconElm);
+      jqObj.fadeOut('fast', callback);
     }
   };
 
@@ -474,15 +511,18 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     })
       .done(function(data, textStatus, jqXHR){
         console.log(JSON.stringify(data));
-        var commentLabel = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentLabel');
-        var commentArea = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea');
-        var actionButtonWrap = targetDivElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap');
-        commentArea.innerHTML = "";
-        commentArea.style.textAlign = "left";
-        actionButtonWrap.remove();
-        commentLabel.innerHTML = "＜コメント＞";
-        commentArea.innerHTML = data.comment;
-        $scope.$emit('receiveVistorMessage', "");
+        $scope.effectScene(true, $(targetDivElm), function(){
+          $(targetDivElm).find('li.sinclo_se').removeClass('recv_file_right').addClass('uploaded');
+          var commentLabel = targetDivElm.querySelector('li.sinclo_se.uploaded div.receiveFileContent div.selectFileArea p.commentLabel');
+          var commentArea = targetDivElm.querySelector('li.sinclo_se.uploaded div.receiveFileContent div.selectFileArea p.commentarea');
+          var actionButtonWrap = targetDivElm.querySelector('li.sinclo_se.uploaded div.actionButtonWrap');
+          commentArea.innerHTML = "";
+          commentArea.style.textAlign = "left";
+          actionButtonWrap.remove();
+          commentLabel.innerHTML = "＜コメント＞";
+          commentArea.innerHTML = data.comment;
+          $scope.$emit('receiveVistorMessage', "");
+        });
       })
       .fail(function(jqXHR, textStatus, errorThrown){
         alert("fail");
