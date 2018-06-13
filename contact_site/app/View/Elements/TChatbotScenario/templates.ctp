@@ -160,7 +160,7 @@
 </div>
 
 <?php /* 属性値取得 */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>" class="set_action_item_body action_hearing">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>" class="set_action_item_body action_hearing" ng-init="main.controllAttributeSettingView(setActionId)">
   <ul>
     <li>
       <div class='grid-container grid-container-header'>
