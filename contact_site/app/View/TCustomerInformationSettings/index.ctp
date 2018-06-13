@@ -115,9 +115,33 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         <td width="5%" class="tCenter"><?=$prevCnt + h($key+1)?></td>
         <td class="tCenter"><?=$val['TCustomerInformationSetting']['item_name']?></td>
         <td class="tCenter"><?=$val['TCustomerInformationSetting']['input_type']?></td>
-        <td class="tCenter"><?=$val['TCustomerInformationSetting']['show_realtime_monitor_flg']?></td>
-        <td class="tCenter"><?=$val['TCustomerInformationSetting']['show_send_mail_flg']?></td>
-        <td class="tCenter"><?=$val['TCustomerInformationSetting']['sync_custom_variable_flg']?></td>
+        <td class="tCenter">
+          <?php
+            if($val['TCustomerInformationSetting']['show_realtime_monitor_flg'] == 1){
+              echo '<span><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;font-size:24px;"></i></span>';
+            }else{
+              echo '<span class="m10b"></span>';
+            }
+          ?>
+        </td>
+        <td class="tCenter">
+          <?php
+            if($val['TCustomerInformationSetting']['show_send_mail_flg'] == 1){
+              echo '<span><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;font-size:24px;"></i></span>';
+            }else{
+              echo '<span class="m10b"></span>';
+            }
+          ?>
+        </td>
+        <td class="tCenter">
+          <?php
+            if($val['TCustomerInformationSetting']['sync_custom_variable_flg'] == 1){
+              echo '<span><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;font-size:24px;"></i></span>';
+            }else{
+              echo '<span class="m10b"></span>';
+            }
+          ?>
+        </td>
         <td class="tCenter"><?=$val['TCustomerInformationSetting']['comment']?></td>
       </tr>
       <?php endforeach; ?>

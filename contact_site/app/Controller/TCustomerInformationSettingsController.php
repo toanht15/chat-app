@@ -57,15 +57,16 @@ class TCustomerInformationSettingsController extends AppController {
    * @return void
    * */
   public function remoteSaveEntryForm() {
-    ini_set("display_errors", 'On');
-    error_reporting(E_ALL);
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    $saveData['TCustomerInformationSetting']['m_compaines_id'] = $this->userInfo['MCompany']['id'];
+    $saveData = [];
     $errorMessage = [];
 
-    if (empty($saveData['TCustomerInformationSetting']['id'])){
+    if (!empty($this->request->data['customerinformationsettingId'])) {
+      $this->TCustomerInformationSetting->recursive = -1;
+      $saveData = $this->TCustomerInformationSetting->read(null, $this->request->data['customerinformationsettingId']);
+    }else{
       $this->TCustomerInformationSetting->create();
       $params = [
         'fields' => [
@@ -161,7 +162,6 @@ class TCustomerInformationSettingsController extends AppController {
    * @return void
    * */
   public function remoteCopyEntryForm() {
-    Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $selectedList = $this->request->data['selectedList'];
@@ -205,16 +205,16 @@ class TCustomerInformationSettingsController extends AppController {
       if (!empty($lastData)) {
         $nextSort = intval($lastData['TCustomerInformationSetting']['sort']) + 1;
       }
-      //$saveData['TCustomerInformationSetting']['sort'] = $nextSort;
+      $saveData['TCustomerInformationSetting']['sort'] = $nextSort;
       $saveData['TCustomerInformationSetting']['m_companies_id'] = $value['TCustomerInformationSetting']['m_companies_id'];
-      $saveData['TCustomerInformationSetting']['item_name'] = $value['item_name'].'コピー';
-      $saveData['TCustomerInformationSetting']['input_type'] = $valuea['input_type'];
-      //$saveData['TCustomerInformationSetting']['input_option'] = $value['input_option'];
-      //$saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = $value['show_realtime_monitor_flg'];
-      //$saveData['TCustomerInformationSetting']['show_send_mail_flg'] = $valuee['show_send_mail_flg'];
-      //$saveData['TCustomerInformationSetting']['sync_custom_variable_flg'] = $value['sync_custom_variable_flg'];
-      //$saveData['TCustomerInformationSetting']['t_custom_variables_id'] = $value['t_custom_variables_id'];
-      $saveData['TCustomerInformationSetting']['comment'] = $value['comment'];
+      $saveData['TCustomerInformationSetting']['item_name'] = $value['TCustomerInformationSetting']['item_name'].'コピー';
+      $saveData['TCustomerInformationSetting']['input_type'] = $value['TCustomerInformationSetting']['input_type'];
+      $saveData['TCustomerInformationSetting']['input_option'] = $value['TCustomerInformationSetting']['input_option'];
+      $saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = $value['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+      $saveData['TCustomerInformationSetting']['show_send_mail_flg'] = $value['TCustomerInformationSetting']['show_send_mail_flg'];
+      $saveData['TCustomerInformationSetting']['sync_custom_variable_flg'] = $value['TCustomerInformationSetting']['sync_custom_variable_flg'];
+      $saveData['TCustomerInformationSetting']['t_custom_variables_id'] = $value['TCustomerInformationSetting']['t_custom_variables_id'];
+      $saveData['TCustomerInformationSetting']['comment'] = $value['TCustomerInformationSetting']['comment'];
       $this->TCustomerInformationSetting->set($saveData);
       $this->TCustomerInformationSetting->begin();
       // バリデーションチェックでエラーが出た場合

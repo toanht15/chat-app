@@ -37,7 +37,7 @@
       var parentTdId = $(this).parent().attr('id');
       var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
       targetObj.find('icon-annotation').css('display','block');
-      //jQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
+      //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
       targetObj.css({
         top: ($(this).get(0).offsetTop - targetObj.find('ul').outerHeight() - 32 + topPosition) + 'px',
         left: $(this).get(0).offsetLeft - 6 + 'px'
@@ -54,22 +54,22 @@
   popupEvent.closePopup = function(){
     var customerinformationsettingId = document.getElementById('TCustomerInformationSettingId').value;
     var item_name = document.getElementById('TCustomerInformationSettingItemName').value;
-    var input_type = Number(document.getElementById('TCustomerInformationSettingInputType').value)+1;
+    var input_type = Number(document.getElementById('TCustomerInformationSettingInputType').value);
     if(input_type == 2){
       var input_option = document.getElementById('TCustomerInformationSettingInputOption').value;
     }
-    console.log(document.getElementById('TCustomerInformationSettingShowRealtimeMonitorFlg'));
+    console.log($("#TCustomerInformationSettingShowSendMailFlg").prop('checked'));
     var show_realtime_monitor_flg = 0;
     var show_send_mail_flg = 0;
     var sync_custom_variable_flg = 0;
     var t_custom_variables_id = 0;
-    if(document.getElementById('TCustomerInformationSettingShowRealtimeMonitorFlg') != null){
+    if($("#TCustomerInformationSettingShowRealtimeMonitorFlg").prop('checked')){
         show_realtime_monitor_flg = 1;
     }
-    if(document.getElementById('TCustomerInformationSettingShowSendMailFlg') != null){
+    if($("#TCustomerInformationSettingShowSendMailFlg").prop('checked')){
         show_send_mail_flg = 1;
     }
-    if(document.getElementById('TCustomerInformationSettingSyncCustomVariablesFlg') != null){
+    if($("#TCustomerInformationSettingSyncCustomVariableFlg").prop('checked')){
         var sync_custom_variable_flg = 1;
         //カスタム変数のidを取得するために何かしらの処理を行う必要性がある
         //t_custom_variable_id = document.getElementById('TCustomerInformationSettingTCustomVariablesId').value;
@@ -156,7 +156,11 @@
         </div>
         <?= $this->Form->input('input_type',
         ['type' => 'select',
-        'options' => ['テキストボックス','テキストエリア','プルダウン'],
+        'options' => [
+          '1' => 'テキストボックス',
+          '2' => 'テキストエリア',
+          '3' => 'プルダウン'
+        ],
         'div' => false,
         'label' => false,
         'maxlength' => 100,
@@ -176,8 +180,8 @@
     </div>
     <div>
       <span>
-        <label for="TCustomerInformationSettingShowRealtimeMonitorFlg" style="cursor:pointer; margin-bottom: 1em; display: flex; align-items: center">
-          <input type="checkbox" id="TCustomerInformationSettingShowRealtimeMonitorFlg" style="position:relative; top:-1px; margin-left:15px"/>
+        <label for="TCustomerInformationSettingShowRealtimeMonitorFlg" style="cursor:pointer; margin-bottom: 1em">
+          <input type="checkbox" id="TCustomerInformationSettingShowRealtimeMonitorFlg" style="position:relative; top:2px; margin-left:15px"/>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>
         <div class="questionBallon" id="filterType3Label">
@@ -187,8 +191,8 @@
     </div>
     <div>
       <span>
-        <label for="TCustomerInformationSettingShowSendMailFlg" style="cursor:pointer; margin-bottom: 1em; display: flex; align-items: center">
-          <input type="checkbox" id="TCustomerInformationSettingShowSendMailFlg" style="position:relative; top:-1px; margin-left:15px"/>
+        <label for="TCustomerInformationSettingShowSendMailFlg" style="cursor:pointer; margin-bottom: 1em">
+          <input type="checkbox" id="TCustomerInformationSettingShowSendMailFlg" style="position:relative; top:2px; margin-left:15px"/>
           メール送信時にメール本文に記載する
         </label>
         <div class="questionBallon" id="filterType4Label">
@@ -198,8 +202,8 @@
     </div>
     <div>
       <span>
-        <label for="TCustomerInformationSettingSyncCustomVariablesFlg" style="cursor:pointer; margin-bottom: 1em; display: flex; align-items: center">
-          <input type="checkbox" id="TCustomerInformationSettingSyncCustomVariablesFlg" style="position:relative; top:-1px; margin-left:15px"/>
+        <label for="TCustomerInformationSettingSyncCustomVariablesFlg" style="cursor:pointer; margin-bottom: 1em">
+          <input type="checkbox" id="TCustomerInformationSettingSyncCustomVariablesFlg" style="position:relative; top:2px; margin-left:15px"/>
           カスタム変数の値を自動的に登録する
         </label>
         <div class="questionBallon" id="filterType5Label">
