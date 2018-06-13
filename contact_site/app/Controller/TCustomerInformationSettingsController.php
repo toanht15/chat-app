@@ -7,13 +7,13 @@
 class TCustomerInformationSettingsController extends AppController {
   public $uses = ['TCustomerInformationSetting','TCustomVariable'];
   public $paginate = [
-    'TCustomerInformationSettings' => [
-      'limit' => 100,
+    'TCustomerInformationSetting' => [
+      'limit' => 10,
       'order' => [
-        'TCustomerInformationSettings.sort' => 'asc',
-        'TCustomerInformationSettings.id' => 'asc'
+        'TCustomerInformationSetting.sort' => 'asc',
+        'TCustomerInformationSetting.id' => 'asc'
       ],
-      'fields' => ['TCustomerInformationSettings.*'],
+      'fields' => ['TCustomerInformationSetting.*'],
       'recursive' => -1
     ]
   ];

@@ -69,7 +69,8 @@
     var customerinformationsettingId = document.getElementById('TCustomerInformationSettingId').value;
     var item_name = document.getElementById('TCustomerInformationSettingItemName').value;
     var input_type = Number(document.getElementById('TCustomerInformationSettingInputType').value);
-    if(input_type == 2){
+    if(input_type == 3){
+        console.log(document.getElementById('TCustomerInformationSettingInputOption').value);
       var input_option = document.getElementById('TCustomerInformationSettingInputOption').value;
     }
     var show_realtime_monitor_flg = 0;
@@ -93,7 +94,6 @@
     $.ajax({
       type: "post",
       url: "<?=$this->Html->url('/TCustomerInformationSettings/remoteSaveEntryForm')?>",
-      //条件次第で送る内容を分岐させる処理が必要？(後でエラーが出なければ必要が無い
       data: {
         customerinformationsettingId: customerinformationsettingId,
         item_name: item_name,
@@ -103,6 +103,7 @@
         show_send_mail_flg: show_send_mail_flg,
         sync_custom_variable_flg: sync_custom_variable_flg,
         t_custom_variables_id: t_custom_variables_id,
+        input_option: input_option,
         comment: comment
       },
       cache: false,
@@ -190,7 +191,7 @@
     <div>
       <span>
         <label for="TCustomerInformationSettingShowRealtimeMonitorFlg" style="cursor:pointer; margin-bottom: 1em">
-          <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => ""])?>
+          <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'style' => 'top:3px;'])?>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>
         <div class="questionBallon" id="filterType3Label">
