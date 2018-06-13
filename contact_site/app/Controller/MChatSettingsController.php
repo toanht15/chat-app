@@ -141,20 +141,23 @@ class MChatSettingsController extends AppController {
     // チャット基本設定のバリデーション結果を変数に渡す
     $ret = $this->MChatSetting->validates();
 
+    //初回通知メッセージバリデーション
+    $inRet = true;
+    if($saveData['MChatSetting']['in_flg'] == 1) {
+      $data = json_decode($this->request->data['MChatSetting']['initial_notification_message'],true);
+      foreach($data as $key => $value){
+        if(empty($this->request->data['MChatSetting']['initial_notification_message'.($key+1)]) ||
+          mb_strlen($this->request->data['MChatSetting']['initial_notification_message'.($key+1)]) > 300) {
+          $inRet = false;
+        }
+      }
+    }
+
     // ユーザーへの同時対応数設定を複数行一括保存が出来るように加工する
     $saveData = $this->_makeSaveUserData($inputData);
     $userRet = true;
     if ( !empty($saveData) ) {
       $userRet = $this->MUser->saveAll($saveData, ['validate' => 'only']);
-    }
-
-    $inRet = true;
-    $data = json_decode($this->request->data['MChatSetting']['initial_notification_message'],true);
-    foreach($data as $key => $value){
-      if(empty($this->request->data['MChatSetting']['initial_notification_message'.($key+1)]) ||
-        mb_strlen($this->request->data['MChatSetting']['initial_notification_message'.($key+1)]) > 300) {
-        $inRet = false;
-      }
     }
 
     // ユーザーデータの一括バリデーションチェック
