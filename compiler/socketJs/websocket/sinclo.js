@@ -2,8 +2,6 @@
   // -----------------------------------------------------------------------------
   //   websocket通信
   // -----------------------------------------------------------------------------
-  console.log('シンクロ情報');
-  console.log(sincloInfo);
   var $ = jquery;
   sinclo = {
     widget: {
@@ -1090,7 +1088,6 @@
       var keys = Object.keys(obj.chat.messages);
       var prevMessageBlock = null;
       var firstCheck = true;
-      console.log('ページ遷移');
       for (var key in obj.chat.messages) {
         if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
         var chat = obj.chat.messages[key], userName;
@@ -1396,13 +1393,9 @@
         if (obj.notification === true) {
           storage.s.set('notificationTime',obj.created);
           data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
-          console.log('大きなバグだ');
-          console.log(data);
           for (var i = 0; i < Object.keys(data).length; i++) {
             (function(pram) {
                 setTimeout(function() {
-                  console.log('大きなバグだ');
-                  console.log(data[pram].seconds);
                 if(storage.s.get('operatorEntered') !== 'true') {
                   sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
                   sinclo.chatApi.scDown();
@@ -1471,7 +1464,6 @@
         console.log("resAutoChatMessage : " + JSON.stringify(d));
         var obj = JSON.parse(d);
         if(!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
-          console.log('ページ遷移4');
           sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
         }
         sinclo.chatApi.autoMessages.push(obj.chatId, obj);
@@ -4184,7 +4176,6 @@
         }
       },
       _showMessage: function(type, message, categoryNum, showTextArea, callback) {
-        console.log('ページ遷移2222222222222');
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {

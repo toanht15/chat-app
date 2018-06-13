@@ -599,8 +599,6 @@ router.get("/", function(req, res, next) {
           }
           sendData.chat.settings['in_flg'] = common.chatSettings[siteKey].in_flg;
           sendData.chat.settings['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
-          console.log('sendData');
-          console.log(sendData);
           res.send(sendData);
       }
       else {
