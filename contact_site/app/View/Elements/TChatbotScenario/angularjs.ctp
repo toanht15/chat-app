@@ -1056,7 +1056,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             $scope.$on('onErrorSelectFile', function(){
               var message = actionDetail.errorMessage;
               $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
-              $scope.doAction();
             });
           }
         } else
