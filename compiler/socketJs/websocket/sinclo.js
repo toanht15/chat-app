@@ -1400,7 +1400,6 @@
                   sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
                   sinclo.chatApi.scDown();
                   var sendData = {
-                    chatId: obj.chatId,
                     siteKey: obj.siteKey,
                     tabId: obj.tabId,
                     chatMessage: data[pram].message,
