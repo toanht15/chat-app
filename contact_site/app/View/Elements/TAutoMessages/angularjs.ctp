@@ -36,6 +36,15 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       return self.setItemList;
     });
 
+    this.checkSelected = function(itemId){
+      //営業時間設定を利用しない場合
+      if(<?= $operatingHourData ?> == 2 && itemId == 4) {
+        return false;
+      } else {
+        return (itemId in this.setItemList && this.setItemList[itemId].length >= this.tmpList[itemId].createLimit[this.condition_type]);
+      }
+    };
+
     this.checkDisabled = function(itemId){
         //営業時間設定を利用しない場合
         if(<?= $operatingHourData ?> == 2 && itemId == 4) {
@@ -50,7 +59,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
           });
           return true;
         }
-        return (itemId in this.setItemList && this.setItemList[itemId].length >= this.tmpList[itemId].createLimit[this.condition_type]);
+        return false;
     };
 
     this.addItem = function(tmpId){
