@@ -429,6 +429,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
         selector = '#action' + actionStep + '_setting .itemListGroup.externalApiResponseBody tr';
       }
+    } else if (actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+      targetObjList = $scope.setActionList[actionStep].conditionList;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
     }
 
     if (targetObjList !== "" && selector !== "") {

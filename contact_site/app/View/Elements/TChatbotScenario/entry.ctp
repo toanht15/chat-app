@@ -52,7 +52,7 @@
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>)" class="greenBtn btn-shadow commontooltip" data-text="変数の値により処理を分岐させるためのアクションです。">条件分岐</a>
         <!-- シナリオ呼出 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>)" class="greenBtn btn-shadow commontooltip" data-text="呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。">シナリオ呼出</a>
-        <!-- 属性地取得 -->
+        <!-- 属性値取得 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>)" class="greenBtn btn-shadow commontooltip" data-text="ページからCSSセレクタで指定された項目の値を取得するためのアクションです。">属性値取得</a>
         <!-- ファイル受信 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_RECEIVE_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="サイト訪問者からのファイル送信を受け付けるアクションです。">ファイル受信</a>

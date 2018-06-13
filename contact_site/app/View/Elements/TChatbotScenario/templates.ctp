@@ -335,7 +335,7 @@
 </div>
 
 <?php /* 条件分岐 */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>" class="set_action_item_body action_branch_on_condition">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>" class="set_action_item_body action_branch_on_condition" ng-init="main.controllBranchOnConditionSettingView(setActionId)">
   <ul>
     <li class="styleFlexbox">
       <span class="fb13em"><label>参照する変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信先のメールアドレスを設定します。<br>（変数の利用も可能です）" data-tooltip-width='210'>?</icon></span></label></span>
@@ -386,7 +386,6 @@
       <div>
         <hr class="separator"/>
         <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.elseEnabled" ng-init="setItem.elseEnabled = false">上記を満たさない場合に実行するアクション<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャット履歴の「成果」に「途中離脱」または「CV」として自動登録します。<br><br>【途中離脱】ヒアリング途中で終了した場合<br>【CV】全項目のヒアリングが完了した場合（入力内容の確認を行う場合は「OK」が選択された場合）" data-tooltip-width='300'>?</icon></span></label>
-
         <ul class="condition else" ng-if="setItem.elseEnabled == true">
           <li class="styleFlexbox">
             <div class="conditionTypeSelect">
