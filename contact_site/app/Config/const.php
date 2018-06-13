@@ -800,8 +800,9 @@ $config['chatbotScenarioActionList'] = [
       'dropAreaMessage' => 'ここにファイルをドロップ
 してください',
       'receiveFileType' => '1',
+      'errorMessage' => '選択されたファイルはアップロードすることができません。',
       'extendedReceiveFileExtensions' => '',
-      'cancelEnabled' => true,
+      'cancelEnabled' => false,
       'cancelLabel' => 'ファイル送信をキャンセルする'
     ]
   ]
@@ -896,12 +897,12 @@ $config['chatbotScenarioReceiveFileTypeList'] = [
   C_SCENARIO_RECEIVE_FILE_TYPE_BASIC => [
     'label' => '一般的なファイルに限定',
     'annotation' => '※PDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限されます。',
-    'tooltip' => 'それまでのすべてのチャットやり取り内容すべてをメールします。'
+    'tooltip' => '送信可能なファイル形式を、PDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限します。'
   ],
   C_SCENARIO_RECEIVE_FILE_TYPE_EXTENDED => [
     'label' => '拡張設定',
     'annotation' => '※送信可能なファイルの拡張子を指定します。複数の拡張子を指定する場合はカンマ（,）で区切ります。',
-    'tooltip' => 'ヒアリングおよび選択肢にて入力（または選択）された内容をメールします。'
+    'tooltip' => 'PDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に加え、下記に指定した拡張子のファイルを受信可能とします。<br>複数の拡張子を指定する必要がある場合は、カンマ区切りで設定します。'
   ]
 ];
 
@@ -939,6 +940,19 @@ $config['chatbotScenarioBranchOnConditionActionType'] = [
   ],
   C_SCENARIO_PROCESS_ACTION_TYPE_NONE => [
     'label' => '次のアクションへ'
+  ]
+];
+
+/* シナリオ設定 - 条件分岐 - 実行するアクション（上記を満たさない） */
+  $config['chatbotScenarioBranchOnConditionElseActionType'] = [
+  C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT => [
+    'label' => 'テキスト発言'
+  ],
+  C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO => [
+    'label' => 'シナリオ呼出'
+  ],
+  C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE => [
+    'label' => 'シナリオを終了'
   ]
 ];
 

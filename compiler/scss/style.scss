@@ -7031,6 +7031,10 @@ ul.naviBtn {
                 background-color: #ffffff;
                 padding: 1.5em;
 
+                input[type="text"] {
+                  font-size: 13px;
+                }
+
                 > ul {
 
                   > li {
@@ -7346,6 +7350,16 @@ ul.naviBtn {
 
                   &.direction-column {
                     flex-direction: column;
+                    padding-bottom: 2px;
+                  }
+
+                  > .fb15em {
+                    flex-basis: 15em;
+                    min-width: 15em;
+                    white-space: nowrap;
+                    & + * {
+                      flex-grow: 1;
+                    }
                   }
 
                   > .fb13em {
