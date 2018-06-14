@@ -28,6 +28,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.addMessage('re', message, prefix);
   });
 
+  $scope.$on('addReErrorMessage', function(event, message, prefix) {
+    $scope.addMessage('re', message, prefix, 'deleteme');
+  });
+
   /**
    * addSeMessage
    * サイト訪問者側メッセージの追加 TODO: 現在使用されていないため、仮実装状態
@@ -44,6 +48,17 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    */
   $scope.$on('addReFileMessage', function(event, fileObj) {
     $scope.addFileMessage('re', fileObj);
+  });
+
+  /**
+   *
+   */
+  $scope.extensionType = null;
+  $scope.extendedExtensions = null;
+  $scope.$on('addSeReceiveFileUI', function(event, dropAreaMessage, calcelable, cancelLabel, extensionType, extendedExtensions) {
+    $scope.extensionType = extensionType;
+    $scope.extendedExtensions = extendedExtensions.split(",");
+    $scope.addReceiveFileUI(dropAreaMessage, calcelable, cancelLabel);
   });
 
   /**
@@ -88,7 +103,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * @param String message  追加するメッセージ
    * @param String prefix   ラジオボタンに付与するプレフィックス
    */
-  $scope.addMessage = function(type, message, prefix) {
+  $scope.addMessage = function(type, message, prefix, appendClass) {
     // ベースとなる要素をクローンし、メッセージを挿入する
     if (type === 're') {
       var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
@@ -97,6 +112,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
     var formattedMessage = $scope.simulatorSettings.createMessage(message, prefix);
     divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
+
+    if(appendClass) {
+      divElm.classList.add(appendClass);
+    }
 
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
@@ -144,6 +163,370 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $('#chatTalk div:last-child').show();
 
     self.autoScroll()
+  };
+
+  /**
+   * addReceiveFileUI
+   * シミュレーター上へのファイル受信用UI表示追加
+   */
+  $scope.addReceiveFileUI = function(dropAreaMessage, cancelEnabled, cancelButtonLabel) {
+    // ベースとなる要素をクローン
+    var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left.recv_file_left').parentNode.cloneNode(true);
+    var dropAreaElm = divElm.querySelector('li.chat_left.recv_file_left div.receiveFileContent div.selectFileArea');
+    var dropAreaMessageElm = divElm.querySelector('li.chat_left.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-message');
+    var selectFileButtonElm = divElm.querySelector('li.chat_left.recv_file_left div.receiveFileContent div.selectFileArea p.drop-area-button a');
+    var selectInputElm = $(divElm).find('.receiveFileInput');
+    if(cancelEnabled) {
+      var cancelButtonElm = divElm.querySelector('li.chat_left.recv_file_left div.cancelReceiveFileArea a');
+      cancelButtonElm.innerHTML = cancelButtonLabel;
+      cancelButtonElm.addEventListener('click', function(){
+        document.getElementById('chatTalk').removeChild(divElm);
+        $scope.addMessage('se', "ファイル送信をキャンセル");
+        $scope.$emit('receiveVistorMessage', "");
+      });
+    }
+    dropAreaMessageElm.innerHTML = dropAreaMessage;
+    // 要素を追加する
+    document.getElementById('chatTalk').appendChild(divElm);
+    $scope.fileUploader.init($(document.querySelector('#chatTalk')), $(dropAreaElm), $(selectFileButtonElm), $(selectInputElm));
+    $('#chatTalk div:last-child').show();
+    self.autoScroll();
+  };
+
+  // ===========
+  // ファイル送信
+  // ===========
+  $scope.fileUploader = {
+    isDisable: false,
+    dragging: false,
+    dragArea: null,
+    droppable: null,
+    selectFileBtn: null,
+    selectInput: null,
+    fileObj: null,
+    loadData: null,
+
+    init: function(dragArea, droppable, selectFileButton, selectInput) {
+      this.dragArea = dragArea;
+      this.droppable = droppable;
+      this.selectFileBtn = selectFileButton;
+      this.selectInput = selectInput;
+      if(window.FileReader) {
+        this._addDragAndDropEvents();
+      } else {
+        this.isDisable = true;
+      }
+      this._addSelectFileEvents();
+    },
+    _addDragAndDropEvents: function() {
+      this.dragArea.on("dragenter", this._enterEvent);
+      this.dragArea.on("dragover", this._overEvent);
+      this.dragArea.on("dragleave", this._leaveEvent);
+      this.dragArea.on("drop", function(){ $scope.fileUploader.droppable.css('display', 'none'); event.preventDefault(); event.stopPropagation(); return false;});
+      this.droppable.on("drop", this._handleDroppedFile);
+    },
+    _addSelectFileEvents: function() {
+      this.selectFileBtn.on('click', function(event){
+        $scope.fileUploader.selectInput.trigger('click');
+      });
+      this.selectInput.on("click", function(event){
+        $scope.fileUploader._hideInvalidError();
+        $(this).val(null);
+      }).on("change",function(event){
+        if($scope.fileUploader.selectInput[0].files[0]) {
+          var self = this;
+          $scope.fileUploader.fileObj = $scope.fileUploader.selectInput[0].files[0];
+          // ファイルの内容は FileReader で読み込みます.
+          var fileReader = new FileReader();
+          fileReader.onload = function (event) {
+            if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
+              $scope.$emit('onErrorSelectFile');
+              return;
+            }
+            // event.target.result に読み込んだファイルの内容が入っています.
+            // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+            $scope.fileUploader.loadData = event.target.result;
+            // プレビュー表示前にエラーを消す
+            $('#chatTalk').find('.deleteme').remove();
+            $scope.showPreview(self, $scope.fileUploader.fileObj, $scope.fileUploader.loadData);
+          };
+          fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
+        }
+      });
+    },
+    _enterEvent: function(event) {
+      $scope.fileUploader.dragging = true;
+      $scope.fileUploader._cancelEvent(event);
+      return false;
+    },
+    _overEvent: function(event) {
+      $scope.fileUploader.dragging = false;
+      $scope.fileUploader.droppable.css('opacity', '0.5');
+      $scope.fileUploader._cancelEvent(event);
+      return false;
+    },
+    _leaveEvent: function(event) {
+      if($scope.fileUploader.dragging) {
+        $scope.fileUploader.dragging = false;
+      } else {
+        $scope.fileUploader.droppable.css('opacity', '1.0');
+      }
+      $scope.fileUploader._cancelEvent(event);
+      return false;
+    },
+    _handleDroppedFile: function(event) {
+      $scope.fileUploader.droppable.css('display', 'none');
+      $scope.fileUploader._hideInvalidError();
+      // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
+      $scope.fileUploader.fileObj = event.originalEvent.dataTransfer.files[0];
+
+      var self = this;
+      // ファイルの内容は FileReader で読み込みます.
+      var fileReader = new FileReader();
+      fileReader.onload = function(event) {
+        if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
+          $scope.$emit('onErrorSelectFile');
+          return;
+        }
+        // event.target.result に読み込んだファイルの内容が入っています.
+        // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+        $scope.fileUploader.loadData = event.target.result;
+        $scope.showPreview(self, $scope.fileUploader.fileObj, $scope.fileUploader.loadData);
+      }
+      fileReader.readAsArrayBuffer($scope.fileUploader.fileObj);
+
+      // デフォルトの処理をキャンセルします.
+      $scope.fileUploader._cancelEvent(event);
+      return false;
+    },
+    _cancelEvent: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    },
+    _validExtension: function(filename) {
+      var allowExtensions = this._getAllowExtension();
+
+      var split = filename.split(".");
+      var targetExtension = split[split.length-1];
+      var regex = new RegExp(allowExtensions.join("|"), 'i');
+      return regex.test(targetExtension);
+    },
+    _getAllowExtension: function() {
+      var base = ["pdf","pptx","ppt","jpg","png","gif"];
+      switch(Number($scope.extensionType)) {
+        case 1:
+          return base;
+        case 2:
+          var extendSettings = $scope.extendedExtensions;
+          return base.concat(extendSettings);
+        default:
+          return base;
+      }
+    },
+    _showInvalidError: function() {
+      var span = document.createElement("span");
+      span.classList.add('errorMsg');
+      span.textContent = "指定のファイルは送信を許可されていません。";
+      $("#sendMessageArea").append(span);
+    },
+    _hideInvalidError: function() {
+      $('#sendMessageArea').find('span.errorMsg').remove();
+    },
+    _showConfirmDialog: function(message) {
+      modalOpen.call(window, message, 'p-cus-file-upload', '確認', 'moment');
+      popupEvent.closePopup = function() {
+        $scope.uploadFile($scope.fileUploader.fileObj, $scope.fileUploader.loadData);
+        popupEvent.close();
+      };
+    }
+  };
+
+  $scope.onClickSelectFileButton = function(event) {
+    var targetInput = $(event.target).parents('div.selectFileArea').find('.receiveFileInput');
+    if(targetInput.length === 1) {
+      targetInput.off('change');
+      var self = this;
+      targetInput.val(null);
+      targetInput.trigger('click');
+      targetInput.on('change', function(e){
+        var fileObj = this.files.item(0);
+        var fileReader = new FileReader();
+
+        fileReader.onload = function(fileEv) {
+          if(!fileObj.name){
+            return;
+          }
+          var loadData = fileEv.target.result;
+          $scope.showPreview(self, fileObj, loadData);
+        };
+        fileReader.readAsArrayBuffer(fileObj);
+      });
+    }
+  };
+
+  $scope.showPreview = function(target, fileObj, loadData) {
+    $scope.effectScene(false, $(target).parents('li.sinclo_re.recv_file_left').parent(), function(){
+      // ベースとなる要素をクローン
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
+      var split = fileObj.name.split(".");
+      var targetExtension = split[split.length-1];
+
+      function afterDesideThumbnail(elm) {
+        divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent p.preview').appendChild(elm);
+        divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea').style.textAlign = 'center';
+        divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.cancel-file-button').addEventListener('click', function(e){
+          $scope.effectScene(false, $(divElm), function(){
+            document.getElementById('chatTalk').removeChild(divElm);
+            $(target).parents('li.sinclo_re.recv_file_left').parent().show();
+          });
+        });
+        divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function(e){
+          $scope.effectScene(false, $(divElm), function(){
+            var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
+            if(!comment) {
+              comment = "（なし）";
+            }
+            $scope.uploadFile(divElm, comment, fileObj, loadData);
+          });
+        });
+        // 要素を追加する
+        document.getElementById('chatTalk').appendChild(divElm);
+        $('#chatTalk div:last-child').show();
+        var targetTextarea = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea');
+        $scope.changeResizableTextarea(targetTextarea);
+        self.autoScroll();
+        $scope.$apply();
+      }
+
+      if(SimulatorService.isImage(targetExtension)) {
+        var imgElm = document.createElement('img');
+        imgElm.classList.add($scope.selectPreviewImgClass());
+        var fileReader = new FileReader();
+        fileReader.onload = function(e) {
+          imgElm.src = this.result;
+          afterDesideThumbnail(imgElm);
+        };
+        fileReader.readAsDataURL(fileObj);
+      } else {
+        var iconElm = document.createElement('i');
+        iconElm.classList.add('sinclo-fal');
+        iconElm.classList.add('fa-4x');
+        iconElm.classList.add(SimulatorService.selectIconClassFromExtension(targetExtension));
+        iconElm.setAttribute("aria-hidden","true");
+        afterDesideThumbnail(iconElm);
+      }
+    });
+  };
+
+  $scope.selectPreviewImgClass = function() {
+    var widgetSizeType = Number($scope.simulatorSettings.widgetSizeTypeToggle);
+    switch(widgetSizeType) {
+      case 1:
+        return 'small';
+      case 2:
+        return 'middle';
+      case 3:
+        return 'large';
+      default:
+        return 'middle';
+    }
+  };
+
+  $scope.effectScene = function(isBack, jqObj, callback){
+    if(isBack) {
+      jqObj.fadeIn('fast', callback);
+    } else {
+      jqObj.fadeOut('fast', callback);
+    }
+  };
+
+  $scope.changeResizableTextarea = function(elm) {
+    var maxRow = 5;                       // 表示可能な最大行数
+    var fontSize = parseFloat(elm.style.fontSize, 10);           // 行数計算のため、templateにて設定したフォントサイズを取得
+    var borderSize = parseFloat(elm.style.borderWidth, 10) * 2;  // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
+    var paddingSize = parseFloat(elm.style.padding, 10) * 2;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
+    var lineHeight = parseFloat(elm.style.lineHeight, 10);       // 表示高さの計算のため、templateにて設定した行の高さを取得
+
+    function autoResize() {
+      console.log("autoResize");
+      // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
+      var areaWidth = elm.getBoundingClientRect().width - borderSize - paddingSize;
+
+      // フォントサイズとテキストエリアのサイズを基に、行数を計算する
+      var textRow = 0;
+      elm.value.split('\n').forEach(function(string) {
+        var stringWidth = string.length * fontSize;
+        textRow += Math.max(Math.ceil(stringWidth/areaWidth), 1);
+      });
+
+      // 表示する行数に応じて、テキストエリアの高さを調整する
+      if (textRow > maxRow) {
+        elm.style.height = (maxRow * (fontSize*lineHeight)) + paddingSize + 'px';
+        elm.style.overflow = 'auto';
+        self.autoScroll();
+      } else {
+        elm.style.height = (textRow * (fontSize*lineHeight)) + paddingSize + 'px';
+        elm.style.overflow = 'hidden';
+        self.autoScroll();
+      }
+    }
+
+    autoResize();
+    elm.addEventListener('input', autoResize);
+  };
+
+  // ファイル送信
+  $scope.uploadFile = function(targetDivElm, comment, fileObj, loadFile) {
+    var fd = new FormData();
+    var blob = new Blob([loadFile], {type: fileObj.type});
+    fd.append("k", "<?= $companyKey; ?>");
+    fd.append("c", comment)
+    fd.append("f", blob, fileObj.name);
+
+    $.ajax({
+      url  : "<?= $this->Html->url('/FC/pus') ?>",
+      type : "POST",
+      data : fd,
+      cache       : false,
+      contentType : false,
+      processData : false,
+      dataType    : "json",
+      xhr : function(){
+        var XHR = $.ajaxSettings.xhr();
+        /*
+        if(XHR.upload){
+          XHR.upload.addEventListener('progress',function(e){
+            $scope.uploadProgress = parseInt(e.loaded/e.total*10000)/100;
+            console.log($scope.uploadProgress);
+            if($scope.uploadProgress === 100) {
+              $('#uploadMessage').css('display', 'none');
+              $('#processingMessage').css('display', 'block');
+            }
+            $scope.$apply();
+          }, false);
+        }
+        */
+        return XHR;
+      }
+    })
+      .done(function(data, textStatus, jqXHR){
+        console.log(JSON.stringify(data));
+        $scope.effectScene(true, $(targetDivElm), function(){
+          $(targetDivElm).find('li.sinclo_se').removeClass('recv_file_right').addClass('uploaded');
+          var commentLabel = targetDivElm.querySelector('li.sinclo_se.uploaded div.receiveFileContent div.selectFileArea p.commentLabel');
+          var commentArea = targetDivElm.querySelector('li.sinclo_se.uploaded div.receiveFileContent div.selectFileArea p.commentarea');
+          var actionButtonWrap = targetDivElm.querySelector('li.sinclo_se.uploaded div.actionButtonWrap');
+          commentArea.innerHTML = "";
+          commentArea.style.textAlign = "left";
+          actionButtonWrap.remove();
+          commentLabel.innerHTML = "＜コメント＞";
+          commentArea.innerHTML = data.comment;
+          $scope.$emit('receiveVistorMessage', "");
+        });
+      })
+      .fail(function(jqXHR, textStatus, errorThrown){
+        alert("fail");
+      });
   };
 
   /**

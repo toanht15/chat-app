@@ -70,9 +70,6 @@ gulp.task('compress-gzip-contact-css', function(){
 gulp.task('socket-sass-compile', function(){
   return gulp.src(path.socketSass + '**/*.sass')
     .pipe(sass({outputStyle: 'expanded'}))
-    .on('error', function(err) {
-      console.log(err.message);
-    })
     .pipe(cssnext())
     .pipe(gulp.dest(path.outOfCssToSocket));
 });
@@ -86,6 +83,9 @@ gulp.task('compress-gzip-socket-css', function(){
 gulp.task('minify-js', function(){
   return gulp.src(path.js)
     .pipe(uglify(uglifyOpt))
+    .on('error', function(e){
+      console.log(e);
+    })
     .pipe(rename({
       extname: '.min.js'
     }))
@@ -100,6 +100,9 @@ gulp.task('minify-js-dev', function(){
     .pipe(sourcemaps.init())
     .pipe(gulp.dest(path.minjs))
     .pipe(uglify(uglifyOpt))
+    .on('error', function(e){
+      console.log(e);
+    })
     .pipe(rename({
       extname: '.min.js'
     }))

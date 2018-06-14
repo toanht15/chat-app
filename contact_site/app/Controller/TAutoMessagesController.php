@@ -983,6 +983,8 @@ class TAutoMessagesController extends AppController {
     $this->set('outMessageAvailableType', Configure::read('outMessageAvailableType'));
     // 画像パス
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
+
+    $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);

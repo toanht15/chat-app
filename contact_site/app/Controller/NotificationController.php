@@ -17,6 +17,7 @@ class NotificationController extends AppController {
   const PARAM_MAIL_TYPE = 'mailType';
   const PARAM_TRANSMISSION_ID = 'transmissionId';
   const PARAM_TEMPLATE_ID = 'templateId';
+  const PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL = 'withDownloadURL';
   const PARAM_VARIABLES = 'variables';
 
   public $components = ['AutoMessageMailTemplate', 'ScenarioMailTemplate', 'MailSender', 'Auth'];
@@ -125,6 +126,9 @@ class NotificationController extends AppController {
     $jsonObj = $this->getRequestJSONData();
     try {
       $this->isValidAccessToken($jsonObj[self::PARAM_ACCESS_TOKEN]);
+      if(!isset($jsonObj[self::PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL]) || empty($jsonObj[self::PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL])) {
+        $jsonObj[self::PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL] = false;
+      }
       $targetChatLog = $this->getTargetChatLogByHistoryId($jsonObj[self::PARAM_HISTORY_ID]);
       if(empty($targetChatLog)) {
         throw new InvalidArgumentException('指定のHistoryId : '.$jsonObj[self::PARAM_HISTORY_ID].' のチャットログが存在しません');
@@ -140,7 +144,7 @@ class NotificationController extends AppController {
       }
       $component = new ScenarioMailTemplateComponent();
       $component->setSenarioRequiredData($jsonObj[self::PARAM_MAIL_TYPE], $jsonObj[self::PARAM_VARIABLES], $jsonObj[self::PARAM_TEMPLATE_ID], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData);
-      $component->createMessageBody();
+      $component->createMessageBody($jsonObj[self::PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL]);
 
       $transmission = $this->getTransmissionConfigById($jsonObj[self::PARAM_TRANSMISSION_ID]);
 
