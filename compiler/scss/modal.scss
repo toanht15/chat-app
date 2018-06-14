@@ -1136,6 +1136,26 @@
         }
       }
 
+      &.p-chatbot-use-extended-setting {
+        width: 750px;
+        #popup-main {
+          font-size: 1.1em;
+          line-height: 1.5em;
+          color: rgb(192, 0, 0);
+        }
+
+        #popup-button {
+          width: 43em;
+          margin: 0 auto;
+
+          .textBtn {
+            width: 12em;
+            margin: 0 2.5em;
+            float: left;
+          }
+        }
+      }
+
       /* アラート用 */
       &.p-alert {
         width: 350px;
