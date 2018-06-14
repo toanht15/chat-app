@@ -1395,7 +1395,7 @@
     }
   }
 
-  .explainTooltip1, .explainTooltip2{
+ .explainTooltip{
     z-index: 10;
     position: absolute;
 
@@ -1404,6 +1404,7 @@
       height: 2.1em;
       display: none;
 
+      /* 矢印 */
       &:before {
         content: " ";
         border: none;
@@ -1451,35 +1452,6 @@
     }
   }
 
-  .explainTooltip1 {
-    icon-annotation {
-      /* 矢印 */
-      &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -42px;
-        left: 5px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -40px;
-        left: 5px;
-        z-index: 3;
-      }
-    }
-  }
-
   .form01 > div {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -1499,7 +1471,7 @@
     }
 
     input[type='text'] {
-      margin-left: 15px;
+      margin-left: 29px;
       width: 75%;
       padding: 5px 10px;
       border: none;
@@ -1520,6 +1492,24 @@
 }
 
 /* 訪問ユーザー情報設定 */
+#tooltip_tcustomerinformationsettings_add_btn.tooltips {
+  position: fixed;
+  left: 78px !important;
+  width: 6em;
+}
+
+#tooltip_tcustomerinformationsettings_copy_btn.tooltips {
+  position: fixed;
+  left: 108.5px !important;
+  width: 9em;
+}
+
+#tooltip_tcustomerinformationsettings_dustbox_btn.tooltips {
+  position: fixed;
+  left: 176px !important;
+  width: 6em;
+}
+
 .p-tcustomerinformationsettings-entry {
   width: 600px;
 
@@ -1626,7 +1616,7 @@
 
     input[type='text'] {
       margin-left: 15px;
-      width: 75%;
+      width: 84%;
       padding: 5px 10px;
       border: none;
       border-bottom: 1px solid #909090;
@@ -1646,7 +1636,7 @@
   }
 
   #popup-main{
-    padding-bottom: 8px!important;
+    padding:6px 20px!important;
   }
 
   #popup-button {

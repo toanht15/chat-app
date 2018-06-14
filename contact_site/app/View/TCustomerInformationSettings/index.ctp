@@ -94,12 +94,12 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <tr>
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
         <th width=" 5%">No</th>
-        <th width =" 25%" class="tCenter">項目名</th>
-        <th width =" 10%" class="tCenter">タイプ</th>
-        <th width =" 6%" class="tCenter">一覧表示</th>
-        <th width =" 6%" class="tCenter">メール掲載</th>
-        <th width =" 15%" class="tCenter">カスタム変数</th>
-        <th width =" 15%" class="tCenter">コメント</th>
+        <th width="21%" class="tCenter">項目名</th>
+        <th width="10%" class="tCenter">タイプ</th>
+        <th width=" 4%" class="tCenter">一覧</br>表示</th>
+        <th width=" 4%" class="tCenter">メール</br>掲載</th>
+        <th width="21%" class="tCenter">カスタム変数</th>
+        <th width="30%" class="tCenter">コメント</th>
       </tr>
       </thead>
     <tbody class="sortable">
@@ -108,13 +108,13 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <?php foreach((array)$tCustomerInformationSettingList as $key => $val):?>
       <tr class="pointer" data-id="<?=$val['TCustomerInformationSetting']['id']?>" data-sort="<?=$val['TCustomerInformationSetting']['sort']?>" onclick="openEditDialog('<?=$val['TCustomerInformationSetting']['id']?>')">
          <!-- この記述が無いとチェックボックスをクリックしてもedit画面が開いてしまう -->
-        <td class="tCenter" onclick="event.stopPropagation()">
+        <td width="5%" class="tCenter" onclick="event.stopPropagation()">
           <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCustomerInformationSetting']['id']?>">
           <label for="selectTab<?=$key?>"></label>
         </td>
         <td width="5%" class="tCenter"><?=$prevCnt + h($key+1)?></td>
-        <td class="tCenter"><?=$val['TCustomerInformationSetting']['item_name']?></td>
-        <td class="tCenter">
+        <td width="21%" class="tCenter"><?=$val['TCustomerInformationSetting']['item_name']?></td>
+        <td width="10%" class="tCenter">
           <?php
             switch($val['TCustomerInformationSetting']['input_type']){
               case '1':
@@ -129,7 +129,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               }
           ?>
         </td>
-        <td class="tCenter">
+        <td width="4%" class="tCenter">
           <?php
             if($val['TCustomerInformationSetting']['show_realtime_monitor_flg'] == 1){
               echo '<span><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;font-size:24px;"></i></span>';
@@ -138,7 +138,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             }
           ?>
         </td>
-        <td class="tCenter">
+        <td width="4%" class="tCenter">
           <?php
             if($val['TCustomerInformationSetting']['show_send_mail_flg'] == 1){
               echo '<span><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;font-size:24px;"></i></span>';
@@ -147,7 +147,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             }
           ?>
         </td>
-        <td class="tCenter">
+        <td width="21%" class="tCenter">
           <?php
           if($val['TCustomerInformationSetting']['sync_custom_variable_flg'] == 0){
           echo '<span class="m10b"></span>';
@@ -156,11 +156,11 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           }
         ?>
         </td>
-        <td class="tCenter"><?=$val['TCustomerInformationSetting']['comment']?></td>
+        <td width="30%" class="tCenter"><?=$val['TCustomerInformationSetting']['comment']?></td>
       </tr>
       <?php endforeach; ?>
       <?php if ( count($tCustomerInformationSettingList) === 0 ) :?>
-        <tr class="cancel"><td class="tCenter" colspan="8">カスタム変数が設定されていません</td></tr>
+        <tr><td class="tCenter" colspan="8">訪問ユーザー情報が設定されていません</td></tr>
       <?php endif; ?>
       </tbody>
     </table>

@@ -1,4 +1,27 @@
 <script type="text/javascript">
+
+  $(function () {
+  //ツールチップの表示制御
+  var topPosition = 0;
+    $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+      var parentTdId = $(this).parent().attr('id');
+      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+      targetObj.find('icon-annotation').css('display','block');
+      //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
+      targetObj.css({
+        top: ($(this).get(0).offsetTop - targetObj.find('ul').outerHeight() - 32 + topPosition) + 'px',
+        left: $(this).get(0).offsetLeft - 6 + 'px'
+      });
+    });
+
+    $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+      var parentTdId = $(this).parent().attr('id');
+      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+      targetObj.find('icon-annotation').css('display','none');;
+    });
+  });
+
+
   popupEvent.closePopup = function(){
     var customvariableId = document.getElementById('TCustomVariableId').value;
     var variable_name = document.getElementById('TCustomVariableVariableName').value;
@@ -62,9 +85,9 @@
           変数名
         </label>
         <div class="questionBallon" id="filterType1Label">
-          <icon class="questionBtn variable_helpBtn">?</icon>
+          <icon class="questionBtn">?</icon>
         </div>
-        <?= $this->Form->input('variable_name', array('placeholder' => '変数名', 'div' => false, 'label' => false, 'maxlength' => 100,'style' => 'margin-left: 15px;')) ?>
+        <?= $this->Form->input('variable_name', array('placeholder' => '変数名', 'div' => false, 'label' => false, 'maxlength' => 100)) ?>
       </span>
     </div>
     <div>
@@ -73,23 +96,23 @@
           CSSセレクタ
         </label>
         <div class="questionBallon" id="filterType2Label">
-          <icon class="questionBtn selecter_helpBtn">?</icon>
+          <icon class="questionBtn">?</icon>
         </div>
-        <?= $this->Form->input('attribute_value', array('placeholder' => 'CSSセレクタ', 'div' => false, 'label' => false, 'maxlength' => 100,'style' => 'margin-left: 15px;')) ?>
+        <?= $this->Form->input('attribute_value', array('placeholder' => 'CSSセレクタ', 'div' => false, 'label' => false, 'maxlength' => 100)) ?>
       </span>
     </div>
     <div>
       <span style="margin-top: 8px;">コメント</span>
       <?= $this->Form->textarea('comment', array('placeholder' => 'コメント', 'div' => false, 'label' => false, 'maxlength' => 300,'style' => 'margin-top: 8px; padding: 10px;')) ?>
     </div>
-    <div class="explainTooltip1">
+    <div id="filterType1Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
           <li><span class="detail">変数名のヘルプです。</span></li>
         </ul>
       </icon-annotation>
     </div>
-    <div class="explainTooltip2">
+    <div id="filterType2Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
           <li><span class="detail">CSSセレクタのヘルプです</span></li>

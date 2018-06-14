@@ -11,41 +11,41 @@
     //エディット時に、既にプルダウンが選ばれていた場合の処理
     if(document.getElementById('TCustomerInformationSettingInputType').value == 3){
       $('#SelectListWrap').css('display','');
-      popupframe.height(popupframe.height()+57);
-      popupbutton.height(popupbutton.height()+4);
+      popupframe.height(popupframe.height()+54);
+      popupbutton.height(popupbutton.height()+1);
       selectflag = 1;
     }
 
     //エディット時に、既にカスタム変数チェックボックスが選択されている場合
     if(document.getElementById('TCustomerInformationSettingSyncCustomVariableFlg').checked){
         $('#CustomVariableWrap').css('display','');
-        popupframe.height(popupframe.height()+40);
-        popupbutton.height(popupbutton.height()+3);
+        popupframe.height(popupframe.height()+38);
+        popupbutton.height(popupbutton.height()+1);
     }
 
     $('#TCustomerInformationSettingSyncCustomVariableFlg').on('click', function(e){
         if($(this).prop('checked')) {
           $('#CustomVariableWrap').css('display','');
-          popupframe.height(popupframe.height()+40);
-          popupbutton.height(popupbutton.height()+3);
+          popupframe.height(popupframe.height()+38);
+          popupbutton.height(popupbutton.height()+1);
         }else{
           $('#CustomVariableWrap').css('display','none');
-          popupframe.height(popupframe.height()-40);
-          popupbutton.height(popupbutton.height()-3);
+          popupframe.height(popupframe.height()-38);
+          popupbutton.height(popupbutton.height()-1);
         }
       });
 
     $('#SelectListForm').change(function(e){
       if(document.getElementById('TCustomerInformationSettingInputType').value == 3){
         $('#SelectListWrap').css('display','');
-        popupframe.height(popupframe.height()+57);
-        popupbutton.height(popupbutton.height()+4);
+        popupframe.height(popupframe.height()+54);
+        popupbutton.height(popupbutton.height()+1);
         selectflag = 1;
       }else{
         $('#SelectListWrap').css('display','none');
         if(selectflag == 1){
-          popupframe.height(popupframe.height()-57);
-          popupbutton.height(popupbutton.height()-4);
+          popupframe.height(popupframe.height()-54);
+          popupbutton.height(popupbutton.height()-1);
           selectflag = 0;
         }
       }
