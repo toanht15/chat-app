@@ -5,6 +5,7 @@ $settingSelected = "";
 $chatSettingSelected = "";
 $docSettingSelected = "";
 $statisticsSelected = "";
+$chatbotSelected = "";
 switch ($this->name) {
     case 'Customers':
         $monitorSelected = "selected";
@@ -18,12 +19,15 @@ switch ($this->name) {
     case 'ScriptSettings':
     case 'TCampaigns':
     case 'DisplayExclusions':
-    case 'MOperatingHours':
         $settingSelected = "selected";
         break;
-    case 'MChatSettings':
-    case 'MChatNotifications':
     case 'TAutoMessages':
+    case 'TChatbotScenario':
+        $chatbotSelected = "selected";
+        break;
+    case 'MChatSettings':
+    case 'MOperatingHours':
+    case 'MChatNotifications':
     case 'TDictionaries':
         $chatSettingSelected = "selected";
         break;
@@ -35,7 +39,6 @@ switch ($this->name) {
         break;
 };
 $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
-
 ?>
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar" class="card-shadow">
@@ -43,8 +46,8 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <?php if(!empty($trialTime)) { ?>
         <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
       <?php } ?>
-        <li class="fLeft"><p><?= h($userInfo['display_name']) ?>さん</p></li>
-        <li class="fRight" id="logout" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>
+        <li class="fLeft menu-bar-right" onclick='location.href = "/PersonalSettings/index"'><p style = "text-decoration: underline;"><?= h($userInfo['display_name']) ?>さん</p></li>
+        <li class="fRight menu-bar-right" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>
     </ul>
 </div>
 <!-- /* 上部カラーバー(ここまで) */ -->
@@ -75,13 +78,18 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         </div>
         <?php endif; ?>
         <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
-            <?= $this->htmlEx->naviLink('設定', 'setting.png') ?>
+            <?= $this->htmlEx->naviLink('基本設定', 'setting.png') ?>
         </div>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
-        <div class="icon <?=$chatSettingSelected?> setting-icon" data-type="chat">
-            <?= $this->htmlEx->naviLink('ﾁｬｯﾄ設定', 'chat_setting.png') ?>
-        </div>
-      <?php endif; ?>
+          <?php if ( $adminFlg ): ?>
+            <div class="icon <?=$chatbotSelected?> setting-icon new-line" data-type="chatbot">
+              <?= $this->htmlEx->naviLink('ﾁｬｯﾄﾎﾞｯﾄ設定', 'scenario_setting.png') ?>
+            </div>
+          <?php endif; ?>
+          <div class="icon <?=$chatSettingSelected?> setting-icon new-line" data-type="chat">
+              <?= $this->htmlEx->naviLink('有人ﾁｬｯﾄ設定', 'chat_setting.png') ?>
+          </div>
+        <?php endif; ?>
       <?php if ($adminFlg && isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
         <div class="icon <?=$docSettingSelected?>">
           <?= $this->htmlEx->naviLink('資料設定', 'document.png', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
@@ -105,27 +113,27 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 <div id="sidebar-sub" class="card-shadow">
     <!-- /* 共通 */ -->
     <div data-sidebar-type="common" class="hide">
-        <div class="icon">
-            <?= $this->htmlEx->naviLink('個人設定', 'personal.png', ['href' => ['controller' => 'PersonalSettings', 'action' => 'index']]) ?>
-        </div>
-    <?php if ( $adminFlg ): ?>
-        <div class="icon" style="display:none">
-            <?= $this->htmlEx->naviLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
-        </div>
-        <div class="icon">
-            <?= $this->htmlEx->naviLink('ユーザー管理', 'users.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
-        </div>
-    <?php endif; ?>
+        <?php if ( $adminFlg ): ?>
+            <div class="icon" style="display:none">
+                <?= $this->htmlEx->naviLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
+            </div>
+            <div class="icon">
+                <?= $this->htmlEx->naviLink('ユーザー管理', 'users.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
+            </div>
+            <div class="icon">
+                <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
+            </div>
+        <?php endif; ?>
         <div class="icon">
             <?= $this->htmlEx->naviLink($codeAndDemoTitle, 'script.png', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>
         </div>
     <?php if ( $adminFlg ): ?>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('営業時間設定', 'operating_hour.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
-        </div>
-        <div class="icon">
-            <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
-        </div>
+      <?php //シェアリングプランの場合
+        if(!$coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]))): ?>
+          <div class="icon">
+            <?= $this->htmlEx->naviLink('営業時間設定', 'operating_hour.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
+          </div>
+        <?php endif; ?>
       <div class="icon">
         <?= $this->htmlEx->naviLink('キャンペーン', 'campaign.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
       </div>
@@ -147,10 +155,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
           <?= $this->htmlEx->naviLink('基本設定', 'chat_setting.png', ['href' => ['controller' => 'MChatSettings', 'action' => 'index']]) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('ｵｰﾄﾒｯｾｰｼﾞ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
-        </div>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('シナリオ設定', 'scenario_setting.png', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviLink('営業時間設定', 'operating_hour.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
         </div>
       <?php endif; ?>
         <div class="icon">
@@ -167,6 +172,20 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       </div>
     <?php endif; ?>
     <!-- /* チャット */ -->
+    <!-- /* シナリオ */ -->
+    <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
+      <div data-sidebar-type="chatbot" class="hide">
+      <?php if ( $adminFlg ): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('ｵｰﾄﾒｯｾｰｼﾞ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviLink('シナリオ設定', 'scenario_setting.png', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']]) ?>
+        </div>
+      <?php endif; ?>
+      </div>
+    <?php endif; ?>
+    <!-- /* シナリオ */ -->
     <!-- /* 履歴 */ -->
     <div data-sidebar-type="history" class="hide">
       <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
