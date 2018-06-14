@@ -223,7 +223,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (message == '') return;
         document.getElementById('action' + index + '_message').innerHTML = $scope.widget.createMessage(message || '', 'preview' + index);
       }
+      // ファイル受信のファイル形式
+      if (typeof newObject.receiveFileType !== 'undefined' && newObject.receiveFileType === "2") {
+        $scope.showExtendedConfigurationWarningPopup(newObject);
+      }
     }, true);
+  };
+
+  $scope.showExtendedConfigurationWarningPopup = function(obj) {
+    modalOpen.call(window, "１．受信したファイルによるウィルス感染などのリスクはお客様の責任にて十分ご理解の上ご利用ください。<br>２．業務に必要なファイル形式のみを指定するようにしてください。<br>３．特に圧縮ファイルを許可する場合は、解凍時に意図しないファイルが含まれる恐れがありますので<br>　　十分に注意の上ご利用ください。", 'p-chatbot-use-extended-setting', '必ず確認してください');
+    popupEvent.agree = function() {
+      popupEvent.close();
+    }
+    popupEvent.closePopup = function () {
+      obj.receiveFileType = "1";
+      popupEvent.close();
+      $timeout(function(){
+        $scope.$apply();
+      });
+    }
   };
 
   /**
