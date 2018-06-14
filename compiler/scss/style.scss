@@ -80,6 +80,10 @@ li {
   border-radius: 0.5em;
   text-align: left;
   padding: 1em;
+
+  &.smallfont {
+    font-size: 0.8em;
+  }
 }
 .tooltips:after {
   content: "";
@@ -108,7 +112,7 @@ table {
   }
 
   tr:hover, tr.on {
-    background-color: rgba(195, 214, 155, 0.1) !important;
+    background-color: rgba(195, 214, 155, 0.1);
   }
 
   th, td {
@@ -210,7 +214,7 @@ input[type='text'], input[type='number'], input[type='password']{
 }
 
 textarea {
-  border-radius: 5px!important;
+  border-radius: 5px;
   border: 1px solid $line-color!important;
   padding: 5px;
   &:focus {
@@ -651,6 +655,58 @@ a {
   padding: 2px 5px;
   font-size: 15px;
   text-align: center;
+}
+
+.explainTooltip {
+  z-index: 10;
+  position: absolute;
+
+  icon-annotation {
+    width: 16em;
+    height: 2.1em;
+    display: none;
+    /* 矢印 */
+    &:before {
+      content: " ";
+      border: none;
+      border-top: 10px solid rgba(0, 0, 0, 0.13);
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      position: absolute;
+      bottom: -28px;
+      left: 5px;
+      z-index: 1;
+    }
+    &:after {
+      content: " ";
+      border: none;
+      border-top: 10px solid white;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      position: absolute;
+      bottom: -26px;
+      left: 5px;
+      z-index: 3;
+    }
+    ul {
+      margin: 0;
+      text-align: left;
+      background-color: #FFF;
+      box-shadow: 0 0 2px rgba(162, 185, 102, 1.0);
+      padding: 10px 10px;
+      font-weight: normal;
+      border-radius: 5px;
+      img {
+        margin-bottom: -0.2em;
+        width:1em;
+        height:1em;
+      }
+      span {
+        font-size: 1em;
+        line-height: 1.5;
+      }
+    }
+  }
 }
 
 /* フッター固定ボタンエリア */
@@ -4032,6 +4088,53 @@ ul.naviBtn {
             }
           }
         }
+        div.recieveFileContent {
+          display: table;
+          table-layout:fixed;
+          width: 100%;
+          height: 64px;
+          white-space: initial;
+          margin-bottom: 0!important;
+          div.recieveFileThumbnailArea {
+            display: block;
+            width: 120px;
+            height: auto;
+            border: 1px solid #D9D9D9;
+            .recieveFileThumbnail {
+              text-align: center;
+              vertical-align: middle;
+              display: inline-block;
+              width: 100%;
+              height: auto;
+              margin-left: 0;
+              margin-bottom: 0px;
+              margin-right: auto;
+            }
+            &:before {
+              content: "";
+              height: 100%;
+              vertical-align: middle;
+              width: 0px;
+              display: inline-block;
+            }
+          }
+          div.recieveFileMetaArea {
+            display:block;
+            .data {
+              margin-bottom: 20px;
+              display: block;
+              &.recieveFileSize {
+                margin-bottom: 0px;
+              }
+            }
+            span.comment {
+              display:block;
+            }
+            span.message {
+              white-space: pre-wrap !important;
+            }
+          }
+        }
       }
 
     ul {
@@ -4653,62 +4756,19 @@ ul.naviBtn {
   }
 
   .explainTooltip {
-    z-index: 10;
-    position: absolute;
-
     icon-annotation {
-      width: 16em;
-      height: 2.1em;
-      display: none;
       top: -5.5em;
       left: -1.3em;
       position: absolute;
-
       /* 矢印 */
       &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -28px;
-        left: 5px;
-        z-index: 1;
+        bottom: -59px;
+        left: 6px;
       }
 
       &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -26px;
-        left: 5px;
-        z-index: 3;
-      }
-
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
+        bottom: -57px;
+        left: 6px;
       }
     }
   }
@@ -4733,9 +4793,9 @@ ul.naviBtn {
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -3.6em;
+        bottom: -4.9em;
         left: 5px;
-        z-index: 1;;
+        z-index: 1;
       }
 
       &:after {
@@ -4745,19 +4805,18 @@ ul.naviBtn {
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -3.4em;
-        left: 5px;
+        bottom: -4.7em;
+        left: 6px;
         z-index: 3;
       }
 
 
       ul {
         margin: 0;
-        padding: 0;
         text-align: left;
         background-color: #FFF;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
+        padding: 10px 10px;
         font-weight: normal;
         border-radius: 5px;
 
@@ -4768,7 +4827,8 @@ ul.naviBtn {
         }
 
         span {
-          font-size: 0.9em;
+          font-size: 1em;
+          line-height: 1.5;
         }
       }
     }
@@ -4977,6 +5037,21 @@ ul.naviBtn {
     margin-top:30px;
   }
 
+  .explainTooltip {
+    icon-annotation {
+      /* 矢印 */
+      &:before {
+        bottom: -59px;
+        left: 6px;
+      }
+
+      &:after {
+        bottom: -58px;
+        left: 6px;
+      }
+    }
+  }
+
   .questionBalloon {
     display: inline-block;
     position: relative;
@@ -4987,64 +5062,6 @@ ul.naviBtn {
       width: 1.5em;
       height: 1.5em;
       font-size: 0.9em!important;
-    }
-  }
-
-  .explainTooltip {
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      width: 16em;
-      height: 2.1em;
-      display: none;
-
-      /* 矢印 */
-      &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -28px;
-        left: 5px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -26px;
-        left: 5px;
-        z-index: 3;
-      }
-
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
-      }
     }
   }
 
@@ -5168,6 +5185,9 @@ ul.naviBtn {
 
   .bgGrey {
     background-color: #DEDEDE;
+    &:hover {
+      background-color: #EEEEEE;
+    }
   }
 
   .lineCtrl {
@@ -5621,6 +5641,9 @@ ul.naviBtn {
 
     .bgGrey {
       background-color: #DEDEDE;
+      &:hover {
+        background-color: #EEEEEE;
+      }
     }
 
     .lineCtrl {
@@ -5757,61 +5780,6 @@ ul.naviBtn {
         }
         #TAutoMessageTrigger {
           width: 13em;
-        }
-        .explainTooltip {
-          z-index: 10;
-          position: absolute;
-
-          icon-annotation {
-            width: 16em;
-            height: 2.1em;
-            display: none;
-
-            &:before {
-              content: " ";
-              border: none;
-              border-top: 10px solid rgba(0, 0, 0, 0.13);
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -68px;
-              left: 5px;
-              z-index: 1;
-            }
-
-            &:after {
-              content: " ";
-              border: none;
-              border-top: 10px solid white;
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -67px;
-              left: 5px;
-              z-index: 3;
-            }
-
-            ul {
-              margin: 0;
-              padding: 0;
-              text-align: left;
-              background-color: #FFF;
-              box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-              padding: 0.5em;
-              font-weight: normal;
-              border-radius: 5px;
-
-              img {
-                margin-bottom: -0.2em;
-                width:1em;
-                height:1em;
-              }
-
-              span {
-                font-size: 0.9em;
-              }
-            }
-          }
         }
 
         > li {
@@ -6158,7 +6126,7 @@ ul.naviBtn {
               display: inline-block;
 
               ul {
-                height: 361px;
+                height: 397px;
                 border: 1px solid #969696;
                 overflow-x: hidden;
                 overflow-y: auto;
@@ -6177,7 +6145,11 @@ ul.naviBtn {
                     background-color: #BFBFBF;
                   }
 
-                  &:not(.disableLi):hover {
+                  &.selectedLi {
+                    background-color: rgb(235, 246, 249);
+                  }
+
+                  &:not(.disableLi):not(.selectedLi):hover {
                     background-color: $list-color;
                   }
 
@@ -6208,54 +6180,19 @@ ul.naviBtn {
         .explainTooltip {
           z-index: 10;
           position: absolute;
-
           icon-annotation {
-            width: 16em;
+            height: auto;
             display: none;
-
-            &:before {
-              content: "";
-              border: none;
-              border-top: 10px solid rgba(0, 0, 0, 0.13);
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -68px;
-              left: 9px;
-              z-index: 1;
-            }
-
-            &:after {
-              content: " ";
-              border: none;
-              border-top: 10px solid white;
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -67px;
-              left: 9px;
-              z-index: 3;
-            }
-
             ul {
-              margin: 0;
-              padding: 0;
-              text-align: left;
-              background-color: #FFF;
-              box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-              padding: 0.5em;
-              font-weight: normal;
-              border-radius: 5px;
-
-              img {
-                margin-bottom: -0.2em;
-                width:1em;
-                height:1em;
-              }
-
-              span {
-                font-size: 0.9em;
-              }
+              padding: 10px 10px;
+            }
+            &:before {
+              bottom: -10px;
+              left: 5px;
+            }
+            &:after {
+              bottom: -9px;
+              left: 5px;
             }
           }
         }
@@ -6293,11 +6230,10 @@ ul.naviBtn {
 
             ul {
               margin: 0;
-              padding: 0;
               text-align: left;
               background-color: #FFF;
               box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-              padding: 0.5em;
+              padding: 10px 10px;
               font-weight: normal;
               border-radius: 5px;
 
@@ -6308,7 +6244,8 @@ ul.naviBtn {
               }
 
               span {
-                font-size: 0.9em;
+                font-size: 1em;
+                line-height: 1.5;
               }
             }
           }
@@ -6388,6 +6325,9 @@ ul.naviBtn {
 
     .bgGrey {
       background-color: #DEDEDE;
+      &:hover {
+        background-color: #EEEEEE;
+      }
     }
 
     .lineCtrl {
@@ -6486,6 +6426,9 @@ ul.naviBtn {
 
       .bgGrey {
         background-color: #DEDEDE;
+        &:hover {
+          background-color: #EEEEEE;
+        }
       }
 
       .lineCtrl {
@@ -7059,10 +7002,12 @@ ul.naviBtn {
               align-content: space-between;
 
               a {
-                width: 10em;
-                padding: 10px;
+                width: 8em;
+                padding: 6px;
                 text-align: center;
                 margin: 0 5px 5px 0;
+                font-size: 1em;
+                text-weight: normal;
               }
             }
           }
@@ -7082,6 +7027,73 @@ ul.naviBtn {
               position: relative;
               border: 1px solid #B7B7B7;
               margin-top: 20px;
+
+              hr.separator {
+                border-color: #C3D69B;
+                border-style: solid;
+                border-width: 1px 0 0 0;
+                margin: 0;
+                background-color: #FFF;
+                padding-bottom: 12px;
+                &.pb6p {
+                  padding-bottom: 5px;
+                }
+              }
+
+              h5.condition-separator {
+                cursor: pointer;
+                font-size: inherit;
+                border-color: #C3D69B;
+                border-style: solid;
+                border-width: 1px 0 1px 0;
+                margin: 0 0 10px 0;
+                background-color: #ECF4DA;
+                font-weight: bold;
+
+                span {
+                  &.removeArea {
+                    width: 2em;
+                    float: left;
+                    text-align: center;
+                    padding: 9px 0.75em;
+                    height: 34px;
+                  }
+                  &.labelArea  {
+                    display: block;
+                    margin-left: 2.5em;
+                    padding: 9px 9px 9px 0.25em;
+                    height: 34px;
+                  }
+                }
+
+                i {
+                  background-size: 12px;
+                  background-repeat: no-repeat;
+                  width: 16px;
+                  height: 16px;
+                  border-radius: 15px;
+                  display: block;
+                  background-position: 1px;
+
+                  &.remove {
+                    border: 1px solid #878787;
+                    background-color: #FFFFFF;
+                    background-image: url("/img/close_b.png");
+
+                    &:hover {
+                      background-color: #CFCFCF;
+                    }
+                  }
+
+                  &.error {
+                    float: right;
+                    background-image: url("/img/exclamation_mark.png");
+                    background-color: #FF8E9E;
+                    width: 15px;
+                    height: 15px;
+                  }
+                }
+              }
 
               &:last-child {
                 margin-bottom: 20px;
@@ -7123,7 +7135,6 @@ ul.naviBtn {
                     background-color: #D69B9B;
                     width: 15px;
                     height: 15px;
-
                   }
                 }
               }
@@ -7143,6 +7154,10 @@ ul.naviBtn {
               .set_action_item_body {
                 background-color: #ffffff;
                 padding: 1.5em;
+
+                input[type="text"] {
+                  font-size: 13px;
+                }
 
                 > ul {
 
@@ -7178,6 +7193,11 @@ ul.naviBtn {
                     height: 25px;
                     font-size: 0.9em;
                   }
+                }
+
+                p.radio-annotation {
+                  margin: 0 0 0.1em;
+                  padding-left: 1.4em;
                 }
 
                 input[type="text"],
@@ -7246,6 +7266,12 @@ ul.naviBtn {
                   }
                   &.grid-container-body {
                     margin-bottom: 1em;
+                    hr.separator {
+                      margin-top: 12px;
+                      padding-bottom: 0;
+                      grid-column: 1/5;
+                      width: 101%;
+                    }
                   }
 
                   input[type="text"], select, textarea {
@@ -7271,6 +7297,42 @@ ul.naviBtn {
                     -ms-grid-column: 3;
                     -ms-grid-row: 1;
                     -ms-grid-row-span: 2;
+                    .textarea-message{
+                      width: calc(100% - 6.5em);
+                      resize: none;
+                      font-size: 13px;
+                      border-width: 1px;
+                      padding: 5px;
+                      line-height: 1.5;
+                      height: 29.5px;
+                      overflow: hidden;
+                      border-radius: 4px !important;
+                      border: 1px solid #909090 !important;
+                      width: calc(100% - 5px);
+                    }
+                  }
+
+                  .area-selector {
+                    grid-row-start: g1;
+                    grid-row-end: g3;
+                    grid-column-start: g1;
+                    grid-column-end: g3;
+                    -ms-grid-column: 3;
+                    -ms-grid-row: 1;
+                    -ms-grid-row-span: 2;
+                    .textarea-message{
+                      width: calc(100% - 6.5em);
+                      resize: none;
+                      font-size: 13px;
+                      border-width: 1px;
+                      padding: 5px;
+                      line-height: 1.5;
+                      height: 29.5px;
+                      overflow: hidden;
+                      border-radius: 4px !important;
+                      border: 1px solid #909090 !important;
+                      width: calc(100% - 5px);
+                    }
                   }
 
                   .area-btn {
@@ -7361,6 +7423,37 @@ ul.naviBtn {
                   }
                 }
 
+                &.action_branch_on_condition {
+                  ul.condition {
+                    &.else {
+                      padding-top: 0.5em;
+                    }
+                    li {
+                      div.conditionTypeSelect {
+                        flex-grow: 0;
+                      }
+                      div.conditionAction {
+                        flex-grow: 1;
+                        label.executeNextActionCheck {
+                          padding-top: 6px;
+                          display: block;
+                        }
+                        textarea {
+                          width:  calc(100% - 1em);
+                        }
+                        &.elseCondition {
+                          textarea {
+                            width: calc(100% - 13.5em);
+                          }
+                        }
+                      }
+                      select {
+                        height: initial;
+                      }
+                    }
+                  }
+                }
+
                 div > label:last-of-type:not(:last-child) {
                   padding-bottom: 0.5em;
                 }
@@ -7378,6 +7471,20 @@ ul.naviBtn {
 
                 .styleFlexbox {
                   display: flex;
+
+                  &.direction-column {
+                    flex-direction: column;
+                    padding-bottom: 2px;
+                  }
+
+                  > .fb15em {
+                    flex-basis: 15em;
+                    min-width: 15em;
+                    white-space: nowrap;
+                    & + * {
+                      flex-grow: 1;
+                    }
+                  }
 
                   > .fb13em {
                     flex-basis: 13em;
@@ -7427,6 +7534,8 @@ ul.naviBtn {
                   > ul {
                     flex-grow: 1;
                   }
+
+
                 }
 
                 .indentDown {
@@ -7604,51 +7713,32 @@ ul.naviBtn {
     position: absolute;
 
     icon-annotation {
-      width: 16em;
+      height: auto;
       display: none;
-
       &:before {
-        content: "";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
         bottom: -10px;
         left: 9px;
-        z-index: 1;
       }
-
       &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
         bottom: -8px;
         left: 9px;
-        z-index: 3;
       }
-
       ul {
         margin: 0;
-        padding: 0;
         text-align: left;
         background-color: #FFF;
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
+        padding: 10px 10px;
         font-weight: normal;
         border-radius: 5px;
-
         img {
           margin-bottom: -0.2em;
           width:1em;
           height:1em;
         }
-
         span {
-          font-size: 0.9em;
+          font-size: 1em;
+          line-height: 1.5;
         }
       }
     }
@@ -7840,91 +7930,14 @@ ul.naviBtn {
     }
   }
   .explainTooltip {
-    z-index: 10;
-    position: absolute;
-
     icon-annotation {
-      width: 16em;
-      height: 2.1em;
-      display: none;
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
+      &:before {
+        bottom: -59px;
+        left: 4px;
       }
-    }
-
-    &#filterType1Tooltip {
-      icon-annotation {
-        /* 矢印 */
-        &:before {
-          content: " ";
-          border: none;
-          border-top: 10px solid rgba(0, 0, 0, 0.13);
-          border-left: 9px solid transparent;
-          border-right: 9px solid transparent;
-          position: absolute;
-          bottom: -42px;
-          left: 5px;
-          z-index: 1;
-        }
-
-        &:after {
-          content: " ";
-          border: none;
-          border-top: 10px solid white;
-          border-left: 9px solid transparent;
-          border-right: 9px solid transparent;
-          position: absolute;
-          bottom: -40px;
-          left: 5px;
-          z-index: 3;
-        }
-      }
-    }
-
-    &#filterType2Tooltip {
-      icon-annotation {
-        /* 矢印 */
-        &:before {
-          content: " ";
-          border: none;
-          border-top: 10px solid rgba(0, 0, 0, 0.13);
-          border-left: 9px solid transparent;
-          border-right: 9px solid transparent;
-          position: absolute;
-          bottom: -28px;
-          left: 5px;
-          z-index: 1;
-        }
-
-        &:after {
-          content: " ";
-          border: none;
-          border-top: 10px solid white;
-          border-left: 9px solid transparent;
-          border-right: 9px solid transparent;
-          position: absolute;
-          bottom: -26px;
-          left: 5px;
-          z-index: 3;
-        }
+      &:after {
+        bottom: -58px;
+        left: 4px;
       }
     }
   }
@@ -7953,6 +7966,9 @@ ul.naviBtn {
 
     .bgGrey {
       background-color: #DEDEDE;
+      &:hover {
+        background-color: #EEEEEE;
+      }
     }
 
     .lineCtrl {
@@ -8497,6 +8513,9 @@ ul.naviBtn {
 
     .bgGrey {
       background-color: #DEDEDE;
+      &:hover {
+        background-color: #EEEEEE;
+      }
     }
 
     .lineCtrl {
@@ -8857,6 +8876,26 @@ ul.naviBtn {
       margin-top: 1em;
     }
 
+    #MChatSettingInitialNotificationMessage1 {
+      width: 30em;
+      height: 8em;
+      resize: none;
+      font-size: 1em;
+      padding: 0.5em;
+      margin-top: 1em;
+      margin-left: 1.8em;
+    }
+
+    .notificationTextarea {
+      width: 30em;
+      height: 8em;
+      resize: none;
+      font-size: 1em;
+      padding: 0.5em;
+      margin-top: 1em;
+      margin-left: 1.8em;
+    }
+
     .summarized {
       margin-left:10px;
     }
@@ -8987,49 +9026,11 @@ ul.naviBtn {
 
       /* 矢印 */
       &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
         bottom: -73px;
-        left: 5px;
-        z-index: 1;
       }
 
       &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
         bottom: -72px;
-        left: 5px;
-        z-index: 3;
-      }
-
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
       }
     }
   }
@@ -9715,37 +9716,6 @@ ul.naviBtn {
       display: inline-block;
     }
 
-    .explainTooltip {
-      z-index: 10;
-      position: absolute;
-
-        icon-annotation {
-        width: 16em;
-        height: 2.1em;
-        display: none;
-
-        ul {
-            margin: 0;
-            padding: 0;
-            text-align: left;
-            background-color: #FFF;
-            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-            padding: 0.5em;
-            font-weight: normal;
-            border-radius: 5px;
-
-          img {
-            margin-bottom: -0.2em;
-            width:1em;
-            height:1em;
-          }
-
-          span {
-            font-size: 0.9em;
-          }
-        }
-      }
-    }
     /*オペレータ画面tooltip*/
     .opOneLineExplainTooltip {
       z-index: 10;
@@ -10152,4 +10122,51 @@ ul#anotherWindow_color-bar-right {
 }
 .fa-chevron-left:before {
   content: "";
+}
+.remove {
+  background-image: url('/img/close_b.png');
+}
+.validation {
+  background-image: url('/img/exclamation_mark.png');
+  background-size: 12px;
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  border-radius: 15px;
+  display: block;
+  background-position: 1px;
+}
+div.balloon {
+  position: absolute;
+  top: 0;
+  left: 58em;
+  background-color: #FF8E9E;
+  z-index: $sub-sidebar-z-index;
+  display: none;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+
+  p { color: #FFF }
+  div.balloonContent {
+    position: relative;
+    width: 30em;
+    min-height: 5em;
+    padding: 0 1em;
+
+    &:before {
+      content: " ";
+      position: absolute;
+      border-right: 10px solid #FF8E9E;
+      border-bottom: 14px solid transparent;
+      top: -5px;
+      left: -10px;
+      width: 0;
+      height: 0;
+    }
+
+  p { margin: 0; padding: 0; margin-top: 5px }
+
+  }
+}
+.in_hidden {
+  height:0;
 }

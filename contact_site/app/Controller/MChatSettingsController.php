@@ -5,6 +5,7 @@
  */
 class MChatSettingsController extends AppController {
   public $uses = ['MChatSetting', 'MUser','MOperatingHour'];
+  public $components = ['NodeSettingsReload'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -32,6 +33,14 @@ class MChatSettingsController extends AppController {
           $operatingHourData['MOperatingHour']['active_flg'] = 2;
         }
         $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+        $data = json_decode($this->request->data['MChatSetting']['initial_notification_message'],true);
+        foreach($data as $key => $value){
+          $this->request->data['MChatSetting']['initial_notification_message'.($key+1)] = $value['message'];
+          $this->request->data['MChatSetting']['seconds'.($key+1)] = $value['seconds'];
+        }
+        $this->set('in_flg',$this->request->data['MChatSetting']['in_flg']);
+        $this->set('data',$data);
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
       }
     }
     // 表示処理
@@ -40,7 +49,11 @@ class MChatSettingsController extends AppController {
       $this->request->data = $this->MChatSetting->find('first', ['conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
-
+      $data = json_decode($this->request->data['MChatSetting']['initial_notification_message'],true);
+      foreach($data as $key => $value){
+        $this->request->data['MChatSetting']['initial_notification_message'.($key+1)] = $value['message'];
+        $this->request->data['MChatSetting']['seconds'.($key+1)] = $value['seconds'];
+      }
       $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
@@ -48,6 +61,9 @@ class MChatSettingsController extends AppController {
         $operatingHourData['MOperatingHour']['active_flg'] = 2;
       }
       $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+      $this->set('notificationArrayNumber',count($data));
+      $this->set('in_flg',$this->request->data['MChatSetting']['in_flg']);
+      $this->set('data',$data);
 
       //デフォルト設定
       if(!empty($this->request->data['MChatSetting']['sorry_message'])) {
@@ -126,6 +142,18 @@ class MChatSettingsController extends AppController {
     // チャット基本設定のバリデーション結果を変数に渡す
     $ret = $this->MChatSetting->validates();
 
+    //初回通知メッセージバリデーション
+    $inRet = true;
+    if($saveData['MChatSetting']['in_flg'] == 1) {
+      $data = json_decode($this->request->data['MChatSetting']['initial_notification_message'],true);
+      foreach($data as $key => $value){
+        if(empty($this->request->data['MChatSetting']['initial_notification_message'.($key+1)]) ||
+          mb_strlen($this->request->data['MChatSetting']['initial_notification_message'.($key+1)]) > 300) {
+          $inRet = false;
+        }
+      }
+    }
+
     // ユーザーへの同時対応数設定を複数行一括保存が出来るように加工する
     $saveData = $this->_makeSaveUserData($inputData);
     $userRet = true;
@@ -135,15 +163,16 @@ class MChatSettingsController extends AppController {
 
     // ユーザーデータの一括バリデーションチェック
     // 何れかのバリデーションチェックでfalseだった場合は処理を中止する
-    if ( !$userRet || !$ret ) {
+    if ( !$userRet || !$ret || !$inRet) {
       return false;
     }
 
     // 保存処理
-    if ( $this->MChatSetting->save() && $this->MUser->saveAll($saveData) ) {
+    if ( $this->MChatSetting->save() && $this->MUser->saveAll($saveData)) {
       // 双方コミットし、true を返す
       $this->MChatSetting->commit();
       $this->MUser->commit();
+      NodeSettingsReloadComponent::reloadChatSettings($this->userInfo['MCompany']['company_key']);
       return true;
     }
     else {

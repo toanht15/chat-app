@@ -35,9 +35,18 @@ function scSettingToggle(){
   }
 }
 
-// 保存処理
-function saveAct(){
-  document.getElementById('MChatSettingIndexForm').submit();
+function inSettingToggle(){
+  //対応上限数のsorryメッセージデータ
+  if(check == false) {
+    check  = true;
+    SorryMessageData = $("#MChatSettingWatingCallSorryMessage").val();
+  }
+  if ( $("#MChatSettingInFlg1").prop("checked") ) { // 同時対応数上限を利用する場合
+    $("#in_content").slideDown("fast");
+  }
+  else { // 同時対応数上限を利用しない場合
+    $("#in_content").slideUp("fast");
+  }
 }
 
 // 元に戻す処理
@@ -74,11 +83,78 @@ $(document).ready(function(){
     $('.settingOutsideHoursPhone').css('pointer-events','none'); //追加ボタン制御
   }
 
+  if(<?= $in_flg ?> == 2) {
+    $('#in_content').css('display','none');
+  }
+
   // 同時対応数上限のON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MChatSetting][sc_flg]"]', scSettingToggle);
   scSettingToggle(); // 初回のみ
 
-    // ツールチップの表示制御
+  // 初回通知メッセージのON/OFFの切り替わりを監視
+  $(document).on('change', '[name="data[MChatSetting][in_flg]"]', inSettingToggle);
+  inSettingToggle(); // 初回のみ
+  // ツールチップの表示制御
+  indicateTooltip();
+
+  //バリデーションチェック
+  checkValidate();
+});
+
+//初回メッセージ項目削除
+function removeItem(number) {
+  $('#notification'+number).remove();
+}
+
+//初回メッセージ項目追加
+function addItem(number) {
+  var length = $('.line').length;
+  if(length < 5) {
+    var content    = "<li style = 'padding: 0 0 19px 0; border-bottom: 1px solid #C3D69B; width:50em;' id = 'notification"+number+"' class = 'line'>";
+        content    += "  <h4 style = 'background-color: #ECF4DA;cursor: pointer;margin: 0;font-weight:bold;'>";
+        content    += "  <span class='removeArea' style = 'width: 2em;float: left;text-align: center;padding: 9px 0.75em;height: 34px;'>";
+        content    += "    <i onclick = 'removeItem("+number+")' class='remove' ng-click='main.removeItem(itemType, itemId)' style = 'border: 1px solid #878787;background-color: #FFFFFF;background-size: 12px;background-repeat: no-repeat;width: 16px;height: 16px;border-radius: 15px;display: block;background-position: 1px;'></i></span>";
+        content    += "    <span style = 'display: block;margin-left: 2.5em;padding: 9px 9px 9px 0.25em;height: 34px;' class='labelArea ng-binding''>初回通知メッセージ<i style = 'float: right;background-color: #FF8E9E;width: 15px;height: 15px;' class='error ng-scope validation'></i></span>";
+        content    += "  </h4>";
+        content    += "<div>";
+        content    += "<input name='data[seconds"+number+"]' min = '0' value = '0' style='width: 3.8em;margin-left: 2em;margin-top: 14px;padding: 5px 10px;border: none;border-bottom: 1px solid #909090;' type='number' id='MChatSettingSeconds"+number+"'/>秒後";
+        content    += "  </div>";
+        content    += "  <span style = 'display:flex;margin-top: 5px;'>";
+        content    += "     <textarea name='data[initial_notification_message"+number+"]' class = 'notificationTextarea' id='MChatSettingInitialNotificationMessage"+number+"'></textarea>";
+        content    += "    <span class = 'summarized'>";
+        content    += "  <span class='greenBtn btn-shadow actBtn choiseButton' onclick=\"addOption(1,'MChatSettingInitialNotificationMessage"+number+"')\">選択肢を追加する</span>";
+        content    += "<span class='greenBtn btn-shadow actBtn phoneButton' onclick=\"addOption(2,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'lastSpeechLabel'>電話番号を追加する<div class = 'questionBalloon questionBalloonPosition13'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "     <span class='greenBtn btn-shadow actBtn linkMovingButton' onclick=\"addOption(3,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'thirdSpeechLabel'>リンク（ページ遷移）<div class = 'questionBalloon questionBalloonPosition15'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn linkNewTabButton' onclick=\"addOption(4,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'secondSpeechLabel'>リンク（新規ページ）<div class = 'questionBalloon questionBalloonPosition14'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "  </span>";
+        content    += "</span>";
+        content    += "  <div style = 'margin-top:17px;'>";
+        if(length !== 4) {
+          content    += " <img onclick = 'addItem("+(number+1)+")' src='/img/add.png' alt='登録' class='btn-shadow disOffgreenBtn' width='25' height='25' style='padding: 2px !important; display: block;margin-left: 1.9em;margin-top: 14px;'>";
+        }
+        content    += "  </div>";
+        content    += "</li>";
+        content    += "<div class='balloon' style='top: 10px; left: 840px; display:none;position: absolute;top: 0;left: 58em;background-color: #FF8E9E;z-index: 5;box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);''><div class='balloonContent' style ='position: relative;width: 30em;min-height: 5em;padding: 0 1em;'><p style = 'margin: 0;padding: 0;margin-top: 5px;color:#FFF'>● 初回通知メッセージは３００文字以内で設定してください</p></div></div>";
+    $('#in_content').append(content);
+  }
+  // ツールチップの表示制御
+  indicateTooltip();
+  //バリデーションチェック
+  checkValidate();
+}
+
+function saveAct() {
+  var length = $('.line').length;
+  var setList = {};
+  for (var i = 0; i < length; i++){
+    setList[i] = {'seconds': $('#MChatSettingSeconds'+(i+1)).val(),'message': $('#MChatSettingInitialNotificationMessage'+(i+1)).val()};
+  }
+  $('#MChatSettingInitialNotificationMessage').val(JSON.stringify(setList));
+  document.getElementById('MChatSettingIndexForm').submit();
+}
+
+function indicateTooltip() {
+  // ツールチップの表示制御
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
     console.log(parentTdId);
@@ -96,9 +172,34 @@ $(document).ready(function(){
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
   });
-});
+}
 
+function checkValidate() {
+  var balloon = $("div.balloon");
+  $('.validation').bind('mouseenter', function(e) {
+      if($(this).val() == "" || $(this).val().length > 300) {
+        var top = $(this).closest("li").prop('offsetTop');
+        var left = $(this).closest("li").prop('offsetLeft');
+        var width = $(this).closest("li").prop('offsetWidth');
+        balloon.css({
+            "top": top + 10,
+            "left": width + left
+        }).show();
+      }
+  });
+  $('.validation').bind('mouseleave', function() {
+      balloon.hide();
+  });
 
+  $(document).on('keyup', '.notificationTextarea', function(e) {
+    if($(this).val() !== "" && $(this).val().length < 300) {
+      $(this).closest('li').find('.validation').hide();
+    }
+    else {
+      $(this).closest('li').find('.validation').show();
+    }
+  });
+}
 
 </script>
 <div id='m_chat_settings_idx' class="card-shadow">
@@ -168,14 +269,37 @@ $(document).ready(function(){
         </div>
       </section>
       <section>
-        <h3 class="require">２．Sorryメッセージ</h3>
+        <h3>２．初回チャット通知メッセージ</h3>
+        <div class="content">
+          <pre>このメッセージはチャットがオペレータに通知された際に、初回のみ設定した秒後に自動送信されます</pre>
+          <label style="display:inline-block;">
+              <?php
+                $settings = [
+                  'type' => 'radio',
+                  'options' => $scFlgOpt,
+                  'default' => 1,
+                  'legend' => false,
+                  'separator' => '</label><br><label style="display:inline-block;">',
+                  'label' => false,
+                  'div' => false,
+                  'class' => 'pointer'
+                ];
+                echo $this->Form->input('MChatSetting.in_flg',$settings);
+              ?>
+          </label>
+          <div id = 'in_content'>
+            <?= $this->element('MChatSettings/templates'); ?>
+          </div>
+        </div>
+      </section>
+      <section>
+        <h3 class="require">3．Sorryメッセージ</h3>
         <div class="content">
           <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
           <li style = "padding: 0 0 15px 0;">
             <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
               <span style = "display:flex;">
                 <?=$this->Form->textarea('outside_hours_sorry_message')?>
-                <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
                 <span class = "summarized">
                   <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
                   <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
@@ -183,12 +307,12 @@ $(document).ready(function(){
                   <span class="greenBtn btn-shadow actBtn linkNewTabButton settingOutsideHoursPhone" onclick="addOption(4,'MChatSettingOutsideHoursSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
                 </span>
               </span>
+              <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin-top: 15px;']); ?>
           </li>
           <li style = "padding: 0 0 15px 0;">
             <pre id = "wating_call">(2)対応上限数を超えてのチャットが受信された場合</pre>
             <span style = "display:flex;">
               <?=$this->Form->textarea('wating_call_sorry_message')?>
-              <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
               <span class = "summarized">
                 <span class="greenBtn btn-shadow actBtn choiseButton settingWatingCallChoice" onclick="addOption(1,'MChatSettingWatingCallSorryMessage')">選択肢を追加する</span>
                 <span class="greenBtn btn-shadow actBtn phoneButton settingWatingCallPhone" onclick="addOption(2,'MChatSettingWatingCallSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
@@ -196,12 +320,12 @@ $(document).ready(function(){
                 <span class="greenBtn btn-shadow actBtn linkNewTabButton settingWatingCallPhone" onclick="addOption(4,'MChatSettingWatingCallSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
               </span>
             </span>
+            <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin-top: 15px;']); ?>
           </li>
           <li style = "padding: 0 0 15px 0;">
             <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
             <span style = "display:flex;">
               <?=$this->Form->textarea('no_standby_sorry_message')?>
-              <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
               <span class = "summarized">
                 <span class="greenBtn btn-shadow actBtn choiseButton" onclick="addOption(1,'MChatSettingNoStandbySorryMessage')">選択肢を追加する</span>
                 <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingNoStandbySorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
@@ -209,6 +333,7 @@ $(document).ready(function(){
                 <span class="greenBtn btn-shadow actBtn linkNewTabButton" onclick="addOption(4,'MChatSettingNoStandbySorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
               </span>
             </span>
+            <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin-top: 15px;']); ?>
           </li>
         </div>
       </section>
