@@ -17,7 +17,7 @@ class FileAppController extends AppController
   const PARAM_TARGET_USER_ID = "targetUserId";
   const PARAM_PARAM = "param";
 
-  public $uses = ['TUploadTransferFile', 'TChatbotScenarioSendFile'];
+  public $uses = ['MCompany', 'TUploadTransferFile', 'TChatbotScenarioSendFile'];
   public $components = ['Amazon'];
 
   // デフォルト設定
@@ -148,12 +148,25 @@ class FileAppController extends AppController
     return date('Y-m-d H:i:s', strtotime($created) + self::EXPIRE_SEC);
   }
 
+  protected function validSiteKey() {
+    $siteKey = $this->request->data('sitekey');
+    $result = $this->MCompany->find('first', array(
+      'conditions' => array(
+        'company_key' => $siteKey,
+        'del_flg != ' => 1
+      )
+    ));
+    if(empty($result)) {
+      throw new NotFoundException('存在しないサイトキーです');
+    }
+  }
+
   protected function isExpire($created) {
     return (time() - strtotime($created)) >= self::EXPIRE_SEC;
   }
 
   protected function createDownloadUrl($created, $fileId, $isScenarioDownload = false) {
-    return C_NODE_SERVER_ADDR.'/File/download?param='.$this->encryptParameterForDownload($created, $fileId, $isScenarioDownload);
+    return C_NODE_SERVER_ADDR.'//download?param='.$this->encryptParameterForDownload($created, $fileId, $isScenarioDownload);
   }
 
   protected function setScenarioMode($isScenarioMode) {

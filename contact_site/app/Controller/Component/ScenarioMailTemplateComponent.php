@@ -16,6 +16,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
 
   const MAIL_TYPE_CD = 'CS001';
 
+  const RECEIVE_FILE_VARIABLE_KEY = 's_sendfile_data';
+
   /**
    * @var Integer
    * 1: チャット内容を全てメールする
@@ -39,27 +41,28 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     $this->variables = $variables;
   }
 
-  public function createMessageBody() {
+  public function createMessageBody($withDownloadURL = false) {
     $this->readTemplate();
-    $this->prepareScenarioMessageBlock();
+    $this->prepareScenarioMessageBlock($withDownloadURL);
     $this->setScenarioMessageBlock();
   }
 
   public function replaceVariables($message) {
     foreach($this->variables as $variable => $value) {
+      if(strcmp($variable, self::RECEIVE_FILE_VARIABLE_KEY) === 0) continue;
       $message = preg_replace("/{{(".$variable.")\}}/", $value, $message);
     }
     return $message;
   }
 
-  private function prepareScenarioMessageBlock() {
+  private function prepareScenarioMessageBlock($withDownloadURL) {
     switch($this->type) {
       case "1":
-        $this->createMetaDataMessage();
+        $this->createMetaDataMessage($withDownloadURL);
         $this->createMessages();
         break;
       case "2":
-        $this->createMetaDataMessage();
+        $this->createMetaDataMessage($withDownloadURL);
         $this->createVariablesMessageBlock();
         break;
       case "3":
@@ -84,12 +87,22 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   /**
    * @override
    */
-  protected function createMetaDataMessage() {
+  protected function createMetaDataMessage($withDownloadURL) {
     $this->scenarioMessageBlock  = "シナリオ実行ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
     $this->scenarioMessageBlock .= "シナリオ実行ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
     $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
     if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
       $this->scenarioMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
+    }
+    if($withDownloadURL && !empty($this->variables[self::RECEIVE_FILE_VARIABLE_KEY])) {
+      $this->scenarioMessageBlock .= "\n";
+      $data = json_decode($this->variables[self::RECEIVE_FILE_VARIABLE_KEY], TRUE);
+      foreach($data as $obj) {
+        $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n";
+        $this->scenarioMessageBlock .= "ダウンロードＵＲＬ：".$obj['downloadUrl']."\n";
+        $this->scenarioMessageBlock .= "コメント：\n".$obj['comment']."\n";
+      }
+      $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n\n";
     }
   }
 
@@ -102,6 +115,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   private function createVariablesMessageBlock() {
     $this->scenarioMessageBlock .= self::MESSAGE_SEPARATOR."\n";
     foreach($this->variables as $variableName => $value) {
+      if(strcmp($variableName, self::RECEIVE_FILE_VARIABLE_KEY) === 0) continue;
       $this->scenarioMessageBlock .= $variableName."：".$value."\n";
     }
   }

@@ -66,13 +66,10 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("bootstrap.css");
     echo $this->Html->css("multi-select.css");
     echo $this->Html->css("standalone.css");
-    echo $this->Html->css('font-awesome.min');
+    echo $this->Html->css("fa-light.min");
+    echo $this->Html->css("fa-solid.min");
+    echo $this->Html->css('fontawesome.min');
   ?>
-  <link rel="prefetch" href="/fonts/fontawesome-webfont.eot?v=4.0.3" as="font">
-  <link rel="prefetch" href="/fonts/fontawesome-webfont.eot?#iefix&v=4.0.3" as="font">
-  <link rel="prefetch" href="/fonts/fontawesome-webfont.woff?v=4.0.3" as="font">
-  <link rel="prefetch" href="/fonts/fontawesome-webfont.ttf?v=4.0.3" as="font">
-  <link rel="prefetch" href="/fonts/fontawesome-webfont.svg?v=4.0.3#fontawesomeregular" as="font">
   <?php
     if ( strcmp($this->name, 'TAutoMessages') === 0 || strcmp($this->name, 'MOperatingHours') === 0) {
       echo $this->Html->css("clockpicker.css");

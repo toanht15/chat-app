@@ -12,6 +12,7 @@ class NodeSettingsReloadComponent extends Component
   const WIDGET_SETTINGS_API = 'http://127.0.0.1:8080/settings/reload/widgetSettings';
   const AUTO_MESSAGE_SETTINGS_API = 'http://127.0.0.1:8080/settings/reload/autoMessages';
   const OPERATION_HOUR_SETTINGS_API = 'http://127.0.0.1:8080/settings/reload/operationHour';
+  const CHAT_SETTINGS_API = 'http://127.0.0.1:8080/settings/reload/chatSettings';
 
   public static function reloadWidgetSettings($companyKey) {
     self::callApi(self::WIDGET_SETTINGS_API, $companyKey);
@@ -23,6 +24,10 @@ class NodeSettingsReloadComponent extends Component
 
   public static function reloadOperationHour($companyKey) {
     self::callApi(self::OPERATION_HOUR_SETTINGS_API, $companyKey);
+  }
+
+  public static function reloadChatSettings($companyKey) {
+    self::callApi(self::CHAT_SETTINGS_API, $companyKey);
   }
 
   private static function callApi($url, $siteKey) {

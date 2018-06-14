@@ -407,7 +407,7 @@ sincloApp.factory('SimulatorService', function() {
      * @param String extension ファイル拡張子
      */
     isImage: function(extension) {
-      return /jpeg|jpg|gif|png/.test(extension);
+      return /jpeg|jpg|gif|png/i.test(extension);
     },
     /**
      * ファイルタイプ別ごとに、font-awesome用のクラスを出し分ける
@@ -416,17 +416,17 @@ sincloApp.factory('SimulatorService', function() {
     selectIconClassFromExtension: function(extension) {
       var selectedClass = "";
       var icons = {
-        image:      'fa-file-image-o',
-        pdf:        'fa-file-pdf-o',
-        word:       'fa-file-word-o',
-        powerpoint: 'fa-file-powerpoint-o',
-        excel:      'fa-file-excel-o',
-        audio:      'fa-file-audio-o',
-        video:      'fa-file-video-o',
-        zip:        'fa-file-zip-o',
-        code:       'fa-file-code-o',
-        text:       'fa-file-text-o',
-        file:       'fa-file-o'
+        image:      'fa-file-image',
+        pdf:        'fa-file-pdf',
+        word:       'fa-file-word',
+        powerpoint: 'fa-file-powerpoint',
+        excel:      'fa-file-excel',
+        audio:      'fa-file-audio',
+        video:      'fa-file-video',
+        zip:        'fa-file-zip',
+        code:       'fa-file-code',
+        text:       'fa-file-text',
+        file:       'fa-file'
       };
       var extensions = {
         gif: icons.image,

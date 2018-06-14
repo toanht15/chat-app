@@ -38,10 +38,24 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   }
 
+  // 登録済みシナリオ一覧（条件分岐用）
+  var scenarioJsonListForBranchOnCond = JSON.parse(document.getElementById('TChatbotScenarioScenarioListForBranchOnCond').value);
+  this.scenarioListForBranchOnCond = [];
+  for (var key in scenarioJsonListForBranchOnCond) {
+    if (scenarioJsonListForBranchOnCond.hasOwnProperty(key)) {
+      this.scenarioListForBranchOnCond.push({'id': scenarioJsonListForBranchOnCond[key].TChatbotScenario.id, 'name': scenarioJsonListForBranchOnCond[key].TChatbotScenario.name});
+    }
+  }
+
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.inputAttributeList = <?php echo json_encode($chatbotScenarioAttributeType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiMethodType = <?php echo json_encode($chatbotScenarioApiMethodType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiResponseType = <?php echo json_encode($chatbotScenarioApiResponseType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.receiveFileTypeList = <?php echo json_encode($chatbotScenarioReceiveFileTypeList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.matchValueTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionMatchValueType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.processActionTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionActionType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.processElseActionTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionElseActionType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
@@ -209,7 +223,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (message == '') return;
         document.getElementById('action' + index + '_message').innerHTML = $scope.widget.createMessage(message || '', 'preview' + index);
       }
+      // ファイル受信のファイル形式
+      if (typeof newObject.receiveFileType !== 'undefined' && newObject.receiveFileType === "2") {
+        $scope.showExtendedConfigurationWarningPopup(newObject);
+      }
     }, true);
+  };
+
+  $scope.showExtendedConfigurationWarningPopup = function(obj) {
+    modalOpen.call(window, "１．受信したファイルによるウィルス感染などのリスクはお客様の責任にて十分ご理解の上ご利用ください。<br>２．業務に必要なファイル形式のみを指定するようにしてください。<br>３．特に圧縮ファイルを許可する場合は、解凍時に意図しないファイルが含まれる恐れがありますので<br>　　十分に注意の上ご利用ください。", 'p-chatbot-use-extended-setting', '必ず確認してください');
+    popupEvent.agree = function() {
+      popupEvent.close();
+    }
+    popupEvent.closePopup = function () {
+      obj.receiveFileType = "1";
+      popupEvent.close();
+      $timeout(function(){
+        $scope.$apply();
+      });
+    }
   };
 
   /**
@@ -359,6 +391,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         this.controllMailSetting(actionStep);
       }
 
+    } else if (actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+      var src = $scope.actionList[actionType].default.getAttributes[0];
+      var target = $scope.setActionList[actionStep].getAttributes;
+      src.type = src.type.toString();
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllAttributeSettingView(actionStep);
+
     } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
       if (/externalApiRequestHeader/.test(targetClassName)) {
         var src = $scope.actionList[actionType].default.requestHeaders[0];
@@ -369,6 +408,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
       target.push(angular.copy(src));
       this.controllExternalApiSetting(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+      var src = $scope.actionList[actionType].default.conditionList[0];
+      var target = $scope.setActionList[actionStep].conditionList;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllBranchOnConditionSettingView(actionStep);
     }
   };
 
@@ -393,6 +437,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       targetObjList = $scope.setActionList[actionStep].toAddress;
       selector = '#action' + actionStep + '_setting .itemListGroup li';
       limitNum = 5;
+    } else if (actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+      targetObjList = $scope.setActionList[actionStep].getAttributes;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
     } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
       if (/externalApiRequestHeader/.test(targetClassName)) {
         targetObjList = $scope.setActionList[actionStep].requestHeaders;
@@ -401,6 +448,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
         selector = '#action' + actionStep + '_setting .itemListGroup.externalApiResponseBody tr';
       }
+    } else if (actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+      targetObjList = $scope.setActionList[actionStep].conditionList;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
     }
 
     if (targetObjList !== "" && selector !== "") {
@@ -684,6 +734,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
+  this.controllAttributeSettingView = function(actionStep) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
+      var targetObjList = $scope.setActionList[actionStep].getAttributes;
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
+    });
+  };
+
   this.controllExternalApiSetting = function( actionStep) {
     $timeout(function(){
       $scope.$apply();
@@ -698,8 +758,18 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
+  this.controllBranchOnConditionSettingView = function(actionStep) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
+      var targetObjList = $scope.setActionList[actionStep].conditionList;
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 5)
+    });
+  };
+
   /**
-   * 選択肢、ヒアリング、メール送信のリストに対して、追加・削除ボタンの表示状態を更新する
+   * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
    * @param String  actionType      アクション種別
    * @param Object  targetElmList   対象のリスト要素(jQueryオブジェクト)
    * @param Object  targetObjList   対象のリストオブジェクト
@@ -717,19 +787,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (elmNum == 1 && index == 0) {
         // リストが一件のみの場合、追加ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        $(targetElm).find('.btnBlock .deleteBtn').hide();
-      } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-        // リストが複数件ある場合、ヒアリング・選択肢アクションは、追加・削除ボタンを表示する
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').hide();
+      } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>
+        || actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+        // リストが複数件ある場合、ヒアリング・選択肢・属性値アクションは、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       } else if (index == elmNum -1 && index != limitNum-1) {
         // リストの最後の一件の場合、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       } else {
         // 削除ボタンのみ表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').hide();
-        $(targetElm).find('.btnBlock .deleteBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       }
     });
   };
@@ -896,6 +967,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       LocalStorageService.setItem('chatbotVariables', [{key: $scope.setActionList[$scope.actionStep].selection.variableName, value: message}]);
       $scope.actionStep++;
       $scope.doAction();
+    } else
+    if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
+      $scope.actionStep++;
+      $scope.doAction();
     }
   });
 
@@ -933,6 +1008,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * アクションの実行
    * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
    */
+  $scope.receiveFileEventListener = null;
   $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
       var actionDetail = $scope.setActionList[$scope.actionStep];
@@ -989,12 +1065,148 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             $scope.actionStep++;
             $scope.doAction();
           }
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+          $scope.actionStep++;
+          $scope.doAction();
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
+          if(actionDetail.dropAreaMessage) {
+            $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled, actionDetail.cancelLabel, actionDetail.receiveFileType, actionDetail.extendedReceiveFileExtensions);
+            if($scope.receiveFileEventListener) {
+              $scope.receiveFileEventListener();
+            }
+            $scope.receiveFileEventListener = $scope.$on('onErrorSelectFile', function(){
+              var message = actionDetail.errorMessage;
+              $scope.$broadcast('addReErrorMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
+            });
+          }
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+          // 指定の変数を取得
+          var value = LocalStorageService.getItem('chatbotVariables', actionDetail.referenceVariable);
+          for(var i=0; i<actionDetail.conditionList.length; i++) {
+            if($scope.isMatch(value, actionDetail.conditionList[i])) {
+              $scope.doBranchOnCondAction(actionDetail.conditionList[i]);
+              return;
+            }
+          }
+          // どの条件にもマッチしなかった場合
+          if(actionDetail.elseEnabled) {
+            $scope.doBranchOnCondAction(actionDetail.elseAction);
+          }
         }
       }, parseInt(time, 10) * 1000);
     } else {
       $scope.actionStop();
     }
   }
+
+  $scope.isMatch = function(targetValue, condition) {
+    switch(Number(condition.matchValueType)) {
+      case 1: // いずれかを含む場合
+        return $scope.matchCaseInclude(targetValue, $scope.splitMatchValue(condition.matchValue));
+      case 2: // いずれも含まない場合
+        return $scope.matchCaseExclude(targetValue, $scope.splitMatchValue(condition.matchValue));
+      default:
+        return false;
+    }
+  };
+
+  $scope.doBranchOnCondAction = function(condition, callback) {
+    switch(Number(condition.actionType)) {
+      case 1:
+        $scope.$broadcast('addReMessage', $scope.replaceVariable(condition.action.message), 'action' + $scope.actionStep);
+        $scope.actionStep++;
+        $scope.doAction();
+        break;
+      case 2:
+        // シナリオ呼び出し
+        var targetScenarioId = condition.action.callScenarioId;
+        console.log("targetScenarioId : %s",targetScenarioId);
+        if(targetScenarioId === "self") {
+          $scope.actionStep = 0;
+          $scope.doAction();
+        } else {
+          self.getScenarioDetail(targetScenarioId, condition.action.executeNextAction == 1);
+        }
+        break;
+      case 3:
+        $scope.actionStop();
+        // シナリオ終了
+        break;
+      case 4:
+        $scope.actionStep++;
+        $scope.doAction();
+        // 何もしない（次のアクションへ）
+        break;
+    }
+  };
+
+  $scope.splitMatchValue = function(val) {
+    var splitedArray = [];
+    val.split('"').forEach(function(currentValue, index, array){
+      if(array.length > 1) {
+        if(index !== 0 && index % 2 === 1) {
+          // 偶数個：そのまま文字列で扱う
+          if(currentValue !== "") {
+            splitedArray.push(currentValue);
+          }
+        } else {
+          if(currentValue) {
+            var trimValue = currentValue.trim(),
+              splitValue = trimValue.replace(/　/g, " ").split(" ");
+            splitedArray = splitedArray.concat($.grep(splitValue, function(e){return e !== "";}));
+          }
+        }
+      } else {
+        var trimValue = currentValue.trim(),
+          splitValue = trimValue.replace(/　/g, " ").split(" ");
+        splitedArray = splitedArray.concat($.grep(splitValue, function(e){return e !== "";}));
+      }
+    });
+    return splitedArray;
+  };
+
+  $scope.matchCaseInclude = function(val, words) {
+    console.log("_matchCaseInclude : %s <=> %s",words, val);
+    var result = false;
+    for(var i=0; i < words.length; i++) {
+      if(words[i] === "") {
+        continue;
+      }
+
+      var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      var preg = new RegExp(word);
+      result = preg.test(val);
+
+      if(result) { // いずれかを含む
+        break;
+      }
+    }
+    return result;
+  };
+
+  $scope.matchCaseExclude = function(val, words) {
+    for(var i=0; i < words.length; i++) {
+      if(words[i] === "") {
+        if (words.length > 1 && i === words.length - 1) {
+          break;
+        }
+        continue;
+      } else {
+        var word = words[i].replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        var preg = new RegExp(word);
+        var exclusionResult = preg.test(val);
+        if(exclusionResult) {
+          // 含んでいる場合はNG
+          return false;
+        }
+      }
+    }
+    //最後まで含んでいなかったらOK
+    return true;
+  };
 
   /**
    * ヒアリングアクションの実行
@@ -1406,6 +1618,16 @@ function actionValidationCheck(element, setActionList, actionItem) {
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?>) {
     if (actionItem.scenarioId === '' || actionItem.scenarioId === null) {
       messageList.push('シナリオを選択してください');
+    }
+
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+    if (!actionItem.getAttributes[0].variableName) {
+      messageList.push('変数名が未入力です');
+    }
+
+    if (!actionItem.getAttributes[0].attributeValue) {
+      messageList.push('属性値が未入力です');
     }
 
   } else
