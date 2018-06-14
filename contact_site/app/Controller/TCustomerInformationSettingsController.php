@@ -8,7 +8,7 @@ class TCustomerInformationSettingsController extends AppController {
   public $uses = ['TCustomerInformationSetting','TCustomVariable'];
   public $paginate = [
     'TCustomerInformationSetting' => [
-      'limit' => 10,
+      'limit' => 100,
       'order' => [
         'TCustomerInformationSetting.sort' => 'asc',
         'TCustomerInformationSetting.id' => 'asc'
@@ -28,9 +28,9 @@ class TCustomerInformationSettingsController extends AppController {
    * @return void
    * */
   public function index() {
-  	Configure::write('debug', 2);
-  	//DB作成後復元
-  	$this->paginate['TCustomerInformationSetting']['conditions']['TCustomerInformationSetting.m_companies_id'] = $this->userInfo['MCompany']['id'];
+    Configure::write('debug', 2);
+    //DB作成後復元
+    $this->paginate['TCustomerInformationSetting']['conditions']['TCustomerInformationSetting.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TCustomerInformationSetting');
     $documentList = $this->TCustomVariable->find('list', $this->_setParamsVariable());
     $this->set('variableList',$documentList);

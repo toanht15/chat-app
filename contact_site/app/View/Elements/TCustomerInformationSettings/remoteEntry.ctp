@@ -160,7 +160,7 @@
         <div class="questionBallon" id="filterType1Label">
           <icon class="questionBtn">?</icon>
         </div>
-        <?= $this->Form->input('item_name', ['div' => false, 'label' => false, 'maxlength' => 100,'style' => 'margin-left: 15px;']) ?>
+        <?= $this->Form->input('item_name', ['placeholder' => '項目名', 'div' => false, 'label' => false, 'maxlength' => 100,'style' => 'margin-left: 15px;']) ?>
       </span>
     </div>
     <div id="SelectListForm" style="margin-bottom: 8px">
@@ -190,7 +190,7 @@
         <label class="require" style="vertical-align: 7px;">
           プルダウンリスト
         </label>
-      <?= $this->Form->textarea('input_option', ['placeholder' => '', 'div' => false, 'label' => false, 'maxlength' => 300]) ?>
+      <?= $this->Form->textarea('input_option', ['div' => false, 'label' => false, 'maxlength' => 300]) ?>
       </span>
       <p style="font-size: 10px; margin: 0px; padding-left: 203px">※リスト表示する内容を改行して複数入力してください</p>
     </div>
