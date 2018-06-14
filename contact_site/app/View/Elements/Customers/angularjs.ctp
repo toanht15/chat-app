@@ -64,6 +64,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         sorry: 4,
         autoSpeech: 5,
         sendFile: 6,
+        notification: 7,
         start: 98,
         end: 99,
         scenario: {
@@ -1454,7 +1455,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         content = $scope.createTextOfMessage(chat, message);
       }
-      else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
+      else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry ) {
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -1462,7 +1463,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         content = "<span class='cName'>自動応答</span>";
         content += $scope.createTextOfMessage(chat, message);
       }
-      else if ( type === chatApi.messageType.autoSpeech ) {
+      else if ( type === chatApi.messageType.autoSpeech || type === chatApi.messageType.notification) {
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
         div.style.height = 'auto';

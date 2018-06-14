@@ -908,11 +908,15 @@ io.sockets.on('connection', function (socket) {
         auto: 3,
         sorry: 4,
         autoSpeech: 5,
+        notification: 7,
         start: 98,
         end: 99
       },
       requestFlg: {
         noFlg: 0
+      },
+      inFlg: {
+        flg: 1
       }
     },
     set: function(d){ // メッセージが渡されてきたと
@@ -938,7 +942,7 @@ io.sockets.on('connection', function (socket) {
             chatData.historyId = historyId;
 
             var sql  = "SELECT";
-                sql += " chat.id, chat.message, chat.message_type as messageType, chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg, chat.created ";
+                sql += " chat.id, chat.message, chat.message_type as messageType, chat.message_distinction as messageDistinction,chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.visitors_id as visitorsId,chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg,chat.notice_flg as noticeFlg, chat.created ";
                 sql += "FROM t_history_chat_logs AS chat ";
                 sql += "LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ";
                 sql += "WHERE t_histories_id = ? ORDER BY created";
@@ -990,6 +994,7 @@ io.sockets.on('connection', function (socket) {
               }
               chatData.messages = objectSort(setList);
               obj.chat = chatData;
+              console.log(chatData);
               emit.toMine('chatMessageData', obj, socket);
             });
         }
@@ -1057,6 +1062,15 @@ io.sockets.on('connection', function (socket) {
                 // 応対可能かチェック(対応できるのであれば trueが返る)
                 chatApi.sendCheck(d, function(err, ret){
                   sendData.opFlg = ret.opFlg;
+                  //初回通知メッセージ利用するの場合
+                  //初回通知メッセージの場合
+                  if(ret.message == null && ret.in_flg == chatApi.cnst.inFlg.flg
+                    && d.notifyToCompany && d.initialNotification == true) {
+                    sendData.notification = true;
+                    sendData.mUserId = d.mUserId;
+                    sendData.messageDistinction = d.messageDistinction;
+                    sendData.userId = d.userId;
+                  }
                   // 書き込みが成功したら顧客側に結果を返す
                   //emit.toUser('sendChatResult', sendData, sId);
                   var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
@@ -1148,6 +1162,7 @@ io.sockets.on('connection', function (socket) {
                   });
                 }
                 if (Number(insertData.message_type) === 3) return false;
+
                 // 書き込みが成功したら企業側に結果を返す
 
                 var sendChatData = {
@@ -1366,7 +1381,7 @@ io.sockets.on('connection', function (socket) {
       var companyId = companyList[d.siteKey];
       var siteKey = d.siteKey;
 
-      var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg,sorry_message, outside_hours_sorry_message, wating_call_sorry_message, no_standby_sorry_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
+      var getUserSQL = "SELECT IFNULL(chat.sc_flg, 2) as sc_flg,in_flg,sorry_message, outside_hours_sorry_message, wating_call_sorry_message, no_standby_sorry_message,initial_notification_message, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
       pool.query(getUserSQL, [companyId], function(err, rows){
         if ( err !== null && err !== '' ) return false; // DB接続断対応
         var ret = false, message = null;
@@ -1552,8 +1567,7 @@ io.sockets.on('connection', function (socket) {
                           (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                           (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                         ) {
-                          ret = true;
-                          break;
+                          return callback(true, {opFlg: true, message: null, in_flg: rows[0].in_flg});
                         }
                         //オペレータが待機していない場合
                         else {
@@ -1599,8 +1613,7 @@ io.sockets.on('connection', function (socket) {
                         (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                         (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
                       ) {
-                        ret = true;
-                        break;
+                          return callback(true, {opFlg: true, message: null, in_flg: rows[0].in_flg});
                       }
                       //オペレータが待機していない場合
                       else {
@@ -1624,7 +1637,7 @@ io.sockets.on('connection', function (socket) {
                 (rows[0].display_type === 1 && getOperatorCnt(d.siteKey) > 0) ||
                 (rows[0].display_type === 4 && getOperatorCnt(d.siteKey) > 0)
               ) {
-                ret = true;
+                return callback(true, {opFlg: true, message: null, in_flg: rows[0].in_flg});
               }
               //オペレータが待機していない場合
               else {
@@ -1673,8 +1686,7 @@ io.sockets.on('connection', function (socket) {
                             if ( userIds.length !== 0 ) {
                               for (var i3 = 0; i3 < userIds.length; i3++) {
                                 if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                                ret = true;
-                                break;
+                                  return callback(true, {opFlg: true, message: null, in_flg: rows[0].in_flg});
                               }
                               //上限数を超えている場合
                               if(ret != true) {
@@ -1734,8 +1746,7 @@ io.sockets.on('connection', function (socket) {
                           if ( userIds.length !== 0 ) {
                             for (var i2 = 0; i2 < userIds.length; i2++) {
                               if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                              ret = true;
-                              break;
+                                return callback(true, {opFlg: true, message: null, in_flg: rows[0].in_flg});
                             }
                             //上限数を超えている場合
                             if(ret != true) {
@@ -1773,8 +1784,7 @@ io.sockets.on('connection', function (socket) {
                   if ( userIds.length !== 0 ) {
                     for (var i = 0; i < userIds.length; i++) {
                       if ( Number(scList[d.siteKey].user[userIds[i]]) === Number(scList[d.siteKey].cnt[userIds[i]]) ) continue;
-                      ret = true;
-                      break;
+                        return callback(true, {opFlg: true, message: null, in_flg: rows[0].in_flg});
                     }
                     //上限数を超えている場合
                     if(ret != true) {
@@ -1800,7 +1810,7 @@ io.sockets.on('connection', function (socket) {
           return callback(false, {ret: ret, message: null});
         }
       });
-    }
+    },
   };
 
   // 顧客情報取得
@@ -3167,6 +3177,22 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
       }
     });
+  });
+
+  // 初回通知メッセージ
+  socket.on("sendInitialNotificationChat", function(d){
+    var obj = JSON.parse(d);
+    var ret = {
+      siteKey: obj.messageList.siteKey,
+      tabId: obj.messageList.tabId,
+      chatMessage: obj.messageList.chatMessage,
+      messageType: obj.messageList.messageType,
+      messageDistinction: obj.messageList.messageDistinction,
+      chatId: obj.messageList.chatId,
+      mUserId: obj.messageList.mUserId,
+      userId: obj.messageList.userId
+    };
+    chatApi.set(ret);
   });
 
   // 既読操作

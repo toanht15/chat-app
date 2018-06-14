@@ -86,7 +86,8 @@ $(function(){
       $isSendFile = false;
       $isRecieveFile = false;
     }
-    else if ( strcmp($val['THistoryChatLog']['message_type'], 5) === 0 || strcmp($val['THistoryChatLog']['message_type'], 4) === 0 ) {
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 5) === 0 || strcmp($val['THistoryChatLog']['message_type'], 4) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 7) === 0) {
       $className = "sinclo_auto";
       $name = "自動返信";
       $id = $val['THistoryChatLog']['id'];
