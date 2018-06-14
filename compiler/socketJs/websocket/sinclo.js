@@ -2,7 +2,6 @@
   // -----------------------------------------------------------------------------
   //   websocket通信
   // -----------------------------------------------------------------------------
-
   var $ = jquery;
   sinclo = {
     widget: {
@@ -1067,6 +1066,7 @@
       storage.s.set('operatorEntered', false); // オペレータが退室した
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
       storage.l.set('leaveFlg', 'true'); // オペレータが退室した
+      storage.s.set('initialNotification', 'true'); // 初回通知メッセージ
       if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
         sinclo.chatApi.showMiniMessageArea();
       }
@@ -1087,6 +1087,7 @@
       this.chatApi.historyId = obj.chat.historyId;
       var keys = Object.keys(obj.chat.messages);
       var prevMessageBlock = null;
+      var firstCheck = true;
       for (var key in obj.chat.messages) {
         if ( !obj.chat.messages.hasOwnProperty(key) ) return false;
         var chat = obj.chat.messages[key], userName;
@@ -1126,6 +1127,7 @@
           console.log("window.sincloInfo.widget.showName: %s window.sincloInfo.widget.showAutomessageName: %s",window.sincloInfo.widget.showName,window.sincloInfo.widget.showAutomessageName);
           if ( Number(chat.messageType) === 3
             || Number(chat.messageType) === 4
+            || Number(chat.messageType) === 7
             || Number(chat.messageType) === 21
             || Number(chat.messageType) === 22
             || Number(chat.messageType) === 23
@@ -1176,6 +1178,9 @@
             else if(chat.deleteFlg === 1) {
               this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
+          }
+          else if(Number(chat.messageType) === 7){
+            return false;
           } else if(Number(chat.messageType) === 19) {
             if(check.isJSON(chat.message)) {
               var result = JSON.parse(chat.message);
@@ -1184,6 +1189,36 @@
               this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           } else {
+            //通知した場合
+            if(chat.noticeFlg == 1 && firstCheck == true) {
+              var now = new Date();
+              var targetDate = new Date(storage.s.get('notificationTime'));
+              //現在時刻から通知された時間の差
+              var diff = (now.getTime() - targetDate.getTime()) / 1000;
+              data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
+              for (var i = 0; i < Object.keys(data).length; i++) {
+                (function(pram) {
+                  setTimeout(function() {
+                    //オペレータが入室していなかった場合
+                    if(storage.s.get('operatorEntered') !== 'true') {
+                      sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
+                      sinclo.chatApi.scDown();
+                      var sendData = {
+                        siteKey: obj.siteKey,
+                        tabId: obj.tabId,
+                        chatMessage: data[pram].message,
+                        messageType: sinclo.chatApi.messageType.notification,
+                        messageDistinction: chat.messageDistinction,
+                        mUserId: chat.userId,
+                        userId: chat.visitorsId,
+                      }
+                      emit("sendInitialNotificationChat", {messageList: sendData});
+                    }
+                  },(data[pram].seconds-diff)*1000);
+                  firstCheck = false;
+                })(i);
+              }
+            }
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
           // シナリオ実行中であればラジオボタンを非活性にする。
@@ -1372,6 +1407,35 @@
           }
           return false;
         }
+        //初回通知メッセージを利用している場合
+        if (obj.notification === true) {
+          storage.s.set('notificationTime',obj.created);
+          data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
+          for (var i = 0; i < Object.keys(data).length; i++) {
+            (function(pram) {
+                setTimeout(function() {
+                if(storage.s.get('operatorEntered') !== 'true') {
+                  sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
+                  sinclo.chatApi.scDown();
+                  var sendData = {
+                    siteKey: obj.siteKey,
+                    tabId: obj.tabId,
+                    chatMessage: data[pram].message,
+                    messageType: sinclo.chatApi.messageType.notification,
+                    messageDistinction: obj.messageDistinction,
+                    chatId: obj.chatId,
+                    mUserId: obj.mUserId,
+                    userId: obj.userId,
+                  }
+                  emit("sendInitialNotificationChat", {messageList: sendData});
+                }
+              },data[pram].seconds*1000);
+            })(i);
+          }
+        }
+        if(obj.messageType == sinclo.chatApi.messageType.notification) {
+          return false;
+        }
         this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
@@ -1399,6 +1463,7 @@
       if(obj.opFlg == true && obj.matchAutoSpeech == false) {
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
+        storage.s.set('initialNotification', 'false');
       }
     },
     sendReqAutoChatMessages: function(d){
@@ -1752,6 +1817,7 @@
           sorry: 4,
           autoSpeech: 5,
           sendFile: 6,
+          notification: 7,
           start: 98,
           end: 99,
           scenario: {
@@ -2637,7 +2703,17 @@
                 // シナリオ中の返答はオペレータへの通知をしない
                 isScenarioMessage = true;
               }
-
+              //初回通知メッセージの場合
+              if(storage.s.get('initialNotification') === null || storage.s.get('initialNotification') === 'true') {
+                initialNotification = true;
+              }
+              //初回通知メッセージではない場合
+              else if(storage.s.get('initialNotification') === 'false') {
+                initialNotification = false;
+              }
+              else {
+                initialNotification = false;
+              }
               setTimeout(function(){
                 emit('sendChat', {
                   historyId: sinclo.chatApi.historyId,
@@ -2646,6 +2722,7 @@
                   mUserId: null,
                   messageType: messageType,
                   messageRequestFlg: messageRequestFlg,
+                  initialNotification: initialNotification,
                   isAutoSpeech : result,
                   notifyToCompany: !result,
                   isScenarioMessage: isScenarioMessage

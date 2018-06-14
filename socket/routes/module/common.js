@@ -8,6 +8,7 @@ var companySettings = {},
     publicHolidaySettings = {},
     publicHolidaySettingsArray = [],
     operationHourSettings = {},
+    chatSettings = {},
     mysql = require('mysql'),
     pool = mysql.createPool({
       host: process.env.DB_HOST || 'localhost',
@@ -27,8 +28,10 @@ function initialize(siteKey) {
   loadWidgetSettings(siteKey,function(){
     loadAutoMessageSettings(siteKey, function(){
       loadOperatingHourSettings(siteKey, function(){
-        loadPublicHoliday(function(){
-          syslogger.info("ALL DATA LOADING IS SUCCESSFUL =====");
+          loadPublicHoliday(function(){
+            loadChatSettings(siteKey, function(){
+              syslogger.info("ALL DATA LOADING IS SUCCESSFUL =====");
+          });
         });
       });
     });
@@ -41,6 +44,7 @@ function exports() {
   module.exports.reloadWidgetSettings = loadWidgetSettings;
   module.exports.reloadAutoMessageSettings = loadAutoMessageSettings;
   module.exports.reloadOperationHourSettings = loadOperatingHourSettings;
+  module.exports.reloadChatSettings = loadChatSettings;
   module.exports.mysql = mysql;
   module.exports.pool = pool;
 }
@@ -289,6 +293,57 @@ function loadPublicHoliday(callback) {
   );
 }
 
+function loadChatSettings(siteKey, callback) {
+  'use strict';
+  var getChatSQL = "SELECT * FROM m_chat_settings where m_companies_id = ?;";
+  if(siteKey) {
+  syslogger.info("loadChatSettings target : " + siteKey);
+   pool.query(getChatSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
+      function(err, row){
+        if(err) {
+          syslogger.error('Unable load chat settings. siteKey : ' + siteKey);
+          return;
+        }
+        if(row && row.length > 0) {
+          syslogger.info(JSON.stringify(row));
+          // row = array
+          chatSettings[siteKey] = row[0];
+          syslogger.info("Load chat setting OK. siteKey : " + siteKey);
+          module.exports.chatSettings = chatSettings;
+        } else {
+          syslogger.info('siteKey: %s chatSettings is not found.',siteKey);
+          chatSettings[siteKey] = [];
+          module.exports.chatSettings = chatSettings;
+        }
+        if(callback) callback();
+      }
+    );
+  } else {
+    // All
+    getChatSQL = "SELECT * FROM m_chat_settings;";
+    pool.query(getChatSQL,
+      function(err, rows){
+        if(err) {
+          syslogger.error('Unable load ALL Chat settings.');
+          return;
+        }
+        if(rows && rows.length > 0) {
+          rows.forEach(function(row){
+            syslogger.info(JSON.stringify(row));
+            var targetSiteKey = idSiteKeyMap[row.m_companies_id];
+            // いったん初期化する
+            chatSettings[targetSiteKey] = {};
+            // row = object
+            chatSettings[targetSiteKey] = row;
+          });
+          syslogger.info('Load ALL Chat settings is successful.');
+          module.exports.chatSettings = chatSettings;
+        }
+        if(callback) callback();
+      }
+    );
+  }
+}
 if(Object.keys(companySettings).length === 0) {
   initialize();
 }
