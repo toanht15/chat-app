@@ -4757,9 +4757,10 @@
         self.set(self._lKey.allowSave, true);
       },
       _disallowSaveing: function() {
-        var self = sinclo.scenarioApi;
-        var flg = self.get(self._lKey.allowSave);
-        return flg == null || flg === "false" || flg === false;
+        // var self = sinclo.scenarioApi;
+        // var flg = self.get(self._lKey.allowSave);
+        // return flg == null || flg === "false" || flg === false;
+        return false;
       },
       _saveVariable: function(valKey, value) {
         var self = sinclo.scenarioApi;
@@ -5409,7 +5410,6 @@
           }
           dataObj.push(obj);
           self._parent._saveVariable(self._downloadUrlKey, JSON.stringify(dataObj));
-          debugger;
         },
         _showError: function() {
           var self = sinclo.scenarioApi._sendFile;
