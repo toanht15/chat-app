@@ -10,7 +10,7 @@
     <li class="styleFlexbox">
       <span class="fb11em"><label>ファイル形式</label></span>
       <div>
-        <label ng-repeat="(key, item) in receiveFileTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_receive_file_type" value="{{key}}" ng-model="setItem.receiveFileType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}" data-tooltip-width='240'>?</icon></span><p class="radio-annotation"><s>{{item.annotation}}</s></p></label>
+        <label ng-repeat="(key, item) in receiveFileTypeList" class="styleBlock pointer"><input class="selectFileTypeRadio" type="radio" name="action_{{setActionId}}_receive_file_type" value="{{key}}" ng-model="setItem.receiveFileType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}" data-tooltip-width='240'>?</icon></span><p class="radio-annotation"><s>{{item.annotation}}</s></p></label>
         <input type="text" name="extendedReceiveFileExtensions" ng-model="setItem.extendedReceiveFileExtensions" ng-if="setItem.receiveFileType == 2">
       </div>
     </li>
