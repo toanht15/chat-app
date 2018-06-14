@@ -36,11 +36,6 @@ function scSettingToggle(){
 }
 
 function inSettingToggle(){
-  //対応上限数のsorryメッセージデータ
-  if(check == false) {
-    check  = true;
-    SorryMessageData = $("#MChatSettingWatingCallSorryMessage").val();
-  }
   if ( $("#MChatSettingInFlg1").prop("checked") ) { // 同時対応数上限を利用する場合
     $("#in_content").slideDown("fast");
   }
@@ -56,6 +51,13 @@ function reloadAct(){
 
 function addOption(type,sorryMessageName){
     sendMessage = document.getElementById(sorryMessageName);
+    //バリデーション
+    if($('#'+sorryMessageName).val().length < 300) {
+      $('#'+sorryMessageName).closest('li').find('.validation').hide();
+    }
+    else {
+      $('#'+sorryMessageName).closest('li').find('.validation').show();
+    }
     //変数追加
     addVariable(type,sendMessage);
 }
@@ -103,44 +105,88 @@ $(document).ready(function(){
 
 //初回メッセージ項目削除
 function removeItem(number) {
-  $('#notification'+number).remove();
+  var length = $('.line').length;
+  $('#unit'+number).remove();
+  if(length == 5) {
+    $("#add5").css('display', 'block');
+  }
+  //削除した下の行を全て一つ上げる
+  for(i=number+1; i<=length;i++) {
+    document.getElementById('unit' + i).id = 'unit' + (i-1);
+    document.getElementById('notification' + i).id = 'notification' + (i-1);
+    document.getElementById('MChatSettingSeconds' + i).name = 'data[MChatSetting][seconds'+ (i-1) +']';
+    document.getElementById('MChatSettingSeconds' + i).id = 'MChatSettingSeconds' + (i-1);
+    document.getElementById('MChatSettingInitialNotificationMessage' + i).name = 'data[MChatSetting][initial_notification_message'+ (i-1) +']';
+    document.getElementById('MChatSettingInitialNotificationMessage' + i).id = 'MChatSettingInitialNotificationMessage' + (i-1);
+    $("#remove"+i).attr('onclick',"removeItem("+(i-1)+")");
+    document.getElementById('remove' + i).id = 'remove' + (i-1);
+    $("#add"+i).attr('onclick',"addItem("+(i)+")");
+    document.getElementById('add' + i).id = 'add' + (i-1);
+    $("#summarized"+i+" #choise").attr('onclick',"addOption(1,'MChatSettingInitialNotificationMessage"+(i-1)+"')");
+    $("#summarized"+i+" #secondSpeechLabel").attr('onclick',"addOption(4,'MChatSettingInitialNotificationMessage"+(i-1)+"')");
+    $("#summarized"+i+" #thirdSpeechLabel").attr('onclick',"addOption(3,'MChatSettingInitialNotificationMessage"+(i-1)+"')");
+    $("#summarized"+i+" #lastSpeechLabel").attr('onclick',"addOption(2,'MChatSettingInitialNotificationMessage"+(i-1)+"')");
+    document.getElementById('summarized' + i).id = 'summarized' + (i-1);
+  }
 }
 
 //初回メッセージ項目追加
 function addItem(number) {
   var length = $('.line').length;
   if(length < 5) {
-    var content    = "<li style = 'padding: 0 0 19px 0; border-bottom: 1px solid #C3D69B; width:50em;' id = 'notification"+number+"' class = 'line'>";
+    for(i=length;i>=number;i--) {
+      document.getElementById('unit' + i).id = 'unit' + (i+1);
+      document.getElementById('notification' + i).id = 'notification' + (i+1);
+      document.getElementById('MChatSettingSeconds' + i).name = 'data[MChatSetting][seconds'+ (i+1) +']';
+      document.getElementById('MChatSettingSeconds' + i).id = 'MChatSettingSeconds' + (i+1);
+      document.getElementById('MChatSettingInitialNotificationMessage' + i).name = 'data[MChatSetting][initial_notification_message'+ (i+1) +']';
+      document.getElementById('MChatSettingInitialNotificationMessage' + i).id = 'MChatSettingInitialNotificationMessage' + (i+1);
+      $("#remove"+i).attr('onclick',"removeItem("+(i+1)+")");
+      document.getElementById('remove' + i).id = 'remove' + (i+1);
+      $("#add"+i).attr('onclick',"addItem("+(i+2)+")");
+      document.getElementById('add' + i).id = 'add' + (i+1);
+      $("#summarized"+i+" #choice").attr('onclick',"addOption(1,'MChatSettingInitialNotificationMessage"+(i+1)+"')");
+      $("#summarized"+i+" #secondSpeechLabel").attr('onclick',"addOption(4,'MChatSettingInitialNotificationMessage"+(i+1)+"')");
+      $("#summarized"+i+" #thirdSpeechLabel").attr('onclick',"addOption(3,'MChatSettingInitialNotificationMessage"+(i+1)+"')");
+      $("#summarized"+i+" #lastSpeechLabel").attr('onclick',"addOption(2,'MChatSettingInitialNotificationMessage"+(i+1)+"')");
+      document.getElementById('summarized' + i).id = 'summarized' + (i+1);
+    }
+    var
+        content    = "<div id = unit"+number+">"
+        content    += "<li style = 'padding: 0 0 19px 0; border-bottom: 1px solid #C3D69B; width:50em;' id = 'notification"+number+"' class = 'line'>";
         content    += "  <h4 style = 'background-color: #ECF4DA;cursor: pointer;margin: 0;font-weight:bold;'>";
         content    += "  <span class='removeArea' style = 'width: 2em;float: left;text-align: center;padding: 9px 0.75em;height: 34px;'>";
-        content    += "    <i onclick = 'removeItem("+number+")' class='remove' ng-click='main.removeItem(itemType, itemId)' style = 'border: 1px solid #878787;background-color: #FFFFFF;background-size: 12px;background-repeat: no-repeat;width: 16px;height: 16px;border-radius: 15px;display: block;background-position: 1px;'></i></span>";
+        content    += "    <i onclick = 'removeItem("+number+")' id = 'remove"+number+"' class = 'remove' style = 'border: 1px solid #878787;background-color: #FFFFFF;background-size: 12px;background-repeat: no-repeat;width: 16px;height: 16px;border-radius: 15px;display: block;background-position: 1px;'></i></span>";
         content    += "    <span style = 'display: block;margin-left: 2.5em;padding: 9px 9px 9px 0.25em;height: 34px;' class='labelArea ng-binding''>初回通知メッセージ<i style = 'float: right;background-color: #FF8E9E;width: 15px;height: 15px;' class='error ng-scope validation'></i></span>";
         content    += "  </h4>";
         content    += "<div>";
-        content    += "<input name='data[seconds"+number+"]' min = '0' value = '0' style='width: 3.8em;margin-left: 2em;margin-top: 14px;padding: 5px 10px;border: none;border-bottom: 1px solid #909090;' type='number' id='MChatSettingSeconds"+number+"'/>秒後";
+        content    += "<input name='data[MChatSetting][seconds"+number+"]' min = '0' value = '0' style='width: 3.8em;margin-left: 2em;margin-top: 14px;padding: 5px 10px;border: none;border-bottom: 1px solid #909090;' type='number' id='MChatSettingSeconds"+number+"'/>秒後";
         content    += "  </div>";
         content    += "  <span style = 'display:flex;margin-top: 5px;'>";
-        content    += "     <textarea name='data[initial_notification_message"+number+"]' class = 'notificationTextarea' id='MChatSettingInitialNotificationMessage"+number+"'></textarea>";
-        content    += "    <span class = 'summarized'>";
-        content    += "  <span class='greenBtn btn-shadow actBtn choiseButton' onclick=\"addOption(1,'MChatSettingInitialNotificationMessage"+number+"')\">選択肢を追加する</span>";
-        content    += "<span class='greenBtn btn-shadow actBtn phoneButton' onclick=\"addOption(2,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'lastSpeechLabel'>電話番号を追加する<div class = 'questionBalloon questionBalloonPosition13'><icon class = 'questionBtn'>?</icon></div></span>";
-        content    += "     <span class='greenBtn btn-shadow actBtn linkMovingButton' onclick=\"addOption(3,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'thirdSpeechLabel'>リンク（ページ遷移）<div class = 'questionBalloon questionBalloonPosition15'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "     <textarea name='data[MChatSetting][initial_notification_message"+number+"]' class = 'notificationTextarea' id='MChatSettingInitialNotificationMessage"+number+"'></textarea>";
+        content    += "    <span id = 'summarized"+number+"' style = 'margin-left:10px;'>";
+        content    += "    <span class='greenBtn btn-shadow actBtn choiseButton' onclick=\"addOption(1,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'choice'>選択肢を追加する</span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn phoneButton' onclick=\"addOption(2,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'lastSpeechLabel'>電話番号を追加する<div class = 'questionBalloon questionBalloonPosition13'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn linkMovingButton' onclick=\"addOption(3,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'thirdSpeechLabel'>リンク（ページ遷移）<div class = 'questionBalloon questionBalloonPosition15'><icon class = 'questionBtn'>?</icon></div></span>";
         content    += "    <span class='greenBtn btn-shadow actBtn linkNewTabButton' onclick=\"addOption(4,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'secondSpeechLabel'>リンク（新規ページ）<div class = 'questionBalloon questionBalloonPosition14'><icon class = 'questionBtn'>?</icon></div></span>";
         content    += "  </span>";
         content    += "</span>";
         content    += "  <div style = 'margin-top:17px;'>";
-        if(length !== 4) {
-          content    += " <img onclick = 'addItem("+(number+1)+")' src='/img/add.png' alt='登録' class='btn-shadow disOffgreenBtn' width='25' height='25' style='padding: 2px !important; display: block;margin-left: 1.9em;margin-top: 14px;'>";
-        }
+        content    += " <img onclick = 'addItem("+(number+1)+")' id = 'add"+number+"' src='/img/add.png' alt='登録' class='btn-shadow disOffgreenBtn' width='25' height='25' style='padding: 2px !important; display: block;margin-left: 1.9em;margin-top: 14px;'>";
         content    += "  </div>";
         content    += "</li>";
         content    += "<div class='balloon' style='top: 10px; left: 840px; display:none;position: absolute;top: 0;left: 58em;background-color: #FF8E9E;z-index: 5;box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);''><div class='balloonContent' style ='position: relative;width: 30em;min-height: 5em;padding: 0 1em;'><p style = 'margin: 0;padding: 0;margin-top: 5px;color:#FFF'>● 初回通知メッセージは３００文字以内で設定してください</p></div></div>";
-    $('#in_content').append(content);
+        content    += "</div>";
+      $('#unit'+(number-1)).after(content);
+      if(length == 4) {
+        $("#add5").css('display', 'none');
+      }
   }
   // ツールチップの表示制御
   indicateTooltip();
   //バリデーションチェック
   checkValidate();
+
 }
 
 function saveAct() {
@@ -287,7 +333,7 @@ function checkValidate() {
                 echo $this->Form->input('MChatSetting.in_flg',$settings);
               ?>
           </label>
-          <div id = 'in_content'>
+          <div id = "in_content">
             <?= $this->element('MChatSettings/templates'); ?>
           </div>
         </div>

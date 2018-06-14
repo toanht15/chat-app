@@ -914,6 +914,14 @@ div[id^="sidebar-"] .icon {
   }
 }
 
+div[id^="sidebar-"] .new-line {
+  height: 75px !important;
+  p {
+    height: 30px !important;
+    width: 50px !important;
+  }
+}
+
 #sidebar-sub {
   background-color: #929292;
   z-index: $sub-sidebar-z-index;
@@ -951,7 +959,7 @@ ul#color-bar-right {
   }
 }
 
-#logout{
+.menu-bar-right{
   cursor: pointer;
 
   &:hover {
@@ -8627,10 +8635,6 @@ ul.naviBtn {
       padding: 0.5em;
       margin-top: 1em;
       margin-left: 1.8em;
-    }
-
-    .summarized {
-      margin-left:10px;
     }
 
     .choiseButton{
