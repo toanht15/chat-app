@@ -248,7 +248,8 @@
           scenario: {
             customer: {
               hearing: 12,
-              selection: 13
+              selection: 13,
+              sendFile: 19
             },
             message: {
               text: 21,
@@ -628,6 +629,41 @@
           content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
         }
       }
+      else if ( type === chatApi.messageType.scenario.customer.sendFile ) {
+        cn = "sinclo_se";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        div.style.borderBottom = '1px solid #bfbfbf';
+        div.style.marginTop = '6px';
+        var created = chat.created.replace(" ", "%");
+        if (chat.delete_flg != 1 && !isJSON(message)) {
+          content = "<span class='cName' style = 'font-size:"+fontSize+"'>シナリオメッセージ（ファイル受信）" + "</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>" + message + "</span>";
+        } else if(chat.delete_flg == 1) {
+          var deleteUser = userList[Number(chat.deleted_user_id)];
+          content = "<span class='cName' style = 'color:#bdbdbd !important; font-size:"+fontSize+"'>シナリオメッセージ（ファイル受信）" + "</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+        }
+        else {
+          // ファイル送信はmessageがJSONなのでparseする
+          message = JSON.parse(message);
+          var forDeletionMessage = "＜コメント＞"+message.comment;
+          forDeletionMessage = forDeletionMessage.replace(/\r?\n?\s+/g,"");
+          forDeletionMessage = escape_html(forDeletionMessage);
+          content = "<span class='cName' style = 'font-size:"+fontSize+"'>シナリオメッセージ（ファイル受信）" + "</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 width=21 height=21 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          content += $scope.createTextOfRecieveFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, message.comment);
+        }
+      }
       else {
         cn = "sinclo_etc";
         div.style.borderBottom = '1px solid #bfbfbf';
@@ -649,11 +685,16 @@
       li.innerHTML = content;
       div.appendChild(li);
       $(elem).append(div);
+      //チャット受信 ダウンロードできるようにする
+      if(type == chatApi.messageType.scenario.customer.sendFile && $('.recieveFileContent').length !== 0) {
+        $('.recieveFileContent')[$('.recieveFileContent').length-1].style.cursor = "pointer";
+        $('.recieveFileContent')[$('.recieveFileContent').length-1].addEventListener("click", function(event){window.open(message.downloadUrl)});
+      }
     };
 
     $scope.createTextOfSendFile = function(chat, url, name, size, extension, isExpired) {
       var thumbnail = "";
-      if (extension.match(/(jpeg|jpg|gif|png)$/) != null && !isExpired) {
+      if (extension.match(/(jpeg|jpg|gif|png)$/i) != null && !isExpired) {
         thumbnail = "<img src='" + url + "' class='sendFileThumbnail' width='64' height='64'>";
       } else {
         thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
@@ -668,6 +709,27 @@
       content    += "  </div>";
       content    += "</div>";
 
+      return content;
+    };
+
+
+    $scope.createTextOfRecieveFile = function(chat, url, name, size, extension, comment) {
+      var thumbnail = "";
+      var height = "";
+      if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
+        thumbnail = "<img src='" + url + "' class='recieveFileThumbnail'>";
+      } else {
+        thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
+        height = "style = 'height:64px;'"
+      }
+      var content    = "<div class='recieveFileContent'>";
+      content    += "  <div class='recieveFileThumbnailArea'"+ height +">" + thumbnail + "</div>";
+      content    += "  <div class='recieveFileMetaArea'>";
+      content    += "  <br>";
+      content    += "    <span class='comment'> ＜コメント＞</span>";
+      content    += "    <span class='message'>"+ comment + "</span>";
+      content    += "  </div>";
+      content    += "</div>";
       return content;
     };
 

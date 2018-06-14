@@ -82,9 +82,14 @@ sinclo@medialink-ml.co.jp
     $this->set('title_for_layout', 'シナリオ設定');
     $this->chatbotScenarioActionList = Configure::read('chatbotScenarioActionList');
     $this->chatbotScenarioInputType = Configure::read('chatbotScenarioInputType');
+    $this->chatbotScenarioAttributeType = Configure::read('chatbotScenarioAttributeType');
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
     $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
     $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
+    $this->chatbotScenarioReceiveFileTypeList = Configure::read('chatbotScenarioReceiveFileTypeList');
+    $this->chatbotScenarioBranchOnConditionMatchValueType = Configure::read('chatbotScenarioBranchOnConditionMatchValueType');
+    $this->chatbotScenarioBranchOnConditionActionType = Configure::read('chatbotScenarioBranchOnConditionActionType');
+    $this->chatbotScenarioBranchOnConditionElseActionType = Configure::read('chatbotScenarioBranchOnConditionElseActionType');
 
     // FileAppController
     $this->fileTransferPrefix = "fileScenarioTransfer/";
@@ -119,6 +124,14 @@ sinclo@medialink-ml.co.jp
 
     // シナリオ設定の一覧を取得する
     $this->request->data['scenarioList'] = $this->_getScenarioList();
+    $this->request->data['scenarioListForBranchOnCond'] = array_merge(array(
+      0 => array(
+        'TChatbotScenario' => array (
+          'id' => 'self',
+          'name' => 'このシナリオ'
+        )
+      )
+    ),$this->request->data['scenarioList']);
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->_viewElement();
@@ -159,7 +172,14 @@ sinclo@medialink-ml.co.jp
     $this->request->data['callerInfo'] = $this->_getScenarioCallerInfo($id, $scenarioList);
     // シナリオ設定の一覧を取得する
     $this->request->data['scenarioList'] = $this->_getScenarioList($id);
-
+    $this->request->data['scenarioListForBranchOnCond'] = array_merge(array(
+      0 => array(
+        'TChatbotScenario' => array (
+          'id' => 'self',
+          'name' => 'このシナリオ'
+        )
+      )
+    ),$this->request->data['scenarioList']);
     $this->_viewElement();
   }
 
@@ -964,12 +984,24 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioActionList', $this->chatbotScenarioActionList);
     // 入力タイプ種別
     $this->set('chatbotScenarioInputType', $this->chatbotScenarioInputType);
+    // 属性タイプ種別
+    $this->set('chatbotScenarioAttributeType', $this->chatbotScenarioAttributeType);
     // メール送信タイプ種別
     $this->set('chatbotScenarioSendMailType', $this->chatbotScenarioSendMailType);
     // API通信メソッド種別
     $this->set('chatbotScenarioApiMethodType', $this->chatbotScenarioApiMethodType);
     // API通信レスポンス種別
     $this->set('chatbotScenarioApiResponseType', $this->chatbotScenarioApiResponseType);
+    // ファイル受信ファイル形式種別
+    $this->set('chatbotScenarioReceiveFileTypeList', $this->chatbotScenarioReceiveFileTypeList);
+    // 条件分岐変数値マッチ条件
+    $this->set('chatbotScenarioBranchOnConditionMatchValueType', $this->chatbotScenarioBranchOnConditionMatchValueType);
+    // 条件分岐アクション種別
+    $this->set('chatbotScenarioBranchOnConditionActionType', $this->chatbotScenarioBranchOnConditionActionType);
+    // 条件分岐アクション種別（上記を満たさない場合）
+    $this->set('chatbotScenarioBranchOnConditionElseActionType', $this->chatbotScenarioBranchOnConditionElseActionType);
+    // ファイル受信用にcompany_keyをsetしておく
+    $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
     // 最後に表示していたページ番号
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);
