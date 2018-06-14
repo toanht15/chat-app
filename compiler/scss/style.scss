@@ -6215,7 +6215,7 @@ ul.naviBtn {
               display: inline-block;
 
               ul {
-                height: 361px;
+                height: 397px;
                 border: 1px solid #969696;
                 overflow-x: hidden;
                 overflow-y: auto;
@@ -8848,6 +8848,26 @@ ul.naviBtn {
       margin-top: 1em;
     }
 
+    #MChatSettingInitialNotificationMessage1 {
+      width: 30em;
+      height: 8em;
+      resize: none;
+      font-size: 1em;
+      padding: 0.5em;
+      margin-top: 1em;
+      margin-left: 1.8em;
+    }
+
+    .notificationTextarea {
+      width: 30em;
+      height: 8em;
+      resize: none;
+      font-size: 1em;
+      padding: 0.5em;
+      margin-top: 1em;
+      margin-left: 1.8em;
+    }
+
     .summarized {
       margin-left:10px;
     }
@@ -10143,4 +10163,51 @@ ul#anotherWindow_color-bar-right {
 }
 .fa-chevron-left:before {
   content: "";
+}
+.remove {
+  background-image: url('/img/close_b.png');
+}
+.validation {
+  background-image: url('/img/exclamation_mark.png');
+  background-size: 12px;
+  background-repeat: no-repeat;
+  width: 16px;
+  height: 16px;
+  border-radius: 15px;
+  display: block;
+  background-position: 1px;
+}
+div.balloon {
+  position: absolute;
+  top: 0;
+  left: 58em;
+  background-color: #FF8E9E;
+  z-index: $sub-sidebar-z-index;
+  display: none;
+  box-shadow: 0 0 2px rgba(0,0,0,0.3);
+
+  p { color: #FFF }
+  div.balloonContent {
+    position: relative;
+    width: 30em;
+    min-height: 5em;
+    padding: 0 1em;
+
+    &:before {
+      content: " ";
+      position: absolute;
+      border-right: 10px solid #FF8E9E;
+      border-bottom: 14px solid transparent;
+      top: -5px;
+      left: -10px;
+      width: 0;
+      height: 0;
+    }
+
+  p { margin: 0; padding: 0; margin-top: 5px }
+
+  }
+}
+.in_hidden {
+  height:0;
 }

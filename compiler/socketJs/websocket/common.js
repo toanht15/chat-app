@@ -4094,6 +4094,7 @@ var socket, // socket.io
           window.sincloInfo.widget = json.widget;
           window.sincloInfo.messages = json.messages;
           window.sincloInfo.contract = json.contract;
+          window.sincloInfo.chat = json.chat;
         }
         else {
           clearTimeout(timer);
