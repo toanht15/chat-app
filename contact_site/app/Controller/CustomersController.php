@@ -70,7 +70,14 @@ class CustomersController extends AppController {
         'sort' => 'asc'
       )
     ));
+
+    $customerInfoDisplaySettingMap = array();
+    foreach($customerSettingList as $index => $data) {
+      $customerInfoDisplaySettingMap[$data['TCustomerInformationSetting']['item_name']] = $data['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+    }
+
     $this->set('customerInformationList', $customerSettingList);
+    $this->set('customerInfoDisplaySettingMap', $customerInfoDisplaySettingMap);
 
     if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
       $this->set('token', $this->userInfo['accessToken']);
