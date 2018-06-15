@@ -118,6 +118,17 @@ class htmlExHelper extends AppHelper {
         return $content;
     }
 
+    public function visitorInput($record) {
+      switch($record['input_type']) {
+        case 1: // テキストボックス
+          return sprintf('<input id="ng-customer-custom-%s" type="text" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" placeholder="%sを追加"/>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name']);
+        case 2: // テキストエリア
+          return sprintf('<textarea rows="7" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" placeholder="%sを追加"></textarea>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name']);
+        case 3: // テキストエリア
+
+      }
+    }
+
     private function makeSendChatView($value){
       $content = "";
 

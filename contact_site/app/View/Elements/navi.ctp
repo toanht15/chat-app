@@ -143,6 +143,12 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <div class="icon">
         <?= $this->htmlEx->naviLink('セキュリティ', 'security_settings_menu.png', ['href' => ['controller' => 'MSecuritySettings', 'action' => 'edit']]) ?>
       </div>
+      <div class="icon">
+        <?= $this->htmlEx->naviLink('変数', 'security_settings_menu.png', ['href' => ['controller' => 'TCustomVariables', 'action' => 'index']]) ?>
+      </div>
+      <div class="icon">
+        <?= $this->htmlEx->naviLink('訪問ユーザ', 'secu  rity_settings_menu.png', ['href' => ['controller' => 'TCustomerInformationSettings', 'action' => 'index']]) ?>
+      </div>
     <?php endif; ?>
     </div>
     <!-- /* 共通 */ -->

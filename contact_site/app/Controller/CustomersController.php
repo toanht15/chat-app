@@ -9,7 +9,7 @@ App::uses('MFileTransferSettingController', 'Controller');
 class CustomersController extends AppController {
   public $uses = [
     'MCompany', 'MUser', 'MCustomer', 'MWidgetSetting', 'MChatNotification', 'MChatSetting',
-    'THistory', 'THistoryChatLog', 'TCampaign', 'TDocument', 'TDictionary', 'TDictionaryCategory'
+    'THistory', 'THistoryChatLog', 'TCampaign', 'TDocument', 'TDictionary', 'TDictionaryCategory', 'TCustomerInformationSetting'
   ];
 
   public $tmpLabelHideList = ["accessId", "ipAddress", "customer", "ua", "stayCount", "time", "campaign", "stayTime", "page", "title", "referrer"];
@@ -59,6 +59,18 @@ class CustomersController extends AppController {
 
     /* 企業ユーザーリストを取得 */
     $this->set('responderList', $this->MUser->coFind('list',["fields" => ["MUser.id", "MUser.display_name"], "recursive" => -1]));
+
+    /* 訪問ユーザ情報設定リストを取得 */
+    $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+      'conditions' => array(
+        'delete_flg' => 0,
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ),
+      'order' => array(
+        'sort' => 'asc'
+      )
+    ));
+    $this->set('customerInformationList', $customerSettingList);
 
     if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
       $this->set('token', $this->userInfo['accessToken']);
@@ -240,9 +252,13 @@ class CustomersController extends AppController {
 
       if ( !empty($mCustomer) ) {
         $data = json_decode($mCustomer['MCustomer']['informations']);
+        $convertedData = array();
+        foreach($data as $key => $value) {
+          $convertedData[$this->convertCustomerDataIF($key)] = $value;
+        }
       }
     }
-    return new CakeResponse(['body' => json_encode($data)]);
+    return new CakeResponse(['body' => json_encode($convertedData)]);
   }
 
   /**
@@ -690,4 +706,14 @@ class CustomersController extends AppController {
     $this->set('userList', $result);
   }
 
+  private function convertCustomerDataIF($key) {
+    $keyMap = array(
+      'company' => '会社名',
+      'name' => '名前',
+      'tel' => '電話番号',
+      'mail' => 'メールアドレス',
+      'memo' => 'メモ'
+    );
+    return $keyMap[$key] ? $keyMap[$key] : $key;
+  }
 }

@@ -2077,8 +2077,9 @@ ul.naviBtn {
         }
 
         #rightContents {
-
           .detailForm {
+            height: 262px;
+            overflow-y: scroll;
             ul {
               display: inline-block;
               width: 100%;
@@ -2086,12 +2087,20 @@ ul.naviBtn {
               li {
                 height: 1.6em;
                 margin: 0.25em 0;
+
+                &.auto-height {
+                  height: auto;
+                }
+
                 label {
                   width: 35%;
                   display: block;
                   float: left;
                   clear: both;
                   padding: 0.25em 0.5em;
+                  &.no-float {
+                    float: none;
+                  }
                 }
                 input {
                   width: 65%;
