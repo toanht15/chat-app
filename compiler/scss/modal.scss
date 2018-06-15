@@ -1694,9 +1694,13 @@
     }
 
     input[type="checkbox"]{
+      display: inline-block;
+      margin: 0 2px;
+      padding: 0;
+      vertical-align: middle;
       position: relative;
-      top: 3px;
-      margin-left: 0px;
+      top: -1px;
+      cursor: pointer;
     }
 
     .forcheckbox{
