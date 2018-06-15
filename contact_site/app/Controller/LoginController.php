@@ -6,7 +6,7 @@
 App::uses('SimplePasswordHasher', 'Controller/Component/Auth');
 class LoginController extends AppController {
   const CONTRACT_ADD_URL = "http://admin.sinclo:81/Contract/add";
-  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const PASSWORD = "##PASSWORD##";

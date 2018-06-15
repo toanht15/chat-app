@@ -1107,6 +1107,70 @@
         }
       }
 
+      /* 個人設定-更新ダイアログ用 */
+      &.p-personal-update {
+        width: 425px;
+        height: 424px;
+        #MUserRemoteOpenEntryFormForm{
+          .form01 {
+            .item {
+              display:flex;
+              .labelArea {
+                width:12em;
+              }
+              span {
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: start;
+                justify-content: flex-start;
+                display: -ms-flexbox;
+                display: flex;
+                width: 280px;
+                padding-left: 9px;
+              }
+            }
+            #popup-main {
+              input[type='checkbox'] {
+                width: auto;
+              }
+              input, select {
+                height: 26px;
+                font-size: 12px;
+                margin: 2px 5px;
+                width: 260px;
+                padding-left: 4px;
+              }
+            }
+            #set_password_area{
+              border: 1px solid #909090;
+              border-radius: 10px;
+              margin-left: 0px;
+              li {
+                display:block;
+              }
+            }
+          }
+        }
+        #popup-main {
+          .form01 div {
+            margin: 5px 0;
+          }
+          img {
+            float: left;
+          }
+        }
+        #popup-button a {
+          width: 75px;
+          float: left;
+          margin: 0 68px;
+        }
+        .error-message {
+          padding: 0;
+          margin: 0 0 0 110px;
+          color: #F57E7E;
+        }
+      }
+
       /* 確認ダイアログ */
       &.p-confirm {
         width: 400px;

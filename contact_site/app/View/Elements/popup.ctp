@@ -232,6 +232,7 @@
         case 'p-history-cus':
         case 'p-muser-entry':
         case 'p-tcampaign-entry':
+        case 'p-personal-update':
           var entryBtn = _button("保存");
           entryBtn.onclick = function () {
             return popupEvent.closePopup();

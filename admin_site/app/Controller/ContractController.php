@@ -14,8 +14,8 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
-  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS_AND_ALEX = "henmi0201@gmail.com";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const PASSWORD = "##PASSWORD##";
@@ -103,7 +103,7 @@ class ContractController extends AppController
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['add','remoteSaveForm']);
+    $this->Auth->allow(['index','add','edit','remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
@@ -504,9 +504,12 @@ class ContractController extends AppController
       $this->addDefaultMailTemplate($addedCompanyInfo['id'], $companyInfo);
       $this->addCompanyJSFile($addedCompanyInfo['companyKey'], $addedCompanyInfo['core_settings']['laCoBrowse']);
     } catch (Exception $e) {
+      $this->log('エラーだよー',LOG_DEBUG);
+      $this->log($e,LOG_DEBUG);
       $this->TransactionManager->rollback($transaction);
       throw $e;
     }
+    $this->log('コミットしとるよ！',LOG_DEBUG);
     $this->TransactionManager->commit($transaction);
     return $addedCompanyInfo;
   }
@@ -752,12 +755,17 @@ class ContractController extends AppController
   }
 
   private function addDefaultChatPersonalSettings($m_companies_id, $companyInfo) {
+    $this->log('ここまでは入っているチャット',LOG_DEBUG);
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $this->log('ここまでは入っているチャット2',LOG_DEBUG);
     $default = $this->getDefaultChatBasicConfigurations($companyInfo['options']['chatbotScenario']);
+    $this->log('ここまでは入っているチャット3',LOG_DEBUG);
+    $this->log($default,LOG_DEBUG);
     $this->MChatSetting->create();
     $this->MChatSetting->set(array(
       "m_companies_id" => $m_companies_id,
       "sc_flg" => $default['sc_flg'],
+      "in_flg" => $default['in_flg'],
       "sc_default_num" => $default['sc_default_num'],
       "outside_hours_sorry_message" => $default['outside_hours_sorry_message'],
       "wating_call_sorry_message" => $default['wating_call_sorry_message'],
