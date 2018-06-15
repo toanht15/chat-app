@@ -357,6 +357,18 @@
             return popupEvent.close();
           };
           break;
+        case 'p-chatbot-use-extended-setting':
+          var closeBtn = _button("キャンセル");
+          var agreeBtn = _button("合意する");
+          closeBtn.onclick = function() {
+            // override me!!
+            return popupEvent.closePopup();
+          };
+          agreeBtn.onclick = function() {
+            // override me!!
+            return popupEvent.agree();
+          };
+          break;
         case 'p-alert':
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
