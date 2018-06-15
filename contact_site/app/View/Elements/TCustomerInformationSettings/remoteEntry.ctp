@@ -52,7 +52,7 @@
     });
 
 
-    //ツールチップの表示制御
+    //白いツールチップの表示制御
     var topPosition = 0;
     $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
       var parentTdId = $(this).parent().attr('id');
@@ -70,6 +70,24 @@
       var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
       targetObj.find('icon-annotation').css('display','none');
     });
+
+    //禁止項目用のtooltip!!
+    var topPosition = 0;
+    $('.commontooltip').off("mouseenter").on('mouseenter',function(event){
+      var targetObj = $("#BanedTooltip");
+      targetObj.find('icon-annotation').css('display','block');
+      //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
+      targetObj.css({
+        top: ($(this).get(0).offsetTop - targetObj.find('ul').outerHeight() - 32 + topPosition) + 'px',
+        left: $(this).get(0).offsetLeft + 75 + 'px'
+      });
+    });
+
+    $('.commontooltip').off("mouseleave").on('mouseleave',function(event){
+      var targetObj = $("#BanedTooltip");
+      targetObj.find('icon-annotation').css('display','none');
+    });
+
   });
   //保存ボタン押下時処理
   popupEvent.closePopup = function(){
@@ -147,9 +165,16 @@
     });
   };
 </script>
-
 <!-- 表示されるフォーム画面 -->
 <?= $this->Form->create('TCustomerInformationSetting', ['action' => 'add']); ?>
+<?php
+$uncheckedflg = true;
+if(isset($this->request->data['TCustomerInformationSetting'])){
+  if($this->request->data['TCustomerInformationSetting']['show_realtime_monitor_flg']){
+    $uncheckedflg = false;
+  }
+}
+?>
   <div class="form01">
     <?= $this->Form->input('id', array('type' => 'hidden')); ?>
     <div>
@@ -195,9 +220,17 @@
       <p style="font-size: 10px; margin: 0px; padding-left: 203px">※リスト表示する内容を改行して複数入力してください</p>
     </div>
     <div>
+    <?php
+    $count = 0;
+    foreach($FlgList as $value){
+      if($value){
+        $count = $count+1;
+      }
+    }
+    ?>
       <span>
-        <label class="forcheckbox" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
-          <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => ""])?>
+        <label class="forcheckbox <?php if((($count === 3)&&$uncheckedflg))echo "grayfont commontooltip"?>" data-text="一覧表示は3つまでです" data-balloon-position="35" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
+          <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => (($count === 3)&&$uncheckedflg)]) ?>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>
         <div class="questionBallon" id="filterType3Label">
@@ -288,6 +321,13 @@
       <icon-annotation>
         <ul>
           <li><span class="detail">カスタム変数のヘルプです。</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id="BanedTooltip" class="expandTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span class="detail">一覧表示に登録できるのは3つまでです。</span></li>
         </ul>
       </icon-annotation>
     </div>

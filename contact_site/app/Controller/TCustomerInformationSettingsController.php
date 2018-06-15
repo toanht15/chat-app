@@ -50,8 +50,10 @@ class TCustomerInformationSettingsController extends AppController {
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->request->data = $this->TCustomerInformationSetting->read(null, $this->request->data['id']);
     }
+    $ShowList = $this->TCustomerInformationSetting->find('list', $this->_setParams());
     $documentList = $this->TCustomVariable->find('list', $this->_setParamsVariable());
     $this->set('variableList',$documentList);
+    $this->set('FlgList',$ShowList);
     $this->render('/Elements/TCustomerInformationSettings/remoteEntry');
   }
   /* *
@@ -391,11 +393,12 @@ class TCustomerInformationSettingsController extends AppController {
   private function _setParams(){
     $params = [
       'order' => [
-        //'TCustomerInformationSetting.sort' => 'asc',
+        'TCustomerInformationSetting.sort' => 'asc',
         'TCustomerInformationSetting.id' => 'asc'
       ],
       'fields' => [
-        'TCustomerInformationSetting.*'
+        //'TCustomerInformationSetting.id',
+        'TCustomerInformationSetting.show_realtime_monitor_flg'
       ],
       'conditions' => [
         'TCustomerInformationSetting.m_companies_id' => $this->userInfo['MCompany']['id']
