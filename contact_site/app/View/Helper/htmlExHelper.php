@@ -125,7 +125,14 @@ class htmlExHelper extends AppHelper {
         case 2: // テキストエリア
           return sprintf('<textarea rows="7" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" placeholder="%sを追加"></textarea>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name']);
         case 3: // テキストエリア
-
+          $options =  explode("\n", $record['input_option']);
+          $html = sprintf('<select id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']">', $record['id'], $record['item_name'], $record['item_name']);
+          $html .= '<option value="">選択してください</option>';
+          for($i = 0; $i < count($options); $i++) {
+            $html .= sprintf('<option value="%s">%s</option>', $options[$i], $options[$i]);
+          }
+          $html .= '</select>';
+          return $html;
       }
     }
 
