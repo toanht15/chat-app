@@ -872,6 +872,43 @@ var db = {
         }
       });
     }
+  },
+  upsertCustomerInfo: function(obj, s) {
+    if(isset(obj.customVariables)) {
+      var customVariables = obj.customVariables;
+      var found = false;
+      if (Object.keys(customVariables).length !== 0) {
+        Object.keys(customVariables).forEach(function (elm, index, arr) {
+          if (isset(customVariables[elm])) {
+            found = true;
+          }
+        });
+      }
+      if (found) {
+        pool.query('SELECT * from m_customers where m_companies_id = ? AND visitors_id = ?', [companyList[obj.siteKey], obj.userId], function (err, row) {
+          if (err !== null && err !== '') return false; // DB接続断対応
+
+          var currentData = {};
+          if (isset(row) && isset(row[0])) {
+            currentData = JSON.parse(row[0].informations);
+            Object.keys(customVariables).forEach(function (key, idx, array) {
+              if (isset(customVariables[key])) {
+                currentData[key] = customVariables[key];
+              }
+            });
+            pool.query('UPDATE m_customers set informations = ? where id = ? ', [JSON.stringify(currentData), row[0].id], function (err, result) {
+
+            });
+          } else {
+            pool.query('INSERT INTO m_customers VALUES (NULL, ?, ?, ?, now(), 0, NULL, NULL, NULL, NULL)', [companyList[obj.siteKey], obj.userId, JSON.stringify(customVariables)], function (err, result) {
+
+            });
+          }
+
+
+        });
+      }
+    }
   }
 };
 
@@ -2289,6 +2326,8 @@ io.sockets.on('connection', function (socket) {
 
       // 履歴作成
       db.addHistory(obj, socket);
+      // カスタム情報自動登録
+      db.upsertCustomerInfo(obj, socket);
 
       // IPアドレスの取得
       if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {

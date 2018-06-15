@@ -2663,6 +2663,7 @@ var socket, // socket.io
     firstConnection: false,
     searchKeyword: null,
     userAgent: window.navigator.userAgent,
+    customVariables: {},
     init: function(){
       // トークン初期化
       common.token_add();
@@ -2672,6 +2673,8 @@ var socket, // socket.io
       this.setPrevpage();
 
       common.getParams();
+
+      userInfo.setCustomVariables();
 
       if ( check.isset(storage.s.get('params')) ) {
         common.setParams();
@@ -2932,6 +2935,7 @@ var socket, // socket.io
     getSendList: function() {
       var code = this.getCode(cnst.info_type.prev);
       var prev = common.jParse(storage.l.get(code));
+      console.log("<><><><><><><><><><> getSendList <><><>><<><><><><><><><><><><><>");
       return {
         ipAddress: this.getIp(),
         time: this.getTime(),
@@ -2942,8 +2946,27 @@ var socket, // socket.io
         chatCnt: document.getElementsByClassName('sinclo_se').length,
         chatUnread: {id: null, cnt: 0},
         service: check.browser(),
-        widget: window.sincloInfo.widgetDisplay
+        widget: window.sincloInfo.widgetDisplay,
+        customVariables: window.userInfo.customVariables
       };
+    },
+    setCustomVariables: function() {
+      debugger;
+      if(sincloInfo.customVariable.length > 0) {
+        for(var i=0; i < sincloInfo.customVariable.length; i++) {
+          var getValue = userInfo._getText($(sincloInfo.customVariable[i].attribute_value));
+          userInfo.customVariables[sincloInfo.customVariable[i].item_name] = getValue.trim();
+        }
+      }
+    },
+    _getText: function(jqObject) {
+      if(jqObject.text() !== "") {
+        return jqObject.text();
+      } else if(jqObject.val() !== "") {
+        return jqObject.val();
+      } else {
+        return "";
+      }
     }
   };
 
@@ -4103,6 +4126,7 @@ var socket, // socket.io
           window.sincloInfo.messages = json.messages;
           window.sincloInfo.contract = json.contract;
           window.sincloInfo.chat = json.chat;
+          window.sincloInfo.customVariable = json.customVariable;
         }
         else {
           clearTimeout(timer);
@@ -4153,6 +4177,8 @@ function emit(evName, data, callback){
   if (evName === "connectSuccess") {
     data.widget = window.sincloInfo.widgetDisplay;
     data.accessId = userInfo.accessId;
+    debugger;
+    data.customVariables = userInfo.customVariables;
   }
   if (evName === "customerInfo" || evName === "sendAccessInfo") {
     data.contract = window.sincloInfo.contract;
