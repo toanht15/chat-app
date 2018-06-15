@@ -241,6 +241,26 @@
             return popupEvent.close();
           };
           break;
+        case 'p-tcustomvariables-entry':
+            var entryBtn = _button("保存");
+            entryBtn.onclick = function () {
+              return popupEvent.closePopup();
+            };
+            var closeBtn = _button("閉じる");
+            closeBtn.onclick = function () {
+              return popupEvent.close();
+            };
+            break;
+        case 'p-tcustomerinformationsettings-entry':
+            var entryBtn = _button("保存");
+            entryBtn.onclick = function () {
+              return popupEvent.closePopup();
+            };
+            var closeBtn = _button("閉じる");
+            closeBtn.onclick = function () {
+              return popupEvent.close();
+            };
+            break;
         case 'p-tdictionary-entry':
           var entryBtn = _button("保存");
           entryBtn.onclick = function () {
@@ -354,6 +374,18 @@
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
             return popupEvent.close();
+          };
+          break;
+        case 'p-chatbot-use-extended-setting':
+          var closeBtn = _button("キャンセル");
+          var agreeBtn = _button("合意する");
+          closeBtn.onclick = function() {
+            // override me!!
+            return popupEvent.closePopup();
+          };
+          agreeBtn.onclick = function() {
+            // override me!!
+            return popupEvent.agree();
           };
           break;
         case 'p-alert':
