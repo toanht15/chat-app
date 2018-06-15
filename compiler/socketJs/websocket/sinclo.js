@@ -5000,7 +5000,7 @@
         },
         _beginValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
-          if(!self._watcher) {
+          if(!check.isIE() && !self._watcher) {
             console.log("BEGIN TIMER");
             if(sinclo.scenarioApi.isScenarioLFDisabled()) {
               sinclo.chatApi.showMiniMessageArea();
@@ -5030,7 +5030,7 @@
         },
         _endValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
-          if(self._watcher) {
+          if(!check.isIE() && self._watcher) {
             console.log("END TIMER");
             clearInterval(self._watcher);
             self._watcher = null;

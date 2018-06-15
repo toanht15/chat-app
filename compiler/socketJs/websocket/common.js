@@ -2609,6 +2609,14 @@ var socket, // socket.io
         return false;
       }
     },
+    isIE: function() {
+      var userAgent = window.navigator.userAgent;
+
+      if ((userAgent.indexOf('MSIE') > -1) || (userAgent.indexOf('Trident/') > -1)) {
+        return true;
+      }
+      return false;
+    },
     // エスケープ用
     // http://qiita.com/saekis/items/c2b41cd8940923863791
     escape_html: function(string) {
