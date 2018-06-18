@@ -1026,20 +1026,22 @@ ul.ulTab {
   width: auto;
   left: -20px;
   div.icon {
+  padding: 0px!important;
     a {
       color: #FFF;
       font-size: 14px;
       display: flex;
       align-items: center;
       text-decoration: none;
+      margin: 0;
       &:hover {
         background-color: $header-btn-hover-color;
       }
       i.icon {
         color: #FFF;
-        margin-left: 1em;
-        margin-right: 0.5em;
+        width:25px;
         font-size: 18px;
+        margin-left:0.5em;
       }
       p {
         color: #FFF;
