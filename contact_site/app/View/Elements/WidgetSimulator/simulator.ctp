@@ -347,7 +347,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
 
         /* ファイル受信 */
         #sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 10px!important; }
-        #sincloBox #chatTalk li.sinclo_se.uploaded { display: inline-block; padding: 10px!important; }
+        #sincloBox #chatTalk li.sinclo_se.uploaded { display: inline-block; padding: 12px!important; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent { border: 1px dashed {{widget.settings['re_text_color']}}; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display: inline-block; width: 75%; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: {{widget.settings['re_text_color']}}!important; color: {{widget.settings['re_background_color']}}; font-weight: normal; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }
@@ -368,7 +368,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 97%; margin: 0 auto; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a:hover { opacity: .8; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.cancel-file-button { margin-right: 2px; width: 49%; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: normal; word-break: keep-all; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.send-file-button { margin-left: 2px; width: 49%; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #64AAC3!important; color: #FFF; font-weight: normal; word-break: keep-all; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.send-file-button { margin-left: 2px; width: 49%; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: {{widget.settings['chat_send_btn_background_color']}}; color: {{widget.settings['chat_send_btn_text_color']}};  font-weight: normal; word-break: keep-all; }
 
         #sincloBox section#chatTab #flexBoxWrap div#messageBox { height: 75px!important; padding: 5px; }
         #sincloBox section#chatTab #flexBoxWrap div#miniFlexBoxHeight { height: 48px!important; padding: 5px; }
@@ -385,7 +385,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab #sincloChatSendBtn.middleSize, #sincloBox section#chatTab #miniSincloChatSendBtn.middleSize { padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
         #sincloBox section#chatTab #sincloChatSendBtn.largeSize, #sincloBox section#chatTab #miniSincloChatSendBtn.largeSize { padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
         #sincloBox section#chatTab #sincloChatSendBtn span, #sincloBox section#chatTab #miniSincloChatSendBtn span { color: {{widget.settings['string_color']}} }
-        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}} }
+        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}}; font-weight: bold; }
         #sincloBox section#chatTab #messageBox.messageBox, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox {border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
         #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder), #sincloBox section#chatTab #miniFlexBoxHeight.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
         #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }

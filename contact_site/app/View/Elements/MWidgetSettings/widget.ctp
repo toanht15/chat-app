@@ -234,8 +234,8 @@
     #sincloBox section#chatTab #sincloChatSendBtn.details{ background-color: {{chat_send_btn_background_color}}!important; }
     #sincloBox section#chatTab #sincloChatSendBtn.middleSize{ padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
     #sincloBox section#chatTab #sincloChatSendBtn.largeSize{ padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
-    #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
-    #sincloBox section#chatTab #sincloChatSendBtn span.details { color: {{chat_send_btn_text_color}} }
+    #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}}; font-weight: bold; }
+    #sincloBox section#chatTab #sincloChatSendBtn span.details { color: {{chat_send_btn_text_color}}; font-weight: bold; }
     #sincloBox section#chatTab #messageBox.messageBox{border-top: 1px solid {{widget_border_color}}; padding: 0.5em;}
     #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
     #sincloBox section#chatTab #messageBox.messageBox.details{ background-color: {{chat_message_background_color}}; border-top: 1px solid {{widget_inside_border_color}}; }
