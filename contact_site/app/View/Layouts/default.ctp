@@ -19,7 +19,7 @@ if( (strcmp($this->name, 'Login') !== 0 && strcmp($this->action, 'baseForAnother
   && strcmp($this->action, 'loadingHtml') !== 0 && strcmp($this->name, 'ScriptSettings') !== 0) ||
   (strcmp($this->name, 'ScriptSettings') === 0 && strcmp($this->action, 'index') === 0)) {
   $naviElm = $this->element('navi');
-  $contentStyle = "position: absolute; top: 60px; left: 60px; right: 0; bottom: 0";
+  $contentStyle = "position: absolute; top: 60px; left: 80px; right: 0; bottom: 0";
 }
 if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
   $contentStyle = "position: absolute; top: 30px; left: 0px; right: 0; bottom: 0";?>
