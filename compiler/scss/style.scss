@@ -1031,23 +1031,33 @@ ul.ulTab {
       color: #FFF;
       font-size: 14px;
       display: flex;
+      justify-content: space-between;
       align-items: center;
       text-decoration: none;
       margin: 0;
       &:hover {
         background-color: $header-btn-hover-color;
       }
-      i.icon {
-        color: #FFF;
-        width:25px;
-        font-size: 18px;
-        margin-left:0.5em;
+      p.icon-wrap {
+        display: inline-block;
+        flex-basis: 35px;
+        align-items: center;
+        i.icon {
+          color: #FFF;
+          width:25px;
+          font-size: 18px;
+          margin-left:0.5em;
+          text-align: center;
+        }
       }
-      p {
+      p:not(.icon-wrap) {
+        text-align: left;
+        flex-basis: auto;
         color: #FFF;
         font-size: 13px;
         margin-left: 0.5em;
         margin-right: 2em;
+        width: 100%;
       }
     }
   }

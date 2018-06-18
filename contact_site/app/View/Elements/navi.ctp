@@ -133,39 +133,39 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <div >
         <?php if ( $adminFlg ): ?>
             <div class="icon" style="display:none">
-                <?= $this->htmlEx->naviFaIconLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
+                <?= $this->htmlEx->naviFaIconLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']], true) ?>
             </div>
             <div class="icon">
-                <?= $this->htmlEx->naviFaIconLink('ユーザー管理', 'fa-user-friends', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
+                <?= $this->htmlEx->naviFaIconLink('ユーザー管理', 'fa-user-friends', ['href' => ['controller' => 'MUsers', 'action' => 'index']], true) ?>
             </div>
             <div class="icon">
-                <?= $this->htmlEx->naviFaIconLink('ウィジェット', 'fa-window-maximize', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
+                <?= $this->htmlEx->naviFaIconLink('ウィジェット', 'fa-window-maximize', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']], true) ?>
             </div>
         <?php endif; ?>
         <div class="icon">
-            <?= $this->htmlEx->naviFaIconLink($codeAndDemoTitle, 'fa-code', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviFaIconLink($codeAndDemoTitle, 'fa-code', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']], true) ?>
         </div>
     <?php if ( $adminFlg ): ?>
       <?php //シェアリングプランの場合
         if(!$coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]))): ?>
           <div class="icon">
-            <?= $this->htmlEx->naviFaIconLink('営業時間設定', 'fa-calendar-alt', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviFaIconLink('営業時間設定', 'fa-calendar-alt', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']], true) ?>
           </div>
         <?php endif; ?>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('キャンペーン', 'fa-trophy', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('キャンペーン', 'fa-trophy', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']], true) ?>
       </div>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('表示除外設定', 'fa-minus-circle', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('表示除外設定', 'fa-minus-circle', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']], true) ?>
       </div>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('セキュリティ', 'fa-shield-alt', ['href' => ['controller' => 'MSecuritySettings', 'action' => 'edit']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('セキュリティ', 'fa-shield-alt', ['href' => ['controller' => 'MSecuritySettings', 'action' => 'edit']], true) ?>
       </div>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('変数', 'fa-percent', ['href' => ['controller' => 'TCustomVariables', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('変数', 'fa-percent', ['href' => ['controller' => 'TCustomVariables', 'action' => 'index']], true) ?>
       </div>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('訪問ユーザ', 'fa-address-card', ['href' => ['controller' => 'TCustomerInformationSettings', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('訪問ユーザ', 'fa-address-card', ['href' => ['controller' => 'TCustomerInformationSettings', 'action' => 'index']], true) ?>
       </div>
     <?php endif; ?>
     </div>
@@ -178,22 +178,22 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <div>
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('基本設定', 'fa-cogs', ['href' => ['controller' => 'MChatSettings', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviFaIconLink('基本設定', 'fa-cogs', ['href' => ['controller' => 'MChatSettings', 'action' => 'index']], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('営業時間設定', 'fa-calendar-alt', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviFaIconLink('営業時間設定', 'fa-calendar-alt', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']], true) ?>
         </div>
       <?php endif; ?>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('定型文', 'fa-book', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('定型文', 'fa-book', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']], true) ?>
       </div>
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('ファイル送信', '<i class="fal fa-cloud-upload', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'edit']]) ?>
+          <?= $this->htmlEx->naviFaIconLink('ファイル送信', '<i class="fal fa-cloud-upload', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'edit']], true) ?>
         </div>
       <?php endif; ?>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('チャット通知', 'fa-broadcast-tower', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('チャット通知', 'fa-broadcast-tower', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']], true) ?>
       </div>
     </div>
   <?php endif; ?>
@@ -206,10 +206,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <div >
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('オートメッセージ', 'fa-comments', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviFaIconLink('オートメッセージ', 'fa-comments', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('シナリオ設定', 'fa-code-merge', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviFaIconLink('シナリオ設定', 'fa-code-merge', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']], true) ?>
         </div>
       <?php endif; ?>
       </div>
@@ -221,10 +221,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
   <div>
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-comment', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
+        <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-comment', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
       </div>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-user-alt', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
+        <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-user-alt', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
       </div>
     <?php endif; ?>
   </div>
@@ -235,16 +235,16 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
       <div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('チャット', 'fa-comment', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()']) ?>
+          <?= $this->htmlEx->naviFaIconLink('チャット', 'fa-comment', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('オペレータ', 'fa-user-alt', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()']) ?>
+          <?= $this->htmlEx->naviFaIconLink('オペレータ', 'fa-user-alt', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-comment', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
+          <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-comment', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-user-alt', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
+          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-user-alt', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
       </div>
     <?php endif; ?>
@@ -266,17 +266,16 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
     var self = $(this);
     $('.sidebar-sub').stop(true,false).animate;
     $.when(
-      $('.sidebar-sub').animate({left: -120}, 180)
+      $('.sidebar-sub').animate({left: -120}, 100)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
-      $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 80}, 180);
+      $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 80}, 100);
     });
   });
 
   $("#sidebar-main div.icon:not(.setting-icon)").mouseenter(function(){
-    console.log("のっとあいこｎ");
     $.when(
-      $('.sidebar-sub').animate({left: -120}, 180)
+      $('.sidebar-sub').animate({left: -120}, 100)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
     });
@@ -284,7 +283,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 
   $('#header').mouseleave(function(){
     $.when(
-      $('.sidebar-sub').animate({left: -120},180)
+      $('.sidebar-sub').animate({left: -120},100)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
     });

@@ -59,8 +59,12 @@ class htmlExHelper extends AppHelper {
         return sprintf($_tmp, $a, $this->Html->image($img['src'], $img['option']), $title);
     }
 
-  public function naviFaIconLink($title, $falClass, $urlOpt = []){
-    $_tmp = "<a %s><i class='icon fal %s'></i><p>%s</p></a>";
+  public function naviFaIconLink($title, $falClass, $urlOpt = [], $isSubMenu = false){
+      if($isSubMenu) {
+        $_tmp = "<a %s><p class='icon-wrap'><i class='icon fal %s'></i></p><p>%s</p></a>";
+      } else {
+        $_tmp = "<a %s><i class='icon fal %s'></i><p>%s</p></a>";
+      }
     $img = [
       'src' => null,
       'alt' => null
