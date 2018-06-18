@@ -59,6 +59,48 @@ class htmlExHelper extends AppHelper {
         return sprintf($_tmp, $a, $this->Html->image($img['src'], $img['option']), $title);
     }
 
+  public function naviFaIconLink($title, $falClass, $urlOpt = []){
+    $_tmp = "<a %s><i class='icon fal %s'></i><p>%s</p></a>";
+    $img = [
+      'src' => null,
+      'alt' => null
+    ];
+    $a = null;
+
+    // setting href
+    if ( !empty($urlOpt['href']) || !empty($urlOpt['onclick'])  || !empty($urlOpt['target']) ) {
+      if ( empty($urlOpt['href']) ) {
+        $a = "href='javascript:void(0)'";
+        if ( empty($urlOpt['onclick']) ) {
+          $a .= " onclick='" . h($urlOpt['onclick']) . "'";
+        }
+      }
+      else {
+        $a = "href='" . $this->Html->url($urlOpt['href']) . "'";
+        if ( !empty($urlOpt['onclick']) ) {
+          $a .= " onclick='" . h($urlOpt['onclick']) . "'";
+        }
+      }
+      if ( !empty($urlOpt['target']) ) {
+        $a .= " target='" . h((string)$urlOpt['target']) . "'";
+      }
+    }
+    //commontooltip用
+    if ( !empty($urlOpt['class'])) {
+      $a .= " class='" . h((string)$urlOpt['class']) . "'";
+    }
+    if ( !empty($urlOpt['data-text'])) {
+      $a .= " data-text='" . h((string)$urlOpt['data-text']) . "'";
+    }
+    if ( !empty($urlOpt['data-balloon-position'])) {
+      $a .= " data-balloon-position='" . h((string)$urlOpt['data-balloon-position']) . "'";
+    }
+    if ( !empty($urlOpt['data-content-position-left'])) {
+      $a .= " data-content-position-left='" . h((string)$urlOpt['data-content-position-left']) . "'";
+    }
+    return sprintf($_tmp, $a, $falClass, $title);
+  }
+
     public function timepad($str){
         return sprintf("%02d", $str);
     }
