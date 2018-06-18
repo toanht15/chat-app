@@ -1,6 +1,7 @@
 <script type="text/javascript">
 var changeFlg = false;
 var changeScreenMode = "";
+var customerInfoSettings = <?php echo json_encode($customerInformationList, JSON_UNESCAPED_UNICODE) ?>;
 //モーダル画面
 function openSearchRefine(){
   $.ajax({
@@ -596,36 +597,15 @@ function openChatById(id) {
       $("#restore").attr('onclick',"reloadAct("+customerData.THistory.id+")");
       document.getElementById("pageCount").innerHTML= customerData.pageCount[0].count;
       $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
-      if(customerData.informations.company !== undefined) {
-        document.getElementById("HistoryCompanyName").value = customerData.informations.company;
+
+      for(var i=0; i < customerInfoSettings.length; i++) {
+        if(customerData.informations[customerInfoSettings[i].item_name]) {
+          $('#ng-customer-custom-'+customerInfoSettings[i].id).val(customerData.informations[customerInfoSettings[i].item_name]);
+        } else {
+          $('#ng-customer-custom-'+customerInfoSettings[i].id).val("");
+        }
       }
-      else {
-        document.getElementById("HistoryCompanyName").value = "";
-      }
-      if(customerData.informations.name !== undefined) {
-        document.getElementById("HistoryName").value = customerData.informations.name;
-      }
-      else {
-        document.getElementById("HistoryName").value = "";
-      }
-      if(customerData.informations.tel !== undefined) {
-        document.getElementById("HistoryTel").value = customerData.informations.tel;
-      }
-      else {
-        document.getElementById("HistoryTel").value = "";
-      }
-      if(customerData.informations.mail !== undefined) {
-        document.getElementById("HistoryMail").value = customerData.informations.mail;
-      }
-      else {
-        document.getElementById("HistoryMail").value = "";
-      }
-      if(customerData.informations.memo !== undefined) {
-        document.getElementById("HistoryMemo").value = customerData.informations.memo;
-      }
-      else {
-        document.getElementById("HistoryMemo").value = "";
-      }
+
       document.getElementById('customerId').value = customerData.MCustomer.id;
     }
   });
@@ -645,11 +625,9 @@ function clearChatAndPersonalInfo() {
   document.getElementById("chatSendingPage").innerHTML= "";
   document.getElementById("separationPage").innerHTML= "";
   document.getElementById("pageCount").innerHTML= "";
-  document.getElementById("HistoryCompanyName").value= "";
-  document.getElementById("HistoryName").value= "";
-  document.getElementById("HistoryTel").value= "";
-  document.getElementById("HistoryMail").value= "";
-  document.getElementById("HistoryMemo").value= "";
+  $('#rightContens .detailForm').find('li').each(function(index, element) {
+    $(elem).find('input,textarea').val("");
+  });
   document.getElementById('customerId').value= "";
 }
 </script>

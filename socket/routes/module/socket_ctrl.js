@@ -873,10 +873,16 @@ var db = {
       });
     }
   },
+  /**
+   * 顧客情報を更新する
+   * @param obj
+   * @param s
+   */
   upsertCustomerInfo: function(obj, s) {
     if(isset(obj.customVariables)) {
       var customVariables = obj.customVariables;
       var found = false;
+
       if (Object.keys(customVariables).length !== 0) {
         Object.keys(customVariables).forEach(function (elm, index, arr) {
           if (isset(customVariables[elm])) {
@@ -892,7 +898,7 @@ var db = {
           if (isset(row) && isset(row[0])) {
             currentData = JSON.parse(row[0].informations);
             Object.keys(customVariables).forEach(function (key, idx, array) {
-              if (isset(customVariables[key])) {
+              if (isset(customVariables[key]) && customVariables[key] !== "") {
                 currentData[key] = customVariables[key];
               }
             });

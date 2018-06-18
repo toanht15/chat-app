@@ -6,7 +6,7 @@
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
     public $components = ['LandscapeLbcAPI'];
-    public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
+    public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
     public $paginate = [
       'THistory' => [
         'limit' => 100,
@@ -1784,6 +1784,22 @@
           $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $visitors_id );
       }
 
+      // 訪問ユーザ情報設定状態を取得
+      /* 訪問ユーザ情報設定リストを取得 */
+      $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+        'conditions' => array(
+          'delete_flg' => 0,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ),
+        'order' => array(
+          'sort' => 'asc'
+        )
+      ));
+      $customerInformationSettingList = [];
+      foreach($customerSettingList as $k => $v) {
+        array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+      }
+
       $userInfo = $this->MUser->read(null, $this->userInfo['id']);
       $data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
       $data['History']['finish_day'] = htmlspecialchars($data['History']['finish_day']);
@@ -1797,6 +1813,7 @@
       $this->set('detailChatPagesData', $detailChatPagesData);
       $this->set('mCustomerList', $mCustomerList);
       $this->set('mCusData', $mCusData);
+      $this->set('customerInformationList', $customerInformationSettingList);
       $this->set('chatUserList', $this->_getChatUser(array_keys($stayList))); // チャット担当者リスト
       $this->set('groupByChatChecked', $type);
       $this->set('campaignList', $this->TCampaign->getList());
