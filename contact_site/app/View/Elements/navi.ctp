@@ -46,14 +46,37 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <?php if(!empty($trialTime)) { ?>
         <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
       <?php } ?>
-        <li class="fLeft menu-bar-right" onclick='location.href = "/PersonalSettings/index"'><p style = "text-decoration: underline;"><?= h($userInfo['display_name']) ?>さん</p></li>
-        <li class="fRight menu-bar-right" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>
+        <li class="fLeft" id = "menu-bar-right"><p style = "cursor:pointer;"><?= h($userInfo['display_name']) ?>さん</p></li>
     </ul>
+</div>
+<div id="colorBarMenu" style = "display:none;">
+  <ul>
+    <li class="t-link" onclick="editPersonalInfo()">
+      <?= $this->Html->image('personal_g.png', array('alt' => 'プロフィール', 'width' => 30, 'height' => 30)) ?>
+      <a href="javascript:void(0)">
+        プロフィール
+      </a>
+    </li>
+    <hr class="separator">
+    <li class="t-link" onclick="window.open('https://info.sinclo.jp/manual/',target = '_blank')">
+      <?= $this->Html->image('manual_g.png', array('alt' => 'ヘルプ', 'width' => 30, 'height' => 30)) ?>
+      <a href="javascript:void(0)">
+        ヘルプ
+      </a>
+    </li>
+    <hr class="separator">
+    <li class="t-link" onclick="window.open('<?= $this->Html->url(['controller' => 'Login', 'action' => 'logout']) ?>')">
+      <?= $this->Html->image('logout_g.png', array('alt' => 'ログアウト', 'width' => 30, 'height' => 30)) ?>
+      <a href="javascript:void(0)">
+        ログアウト
+      </a>
+    </li>
+  </ul>
 </div>
 <!-- /* 上部カラーバー(ここまで) */ -->
 
 <!-- /* システムアイコン（ここから） */ -->
-<div id="sys-icon" class="card-shadow"><?= $this->Html->image('sinclo_square_logo.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 3px; display: block'))?></div>
+<div id="sys-icon" class="card-shadow"><?= $this->Html->image('sinclo_square_logo.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 13px; display: block'))?></div>
 <!-- /* システムアイコン（ここまで） */ -->
 
 <!-- /* サイドバー１（ここから） */ -->
@@ -158,7 +181,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <div data-sidebar-type="chat" class="hide">
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('基本設定', 'chat_setting.png', ['href' => ['controller' => 'MChatSettings', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviLink('基本設定', 'gear.png', ['href' => ['controller' => 'MChatSettings', 'action' => 'index']]) ?>
         </div>
         <div class="icon">
           <?= $this->htmlEx->naviLink('営業時間設定', 'operating_hour.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
@@ -186,7 +209,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
           <?= $this->htmlEx->naviLink('ｵｰﾄﾒｯｾｰｼﾞ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('シナリオ設定', 'scenario_setting.png', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviLink('シナリオ設定', 'flow.png', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']]) ?>
         </div>
       <?php endif; ?>
       </div>
@@ -261,4 +284,41 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       nowOpenType = "";
     }
   });
+
+  var fadeOutLayerMenu = function() {
+    $("#colorBarMenu").fadeOut("fast");
+  };
+
+  var fadeInLayerMenu = function() {
+    console.log('fadein');
+    $("#colorBarMenu").fadeIn("fast");
+  };
+
+  $('#menu-bar-right').on('click', function(e) {
+    e.stopPropagation();
+    var menu = document.getElementById("colorBarMenu").style.display;
+    if(menu == "block"){
+      fadeOutLayerMenu();
+    }
+    else{
+      fadeInLayerMenu();
+    }
+  });
+
+  $(document).on('click', fadeOutLayerMenu);
+
+  function editPersonalInfo(){
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url('/PersonalSettings/remoteOpenEntryForm') ?>",
+      success: function(html){
+        modalOpen.call(window, html, 'p-personal-update', '個人設定', 'moment');
+      },
+      error: function(html) {
+        console.log('error');
+      }
+    });
+  }
 </script>

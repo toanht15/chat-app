@@ -49,7 +49,8 @@ class MChatSettingsController extends AppController {
       $this->request->data = $this->MChatSetting->find('first', ['conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
-      if(!empty($this->request->data['MChatSetting']['initial_notification_message'])) {
+      if(!empty($this->request->data['MChatSetting']['initial_notification_message']) &&
+        isset($this->coreSettings[C_COMPANY_USE_CHATCALLMESSAGES])) {
         $data = json_decode($this->request->data['MChatSetting']['initial_notification_message'],true);
         foreach($data as $key => $value){
           $this->request->data['MChatSetting']['initial_notification_message'.($key+1)] = $value['message'];
@@ -64,6 +65,7 @@ class MChatSettingsController extends AppController {
         $data[0]['message'] = '';
         $this->request->data['MChatSetting']['initial_notification_message1'] = '';
         $this->request->data['MChatSetting']['seconds1'] = 0;
+        $this->request->data['MChatSetting']['in_flg'] = 2;
         $this->set('in_flg',2);
         $this->set('data',$data);
       }
@@ -153,7 +155,7 @@ class MChatSettingsController extends AppController {
     // チャット基本設定のバリデーション結果を変数に渡す
     $ret = $this->MChatSetting->validates();
 
-    //初回通知メッセージバリデーション
+    //チャット呼出中メッセージバリデーション
     $inRet = true;
     if($saveData['MChatSetting']['in_flg'] == 1) {
       $data = json_decode($this->request->data['MChatSetting']['initial_notification_message'],true);
