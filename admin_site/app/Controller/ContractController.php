@@ -758,6 +758,7 @@ class ContractController extends AppController
     $this->MChatSetting->set(array(
       "m_companies_id" => $m_companies_id,
       "sc_flg" => $default['sc_flg'],
+      "in_flg" => $default['in_flg'],
       "sc_default_num" => $default['sc_default_num'],
       "outside_hours_sorry_message" => $default['outside_hours_sorry_message'],
       "wating_call_sorry_message" => $default['wating_call_sorry_message'],

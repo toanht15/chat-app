@@ -137,7 +137,7 @@
     #sincloBox p#widgetTitle.sp { font-size: 14px;}
     #sincloBox p#widgetTitle.spText{ text-indent: 1em; }
     #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-    #sincloBox div.widgetHeaderWrap:hover #widgetTitle { opacity: 0.75; }
+    #sincloBox div.widgetHeaderWrap:not(.sp):hover #widgetTitle { opacity: 0.75; }
     #sincloBox div.widgetHeaderWrap #titleWrap { position: relative; }
     /*
           #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
@@ -235,7 +235,7 @@
     #sincloBox section#chatTab #sincloChatSendBtn.middleSize{ padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
     #sincloBox section#chatTab #sincloChatSendBtn.largeSize{ padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
     #sincloBox section#chatTab #sincloChatSendBtn span { color: {{string_color}} }
-    #sincloBox section#chatTab #sincloChatSendBtn span.details { color: {{chat_send_btn_text_color}} }
+    #sincloBox section#chatTab #sincloChatSendBtn span.details { color: {{chat_send_btn_text_color}}; font-weight: bold; }
     #sincloBox section#chatTab #messageBox.messageBox{border-top: 1px solid {{widget_border_color}}; padding: 0.5em;}
     #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
     #sincloBox section#chatTab #messageBox.messageBox.details{ background-color: {{chat_message_background_color}}; border-top: 1px solid {{widget_inside_border_color}}; }
@@ -326,7 +326,7 @@
     <span id="mainImage" class="widgetOpener" ng-hide="spHeaderLightToggle() || mainImageToggle !== '1'">
       <img ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
     </span>
-  <div class="widgetHeaderWrap">
+  <div class="widgetHeaderWrap" ng-class="{sp:showWidgetType === 3}">
     <!-- 画像 -->
     <div id="titleWrap">
       <!-- タイトル -->
