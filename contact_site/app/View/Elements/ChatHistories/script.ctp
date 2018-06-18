@@ -27,9 +27,7 @@ function customerInfoSave(historyId) {
   visitorsId = $('#visitorsId').text();
 
   $(".infoData").each(function(i){
-    if(i <= 4) {
-      dataList[$(this).data('key')] = this.value;
-    }
+    dataList[$(this).data('key')] = this.value;
   });
   $.ajax({
     type: 'GET',
@@ -600,9 +598,9 @@ function openChatById(id) {
 
       for(var i=0; i < customerInfoSettings.length; i++) {
         if(customerData.informations[customerInfoSettings[i].item_name]) {
-          $('#ng-customer-custom-'+customerInfoSettings[i].id).val(customerData.informations[customerInfoSettings[i].item_name]);
+          $('#ng-customer-custom-'+customerInfoSettings[i].id).get(0).value = customerData.informations[customerInfoSettings[i].item_name];
         } else {
-          $('#ng-customer-custom-'+customerInfoSettings[i].id).val("");
+          $('#ng-customer-custom-'+customerInfoSettings[i].id).get(0).value = "";
         }
       }
 

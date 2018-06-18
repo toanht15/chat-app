@@ -27,23 +27,6 @@
     public function beforeFilter(){
       parent::beforeFilter();
       $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
-      //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
-      /*$orList = [];
-      if ( !empty($ret['MCompany']['exclude_ips']) ) {
-        foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
-          if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
-            $orList[] = "INET_ATON('".trim($v)."') = INET_ATON(THistory.ip_address)";
-            continue;
-          }
-          $ips = $this->MCompany->cidrToRange(trim($v));
-          $list = [];
-          if ( count($ips) === 2 ) {
-            $list[] = "INET_ATON('".trim($ips[0])."') <= INET_ATON(THistory.ip_address)";
-            $list[] = "INET_ATON('".trim($ips[1])."') >= INET_ATON(THistory.ip_address)";
-          }
-          $orList[] = $list;
-        }
-      }*/
 
       $this->paginate['THistory']['conditions'] = [
         'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
@@ -1014,13 +997,25 @@
      * @return array
      * */
     private function _getInfomationList(){
-      return [
-        'company' => '会社名',
-        'name' => '名前',
-        'tel' => '電話番号',
-        'mail' => 'メールアドレス',
-        'memo' => 'メモ'
-      ];
+      $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+        'conditions' => array(
+          'delete_flg' => 0,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ),
+        'order' => array(
+          'sort' => 'asc'
+        )
+      ));
+      $customerInformationSettingList = [];
+      foreach($customerSettingList as $k => $v) {
+        array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+      }
+
+      $customerInfoDisplaySettingMap = array();
+      foreach($customerSettingList as $index => $customerData) {
+        $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['item_name'];
+      }
+      return $customerInfoDisplaySettingMap;
     }
 
     private function _setListByChat($type, $data, $visitorsIds = []){
@@ -1039,6 +1034,16 @@
       $userCond = [
         'MCustomer.m_companies_id' => $this->userInfo['MCompany']['id'],
       ];
+
+      $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+        'conditions' => array(
+          'delete_flg' => 0,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ),
+        'order' => array(
+          'sort' => 'asc'
+        )
+      ));
 
       $customerInformationSettingList = [];
       foreach($customerSettingList as $k => $v) {
@@ -1123,7 +1128,16 @@
         $data = $this->Session->read('Thistory');
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-        if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
+        $this->log($data['CustomData']['informations'], LOG_DEBUG);
+        if((isset($data['CustomData'])) || (
+          ( isset($data['History']['company_name']) && $data['History']['company_name'] !== ""
+          ) || (
+            isset($data['History']['customer_name']) && $data['History']['customer_name'] !== ""
+          ) || (
+            isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== ""
+          ) || (
+            isset($data['History']['mail_address']) && $data['History']['mail_address'] !== ""
+          )) ) {
           //会社名が入っている場合
           if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
             //会社名がランドスケープテーブルに登録されている場合
@@ -1162,7 +1176,7 @@
             }
           }
           else {
-            $visitorsIds = $this->_searchCustomer($data['History']);
+            $visitorsIds = $this->_searchCustomer($data['CustomData']);
             $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
             $chatCond['visitors_id'] = $visitorsIds;
           }

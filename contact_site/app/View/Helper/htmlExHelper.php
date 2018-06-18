@@ -166,16 +166,16 @@ class htmlExHelper extends AppHelper {
       }
       $placeholderAttr = "";
       if($showPlaceHolder) {
-        $placeholderAttr = 'placeholder="%sを追加"';
+        $placeholderAttr = 'placeholder="'.$record['item_name'].'を追加"';
       }
       switch($record['input_type']) {
         case 1: // テキストボックス
-          return sprintf('<input id="ng-customer-custom-%s" type="text" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" %s/>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $placeholderAttr);
+          return sprintf('<input class="infoData" id="ng-customer-custom-%s" type="text" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" %s/>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $placeholderAttr);
         case 2: // テキストエリア
-          return sprintf('<textarea rows="7" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" %s"></textarea>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $placeholderAttr);
+          return sprintf('<textarea class="infoData" rows="7" id="ng-customer-custom-%s" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" %s"></textarea>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $placeholderAttr);
         case 3: // テキストエリア
           $options =  explode("\n", $record['input_option']);
-          $html = sprintf('<select id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']">', $record['id'], $record['item_name'], $record['item_name']);
+          $html = sprintf('<select class="infoData" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" data-key="%s" ng-model="customData[\'%s\']">', $record['id'], $record['item_name'], $record['item_name'], $record['item_name']);
           $html .= '<option value="">選択してください</option>';
           for($i = 0; $i < count($options); $i++) {
             $html .= sprintf('<option value="%s">%s</option>', $options[$i], $options[$i]);
@@ -195,12 +195,12 @@ class htmlExHelper extends AppHelper {
     }
     switch($record['input_type']) {
       case 1: // テキストボックス
-        return sprintf('<input id="ng-customer-custom-%s" type="text" name="data[\'CustomData\'][\'%s\']"/>', $record['id'], $record['item_name']);
+        return sprintf('<input id="ng-customer-custom-%s" type="text" name="data[CustomData][%s]"/>', $record['id'], $record['item_name']);
       case 2: // テキストエリア
-        return sprintf('<textarea rows="7" id="ng-customer-custom-%s" name="data[\'CustomData\'][\'%s\']"></textarea>', $record['id'], $record['item_name']);
+        return sprintf('<textarea rows="7" id="ng-customer-custom-%s" name="data[CustomData][%s]"></textarea>', $record['id'], $record['item_name']);
       case 3: // テキストエリア
         $options =  explode("\n", $record['input_option']);
-        $html = sprintf('<select id="ng-customer-custom-%s" name="data[\'CustomData\'][\'%s\']">', $record['id'], $record['item_name']);
+        $html = sprintf('<select id="ng-customer-custom-%s" name="data[CustomData][%s]">', $record['id'], $record['item_name']);
         $html .= '<option value="">選択してください</option>';
         for($i = 0; $i < count($options); $i++) {
           $html .= sprintf('<option value="%s">%s</option>', $options[$i], $options[$i]);
