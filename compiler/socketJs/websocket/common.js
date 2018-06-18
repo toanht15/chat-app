@@ -882,7 +882,6 @@ var socket, // socket.io
       html += '      #sincloBox label { display: inline; max-width: 100%; margin-bottom: 0; font-weight: normal;}';
       html += '      #sincloBox a:hover { color: ' + colorList['mainColor'] + '; }';
       html += '      #sincloBox sinclo-div#widgetHeader { cursor:pointer; position: relative;}';
-      html += '      #sincloBox sinclo-div#widgetHeader:hover #widgetTitle { background-color: ' + highlightColor + ' }';
       html += '      #sincloBox #titleWrap { position: relative; }';
       html += '      #sincloBox input { text-align: left; }';
       html += '      #sincloBox sinclo-div#widgetHeader:after { content: " "; position: absolute; bottom: 0; left: 0; right: 0; z-index: -1; background-color: #FFF; }';
@@ -1324,6 +1323,7 @@ var socket, // socket.io
 //        html += "      #sincloBox { width: " + widgetWidth + "px }";
         html += "      #sincloBox div#sincloWidgetBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px " + widget.boxShadow + "px " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0;}";
         html += '      #sincloBox * { line-height: 1.4; font-size: '+ sizeList['d12font'] +'px; }';
+        html += '      #sincloBox sinclo-div#widgetHeader:hover #widgetTitle { background-color: ' + highlightColor + ' }';
         html += '      #sincloBox sinclo-div#widgetHeader:after { top: 32px }';
 //        html += "      #sincloBox section { width: " + widgetWidth + "px }";
 //        html += "      #sincloBox section#navigation ul { width: " + widgetWidth + "px }";
