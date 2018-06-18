@@ -464,6 +464,25 @@
       $name = "sinclo-history";
 
       if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
+        $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+          'conditions' => array(
+            'delete_flg' => 0,
+            'm_companies_id' => $this->userInfo['MCompany']['id']
+          ),
+          'order' => array(
+            'sort' => 'asc'
+          )
+        ));
+        $customerInformationSettingList = [];
+        foreach($customerSettingList as $k => $v) {
+          array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+        }
+
+        $customerInfoDisplaySettingMap = array();
+        foreach($customerSettingList as $index => $customerData) {
+          $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = (boolean)$customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+        }
+
         //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
         $this->printProcessTimetoLog('BEGIN _searchConditions');
         $returnData = $this->_searchConditions();
@@ -581,12 +600,10 @@
           $row['customer'] = "";
           if ( !empty($history['MCustomer']['informations']) ) {
             $informations = (array)json_decode($history['MCustomer']['informations']);
-            if ( isset($informations['company']) && $informations['company'] !== "" ) {
-              $row['customer'] .= $informations['company'];
-            }
-            if (isset($informations['name']) && $informations['name'] !== "" ) {
-              if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
-              $row['customer'] .= $informations['name'];
+            foreach($customerInfoDisplaySettingMap as $k => $v) {
+              if($v) {
+                $row['customer'] .= $informations[$k]."\n";
+              }
             }
           }
 
@@ -646,6 +663,24 @@
       ini_set('memory_limit', '-1');
 
       if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
+        $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+          'conditions' => array(
+            'delete_flg' => 0,
+            'm_companies_id' => $this->userInfo['MCompany']['id']
+          ),
+          'order' => array(
+            'sort' => 'asc'
+          )
+        ));
+        $customerInformationSettingList = [];
+        foreach($customerSettingList as $k => $v) {
+          array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+        }
+
+        $customerInfoDisplaySettingMap = array();
+        foreach($customerSettingList as $index => $customerData) {
+          $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = (boolean)$customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+        }
         //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
         $returnData = $this->_searchConditions();
         $campaignList = $this->TCampaign->getList();
@@ -715,12 +750,10 @@
           $row['customer'] = "";
           if ( !empty($val['MCustomer']['informations']) ) {
             $informations = (array)json_decode($val['MCustomer']['informations']);
-            if ( isset($informations['company']) && $informations['company'] !== "" ) {
-              $row['customer'] .= $informations['company'];
-            }
-            if (isset($informations['name']) && $informations['name'] !== "" ) {
-              if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
-              $row['customer'] .= $informations['name'];
+            foreach($customerInfoDisplaySettingMap as $k => $v) {
+              if($v) {
+                $row['customer'] .= $informations[$k]."\n";
+              }
             }
           }
           // OS
