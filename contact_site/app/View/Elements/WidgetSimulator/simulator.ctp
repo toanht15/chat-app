@@ -350,7 +350,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab #sincloChatSendBtn.middleSize, #sincloBox section#chatTab #miniSincloChatSendBtn.middleSize { padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
         #sincloBox section#chatTab #sincloChatSendBtn.largeSize, #sincloBox section#chatTab #miniSincloChatSendBtn.largeSize { padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
         #sincloBox section#chatTab #sincloChatSendBtn span, #sincloBox section#chatTab #miniSincloChatSendBtn span { color: {{widget.settings['string_color']}} }
-        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}} }
+        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}}; font-weight: bold; }
         #sincloBox section#chatTab #messageBox.messageBox, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox {border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
         #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder), #sincloBox section#chatTab #miniFlexBoxHeight.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
         #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
@@ -621,7 +621,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab #miniSincloChatSendBtn { width: 20%; height: 100%; padding: 1em 0; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0 auto; float: right; text-align: center; background-color: {{widget.settings['main_color']}}!important; color: {{widget.settings['string_color']}}; font-weight: bold; font-size: 1.2em;}
         #sincloBox section#chatTab #sincloChatSendBtn.details, #sincloBox section#chatTab #miniSincloChatSendBtn.details { background-color: {{widget.settings['chat_send_btn_background_color']}}!important; }
         #sincloBox section#chatTab #sincloChatSendBtn span, #sincloBox section#chatTab #miniSincloChatSendBtn span { color: {{widget.settings['string_color']}} }
-        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}} }
+        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}}; font-weight: bold; }
         #sincloBox section#chatTab #messageBox.messageBox, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox {border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
         #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder), #sincloBox section#chatTab #miniFlexBoxHeight.messageBox:not(.notNoneWidgetOutsideBorder) { border:none }
         #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
