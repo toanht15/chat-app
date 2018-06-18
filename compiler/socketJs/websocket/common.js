@@ -1185,7 +1185,7 @@ var socket, // socket.io
           } else {
             html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-bottom: ' + (60 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
           }
-          html += '#sincloBox ul#chatTalk li { border-radius: ' + (5 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (10 * ratio) + 'px ' + (10 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; }';
+          html += '#sincloBox ul#chatTalk li { border-radius: ' + (12 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (10 * ratio) + 'px ' + (10 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li.sinclo_se { font-size: ' + (12 * ratio) + 'px; margin-left: '+ (widgetWidth/342.5)*45 +'px;}';
           html += '#sincloBox ul#chatTalk li.sinclo_re { font-size: ' + (12 * ratio) + 'px; margin-right: '+ (widgetWidth/342.5)*21 +'px;}';
           html += '#sincloBox ul#chatTalk li div.sendFileThumbnailArea { display: table-cell; width: ' + (64 * ratio) + 'px; height: ' + (64 * ratio) + 'px; border: 1px solid #D9D9D9; }';
@@ -1287,8 +1287,8 @@ var socket, // socket.io
 */
           html += '#sincloBox[data-openflg="true"] p#widgetTitle:after { margin-top: 0.5em; }';
           html += '#sincloBox #widgetTitle em { width: 2em; height: 2em; font-size: 0.8em; padding: 0.25em; border-radius: 5em; margin: 0.25em; }';
-          html += '#sincloBox ul#chatTalk { padding: 0.3em; padding-bottom:60px; background-color: '+ colorList['chatTalkBackgroundColor'] +'}';
-          html += '#sincloBox ul#chatTalk li { font-size: 0.8em; border-radius: 0.3em; margin: 0.3em 0; padding: 0.3em; }';
+          html += '#sincloBox ul#chatTalk { padding: 0.3em; padding-bottom:3.6em; background-color: '+ colorList['chatTalkBackgroundColor'] +'}';
+          html += '#sincloBox ul#chatTalk li { font-size: 0.8em; border-radius: 0.72em; margin: 0.3em 0; padding: 0.3em; }';
           html += '#sincloBox ul#chatTalk li div.sendFileThumbnailArea { display: table-cell; width: ' + (64 * ratio) + 'px; height: ' + (64 * ratio) + 'px; border: 1px solid #D9D9D9; }';
           html += '#sincloBox ul#chatTalk li.sinclo_se { font-size: 0.8em; margin-left: '+ (widgetWidth/342.5)*45 +'px;}';
           html += '#sincloBox ul#chatTalk li.sinclo_re { font-size: 0.8em; margin-right: '+ (widgetWidth/342.5)*21 +'px;}';
