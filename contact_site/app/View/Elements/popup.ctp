@@ -242,6 +242,26 @@
             return popupEvent.close();
           };
           break;
+        case 'p-tcustomvariables-entry':
+            var entryBtn = _button("保存");
+            entryBtn.onclick = function () {
+              return popupEvent.closePopup();
+            };
+            var closeBtn = _button("閉じる");
+            closeBtn.onclick = function () {
+              return popupEvent.close();
+            };
+            break;
+        case 'p-tcustomerinformationsettings-entry':
+            var entryBtn = _button("保存");
+            entryBtn.onclick = function () {
+              return popupEvent.closePopup();
+            };
+            var closeBtn = _button("閉じる");
+            closeBtn.onclick = function () {
+              return popupEvent.close();
+            };
+            break;
         case 'p-tdictionary-entry':
           var entryBtn = _button("保存");
           entryBtn.onclick = function () {

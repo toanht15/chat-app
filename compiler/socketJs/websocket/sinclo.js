@@ -4757,9 +4757,10 @@
         self.set(self._lKey.allowSave, true);
       },
       _disallowSaveing: function() {
-        var self = sinclo.scenarioApi;
-        var flg = self.get(self._lKey.allowSave);
-        return flg == null || flg === "false" || flg === false;
+        // var self = sinclo.scenarioApi;
+        // var flg = self.get(self._lKey.allowSave);
+        // return flg == null || flg === "false" || flg === false;
+        return false;
       },
       _saveVariable: function(valKey, value) {
         var self = sinclo.scenarioApi;
@@ -5000,7 +5001,7 @@
         },
         _beginValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
-          if(!self._watcher) {
+          if(!check.isIE() && !self._watcher) {
             console.log("BEGIN TIMER");
             if(sinclo.scenarioApi.isScenarioLFDisabled()) {
               sinclo.chatApi.showMiniMessageArea();
@@ -5030,7 +5031,7 @@
         },
         _endValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
-          if(self._watcher) {
+          if(!check.isIE() && self._watcher) {
             console.log("END TIMER");
             clearInterval(self._watcher);
             self._watcher = null;
@@ -5409,7 +5410,6 @@
           }
           dataObj.push(obj);
           self._parent._saveVariable(self._downloadUrlKey, JSON.stringify(dataObj));
-          debugger;
         },
         _showError: function() {
           var self = sinclo.scenarioApi._sendFile;
