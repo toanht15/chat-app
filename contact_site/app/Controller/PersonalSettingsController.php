@@ -13,32 +13,85 @@ class PersonalSettingsController extends AppController {
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
   }
 
-  /* *
-   * 一覧画面
+    /* *
+   * 更新画面
    * @return void
    * */
-  public function index() {
-    $this->MUser->recursive = -1;
+  public function remoteOpenEntryForm() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    $this->data = $this->MUser->read(null, $this->userInfo['id']);
+    $token = md5(uniqid(rand()));
+    $this->set('token', $token);
+    $this->Session->write('token', $token);
+    $this->set('mChatSetting', $this->MChatSetting->coFind('first', [], false));
+    $this->render('/PersonalSettings/remoteEntryUser');
+  }
+
+    /* *
+   * 保存処理
+   * @return void
+   * */
+  public function remoteSaveEntryForm() {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->layout = 'ajax';
+    if ( !$this->request->is('ajax') ) return false;
+
     if ( $this->request->is('post') ) {
       $token = $this->Session->read('token');
       //トークンチェック
       if($this->request->data['accessToken'] == $token) {
-        $errors = $this->_update($this->request->data);
-        if ( empty($errors) ) {
-          $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_SUCCESS, 'text' => Configure::read('message.const.saveSuccessful')]);
-          $this->Session->read('token');
-          $this->set('token', $token);
+        $tmpData = [];
+
+        $tmpData['MUser']['user_name'] = $this->request->data['userName'];
+        $tmpData['MUser']['display_name'] = $this->request->data['displayName'];
+        $tmpData['MUser']['settings'] = $this->request->data['settings'];
+        $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
+
+        $errors = [];
+        // パスワードを変更する場合
+        if ( $this->request->data['edit_password'] === 'true' ) {
+          $tmpData['MUser']['current_password'] = $this->request->data['current_password'];
+          $tmpData['MUser']['new_password'] = $this->request->data['new_password'];
+          $tmpData['MUser']['confirm_password'] = $this->request->data['confirm_password'];
+          $this->MUser->validate = $this->MUser->updateValidate;
         }
-        else {
-          $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
-          $this->Session->read('token');
-          $this->set('token', $token);
+
+        //userInfoのidと$inputDataのidが違う場合、$inputDataのidが空の場合
+        if($this->request->data['id'] != $this->userInfo['id']  || empty($this->request->data['id'])) {
+          $errors['rollback'] = Configure::read('message.const.saveFailed');
+          return $errors;
         }
+
+        // パスワードチェックが問題なければ単独でバリデーションチェックのみ
+        $this->MUser->set($tmpData);
+        $this->MUser->begin();
+        $errors = null;
+
+        if ( $this->MUser->validates() ) {
+          // バリデーションチェックが成功した場合
+          // 保存処理
+          if ( $this->MUser->save($tmpData, false) ) {
+            $this->MUser->commit();
+            $this->Session->read('token');
+            $this->set('token', $token);
+            $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+          }
+          else {
+            $this->MUser->rollback();
+            $this->Session->read('token');
+            $this->set('token', $token);
+          }
+        }
+        $errors = $this->MUser->validationErrors;
+        return new CakeResponse(['body' => json_encode($errors)]);
       }
       else {
-        $this->set('alertMessage', ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
         $this->Session->read('token');
         $this->set('token', $token);
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
       }
     }
     else {
@@ -49,47 +102,4 @@ class PersonalSettingsController extends AppController {
     }
     $this->set('mChatSetting', $this->MChatSetting->coFind('first', [], false));
   }
-
-  /* *
-   * 更新
-   * @return void
-   * */
-  private function _update($inputData) {
-    $this->request->data['MUser']['current_password'] = '';
-    $this->request->data['MUser']['new_password'] = '';
-    $this->request->data['MUser']['confirm_password'] = '';
-    $errors = [];
-    // パスワードを変更する場合
-    if ( !empty($inputData['MUser']['edit_password']) ) {
-      $this->MUser->validate = $this->MUser->updateValidate;
-    }
-
-    //userInfoのidと$inputDataのidが違う場合、$inputDataのidが空の場合
-    if($inputData['MUser']['id'] != $this->userInfo['id']  || empty($inputData['MUser']['id'])) {
-      $errors['rollback'] = Configure::read('message.const.saveFailed');
-      return $errors;
-    }
-
-    // パスワードチェックが問題なければ単独でバリデーションチェックのみ
-    $this->MUser->set($inputData);
-    $this->MUser->begin();
-
-    if ( $this->MUser->validates() ) {
-      // バリデーションチェックが成功した場合
-      // 保存処理
-      if ( $this->MUser->save($inputData, false) ) {
-        $this->MUser->commit();
-      }
-      else {
-        $this->MUser->rollback();
-        $errors['rollback'] = Configure::read('message.const.saveFailed');
-      }
-    }
-    else {
-      // 画面に返す
-      $errors = $this->MUser->validationErrors;
-    }
-    return $errors;
-  }
-
 }
