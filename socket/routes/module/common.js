@@ -9,6 +9,7 @@ var companySettings = {},
     publicHolidaySettingsArray = [],
     operationHourSettings = {},
     chatSettings = {},
+    customerInfoSettings = {},
     mysql = require('mysql'),
     pool = mysql.createPool({
       host: process.env.DB_HOST || 'localhost',
@@ -27,10 +28,12 @@ function initialize(siteKey) {
   // コール順厳守
   loadWidgetSettings(siteKey,function(){
     loadAutoMessageSettings(siteKey, function(){
-      loadOperatingHourSettings(siteKey, function(){
+      loadCustomVariableSettings(siteKey, function(){
+        loadOperatingHourSettings(siteKey, function(){
           loadPublicHoliday(function(){
             loadChatSettings(siteKey, function(){
               syslogger.info("ALL DATA LOADING IS SUCCESSFUL =====");
+            });
           });
         });
       });
@@ -344,6 +347,72 @@ function loadChatSettings(siteKey, callback) {
     );
   }
 }
+
+function loadCustomVariableSettings(siteKey, callback) {
+  'use strict';
+  var getCustomerInfoSettingsSQL = "";
+  if(siteKey) {
+    syslogger.info("function loadCustomVariableSettings(siteKey, callback) {\n target : " + siteKey);
+    // All
+    getCustomerInfoSettingsSQL = "SELECT tcis.m_companies_id as m_companies_id, tcis.item_name as item_name, tcv.attribute_value as attribute_value FROM t_customer_information_settings as tcis";
+    getCustomerInfoSettingsSQL += " INNER JOIN t_custom_variables as tcv ON (tcis.t_custom_variables_id = tcv.id)";
+    getCustomerInfoSettingsSQL += " WHERE tcis.m_companies_id = ? AND tcis.sync_custom_variable_flg = 1 AND tcis.delete_flg = 0;";
+    pool.query(getCustomerInfoSettingsSQL, [siteKeyIdMap[siteKey] ? siteKeyIdMap[siteKey] : 0],
+      function(err, rows){
+        if(err) {
+          syslogger.error('Unable load Customer Info settings. siteKey : ' + siteKey);
+          return;
+        }
+        if(rows && rows.length > 0) {
+          syslogger.info(JSON.stringify(rows));
+          // row = array
+          customerInfoSettings[siteKey] = rows;
+          syslogger.info("Load Customer Info settings OK. siteKey : " + siteKey);
+          module.exports.customerInfoSettings = chatSettings;
+        } else {
+          syslogger.info('siteKey: %s Customer Info settings is not found.',siteKey);
+          customerInfoSettings[siteKey] = [];
+          module.exports.customerInfoSettings = chatSettings;
+        }
+        if(callback) callback();
+      }
+    );
+  } else {
+    // All
+    getCustomerInfoSettingsSQL = "SELECT tcis.m_companies_id as m_companies_id, tcis.item_name as item_name, tcv.attribute_value as attribute_value FROM t_customer_information_settings as tcis";
+    getCustomerInfoSettingsSQL += " INNER JOIN t_custom_variables as tcv ON (tcis.t_custom_variables_id = tcv.id)";
+    getCustomerInfoSettingsSQL += " WHERE tcis.sync_custom_variable_flg = 1 AND tcis.delete_flg = 0;";
+    pool.query(getCustomerInfoSettingsSQL,
+      function(err, rows){
+        if(err) {
+          syslogger.error('Unable load ALL Customer Info settings.');
+          return;
+        }
+        // いったんクリアする
+        customerInfoSettings = {};
+        if(rows && rows.length > 0) {
+          rows.forEach(function(row){
+            var targetSiteKey = idSiteKeyMap[row.m_companies_id];
+            if(!customerInfoSettings[targetSiteKey]) {
+              customerInfoSettings[targetSiteKey] = [];
+            }
+            customerInfoSettings[targetSiteKey].push(row);
+          });
+          Object.keys(companySettings).forEach(function(elm, index, arr){
+            if(!customerInfoSettings[elm]) {
+              syslogger.info('siteKey: %s CustomerInfo setting is not found.',elm);
+              customerInfoSettings[elm] = [];
+            }
+          });
+          syslogger.info('Load ALL CustomerInfo settings is successful.');
+          module.exports.customerInfoSettings = customerInfoSettings;
+        }
+        if(callback) callback();
+      }
+    );
+  }
+}
+
 if(Object.keys(companySettings).length === 0) {
   initialize();
 }

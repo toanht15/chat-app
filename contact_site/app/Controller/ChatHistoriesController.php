@@ -6,7 +6,7 @@
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
     public $components = ['LandscapeLbcAPI'];
-    public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
+    public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
     public $paginate = [
       'THistory' => [
         'limit' => 100,
@@ -27,23 +27,6 @@
     public function beforeFilter(){
       parent::beforeFilter();
       $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
-      //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
-      /*$orList = [];
-      if ( !empty($ret['MCompany']['exclude_ips']) ) {
-        foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
-          if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
-            $orList[] = "INET_ATON('".trim($v)."') = INET_ATON(THistory.ip_address)";
-            continue;
-          }
-          $ips = $this->MCompany->cidrToRange(trim($v));
-          $list = [];
-          if ( count($ips) === 2 ) {
-            $list[] = "INET_ATON('".trim($ips[0])."') <= INET_ATON(THistory.ip_address)";
-            $list[] = "INET_ATON('".trim($ips[1])."') >= INET_ATON(THistory.ip_address)";
-          }
-          $orList[] = $list;
-        }
-      }*/
 
       $this->paginate['THistory']['conditions'] = [
         'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
@@ -481,6 +464,25 @@
       $name = "sinclo-history";
 
       if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
+        $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+          'conditions' => array(
+            'delete_flg' => 0,
+            'm_companies_id' => $this->userInfo['MCompany']['id']
+          ),
+          'order' => array(
+            'sort' => 'asc'
+          )
+        ));
+        $customerInformationSettingList = [];
+        foreach($customerSettingList as $k => $v) {
+          array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+        }
+
+        $customerInfoDisplaySettingMap = array();
+        foreach($customerSettingList as $index => $customerData) {
+          $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = (boolean)$customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+        }
+
         //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
         $this->printProcessTimetoLog('BEGIN _searchConditions');
         $returnData = $this->_searchConditions();
@@ -598,12 +600,10 @@
           $row['customer'] = "";
           if ( !empty($history['MCustomer']['informations']) ) {
             $informations = (array)json_decode($history['MCustomer']['informations']);
-            if ( isset($informations['company']) && $informations['company'] !== "" ) {
-              $row['customer'] .= $informations['company'];
-            }
-            if (isset($informations['name']) && $informations['name'] !== "" ) {
-              if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
-              $row['customer'] .= $informations['name'];
+            foreach($customerInfoDisplaySettingMap as $k => $v) {
+              if($v) {
+                $row['customer'] .= $informations[$k]."\n";
+              }
             }
           }
 
@@ -663,6 +663,24 @@
       ini_set('memory_limit', '-1');
 
       if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
+        $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+          'conditions' => array(
+            'delete_flg' => 0,
+            'm_companies_id' => $this->userInfo['MCompany']['id']
+          ),
+          'order' => array(
+            'sort' => 'asc'
+          )
+        ));
+        $customerInformationSettingList = [];
+        foreach($customerSettingList as $k => $v) {
+          array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+        }
+
+        $customerInfoDisplaySettingMap = array();
+        foreach($customerSettingList as $index => $customerData) {
+          $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = (boolean)$customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+        }
         //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
         $returnData = $this->_searchConditions();
         $campaignList = $this->TCampaign->getList();
@@ -732,12 +750,10 @@
           $row['customer'] = "";
           if ( !empty($val['MCustomer']['informations']) ) {
             $informations = (array)json_decode($val['MCustomer']['informations']);
-            if ( isset($informations['company']) && $informations['company'] !== "" ) {
-              $row['customer'] .= $informations['company'];
-            }
-            if (isset($informations['name']) && $informations['name'] !== "" ) {
-              if ( $row['customer'] !== "" ) $row['customer'] .= "\n";
-              $row['customer'] .= $informations['name'];
+            foreach($customerInfoDisplaySettingMap as $k => $v) {
+              if($v) {
+                $row['customer'] .= $informations[$k]."\n";
+              }
             }
           }
           // OS
@@ -1014,13 +1030,25 @@
      * @return array
      * */
     private function _getInfomationList(){
-      return [
-        'company' => '会社名',
-        'name' => '名前',
-        'tel' => '電話番号',
-        'mail' => 'メールアドレス',
-        'memo' => 'メモ'
-      ];
+      $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+        'conditions' => array(
+          'delete_flg' => 0,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ),
+        'order' => array(
+          'sort' => 'asc'
+        )
+      ));
+      $customerInformationSettingList = [];
+      foreach($customerSettingList as $k => $v) {
+        array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+      }
+
+      $customerInfoDisplaySettingMap = array();
+      foreach($customerSettingList as $index => $customerData) {
+        $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['item_name'];
+      }
+      return $customerInfoDisplaySettingMap;
     }
 
     private function _setListByChat($type, $data, $visitorsIds = []){
@@ -1039,7 +1067,26 @@
       $userCond = [
         'MCustomer.m_companies_id' => $this->userInfo['MCompany']['id'],
       ];
-      $keys = ['company_name' => 'company', 'customer_name' => 'name', 'telephone_number' => 'tel', 'mail_address' => 'mail'];
+
+      $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+        'conditions' => array(
+          'delete_flg' => 0,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ),
+        'order' => array(
+          'sort' => 'asc'
+        )
+      ));
+
+      $customerInformationSettingList = [];
+      foreach($customerSettingList as $k => $v) {
+        array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+      }
+
+      $customerInfoDisplaySettingMap = array();
+      foreach($customerSettingList as $index => $customerData) {
+        $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+      }
 
       $allusers = $this->MCustomer->find('all', [
         'fields' => '*',
@@ -1049,9 +1096,9 @@
       foreach($allusers as $alluser) {
         $setFlg = false;
         $settings = (array)json_decode($alluser['MCustomer']['informations']);
-        foreach ($keys as $key => $val) {
+        foreach ($customerInfoDisplaySettingMap as $key => $val) {
           if ( isset($data[$key]) && $data[$key] != "" ) {
-            if ( !(isset($settings[$val]) && $settings[$val] != "" && strstr($settings[$val], $data[$key])) ) {
+            if ( !(isset($settings[$key]) && $settings[$key] != "" && strstr($settings[$key], $data[$key])) ) {
               $setFlg = false;
               continue 2;
             }
@@ -1114,7 +1161,16 @@
         $data = $this->Session->read('Thistory');
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-        if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
+        $this->log($data['CustomData']['informations'], LOG_DEBUG);
+        if((isset($data['CustomData'])) || (
+          ( isset($data['History']['company_name']) && $data['History']['company_name'] !== ""
+          ) || (
+            isset($data['History']['customer_name']) && $data['History']['customer_name'] !== ""
+          ) || (
+            isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== ""
+          ) || (
+            isset($data['History']['mail_address']) && $data['History']['mail_address'] !== ""
+          )) ) {
           //会社名が入っている場合
           if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
             //会社名がランドスケープテーブルに登録されている場合
@@ -1147,13 +1203,13 @@
               );
             }
             else {
-              $visitorsIds = $this->_searchCustomer($data['History']);
+              $visitorsIds = $this->_searchCustomer($data['CustomData']);
               $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
               $chatCond['visitors_id'] = $visitorsIds;
             }
           }
           else {
-            $visitorsIds = $this->_searchCustomer($data['History']);
+            $visitorsIds = $this->_searchCustomer($data['CustomData']);
             $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
             $chatCond['visitors_id'] = $visitorsIds;
           }
@@ -1784,6 +1840,29 @@
           $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $visitors_id );
       }
 
+      // 訪問ユーザ情報設定状態を取得
+      /* 訪問ユーザ情報設定リストを取得 */
+      $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+        'conditions' => array(
+          'delete_flg' => 0,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ),
+        'order' => array(
+          'sort' => 'asc'
+        )
+      ));
+      $customerInformationSettingList = [];
+      foreach($customerSettingList as $k => $v) {
+        array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+      }
+
+      $customerInfoDisplaySettingMap = array();
+      foreach($customerSettingList as $index => $customerData) {
+        $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+      }
+      $this->set('customerInformationList', $customerInformationSettingList);
+      $this->set('customerInfoDisplaySettingMap', $customerInfoDisplaySettingMap);
+
       $userInfo = $this->MUser->read(null, $this->userInfo['id']);
       $data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
       $data['History']['finish_day'] = htmlspecialchars($data['History']['finish_day']);
@@ -2039,7 +2118,27 @@
            $campaignData[$v['TCampaign']['name']] = $v['TCampaign']['name'];
         }
       }
+      /* 訪問ユーザ情報設定リストを取得 */
+      $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+        'conditions' => array(
+          'delete_flg' => 0,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ),
+        'order' => array(
+          'sort' => 'asc'
+        )
+      ));
+      $customerInformationSettingList = [];
+      foreach($customerSettingList as $k => $v) {
+        array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+      }
 
+      $customerInfoDisplaySettingMap = array();
+      foreach($customerSettingList as $index => $customerData) {
+        $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+      }
+      $this->set('customerInformationList', $customerInformationSettingList);
+      $this->set('customerInfoDisplaySettingMap', $customerInfoDisplaySettingMap);
       $this->set('chatType', $chatType);
       $this->set('campaign', $campaignData);
       // 成果種別リスト スタンダードプラン以上

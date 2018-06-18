@@ -47,7 +47,7 @@
       return 'IE';
     }
     if (M[1] === 'Chrome') {
-      tem = ua.match(/\bOPR\/(\d+)/)
+      tem = ua.match(/\bOPR\/(\d+)/);
       if (tem != null) {
         return 'Opera';
       }
@@ -67,7 +67,7 @@
       return (tem[1] || '');
     }
     if (M[1] === 'Chrome') {
-      tem = ua.match(/\bOPR\/(\d+)/)
+      tem = ua.match(/\bOPR\/(\d+)/);
       if (tem != null) {
         return tem[1];
       }
@@ -530,7 +530,7 @@
           window.setTimeout(function () {
             shortMessage.trialClose();
           }, 300);
-        };
+        }
       },
       close: function () {
         $("#shortMessage").animate(
@@ -556,7 +556,7 @@
               $(".outOfTermTrial").animate(
                 {
                   'top':'-100px'
-                },700)
+                },700);
               window.setTimeout(function () {
                 $('#shortMessage').prop('class', 'popup-off');
               },1000)
