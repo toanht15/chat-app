@@ -1800,6 +1800,11 @@
         array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
       }
 
+      $customerInfoDisplaySettingMap = array();
+      foreach($customerSettingList as $index => $customerData) {
+        $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+      }
+
       $userInfo = $this->MUser->read(null, $this->userInfo['id']);
       $data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
       $data['History']['finish_day'] = htmlspecialchars($data['History']['finish_day']);
@@ -1814,6 +1819,7 @@
       $this->set('mCustomerList', $mCustomerList);
       $this->set('mCusData', $mCusData);
       $this->set('customerInformationList', $customerInformationSettingList);
+      $this->set('customerInfoDisplaySettingMap', $customerInfoDisplaySettingMap);
       $this->set('chatUserList', $this->_getChatUser(array_keys($stayList))); // チャット担当者リスト
       $this->set('groupByChatChecked', $type);
       $this->set('campaignList', $this->TCampaign->getList());
