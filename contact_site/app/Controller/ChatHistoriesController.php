@@ -1039,7 +1039,16 @@
       $userCond = [
         'MCustomer.m_companies_id' => $this->userInfo['MCompany']['id'],
       ];
-      $keys = ['company_name' => 'company', 'customer_name' => 'name', 'telephone_number' => 'tel', 'mail_address' => 'mail'];
+
+      $customerInformationSettingList = [];
+      foreach($customerSettingList as $k => $v) {
+        array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+      }
+
+      $customerInfoDisplaySettingMap = array();
+      foreach($customerSettingList as $index => $customerData) {
+        $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+      }
 
       $allusers = $this->MCustomer->find('all', [
         'fields' => '*',
@@ -1049,9 +1058,9 @@
       foreach($allusers as $alluser) {
         $setFlg = false;
         $settings = (array)json_decode($alluser['MCustomer']['informations']);
-        foreach ($keys as $key => $val) {
+        foreach ($customerInfoDisplaySettingMap as $key => $val) {
           if ( isset($data[$key]) && $data[$key] != "" ) {
-            if ( !(isset($settings[$val]) && $settings[$val] != "" && strstr($settings[$val], $data[$key])) ) {
+            if ( !(isset($settings[$key]) && $settings[$key] != "" && strstr($settings[$key], $data[$key])) ) {
               $setFlg = false;
               continue 2;
             }
@@ -1147,7 +1156,7 @@
               );
             }
             else {
-              $visitorsIds = $this->_searchCustomer($data['History']);
+              $visitorsIds = $this->_searchCustomer($data['CustomData']);
               $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
               $chatCond['visitors_id'] = $visitorsIds;
             }
@@ -1804,6 +1813,8 @@
       foreach($customerSettingList as $index => $customerData) {
         $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
       }
+      $this->set('customerInformationList', $customerInformationSettingList);
+      $this->set('customerInfoDisplaySettingMap', $customerInfoDisplaySettingMap);
 
       $userInfo = $this->MUser->read(null, $this->userInfo['id']);
       $data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
@@ -1818,8 +1829,6 @@
       $this->set('detailChatPagesData', $detailChatPagesData);
       $this->set('mCustomerList', $mCustomerList);
       $this->set('mCusData', $mCusData);
-      $this->set('customerInformationList', $customerInformationSettingList);
-      $this->set('customerInfoDisplaySettingMap', $customerInfoDisplaySettingMap);
       $this->set('chatUserList', $this->_getChatUser(array_keys($stayList))); // チャット担当者リスト
       $this->set('groupByChatChecked', $type);
       $this->set('campaignList', $this->TCampaign->getList());
@@ -2062,7 +2071,27 @@
            $campaignData[$v['TCampaign']['name']] = $v['TCampaign']['name'];
         }
       }
+      /* 訪問ユーザ情報設定リストを取得 */
+      $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+        'conditions' => array(
+          'delete_flg' => 0,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ),
+        'order' => array(
+          'sort' => 'asc'
+        )
+      ));
+      $customerInformationSettingList = [];
+      foreach($customerSettingList as $k => $v) {
+        array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+      }
 
+      $customerInfoDisplaySettingMap = array();
+      foreach($customerSettingList as $index => $customerData) {
+        $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+      }
+      $this->set('customerInformationList', $customerInformationSettingList);
+      $this->set('customerInfoDisplaySettingMap', $customerInfoDisplaySettingMap);
       $this->set('chatType', $chatType);
       $this->set('campaign', $campaignData);
       // 成果種別リスト スタンダードプラン以上

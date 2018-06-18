@@ -118,12 +118,19 @@ class htmlExHelper extends AppHelper {
         return $content;
     }
 
-    public function visitorInput($record) {
+    public function visitorInput($record, $forceInputText = false, $showPlaceHolder = true) {
+      if($forceInputText && strcmp($record['input_type'], 2) === 0) {
+        $record['input_type'] = 1;
+      }
+      $placeholderAttr = "";
+      if($showPlaceHolder) {
+        $placeholderAttr = 'placeholder="%sを追加"';
+      }
       switch($record['input_type']) {
         case 1: // テキストボックス
-          return sprintf('<input id="ng-customer-custom-%s" type="text" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" placeholder="%sを追加"/>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name']);
+          return sprintf('<input id="ng-customer-custom-%s" type="text" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" %s/>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $placeholderAttr);
         case 2: // テキストエリア
-          return sprintf('<textarea rows="7" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" placeholder="%sを追加"></textarea>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name']);
+          return sprintf('<textarea rows="7" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" %s"></textarea>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $placeholderAttr);
         case 3: // テキストエリア
           $options =  explode("\n", $record['input_option']);
           $html = sprintf('<select id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']">', $record['id'], $record['item_name'], $record['item_name']);
@@ -135,6 +142,31 @@ class htmlExHelper extends AppHelper {
           return $html;
       }
     }
+
+  public function visitorSearchInput($record, $forceInputText = false, $showPlaceHolder = true) {
+    if($forceInputText && strcmp($record['input_type'], 2) === 0) {
+      $record['input_type'] = 1;
+    }
+    $placeholderAttr = "";
+    if($showPlaceHolder) {
+      $placeholderAttr = 'placeholder="%sを追加"';
+    }
+    switch($record['input_type']) {
+      case 1: // テキストボックス
+        return sprintf('<input id="ng-customer-custom-%s" type="text" name="data[\'CustomData\'][\'%s\']"/>', $record['id'], $record['item_name']);
+      case 2: // テキストエリア
+        return sprintf('<textarea rows="7" id="ng-customer-custom-%s" name="data[\'CustomData\'][\'%s\']"></textarea>', $record['id'], $record['item_name']);
+      case 3: // テキストエリア
+        $options =  explode("\n", $record['input_option']);
+        $html = sprintf('<select id="ng-customer-custom-%s" name="data[\'CustomData\'][\'%s\']">', $record['id'], $record['item_name']);
+        $html .= '<option value="">選択してください</option>';
+        for($i = 0; $i < count($options); $i++) {
+          $html .= sprintf('<option value="%s">%s</option>', $options[$i], $options[$i]);
+        }
+        $html .= '</select>';
+        return $html;
+    }
+  }
 
     private function makeSendChatView($value){
       $content = "";
