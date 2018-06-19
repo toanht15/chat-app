@@ -2,14 +2,14 @@
   //特定項目を選択した際に、追加メニュー分の高さを確保する
   //特定項目から選択が外れた場合は、その分の高さを削減する
   $(function () {
-
-	//各種変数の設定
+    popupEvent.resize();
+    //各種変数の設定
     var popupframe = $('#popup-frame');
-    var popupcontent = $('#popup-content');
     var popupbutton = $('#popup-button');
+
     var labelposition = $("#pulldown_label")
     $("#TCustomerInformationSettingInputOption").height(8);
-    var addsize = 18;
+    var addsize = 16;
 
 
 
@@ -21,10 +21,7 @@
         $(e.target).height(e.target.scrollHeight);
         //5行分まではポップアップを同時に拡大する処理
         if(column_size < 5){
-          //labelposition.css({"vertical-align": "+=18px"});
           popupframe.height(popupframe.height()+addsize);
-          popupcontent.height(popupcontent.height()+addsize);
-          popupbutton.height(popupbutton.height()+2);
           column_size += 1;
         }
       }else{
@@ -34,10 +31,7 @@
             $(e.target).height(e.target.scrollHeight);
             break;
           }else{
-            //labelposition.css({"vertical-align": "-=18px"});
             popupframe.height(popupframe.height()-addsize);
-            popupcontent.height(popupcontent.height()-addsize);
-            popupbutton.height(popupbutton.height()+2);
             column_size -= 1;
             console.log(column_size);
           }
@@ -53,10 +47,7 @@
         var after = $(e.target).height();
         if(before - after != 16){
           while(after > before){
-            //labelposition.css({"vertical-align": "+=18px"});
             popupframe.height(popupframe.height()+addsize);
-            popupcontent.height(popupcontent.height()+addsize);
-            popupbutton.height(popupbutton.height()+2);
             before += addsize;
             column_size += 1;
           }
@@ -72,6 +63,7 @@
       popupbutton.height(popupbutton.height()+1);
       selectflag = 1;
     }
+
 
     //エディット時に、既にカスタム変数チェックボックスが選択されている場合
     if(document.getElementById('TCustomerInformationSettingSyncCustomVariableFlg').checked){
