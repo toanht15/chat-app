@@ -5,7 +5,7 @@
 <div id='tdictionaries_idx' class="card-shadow" style="min-width: <?= count((array)$nameList) * 47 + 42 + 40; ?>px!important;">
 
 <div id='tdictionaries_add_title'>
-  <div class="fLeft"><?= $this->Html->image('dictionary_g.png', array('alt' => '定型文メッセージ管理', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+  <div class="fLeft"><i class="fal fa-book fa-2x"></i></div>
   <h1>定型文管理</h1>
 </div>
 <!-- #451 定型文カテゴリ対応 start -->

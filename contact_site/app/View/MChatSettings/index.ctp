@@ -260,7 +260,7 @@ function checkValidate() {
 
   <div id='m_chat_settings_add_title'>
       <div class="fLeft">
-        <?= $this->Html->image('chat_setting_g.png', array('alt' => 'チャット基本設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?>
+        <i class="fal fa-cogs fa-2x"></i>
       </div>
       <h1>チャット基本設定</h1>
   </div>
