@@ -982,7 +982,7 @@ ul.ulTab {
 }
 
 #sidebar-main {
-  background-color: #595959;
+  background-color: #6C6C6C;
   z-index: $sidebar-z-index;
   padding-top: 85px;
   width: 80px;
@@ -999,7 +999,7 @@ ul.ulTab {
     color: #FFF;
     text-align: center;
     &.selected, &:hover {
-      background-color: #929292;
+      background-color: #959595;
     }
   }
 }
@@ -1014,14 +1014,14 @@ ul.ulTab {
     padding-top: 0px;
     &:hover {
       cursor: pointer;
-      background-color: #929292;
+      background-color: #959595;
     }
   }
 }
 
 .sidebar-sub {
   display: inline-block;
-  background-color: #929292;
+  background-color: #959595;
   z-index: $sub-sidebar-z-index;
   width: auto;
   left: -20px;
@@ -1036,7 +1036,8 @@ ul.ulTab {
       text-decoration: none;
       margin: 0;
       &:hover {
-        background-color: $header-btn-hover-color;
+        background-color: #B7CF89;
+        font-weight: bold;
       }
       p.icon-wrap {
         display: inline-block;
