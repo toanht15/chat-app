@@ -5,6 +5,7 @@ $settingSelected = "";
 $chatSettingSelected = "";
 $docSettingSelected = "";
 $statisticsSelected = "";
+$chatbotSelected = "";
 switch ($this->name) {
     case 'Customers':
         $monitorSelected = "selected";
@@ -18,12 +19,15 @@ switch ($this->name) {
     case 'ScriptSettings':
     case 'TCampaigns':
     case 'DisplayExclusions':
-    case 'MOperatingHours':
         $settingSelected = "selected";
         break;
-    case 'MChatSettings':
-    case 'MChatNotifications':
     case 'TAutoMessages':
+    case 'TChatbotScenario':
+        $chatbotSelected = "selected";
+        break;
+    case 'MChatSettings':
+    case 'MOperatingHours':
+    case 'MChatNotifications':
     case 'TDictionaries':
         $chatSettingSelected = "selected";
         break;
@@ -35,65 +39,87 @@ switch ($this->name) {
         break;
 };
 $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
-
 ?>
 <!-- /* 上部カラーバー(ここから) */ -->
-<div id="color-bar" class="card-shadow">
+<div id="color-bar">
     <ul id="color-bar-right" class="fRight">
       <?php if(!empty($trialTime)) { ?>
         <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
       <?php } ?>
-        <li class="fLeft"><p><?= h($userInfo['display_name']) ?>さん</p></li>
-        <li class="fRight" id="logout" onclick='location.href = "/Login/logout"'><p>ログアウト</p></li>
+        <li class="fLeft" id = "menu-bar-right"><p><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-up fa-2x'></i></p></li>
     </ul>
+</div>
+<div id="colorBarMenu" style = "display:none;">
+  <ul>
+    <li class="t-link" onclick="editPersonalInfo()">
+      <?= $this->Html->image('personal_g.png', array('alt' => 'プロフィール', 'width' => 30, 'height' => 30)) ?>
+      <a href="javascript:void(0)">
+        プロフィール
+      </a>
+    </li>
+    <hr class="separator">
+    <li class="t-link" onclick="window.open('https://info.sinclo.jp/manual/',target = '_blank')">
+      <?= $this->Html->image('manual_g.png', array('alt' => 'ヘルプ', 'width' => 30, 'height' => 30)) ?>
+      <a href="javascript:void(0)">
+        ヘルプ
+      </a>
+    </li>
+    <hr class="separator">
+    <li class="t-link" onclick="window.open('<?= $this->Html->url(['controller' => 'Login', 'action' => 'logout']) ?>')">
+      <?= $this->Html->image('logout_g.png', array('alt' => 'ログアウト', 'width' => 30, 'height' => 30)) ?>
+      <a href="javascript:void(0)">
+        ログアウト
+      </a>
+    </li>
+  </ul>
 </div>
 <!-- /* 上部カラーバー(ここまで) */ -->
 
 <!-- /* システムアイコン（ここから） */ -->
-<div id="sys-icon" class="card-shadow"><?= $this->Html->image('sinclo_square_logo.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 3px; display: block'))?></div>
+<div id="sys-icon"><?= $this->Html->image('sinclo_square_logo.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 13px; display: block'))?></div>
 <!-- /* システムアイコン（ここまで） */ -->
 
 <!-- /* サイドバー１（ここから） */ -->
-<div id="sidebar-main" class="card-shadow">
+<div id="sidebar-main">
     <div>
         <div class="icon <?=$monitorSelected?>">
-            <?= $this->htmlEx->naviLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'monitor.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviFaIconLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'fa-home', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
+        <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
+          <?= $this->htmlEx->naviFaIconLink('基本設定', 'fa-wrench') ?>
+        </div>
+        <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
+          <?php if ( $adminFlg ): ?>
+            <div class="icon <?=$chatbotSelected?> setting-icon new-line" data-type="chatbot">
+              <?= $this->htmlEx->naviFaIconLink('ﾁｬｯﾄﾎﾞｯﾄ', 'fa-robot') ?>
+            </div>
+          <?php endif; ?>
+          <div class="icon <?=$chatSettingSelected?> setting-icon new-line" data-type="chat">
+            <?= $this->htmlEx->naviFaIconLink('有人ﾁｬｯﾄ', 'fa-comment') ?>
+          </div>
+        <?php endif; ?>
+        <?php if ($adminFlg && isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
+          <div class="icon <?=$docSettingSelected?>">
+            <?= $this->htmlEx->naviFaIconLink('資料設定', 'fa-file-alt', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
+          </div>
+        <?php endif; ?>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <div class="icon <?=$historySelected?> setting-icon" data-type="history">
-            <?= $this->htmlEx->naviLink('履歴一覧', 'history.png') ?>
+          <div class="icon <?=$statisticsSelected?> setting-icon" data-type="statistics" >
+            <?= $this->htmlEx->naviFaIconLink('履歴・統計', 'fa-chart-pie') ?>
           </div>
         <?php endif; ?>
         <?php if (!$coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <div class="icon <?=$historySelected?>">
-            <?= $this->htmlEx->naviLink('履歴一覧', 'history.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
+          <div class="icon <?=$statisticsSelectedSelected?>">
+            <?= $this->htmlEx->naviFaIconLink('履歴・統計', 'fa-chart-pie', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
           </div>
         <?php endif; ?>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-        <div class="icon <?=$statisticsSelected?> setting-icon" data-type="statistics" >
-            <?= $this->htmlEx->naviLink('統計', 'graph.png') ?>
-        </div>
-        <?php endif; ?>
-        <div class="icon <?=$settingSelected?> setting-icon" data-type="common">
-            <?= $this->htmlEx->naviLink('設定', 'setting.png') ?>
-        </div>
-        <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
-        <div class="icon <?=$chatSettingSelected?> setting-icon" data-type="chat">
-            <?= $this->htmlEx->naviLink('ﾁｬｯﾄ設定', 'chat_setting.png') ?>
-        </div>
-      <?php endif; ?>
-      <?php if ($adminFlg && isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
-        <div class="icon <?=$docSettingSelected?>">
-          <?= $this->htmlEx->naviLink('資料設定', 'document.png', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
-        </div>
-      <?php endif; ?>
       <div class="bottom-area">
         <hr class="separator"/>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('お知らせ', 'info.png', ['href' => 'https://info.sinclo.jp/news/', 'target' => '_blank']) ?>
+          <?= $this->htmlEx->naviFaIconLink('お知らせ', 'fa-bell', ['href' => 'https://info.sinclo.jp/news/', 'target' => '_blank']) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('ヘルプ', 'manual.png', ['href' => 'https://info.sinclo.jp/manual/', 'target' => '_blank']) ?>
+          <?= $this->htmlEx->naviFaIconLink('ヘルプ', 'fa-book-open', ['href' => 'https://info.sinclo.jp/manual/', 'target' => '_blank']) ?>
         </div>
       </div>
     </div>
@@ -102,91 +128,123 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 <!-- /* サイドバー１（ここまで） */ -->
 
 <!-- /* サイドバー２（ここから） */ -->
-<div id="sidebar-sub" class="card-shadow">
+<div data-sidebar-type="common" class="sidebar-sub hide">
     <!-- /* 共通 */ -->
-    <div data-sidebar-type="common" class="hide">
+    <div >
+        <?php if ( $adminFlg ): ?>
+            <div class="icon" style="display:none">
+                <?= $this->htmlEx->naviFaIconLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']], true) ?>
+            </div>
+            <div class="icon">
+                <?= $this->htmlEx->naviFaIconLink('ユーザー管理', 'fa-user-friends', ['href' => ['controller' => 'MUsers', 'action' => 'index']], true) ?>
+            </div>
+            <div class="icon">
+                <?= $this->htmlEx->naviFaIconLink('ウィジェット', 'fa-window-maximize', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']], true) ?>
+            </div>
+        <?php endif; ?>
         <div class="icon">
-            <?= $this->htmlEx->naviLink('個人設定', 'personal.png', ['href' => ['controller' => 'PersonalSettings', 'action' => 'index']]) ?>
+            <?= $this->htmlEx->naviFaIconLink($codeAndDemoTitle, 'fa-code', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']], true) ?>
         </div>
     <?php if ( $adminFlg ): ?>
-        <div class="icon" style="display:none">
-            <?= $this->htmlEx->naviLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
-        </div>
-        <div class="icon">
-            <?= $this->htmlEx->naviLink('ユーザー管理', 'users.png', ['href' => ['controller' => 'MUsers', 'action' => 'index']]) ?>
-        </div>
-    <?php endif; ?>
-        <div class="icon">
-            <?= $this->htmlEx->naviLink($codeAndDemoTitle, 'script.png', ['href' => ['controller' => 'ScriptSettings', 'action' => 'index']]) ?>
-        </div>
-    <?php if ( $adminFlg ): ?>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('営業時間設定', 'operating_hour.png', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']]) ?>
-        </div>
-        <div class="icon">
-            <?= $this->htmlEx->naviLink('ウィジェット', 'widget.png', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']]) ?>
-        </div>
+      <?php //シェアリングプランの場合
+        if(!$coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]))): ?>
+          <div class="icon">
+            <?= $this->htmlEx->naviFaIconLink('営業時間設定', 'fa-calendar-alt', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']], true) ?>
+          </div>
+        <?php endif; ?>
       <div class="icon">
-        <?= $this->htmlEx->naviLink('キャンペーン', 'campaign.png', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('キャンペーン', 'fa-trophy', ['href' => ['controller' => 'TCampaigns', 'action' => 'index']], true) ?>
       </div>
       <div class="icon">
-        <?= $this->htmlEx->naviLink('表示除外設定', 'exclusion.png', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('表示除外設定', 'fa-minus-circle', ['href' => ['controller' => 'DisplayExclusions', 'action' => 'index']], true) ?>
       </div>
       <div class="icon">
-        <?= $this->htmlEx->naviLink('セキュリティ', 'security_settings_menu.png', ['href' => ['controller' => 'MSecuritySettings', 'action' => 'edit']]) ?>
+        <?= $this->htmlEx->naviFaIconLink('セキュリティ', 'fa-shield-alt', ['href' => ['controller' => 'MSecuritySettings', 'action' => 'edit']], true) ?>
+      </div>
+      <div class="icon">
+        <?= $this->htmlEx->naviFaIconLink('カスタム変数', 'fa-percent', ['href' => ['controller' => 'TCustomVariables', 'action' => 'index']], true) ?>
+      </div>
+      <div class="icon">
+        <?= $this->htmlEx->naviFaIconLink('訪問ユーザ情報設定', 'fa-address-card', ['href' => ['controller' => 'TCustomerInformationSettings', 'action' => 'index']], true) ?>
       </div>
     <?php endif; ?>
     </div>
     <!-- /* 共通 */ -->
+</div>
 
-    <!-- /* チャット */ -->
+<div data-sidebar-type="chat" class="sidebar-sub hide">
+  <!-- /* チャット */ -->
+  <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
+    <div>
+      <?php if ( $adminFlg ): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('基本設定', 'fa-cogs', ['href' => ['controller' => 'MChatSettings', 'action' => 'index']], true) ?>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('営業時間設定', 'fa-calendar-alt', ['href' => ['controller' => 'MOperatingHours', 'action' => 'index']], true) ?>
+        </div>
+      <?php endif; ?>
+      <div class="icon">
+        <?= $this->htmlEx->naviFaIconLink('定型文', 'fa-book', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']], true) ?>
+      </div>
+      <?php if ( $adminFlg ): ?>
+        <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('ファイル送信', 'fa-cloud-upload', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'edit']], true) ?>
+        </div>
+      <?php endif; ?>
+      <div class="icon">
+        <?= $this->htmlEx->naviFaIconLink('チャット通知', 'fa-broadcast-tower', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']], true) ?>
+      </div>
+    </div>
+  <?php endif; ?>
+  <!-- /* チャット */ -->
+</div>
+
+<div data-sidebar-type="chatbot" class="sidebar-sub hide">
+    <!-- /* シナリオ */ -->
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
-      <div data-sidebar-type="chat" class="hide">
+      <div >
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('基本設定', 'chat_setting.png', ['href' => ['controller' => 'MChatSettings', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviFaIconLink('オートメッセージ', 'fa-comments', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('ｵｰﾄﾒｯｾｰｼﾞ', 'auto_message.png', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']]) ?>
-        </div>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('シナリオ設定', 'scenario_setting.png', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']]) ?>
+          <?= $this->htmlEx->naviFaIconLink('シナリオ設定', 'fa-code-merge', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']], true) ?>
         </div>
       <?php endif; ?>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('定型文', 'dictionary.png', ['href' => ['controller' => 'TDictionaries', 'action' => 'index']]) ?>
-        </div>
-      <?php if ( $adminFlg ): ?>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('ファイル送信', 'file_transfer_setting_menu.png', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'edit']]) ?>
-        </div>
-      <?php endif; ?>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('チャット通知', 'notification.png', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']]) ?>
-        </div>
       </div>
     <?php endif; ?>
-    <!-- /* チャット */ -->
-    <!-- /* 履歴 */ -->
-    <div data-sidebar-type="history" class="hide">
-      <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('チャット履歴', 'chat_setting.png', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
-        </div>
-        <div class="icon">
-          <?= $this->htmlEx->naviLink('アクセス履歴', 'personal.png', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()']) ?>
-        </div>
-      <?php endif; ?>
+    <!-- /* シナリオ */ -->
+</div>
+<div data-sidebar-type="history" class="sidebar-sub hide">
+  <!-- /* 履歴 */ -->
+  <div>
+    <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
+      <div class="icon">
+        <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-comment', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
       </div>
-    <!-- /* 履歴 */ -->
+      <div class="icon">
+        <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-user-alt', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+      </div>
+    <?php endif; ?>
+  </div>
+  <!-- /* 履歴 */ -->
+</div>
+<div data-sidebar-type="statistics" class="sidebar-sub hide">
     <!-- /* 統計 */ -->
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-      <div data-sidebar-type="statistics" class="hide">
+      <div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('チャット', 'chat_setting.png', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()']) ?>
+          <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-comment', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviLink('オペレータ', 'personal.png', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()']) ?>
+          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-user-alt', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('チャット統計', 'fa-comment', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()'], true) ?>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('オペレータ統計', 'fa-user-alt', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
       </div>
     <?php endif; ?>
@@ -194,46 +252,100 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 </div>
 <!-- /* サイドバー２（ここまで） */ -->
 <script type="text/javascript">
-  var nowOpenType = "";
+  var clickMenu = false;
 
-  var hideTimer = null;
-  $("#sidebar-main .icon:not(.setting-icon)").mouseenter(function(){
-    console.log("#sidebar-main .icon:not(.setting-icon)");
-    if(hideTimer) {
-      clearTimeout(hideTimer);
-      hideTimer = null;
-    }
-    setTimeout(function(){
-      $("#sidebar-sub").removeClass('open');
-      $("#sidebar-sub > div").addClass("hide");
-      nowOpenType = "";
-    }, 100);
+  $(function(){
+    var property = window.getComputedStyle($('a > i.icon')[0], '::before').getPropertyValue('width');
+    console.log(property);  // 疑似要素取得
   });
 
+
+  var pointtimes = 0;
   $(".setting-icon").mouseenter(function(){
+    pointtimes += 1;
     var type = $(this).data("type");
-    if ( $("#sidebar-sub").is(".open") ) {
-      $("#sidebar-sub").removeClass('open');
-      $("#sidebar-sub > div").addClass("hide");
-      setTimeout(function(){
-        $("#sidebar-sub > div").addClass("hide");
-        $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
-        $("#sidebar-sub").addClass('open');
-        nowOpenType = type;
-      }, 100);
-    }
-    else {
-      $("#sidebar-sub > div").addClass("hide");
-      $("#sidebar-sub div[data-sidebar-type='"+type+"']").removeClass("hide");
-      $("#sidebar-sub").addClass('open');
-      nowOpenType = type;
-    }
+    var self = $(this);
+    $('.sidebar-sub').stop(true,false).animate;
+    $.when(
+      $('.sidebar-sub').animate({left: -120}, 100)
+    ).done(function(){
+      $('.sidebar-sub').addClass('hide');
+      $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 80}, 100);
+    });
   });
+
+  $("#sidebar-main div.icon:not(.setting-icon)").mouseenter(function(){
+    $.when(
+      $('.sidebar-sub').animate({left: -120}, 100)
+    ).done(function(){
+      $('.sidebar-sub').addClass('hide');
+    });
+  });
+
   $('#header').mouseleave(function(){
-    if(nowOpenType !== "") {
-      $("#sidebar-sub").removeClass('open');
-      $("#sidebar-sub > div").addClass("hide");
-      nowOpenType = "";
-    }
+    $.when(
+      $('.sidebar-sub').animate({left: -120},100)
+    ).done(function(){
+      $('.sidebar-sub').addClass('hide');
+    });
   });
+
+  var fadeOutLayerMenu = function() {
+    $("#colorBarMenu").fadeOut("fast");
+  };
+
+  var fadeInLayerMenu = function() {
+    console.log('fadein');
+    $("#colorBarMenu").fadeIn("fast");
+  };
+
+  $('#menu-bar-right').on('click', function(e) {
+    e.stopPropagation();
+    //矢印下向きに変更
+    $('.fal').toggleClass('downArrow');
+    var menu = document.getElementById("colorBarMenu").style.display;
+    if(menu == "block"){
+      //メニュー非表示
+      fadeOutLayerMenu();
+      $("#menu-bar-right").css('background-color', '#C3D69B');
+    }
+    else{
+      //メニュー表示
+      fadeInLayerMenu();
+      $("#menu-bar-right").css('background-color', '#D6E8B0');
+    }
+    clickMenu = true;
+    $("#menu-bar-right").mouseenter(function(){
+      $("#menu-bar-right").css('background-color', '#D6E8B0');
+    });
+    $('#menu-bar-right').mouseleave(function(){
+      if(clickMenu === false) {
+        $("#menu-bar-right").css('background-color', '#C3D69B');
+      }
+    });
+  });
+
+
+  $(document).on('click',function(){
+    //メニュー非表示
+    fadeOutLayerMenu();
+    $('.fal').removeClass('downArrow');
+    $("#menu-bar-right").css('background-color', '#C3D69B');
+    clickMenu = false;
+  });
+
+  function editPersonalInfo(){
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url('/PersonalSettings/remoteOpenEntryForm') ?>",
+      success: function(html){
+        modalOpen.call(window, html, 'p-personal-update', '個人設定', 'moment');
+      },
+      error: function(html) {
+        console.log('error');
+      }
+    });
+  }
 </script>

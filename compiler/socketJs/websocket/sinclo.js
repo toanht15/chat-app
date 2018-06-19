@@ -35,6 +35,21 @@
         if(String(flg) === "true" && typeof ga == "function"){
           ga('send', 'event', 'sinclo', 'clickMaximize', location.href, 1);
         }
+        if(String(flg) === "false" && typeof ga == "function"){
+          ga('send', 'event', 'sinclo', 'clickMinimize', location.href, 1);
+          //ウィジェットを最小化した回数追加
+          var now = new Date();
+          month = ('0' + (now.getMonth() + 1)).slice(-2);
+          day = ('0' + now.getDate()).slice(-2);
+          hour = ('0' + now.getHours()).slice(-2);
+          emit('addClickMinimizeCounts', {
+            siteKey: sincloInfo.site.key,
+            year: now.getFullYear(),
+            month: month,
+            day: day,
+            hour: hour
+          });
+        }
       },
       ev: function() {
         if(!common.widgetHandler.isShown()) {
@@ -129,6 +144,22 @@
       },
       //閉じるボタンがクリックされた時の挙動
       closeBtn: function(){
+        //閉じるボタンをクリックした回数
+        if(typeof ga == "function") {
+          ga('send', 'event', 'sinclo', 'clickClose', location.href, 1);
+          //閉じるボタンクリック数追加
+          var now = new Date();
+          month = ('0' + (now.getMonth() + 1)).slice(-2);
+          day = ('0' + now.getDate()).slice(-2);
+          hour = ('0' + now.getHours()).slice(-2);
+          emit('addClickCloseCounts', {
+            siteKey: sincloInfo.site.key,
+            year: now.getFullYear(),
+            month: month,
+            day: day,
+            hour: hour
+          });
+        }
         //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
         if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1){
           //バナー表示にする
@@ -1357,6 +1388,13 @@
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
+          if(obj.messageType !== sinclo.chatApi.messageType.auto && storage.s.get('requestFlg') === 'true') {
+            //自動返信を出した数
+            if(typeof ga == "function"){
+              ga('send', 'event', 'sinclo', 'autoChat', location.href, 1);
+            }
+            storage.s.set('requestFlg',false);
+          };
           if(obj.tabId === userInfo.tabId) {
             this.chatApi.scDown();
             return false;
@@ -2687,6 +2725,7 @@
               if(typeof ga == "function"){
                 ga('send', 'event', 'sinclo', 'sendChat', location.href, 1);
               }
+              storage.s.set('requestFlg',true);
               messageRequestFlg = flg;
             }
 
@@ -4033,7 +4072,11 @@
             matchAllSpeechContent: function(msg, callback) {
               // FIXME マッチした処理が２回以上の場合、チャット送信処理も２回以上処理される
               var matched = false;
-              if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false" || (!sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput())) && this.speechContentRegEx.length > 0) {
+              if((
+                !check.isset(storage.s.get('operatorEntered'))
+                || storage.s.get('operatorEntered') === "false"
+                || (!sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput())
+              ) && this.speechContentRegEx.length > 0) {
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
@@ -4757,9 +4800,10 @@
         self.set(self._lKey.allowSave, true);
       },
       _disallowSaveing: function() {
-        var self = sinclo.scenarioApi;
-        var flg = self.get(self._lKey.allowSave);
-        return flg == null || flg === "false" || flg === false;
+        // var self = sinclo.scenarioApi;
+        // var flg = self.get(self._lKey.allowSave);
+        // return flg == null || flg === "false" || flg === false;
+        return false;
       },
       _saveVariable: function(valKey, value) {
         var self = sinclo.scenarioApi;
@@ -5000,7 +5044,7 @@
         },
         _beginValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
-          if(!self._watcher) {
+          if(!check.isIE() && !self._watcher) {
             console.log("BEGIN TIMER");
             if(sinclo.scenarioApi.isScenarioLFDisabled()) {
               sinclo.chatApi.showMiniMessageArea();
@@ -5030,7 +5074,7 @@
         },
         _endValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
-          if(self._watcher) {
+          if(!check.isIE() && self._watcher) {
             console.log("END TIMER");
             clearInterval(self._watcher);
             self._watcher = null;
@@ -5409,7 +5453,6 @@
           }
           dataObj.push(obj);
           self._parent._saveVariable(self._downloadUrlKey, JSON.stringify(dataObj));
-          debugger;
         },
         _showError: function() {
           var self = sinclo.scenarioApi._sendFile;

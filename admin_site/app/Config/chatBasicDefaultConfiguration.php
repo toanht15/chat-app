@@ -26,6 +26,7 @@ $config['default'] = [
     ],
     'basic_without_scenario' => [
       'sc_flg' => 2,
+      'in_flg' => 1,
       'sc_default_num' => 2,
       'outside_hours_sorry_message' => 'お問い合わせありがとうございます。
 申し訳ございませんが、只今営業時間外となりますので、後ほど担当よりご連絡させて頂きます。
@@ -47,7 +48,8 @@ $config['default'] = [
 お客様のご連絡先（会社名、お名前、メールアドレス）はすべてご入力いただけましたでしょうか？
 
 [] はい、すべて入力しました。
-[] いいえ、入力していません。'
+[] いいえ、入力していません。',
+      'initial_notification_message' => '{"0":{"seconds":"1","message":"ただいま担当の者を呼び出しておりますので、そのままでお待ちください。"}}',
     ]
   ]
 ];

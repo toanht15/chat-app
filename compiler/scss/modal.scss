@@ -1107,6 +1107,70 @@
         }
       }
 
+      /* 個人設定-更新ダイアログ用 */
+      &.p-personal-update {
+        width: 425px;
+        height: 424px;
+        #MUserRemoteOpenEntryFormForm{
+          .form01 {
+            .item {
+              display:flex;
+              .labelArea {
+                width:12em;
+              }
+              span {
+                -ms-flex-align: center;
+                align-items: center;
+                -ms-flex-pack: start;
+                justify-content: flex-start;
+                display: -ms-flexbox;
+                display: flex;
+                width: 280px;
+                padding-left: 9px;
+              }
+            }
+            #popup-main {
+              input[type='checkbox'] {
+                width: auto;
+              }
+              input, select {
+                height: 26px;
+                font-size: 12px;
+                margin: 2px 5px;
+                width: 260px;
+                padding-left: 4px;
+              }
+            }
+            #set_password_area{
+              border: 1px solid #909090;
+              border-radius: 10px;
+              margin-left: 0px;
+              li {
+                display:block;
+              }
+            }
+          }
+        }
+        #popup-main {
+          .form01 div {
+            margin: 5px 0;
+          }
+          img {
+            float: left;
+          }
+        }
+        #popup-button a {
+          width: 75px;
+          float: left;
+          margin: 0 68px;
+        }
+        .error-message {
+          padding: 0;
+          margin: 0 0 0 110px;
+          color: #F57E7E;
+        }
+      }
+
       /* 確認ダイアログ */
       &.p-confirm {
         width: 400px;
@@ -1462,12 +1526,12 @@
     }
   }
 
- .explainTooltip{
+  .explainTooltip{
     z-index: 10;
     position: absolute;
 
     icon-annotation {
-      width: 16em;
+      width: 25em;
       height: 2.1em;
       display: none;
 
@@ -1479,7 +1543,7 @@
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -42px;
+        bottom: -140px;
         left: 5px;
         z-index: 1;
       }
@@ -1491,7 +1555,7 @@
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -40px;
+        bottom: -138px;
         left: 5px;
         z-index: 3;
       }
@@ -1514,6 +1578,32 @@
 
         span {
           font-size: 0.9em;
+        }
+      }
+    }
+    &#filterType1Tooltip {
+      icon-annotation {
+        &:before {
+          bottom: -108px;
+          left: 5px;
+        }
+
+        &:after {
+          bottom: -106px;
+          left: 5px;
+        }
+      }
+    }
+    &#filterType2Tooltip {
+      icon-annotation {
+        &:before {
+          bottom: -156px;
+          left: 5px;
+        }
+
+        &:after {
+          bottom: -154px;
+          left: 5px;
         }
       }
     }

@@ -8,8 +8,8 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 <div id='tcustomerinformationsettings_idx' class="card-shadow">
 
   <div id='tcustomerinformationsettings_title'>
-    <div class="fLeft"><?= $this->Html->image('dictionary_g.png', array('alt' => 'カスタム変数', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
-    <h1>訪問ユーザー情報設定<span id="sortMessage"></span></h1>
+    <div class="fLeft"><i class="fal fa-address-card fa-2x"></i></div>
+    <h1>訪問ユーザ情報設定<span id="sortMessage"></span></h1>
   </div>
 
   <div id='tcustomerinformationsettings_description'>

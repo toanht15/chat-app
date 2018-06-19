@@ -59,6 +59,52 @@ class htmlExHelper extends AppHelper {
         return sprintf($_tmp, $a, $this->Html->image($img['src'], $img['option']), $title);
     }
 
+  public function naviFaIconLink($title, $falClass, $urlOpt = [], $isSubMenu = false){
+      if($isSubMenu) {
+        $_tmp = "<a %s><p class='icon-wrap'><i class='icon fal %s'></i></p><p>%s</p></a>";
+      } else {
+        $_tmp = "<a %s><i class='icon fal %s'></i><p>%s</p></a>";
+      }
+    $img = [
+      'src' => null,
+      'alt' => null
+    ];
+    $a = null;
+
+    // setting href
+    if ( !empty($urlOpt['href']) || !empty($urlOpt['onclick'])  || !empty($urlOpt['target']) ) {
+      if ( empty($urlOpt['href']) ) {
+        $a = "href='javascript:void(0)'";
+        if ( empty($urlOpt['onclick']) ) {
+          $a .= " onclick='" . h($urlOpt['onclick']) . "'";
+        }
+      }
+      else {
+        $a = "href='" . $this->Html->url($urlOpt['href']) . "'";
+        if ( !empty($urlOpt['onclick']) ) {
+          $a .= " onclick='" . h($urlOpt['onclick']) . "'";
+        }
+      }
+      if ( !empty($urlOpt['target']) ) {
+        $a .= " target='" . h((string)$urlOpt['target']) . "'";
+      }
+    }
+    //commontooltip用
+    if ( !empty($urlOpt['class'])) {
+      $a .= " class='" . h((string)$urlOpt['class']) . "'";
+    }
+    if ( !empty($urlOpt['data-text'])) {
+      $a .= " data-text='" . h((string)$urlOpt['data-text']) . "'";
+    }
+    if ( !empty($urlOpt['data-balloon-position'])) {
+      $a .= " data-balloon-position='" . h((string)$urlOpt['data-balloon-position']) . "'";
+    }
+    if ( !empty($urlOpt['data-content-position-left'])) {
+      $a .= " data-content-position-left='" . h((string)$urlOpt['data-content-position-left']) . "'";
+    }
+    return sprintf($_tmp, $a, $falClass, $title);
+  }
+
     public function timepad($str){
         return sprintf("%02d", $str);
     }
@@ -117,6 +163,60 @@ class htmlExHelper extends AppHelper {
         }
         return $content;
     }
+
+    public function visitorInput($record, $forceInputText = false, $showPlaceHolder = true, $value = "") {
+      if($forceInputText && strcmp($record['input_type'], 2) === 0) {
+        $record['input_type'] = 1;
+      }
+      $placeholderAttr = "";
+      if($showPlaceHolder) {
+        $placeholderAttr = 'placeholder="'.$record['item_name'].'を追加"';
+      }
+      switch($record['input_type']) {
+        case 1: // テキストボックス
+          return sprintf('<input class="infoData" id="ng-customer-custom-%s" type="text" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" value="%s" %s/>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $value, $placeholderAttr);
+        case 2: // テキストエリア
+          return sprintf('<textarea class="infoData" rows="7" id="ng-customer-custom-%s" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" value="%s" %s></textarea>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $value, $placeholderAttr);
+        case 3: // テキストエリア
+          $options =  explode("\n", $record['input_option']);
+          $html = sprintf('<select class="infoData" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" data-key="%s" ng-model="customData[\'%s\']" value="%s">', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $value);
+          $html .= '<option value="">選択してください</option>';
+          for($i = 0; $i < count($options); $i++) {
+            if(strcmp($options[$i], $value) === 0) {
+              $html .= sprintf('<option value="%s" selected>%s</option>', $options[$i], $options[$i]);
+            } else {
+              $html .= sprintf('<option value="%s">%s</option>', $options[$i], $options[$i]);
+            }
+          }
+          $html .= '</select>';
+          return $html;
+      }
+    }
+
+  public function visitorSearchInput($record, $forceInputText = false, $showPlaceHolder = true) {
+    if($forceInputText && strcmp($record['input_type'], 2) === 0) {
+      $record['input_type'] = 1;
+    }
+    $placeholderAttr = "";
+    if($showPlaceHolder) {
+      $placeholderAttr = 'placeholder="%sを追加"';
+    }
+    switch($record['input_type']) {
+      case 1: // テキストボックス
+        return sprintf('<input id="ng-customer-custom-%s" type="text" name="data[CustomData][%s]"/>', $record['id'], $record['item_name']);
+      case 2: // テキストエリア
+        return sprintf('<textarea rows="7" id="ng-customer-custom-%s" name="data[CustomData][%s]"></textarea>', $record['id'], $record['item_name']);
+      case 3: // テキストエリア
+        $options =  explode("\n", $record['input_option']);
+        $html = sprintf('<select id="ng-customer-custom-%s" name="data[CustomData][%s]">', $record['id'], $record['item_name']);
+        $html .= '<option value="">選択してください</option>';
+        for($i = 0; $i < count($options); $i++) {
+          $html .= sprintf('<option value="%s">%s</option>', $options[$i], $options[$i]);
+        }
+        $html .= '</select>';
+        return $html;
+    }
+  }
 
     private function makeSendChatView($value){
       $content = "";

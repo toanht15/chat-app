@@ -7,7 +7,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 <div id='tautomessages_idx' class="card-shadow">
 
   <div id='tautomessages_title'>
-    <div class="fLeft"><?= $this->Html->image('auto_message_g.png', array('alt' => 'オートメッセージ設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><i class="fal fa-comments fa-2x"></i></div>
     <h1>オートメッセージ設定</h1>
   </div>
 

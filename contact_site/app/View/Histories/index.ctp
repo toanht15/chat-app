@@ -4,7 +4,7 @@
 <div id='history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainController">
 
   <div id='history_title'>
-    <div class="fLeft"><?= $this->Html->image('personal_g.png', array('alt' => 'アクセス履歴', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><i class="fal fa-user-alt fa-2x"></i></div>
       <h1>アクセス履歴</h1>
       <?= $this->Html->link(
         'ＣＳＶ出力',

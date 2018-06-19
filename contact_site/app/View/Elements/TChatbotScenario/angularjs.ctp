@@ -1641,6 +1641,31 @@ function actionValidationCheck(element, setActionList, actionItem) {
     if (!actionItem.tChatbotScenarioSendFileId || !actionItem.file || !actionItem.file.download_url || !actionItem.file.file_size) {
       messageList.push('ファイルが未選択です');
     }
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+    if (!actionItem.referenceVariable) {
+      messageList.push('参照する変数名が未入力です');
+    }
+    var validMatchValues = actionItem.conditionList.some(function(obj) {
+      return !!obj.matchValue;
+    });
+    if (!validMatchValues) {
+      messageList.push('条件が未入力です');
+    }
+
+    var validMessageActions = actionItem.conditionList.some(function(obj) {
+      return obj.actionType === "1" && !!obj.action.message;
+    });
+    if (!validMessageActions) {
+      messageList.push('アクションのメッセージが未入力です');
+    }
+
+    var validCallScenarioActions = actionItem.conditionList.some(function(obj) {
+      return obj.actionType === "2" && !!(obj.action.callScenarioId !== "");
+    });
+    if (!validCallScenarioActions) {
+      messageList.push('呼出先のシナリオを選択して下さい');
+    }
   }
 
   // 使用されている変数名を抽出する

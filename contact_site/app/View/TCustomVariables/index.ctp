@@ -8,7 +8,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 <div id='tcustomvariables_idx' class="card-shadow">
 
   <div id='tcustomvariables_title'>
-    <div class="fLeft"><?= $this->Html->image('dictionary_g.png', array('alt' => 'カスタム変数', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><i class="fal fa-percent fa-2x"></i></div>
     <h1>カスタム変数<span id="sortMessage"></span></h1>
   </div>
 

@@ -5,6 +5,7 @@
  * @property TCustomerInformationSettings $TCustomerInformationSettings
  */
 class TCustomerInformationSettingsController extends AppController {
+  public $components = ['NodeSettingsReload'];
   public $uses = ['TCustomerInformationSetting','TCustomVariable'];
   public $paginate = [
     'TCustomerInformationSetting' => [
@@ -125,11 +126,13 @@ class TCustomerInformationSettingsController extends AppController {
     // バリデーションチェックでエラーが出た場合
     if ( $this->TCustomerInformationSetting->save() ) {
       $this->TCustomerInformationSetting->commit();
+      NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
     }
     else {
       $this->TCustomerInformationSetting->rollback();
     }
+
     $errorMessage = $this->TCustomerInformationSetting->validationErrors;
     return new CakeResponse(['body' => json_encode($errorMessage)]);
   }
@@ -153,6 +156,7 @@ class TCustomerInformationSettingsController extends AppController {
     }
     if($res){
       $this->TCustomerInformationSetting->commit();
+      NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
     }
     else{
@@ -230,6 +234,7 @@ class TCustomerInformationSettingsController extends AppController {
         }
         else{
           $this->TCustomerInformationSetting->commit();
+          NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
           $this->Session->delete('dstoken');
           $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         }
@@ -314,6 +319,7 @@ class TCustomerInformationSettingsController extends AppController {
       }
       if ($ret) {
         $this->TCustomerInformationSetting->commit();
+        NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       }
       else {
@@ -382,6 +388,7 @@ class TCustomerInformationSettingsController extends AppController {
     }
     if ($ret) {
       $this->TCustomerInformationSetting->commit();
+      NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
       return true;
     }
     else {

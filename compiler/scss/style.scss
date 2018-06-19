@@ -870,7 +870,7 @@ ul.ulTab {
   left: 0;
   background-color: #FFF;
   z-index: $sidebar-z-index + 1;
-  width: 60px;
+  width: 80px;
   height: 60px;
 }
 
@@ -887,17 +887,77 @@ ul.ulTab {
   overflow: hidden;
 }
 
-/* ヘッダー：サイドバー */
+/* ヘッダー：メニュー */
+#colorBarMenu {
+  display: none;
+  position: absolute;
+  top: 48px;
+  right: 15px;
+  width: 193px;
+  font-size: 12px;
+  z-index: 9999;
+  ul {
+    border: solid 1px #ccc;
+    display: block;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    padding: 5px 0px !important;
+    background: #fff;
+    position: relative;
+    hr.separator {
+      margin-top: 0.1em;
+      margin-bottom: 0.1em;
+      display: block;
+      width: 95%;
+      height: 1px;
+      background-color: #EDEDED;
+      border: 0;  /*デフォルトデザインでは線がある場合があるので、消しておく。*/
+      &.indent {
+        width: 384px;
+        position: relative;
+        left: -5px;
+      }
+    }
+    li:hover {
+      background-color: #ECF4DA;
+      /*color: #fff;*/
+      text-decoration: none;
+      display: block;
+      padding: 10px 10px 10px;
+      a{
+        color:#595959;
+      }
+    }
+    li.t-link {
+      padding: 0px 0px 0px;
+      width: 100%;
+      height: 100%;
+      display:flex;
+      cursor:pointer;
+      a{
+        text-decoration: none;
+        display: block;
+        padding: 10px 10px 10px
+      }
+      img {
+        margin: 0;
+        padding: 4px 4px 4px;
+      }
+    }
+  }
+}
 
-div[id^="sidebar-"] {
+/* ヘッダー：サイドバー */
+#sidebar-main {
   position: absolute;
   top: 0;
   left: 0;
   bottom: 0;
+}
+
+#sidebar-main, .sidebar-sub {
   overflow: hidden;
   .icon {
-    height: 60px !important;
-    padding: 7.5px 0 !important;
+    padding: 7px 0 !important;
     position: relative;
     cursor: pointer;
   }
@@ -922,77 +982,92 @@ div[id^="sidebar-"] {
 }
 
 #sidebar-main {
-  background-color: #595959;
+  background-color: #6C6C6C;
   z-index: $sidebar-z-index;
   padding-top: 85px;
-  width: 60px;
+  width: 80px;
+  a {
+    text-decoration: none;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+  }
   .icon {
-    width: 60px !important;
+    font-size: 1.4em;
+    width: 80px !important;
+    color: #FFF;
+    text-align: center;
     &.selected, &:hover {
-      background-color: #929292;
-      box-shadow: 0 0 3px $shadow-color;
+      background-color: #959595;
     }
   }
 }
 
-div[id^="sidebar-"] .icon {
-  a {
-    display: flex;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-  img {
-    margin: 7px auto 0 auto;
-    display: block;
-    transform: scale(0.8);
-  }
-  &:hover img {
-    transform: scale(1);
-    transition: transform 0.3s ease;
-  }
+#sidebar-main .icon {
   p {
     height: 15px !important;
     font-size: 11px;
     text-align: center;
     margin: 0 auto;
     color: #FFF;
-    padding-top: 4px;
-    position: absolute;
-    bottom: 5px;
-    left: 0;
-    right: 0;
+    padding-top: 0px;
     &:hover {
       cursor: pointer;
+      background-color: #959595;
     }
   }
 }
 
-#sidebar-sub {
-  background-color: #929292;
+.sidebar-sub {
+  display: inline-block;
+  background-color: #959595;
   z-index: $sub-sidebar-z-index;
-  padding-top: 115px;
-  transition: left 0.1s linear;
-  width: 80px;
+  width: auto;
   left: -20px;
-  &.open {
-    left: 60px;
-    transition: left 0.15s linear;
-  }
-  .icon {
-    width: 80px !important;
-    &:hover {
-      background-color: #B9B9B9;
-      box-shadow: 0 0 3px $shadow-color;
+  div.icon {
+  padding: 0px!important;
+    a {
+      color: #FFF;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+      margin: 0;
+      &:hover {
+        background-color: #B7CF89;
+        font-weight: bold;
+      }
+      p.icon-wrap {
+        display: inline-block;
+        flex-basis: 35px;
+        align-items: center;
+        margin: 0.5em 0;
+        i.icon {
+          color: #FFF;
+          width:25px;
+          font-size: 18px;
+          margin-left:0.5em;
+          text-align: center;
+        }
+      }
+      p:not(.icon-wrap) {
+        text-align: left;
+        flex-basis: auto;
+        color: #FFF;
+        font-size: 13px;
+        margin-left: 0.5em;
+        margin-right: 2em;
+        width: 100%;
+      }
     }
   }
 }
 
 /* ヘッダー：上部カラーバー */
 ul#color-bar-right {
-  margin: 0;
+  margin:0 15px 0 0;
   li {
     height: 60px !important;
     padding: 0 10px;
@@ -1007,18 +1082,29 @@ ul#color-bar-right {
   }
 }
 
-#logout{
+#menu-bar-right{
   cursor: pointer;
-
+  p {
+    cursor:pointer;
+    display:flex;
+    i {
+      color:#fff;
+      line-height: 0.6;
+      margin-left: 10px;
+    }
+  }
   &:hover {
     background-color: $header-btn-hover-color;
-    box-shadow: 0 0 3px $shadow-color;
   }
 
+  .downArrow::before {
+    content: "\f107";
+  }
   span {
     font-weight: bold;
   }
 }
+
 
 /* コンテンツ */
 #content { overflow: auto }
@@ -2069,8 +2155,9 @@ ul.naviBtn {
         }
 
         #rightContents {
-
           .detailForm {
+            height: 262px;
+            overflow-y: scroll;
             ul {
               display: inline-block;
               width: 100%;
@@ -2078,12 +2165,20 @@ ul.naviBtn {
               li {
                 height: 1.6em;
                 margin: 0.25em 0;
+
+                &.auto-height {
+                  height: auto;
+                }
+
                 label {
                   width: 35%;
                   display: block;
                   float: left;
                   clear: both;
                   padding: 0.25em 0.5em;
+                  &.no-float {
+                    float: none;
+                  }
                 }
                 input {
                   width: 65%;
@@ -6126,7 +6221,7 @@ ul.naviBtn {
               display: inline-block;
 
               ul {
-                height: 397px;
+                height: 361px;
                 border: 1px solid #969696;
                 overflow-x: hidden;
                 overflow-y: auto;
@@ -8894,10 +8989,6 @@ ul.naviBtn {
       padding: 0.5em;
       margin-top: 1em;
       margin-left: 1.8em;
-    }
-
-    .summarized {
-      margin-left:10px;
     }
 
     .choiseButton{
