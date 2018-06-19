@@ -113,6 +113,22 @@
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
             }
+            //ウィジェットを最小化した回数
+            if(typeof ga == "function"){
+              ga('send', 'event', 'sinclo', 'clickMinimize', location.href, 1);
+              //ウィジェットを最小化した回数追加
+              var now = new Date();
+              month = ('0' + (now.getMonth() + 1)).slice(-2);
+              day = ('0' + now.getDate()).slice(-2);
+              hour = ('0' + now.getHours()).slice(-2);
+              emit('addClickMinimizeCounts', {
+                siteKey: sincloInfo.site.key,
+                year: now.getFullYear(),
+                month: month,
+                day: day,
+                hour: hour
+              });
+            }
             height = this.header.offsetHeight;
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
@@ -129,6 +145,22 @@
       },
       //閉じるボタンがクリックされた時の挙動
       closeBtn: function(){
+        //閉じるボタンをクリックした回数
+        if(typeof ga == "function") {
+          ga('send', 'event', 'sinclo', 'clickClose', location.href, 1);
+          //閉じるボタンクリック数追加
+          var now = new Date();
+          month = ('0' + (now.getMonth() + 1)).slice(-2);
+          day = ('0' + now.getDate()).slice(-2);
+          hour = ('0' + now.getHours()).slice(-2);
+          emit('addClickCloseCounts', {
+            siteKey: sincloInfo.site.key,
+            year: now.getFullYear(),
+            month: month,
+            day: day,
+            hour: hour
+          });
+        }
         //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
         if(Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1){
           //バナー表示にする
@@ -1357,6 +1389,13 @@
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
+          if(obj.messageType !== sinclo.chatApi.messageType.auto && storage.s.get('requestFlg') === 'true') {
+            //自動返信を出した数
+            if(typeof ga == "function"){
+              ga('send', 'event', 'sinclo', 'autoChat', location.href, 1);
+            }
+            storage.s.set('requestFlg',false);
+          };
           if(obj.tabId === userInfo.tabId) {
             this.chatApi.scDown();
             return false;
@@ -2687,6 +2726,7 @@
               if(typeof ga == "function"){
                 ga('send', 'event', 'sinclo', 'sendChat', location.href, 1);
               }
+              storage.s.set('requestFlg',true);
               messageRequestFlg = flg;
             }
 
@@ -2724,7 +2764,7 @@
                   messageRequestFlg: messageRequestFlg,
                   initialNotification: initialNotification,
                   isAutoSpeech : result,
-                  notifyToCompany: !result,
+                  notifyToCompy: !result,
                   isScenarioMessage: isScenarioMessage
                 });
               }, 100);

@@ -200,22 +200,6 @@
         <td><?php echo number_format($data['requestDatas']['allRequestNumberData']) ?></td>
       </tr>
       <tr>
-        <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
-          <div class="questionBalloon questionBalloonPosition8">
-            <icon class="questionBtn">？</icon>
-          </div>
-        </td>
-        <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <?php if(is_int($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
-            <td><?php echo number_format($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
-          <?php }
-            else { ?>
-              <td><?php echo ($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
-            <?php } ?>
-        <?php } ?>
-        <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
-      </tr>
-      <tr>
         <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>自動返信応対件数
           <div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
@@ -230,6 +214,22 @@
           <?php } ?>
         <?php } ?>
         <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
+      </tr>
+      <tr>
+        <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
+          <div class="questionBalloon questionBalloonPosition8">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+        <?php for ($i = $start; $i <= $end; $i++) { ?>
+          <?php if(is_int($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+          <?php }
+            else { ?>
+              <td><?php echo ($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php } ?>
+        <?php } ?>
+        <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
       </tr>
       <tr>
         <td id = 'chatDenialLabel' class = 'tooltip'>チャット拒否件数
@@ -421,17 +421,6 @@
           <td><?php echo number_format($data['requestDatas']['allRequestNumberData']) ?></td>
         </tr>
         <tr>
-        <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
-          <div class="questionBalloon questionBalloonPosition8">
-            <icon class="questionBtn">？</icon>
-          </div>
-        </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-                <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
-          <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
-        </tr>
-        <tr>
           <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>自動返信応対件数
             <div class="questionBalloon questionBalloonPosition8">
               <icon class="questionBtn">？</icon>
@@ -441,6 +430,17 @@
                 <td><?php echo number_format($data['automaticResponseData']['automaticResponseNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
           <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
+        </tr>
+        <tr>
+        <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
+          <div class="questionBalloon questionBalloonPosition8">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+                <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']) ?></td>
+          <?php } ?>
+          <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
         </tr>
         <tr>
           <td id = 'chatDenialLabel' class = 'tooltip'>チャット拒否件数
