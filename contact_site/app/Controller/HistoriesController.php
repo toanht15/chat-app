@@ -1,4 +1,6 @@
 <?php
+App::uses('CustomerInformationUtil', 'Vendor/Util');
+
 /**
  * HistoriesController controller.
  * 履歴一覧画面
@@ -354,7 +356,7 @@ class HistoriesController extends AppController {
         // 訪問ユーザ
         $row['customer'] = "";
         if ( !empty($history['MCustomer']['informations']) ) {
-          $informations = (array)json_decode($history['MCustomer']['informations']);
+          $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($history['MCustomer']['informations']));
           if ( isset($informations['company']) && $informations['company'] !== "" ) {
             $row['customer'] .= $informations['company'];
           }
@@ -471,7 +473,7 @@ class HistoriesController extends AppController {
         //訪問ユーザ
         $row['customer'] = "";
         if ( !empty($val['MCustomer']['informations']) ) {
-          $informations = (array)json_decode($val['MCustomer']['informations']);
+          $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($val['MCustomer']['informations']));
           if ( isset($informations['company']) && $informations['company'] !== "" ) {
             $row['customer'] .= $informations['company'];
           }
@@ -790,7 +792,26 @@ class HistoriesController extends AppController {
     $userCond = [
       'MCustomer.m_companies_id' => $this->userInfo['MCompany']['id'],
     ];
-    $keys = ['company_name' => 'company', 'customer_name' => 'name', 'telephone_number' => 'tel', 'mail_address' => 'mail'];
+
+    $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+      'conditions' => array(
+        'delete_flg' => 0,
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ),
+      'order' => array(
+        'sort' => 'asc'
+      )
+    ));
+
+    $customerInformationSettingList = [];
+    foreach($customerSettingList as $k => $v) {
+      array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+    }
+
+    $customerInfoDisplaySettingMap = array();
+    foreach($customerSettingList as $index => $customerData) {
+      $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['item_name'];
+    }
 
     $allusers = $this->MCustomer->find('all', [
       'fields' => '*',
@@ -799,8 +820,8 @@ class HistoriesController extends AppController {
 
     foreach($allusers as $alluser) {
       $setFlg = false;
-      $settings = (array)json_decode($alluser['MCustomer']['informations']);
-      foreach ($keys as $key => $val) {
+      $settings = CustomerInformationUtil::convertOldIFData((array)json_decode($alluser['MCustomer']['informations']));
+      foreach ($customerInfoDisplaySettingMap as $key => $val) {
         if ( isset($data[$key]) && $data[$key] != "" ) {
           if ( !(isset($settings[$val]) && $settings[$val] != "" && strstr($settings[$val], $data[$key])) ) {
             $setFlg = false;
@@ -866,7 +887,7 @@ class HistoriesController extends AppController {
       /* ○ 検索処理 */
 
       /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-      if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
+      if((isset($data['CustomData'])) || ((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "")) ) {
         //会社名が入っている場合
         if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
           //会社名がランドスケープテーブルに登録されている場合
@@ -893,13 +914,13 @@ class HistoriesController extends AppController {
             );
           }
           else {
-            $visitorsIds = $this->_searchCustomer($data['History']);
+            $visitorsIds = $this->_searchCustomer($data['CustomData']);
             $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
             $chatCond['visitors_id'] = $visitorsIds;
           }
         }
         else {
-          $visitorsIds = $this->_searchCustomer($data['History']);
+          $visitorsIds = $this->_searchCustomer($data['CustomData']);
           $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
           $chatCond['visitors_id'] = $visitorsIds;
         }
@@ -1154,8 +1175,8 @@ class HistoriesController extends AppController {
       ]
     ]);
     // いったんJSONデータをデコードする
-    foreach($mCustomerList as $k => &$v) {
-      $v = json_decode($v, TRUE);
+    foreach($mCustomerList as $key => $value) {
+      $mCustomerList[$key] = json_decode($value, TRUE);
     }
 
     $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
