@@ -1,4 +1,6 @@
   <?php
+  App::uses('CustomerInformationUtil', 'Vendor/Util');
+
   /**
    * ChatHistoriesController controller.
    * チャット履歴一覧画面
