@@ -59,6 +59,7 @@ define('C_COMPANY_USE_OPERATOR_PRESENCE_VIEW', 'operatorPresenceView'); // オ�
 define('C_COMPANY_USE_REALTIME_MONITOR_POLLING_MODE', 'monitorPollingMode'); // リアルタイムモニタの情報取得方法変更（ポーリング式）
 define('C_COMPANY_USE_CHATBOT_SCENARIO', 'chatbotScenario');  // チャットボットシナリオ設定
 define('C_COMPANY_USE_CAMPAIGN', 'campaign');  // キャンペーン設定
+define('C_COMPANY_USE_CHATCALLMESSAGES', 'chatCallMessages');  // チャット呼出中メッセージ
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
@@ -118,6 +119,10 @@ define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
 // チャット対応数制限
 define('C_SC_ENABLED', 1); // 利用する
 define('C_SC_DISABLED', 2); // 利用しない
+
+// チャット呼出中メッセージ
+define('C_IN_ENABLED', 1); // 利用する
+define('C_IN_DISABLED', 2); // 利用しない
 
 // 営業時間設定
 define('C_ACTIVE_ENABLED', 1); // 利用する

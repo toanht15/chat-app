@@ -7,7 +7,7 @@
     #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
     #sincloBox p#widgetTitle { text-align: center!important; padding: 7px 30px!important; position:relative; z-index: 1; cursor:pointer; border-radius: 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: 14px; margin: 0;color: {{string_color}}; height: 32px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}
     #sincloBox.open #minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-    #sincloBox div.widgetHeaderWrap:hover #widgetTitle { opacity: 0.75; }
+    #sincloBox div.widgetHeaderWrap:not(.sp):hover #widgetTitle { opacity: 0.75; }
     /*
           #sincloBox:not(.open) #addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
 */
@@ -21,7 +21,7 @@
     #sincloBox section.noDisplay { display: none }
     #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
     @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
-    #sincloBox ul#chatTalk { width: 100%; height: 100px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
+    #sincloBox ul#chatTalk { width: 100%; height: 100px; padding: 5px 5px 60px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
     #sincloBox ul#chatTalk.details { background-color: {{chat_talk_background_color}}; }
     #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 10px; font-size: 11px; line-height: 1.4; white-space: pre-wrap; color: {{message_text_color}}; }
     #sincloBox ul#chatTalk div.liLeft { text-align: left; }
@@ -69,7 +69,7 @@
     #sincloBox section#chatTab #messageBox.messageBox.details:not(.notNone){ border-top: none; }
     .disableCopy{ user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }
   </style>
-  <div class="widgetHeaderWrap">
+  <div class="widgetHeaderWrap sp">
     <!-- chat_message_copy 0 stayt -->
     <div ng-if="chat_message_copy == '0'">
       <!-- タイトル -->

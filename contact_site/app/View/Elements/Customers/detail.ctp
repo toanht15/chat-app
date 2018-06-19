@@ -136,26 +136,19 @@
       <div id="rightContents">
         <div class="detailForm card">
           <ul>
-            <li>
-              <label for="ng-customer-company">会社名</label>
-              <input type="text" id="ng-customer-company" ng-blur="saveCusInfo('company', customData)" ng-model="customData.company" placeholder="会社名を追加" />
-            </li>
-            <li>
-              <label for="ng-customer-name">名前</label>
-              <input type="text" id="ng-customer-name" ng-blur="saveCusInfo('name', customData)" ng-model="customData.name" placeholder="名前を追加">
-            </li>
-            <li>
-              <label for="ng-customer-tel">電話番号</label>
-              <input type="text" id="ng-customer-tel" ng-blur="saveCusInfo('tel', customData)" ng-model="customData.tel" placeholder="電話番号を追加" />
-            </li>
-            <li>
-              <label for="ng-customer-mail">メールアドレス</label>
-              <input type="text" id="ng-customer-mail" ng-blur="saveCusInfo('mail', customData)" ng-model="customData.mail" placeholder="メールアドレスを追加" />
-            </li>
-            <li>
-              <label for="ng-customer-memo">メモ</label>
-              <textarea rows="7" id="ng-customer-memo" ng-blur="saveCusInfo('memo', customData)" ng-model="customData.memo" placeholder="メモを追加"></textarea>
-            </li>
+            <?php
+            for($i = 0; $i < count($customerInformationList); $i++) {
+              if(strcmp($customerInformationList[$i]['TCustomerInformationSetting']['input_type'], "2") === 0) {
+                echo '<li class="auto-height">';
+                echo '  <label class="no-float" for="ng-customer-custom-'.$customerInformationList[$i]['TCustomerInformationSetting']['id'].'">'.$customerInformationList[$i]['TCustomerInformationSetting']['item_name'].'</label>';
+              } else {
+                echo '<li>';
+                echo '  <label for="ng-customer-custom-' . $customerInformationList[$i]['TCustomerInformationSetting']['id'] . '">' . $customerInformationList[$i]['TCustomerInformationSetting']['item_name'] . '</label>';
+              }
+              echo $this->htmlEx->visitorInput($customerInformationList[$i]['TCustomerInformationSetting']);
+              echo '</li>';
+            }
+            ?>
           </ul>
         </div>
         <div class="nowInfo card">
