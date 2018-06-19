@@ -20,22 +20,19 @@ popupEvent.closePopup = function(){
       <p><span>ipアドレス</span></p>
       <span><?= $this->Form->input('ip_address',['label'=>false,'div' => false]) ?></span>
     </li>
-    <li>
-      <p><span>会社名</span></p>
-      <span><?= $this->Form->input('company_name',['label'=>false,'div' => false]) ?></span>
-    </li>
-    <li>
-    <p><span>名前</span></p>
-      <span><?= $this->Form->input('customer_name',['label'=>false,'div' => false]) ?></span>
-    </li>
-    <li>
-      <p><span>電話番号</span></p>
-      <span><?= $this->Form->input('telephone_number',['label'=>false,'div' => false]) ?></span>
-    </li>
-    <li>
-      <p><span>メールアドレス</span></p>
-      <span><?= $this->Form->input('mail_address',['label'=>false,'div' => false]) ?></span>
-    </li>
+    <?php
+    for($i = 0; $i < count($customerInformationList); $i++) {
+      if(strcmp($customerInformationList[$i]['input_type'], "2") === 0) {
+        echo '<li class="auto-height">';
+        echo '  <p><span>'.$customerInformationList[$i]['item_name'].'</span></p>';
+      } else {
+        echo '<li>';
+        echo '  <p><span>'.$customerInformationList[$i]['item_name'].'</span></p>';
+      }
+      echo '  <span>'.$this->htmlEx->visitorSearchInput($customerInformationList[$i], true, false).'</span>';
+      echo '</li>';
+    }
+    ?>
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
       <li>
         <p><span>チャット担当者</span></p>

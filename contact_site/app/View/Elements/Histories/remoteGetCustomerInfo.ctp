@@ -42,7 +42,7 @@ $(document).ready(function(){
   </li>
   <?php foreach($infoList as $key => $val): ?>
     <li>
-      <p><span><?=$val?></span></p>
+      <p><span><?=$key?></span></p>
       <span>
       <?php
         $infoVal = "";
@@ -50,11 +50,7 @@ $(document).ready(function(){
           $infoVal = $data['informations'][$key];
         }
 
-        if ( strcmp($key, 'memo') === 0 ) {
-          echo $this->Form->textarea($key, ['rows'=>5, 'cols'=>25, 'class'=>'infoData', 'value'=>$infoVal, 'data-key'=>$key]);
-        } else {
-          echo $this->Form->input($key, ['type'=>'text', 'class'=>'infoData', 'value'=>$infoVal, 'data-key'=>$key, 'label' => false, 'div'=> false]);
-        }
+        echo $this->htmlEx->visitorInput($val, true, false, $infoVal);
       ?>
       </span>
     </li>

@@ -113,6 +113,7 @@ class TCustomVariablesController extends AppController {
     // バリデーションチェックでエラーが出た場合
     if ( $this->TCustomVariable->save() ) {
       $this->TCustomVariable->commit();
+      NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
     }
     else {
@@ -141,6 +142,7 @@ class TCustomVariablesController extends AppController {
     }
     if($res){
       $this->TCustomVariable->commit();
+      NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
     }
     else{
@@ -214,6 +216,7 @@ class TCustomVariablesController extends AppController {
         }
         else{
           $this->TCustomVariable->commit();
+          NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
           $this->Session->delete('dstoken');
           $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         }
@@ -298,6 +301,7 @@ class TCustomVariablesController extends AppController {
       }
       if ($ret) {
         $this->TCustomVariable->commit();
+        NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       }
       else {
@@ -366,6 +370,7 @@ class TCustomVariablesController extends AppController {
     }
     if ($ret) {
       $this->TCustomVariable->commit();
+      NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
       return true;
     }
     else {
