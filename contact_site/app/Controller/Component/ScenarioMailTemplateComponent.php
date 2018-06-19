@@ -35,8 +35,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     $this->scenarioMessageBlock = "";
   }
 
-  public function setSenarioRequiredData($mailType, $variables, $templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null) {
-    parent::setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData);
+  public function setSenarioRequiredData($mailType, $variables, $templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array()) {
+    parent::setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData, $customerInfo);
     $this->type = $mailType;
     $this->variables = $variables;
   }
@@ -93,6 +93,12 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
     if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
       $this->scenarioMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
+    }
+    if(!empty($this->customerInfo) && count($this->customerInfo) > 0) {
+      $this->scenarioMessageBlock .= "\n";
+      foreach($this->customerInfo as $key => $value) {
+        $this->scenarioMessageBlock .= $key."：".$value."\n";
+      }
     }
     if($withDownloadURL && !empty($this->variables[self::RECEIVE_FILE_VARIABLE_KEY])) {
       $this->scenarioMessageBlock .= "\n";
