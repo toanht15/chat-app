@@ -1,31 +1,6 @@
 <script type="text/javascript">
 
-$(document).ready(function(){
-  // ツールチップの表示制御
-  $(document).off('mouseenter','.variable_helpBtn').on('mouseenter','.variable_helpBtn', function(event){
-    var targetObj = $('.explainTooltip1');
-    targetObj.find('icon-annotation').css('display','block');
-    targetObj.css({
-      top: ( -(targetObj.find('ul').outerHeight()) - 28) + 'px',
-      left: (targetObj.find('ul').outerWidth() - 94) + 'px'
-    });
-  });
-  $(document).off('mouseleave','.variable_helpBtn').on('mouseleave','.variable_helpBtn', function(event){
-    $('.explainTooltip1').find('icon-annotation').css('display','none');
-  });
 
-  $(document).off('mouseenter','.selecter_helpBtn').on('mouseenter','.selecter_helpBtn', function(event){
-    var targetObj = $('.explainTooltip2');
-    targetObj.find('icon-annotation').css('display','block');
-    targetObj.css({
-      top: ( -(targetObj.find('ul').outerHeight()) + 18) + 'px',
-      left:(targetObj.find('ul').outerWidth() - 94) + 'px'
-    });
-  });
-  $(document).off('mouseleave','.selecter_helpBtn').on('mouseleave','.selecter_helpBtn', function(event){
-    $('.explainTooltip2').find('icon-annotation').css('display','none');
-  });
-});
 function openAddDialog(){
   //並べ替えチェックボックスが入っているときはリンク無効とする
   if (!document.getElementById("sort").checked) {
@@ -160,7 +135,7 @@ function openConfirmDialog(){
   for (var i = 0; i < list.length; i++){
     selectedList.push(Number(list[i].value));
   }
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'カスタム変数', 'moment');
+  modalOpen.call(window, "削除します、よろしいですか？<br><br>（参照設定されているカスタム変数は削除できません）", 'p-confirm', 'カスタム変数', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
     $.ajax({
       type: 'post',
@@ -172,8 +147,7 @@ function openConfirmDialog(){
       success: function(){
         location.href = "<?= $this->Html->url('/TCustomVariables/index') ?>";
       },
-      error: function() {
-        //debugger;
+      error: function(){
         console.log('error');
         location.href = "<?= $this->Html->url('/TCustomVariables/index') ?>";
       }
