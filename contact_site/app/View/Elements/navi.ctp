@@ -46,7 +46,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <?php if(!empty($trialTime)) { ?>
         <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
       <?php } ?>
-        <li class="fLeft" id = "menu-bar-right"><p style = "cursor:pointer;"><?= h($userInfo['display_name']) ?>さん</p></li>
+        <li class="fLeft" id = "menu-bar-right"><p><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-up fa-2x'></i></p></li>
     </ul>
 </div>
 <div id="colorBarMenu" style = "display:none;">
@@ -252,6 +252,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 </div>
 <!-- /* サイドバー２（ここまで） */ -->
 <script type="text/javascript">
+  var clickMenu = false;
 
   $(function(){
     var property = window.getComputedStyle($('a > i.icon')[0], '::before').getPropertyValue('width');
@@ -300,16 +301,38 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 
   $('#menu-bar-right').on('click', function(e) {
     e.stopPropagation();
+    //矢印下向きに変更
+    $('.fal').toggleClass('downArrow');
     var menu = document.getElementById("colorBarMenu").style.display;
     if(menu == "block"){
+      //メニュー非表示
       fadeOutLayerMenu();
+      $("#menu-bar-right").css('background-color', '#C3D69B');
     }
     else{
+      //メニュー表示
       fadeInLayerMenu();
+      $("#menu-bar-right").css('background-color', '#D6E8B0');
     }
+    clickMenu = true;
+    $("#menu-bar-right").mouseenter(function(){
+      $("#menu-bar-right").css('background-color', '#D6E8B0');
+    });
+    $('#menu-bar-right').mouseleave(function(){
+      if(clickMenu === false) {
+        $("#menu-bar-right").css('background-color', '#C3D69B');
+      }
+    });
   });
 
-  $(document).on('click', fadeOutLayerMenu);
+
+  $(document).on('click',function(){
+    //メニュー非表示
+    fadeOutLayerMenu();
+    $('.fal').removeClass('downArrow');
+    $("#menu-bar-right").css('background-color', '#C3D69B');
+    clickMenu = false;
+  });
 
   function editPersonalInfo(){
     $.ajax({
