@@ -1530,12 +1530,12 @@
     }
   }
 
- .explainTooltip{
+  .explainTooltip{
     z-index: 10;
     position: absolute;
 
     icon-annotation {
-      width: 16em;
+      width: 25em;
       height: 2.1em;
       display: none;
 
@@ -1547,7 +1547,7 @@
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -42px;
+        bottom: -140px;
         left: 5px;
         z-index: 1;
       }
@@ -1559,7 +1559,7 @@
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -40px;
+        bottom: -138px;
         left: 5px;
         z-index: 3;
       }
@@ -1582,6 +1582,32 @@
 
         span {
           font-size: 0.9em;
+        }
+      }
+    }
+    &#filterType1Tooltip {
+      icon-annotation {
+        &:before {
+          bottom: -108px;
+          left: 5px;
+        }
+
+        &:after {
+          bottom: -106px;
+          left: 5px;
+        }
+      }
+    }
+    &#filterType2Tooltip {
+      icon-annotation {
+        &:before {
+          bottom: -156px;
+          left: 5px;
+        }
+
+        &:after {
+          bottom: -154px;
+          left: 5px;
         }
       }
     }
