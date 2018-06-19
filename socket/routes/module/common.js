@@ -48,6 +48,7 @@ function exports() {
   module.exports.reloadAutoMessageSettings = loadAutoMessageSettings;
   module.exports.reloadOperationHourSettings = loadOperatingHourSettings;
   module.exports.reloadChatSettings = loadChatSettings;
+  module.exports.reloadCustomVariableSettings = loadCustomVariableSettings;
   module.exports.mysql = mysql;
   module.exports.pool = pool;
 }
