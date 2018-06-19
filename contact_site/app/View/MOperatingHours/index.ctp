@@ -10,7 +10,7 @@ if ( !(!empty($this->data['MOperatingHour']['active_flg']) && strcmp($this->data
 <div id='moperating_hours_idx' class="card-shadow">
   <div id='moperating_hours_add_title'>
      <div class="fLeft">
-        <?= $this->Html->image('operating_hour_g.png', array('alt' => 'チャット基本設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?>
+        <i class="fal fa-calendar-alt fa-2x"></i>
       </div>
     <h1>営業時間設定<span id="sortMessage"></span></h1>
   </div>

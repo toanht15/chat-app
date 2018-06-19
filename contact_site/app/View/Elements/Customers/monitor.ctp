@@ -1,6 +1,6 @@
 <!-- タイトル -->
 <div id='customer_title'>
-    <div class="fLeft"><?= $this->Html->image('monitor_g.png', array('alt' => 'リアルタイムモニタ', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><i class="fal fa-home fa-2x"></i></div>
     <h1>リアルタイムモニタ
 <?php if ( $widgetCheck ){ ?>
   <?php if(strcmp($userInfo['permission_level'], C_AUTHORITY_NORMAL) !== 0): ?>

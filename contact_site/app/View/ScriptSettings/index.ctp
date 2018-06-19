@@ -28,7 +28,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
 <div id='script_setting_idx' class="card-shadow">
 
 <div id='script_setting_title'>
-  <div class="fLeft"><?= $this->Html->image('script_g.png', array('alt' => $mainTitle, 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+  <div class="fLeft"><i class="fal fa-code fa-2x"></i></div>
     <h1><?=$mainTitle?></h1>
 </div>
 <div id='script_setting_content' class="p20x">
