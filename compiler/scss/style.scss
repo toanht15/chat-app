@@ -891,7 +891,7 @@ ul.ulTab {
 #colorBarMenu {
   display: none;
   position: absolute;
-  top: 28px;
+  top: 48px;
   right: 15px;
   width: 193px;
   font-size: 12px;
@@ -1084,17 +1084,22 @@ ul#color-bar-right {
 
 #menu-bar-right{
   cursor: pointer;
-
-  &:hover {
-    background-color: $header-btn-hover-color;
-    box-shadow: 0 0 3px $shadow-color;
-    p::after {
-      content: "✔";
+  p {
+    cursor:pointer;
+    display:flex;
+    i {
       color:#fff;
+      line-height: 0.6;
       margin-left: 10px;
     }
   }
+  &:hover {
+    background-color: $header-btn-hover-color;
+  }
 
+  .downArrow::before {
+    content: "\f107";
+  }
   span {
     font-weight: bold;
   }
