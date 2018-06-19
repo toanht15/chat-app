@@ -1735,10 +1735,14 @@
         margin-top: 0px;
         padding: 1px;
         max-height: 88px;
-        overflow-y: scroll;
+        overflow-y: hidden;
         word-break : break-all;
         line-height: 18px;
       }
+    }
+
+    &#SelectListWrap > span{
+      margin-top: 10px;
     }
 
     #pulldown_label{
@@ -1759,7 +1763,7 @@
 
     input[type="checkbox"]{
       display: inline-block;
-      margin: 0 2px;
+      margin: 0 0px;
       padding: 0;
       vertical-align: middle;
       position: relative;

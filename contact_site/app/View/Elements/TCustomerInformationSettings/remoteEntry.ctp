@@ -9,33 +9,44 @@
 
     var labelposition = $("#pulldown_label")
     $("#TCustomerInformationSettingInputOption").height(8);
-    var addsize = 16;
+    var heightsize = 16;
 
 
 
     //入力量に応じてプルダウンのテキスト入力エリアが拡大する処理
     var column_size = 1;
-    console.log(column_size);
+
     $("#TCustomerInformationSettingInputOption").on("input",function(e){
+      var scroll_flg = false;
       if($(e.target).get(0).scrollHeight > $(e.target).get(0).offsetHeight){
         $(e.target).height(e.target.scrollHeight);
         //5行分まではポップアップを同時に拡大する処理
-        if(column_size < 5){
-          popupframe.height(popupframe.height()+addsize);
+        if(column_size < 6){
+          popupEvent.resize();
           column_size += 1;
+          if(column_size == 6){
+            scroll_flg = true;
+            column_size = 5;
+          }
         }
       }else{
         while(true){
-          $(e.target).height($(e.target).height() - addsize);
+          $(e.target).height($(e.target).height() - heightsize);
           if($(e.target).get(0).scrollHeight > $(e.target).get(0).offsetHeight){
             $(e.target).height(e.target.scrollHeight);
             break;
           }else{
-            popupframe.height(popupframe.height()-addsize);
+            popupEvent.resize();
             column_size -= 1;
-            console.log(column_size);
           }
         }
+      }
+      if(scroll_flg){
+        $("#TCustomerInformationSettingInputOption").css('overflow-y','scroll');
+        $("#TCustomerInformationSettingInputOption").css('width','180px');
+      }else{
+        $("#TCustomerInformationSettingInputOption").css('overflow-y','hidden');
+        $("#TCustomerInformationSettingInputOption").css('width','161px');
       }
     });
 
@@ -47,8 +58,8 @@
         var after = $(e.target).height();
         if(before - after != 16){
           while(after > before){
-            popupframe.height(popupframe.height()+addsize);
-            before += addsize;
+            popupEvent.resize();
+            before += heightsize;
             column_size += 1;
           }
         }
@@ -59,8 +70,7 @@
     //エディット時に、既にプルダウンが選ばれていた場合の処理
     if(document.getElementById('TCustomerInformationSettingInputType').value == 3){
       $('#SelectListWrap').css('display','');
-      popupframe.height(popupframe.height()+54);
-      popupbutton.height(popupbutton.height()+1);
+      popupEvent.resize();
       selectflag = 1;
     }
 
@@ -68,36 +78,29 @@
     //エディット時に、既にカスタム変数チェックボックスが選択されている場合
     if(document.getElementById('TCustomerInformationSettingSyncCustomVariableFlg').checked){
         $('#CustomVariableWrap').css('display','');
-        popupframe.height(popupframe.height()+38);
-        popupbutton.height(popupbutton.height()+1);
+        popupEvent.resize();
     }
 
     $('#TCustomerInformationSettingSyncCustomVariableFlg').on('click', function(e){
         if($(this).prop('checked')) {
           $('#CustomVariableWrap').css('display','');
-          popupframe.height(popupframe.height()+38);
-          popupbutton.height(popupbutton.height()+1);
         }else{
           $('#CustomVariableWrap').css('display','none');
-          popupframe.height(popupframe.height()-38);
-          popupbutton.height(popupbutton.height()-1);
         }
+        popupEvent.resize();
       });
 
     $('#SelectListForm').change(function(e){
       if(document.getElementById('TCustomerInformationSettingInputType').value == 3){
         $('#SelectListWrap').css('display','');
-        popupframe.height(popupframe.height()+54);
-        popupbutton.height(popupbutton.height()+1);
         selectflag = 1;
       }else{
         $('#SelectListWrap').css('display','none');
         if(selectflag == 1){
-          popupframe.height(popupframe.height()-54);
-          popupbutton.height(popupbutton.height()-1);
           selectflag = 0;
         }
       }
+      popupEvent.resize();
     });
 
 
@@ -120,20 +123,26 @@
       targetObj.find('icon-annotation').css('display','none');
     });
 
-    //禁止項目用のtooltip!!
+    //禁止項目用のツールチップ表示制御
     var topPosition = 0;
     $('.commontooltip').off("mouseenter").on('mouseenter',function(event){
-      var targetObj = $("#BanedTooltip");
+      var classVariables = $('.commontooltip').attr('class');
+      console.log(classVariables);
+      var classVariable = classVariables.split(' ');
+      //classVariable[3]にツールチップ(連番)のクラスが格納されている
+      var targetObj = $("#" + classVariable[3].replace(/Label/, "Tooltip"));
       targetObj.find('icon-annotation').css('display','block');
       //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
       targetObj.css({
         top: ($(this).get(0).offsetTop - targetObj.find('ul').outerHeight() - 32 + topPosition) + 'px',
-        left: $(this).get(0).offsetLeft + 75 + 'px'
+        left: $(this).get(0).offsetLeft + $(this).width()/4 + 'px'
       });
     });
 
     $('.commontooltip').off("mouseleave").on('mouseleave',function(event){
-      var targetObj = $("#BanedTooltip");
+        var classVariables = $('.commontooltip').attr('class');
+        var classVariable = classVariables.split(' ');
+        var targetObj = $("#" + classVariable[3].replace(/Label/, "Tooltip"));
       targetObj.find('icon-annotation').css('display','none');
     });
 
@@ -279,8 +288,8 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
     }
     ?>
       <span>
-        <label class="forcheckbox <?php if((($count === 3)&&$uncheckedflg))echo "grayfont commontooltip"?>" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
-          <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => (($count === 3)&&$uncheckedflg)]) ?>
+        <label class="forcheckbox <?php if((($count >= 3)&&$uncheckedflg))echo "grayfont commontooltip BanedType1Label"?>" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
+          <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => (($count >= 3)&&$uncheckedflg)]) ?>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>
         <div class="questionBallon" id="filterType3Label">
@@ -301,7 +310,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
     </div>
     <div>
       <span>
-        <label class="forcheckbox" for="TCustomerInformationSettingSyncCustomVariableFlg">
+        <label class="forcheckbox <?php if(empty($variableList))echo "grayfont commontooltip BanedType2Label"?>" for="TCustomerInformationSettingSyncCustomVariableFlg">
           <?= $this->Form->input('sync_custom_variable_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => empty($variableList)])?>
           カスタム変数の値を自動的に登録する
         </label>
@@ -374,10 +383,17 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
         </ul>
       </icon-annotation>
     </div>
-    <div id="BanedTooltip" class="expandTooltip">
+    <div id="BanedType1Tooltip" class="expandTooltip">
       <icon-annotation>
         <ul>
           <li><span class="detail">一覧表示に登録できるのは3つまでです。</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id="BanedType2Tooltip" class="expandTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span class="detail">カスタム変数の値が登録されていません</span></li>
         </ul>
       </icon-annotation>
     </div>

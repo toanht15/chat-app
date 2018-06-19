@@ -214,7 +214,7 @@ class TCustomerInformationSettingsController extends AppController {
       $saveData['TCustomerInformationSetting']['item_name'] = $value['TCustomerInformationSetting']['item_name'].'コピー';
       $saveData['TCustomerInformationSetting']['input_type'] = $value['TCustomerInformationSetting']['input_type'];
       $saveData['TCustomerInformationSetting']['input_option'] = $value['TCustomerInformationSetting']['input_option'];
-      $saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = $value['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+      $saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = 0;
       $saveData['TCustomerInformationSetting']['show_send_mail_flg'] = $value['TCustomerInformationSetting']['show_send_mail_flg'];
       $saveData['TCustomerInformationSetting']['sync_custom_variable_flg'] = $value['TCustomerInformationSetting']['sync_custom_variable_flg'];
       $saveData['TCustomerInformationSetting']['t_custom_variables_id'] = $value['TCustomerInformationSetting']['t_custom_variables_id'];
