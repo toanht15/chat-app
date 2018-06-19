@@ -397,7 +397,6 @@ class TCustomerInformationSettingsController extends AppController {
         'TCustomerInformationSetting.id' => 'asc'
       ],
       'fields' => [
-        //'TCustomerInformationSetting.id',
         'TCustomerInformationSetting.show_realtime_monitor_flg'
       ],
       'conditions' => [

@@ -1445,11 +1445,7 @@
 /* カスタム変数 */
 .p-tcustomvariables-entry {
   width: 600px;
-  height: 450px!important;
-
-  #filterType1Label {
-    margin-right: 36.6px;
-  }
+  height: 450px;
 
   .questionBallon {
     display: inline-block;
@@ -1548,6 +1544,10 @@
       border: none;
       border-bottom: 1px solid #909090;
     }
+  }
+
+  #popup-main{
+    padding:8px 20px!important;
   }
 
   #popup-button {
@@ -1678,7 +1678,7 @@
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -34px;
+        bottom: -34.5px;
         left: 85px;
         z-index: 1;
       }

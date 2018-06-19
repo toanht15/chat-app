@@ -43,10 +43,8 @@
       }
       if(scroll_flg){
         $("#TCustomerInformationSettingInputOption").css('overflow-y','scroll');
-        $("#TCustomerInformationSettingInputOption").css('width','180px');
       }else{
         $("#TCustomerInformationSettingInputOption").css('overflow-y','hidden');
-        $("#TCustomerInformationSettingInputOption").css('width','161px');
       }
     });
 
@@ -125,28 +123,24 @@
 
     //禁止項目用のツールチップ表示制御
     var topPosition = 0;
-    $('.commontooltip').off("mouseenter").on('mouseenter',function(event){
-      var classVariables = $('.commontooltip').attr('class');
-      console.log(classVariables);
-      var classVariable = classVariables.split(' ');
-      //classVariable[3]にツールチップ(連番)のクラスが格納されている
-      var targetObj = $("#" + classVariable[3].replace(/Label/, "Tooltip"));
+    $('.banedtooltip').off("mouseenter").on('mouseenter',function(event){
+      var parentTdId = $(this).parent().attr('id');
+      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
       targetObj.find('icon-annotation').css('display','block');
       //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
       targetObj.css({
         top: ($(this).get(0).offsetTop - targetObj.find('ul').outerHeight() - 32 + topPosition) + 'px',
-        left: $(this).get(0).offsetLeft + $(this).width()/4 + 'px'
+        left: $(this).get(0).offsetLeft + ($(this).width()/2) - 90 + 'px'
       });
     });
 
-    $('.commontooltip').off("mouseleave").on('mouseleave',function(event){
-        var classVariables = $('.commontooltip').attr('class');
-        var classVariable = classVariables.split(' ');
-        var targetObj = $("#" + classVariable[3].replace(/Label/, "Tooltip"));
+    $('.banedtooltip').off("mouseleave").on('mouseleave',function(event){
+      var parentTdId = $(this).parent().attr('id');
+      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
       targetObj.find('icon-annotation').css('display','none');
     });
-
   });
+
   //保存ボタン押下時処理
   popupEvent.closePopup = function(){
     var customerinformationsettingId = document.getElementById('TCustomerInformationSettingId').value;
@@ -287,8 +281,8 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
       }
     }
     ?>
-      <span>
-        <label class="forcheckbox <?php if((($count >= 3)&&$uncheckedflg))echo "grayfont commontooltip BanedType1Label"?>" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
+      <span id="BanedType1Label">
+        <label class="forcheckbox <?php if((($count >= 3)&&$uncheckedflg))echo "grayfont banedtooltip"?>" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
           <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => (($count >= 3)&&$uncheckedflg)]) ?>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>
@@ -309,8 +303,8 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
       </span>
     </div>
     <div>
-      <span>
-        <label class="forcheckbox <?php if(empty($variableList))echo "grayfont commontooltip BanedType2Label"?>" for="TCustomerInformationSettingSyncCustomVariableFlg">
+      <span id="BanedType2Label">
+        <label class="forcheckbox <?php if(empty($variableList))echo "grayfont banedtooltip"?>" for="TCustomerInformationSettingSyncCustomVariableFlg">
           <?= $this->Form->input('sync_custom_variable_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => empty($variableList)])?>
           カスタム変数の値を自動的に登録する
         </label>
