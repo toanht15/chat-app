@@ -1076,7 +1076,15 @@ ul#color-bar-right {
 
 #menu-bar-right{
   cursor: pointer;
-
+  p {
+    cursor:pointer;
+    display:flex;
+    i {
+      color:#fff;
+      line-height: 0.6;
+      margin-left: 10px;
+    }
+  }
   &:hover {
     background-color: $header-btn-hover-color;
   }

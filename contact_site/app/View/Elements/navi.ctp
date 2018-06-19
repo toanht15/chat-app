@@ -46,7 +46,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <?php if(!empty($trialTime)) { ?>
         <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
       <?php } ?>
-        <li class="fLeft" id = "menu-bar-right"><p style = "cursor:pointer;display:flex;"><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-up fa-2x' style = "color:#fff;line-height: 0.6;margin-left: 6px;"></i></p></li>
+        <li class="fLeft" id = "menu-bar-right"><p><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-up fa-2x'></i></p></li>
     </ul>
 </div>
 <div id="colorBarMenu" style = "display:none;">
