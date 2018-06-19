@@ -3,9 +3,66 @@
   //特定項目から選択が外れた場合は、その分の高さを削減する
   $(function () {
 
-	//選択状況によりウィンドウサイズが変化する処理
+	//各種変数の設定
     var popupframe = $('#popup-frame');
+    var popupcontent = $('#popup-content');
     var popupbutton = $('#popup-button');
+    var labelposition = $("#pulldown_label")
+    $("#TCustomerInformationSettingInputOption").height(8);
+    var addsize = 18;
+
+
+
+    //入力量に応じてプルダウンのテキスト入力エリアが拡大する処理
+    var column_size = 1;
+    console.log(column_size);
+    $("#TCustomerInformationSettingInputOption").on("input",function(e){
+      if($(e.target).get(0).scrollHeight > $(e.target).get(0).offsetHeight){
+        $(e.target).height(e.target.scrollHeight);
+        //5行分まではポップアップを同時に拡大する処理
+        if(column_size < 5){
+          //labelposition.css({"vertical-align": "+=18px"});
+          popupframe.height(popupframe.height()+addsize);
+          popupcontent.height(popupcontent.height()+addsize);
+          popupbutton.height(popupbutton.height()+2);
+          column_size += 1;
+        }
+      }else{
+        while(true){
+          $(e.target).height($(e.target).height() - addsize);
+          if($(e.target).get(0).scrollHeight > $(e.target).get(0).offsetHeight){
+            $(e.target).height(e.target.scrollHeight);
+            break;
+          }else{
+            //labelposition.css({"vertical-align": "-=18px"});
+            popupframe.height(popupframe.height()-addsize);
+            popupcontent.height(popupcontent.height()-addsize);
+            popupbutton.height(popupbutton.height()+2);
+            column_size -= 1;
+            console.log(column_size);
+          }
+        }
+      }
+    });
+
+    //既に入力値があった場合にそのサイズに合わせる処理
+    $("#TCustomerInformationSettingInputOption").focusin(function(e){
+      var before = $(e.target).height();
+      if($(e.target).get(0).scrollHeight > $(e.target).get(0).offsetHeight){
+        $(e.target).height(e.target.scrollHeight);
+        var after = $(e.target).height();
+        if(before - after != 16){
+          while(after > before){
+            //labelposition.css({"vertical-align": "+=18px"});
+            popupframe.height(popupframe.height()+addsize);
+            popupcontent.height(popupcontent.height()+addsize);
+            popupbutton.height(popupbutton.height()+2);
+            before += addsize;
+            column_size += 1;
+          }
+        }
+      }
+    });
 
     var selectflag = 0;
     //エディット時に、既にプルダウンが選ばれていた場合の処理
@@ -212,7 +269,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
     </div>
     <div id="SelectListWrap" style="display: none; margin:0px!important">
       <span style="padding-left: 97px">
-        <label class="require" style="vertical-align: 7px;">
+        <label id="pulldown_label" class="require">
           プルダウンリスト
         </label>
       <?= $this->Form->textarea('input_option', ['div' => false, 'label' => false, 'maxlength' => 300]) ?>
@@ -220,6 +277,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
       <p style="font-size: 10px; margin: 0px; padding-left: 203px">※リスト表示する内容を改行して複数入力してください</p>
     </div>
     <div>
+    <!-- 一覧表示のチェックが幾つ付いているかのカウント -->
     <?php
     $count = 0;
     foreach($FlgList as $value){
@@ -229,7 +287,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
     }
     ?>
       <span>
-        <label class="forcheckbox <?php if((($count === 3)&&$uncheckedflg))echo "grayfont commontooltip"?>" data-text="一覧表示は3つまでです" data-balloon-position="35" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
+        <label class="forcheckbox <?php if((($count === 3)&&$uncheckedflg))echo "grayfont commontooltip"?>" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
           <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => (($count === 3)&&$uncheckedflg)]) ?>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>

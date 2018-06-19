@@ -1722,20 +1722,30 @@
     flex-direction: column;
     margin: 20px 0;
 
-    textarea {
+    textarea{
       margin-top: 8px;
       padding: 10px;
       height: 140px;
       resize: none;
       border-radius: 15px!important;
-      overflow: auto;
 
       &#TCustomerInformationSettingInputOption{
         box-sizing: content-box;
-        height: 1.2em;
         border-radius: 5px!important;
-        margin-top: 8px;
+        margin-top: 0px;
         padding: 1px;
+        max-height: 88px;
+        overflow-y: scroll;
+        word-break : break-all;
+        line-height: 18px;
+      }
+    }
+
+    #pulldown_label{
+      vertical-align: top;
+
+      &.require:after{
+        vertical-align: top;
       }
     }
 
