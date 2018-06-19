@@ -15,6 +15,10 @@ class StatisticsController extends AppController {
       'autoMessage' => 3,
       'denial' => 4,
       'automatic' => 5,
+      'scenarioText' => 21,
+      'scenarioHearing' => 22,
+      'scenarioSelection' => 23,
+      'scenarioReceiveFile' => 27,
       'enteringRoom' => 98,
       'exit' => 99
     ],
@@ -1778,29 +1782,41 @@ class StatisticsController extends AppController {
     $automaticResponse = "SELECT date_format(th.access_date,?) as date,
     count(distinct thcl.message_distinction,thcl.t_histories_id) as automaticResponse_count
     FROM
-      (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs
-       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = ?
-      and m_companies_id = ?) as thcl
+      ((select id,t_histories_id,message_distinction,message_type,message_request_flg from t_history_chat_logs
+       force index(idx_t_history_chat_logs_message_type_companies_id) where (message_type = ? or message_type = ? or message_type = ? or message_type = ? or message_type = ?)  and m_companies_id = ?) as thcl
     LEFT JOIN
       (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs
-      force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = ? and m_companies_id = ?) as thcl2
+       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = ? and m_companies_id = ?) as thcl2
     ON
       thcl.t_histories_id = thcl2.t_histories_id
     AND
-      thcl.message_distinction = thcl2.message_distinction,
+      thcl.message_distinction = thcl2.message_distinction)
+    LEFT JOIN
+      (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs
+       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where message_request_flg = ? and m_companies_id = ?) as thcl3
+    ON
+      thcl.t_histories_id = thcl3.t_histories_id
+    AND
+      thcl.message_distinction = thcl3.message_distinction,
     t_histories as th
     WHERE
       thcl2.t_histories_id IS NULL
     AND
       th.id = thcl.t_histories_id
     AND
+      th.id > thcl3.id
+    AND
       th.access_date between ? and ?
     group by date";
 
     $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format,
-    $this->chatMessageType['messageType']['automatic'],$this->userInfo['MCompany']['id'],
+    $this->chatMessageType['messageType']['automatic'],$this->chatMessageType['messageType']['scenarioText'],
+    $this->chatMessageType['messageType']['scenarioHearing'],$this->chatMessageType['messageType']['scenarioSelection'],
+    $this->chatMessageType['messageType']['scenarioReceiveFile'],$this->userInfo['MCompany']['id'],
     $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
+    $this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
     $correctStartDate,$correctEndDate));
+
     foreach($automaticResponseNumber as $k => $v) {
       $automaticResponseNumberData =  $automaticResponseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['automaticResponse_count']));
       if($v[0]['automaticResponse_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
