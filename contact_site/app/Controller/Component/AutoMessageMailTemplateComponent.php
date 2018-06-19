@@ -37,6 +37,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected $stayLog;
   protected $campaigns;
   protected $landscapeData;
+  protected $customerInfo;
 
   private $autoMessageBlock;
 
@@ -52,12 +53,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
 
   }
 
-  public function setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null) {
+  public function setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array()) {
     $this->templateId = $templateId;
     $this->chatLogs = $chatLogs;
     $this->stayLog = $stayLog;
     $this->campaigns = $campaigns;
     $this->landscapeData = $landscapeData;
+    $this->customerInfo = $customerInfo;
   }
 
   public function createMessageBody() {
@@ -82,6 +84,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     $this->autoMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
     if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
     $this->autoMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
+    }
+    if(!empty($this->customerInfo) && count($this->customerInfo) > 0) {
+      $this->autoMessageBlock .= "\n";
+      foreach($this->customerInfo as $key => $value) {
+        $this->autoMessageBlock .= $key."：".$value."\n";
+      }
+      $this->autoMessageBlock .= "\n";
     }
   }
 
