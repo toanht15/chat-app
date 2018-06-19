@@ -9,7 +9,7 @@ class TCustomerInformationSettingsController extends AppController {
   public $uses = ['TCustomerInformationSetting','TCustomVariable'];
   public $paginate = [
     'TCustomerInformationSetting' => [
-      'limit' => 10,
+      'limit' => 100,
       'order' => [
         'TCustomerInformationSetting.sort' => 'asc',
         'TCustomerInformationSetting.id' => 'asc'
@@ -29,9 +29,9 @@ class TCustomerInformationSettingsController extends AppController {
    * @return void
    * */
   public function index() {
-  	Configure::write('debug', 2);
-  	//DB作成後復元
-  	$this->paginate['TCustomerInformationSetting']['conditions']['TCustomerInformationSetting.m_companies_id'] = $this->userInfo['MCompany']['id'];
+    Configure::write('debug', 2);
+    //DB作成後復元
+    $this->paginate['TCustomerInformationSetting']['conditions']['TCustomerInformationSetting.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TCustomerInformationSetting');
     $documentList = $this->TCustomVariable->find('list', $this->_setParamsVariable());
     $this->set('variableList',$documentList);
@@ -51,8 +51,10 @@ class TCustomerInformationSettingsController extends AppController {
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->request->data = $this->TCustomerInformationSetting->read(null, $this->request->data['id']);
     }
+    $ShowList = $this->TCustomerInformationSetting->find('list', $this->_setParams());
     $documentList = $this->TCustomVariable->find('list', $this->_setParamsVariable());
     $this->set('variableList',$documentList);
+    $this->set('FlgList',$ShowList);
     $this->render('/Elements/TCustomerInformationSettings/remoteEntry');
   }
   /* *
@@ -216,7 +218,7 @@ class TCustomerInformationSettingsController extends AppController {
       $saveData['TCustomerInformationSetting']['item_name'] = $value['TCustomerInformationSetting']['item_name'].'コピー';
       $saveData['TCustomerInformationSetting']['input_type'] = $value['TCustomerInformationSetting']['input_type'];
       $saveData['TCustomerInformationSetting']['input_option'] = $value['TCustomerInformationSetting']['input_option'];
-      $saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = $value['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+      $saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = 0;
       $saveData['TCustomerInformationSetting']['show_send_mail_flg'] = $value['TCustomerInformationSetting']['show_send_mail_flg'];
       $saveData['TCustomerInformationSetting']['sync_custom_variable_flg'] = $value['TCustomerInformationSetting']['sync_custom_variable_flg'];
       $saveData['TCustomerInformationSetting']['t_custom_variables_id'] = $value['TCustomerInformationSetting']['t_custom_variables_id'];
@@ -398,11 +400,11 @@ class TCustomerInformationSettingsController extends AppController {
   private function _setParams(){
     $params = [
       'order' => [
-        //'TCustomerInformationSetting.sort' => 'asc',
+        'TCustomerInformationSetting.sort' => 'asc',
         'TCustomerInformationSetting.id' => 'asc'
       ],
       'fields' => [
-        'TCustomerInformationSetting.*'
+        'TCustomerInformationSetting.show_realtime_monitor_flg'
       ],
       'conditions' => [
         'TCustomerInformationSetting.m_companies_id' => $this->userInfo['MCompany']['id']
