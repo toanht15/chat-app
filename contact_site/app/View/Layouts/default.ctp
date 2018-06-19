@@ -46,14 +46,12 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
   <?php echo $this->Html->charset(); ?>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>
-    <?php if(strcmp($this->name, 'ScriptSettings') == 0 && strcmp($this->action, 'index') !== 0) {
-      echo $this->fetch('title'); ?>
+    <?php if(strcmp($this->name, 'ScriptSettings') == 0 && strcmp($this->action, 'index') !== 0) { ?>
+      <title><?php echo $this->fetch('title'); ?></title>
     <?php }
     else { ?>
-      <?php echo $this->fetch('title'); ?> | sinclo
+      <title><?php echo $this->fetch('title'); ?> | sinclo</title>
     <?php } ?>
-  </title>
   <?php
     echo $this->Html->meta('icon');
     // TODO 後程検討
