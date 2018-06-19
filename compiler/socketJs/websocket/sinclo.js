@@ -30,7 +30,7 @@
       toggle: function(){
         this.ev();
 //        sincloBox.setAttribute('data-openflg', false);
-        var flg = sinclo.widget.condifiton.get();;
+        var flg = sinclo.widget.condifiton.get();
         //ウィジェットを開いた回数
         if(String(flg) === "true" && typeof ga == "function"){
           ga('send', 'event', 'sinclo', 'clickMaximize', location.href, 1);
