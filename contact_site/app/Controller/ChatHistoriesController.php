@@ -599,7 +599,7 @@
           // 訪問ユーザ
           $row['customer'] = "";
           if ( !empty($history['MCustomer']['informations']) ) {
-            $informations = (array)json_decode($history['MCustomer']['informations']);
+            $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($history['MCustomer']['informations']));
             foreach($customerInfoDisplaySettingMap as $k => $v) {
               if($v) {
                 $row['customer'] .= $informations[$k]."\n";
@@ -749,7 +749,7 @@
           //訪問ユーザ
           $row['customer'] = "";
           if ( !empty($val['MCustomer']['informations']) ) {
-            $informations = (array)json_decode($val['MCustomer']['informations']);
+            $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($val['MCustomer']['informations']));
             foreach($customerInfoDisplaySettingMap as $k => $v) {
               if($v) {
                 $row['customer'] .= $informations[$k]."\n";
@@ -1095,7 +1095,7 @@
 
       foreach($allusers as $alluser) {
         $setFlg = false;
-        $settings = (array)json_decode($alluser['MCustomer']['informations']);
+        $settings = CustomerInformationUtil::convertOldIFData((array)json_decode($alluser['MCustomer']['informations']));
         foreach ($customerInfoDisplaySettingMap as $key => $val) {
           if ( isset($data[$key]) && $data[$key] != "" ) {
             if ( !(isset($settings[$key]) && $settings[$key] != "" && strstr($settings[$key], $data[$key])) ) {
