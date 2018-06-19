@@ -5,7 +5,7 @@
  */
 class HistoriesController extends AppController {
   public $helpers = ['Time'];
-  public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
+  public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
   public $components = ['LandscapeLbcAPI'];
   public $paginate = [
     'THistory' => [
@@ -176,7 +176,7 @@ class HistoriesController extends AppController {
     $ret = $this->_getChatLog($this->params->query['historyId']);
     $permissionLevel = $this->userInfo['permission_level'];
     $this->set('THistoryChatLog', $ret);
-    $this->set('permissionLevel',$permissionLevel);
+    $this->set('permissionLevel', $permissionLevel);
     return $this->render('/Elements/Histories/remoteGetChatLogs');
   }
 
@@ -753,13 +753,25 @@ class HistoriesController extends AppController {
    * @return array
    * */
   private function _getInfomationList(){
-    return [
-      'company' => '会社名',
-      'name' => '名前',
-      'tel' => '電話番号',
-      'mail' => 'メールアドレス',
-      'memo' => 'メモ'
-    ];
+    $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+      'conditions' => array(
+        'delete_flg' => 0,
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ),
+      'order' => array(
+        'sort' => 'asc'
+      )
+    ));
+    $customerInformationSettingList = [];
+    foreach($customerSettingList as $k => $v) {
+      array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+    }
+
+    $customerInfoDisplaySettingMap = array();
+    foreach($customerSettingList as $index => $customerData) {
+      $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting'];
+    }
+    return $customerInfoDisplaySettingMap;
   }
 
   private function _setListByChat($type, $data, $visitorsIds = []){
@@ -1141,6 +1153,32 @@ class HistoriesController extends AppController {
         'visitors_id' => array_keys($customerIdList),
       ]
     ]);
+    // いったんJSONデータをデコードする
+    foreach($mCustomerList as $k => &$v) {
+      $v = json_decode($v, TRUE);
+    }
+
+    $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+      'conditions' => array(
+        'delete_flg' => 0,
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ),
+      'order' => array(
+        'sort' => 'asc'
+      )
+    ));
+    $customerInformationSettingList = [];
+    foreach($customerSettingList as $k => $v) {
+      array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+    }
+
+    $customerInfoDisplaySettingMap = array();
+    foreach($customerSettingList as $index => $customerData) {
+      $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = (boolean)$customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+    }
+
+    $this->set('customerInformationList', $customerInformationSettingList);
+    $this->set('customerInfoDisplaySettingMap', $customerInfoDisplaySettingMap);
 
     $data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
     $data['History']['finish_day'] = htmlspecialchars($data['History']['finish_day']);
@@ -1381,6 +1419,30 @@ class HistoriesController extends AppController {
       unset($achievementType[0]);
       $this->set('achievementType', $achievementType);
     }
+
+    // 訪問ユーザ情報設定状態を取得
+    /* 訪問ユーザ情報設定リストを取得 */
+    $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
+      'conditions' => array(
+        'delete_flg' => 0,
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ),
+      'order' => array(
+        'sort' => 'asc'
+      )
+    ));
+    $customerInformationSettingList = [];
+    foreach($customerSettingList as $k => $v) {
+      array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
+    }
+
+    $customerInfoDisplaySettingMap = array();
+    foreach($customerSettingList as $index => $customerData) {
+      $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
+    }
+    $this->set('customerInformationList', $customerInformationSettingList);
+    $this->set('customerInfoDisplaySettingMap', $customerInfoDisplaySettingMap);
+
     // const
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');
   }

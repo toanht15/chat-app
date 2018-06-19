@@ -1,7 +1,7 @@
 <script type="text/javascript">
 'use strict';
   var historySearchConditions = <?php echo json_encode($data);?>;
-  var mCustomerInfoList = <?php echo json_encode($mCustomerList);?>;
+  var mCustomerInfoList = <?php echo json_encode($mCustomerList, JSON_UNESCAPED_UNICODE);?>;
   var sincloApp = angular.module('sincloApp', ['ngSanitize']);
   sincloApp.controller('MainController', function($scope) {
     $scope.ua = function(str){
@@ -18,16 +18,20 @@
       return showData.join("\n");
     };
 
+    $scope.displayCustomerInfoSettingMap = <?= json_encode($customerInfoDisplaySettingMap) ?>;
     $scope.ui = function(ip, id){
       var showData = [];
+      if ( mCustomerInfoList[id] ) {
+        var c = mCustomerInfoList[id];
+        try {
+          Object.keys($scope.displayCustomerInfoSettingMap).forEach(function (elm, index, array) {
+            if(!$scope.displayCustomerInfoSettingMap[elm]) return;
+            if ( (elm in c) && c[elm].length > 0 ) {
+              showData.push(c[elm]);
+            }
+          });
+        } catch(e) {
 
-      if ( mCustomerInfoList.hasOwnProperty(id) && mCustomerInfoList[id] !== "" && mCustomerInfoList[id] != null && mCustomerInfoList[id] !== undefined ) {
-        var c = JSON.parse(mCustomerInfoList[id]);
-        if ( ('company' in c) && c.company.length > 0 ) {
-          showData.push(c.company); // 会社名
-        }
-        if ( ('name' in c) && c.name.length > 0 ) {
-          showData.push(c.name); // 名前
         }
       }
       return showData.join("\n");
