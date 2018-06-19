@@ -765,6 +765,43 @@ router.post("/reload/chatSettings", function(req, res, next) {
   // res.render('index', { title: 'Settings' });
 });
 
+router.post("/reload/customVariableSettings", function(req, res, next) {
+
+  /* Cross-Origin */
+  // http://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'POST');
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  // Set to true if you need the website to include cookies in the requests sent
+  // to the API (e.g. in case you use sessions)
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  /* no-cache */
+  // http://garafu.blogspot.jp/2013/06/ajax.html
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Pragma", "no-cache");
+
+  try {
+    if(req.get('host').indexOf('127.0.0.1') === -1) {
+      throw new ReferenceError('想定したURLでのコールではありません');
+    }
+    if (  !('body' in req) || (('body' in req) && !('sitekey' in req['body'])) ) {
+      throw new Error('Forbidden');
+    }
+    common.reloadCustomVariableSettings(req['body']['sitekey']);
+  } catch (e) {
+    var err = new Error(' Service Unavailable');
+    err.status = 503;
+    next(err);
+    return false;
+  }
+  // res.render('index', { title: 'Settings' });
+});
+
 /**
  * 10進数表記ののIPアドレスを2進数に変換
  * @params array sample: ['127', '0', '0', '0']
