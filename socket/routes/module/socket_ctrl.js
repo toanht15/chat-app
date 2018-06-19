@@ -872,6 +872,49 @@ var db = {
         }
       });
     }
+  },
+  /**
+   * 顧客情報を更新する
+   * @param obj
+   * @param s
+   */
+  upsertCustomerInfo: function(obj, s) {
+    if(isset(obj.customVariables)) {
+      var customVariables = obj.customVariables;
+      var found = false;
+
+      if (Object.keys(customVariables).length !== 0) {
+        Object.keys(customVariables).forEach(function (elm, index, arr) {
+          if (isset(customVariables[elm])) {
+            found = true;
+          }
+        });
+      }
+      if (found) {
+        pool.query('SELECT * from m_customers where m_companies_id = ? AND visitors_id = ?', [companyList[obj.siteKey], obj.userId], function (err, row) {
+          if (err !== null && err !== '') return false; // DB接続断対応
+
+          var currentData = {};
+          if (isset(row) && isset(row[0])) {
+            currentData = JSON.parse(row[0].informations);
+            Object.keys(customVariables).forEach(function (key, idx, array) {
+              if (isset(customVariables[key]) && customVariables[key] !== "") {
+                currentData[key] = customVariables[key];
+              }
+            });
+            pool.query('UPDATE m_customers set informations = ? where id = ? ', [JSON.stringify(currentData), row[0].id], function (err, result) {
+
+            });
+          } else {
+            pool.query('INSERT INTO m_customers VALUES (NULL, ?, ?, ?, now(), 0, NULL, NULL, NULL, NULL)', [companyList[obj.siteKey], obj.userId, JSON.stringify(customVariables)], function (err, result) {
+
+            });
+          }
+
+
+        });
+      }
+    }
   }
 };
 
@@ -1062,8 +1105,8 @@ io.sockets.on('connection', function (socket) {
                 // 応対可能かチェック(対応できるのであれば trueが返る)
                 chatApi.sendCheck(d, function(err, ret){
                   sendData.opFlg = ret.opFlg;
-                  //初回通知メッセージ利用するの場合
-                  //初回通知メッセージの場合
+                  //チャット呼出中メッセージ利用するの場合
+                  //チャット呼出中メッセージの場合
                   if(ret.message == null && ret.in_flg == chatApi.cnst.inFlg.flg
                     && d.notifyToCompany && d.initialNotification == true) {
                     sendData.notification = true;
@@ -2289,6 +2332,8 @@ io.sockets.on('connection', function (socket) {
 
       // 履歴作成
       db.addHistory(obj, socket);
+      // カスタム情報自動登録
+      db.upsertCustomerInfo(obj, socket);
 
       // IPアドレスの取得
       if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
@@ -2342,6 +2387,57 @@ io.sockets.on('connection', function (socket) {
       }
     }
   });
+
+  //閉じるボタンクリック数追加
+  socket.on("addClickCloseCounts", function (data) {
+    var obj = JSON.parse(data);
+    pool.query('SELECT widget_close_count from t_history_widget_close_counts where m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',[companyList[obj.siteKey],obj.year,obj.month,obj.day,obj.hour],function(err,results) {
+      if(results.length == 0) {
+        pool.query('INSERT INTO t_history_widget_close_counts (m_companies_id,year,month,day,hour,widget_close_count) VALUES(?,?,?,?,?,?)',[companyList[obj.siteKey],obj.year,obj.month,obj.day,obj.hour,1 ],function(error,res) {
+          if(isset(error)) {
+            console.log("RECORD INSERT ERROR: t_history_widget_close_counts:" + error);
+          }
+        });
+      }
+      else {
+        pool.query('UPDATE t_history_widget_close_counts SET widget_close_count = ? WHERE m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',[results[0].widget_close_count + 1, companyList[obj.siteKey],obj.year,obj.month,obj.day,obj.hour],function(error,res) {
+          if(isset(error)){
+            console.log("RECORD UPDATE ERROR: t_conversation_count(conversation_count):" + error);
+            return false;
+          }
+        });
+      }
+      if(isset(err)) {
+        console.log("RECORD SELECT ERROR: t_history_widget_close_counts:" + err);
+      }
+    });
+  });
+
+  //ウィジェットを最小化した回数追加
+  socket.on("addClickMinimizeCounts", function (data) {
+    var obj = JSON.parse(data);
+    pool.query('SELECT widget_minimize_count from t_history_widget_minimize_counts where m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',[companyList[obj.siteKey],obj.year,obj.month,obj.day,obj.hour],function(err,results) {
+      if(results.length == 0) {
+        pool.query('INSERT INTO t_history_widget_minimize_counts (m_companies_id,year,month,day,hour,widget_minimize_count) VALUES(?,?,?,?,?,?)',[companyList[obj.siteKey],obj.year,obj.month,obj.day,obj.hour,1 ],function(error,res) {
+          if(isset(error)) {
+            console.log("RECORD INSERT ERROR: t_history_widget_minimize_counts:" + error);
+          }
+        });
+      }
+      else {
+        pool.query('UPDATE t_history_widget_minimize_counts SET widget_minimize_count = ? WHERE m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?',[results[0].widget_minimize_count + 1, companyList[obj.siteKey],obj.year,obj.month,obj.day,obj.hour],function(error,res) {
+          if(isset(error)){
+            console.log("RECORD UPDATE ERROR: t_conversation_count(conversation_count):" + error);
+            return false;
+          }
+        });
+      }
+      if(isset(err)) {
+        console.log("RECORD SELECT ERROR: t_history_widget_minimize_counts:" + err);
+      }
+    });
+  });
+
   //ウィジェットを開いた事を通知する
   //現在はウィジェット表示ログを書き込むのみで、クライアント側はretTabInfoにwidgetの情報を付与してハンドリングしている
   socket.on("sendWidgetShown",function(d){
@@ -3179,7 +3275,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     });
   });
 
-  // 初回通知メッセージ
+  // チャット呼出中メッセージ
   socket.on("sendInitialNotificationChat", function(d){
     var obj = JSON.parse(d);
     var ret = {

@@ -21,7 +21,7 @@
     #sincloBox section.noDisplay { display: none }
     #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
     @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
-    #sincloBox ul#chatTalk { width: 100%; height: 100px; padding: 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
+    #sincloBox ul#chatTalk { width: 100%; height: 100px; padding: 5px 5px 60px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
     #sincloBox ul#chatTalk.details { background-color: {{chat_talk_background_color}}; }
     #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 10px; font-size: 11px; line-height: 1.4; white-space: pre-wrap; color: {{message_text_color}}; }
     #sincloBox ul#chatTalk div.liLeft { text-align: left; }

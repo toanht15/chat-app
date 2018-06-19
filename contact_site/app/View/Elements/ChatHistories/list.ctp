@@ -592,27 +592,20 @@
         <div class="detailForm card">
         <?php if(!empty($defaultHistoryList) && !empty($tHistoryCountData)) { ?>
           <ul>
-            <li>
             <?php $this->log('mCusData',LOG_DEBUG); $this->log($mCusData,LOG_DEBUG); ?>
-              <label for="ng-customer-company">会社名</label>
-              <?= $this->Form->input('company_name',['label'=>false,'div' => false,'class' => 'infoData','type' => 'text','value' => !empty($mCusData['informations']['company']) ? $mCusData['informations']['company'] : "",'placeholder' => "会社名を追加",'data-key' => 'company']) ?></span>
-            </li>
-            <li>
-              <label for="ng-customer-name">名前</label>
-              <?= $this->Form->input('name',['label'=>false,'div' => false,'class' => 'infoData','type' => 'text','value' => !empty($mCusData['informations']['name']) ? $mCusData['informations']['name'] : "",'placeholder' => "名前を追加",'data-key' => 'name']) ?></span>
-            </li>
-            <li>
-              <label for="ng-customer-tel">電話番号</label>
-              <?= $this->Form->input('tel',['label'=>false,'div' => false,'class' => 'infoData','type' => 'text','value' => !empty($mCusData['informations']['tel']) ? $mCusData['informations']['tel'] : "",'placeholder' => "電話番号を追加",'data-key' => 'tel']) ?></span>
-            </li>
-            <li>
-              <label for="ng-customer-mail">メールアドレス</label>
-              <?= $this->Form->input('mail',['label'=>false,'div' => false,'class' => 'infoData','type' => 'text','value' => !empty($mCusData['informations']['mail']) ? $mCusData['informations']['mail'] : "",'placeholder' => "メールアドレスを追加",'data-key' => 'mail']) ?></span>
-            </li>
-            <li>
-              <label for="ng-customer-memo" style = "width:60% !important">メモ</label>
-              <?= $this->Form->input('memo',['rows' => 7,'label'=>false,'div' => false,'class' => 'infoData','type' => 'textarea','value' => !empty($mCusData) ? $mCusData['informations']['memo'] : "",'placeholder' => "メモを追加",'data-key' => 'memo']) ?></span>
-            </li>
+            <?php
+            for($i = 0; $i < count($customerInformationList); $i++) {
+              if(strcmp($customerInformationList[$i]['input_type'], "2") === 0) {
+                echo '<li class="auto-height">';
+                echo '  <label class="no-float" for="ng-customer-custom-'.$customerInformationList[$i]['id'].'">'.$customerInformationList[$i]['item_name'].'</label>';
+              } else {
+                echo '<li>';
+                echo '  <label for="ng-customer-custom-' . $customerInformationList[$i]['id'] . '">' . $customerInformationList[$i]['item_name'] . '</label>';
+              }
+              echo $this->htmlEx->visitorInput($customerInformationList[$i]);
+              echo '</li>';
+            }
+            ?>
           </ul>
           <div id="personal_action">
               <?= $this->Html->link('元に戻す', 'javascript:void(0)', array('onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton')) ?>

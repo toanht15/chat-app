@@ -427,6 +427,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.messageList = [];
     $scope.chatOpList = [];
     $scope.chatList = [];
+    $scope.displayCustomerInfoSettingMap = <?php echo json_encode($customerInfoDisplaySettingMap, JSON_UNESCAPED_UNICODE) ?>;
     $scope.typingMessageSe = "";
     $scope.typingMessageRe = {};
     $scope.uploadProgress = 0;
@@ -629,11 +630,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var showData = [];
       if ( $scope.customerList.hasOwnProperty(m.userId) && isset($scope.customerList[m.userId]) ) {
         var c = $scope.customerList[m.userId];
-        if ( ('company' in c) && c.company.length > 0 ) {
-          showData.push(c.company); // 会社名
-        }
-        if ( ('name' in c) && c.name.length > 0 ) {
-          showData.push(c.name); // 名前
+        try {
+          Object.keys($scope.displayCustomerInfoSettingMap).forEach(function (elm, index, array) {
+            if(!$scope.displayCustomerInfoSettingMap[elm]) return;
+            if ( (elm in c) && c[elm].length > 0 ) {
+              showData.push(c[elm]);
+            }
+          });
+        } catch(e) {
+
         }
       }
       return showData.join("\n");

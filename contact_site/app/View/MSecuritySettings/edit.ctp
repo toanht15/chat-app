@@ -2,7 +2,7 @@
 <div id='msecuritysettings_idx' class="card-shadow">
 
   <div id='msecuritysettings_title'>
-    <div class="fLeft"><?= $this->Html->image('security_settings_top.png', array('alt' => 'セキュリティ設定', 'width' => 30, 'height' => 30, 'style' => 'margin: 0 auto')) ?></div>
+    <div class="fLeft"><i class="fal fa-shield-alt fa-2x"></i></div>
     <h1>セキュリティ設定</h1>
   </div>
 

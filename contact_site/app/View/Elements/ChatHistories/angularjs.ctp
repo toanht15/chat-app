@@ -784,16 +784,39 @@
       return selectedClass;
     }
 
+    $scope.displayCustomerInfoSettingMap = <?= json_encode($customerInfoDisplaySettingMap) ?>;
+    $scope.ui = function(m){
+      var showData = [];
+      if ( $scope.customerList.hasOwnProperty(m.userId) && isset($scope.customerList[m.userId]) ) {
+        var c = $scope.customerList[m.userId];
+        try {
+          Object.keys($scope.displayCustomerInfoSettingMap).forEach(function (elm, index, array) {
+            if(!$scope.displayCustomerInfoSettingMap[elm]) return;
+            if ( (elm in c) && c[elm].length > 0 ) {
+              showData.push(c[elm]);
+            }
+          });
+        } catch(e) {
+
+        }
+      }
+      return showData.join("\n");
+    };
+
     $scope.ui = function(ip, id){
       var showData = [];
 
       if ( mCustomerInfoList.hasOwnProperty(id) && mCustomerInfoList[id] !== "" && mCustomerInfoList[id] != null && mCustomerInfoList[id] !== undefined ) {
         var c = JSON.parse(mCustomerInfoList[id]);
-        if ( ('company' in c) && c.company.length > 0 ) {
-          showData.push(c.company); // 会社名
-        }
-        if ( ('name' in c) && c.name.length > 0 ) {
-          showData.push(c.name); // 名前
+        try {
+          Object.keys($scope.displayCustomerInfoSettingMap).forEach(function (elm, index, array) {
+            if(!$scope.displayCustomerInfoSettingMap[elm]) return;
+            if ( (elm in c) && c[elm].length > 0 ) {
+              showData.push(c[elm]);
+            }
+          });
+        } catch(e) {
+
         }
       }
       if(changeScreenMode == "" && <?= $screenFlg ?> == 1) {
