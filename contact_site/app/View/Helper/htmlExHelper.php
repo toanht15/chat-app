@@ -164,7 +164,7 @@ class htmlExHelper extends AppHelper {
         return $content;
     }
 
-    public function visitorInput($record, $forceInputText = false, $showPlaceHolder = true) {
+    public function visitorInput($record, $forceInputText = false, $showPlaceHolder = true, $value = "") {
       if($forceInputText && strcmp($record['input_type'], 2) === 0) {
         $record['input_type'] = 1;
       }
@@ -174,15 +174,19 @@ class htmlExHelper extends AppHelper {
       }
       switch($record['input_type']) {
         case 1: // テキストボックス
-          return sprintf('<input class="infoData" id="ng-customer-custom-%s" type="text" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" %s/>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $placeholderAttr);
+          return sprintf('<input class="infoData" id="ng-customer-custom-%s" type="text" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" value="%s" %s/>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $value, $placeholderAttr);
         case 2: // テキストエリア
-          return sprintf('<textarea class="infoData" rows="7" id="ng-customer-custom-%s" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" %s"></textarea>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $placeholderAttr);
+          return sprintf('<textarea class="infoData" rows="7" id="ng-customer-custom-%s" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" ng-model="customData[\'%s\']" value="%s" %s></textarea>', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $value, $placeholderAttr);
         case 3: // テキストエリア
           $options =  explode("\n", $record['input_option']);
-          $html = sprintf('<select class="infoData" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" data-key="%s" ng-model="customData[\'%s\']">', $record['id'], $record['item_name'], $record['item_name'], $record['item_name']);
+          $html = sprintf('<select class="infoData" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" data-key="%s" ng-model="customData[\'%s\']" value="%s">', $record['id'], $record['item_name'], $record['item_name'], $record['item_name'], $value);
           $html .= '<option value="">選択してください</option>';
           for($i = 0; $i < count($options); $i++) {
-            $html .= sprintf('<option value="%s">%s</option>', $options[$i], $options[$i]);
+            if(strcmp($options[$i], $value) === 0) {
+              $html .= sprintf('<option value="%s" selected>%s</option>', $options[$i], $options[$i]);
+            } else {
+              $html .= sprintf('<option value="%s">%s</option>', $options[$i], $options[$i]);
+            }
           }
           $html .= '</select>';
           return $html;
