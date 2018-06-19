@@ -30,10 +30,25 @@
       toggle: function(){
         this.ev();
 //        sincloBox.setAttribute('data-openflg', false);
-        var flg = sinclo.widget.condifiton.get();
+        var flg = sinclo.widget.condifiton.get();;
         //ウィジェットを開いた回数
         if(String(flg) === "true" && typeof ga == "function"){
           ga('send', 'event', 'sinclo', 'clickMaximize', location.href, 1);
+        }
+        if(String(flg) === "false" && typeof ga == "function"){
+          ga('send', 'event', 'sinclo', 'clickMinimize', location.href, 1);
+          //ウィジェットを最小化した回数追加
+          var now = new Date();
+          month = ('0' + (now.getMonth() + 1)).slice(-2);
+          day = ('0' + now.getDate()).slice(-2);
+          hour = ('0' + now.getHours()).slice(-2);
+          emit('addClickMinimizeCounts', {
+            siteKey: sincloInfo.site.key,
+            year: now.getFullYear(),
+            month: month,
+            day: day,
+            hour: hour
+          });
         }
       },
       ev: function() {
@@ -112,22 +127,6 @@
             else{
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
-            }
-            //ウィジェットを最小化した回数
-            if(typeof ga == "function"){
-              ga('send', 'event', 'sinclo', 'clickMinimize', location.href, 1);
-              //ウィジェットを最小化した回数追加
-              var now = new Date();
-              month = ('0' + (now.getMonth() + 1)).slice(-2);
-              day = ('0' + now.getDate()).slice(-2);
-              hour = ('0' + now.getHours()).slice(-2);
-              emit('addClickMinimizeCounts', {
-                siteKey: sincloInfo.site.key,
-                year: now.getFullYear(),
-                month: month,
-                day: day,
-                hour: hour
-              });
             }
             height = this.header.offsetHeight;
             sinclo.widget.condifiton.set(false, true);
@@ -2764,7 +2763,7 @@
                   messageRequestFlg: messageRequestFlg,
                   initialNotification: initialNotification,
                   isAutoSpeech : result,
-                  notifyToCompy: !result,
+                  notifyToCompany: !result,
                   isScenarioMessage: isScenarioMessage
                 });
               }, 100);

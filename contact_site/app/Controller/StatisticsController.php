@@ -1808,7 +1808,7 @@ class StatisticsController extends AppController {
     AND
       th.access_date between ? and ?
     group by date";
-    //ここ大注目
+
     $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format,
     $this->chatMessageType['messageType']['automatic'],$this->chatMessageType['messageType']['scenarioText'],
     $this->chatMessageType['messageType']['scenarioHearing'],$this->chatMessageType['messageType']['scenarioSelection'],

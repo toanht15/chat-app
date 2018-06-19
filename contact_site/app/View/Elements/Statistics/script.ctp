@@ -235,7 +235,6 @@ $(window).load(function(){
   //日別の月を選択
   $("#daylyForm").change(function(){
     var daylyForm = $("#daylyForm").val();
-     //daylyForm = ;
     if(daylyForm != '') {
       loading.load.start();
       var dateFormat = $("select[name=dateFormat]").val();
@@ -245,7 +244,7 @@ $(window).load(function(){
         // @see https://stackoverflow.com/questions/28586393/safari-not-updating-ui-during-form-submission
         if(document.getElementById("StatisticsForChatForm") != null) {
           setTimeout(function() {
-            //document.getElementById('StatisticsForChatForm').submit();
+            document.getElementById('StatisticsForChatForm').submit();
           },0);
         }
         else if(document.getElementById("StatisticsForOperatorForm") != null) {
