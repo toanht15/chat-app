@@ -8,7 +8,7 @@
  */
 
 class AddCustomerInfoInitialDataShell extends AppShell {
-  public $uses = array('MCompany','TCustomerInformationSetting');
+  public $uses = array('MCompany','MCustomer','TCustomerInformationSetting');
 
   public function addAll()
   {
@@ -114,7 +114,58 @@ class AddCustomerInfoInitialDataShell extends AppShell {
       $this->TCustomerInformationSetting->rollback();
       $this->log('ERROR FOUND !! message => '.$e->getMessage(), LOG_ERR, 'refresh');
     }
-    $this->log('END   RefreshCompanyCoreSettingsShell::refresh', LOG_INFO, 'refresh');
+    $this->log('END   AddCustomerInfoInitialDataShell::addAll', LOG_INFO, 'refresh');
+  }
+
+  public function replaceAllOldIf() {
+    $this->log('BEGIN AddCustomerInfoInitialDataShell::replaceAllOldIf', LOG_INFO, 'refresh');
+    $record = $this->MCustomer->find('all',[]);
+    try {
+      $ifKeyMap = array(
+        'company' => '会社名',
+        'name' => '名前',
+        'tel' => '電話番号',
+        'mail' => 'メールアドレス',
+        'memo' => 'メモ'
+      );
+      $this->MCustomer->begin();
+      foreach ($record as $index => $customer) {
+        $this->log('==========================================', LOG_INFO, 'refresh');
+        $this->log('TARGET : ' . $customer['MCustomer']['m_companies_id'], LOG_INFO, 'refresh');
+        $this->log('DATA    : ' . $customer['MCustomer']['informations'], LOG_INFO, 'refresh');
+        $this->log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~', LOG_INFO, 'refresh');
+
+        $oldData = json_decode($customer['MCustomer']['informations'], TRUE);
+        $newData = array();
+        $oldIfFound = false;
+        foreach($oldData as $k => $v) {
+          if(array_key_exists($k, $ifKeyMap)) {
+            $oldIfFound = true;
+            $newData[$ifKeyMap[$k]] = $v;
+          } else {
+            $newData[$k] = $v;
+          }
+        }
+
+        if($oldIfFound) {
+          $customer['MCustomer']['informations'] = json_encode($newData);
+          $this->MCustomer->set($customer);
+          $this->MCustomer->save();
+          $this->log('==========================================', LOG_INFO, 'refresh');
+          $this->log('SAVE RESULT : OK', LOG_INFO, 'refresh');
+          $this->log('==========================================', LOG_INFO, 'refresh');
+        } else {
+          $this->log('==========================================', LOG_INFO, 'refresh');
+          $this->log('SAVE DATA is found. skipping... ', LOG_INFO, 'refresh');
+          $this->log('==========================================', LOG_INFO, 'refresh');
+        }
+      }
+      $this->MCustomer->commit();
+    } catch (Exception $e) {
+      $this->TCustomerInformationSetting->rollback();
+      $this->log('ERROR FOUND !! message => '.$e->getMessage(), LOG_ERR, 'refresh');
+    }
+    $this->log('END   AddCustomerInfoInitialDataShell::replaceAllOldIf', LOG_INFO, 'refresh');
   }
 
   private function convertContactTypesIdToString($m_contact_types_id) {

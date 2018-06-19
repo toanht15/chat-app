@@ -1161,7 +1161,6 @@
         $data = $this->Session->read('Thistory');
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-        $this->log($data['CustomData']['informations'], LOG_DEBUG);
         if((isset($data['CustomData'])) || (
           ( isset($data['History']['company_name']) && $data['History']['company_name'] !== ""
           ) || (
