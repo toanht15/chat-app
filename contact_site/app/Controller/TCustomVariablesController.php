@@ -5,7 +5,7 @@
  * @property TCustomVariable $TCustomVariable
  */
 class TCustomVariablesController extends AppController {
-  public $uses = ['TCustomVariable'];
+  public $uses = ['TCustomVariable','TCustomerInformationSetting'];
   public $paginate = [
     'TCustomVariable' => [
       'limit' => 100,
@@ -31,7 +31,6 @@ class TCustomVariablesController extends AppController {
   	Configure::write('debug', 2);
   	$this->paginate['TCustomVariable']['conditions']['TCustomVariable.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TCustomVariable');
-  	//$documentList = $this->TCustomVariable->find('all', $this->_setParams());
     $this->set('tCustomVariableList', $data);
   }
 
@@ -133,9 +132,15 @@ class TCustomVariablesController extends AppController {
     $this->layout = 'ajax';
     $this->TCustomVariable->recursive = -1;
     $selectedList = $this->request->data['selectedList'];
+    $documentList = $this->TCustomerInformationSetting->find('list', $this->_checkVariable());
     $this->TCustomVariable->begin();
     $res = true;
     foreach($selectedList as $key => $val){
+      foreach($documentList as $value){
+        if($val == $value){
+          $res = false;
+        }
+      }
       if (! $this->TCustomVariable->delete($val) ) {
         $res = false;
       }
@@ -394,5 +399,22 @@ class TCustomVariablesController extends AppController {
       'recursive' => -1
     ];
     return $params;
+  }
+
+  private function _checkVariable(){
+  	$params = [
+  			'order' => [
+  					'TCustomerInformationSetting.sort' => 'asc',
+  					'TCustomerInformationSetting.id' => 'asc'
+  			],
+  			'fields' => [
+  					'TCustomerInformationSetting.t_custom_variables_id'
+  			],
+  			'conditions' => [
+  					'TCustomerInformationSetting.m_companies_id' => $this->userInfo['MCompany']['id']
+  			],
+  			'recursive' => -1
+  	];
+  	return $params;
   }
 }
