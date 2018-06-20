@@ -1,24 +1,18 @@
 <?php
 $monitorSelected = "";
-$historySelected = "";
 $settingSelected = "";
 $chatSettingSelected = "";
 $docSettingSelected = "";
 $statisticsSelected = "";
 $chatbotSelected = "";
+$otherSettingSelected = "";
 switch ($this->name) {
     case 'Customers':
         $monitorSelected = "selected";
         break;
-    case 'Histories':
-        $historySelected = "selected";
-        break;
     case 'MUsers':
-    case 'PersonalSettings':
     case 'MWidgetSettings':
     case 'ScriptSettings':
-    case 'TCampaigns':
-    case 'DisplayExclusions':
         $settingSelected = "selected";
         break;
     case 'TAutoMessages':
@@ -27,15 +21,25 @@ switch ($this->name) {
         break;
     case 'MChatSettings':
     case 'MOperatingHours':
-    case 'MChatNotifications':
     case 'TDictionaries':
+    case 'MFileTransferSetting':
+    case 'MChatNotifications':
         $chatSettingSelected = "selected";
         break;
     case 'TDocuments':
         $docSettingSelected = "selected";
         break;
+    case 'ChatHistories':
+    case 'Histories':
     case 'Statistics':
         $statisticsSelected = "selected";
+        break;
+    case 'TCustomerInformationSettings':
+    case 'TCustomVariables':
+    case 'TCampaigns':
+    case 'DisplayExclusions':
+    case 'MSecuritySettings':
+        $otherSettingSelected = "selected";
         break;
 };
 $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイト" ;
@@ -91,7 +95,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
           </div>
         <?php endif; ?>
         <?php if (!$coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <div class="icon <?=$statisticsSelectedSelected?>">
+          <div class="icon <?=$statisticsSelected?>">
             <?= $this->htmlEx->naviFaIconLink('履歴・統計', 'fa-chart-pie', ['href' => ['controller' => 'Histories', 'action' => 'clearSession']]) ?>
           </div>
         <?php endif; ?>
@@ -113,8 +117,8 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
             <?= $this->htmlEx->naviFaIconLink('資料設定', 'fa-file-alt', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
           </div>
         <?php endif; ?>
-          <div class="icon <?=$chatSettingSelected?> setting-icon new-line" data-type="other">
-            <?= $this->htmlEx->naviFaIconLink('その他設定', 'fa-comment') ?>
+          <div class="icon <?=$otherSettingSelected?> setting-icon new-line" data-type="other">
+            <?= $this->htmlEx->naviFaIconLink('その他設定', 'fa-cogs') ?>
           </div>
       <div class="bottom-area">
         <hr class="separator"/>
