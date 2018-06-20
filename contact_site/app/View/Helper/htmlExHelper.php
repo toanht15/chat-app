@@ -174,13 +174,13 @@ class htmlExHelper extends AppHelper {
       }
       $ngModelAttr = "";
       if($addNgModel) {
-        $ngModelAttr = 'ng-model="customData['.$record['item_name'].']"';
+        $ngModelAttr = 'ng-model="customData[\''.$record['item_name'].'\']"';
       }
       switch($record['input_type']) {
         case 1: // テキストボックス
           return sprintf('<input class="infoData" id="ng-customer-custom-%s" type="text" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" '.$ngModelAttr.' value="%s" %s/>', $record['id'], $record['item_name'], $record['item_name'], $value, $placeholderAttr);
         case 2: // テキストエリア
-          return sprintf('<textarea class="infoData" rows="7" id="ng-customer-custom-%s" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" '.$ngModelAttr.' value="%s" %s></textarea>', $record['id'], $record['item_name'], $record['item_name'], $value, $placeholderAttr);
+          return sprintf('<textarea class="infoData" rows="7" id="ng-customer-custom-%s" data-key="%s" ng-blur="saveCusInfo(\'%s\', customData)" '.$ngModelAttr.' %s>%s</textarea>', $record['id'], $record['item_name'], $record['item_name'], $placeholderAttr, $value);
         case 3: // テキストエリア
           $options =  explode("\n", $record['input_option']);
           $html = sprintf('<select class="infoData" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" data-key="%s" '.$ngModelAttr.' value="%s">', $record['id'], $record['item_name'], $record['item_name'], $value);

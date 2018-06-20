@@ -1,7 +1,7 @@
 <div id='chat_notifications_idx' class="card-shadow">
 
 <div id='chat_notifications_add_title'>
-  <div class="fLeft"><i class="fal fa-broadcast-tower fa-2x"></i></div>
+  <div class="fLeft"><i class="fal fa-info-circle fa-2x"></i></div>
   <h1>チャット通知情報</h1>
 </div>
 <div id='chat_notifications_entry' class="p20x">

@@ -9,7 +9,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 
   <div id='tcustomvariables_title'>
     <div class="fLeft"><i class="fal fa-percent fa-2x"></i></div>
-    <h1>カスタム変数<span id="sortMessage"></span></h1>
+    <h1>カスタム変数設定<span id="sortMessage"></span></h1>
   </div>
 
   <div id='tcustomvariables_description'>

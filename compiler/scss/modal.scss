@@ -1109,15 +1109,41 @@
 
       /* 個人設定-更新ダイアログ用 */
       &.p-personal-update {
-        width: 425px;
-        height: 424px;
+        width: 445px;
+        height: 450px;
         #MUserRemoteOpenEntryFormForm{
           .form01 {
+            .inputItems {
+              width:272px;
+            }
             .item {
               display:flex;
-              .labelArea {
-                width:12em;
-              }
+            }
+            .labelArea {
+              width:11em;
+              margin: 5px 0 !important;
+            }
+            .labelAreaPassword {
+              width:15em;
+            }
+            .item {
+              margin: 15px 0 !important;
+            }
+            .checkLabelArea {
+              cursor: pointer;
+              display: flex;
+              position: relative;
+            }
+            span {
+              -ms-flex-align: center;
+              align-items: center;
+              -ms-flex-pack: start;
+              justify-content: flex-start;
+              display: -ms-flexbox;
+              display: flex;
+              width: 280px;
+            }
+            #set_password_area {
               span {
                 -ms-flex-align: center;
                 align-items: center;
@@ -1162,7 +1188,7 @@
         #popup-button a {
           width: 75px;
           float: left;
-          margin: 0 68px;
+          margin: 0 73px;
         }
         .error-message {
           padding: 0;

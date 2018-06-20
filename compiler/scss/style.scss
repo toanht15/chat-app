@@ -18,6 +18,10 @@ $sub-sidebar-z-index: 5;
   color: $string-color;
 }
 
+.fal{
+  line-height:1.25;
+}
+
 ::selection {
   background-color: #ADAFAE;
 }
@@ -941,6 +945,12 @@ ul.ulTab {
       img {
         margin: 0;
         padding: 4px 4px 4px;
+        margin-left: 10px;
+      }
+      .fal {
+        margin: 0;
+        padding: 4px 4px 4px;
+        margin-left: 10px;
       }
     }
   }
@@ -957,7 +967,7 @@ ul.ulTab {
 #sidebar-main, .sidebar-sub {
   overflow: hidden;
   .icon {
-    padding: 7px 0 !important;
+    padding: 5px 0 !important;
     position: relative;
     cursor: pointer;
   }
@@ -982,7 +992,7 @@ ul.ulTab {
 }
 
 #sidebar-main {
-  background-color: #6C6C6C;
+  background-color: #7f7f7f;
   z-index: $sidebar-z-index;
   padding-top: 85px;
   width: 80px;
@@ -999,29 +1009,28 @@ ul.ulTab {
     color: #FFF;
     text-align: center;
     &.selected, &:hover {
-      background-color: #959595;
+      background-color: #A6A6A6;
     }
   }
 }
 
 #sidebar-main .icon {
   p {
-    height: 15px !important;
+    display:flex;
+    align-items:center;
+    height: 20px !important;
     font-size: 11px;
     text-align: center;
     margin: 0 auto;
     color: #FFF;
     padding-top: 0px;
-    &:hover {
-      cursor: pointer;
-      background-color: #959595;
-    }
+    z-index: 1;
   }
 }
 
 .sidebar-sub {
   display: inline-block;
-  background-color: #959595;
+  background-color: #A6A6A6;
   z-index: $sub-sidebar-z-index;
   width: auto;
   left: -20px;
@@ -1087,18 +1096,19 @@ ul#color-bar-right {
   p {
     cursor:pointer;
     display:flex;
-    i {
+    .fa-angle-down {
       color:#fff;
       line-height: 0.6;
       margin-left: 10px;
     }
+    .fa-user-circle {
+      color: #fff;
+      line-height: 0.6;
+      margin-right: 10px;
+    }
   }
   &:hover {
     background-color: $header-btn-hover-color;
-  }
-
-  .downArrow::before {
-    content: "\f107";
   }
   span {
     font-weight: bold;
@@ -8946,6 +8956,19 @@ ul.naviBtn {
       padding-left: 5px;
     }
     .content { margin: 0 0 2em 2em; }
+    .pre {
+      display: block;
+      line-height: 2em;
+      padding-bottom: 0.5em;
+    }
+    .separator {
+      border-color: #C3D69B;
+      border-style: solid;
+      border-width: 1px 0 0 0;
+      margin: 0;
+      background-color: #FFF;
+      padding-bottom: 5px;
+    }
     #MChatSettingOutsideHoursSorryMessage {
       width: 30em;
       height: 8em;
@@ -8987,7 +9010,7 @@ ul.naviBtn {
       resize: none;
       font-size: 1em;
       padding: 0.5em;
-      margin-top: 1em;
+      margin-top: 14px;
       margin-left: 1.8em;
     }
 

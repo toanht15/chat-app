@@ -109,6 +109,12 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
         $this->scenarioMessageBlock .= "コメント：\n".$obj['comment']."\n";
       }
       $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n\n";
+    } else if($withDownloadURL) {
+      // ファイル送信URLを付与する設定なのにデータが無い状態はキャンセル扱いとする
+      $this->scenarioMessageBlock .= "\n";
+      $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n";
+      $this->scenarioMessageBlock .= "ダウンロードＵＲＬ：（ファイル送信をキャンセル）\n";
+      $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n\n";
     }
   }
 

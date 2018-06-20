@@ -277,7 +277,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
       <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
         @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
         @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
-        #sincloBox ul#chatTalk { width: 100%; height: 194px; padding-bottom: 5px 5px 60px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
+        #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px 5px 60px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
         #sincloBox ul#chatTalk.middleSize { height: 284px; }
         #sincloBox ul#chatTalk.largeSize { height: 374px; }
         #sincloBox ul#chatTalk.details { background-color: {{widget.settings['chat_talk_background_color']}}; }
@@ -346,7 +346,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li .sendFileContent .sendFileMetaArea .data.sendFileSize { margin-bottom: 0px; }
 
         /* ファイル受信 */
-        #sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 12px!important; }
+        #sincloBox ul#chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 10px; }
+        #sincloBox ul#chatTalk.middleSize li.sinclo_re.recv_file_left, #sincloBox #chatTalk.middleSize li.sinclo_se.recv_file_right { display: block; padding: 12px; }
+        #sincloBox ul#chatTalk.largeSize li.sinclo_re.recv_file_left, #sincloBox #chatTalk.largeSize li.sinclo_se.recv_file_right { display: block; padding: 14px; }
         #sincloBox #chatTalk li.sinclo_se.uploaded { display: inline-block; padding: 12px!important; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent { border: 1px dashed {{widget.settings['re_text_color']}}; }
         #sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display: inline-block; width: 75%; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: {{widget.settings['re_text_color']}}!important; color: {{widget.settings['re_background_color']}}; font-weight: normal; }
