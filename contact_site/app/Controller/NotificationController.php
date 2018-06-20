@@ -353,7 +353,7 @@ class NotificationController extends AppController {
   }
 
   private function getTargetCustomerInfoByVisitorId($m_companies_id, $visitor_id) {
-    $customerInfo = $this->MCustomer->find('all', array(
+    $customerInfo = $this->MCustomer->find('first', array(
       'm_companies_id' => $m_companies_id ,
       'visitors_id' => $visitor_id
     );
