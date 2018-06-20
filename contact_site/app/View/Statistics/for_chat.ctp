@@ -6,7 +6,7 @@
   <?php endif; ?>
   <div id='statistic_title'>
     <div class="fLeft"><i class="fal fa-comment fa-2x"></i></div>
-    <h1>チャット統計</h1>
+    <h1>チャット統計レポート</h1>
   </div>
 
   <?php echo $this->element('Statistics/base'); ?>
