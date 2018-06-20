@@ -1074,6 +1074,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
           if(actionDetail.dropAreaMessage) {
             $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled, actionDetail.cancelLabel, actionDetail.receiveFileType, actionDetail.extendedReceiveFileExtensions);
+            $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
             if($scope.receiveFileEventListener) {
               $scope.receiveFileEventListener();
             }
