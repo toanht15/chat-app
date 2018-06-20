@@ -869,9 +869,15 @@ ul.ulTab {
   top: 0;
   left: 0;
   background-color: #FFF;
-  z-index: $sidebar-z-index + 1;
+  z-index: 7;
   width: 80px;
   height: 60px;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+  align-items: center;
+  -ms-flex-pack: center;
+  justify-content: center;
 }
 
 /* ヘッダー：カラーバー */
@@ -945,8 +951,12 @@ ul.ulTab {
       }
       .fal {
         margin: 0;
-        padding: 4px 4px 4px;
+        padding: 10px 4px 4px;
         margin-left: 10px;
+        color: #cccccc;
+      }
+      .smallFal {
+        font-size:15px;
       }
     }
   }
@@ -9137,11 +9147,11 @@ ul.naviBtn {
 
       /* 矢印 */
       &:before {
-        bottom: -73px;
+        bottom: -95px;
       }
 
       &:after {
-        bottom: -72px;
+        bottom: -94px;
       }
     }
   }
