@@ -606,7 +606,9 @@ function openChatById(id) {
         }
       }
 
-      document.getElementById('customerId').value = customerData.MCustomer.id;
+      if(customerData.MCustomer && customerData.MCustomer.id) {
+        document.getElementById('customerId').value = customerData.MCustomer.id;
+      }
     }
   });
 }
