@@ -18,6 +18,10 @@ $sub-sidebar-z-index: 5;
   color: $string-color;
 }
 
+.fal{
+  line-height:1.25;
+}
+
 ::selection {
   background-color: #ADAFAE;
 }
@@ -957,7 +961,7 @@ ul.ulTab {
 #sidebar-main, .sidebar-sub {
   overflow: hidden;
   .icon {
-    padding: 7px 0 !important;
+    padding: 5px 0 !important;
     position: relative;
     cursor: pointer;
   }

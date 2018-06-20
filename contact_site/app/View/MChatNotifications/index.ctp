@@ -3,7 +3,7 @@
 <div id='chat_notifications_idx' class="card-shadow">
 
   <div id='chat_notifications_add_title'>
-    <div class="fLeft"><i class="fal fa-bell fa-2x"></i></div>
+    <div class="fLeft"><i class="fal fa-info-circle fa-2x"></i></div>
     <h1>チャット通知設定<span id="sortMessage"></span></h1>
   </div>
 

@@ -181,11 +181,11 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       </div>
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('ファイル送信設定', 'fa-cloud-upload', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'edit']], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('ファイル送信設定', 'fa-paperclip', ['href' => ['controller' => 'MFileTransferSetting', 'action' => 'edit']], true) ?>
         </div>
       <?php endif; ?>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('チャット通知設定', 'fa-bell', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']], true) ?>
+        <?= $this->htmlEx->naviFaIconLink('チャット通知設定', 'fa-info-circle', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']], true) ?>
       </div>
     </div>
   <?php endif; ?>
@@ -213,16 +213,16 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
       <div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-comment', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-history', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-user-alt', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-history', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('チャット統計レポート', 'fa-comment', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('チャット統計レポート', 'fa-chart-line', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('オペレータ統計レポート', 'fa-user-alt', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('オペレータ統計レポート', 'fa-chart-line', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
       </div>
     <?php endif; ?>

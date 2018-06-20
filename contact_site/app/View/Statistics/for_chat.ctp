@@ -5,7 +5,7 @@
     </div>
   <?php endif; ?>
   <div id='statistic_title'>
-    <div class="fLeft"><i class="fal fa-comment fa-2x"></i></div>
+    <div class="fLeft"><i class="fal fa-chart-line fa-2x"></i></div>
     <h1>チャット統計レポート</h1>
   </div>
 
