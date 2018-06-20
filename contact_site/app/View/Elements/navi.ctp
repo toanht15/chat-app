@@ -258,14 +258,14 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 
 
   var pointtimes = 0;
-  var duration_time = 160;
+  var duration_time = 260;
   $(".setting-icon").mouseenter(function(){
     pointtimes += 1;
     var type = $(this).data("type");
     var self = $(this);
     $('.sidebar-sub').stop(true,false).animate;
     $.when(
-      $('.sidebar-sub').animate({left: -120}, duration_time)
+      $('.sidebar-sub').animate({left: -200}, duration_time)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
       $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 81}, duration_time);
@@ -274,7 +274,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 
   $("#sidebar-main div.icon:not(.setting-icon)").mouseenter(function(){
     $.when(
-      $('.sidebar-sub').animate({left: -120}, duration_time)
+      $('.sidebar-sub').animate({left: -200}, duration_time)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
     });
@@ -282,7 +282,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 
   $('#header').mouseleave(function(){
     $.when(
-      $('.sidebar-sub').animate({left: -120},duration_time)
+      $('.sidebar-sub').animate({left: -200},duration_time)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
     });
