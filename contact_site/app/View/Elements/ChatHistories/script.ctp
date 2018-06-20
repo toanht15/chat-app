@@ -501,7 +501,9 @@ $(function(){
 
     setTimeout(function(){
       // 初期表示時にテーブルのヘッダとボディがズレることがあるのでタイミングをずらして再描画
-      tableObj.columns.adjust();
+      if(tableObj && tableObj.columns) {
+        tableObj.columns.adjust();
+      }
     }, 500);
 });
 
@@ -597,7 +599,7 @@ function openChatById(id) {
       $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
 
       for(var i=0; i < customerInfoSettings.length; i++) {
-        if(customerData.informations[customerInfoSettings[i].item_name]) {
+        if(customerData.informations && customerData.informations[customerInfoSettings[i].item_name]) {
           $('#ng-customer-custom-'+customerInfoSettings[i].id).get(0).value = customerData.informations[customerInfoSettings[i].item_name];
         } else {
           $('#ng-customer-custom-'+customerInfoSettings[i].id).get(0).value = "";
