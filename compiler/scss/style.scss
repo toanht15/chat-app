@@ -1026,7 +1026,7 @@ ul.ulTab {
   display: inline-block;
   background-color: #A6A6A6;
   z-index: $sub-sidebar-z-index;
-  width: auto;
+  width: 218px;
   left: -20px;
   div.icon {
   padding: 0px!important;
@@ -1038,6 +1038,7 @@ ul.ulTab {
       align-items: center;
       text-decoration: none;
       margin: 0;
+      padding-left: 10px;
       &:hover {
         background-color: #B7CF89;
         font-weight: bold;
