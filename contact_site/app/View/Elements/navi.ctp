@@ -296,7 +296,6 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
   };
 
   $("#menu-bar-right").mouseenter(function(){
-    console.log('menu');
     fadeInLayerMenu();
     $("#menu-bar-right").css('background-color', '#D6E8B0');
   });
