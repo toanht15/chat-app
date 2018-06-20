@@ -803,6 +803,7 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_RECEIVE_FILE => [
     'label' => 'ファイル受信',
     'default' => [
+      'chatTextArea' => '2',
       'dropAreaMessage' => 'ここにファイルをドロップ
 してください',
       'receiveFileType' => '1',
@@ -817,6 +818,7 @@ $config['chatbotScenarioActionList'] = [
   C_SCENARIO_ACTION_BRANCH_ON_CONDITION => [
     'label' => '条件分岐',
     'default' => [
+      'chatTextArea' => '2',
       'referenceVariable' => "",
       'conditionList' => [
         [
