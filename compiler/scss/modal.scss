@@ -1535,11 +1535,7 @@
 /* カスタム変数 */
 .p-tcustomvariables-entry {
   width: 600px;
-  height: 450px!important;
-
-  #filterType1Label {
-    margin-right: 36.6px;
-  }
+  height: 450px;
 
   .questionBallon {
     display: inline-block;
@@ -1666,6 +1662,10 @@
     }
   }
 
+  #popup-main{
+    padding:8px 20px!important;
+  }
+
   #popup-button {
     width: 15em;
     margin: 0 auto;
@@ -1716,7 +1716,7 @@
     }
   }
 
- .explainTooltip{
+  .explainTooltip{
     z-index: 10;
     position: absolute;
 
@@ -1733,7 +1733,7 @@
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -42px;
+        bottom: -14px;
         left: 5px;
         z-index: 1;
       }
@@ -1745,7 +1745,7 @@
         border-left: 9px solid transparent;
         border-right: 9px solid transparent;
         position: absolute;
-        bottom: -40px;
+        bottom: -12px;
         left: 5px;
         z-index: 3;
       }
@@ -1766,9 +1766,63 @@
           height:1em;
         }
 
+        li{
+          margin: 0px;
+        }
+
         span {
           font-size: 0.9em;
         }
+      }
+    }
+  }
+
+  .expandTooltip{
+    z-index: 10;
+    position: absolute;
+
+    icon-annotation {
+      width: 16em;
+      height: 2.1em;
+      display: none;
+
+      /* 矢印 */
+      &:before {
+        content: " ";
+        border: none;
+        border-top: 10px solid rgba(0, 0, 0,0.7);
+        border-left: 9px solid transparent;
+        border-right: 9px solid transparent;
+        position: absolute;
+        bottom: -34.5px;
+        left: 85px;
+        z-index: 1;
+      }
+
+      ul {
+        margin: 0;
+        padding: 0.9em;
+        text-align: left;
+        background-color: #000000b0;
+        font-weight: normal;
+        border-radius: 5px;
+        border: none;
+
+        img {
+          margin-bottom: -0.2em;
+          width:1em;
+          height:1em;
+        }
+
+        li{
+          margin: 0px;
+        }
+
+        span {
+          font-size: 0.9em;
+          color:white ;
+        }
+
       }
     }
   }
@@ -1784,20 +1838,34 @@
     flex-direction: column;
     margin: 20px 0;
 
-    textarea {
+    textarea{
       margin-top: 8px;
       padding: 10px;
       height: 140px;
       resize: none;
       border-radius: 15px!important;
-      overflow: auto;
 
       &#TCustomerInformationSettingInputOption{
         box-sizing: content-box;
-        height: 1.2em;
         border-radius: 5px!important;
-        margin-top: 8px;
+        margin-top: 0px;
         padding: 1px;
+        max-height: 88px;
+        overflow-y: hidden;
+        word-break : break-all;
+        line-height: 18px;
+      }
+    }
+
+    &#SelectListWrap > span{
+      margin-top: 10px;
+    }
+
+    #pulldown_label{
+      vertical-align: top;
+
+      &.require:after{
+        vertical-align: top;
       }
     }
 
@@ -1810,14 +1878,22 @@
     }
 
     input[type="checkbox"]{
+      display: inline-block;
+      margin: 0 0px;
+      padding: 0;
+      vertical-align: middle;
       position: relative;
-      top: 3px;
-      margin-left: 0px;
+      top: -1px;
+      cursor: pointer;
     }
 
     .forcheckbox{
       cursor:pointer;
       margin-bottom: 1em;
+
+      &.grayfont{
+        color:rgb(204, 204, 204)
+      }
     }
 
   }

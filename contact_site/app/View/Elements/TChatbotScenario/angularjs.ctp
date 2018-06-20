@@ -316,7 +316,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   // シナリオ設定の保存
-  this.saveAct = function() {
+  this.saveAct = function(e) {
+    if($('#submitBtn').hasClass('disabled')) return false;
     // localStorageから一時保存データを削除する
     LocalStorageService.remove($scope.storageKey);
 
@@ -1073,6 +1074,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
           if(actionDetail.dropAreaMessage) {
             $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled, actionDetail.cancelLabel, actionDetail.receiveFileType, actionDetail.extendedReceiveFileExtensions);
+            $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
             if($scope.receiveFileEventListener) {
               $scope.receiveFileEventListener();
             }
@@ -1622,18 +1624,30 @@ function actionValidationCheck(element, setActionList, actionItem) {
 
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
-    if (!actionItem.getAttributes[0].variableName) {
-      messageList.push('変数名が未入力です');
-    }
-
-    if (!actionItem.getAttributes[0].attributeValue) {
-      messageList.push('属性値が未入力です');
-    }
-
+    actionItem.getAttributes.some(function(elm){
+      var found = false;
+      if (!elm.variableName) {
+        found = true;
+        messageList.push('変数名が未入力です');
+      }
+      if (!elm.attributeValue) {
+        found = true;
+        messageList.push('CSSセレクタが未入力です');
+      }
+      if(found) {
+        return true;
+      }
+    });
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
     if (!actionItem.url) {
       messageList.push('連携先URLが未入力です');
+    }
+
+  }else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
+    if(!actionItem.dropAreaMessage) {
+      messageList.push("見出し文が未入力です");
     }
 
   } else
@@ -1641,31 +1655,42 @@ function actionValidationCheck(element, setActionList, actionItem) {
     if (!actionItem.tChatbotScenarioSendFileId || !actionItem.file || !actionItem.file.download_url || !actionItem.file.file_size) {
       messageList.push('ファイルが未選択です');
     }
+    if (Number(actionItem.receiveFileType) === 2 && !actionItem.extendedReceiveFileExtensions) {
+      messageList.push('拡張設定を選択した場合は拡張子の指定が必須です');
+    }
+    if (!actionItem.errorMessage) {
+      messageList.push('ファイルエラー時の返信メッセージが未入力です');
+    }
+    if (actionItem.cancelEnabled && !actionItem.cancelLabel) {
+      messageList.push('キャンセルできるようにする場合は名称の入力が必須です');
+    }
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
     if (!actionItem.referenceVariable) {
       messageList.push('参照する変数名が未入力です');
     }
+
     var validMatchValues = actionItem.conditionList.some(function(obj) {
       return !!obj.matchValue;
     });
+
     if (!validMatchValues) {
       messageList.push('条件が未入力です');
     }
 
-    var validMessageActions = actionItem.conditionList.some(function(obj) {
-      return obj.actionType === "1" && !!obj.action.message;
+    actionItem.conditionList.some(function(elm){
+      if(Number(elm.actionType) === 1 && !elm.action.message) {
+        messageList.push('アクションのメッセージが未入力です');
+        return true;
+      }
     });
-    if (!validMessageActions) {
-      messageList.push('アクションのメッセージが未入力です');
-    }
 
-    var validCallScenarioActions = actionItem.conditionList.some(function(obj) {
-      return obj.actionType === "2" && !!(obj.action.callScenarioId !== "");
+    actionItem.conditionList.some(function(elm){
+      if(Number(elm.actionType) === 2 && (!elm.action.callScenarioId || elm.action.callScenarioId === "")) {
+        messageList.push('呼出先のシナリオを選択して下さい');
+        return true;
+      }
     });
-    if (!validCallScenarioActions) {
-      messageList.push('呼出先のシナリオを選択して下さい');
-    }
   }
 
   // 使用されている変数名を抽出する
@@ -1706,12 +1731,15 @@ function actionValidationCheck(element, setActionList, actionItem) {
 
   // エラーメッセージをツールチップに設定
   if (!actionItem.$valid) {
+    $('#submitBtn').removeClass('greenBtn').addClass('disOffgrayBtn disabled').prop('disabled', true);
     setTimeout(function() {
       var target = element.querySelector('h4 > a > i');
       target.dataset.tooltip = messageList.map(function(message) {
         return '● ' + message;
       }).join('\n');
     }, 0);
+  } else {
+    $('#submitBtn').removeClass('disOffgrayBtn disabled').addClass('greenBtn').prop('disabled', false);
   }
 }
 

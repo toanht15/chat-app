@@ -406,8 +406,15 @@ function loadCustomVariableSettings(siteKey, callback) {
             }
           });
           syslogger.info('Load ALL CustomerInfo settings is successful.');
-          module.exports.customerInfoSettings = customerInfoSettings;
+        } else {
+          Object.keys(companySettings).forEach(function(elm, index, arr){
+            if(!customerInfoSettings[elm]) {
+              syslogger.info('siteKey: %s CustomerInfo setting is not found.',elm);
+              customerInfoSettings[elm] = [];
+            }
+          });
         }
+        module.exports.customerInfoSettings = customerInfoSettings;
         if(callback) callback();
       }
     );

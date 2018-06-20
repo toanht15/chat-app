@@ -595,6 +595,7 @@
             <?php $this->log('mCusData',LOG_DEBUG); $this->log($mCusData,LOG_DEBUG); ?>
             <?php
             for($i = 0; $i < count($customerInformationList); $i++) {
+              $informations = !empty($mCusData['MCustomer']) ? json_decode($mCusData['MCustomer']['informations'], TRUE) : array();
               if(strcmp($customerInformationList[$i]['input_type'], "2") === 0) {
                 echo '<li class="auto-height">';
                 echo '  <label class="no-float" for="ng-customer-custom-'.$customerInformationList[$i]['id'].'">'.$customerInformationList[$i]['item_name'].'</label>';
@@ -602,7 +603,8 @@
                 echo '<li>';
                 echo '  <label for="ng-customer-custom-' . $customerInformationList[$i]['id'] . '">' . $customerInformationList[$i]['item_name'] . '</label>';
               }
-              echo $this->htmlEx->visitorInput($customerInformationList[$i]);
+              $outValue = !empty($informations[$customerInformationList[$i]['item_name']]) ? $informations[$customerInformationList[$i]['item_name']] : "";
+              echo $this->htmlEx->visitorInput($customerInformationList[$i], false, true, false, $outValue);
               echo '</li>';
             }
             ?>
