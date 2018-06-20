@@ -18,6 +18,10 @@ $sub-sidebar-z-index: 5;
   color: $string-color;
 }
 
+.fal{
+  line-height:1.25;
+}
+
 ::selection {
   background-color: #ADAFAE;
 }
@@ -957,7 +961,7 @@ ul.ulTab {
 #sidebar-main, .sidebar-sub {
   overflow: hidden;
   .icon {
-    padding: 7px 0 !important;
+    padding: 5px 0 !important;
     position: relative;
     cursor: pointer;
   }
@@ -999,29 +1003,28 @@ ul.ulTab {
     color: #FFF;
     text-align: center;
     &.selected, &:hover {
-      background-color: #959595;
+      background-color: #A6A6A6;
     }
   }
 }
 
 #sidebar-main .icon {
   p {
-    height: 15px !important;
+    display:flex;
+    align-items:center;
+    height: 20px !important;
     font-size: 11px;
     text-align: center;
     margin: 0 auto;
     color: #FFF;
     padding-top: 0px;
-    &:hover {
-      cursor: pointer;
-      background-color: #959595;
-    }
+    z-index: 1;
   }
 }
 
 .sidebar-sub {
   display: inline-block;
-  background-color: #959595;
+  background-color: #A6A6A6;
   z-index: $sub-sidebar-z-index;
   width: auto;
   left: -20px;

@@ -7,7 +7,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 <div id='tchatbotscenario_idx' class="card-shadow">
 
   <div id='tchatbotscenario_title'>
-    <div class="fLeft"><i class="fal fa-robot fa-2x"></i></div>
+    <div class="fLeft"><i class="fal fa-code-merge fa-2x"></i></div>
     <h1>シナリオ設定</h1>
   </div>
 
