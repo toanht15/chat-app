@@ -50,27 +50,27 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       <?php if(!empty($trialTime)) { ?>
         <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
       <?php } ?>
-        <li class="fLeft" id = "menu-bar-right"><p><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-up fa-2x'></i></p></li>
+        <li class="fLeft" id = "menu-bar-right"><p><i class="fal fa-user-circle fa-2x"></i><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-down fa-2x'></i></p></li>
     </ul>
 </div>
 <div id="colorBarMenu" style = "display:none;">
   <ul>
     <li class="t-link" onclick="editPersonalInfo()">
-      <?= $this->Html->image('personal_g.png', array('alt' => 'プロフィール', 'width' => 30, 'height' => 30)) ?>
+      <i class="fal fa-user-circle fa-2x"></i>
       <a href="javascript:void(0)">
         プロフィール
       </a>
     </li>
     <hr class="separator">
     <li class="t-link" onclick="window.open('https://info.sinclo.jp/manual/',target = '_blank')">
-      <?= $this->Html->image('manual_g.png', array('alt' => 'ヘルプ', 'width' => 30, 'height' => 30)) ?>
+      <i class="fal fa-book-open fa-2x"></i>
       <a href="javascript:void(0)">
         ヘルプ
       </a>
     </li>
     <hr class="separator">
-    <li class="t-link" onclick="window.open('<?= $this->Html->url(['controller' => 'Login', 'action' => 'logout']) ?>')">
-      <?= $this->Html->image('logout_g.png', array('alt' => 'ログアウト', 'width' => 30, 'height' => 30)) ?>
+    <li class="t-link" onclick = 'location.href = "/Login/logout"'>
+      <i class="fal fa-sign-out-alt fa-2x"></i>
       <a href="javascript:void(0)">
         ログアウト
       </a>
@@ -80,7 +80,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 <!-- /* 上部カラーバー(ここまで) */ -->
 
 <!-- /* システムアイコン（ここから） */ -->
-<div id="sys-icon"><?= $this->Html->image('sinclo_square_logo.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 13px; display: block'))?></div>
+<div id="sys-icon"><?= $this->Html->image('logo_sinclo_square.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 13px; display: block'))?></div>
 <!-- /* システムアイコン（ここまで） */ -->
 
 <!-- /* サイドバー１（ここから） */ -->
@@ -290,45 +290,33 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
   });
 
   var fadeOutLayerMenu = function() {
-    $("#colorBarMenu").fadeOut("fast");
+    $("#colorBarMenu").slideUp(260);
   };
 
   var fadeInLayerMenu = function() {
-    console.log('fadein');
-    $("#colorBarMenu").fadeIn("fast");
+    $("#colorBarMenu").slideToggle(260);
   };
 
-  $('#menu-bar-right').on('click', function(e) {
-    e.stopPropagation();
-    //矢印下向きに変更
-    $('.fal').toggleClass('downArrow');
-    var menu = document.getElementById("colorBarMenu").style.display;
-    if(menu == "block"){
+  $("#menu-bar-right").mouseenter(function(){
+    fadeInLayerMenu();
+    $("#menu-bar-right").css('background-color', '#D6E8B0');
+  });
+  $('#menu-bar-right').mouseleave(function(e){
+    if(e.toElement.id !== 'colorBarMenu') {
       //メニュー非表示
       fadeOutLayerMenu();
       $("#menu-bar-right").css('background-color', '#C3D69B');
     }
-    else{
-      //メニュー表示
-      fadeInLayerMenu();
-      $("#menu-bar-right").css('background-color', '#D6E8B0');
-    }
-    clickMenu = true;
-    $("#menu-bar-right").mouseenter(function(){
-      $("#menu-bar-right").css('background-color', '#D6E8B0');
-    });
-    $('#menu-bar-right').mouseleave(function(){
-      if(clickMenu === false) {
-        $("#menu-bar-right").css('background-color', '#C3D69B');
-      }
-    });
   });
-
+  $('#colorBarMenu').mouseleave(function(){
+    //メニュー非表示
+    fadeOutLayerMenu();
+    $("#menu-bar-right").css('background-color', '#C3D69B');
+  });
 
   $(document).on('click',function(){
     //メニュー非表示
     fadeOutLayerMenu();
-    $('.fal').removeClass('downArrow');
     $("#menu-bar-right").css('background-color', '#C3D69B');
     clickMenu = false;
   });
@@ -340,7 +328,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       cache: false,
       url: "<?= $this->Html->url('/PersonalSettings/remoteOpenEntryForm') ?>",
       success: function(html){
-        modalOpen.call(window, html, 'p-personal-update', '個人設定', 'moment');
+        modalOpen.call(window, html, 'p-personal-update', 'プロフィール', 'moment');
       },
       error: function(html) {
         console.log('error');
