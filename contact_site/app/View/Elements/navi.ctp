@@ -118,9 +118,6 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
         <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('お知らせ', 'fa-bell', ['href' => 'https://info.sinclo.jp/news/', 'target' => '_blank']) ?>
         </div>
-        <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('ヘルプ', 'fa-book-open', ['href' => 'https://info.sinclo.jp/manual/', 'target' => '_blank']) ?>
-        </div>
       </div>
     </div>
   <div id="supportNumberArea" style="width:100%; color:#FFF; position: absolute; bottom: 5px; text-align: center;"></div>
