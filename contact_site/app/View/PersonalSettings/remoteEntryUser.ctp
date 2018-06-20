@@ -103,51 +103,55 @@ if ( !empty($this->data['MUser']['settings']) ) {
         <!-- /* 基本情報 */ -->
         <section>
             <?= $this->Form->input('id', array('type' => 'hidden')); ?>
-            <div>
+            <div class = "item">
             <div class="labelArea fLeft"><span class="require"><label>氏名</label></span></div>
-            <?= $this->Form->input('user_name', array('placeholder' => 'user_name', 'div' => false, 'label' => false, 'maxlength' => 50, 'error' => false)) ?>
+            <?= $this->Form->input('user_name', array('placeholder' => 'user_name', 'div' => false, 'label' => false, 'maxlength' => 50, 'error' => false,'class' => 'inputItems')) ?>
             </div>
-            <div>
+            <div class = "item">
             <div class="labelArea fLeft"><span class="require"><label>表示名</label></span></div>
-            <?= $this->Form->input('display_name', array('placeholder' => 'display_name', 'div' => false, 'label' => false, 'maxlength' => 10, 'error' => false)) ?>
+            <?= $this->Form->input('display_name', array('placeholder' => 'display_name', 'div' => false, 'label' => false, 'maxlength' => 10, 'error' => false,'class' => 'inputItems')) ?>
             </div>
             <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && !empty($mChatSetting['MChatSetting']) && strcmp($mChatSetting['MChatSetting']['sc_flg'], C_SC_ENABLED) === 0 ) : ?>
-              <div>
+              <div class = "item">
             <?php else : ?>
               <div style = "display:none;">
             <?php endif; ?>
                <div class="labelArea fLeft"><span><label>チャット同時対応数</label></span></div>
-               <div style = "padding-top: 5px;"><?php
+               <div><?php
                echo ( !empty($settings['sc_num']) ) ? $settings['sc_num'] : 0 ?></div>
                <?=$this->Form->hidden('settings',array('error' => false))?>
            <?php if ( $this->Form->isFieldError('settings') ) echo $this->Form->error('settings', null, array('wrap' => 'li')); ?>
               </div>
-            <div>
+            <div class = "item">
             <div class="labelArea fLeft"><span class="require"><label>メールアドレス</label></span></div>
-            <?= $this->Form->input('mail_address', array('placeholder' => 'mail_address', 'div' => false, 'label' => false, 'maxlength' => 200, 'error' => false)) ?>
+            <?= $this->Form->input('mail_address', array('placeholder' => 'mail_address', 'div' => false, 'label' => false, 'maxlength' => 200, 'error' => false, 'class' => 'inputItems')) ?>
             </div>
         </section>
         <!-- /* パスワード変更 */ -->
         <section>
+          <div class = "item">
             <!-- /* autocomplete対策 */ -->
             <input type="text" style="display: none">
             <input type="password" style="display: none">
             <!-- /* autocomplete対策 */ -->
-              <div class="labelArea m40l fLeft"><span><label>パスワードを変更する</label></span></div>
-              <?= $this->Form->input('edit_password', array('type' => 'checkbox', 'class' => 'pointer', 'label' => false, 'div' => false)); ?>
+            <label class="checkLabelArea">
+            <?= $this->Form->input('edit_password', array('type' => 'checkbox', 'class' => 'pointer', 'label' => false, 'div' => false, 'style' => 'margin-left:0px')); ?>
+              <span>パスワードを変更する</span>
+            </label>
+          </div>
               <div id="set_password_area">
                 <li>
-                    <div class="labelArea fLeft"><span><label>現在のパスワード</label></span></div>
+                    <div class="labelAreaPassword fLeft"><span><label>現在のパスワード</label></span></div>
                     <?= $this->Form->input('current_password', array('type' => 'password', 'disabled' => $editFlg, 'placeholder' => 'current password', 'div' => false, 'label' => false, 'maxlength' => 12, 'error' => false)) ?>
                 </li>
                 <?php if ($this->Form->isFieldError('current_password')) echo $this->Form->error('current_password', null, array('wrap' => 'li')); ?>
                 <li>
-                    <div class="labelArea fLeft"><span><label>新しいパスワード</label></span></div>
+                    <div class="labelAreaPassword fLeft"><span><label>新しいパスワード</label></span></div>
                     <?= $this->Form->input('new_password', array('type' => 'password', 'disabled' => $editFlg, 'placeholder' => 'new password', 'div' => false, 'label' => false, 'maxlength' => 12, 'error' => false)) ?>
                 </li>
                 <?php if ($this->Form->isFieldError('new_password') ) echo $this->Form->error('new_password', null, array('wrap' => 'li')); ?>
                 <li>
-                    <div class="labelArea fLeft"><span><label>新しいパスワード（確認用）</label></span></div>
+                    <div class="labelAreaPassword fLeft"><span><label>新しいパスワード（確認用）</label></span></div>
                     <?= $this->Form->input('confirm_password', array('type' => 'password', 'disabled' => $editFlg, 'placeholder' => 'confirm password', 'div' => false, 'label' => false, 'maxlength' => 12, 'error' => false)) ?>
                 </li>
                 <?php if ($this->Form->isFieldError('confirm_password') ) echo $this->Form->error('confirm_password', null, array('wrap' => 'li')); ?>

@@ -46,7 +46,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <?php if(!empty($trialTime)) { ?>
         <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
       <?php } ?>
-        <li class="fLeft" id = "menu-bar-right"><p><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-up fa-2x'></i></p></li>
+        <li class="fLeft" id = "menu-bar-right"><p><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-down fa-2x'></i></p></li>
     </ul>
 </div>
 <div id="colorBarMenu" style = "display:none;">
@@ -65,7 +65,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       </a>
     </li>
     <hr class="separator">
-    <li class="t-link" onclick="window.open('<?= $this->Html->url(['controller' => 'Login', 'action' => 'logout']) ?>')">
+    <li class="t-link" onclick = 'location.href = "/Login/logout"'>
       <?= $this->Html->image('logout_g.png', array('alt' => 'ログアウト', 'width' => 30, 'height' => 30)) ?>
       <a href="javascript:void(0)">
         ログアウト
@@ -76,7 +76,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
 <!-- /* 上部カラーバー(ここまで) */ -->
 
 <!-- /* システムアイコン（ここから） */ -->
-<div id="sys-icon"><?= $this->Html->image('sinclo_square_logo.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 13px; display: block'))?></div>
+<div id="sys-icon"><?= $this->Html->image('logo_sinclo_square.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 13px; display: block'))?></div>
 <!-- /* システムアイコン（ここまで） */ -->
 
 <!-- /* サイドバー１（ここから） */ -->
@@ -291,45 +291,34 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
   });
 
   var fadeOutLayerMenu = function() {
-    $("#colorBarMenu").fadeOut("fast");
+    $("#colorBarMenu").slideUp(260);
   };
 
   var fadeInLayerMenu = function() {
-    console.log('fadein');
-    $("#colorBarMenu").fadeIn("fast");
+    $("#colorBarMenu").slideToggle(260);
   };
 
-  $('#menu-bar-right').on('click', function(e) {
-    e.stopPropagation();
-    //矢印下向きに変更
-    $('.fal').toggleClass('downArrow');
-    var menu = document.getElementById("colorBarMenu").style.display;
-    if(menu == "block"){
+  $("#menu-bar-right").mouseenter(function(){
+    console.log('menu');
+    fadeInLayerMenu();
+    $("#menu-bar-right").css('background-color', '#D6E8B0');
+  });
+  $('#menu-bar-right').mouseleave(function(e){
+    if(e.toElement.id !== 'colorBarMenu') {
       //メニュー非表示
       fadeOutLayerMenu();
       $("#menu-bar-right").css('background-color', '#C3D69B');
     }
-    else{
-      //メニュー表示
-      fadeInLayerMenu();
-      $("#menu-bar-right").css('background-color', '#D6E8B0');
-    }
-    clickMenu = true;
-    $("#menu-bar-right").mouseenter(function(){
-      $("#menu-bar-right").css('background-color', '#D6E8B0');
-    });
-    $('#menu-bar-right').mouseleave(function(){
-      if(clickMenu === false) {
-        $("#menu-bar-right").css('background-color', '#C3D69B');
-      }
-    });
   });
-
+  $('#colorBarMenu').mouseleave(function(){
+    //メニュー非表示
+    fadeOutLayerMenu();
+    $("#menu-bar-right").css('background-color', '#C3D69B');
+  });
 
   $(document).on('click',function(){
     //メニュー非表示
     fadeOutLayerMenu();
-    $('.fal').removeClass('downArrow');
     $("#menu-bar-right").css('background-color', '#C3D69B');
     clickMenu = false;
   });
@@ -341,7 +330,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       cache: false,
       url: "<?= $this->Html->url('/PersonalSettings/remoteOpenEntryForm') ?>",
       success: function(html){
-        modalOpen.call(window, html, 'p-personal-update', '個人設定', 'moment');
+        modalOpen.call(window, html, 'p-personal-update', 'プロフィール', 'moment');
       },
       error: function(html) {
         console.log('error');

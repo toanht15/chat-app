@@ -165,12 +165,12 @@ function addItem(number) {
         content    += "  <h4 style = 'background-color: #ECF4DA;margin: 0;font-weight:bold;'>";
         content    += "  <span class='removeArea' style = 'width: 2em;float: left;text-align: center;padding: 9px 0.75em;height: 34px;'>";
         content    += "    <i onclick = 'removeItem("+number+")' id = 'remove"+number+"' class = 'remove' style = 'cursor:pointer; border: 1px solid #878787;background-color: #FFFFFF;background-size: 12px;background-repeat: no-repeat;width: 16px;height: 16px;border-radius: 15px;display: block;background-position: 1px;'></i></span>";
-        content    += "    <span style = 'display: block;margin-left: 2.5em;padding: 9px 9px 9px 0.25em;height: 34px;' class='labelArea ng-binding''>チャット呼出中メッセージ<i style = 'float: right;background-color: #FF8E9E;width: 15px;height: 15px;' class='error ng-scope validation'></i></span>";
+        content    += "    <span style = 'display: block;margin-left: 2.5em;padding: 9px 9px 9px 0.25em;height: 34px;' class='labelArea ng-binding''>チャット呼出中メッセージ<i style = 'float: right;background-color: #FF8E9E;width: 15px;height: 15px;cursor:pointer;' class='error ng-scope validation'></i></span>";
         content    += "  </h4>";
         content    += "<div>";
         content    += "<input name='data[MChatSetting][seconds"+number+"]' min = '0' value = '0' style='width: 5.5em;margin-left: 2em;margin-top: 14px;padding: 5px 10px;border: none;border-bottom: 1px solid #909090;' type='number' id='MChatSettingSeconds"+number+"'/>秒後";
         content    += "  </div>";
-        content    += "  <span style = 'display:flex;margin-top: 5px;'>";
+        content    += "  <span style = 'display:flex;'>";
         content    += "     <textarea name='data[MChatSetting][initial_notification_message"+number+"]' class = 'notificationTextarea' id='MChatSettingInitialNotificationMessage"+number+"'></textarea>";
         content    += "    <span id = 'summarized"+number+"' style = 'margin-left:10px;'>";
         content    += "    <span class='greenBtn btn-shadow actBtn choiseButton' onclick=\"addOption(1,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'choice'>選択肢を追加する</span>";
@@ -179,8 +179,11 @@ function addItem(number) {
         content    += "    <span class='greenBtn btn-shadow actBtn linkNewTabButton' onclick=\"addOption(4,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'secondSpeechLabel'>リンク（新規ページ）<div class = 'questionBalloon questionBalloonPosition14'><icon class = 'questionBtn'>?</icon></div></span>";
         content    += "  </span>";
         content    += "</span>";
-        content    += "  <div style = 'margin-top:17px;'>";
-        content    += " <img onclick = 'addItem("+(number+1)+")' id = 'add"+number+"' src='/img/add.png' alt='登録' class='btn-shadow disOffgreenBtn' width='25' height='25' style='padding: 2px !important; display: block;margin-left: 1.9em;margin-top: 14px;transform: scale(0.8);'>";
+        content    += "<div>";
+        content    += "<hr class='separator' style = 'margin-top:1em'>";
+        content    += "  <div>";
+        content    += " <img onclick = 'addItem("+(number+1)+")' id = 'add"+number+"' src='/img/add.png' alt='登録' class='btn-shadow disOffgreenBtn' width='25' height='25' style='padding: 2px !important; display: block;margin-left: 1.9em;transform: scale(0.8);'>";
+        content    += "  </div>";
         content    += "  </div>";
         content    += "</li>";
         content    += "<div class='balloon' style='top: 10px; left: 840px; display:none;position: absolute;top: 0;left: 58em;background-color: #FF8E9E;z-index: 5;box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);''><div class='balloonContent' style ='position: relative;width: 30em;min-height: 5em;padding: 0 1em;'><p style = 'margin: 0;padding: 0;margin-top: 5px;color:#FFF'>● チャット呼出中メッセージは３００文字以内で設定してください</p></div></div>";
@@ -269,9 +272,7 @@ function checkValidate() {
       <section>
         <h3>１．同時対応数上限</h3>
         <div class ="content">
-          <pre>同時にチャットを受け取れる数を制限することができます。
-同時対応数が上限に達したユーザーへは新着チャットのデスクトップ通知が表示されなくなります。
-          </pre>
+          <span class = "pre">オペレータが同時にチャット対応できる上限数を設定することができます。&#10;ここで設定した同時対応数に達したオペレータには新着チャットのデスクトップ通知が表示されなくなります。&#10;また、すべてのオペレータが同時対応数の上限に達している際に新着チャットが送信された場合には、チャット送信者（サイト訪問者）に対してsorryメッセージ（当画面下段にて設定可能）を自動返信します。</span>
           <div>
             <label style="display:inline-block;" <?php echo $coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : 'style="color: #CCCCCC;" '?>>
               <?php
@@ -328,9 +329,7 @@ function checkValidate() {
       <section>
         <h3>２．チャット呼出中メッセージ</h3>
         <div class="content">
-          <pre>有人チャットを受信後、オペレータが入室するまでの間に任意のメッセージを自動送信することができます。
-最初の有人チャットを受信してからオペレータが入室するまでの経過時間により、自動送信するメッセージを複数設定することが可能です。
-          </pre>
+          <span class = "pre">有人チャットを受信後、オペレータが入室するまでの間に任意のメッセージを自動送信することができます。&#10;最初の有人チャットを受信してからオペレータが入室するまでの経過時間により、自動送信するメッセージを複数設定することが可能です。</span>
           <label style="display:inline-block;">
               <?php
                 $settings = [
