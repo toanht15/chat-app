@@ -56,19 +56,20 @@ class DeleteOldHistoriesShell extends AppShell
           $this->deleteReceiveFile($data['MCompany']);
         }
         $this->commitTransaction();
+        $this->log('TARGET IDS : '.var_export($this->deleteTargetHistoryIds, TRUE), self::LOG_INFO);
       } else {
-        $this->log('target companies is not found.');
+        $this->log('target companies is not found.', self::LOG_INFO);
       }
-      $this->log('TARGET IDS'.var_export($this->deleteTargetHistoryIds, FALSE), self::LOG_INFO);
     } catch(Exception $e) {
       $this->rollbackTransaction();
     }
   }
 
-  private function getDeleteTargetCompanies($d) {
+  private function getDeleteTargetCompanies() {
     $this->targetCompanies = $this->MCompany->find('all',array(
       'conditions' => array(
-        'AND' => array('del_flg' => 0, 'keep_history_days > ' => 0, 'm_companies_id' => $d['id'])
+        'AND' => array('del_flg' => 0, 'keep_history_days > ' => 0)
+      )
     ));
   }
 
