@@ -353,7 +353,10 @@ class NotificationController extends AppController {
   }
 
   private function getTargetCustomerInfoByVisitorId($m_companies_id, $visitor_id) {
-    $customerInfo = $this->MCustomer->findByVisitorsId($visitor_id);
+    $customerInfo = $this->MCustomer->find('all', array(
+      'm_companies_id' => $m_companies_id ,
+      'visitors_id' => $visitor_id
+    );
     $customerInfoObj = json_decode($customerInfo['MCustomer']['informations'],TRUE);
     $settings = $this->getAllCustomerSettingsForNotifyMail($m_companies_id);
     $returnVal = array();
