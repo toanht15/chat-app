@@ -46,27 +46,27 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード・デモ" : "デモサイト" ;
       <?php if(!empty($trialTime)) { ?>
         <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
       <?php } ?>
-        <li class="fLeft" id = "menu-bar-right"><p><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-down fa-2x'></i></p></li>
+        <li class="fLeft" id = "menu-bar-right"><p><i class="fal fa-user-circle fa-2x"></i><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-down fa-2x'></i></p></li>
     </ul>
 </div>
 <div id="colorBarMenu" style = "display:none;">
   <ul>
     <li class="t-link" onclick="editPersonalInfo()">
-      <?= $this->Html->image('personal_g.png', array('alt' => 'プロフィール', 'width' => 30, 'height' => 30)) ?>
+      <i class="fal fa-user-circle fa-2x"></i>
       <a href="javascript:void(0)">
         プロフィール
       </a>
     </li>
     <hr class="separator">
     <li class="t-link" onclick="window.open('https://info.sinclo.jp/manual/',target = '_blank')">
-      <?= $this->Html->image('manual_g.png', array('alt' => 'ヘルプ', 'width' => 30, 'height' => 30)) ?>
+      <i class="fal fa-book-open fa-2x"></i>
       <a href="javascript:void(0)">
         ヘルプ
       </a>
     </li>
     <hr class="separator">
     <li class="t-link" onclick = 'location.href = "/Login/logout"'>
-      <?= $this->Html->image('logout_g.png', array('alt' => 'ログアウト', 'width' => 30, 'height' => 30)) ?>
+      <i class="fal fa-sign-out-alt fa-2x"></i>
       <a href="javascript:void(0)">
         ログアウト
       </a>

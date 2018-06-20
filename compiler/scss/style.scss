@@ -943,6 +943,11 @@ ul.ulTab {
         padding: 4px 4px 4px;
         margin-left: 10px;
       }
+      .fal {
+        margin: 0;
+        padding: 4px 4px 4px;
+        margin-left: 10px;
+      }
     }
   }
 }
@@ -1088,10 +1093,15 @@ ul#color-bar-right {
   p {
     cursor:pointer;
     display:flex;
-    i {
+    .fa-angle-down {
       color:#fff;
       line-height: 0.6;
       margin-left: 10px;
+    }
+    .fa-user-circle {
+      color: #fff;
+      line-height: 0.6;
+      margin-right: 10px;
     }
   }
   &:hover {
