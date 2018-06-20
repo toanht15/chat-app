@@ -501,7 +501,9 @@ $(function(){
 
     setTimeout(function(){
       // 初期表示時にテーブルのヘッダとボディがズレることがあるのでタイミングをずらして再描画
-      tableObj.columns.adjust();
+      if(tableObj && tableObj.columns) {
+        tableObj.columns.adjust();
+      }
     }, 500);
 });
 
