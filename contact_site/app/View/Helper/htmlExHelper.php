@@ -174,7 +174,7 @@ class htmlExHelper extends AppHelper {
       }
       $ngModelAttr = "";
       if($addNgModel) {
-        $ngModelAttr = 'ng-model="customData['.$record['item_name'].']"';
+        $ngModelAttr = 'ng-model="customData[\''.$record['item_name'].'\']"';
       }
       switch($record['input_type']) {
         case 1: // テキストボックス
