@@ -100,7 +100,7 @@
     <div id="tchatbotscenario_actions" class="fotterBtnArea">
       <?=$this->Html->link('戻る','/TChatbotScenario/index/page:'.$lastPage, ['class'=>'whiteBtn btn-shadow'])?>
       <a href="javascript:void(0)" ng-click="main.saveTemporary()" class="greenBtn btn-shadow">一時保存</a>
-      <a href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>
+      <a id="submitBtn" href="javascript:void(0)" ng-click="main.saveAct()" class="greenBtn btn-shadow">保存</a>
       <?php
       $class = "";
       if ( empty($this->data['TChatbotScenario']['id']) ) {

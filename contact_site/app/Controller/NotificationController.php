@@ -21,7 +21,7 @@ class NotificationController extends AppController {
   const PARAM_VARIABLES = 'variables';
 
   public $components = ['AutoMessageMailTemplate', 'ScenarioMailTemplate', 'MailSender', 'Auth'];
-  public $uses = ['TAutoMessage','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting', 'TMailTransmissionLog', 'MCompany'];
+  public $uses = ['TAutoMessage','MCustomer','TCustomerInformationSetting','TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'MLandscapeData', 'MMailTransmissionSetting', 'TMailTransmissionLog', 'MCompany'];
 
   public function beforeFilter() {
     $this->Auth->allow('autoMessages','scenario', 'callExternalApi');
@@ -53,8 +53,11 @@ class NotificationController extends AppController {
       if(!empty($coreSettings) && array_key_exists(C_COMPANY_REF_COMPANY_DATA, $coreSettings) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { //FIX : 企業マスタから取得必須
         $targetLandscapeData = $this->getTargetLandScapeDataByIpAddress($targetHistory['THistory']['ip_address']);
       }
+
+      $customerInfo = $this->getTargetCustomerInfoByVisitorId($targetHistory['THistory']['m_companies_id'], $targetHistory['THistory']['visitors_id']);
+
       $component = new AutoMessageMailTemplateComponent();
-      $component->setRequiredData($targetAutoMessage['TAutoMessage']['m_mail_template_id'], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData);
+      $component->setRequiredData($targetAutoMessage['TAutoMessage']['m_mail_template_id'], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData, $customerInfo);
       $component->createMessageBody();
 
       $transmission = $this->getTransmissionConfigById($targetAutoMessage['TAutoMessage']['m_mail_transmission_settings_id']);
@@ -142,8 +145,11 @@ class NotificationController extends AppController {
       if(!empty($coreSettings) && array_key_exists(C_COMPANY_REF_COMPANY_DATA, $coreSettings) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]) { //FIX : 企業マスタから取得必須
         $targetLandscapeData = $this->getTargetLandScapeDataByIpAddress($targetHistory['THistory']['ip_address']);
       }
+
+      $customerInfo = $this->getTargetCustomerInfoByVisitorId($targetHistory['THistory']['m_companies_id'], $targetHistory['THistory']['visitors_id']);
+
       $component = new ScenarioMailTemplateComponent();
-      $component->setSenarioRequiredData($jsonObj[self::PARAM_MAIL_TYPE], $jsonObj[self::PARAM_VARIABLES], $jsonObj[self::PARAM_TEMPLATE_ID], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData);
+      $component->setSenarioRequiredData($jsonObj[self::PARAM_MAIL_TYPE], $jsonObj[self::PARAM_VARIABLES], $jsonObj[self::PARAM_TEMPLATE_ID], $allChatLogs, $targetStayLog, $campaign, $targetLandscapeData, $customerInfo);
       $component->createMessageBody($jsonObj[self::PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL]);
 
       $transmission = $this->getTransmissionConfigById($jsonObj[self::PARAM_TRANSMISSION_ID]);
@@ -344,6 +350,36 @@ class NotificationController extends AppController {
 
   private function getTargetHistoryById($id) {
     return $this->THistory->findById($id);
+  }
+
+  private function getTargetCustomerInfoByVisitorId($m_companies_id, $visitor_id) {
+    $customerInfo = $this->MCustomer->find('first', array(
+      'conditions' => array(
+        'm_companies_id' => $m_companies_id,
+        'visitors_id' => $visitor_id
+      )
+    ));
+    $customerInfoObj = json_decode($customerInfo['MCustomer']['informations'],TRUE);
+    $settings = $this->getAllCustomerSettingsForNotifyMail($m_companies_id);
+    $returnVal = array();
+    foreach($settings as $index => $obj) {
+      if(strcmp($obj['TCustomerInformationSetting']['show_send_mail_flg'], 1) === 0
+        && isset($customerInfoObj[$obj['TCustomerInformationSetting']['item_name']])
+        && strcmp($customerInfoObj[$obj['TCustomerInformationSetting']['item_name']], "") !== 0) {
+        $returnVal[$obj['TCustomerInformationSetting']['item_name']] = $customerInfoObj[$obj['TCustomerInformationSetting']['item_name']];
+      }
+    }
+    return $returnVal;
+  }
+
+  private function getAllCustomerSettingsForNotifyMail($m_companies_id) {
+    return $this->TCustomerInformationSetting->find('all', array(
+      'conditions' => array(
+        'AND' => array('m_companies_id' => $m_companies_id, 'show_send_mail_flg' => 1),
+        'NOT' => array('delete_flg' => 1)
+      ),
+      'order' => array('sort')
+    ));
   }
 
   /**

@@ -263,7 +263,7 @@ function checkValidate() {
 
   <div id='m_chat_settings_add_title'>
       <div class="fLeft">
-        <i class="fal fa-cogs fa-2x"></i>
+        <i class="fal fa-cog fa-2x"></i>
       </div>
       <h1>チャット基本設定</h1>
   </div>

@@ -9,7 +9,7 @@ if ( !(!empty($this->data['MFileTransferSetting']['type']) && strcmp($this->data
 <div id='mfiletransfersetting_idx' class="card-shadow">
 
   <div id='mfiletransfersetting_title'>
-    <div class="fLeft"><i class="fal fa-cloud-upload fa-2x"></i></div>
+    <div class="fLeft"><i class="fal fa-paperclip fa-2x"></i></div>
     <h1>ファイル送信設定</h1>
   </div>
 

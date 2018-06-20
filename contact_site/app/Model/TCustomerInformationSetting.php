@@ -7,13 +7,13 @@ App::uses('AppModel', 'Model');
 */
 class TCustomerInformationSetting extends AppModel {
 
-	public $name = 'TCustomerInformationSettings';
+  public $name = 'TCustomerInformationSettings';
 
-	public $validate = [
-		'item_name' => [
-				'rule' => ['maxLength', 100],
-				'allowEmpty' => false,
-				'message' => '項目名は１００文字以内で設定してください。'
-		]
-	];
+  public $validate = [
+    'item_name' => [
+        'rule' => ['maxLength', 100],
+        'allowEmpty' => false,
+        'message' => '項目名は１００文字以内で設定してください。'
+    ]
+  ];
 }

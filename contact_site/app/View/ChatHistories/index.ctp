@@ -3,7 +3,7 @@
 <?= $this->element('ChatHistories/script') ?>
 <div id='chat_history_idx' class="card-shadow" ng-app="sincloApp" ng-controller="MainController" >
   <div id='history_title'>
-    <div class="fLeft"><i class="fal fa-comment fa-2x"></i></div>
+    <div class="fLeft"><i class="fal fa-history fa-2x"></i></div>
       <h1>チャット履歴</h1>
       <?= $this->Html->link(
         '履歴一覧ＣＳＶ出力',
