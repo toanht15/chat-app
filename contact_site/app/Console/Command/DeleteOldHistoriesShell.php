@@ -44,10 +44,10 @@ class DeleteOldHistoriesShell extends AppShell
       if(count($this->targetCompanies) > 0) {
         $this->beginTransaction();
         foreach($this->targetCompanies as $index => $data) {
-          $this->log('=======================================');
-          $this->log('DELETE TARGET COMPANY NAME : '.$data['MCompany']['company_name']);
-          $this->log('KEEP HISTORY DAYS : '.$data['MCompany']['keep_history_days']);
-          $this->log('=======================================');
+          $this->log('=======================================', self::LOG_INFO);
+          $this->log('DELETE TARGET COMPANY NAME : '.$data['MCompany']['company_name'], self::LOG_INFO);
+          $this->log('KEEP HISTORY DAYS : '.$data['MCompany']['keep_history_days'], self::LOG_INFO);
+          $this->log('=======================================', self::LOG_INFO);
           $this->getDeleteTargetHistories($data['MCompany']);
           $this->deleteChatLog($data['MCompany']);
           $this->deleteStayLog();
