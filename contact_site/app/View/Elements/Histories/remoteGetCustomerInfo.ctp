@@ -50,7 +50,7 @@ $(document).ready(function(){
           $infoVal = $data['informations'][$key];
         }
 
-        echo $this->htmlEx->visitorInput($val, true, false, $infoVal);
+        echo $this->htmlEx->visitorInput($val, true, false, false, $infoVal);
       ?>
       </span>
     </li>
