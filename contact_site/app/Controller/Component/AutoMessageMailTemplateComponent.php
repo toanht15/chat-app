@@ -202,9 +202,16 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   }
 
   protected function generateFileReceiveBlockStr($date, $content) {
-    $message = self::MESSAGE_SEPARATOR."\n";
-    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_FILE_RECEIVE);
-    $message .= $this->createReceiveFileMessageContent($content);
+    $obj = json_decode($content);
+    if(is_array($obj)) {
+      $message = self::MESSAGE_SEPARATOR."\n";
+      $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_FILE_RECEIVE);
+      $message .= $this->createReceiveFileMessageContent($content);
+    } else {
+      $message = self::MESSAGE_SEPARATOR."\n";
+      $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_FILE_RECEIVE);
+      $message .= $this->createMessageContent($content);
+    }
     return $message;
   }
 
