@@ -673,11 +673,11 @@ a {
     &:before {
       content: " ";
       border: none;
-      border-top: 10px solid rgba(0, 0, 0, 0.13);
+      border-top: 10px solid #C3D69B;
       border-left: 9px solid transparent;
       border-right: 9px solid transparent;
       position: absolute;
-      bottom: -28px;
+      bottom: -10px;
       left: 5px;
       z-index: 1;
     }
@@ -688,7 +688,7 @@ a {
       border-left: 9px solid transparent;
       border-right: 9px solid transparent;
       position: absolute;
-      bottom: -26px;
+      bottom: -8px;
       left: 5px;
       z-index: 3;
     }
@@ -696,10 +696,12 @@ a {
       margin: 0;
       text-align: left;
       background-color: #FFF;
-      box-shadow: 0 0 2px rgba(162, 185, 102, 1.0);
-      padding: 10px 10px;
+      box-shadow: 0 0 0 1px #C3D69B;
+      padding: 1em!important;
       font-weight: normal;
       border-radius: 5px;
+      position: absolute;
+      bottom: 0px;
       img {
         margin-bottom: -0.2em;
         width:1em;
@@ -707,7 +709,7 @@ a {
       }
       span {
         font-size: 1em;
-        line-height: 1.5;
+        line-height: 1.8;
       }
     }
   }
@@ -885,7 +887,7 @@ ul.ulTab {
   top: 0;
   left: 0;
   right: 0;
-  background-color: #b2d251;
+  background-color: $main-color;
   height: 60px;
   z-index: $sidebar-z-index;
   overflow: hidden;
@@ -1042,9 +1044,9 @@ ul.ulTab {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding-left: 3px;
       text-decoration: none;
       margin: 0;
-      padding-left: 3px;
       &:hover {
         background-color: #B7CF89;
         font-weight: bold;
@@ -1068,7 +1070,7 @@ ul.ulTab {
         color: #FFF;
         font-size: 13px;
         margin-left: 0.5em;
-        margin-right:3px;
+        margin-right: 3px;
         width: 100%;
       }
     }
@@ -3210,7 +3212,7 @@ ul.naviBtn {
           &:before {
             content: " ";
             border: none;
-            border-top: 10px solid rgba(0, 0, 0, 0.13);
+            border-top: 10px solid #C3D69B;
             border-left: 9px solid transparent;
             border-right: 9px solid transparent;
             position: absolute;
@@ -3236,7 +3238,7 @@ ul.naviBtn {
             padding: 0;
             text-align: left;
             background-color: #FFF;
-            box-shadow: 0 0 2px rgba(0,0,0,0.8);
+            box-shadow: 0 0 0 1px #C3D69B;
             padding: 0.5em;
             font-weight: normal;
             border-radius: 5px;
@@ -3883,25 +3885,6 @@ ul.naviBtn {
     #leftContents ul.tabStyle li.on {
       width:13em;
     }
-    .explainTooltip {
-      icon-annotation {
-        top: -6.7em !important;
-        left: -1.7em !important;
-        /* 矢印 */
-        &:before {
-          bottom: -27.3px !important;
-        }
-        &:after {
-          bottom: -25.3px !important;
-        }
-      }
-    }
-    .opThreeLineExplainTooltip {
-      icon-annotation {
-        top: -6.2em !important;
-        left: -1.6em !important;
-      }
-    }
   }
   @media screen and (min-width:1024px) and ( max-width:1279px) {
     /*　画面サイズが1024pxからはここを読み込む　*/
@@ -3937,25 +3920,6 @@ ul.naviBtn {
     }
     #leftContents ul.tabStyle li.on {
       width:14.5em;
-    }
-    .explainTooltip {
-      icon-annotation {
-        top: -6.7em !important;
-        left: -1.7em !important;
-        /* 矢印 */
-        &:before {
-          bottom: -27.3px !important;
-        }
-        &:after {
-          bottom: -25.3px !important;
-        }
-      }
-    }
-    .opThreeLineExplainTooltip {
-      icon-annotation {
-        top: -6.2em !important;
-        left: -1.6em !important;
-      }
     }
   }
 
@@ -4591,8 +4555,6 @@ ul.naviBtn {
 
   #history_title {
     position: relative;
-    display:flex;
-    align-items:center;
     #outputCSV {
       position: absolute;
       top: 10px;
@@ -4864,85 +4826,6 @@ ul.naviBtn {
     }
   }
 
-  .explainTooltip {
-    icon-annotation {
-      top: -5.5em;
-      left: -1.3em;
-      position: absolute;
-      /* 矢印 */
-      &:before {
-        bottom: -59px;
-        left: 6px;
-      }
-
-      &:after {
-        bottom: -57px;
-        left: 6px;
-      }
-    }
-  }
-
-  .opThreeLineExplainTooltip {
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      width: 16em;
-      height: 2.1em;
-      display: none;
-      top: -5.5em;
-      left: -1.3em;
-      position: absolute;
-
-      /* 矢印 */
-      &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -4.9em;
-        left: 5px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -4.7em;
-        left: 6px;
-        z-index: 3;
-      }
-
-
-      ul {
-        margin: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 10px 10px;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        span {
-          font-size: 1em;
-          line-height: 1.5;
-        }
-      }
-    }
-  }
-
   #noseach_menu{
     visibility:hidden;
     margin-top: -3em;
@@ -5144,21 +5027,6 @@ ul.naviBtn {
 
   .seach_menu {
     margin-top:30px;
-  }
-
-  .explainTooltip {
-    icon-annotation {
-      /* 矢印 */
-      &:before {
-        bottom: -59px;
-        left: 6px;
-      }
-
-      &:after {
-        bottom: -58px;
-        left: 6px;
-      }
-    }
   }
 
   .questionBalloon {
@@ -6281,80 +6149,6 @@ ul.naviBtn {
                 width: 1.3em;
                 height: 1.3em;
                 font-size: 0.9em!important;
-              }
-            }
-          }
-        }
-
-        .explainTooltip {
-          z-index: 10;
-          position: absolute;
-          icon-annotation {
-            height: auto;
-            display: none;
-            ul {
-              padding: 10px 10px;
-            }
-            &:before {
-              bottom: -10px;
-              left: 5px;
-            }
-            &:after {
-              bottom: -9px;
-              left: 5px;
-            }
-          }
-        }
-        .explainTelTooltip {
-          z-index: 10;
-          position: absolute;
-
-          icon-annotation {
-            width: 16em;
-            display: none;
-
-            &:before {
-              content: "";
-              border: none;
-              border-top: 10px solid rgba(0, 0, 0, 0.13);
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -11px;
-              left: 9px;
-              z-index: 1;
-            }
-
-            &:after {
-              content: " ";
-              border: none;
-              border-top: 10px solid white;
-              border-left: 9px solid transparent;
-              border-right: 9px solid transparent;
-              position: absolute;
-              bottom: -10px;
-              left: 9px;
-              z-index: 3;
-            }
-
-            ul {
-              margin: 0;
-              text-align: left;
-              background-color: #FFF;
-              box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-              padding: 10px 10px;
-              font-weight: normal;
-              border-radius: 5px;
-
-              img {
-                margin-bottom: -0.2em;
-                width:1em;
-                height:1em;
-              }
-
-              span {
-                font-size: 1em;
-                line-height: 1.5;
               }
             }
           }
@@ -7816,42 +7610,6 @@ ul.naviBtn {
       padding: 0.1em;
     }
   }
-
-  .explainTooltip {
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      height: auto;
-      display: none;
-      &:before {
-        bottom: -10px;
-        left: 9px;
-      }
-      &:after {
-        bottom: -8px;
-        left: 9px;
-      }
-      ul {
-        margin: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 10px 10px;
-        font-weight: normal;
-        border-radius: 5px;
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-        span {
-          font-size: 1em;
-          line-height: 1.5;
-        }
-      }
-    }
-  }
 }
 
 /* ファイル送信設定 */
@@ -8036,18 +7794,6 @@ ul.naviBtn {
       display: block;
       margin: 0 auto;
       text-align: center;
-    }
-  }
-  .explainTooltip {
-    icon-annotation {
-      &:before {
-        bottom: -59px;
-        left: 4px;
-      }
-      &:after {
-        bottom: -58px;
-        left: 4px;
-      }
     }
   }
 }
@@ -9132,83 +8878,6 @@ ul.naviBtn {
       }
     }
   }
-
-  .explainTooltip {
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      width: 16em;
-      height: 2.1em;
-      display: none;
-
-      /* 矢印 */
-      &:before {
-        bottom: -73px;
-      }
-
-      &:after {
-        bottom: -72px;
-      }
-    }
-  }
-  .explainTelTooltip {
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      width: 16em;
-      height: 2.1em;
-      display: none;
-
-      /* 矢印 */
-      &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -59px;
-        left: 5px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -57px;
-        left: 5px;
-        z-index: 3;
-      }
-
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
-      }
-    }
-  }
 }
 
 /*　資料プレビュー */
@@ -9769,254 +9438,15 @@ ul.naviBtn {
       }
     }
 
-    .questionBalloon.questionBalloonPosition6 {
-        float: right;
-        margin-right: 89.5px;
-    }
-    /*オペレータ画面クエッションマーク*/
-    .opQuestionBalloon.opQuestionBalloonPosition6 {
-      left: 5.5px;
-      display: inline-block;
-    }
-
-    .questionBalloon.questionBalloonPosition7 {
-        float: right;
-        margin-right: 77.5px;
-    }
-    .opQuestionBalloon.opQuestionBalloonPosition7 {
-      left: 5.5px;
-      display: inline-block;
-    }
-
-    .questionBalloon.questionBalloonPosition8 {
-      float: right;
-      margin-right: 64.5px;
-    }
-
-    .opQuestionBalloon.opQuestionBalloonPosition8 {
-      left: 5.5px;
-      display: inline-block;
-    }
-
-    .questionBalloon.questionBalloonPosition8s {
-      float: right;
-      margin-right: 65.5px;
-    }
-
-    .opQuestionBalloon.opQuestionBalloonPosition8s {
-      left: 5.5px;
-      display: inline-block;
-    }
-
-
-    .questionBalloon.questionBalloonPosition9 {
-        float: right;
-        margin-right: 53.5px;
-    }
-
-    .questionBalloon.questionBalloonPosition11 {
-      float: right;
-      margin-right: 29.5px;
-    }
-
-    .opQuestionBalloon.opQuestionBalloonPosition11 {
-      left: 5.5px;
-      display: inline-block;
-    }
-
-    .questionBalloon.questionBalloonPosition13 {
-      float: right;
-      margin-right: 5.5px;
-    }
-
-    .opQuestionBalloon.opQuestionBalloonPosition13 {
-      left: 5.5px;
-      display: inline-block;
-    }
-
-    /*オペレータ画面tooltip*/
-    .opOneLineExplainTooltip {
-      z-index: 10;
-      position: absolute;
-
-        icon-annotation {
-        width: 12em;
-        height: 2.1em;
-        display: none;
-
-        /* 矢印 */
-          &:before {
-            content: " ";
-            border: none;
-            border-top: 10px solid rgba(0, 0, 0, 0.13);
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -0.7em;
-            left: 109px;
-            z-index: 1;
-          }
-
-          &:after {
-            content: " ";
-            border: none;
-            border-top: 10px solid white;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -0.7em;
-            left: 109px;
-            z-index: 3;
-          }
-
-
-        ul {
-            margin: 0;
-            padding: 0;
-            text-align: left;
-            background-color: #FFF;
-            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-            padding: 0.5em;
-            font-weight: normal;
-            border-radius: 5px;
-
-          img {
-            margin-bottom: -0.2em;
-            width:1em;
-            height:1em;
-          }
-
-          span {
-            font-size: 0.9em;
-          }
-        }
-      }
-    }
-
-    .opTwoLineExplainTooltip {
-      z-index: 10;
-      position: absolute;
-
-        icon-annotation {
-        width: 16em;
-        height: 2.1em;
-        display: none;
-
-        /* 矢印 */
-          &:before {
-            content: " ";
-            border: none;
-            border-top: 10px solid rgba(0, 0, 0, 0.13);
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -10px;
-            left: 146px;
-            z-index: 1;
-          }
-
-          &:after {
-            content: " ";
-            border: none;
-            border-top: 10px solid white;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -9px;
-            left: 144px;
-            z-index: 3;
-          }
-
-
-        ul {
-            margin: 0;
-            padding: 0;
-            text-align: left;
-            background-color: #FFF;
-            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-            padding: 0.5em;
-            font-weight: normal;
-            border-radius: 5px;
-
-          img {
-            margin-bottom: -0.2em;
-            width:1em;
-            height:1em;
-          }
-
-          span {
-            font-size: 0.9em;
-          }
-        }
-      }
-    }
-
-
-    .opThreeLineExplainTooltip {
-      z-index: 10;
-      position: absolute;
-
-        icon-annotation {
-        width: 16em;
-        height: 2.1em;
-        display: none;
-
-        /* 矢印 */
-          &:before {
-            content: " ";
-            border: none;
-            border-top: 10px solid rgba(0, 0, 0, 0.13);
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -0.7em;
-            left: 147px;
-            z-index: 1;;
-          }
-
-          &:after {
-            content: " ";
-            border: none;
-            border-top: 10px solid white;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -0.7em;
-            left: 147px;
-            z-index: 3;
-          }
-
-
-        ul {
-            margin: 0;
-            padding: 0;
-            text-align: left;
-            background-color: #FFF;
-            box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-            padding: 0.5em;
-            font-weight: normal;
-            border-radius: 5px;
-
-          img {
-            margin-bottom: -0.2em;
-            width:1em;
-            height:1em;
-          }
-
-          span {
-            font-size: 0.9em;
-          }
-        }
-      }
-    }
-
     .dataTables_wrapper .dataTables_scroll div.dataTables_scrollBody > table > tbody > tr > td {
       vertical-align: middle;
       text-align: center;
     }
 
     .questionBalloon {
-      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+      text-align: center;
 
       icon {
         border-radius: 20px;
@@ -10028,7 +9458,9 @@ ul.naviBtn {
     }
 
     .opQuestionBalloon {
-      position: relative;
+      display: inline-block;
+      margin-left: 6px;
+      text-align: center;
 
       icon {
         border-radius: 20px;
