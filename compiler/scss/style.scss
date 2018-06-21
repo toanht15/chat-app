@@ -1062,7 +1062,7 @@ ul.ulTab {
         color: #FFF;
         font-size: 13px;
         margin-left: 0.5em;
-        margin-right: 2em;
+        margin-right:3px;
         width: 100%;
       }
     }
@@ -4583,6 +4583,8 @@ ul.naviBtn {
 
   #history_title {
     position: relative;
+    display:flex;
+    align-items:center;
     #outputCSV {
       position: absolute;
       top: 10px;
