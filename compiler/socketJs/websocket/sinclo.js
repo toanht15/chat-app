@@ -22,7 +22,7 @@
             storage.s.set("widgetMaximized", flg);
           }
         }
-      }
+      },
     },
     syncTimeout: "",
     operatorInfo: {
@@ -4444,6 +4444,19 @@
           self._enablePreviousRadioButton();
           self._unsetBaseObj();
           self.setPlaceholderMessage(self.getPlaceholderMessage());
+
+          // 元のメッセージ入力欄に戻す
+          sinclo.chatApi.hideMiniMessageArea();
+          //自由入力エリアが閉まっているか空いているかチェック
+          var textareaOpend = storage.l.get('textareaOpend');
+          //チャットのテキストエリア表示
+          if( textareaOpend == 'close') {
+            sinclo.hideTextarea();
+          }
+          //チャットのテキストエリア非表示
+          else {
+            sinclo.displayTextarea();
+          }
         });
       },
       isProcessing: function() {
