@@ -1049,7 +1049,7 @@ ul.ulTab {
       margin: 0;
       &:hover {
         background-color: #B7CF89;
-        font-weight: bold;
+        text-shadow: 0.4px -0.4px, -0.4px 0.4px;
       }
       p.icon-wrap {
         display: inline-block;
