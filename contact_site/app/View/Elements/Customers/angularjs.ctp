@@ -1575,7 +1575,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           div.style.textAlign = 'left';
           div.style.height = 'auto';
           div.style.padding = '0';
-          content = "<span class='cName'>シナリオメッセージ(ファイル受信)</span>";
           content += $scope.createTextOfMessage(chat, message);
         }
       }

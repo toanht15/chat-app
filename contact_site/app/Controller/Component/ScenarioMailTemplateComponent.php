@@ -104,16 +104,15 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
       $this->scenarioMessageBlock .= "\n";
       $data = json_decode($this->variables[self::RECEIVE_FILE_VARIABLE_KEY], TRUE);
       foreach($data as $obj) {
-        $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n";
-        $this->scenarioMessageBlock .= "ダウンロードＵＲＬ：".$obj['downloadUrl']."\n";
-        $this->scenarioMessageBlock .= "コメント：\n".$obj['comment']."\n";
+        if(isset($obj['downloadUrl']) && isset($obj['comment'])) {
+          $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n";
+          $this->scenarioMessageBlock .= "ダウンロードＵＲＬ：".$obj['downloadUrl']."\n";
+          $this->scenarioMessageBlock .= "コメント：\n".$obj['comment']."\n";
+        } else if(isset($obj['canceled']) && isset($obj['message']) && $obj['canceled']) {
+          $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n";
+          $this->scenarioMessageBlock .= "ダウンロードＵＲＬ：（".$obj['message']."）\n";
+        }
       }
-      $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n\n";
-    } else if($withDownloadURL) {
-      // ファイル送信URLを付与する設定なのにデータが無い状態はキャンセル扱いとする
-      $this->scenarioMessageBlock .= "\n";
-      $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n";
-      $this->scenarioMessageBlock .= "ダウンロードＵＲＬ：（ファイル送信をキャンセル）\n";
       $this->scenarioMessageBlock .= self::RECEIVE_FILE_MESSAGE_SEPARATOR."\n\n";
     }
   }
