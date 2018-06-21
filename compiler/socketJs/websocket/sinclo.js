@@ -22,7 +22,7 @@
             storage.s.set("widgetMaximized", flg);
           }
         }
-      }
+      },
     },
     syncTimeout: "",
     operatorInfo: {
@@ -4298,6 +4298,7 @@
         "4_lf": '([0-9]|\-|\\r\\n|\\n|\\r)+'
       },
       _lKey: {
+        beforeTextareaOpened: "s_beforeTextareaOpened",
         scenarioBase: "s_currentdata",
         scenarioId: "s_id",
         processing: "s_processing",
@@ -4387,6 +4388,7 @@
 
         } else {
           self._setBaseObj({});
+          self.set(self._lKey.beforeTextareaOpened, storage.l.get('textareaOpend'));
           self.set(self._lKey.scenarioId, id);
           self.set(self._lKey.scenarios, scenarioObj);
           self.set(self._lKey.scenarioLength, Object.keys(scenarioObj).length);
@@ -4438,12 +4440,18 @@
       _end: function() {
         // シナリオ終了
         var self = sinclo.scenarioApi;
+        var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         self._resetDefaultVal();
         self._saveStoredMessage(function(){
           self._saveProcessingState(false);
           self._enablePreviousRadioButton();
           self._unsetBaseObj();
           self.setPlaceholderMessage(self.getPlaceholderMessage());
+
+          // 元のメッセージ入力欄に戻す
+          sinclo.chatApi.hideMiniMessageArea();
+          var type = (beforeTextareaOpened === "close") ? "2" : "1";
+          self._handleChatTextArea(type)
         });
       },
       isProcessing: function() {
