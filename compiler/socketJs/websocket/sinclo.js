@@ -2441,7 +2441,7 @@
           if (data.extension.match(/(jpeg|jpg|gif|png)$/i) != null && !isExpired) {
             thumbnail = "<img src='" + data.downloadUrl + "' class='sendFileThumbnail' width='64' height='64'>";
           } else {
-            thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(data.extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+            thumbnail = "<i class='sinclo-fal " + this._selectFontIconClassFromExtension(data.extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
 
           var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showAutomessageName) !== 2 ? "ファイルが送信されました" : "") + (isExpired ? "（ダウンロード有効期限切れ）" : "") + "</span>";
@@ -2540,7 +2540,7 @@
           if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
             thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail " + sinclo.chatApi.fileUploader._selectPreviewImgClass() + "'>";
           } else {
-            thumbnail = "<i class='sinclo-fa " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+            thumbnail = "<i class='sinclo-fal " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
           divElm.innerHTML = "  <li class=\"sinclo_se effect_right chat_right uploaded details\">" +
             "    <div class=\"receiveFileContent\">" +
