@@ -2622,9 +2622,16 @@
           }
           this.scDownTimer = setTimeout(function(){
           var chatTalk = document.getElementById('chatTalk');
-            $('#sincloBox #chatTalk').animate({
-              scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
-          }, 300);
+            var lastMessageHeight = $('#chatTalk sinclo-chat div:last-of-type').height();
+            if(chatTalk.clientHeight > (lastMessageHeight + 60)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
+              $('#sincloBox #chatTalk').animate({
+                scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
+              }, 300);
+            } else {
+              $('#sincloBox #chatTalk').animate({
+                scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + 60)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+              }, 300);
+            }
           }, 500);
         },
         scDownImmediate: function(){

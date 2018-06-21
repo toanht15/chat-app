@@ -96,10 +96,10 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         <th width=" 5%">No</th>
         <th width="21%" class="tCenter">項目名</th>
         <th width="10%" class="tCenter">タイプ</th>
-        <th width=" 4%" class="tCenter">一覧</br>表示</th>
-        <th width=" 4%" class="tCenter">メール</br>掲載</th>
+        <th width=" 6%" class="tCenter">一覧</br>表示</th>
+        <th width=" 6%" class="tCenter">メール</br>掲載</th>
         <th width="21%" class="tCenter">カスタム変数</th>
-        <th width="30%" class="tCenter">コメント</th>
+        <th width="26%" class="tCenter">コメント</th>
       </tr>
       </thead>
     <tbody class="sortable">
@@ -129,7 +129,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               }
           ?>
         </td>
-        <td width="4%" class="tCenter">
+        <td width="6%" class="tCenter">
           <?php
             if($val['TCustomerInformationSetting']['show_realtime_monitor_flg'] == 1){
               echo '<span><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;font-size:24px;"></i></span>';
@@ -138,7 +138,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             }
           ?>
         </td>
-        <td width="4%" class="tCenter">
+        <td width="6%" class="tCenter">
           <?php
             if($val['TCustomerInformationSetting']['show_send_mail_flg'] == 1){
               echo '<span><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;font-size:24px;"></i></span>';
@@ -156,7 +156,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           }
         ?>
         </td>
-        <td width="30%" class="tCenter"><?=$val['TCustomerInformationSetting']['comment']?></td>
+        <td width="26%" class="tCenter"><?=$val['TCustomerInformationSetting']['comment']?></td>
       </tr>
       <?php endforeach; ?>
       <?php if ( count($tCustomerInformationSettingList) === 0 ) :?>

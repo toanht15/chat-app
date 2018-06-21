@@ -2,14 +2,13 @@
 
   $(function () {
   //ツールチップの表示制御
-  var topPosition = 0;
     $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
       var parentTdId = $(this).parent().attr('id');
       var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
       targetObj.find('icon-annotation').css('display','block');
       //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
       targetObj.css({
-        top: ($(this).get(0).offsetTop - targetObj.find('ul').outerHeight() - 32 + topPosition) + 'px',
+        top: $(this).get(0).offsetTop  - 57  + 'px',
         left: $(this).get(0).offsetLeft - 6 + 'px'
       });
     });
@@ -108,14 +107,14 @@
     <div id="filterType1Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail">変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{&thinsp;{変数名}&thinsp;}と指定することで利用することが可能です。</span></li>
+          <li><span class="detail" style="width:314px;">変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存され、訪問ユーザー情報に自動で付与することが可能です。（別途、訪問ユーザ情報設定画面からの設定も必要です）</span></li>
         </ul>
       </icon-annotation>
     </div>
     <div id="filterType2Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail">ウィジェットを表示している画面上から取得する値をCSSのセレクタと同様の記入方法で設定します。<br><br>例）<br>・要素のIDが"user_name"の値を取得する場合：#user_name<br>・IDが"user_info"の要素内の"name"というクラスを持つ要素の値を取得する場合：#user_info .name</span></li>
+          <li><span class="detail" style="width:314px;">ウィジェットを表示している画面上から取得する値をCSSのセレクタと同様の記入方法で設定します。<br><br>例）<br>・要素のIDが"user_name"の値を取得する場合：#user_name<br>・IDが"user_info"の要素内の"name"というクラスを持つ要素の値を取得する場合：#user_info .name</span></li>
         </ul>
       </icon-annotation>
     </div>

@@ -553,24 +553,6 @@ var uploadFile = function(fileObj, loadFile) {
 }
 
 $(document).ready(function(){
-  // ツールチップの表示制御
-  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
-    var parentTdId = $(this).parent().parent().attr('id');
-    console.log(parentTdId);
-    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    console.log(targetObj);
-    targetObj.find('icon-annotation').css('display','block');
-    targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
-      left: $(this).offset().left - 65 + 'px'
-    });
-  });
-
-  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
-    var parentTdId = $(this).parent().parent().attr('id');
-    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    targetObj.find('icon-annotation').css('display','none');
-  });
 
   <?php if(isset($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE]) && $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE]): ?>
   var fadeOutLayerMenu = function() {

@@ -244,15 +244,15 @@
           <th style = "width:5%;display:none;" id = "ip">IPアドレス</th>
           <th style = "width:5%;display:none;" id = "visitor">訪問ユーザ</th>
           <th id = "campaign" style = "width:3%" >キャンペーン</th>
-          <th id = "sendChatPageLabel" style = "width:13%">チャット送信ページ<div class="questionBalloon questionBalloonPosition8">
+          <th id = "sendChatPageLabel" style = "width:13%">チャット送信ページ<div class="questionBalloon">
             <icon class="questionBtn">？</icon>
           </div></th>
           <th style = "min-width:33px;" id = "achievement">成果</th>
-          <th style = "min-width:79px;" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon questionBalloonPosition13">
+          <th style = "min-width:79px;" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon">
             <icon class="questionBtn">？</icon>
             </div></th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <th style = "min-width:71px;" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+          <th style = "min-width:71px;" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon">
               <icon class="questionBtn">？</icon>
             </div></th>
            <th style = "width:6%;display:none;" id = "responsible">担当者</th>
@@ -635,21 +635,21 @@ echo $this->Form->input('customerId', array('type'=>'hidden','id' => 'customerId
     </ul>
   </icon-annotation>
 </div>
-<div id='sendChatPageTooltip' class="opThreeLineExplainTooltip">
+<div id='sendChatPageTooltip' class="explainTooltip">
   <icon-annotation>
     <ul>
       <li><span>サイト訪問者が一番最初にチャット送信（ラジオボタン操作を含む）したページ</span></li>
     </ul>
   </icon-annotation>
 </div>
-<div id='firstTimeReceivingTooltip' class="opThreeLineExplainTooltip">
+<div id='firstTimeReceivingTooltip' class="explainTooltip">
   <icon-annotation>
     <ul>
       <li><span>サイト訪問者が一番最初にチャット送信（ラジオボタン操作を含む）した日時</span></li>
     </ul>
   </icon-annotation>
 </div>
-<div id='manualReceivingTooltip' class="opThreeLineExplainTooltip">
+<div id='manualReceivingTooltip' class="explainTooltip">
   <icon-annotation>
     <ul>
       <li><span>サイト訪問者が送信したチャットが、最初にオペレータに通知された日時</span></li>
