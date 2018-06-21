@@ -52,8 +52,8 @@ $(function(){
     console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70 + topPosition) + 'px',
-      left: $(this).offset().left - 65 + 'px'
+      top:  $(this).offset().top  - 96 + 'px',
+      left: $(this).offset().left - 86 + 'px'
     });
   });
 

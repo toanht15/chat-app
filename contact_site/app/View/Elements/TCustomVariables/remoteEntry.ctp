@@ -2,14 +2,13 @@
 
   $(function () {
   //ツールチップの表示制御
-  var topPosition = 0;
     $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
       var parentTdId = $(this).parent().attr('id');
       var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
       targetObj.find('icon-annotation').css('display','block');
       //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
       targetObj.css({
-        top: ($(this).get(0).offsetTop - targetObj.find('ul').outerHeight() - 32 + topPosition) + 'px',
+        top: $(this).get(0).offsetTop  - 60  + 'px',
         left: $(this).get(0).offsetLeft - 6 + 'px'
       });
     });

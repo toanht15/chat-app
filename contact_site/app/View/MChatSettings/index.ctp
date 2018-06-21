@@ -219,8 +219,8 @@ function indicateTooltip() {
     console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70 + topPosition) + 'px',
-      left: $(this).offset().left - 65 + 'px'
+      top: $(this).offset().top + 96 + 'px',
+      left: $(this).offset().left - 86 + 'px'
     });
   });
 
@@ -404,7 +404,7 @@ function checkValidate() {
       <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
       <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
     </div>
-    <div id='lastSpeechTooltip' class="explainTelTooltip">
+    <div id='lastSpeechTooltip' class="explainTooltip">
       <icon-annotation>
         <ul>
           <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>

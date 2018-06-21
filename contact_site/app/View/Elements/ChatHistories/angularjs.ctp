@@ -954,8 +954,8 @@ $(document).ready(function(){
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
-      left: $(this).offset().left - 65 + 'px'
+      top: $(this).offset().top -156 + 'px',
+      left:$(this).offset().left - 102 + 'px'
     });
   });
 
