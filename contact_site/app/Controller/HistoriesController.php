@@ -563,6 +563,16 @@ class HistoriesController extends AppController {
           $row['transmissionKind'] = '訪問者（選択肢回答）';
           $row['transmissionPerson'] = '';
         }
+        if($val['THistoryChatLog']['message_type'] == 19) {
+          $row['transmissionKind'] = 'シナリオメッセージ（ファイル受信）';
+          $row['transmissionPerson'] = "";
+          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          if(isset($json['downloadUrl']) && isset($json['comment'])) {
+            $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['downloadUrl'];
+          } else if(isset($json['canceled']) && isset($json['message']) && $json['canceled']) {
+            $val['THistoryChatLog']['message'] = "（".$json['message']."）";
+          }
+        }
         if($val['THistoryChatLog']['message_type'] == 21) {
           $row['transmissionKind'] = 'シナリオメッセージ（テキスト発言）';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
@@ -580,13 +590,6 @@ class HistoriesController extends AppController {
           $row['transmissionPerson'] = "";
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
           $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
-        }
-        if($val['THistoryChatLog']['message_type'] == 29) {
-          $row['transmissionKind'] = 'シナリオメッセージ（ファイル受信）';
-          $row['transmissionPerson'] = "";
-          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-          $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['downloadUrl'];
         }
         if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
           $row['transmissionKind'] = '通知メッセージ';

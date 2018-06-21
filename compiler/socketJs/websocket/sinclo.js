@@ -22,7 +22,7 @@
             storage.s.set("widgetMaximized", flg);
           }
         }
-      }
+      },
     },
     syncTimeout: "",
     operatorInfo: {
@@ -2520,7 +2520,7 @@
                 notifyToCompany: false,
                 isScenarioMessage: true
               }, function() {
-                $(document).trigger(sinclo.scenarioApi._events.fileUploaded, [true, null]);
+                $(document).trigger(sinclo.scenarioApi._events.fileUploaded, [true, {"canceled":true, "message": "ファイル送信をキャンセル"}]);
               });
             });
           }
@@ -2622,9 +2622,16 @@
           }
           this.scDownTimer = setTimeout(function(){
           var chatTalk = document.getElementById('chatTalk');
-            $('#sincloBox #chatTalk').animate({
-              scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
-          }, 300);
+            var lastMessageHeight = $('#chatTalk sinclo-chat div:last-of-type').height();
+            if(chatTalk.clientHeight > (lastMessageHeight + 60)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
+              $('#sincloBox #chatTalk').animate({
+                scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
+              }, 300);
+            } else {
+              $('#sincloBox #chatTalk').animate({
+                scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + 60)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+              }, 300);
+            }
           }, 500);
         },
         scDownImmediate: function(){
@@ -4298,6 +4305,7 @@
         "4_lf": '([0-9]|\-|\\r\\n|\\n|\\r)+'
       },
       _lKey: {
+        beforeTextareaOpened: "s_beforeTextareaOpened",
         scenarioBase: "s_currentdata",
         scenarioId: "s_id",
         processing: "s_processing",
@@ -4387,6 +4395,7 @@
 
         } else {
           self._setBaseObj({});
+          self.set(self._lKey.beforeTextareaOpened, storage.l.get('textareaOpend'));
           self.set(self._lKey.scenarioId, id);
           self.set(self._lKey.scenarios, scenarioObj);
           self.set(self._lKey.scenarioLength, Object.keys(scenarioObj).length);
@@ -4438,12 +4447,18 @@
       _end: function() {
         // シナリオ終了
         var self = sinclo.scenarioApi;
+        var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         self._resetDefaultVal();
         self._saveStoredMessage(function(){
           self._saveProcessingState(false);
           self._enablePreviousRadioButton();
           self._unsetBaseObj();
           self.setPlaceholderMessage(self.getPlaceholderMessage());
+
+          // 元のメッセージ入力欄に戻す
+          sinclo.chatApi.hideMiniMessageArea();
+          var type = (beforeTextareaOpened === "close") ? "2" : "1";
+          self._handleChatTextArea(type)
         });
       },
       isProcessing: function() {

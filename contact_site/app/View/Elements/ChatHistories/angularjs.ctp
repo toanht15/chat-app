@@ -630,7 +630,7 @@
         }
       }
       else if ( type === chatApi.messageType.scenario.customer.sendFile ) {
-        cn = "sinclo_se";
+        cn = "sinclo_re";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';

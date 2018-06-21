@@ -887,7 +887,7 @@ ul.ulTab {
   top: 0;
   left: 0;
   right: 0;
-  background-color: $main-color;
+  background-color: #b2d251;
   height: 60px;
   z-index: $sidebar-z-index;
   overflow: hidden;
@@ -1047,6 +1047,7 @@ ul.ulTab {
       padding: 11.5px 0px;
       text-decoration: none;
       margin: 0;
+      padding-left: 3px;
       &:hover {
         background-color: #B7CF89;
         text-shadow: 0.4px -0.4px, -0.4px 0.4px;
@@ -4555,6 +4556,8 @@ ul.naviBtn {
 
   #history_title {
     position: relative;
+    display:flex;
+    align-items:center;
     #outputCSV {
       position: absolute;
       top: 10px;

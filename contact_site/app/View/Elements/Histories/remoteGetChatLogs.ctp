@@ -135,7 +135,7 @@ $(function(){
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 19) === 0 ) {
       if(!json_decode($val['THistoryChatLog']['message'])) {
-        $className = "sinclo_se";
+        $className = "sinclo_re";
         $name = "シナリオメッセージ（ファイル受信）";
         $id = $val['THistoryChatLog']['id'];
         $historyId = $val['THistoryChatLog']['t_histories_id'];
@@ -147,7 +147,7 @@ $(function(){
         $isRecieveFile = false;
         $number = $number + 1;
       } else {
-        $className = "sinclo_se";
+        $className = "sinclo_re";
         $name = "シナリオメッセージ（ファイル受信）";
         $id = $val['THistoryChatLog']['id'];
         $historyId = $val['THistoryChatLog']['t_histories_id'];
@@ -238,8 +238,12 @@ $(function(){
     var number = "<?=$number?>";
     var message_type = "<?=$val['THistoryChatLog']['message_type']?>";
     if(message_type == 19 && number !== -1) {
-      $('.recieveFileContent')[number].style.cursor = "pointer";
-      $('.recieveFileContent')[number].addEventListener("click", function(event){window.open("<?=$downloadUrl?>")});
+      if($('.recieveFileContent')[number]) {
+        $('.recieveFileContent')[number].style.cursor = "pointer";
+        $('.recieveFileContent')[number].addEventListener("click", function (event) {
+          window.open("<?=$downloadUrl?>")
+        });
+      }
     }
   });
   </script>
