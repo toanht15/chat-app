@@ -4298,6 +4298,7 @@
         "4_lf": '([0-9]|\-|\\r\\n|\\n|\\r)+'
       },
       _lKey: {
+        beforeTextareaOpened: "s_beforeTextareaOpened",
         scenarioBase: "s_currentdata",
         scenarioId: "s_id",
         processing: "s_processing",
@@ -4387,6 +4388,7 @@
 
         } else {
           self._setBaseObj({});
+          self.set(self._lKey.beforeTextareaOpened, storage.l.get('textareaOpend'));
           self.set(self._lKey.scenarioId, id);
           self.set(self._lKey.scenarios, scenarioObj);
           self.set(self._lKey.scenarioLength, Object.keys(scenarioObj).length);
@@ -4438,6 +4440,7 @@
       _end: function() {
         // シナリオ終了
         var self = sinclo.scenarioApi;
+        var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         self._resetDefaultVal();
         self._saveStoredMessage(function(){
           self._saveProcessingState(false);
@@ -4447,16 +4450,8 @@
 
           // 元のメッセージ入力欄に戻す
           sinclo.chatApi.hideMiniMessageArea();
-          //自由入力エリアが閉まっているか空いているかチェック
-          var textareaOpend = storage.l.get('textareaOpend');
-          //チャットのテキストエリア表示
-          if( textareaOpend == 'close') {
-            sinclo.hideTextarea();
-          }
-          //チャットのテキストエリア非表示
-          else {
-            sinclo.displayTextarea();
-          }
+          var type = (beforeTextareaOpened === "close") ? "2" : "1";
+          self._handleChatTextArea(type)
         });
       },
       isProcessing: function() {
