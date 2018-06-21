@@ -885,7 +885,7 @@ ul.ulTab {
   top: 0;
   left: 0;
   right: 0;
-  background-color: $main-color;
+  background-color: #b2d251;
   height: 60px;
   z-index: $sidebar-z-index;
   overflow: hidden;
@@ -1097,6 +1097,7 @@ ul#color-bar-right {
   p {
     cursor:pointer;
     display:flex;
+    font-weight: bold;
     .fa-angle-down {
       color:#fff;
       line-height: 0.6;
