@@ -45,12 +45,13 @@ switch ($this->name) {
 $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイト" ;
 ?>
 <!-- /* 上部カラーバー(ここから) */ -->
+<?php $this->log('userInfo',LOG_DEBUG); $this->log($userInfo['display_name'],LOG_DEBUG); ?>
 <div id="color-bar">
   <ul id="color-bar-right" class="fRight">
     <?php if(!empty($trialTime)) { ?>
       <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
     <?php } ?>
-      <li class="fLeft" id = "menu-bar-right"><p><i class="fal fa-user-circle fa-2x"></i><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-down fa-2x'></i></p></li>
+      <li class="fLeft" id = "menu-bar-right"><p><i class="fal fa-user-circle fa-2x"></i><?= h($userInfo['display_name']) ?> さん<i class='fal fa-angle-down fa-2x'></i></p></li>
   </ul>
 </div>
 <div id="colorBarMenu">
@@ -80,7 +81,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 <!-- /* 上部カラーバー(ここまで) */ -->
 
 <!-- /* システムアイコン（ここから） */ -->
-<div id="sys-icon"><?= $this->Html->image('logo_sinclo_square.png', array('alt' => 'アイコン', 'width' => 48, 'height' => 48, 'style'=>'margin-left:4px; display: block'))?></div>
+<div id="sys-icon"><?= $this->Html->image('logo_sinclo_square.png', array('alt' => 'アイコン', 'width' => 55, 'height' => 55, 'style'=>'display: block'))?></div>
 <!-- /* システムアイコン（ここまで） */ -->
 
 <!-- /* サイドバー１（ここから） */ -->
@@ -298,6 +299,15 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
   };
 
   $("#menu-bar-right").mouseenter(function(){
+    //表示名2文字以下の場合
+    if(parseInt($('#menu-bar-right').css('width')) < 144) {
+      $('#colorBarMenu').css('width',144);
+      $('#menu-bar-right').css('width',144);
+    }
+    //表示名2文字以上の場合
+    else {
+      $('#colorBarMenu').css('width',parseInt($('#menu-bar-right').css('width')));
+    }
     if($("#colorBarMenu").css('display') == 'none') {
       fadeInLayerMenu();
     }
