@@ -3982,7 +3982,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if ( !(key in scope.customData) ) return false;
           var ret = true;
           // 新規記入でない場合
-          if ( (key in scope.customPrevData) ) {
+          if ( scope.customPrevData && (key in scope.customPrevData) ) {
             // 変わっていない場合
             if ( scope.customData[key] === scope.customPrevData[key] ) {
               ret = false;
