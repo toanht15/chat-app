@@ -1007,7 +1007,6 @@
         case "scroll":
           elm = $(obj.nodeName).eq(Number(obj.idx));
           if ( elm.length > 0 ) {
-            console.log('もうここしかないでしょ！');
             var scrollBarSize = {
                   height: elm[0].scrollHeight - elm[0].clientHeight,
                   width: elm[0].scrollWidth - elm[0].clientWidth
@@ -2646,7 +2645,6 @@
           }, 500);
         },
         scDownImmediate: function(){
-          console.log('こっちに入っていなければいけん2！');
           var chatTalk = document.getElementById('chatTalk');
           $('#sincloBox #chatTalk').animate({
             scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight - 2

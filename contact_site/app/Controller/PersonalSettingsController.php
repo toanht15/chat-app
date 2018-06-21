@@ -75,7 +75,6 @@ class PersonalSettingsController extends AppController {
           // 保存処理
           if ( $this->MUser->save($tmpData, false) ) {
             $this->MUser->commit();
-            $this->userInfo['display_name'] = $tmpData['MUser']['display_name'];
             $this->Session->write('global.userInfo',$this->userInfo);
             $this->Session->read('token');
             $this->set('token', $token);
