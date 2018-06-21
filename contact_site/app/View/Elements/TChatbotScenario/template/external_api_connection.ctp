@@ -56,7 +56,7 @@
         <table cellspacing="5">
           <thead>
           <tr>
-            <th class="item_name">変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、<code ng-non-bindable>{{変数名}}</code>と指定することで利用することが可能です。" data-tooltip-width='300'>?</icon></span></th>
+            <th class="item_name">変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{&thinsp;{変数名}&thinsp;}と指定することで利用することが可能です。" data-tooltip-width='300'>?</icon></span></th>
             <th class="item_value">変換元キー名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="取得したデータから、キー名を設定して変数に保存するデータを指定できます。" data-tooltip-width='300'>?</icon></span></th>
             <th class="item_btn_block"></th>
           </tr>

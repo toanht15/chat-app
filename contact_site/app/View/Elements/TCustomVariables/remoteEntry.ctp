@@ -108,7 +108,7 @@
     <div id="filterType1Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail">変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、<code ng-non-bindable>{{変数名}}</code>と指定することで利用することが可能です。</span></li>
+          <li><span class="detail">変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{&thinsp;{変数名}&thinsp;}と指定することで利用することが可能です。</span></li>
         </ul>
       </icon-annotation>
     </div>

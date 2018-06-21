@@ -3,7 +3,7 @@
   <ul>
     <li>
       <div class='grid-container grid-container-header'>
-        <div class='area-name'>変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、<code ng-non-bindable>{{変数名}}</code>と指定することで利用することが可能です。" data-tooltip-width='300'>?</icon></span></div>
+        <div class='area-name'>変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{&thinsp;{変数名}&thinsp;}と指定することで利用することが可能です。" data-tooltip-width='300'>?</icon></span></div>
         <div class='area-selector'>CSSセレクタ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="ウィジェットを表示している画面上から取得する値をCSSのセレクタと同様の記入方法で設定します。<br><br>例）<br>・要素のIDが&quot;user_name&quot;の値を取得する場合：#user_name<br>・IDが&quot;user_info&quot;の要素内の&quot;name&quot;というクラスを持つ要素の値を取得する場合：#user_info .name" data-tooltip-width='300'>?</icon></span></div>
       </div>
       <div  class='styleFlexbox' ng-repeat="(listId, getAttributes) in setItem.getAttributes track by $index">

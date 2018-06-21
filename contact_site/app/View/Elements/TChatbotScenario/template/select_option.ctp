@@ -2,7 +2,7 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>" class="set_action_item_body action_select_option" ng-init="main.controllSelectOptionSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb7em"><label class="hearingSelectVariableNameLabel">変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の選択した内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、<code ng-non-bindable>{{変数名}}</code>と指定することで利用することが可能です。" data-tooltip-width='300'>?</icon></span></label></span>
+      <span class="fb7em"><label class="hearingSelectVariableNameLabel">変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の選択した内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{&thinsp;{変数名}&thinsp;}と指定することで利用することが可能です。" data-tooltip-width='300'>?</icon></span></label></span>
       <div>
         <input type="text" ng-model="setItem.selection.variableName">
       </div>
