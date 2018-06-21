@@ -181,7 +181,6 @@
     var item_name = document.getElementById('TCustomerInformationSettingItemName').value;
     var input_type = Number(document.getElementById('TCustomerInformationSettingInputType').value);
     if(input_type == 3){
-        console.log(document.getElementById('TCustomerInformationSettingInputOption').value);
       var input_option = document.getElementById('TCustomerInformationSettingInputOption').value;
     }
     var show_realtime_monitor_flg = 0;
@@ -200,8 +199,8 @@
         t_custom_variables_id = document.getElementById('TCustomerInformationSettingTCustomVariablesId').value;
     }
     var comment = document.getElementById('TCustomerInformationSettingComment').value;
-
     //非同期通信処理
+    loading.load.start();
     $.ajax({
       type: "post",
       url: "<?=$this->Html->url('/TCustomerInformationSettings/remoteSaveEntryForm')?>",
@@ -226,6 +225,7 @@
           location.href = "<?=$this->Html->url(array('controller' => 'TCustomerInformationSettings', 'action' => 'index'))?>";
           return false;
         }
+        loading.load.finish();
         for (var i = 0; i < keys.length; i++) {
           if ( data[keys[i]].length > 0 ) {
             var target = $("[name='data[TCustomerInformationSetting][" + keys[i] + "]']");
@@ -382,7 +382,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
         'div' => false,
         'label' => false,
         'maxlength' => 100,
-        'style' => 'margin-left: 15px;font-size: 1em'
+        'style' => 'margin-left: 15px;font-size: 1em;padding-right:50px;max-width:380px;'
         ]) ?>
       </span>
     </div>
