@@ -1575,7 +1575,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           div.style.textAlign = 'left';
           div.style.height = 'auto';
           div.style.padding = '0';
-          content = "<span class='cName'>シナリオメッセージ(ファイル受信)</span>";
           content += $scope.createTextOfMessage(chat, message);
         }
       }
@@ -3983,7 +3982,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           if ( !(key in scope.customData) ) return false;
           var ret = true;
           // 新規記入でない場合
-          if ( (key in scope.customPrevData) ) {
+          if ( scope.customPrevData && (key in scope.customPrevData) ) {
             // 変わっていない場合
             if ( scope.customData[key] === scope.customPrevData[key] ) {
               ret = false;

@@ -2520,7 +2520,7 @@
                 notifyToCompany: false,
                 isScenarioMessage: true
               }, function() {
-                $(document).trigger(sinclo.scenarioApi._events.fileUploaded, [true, null]);
+                $(document).trigger(sinclo.scenarioApi._events.fileUploaded, [true, {"canceled":true, "message": "ファイル送信をキャンセル"}]);
               });
             });
           }
