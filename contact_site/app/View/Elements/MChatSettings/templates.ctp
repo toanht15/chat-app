@@ -13,17 +13,17 @@
           <?php } ?>
           <span style = 'display: block;margin-left: 2.5em;padding: 9px 9px 9px 0.25em;height: 34px;' class='labelArea ng-binding''>チャット呼出中メッセージ
           <?php if($value['message'] == '' || mb_strlen($value['message']) > 300) { ?>
-            <i style = 'float: right;background-color: #FF8E9E;width: 15px;height: 15px;' class='error ng-scope validation'></i>
+            <i style = 'float: right;background-color: #FF8E9E;width: 15px;height: 15px;cursor: pointer;' class='error ng-scope validation'></i>
           <?php }
           else { ?>
-            <i style = 'float: right;background-color: #FF8E9E;width: 15px;height: 15px;display:none;' class='error ng-scope validation'></i>
+            <i style = 'float: right;background-color: #FF8E9E;width: 15px;height: 15px;display:none;cursor: pointer;' class='error ng-scope validation'></i>
           <?php } ?>
             </span>
           </h4>
           <div>
             <?= $this->Form->input('seconds'.$key, array('id' => 'MChatSettingSeconds'.$key, 'min' => 0,'type' => 'number', 'div' => false, 'label' => false, 'style' => 'width: 5.5em;margin-left: 2em;margin-top: 14px;','error' => false)) ?>秒後
           </div>
-          <span style = "display:flex;margin-top: 5px;">
+          <span style = "display:flex;">
             <?=$this->Form->textarea('initial_notification_message'.$key,array('class' => 'notificationTextarea'))?>
             <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
             <span id = "summarized<?=$key?>">
@@ -33,13 +33,16 @@
               <span class="greenBtn btn-shadow actBtn linkNewTabButton" onclick="addOption(4,'MChatSettingInitialNotificationMessage<?=$key?>')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
             </span>
           </span>
-          <div style = "margin-top:17px;">
-          <?php if($key == 5) { ?>
-            <img onclick = "addItem(<?=$key+1?>)" id = 'add<?=$key?>' src="/img/add.png" alt="登録" class="btn-shadow disOffgreenBtn" width="25" height="25" style="padding: 2px !important; display: none;margin-left: 1.9em;margin-top: 14px;transform: scale(0.8);">
-          <?php }
-          else { ?>
-            <img onclick = "addItem(<?=$key+1?>)" id = 'add<?=$key?>' src="/img/add.png" alt="登録" class="btn-shadow disOffgreenBtn" width="25" height="25" style="padding: 2px !important; display: block;margin-left: 1.9em;margin-top: 14px;transform: scale(0.8);">
-          <?php } ?>
+          <div>
+          <hr class="separator" style = "margin-top:1em">
+          <div>
+            <?php if($key == 5) { ?>
+              <img onclick = "addItem(<?=$key+1?>)" id = 'add<?=$key?>' src="/img/add.png" alt="登録" class="btn-shadow disOffgreenBtn" width="25" height="25" style="padding: 2px !important; display: none;margin-left: 1.9em;transform: scale(0.8);">
+            <?php }
+            else { ?>
+              <img onclick = "addItem(<?=$key+1?>)" id = 'add<?=$key?>' src="/img/add.png" alt="登録" class="btn-shadow disOffgreenBtn" width="25" height="25" style="padding: 2px !important; display: block;margin-left: 1.9em;transform: scale(0.8);">
+            <?php } ?>
+          </div>
         </div>
       </li>
     </div>
