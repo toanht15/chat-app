@@ -1570,12 +1570,20 @@
       overflow: auto;
     }
 
+    li {
+      margin: 0px;
+    }
+
     input[type='text'] {
       margin-left: 29px;
       width: 75%;
       padding: 5px 10px;
       border: none;
       border-bottom: 1px solid #909090;
+    }
+
+    #TCustomVariableVariableName{
+      margin-left: 65px;
     }
   }
 
@@ -1615,7 +1623,7 @@
 }
 
 .p-tcustomerinformationsettings-entry {
-  width: 600px;
+  width: 565px;
 
 
   .questionBallon {
@@ -1694,6 +1702,9 @@
     flex-direction: column;
     margin: 20px 0;
 
+    li{
+    margin: 0px;
+    }
     textarea{
       margin-top: 8px;
       padding: 10px;
@@ -1705,11 +1716,13 @@
         box-sizing: content-box;
         border-radius: 5px!important;
         margin-top: 0px;
-        padding: 1px;
-        max-height: 88px;
+        margin-left: 15px;
+        padding: 4px;
+        max-height: 98px;
         overflow-y: hidden;
         word-break : break-all;
-        line-height: 18px;
+        line-height: 20px;
+        width: 292px;
       }
     }
 
@@ -1741,6 +1754,14 @@
       position: relative;
       top: -1px;
       cursor: pointer;
+    }
+
+    #TCustomerInformationSettingInputType{
+      width: 40%;
+    }
+
+    #TCustomerInformationSettingTCustomVariablesId{
+      width: 31%
     }
 
     .forcheckbox{

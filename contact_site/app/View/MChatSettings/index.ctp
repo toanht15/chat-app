@@ -212,6 +212,9 @@ function saveAct() {
 
 function indicateTooltip() {
   // ツールチップの表示制御
+  document.querySelector('#content').onscroll = function() {
+    topPosition = this.scrollTop;
+  }
   $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
     console.log(parentTdId);
@@ -219,7 +222,7 @@ function indicateTooltip() {
     console.log(targetObj);
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: $(this).offset().top + 96 + 'px',
+      top: ($(this).offset().top - 95 + topPosition)+'px',
       left: $(this).offset().left - 86 + 'px'
     });
   });
