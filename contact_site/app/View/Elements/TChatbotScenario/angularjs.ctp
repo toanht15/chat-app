@@ -224,7 +224,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         document.getElementById('action' + index + '_message').innerHTML = $scope.widget.createMessage(message || '', 'preview' + index);
       }
       // ファイル受信のファイル形式
-      if (typeof newObject.receiveFileType !== 'undefined' && newObject.receiveFileType === "2") {
+      if (oldObject.receiveFileType === "1" && typeof newObject.receiveFileType !== 'undefined' && newObject.receiveFileType === "2") {
         $scope.showExtendedConfigurationWarningPopup(newObject);
       }
       // 条件分岐のアクション「テキスト発言」

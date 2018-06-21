@@ -2,7 +2,7 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>" class="set_action_item_body action_branch_on_condition" ng-init="main.controllBranchOnConditionSettingView(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb15em"><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信先のメールアドレスを設定します。<br>（変数の利用も可能です）" data-tooltip-width='210'>?</icon></span></span>
+      <span class="fb15em"><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件の判定に利用する変数名を設定します。" data-tooltip-width='210'>?</icon></span></span>
       <div>
         <input type="text" ng-model="setItem.referenceVariable">
       </div>
@@ -22,7 +22,11 @@
         </li>
         <li class="styleFlexbox m10b">
           <span class="fb15em indentDown"><label></label></span>
-          <s>※複数の値を設定する場合はスペースで区切ってください。</s>
+          <div class="styleFlexbox direction-column">
+            <s>※複数の値を設定する場合はスペースで区切ってください。</s>
+            <s>※スペース（空白）を含む値を設定する場合はキーワード全体を半角のダブルクォーテーション（"）で囲んでください。</s>
+            <s>（例："山田 花子"）</s>
+          </div>
         </li>
         <li class="styleFlexbox">
           <div class="fb15em indentDown"><label class="require">実行するアクション</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件を満たした場合に「テキスト発言」「シナリオ呼出」「シナリオを終了」「次のアクションへ」のいずれかの処理を行うことができます。">?</icon></span></div>
