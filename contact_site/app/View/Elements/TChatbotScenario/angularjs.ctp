@@ -63,6 +63,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   var scenarioId = document.getElementById('TChatbotScenarioId').value || 'tmp';
   $scope.storageKey = 'scenario_' + scenarioId;
 
+  /**
+   * angularのExpressionを文字列のまま表示する
+   */
+  $scope.showExpression = function(str) {
+    return '{{' + str + '}}';
+  }
+
   // 設定一覧の並び替えオプション
   $scope.sortableOptions = {
     axis: "y",
