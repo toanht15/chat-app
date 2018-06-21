@@ -312,18 +312,10 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
-    if ( parentTdId.match(/op/)) {
-      targetObj.css({
-        top: ($(this).offset().top - targetObj.find('ul').outerHeight() -35) + 'px',
-        left: '50px'
-      });
-    }
-    else {
-      targetObj.css({
-        top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 65) + 'px',
-        left: '50px'
-      });
-    }
+    targetObj.css({
+      top: $(this).offset().top  - 96 + 'px',
+      left:$(this).offset().left - 85 + 'px'
+    });
   });
 
   $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
@@ -337,25 +329,16 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
-    console.log(parentTdId);
-    if( parentTdId == 'opChatResponseLabel') {
-      targetObj.css({
-        left: ($(this).offset().left - 170) + 'px'
-      });
-    }
-    else if ( parentTdId.match(/op/)) {
-      console.log($(this).offset().left);
-      targetObj.css({
-        left: ($(this).offset().left - 207) + 'px'
-      });
-    }
+    targetObj.css({
+      top: $(this).offset().top  - 70 + 'px',
+      left: $(this).offset().left - 85 + 'px'
+    });
   });
 
   $('.opQuestionBtn').off("mouseleave").on('mouseleave',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
-    console.log($(this).offset().left);
   });
 
   // DataTablesの検索時にツールチップを非表示にする

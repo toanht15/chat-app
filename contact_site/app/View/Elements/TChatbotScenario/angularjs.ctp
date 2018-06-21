@@ -1453,8 +1453,8 @@ $(document).ready(function() {
     targetObj.find('icon-annotation .detail').html($(this).data('tooltip'));
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
-      left: $(this).offset().left - 70 + 'px'
+      top: $(this).offset().top - 96 + 'px',
+      left: $(this).offset().left - 85 + 'px'
     });
 
     // 表示サイズ調整

@@ -1552,89 +1552,6 @@
     }
   }
 
-  .explainTooltip{
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      width: 25em;
-      height: 2.1em;
-      display: none;
-
-      /* 矢印 */
-      &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -140px;
-        left: 5px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -138px;
-        left: 5px;
-        z-index: 3;
-      }
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
-      }
-    }
-    &#filterType1Tooltip {
-      icon-annotation {
-        &:before {
-          bottom: -108px;
-          left: 5px;
-        }
-
-        &:after {
-          bottom: -106px;
-          left: 5px;
-        }
-      }
-    }
-    &#filterType2Tooltip {
-      icon-annotation {
-        &:before {
-          bottom: -156px;
-          left: 5px;
-        }
-
-        &:after {
-          bottom: -154px;
-          left: 5px;
-        }
-      }
-    }
-  }
-
   .form01 > div {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -1653,12 +1570,20 @@
       overflow: auto;
     }
 
+    li {
+      margin: 0px;
+    }
+
     input[type='text'] {
       margin-left: 29px;
       width: 75%;
       padding: 5px 10px;
       border: none;
       border-bottom: 1px solid #909090;
+    }
+
+    #TCustomVariableVariableName{
+      margin-left: 65px;
     }
   }
 
@@ -1698,7 +1623,7 @@
 }
 
 .p-tcustomerinformationsettings-entry {
-  width: 600px;
+  width: 565px;
 
 
   .questionBallon {
@@ -1713,67 +1638,6 @@
       font-size: 12px !important;
       line-height: 12px;
       padding: 0.1em;
-    }
-  }
-
-  .explainTooltip{
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      width: 16em;
-      height: 2.1em;
-      display: none;
-
-      /* 矢印 */
-      &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -14px;
-        left: 5px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -12px;
-        left: 5px;
-        z-index: 3;
-      }
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        li{
-          margin: 0px;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
-      }
     }
   }
 
@@ -1838,6 +1702,9 @@
     flex-direction: column;
     margin: 20px 0;
 
+    li{
+    margin: 0px;
+    }
     textarea{
       margin-top: 8px;
       padding: 10px;
@@ -1849,11 +1716,13 @@
         box-sizing: content-box;
         border-radius: 5px!important;
         margin-top: 0px;
-        padding: 1px;
-        max-height: 88px;
+        margin-left: 15px;
+        padding: 4px;
+        max-height: 98px;
         overflow-y: hidden;
         word-break : break-all;
-        line-height: 18px;
+        line-height: 20px;
+        width: 292px;
       }
     }
 
@@ -1871,7 +1740,7 @@
 
     input[type='text'] {
       margin-left: 15px;
-      width: 84%;
+      width: 83%;
       padding: 5px 10px;
       border: none;
       border-bottom: 1px solid #909090;
@@ -1885,6 +1754,10 @@
       position: relative;
       top: -1px;
       cursor: pointer;
+    }
+
+    #TCustomerInformationSettingInputType{
+      width: 40%;
     }
 
     .forcheckbox{

@@ -62,7 +62,6 @@ class TCustomerInformationSettingsController extends AppController {
    * @return void
    * */
   public function remoteSaveEntryForm() {
-    Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $saveData = [];
@@ -113,7 +112,11 @@ class TCustomerInformationSettingsController extends AppController {
     $saveData['TCustomerInformationSetting']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     $saveData['TCustomerInformationSetting']['item_name'] = $this->request->data['item_name'];
     $saveData['TCustomerInformationSetting']['input_type'] = $this->request->data['input_type'];
+    if(isset($this->request->data['input_option'])){
     $saveData['TCustomerInformationSetting']['input_option'] = $this->request->data['input_option'];
+    }else{
+    $saveData['TCustomerInformationSetting']['input_option'] ="";
+    }
     $saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = $this->request->data['show_realtime_monitor_flg'];
     $saveData['TCustomerInformationSetting']['show_send_mail_flg'] = $this->request->data['show_send_mail_flg'];
     $saveData['TCustomerInformationSetting']['sync_custom_variable_flg'] = $this->request->data['sync_custom_variable_flg'];
@@ -243,7 +246,7 @@ class TCustomerInformationSettingsController extends AppController {
   }
 
   /**
-   * カスタム変数ソート順更新
+   * 訪問ユーザー情報ソート順更新
    *
    * */
   public function remoteSaveSort(){
