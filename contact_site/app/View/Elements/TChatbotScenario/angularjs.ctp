@@ -227,6 +227,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (typeof newObject.receiveFileType !== 'undefined' && newObject.receiveFileType === "2") {
         $scope.showExtendedConfigurationWarningPopup(newObject);
       }
+      // 条件分岐のアクション「テキスト発言」
+      // 送信メッセージ
+      if ( newObject.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?> && newObject.conditionList.length > 0) {
+        angular.forEach(newObject.conditionList, function(condition, conditionIndex){
+          if(condition.actionType == "1" && document.getElementById('action' + index + "-" + conditionIndex + '_message')) {
+            document.getElementById('action' + index + "-" + conditionIndex + '_message').innerHTML = $scope.widget.createMessage(condition.action.message);
+          }
+        });
+      }
     }, true);
   };
 
