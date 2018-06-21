@@ -891,7 +891,7 @@ ul.ulTab {
   top: 0;
   left: 0;
   right: 0;
-  background-color: $main-color;
+  background-color: #b2d251;
   height: 60px;
   z-index: $sidebar-z-index;
   overflow: hidden;
@@ -1043,7 +1043,7 @@ ul.ulTab {
   display: inline-block;
   background-color: #A6A6A6;
   z-index: $sub-sidebar-z-index;
-  width: auto;
+  width: 202px;
   left: -20px;
   div.icon {
   padding: 0px!important;
@@ -1055,6 +1055,7 @@ ul.ulTab {
       align-items: center;
       text-decoration: none;
       margin: 0;
+      padding-left: 3px;
       &:hover {
         background-color: #B7CF89;
         font-weight: bold;
@@ -1078,7 +1079,7 @@ ul.ulTab {
         color: #FFF;
         font-size: 13px;
         margin-left: 0.5em;
-        margin-right: 2em;
+        margin-right:3px;
         width: 100%;
       }
     }
@@ -1107,6 +1108,7 @@ ul#color-bar-right {
   p {
     cursor:pointer;
     display:flex;
+    font-weight: bold;
     .fa-angle-down {
       color:#fff;
       line-height: 0.6;
@@ -4600,6 +4602,8 @@ ul.naviBtn {
 
   #history_title {
     position: relative;
+    display:flex;
+    align-items:center;
     #outputCSV {
       position: absolute;
       top: 10px;

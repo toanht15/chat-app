@@ -823,8 +823,8 @@ var socket, // socket.io
       /* 共通スタイル */
       html += '      @media print{ sinclo { display:none!important; } }';
       //アイコンフォント用
-      html += '      @font-face { font-family: "Font Awesome 5 Pro"; font-style: normal; font-weight: 300; src: url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.eot"); src: url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.eot?#iefix") format("embedded-opentype"), url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.woff2") format("woff2"), url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.woff") format("woff"), url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.ttf") format("truetype"), url(' + sincloInfo.site.files + '"/webfonts/fa-light-300.svg#fontawesome") format("svg"); }';
-      html += '      @font-face { font-family: SincloFont; font-style: normal; font-weight: 900; src: url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.eot"); src: url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.woff2") format("woff2"), url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.woff") format("woff"), url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.ttf") format("truetype"), url(' + sincloInfo.site.files + '"/webfonts/fa-solid-900.svg#fontawesome") format("svg"); }';
+      html += '      @font-face { font-family: "Font Awesome 5 Pro"; font-style: normal; font-weight: 300; src: url("' + sincloInfo.site.files + '/webfonts/fa-light-300.eot"); src: url("' + sincloInfo.site.files + '/webfonts/fa-light-300.eot?#iefix") format("embedded-opentype"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.woff2") format("woff2"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.woff") format("woff"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.ttf") format("truetype"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.svg#fontawesome") format("svg"); }';
+      html += '      @font-face { font-family: SincloFont; font-style: normal; font-weight: 900; src: url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.eot"); src: url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.woff2") format("woff2"), url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.woff") format("woff"), url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.ttf") format("truetype"), url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.svg#fontawesome") format("svg"); }';
       html += '      #sincloBox .sinclo-fal { font-family: "Font Awesome 5 Pro"; display: inline-block; font-style: normal; font-weight: 300; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }';
       html += '      #sincloBox .sinclo-fal.fa-4x { font-size: 4em; }';
       //アイコンフォント用
@@ -835,7 +835,7 @@ var socket, // socket.io
       */
       html += '      #sincloBox div, #sincloBox span, #sincloBox applet, #sincloBox object, #sincloBox iframe, #sincloBox h1, #sincloBox h2, #sincloBox h3, #sincloBox h4, #sincloBox h5, #sincloBox h6, #sincloBox p, #sincloBox blockquote, #sincloBox pre, #sincloBox a, #sincloBox abbr, #sincloBox acronym, #sincloBox address, #sincloBox big, #sincloBox cite, #sincloBox code, #sincloBox del, #sincloBox dfn, #sincloBox em, #sincloBox img, #sincloBox ins, #sincloBox kbd, #sincloBox q, #sincloBox s, #sincloBox samp, #sincloBox small, #sincloBox strike, #sincloBox strong, #sincloBox sub, #sincloBox sup, #sincloBox tt, #sincloBox var, #sincloBox b, #sincloBox u, #sincloBox i, #sincloBox center, #sincloBox dl, #sincloBox dt, #sincloBox dd, #sincloBox ol, #sincloBox ul, #sincloBox li, #sincloBox fieldset, #sincloBox form, #sincloBox label, #sincloBox legend, #sincloBox table, #sincloBox caption, #sincloBox tbody, #sincloBox tfoot, #sincloBox thead, #sincloBox tr, #sincloBox th, #sincloBox td, #sincloBox article, #sincloBox aside, #sincloBox canvas, #sincloBox details, #sincloBox embed, #sincloBox figure, #sincloBox figcaption, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox output, #sincloBox ruby, #sincloBox section, #sincloBox summary, #sincloBox time, #sincloBox mark, #sincloBox audio, #sincloBox video' +
         ' { ' +
-        '  font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica,Helvetica Neue,Arial,Verdana;' +
+        '  font-family: \'-apple-system\', \'BlinkMacSystemFont\',\'Hiragino Sans\',\'Hiragino Kaku Gothic ProN\', "segoe ui",\'游ゴシック  Medium\',\'メイリオ\', Meiryo,\'ＭＳ Ｐゴシック\',\'MS PGothic\',sans-serif;' +
         '  font-weight: normal;' +
         '  font-variant: normal;' +
         '  position: static;' +
@@ -924,18 +924,19 @@ var socket, // socket.io
         html += '      @keyframes fadeIn { 0% { opacity :0; } 100% { opacity :1; } }';
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.sincloInfo.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         // ファイルフォントアイコン-----------
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-4x { font-size:4em; }'
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file:before { content: "\\f016" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-image:before { content: "\\f1c5" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-pdf:before { content: "\\f1c1" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-word:before { content: "\\f1c2" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-powerpoint:before { content: "\\f1c4" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-excel:before { content: "\\f1c3" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-audio:before { content: "\\f1c7" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-video:before { content: "\\f1c8" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-zip:before { content: "\\f1c6" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-code:before { content: "\\f1c9" }';
-        html += '      #sincloBox ul#chatTalk li div.sendFileThumbnailArea .sinclo-fal.fa-file-text:before { content: "\\f0f6" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-4x { font-size:4em; }'
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file:before { content: "\\f016" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-image:before { content: "\\f1c5" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-pdf:before { content: "\\f1c1" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-word:before { content: "\\f1c2" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-powerpoint:before { content: "\\f1c4" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-excel:before { content: "\\f1c3" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-audio:before { content: "\\f1c7" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-video:before { content: "\\f1c8" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-zip:before { content: "\\f1c6" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-code:before { content: "\\f1c9" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-text:before { content: "\\f0f6" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-cloud-upload:before { content: "\\f0ee" }';
         // ------------ファイルフォントアイコン
         html += '      #sincloBox ul#chatTalk li span.sendFileMessage { color: '+ colorList['reTextColor'] +' }';
         html += '      #sincloBox ul#chatTalk li div.sendFileContent { display: table; table-layout:fixed; width: 100%; height: 64px; white-space: pre-line; margin-bottom: 0; }';
@@ -1010,7 +1011,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent { line-height: 0; border: 1px dashed ' + widget.reTextColor + '; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 0; }'
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin: 6.5px 0; text-align: center; color:' + widget.reTextColor + '; font-weight: bold; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; line-height: 24px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 13px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display:inline-block; width:75%; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; text-align: center; background-color: ' + widget.reTextColor + '!important; color: ' + widget.reBackgroundColor + '; font-weight: normal; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }';
@@ -1023,7 +1024,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.small { max-width: 165px; max-height: 60px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.middle { max-width: 215px; max-height: 160px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.large { max-width: 265px; max-height: 240px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; width: 100%; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; width: 100%; margin-bottom: 3px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 97%; height: 40px; resize: none; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea:focus { outline: none!important; border-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important;}'
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 97%; margin: 0 auto; }';
@@ -2964,7 +2965,9 @@ var socket, // socket.io
       if(sincloInfo.customVariable.length > 0) {
         for(var i=0; i < sincloInfo.customVariable.length; i++) {
           var getValue = userInfo._getText($(sincloInfo.customVariable[i].attribute_value));
-          userInfo.customVariables[sincloInfo.customVariable[i].item_name] = getValue.trim();
+          if(getValue) {
+            userInfo.customVariables[sincloInfo.customVariable[i].item_name] = getValue.trim();
+          }
         }
       }
     },
