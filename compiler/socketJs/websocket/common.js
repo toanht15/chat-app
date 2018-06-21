@@ -1018,9 +1018,9 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent { line-height: 0; background-color: #FFF; padding: 5px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea { line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.small { max-width: 165px; max-height: 60px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.middle { max-width: 215px; max-height: 160px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.large { max-width: 265px; max-height: 240px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.small { max-width: 165px; max-height: 120px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.middle { max-width: 215px; max-height: 188px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.large { max-width: 265px; max-height: 285px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; width: 100%; margin-bottom: 3px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 97%; height: 40px; resize: none; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea:focus { outline: none!important; border-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important;}'
