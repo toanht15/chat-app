@@ -233,6 +233,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         angular.forEach(newObject.conditionList, function(condition, conditionIndex){
           if(condition.actionType == "1" && document.getElementById('action' + index + "-" + conditionIndex + '_message')) {
             document.getElementById('action' + index + "-" + conditionIndex + '_message').innerHTML = $scope.widget.createMessage(condition.action.message);
+          } else if(condition.actionType != "1" && condition.action.message) {
+            condition.action.message = "";
+          } else if(condition.actionType != "2" && condition.action.callScenarioId) {
+            delete condition.action.callScenarioId;
           }
         });
       }
