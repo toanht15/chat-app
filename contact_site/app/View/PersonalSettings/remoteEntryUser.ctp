@@ -29,8 +29,6 @@
     var new_password = document.getElementById('MUserNewPassword').value;
     var confirm_password = document.getElementById('MUserConfirmPassword').value;
     var accessToken = "<?=$token?>";
-    console.log('チェック');
-    console.log(current_password);
     $.ajax({
         type: "post",
         url: "<?=$this->Html->url('/PersonalSettings/remoteSaveEntryForm')?>",
@@ -50,11 +48,9 @@
         dataType: "JSON",
         success: function(data){
           var keys = Object.keys(data), num = 0, popup = $("#popup-frame");
-          popup.removeAttr('style');
           $(".error-message").remove();
           console.log(keys.length);
           if ( keys.length === 0 ) {
-              console.log('保存処理成功');
               location.href = location.href;
               return false;
           }
@@ -96,8 +92,7 @@ if ( !empty($this->data['MUser']['settings']) ) {
   }
 }
 ?>
-<div id = "modalShortMessage">
-</div>
+<!-- 表示されるフォーム画面 -->
 <?= $this->Form->create('MUser', array('type' => 'post', 'url' => array('controller' => 'PersonalSettings', 'action' => 'index'),'name' => 'MUserIndexForm')); ?>
     <div class="form01">
         <!-- /* 基本情報 */ -->
@@ -117,7 +112,7 @@ if ( !empty($this->data['MUser']['settings']) ) {
               <div style = "display:none;">
             <?php endif; ?>
                <div class="labelArea fLeft"><span><label>チャット同時対応数</label></span></div>
-               <div><?php
+               <div id = "upperLimit"><?php
                echo ( !empty($settings['sc_num']) ) ? $settings['sc_num'] : 0 ?></div>
                <?=$this->Form->hidden('settings',array('error' => false))?>
            <?php if ( $this->Form->isFieldError('settings') ) echo $this->Form->error('settings', null, array('wrap' => 'li')); ?>
