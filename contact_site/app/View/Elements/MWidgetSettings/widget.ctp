@@ -169,9 +169,9 @@
     #sincloBox div#miniTarget { overflow: hidden; transition: height 200ms linear; }
     <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
     @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
-    #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px 5px 60px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
-    #sincloBox ul#chatTalk.middleSize { height: 284px; }
-    #sincloBox ul#chatTalk.largeSize { height: 374px; }
+    #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 5px 5px 30.8px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
+    #sincloBox ul#chatTalk.middleSize { height: 284px; padding: 5px 5px 45.6px 5px;}
+    #sincloBox ul#chatTalk.largeSize { height: 374px; padding: 5px 5px 60px 5px;}
     #sincloBox ul#chatTalk.details { background-color: {{chat_talk_background_color}}; }
     #sincloBox ul#chatTalk div.liLeft { text-align: left; }
     #sincloBox ul#chatTalk div.liBoxRight { text-align: right; }
