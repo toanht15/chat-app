@@ -1361,7 +1361,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       divElm.style.textAlign = "right";
       var thumbnail = "";
       if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
-        thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail' width='64' height='64'>";
+        thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail' style='max-width: 200px; max-height: 140px'>";
       } else {
         thumbnail = "<i class='sinclo-fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
       }
