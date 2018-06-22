@@ -6,7 +6,7 @@
  */
 class TCustomerInformationSettingsController extends AppController {
   public $components = ['NodeSettingsReload'];
-  public $uses = ['TCustomerInformationSetting','TCustomVariable'];
+  public $uses = ['TCustomerInformationSetting','TCustomVariable', 'MCustomer'];
   public $paginate = [
     'TCustomerInformationSetting' => [
       'limit' => 100,
@@ -62,7 +62,6 @@ class TCustomerInformationSettingsController extends AppController {
    * @return void
    * */
   public function remoteSaveEntryForm() {
-    Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
     $saveData = [];
@@ -110,10 +109,23 @@ class TCustomerInformationSettingsController extends AppController {
       $saveData['TCustomerInformationSetting']['sort'] = $nextSort;
 
     }
+    $oldItemName = "";
+    $newItemName = "";
+    $itemNameChanged = false;
+    if(strcmp($saveData['TCustomerInformationSetting']['item_name'], $this->request->data['item_name']) !== 0) {
+      $itemNameChanged = true;
+      $oldItemName = $saveData['TCustomerInformationSetting']['item_name'];
+      $newItemName = $this->request->data['item_name'];
+    }
+
     $saveData['TCustomerInformationSetting']['m_companies_id'] = $this->userInfo['MCompany']['id'];
     $saveData['TCustomerInformationSetting']['item_name'] = $this->request->data['item_name'];
     $saveData['TCustomerInformationSetting']['input_type'] = $this->request->data['input_type'];
+    if(isset($this->request->data['input_option'])){
     $saveData['TCustomerInformationSetting']['input_option'] = $this->request->data['input_option'];
+    }else{
+    $saveData['TCustomerInformationSetting']['input_option'] ="";
+    }
     $saveData['TCustomerInformationSetting']['show_realtime_monitor_flg'] = $this->request->data['show_realtime_monitor_flg'];
     $saveData['TCustomerInformationSetting']['show_send_mail_flg'] = $this->request->data['show_send_mail_flg'];
     $saveData['TCustomerInformationSetting']['sync_custom_variable_flg'] = $this->request->data['sync_custom_variable_flg'];
@@ -125,7 +137,18 @@ class TCustomerInformationSettingsController extends AppController {
 
     // バリデーションチェックでエラーが出た場合
     if ( $this->TCustomerInformationSetting->save() ) {
-      $this->TCustomerInformationSetting->commit();
+      try {
+        if($itemNameChanged) {
+          $this->log($this->userInfo['MCompany']['company_key'].': ITEM NAME CHANGED before => '.$oldItemName.' after => '.$newItemName, LOG_INFO);
+          $this->replaceAllCustomerInformationKey($oldItemName, $newItemName);
+        }
+        $this->TCustomerInformationSetting->commit();
+      } catch(Exception $e) {
+        $this->log('訪問ユーザ情報のキー書き換え時にエラーが発生しました。', LOG_ERR);
+        $this->TCustomerInformationSetting->rollback();
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
+        return new CakeResponse(['body' => json_encode(array('result' => false))]);
+      }
       NodeSettingsReloadComponent::reloadCustomVariableSettings($this->userInfo['MCompany']['company_key']);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
     }
@@ -135,6 +158,36 @@ class TCustomerInformationSettingsController extends AppController {
 
     $errorMessage = $this->TCustomerInformationSetting->validationErrors;
     return new CakeResponse(['body' => json_encode($errorMessage)]);
+  }
+
+  private function replaceAllCustomerInformationKey($oldKey, $newKey) {
+    $allCustomerInfo = $this->MCustomer->find('all', array(
+      'conditions' => array(
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      )
+    ));
+    if(count($allCustomerInfo) > 0) {
+      $this->MCustomer->begin();
+      foreach($allCustomerInfo as $index => $data) {
+        $informations = json_decode($data['MCustomer']['informations'], TRUE);
+        $newInformaions = array();
+        foreach($informations as $key => $value) {
+          if(strcmp($oldKey, $key) === 0) {
+            $newInformations[$newKey] = $value;
+          } else {
+            $newInformations[$key] = $value;
+          }
+        }
+        $data['MCustomer']['informations'] = json_encode($newInformations);
+        if(!$data['MCustomer']['informations']) {
+          $this->MCustomer->rollback();
+          throw new Exception('書き換え中にエラーが発生しました。');
+        }
+        $this->MCustomer->create(false);
+        $this->MCustomer->save($data);
+      }
+      $this->MCustomer->commit();
+    }
   }
 
   /* *
@@ -243,7 +296,7 @@ class TCustomerInformationSettingsController extends AppController {
   }
 
   /**
-   * カスタム変数ソート順更新
+   * 訪問ユーザー情報ソート順更新
    *
    * */
   public function remoteSaveSort(){

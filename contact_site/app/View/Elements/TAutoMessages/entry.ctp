@@ -320,7 +320,7 @@
             ]); ?></label>
           </li>
           <!-- 状態 -->
-          <div id='lastSpeechTooltip' class="explainTelTooltip">
+          <div id='lastSpeechTooltip' class="explainTooltip">
             <icon-annotation>
               <ul>
                 <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>

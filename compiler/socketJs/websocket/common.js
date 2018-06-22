@@ -1008,7 +1008,7 @@ var socket, // socket.io
           html += '#sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 14px!important; line-height: 0; }';
         }
         html += '#sincloBox #chatTalk li.sinclo_se.uploaded { padding: 10px 15px!important; line-height: 0; }'
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent { line-height: 0; border: 1px dashed ' + widget.reTextColor + '; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent { position: relative; line-height: 0; border: 1px dashed ' + widget.reTextColor + '; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 0; }'
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin: 6.5px 0; text-align: center; color:' + widget.reTextColor + '; font-weight: bold; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; line-height: 24px; }';
@@ -1018,12 +1018,12 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea a { font-size: ' + (widget.reTextSize - 1) + 'px; cursor: pointer; text-decoration: underline; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { line-height: 1; font-size: 3em; color: ' + widget.reTextColor + '; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent { line-height: 0; background-color: #FFF; padding: 5px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent { position: relative; line-height: 0; background-color: #FFF; padding: 5px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea { line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.small { max-width: 165px; max-height: 60px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.middle { max-width: 215px; max-height: 160px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.large { max-width: 265px; max-height: 240px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.small { max-width: 165px; max-height: 120px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.middle { max-width: 215px; max-height: 188px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.large { max-width: 265px; max-height: 285px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; width: 100%; margin-bottom: 3px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 97%; height: 40px; resize: none; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea:focus { outline: none!important; border-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important;}'
@@ -1031,6 +1031,16 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a:hover { opacity: .8; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.cancel-file-button { margin-right: 2px; width: 49%; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: normal; word-break: keep-all; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.send-file-button { margin-left: 2px; width: 49%; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: normal; word-break: keep-all; }';
+        html += '#sincloBox #chatTalk li div div.loadingPopup { display: flex; flex-flow: column nowrap; justify-content: center; align-items: center; text-align:center; vertical-align: middle; color: #FFF; background-color: rgba(0, 0, 0, 0.7); position: absolute; top:0; right: 0; bottom: 0; left: 0; }';
+        html += '#sincloBox #chatTalk li div div.loadingPopup.hide { display: none; }';
+        html += '#sincloBox #chatTalk li div div.loadingPopup i { font-size: 6em; text-align:center; color: #FFF; }';
+        html += '#sincloBox #chatTalk li div div.loadingPopup p.progressMessage { text-align:center; color: #FFF; }';
+        html += '#sincloBox #chatTalk li div div.loadingPopup i.load { -webkit-animation: spin 1.5s linear infinite; -moz-animation: spin 1.5s linear infinite; -ms-animation: spin 1.5s linear infinite; -o-animation: spin 1.5s linear infinite; animation: spin 1.5s linear infinite; }';
+        html += '@-webkit-keyframes spin { 0% {-webkit-transform: rotate(0deg);} 100% {-webkit-transform: rotate(360deg);} }';
+        html += '@-moz-keyframes spin { 0% {-moz-transform: rotate(0deg);} 100% {-moz-transform: rotate(360deg);} }';
+        html += '@-ms-keyframes spin { 0% {-ms-transform: rotate(0deg);} 100% {-ms-transform: rotate(360deg);} }';
+        html += '@-o-keyframes spin { 0% {-o-transform: rotate(0deg);} 100% {-o-transform: rotate(360deg);} }';
+        html += '@keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }';
 
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
@@ -1617,7 +1627,7 @@ var socket, // socket.io
       // ボタンのみの場合
       placeholder = sinclo.chatApi.getPlaceholderMessage();
       html += '  <section id="chatTab" class="flexBox">';
-      html += '    <ul id="chatTalk"><sinclo-chat></sinclo-chat><sinclo-typing></sinclo-typing><sinclo-chat-receiver><span id="receiveMessage">テストメッセージです</span></sinclo-chat-receiver></ul>';
+      html += '    <ul id="chatTalk"><sinclo-chat></sinclo-chat><sinclo-typing></sinclo-typing><sinclo-chat-receiver><span id="receiveMessage">テストメッセージです</span></sinclo-chat-receiver><sinclo-loading></sinclo-loading></sinclo-loading></ul>';
       html += '    <sinclo-chat-alert>通信が切断されました。<br>こちらをタップすると再接続します。</sinclo-chat-alert>';
       html += '    <sinclo-div id="flexBoxWrap">';
       html += '      <sinclo-div class="flexBoxRow" id = "flexBoxHeight">';
@@ -2961,7 +2971,6 @@ var socket, // socket.io
       };
     },
     setCustomVariables: function() {
-      debugger;
       if(sincloInfo.customVariable.length > 0) {
         for(var i=0; i < sincloInfo.customVariable.length; i++) {
           var getValue = userInfo._getText($(sincloInfo.customVariable[i].attribute_value));
@@ -4189,7 +4198,6 @@ function emit(evName, data, callback){
   if (evName === "connectSuccess") {
     data.widget = window.sincloInfo.widgetDisplay;
     data.accessId = userInfo.accessId;
-    debugger;
     data.customVariables = userInfo.customVariables;
   }
   if (evName === "customerInfo" || evName === "sendAccessInfo") {

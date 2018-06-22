@@ -63,6 +63,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   var scenarioId = document.getElementById('TChatbotScenarioId').value || 'tmp';
   $scope.storageKey = 'scenario_' + scenarioId;
 
+  /**
+   * angularのExpressionを文字列のまま表示する
+   */
+  $scope.showExpression = function(str) {
+    return '{{' + str + '}}';
+  }
+
   // 設定一覧の並び替えオプション
   $scope.sortableOptions = {
     axis: "y",
@@ -233,6 +240,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         angular.forEach(newObject.conditionList, function(condition, conditionIndex){
           if(condition.actionType == "1" && document.getElementById('action' + index + "-" + conditionIndex + '_message')) {
             document.getElementById('action' + index + "-" + conditionIndex + '_message').innerHTML = $scope.widget.createMessage(condition.action.message);
+          } else if(condition.actionType != "1" && condition.action.message) {
+            condition.action.message = "";
+          } else if(condition.actionType != "2" && condition.action.callScenarioId) {
+            delete condition.action.callScenarioId;
           }
         });
       }
@@ -1449,8 +1460,8 @@ $(document).ready(function() {
     targetObj.find('icon-annotation .detail').html($(this).data('tooltip'));
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: ($(this).offset().top - targetObj.find('ul').outerHeight() - 70) + 'px',
-      left: $(this).offset().left - 70 + 'px'
+      top: $(this).offset().top - 96 + 'px',
+      left: $(this).offset().left - 85 + 'px'
     });
 
     // 表示サイズ調整

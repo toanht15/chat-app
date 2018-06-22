@@ -1557,89 +1557,6 @@
     }
   }
 
-  .explainTooltip{
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      width: 25em;
-      height: 2.1em;
-      display: none;
-
-      /* 矢印 */
-      &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -140px;
-        left: 5px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -138px;
-        left: 5px;
-        z-index: 3;
-      }
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
-      }
-    }
-    &#filterType1Tooltip {
-      icon-annotation {
-        &:before {
-          bottom: -108px;
-          left: 5px;
-        }
-
-        &:after {
-          bottom: -106px;
-          left: 5px;
-        }
-      }
-    }
-    &#filterType2Tooltip {
-      icon-annotation {
-        &:before {
-          bottom: -156px;
-          left: 5px;
-        }
-
-        &:after {
-          bottom: -154px;
-          left: 5px;
-        }
-      }
-    }
-  }
-
   .form01 > div {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -1658,12 +1575,20 @@
       overflow: auto;
     }
 
+    li {
+      margin: 0px;
+    }
+
     input[type='text'] {
       margin-left: 29px;
       width: 75%;
       padding: 5px 10px;
       border: none;
       border-bottom: 1px solid #909090;
+    }
+
+    #TCustomVariableVariableName{
+      margin-left: 65px;
     }
   }
 
@@ -1684,26 +1609,8 @@
 }
 
 /* 訪問ユーザー情報設定 */
-#tooltip_tcustomerinformationsettings_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_tcustomerinformationsettings_copy_btn.tooltips {
-  position: fixed;
-  left: 108.5px !important;
-  width: 9em;
-}
-
-#tooltip_tcustomerinformationsettings_dustbox_btn.tooltips {
-  position: fixed;
-  left: 176px !important;
-  width: 6em;
-}
-
 .p-tcustomerinformationsettings-entry {
-  width: 600px;
+  width: 565px;
 
 
   .questionBallon {
@@ -1718,67 +1625,6 @@
       font-size: 12px !important;
       line-height: 12px;
       padding: 0.1em;
-    }
-  }
-
-  .explainTooltip{
-    z-index: 10;
-    position: absolute;
-
-    icon-annotation {
-      width: 16em;
-      height: 2.1em;
-      display: none;
-
-      /* 矢印 */
-      &:before {
-        content: " ";
-        border: none;
-        border-top: 10px solid rgba(0, 0, 0, 0.13);
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -14px;
-        left: 5px;
-        z-index: 1;
-      }
-
-      &:after {
-        content: " ";
-        border: none;
-        border-top: 10px solid white;
-        border-left: 9px solid transparent;
-        border-right: 9px solid transparent;
-        position: absolute;
-        bottom: -12px;
-        left: 5px;
-        z-index: 3;
-      }
-
-      ul {
-        margin: 0;
-        padding: 0;
-        text-align: left;
-        background-color: #FFF;
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.8);
-        padding: 0.5em;
-        font-weight: normal;
-        border-radius: 5px;
-
-        img {
-          margin-bottom: -0.2em;
-          width:1em;
-          height:1em;
-        }
-
-        li{
-          margin: 0px;
-        }
-
-        span {
-          font-size: 0.9em;
-        }
-      }
     }
   }
 
@@ -1843,6 +1689,9 @@
     flex-direction: column;
     margin: 20px 0;
 
+    li{
+    margin: 0px;
+    }
     textarea{
       margin-top: 8px;
       padding: 10px;
@@ -1854,11 +1703,13 @@
         box-sizing: content-box;
         border-radius: 5px!important;
         margin-top: 0px;
-        padding: 1px;
-        max-height: 88px;
+        margin-left: 15px;
+        padding: 4px;
+        max-height: 98px;
         overflow-y: hidden;
         word-break : break-all;
-        line-height: 18px;
+        line-height: 20px;
+        width: 292px;
       }
     }
 
@@ -1876,7 +1727,7 @@
 
     input[type='text'] {
       margin-left: 15px;
-      width: 84%;
+      width: 83%;
       padding: 5px 10px;
       border: none;
       border-bottom: 1px solid #909090;
@@ -1890,6 +1741,10 @@
       position: relative;
       top: -1px;
       cursor: pointer;
+    }
+
+    #TCustomerInformationSettingInputType{
+      width: 40%;
     }
 
     .forcheckbox{
@@ -1936,71 +1791,7 @@
   }
 }
 
-#tooltip_tautomessages_add_btn.tooltips {
-  position: fixed;
-  left: 79px !important;
-  width: 6em;
-}
 
-#tooltip_tautomessages_copy_btn.tooltips {
-  position: fixed;
-  left: 106px !important;
-  width: 9em;
-}
-
-#tooltip_tautomessages_check_btn.tooltips {
-  position: fixed;
-  left: 161px !important;
-  width: 7em;
-}
-
-#tooltip_tautomessages_inactive_btn.tooltips {
-  position: fixed;
-  left: 207px !important;
-  width: 7em;
-}
-
-#tooltip_tautomessages_dustbox_btn.tooltips {
-  position: fixed;
-  left: 259px !important;
-  width: 6em;
-}
-
-#tooltip_tautomessage_select_scenario.tooltips::after {
-  position: relative;
-  top: 24px !important;
-  left: 20px !important;
-}
-
-#tooltip_tchatbotscenario_add_btn.tooltips {
-  position: fixed;
-  left: 79px !important;
-  width: 6em;
-}
-
-#tooltip_tchatbotscenario_copy_btn.tooltips {
-  position: fixed;
-  left: 106px !important;
-  width: 9em;
-}
-
-#tooltip_tchatbotscenario_dustbox_btn.tooltips {
-  position: fixed;
-  left: 169px !important;
-  width: 6em;
-}
-
-#tooltip_history_csv_btn.tooltips {
-  position: fixed;
-  left: 73px !important;
-  width: 7em;
-}
-
-#tooltip_history_dustbox_btn.tooltips {
-  position: fixed;
-  left: 125px !important;
-  width: 7em;
-}
 
 /*営業時間 */
 .p-operatinghours-entry {
@@ -2107,18 +1898,6 @@
   }
 }
 
-#tooltip_tdocument_add_btn.tooltips {
-  position: fixed;
-  left: 79px !important;
-  width: 6em;
-}
-
-#tooltip_tdocument_dustbox_btn.tooltips {
-  position: fixed;
-  left: 128px !important;
-  width: 6em;
-}
-
 /* ユーザ管理レイアウト調整 */
 #muser_idx{
   #muser_menu{
@@ -2135,18 +1914,6 @@
       }
     }
   }
-}
-
-#tooltip_m_users_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_m_users_dustbox_btn.tooltips {
-  position: fixed;
-  left: 126px !important;
-  width: 6em;
 }
 
 /* キャンペーン設定レイアウト調整 */
@@ -2173,24 +1940,6 @@
       }
     }
   }
-}
-
-#tooltip_tcampaigns_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_tcampaigns_copy_btn.tooltips {
-  position: fixed;
-  left: 108.5px !important;
-  width: 9em;
-}
-
-#tooltip_tcampaigns_dustbox_btn.tooltips {
-  position: fixed;
-  left: 176px !important;
-  width: 6em;
 }
 
 /* チャット通知設定レイアウト調整 */
@@ -2224,19 +1973,6 @@
     }
   }
 }
-
-#tooltip_chat_notifications_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_chat_notifications_dustbox_btn.tooltips {
-  position: fixed;
-  left: 126px !important;
-  width: 6em;
-}
-
 /* カスタム変数レイアウト調整 */
 #tcustomvariables_idx{
   #tcustomvariables_description{
@@ -2261,24 +1997,6 @@
       }
     }
   }
-}
-
-#tooltip_tcustomvariables_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_tcustomvariables_copy_btn.tooltips {
-  position: fixed;
-  left: 108.5px !important;
-  width: 9em;
-}
-
-#tooltip_tcustomvariables_dustbox_btn.tooltips {
-  position: fixed;
-  left: 176px !important;
-  width: 6em;
 }
 
 
@@ -2866,44 +2584,6 @@
   padding: 0px !important;
   color: #555;
   display: block;
-}
-
-/*[id^="layerMenu"] ul li:hover {
-  color: #EA0001;
-}*/
-
-[id^="tooltip_tdictionaries_add_btn"].tooltips{
-  position: fixed;
-  left: 109px !important;
-  width: 6em
-}
-
-[id^="tooltip_tdictionaries_copy_btn"].tooltips{
-  position: fixed;
-  left: 139px !important;
-  width: 9em;
-}
-
-[id^="tooltip_tdictionaries_move_btn"].tooltips{
-  position: fixed;
-  left: 205px !important;
-  width: 6em;
-}
-
-[id^="tooltip_tdictionaries_dustbox_btn"].tooltips{
-  position: fixed;
-  left: 254px !important;
-  width: 6em;
-}
-
-[id^="tooltip_tdictionaries_manu_btn"].tooltips{
-  right: 57px;
-  width: 7em;
-  position: fixed;
-}
-
-[id^="tooltip_gray_tdictionaries_manu_btn"].tooltips{
-  position: fixed;
 }
 
 .ui-tabs.soteTabs {

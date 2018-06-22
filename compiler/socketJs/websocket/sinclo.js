@@ -2496,6 +2496,7 @@
           content    += "    </p>";
           content    += "    <input type='file' class='receiveFileInput' name='receiveFileInput' style='display:none'>"
           content    += "  </div>";
+          content    += "  <div class='loadingPopup hide'><i class='sinclo-fal fa-spinner load'></i><p class='progressMessage'>読み込み中です。<br>しばらくお待ち下さい。</p></div>"
           content    += "</div>";
           if(cancelable) {
             content  += "<div class='cancelReceiveFileArea'>";
@@ -2992,9 +2993,11 @@
             if(sinclo.chatApi.fileUploader.selectInput[0].files[0]) {
               var self = this;
               sinclo.chatApi.fileUploader.fileObj = sinclo.chatApi.fileUploader.selectInput[0].files[0];
+              sinclo.chatApi.fileUploader._showLoadingPopup($(self).parents('li.sinclo_re'));
               // ファイルの内容は FileReader で読み込みます.
               var fileReader = new FileReader();
               fileReader.onload = function (event) {
+                sinclo.chatApi.fileUploader._hideLoadingPopup($(self).parents('li.sinclo_re'));
                 if(!sinclo.chatApi.fileUploader._validExtension(sinclo.chatApi.fileUploader.fileObj.name)) {
                   sinclo.chatApi.fileUploader._showInvalidError();
                   return;
@@ -3038,8 +3041,10 @@
 
           var self = this;
           // ファイルの内容は FileReader で読み込みます.
+          sinclo.chatApi.fileUploader._showLoadingPopup($(self).parents('li.sinclo_re'));
           var fileReader = new FileReader();
           fileReader.onload = function(event) {
+            sinclo.chatApi.fileUploader._hideLoadingPopup($(self).parents('li.sinclo_re'));
             if(!sinclo.chatApi.fileUploader._validExtension(sinclo.chatApi.fileUploader.fileObj.name)) {
               sinclo.chatApi.fileUploader._showInvalidError();
               return;
@@ -3082,6 +3087,12 @@
               return base;
           }
         },
+        _showLoadingPopup: function(divElm) {
+          $(divElm).find('div.receiveFileContent').find('div.loadingPopup').removeClass('hide');
+        },
+        _hideLoadingPopup: function(divElm) {
+          $(divElm).find('div.receiveFileContent').find('div.loadingPopup').addClass('hide');
+        },
         _showInvalidError: function() {
           $(document).trigger(sinclo.scenarioApi._events.fileUploaded, false);
         },
@@ -3114,6 +3125,7 @@
               "          <a class=\"send-file-button\">送信する</a>" +
               "        </div>" +
               "      </div>" +
+              "      <div class='loadingPopup hide'><i class='sinclo-fal fa-spinner load'></i><p class='progressMessage'>アップロード中です。<br>しばらくお待ち下さい。</p></div>" +
               "    </div>" +
               "  </li>";
             divElm.style.textAlign = "right";
@@ -3132,13 +3144,12 @@
               });
               $(divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button')).off('click');
               divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function (e) {
-                sinclo.chatApi.fileUploader._effectScene(false, $(divElm), function(){
-                  var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
-                  if (!comment) {
-                    comment = "（なし）";
-                  }
-                  sinclo.chatApi.fileUploader._uploadFile(divElm, comment, fileObj, loadData);
-                });
+                var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
+                if (!comment) {
+                  comment = "（なし）";
+                }
+                sinclo.chatApi.fileUploader._showLoadingPopup(divElm);
+                sinclo.chatApi.fileUploader._uploadFile(divElm, comment, fileObj, loadData);
               });
               // 要素を追加する
               document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
@@ -3253,20 +3264,23 @@
             }
           })
           .done(function(data, textStatus, jqXHR){
-            console.log(JSON.stringify(data));
-            document.getElementById('chatTalk').querySelector('sinclo-chat').removeChild(targetDivElm);
-            emit('sendChat', {
-              historyId: sinclo.chatApi.historyId,
-              stayLogsId: sinclo.chatApi.stayLogsId,
-              chatMessage: JSON.stringify(data),
-              mUserId: null,
-              messageType: 19,
-              messageRequestFlg: 0,
-              isAutoSpeech : false,
-              notifyToCompany: false,
-              isScenarioMessage: true
-            }, function() {
-              $(document).trigger(sinclo.scenarioApi._events.fileUploaded, [true, {'downloadUrl': data.downloadUrl, 'comment': data.comment}]);
+            sinclo.chatApi.fileUploader._hideLoadingPopup(targetDivElm);
+            sinclo.chatApi.fileUploader._effectScene(false, $(targetDivElm), function(){
+              console.log(JSON.stringify(data));
+              document.getElementById('chatTalk').querySelector('sinclo-chat').removeChild(targetDivElm);
+              emit('sendChat', {
+                historyId: sinclo.chatApi.historyId,
+                stayLogsId: sinclo.chatApi.stayLogsId,
+                chatMessage: JSON.stringify(data),
+                mUserId: null,
+                messageType: 19,
+                messageRequestFlg: 0,
+                isAutoSpeech : false,
+                notifyToCompany: false,
+                isScenarioMessage: true
+              }, function() {
+                $(document).trigger(sinclo.scenarioApi._events.fileUploaded, [true, {'downloadUrl': data.downloadUrl, 'comment': data.comment}]);
+              });
             });
           })
           .fail(function(jqXHR, textStatus, errorThrown){
