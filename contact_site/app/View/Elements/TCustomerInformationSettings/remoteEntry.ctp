@@ -324,7 +324,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
         </label>
       <?= $this->Form->textarea('input_option', ['div' => false, 'label' => false, 'maxlength' => 300]) ?>
       </span>
-      <p style="font-size: 10px; margin: 0px; padding-left: 203px">※リスト表示する内容を改行して複数入力してください</p>
+      <p style="font-size: 10px; margin: 0px; padding-left: 219px">※リスト表示する内容を改行して複数入力してください</p>
     </div>
     <div>
     <!-- 一覧表示のチェックが幾つ付いているかのカウント -->
@@ -414,7 +414,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
     <div id="filterType4Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail" style="width:204px;">オートメッセージ設定やシナリオ設定でメール送信する際にメール本文に記載する場合チェックをしてください。</span></li>
+          <li><span class="detail" style="width:204px;">メール本文にこの項目を記載する場合にチェックをしてください。</span></li>
         </ul>
       </icon-annotation>
     </div>
