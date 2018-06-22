@@ -5,6 +5,7 @@
  * @property TCustomVariable $TCustomVariable
  */
 class TCustomVariablesController extends AppController {
+  public $components = ['NodeSettingsReload'];
   public $uses = ['TCustomVariable','TCustomerInformationSetting'];
   public $paginate = [
     'TCustomVariable' => [
