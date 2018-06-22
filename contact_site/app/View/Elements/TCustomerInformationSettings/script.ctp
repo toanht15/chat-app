@@ -160,6 +160,7 @@ function openConfirmDialog(){
   }
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '訪問ユーザー情報設定', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
+    loading.load.start();
     $.ajax({
       type: 'post',
       cache: false,
@@ -200,6 +201,7 @@ function openCopyDialog(){
   }
   modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', '訪問ユーザー情報設定', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
+    loading.load.start();
     //selectedListには何番目と何番目が入っているかが格納されている。
     $.ajax({
       type: 'post',
@@ -274,6 +276,7 @@ var confirmSort = function(){
 var saveToggleSort = toExecutableOnce(function(){
   var list = getSort();
   var sortNolist = getSortNo();
+  loading.load.start();
   $.ajax({
     type: "POST",
     url: "<?= $this->Html->url(['controller' => 'TCustomerInformationSettings', 'action' => 'remoteSaveSort']) ?>",
