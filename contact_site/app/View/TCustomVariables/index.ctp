@@ -13,7 +13,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
   </div>
 
   <div id='tcustomvariables_description'>
-    <span class="pre">お客様のサイト（sincloタグが埋め込まれたページ）内にて、id属性またはname属性で指定された項目の値を取得することが可能です。（ECサイトや会員制サイトで会員番号や会員名などを取得可）
+    <span class="pre">お客様のサイト（sincloタグが埋め込まれたページ）内にて、CSSセレクタで指定された項目の値を取得することが可能です。（ECサイトや会員制サイトで会員番号や会員名などを取得可）
     取得した値はオートメッセージの条件で利用したり、リアルタイムモニターや履歴に自動で付与することが可能です。</span>
   </div>
 
