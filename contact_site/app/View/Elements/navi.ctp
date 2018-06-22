@@ -45,32 +45,33 @@ switch ($this->name) {
 $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイト" ;
 ?>
 <!-- /* 上部カラーバー(ここから) */ -->
+<?php $this->log('userInfo',LOG_DEBUG); $this->log($userInfo['display_name'],LOG_DEBUG); ?>
 <div id="color-bar">
-    <ul id="color-bar-right" class="fRight">
-      <?php if(!empty($trialTime)) { ?>
-        <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
-      <?php } ?>
-        <li class="fLeft" id = "menu-bar-right"><p><i class="fal fa-user-circle fa-2x"></i><?= h($userInfo['display_name']) ?>さん<i class='fal fa-angle-down fa-2x'></i></p></li>
-    </ul>
+  <ul id="color-bar-right" class="fRight">
+    <?php if(!empty($trialTime)) { ?>
+      <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
+    <?php } ?>
+      <li class="fLeft" id = "menu-bar-right"><p><i class="fal fa-user-circle fa-2x"></i><?= h($userInfo['display_name']) ?> さん<i class='fal fa-angle-down fa-2x'></i></p></li>
+  </ul>
 </div>
-<div id="colorBarMenu" style = "display:none;">
+<div id="colorBarMenu">
   <ul>
     <li class="t-link" onclick="editPersonalInfo()">
-      <i class="fal fa-user-circle fa-2x"></i>
+      <i class="fal fa-user-circle fa-2x smallFal"></i>
       <a href="javascript:void(0)">
         プロフィール
       </a>
     </li>
     <hr class="separator">
     <li class="t-link" onclick="window.open('https://info.sinclo.jp/manual/',target = '_blank')">
-      <i class="fal fa-book-open fa-2x"></i>
+      <i class="fal fa-book-open fa-2x smallFal"></i>
       <a href="javascript:void(0)">
         ヘルプ
       </a>
     </li>
     <hr class="separator">
     <li class="t-link" onclick = 'location.href = "/Login/logout"'>
-      <i class="fal fa-sign-out-alt fa-2x"></i>
+      <i class="fal fa-sign-out-alt fa-2x smallFal"></i>
       <a href="javascript:void(0)">
         ログアウト
       </a>
@@ -80,7 +81,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 <!-- /* 上部カラーバー(ここまで) */ -->
 
 <!-- /* システムアイコン（ここから） */ -->
-<div id="sys-icon"><?= $this->Html->image('logo_sinclo_square.png', array('alt' => 'アイコン', 'width' => 54, 'height' => 48, 'style'=>'margin: 6px 13px; display: block'))?></div>
+<div id="sys-icon"><?= $this->Html->image('logo_sinclo_square.png', array('alt' => 'アイコン', 'width' => 55, 'height' => 55, 'style'=>'display: block'))?></div>
 <!-- /* システムアイコン（ここまで） */ -->
 
 <!-- /* サイドバー１（ここから） */ -->
@@ -298,27 +299,37 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
   };
 
   $("#menu-bar-right").mouseenter(function(){
-    fadeInLayerMenu();
+    //表示名2文字以下の場合
+    if(parseInt($('#menu-bar-right').css('width')) < 144) {
+      $('#colorBarMenu').css('width',144);
+      $('#menu-bar-right').css('width',144);
+    }
+    //表示名2文字以上の場合
+    else {
+      $('#colorBarMenu').css('width',parseInt($('#menu-bar-right').css('width')));
+    }
+    if($("#colorBarMenu").css('display') == 'none') {
+      fadeInLayerMenu();
+    }
     $("#menu-bar-right").css('background-color', '#D6E8B0');
   });
   $('#menu-bar-right').mouseleave(function(e){
-    if(e.toElement.id !== 'colorBarMenu') {
+      if(e.toElement.id !== 'colorBarMenu') {
+        //メニュー非表示
+        fadeOutLayerMenu();
+        $("#menu-bar-right").css('background-color', '#C3D69B');
+      }
+  });
+  $('#colorBarMenu').mouseleave(function(e){
+    if(e.toElement.id !== 'menu-bar-right') {
       //メニュー非表示
       fadeOutLayerMenu();
       $("#menu-bar-right").css('background-color', '#C3D69B');
     }
   });
-  $('#colorBarMenu').mouseleave(function(){
-    //メニュー非表示
-    fadeOutLayerMenu();
+  $('.t-link').click(function(){
+    $("#colorBarMenu").css('display', 'none');
     $("#menu-bar-right").css('background-color', '#C3D69B');
-  });
-
-  $(document).on('click',function(){
-    //メニュー非表示
-    fadeOutLayerMenu();
-    $("#menu-bar-right").css('background-color', '#C3D69B');
-    clickMenu = false;
   });
 
   function editPersonalInfo(){
