@@ -311,25 +311,25 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
     if($("#colorBarMenu").css('display') == 'none') {
       fadeInLayerMenu();
     }
-    $("#menu-bar-right").css('background-color', '#D6E8B0');
+    $("#menu-bar-right").css('background-color', '#c6dc83');
   });
   $('#menu-bar-right').mouseleave(function(e){
       if(e.toElement.id !== 'colorBarMenu') {
         //メニュー非表示
         fadeOutLayerMenu();
-        $("#menu-bar-right").css('background-color', '#C3D69B');
+        $("#menu-bar-right").css('background-color', '#b2d251');
       }
   });
   $('#colorBarMenu').mouseleave(function(e){
     if(e.toElement.id !== 'menu-bar-right') {
       //メニュー非表示
       fadeOutLayerMenu();
-      $("#menu-bar-right").css('background-color', '#C3D69B');
+      $("#menu-bar-right").css('background-color', '#b2d251');
     }
   });
   $('.t-link').click(function(){
     $("#colorBarMenu").css('display', 'none');
-    $("#menu-bar-right").css('background-color', '#C3D69B');
+    $("#menu-bar-right").css('background-color', '#b2d251');
   });
 
   function editPersonalInfo(){

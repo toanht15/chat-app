@@ -902,9 +902,22 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * メッセージ追加後のスクロールアニメーション
    */
   this.autoScroll = function() {
+    console.log('チェック');
     $timeout(function() {
       var target = $('#chatTalk');
+      var paddingBottom = (parseInt($('#chatTalk').css('height')) * 60) / 374;
+      //var lastMessageHeight = $('#chatTalk div:nth-last-of-type(1)').height();
+      //var lastMessageHeight = $('#chatTalk div:nth-last-of-type(1)').height();
+      console.log($('#chatTalk div'));
       var time = 500;
+      //console.log('高さ');
+      //console.log(lastMessageHeight);
+      /*if(target.clientHeight > (lastMessageHeight + paddingBottom)) {
+        console.log('へいへい');
+      }
+      else {
+        console.log('ああああああああああ');
+      }*/
       target.stop().animate({
         scrollTop: target.get(0).scrollHeight - target.outerHeight()
       }, time);

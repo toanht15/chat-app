@@ -1197,8 +1197,8 @@ $(document).ready(function(){
   $(window).on('keydown', function(e) {
     var check = parseInt($(".dataTables_scrollBody").css('height'));
     var focusText = document.activeElement;
-    if(e.keyCode === 40 && focusText.id != 'HistoryCompanyName' && focusText.id != 'HistoryName' &&
-      focusText.id != 'HistoryTel' && focusText.id != 'HistoryMail' && focusText.id != 'HistoryMemo') { // ↓
+    if(e.keyCode === 40 && focusText.id != 'ng-customer-custom-6' && focusText.id != 'ng-customer-custom-1127' && focusText.id != 'ng-customer-custom-7' &&
+      focusText.id != 'ng-customer-custom-8' && focusText.id != 'ng-customer-custom-9' &&　focusText.id != 'ng-customer-custom-1128' && focusText.id != 'ng-customer-custom-1136') { // ↓
       e.preventDefault();
       number = number + 1;
       if(prevBoldTarget.next("tr")[0] != null) {
@@ -1242,8 +1242,8 @@ $(document).ready(function(){
         $(".dataTables_scrollBody").scrollTop($(".dataTables_scrollBody").scrollTop()+prevBoldTarget[0]['clientHeight']);
       }
     }
-    if(e.keyCode === 38 && focusText.id != 'HistoryCompanyName' && focusText.id != 'HistoryName' &&
-      focusText.id != 'HistoryTel' && focusText.id != 'HistoryMail' && focusText.id != 'HistoryMemo') { // ↑キーを押したら
+    if(e.keyCode === 38 && focusText.id != 'ng-customer-custom-6' && focusText.id != 'ng-customer-custom-1127' && focusText.id != 'ng-customer-custom-7' &&
+      focusText.id != 'ng-customer-custom-8' && focusText.id != 'ng-customer-custom-9' &&　focusText.id != 'ng-customer-custom-1128' && focusText.id != 'ng-customer-custom-1136') { // ↑キーを押したら
       e.preventDefault();
       if(number > 0) {
         number = number - 1;
