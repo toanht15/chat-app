@@ -326,7 +326,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
       </span>
       <p style="font-size: 10px; margin: 0px; padding-left: 203px">※リスト表示する内容を改行して複数入力してください</p>
     </div>
-    <div class="commontooltip" data-text="テスト">
+    <div>
     <!-- 一覧表示のチェックが幾つ付いているかのカウント -->
     <?php
     $count = 0;
