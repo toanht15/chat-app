@@ -1604,24 +1604,6 @@
 }
 
 /* 訪問ユーザー情報設定 */
-#tooltip_tcustomerinformationsettings_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_tcustomerinformationsettings_copy_btn.tooltips {
-  position: fixed;
-  left: 108.5px !important;
-  width: 9em;
-}
-
-#tooltip_tcustomerinformationsettings_dustbox_btn.tooltips {
-  position: fixed;
-  left: 176px !important;
-  width: 6em;
-}
-
 .p-tcustomerinformationsettings-entry {
   width: 565px;
 
@@ -1804,71 +1786,7 @@
   }
 }
 
-#tooltip_tautomessages_add_btn.tooltips {
-  position: fixed;
-  left: 79px !important;
-  width: 6em;
-}
 
-#tooltip_tautomessages_copy_btn.tooltips {
-  position: fixed;
-  left: 106px !important;
-  width: 9em;
-}
-
-#tooltip_tautomessages_check_btn.tooltips {
-  position: fixed;
-  left: 161px !important;
-  width: 7em;
-}
-
-#tooltip_tautomessages_inactive_btn.tooltips {
-  position: fixed;
-  left: 207px !important;
-  width: 7em;
-}
-
-#tooltip_tautomessages_dustbox_btn.tooltips {
-  position: fixed;
-  left: 259px !important;
-  width: 6em;
-}
-
-#tooltip_tautomessage_select_scenario.tooltips::after {
-  position: relative;
-  top: 24px !important;
-  left: 20px !important;
-}
-
-#tooltip_tchatbotscenario_add_btn.tooltips {
-  position: fixed;
-  left: 79px !important;
-  width: 6em;
-}
-
-#tooltip_tchatbotscenario_copy_btn.tooltips {
-  position: fixed;
-  left: 106px !important;
-  width: 9em;
-}
-
-#tooltip_tchatbotscenario_dustbox_btn.tooltips {
-  position: fixed;
-  left: 169px !important;
-  width: 6em;
-}
-
-#tooltip_history_csv_btn.tooltips {
-  position: fixed;
-  left: 73px !important;
-  width: 7em;
-}
-
-#tooltip_history_dustbox_btn.tooltips {
-  position: fixed;
-  left: 125px !important;
-  width: 7em;
-}
 
 /*営業時間 */
 .p-operatinghours-entry {
@@ -1975,18 +1893,6 @@
   }
 }
 
-#tooltip_tdocument_add_btn.tooltips {
-  position: fixed;
-  left: 79px !important;
-  width: 6em;
-}
-
-#tooltip_tdocument_dustbox_btn.tooltips {
-  position: fixed;
-  left: 128px !important;
-  width: 6em;
-}
-
 /* ユーザ管理レイアウト調整 */
 #muser_idx{
   #muser_menu{
@@ -2003,18 +1909,6 @@
       }
     }
   }
-}
-
-#tooltip_m_users_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_m_users_dustbox_btn.tooltips {
-  position: fixed;
-  left: 126px !important;
-  width: 6em;
 }
 
 /* キャンペーン設定レイアウト調整 */
@@ -2041,24 +1935,6 @@
       }
     }
   }
-}
-
-#tooltip_tcampaigns_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_tcampaigns_copy_btn.tooltips {
-  position: fixed;
-  left: 108.5px !important;
-  width: 9em;
-}
-
-#tooltip_tcampaigns_dustbox_btn.tooltips {
-  position: fixed;
-  left: 176px !important;
-  width: 6em;
 }
 
 /* チャット通知設定レイアウト調整 */
@@ -2092,19 +1968,6 @@
     }
   }
 }
-
-#tooltip_chat_notifications_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_chat_notifications_dustbox_btn.tooltips {
-  position: fixed;
-  left: 126px !important;
-  width: 6em;
-}
-
 /* カスタム変数レイアウト調整 */
 #tcustomvariables_idx{
   #tcustomvariables_description{
@@ -2129,24 +1992,6 @@
       }
     }
   }
-}
-
-#tooltip_tcustomvariables_add_btn.tooltips {
-  position: fixed;
-  left: 78px !important;
-  width: 6em;
-}
-
-#tooltip_tcustomvariables_copy_btn.tooltips {
-  position: fixed;
-  left: 108.5px !important;
-  width: 9em;
-}
-
-#tooltip_tcustomvariables_dustbox_btn.tooltips {
-  position: fixed;
-  left: 176px !important;
-  width: 6em;
 }
 
 
@@ -2734,44 +2579,6 @@
   padding: 0px !important;
   color: #555;
   display: block;
-}
-
-/*[id^="layerMenu"] ul li:hover {
-  color: #EA0001;
-}*/
-
-[id^="tooltip_tdictionaries_add_btn"].tooltips{
-  position: fixed;
-  left: 109px !important;
-  width: 6em
-}
-
-[id^="tooltip_tdictionaries_copy_btn"].tooltips{
-  position: fixed;
-  left: 139px !important;
-  width: 9em;
-}
-
-[id^="tooltip_tdictionaries_move_btn"].tooltips{
-  position: fixed;
-  left: 205px !important;
-  width: 6em;
-}
-
-[id^="tooltip_tdictionaries_dustbox_btn"].tooltips{
-  position: fixed;
-  left: 254px !important;
-  width: 6em;
-}
-
-[id^="tooltip_tdictionaries_manu_btn"].tooltips{
-  right: 57px;
-  width: 7em;
-  position: fixed;
-}
-
-[id^="tooltip_gray_tdictionaries_manu_btn"].tooltips{
-  position: fixed;
 }
 
 .ui-tabs.soteTabs {
