@@ -28,6 +28,7 @@
     var comment = document.getElementById('TCustomVariableComment').value;
 
     //非同期通信処理
+    loading.load.start();
     $.ajax({
       type: "post",
       url: "<?=$this->Html->url('/TCustomVariables/remoteSaveEntryForm')?>",

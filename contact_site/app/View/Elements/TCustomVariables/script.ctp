@@ -137,6 +137,7 @@ function openConfirmDialog(){
   }
   modalOpen.call(window, "削除します、よろしいですか？<br><br>（参照設定されているカスタム変数は削除できません）", 'p-confirm', 'カスタム変数', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
+    loading.load.start();
     $.ajax({
       type: 'post',
       cache: false,
@@ -176,6 +177,7 @@ function openCopyDialog(){
   }
   modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', 'カスタム変数', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
+    loading.load.start();
     $.ajax({
       type: 'post',
       cache: false,
@@ -249,6 +251,7 @@ var confirmSort = function(){
 var saveToggleSort = toExecutableOnce(function(){
   var list = getSort();
   var sortNolist = getSortNo();
+  loading.load.start();
   $.ajax({
     type: "POST",
     url: "<?= $this->Html->url(['controller' => 'TCustomVariables', 'action' => 'remoteSaveSort']) ?>",

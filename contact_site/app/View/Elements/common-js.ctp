@@ -216,14 +216,14 @@
 
           // ツールチップのサイズ
           var ttSize = {
-            width: $tooltip.outerWidth(),
+            width: $tooltip.width(),
             height: $tooltip.outerHeight()
           };
 
-          var leftCoordinate = (offset.left + size.width / 2 - ttSize.width / 2) + contentPositionLeft;
+          var leftCoordinate = (offset.left + size.width / 2 - ttSize.width / 2) + contentPositionLeft - 12;
           var isOverWidth = (leftCoordinate + ttSize.width + 40) > $(window).outerWidth();
           if(isOverWidth) {
-            leftCoordinate = (offset.left + size.width)  - ttSize.width;
+            leftCoordinate = (offset.left + size.width)- ttSize.width;
             baloonPosition = 75;
           }
 
