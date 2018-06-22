@@ -1109,12 +1109,12 @@
 
       /* 個人設定-更新ダイアログ用 */
       &.p-personal-update {
-        width: 445px;
+        width: 600px;
         height: 450px;
         #MUserRemoteOpenEntryFormForm{
           .form01 {
             .inputItems {
-              width:272px;
+              width:427px;
             }
             .item {
               display:flex;
@@ -1128,6 +1128,11 @@
             }
             .item {
               margin: 15px 0 !important;
+            }
+            #upperLimit {
+              padding: 5px 10px;
+              font: 400 13.3333px Arial;
+              margin:0;
             }
             .checkLabelArea {
               cursor: pointer;
@@ -1170,7 +1175,6 @@
             #set_password_area{
               border: 1px solid #909090;
               border-radius: 10px;
-              margin-left: 0px;
               li {
                 display:block;
               }
@@ -1179,7 +1183,7 @@
         }
         #popup-main {
           .form01 div {
-            margin: 5px 0;
+            margin: 5px 36px;
           }
           img {
             float: left;
@@ -1188,14 +1192,15 @@
         #popup-button a {
           width: 75px;
           float: left;
-          margin: 0 73px;
+          margin: 0 112px;
         }
         .error-message {
           padding: 0;
           margin: 0 0 0 110px;
           color: #F57E7E;
         }
-      }
+    }
+
 
       /* 確認ダイアログ */
       &.p-confirm {
@@ -1649,7 +1654,7 @@
         margin: 0;
         padding: 0.9em;
         text-align: left;
-        background-color: #000000b0;
+        background-color: #FFF;
         font-weight: normal;
         border-radius: 5px;
         border: none;

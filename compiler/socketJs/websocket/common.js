@@ -375,6 +375,7 @@ var socket, // socket.io
             sincloAccessInfoHeight: 26.5,
             fotterHeight: 26.5,
             telContentHeight: 125,
+            paddingBottom: 30.8,
             d11font: 11,
             d12font: 12,
             d13font: 13,
@@ -399,6 +400,7 @@ var socket, // socket.io
             sincloAccessInfoHeight: 26.5,
             fotterHeight: 26.5,
             telContentHeight: 214.5,
+            paddingBottom: 45.6,
             d11font: 12,
             d12font: 13,
             d13font: 14,
@@ -423,6 +425,7 @@ var socket, // socket.io
             sincloAccessInfoHeight: 26.5,
             fotterHeight: 26.5,
             telContentHeight: 305,
+            paddingBottom: 60,
             d11font: 12,
             d12font: 13,
             d13font: 14,
@@ -1303,7 +1306,7 @@ var socket, // socket.io
 */
           html += '#sincloBox[data-openflg="true"] p#widgetTitle:after { margin-top: 0.5em; }';
           html += '#sincloBox #widgetTitle em { width: 2em; height: 2em; font-size: 0.8em; padding: 0.25em; border-radius: 5em; margin: 0.25em; }';
-          html += '#sincloBox ul#chatTalk { padding: 0.3em; padding-bottom:3.6em; background-color: '+ colorList['chatTalkBackgroundColor'] +'}';
+          html += '#sincloBox ul#chatTalk { padding: 0.3em; padding-bottom:' + (60 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +'}';
           html += '#sincloBox ul#chatTalk li { font-size: 0.8em; border-radius: 0.72em; margin: 0.3em 0; padding: 0.3em; }';
           html += '#sincloBox ul#chatTalk li div.sendFileThumbnailArea { display: table-cell; width: ' + (64 * ratio) + 'px; height: ' + (64 * ratio) + 'px; border: 1px solid #D9D9D9; }';
           html += '#sincloBox ul#chatTalk li.sinclo_se { font-size: 0.8em; margin-left: '+ (widgetWidth/342.5)*45 +'px;}';
@@ -1406,7 +1409,7 @@ var socket, // socket.io
         // チャットを使用する際
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
-          html += '      #sincloBox ul#chatTalk { height: '+ sizeList['chatTalkHeight'] +'px; padding: 5px 5px 60px 5px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+          html += '      #sincloBox ul#chatTalk { height: '+ sizeList['chatTalkHeight'] +'px; padding: 5px 5px '+ sizeList['paddingBottom'] +'px 5px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
           html += '      #sincloBox ul#chatTalk li { border-radius: 12px; margin: 5px 0 0 0; padding: 10px 15px; }';
           if(colorList['seBorderNone'] === 0){
             html += '      #sincloBox ul#chatTalk li.sinclo_se { border: 1px solid '+ colorList['seBorderColor'] +'; }';
