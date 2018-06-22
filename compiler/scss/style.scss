@@ -1046,6 +1046,7 @@ ul.ulTab {
   z-index: $sub-sidebar-z-index;
   width: 212px;
   left: -20px;
+  padding: 11.5px 0px;
   div.icon {
   padding: 0px!important;
     a {
@@ -1054,7 +1055,7 @@ ul.ulTab {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 11.5px 0px;
+      padding: 0px 0px;
       text-decoration: none;
       margin: 0;
       padding-left: 3px;
