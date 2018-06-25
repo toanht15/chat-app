@@ -5697,29 +5697,8 @@
           emit('saveCustomerInfoValue', {targetValues: sendArray});
           // 即時で返す
           callback();
-        },
-        _getValue: function(type, selector) {
-          var self = sinclo.scenarioApi._getAttributeValue;
-          switch(Number(type)) {
-            case 1: // ID
-              return self._getText($('#' + selector));
-            case 2: // name
-              return self._getText($('[name="' + selector + '"]')); // FIXME あやしい
-            case 3: // CSS-selector
-              return self._getText($(selector));
-              break;
-          }
-        },
-        _getText: function(jqObject) {
-          if(jqObject.text() !== "") {
-            return jqObject.text();
-          } else if(jqObject.val() !== "") {
-            return jqObject.val();
-          } else {
-            return "";
-          }
         }
-      },
+      }
     },
     // 外部連携API
     api: {
