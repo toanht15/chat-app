@@ -892,7 +892,10 @@ var db = {
       }
       if (found) {
         pool.query('SELECT * from m_customers where m_companies_id = ? AND visitors_id = ?', [companyList[obj.siteKey], obj.userId], function (err, row) {
-          if (err !== null && err !== '') return false; // DB接続断対応
+          if (err !== null && err !== '') {
+            callback(false);
+            return false;
+          } // DB接続断対応
 
           var currentData = {};
           if (isset(row) && isset(row[0])) {
@@ -916,10 +919,12 @@ var db = {
               });
             });
           }
-
-
         });
+      } else {
+        callback(false);
       }
+    } else {
+      callback(false);
     }
   }
 };
@@ -2339,29 +2344,29 @@ io.sockets.on('connection', function (socket) {
       // 履歴作成
       db.addHistory(obj, socket);
       // カスタム情報自動登録
-      db.upsertCustomerInfo(obj, socket);
+      db.upsertCustomerInfo(obj, socket, function(result){
+        // IPアドレスの取得
+        if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
+          obj.ipAddress = getIp(socket);
+        }
 
-      // IPアドレスの取得
-      if ( !(('ipAddress' in obj) && isset(obj.ipAddress)) ) {
-        obj.ipAddress = getIp(socket);
-      }
-
-      //FIXME 企業別機能設定（企業情報連携）
-      getCompanyInfoFromApi(obj.ipAddress, function(data){
-        if(data) {
-          var response = JSON.parse(data);
-          obj.orgName = response.data.orgName;
-          obj.lbcCode = response.data.lbcCode;
-          sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
-          sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
-          if(isset(customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id])) {
-            customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['orgName'] = obj.orgName;
-            customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['lbcCode'] = obj.lbcCode;
+        //FIXME 企業別機能設定（企業情報連携）
+        getCompanyInfoFromApi(obj.ipAddress, function(data){
+          if(data) {
+            var response = JSON.parse(data);
+            obj.orgName = response.data.orgName;
+            obj.lbcCode = response.data.lbcCode;
+            sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
+            sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
+            if(isset(customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id])) {
+              customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['orgName'] = obj.orgName;
+              customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['lbcCode'] = obj.lbcCode;
+            }
           }
-        }
-        if(!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
-          emit.toCompany('syncNewInfo', obj, obj.siteKey);
-        }
+          if(!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
+            emit.toCompany('syncNewInfo', obj, obj.siteKey);
+          }
+        });
       });
     }
     if(ack) {
