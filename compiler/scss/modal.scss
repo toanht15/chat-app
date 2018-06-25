@@ -1700,6 +1700,7 @@
       border-radius: 15px!important;
 
       &#TCustomerInformationSettingInputOption{
+        white-space: nowrap;
         box-sizing: content-box;
         border-radius: 5px!important;
         margin-top: 0px;
@@ -1708,6 +1709,7 @@
         padding-left: 7px;
         max-height: 98px;
         overflow-y: hidden;
+        overflow-x: auto;
         word-break : break-all;
         line-height: 20px;
         width: 292px;
