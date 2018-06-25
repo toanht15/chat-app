@@ -4378,7 +4378,8 @@
         receiveFile: "7",
         getAttributeValue: "8",
         sendFile: "9",
-        branchOnCond: "10"
+        branchOnCond: "10",
+        addCustomerInformation: "11"
       },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
@@ -4677,6 +4678,10 @@
           case self._actionType.branchOnCond:
             self._branchOnCond._init(self);
             self._branchOnCond._process();
+            break;
+          case self._actionType.addCustomerInformation:
+            self._addCustomerInformation._init(self);
+            self._addCustomerInformation._process();
             break;
         }
       },
@@ -5658,6 +5663,40 @@
           }
           //最後まで含んでいなかったらOK
           return true;
+        }
+      },
+      _addCustomerInformation: {
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._addCustomerInformation;
+          self._parent._doing(0, function () { // 即時実行
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._getValueAndSend(function (result) {
+              if(self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
+            });
+          });
+        },
+        _getValueAndSend: function(callback) {
+          var self = sinclo.scenarioApi._addCustomerInformation;
+          var customerInformations = self._parent.get(self._parent._lKey.currentScenario).addCustomerInformations;
+          var sendArray = [];
+          for(var i=0; i < customerInformations.length; i++) {
+            var targetVariableName = customerInformations[i].variableName;
+            var targetId = customerInformations[i].targetId;
+            var variable = self._parent._getSavedVariable(targetVariableName);
+            sendArray.push({
+              id: targetId,
+              value: variable
+            });
+          }
+          emit('saveCustomerInfoValue', {targetValues: sendArray});
+          // 即時で返す
+          callback();
         }
       }
     },

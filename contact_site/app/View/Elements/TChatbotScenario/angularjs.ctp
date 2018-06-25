@@ -434,6 +434,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var target = $scope.setActionList[actionStep].conditionList;
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllBranchOnConditionSettingView(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+      var src = $scope.actionList[actionType].default.addCustomerInformations[0];
+      var target = $scope.setActionList[actionStep].addCustomerInformations;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllAddCustomerInformationView(actionStep);
+
     }
   };
 
@@ -471,6 +477,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
     } else if (actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
       targetObjList = $scope.setActionList[actionStep].conditionList;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if (actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+      targetObjList = $scope.setActionList[actionStep].addCustomerInformations;
       selector = '#action' + actionStep + '_setting .itemListGroup';
     }
 
@@ -786,6 +795,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
       var targetObjList = $scope.setActionList[actionStep].conditionList;
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 5)
+    });
+  };
+
+  this.controllAddCustomerInformationView = function(actionStep) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
+      var targetObjList = $scope.setActionList[actionStep].addCustomerInformations;
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
     });
   };
 
@@ -1708,6 +1727,22 @@ function actionValidationCheck(element, setActionList, actionItem) {
     actionItem.conditionList.some(function(elm){
       if(Number(elm.actionType) === 2 && (!elm.action.callScenarioId || elm.action.callScenarioId === "")) {
         messageList.push('呼出先のシナリオを選択して下さい');
+        return true;
+      }
+    });
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+    actionItem.addCustomerInformations.some(function(elm){
+      var found = false;
+      if (!elm.variableName) {
+        found = true;
+        messageList.push('変数名が未入力です');
+      }
+      if (!elm.targetId) {
+        found = true;
+        messageList.push('訪問ユーザ情報の項目が未指定です');
+      }
+      if(found) {
         return true;
       }
     });
