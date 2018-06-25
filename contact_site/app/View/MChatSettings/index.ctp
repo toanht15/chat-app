@@ -107,9 +107,6 @@ $(document).ready(function(){
 function removeItem(number) {
   var length = $('.line').length;
   $('#unit'+number).remove();
-  if(length == 5) {
-    $("#add5").css('display', 'block');
-  }
   //削除した下の行を全て一つ上げる
   for(i=number+1; i<=length;i++) {
     document.getElementById('unit' + i).id = 'unit' + (i-1);
@@ -131,6 +128,12 @@ function removeItem(number) {
   //チャット呼び出し中メッセージが1つしかない場合は削除ボタンを表示しない
   if(length == 2) {
     $("#remove1").css('display', 'none');
+  }
+  //「＋」ボタンが表示されていない場合、全て表示する
+  if(length == 5) {
+    for(var i2 =1; i2<=4; i2++) {
+      $("#add"+i2).css('display', 'block');
+    }
   }
 }
 
@@ -190,7 +193,10 @@ function addItem(number) {
         content    += "</div>";
       $('#unit'+(number-1)).after(content);
       if(length == 4) {
-        $("#add5").css('display', 'none');
+        //「＋」ボタンすべて消す
+        for(var i2 =1; i2<=5; i2++) {
+          $("#add"+i2).css('display', 'none');
+        }
       }
   }
   // ツールチップの表示制御
