@@ -50,7 +50,7 @@ class MChatSettingsController extends AppController {
         'm_companies_id' => $this->userInfo['MCompany']['id']
       ]]);
       if(!empty($this->request->data['MChatSetting']['initial_notification_message']) &&
-        isset($this->coreSettings[C_COMPANY_USE_CHATCALLMESSAGES])) {
+        $this->coreSettings[C_COMPANY_USE_CHATCALLMESSAGES]) {
         $data = json_decode($this->request->data['MChatSetting']['initial_notification_message'],true);
         foreach($data as $key => $value){
           $this->request->data['MChatSetting']['initial_notification_message'.($key+1)] = $value['message'];
@@ -60,6 +60,7 @@ class MChatSettingsController extends AppController {
         $this->set('data',$data);
       }
       else {
+        $this->log('ここに入っている',LOG_DEBUG);
         //デフォルト値設定
         $data[0]['seconds'] = 0;
         $data[0]['message'] = '';
