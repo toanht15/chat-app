@@ -276,7 +276,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       $('.sidebar-sub').animate({left: -200}, duration_time)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
-              var subMenuIconTop = self.offset().top;
+      var subMenuIconTop = self.offset().top;
       $('[data-sidebar-type="' + type + '"]').removeClass('hide');
       var subMenuHeight = $('[data-sidebar-type="' + type + '"]').height();
       $('[data-sidebar-type="' + type + '"]').addClass('hide');
