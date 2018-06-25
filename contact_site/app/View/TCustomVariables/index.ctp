@@ -6,7 +6,11 @@ $params = $this->Paginator->params();
 $prevCnt = ($params['page'] - 1) * $params['limit'];
 ?>
 <div id='tcustomvariables_idx' class="card-shadow">
-
+  <?php if(false): /* FIXME プラン別制御 */?>
+    <div id="modal" style="display: table; position: absolute; top:15px; left:15px; width: calc(100% - 30px); height: calc(100% - 30px); z-index: 4; background-color: rgba(0, 0, 0, 0.8);">
+      <p style="font-size: 15px; color: #FFF; display: table-cell; vertical-align: middle; text-align: center;">こちらの機能はスタンダードプランからご利用いただけます。</p>
+    </div>
+  <?php endif; ?>
   <div id='tcustomvariables_title'>
     <div class="fLeft"><i class="fal fa-percent fa-2x"></i></div>
     <h1>カスタム変数設定<span id="sortMessage"></span></h1>

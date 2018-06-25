@@ -2623,25 +2623,32 @@
           }
           this.scDownTimer = setTimeout(function(){
           var chatTalk = document.getElementById('chatTalk');
-            var lastMessageHeight = $('#chatTalk sinclo-chat div:last-of-type').height();
-            var paddingBottom = (parseInt($('#chatTalk').css('height')) * 60) / 374;
-            if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
+            var lastMessage = $('#chatTalk sinclo-chat div:last-of-type');
+            if(lastMessage.find('.sinclo_re').length > 0) {
+              var lastMessageHeight = lastMessage.height();
+              var paddingBottom = (parseInt($('#chatTalk').css('height')) * 60) / 374;
+              if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
+                $('#sincloBox #chatTalk').animate({
+                  scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
+                }, 300);
+              } else {
+                //「○○が入力中です」のメッセージが残っていない場合
+                if(document.getElementById('sinclo_typeing_message') === null) {
+                  $('#sincloBox #chatTalk').animate({
+                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                  }, 300);
+                }
+                //「○○が入力中です」のメッセージが残っている場合
+                else {
+                  $('#sincloBox #chatTalk').animate({
+                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                  }, 300);
+                }
+              }
+            } else {
               $('#sincloBox #chatTalk').animate({
                 scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
               }, 300);
-            } else {
-              //「○○が入力中です」のメッセージが残っていない場合
-              if(document.getElementById('sinclo_typeing_message') === null) {
-                $('#sincloBox #chatTalk').animate({
-                  scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom)) // FIXME ウィジェットサイズに合わせた余白で計算すること
-                }, 300);
-              }
-              //「○○が入力中です」のメッセージが残っている場合
-              else {
-                $('#sincloBox #chatTalk').animate({
-                  scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
-                }, 300);
-              }
             }
           }, 500);
         },

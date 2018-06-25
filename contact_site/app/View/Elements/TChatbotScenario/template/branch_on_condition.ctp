@@ -2,7 +2,7 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>" class="set_action_item_body action_branch_on_condition" ng-init="main.controllBranchOnConditionSettingView(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb15em"><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件の判定に利用する変数名を設定します。">?</icon></span></span>
+      <span class="fb15em"><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件の判定に利用する変数名を設定します。<br>（変数名を{{showExpression('変数名')}}と{で括る必要はありません）">?</icon></span></span>
       <div>
         <input type="text" ng-model="setItem.referenceVariable">
       </div>
