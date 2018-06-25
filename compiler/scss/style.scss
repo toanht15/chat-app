@@ -665,32 +665,10 @@ a {
   position: absolute;
 
   icon-annotation {
-    width: 16em;
+    width: 30em!important;
     height: 2.1em;
     display: none;
-    /* 矢印 */
-    &:before {
-      content: " ";
-      border: none;
-      border-top: 12px solid #C3D69B;
-      border-left: 11px solid transparent;
-      border-right: 11px solid transparent;
-      position: absolute;
-      bottom: -10px;
-      left: 5px;
-      z-index: 1;
-    }
-    &:after {
-      content: " ";
-      border:none;
-      border-top: 12px solid white;
-      border-left: 11px solid transparent;
-      border-right: 11px solid transparent;
-      position: absolute;
-      bottom: -5px;
-      left: 5px;
-      z-index: 3;
-    }
+
     ul {
       margin: 0;
       text-align: left;
@@ -709,7 +687,7 @@ a {
       }
       span {
         font-size: 14px;
-        line-height: 1.8;
+        line-height: 1.43;
         width: auto;
       }
     }
@@ -946,10 +924,11 @@ ul.ulTab {
       height: 100%;
       cursor:pointer;
       text-align: center;
+      display:flex;
       a{
         text-decoration: none;
         display: block;
-        padding-bottom:4px;
+        padding: 10px 10px 10px;
       }
       img {
         margin: 0;
@@ -958,12 +937,14 @@ ul.ulTab {
       }
       .fal {
         margin: 0;
-        padding: 4px 0px;
+        padding: 6px 0px;
         color: #cccccc;
+        margin-left:10px;
       }
       .smallFal {
         font-size:17px;
-        width: 26px;
+        width: 30px;
+        text-align:center;
       }
     }
   }
@@ -1045,7 +1026,7 @@ ul.ulTab {
   display: inline-block;
   background-color: #A6A6A6;
   z-index: $sub-sidebar-z-index;
-  width: 245px;
+  width: 221px;
   left: -20px;
   padding: 7.5px 0px;
   &.with-splitter {
@@ -1082,7 +1063,7 @@ ul.ulTab {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0px 0px;
+      padding: 11.5px 0px;
       text-decoration: none;
       margin: 0;
       padding-left: 3px;
@@ -1333,7 +1314,7 @@ ul#color-bar-right {
 
 [id$=_idx] {
   width: auto;
-  margin: 15px 15px 0 15px;
+  margin: 15px 15px 15px 15px;
   min-width: $content-min-width!important;
 }
 
@@ -3251,31 +3232,6 @@ ul.naviBtn {
           height: 6.3em;
           z-index: 2;
           display: none;
-
-          /* 矢印 */
-          &:before {
-            content: " ";
-            border: none;
-            border-top: 10px solid #C3D69B;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -0.7em;
-            left: 10px;
-            z-index: 1;
-          }
-
-          &:after {
-            content: " ";
-            border: none;
-            border-top: 10px solid white;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -0.5em;
-            left: 10px;
-            z-index: 3;
-          }
 
           ul {
             margin: 0;
@@ -5327,6 +5283,7 @@ ul.naviBtn {
 /* ウィジェット */
 
 #m_widget_setting_idx {
+  margin: 15px 15px 72px 15px;
   #m_widget_setting_form {
     position: relative;
     padding-bottom: 50px;
@@ -5570,6 +5527,7 @@ ul.naviBtn {
 
 /* オートメッセージ機能 */
 #tautomessages_idx {
+  margin: 15px 15px 72px 15px;
   $list-color: #ECF4DA;
 
   #tautomessages_menu {
@@ -6237,7 +6195,7 @@ ul.naviBtn {
 
           > div {
             position: absolute;
-            bottom: 6px;
+            bottom: -66px;
 
             section#switch_widget {
               margin-bottom: 0.5em;
@@ -7977,32 +7935,35 @@ ul.naviBtn {
 }
 
 /*　表示除外設定 */
-#display_exclusion_index_form {
-  textarea {
-    border-radius: 0 !important;
-    border: 1px solid #909090 !important;
-    padding: 5px;
-    margin: 10px 0 0 10px;
-  }
-}
-
-#display_exclusions_form {
-  padding-bottom: 62px;
-
-  h3 {
-    border-bottom: 3px solid #C3D69B;
-    padding-left: 5px;
-    font-size: 13px;
+#display_exclusions_idx {
+  margin: 15px 15px 72px 15px;
+  #display_exclusion_index_form {
+    textarea {
+      border-radius: 0 !important;
+      border: 1px solid #909090 !important;
+      padding: 5px;
+      margin: 10px 0 0 10px;
+    }
   }
 
-  .content {
-    margin-left: 1em;
-    pre {
-      line-height: 2em;
+  #display_exclusions_form {
+    padding-bottom: 62px;
+
+    h3 {
+      border-bottom: 3px solid #C3D69B;
+      padding-left: 5px;
+      font-size: 13px;
     }
 
-    div {
-      display: flex;
+    .content {
+      margin-left: 1em;
+      pre {
+        line-height: 2em;
+      }
+
+      div {
+        display: flex;
+      }
     }
   }
 }
@@ -8768,6 +8729,7 @@ ul.naviBtn {
 
 /* チャット基本設定画面 */
 #m_chat_settings_idx {
+  margin: 15px 15px 72px 15px;
   #m_chat_settings_form {
     label { cursor: pointer; }
     h3 {

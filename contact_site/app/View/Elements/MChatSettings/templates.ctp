@@ -36,7 +36,9 @@
           <div>
           <hr class="separator" style = "margin-top:1em">
           <div>
-            <?php if($key == 5) { ?>
+            <?php
+            //「＋」ボタンを表示させない
+            if(count($data) == 5) { ?>
               <img onclick = "addItem(<?=$key+1?>)" id = 'add<?=$key?>' src="/img/add.png" alt="登録" class="btn-shadow disOffgreenBtn" width="25" height="25" style="padding: 2px !important; display: none;margin-left: 1.9em;transform: scale(0.8);">
             <?php }
             else { ?>

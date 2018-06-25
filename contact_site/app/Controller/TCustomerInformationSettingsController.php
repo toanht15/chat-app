@@ -112,10 +112,12 @@ class TCustomerInformationSettingsController extends AppController {
     $oldItemName = "";
     $newItemName = "";
     $itemNameChanged = false;
-    if(strcmp($saveData['TCustomerInformationSetting']['item_name'], $this->request->data['item_name']) !== 0) {
-      $itemNameChanged = true;
-      $oldItemName = $saveData['TCustomerInformationSetting']['item_name'];
-      $newItemName = $this->request->data['item_name'];
+    if(isset($saveData['TCustomerInformationSetting']['item_name'])){
+      if(strcmp($saveData['TCustomerInformationSetting']['item_name'], $this->request->data['item_name']) !== 0) {
+        $itemNameChanged = true;
+        $oldItemName = $saveData['TCustomerInformationSetting']['item_name'];
+        $newItemName = $this->request->data['item_name'];
+      }
     }
 
     $saveData['TCustomerInformationSetting']['m_companies_id'] = $this->userInfo['MCompany']['id'];

@@ -2,7 +2,6 @@
   //特定項目を選択した際に、追加メニュー分の高さを確保する
   //特定項目から選択が外れた場合は、その分の高さを削減する
   $(function () {
-    popupEvent.resize();
     //各種変数の設定
     var popupframe = $('#popup-frame');
     var popupbutton = $('#popup-button');
@@ -10,94 +9,70 @@
     var labelposition = $("#pulldown_label")
     $("#TCustomerInformationSettingInputOption").height(8);
     var heightsize = 18;
-    var long_flg = false;
-
 
 
   //入力量に応じてプルダウンのテキスト入力エリアが拡大する処理
     var column_size = 1;
     enter_flg = false;
 
+
+
+    var pulldown_Id = "#TCustomerInformationSettingInputOption";
     $("#TCustomerInformationSettingInputOption").on("input",function(e){
-      console.log(column_size);
-
-      $(document).on('keydown', function(e){
-        if(e.keyCode==13){
-          enter_flg = true;
-          long_flg = false;
-        }else{
-          enter_flg = false;
-        }
-      });
-      var scroll_flg = false;
-      //拡大時の処理
-      if($(e.target).get(0).scrollHeight > $(e.target).get(0).offsetHeight){
-        //改行ではなく文字数超過で複数行に渡る場合
-        if(!enter_flg){
-          scroll_flg = true;
-          if(!long_flg){
-            long_flg = true;
-            //column_size += 1;
-          }
-        }else{
-          $(e.target).height(e.target.scrollHeight-8);
-          //5行分まではポップアップを同時に拡大する処理
-          if(column_size < 6){
-            popupEvent.resize();
-            column_size += 1;
-            if(column_size == 6){
-              scroll_flg = true;
-            }
-          }
-        }
-      }else{
-        while(true){
-          //offsetのサイズをわざと小さくしている
-          $(e.target).height($(e.target).height() - heightsize);
-          //内容物の大きさに合うよう調整
-          if($(e.target).get(0).scrollHeight > $(e.target).get(0).offsetHeight){
-            $(e.target).height(e.target.scrollHeight-8);
-            break;
-          //offset(見た目上)の方が大きい場合
-          }else{
-            popupEvent.resize();
-            if(column_size < 1){
-            }
-          }
-        }
-      }
-
-      if(scroll_flg){
+      scroll_flg = false;
+      var pulldown_array = $(e.target).val().split(/\r\n|\r|\n/);
+      var column_size = pulldown_array.length;
+      $(e.target).height(20*column_size);
+      //ポップアップサイズを取得し、もしブラウザの縦幅以上だったらスクロール表示させる
+      if($('#popup-frame').height() > ($(window).height()-50)){
         $(e.target).css('overflow-y','scroll');
-        $(e.target).animate({scrollTop: $("#TCustomerInformationSettingInputOption")[0].scrollHeight}, 'fast');
+        $(e.target).css('max-height',$(e.target).height() +'px');
       }else{
         $(e.target).css('overflow-y','hidden');
+        $(e.target).css('max-height',$(e.target).height()+50 +'px');
       }
-      switch($(e.target).height()/20){
-      case 1:
-        column_size = 1;
-        break;
-      case 2:
-        column_size = 2;
-        break;
-      case 3:
-        column_size = 3;
-        break;
-      case 4:
-        column_size = 4;
-        break;
-      default:
-        column_size = 5;
+
+
+
+      $(e.target).css('overflow-x','hidden');
+      for(var i = 0; i < column_size; i++){
+        if($("#widther").text(pulldown_array[i]).get(0).offsetWidth>260){
+          scroll_flg = true;
+        }
       }
+      if(scroll_flg){
+        $(e.target).css({'overflow-x':'scroll','padding-bottom':'19px'});
+        if($(e.target).css('overflow-y')=='scroll'){
+          $(e.target).css({'padding-bottom':'4px'});
+        }
+      }else{
+        $(e.target).css({'overflow-x':'hidden','padding-bottom':'4px'});
+      }
+      $("#widther").empty();
+      popupEvent.resize();
     });
 
-    //既に入力値があった場合にそのサイズに合わせる処理
 
-    var column_count = $("#column_counter").attr('class').substr(0,1);
-    for(var i=1;i<column_count;i++){
-      column_size += 1;
-      $("#TCustomerInformationSettingInputOption").height($("#TCustomerInformationSettingInputOption").height() + 20);
+
+    /******既に入力値があった場合にそのサイズに合わせる処理******
+     *入力がn行あったら、そのn行全てを表示させておく必要がある。*
+    */
+    var column_size = $("#column_counter").attr('class');
+    for(var i=1; i<column_size; i++){
+      $("#TCustomerInformationSettingInputOption").height(28 + 20 * i)
+      console.log($("#popup-frame").height());
+      console.log($("#TCustomerInformationSettingInputOption").height());
+      if($("#TCustomerInformationSettingInputOption").height() < $(window).height()-600){
+        $("#TCustomerInformationSettingInputOption").css('overflow-y','hidden');
+        $("#TCustomerInformationSettingInputOption").css('max-height',$("#TCustomerInformationSettingInputOption").height()+50 +'px');
+      }else{
+        $("#TCustomerInformationSettingInputOption").css('overflow-y','scroll');
+        $("#TCustomerInformationSettingInputOption").css('max-height',$("#TCustomerInformationSettingInputOption").height() +'px');
+        break;
+      }
     }
+
+
 
     var selectflag = 0;
     //エディット時に、既にプルダウンが選ばれていた場合の処理
@@ -225,7 +200,6 @@
           location.href = "<?=$this->Html->url(array('controller' => 'TCustomerInformationSettings', 'action' => 'index'))?>";
           return false;
         }
-        loading.load.finish();
         for (var i = 0; i < keys.length; i++) {
           if ( data[keys[i]].length > 0 ) {
             var target = $("[name='data[TCustomerInformationSetting][" + keys[i] + "]']");
@@ -236,6 +210,7 @@
           }
         }
         if ( num > 0 ) {
+          loading.load.finish();
           var newHeight = $("#popup-content").height() + (num * 15);
           $("#popup-frame").animate({
             height: newHeight + "px"
@@ -252,6 +227,7 @@
   };
 </script>
 <!-- 表示されるフォーム画面 -->
+<span id="widther" style="visibility:hidden;position:absolute;white-space:nowrap;"></span>
 <?= $this->Form->create('TCustomerInformationSetting', ['action' => 'add']);?>
 <div id = "column_counter" class="<?php
 //一覧表示のチェックボックスにチェックが入っているかの判別
@@ -262,24 +238,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
   }
   //input_optionの行数取得(改行コード検索)
   $pulldown_str = $this->request->data['TCustomerInformationSetting']['input_option'];
-  $column_count = floor(strlen($pulldown_str)/40);
-  switch(substr_count($pulldown_str,"\n") + $column_count){
-    case 0:
-      echo "1colum";
-      break;
-    case 1:
-      echo "2colum";
-      break;
-    case 2:
-      echo "3colum";
-      break;
-    case 3:
-      echo "4colum";
-      break;
-    default:
-      echo "5colum";
-      break;
-  }
+  echo substr_count($pulldown_str,"\n");
 }
 ?>"></div>
   <div class="form01">
@@ -400,28 +359,28 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
     <div id="filterType2Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail" style="width:204px;">テキストボックス、テキストエリア、<br>プルダウンから選択可能です。</span></li>
+          <li><span class="detail">テキストボックス、テキストエリア、<br>プルダウンから選択可能です。</span></li>
         </ul>
       </icon-annotation>
     </div>
     <div id="filterType3Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail" style="width:204px;">リアルタイムモニタやチャット履歴の一覧画面に表示させる場合にチェックをしてください。（一覧に表示できる項目は最大で３つまでとなります。）</span></li>
+          <li><span class="detail">リアルタイムモニタやチャット履歴の一覧画面に表示させる場合にチェックをしてください。（一覧に表示できる項目は最大で３つまでとなります。）</span></li>
         </ul>
       </icon-annotation>
     </div>
     <div id="filterType4Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail" style="width:204px;">メール本文にこの項目を記載する場合にチェックをしてください。</span></li>
+          <li><span class="detail">メール本文にこの項目を記載する場合にチェックをしてください。</span></li>
         </ul>
       </icon-annotation>
     </div>
     <div id="filterType5Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail" style="width:204px;">ページから取得した値（ログインユーザー名など）を自動で訪問ユーザ情報に登録することが可能です、本機能を利用する場合は事前にカスタム変数の設定をしてください。</span></li>
+          <li><span class="detail">ページから取得した値（ログインユーザー名など）を自動で訪問ユーザ情報に登録することが可能です、本機能を利用する場合は事前にカスタム変数の設定をしてください。</span></li>
         </ul>
       </icon-annotation>
     </div>

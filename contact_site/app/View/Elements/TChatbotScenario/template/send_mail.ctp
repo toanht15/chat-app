@@ -2,7 +2,7 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>" class="set_action_item_body action_send_mail" ng-init="main.controllMailSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb13em"><label>送信先メールアドレス<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信先のメールアドレスを設定します。<br>（変数の利用も可能です）" data-tooltip-width='210'>?</icon></span></label></span>
+      <span class="fb13em"><label>送信先メールアドレス<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信先のメールアドレスを設定します。<br>（変数の利用も可能です）">?</icon></span></label></span>
       <ul class="itemListGroup">
         <li ng-repeat="(listId, addressItem) in setItem.toAddress track by $index">
           <input type="text" ng-model="setItem.toAddress[listId]" ng-init="setItem.toAddress[listId] = setItem.toAddress[listId]" default="">
@@ -13,13 +13,13 @@
       </ul>
     </li>
     <li class="styleFlexbox">
-      <span class="fb13em"><label>メールタイトル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="メールタイトルを設定します。<br>（変数の利用も可能です）" data-tooltip-width='165'>?</icon></span></label></span>
+      <span class="fb13em"><label>メールタイトル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="メールタイトルを設定します。<br>（変数の利用も可能です）">?</icon></span></label></span>
       <div>
         <input type="text" ng-model="setItem.subject">
       </div>
     </li>
     <li class="styleFlexbox">
-      <span class="fb13em"><label>差出人名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="差出人名を設定します。<br>（変数の利用も可能です）" data-tooltip-width='145'>?</icon></span></label></span>
+      <span class="fb13em"><label>差出人名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="差出人名を設定します。<br>（変数の利用も可能です）">?</icon></span></label></span>
       <div>
         <input type="text" ng-model="setItem.fromName">
       </div>
@@ -27,7 +27,7 @@
     <li class="styleFlexbox">
       <span class="fb13em"><label>メール本文タイプ</label></span>
       <div>
-        <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}" data-tooltip-width='240'>?</icon></span></label>
+        <label ng-repeat="(key, item) in sendMailTypeList" class="styleBlock pointer"><input type="radio" name="action_{{setActionId}}_mail_type" value="{{key}}" ng-model="setItem.mailType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span></label>
         <resize-textarea ng-if="setItem.mailType == <?= C_SCENARIO_MAIL_TYPE_CUSTOMIZE ?>" ng-model="setItem.template" cols="48" rows="1" placeholder="メール本文を入力してください" data-maxRow="10"></resize-textarea>
       </div>
     </li>

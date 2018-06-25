@@ -15,7 +15,7 @@
     <ul>
       <!-- シナリオ名称 -->
       <li>
-        <label>シナリオ名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="シナリオに名称を設定します。" data-tooltip-width='160'>?</icon></span></label>
+        <label>シナリオ名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="シナリオに名称を設定します。">?</icon></span></label>
         <?= $this->ngForm->input('name', [
           'type' => 'text',
           'placeholder' => 'シナリオ名称を入力',
