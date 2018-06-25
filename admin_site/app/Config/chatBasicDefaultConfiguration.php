@@ -10,6 +10,7 @@ $config['default'] = [
   'chat' => [
     'basic_with_scenario' => [
       'sc_flg' => 2,
+      'in_flg' => 1,
       'sc_default_num' => 2,
       'outside_hours_sorry_message' => 'お問い合わせありがとうございます。
 申し訳ございませんが、只今営業時間外でございます。
@@ -22,7 +23,8 @@ $config['default'] = [
 ≪　お問い合わせフォーム等のURL　≫',
       'no_standby_sorry_message' => 'お問い合わせありがとうございます。
 申し訳ございませんが、ただ今担当の者が席を外しております。
-しばらく経ってから再度お問い合わせください。'
+しばらく経ってから再度お問い合わせください。',
+      'initial_notification_message' => '{"0":{"seconds":"1","message":"ただいま担当の者を呼び出しておりますので、そのままでお待ちください。"}}',
     ],
     'basic_without_scenario' => [
       'sc_flg' => 2,
