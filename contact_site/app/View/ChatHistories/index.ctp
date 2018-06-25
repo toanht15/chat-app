@@ -13,7 +13,7 @@
               'id' => 'outputCSV',
               'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
               'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "検索条件に該当するチャット履歴<br>一覧をCSV出力します。" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
-              'data-balloon-position' => '75'
+              'data-balloon-position' => '50'
           ));
       ?>
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>

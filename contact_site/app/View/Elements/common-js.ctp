@@ -240,7 +240,6 @@
             });
           }
           if(baloonPosition) {
-            $tooltip.append('<style>.tooltips:after{left:' + baloonPosition + '%!important; top:' + toppx + 'px!important;}</style>');
             $tooltip.attr("id","tooltip_"+id)
           }
         }, true); //radioボタンのdisableに対応するためuseCaptureを利用

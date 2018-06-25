@@ -119,7 +119,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
-    $('#chatTalk div:last-child').show();
+    $('#chatTalk > div:last-child').show();
 
     self.autoScroll();
   };
@@ -160,7 +160,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
-    $('#chatTalk div:last-child').show();
+    $('#chatTalk > div:last-child').show();
 
     self.autoScroll()
   };
@@ -189,7 +189,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
     $scope.fileUploader.init($(document.querySelector('#chatTalk')), $(dropAreaElm), $(selectFileButtonElm), $(selectInputElm));
-    $('#chatTalk div:last-child').show();
+    $('#chatTalk > div:last-child').show();
     self.autoScroll();
   };
 
@@ -237,8 +237,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
           var self = this;
           $scope.fileUploader.fileObj = $scope.fileUploader.selectInput[0].files[0];
           // ファイルの内容は FileReader で読み込みます.
+          $scope.showLoadingPopup($(self).parents('li.sinclo_re'));
           var fileReader = new FileReader();
           fileReader.onload = function (event) {
+            $scope.hideLoadingPopup($(self).parents('li.sinclo_re'));
             if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
               $scope.$emit('onErrorSelectFile');
               return;
@@ -283,7 +285,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       var self = this;
       // ファイルの内容は FileReader で読み込みます.
       var fileReader = new FileReader();
+      $scope.showLoadingPopup($(self).parents('li.sinclo_re'));
       fileReader.onload = function(event) {
+        $scope.hideLoadingPopup($(self).parents('li.sinclo_re'));
         if(!$scope.fileUploader._validExtension($scope.fileUploader.fileObj.name)) {
           $scope.$emit('onErrorSelectFile');
           return;
@@ -364,7 +368,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     }
   };
 
-  $scope.showPreview = function(target, fileObj, loadData) {
+    $scope.showPreview = function(target, fileObj, loadData) {
     $scope.effectScene(false, $(target).parents('li.sinclo_re.recv_file_left').parent(), function(){
       // ベースとなる要素をクローン
       var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
@@ -381,17 +385,16 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
           });
         });
         divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').addEventListener('click', function(e){
-          $scope.effectScene(false, $(divElm), function(){
-            var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
-            if(!comment) {
-              comment = "（なし）";
-            }
-            $scope.uploadFile(divElm, comment, fileObj, loadData);
-          });
+          var comment = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea').value;
+          if(!comment) {
+            comment = "（なし）";
+          }
+          $scope.showLoadingPopup(divElm);
+          $scope.uploadFile(divElm, comment, fileObj, loadData);
         });
         // 要素を追加する
         document.getElementById('chatTalk').appendChild(divElm);
-        $('#chatTalk div:last-child').show();
+        $('#chatTalk > div:last-child').show();
         var targetTextarea = divElm.querySelector('li.sinclo_se.recv_file_right div.receiveFileContent div.selectFileArea p.commentarea textarea');
         $scope.changeResizableTextarea(targetTextarea);
         self.autoScroll();
@@ -438,6 +441,14 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     } else {
       jqObj.fadeOut('fast', callback);
     }
+  };
+
+  $scope.showLoadingPopup = function(divElm) {
+    $(divElm).find('div.receiveFileContent').find('div.loadingPopup').removeClass('hide');
+  };
+
+  $scope.hideLoadingPopup = function(divElm) {
+    $(divElm).find('div.receiveFileContent').find('div.loadingPopup').addClass('hide');
   };
 
   $scope.changeResizableTextarea = function(elm) {
@@ -511,6 +522,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     })
       .done(function(data, textStatus, jqXHR){
         console.log(JSON.stringify(data));
+        $scope.hideLoadingPopup(targetDivElm);
         $scope.effectScene(true, $(targetDivElm), function(){
           $(targetDivElm).find('li.sinclo_se').removeClass('recv_file_right').addClass('uploaded');
           var commentLabel = targetDivElm.querySelector('li.sinclo_se.uploaded div.receiveFileContent div.selectFileArea p.commentLabel');
