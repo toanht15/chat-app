@@ -98,9 +98,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <tr>
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
         <th width=" 5%">No</th>
-        <th class="tCenter">カスタム変数名</th>
-        <th class="tCenter">CSSセレクタ</th>
-        <th class="tCenter">コメント</th>
+        <th width="30%" class="tCenter">カスタム変数名</th>
+        <th width="30%" class="tCenter">CSSセレクタ</th>
+        <th width="30%" class="tCenter">コメント</th>
       </tr>
       </thead>
     <tbody class="sortable">
@@ -113,9 +113,9 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           <label for="selectTab<?=$key?>"></label>
         </td>
         <td width="5%" class="tCenter"><?=$prevCnt + h($key+1)?></td>
-        <td class="tCenter"><?=$val['TCustomVariable']['variable_name']?></td>
-        <td class="tCenter"><?=$val['TCustomVariable']['attribute_value']?></td>
-        <td class="tCenter"><?=$val['TCustomVariable']['comment']?></td>
+        <td width="30%" class="tCenter"><?=$val['TCustomVariable']['variable_name']?></td>
+        <td width="30%" class="tCenter"><?=$val['TCustomVariable']['attribute_value']?></td>
+        <td width="30%" class="tCenter"><?=$val['TCustomVariable']['comment']?></td>
       </tr>
       <?php endforeach; ?>
       <?php if ( count($tCustomVariableList) === 0 ) :?>

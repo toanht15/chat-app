@@ -4,7 +4,7 @@
     <li>
       <div class='grid-container grid-container-header'>
         <div class='area-name'>変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。" data-tooltip-width='300'>?</icon></span></div>
-        <div class='area-selector'>CSSセレクタ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{showCSSSelectorTooltip()}}" data-tooltip-width='450'>?</icon></span></div>
+        <div class='area-selector'>CSSセレクタ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{showCSSSelectorTooltip()}}">?</icon></span></div>
       </div>
       <div  class='styleFlexbox' ng-repeat="(listId, getAttributes) in setItem.getAttributes track by $index">
         <div class='grid-container grid-container-body itemListGroup'>

@@ -2,7 +2,7 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>" class="set_action_item_body action_branch_on_condition" ng-init="main.controllBranchOnConditionSettingView(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb15em"><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件の判定に利用する変数名を設定します。<br>（変数名を{{showExpression('変数名')}}と{で括る必要はありません）" data-tooltip-width='210'>?</icon></span></span>
+      <span class="fb15em"><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件の判定に利用する変数名を設定します。<br>（変数名を{{showExpression('変数名')}}と{で括る必要はありません）">?</icon></span></span>
       <div>
         <input type="text" ng-model="setItem.referenceVariable">
       </div>
@@ -41,7 +41,7 @@
               <option value="">シナリオを選択してください</option>
               <option value="self">このシナリオ</option>
             </select>
-            <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="condition.action.executeNextAction" ng-init="condition.action.executeNextAction = condition.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。" data-tooltip-width='300'>?</icon></span></label>
+            <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="condition.action.executeNextAction" ng-init="condition.action.executeNextAction = condition.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。">?</icon></span></label>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
         </li>
@@ -56,7 +56,7 @@
     <li>
       <div>
         <hr class="separator"/>
-        <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.elseEnabled" ng-init="setItem.elseEnabled = false">上記を満たさない場合に実行するアクション<span class="questionBalloon"><icon class="questionBtn" data-tooltip="設定した条件のいずれにも該当しない場合に実行するアクションを設定します。（本設定を行わない場合、設定された条件に該当しない場合は次のアクションに進みます。）" data-tooltip-width='300'>?</icon></span></label>
+        <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.elseEnabled" ng-init="setItem.elseEnabled = false">上記を満たさない場合に実行するアクション<span class="questionBalloon"><icon class="questionBtn" data-tooltip="設定した条件のいずれにも該当しない場合に実行するアクションを設定します。（本設定を行わない場合、設定された条件に該当しない場合は次のアクションに進みます。）">?</icon></span></label>
         <ul class="condition else" ng-if="setItem.elseEnabled == true">
           <li class="styleFlexbox">
             <div class="conditionTypeSelect">
@@ -70,7 +70,7 @@
                 <option value="">シナリオを選択してください</option>
                 <option value="self">このシナリオ</option>
               </select>
-              <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="setItem.elseAction.action.executeNextAction" ng-init="setItem.elseAction.action.executeNextAction = setItem.elseAction.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。" data-tooltip-width='300'>?</icon></span></label>
+              <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="setItem.elseAction.action.executeNextAction" ng-init="setItem.elseAction.action.executeNextAction = setItem.elseAction.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。">?</icon></span></label>
             </div>
             <div class="conditionAction elseCondition" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
           </li>

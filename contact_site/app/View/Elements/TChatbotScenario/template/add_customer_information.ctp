@@ -3,8 +3,8 @@
   <ul>
     <li>
       <div class='grid-container short grid-container-header'>
-        <div class='area-name'><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="訪問者情報として自動登録したい変数名を設定します。<br>（変数名を{{showExpression('変数名')}}と{で括る必要はありません）" data-tooltip-width='300'>?</icon></span></div>
-        <div class='area-selector short'><label class="require">訪問ユーザ情報の項目</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名で指定された変数の値が、ここで指定された訪問ユーザ情報の項目に自動で登録されます。" data-tooltip-width='300'>?</icon></span></div>
+        <div class='area-name'><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="訪問者情報として自動登録したい変数名を設定します。<br>（変数名を{{showExpression('変数名')}}と{で括る必要はありません）">?</icon></span></div>
+        <div class='area-selector short'><label class="require">訪問ユーザ情報の項目</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名で指定された変数の値が、ここで指定された訪問ユーザ情報の項目に自動で登録されます。">?</icon></span></div>
       </div>
       <div  class='styleFlexbox' ng-repeat="(listId, addCustomerInformation) in setItem.addCustomerInformations track by $index">
         <div class='grid-container short grid-container-body itemListGroup'>

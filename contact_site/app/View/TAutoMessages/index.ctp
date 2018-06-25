@@ -4,7 +4,7 @@
 $params = $this->Paginator->params();
 $prevCnt = ($params['page'] - 1) * $params['limit'];
 ?>
-<div id='tautomessages_idx' class="card-shadow">
+<div id='tautomessages_idx' class="card-shadow" style = "margin:15px 15px 15px 15px;">
 
   <div id='tautomessages_title'>
     <div class="fLeft"><i class="fal fa-comments fa-2x"></i></div>

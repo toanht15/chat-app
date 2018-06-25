@@ -763,7 +763,8 @@ class ContractController extends AppController
       "outside_hours_sorry_message" => $default['outside_hours_sorry_message'],
       "wating_call_sorry_message" => $default['wating_call_sorry_message'],
       "no_standby_sorry_message" => $default['no_standby_sorry_message'],
-      "sorry_message" => ""
+      "sorry_message" => "",
+      "initial_notification_message" => $this->convertActivityToJSON($default['initial_notification_message']),
     ));
     $this->MChatSetting->save();
   }
