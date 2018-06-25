@@ -4217,7 +4217,7 @@ function emit(evName, data, callback){
     data.title = common.title();
   }
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat" ||
-  evName === "storeScenarioMessage") {
+  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue") {
     data.userId = userInfo.userId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||

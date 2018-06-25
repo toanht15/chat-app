@@ -3599,6 +3599,33 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     });
   });
 
+  socket.on('saveCustomerInfoValue', function(data){
+    var obj = JSON.parse(data);
+    var targetValues = obj.targetValues ? obj.targetValues : [];
+    var ids = [];
+    var objForMerge = {};
+    var saveValue = {};
+    for(var i=0; i < targetValues.length; i++) {
+      ids.push(targetValues[i].id);
+      objForMerge[targetValues[i].id] = targetValues[i].value;
+    }
+
+    pool.query("select id, m_companies_id, item_name, delete_flg from t_customer_information_settings where m_companies_id = ? and id in (?);", [companyList[obj.siteKey], ids], function(err, rows){
+      if(err !== null && err !== "") return false;
+      if(rows.length > 0) {
+        for(var j=0; j < rows.length; j++) {
+          saveValue[rows[j]['item_name']] = objForMerge[rows[j].id];
+        }
+        // カスタム情報自動登録
+        db.upsertCustomerInfo({
+          siteKey: obj.siteKey,
+          userId: obj.userId,
+          customVariables: saveValue
+        }, socket);
+      }
+    });
+  });
+
   var replaceVariable = function(variables, message) {
     return message.replace(/{{(.+?)\}}/g, function(param) {
       var name = param.replace(/^{{(.+)}}$/, '$1');

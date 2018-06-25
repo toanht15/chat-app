@@ -6918,11 +6918,11 @@ ul.naviBtn {
               align-content: space-between;
 
               a {
-                width: 8em;
+                width: 9em;
                 padding: 6px;
                 text-align: center;
                 margin: 0 5px 5px 0;
-                font-size: 1em;
+                font-size: 0.9em;
                 text-weight: normal;
               }
             }
@@ -7173,6 +7173,10 @@ ul.naviBtn {
                   display: grid;
                   grid-template-columns: 160px 118px 1fr 48px;
                   -ms-grid-columns: 160px 118px 1fr 48px;
+                  &.short {
+                    grid-template-columns: 170px 236px 60px 1fr;
+                    -ms-grid-columns: 170px 236px 60px 1fr;
+                  }
                   grid-template-rows: 31px 1fr;
                   -ms-grid-rows: 31px 1fr;
                   grid-template-areas: 'g0 g1 g3 g4' 'g2 g2 g3 g4';
@@ -7187,6 +7191,9 @@ ul.naviBtn {
                       padding-bottom: 0;
                       grid-column: 1/5;
                       width: 101%;
+                      &.short {
+                        grid-column: 1/4;
+                      }
                     }
                   }
 
@@ -7236,6 +7243,15 @@ ul.naviBtn {
                     -ms-grid-column: 3;
                     -ms-grid-row: 1;
                     -ms-grid-row-span: 2;
+                    &.short {
+                      grid-row-start: g1;
+                      grid-row-end: g2;
+                      grid-column-start: g1;
+                      grid-column-end: g2;
+                      -ms-grid-column: 3;
+                      -ms-grid-row: 1;
+                      -ms-grid-row-span: 2;
+                    }
                     .textarea-message{
                       width: calc(100% - 6.5em);
                       resize: none;
@@ -7258,6 +7274,13 @@ ul.naviBtn {
                     -ms-grid-row-span: 2;
                     padding-left: 0;
                     vertical-align: top;
+
+                    &.short {
+                      grid-area: g3;
+                      -ms-grid-column: 3;
+                      -ms-grid-row: 1;
+                      -ms-grid-row-span: 2;
+                    }
 
                     .btnBlock {
                       padding-left: 0;
