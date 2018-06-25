@@ -916,10 +916,21 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   this.autoScroll = function() {
     $timeout(function() {
       var target = $('#chatTalk');
+      var paddingBottom = (parseInt($('#chatTalk').css('height')) * 60) / 374;
+      var lastMessageHeight = $("#chatTab ul").find("div:last").height();
+      var chatTalk = document.getElementById('chatTalk');
       var time = 500;
-      target.stop().animate({
-        scrollTop: target.get(0).scrollHeight - target.outerHeight()
-      }, time);
+      //ウィジェットサイズに合わせた余白で計算
+      if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) {
+        target.stop().animate({
+          scrollTop: target.get(0).scrollHeight - target.outerHeight()
+        }, time);
+      }
+      else {
+        target.stop().animate({
+          scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom))
+        }, time);
+      }
     }, 0);
   }
 

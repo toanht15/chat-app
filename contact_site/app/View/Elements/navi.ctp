@@ -49,9 +49,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 <div id="color-bar">
   <ul id="color-bar-right" class="fRight">
     <?php if(!empty($trialTime)) { ?>
-      <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span><?= ' 日です'?></p></li>
+      <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span> <?= ' 日です'?></p></li>
     <?php } ?>
-      <li class="fLeft" id = "menu-bar-right"><p><i class="fal fa-user-circle fa-2x"></i><?= h($userInfo['display_name']) ?> さん<i class='fal fa-angle-down fa-2x'></i></p></li>
+      <li class="fLeft" id = "menu-bar-right"><p><i class="fal fa-user-circle fa-2x"></i><?= h($userInfo['display_name'])  ?><span> &nbsp;さん</span><i class='fal fa-angle-down fa-2x'></i></p></li>
   </ul>
 </div>
 <div id="colorBarMenu">
@@ -311,25 +311,24 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
     if($("#colorBarMenu").css('display') == 'none') {
       fadeInLayerMenu();
     }
-    $("#menu-bar-right").css('background-color', '#D6E8B0');
+    $("#menu-bar-right").css('background-color', '#c6dc83');
   });
+
+  $("#header").mouseleave(function(e){
+    fadeOutLayerMenu();
+    $("#menu-bar-right").css('background-color', '#b2d251');
+  });
+
   $('#menu-bar-right').mouseleave(function(e){
-      if(e.toElement.id !== 'colorBarMenu') {
+      if(e.toElement.id == 'color-bar-right' || e.toElement.id == 'color-bar') {
         //メニュー非表示
         fadeOutLayerMenu();
-        $("#menu-bar-right").css('background-color', '#C3D69B');
+        $("#menu-bar-right").css('background-color', '#b2d251');
       }
-  });
-  $('#colorBarMenu').mouseleave(function(e){
-    if(e.toElement.id !== 'menu-bar-right') {
-      //メニュー非表示
-      fadeOutLayerMenu();
-      $("#menu-bar-right").css('background-color', '#C3D69B');
-    }
   });
   $('.t-link').click(function(){
     $("#colorBarMenu").css('display', 'none');
-    $("#menu-bar-right").css('background-color', '#C3D69B');
+    $("#menu-bar-right").css('background-color', '#b2d251');
   });
 
   function editPersonalInfo(){
