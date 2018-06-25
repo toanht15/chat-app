@@ -1,4 +1,4 @@
-  <?php
+ <?php
   App::uses('CustomerInformationUtil', 'Vendor/Util');
 
   /**
@@ -212,7 +212,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params);
+        //$tHistoryCountData = $this->THistory->find('first', $params);
+        $tHistoryCountData = 3;
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -1830,7 +1831,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        $tHistoryCountData = 3;
       }
       else {
         $tHistoryCountData = "";
@@ -1852,6 +1854,8 @@
           'sort' => 'asc'
         )
       ));
+      $this->log('チェックしよう',LOG_DEBUG);
+      $this->log($customerSettingList,LOG_DEBUG);
       $customerInformationSettingList = [];
       foreach($customerSettingList as $k => $v) {
         array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);

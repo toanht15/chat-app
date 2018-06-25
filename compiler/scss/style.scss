@@ -1110,6 +1110,11 @@ ul#color-bar-right {
     cursor:pointer;
     display:flex;
     font-weight: bold;
+    span {
+      color: #fff;
+      font-size: 13px;
+      font-weight: normal;
+    }
     .fa-angle-down {
       color:#fff;
       line-height: 0.6;

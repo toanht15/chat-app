@@ -361,9 +361,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent { background-color: #FFF; padding: 5px; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img { max-width: 215px; max-height: 160px; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.small { max-width: 165px; max-height: 120px; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.middle { max-width: 215px; max-height: 188px; }
-        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.large { max-width: 265px; max-height: 285px; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.small { max-width: 165px; max-height: 60px; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.middle { max-width: 215px; max-height: 160px; }
+        #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.large { max-width: 265px; max-height: 240px; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; width: 100%; }';
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; width: 100%; }
         #sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { border-radius: 0px; width: 97%; height: 40px; resize: none; }
