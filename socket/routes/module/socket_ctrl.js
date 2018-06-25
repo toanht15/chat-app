@@ -878,7 +878,7 @@ var db = {
    * @param obj
    * @param s
    */
-  upsertCustomerInfo: function(obj, s) {
+  upsertCustomerInfo: function(obj, s, callback) {
     if(isset(obj.customVariables)) {
       var customVariables = obj.customVariables;
       var found = false;
@@ -903,11 +903,17 @@ var db = {
               }
             });
             pool.query('UPDATE m_customers set informations = ? where id = ? ', [JSON.stringify(currentData), row[0].id], function (err, result) {
-
+              if(callback) callback({
+                userId: obj.userId,
+                data: JSON.stringify(currentData)
+              });
             });
           } else {
             pool.query('INSERT INTO m_customers VALUES (NULL, ?, ?, ?, now(), 0, NULL, NULL, NULL, NULL)', [companyList[obj.siteKey], obj.userId, JSON.stringify(customVariables)], function (err, result) {
-
+              if(callback) callback({
+                userId: obj.userId,
+                data: JSON.stringify(customVariables)
+              });
             });
           }
 
@@ -3621,7 +3627,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           siteKey: obj.siteKey,
           userId: obj.userId,
           customVariables: saveValue
-        }, socket);
+        }, socket, function(resultData){
+          if(isset(resultData)) {
+            emit.toCompany('customerInfoUpdated', resultData, obj.siteKey);
+          }
+        });
       }
     });
   });
