@@ -15,7 +15,7 @@
     <ul>
       <!-- シナリオ名称 -->
       <li>
-        <label>シナリオ名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="シナリオに名称を設定します。" data-tooltip-width='160'>?</icon></span></label>
+        <label>シナリオ名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="シナリオに名称を設定します。">?</icon></span></label>
         <?= $this->ngForm->input('name', [
           'type' => 'text',
           'placeholder' => 'シナリオ名称を入力',
@@ -61,7 +61,7 @@
         <!-- 外部連携 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="連携したい外部システムの設定を行<?php echo"<br>"?>い、アクションの途中で任意のAPI<?php echo"<br>"?>を実行することができるアクション<?php echo"<br>"?>です。">外部連携</a>
         <!-- 訪問ユーザ情報 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>)" class="greenBtn btn-shadow commontooltip" data-text="変数に格納したユーザから取得した情報を訪問ユーザ情報として登録することができます。">訪問ユーザ登録</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>)" class="greenBtn btn-shadow commontooltip" data-text="変数の値を訪問ユーザ情報として登録するためのアクションです。">訪問ユーザ登録</a>
         <!-- メール送信 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)" class="greenBtn btn-shadow commontooltip" data-text="メールを送信するアクションです。<?php echo"<br>"?>宛先、差出人名、メールタイトル、<?php echo"<br>"?>メール本文を自由に設定することが<?php echo"<br>"?>可能です。">メール送信</a>
       </div>

@@ -51,13 +51,13 @@
       </span>
     </li>
     <li class="styleFlexbox">
-      <span class="fb13em"><label>レスポンスボディ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="外部連携先のサーバーから取得したデータを、シナリオで利用できるように変数に保存します。" data-tooltip-width='300'>?</icon></span></label></span>
+      <span class="fb13em"><label>レスポンスボディ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="外部連携先のサーバーから取得したデータを、シナリオで利用できるように変数に保存します。">?</icon></span></label></span>
       <div>
         <table cellspacing="5">
           <thead>
           <tr>
-            <th class="item_name">変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。" data-tooltip-width='300'>?</icon></span></th>
-            <th class="item_value">変換元キー名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="取得したデータから、キー名を設定して変数に保存するデータを指定できます。" data-tooltip-width='300'>?</icon></span></th>
+            <th class="item_name">変数名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。">?</icon></span></th>
+            <th class="item_value">変換元キー名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="取得したデータから、キー名を設定して変数に保存するデータを指定できます。">?</icon></span></th>
             <th class="item_btn_block"></th>
           </tr>
           </thead>
