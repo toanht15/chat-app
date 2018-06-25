@@ -2,7 +2,6 @@
   //特定項目を選択した際に、追加メニュー分の高さを確保する
   //特定項目から選択が外れた場合は、その分の高さを削減する
   $(function () {
-    popupEvent.resize();
     //各種変数の設定
     var popupframe = $('#popup-frame');
     var popupbutton = $('#popup-button');
@@ -10,31 +9,33 @@
     var labelposition = $("#pulldown_label")
     $("#TCustomerInformationSettingInputOption").height(8);
     var heightsize = 18;
-    var long_flg = false;
-    var scroll_flg = false;
-
 
 
   //入力量に応じてプルダウンのテキスト入力エリアが拡大する処理
     var column_size = 1;
     enter_flg = false;
 
+
+    var pulldown_Id = "#TCustomerInformationSettingInputOption";
     $("#TCustomerInformationSettingInputOption").on("input",function(e){
       var scroll_flg = false;
-      var content_size = $(e.target).get(0).scrollHeight;
       var pulldown_array = $(e.target).val().split(/\r\n|\r|\n/);
       var column_size = pulldown_array.length;
-      //行数を取得し、もし5行以上だったらスクロール表示させ、5行のままにする
-      if(column_size>5){
+      $(e.target).height(20*column_size);
+      //ポップアップサイズを取得し、もしブラウザの縦幅以上だったらスクロール表示させる
+      if($('#popup-frame').height() > ($(window).height()-50)){
         $(e.target).css('overflow-y','scroll');
-        column_size = 5
+        $(e.target).css('max-height',$(e.target).height() +'px');
       }else{
         $(e.target).css('overflow-y','hidden');
+        $(e.target).css('max-height',$(e.target).height()+50 +'px');
       }
+
+
+
       $(e.target).css('overflow-x','hidden');
       for(var i = 0; i < column_size; i++){
         if($("#widther").text(pulldown_array[i]).get(0).offsetWidth>260){
-          console.log(i + "番目がover");
           scroll_flg = true;
         }
       }
@@ -44,21 +45,31 @@
       }else{
         $(e.target).css('padding-bottom','4px');
       }
-
-      $(e.target).height(20*column_size);
-      //幅は取得したので、その幅によりpaddingを増加させるか考える、改行文字でsplitしたやつ
-      //を1行ずつ判別してそれが260よりも大きかったらpaddingを増加させる、という処理を書けばok
       $("#widther").empty();
       popupEvent.resize();
     });
 
-    //既に入力値があった場合にそのサイズに合わせる処理
 
-    var column_count = $("#column_counter").attr('class').substr(0,1);
-    for(var i=1;i<column_count;i++){
-      column_size += 1;
-      $("#TCustomerInformationSettingInputOption").height($("#TCustomerInformationSettingInputOption").height() + 20);
+
+    /******既に入力値があった場合にそのサイズに合わせる処理******
+     *入力がn行あったら、そのn行全てを表示させておく必要がある。*
+    */
+    var column_size = $("#column_counter").attr('class');
+    for(var i=1; i<column_size; i++){
+      $("#TCustomerInformationSettingInputOption").height(28 + 20 * i)
+      console.log($("#popup-frame").height());
+      console.log($("#TCustomerInformationSettingInputOption").height());
+      if($("#TCustomerInformationSettingInputOption").height() < $(window).height()-600){
+        $("#TCustomerInformationSettingInputOption").css('overflow-y','hidden');
+        $("#TCustomerInformationSettingInputOption").css('max-height',$("#TCustomerInformationSettingInputOption").height()+50 +'px');
+      }else{
+        $("#TCustomerInformationSettingInputOption").css('overflow-y','scroll');
+        $("#TCustomerInformationSettingInputOption").css('max-height',$("#TCustomerInformationSettingInputOption").height() +'px');
+        break;
+      }
     }
+
+
 
     var selectflag = 0;
     //エディット時に、既にプルダウンが選ばれていた場合の処理
@@ -224,24 +235,7 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
   }
   //input_optionの行数取得(改行コード検索)
   $pulldown_str = $this->request->data['TCustomerInformationSetting']['input_option'];
-  $column_count = floor(strlen($pulldown_str)/40);
-  switch(substr_count($pulldown_str,"\n") + $column_count){
-    case 0:
-      echo "1colum";
-      break;
-    case 1:
-      echo "2colum";
-      break;
-    case 2:
-      echo "3colum";
-      break;
-    case 3:
-      echo "4colum";
-      break;
-    default:
-      echo "5colum";
-      break;
-  }
+  echo substr_count($pulldown_str,"\n");
 }
 ?>"></div>
   <div class="form01">
@@ -362,28 +356,28 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
     <div id="filterType2Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail" style="width:204px;">テキストボックス、テキストエリア、<br>プルダウンから選択可能です。</span></li>
+          <li><span class="detail">テキストボックス、テキストエリア、<br>プルダウンから選択可能です。</span></li>
         </ul>
       </icon-annotation>
     </div>
     <div id="filterType3Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail" style="width:204px;">リアルタイムモニタやチャット履歴の一覧画面に表示させる場合にチェックをしてください。（一覧に表示できる項目は最大で３つまでとなります。）</span></li>
+          <li><span class="detail">リアルタイムモニタやチャット履歴の一覧画面に表示させる場合にチェックをしてください。（一覧に表示できる項目は最大で３つまでとなります。）</span></li>
         </ul>
       </icon-annotation>
     </div>
     <div id="filterType4Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail" style="width:204px;">メール本文にこの項目を記載する場合にチェックをしてください。</span></li>
+          <li><span class="detail">メール本文にこの項目を記載する場合にチェックをしてください。</span></li>
         </ul>
       </icon-annotation>
     </div>
     <div id="filterType5Tooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
-          <li><span class="detail" style="width:204px;">ページから取得した値（ログインユーザー名など）を自動で訪問ユーザ情報に登録することが可能です、本機能を利用する場合は事前にカスタム変数の設定をしてください。</span></li>
+          <li><span class="detail">ページから取得した値（ログインユーザー名など）を自動で訪問ユーザ情報に登録することが可能です、本機能を利用する場合は事前にカスタム変数の設定をしてください。</span></li>
         </ul>
       </icon-annotation>
     </div>

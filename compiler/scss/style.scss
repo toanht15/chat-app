@@ -665,32 +665,10 @@ a {
   position: absolute;
 
   icon-annotation {
-    width: 16em;
+    width: 30em!important;
     height: 2.1em;
     display: none;
-    /* 矢印 */
-    &:before {
-      content: " ";
-      border: none;
-      border-top: 12px solid #C3D69B;
-      border-left: 11px solid transparent;
-      border-right: 11px solid transparent;
-      position: absolute;
-      bottom: -10px;
-      left: 5px;
-      z-index: 1;
-    }
-    &:after {
-      content: " ";
-      border:none;
-      border-top: 12px solid white;
-      border-left: 11px solid transparent;
-      border-right: 11px solid transparent;
-      position: absolute;
-      bottom: -5px;
-      left: 5px;
-      z-index: 3;
-    }
+
     ul {
       margin: 0;
       text-align: left;
@@ -709,7 +687,7 @@ a {
       }
       span {
         font-size: 14px;
-        line-height: 1.8;
+        line-height: 1.43;
         width: auto;
       }
     }
@@ -3251,31 +3229,6 @@ ul.naviBtn {
           height: 6.3em;
           z-index: 2;
           display: none;
-
-          /* 矢印 */
-          &:before {
-            content: " ";
-            border: none;
-            border-top: 10px solid #C3D69B;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -0.7em;
-            left: 10px;
-            z-index: 1;
-          }
-
-          &:after {
-            content: " ";
-            border: none;
-            border-top: 10px solid white;
-            border-left: 9px solid transparent;
-            border-right: 9px solid transparent;
-            position: absolute;
-            bottom: -0.5em;
-            left: 10px;
-            z-index: 3;
-          }
 
           ul {
             margin: 0;
