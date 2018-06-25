@@ -211,6 +211,7 @@ define('C_SCENARIO_ACTION_SEND_FILE', 7); // ファイル送信
 define('C_SCENARIO_ACTION_GET_ATTRIBUTE', 8); // 属性値取得
 define('C_SCENARIO_ACTION_RECEIVE_FILE', 9); // ファイル受信
 define('C_SCENARIO_ACTION_BRANCH_ON_CONDITION', 10); // 条件分岐
+define('C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION', 11); // 訪問ユーザ登録
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -835,6 +836,19 @@ $config['chatbotScenarioActionList'] = [
         "actionType" => "1",
         "action" => [
           "message" => ""
+        ]
+      ]
+    ]
+  ],  // 属性値取得
+  C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION => [
+    'label' => '訪問ユーザ登録',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'addCustomerInformations' => [
+        [
+          'variableName' => '',
+          'targetId' => 0
         ]
       ]
     ]
