@@ -5481,7 +5481,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._sendFile;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
-            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._parent._handleChatTextArea("2");
             var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
             var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
