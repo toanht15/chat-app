@@ -1002,12 +1002,15 @@ var socket, // socket.io
         /* ファイル受信  */
         if(Number(widget.widgetSizeType) == 1) {
           html += '#sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 10px!important; line-height: 0; }';
+          html += '#sincloBox #chatTalk li.sinclo_se.uploaded { padding: 10px!important; line-height: 0; }';
         } else if (check.smartphone() || Number(widget.widgetSizeType) == 2) {
           html += '#sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 12px!important; line-height: 0; }';
+          html += '#sincloBox #chatTalk li.sinclo_se.uploaded { padding: 12px!important; line-height: 0; }';
         } else if(Number(widget.widgetSizeType) == 3) {
           html += '#sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 14px!important; line-height: 0; }';
+          html += '#sincloBox #chatTalk li.sinclo_se.uploaded { padding: 14px!important; line-height: 0; }';
         }
-        html += '#sincloBox #chatTalk li.sinclo_se.uploaded { padding: 10px 15px!important; line-height: 0; }'
+
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent { position: relative; line-height: 0; border: 1px dashed ' + widget.reTextColor + '; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 0; }'
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin: 6.5px 0; text-align: center; color:' + widget.reTextColor + '; font-weight: bold; }';
