@@ -206,21 +206,27 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
     <?php endif; ?>
     <!-- /* シナリオ */ -->
 </div>
-<div data-sidebar-type="statistics" class="sidebar-sub hide">
+<div data-sidebar-type="statistics" class="sidebar-sub with-splitter hide">
     <!-- /* 履歴・統計 */ -->
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
       <div>
-        <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-history', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+        <div class="splitter">
+          <i class='fal fa-history'></i><span class="splitter-label">履歴</span>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-history', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('チャット履歴', '', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('チャット統計レポート', 'fa-chart-line', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', '', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+        </div>
+        <div class="splitter">
+          <i class='fal fa-chart-line'></i><span class="splitter-label">統計レポート</span>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('オペレータ統計レポート', 'fa-chart-line', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('チャット統計レポート', '', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()'], true) ?>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('オペレータ統計レポート', '', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
       </div>
     <?php endif; ?>
@@ -270,7 +276,15 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       $('.sidebar-sub').animate({left: -200}, duration_time)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
-      $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 81}, duration_time);
+              var subMenuIconTop = self.offset().top;
+      $('[data-sidebar-type="' + type + '"]').removeClass('hide');
+      var subMenuHeight = $('[data-sidebar-type="' + type + '"]').height();
+      $('[data-sidebar-type="' + type + '"]').addClass('hide');
+      if(window.innerHeight < subMenuIconTop + subMenuHeight) {
+        $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: window.innerHeight - subMenuHeight - 6.5}).animate({left: 81}, duration_time); // 6.5はメニューの下部padding分
+      } else {
+        $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 81}, duration_time);
+      }
     });
   });
 
@@ -315,14 +329,14 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
   });
 
   $("#header").mouseleave(function(e){
-    //fadeOutLayerMenu();
+    fadeOutLayerMenu();
     $("#menu-bar-right").css('background-color', '#b2d251');
   });
 
   $('#menu-bar-right').mouseleave(function(e){
-      if(e.toElement.id == 'color-bar-right' || e.toElement.id == 'color-bar') {
+      if(e.target.id == 'color-bar-right' || e.target.id == 'color-bar') {
         //メニュー非表示
-        //fadeOutLayerMenu();
+        fadeOutLayerMenu();
         $("#menu-bar-right").css('background-color', '#b2d251');
       }
   });
