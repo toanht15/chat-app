@@ -1730,6 +1730,22 @@ function actionValidationCheck(element, setActionList, actionItem) {
         return true;
       }
     });
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+    actionItem.addCustomerInformations.some(function(elm){
+      var found = false;
+      if (!elm.variableName) {
+        found = true;
+        messageList.push('変数名が未入力です');
+      }
+      if (!elm.targetId) {
+        found = true;
+        messageList.push('訪問ユーザ情報の項目が未指定です');
+      }
+      if(found) {
+        return true;
+      }
+    });
   }
 
   // 使用されている変数名を抽出する
