@@ -14,8 +14,8 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
-  const ML_MAIL_ADDRESS_AND_ALEX = "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const PASSWORD = "##PASSWORD##";
@@ -103,7 +103,7 @@ class ContractController extends AppController
   public function beforeFilter(){
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['add','edit','index','remoteSaveForm']);
+    $this->Auth->allow(['add','remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
@@ -752,12 +752,9 @@ class ContractController extends AppController
   }
 
   private function addDefaultChatPersonalSettings($m_companies_id, $companyInfo) {
-    $this->log('ここまでは入ってきてる',LOG_DEBUG);
     if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
     $default = $this->getDefaultChatBasicConfigurations($companyInfo['options']['chatbotScenario']);
     $this->MChatSetting->create();
-    $this->log('data',LOG_DEBUG);
-    $this->log($default,LOG_DEBUG);
     $this->MChatSetting->set([
       "m_companies_id" => $m_companies_id,
       "sc_flg" => $default['sc_flg'],
