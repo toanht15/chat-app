@@ -1625,7 +1625,7 @@ ul.naviBtn {
       }
 
       @mixin miniFont {
-        label, input, textarea {
+        label, input, textarea, select {
           font-size: 0.83em!important;
         }
       }
@@ -2222,7 +2222,10 @@ ul.naviBtn {
                 input {
                   width: 65%;
                   float: right;
-                  padding: 0.25em 0.5em;
+                  padding: 0.25em 0.75em;
+                }
+                select {
+                  padding: 0 0 0 0.25px;
                 }
                 textarea {
                   width: 100%;
@@ -2512,7 +2515,7 @@ ul.naviBtn {
       }
 
       @mixin miniFont {
-        label, input, textarea {
+        label, input, textarea, select {
           font-size: 0.83em!important;
         }
       }
