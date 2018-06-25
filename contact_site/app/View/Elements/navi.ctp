@@ -270,7 +270,15 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       $('.sidebar-sub').animate({left: -200}, duration_time)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
-      $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 81}, duration_time);
+      var subMenuIconTop = self.offset().top;
+      $('[data-sidebar-type="' + type + '"]').removeClass('hide');
+      var subMenuHeight = $('[data-sidebar-type="' + type + '"]').height();
+      $('[data-sidebar-type="' + type + '"]').addClass('hide');
+      if(window.innerHeight < subMenuIconTop + subMenuHeight) {
+        $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: window.innerHeight - subMenuHeight - 6.5}).animate({left: 81}, duration_time); // 6.5はメニューの下部padding分
+      } else {
+        $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 81}, duration_time);
+      }
     });
   });
 
@@ -320,7 +328,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
   });
 
   $('#menu-bar-right').mouseleave(function(e){
-      if(e.toElement.id == 'color-bar-right' || e.toElement.id == 'color-bar') {
+      if(e.target.id == 'color-bar-right' || e.target.id == 'color-bar') {
         //メニュー非表示
         fadeOutLayerMenu();
         $("#menu-bar-right").css('background-color', '#b2d251');
