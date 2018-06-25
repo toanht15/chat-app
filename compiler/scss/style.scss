@@ -909,13 +909,16 @@ ul.ulTab {
       }
     }
     li:hover {
-      background-color: #ECF4DA;
+      background-color: #C3D69B;
       /*color: #fff;*/
       text-decoration: none;
       display: block;
       padding: 10px 10px 10px;
       a{
-        color:#595959;
+        color:#fff;
+      }
+      i {
+        color:#fff !important;
       }
     }
     li.t-link {
@@ -938,7 +941,7 @@ ul.ulTab {
       .fal {
         margin: 0;
         padding: 6px 0px;
-        color: #cccccc;
+        color: #595959;
         margin-left:10px;
       }
       .smallFal {
@@ -1063,7 +1066,7 @@ ul.ulTab {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 11.5px 0px;
+      padding: 0px;
       text-decoration: none;
       margin: 0;
       padding-left: 3px;
