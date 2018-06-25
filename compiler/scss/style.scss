@@ -1048,6 +1048,32 @@ ul.ulTab {
   width: 245px;
   left: -20px;
   padding: 7.5px 0px;
+  &.with-splitter {
+    padding: 0px;
+    div.icon {
+      p.icon-wrap {
+        flex-basis: auto;
+        i.icon {
+          width: 14px;
+        }
+      }
+    }
+  }
+  div.splitter {
+    color: #FFF;
+    background-color: #7f7f7f;
+    display: flex;
+    align-items: center;
+    padding: 0.5em 0;
+    i {
+      font-size: 18px;
+      color: #FFF;
+      margin: 0 0.5em;
+    }
+    span.splitter-label {
+      color: #FFF;
+    }
+  }
   div.icon {
   padding: 0px!important;
     a {

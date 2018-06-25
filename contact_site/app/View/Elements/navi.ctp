@@ -206,21 +206,27 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
     <?php endif; ?>
     <!-- /* シナリオ */ -->
 </div>
-<div data-sidebar-type="statistics" class="sidebar-sub hide">
+<div data-sidebar-type="statistics" class="sidebar-sub with-splitter hide">
     <!-- /* 履歴・統計 */ -->
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
       <div>
-        <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('チャット履歴', 'fa-history', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+        <div class="splitter">
+          <i class='fal fa-history'></i><span class="splitter-label">履歴</span>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', 'fa-history', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('チャット履歴', '', ['href' => ['controller' => 'ChatHistories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('チャット統計レポート', 'fa-chart-line', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('アクセス履歴', '', ['href' => ['controller' => 'Histories', 'action' => 'clearSession'], 'onclick' => 'window.loading.load.start()'], true) ?>
+        </div>
+        <div class="splitter">
+          <i class='fal fa-chart-line'></i><span class="splitter-label">統計レポート</span>
         </div>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('オペレータ統計レポート', 'fa-chart-line', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('チャット統計レポート', '', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()'], true) ?>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('オペレータ統計レポート', '', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
       </div>
     <?php endif; ?>
