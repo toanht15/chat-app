@@ -17,28 +17,79 @@
   //入力量に応じてプルダウンのテキスト入力エリアが拡大する処理
     var column_size = 1;
     enter_flg = false;
-    var Xscroll = false;
 
     $("#TCustomerInformationSettingInputOption").on("input",function(e){
-        var content_size = $(e.target).get(0).scrollHeight;
-        var column_size = $(e.target).val().split(/\r\n|\r|\n/).length;
-        $(e.target).css('overflow-x','hidden');
-        //行数を取得し、もし5行以上だったらスクロール表示させ、5行のままにする
-        if(column_size>5){
-          $(e.target).css('overflow-y','scroll');
-          column_size = 5
+      console.log(column_size);
+
+      $(document).on('keydown', function(e){
+        if(e.keyCode==13){
+          enter_flg = true;
+          long_flg = false;
         }else{
-          $(e.target).css('overflow-y','hidden');
+          enter_flg = false;
         }
-        if($("#widther").text($(e.target).val()).get(0).offsetWidth>260*column_size){}
-        $(e.target).height(20*column_size);
-        //幅は取得したので、その幅によりpaddingを増加させるか考える、改行文字でsplitしたやつ
-        //を1行ずつ判別してそれが260よりも大きかったらpaddingを増加させる、という処理を書けばok
-        console.log($("#widther").text($(e.target).val()).get(0).offsetWidth);
-        console.log($(e.target).val().split(/\r\n|\r|\n/)[0]);
-        $("#widther").empty();
-        popupEvent.resize();
       });
+      var scroll_flg = false;
+      //拡大時の処理
+      if($(e.target).get(0).scrollHeight > $(e.target).get(0).offsetHeight){
+        //改行ではなく文字数超過で複数行に渡る場合
+        if(!enter_flg){
+          scroll_flg = true;
+          if(!long_flg){
+            long_flg = true;
+            //column_size += 1;
+          }
+        }else{
+          $(e.target).height(e.target.scrollHeight-8);
+          //5行分まではポップアップを同時に拡大する処理
+          if(column_size < 6){
+            popupEvent.resize();
+            column_size += 1;
+            if(column_size == 6){
+              scroll_flg = true;
+            }
+          }
+        }
+      }else{
+        while(true){
+          //offsetのサイズをわざと小さくしている
+          $(e.target).height($(e.target).height() - heightsize);
+          //内容物の大きさに合うよう調整
+          if($(e.target).get(0).scrollHeight > $(e.target).get(0).offsetHeight){
+            $(e.target).height(e.target.scrollHeight-8);
+            break;
+          //offset(見た目上)の方が大きい場合
+          }else{
+            popupEvent.resize();
+            if(column_size < 1){
+            }
+          }
+        }
+      }
+
+      if(scroll_flg){
+        $(e.target).css('overflow-y','scroll');
+        $(e.target).animate({scrollTop: $("#TCustomerInformationSettingInputOption")[0].scrollHeight}, 'fast');
+      }else{
+        $(e.target).css('overflow-y','hidden');
+      }
+      switch($(e.target).height()/20){
+      case 1:
+        column_size = 1;
+        break;
+      case 2:
+        column_size = 2;
+        break;
+      case 3:
+        column_size = 3;
+        break;
+      case 4:
+        column_size = 4;
+        break;
+      default:
+        column_size = 5;
+      }
+    });
 
     //既に入力値があった場合にそのサイズに合わせる処理
 
@@ -201,7 +252,6 @@
   };
 </script>
 <!-- 表示されるフォーム画面 -->
-<span id="widther" style="visibility:hidden;position:absolute;white-space:nowrap;"></span>
 <?= $this->Form->create('TCustomerInformationSetting', ['action' => 'add']);?>
 <div id = "column_counter" class="<?php
 //一覧表示のチェックボックスにチェックが入っているかの判別
