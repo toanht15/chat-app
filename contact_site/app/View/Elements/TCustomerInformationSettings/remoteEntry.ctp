@@ -11,6 +11,7 @@
     $("#TCustomerInformationSettingInputOption").height(8);
     var heightsize = 18;
     var long_flg = false;
+    var scroll_flg = false;
 
 
 
@@ -19,24 +20,37 @@
     enter_flg = false;
 
     $("#TCustomerInformationSettingInputOption").on("input",function(e){
-        var content_size = $(e.target).get(0).scrollHeight;
-        var column_size = $(e.target).val().split(/\r\n|\r|\n/).length;
-        //行数を取得し、もし5行以上だったらスクロール表示させ、5行のままにする
-        if(column_size>5){
-          $(e.target).css('overflow-y','scroll');
-          column_size = 5
-        }else{
-          $(e.target).css('overflow-y','hidden');
+      var scroll_flg = false;
+      var content_size = $(e.target).get(0).scrollHeight;
+      var pulldown_array = $(e.target).val().split(/\r\n|\r|\n/);
+      var column_size = pulldown_array.length;
+      //行数を取得し、もし5行以上だったらスクロール表示させ、5行のままにする
+      if(column_size>5){
+        $(e.target).css('overflow-y','scroll');
+        column_size = 5
+      }else{
+        $(e.target).css('overflow-y','hidden');
+      }
+      $(e.target).css('overflow-x','hidden');
+      for(var i = 0; i < column_size; i++){
+        if($("#widther").text(pulldown_array[i]).get(0).offsetWidth>260){
+          console.log(i + "番目がover");
+          scroll_flg = true;
         }
-        if($("#widther").text($(e.target).val()).get(0).offsetWidth>260){}
-        $(e.target).height(20*column_size);
-        //幅は取得したので、その幅によりpaddingを増加させるか考える、改行文字でsplitしたやつ
-        //を1行ずつ判別してそれが260よりも大きかったらpaddingを増加させる、という処理を書けばok
-        console.log($("#widther").text($(e.target).val()).get(0).offsetWidth);
-        $("#widther").empty();
+      }
+        $(e.target).css({'overflow-x':'hidden','padding-bottom':'19px'});
+      if(scroll_flg){
+        $(e.target).css('overflow-x','scroll');
+      }else{
+        $(e.target).css('padding-bottom','4px');
+      }
 
-        popupEvent.resize();
-      });
+      $(e.target).height(20*column_size);
+      //幅は取得したので、その幅によりpaddingを増加させるか考える、改行文字でsplitしたやつ
+      //を1行ずつ判別してそれが260よりも大きかったらpaddingを増加させる、という処理を書けばok
+      $("#widther").empty();
+      popupEvent.resize();
+    });
 
     //既に入力値があった場合にそのサイズに合わせる処理
 
