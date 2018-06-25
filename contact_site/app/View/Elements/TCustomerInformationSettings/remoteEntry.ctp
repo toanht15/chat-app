@@ -16,9 +16,10 @@
     enter_flg = false;
 
 
+
     var pulldown_Id = "#TCustomerInformationSettingInputOption";
     $("#TCustomerInformationSettingInputOption").on("input",function(e){
-      var scroll_flg = false;
+      scroll_flg = false;
       var pulldown_array = $(e.target).val().split(/\r\n|\r|\n/);
       var column_size = pulldown_array.length;
       $(e.target).height(20*column_size);
@@ -39,11 +40,13 @@
           scroll_flg = true;
         }
       }
-        $(e.target).css({'overflow-x':'hidden','padding-bottom':'19px'});
       if(scroll_flg){
-        $(e.target).css('overflow-x','scroll');
+        $(e.target).css({'overflow-x':'scroll','padding-bottom':'19px'});
+        if($(e.target).css('overflow-y')=='scroll'){
+          $(e.target).css({'padding-bottom':'4px'});
+        }
       }else{
-        $(e.target).css('padding-bottom','4px');
+        $(e.target).css({'overflow-x':'hidden','padding-bottom':'4px'});
       }
       $("#widther").empty();
       popupEvent.resize();
