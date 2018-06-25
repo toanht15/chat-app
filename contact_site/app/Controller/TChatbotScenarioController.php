@@ -17,7 +17,7 @@ App::uses('ChatbotScenarioException', 'Lib/Error');
 
 class TChatbotScenarioController extends FileAppController {
 
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -1006,6 +1006,13 @@ sinclo@medialink-ml.co.jp
     if(!empty($this->request->query['lastpage'])){
       $this->set('lastPage', $this->request->query['lastpage']);
     }
+    $chatbotScenarioAddCustomerInformationList = $this->TCustomerInformationSetting->find('all', array(
+      'conditions' => array(
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'delete_flg' => 0
+      )
+    ));
+    $this->set('chatbotScenarioAddCustomerInformationList', $chatbotScenarioAddCustomerInformationList);
   }
 
   /**
