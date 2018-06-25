@@ -47,6 +47,7 @@
           location.href = "<?=$this->Html->url(array('controller' => 'TCustomVariables', 'action' => 'index'))?>";
           return false;
         }
+        loading.load.finish();
         for (var i = 0; i < keys.length; i++) {
           if ( data[keys[i]].length > 0 ) {
             var target = $("[name='data[TCustomVariable][" + keys[i] + "]']");
