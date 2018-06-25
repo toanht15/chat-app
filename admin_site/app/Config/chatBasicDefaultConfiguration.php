@@ -24,7 +24,7 @@ $config['default'] = [
       'no_standby_sorry_message' => 'お問い合わせありがとうございます。
 申し訳ございませんが、ただ今担当の者が席を外しております。
 しばらく経ってから再度お問い合わせください。',
-      'initial_notification_message' => '{"0":{"seconds":"1","message":"ただいま担当の者を呼び出しておりますので、そのままでお待ちください。"}}',
+      'initial_notification_message' => ["0 " => ["seconds"=>"1","message"=>"ただいま担当の者を呼び出しておりますので、そのままでお待ちください。"]],
     ],
     'basic_without_scenario' => [
       'sc_flg' => 2,
@@ -51,7 +51,7 @@ $config['default'] = [
 
 [] はい、すべて入力しました。
 [] いいえ、入力していません。',
-      'initial_notification_message' => '{"0":{"seconds":"1","message":"ただいま担当の者を呼び出しておりますので、そのままでお待ちください。"}}',
+      'initial_notification_message' => ["0 " => ["seconds"=>"1","message"=>"ただいま担当の者を呼び出しておりますので、そのままでお待ちください。"]],
     ]
   ]
 ];
