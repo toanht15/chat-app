@@ -916,7 +916,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   this.autoScroll = function() {
     $timeout(function() {
       var target = $('#chatTalk');
-      var paddingBottom = (parseInt($('#chatTalk').css('height')) * 60) / 374;
+      var paddingBottom = parseFloat($('#chatTalk').css('padding-bottom'));
       var lastMessageHeight = $("#chatTab ul").find("div:last").height();
       var chatTalk = document.getElementById('chatTalk');
       var time = 500;
