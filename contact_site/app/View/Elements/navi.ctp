@@ -329,6 +329,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
   });
 
   $("#header").mouseleave(function(e){
+    fadeOutLayerMenu();
     $("#menu-bar-right").css('background-color', '#b2d251');
   });
 
