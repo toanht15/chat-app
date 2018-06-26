@@ -386,9 +386,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( !window.hasOwnProperty('socket') ) return false;
         socket.on(eventName, function () {
           var args = arguments;
-          $rootScope.$apply(function () {
-            callback.apply(socket, args);
-          });
+            $rootScope.$apply(function () {
+              $timeout(function(){
+                callback.apply(socket, args);
+              });
+            });
         });
       },
       emit: function (eventName, d, callback) {
@@ -2238,6 +2240,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('customerInfoUpdated', function (data) {
       var obj = JSON.parse(data);
       $scope.customerList[obj.userId] = JSON.parse(obj.data);
+      $scope.$apply();
     });
 
 
@@ -3980,7 +3983,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }
   });
 
-  sincloApp.directive('ngCustomer', function(){
+  sincloApp.directive('ngCustomer', function($timeout){
     return {
       restrict: 'A',
       link: function(scope, elems, attrs, ctrl){
@@ -4065,6 +4068,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               scope.customPrevData = angular.copy(ret);
               if ( angular.isDefined(scope.detailId) && scope.detailId !== "" ) {
                 scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+                console.log("scope apply");
+                $timeout(function(){
+                  scope.$apply();
+                },100);
               }
               else {
                 console.error('Please Tab Close.');
