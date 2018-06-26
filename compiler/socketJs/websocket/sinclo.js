@@ -2130,15 +2130,13 @@
           return msg;
         },
         setPlaceholderMessage: function(msg) {
-          if( !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false" ) {
-            var message = document.getElementById('sincloChatMessage');
-            if(message) {
-              message.placeholder = msg;
-            }
-            var miniMessage = document.getElementById('miniSincloChatMessage');
-            if(miniMessage) {
-              miniMessage.placeholder = msg;
-            }
+          var message = document.getElementById('sincloChatMessage');
+          if(message) {
+            message.placeholder = msg;
+          }
+          var miniMessage = document.getElementById('miniSincloChatMessage');
+          if(miniMessage) {
+            miniMessage.placeholder = msg;
           }
         },
         clearPlaceholderMessage: function() {
@@ -2626,7 +2624,7 @@
             var lastMessage = $('#chatTalk sinclo-chat div:last-of-type');
             if(lastMessage.find('.sinclo_re').length > 0) {
               var lastMessageHeight = lastMessage.height();
-              var paddingBottom = (parseInt($('#chatTalk').css('height')) * 60) / 374;
+              var paddingBottom = parseFloat($('#chatTalk').css('padding-bottom'));
               if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
                 $('#sincloBox #chatTalk').animate({
                   scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)

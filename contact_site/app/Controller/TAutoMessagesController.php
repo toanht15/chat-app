@@ -829,6 +829,12 @@ class TAutoMessagesController extends AppController {
         $nextSort = intval($lastData['TAutoMessage']['sort']) + 1;
       }
       $saveData['TAutoMessage']['sort'] = $nextSort;
+
+      $count = $this->TAutoMessage->find('first',[
+        'fields' => ['count(*) as count'],
+        'conditions' => ['TAutoMessage.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
+      ]);
+      $nextPage = floor((intval($count[0]['count']) + 99) / 100);
     }
 
     // メール送信設定の値を抜く
@@ -954,12 +960,7 @@ class TAutoMessagesController extends AppController {
       throw $exception;
     }
 
-    $count = $this->TAutoMessage->find('first',[
-      'fields' => ['count(*) as count'],
-      'conditions' => ['TAutoMessage.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
-    ]);
-
-    $page = floor((intval($count[0]['count']) + 99) / 100);
+    $page = $nextPage;
 
     return $page >= 1 ? $page : 1;
   }

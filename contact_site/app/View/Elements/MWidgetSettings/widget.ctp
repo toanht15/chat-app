@@ -137,7 +137,7 @@
     #sincloBox p#widgetTitle.sp { font-size: 14px;}
     #sincloBox p#widgetTitle.spText{ text-indent: 1em; }
     #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-    #sincloBox div.widgetHeaderWrap:not(.sp):hover #widgetTitle { opacity: 0.75; }
+    #sincloBox div.widgetHeaderWrap:not(.sp):hover { opacity: 0.75; }
     #sincloBox div.widgetHeaderWrap #titleWrap { position: relative; }
     /*
           #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
