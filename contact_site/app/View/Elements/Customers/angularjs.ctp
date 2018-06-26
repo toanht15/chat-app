@@ -1183,6 +1183,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.getCustomerInfoFromMonitor = function(m){
       $scope.customerList[m.userId] = m.customerInfo;
+      $scope.requestedCustomerList.push(m.userId);
     };
 
     // 顧客の詳細情報を取得する
@@ -2001,7 +2002,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       $scope.monitorList[obj.tabId] = obj;
 
-      //$scope.getCustomerInfoFromMonitor(obj);
+      if(obj.customerInfo) {
+        $scope.getCustomerInfoFromMonitor(obj);
+      }
 
       if ( 'referrer' in obj && 'referrer' in obj) {
         var url = $scope.trimToURL(obj.referrer);
@@ -3789,9 +3792,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       returnValue.forEach(function(elm, index, array){
         if(!isset(scope.customerList[elm.userId])) {
           if(scope.requestedCustomerList.indexOf(elm.userId) === -1) {
-            scope.getCustomerInfoFromMonitor(elm);
+            scope.getCustomerInfo(elm.userId, function(result){
+              scope.customerList[elm.userId] = result;
+              scope.$apply();
+            });
             scope.requestedCustomerList.push(elm.userId);
           }
+        } else {
+          elm.customerInfo = scope.customerList[elm.userId];
         }
       });
       return returnValue;
@@ -4057,6 +4065,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
         }, function(){
           // 変わった場合
+          console.log("changed");
           if ( !(scope.detail === undefined || scope.detail === {}) && scope.detail.tabId !== scope.detailId ) {
             scope.customData = {};
             scope.customPrevData = {};

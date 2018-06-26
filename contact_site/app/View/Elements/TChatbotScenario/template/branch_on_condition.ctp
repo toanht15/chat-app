@@ -56,7 +56,7 @@
     <li>
       <div>
         <hr class="separator"/>
-        <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.elseEnabled" ng-init="setItem.elseEnabled = false">上記を満たさない場合に実行するアクション<span class="questionBalloon"><icon class="questionBtn" data-tooltip="設定した条件のいずれにも該当しない場合に実行するアクションを設定します。（本設定を行わない場合、設定された条件に該当しない場合は次のアクションに進みます。）">?</icon></span></label>
+        <label class="fb13em pointer p05tb"><input type="checkbox" ng-model="setItem.elseEnabled" ng-init="setItem.elseEnabled == true">上記を満たさない場合に実行するアクション<span class="questionBalloon"><icon class="questionBtn" data-tooltip="設定した条件のいずれにも該当しない場合に実行するアクションを設定します。（本設定を行わない場合、設定された条件に該当しない場合は次のアクションに進みます。）">?</icon></span></label>
         <ul class="condition else" ng-if="setItem.elseEnabled == true">
           <li class="styleFlexbox">
             <div class="conditionTypeSelect">

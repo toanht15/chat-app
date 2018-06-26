@@ -1010,6 +1010,9 @@ sinclo@medialink-ml.co.jp
       'conditions' => array(
         'm_companies_id' => $this->userInfo['MCompany']['id'],
         'delete_flg' => 0
+      ),
+      'order' => array(
+        'sort' => 'asc'
       )
     ));
     $this->set('chatbotScenarioAddCustomerInformationList', $chatbotScenarioAddCustomerInformationList);
