@@ -8,7 +8,7 @@
       </div>
     </li>
     <li class="styleFlexbox">
-      <span class="fb9em"><label>送信ファイル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信させたいファイルを設定します。" data-tooltip-width='200'>?</icon></span></label></span>
+      <span class="fb9em"><label>送信ファイル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信させたいファイルを設定します。">?</icon></span></label></span>
       <ul class="selectFileArea">
         <li ng-if="!main.isFileSet(setItem)">
           <span>ファイルが選択されていません</span>

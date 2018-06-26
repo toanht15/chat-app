@@ -959,7 +959,7 @@ var socket, // socket.io
           //　チャット本文コピーできる
           html += '      #sincloBox ul#chatTalk { width: 100%; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0; clear: both!important; }';
         }
-        html += '      #sincloBox ul sinclo-chat { clear: both!important } ';
+        html += '      #sincloBox ul sinclo-chat { clear: both!important; padding-bottom: '+ sizeList['paddingBottom'] +'px; display: block; }';
         html += '      #sincloBox ul#chatTalk li { text-align: left!important; word-wrap: break-word; word-break: break-all; white-space: pre-wrap!important; background-color: transparent; white-space: pre; color: ' + chatContentTextColor + '; font-weight: normal!important; }';
         if (widget.chatMessageDesignType === 2) {
           // 吹き出し型
@@ -1414,7 +1414,7 @@ var socket, // socket.io
         // チャットを使用する際
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
-          html += '      #sincloBox ul#chatTalk { height: '+ sizeList['chatTalkHeight'] +'px; padding: 5px 5px '+ sizeList['paddingBottom'] +'px 5px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+          html += '      #sincloBox ul#chatTalk { height: '+ sizeList['chatTalkHeight'] +'px; padding: 5px 5px 0px 5px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
           html += '      #sincloBox ul#chatTalk li { border-radius: 12px; margin: 5px 0 0 0; padding: 10px 15px; }';
           if(colorList['seBorderNone'] === 0){
             html += '      #sincloBox ul#chatTalk li.sinclo_se { border: 1px solid '+ colorList['seBorderColor'] +'; }';

@@ -2234,6 +2234,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       pushToList(obj);
     });
 
+    socket.on('customerInfoUpdated', function (data) {
+      var obj = JSON.parse(data);
+      $scope.customerList[obj.userId] = JSON.parse(obj.data);
+    });
+
 
     /* タブ状態受け渡し */
     // タブ状態を取得

@@ -10,7 +10,7 @@
     <li class="styleFlexbox">
       <span class="fb11em"><label>ファイル形式</label></span>
       <div>
-        <label ng-repeat="(key, item) in receiveFileTypeList" class="styleBlock pointer"><input class="selectFileTypeRadio" type="radio" name="action_{{setActionId}}_receive_file_type" value="{{key}}" ng-model="setItem.receiveFileType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}" data-tooltip-width='240'>?</icon></span><p class="radio-annotation"><s>{{item.annotation}}</s></p></label>
+        <label ng-repeat="(key, item) in receiveFileTypeList" class="styleBlock pointer"><input class="selectFileTypeRadio" type="radio" name="action_{{setActionId}}_receive_file_type" value="{{key}}" ng-model="setItem.receiveFileType">{{item.label}}<span class="questionBalloon"><icon class="questionBtn" data-tooltip="{{item.tooltip}}">?</icon></span><p class="radio-annotation"><s>{{item.annotation}}</s></p></label>
         <input type="text" name="extendedReceiveFileExtensions" ng-model="setItem.extendedReceiveFileExtensions" ng-if="setItem.receiveFileType == 2">
       </div>
     </li>
@@ -21,7 +21,8 @@
       </div>
     </li>
     <li>
-      <label class="pointer"><input type="checkbox" ng-model="setItem.cancelEnabled" ng-init="setItem.isConfirm = setItem.isConfirm == 0">キャンセルできるようにする<span class="questionBalloon"><icon class="questionBtn" data-tooltip="ファイル送信をキャンセルできるようにする（ファイル送信を行わず次のアクションに進むことを許容する）場合、チェックをONにしてください。" data-tooltip-width='300'>?</icon></span></label>
+      <label class="pointer"><input type="checkbox" ng-model="setItem.cancelEnabled" ng-init="setItem.isConfirm = setItem.isConfirm == 0">キャンセルできるようにする<span class="questionBalloon"><icon class="questionBtn" data-tooltip="ファイル送信をキャンセルできるようにする（ファイル送信を行わず次のアクションに進むことを許容する）場合、チェックをONにしてください。">?</icon></span></label>
+
       <ul ng-if="setItem.cancelEnabled == true" class="indentDown">
         <li class="styleFlexbox">
           <span class="fb9em"><label>名称<span class="questionBalloon"><icon class="questionBtn" data-tooltip="キャンセルボタンの表示テキストを設定します。">?</icon></span></label></span>
