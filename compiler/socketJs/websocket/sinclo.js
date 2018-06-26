@@ -2130,15 +2130,13 @@
           return msg;
         },
         setPlaceholderMessage: function(msg) {
-          if( !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false" ) {
-            var message = document.getElementById('sincloChatMessage');
-            if(message) {
-              message.placeholder = msg;
-            }
-            var miniMessage = document.getElementById('miniSincloChatMessage');
-            if(miniMessage) {
-              miniMessage.placeholder = msg;
-            }
+          var message = document.getElementById('sincloChatMessage');
+          if(message) {
+            message.placeholder = msg;
+          }
+          var miniMessage = document.getElementById('miniSincloChatMessage');
+          if(miniMessage) {
+            miniMessage.placeholder = msg;
           }
         },
         clearPlaceholderMessage: function() {
@@ -2626,7 +2624,7 @@
             var lastMessage = $('#chatTalk sinclo-chat div:last-of-type');
             if(lastMessage.find('.sinclo_re').length > 0) {
               var lastMessageHeight = lastMessage.height();
-              var paddingBottom = (parseInt($('#chatTalk').css('height')) * 60) / 374;
+              var paddingBottom = parseFloat($('#chatTalk').css('padding-bottom'));
               if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
                 $('#sincloBox #chatTalk').animate({
                   scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
@@ -4117,11 +4115,14 @@
             matchAllSpeechContent: function(msg, callback) {
               // FIXME マッチした処理が２回以上の場合、チャット送信処理も２回以上処理される
               var matched = false;
-              if((
-                !check.isset(storage.s.get('operatorEntered'))
-                || storage.s.get('operatorEntered') === "false"
-                || (!sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput())
-              ) && this.speechContentRegEx.length > 0) {
+              // チェック処理に入る条件（すべてAND）
+              // 1. オペレータが未入室状態
+              // 2. シナリオ中ではない
+              // 3. シナリオの入力待ち状態ではない
+              // 4. マッチ設定が存在する
+              if(
+                (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
+                && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() && this.speechContentRegEx.length > 0) {
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
