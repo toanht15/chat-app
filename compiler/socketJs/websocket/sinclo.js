@@ -1226,7 +1226,7 @@
               var targetDate = new Date(storage.s.get('notificationTime'));
               //現在時刻から通知された時間の差
               var diff = (now.getTime() - targetDate.getTime()) / 1000;
-              data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
+              var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
               for (var i = 0; i < Object.keys(data).length; i++) {
                 (function(pram) {
                   setTimeout(function() {
@@ -2483,7 +2483,7 @@
           div.appendChild(li);
           chatList.appendChild(div);
 
-          var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showAutomessageName) !== 2 ? sincloInfo.widget.subTitle : "") + "</span>";
+          var content = (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
           content    += "<div class='receiveFileContent'>";
           content    += "  <div class='selectFileArea'>";
           content    += "    <p class='drop-area-message'>" + message + "</p>";
@@ -4497,8 +4497,10 @@
 
           // 元のメッセージ入力欄に戻す
           sinclo.chatApi.hideMiniMessageArea();
+          sinclo.chatApi.removeAllEvent();
+          sinclo.chatApi.initEvent();
           var type = (beforeTextareaOpened === "close") ? "2" : "1";
-          self._handleChatTextArea(type)
+          self._handleChatTextArea(type);
         });
       },
       isProcessing: function() {
