@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 $main-color: #C3D69B;
-$string-color: rgba(0, 0, 0, 0.87);
+$string-color: #595959;
 $line-color: #B5B5B5;
 $error-color: #F57E7E;
 $line-color: #909090;
@@ -64,7 +64,7 @@ h1 {
 s {
   text-decoration: none;
   font-size: 0.9em;
-  color: #8f8f8f;
+  color: rgba(0, 0, 0, 0.54);
 }
 
 input[type='range'] {
