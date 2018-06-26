@@ -461,6 +461,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var target = $scope.setActionList[actionStep].addCustomerInformations;
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllAddCustomerInformationView(actionStep);
+
     }
   };
 
@@ -816,7 +817,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
       var targetObjList = $scope.setActionList[actionStep].conditionList;
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 5)
-      });
+    });
   };
 
   this.controllAddCustomerInformationView = function(actionStep) {
