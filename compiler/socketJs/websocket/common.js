@@ -959,7 +959,8 @@ var socket, // socket.io
           //　チャット本文コピーできる
           html += '      #sincloBox ul#chatTalk { width: 100%; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0; clear: both!important; }';
         }
-        html += '      #sincloBox ul sinclo-chat { clear: both!important; padding-bottom: '+ sizeList['paddingBottom'] +'px; display: block; }';
+        html += '      #sincloBox ul sinclo-chat { clear: both!important; }';
+        html += '      #sincloBox ul sinclo-typing { padding-bottom: '+ sizeList['paddingBottom'] +'px; display: block; }';
         html += '      #sincloBox ul#chatTalk li { text-align: left!important; word-wrap: break-word; word-break: break-all; white-space: pre-wrap!important; background-color: transparent; white-space: pre; color: ' + chatContentTextColor + '; font-weight: normal!important; }';
         if (widget.chatMessageDesignType === 2) {
           // 吹き出し型
