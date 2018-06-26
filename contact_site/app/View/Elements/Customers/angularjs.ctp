@@ -1566,6 +1566,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           content = $scope.createTextOfReceivedFile(message.comment, message.downloadUrl, message.extension);
           if (!isExpired) {
             li.style.cursor = "pointer";
+            li.style.lineHeight = 0;
             li.addEventListener("click", function (event) {
               window.open(message.downloadUrl)
             });
