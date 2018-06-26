@@ -18,7 +18,7 @@ sincloApp.directive('stringToNumber', function() {
   };
 });
 
-sincloApp.controller('WidgetCtrl', function($scope){
+sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
 
@@ -1126,7 +1126,9 @@ sincloApp.controller('WidgetCtrl', function($scope){
       if($scope.showWidgetType !== tag){
         $scope.switchWidget(tag);
       }
-      $scope.openFlg = false;
+      $timeout(function(){
+        $scope.openFlg = false;
+      },0);
     }
 
     $scope.settingShowTimeRadioButtonEnable = function(jq) {

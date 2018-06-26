@@ -1,7 +1,7 @@
 @charset "UTF-8";
 
 $main-color: #C3D69B;
-$string-color: #595959;
+$string-color: rgba(0, 0, 0, 0.87);
 $line-color: #B5B5B5;
 $error-color: #F57E7E;
 $line-color: #909090;
@@ -26,6 +26,22 @@ $sub-sidebar-z-index: 5;
   background-color: #ADAFAE;
 }
 
+@mixin placeholder($color) {
+  &::placeholder {
+    color: $color;
+  }
+
+  // IE
+  &:-ms-input-placeholder {
+    color: $color;
+  }
+
+  // Edge
+  &::-ms-input-placeholder {
+    color: $color;
+  }
+}
+
 body {
   font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
   font-size: 12px;
@@ -36,6 +52,7 @@ body {
 }
 
 pre, input, textarea {
+  @include placeholder(rgba(0, 0, 0, 0.32));
   font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
 }
 
