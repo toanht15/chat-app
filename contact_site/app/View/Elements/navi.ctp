@@ -64,7 +64,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
     </li>
     <hr class="separator">
     <li class="t-link" onclick="window.open('https://info.sinclo.jp/manual/',target = '_blank')">
-      <i class="fal fa-book-open fa-2x smallFal" style = "font-size: 13.4px; padding: 8px 0px;"></i>
+      <i class="fal fa-question-circle fa-2x smallFal"></i>
       <a href="javascript:void(0)">
         ヘルプ
       </a>
@@ -329,7 +329,6 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
   });
 
   $("#header").mouseleave(function(e){
-    fadeOutLayerMenu();
     $("#menu-bar-right").css('background-color', '#b2d251');
   });
 

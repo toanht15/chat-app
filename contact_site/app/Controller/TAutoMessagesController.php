@@ -762,6 +762,8 @@ class TAutoMessagesController extends AppController {
     try {
       $transactions = $this->TransactionManager->begin();
       $nextPage = $this->_entryProcess($saveData);
+      $this->log('nextPage',LOG_DEBUG);
+      $this->log($nextPage,LOG_DEBUG);
       $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       $this->redirect('/TAutoMessages/index/page:'.$nextPage, null, false);
@@ -785,6 +787,8 @@ class TAutoMessagesController extends AppController {
   private function _entryProcess($saveData) {
     $errors = [];
     $saveData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
+    $this->log('saveData',LOG_DEBUG);
+    $this->log($saveData,LOG_DEBUG);
     if(array_key_exists ('lastPage',$saveData)){
       $nextPage = $saveData['lastPage'];
     }
@@ -829,6 +833,12 @@ class TAutoMessagesController extends AppController {
         $nextSort = intval($lastData['TAutoMessage']['sort']) + 1;
       }
       $saveData['TAutoMessage']['sort'] = $nextSort;
+
+      $count = $this->TAutoMessage->find('first',[
+        'fields' => ['count(*) as count'],
+        'conditions' => ['TAutoMessage.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
+      ]);
+      $nextPage = floor((intval($count[0]['count']) + 99) / 100);
     }
 
     // メール送信設定の値を抜く
@@ -954,12 +964,7 @@ class TAutoMessagesController extends AppController {
       throw $exception;
     }
 
-    $count = $this->TAutoMessage->find('first',[
-      'fields' => ['count(*) as count'],
-      'conditions' => ['TAutoMessage.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
-    ]);
-
-    $page = floor((intval($count[0]['count']) + 99) / 100);
+    $page = $nextPage;
 
     return $page >= 1 ? $page : 1;
   }
