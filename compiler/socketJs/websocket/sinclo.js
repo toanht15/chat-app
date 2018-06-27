@@ -1221,23 +1221,23 @@
             }
           } else {
             //通知した場合
-            if(chat.noticeFlg == 1 && firstCheck == true) {
+            if(chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
               var now = new Date();
               var targetDate = new Date(storage.s.get('notificationTime'));
               //現在時刻から通知された時間の差
               var diff = (now.getTime() - targetDate.getTime()) / 1000;
               var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
               for (var i = 0; i < Object.keys(data).length; i++) {
-                (function(pram) {
+                (function(times) {
                   setTimeout(function() {
                     //オペレータが入室していなかった場合
-                    if(storage.s.get('operatorEntered') !== 'true') {
-                      sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
+                    if(storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
+                      sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
                       sinclo.chatApi.scDown();
                       var sendData = {
                         siteKey: obj.siteKey,
                         tabId: obj.tabId,
-                        chatMessage: data[pram].message,
+                        chatMessage: data[times].message,
                         messageType: sinclo.chatApi.messageType.notification,
                         messageDistinction: chat.messageDistinction,
                         mUserId: chat.userId,
@@ -1245,7 +1245,7 @@
                       }
                       emit("sendInitialNotificationChat", {messageList: sendData});
                     }
-                  },(data[pram].seconds-diff)*1000);
+                  },(data[times].seconds-diff)*1000);
                   firstCheck = false;
                 })(i);
               }
@@ -1448,17 +1448,17 @@
         //初回通知メッセージを利用している場合
         if (obj.notification === true) {
           storage.s.set('notificationTime',obj.created);
-          data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
+          var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
           for (var i = 0; i < Object.keys(data).length; i++) {
-            (function(pram) {
+            (function(times) {
                 setTimeout(function() {
-                if(storage.s.get('operatorEntered') !== 'true') {
-                  sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
+                if(storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
+                  sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
                   sinclo.chatApi.scDown();
                   var sendData = {
                     siteKey: obj.siteKey,
                     tabId: obj.tabId,
-                    chatMessage: data[pram].message,
+                    chatMessage: data[times].message,
                     messageType: sinclo.chatApi.messageType.notification,
                     messageDistinction: obj.messageDistinction,
                     chatId: obj.chatId,
@@ -1467,7 +1467,7 @@
                   }
                   emit("sendInitialNotificationChat", {messageList: sendData});
                 }
-              },data[pram].seconds*1000);
+              },data[times].seconds*1000);
             })(i);
           }
         }
