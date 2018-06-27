@@ -1209,7 +1209,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.getOldChat = function(historyId, oldFlg, event){
       if(event !== undefined) {
         //過去のチャットを選択したとき
-        $('.pastChatShowBold').css('background-color','#fff');
+        $('.pastChatShowBold').css('cssText', 'background-color: #fff');
         $(event.currentTarget).css('cssText', 'background-color: rgb(235, 246, 249)!important');
       }
       $scope.chatLogMessageList = [];
