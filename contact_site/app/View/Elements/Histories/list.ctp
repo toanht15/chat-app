@@ -12,7 +12,7 @@
             <th width="10%">参照元URL</th>
             <th width=" 5%">滞在時間</th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-            <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon questionBalloonPosition13">
+            <th id="lastSpeechLabel" width=" 6%">最終発言後<br>離脱時間<div class="questionBalloon commontooltip" data-text="サイト訪問者が最後に発言してからページを離脱するまでの時間">
                 <icon class="questionBtn">？</icon>
               </div></th>
             <th width=" 4%">成果</th>
@@ -99,11 +99,4 @@ if ( isset($history['THistory']['visitors_id']) ) {
     </tbody>
 </table>
 <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-<div id='lastSpeechTooltip' class="explainTooltip">
-  <icon-annotation>
-    <ul>
-      <li><span>サイト訪問者が最後に発言してからページを離脱するまでの時間</span></li>
-    </ul>
-  </icon-annotation>
-</div>
 <?php endif; ?>

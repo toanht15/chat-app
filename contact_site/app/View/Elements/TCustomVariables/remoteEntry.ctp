@@ -1,22 +1,22 @@
 <script type="text/javascript">
 
   $(function () {
-  //ツールチップの表示制御
-    $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
-      var parentTdId = $(this).parent().attr('id');
-      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-      targetObj.find('icon-annotation').css('display','block');
+    addTooltipEvent();
+    //タグを含むツールチップの制御
+    $('#ExtraLabel').off("mouseenter").on('mouseenter',function(event){
+      targetObj = $('#ExtraTooltip').find('icon-annotation')
+      targetObj.css('display','flex');
+      console.log(targetObj);
       //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
       targetObj.css({
-        top: $(this).get(0).offsetTop  - 57  + 'px',
-        left: $(this).get(0).offsetLeft - 6 + 'px'
+        top: $(this).get(0).offsetTop - 273 + 'px',
+        left: $(this).get(0).offsetLeft - 95 + 'px',
+        'position':'relative'
       });
     });
 
-    $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
-      var parentTdId = $(this).parent().attr('id');
-      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-      targetObj.find('icon-annotation').css('display','none');;
+    $('#ExtraLabel').off("mouseleave").on('mouseleave',function(event){
+      $('#ExtraTooltip').find('icon-annotation').css('display','none');
     });
   });
 
@@ -76,6 +76,7 @@
 
 </script>
 
+<?php echo $this->Html->script("common.js"); ?>
 <!-- 表示されるフォーム画面 -->
 <?= $this->Form->create('TCustomVariable', array('action' => 'add')); ?>
   <div class="form01">
@@ -85,8 +86,8 @@
         <label class="require">
           変数名
         </label>
-        <div class="questionBallon" id="filterType1Label">
-          <icon class="questionBtn">?</icon>
+        <div class="questionBallon">
+          <icon class="questionBtn commontooltip" data-text="変数名を設定します。ここで設定した変数名に取得したデータの内容が保存され、訪問ユーザー情報に<br>自動で付与することが可能です。（別途、訪問ユーザ情報設定画面からの設定も必要です）">?</icon>
         </div>
         <?= $this->Form->input('variable_name', array('placeholder' => '変数名', 'div' => false, 'label' => false, 'maxlength' => 100)) ?>
       </span>
@@ -96,7 +97,7 @@
         <label class="require">
           CSSセレクタ
         </label>
-        <div class="questionBallon" id="filterType2Label">
+        <div class="questionBallon" id="ExtraLabel">
           <icon class="questionBtn">?</icon>
         </div>
         <?= $this->Form->input('attribute_value', array('placeholder' => 'CSSセレクタ', 'div' => false, 'label' => false, 'maxlength' => 100)) ?>
@@ -106,14 +107,7 @@
       <span style="margin-top: 8px;">コメント</span>
       <?= $this->Form->textarea('comment', array('placeholder' => 'コメント', 'div' => false, 'label' => false, 'maxlength' => 300,'style' => 'margin-top: 8px; padding: 10px;')) ?>
     </div>
-    <div id="filterType1Tooltip" class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span class="detail" style="width:314px;">変数名を設定します。<br>ここで設定した変数名に取得したデータの内容が保存され、訪問ユーザー情報に自動で付与することが可能です。（別途、訪問ユーザ情報設定画面からの設定も必要です）</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id="filterType2Tooltip" class="explainTooltip">
+    <div id="ExtraTooltip" class="explainTooltip">
       <icon-annotation>
         <ul>
           <li><span class="detail" style="width:550px;">ウィジェットを表示している画面上から取得する値をCSSのセレクタと同様の記入方法で設定します。<br><br>例１）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4c9db3">#user_name</span><br>【HTMLの例】<br><div style="color:#4c9db3">&lt;span id=&quot;user_name&quot;&gt;田中太郎&lt;/span&gt;</div><br>例２）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4c9db3">#nav-tools .nav-line-1</span><span style="color:rgb(192, 0,0)">　※ID属性とクラス名の間に要半角スペース</span><br>【HTMLの例】<br><div style="color:#4c9db3">&lt;div id=&quot;nav-tools&quot;&gt;<br> 　　(中略)<br>　&lt;span class=&quot;nav-line-1&quot;&gt;田中太郎&lt;/span&gt;<br>　&lt;span class=&quot;nav-line-2&quot;&gt;リスト&lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;&lt;/span&gt;<br> 　　(中略)<br>&lt;/div&gt;</div></span></li>

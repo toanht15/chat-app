@@ -20,11 +20,14 @@
                 <?php
                 $isFirst = true;
                 foreach($typeSelect as $value => $label) {
+                  if($value==1){$help = "指定した接続元IPアドレス以外からのsinclo管理画面の使用を制限します。";
+                  }else{$help = "指定した接続元IPアドレスからのsinclo管理画面の使用を制限します。";
+                  }
                   if($isFirst) {
                     echo '<label style="display:inline-block"><input type="radio" name="data[MSecuritySettings][ip_filter_enabled]" id="MSecuritySettingsIpFilterEnabled'.$value.'" value="'.$value.'" class="pointer" '.(!(isset($coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) ? 'disabled="disabled"' : '').(strcmp($this->request->data['MSecuritySettings']['ip_filter_enabled'], $value) === 0 ? ' checked="checked"' : '').' >'.$label.'</label><br>';
                     $isFirst = false;
                   } else {
-                    echo '<label style="display:inline-block"'.(isset($coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="15.5"').'><input type="radio" name="data[MSecuritySettings][ip_filter_enabled]" id="MSecuritySettingsIpFilterEnabled'.$value.'" value="'.$value.'" class="pointer" '.(!(isset($coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) ? 'disabled="disabled"' : '').(strcmp($this->request->data['MSecuritySettings']['ip_filter_enabled'], $value) === 0 ? ' checked="checked"' : '').'>'.$label.'</label><div class = "questionBalloon" id="filterType'.$value.'Label"><icon class = "questionBtn">?</icon></div><br>';
+                    echo '<label style="display:inline-block"'.(isset($coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="15.5"').'><input type="radio" name="data[MSecuritySettings][ip_filter_enabled]" id="MSecuritySettingsIpFilterEnabled'.$value.'" value="'.$value.'" class="pointer" '.(!(isset($coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) && $coreSettings[C_COMPANY_USE_SECURITY_LOGIN_IP_FILTER]) ? 'disabled="disabled"' : '').(strcmp($this->request->data['MSecuritySettings']['ip_filter_enabled'], $value) === 0 ? ' checked="checked"' : '').'>'.$label.'</label><div class = "questionBalloon"><icon class = "questionBtn commontooltip" data-text='.$help.'>?</icon></div><br>';
                   }
                 }
                 ?>
@@ -86,19 +89,5 @@
     <?= $this->Html->link('更新', 'javascript:void(0)', ['id' => 'updateBtn', 'class' => 'greenBtn btn-shadow']) ?>
     <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
     <?php endif; ?>
-  </div>
-  <div id='filterType1Tooltip' class="explainTooltip">
-    <icon-annotation>
-      <ul>
-        <li><span>指定した接続元IPアドレス以外からのsinclo管理画面の使用を制限します。</span></li>
-      </ul>
-    </icon-annotation>
-  </div>
-  <div id='filterType2Tooltip' class="explainTooltip">
-    <icon-annotation>
-      <ul>
-        <li><span>指定した接続元IPアドレスからのsinclo管理画面の使用を制限します。</span></li>
-      </ul>
-    </icon-annotation>
   </div>
 </div>
