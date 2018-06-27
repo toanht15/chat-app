@@ -6978,7 +6978,6 @@ ul.naviBtn {
               }
 
               h5.condition-separator {
-                cursor: pointer;
                 font-size: inherit;
                 border-color: #C3D69B;
                 border-style: solid;
@@ -6989,6 +6988,9 @@ ul.naviBtn {
 
                 span {
                   &.removeArea {
+                    i.deleteBtn {
+                      cursor: pointer;
+                    }
                     width: 2em;
                     float: left;
                     text-align: center;
