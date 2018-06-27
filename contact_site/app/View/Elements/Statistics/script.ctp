@@ -313,7 +313,7 @@ $(window).load(function(){
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: $(this).offset().top  - 26 + 'px',
+      top: $(this).offset().top  - 40 + 'px',
       left:$(this).offset().left - 205 + 'px'
     });
   });

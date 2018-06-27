@@ -91,7 +91,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
         <th width=" 5%">No</th>
         <th width="45%">名称</th>
-        <th width="45%">呼び出し元<div class="questionBalloon"><icon class="questionBtn" data-tooltip="オートメッセージ設定やシナリオ設定のアクションから、呼び出し設定を利用できます">?</icon></div></th>
+        <th width="45%">呼び出し元<div class="questionBalloon"><icon class="questionBtn commontooltip" data-text="オートメッセージ設定やシナリオ設定のアクションから、呼び出し設定を利用できます">?</icon></div></th>
       </tr>
       </thead>
 <!--

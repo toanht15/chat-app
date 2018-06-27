@@ -1887,6 +1887,7 @@ var socket, // socket.io
             }
             //最小化時ボタン表示
             common.whenMinimizedBtnShow();
+            common.widgetHandler._handleResizeEvent();
             // このタイミングでの最大化実行条件
             // １：PCの場合、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
             // ２：スマホの場合、ウィジェット最大化する設定が有効で、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
@@ -1905,6 +1906,7 @@ var socket, // socket.io
               }
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
+              common.widgetHandler._handleResizeEvent();
             }
           }
           else{
@@ -1922,6 +1924,7 @@ var socket, // socket.io
               //最小化時ボタン表示
               common.whenMinimizedBtnShow();
               sinclo.chatApi.unlockPageScroll();
+              common.widgetHandler._handleResizeEvent();
             }
             else{
               console.log("saidaika");
@@ -1937,6 +1940,7 @@ var socket, // socket.io
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
               sinclo.chatApi.lockPageScroll();
+              common.widgetHandler._handleResizeEvent();
             }
           }
         }

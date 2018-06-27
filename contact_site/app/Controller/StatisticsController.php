@@ -1804,7 +1804,7 @@ class StatisticsController extends AppController {
     AND
       th.id = thcl.t_histories_id
     AND
-      th.id > thcl3.id
+      thcl.id > thcl3.id
     AND
       th.access_date between ? and ?
     group by date";
