@@ -204,9 +204,16 @@
             overcount += 1;
           }
 
-          //ツールチップを表示する位置の制御
+          var topCoordinate = offset.top + size.height + 7;
+
+          console.log(topCoordinate + ttSize.height);
+          console.log($(window).outerHeight());
+          if((topCoordinate + ttSize.height + 40) > $(window).outerHeight()){
+            topCoordinate = offset.top -ttSize.height - 30;
+          }else{
+          }
           $tooltip.css({
-            top: offset.top + size.height + 7,
+            top: topCoordinate,
             left: leftCoordinate
           });
         }, true); //radioボタンのdisableに対応するためuseCaptureを利用
