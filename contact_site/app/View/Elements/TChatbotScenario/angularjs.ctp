@@ -250,6 +250,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             delete condition.action.callScenarioId;
           }
         });
+        // 上記を満たさなかった場合：送信メッセージ
+        if (newObject.elseEnabled && newObject.elseAction.actionType == '1' && newObject.elseAction.action.message) {
+          document.getElementById('action' + index + '_else-message').innerHTML = $scope.widget.createMessage(newObject.elseAction.action.message);
+        }
       }
     }, true);
   };
@@ -1482,10 +1486,29 @@ $(document).ready(function() {
     var targetObj = $('.explainTooltip');
     targetObj.find('icon-annotation .detail').html($(this).data('tooltip'));
     targetObj.find('icon-annotation').css('display','block');
+    var targetWidth = targetObj.find('ul').css('width').replace('px','');
+    var targetHeight = targetObj.find('ul').css('height').replace('px','');
     targetObj.css({
-      top: $(this).offset().top - 96 + 'px',
-      left: $(this).offset().left - 85 + 'px'
+      top: $(this).offset().top -30 + 'px',
+      left: $(this).offset().left - targetWidth*0.65 + 'px'
     });
+    //画面よりも下にヘルプが行ってしまう場合の処理
+    var contentposition = Number(targetObj.css('top').replace('px','')) + Number(targetHeight) + 180;
+    if(contentposition > window.outerHeight){
+      targetObj.css({
+        top: $(this).offset().top - 90 + 'px',
+      });
+      targetObj.find('ul').css('top','auto');
+      targetObj.find('ul').css('bottom','0px');
+    }
+    //画面よりも左にヘルプが行ってしまう場合の処理
+    console.log(targetObj.css('left'));
+    if(targetObj.css('left').replace("px","") < 50){
+      targetObj.css('left','30px');
+    }
+
+
+
 
     // 表示サイズ調整
     var targetWidth = $(this).data('tooltip-width');
@@ -1496,6 +1519,8 @@ $(document).ready(function() {
     }
   }).off('mouseleave','.questionBtn').on('mouseleave','.questionBtn', function(event){
     $('.explainTooltip').find('icon-annotation').css('display','none');
+    $('.explainTooltip').find('ul').css('top','0px');
+    $('.explainTooltip').find('ul').css('bottom','auto');
   });
 
   // ツールチップの表示制御（エラーメッセージ）
@@ -1511,7 +1536,7 @@ $(document).ready(function() {
 
     targetObj.css({
       top: ($(this).offset().top - targetObj.outerHeight() - 70) + 'px',
-      left: $(this).offset().left - 70 + 'px',
+      left:($(this).offset().left - 79) + 'px',
       display: 'block'
     });
   }).off('mouseleave','.errorBtn').on('mouseleave','.errorBtn', function(event) {

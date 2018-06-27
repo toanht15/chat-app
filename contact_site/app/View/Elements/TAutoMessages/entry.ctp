@@ -152,9 +152,9 @@
               <span>
                 <label class="require">メッセージ</label>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(1)">選択肢を追加する</span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(3)" id = "thirdSpeechLabel">リンク(ページ遷移)<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(4)" id = "secondSpeechLabel">リンク(新規ページ)<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜telno＞タグの間に電話番号を</br>記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(3)">リンク(ページ遷移)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所に</br>URLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(4)">リンク(新規ページ)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所に</br>URLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
               </span>
               <?=$this->Form->textarea('action', ['maxlength'=>1000, 'cols' => 48, 'rows' => 15, 'ng-init' => 'decodeHtmlSpecialChar("'.h(!empty($this->data['TAutoMessage']['action']) ? $this->data['TAutoMessage']['action'] : "").'")', 'ng-model' => 'action'])?>
               <?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
@@ -320,27 +320,6 @@
             ]); ?></label>
           </li>
           <!-- 状態 -->
-          <div id='lastSpeechTooltip' class="explainTooltip">
-            <icon-annotation>
-              <ul>
-                <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>
-              </ul>
-            </icon-annotation>
-          </div>
-          <div id='secondSpeechTooltip' class="explainTooltip">
-            <icon-annotation>
-              <ul>
-                <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます</span></li>
-              </ul>
-            </icon-annotation>
-          </div>
-          <div id='thirdSpeechTooltip' class="explainTooltip">
-            <icon-annotation>
-              <ul>
-                <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します</span></li>
-              </ul>
-            </icon-annotation>
-          </div>
         </ul>
       </div>
 
