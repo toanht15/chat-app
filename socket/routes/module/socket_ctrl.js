@@ -2352,16 +2352,20 @@ io.sockets.on('connection', function (socket) {
 
         //FIXME 企業別機能設定（企業情報連携）
         getCompanyInfoFromApi(obj.ipAddress, function(data){
-          if(data) {
-            var response = JSON.parse(data);
-            obj.orgName = response.data.orgName;
-            obj.lbcCode = response.data.lbcCode;
-            sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
-            sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
-            if(isset(customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id])) {
-              customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['orgName'] = obj.orgName;
-              customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['lbcCode'] = obj.lbcCode;
+          try {
+            if (data) {
+              var response = JSON.parse(data);
+              obj.orgName = response.data.orgName;
+              obj.lbcCode = response.data.lbcCode;
+              sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
+              sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
+              if (isset(customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id])) {
+                customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['orgName'] = obj.orgName;
+                customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id]['lbcCode'] = obj.lbcCode;
+              }
             }
+          } catch(e) {
+            console.log('getCompanyInfoFromApiのcallbackでエラー : ' + data + ' message : ' + e.getMessage());
           }
           if(!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
             emit.toCompany('syncNewInfo', obj, obj.siteKey);

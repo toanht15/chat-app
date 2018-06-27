@@ -185,7 +185,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
         </div>
       <?php endif; ?>
       <div class="icon">
-        <?= $this->htmlEx->naviFaIconLink('チャット通知設定', 'fa-info-circle', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']], true) ?>
+        <?= $this->htmlEx->naviFaIconLink('チャット通知設定', 'fa-exclamation-square', ['href' => ['controller' => 'MChatNotifications', 'action' => 'index']], true) ?>
       </div>
     </div>
   <?php endif; ?>

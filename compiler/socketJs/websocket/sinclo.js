@@ -1226,32 +1226,30 @@
               var targetDate = new Date(storage.s.get('notificationTime'));
               //現在時刻から通知された時間の差
               var diff = (now.getTime() - targetDate.getTime()) / 1000;
-              if(sincloInfo.chat.settings.initial_notification_message != null) {
-                data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
-                for (var i = 0; i < Object.keys(data).length; i++) {
-                  (function(pram) {
-                    setTimeout(function() {
-                      //オペレータが入室していなかった場合
-                      if(storage.s.get('operatorEntered') !== 'true') {
-                        sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
-                        sinclo.chatApi.scDown();
-                        var sendData = {
-                          siteKey: obj.siteKey,
-                          tabId: obj.tabId,
-                          chatMessage: data[pram].message,
-                          messageType: sinclo.chatApi.messageType.notification,
-                          messageDistinction: chat.messageDistinction,
-                          mUserId: chat.userId,
-                          userId: chat.visitorsId,
-                        }
-                        emit("sendInitialNotificationChat", {messageList: sendData});
+
+              var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
+              for (var i = 0; i < Object.keys(data).length; i++) {
+                (function(pram) {
+                  setTimeout(function() {
+                    //オペレータが入室していなかった場合
+                    if(storage.s.get('operatorEntered') !== 'true') {
+                      sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
+                      sinclo.chatApi.scDown();
+                      var sendData = {
+                        siteKey: obj.siteKey,
+                        tabId: obj.tabId,
+                        chatMessage: data[pram].message,
+                        messageType: sinclo.chatApi.messageType.notification,
+                        messageDistinction: chat.messageDistinction,
+                        mUserId: chat.userId,
+                        userId: chat.visitorsId
                       }
-                    },(data[pram].seconds-diff)*1000);
-                    firstCheck = false;
-                  })(i);
-                }
+                      emit("sendInitialNotificationChat", {messageList: sendData});
+                    }
+                  },(data[pram].seconds-diff)*1000);
+                  firstCheck = false;
+                })(i);
               }
-            }
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
           // シナリオ実行中であればラジオボタンを非活性にする。
@@ -1450,29 +1448,27 @@
         //初回通知メッセージを利用している場合
         if (obj.notification === true) {
           storage.s.set('notificationTime',obj.created);
-          if(sincloInfo.chat.settings.initial_notification_message != null) {
-            data = JSON.parse(sincloInfo.chat.settings.initial_notification_message);
-            for (var i = 0; i < Object.keys(data).length; i++) {
-              (function(pram) {
-                  setTimeout(function() {
-                  if(storage.s.get('operatorEntered') !== 'true' && data[pram].message !== "") {
-                    sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
-                    sinclo.chatApi.scDown();
-                    var sendData = {
-                      siteKey: obj.siteKey,
-                      tabId: obj.tabId,
-                      chatMessage: data[pram].message,
-                      messageType: sinclo.chatApi.messageType.notification,
-                      messageDistinction: obj.messageDistinction,
-                      chatId: obj.chatId,
-                      mUserId: obj.mUserId,
-                      userId: obj.userId,
-                    }
-                    emit("sendInitialNotificationChat", {messageList: sendData});
+          var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
+          for (var i = 0; i < Object.keys(data).length; i++) {
+            (function(pram) {
+                setTimeout(function() {
+                if(storage.s.get('operatorEntered') !== 'true' && data[pram].message !== "") {
+                  sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
+                  sinclo.chatApi.scDown();
+                  var sendData = {
+                    siteKey: obj.siteKey,
+                    tabId: obj.tabId,
+                    chatMessage: data[pram].message,
+                    messageType: sinclo.chatApi.messageType.notification,
+                    messageDistinction: obj.messageDistinction,
+                    chatId: obj.chatId,
+                    mUserId: obj.mUserId,
+                    userId: obj.userId,
                   }
-                },data[pram].seconds*1000);
-              })(i);
-            }
+                  emit("sendInitialNotificationChat", {messageList: sendData});
+                }
+              },data[pram].seconds*1000);
+            })(i);
           }
         }
         if(obj.messageType == sinclo.chatApi.messageType.notification) {
@@ -2487,7 +2483,7 @@
           div.appendChild(li);
           chatList.appendChild(div);
 
-          var content = "<span class='cName'>" + (Number(window.sincloInfo.widget.showAutomessageName) !== 2 ? sincloInfo.widget.subTitle : "") + "</span>";
+          var content = (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
           content    += "<div class='receiveFileContent'>";
           content    += "  <div class='selectFileArea'>";
           content    += "    <p class='drop-area-message'>" + message + "</p>";
@@ -2628,7 +2624,7 @@
             var lastMessage = $('#chatTalk sinclo-chat div:last-of-type');
             if(lastMessage.find('.sinclo_re').length > 0) {
               var lastMessageHeight = lastMessage.height();
-              var paddingBottom = parseFloat($('#chatTalk').css('padding-bottom'));
+              var paddingBottom = parseFloat($('#chatTalk sinclo-typing').css('padding-bottom'));
               if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
                 $('#sincloBox #chatTalk').animate({
                   scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
@@ -4119,11 +4115,14 @@
             matchAllSpeechContent: function(msg, callback) {
               // FIXME マッチした処理が２回以上の場合、チャット送信処理も２回以上処理される
               var matched = false;
-              if((
-                !check.isset(storage.s.get('operatorEntered'))
-                || storage.s.get('operatorEntered') === "false"
-                || (!sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput())
-              ) && this.speechContentRegEx.length > 0) {
+              // チェック処理に入る条件（すべてAND）
+              // 1. オペレータが未入室状態
+              // 2. シナリオ中ではない
+              // 3. シナリオの入力待ち状態ではない
+              // 4. マッチ設定が存在する
+              if(
+                (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
+                && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() && this.speechContentRegEx.length > 0) {
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
@@ -4498,8 +4497,10 @@
 
           // 元のメッセージ入力欄に戻す
           sinclo.chatApi.hideMiniMessageArea();
+          sinclo.chatApi.removeAllEvent();
+          sinclo.chatApi.initEvent();
           var type = (beforeTextareaOpened === "close") ? "2" : "1";
-          self._handleChatTextArea(type)
+          self._handleChatTextArea(type);
         });
       },
       isProcessing: function() {

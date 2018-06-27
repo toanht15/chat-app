@@ -185,6 +185,9 @@ class htmlExHelper extends AppHelper {
           $options =  explode("\n", $record['input_option']);
           $html = sprintf('<select class="infoData" id="ng-customer-custom-%s" ng-blur="saveCusInfo(\'%s\', customData)" data-key="%s" '.$ngModelAttr.' value="%s">', $record['id'], $record['item_name'], $record['item_name'], $value);
           $html .= '<option value="">選択してください</option>';
+          if($value && !in_array($value, $options)) {
+            $html .= sprintf('<option value="%s" selected disabled>%s</option>', $value, $value);
+          }
           for($i = 0; $i < count($options); $i++) {
             if(strcmp($options[$i], $value) === 0) {
               $html .= sprintf('<option value="%s" selected>%s</option>', $options[$i], $options[$i]);

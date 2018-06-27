@@ -377,7 +377,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   }
 
   // http://weathercook.hatenadiary.jp/entry/2013/12/02/062136
-  sincloApp.factory('angularSocket', function ($rootScope) {
+  sincloApp.factory('angularSocket', function ($rootScope, $timeout) {
     if(socket) {
       socket.open();
     }
@@ -386,9 +386,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if ( !window.hasOwnProperty('socket') ) return false;
         socket.on(eventName, function () {
           var args = arguments;
-          $rootScope.$apply(function () {
-            callback.apply(socket, args);
-          });
+            $rootScope.$apply(function () {
+              $timeout(function(){
+                callback.apply(socket, args);
+              });
+            });
         });
       },
       emit: function (eventName, d, callback) {
@@ -1181,6 +1183,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     $scope.getCustomerInfoFromMonitor = function(m){
       $scope.customerList[m.userId] = m.customerInfo;
+      $scope.requestedCustomerList.push(m.userId);
     };
 
     // 顧客の詳細情報を取得する
@@ -1571,6 +1574,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           content = $scope.createTextOfReceivedFile(message.comment, message.downloadUrl, message.extension);
           if (!isExpired) {
             li.style.cursor = "pointer";
+            li.style.lineHeight = 0;
             li.addEventListener("click", function (event) {
               window.open(message.downloadUrl)
             });
@@ -2003,7 +2007,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       $scope.monitorList[obj.tabId] = obj;
 
-      //$scope.getCustomerInfoFromMonitor(obj);
+      if(obj.customerInfo) {
+        $scope.getCustomerInfoFromMonitor(obj);
+      }
 
       if ( 'referrer' in obj && 'referrer' in obj) {
         var url = $scope.trimToURL(obj.referrer);
@@ -2242,6 +2248,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('customerInfoUpdated', function (data) {
       var obj = JSON.parse(data);
       $scope.customerList[obj.userId] = JSON.parse(obj.data);
+      $scope.$apply();
     });
 
 
@@ -3790,9 +3797,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       returnValue.forEach(function(elm, index, array){
         if(!isset(scope.customerList[elm.userId])) {
           if(scope.requestedCustomerList.indexOf(elm.userId) === -1) {
-            scope.getCustomerInfoFromMonitor(elm);
+            scope.getCustomerInfo(elm.userId, function(result){
+              scope.customerList[elm.userId] = result;
+              scope.$apply();
+            });
             scope.requestedCustomerList.push(elm.userId);
           }
+        } else {
+          elm.customerInfo = scope.customerList[elm.userId];
         }
       });
       return returnValue;
@@ -3984,7 +3996,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     }
   });
 
-  sincloApp.directive('ngCustomer', function(){
+  sincloApp.directive('ngCustomer', function($timeout){
     return {
       restrict: 'A',
       link: function(scope, elems, attrs, ctrl){
@@ -4058,17 +4070,34 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
         }, function(){
           // 変わった場合
+          console.log("changed");
           if ( !(scope.detail === undefined || scope.detail === {}) && scope.detail.tabId !== scope.detailId ) {
             scope.customData = {};
             scope.customPrevData = {};
+            $('option.delete-me').remove();
           }
           if ( angular.isDefined(scope.detailId) && scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
             scope.detail = angular.copy(scope.monitorList[scope.detailId]);
             scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
               scope.customData = ret;
               scope.customPrevData = angular.copy(ret);
+
+              if(ret) {
+                Object.keys(ret).forEach(function(elm, idx, arr){
+                  var targetElm = $('[data-key="' + elm + '"]');
+                  if(targetElm && targetElm.is('select') && targetElm.find('option[value="'+ret[elm]+'"]').length === 0) {
+                    targetElm.prepend('<option class="delete-me" value="' + ret[elm] + '" selected disabled>' + ret[elm] + '</option>');
+                    scope.customData[elm] = ret[elm];
+                  }
+                });
+              }
+
               if ( angular.isDefined(scope.detailId) && scope.detailId !== "" ) {
                 scope.customerList[scope.monitorList[scope.detailId].userId] = angular.copy(scope.customData);
+                console.log("scope apply");
+                $timeout(function(){
+                  scope.$apply();
+                },100);
               }
               else {
                 console.error('Please Tab Close.');
