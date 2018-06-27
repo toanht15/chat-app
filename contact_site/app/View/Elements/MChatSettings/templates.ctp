@@ -28,9 +28,9 @@
             <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin: 0;']); ?>
             <span id = "summarized<?=$key?>">
               <span class="greenBtn btn-shadow actBtn choiseButton" onclick="addOption(1,'MChatSettingInitialNotificationMessage<?=$key?>')" id = "choice">選択肢を追加する</span>
-              <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingInitialNotificationMessage<?=$key?>')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
-              <span class="greenBtn btn-shadow actBtn linkMovingButton" onclick="addOption(3,'MChatSettingInitialNotificationMessage<?=$key?>')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon questionBalloonPosition15"><icon class = "questionBtn">?</icon></div></span>
-              <span class="greenBtn btn-shadow actBtn linkNewTabButton" onclick="addOption(4,'MChatSettingInitialNotificationMessage<?=$key?>')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingInitialNotificationMessage<?=$key?>')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  telno  &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn linkMovingButton" onclick="addOption(3,'MChatSettingInitialNotificationMessage<?=$key?>')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
+              <span class="greenBtn btn-shadow actBtn linkNewTabButton" onclick="addOption(4,'MChatSettingInitialNotificationMessage<?=$key?>')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
             </span>
           </span>
           <div>
