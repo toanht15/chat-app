@@ -96,8 +96,6 @@ $(document).ready(function(){
   // チャット呼出中メッセージのON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MChatSetting][in_flg]"]', inSettingToggle);
   inSettingToggle(); // 初回のみ
-  // ツールチップの表示制御
-  indicateTooltip();
 
   //バリデーションチェック
   checkValidate();
@@ -177,9 +175,9 @@ function addItem(number) {
         content    += "     <textarea name='data[MChatSetting][initial_notification_message"+number+"]' class = 'notificationTextarea' id='MChatSettingInitialNotificationMessage"+number+"'></textarea>";
         content    += "    <span id = 'summarized"+number+"' style = 'margin-left:10px;'>";
         content    += "    <span class='greenBtn btn-shadow actBtn choiseButton' onclick=\"addOption(1,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'choice'>選択肢を追加する</span>";
-        content    += "    <span class='greenBtn btn-shadow actBtn phoneButton' onclick=\"addOption(2,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'lastSpeechLabel'>電話番号を追加する<div class = 'questionBalloon questionBalloonPosition13'><icon class = 'questionBtn'>?</icon></div></span>";
-        content    += "    <span class='greenBtn btn-shadow actBtn linkMovingButton' onclick=\"addOption(3,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'thirdSpeechLabel'>リンク（ページ遷移）<div class = 'questionBalloon questionBalloonPosition15'><icon class = 'questionBtn'>?</icon></div></span>";
-        content    += "    <span class='greenBtn btn-shadow actBtn linkNewTabButton' onclick=\"addOption(4,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'secondSpeechLabel'>リンク（新規ページ）<div class = 'questionBalloon questionBalloonPosition14'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn phoneButton' onclick=\"addOption(2,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'lastSpeechLabel'>電話番号を追加する<div class = 'questionBalloon commontooltip' data-text='このボタンを押すと挿入される&lt;  telno  &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn linkMovingButton' onclick=\"addOption(3,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'thirdSpeechLabel'>リンク（ページ遷移）<div class = 'questionBalloon  commontooltip' data-text='このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn linkNewTabButton' onclick=\"addOption(4,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'secondSpeechLabel'>リンク（新規ページ）<div class = 'questionBalloon  commontooltip' data-text='このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します'><icon class = 'questionBtn'>?</icon></div></span>";
         content    += "  </span>";
         content    += "</span>";
         content    += "<div>";
@@ -199,6 +197,7 @@ function addItem(number) {
         }
       }
   }
+  addTooltipEvent();
   //バリデーションチェック
   checkValidate();
 

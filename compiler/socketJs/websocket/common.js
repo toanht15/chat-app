@@ -126,7 +126,9 @@ var socket, // socket.io
     // https://stackoverflow.com/questions/15900485/correct-way-to-convert-size-in-bytes-to-kb-mb-gb-in-javascript
     formatBytes : function(a,b){if(0==a)return"0 Bytes";var c=1024,d=b||2,e=["Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"],f=Math.floor(Math.log(a)/Math.log(c));return parseFloat((a/Math.pow(c,f)).toFixed(d))+" "+e[f]},
     createWidget: function(){
+      console.log('リロードだね');
       var widget = window.sincloInfo.widget, displaySet = "";
+      console.log(this.widgetCssTemplate(widget));
       var css = this.widgetCssTemplate(widget),
           header = this.widgetHeaderTemplate(widget),
           //プレミアムプランであってもナビゲションを非表示にする
@@ -137,10 +139,12 @@ var socket, // socket.io
           fotter = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.widget.hideFotter) && window.sincloInfo.custom.widget.hideFotter) ? '' : '<p id="fotter">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>';
       // フルプランのPCの場合
       if ( window.sincloInfo.contract.chat && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) && !check.smartphone() ) {
+        console.log('ああああああああ');
         displaySet += navi + chat + call;
       }
       // フルプランのSPの場合はチャットのみ表示
       else if ( window.sincloInfo.contract.chat && (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document)) && check.smartphone() ) {
+        console.log('いいいいいい');
         displaySet += chat;
       }
       else {
@@ -1738,10 +1742,13 @@ var socket, // socket.io
       }
 
       if ( userInfo.accessType !== cnst.access_type.host ) {
+          console.log('ここを通ってる');
           var html = common.createWidget();
           $('body').append(html);
           emit('syncReady', {widget: window.sincloInfo.widgetDisplay});
           sincloBox = document.getElementById('sincloBox');
+          console.log('おおおお');
+          console.log(sincloBox);
           sinclo.widget.condifiton.set(false, false);
           sinclo.operatorInfo.header = document.querySelector('#sincloBox #widgetHeader');
 
@@ -1899,6 +1906,7 @@ var socket, // socket.io
             }
             //最小化時ボタン表示
             common.whenMinimizedBtnShow();
+            common.widgetHandler._handleResizeEvent();
             // このタイミングでの最大化実行条件
             // １：PCの場合、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
             // ２：スマホの場合、ウィジェット最大化する設定が有効で、ウィジェット最大化処理がウィジェット非表示時に実行されていた場合
@@ -1917,6 +1925,7 @@ var socket, // socket.io
               }
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
+              common.widgetHandler._handleResizeEvent();
             }
           }
           else{
@@ -1934,6 +1943,7 @@ var socket, // socket.io
               //最小化時ボタン表示
               common.whenMinimizedBtnShow();
               sinclo.chatApi.unlockPageScroll();
+              common.widgetHandler._handleResizeEvent();
             }
             else{
               console.log("saidaika");
@@ -1949,6 +1959,7 @@ var socket, // socket.io
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
               sinclo.chatApi.lockPageScroll();
+              common.widgetHandler._handleResizeEvent();
             }
           }
         }
@@ -1989,6 +2000,7 @@ var socket, // socket.io
         return siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0;
       },
       beginToWatchResizeEvent: function() {
+        console.log('リサイズ');
         if(!check.smartphone()) {
           console.log("widgetHandler::beginToWatchResizeEvent");
           $(window).on('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
@@ -2003,6 +2015,7 @@ var socket, // socket.io
         }
       },
       _handleResizeEvent: function() {
+        console.log('ハンドル');
         console.log("widgetHandler::_handleResizeEvent");
         if(storage.s.get('widgetMaximized') === "true") {
           $('#sincloBox').css('height', 'auto');
@@ -2020,6 +2033,8 @@ var socket, // socket.io
 
         // 変更後サイズ
         var afterWidgetHeight = $('#sincloWidgetBox').height() + delta;
+        console.log('変更後サイズ');
+        console.log(afterWidgetHeight);
         if (delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
           console.log('1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
           changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
@@ -2028,7 +2043,11 @@ var socket, // socket.io
           changeTarget.height(common.widgetHandler._getMinChatTalkHeight());
         } else if ((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
           console.log('3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
+          console.log('チェンジターゲット');
+          console.log(changeTarget.height());
+          console.log(delta);
           changeTarget.height(changeTarget.height() + delta);
+          console.log(changeTarget.height());
         }
         common.widgetHandler._currentWindowHeight = windowHeight;
       },

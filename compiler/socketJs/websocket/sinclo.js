@@ -300,8 +300,10 @@
       reCreateWidgetMessage: "",
       reCreateWidgetTimer: null,
       reCreateWidget: function(e){
+        console.log('リロード');
         if(e) e.stopPropagation();
         if (!check.smartphone()) return false; // 念のため
+        console.log('とりあえずここまでは来ている');
         if ( sinclo.operatorInfo.reCreateWidgetTimer ) {
           clearTimeout(sinclo.operatorInfo.reCreateWidgetTimer);
         }
@@ -320,7 +322,6 @@
         if ( sincloBox ) {
           sincloBox.style.display = "none";
         }
-
 
         sinclo.operatorInfo.reCreateWidgetTimer = setTimeout(function(){
           var html = common.createWidget();
@@ -526,6 +527,7 @@
             setTimeout(setWidgetFnc, 500);
           }
           else {
+            console.log('ここだああああああ');
             common.makeAccessIdTag();
           }
         };
