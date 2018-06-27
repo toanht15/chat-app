@@ -17,6 +17,8 @@ App::uses('ChatbotScenarioException', 'Lib/Error');
 
 class TChatbotScenarioController extends FileAppController {
 
+  const CALL_SELF_SCENARIO_NAME = "（このシナリオ）";
+
   public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting'];
   public $paginate = [
     'TChatbotScenario' => [
@@ -105,6 +107,7 @@ sinclo@medialink-ml.co.jp
 
     // 呼び出し元情報を取得する
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $scenarioList = array_merge($scenarioList, $this->_findScenarioByActionType(C_SCENARIO_ACTION_BRANCH_ON_CONDITION));
     foreach($data as &$item) {
       $item['callerInfo'] = $this->_getScenarioCallerInfo($item['TChatbotScenario']['id'], $scenarioList);
     }
@@ -196,7 +199,7 @@ sinclo@medialink-ml.co.jp
     // 呼び出し設定されている場合は削除しない
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
     $callerInfo = $this->_getScenarioCallerInfo($scenarioId, $scenarioList);
-    if (!empty($callerInfo['TAutoMessage']) || !empty($callerInfo['TChatbotScenario'])) {
+    if (!empty($callerInfo['TAutoMessage']) || !$this->isDeletableScenario($callerInfo['TChatbotScenario'])) {
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
       return;
     }
@@ -265,7 +268,7 @@ sinclo@medialink-ml.co.jp
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
     foreach ($selectedList as $scenarioId) {
       $callerInfo = $this->_getScenarioCallerInfo($scenarioId, $scenarioList);
-      if (empty($callerInfo['TAutoMessage']) && empty($callerInfo['TChatbotScenario'])) {
+      if (empty($callerInfo['TAutoMessage']) && $this->isDeletableScenario($callerInfo['TChatbotScenario'])) {
         $targetList[] = $scenarioId;
       }
     }
@@ -1575,9 +1578,15 @@ sinclo@medialink-ml.co.jp
     // 呼び出し元シナリオ情報を取得する
     $matchScenarioNames = [];
     $keyword = '"tChatbotScenarioId":"'. $id . '"';
+    $branchOnCondKeyword = '"callScenarioId":"'. $id . '"';
+    $branchOnCondKeywordForSelf = '"callScenarioId":"self"';
     foreach ($scenarioList as $scenario) {
       if (strpos($scenario['TChatbotScenario']['activity'], $keyword)) {
         $matchScenarioNames[] = $scenario['TChatbotScenario']['name'];
+      } else if (strpos($scenario['TChatbotScenario']['activity'], $branchOnCondKeyword)) {
+        $matchScenarioNames[] = $scenario['TChatbotScenario']['name'];
+      } else if (strcmp($id, $scenario['TChatbotScenario']['id']) === 0 && strpos($scenario['TChatbotScenario']['activity'], $branchOnCondKeywordForSelf)) {
+        $matchScenarioNames[] = self::CALL_SELF_SCENARIO_NAME;
       }
     }
     $callerInfo['TChatbotScenario'] = $matchScenarioNames;
@@ -1748,5 +1757,9 @@ sinclo@medialink-ml.co.jp
       'file_size' => $this->prettyByte2Str($file['file_size']),
       'extension' => $this->getExtension($file['file_name'])
     ];
+  }
+
+  private function isDeletableScenario($scenarioCallerInfo) {
+    return empty($scenarioCallerInfo) || (count($scenarioCallerInfo) === 1 && strcmp($scenarioCallerInfo[0], self::CALL_SELF_SCENARIO_NAME) === 0);
   }
 }
