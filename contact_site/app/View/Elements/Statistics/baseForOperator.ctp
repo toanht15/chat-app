@@ -35,49 +35,6 @@
     </div><!-- #statistic_menu -->
 
     <div id='statistics_content' class="p20trl" style="visibility:hidden;">
-      <div id='opChatRequestTooltip' class="explainTooltip">
-        <icon-annotation style = "margin-top:-58px;">
-          <ul>
-            <li><span>サイト訪問者が送信したチャットを待機中のオペレーターが受信した件数(※初回メッセージのみカウント)</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
-      <div id='opChatResponseTooltip' class="explainTooltip">
-        <icon-annotation style = "margin-top:-28px;">
-          <ul>
-            <li><span>オペレータが入室した件数</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
-      <div id='opChatEffectivenessTooltip' class="explainTooltip">
-        <icon-annotation style = "margin-top:-43px;">
-          <ul>
-            <li><span>成果が「有効」として登録された件数</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
-      <div id='opChatConsumerWaitAverageTimeTooltip' class="explainTooltip">
-        <icon-annotation style = "margin-top:-58px;">
-          <ul>
-            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
-      <div id='opChatResponseAverageTimeTooltip' class="explainTooltip">
-        <icon-annotation style = "margin-top:-58px;">
-          <ul>
-            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
-      <div id='opChatEffectivenessResponseRateTooltip' class="explainTooltip">
-        <icon-annotation style = "margin-top:-43px;">
-          <ul>
-            <li><span>チャット有効件数／チャット応対件数</span></li>
-          </ul>
-        </icon-annotation>
-      </div>
-
     <!-- /* テーブル表示エリア */ -->
 
     <table id="statistics_table" class="display opList" cellspacing="0" width = "100%">
@@ -92,42 +49,42 @@
             <a href="<?=$this->Html->url(array('controller' => 'Statistics',
             'action' => 'loadingHtml','?'=>array('item'=>'requestChat','type'=>$time,'target'=>$type)))?>"
             onclick="window.open(this.href, 'mywindow2.<?= $time ?>', 'width=1000, height=700'); return false;">チャットリクエスト件数</a>
-          <div class="opQuestionBalloon opQuestionBalloonPosition11">
+          <div class="opQuestionBalloon commontooltip" data-text="サイト訪問者が送信したチャットを待機中のオペレーターが受信した件数(※初回メッセージのみカウント)">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatResponseLabel">
             <a href="<?=$this->Html->url(array('controller' => 'Statistics',
             'action' => 'loadingHtml','?'=>array('item'=>'responseChat','type'=>$time,'target'=>$type)))?>"
             onclick="window.open(this.href, 'mywindow3.<?= $time ?>', 'width=1000, height=700'); return false;">チャット応対件数</a>
-          <div class="opQuestionBalloon opQuestionBalloonPosition8">
+          <div class="opQuestionBalloon commontooltip" data-text="オペレータが入室した件数">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatEffectivenessLabel">
             <a href="<?=$this->Html->url(array('controller' => 'Statistics',
             'action' => 'loadingHtml','?'=>array('item'=>'effectiveness','type'=>$time,'target'=>$type)))?>"
             onclick="window.open(this.href, 'mywindow4.<?= $time ?>', 'width=1000, height=700'); return false;">チャット有効件数</a>
-          <div class="opQuestionBalloon opQuestionBalloonPosition8s">
+          <div class="opQuestionBalloon commontooltip" data-text="成果が「有効」として登録された件数">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatConsumerWaitAverageTimeLabel">
             <a href="<?=$this->Html->url(array('controller' => 'Statistics',
             'action' => 'loadingHtml','?'=>array('item'=>'avgConsumersWaitTime','type'=>$time,'target'=>$type)))?>"
             onclick="window.open(this.href, 'mywindow5.<?= $time ?>', 'width=1000, height=700'); return false;">平均消費者待機時間</a>
-          <div class="opQuestionBalloon opQuestionBalloonPosition13">
+          <div class="opQuestionBalloon commontooltip" data-text="サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator tooltip" id="opChatResponseAverageTimeLabel">
             <a href="<?=$this->Html->url(array('controller' => 'Statistics',
             'action' => 'loadingHtml','?'=>array('item'=>'avgResponseTime','type'=>$time,'target'=>$type)))?>"
             onclick="window.open(this.href, 'mywindow6.<?= $time ?>', 'width=1000, height=700'); return false;">平均応答時間</a>
-          <div class="opQuestionBalloon opQuestionBalloonPosition6">
+          <div class="opQuestionBalloon commontooltip" data-text="サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
           <th class = "thMinWidthTimelyForOperator opLastTooltip" id="opChatEffectivenessResponseRateLabel">
             <a href="<?=$this->Html->url(array('controller' => 'Statistics',
             'action' => 'loadingHtml','?'=>array('item'=>'effectivenessRate','type'=>$time,'target'=>$type)))?>"
             onclick="window.open(this.href, 'mywindow7.<?= $time ?>', 'width=1000, height=700'); return false;">チャット有効率</a>
-          <div class="opQuestionBalloon opQuestionBalloonPosition7">
+          <div class="opQuestionBalloon commontooltip" data-text="チャット有効件数／チャット応対件数">
             <icon class="opQuestionBtn">？</icon>
           </div></th>
         </tr>

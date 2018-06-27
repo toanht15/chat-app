@@ -142,23 +142,6 @@
 }());
 
 $(document).ready(function(){
-  // ツールチップの表示制御
-  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
-    var parentTdId = $(this).parent().parent().attr('id');
-    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    targetObj.find('icon-annotation').css('display','block');
-    targetObj.css({
-      top: $(this).offset().top - 95 + 'px',
-      left:$(this).offset().left - 85 + 'px'
-    });
-  });
-
-  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
-    var parentTdId = $(this).parent().parent().attr('id');
-    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    targetObj.find('icon-annotation').css('display','none');
-  });
-
   var outputCSVBtn = document.getElementById('outputCSV');
   outputCSVBtn.addEventListener('click', function(){
     if($(outputCSVBtn).hasClass('disabled')) return false;

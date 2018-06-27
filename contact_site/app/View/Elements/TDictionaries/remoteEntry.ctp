@@ -1,9 +1,8 @@
 <script type="text/javascript">
-  balloonMessages = {
-    1: "選択肢を追加します",
-    2: "企業名を代入する文字列を挿入します",
-    3: "表示名（担当者名）を代入する文字列を挿入します"
-  };
+
+
+  addTooltipEvent();
+
   popupEvent.closePopup = function(){
     var dictionaryId = document.getElementById('TDictionaryId').value;
     var word = document.getElementById('TDictionaryWord').value;
@@ -119,9 +118,9 @@
         <label class="require">定型文</label>
         <menu class="w100">
         <input type="hidden" id="dstoken" name="dstoken" value="<?=$dstoken?>">
-        <span class="btn-shadow d-set-option-btn" data-type="1" onclick="addOption(1)">選択肢</span>
-        <span class="btn-shadow d-set-option-btn" data-type="2" onclick="addOption(2)">企業名</span>
-        <span class="btn-shadow d-set-option-btn" data-type="3" onclick="addOption(3)">表示名</span>
+        <span class="btn-shadow d-set-option-btn commontooltip" data-text="選択肢を追加します" onclick="addOption(1)">選択肢</span>
+        <span class="btn-shadow d-set-option-btn commontooltip" data-text="企業名を代入する文字列を挿入します" onclick="addOption(2)">企業名</span>
+        <span class="btn-shadow d-set-option-btn commontooltip" data-text="表示名（担当者名）を代入する文字列を挿入します" onclick="addOption(3)">表示名</span>
         </menu>
         <div class="balloon"><span></span></div>
       </div>
