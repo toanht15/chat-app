@@ -5106,13 +5106,13 @@
         },
         _beginValidInputWatcher: function() {
           var self = sinclo.scenarioApi._hearing;
+          if(sinclo.scenarioApi.isScenarioLFDisabled()) {
+            sinclo.chatApi.showMiniMessageArea();
+          } else {
+            sinclo.chatApi.hideMiniMessageArea();
+          }
           if(!check.isIE() && !self._watcher) {
             console.log("BEGIN TIMER");
-            if(sinclo.scenarioApi.isScenarioLFDisabled()) {
-              sinclo.chatApi.showMiniMessageArea();
-            } else {
-              sinclo.chatApi.hideMiniMessageArea();
-            }
             self._watcher = setInterval(function(){
               if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 if(sinclo.scenarioApi.isScenarioLFDisabled()) {
