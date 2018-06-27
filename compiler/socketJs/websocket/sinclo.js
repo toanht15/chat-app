@@ -1194,9 +1194,9 @@
             console.log("userName : %s",userName);
           }
 
-          if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "1") {
+          if(sinclo.scenarioApi.isProcessing() && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "1") {
             sinclo.displayTextarea();
-          } else if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "2") {
+          } else if(sinclo.scenarioApi.isProcessing() && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "2") {
             sinclo.hideTextarea();
           }
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;

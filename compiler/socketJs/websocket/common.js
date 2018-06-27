@@ -823,9 +823,9 @@ var socket, // socket.io
       /* 共通スタイル */
       html += '      @media print{ sinclo { display:none!important; } }';
       //アイコンフォント用
-      html += '      @font-face { font-family: "Font Awesome 5 Pro"; font-style: normal; font-weight: 300; src: url("' + sincloInfo.site.files + '/webfonts/fa-light-300.eot"); src: url("' + sincloInfo.site.files + '/webfonts/fa-light-300.eot?#iefix") format("embedded-opentype"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.woff2") format("woff2"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.woff") format("woff"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.ttf") format("truetype"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.svg#fontawesome") format("svg"); }';
+      html += '      @font-face { font-family: "FA5P"; font-style: normal; font-weight: 300; src: url("' + sincloInfo.site.files + '/webfonts/fa-light-300.eot"); src: url("' + sincloInfo.site.files + '/webfonts/fa-light-300.eot?#iefix") format("embedded-opentype"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.woff2") format("woff2"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.woff") format("woff"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.ttf") format("truetype"), url("' + sincloInfo.site.files + '/webfonts/fa-light-300.svg#fontawesome") format("svg"); }';
       html += '      @font-face { font-family: SincloFont; font-style: normal; font-weight: 900; src: url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.eot"); src: url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.woff2") format("woff2"), url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.woff") format("woff"), url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.ttf") format("truetype"), url("' + sincloInfo.site.files + '/webfonts/fa-solid-900.svg#fontawesome") format("svg"); }';
-      html += '      #sincloBox .sinclo-fal { font-family: "Font Awesome 5 Pro"; display: inline-block; font-style: normal; font-weight: 300; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }';
+      html += '      #sincloBox .sinclo-fal { font-family: "FA5P"; display: inline-block; font-style: normal; font-weight: 300; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }';
       html += '      #sincloBox .sinclo-fal.fa-4x { font-size: 4em; }';
       //アイコンフォント用
       /* http://meyerweb.com/eric/tools/css/reset/
@@ -924,19 +924,7 @@ var socket, // socket.io
         html += '      @keyframes fadeIn { 0% { opacity :0; } 100% { opacity :1; } }';
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.sincloInfo.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         // ファイルフォントアイコン-----------
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-4x { font-size:4em; }'
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file:before { content: "\\f016" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-image:before { content: "\\f1c5" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-pdf:before { content: "\\f1c1" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-word:before { content: "\\f1c2" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-powerpoint:before { content: "\\f1c4" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-excel:before { content: "\\f1c3" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-audio:before { content: "\\f1c7" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-video:before { content: "\\f1c8" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-zip:before { content: "\\f1c6" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-code:before { content: "\\f1c9" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-text:before { content: "\\f0f6" }';
-        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-cloud-upload:before { content: "\\f0ee" }';
+        html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-4x { font-size:4em; }';
         // ------------ファイルフォントアイコン
         html += '      #sincloBox ul#chatTalk li span.sendFileMessage { color: '+ colorList['reTextColor'] +' }';
         html += '      #sincloBox ul#chatTalk li div.sendFileContent { display: table; table-layout:fixed; width: 100%; height: 64px; white-space: pre-line; margin-bottom: 0; }';
