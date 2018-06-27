@@ -481,7 +481,7 @@
       <!-- 過去のチャット -->
       <section id="oldChat" style = "height:100%">
         <ul class="historyList" style = "margin-top: 0;">
-          <li class = "pastChatShowBold" (click)="bgcolor='#FF7F50'" id = "oldChatList" ng-click="getOldChat(historyId, true, $event)" ng-repeat="(historyId, firstDate) in chatLogList"><span>{{firstDate | date:'yyyy年M月d日（EEE）a hh時mm分ss秒' }}</span></li>
+          <li class = "pastChatShowBold"  id = "oldChatList" ng-click="getOldChat(historyId, true, $event)" ng-repeat="(historyId, firstDate) in chatLogList"><span>{{firstDate | date:'yyyy年M月d日（EEE）a hh時mm分ss秒' }}</span></li>
         </ul>
           <ul class="chatView" id = "pastChatTalk" >
             <message-list>
@@ -593,7 +593,6 @@
         <?php if(!empty($defaultHistoryList) && !empty($tHistoryCountData)) { ?>
           <ul>
             <?php $this->log('mCusData',LOG_DEBUG); $this->log($mCusData,LOG_DEBUG); ?>
-            <?php $this->log('customerInformationList',LOG_DEBUG); $this->log($customerInformationList,LOG_DEBUG); ?>
             <?php
             for($i = 0; $i < count($customerInformationList); $i++) {
               $informations = !empty($mCusData['MCustomer']) ? json_decode($mCusData['MCustomer']['informations'], TRUE) : array();
