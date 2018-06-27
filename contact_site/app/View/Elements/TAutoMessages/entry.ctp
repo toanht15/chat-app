@@ -118,7 +118,7 @@
             <?php
               $canSelectScenario = isset($coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO];
             ?>
-            <label id="tautomessage_select_scenario" style="display: inline-block;" <?php echo $canSelectScenario ? '' : 'class="commontooltip" data-text="こちらの機能はオプションの加入が必要です。" data-balloon-position="43"' ?>>
+            <label id="tautomessage_select_scenario" style="display: inline-block;" <?php echo $canSelectScenario ? '' : 'class="commontooltip" data-text="こちらの機能はオプションの加入が必要です。"' ?>>
               <?= $this->Form->input('t_chatbot_scenario_id', [
                 'type' => 'select',
                 'options' => $this->data['chatbotScenario'],
@@ -152,9 +152,9 @@
               <span>
                 <label class="require">メッセージ</label>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(1)">選択肢を追加する</span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜telno＞タグの間に電話番号を</br>記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(3)">リンク(ページ遷移)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所に</br>URLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(4)">リンク(新規ページ)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所に</br>URLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(3)">リンク(ページ遷移)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(4)">リンク(新規ページ)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
               </span>
               <?=$this->Form->textarea('action', ['maxlength'=>1000, 'cols' => 48, 'rows' => 15, 'ng-init' => 'decodeHtmlSpecialChar("'.h(!empty($this->data['TAutoMessage']['action']) ? $this->data['TAutoMessage']['action'] : "").'")', 'ng-model' => 'action'])?>
               <?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
@@ -168,7 +168,7 @@
             <label class="pointer"><?= $this->ngForm->input('main.chat_textarea', [
               'type' => 'radio',
               'options' => $outMessageTextarea,
-              'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_FREE_INPUT] ? '' : '"color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="20.5"').'>',
+              'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_FREE_INPUT] ? '' : '"color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプランからご利用いただけます。" data-balloon-position="20.5"').'>',
               'error' => false,
               'disabled' => !$coreSettings[C_COMPANY_USE_FREE_INPUT],
             ], [
@@ -200,7 +200,7 @@
 
           <!-- メール送信 -->
           <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="bt0" id="sendMailSettingCheckBox">
-            <label style="display:inline-block; <?php echo $coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL] ? '"' : 'color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-content-position-left="-33" data-balloon-position="5"'?> >
+            <label style="display:inline-block; <?php echo $coreSettings[C_COMPANY_USE_AUTOMESSAGE_SEND_MAIL] ? '"' : 'color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプランからご利用いただけます。" data-content-position-left="-33" data-balloon-position="5"'?> >
             <?= $this->Form->input('main.send_mail_flg', [
                   'type' => 'checkbox',
                   'error' => false,

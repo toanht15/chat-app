@@ -43,27 +43,27 @@
       <h3>アクションを追加する</h3>
       <div id="tchatbotscenario_form_action_menulist">
         <!-- テキスト発言 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_TEXT ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットに発言させたいテキ<?php echo"<br>"?>ストメッセージを設定できるアクシ<?php echo"<br>"?>ョンです。">テキスト発言</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_TEXT ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットに発言させたいテキストメッセージを設定できるアクションです。">テキスト発言</a>
         <!-- ヒアリング -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットから投げかけたい質<?php echo"<br>"?>問（ヒアリング項目）を設定し、サ<?php echo"<br>"?>イト訪問者からのテキスト入力を受<?php echo"<br>"?>け付けるアクションです。ヒアリン<?php echo"<br>"?>グ項目は複数設定することが可能で<?php echo"<br>"?>す。">ヒアリング</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">ヒアリング</a>
         <!-- 選択肢 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SELECT_OPTION ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットに発言させたい選択<?php echo"<br>"?>式（択一式）メッセージを設定でき<?php echo"<br>"?>るアクションです。">選択肢</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SELECT_OPTION ?>)" class="greenBtn btn-shadow commontooltip" data-text="チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。">選択肢</a>
         <!-- 条件分岐 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>)" class="greenBtn btn-shadow commontooltip" data-text="変数の値により処理を分岐させるた<?php echo"<br>"?>めのアクションです。">条件分岐</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>)" class="greenBtn btn-shadow commontooltip" data-text="変数の値により処理を分岐させるためのアクションです。">条件分岐</a>
         <!-- シナリオ呼出 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>)" class="greenBtn btn-shadow commontooltip" data-text="呼び出したいシナリオを設定し、ア<?php echo"<br>"?>クションの途中で登録済みのシナリ<?php echo"<br>"?>オを実行することができるアクショ<?php echo"<br>"?>ンです。">シナリオ呼出</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>)" class="greenBtn btn-shadow commontooltip" data-text="呼び出したいシナリオを設定し、アクションの途中で登録済みのシナリオを実行することができるアクションです。">シナリオ呼出</a>
         <!-- 属性値取得 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>)" class="greenBtn btn-shadow commontooltip" data-text="ページからCSSセレクタで指定され<?php echo"<br>"?>た項目の値を取得するためのアクシ<?php echo"<br>"?>ョンです。">属性値取得</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>)" class="greenBtn btn-shadow commontooltip" data-text="ページからCSSセレクタで指定された項目の値を取得するためのアクションです。">属性値取得</a>
         <!-- ファイル受信 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_RECEIVE_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="サイト訪問者からのファイル送信を<?php echo"<br>"?>受け付けるアクションです。">ファイル受信</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_RECEIVE_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="サイト訪問者からのファイル送信を受け付けるアクションです。">ファイル受信</a>
         <!-- ファイル送信 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルを設定できるア<?php echo"<br>"?>クションです。">ファイル送信</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルを設定できるアクションです。">ファイル送信</a>
         <!-- 外部連携 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="連携したい外部システムの設定を行<?php echo"<br>"?>い、アクションの途中で任意のAPI<?php echo"<br>"?>を実行することができるアクション<?php echo"<br>"?>です。">外部連携</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。">外部連携</a>
         <!-- 訪問ユーザ情報 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>)" class="greenBtn btn-shadow commontooltip" data-text="変数の値を訪問ユーザ情報として登録するためのアクションです。">訪問ユーザ登録</a>
         <!-- メール送信 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)" class="greenBtn btn-shadow commontooltip" data-text="メールを送信するアクションです。<?php echo"<br>"?>宛先、差出人名、メールタイトル、<?php echo"<br>"?>メール本文を自由に設定することが<?php echo"<br>"?>可能です。">メール送信</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)" class="greenBtn btn-shadow commontooltip" data-text="メールを送信するアクションです。宛先、差出人名、メールタイトル、メール本文を自由に設定することが可能です。">メール送信</a>
       </div>
     </div>
     <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">

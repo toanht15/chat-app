@@ -5,18 +5,29 @@
     //タグを含むツールチップの制御
     $('#ExtraLabel').off("mouseenter").on('mouseenter',function(event){
       targetObj = $('#ExtraTooltip').find('icon-annotation')
+      var targetHeight = 486;
       targetObj.css('display','flex');
-      console.log(targetObj);
       //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
       targetObj.css({
-        top: $(this).get(0).offsetTop - 273 + 'px',
+        top: $(this).get(0).offsetTop - 280 + 'px',
         left: $(this).get(0).offsetLeft - 95 + 'px',
         'position':'relative'
       });
+      //画面よりも下にヘルプが行ってしまう場合の処理
+      var contentposition = targetHeight + 175;
+      console.log(window.innerHeight);
+      if(contentposition > window.innerHeight){
+        targetObj.css({
+          top: $(this).get(0).offsetTop - window.innerHeight*0.7 + 'px',
+          left: $(this).get(0).offsetLeft + 20 + 'px'
+        });
+      }
     });
 
     $('#ExtraLabel').off("mouseleave").on('mouseleave',function(event){
-      $('#ExtraTooltip').find('icon-annotation').css('display','none');
+     $('#ExtraTooltip').find('icon-annotation').css('display','none');
+     $('#ExtraTooltip').find('ul').css('top','0px');
+     $('#ExtraTooltip').find('ul').css('bottom','auto');
     });
   });
 
@@ -109,8 +120,8 @@
     </div>
     <div id="ExtraTooltip" class="explainTooltip">
       <icon-annotation>
-        <ul>
-          <li><span class="detail" style="width:550px;">ウィジェットを表示している画面上から取得する値をCSSのセレクタと同様の記入方法で設定します。<br><br>例１）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4c9db3">#user_name</span><br>【HTMLの例】<br><div style="color:#4c9db3">&lt;span id=&quot;user_name&quot;&gt;田中太郎&lt;/span&gt;</div><br>例２）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4c9db3">#nav-tools .nav-line-1</span><span style="color:rgb(192, 0,0)">　※ID属性とクラス名の間に要半角スペース</span><br>【HTMLの例】<br><div style="color:#4c9db3">&lt;div id=&quot;nav-tools&quot;&gt;<br> 　　(中略)<br>　&lt;span class=&quot;nav-line-1&quot;&gt;田中太郎&lt;/span&gt;<br>　&lt;span class=&quot;nav-line-2&quot;&gt;リスト&lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;&lt;/span&gt;<br> 　　(中略)<br>&lt;/div&gt;</div></span></li>
+        <ul style="max-width:530px;width:510px;">
+          <li><span class="detail">ウィジェットを表示している画面上から取得する値をCSSのセレクタと同様の記入方法で設定します。<br><br>例１）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4edcdc">#user_name</span><br>【HTMLの例】<br><div style="color:#4edcdc">&lt;span id=&quot;user_name&quot;&gt;田中太郎&lt;/span&gt;</div><br>例２）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4edcdc">#nav-tools .nav-line-1</span><span style="color:#ff8000">　※ID属性とクラス名の間に要半角スペース</span><br>【HTMLの例】<br><div style="color:#4edcdc">&lt;div id=&quot;nav-tools&quot;&gt;<br> 　　(中略)<br>　&lt;span class=&quot;nav-line-1&quot;&gt;田中太郎&lt;/span&gt;<br>　&lt;span class=&quot;nav-line-2&quot;&gt;リスト&lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;&lt;/span&gt;<br> 　　(中略)<br>&lt;/div&gt;</div></span></li>
         </ul>
       </icon-annotation>
     </div>
