@@ -41,7 +41,7 @@ function timeChangeForOperator()　{
   {
     document.getElementById("monthlyForm").style.display="";
     document.getElementById("daylyForm").style.display="none";
-    document.getElementById("hourlyForm").style.display="none";
+//     document.getElementById("hourlyForm").style.display="none";
     document.getElementById("monthlyForm").value = "";
     document.getElementById("triangle").style.borderTop = "0px";
   }
@@ -313,29 +313,12 @@ $(window).load(function(){
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','block');
     targetObj.css({
-      top: $(this).offset().top  - 96 + 'px',
-      left:$(this).offset().left - 85 + 'px'
+      top: $(this).offset().top  - 26 + 'px',
+      left:$(this).offset().left - 205 + 'px'
     });
   });
 
   $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
-    var parentTdId = $(this).parent().parent().attr('id');
-    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    targetObj.find('icon-annotation').css('display','none');
-  });
-
-  // ツールチップの表示制御(オペレータ統計画面)
-  $('.opQuestionBtn').off("mouseenter").on('mouseenter',function(event){
-    var parentTdId = $(this).parent().parent().attr('id');
-    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-    targetObj.find('icon-annotation').css('display','block');
-    targetObj.css({
-      top: $(this).offset().top  - 70 + 'px',
-      left: $(this).offset().left - 85 + 'px'
-    });
-  });
-
-  $('.opQuestionBtn').off("mouseleave").on('mouseleave',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
