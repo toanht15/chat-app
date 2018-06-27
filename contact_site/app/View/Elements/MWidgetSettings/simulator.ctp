@@ -207,11 +207,12 @@
   <?= $this->element('MWidgetSettings/widget'); ?>
   <!-- バナー -->
   <style>
-    #sincloBannerWrap {
+    #sincloBannerBox {
       background-color: rgb(255, 255, 255);
+      border-radius: {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px {{radius_ratio}}px;
     }
-    #sincloBannerWrap:hover {
-      opacity: 0.75;
+    #sincloBanner:hover {
+      opacity: 0.75 !important;
     }
     #sincloBanner {
       position: relative;
@@ -254,7 +255,7 @@
       margin-right: 5px;
     }
   </style>
-  <div id = "sincloBannerWrap">
+  <div id = "sincloBannerBox">
     <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
       <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
         <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 24px; height: 24px; opacity: 1; margin: 0px 5px; flex-basis: 24px;" xml:space="preserve">
