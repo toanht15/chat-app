@@ -71,7 +71,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   $scope.showCSSSelectorTooltip = function() {
-    return 'ウィジェットを表示している画面上から取得する値をCSSのセレクタと同様の記入方法で設定します。<br><br>例１）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4c9db3">#user_name</span><br>【HTMLの例】<br><div style="color:#4c9db3">&lt;span id=&quot;user_name&quot;&gt;田中太郎&lt;/span&gt;</div><br>例２）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4c9db3">#nav-tools .nav-line-1</span><span style="color:rgb(192, 0,0)">　※ID属性とクラス名の間に要半角スペース</span><br>【HTMLの例】<br><div style="color:#4c9db3">&lt;div id=&quot;nav-tools&quot;&gt;<br> 　　(中略)<br>　&lt;span class=&quot;nav-line-1&quot;&gt;田中太郎&lt;/span&gt;<br>　&lt;span class=&quot;nav-line-2&quot;&gt;リスト&lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;&lt;/span&gt;<br> 　　(中略)<br>&lt;/div&gt;</div>';
+    return 'ウィジェットを表示している画面上から取得する値をCSSのセレクタと同様の記入方法で設定します。<br><br>例１）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4edcdc">#user_name</span><br>【HTMLの例】<br><div style="color:#4edcdc">&lt;span id=&quot;user_name&quot;&gt;田中太郎&lt;/span&gt;</div><br>例２）以下のHTMLで「田中太郎」を取得したい場合<br>【設定値】<span style="color:#4edcdc">#nav-tools .nav-line-1</span><span style="color:#ff8000">　※ID属性とクラス名の間に要半角スペース</span><br>【HTMLの例】<br><div style="color:#4edcdc">&lt;div id=&quot;nav-tools&quot;&gt;<br> 　　(中略)<br>　&lt;span class=&quot;nav-line-1&quot;&gt;田中太郎&lt;/span&gt;<br>　&lt;span class=&quot;nav-line-2&quot;&gt;リスト&lt;span class=&quot;nav-icon&quot;&gt;&lt;/span&gt;&lt;/span&gt;<br> 　　(中略)<br>&lt;/div&gt;</div>';
   }
 
   // 設定一覧の並び替えオプション
@@ -1479,26 +1479,37 @@ function submitAct() {
 $(document).ready(function() {
   // ツールチップの表示制御（ヘルプ）
   $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
+    /**拡大率によって表示が崩れぬよう、拡大率を取得し、表示の調整*********/
+    var per_expand = window.innerHeight/974;
+    if(per_expand < 1){
+      per_expand = 1;
+    }
+      $('.explainTooltip').find('ul').css('max-width', 448*per_expand +'px');
+    /**********************************************************************/
+
     var targetObj = $('.explainTooltip');
     targetObj.find('icon-annotation .detail').html($(this).data('tooltip'));
     targetObj.find('icon-annotation').css('display','block');
     var targetWidth = targetObj.find('ul').css('width').replace('px','');
     var targetHeight = targetObj.find('ul').css('height').replace('px','');
     targetObj.css({
-      top: $(this).offset().top -30 + 'px',
+      top: $(this).offset().top - 55 + 15*per_expand + 'px',
       left: $(this).offset().left - targetWidth*0.65 + 'px'
     });
+    //画面の拡大率を取得(どのような状況でもしっかり処理を行えるよう
+
+
     //画面よりも下にヘルプが行ってしまう場合の処理
-    var contentposition = Number(targetObj.css('top').replace('px','')) + Number(targetHeight) + 180;
-    if(contentposition > window.outerHeight){
+    var contentposition = Number(targetObj.css('top').replace('px','')) + Number(targetHeight) + 175;
+    console.log(contentposition);
+    if(contentposition > window.innerHeight){
       targetObj.css({
-        top: $(this).offset().top - 90 + 'px',
+        top: $(this).offset().top - 60 - 30*per_expand + 'px',
       });
       targetObj.find('ul').css('top','auto');
       targetObj.find('ul').css('bottom','0px');
     }
     //画面よりも左にヘルプが行ってしまう場合の処理
-    console.log(targetObj.css('left'));
     if(targetObj.css('left').replace("px","") < 50){
       targetObj.css('left','30px');
     }

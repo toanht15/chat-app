@@ -206,7 +206,7 @@
 
           //ツールチップを表示する位置の制御
           $tooltip.css({
-            top: offset.top + size.height + 15,
+            top: offset.top + size.height + 7,
             left: leftCoordinate
           });
         }, true); //radioボタンのdisableに対応するためuseCaptureを利用
