@@ -96,6 +96,8 @@ $(document).ready(function(){
   // チャット呼出中メッセージのON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MChatSetting][in_flg]"]', inSettingToggle);
   inSettingToggle(); // 初回のみ
+  // ツールチップの表示制御
+  indicateTooltip();
 
   //バリデーションチェック
   checkValidate();
@@ -175,9 +177,9 @@ function addItem(number) {
         content    += "     <textarea name='data[MChatSetting][initial_notification_message"+number+"]' class = 'notificationTextarea' id='MChatSettingInitialNotificationMessage"+number+"'></textarea>";
         content    += "    <span id = 'summarized"+number+"' style = 'margin-left:10px;'>";
         content    += "    <span class='greenBtn btn-shadow actBtn choiseButton' onclick=\"addOption(1,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'choice'>選択肢を追加する</span>";
-        content    += "    <span class='greenBtn btn-shadow actBtn phoneButton' onclick=\"addOption(2,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'lastSpeechLabel'>電話番号を追加する<div class = 'questionBalloon commontooltip' data-text='このボタンを押すと挿入される&lt;  telno  &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります'><icon class = 'questionBtn'>?</icon></div></span>";
-        content    += "    <span class='greenBtn btn-shadow actBtn linkMovingButton' onclick=\"addOption(3,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'thirdSpeechLabel'>リンク（ページ遷移）<div class = 'questionBalloon  commontooltip' data-text='このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます'><icon class = 'questionBtn'>?</icon></div></span>";
-        content    += "    <span class='greenBtn btn-shadow actBtn linkNewTabButton' onclick=\"addOption(4,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'secondSpeechLabel'>リンク（新規ページ）<div class = 'questionBalloon  commontooltip' data-text='このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn phoneButton' onclick=\"addOption(2,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'lastSpeechLabel'>電話番号を追加する<div class = 'questionBalloon questionBalloonPosition13'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn linkMovingButton' onclick=\"addOption(3,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'thirdSpeechLabel'>リンク（ページ遷移）<div class = 'questionBalloon questionBalloonPosition15'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn linkNewTabButton' onclick=\"addOption(4,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'secondSpeechLabel'>リンク（新規ページ）<div class = 'questionBalloon questionBalloonPosition14'><icon class = 'questionBtn'>?</icon></div></span>";
         content    += "  </span>";
         content    += "</span>";
         content    += "<div>";
@@ -197,7 +199,8 @@ function addItem(number) {
         }
       }
   }
-  addTooltipEvent();
+  // ツールチップの表示制御
+  indicateTooltip();
   //バリデーションチェック
   checkValidate();
 
@@ -213,7 +216,29 @@ function saveAct() {
   document.getElementById('MChatSettingIndexForm').submit();
 }
 
+function indicateTooltip() {
+  // ツールチップの表示制御
+  document.querySelector('#content').onscroll = function() {
+    topPosition = this.scrollTop;
+  }
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    console.log(parentTdId);
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    console.log(targetObj);
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: ($(this).offset().top - 95 + topPosition)+'px',
+      left: $(this).offset().left - 86 + 'px'
+    });
+  });
 
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
+}
 
 function checkValidate() {
   var balloon = $("div.balloon");
@@ -345,9 +370,9 @@ function checkValidate() {
                 <?=$this->Form->textarea('outside_hours_sorry_message')?>
                 <span class = "summarized">
                   <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
-                  <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  telno  &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
-                  <span class="greenBtn btn-shadow actBtn linkMovingButton settingOutsideHoursPhone" onclick="addOption(3,'MChatSettingOutsideHoursSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
-                  <span class="greenBtn btn-shadow actBtn linkNewTabButton settingOutsideHoursPhone" onclick="addOption(4,'MChatSettingOutsideHoursSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
+                  <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+                  <span class="greenBtn btn-shadow actBtn linkMovingButton settingOutsideHoursPhone" onclick="addOption(3,'MChatSettingOutsideHoursSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon questionBalloonPosition15"><icon class = "questionBtn">?</icon></div></span>
+                  <span class="greenBtn btn-shadow actBtn linkNewTabButton settingOutsideHoursPhone" onclick="addOption(4,'MChatSettingOutsideHoursSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
                 </span>
               </span>
               <?php if ( $this->Form->isFieldError('outside_hours_sorry_message') ) echo $this->Form->error('outside_hours_sorry_message', null, ['wrap' => 'p', 'style' => 'margin-top: 15px;']); ?>
@@ -358,9 +383,9 @@ function checkValidate() {
               <?=$this->Form->textarea('wating_call_sorry_message')?>
               <span class = "summarized">
                 <span class="greenBtn btn-shadow actBtn choiseButton settingWatingCallChoice" onclick="addOption(1,'MChatSettingWatingCallSorryMessage')">選択肢を追加する</span>
-                <span class="greenBtn btn-shadow actBtn phoneButton settingWatingCallPhone" onclick="addOption(2,'MChatSettingWatingCallSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される &gt;telno&lt; タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn linkMovingButton settingWatingCallPhone" onclick="addOption(3,'MChatSettingWatingCallSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される &gt;a href&lt; タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn linkNewTabButton settingWatingCallPhone" onclick="addOption(4,'MChatSettingWatingCallSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される &gt;a href&lt; タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn phoneButton settingWatingCallPhone" onclick="addOption(2,'MChatSettingWatingCallSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn linkMovingButton settingWatingCallPhone" onclick="addOption(3,'MChatSettingWatingCallSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon questionBalloonPosition15"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn linkNewTabButton settingWatingCallPhone" onclick="addOption(4,'MChatSettingWatingCallSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
               </span>
             </span>
             <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin-top: 15px;']); ?>
@@ -371,9 +396,9 @@ function checkValidate() {
               <?=$this->Form->textarea('no_standby_sorry_message')?>
               <span class = "summarized">
                 <span class="greenBtn btn-shadow actBtn choiseButton" onclick="addOption(1,'MChatSettingNoStandbySorryMessage')">選択肢を追加する</span>
-                <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingNoStandbySorryMessage')">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; telno &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn linkMovingButton" onclick="addOption(3,'MChatSettingNoStandbySorryMessage')">リンク（ページ遷移）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; a href &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
-                <span class="greenBtn btn-shadow actBtn linkNewTabButton" onclick="addOption(4,'MChatSettingNoStandbySorryMessage')">リンク（新規ページ）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; a href &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingNoStandbySorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon questionBalloonPosition13"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn linkMovingButton" onclick="addOption(3,'MChatSettingNoStandbySorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon questionBalloonPosition15"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn linkNewTabButton" onclick="addOption(4,'MChatSettingNoStandbySorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon questionBalloonPosition14"><icon class = "questionBtn">?</icon></div></span>
               </span>
             </span>
             <?php if ( $this->Form->isFieldError('no_standby_sorry_message') ) echo $this->Form->error('no_standby_sorry_message', null, ['wrap' => 'p', 'style' => 'margin-top: 15px;']); ?>
@@ -387,6 +412,27 @@ function checkValidate() {
       <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()','class' => 'whiteBtn btn-shadow']) ?>
       <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
       <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
+    </div>
+    <div id='lastSpeechTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id='secondSpeechTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます</span></li>
+        </ul>
+      </icon-annotation>
+    </div>
+    <div id='thirdSpeechTooltip' class="explainTooltip">
+      <icon-annotation>
+        <ul>
+          <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します</span></li>
+        </ul>
+      </icon-annotation>
     </div>
   </div>
 
