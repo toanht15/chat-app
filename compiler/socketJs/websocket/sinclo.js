@@ -3001,7 +3001,7 @@
             sinclo.chatApi.fileUploader._hideInvalidError();
             $(this).val(null);
           }).on("change",function(event){
-            if(sinclo.chatApi.fileUploader.selectInput[0].files[0]) {
+            if(sinclo.chatApi.fileUploader.selectInput[0].files[0] && sinclo.chatApi.fileUploader.selectInput[0].files.length === 1) {
               var self = this;
               sinclo.chatApi.fileUploader.fileObj = sinclo.chatApi.fileUploader.selectInput[0].files[0];
               sinclo.chatApi.fileUploader._showLoadingPopup($(self).parents('li.sinclo_re'));
@@ -3021,6 +3021,9 @@
                 sinclo.chatApi.fileUploader._showPreview(self, sinclo.chatApi.fileUploader.fileObj, sinclo.chatApi.fileUploader.loadData);
               };
               fileReader.readAsArrayBuffer(sinclo.chatApi.fileUploader.fileObj);
+            } else {
+              sinclo.chatApi.fileUploader._showInvalidError();
+              return;
             }
           });
         },
@@ -3045,29 +3048,32 @@
           return false;
         },
         _handleDroppedFile: function(event) {
-          sinclo.chatApi.fileUploader.droppable.css('display', 'none');
           sinclo.chatApi.fileUploader._hideInvalidError();
-          // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
-          sinclo.chatApi.fileUploader.fileObj = event.originalEvent.dataTransfer.files[0];
+          if( event.originalEvent.dataTransfer.files[0] && event.originalEvent.dataTransfer.files.length === 1) {
+            // ファイルは複数ドロップされる可能性がありますが, ここでは 1 つ目のファイルを扱います.
+            sinclo.chatApi.fileUploader.fileObj = event.originalEvent.dataTransfer.files[0];
 
-          var self = this;
-          // ファイルの内容は FileReader で読み込みます.
-          sinclo.chatApi.fileUploader._showLoadingPopup($(self).parents('li.sinclo_re'));
-          var fileReader = new FileReader();
-          fileReader.onload = function(event) {
-            sinclo.chatApi.fileUploader._hideLoadingPopup($(self).parents('li.sinclo_re'));
-            if(!sinclo.chatApi.fileUploader._validExtension(sinclo.chatApi.fileUploader.fileObj.name)) {
-              sinclo.chatApi.fileUploader._showInvalidError();
-              return;
-            } else {
-              $('#chatTab').find('[class^="sinclo_re delete_e"]').remove();
+            var self = this;
+            // ファイルの内容は FileReader で読み込みます.
+            sinclo.chatApi.fileUploader._showLoadingPopup($(self).parents('li.sinclo_re'));
+            var fileReader = new FileReader();
+            fileReader.onload = function(event) {
+              sinclo.chatApi.fileUploader._hideLoadingPopup($(self).parents('li.sinclo_re'));
+              if(!sinclo.chatApi.fileUploader._validExtension(sinclo.chatApi.fileUploader.fileObj.name)) {
+                sinclo.chatApi.fileUploader._showInvalidError();
+                return;
+              } else {
+                $('#chatTab').find('[class^="sinclo_re delete_e"]').remove();
+              }
+              // event.target.result に読み込んだファイルの内容が入っています.
+              // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
+              sinclo.chatApi.fileUploader.loadData = event.target.result;
+              sinclo.chatApi.fileUploader._showPreview(self, sinclo.chatApi.fileUploader.fileObj, sinclo.chatApi.fileUploader.loadData);
             }
-            // event.target.result に読み込んだファイルの内容が入っています.
-            // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
-            sinclo.chatApi.fileUploader.loadData = event.target.result;
-            sinclo.chatApi.fileUploader._showPreview(self, sinclo.chatApi.fileUploader.fileObj, sinclo.chatApi.fileUploader.loadData);
+            fileReader.readAsArrayBuffer(sinclo.chatApi.fileUploader.fileObj);
+          } else {
+            sinclo.chatApi.fileUploader._showInvalidError();
           }
-          fileReader.readAsArrayBuffer(sinclo.chatApi.fileUploader.fileObj);
 
           // デフォルトの処理をキャンセルします.
           sinclo.chatApi.fileUploader._cancelEvent(event);
@@ -3295,7 +3301,8 @@
             });
           })
           .fail(function(jqXHR, textStatus, errorThrown){
-            alert("fail");
+            sinclo.chatApi.fileUploader._hideLoadingPopup(targetDivElm);
+            sinclo.chatApi.fileUploader._showInvalidError();
           });
         }
       }
@@ -5495,7 +5502,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._sendFile;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
-            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._parent._handleChatTextArea("2");
             var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
             var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
