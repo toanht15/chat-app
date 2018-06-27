@@ -1137,12 +1137,12 @@ ul#color-bar-right {
     .fa-angle-down {
       color:#fff;
       line-height: 0.6;
-      margin-left: 10px;
+      margin-left: 6.5px;
     }
     .fa-user-circle {
       color: #fff;
       line-height: 0.6;
-      margin-right: 10px;
+      margin-right: 6.5px;
     }
   }
   &:hover {
@@ -1790,7 +1790,7 @@ ul.naviBtn {
                       cursor: pointer;
 
                       &:hover, &.on {
-                          background-color: #f6fee6;
+                          background-color: #f6fee6 !important;
                       }
                     }
                 }
@@ -4126,7 +4126,7 @@ ul.naviBtn {
                 font-size: 13px;
 
                 &:hover, &.on {
-                    background-color: #f6fee6;
+                    background-color: #f6fee6 !important;
                 }
               }
           }
