@@ -2623,7 +2623,7 @@
           var chatTalk = document.getElementById('chatTalk');
             var receiveLastMessage = $('#chatTalk sinclo-chat div:last-of-type').find('.sinclo_re:last-of-type');
             if(receiveLastMessage.length > 0) {
-              var lastMessageHeight = receiveLastMessage.outerHeight();
+              var lastMessageHeight = receiveLastMessage.parent().outerHeight();
               var paddingBottom = parseFloat($('#chatTalk sinclo-typing').css('padding-bottom'));
               if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
                 $('#sincloBox #chatTalk').animate({
