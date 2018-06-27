@@ -116,7 +116,7 @@
             <!-- 過去のチャット -->
             <section id="oldChat">
               <ul class="historyList">
-                <li ng-click="getOldChat(historyId, true)" ng-repeat="(historyId, firstDate) in chatLogList"><span>{{firstDate | date:'yyyy年M月d日（EEE）a hh時mm分ss秒' }}</span></li>
+                <li ng-click="getOldChat(historyId, true, $event)" ng-repeat="(historyId, firstDate) in chatLogList" class = "pastChatShowBold"><span>{{firstDate | date:'yyyy年M月d日（EEE）a hh時mm分ss秒' }}</span></li>
               </ul>
               <div class="chatList">
                 <ul>

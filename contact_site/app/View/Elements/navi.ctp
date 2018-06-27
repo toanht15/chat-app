@@ -299,11 +299,11 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
   });
 
   $('#header').mouseleave(function(){
-    /*$.when(
+    $.when(
       $('.sidebar-sub').animate({left: -200},duration_time)
     ).done(function(){
       $('.sidebar-sub').addClass('hide');
-    });*/
+    });
   });
 
   var fadeOutLayerMenu = function() {

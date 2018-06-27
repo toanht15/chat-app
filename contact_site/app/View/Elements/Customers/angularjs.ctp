@@ -1203,9 +1203,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     // 顧客の詳細情報を取得する
-    $scope.getOldChat = function(historyId, oldFlg){
-      $('.ng-scope').css('background-color','#fff');
-      $(event.currentTarget).css('cssText', 'background-color: rgb(235, 246, 249)!important');
+    $scope.getOldChat = function(historyId, oldFlg, event){
+      if(event !== undefined) {
+        //過去のチャットを選択したとき
+        $('.pastChatShowBold').css('background-color','#fff');
+        $(event.currentTarget).css('cssText', 'background-color: rgb(235, 246, 249)!important');
+      }
       $scope.chatLogMessageList = [];
       $.ajax({
         type: "GET",

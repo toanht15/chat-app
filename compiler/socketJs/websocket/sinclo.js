@@ -1220,8 +1220,6 @@
               this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           } else {
-            console.log('通知してるね');
-            console.log(sincloInfo.chat.settings.initial_notification_message);
             //通知した場合
             if(chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
               var now = new Date();
@@ -4730,10 +4728,8 @@
         return true;
       },
       _handleChatTextArea: function(type) {
-        console.log('ここに入った！');
         switch(type) {
           case "1":
-            console.log('ここに入った2！');
             sinclo.displayTextarea();
             storage.l.set('textareaOpend', 'open');
             break;
@@ -4750,10 +4746,8 @@
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
           if(String(categoryNum).indexOf("delete_") >= 0) {
             sinclo.chatApi.createMessage('sinclo_re ' + categoryNum, message, name, true);
-            console.log('おおおおお');
           } else {
             sinclo.chatApi.createMessage('sinclo_re', message, name, true);
-            console.log('かかかか');
           }
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
@@ -4971,7 +4965,6 @@
         return messageBlock;
       },
       _waitingInput: function(callback) {
-        console.log('ここ入ってるよ！');
         var self = sinclo.scenarioApi;
         $(document).on(self._events.inputCompleted, function(e, inputVal){
           callback(inputVal);
@@ -5163,22 +5156,18 @@
           }
         },
         _execute: function (hearing) {
-          console.log('ヒアリングだぜ！');
           var message = hearing.message;
           // クロージャー用
           var self = sinclo.scenarioApi._hearing;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
-            console.log('ああああ');
-            /*self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
-            self._beginValidInputWatcher();
-            self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());*/
+          self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+          self._beginValidInputWatcher();
+          self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
 
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
-              console.log('ううううううう');
               self._parent._waitingInput(function (inputVal) {
-                console.log('うそやん');
                 sinclo.chatApi.removeKeyDownEventToSendChat();
                 self._parent._unWaitingInput();
                 self._endValidInputWatcher();

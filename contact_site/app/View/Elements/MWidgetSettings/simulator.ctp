@@ -77,12 +77,12 @@
       right: 0;
     }
 
-    #sincloBox.sp-preview.fullSize #chatTalk22 {
+    #sincloBox.sp-preview.fullSize #chatTalk {
       height: 258px;
       padding: 5px 5px 41.4px 5px;
     }
 
-    #sincloBox.sp-preview.fullSize.simpleHeader #chatTalk22 {
+    #sincloBox.sp-preview.fullSize.simpleHeader #chatTalk {
       height: 310px;
       padding: 5px 5px 49.7px 5px;
     }
@@ -94,7 +94,7 @@
       left: 0;
       right: 0;
     }
-    #sincloBox.sp-preview.landscape #chatTalk22 {
+    #sincloBox.sp-preview.landscape #chatTalk {
       height: 189px;
     }
     #sincloBox.middleSize{
