@@ -250,6 +250,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             delete condition.action.callScenarioId;
           }
         });
+        // 上記を満たさなかった場合：送信メッセージ
+        if (newObject.elseEnabled && newObject.elseAction.actionType == '1' && newObject.elseAction.action.message) {
+          document.getElementById('action' + index + '_else-message').innerHTML = $scope.widget.createMessage(newObject.elseAction.action.message);
+        }
       }
     }, true);
   };
