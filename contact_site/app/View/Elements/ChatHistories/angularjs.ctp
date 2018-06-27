@@ -118,7 +118,9 @@
 
     // 顧客の詳細情報を取得する
     var jqxhr;
-    $scope.getOldChat = function(historyId, oldFlg){
+    $scope.getOldChat = function(historyId, oldFlg, event){
+      $('.pastChatShowBold').css('background-color','#fff');
+      $(event.currentTarget).css('cssText', 'background-color: rgb(235, 246, 249)!important');
       if(oldFlg == false) {
         changeHistoryId = historyId;
       }

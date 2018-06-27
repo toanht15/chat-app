@@ -1,4 +1,5 @@
 <?php
+define('APP_MODE_DEV', true);
 /* 定数定義 */
 define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
@@ -60,6 +61,8 @@ define('C_COMPANY_USE_REALTIME_MONITOR_POLLING_MODE', 'monitorPollingMode'); // 
 define('C_COMPANY_USE_CHATBOT_SCENARIO', 'chatbotScenario');  // チャットボットシナリオ設定
 define('C_COMPANY_USE_CAMPAIGN', 'campaign');  // キャンペーン設定
 define('C_COMPANY_USE_CHATCALLMESSAGES', 'chatCallMessages');  // チャット呼出中メッセージ
+define('C_COMPANY_USE_CUSTOMVARIABLES', 'customVariables');  // カスタム変数
+define('C_COMPANY_USE_EDITCUSTOMERINFOMATIONS', 'editCustomerInfomations');  // 訪問ユーザ情報
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);

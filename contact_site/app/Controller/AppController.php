@@ -85,6 +85,8 @@ class AppController extends Controller {
     C_COMPANY_USE_CHATBOT_SCENARIO => false, // シナリオ設定
     C_COMPANY_USE_CAMPAIGN => false, // キャンペーン設定
     C_COMPANY_USE_CHATCALLMESSAGES => false, // チャット呼出中メッセージ
+    C_COMPANY_USE_CUSTOMVARIABLES => false, //カスタム変数
+    C_COMPANY_USE_EDITCUSTOMERINFOMATIONS => false //訪問ユーザ情報
   ];
 
   private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';

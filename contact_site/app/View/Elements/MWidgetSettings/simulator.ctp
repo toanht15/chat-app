@@ -77,12 +77,12 @@
       right: 0;
     }
 
-    #sincloBox.sp-preview.fullSize #chatTalk {
+    #sincloBox.sp-preview.fullSize #chatTalk22 {
       height: 258px;
       padding: 5px 5px 41.4px 5px;
     }
 
-    #sincloBox.sp-preview.fullSize.simpleHeader #chatTalk {
+    #sincloBox.sp-preview.fullSize.simpleHeader #chatTalk22 {
       height: 310px;
       padding: 5px 5px 49.7px 5px;
     }
@@ -94,7 +94,7 @@
       left: 0;
       right: 0;
     }
-    #sincloBox.sp-preview.landscape #chatTalk {
+    #sincloBox.sp-preview.landscape #chatTalk22 {
       height: 189px;
     }
     #sincloBox.middleSize{
@@ -207,6 +207,12 @@
   <?= $this->element('MWidgetSettings/widget'); ?>
   <!-- バナー -->
   <style>
+    #sincloBannerWrap {
+      background-color: rgb(255, 255, 255);
+    }
+    #sincloBannerWrap:hover {
+      opacity: 0.75;
+    }
     #sincloBanner {
       position: relative;
       z-index: 1;
@@ -248,17 +254,19 @@
       margin-right: 5px;
     }
   </style>
-  <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
-    <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
-      <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 24px; height: 24px; opacity: 1; margin: 0px 5px; flex-basis: 24px;" xml:space="preserve">
-        <style type="text/css">
-          .st0{fill:{{string_color}};}
-        </style>
-        <g>
-          <path class="st0" d="M257.135,19.179C103.967,19.179,0,97.273,0,218.763c0,74.744,31.075,134.641,91.108,173.176 c4.004,2.572,8.728,2.962,6.955,10.365c-7.16,29.935-19.608,83.276-19.608,83.276c-0.527,2.26,0.321,4.618,2.162,6.03 c1.84,1.402,4.334,1.607,6.38,0.507c0,0,87.864-52.066,99.583-58.573c27.333-15.625,50.878-18.654,68.558-18.654 C376.619,414.89,512,366.282,512,217.458C512,102.036,418.974,19.179,257.135,19.179z" style="fill:{{string_color}}"></path>
-        </g>
-      </svg>
-      <span id="bannertext">{{bannertext}}</span>
+  <div id = "sincloBannerWrap">
+    <div id="sincloBanner" ng-click="bannerSwitchWidget()" ng-if="closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4">
+      <div id="sincloBannerText" ng-click="bannerSwitchWidget()">
+        <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 24px; height: 24px; opacity: 1; margin: 0px 5px; flex-basis: 24px;" xml:space="preserve">
+          <style type="text/css">
+            .st0{fill:{{string_color}};}
+          </style>
+          <g>
+            <path class="st0" d="M257.135,19.179C103.967,19.179,0,97.273,0,218.763c0,74.744,31.075,134.641,91.108,173.176 c4.004,2.572,8.728,2.962,6.955,10.365c-7.16,29.935-19.608,83.276-19.608,83.276c-0.527,2.26,0.321,4.618,2.162,6.03 c1.84,1.402,4.334,1.607,6.38,0.507c0,0,87.864-52.066,99.583-58.573c27.333-15.625,50.878-18.654,68.558-18.654 C376.619,414.89,512,366.282,512,217.458C512,102.036,418.974,19.179,257.135,19.179z" style="fill:{{string_color}}"></path>
+          </g>
+        </svg>
+        <span id="bannertext">{{bannertext}}</span>
+      </div>
     </div>
   </div>
   <!-- バナー -->
