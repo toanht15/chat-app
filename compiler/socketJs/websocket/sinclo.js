@@ -1226,13 +1226,12 @@
               var targetDate = new Date(storage.s.get('notificationTime'));
               //現在時刻から通知された時間の差
               var diff = (now.getTime() - targetDate.getTime()) / 1000;
-
               var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
               for (var i = 0; i < Object.keys(data).length; i++) {
                 (function(pram) {
                   setTimeout(function() {
                     //オペレータが入室していなかった場合
-                    if(storage.s.get('operatorEntered') !== 'true') {
+                    if(storage.s.get('operatorEntered') !== 'true' && data[pram].message !== "") {
                       sinclo.chatApi.createMessageUnread("sinclo_re", data[pram].message, sincloInfo.widget.subTitle);
                       sinclo.chatApi.scDown();
                       var sendData = {
@@ -1242,7 +1241,7 @@
                         messageType: sinclo.chatApi.messageType.notification,
                         messageDistinction: chat.messageDistinction,
                         mUserId: chat.userId,
-                        userId: chat.visitorsId
+                        userId: chat.visitorsId,
                       }
                       emit("sendInitialNotificationChat", {messageList: sendData});
                     }
@@ -1250,6 +1249,7 @@
                   firstCheck = false;
                 })(i);
               }
+            }
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
           // シナリオ実行中であればラジオボタンを非活性にする。

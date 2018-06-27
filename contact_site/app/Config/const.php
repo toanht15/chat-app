@@ -1,5 +1,4 @@
 <?php
-
 /* 定数定義 */
 define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
