@@ -23,14 +23,13 @@
       scroll_flg = false;
       var pulldown_array = $(e.target).val().split(/\r\n|\r|\n/);
       var column_size = pulldown_array.length;
-      $(e.target).height(20*column_size);
       //ポップアップサイズを取得し、もしブラウザの縦幅以上だったらスクロール表示させる
-      if($('#popup-frame').height() > ($(window).height()-50)){
+      if(column_size>4){
         $(e.target).css('overflow-y','scroll');
-        $(e.target).css('max-height',$(e.target).height() +'px');
+        $(e.target).height(20*4);
       }else{
         $(e.target).css('overflow-y','hidden');
-        $(e.target).css('max-height',$(e.target).height()+50 +'px');
+        $(e.target).height(20*column_size);
       }
 
 
@@ -44,6 +43,7 @@
       if(scroll_flg){
         $(e.target).css({'overflow-x':'scroll','padding-bottom':'19px'});
         if($(e.target).css('overflow-y')=='scroll'){
+          $(e.target).height(20*column_size +18);
           $(e.target).css({'padding-bottom':'4px'});
         }
       }else{
@@ -58,18 +58,19 @@
     /******既に入力値があった場合にそのサイズに合わせる処理******
      *入力がn行あったら、そのn行全てを表示させておく必要がある。*
     */
+    var string_size = $("#length_counter").attr('class');
     var column_size = $("#column_counter").attr('class');
-    for(var i=1; i<column_size; i++){
-      $("#TCustomerInformationSettingInputOption").height(28 + 20 * i)
-      if($("#TCustomerInformationSettingInputOption").height() < $(window).height()-600){
-        $("#TCustomerInformationSettingInputOption").css('overflow-y','hidden');
-        $("#TCustomerInformationSettingInputOption").css('max-height',$("#TCustomerInformationSettingInputOption").height()+50 +'px');
-      }else{
+      if(column_size>3){
         $("#TCustomerInformationSettingInputOption").css('overflow-y','scroll');
-        $("#TCustomerInformationSettingInputOption").css('max-height',$("#TCustomerInformationSettingInputOption").height() +'px');
-        break;
+        $("#TCustomerInformationSettingInputOption").height(20*4 + 3);
+      }else{
+        $("#TCustomerInformationSettingInputOption").css('overflow-y','hidden');
+        if(string_size === "true"){
+          $("#TCustomerInformationSettingInputOption").height(20*column_size +23);
+        }else{
+          $("#TCustomerInformationSettingInputOption").height(20*column_size +8);
+        }
       }
-    }
 
 
 
@@ -117,7 +118,12 @@
     var item_name = document.getElementById('TCustomerInformationSettingItemName').value;
     var input_type = Number(document.getElementById('TCustomerInformationSettingInputType').value);
     if(input_type == 3){
-      var input_option = document.getElementById('TCustomerInformationSettingInputOption').value;
+      if(!(document.getElementById('TCustomerInformationSettingInputOption').value)){
+        loading.load.finish();
+        exit();
+      }else{
+        var input_option = document.getElementById('TCustomerInformationSettingInputOption').value;
+      }
     }
     var show_realtime_monitor_flg = 0;
     var show_send_mail_flg = 0;
@@ -200,6 +206,20 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
   //input_optionの行数取得(改行コード検索)
   $pulldown_str = $this->request->data['TCustomerInformationSetting']['input_option'];
   echo substr_count($pulldown_str,"\n");
+}
+?>"></div>
+<div id = "length_counter" class="<?php
+$max_str_length = 0;
+$str_array = explode("\n", $pulldown_str);
+foreach($str_array as $str_value){
+  if($max_str_length < mb_strwidth($str_value)){
+    $max_str_length = mb_strwidth($str_value);
+  }
+}
+if($max_str_length > 39){
+  echo "true";
+}else{
+  echo "false";
 }
 ?>"></div>
   <div class="form01">

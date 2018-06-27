@@ -31,7 +31,6 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
                 'id'=>'tcustomvariables_add_btn',
                 'class' => 'btn-shadow disOffgreenBtn commontooltip',
                 'data-text' => '新規追加',
-                'data-balloon-position' => '36',
                 'width' => 45,
                 'height' => 45,
             	'onclick' => 'openAddDialog()'
@@ -45,7 +44,6 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
                 'id'=>'tcustomvariables_copy_btn',
                 'class' => 'btn-shadow disOffgrayBtn commontooltip',
                 'data-text' => 'コピー（複製）',
-                'data-balloon-position' => '41',
                 'width' => 45,
                 'height' => 45)) ?>
           </a>
@@ -57,7 +55,6 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
                 'id'=>'tcustomvariables_dustbox_btn',
                 'class' => 'btn-shadow disOffgrayBtn commontooltip',
                 'data-text' => '削除する',
-                'data-balloon-position' => '35',
                 'width' => 45,
                 'height' => 45)) ?>
           </a>

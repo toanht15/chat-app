@@ -12,7 +12,7 @@
               'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? " skyBlueBtn commontooltip" : " grayBtn commontooltip disabled"),
               'id' => 'outputCSV',
               'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
-              'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "検索条件に該当するチャット履歴<br>一覧をCSV出力します。" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
+              'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "検索条件に該当するチャット履歴一覧をCSV出力します。" : "こちらの機能はスタンダードプランからご利用いただけます。",
               'data-balloon-position' => '50'
           ));
       ?>
@@ -24,7 +24,7 @@
               'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? " skyBlueBtn commontooltip" : " grayBtn commontooltip disabled"),
               'id' => 'outputChat',
               'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
-              'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "検索条件に該当するチャット内容を<br>すべてCSV出力します。" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
+              'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "検索条件に該当するチャット内容をすべてCSV出力します。" : "こちらの機能はスタンダードプランからご利用いただけます。",
         ));
       ?>
     <?php endif; ?>
