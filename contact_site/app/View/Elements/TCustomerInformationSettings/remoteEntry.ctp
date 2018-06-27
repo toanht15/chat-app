@@ -2,6 +2,7 @@
   //特定項目を選択した際に、追加メニュー分の高さを確保する
   //特定項目から選択が外れた場合は、その分の高さを削減する
   $(function () {
+    addTooltipEvent();
     //各種変数の設定
     var popupframe = $('#popup-frame');
     var popupbutton = $('#popup-button');
@@ -60,8 +61,6 @@
     var column_size = $("#column_counter").attr('class');
     for(var i=1; i<column_size; i++){
       $("#TCustomerInformationSettingInputOption").height(28 + 20 * i)
-      console.log($("#popup-frame").height());
-      console.log($("#TCustomerInformationSettingInputOption").height());
       if($("#TCustomerInformationSettingInputOption").height() < $(window).height()-600){
         $("#TCustomerInformationSettingInputOption").css('overflow-y','hidden');
         $("#TCustomerInformationSettingInputOption").css('max-height',$("#TCustomerInformationSettingInputOption").height()+50 +'px');
@@ -110,45 +109,7 @@
       }
       popupEvent.resize();
     });
-
-
-    //標準ツールチップの表示制御
-    $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
-      var parentTdId = $(this).parent().attr('id');
-      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-      targetObj.find('icon-annotation').css('display','flex');
-      //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
-      targetObj.css({
-        top: $(this).get(0).offsetTop - 57 + 'px',
-        left: $(this).get(0).offsetLeft - 6 + 'px'
-      });
     });
-
-    $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
-      var parentTdId = $(this).parent().attr('id');
-      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-      targetObj.find('icon-annotation').css('display','none');
-    });
-
-    //禁止項目用のツールチップ表示制御
-    var topPosition = 0;
-    $('.banedtooltip').off("mouseenter").on('mouseenter',function(event){
-      var parentTdId = $(this).parent().attr('id');
-      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-      targetObj.find('icon-annotation').css('display','block');
-      //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
-      targetObj.css({
-        top: ($(this).get(0).offsetTop - targetObj.find('ul').outerHeight() - 32 + topPosition) + 'px',
-        left: $(this).get(0).offsetLeft + ($(this).width()/2) - 90 + 'px'
-      });
-    });
-
-    $('.banedtooltip').off("mouseleave").on('mouseleave',function(event){
-      var parentTdId = $(this).parent().attr('id');
-      var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
-      targetObj.find('icon-annotation').css('display','none');
-    });
-  });
 
   //保存ボタン押下時処理
   popupEvent.closePopup = function(){
@@ -248,8 +209,8 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
         <label class="require">
           項目名
         </label>
-        <div class="questionBallon" id="filterType1Label">
-          <icon class="questionBtn">?</icon>
+        <div class="questionBallon">
+          <icon class="questionBtn commontooltip" data-text="項目名を入力します。<br>（会社名、名前など）">?</icon>
         </div>
         <?= $this->Form->input('item_name', ['placeholder' => '項目名', 'div' => false, 'label' => false, 'maxlength' => 100,'style' => 'margin-left: 15px;']) ?>
       </span>
@@ -259,8 +220,8 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
         <label class="require">
           タイプ
         </label>
-        <div class="questionBallon" id="filterType2Label">
-          <icon class="questionBtn">?</icon>
+        <div class="questionBallon">
+          <icon class="questionBtn commontooltip" data-text="テキストボックス、テキストエリア、<br>プルダウンから選択可能です。">?</icon>
         </div>
         <?= $this->Form->input('input_type',
         ['type' => 'select',
@@ -296,12 +257,12 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
     }
     ?>
       <span id="BanedType1Label">
-        <label class="forcheckbox <?php if((($count >= 3)&&$uncheckedflg))echo "grayfont banedtooltip"?>" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
+        <label class="forcheckbox <?php if((($count >= 3)&&$uncheckedflg))echo "grayfont commontooltip"?>" data-text="一覧表示に登録できるのは3つまでです。" for="TCustomerInformationSettingShowRealtimeMonitorFlg">
           <?= $this->Form->input('show_realtime_monitor_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => (($count >= 3)&&$uncheckedflg)]) ?>
           この項目をリアルタイムモニターや履歴の一覧に表示する
         </label>
-        <div class="questionBallon" id="filterType3Label">
-          <icon class="questionBtn">?</icon>
+        <div class="questionBallon">
+          <icon class="questionBtn commontooltip" data-text="リアルタイムモニタやチャット履歴の一覧画面に表示させる場合にチェックをしてください。（一覧に表示できる項目は最大で３つまでとなります。）">?</icon>
         </div>
       </span>
     </div>
@@ -311,19 +272,19 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
           <?= $this->Form->input('show_send_mail_flg',['type' => 'checkbox', 'div' => false, 'label' => ""])?>
           メール送信時にメール本文に記載する
         </label>
-        <div class="questionBallon" id="filterType4Label">
-          <icon class="questionBtn">?</icon>
+        <div class="questionBallon">
+          <icon class="questionBtn commontooltip" data-text="メール本文にこの項目を記載する場合にチェックをしてください。">?</icon>
         </div>
       </span>
     </div>
     <div>
       <span id="BanedType2Label">
-        <label class="forcheckbox <?php if(empty($variableList))echo "grayfont banedtooltip"?>" for="TCustomerInformationSettingSyncCustomVariableFlg">
+        <label class="forcheckbox <?php if(empty($variableList))echo "grayfont commontooltip"?>" data-text="カスタム変数の値が登録されていません。" for="TCustomerInformationSettingSyncCustomVariableFlg">
           <?= $this->Form->input('sync_custom_variable_flg',['type' => 'checkbox', 'div' => false, 'label' => "", 'disabled' => empty($variableList)])?>
           カスタム変数の値を自動的に登録する
         </label>
-        <div class="questionBallon" id="filterType5Label">
-          <icon class="questionBtn">?</icon>
+        <div class="questionBallon">
+          <icon class="questionBtn commontooltip" data-text="ページから取得した値（ログインユーザー名など）を自動で訪問ユーザ情報に登録することが可能です、本機能を利用する場合は事前にカスタム変数の設定をしてください。">?</icon>
         </div>
       </span>
     </div>
@@ -332,8 +293,8 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
         <label class="require">
           カスタム変数
         </label>
-        <div class="questionBallon" id="filterType6Label">
-          <icon class="questionBtn">?</icon>
+        <div class="questionBallon">
+          <icon class="questionBtn commontooltip" data-text="登録したいカスタム変数を選択してください。">?</icon>
         </div>
         <?= $this->Form->input('t_custom_variables_id',
         ['type' => 'select',
@@ -348,62 +309,6 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
     <div>
       <span style="margin-top: 8px;">コメント</span>
       <?= $this->Form->textarea('comment', ['placeholder' => 'コメント', 'div' => false, 'label' => false, 'maxlength' => 300]) ?>
-    </div>
-    <div id="filterType1Tooltip" class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span class="detail">項目名を入力します。<br>（会社名、名前など）</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id="filterType2Tooltip" class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span class="detail">テキストボックス、テキストエリア、<br>プルダウンから選択可能です。</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id="filterType3Tooltip" class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span class="detail">リアルタイムモニタやチャット履歴の一覧画面に表示させる場合にチェックをしてください。（一覧に表示できる項目は最大で３つまでとなります。）</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id="filterType4Tooltip" class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span class="detail">メール本文にこの項目を記載する場合にチェックをしてください。</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id="filterType5Tooltip" class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span class="detail">ページから取得した値（ログインユーザー名など）を自動で訪問ユーザ情報に登録することが可能です、本機能を利用する場合は事前にカスタム変数の設定をしてください。</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id="filterType6Tooltip" class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span class="detail">登録したいカスタム変数を選択してください。</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id="BanedType1Tooltip" class="expandTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span class="detail">一覧表示に登録できるのは3つまでです。</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id="BanedType2Tooltip" class="expandTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span class="detail">カスタム変数の値が登録されていません。</span></li>
-        </ul>
-      </icon-annotation>
     </div>
   </div>
 <?= $this->Form->end(); ?>
