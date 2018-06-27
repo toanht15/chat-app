@@ -3,7 +3,7 @@
 <div id='tchatbotscenario_idx' class="card-shadow entry-wrapper">
 
 <div id='tchatbotscenario_add_title'>
-	<div class="fLeft"><i class="fal fa-robot fa-2x"></i></div>
+	<div class="fLeft"><i class="fal fa-code-merge fa-2x"></i></div>
 	<h1>シナリオ設定登録</h1>
 </div>
 
