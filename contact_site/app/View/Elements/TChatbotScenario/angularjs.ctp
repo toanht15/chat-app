@@ -263,7 +263,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     popupEvent.agree = function() {
       popupEvent.close();
     }
-    popupEvent.closePopup = function () {
+    popupEvent.closeNoPopup = function () {
       obj.receiveFileType = "1";
       popupEvent.close();
       $timeout(function(){
