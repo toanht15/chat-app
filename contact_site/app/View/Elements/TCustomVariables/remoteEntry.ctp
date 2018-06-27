@@ -5,18 +5,29 @@
     //タグを含むツールチップの制御
     $('#ExtraLabel').off("mouseenter").on('mouseenter',function(event){
       targetObj = $('#ExtraTooltip').find('icon-annotation')
+      var targetHeight = 486;
       targetObj.css('display','flex');
-      console.log(targetObj);
       //位置取得はjQueryだとうまく動作しないことがあるらしく、javascriptでoffsetを取得する
       targetObj.css({
         top: $(this).get(0).offsetTop - 280 + 'px',
         left: $(this).get(0).offsetLeft - 95 + 'px',
         'position':'relative'
       });
+      //画面よりも下にヘルプが行ってしまう場合の処理
+      var contentposition = targetHeight + 175;
+      console.log(window.innerHeight);
+      if(contentposition > window.innerHeight){
+        targetObj.css({
+          top: $(this).get(0).offsetTop - window.innerHeight*0.7 + 'px',
+          left: $(this).get(0).offsetLeft + 20 + 'px'
+        });
+      }
     });
 
     $('#ExtraLabel').off("mouseleave").on('mouseleave',function(event){
-      $('#ExtraTooltip').find('icon-annotation').css('display','none');
+     $('#ExtraTooltip').find('icon-annotation').css('display','none');
+     $('#ExtraTooltip').find('ul').css('top','0px');
+     $('#ExtraTooltip').find('ul').css('bottom','auto');
     });
   });
 

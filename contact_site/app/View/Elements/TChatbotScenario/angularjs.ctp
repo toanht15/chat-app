@@ -1479,7 +1479,7 @@ function submitAct() {
 $(document).ready(function() {
   // ツールチップの表示制御（ヘルプ）
   $(document).off('mouseenter','.questionBtn').on('mouseenter','.questionBtn', function(event){
-    /**拡大率によって表示が崩れぬよう、拡大率を取得し、表示の調整*********/
+    /**拡大率によって表示が崩れないよう、拡大率を取得し、表示の調整*********/
     var per_expand = window.innerHeight/974;
     if(per_expand < 1){
       per_expand = 1;

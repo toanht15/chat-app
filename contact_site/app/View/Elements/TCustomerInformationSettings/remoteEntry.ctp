@@ -58,12 +58,11 @@
     /******既に入力値があった場合にそのサイズに合わせる処理******
      *入力がn行あったら、そのn行全てを表示させておく必要がある。*
     */
-    console.log($("#length_counter").attr('class'));
-    var string_size = $("#length_counter").attr('class')
+    var string_size = $("#length_counter").attr('class');
     var column_size = $("#column_counter").attr('class');
-      if(column_size>4){
+      if(column_size>3){
         $("#TCustomerInformationSettingInputOption").css('overflow-y','scroll');
-        $("#TCustomerInformationSettingInputOption").height(20*4);
+        $("#TCustomerInformationSettingInputOption").height(20*4 + 3);
       }else{
         $("#TCustomerInformationSettingInputOption").css('overflow-y','hidden');
         if(string_size === "true"){
