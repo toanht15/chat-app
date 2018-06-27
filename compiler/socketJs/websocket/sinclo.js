@@ -2621,9 +2621,9 @@
           }
           this.scDownTimer = setTimeout(function(){
           var chatTalk = document.getElementById('chatTalk');
-            var lastMessage = $('#chatTalk sinclo-chat div:last-of-type');
-            if(lastMessage.find('.sinclo_re').length > 0) {
-              var lastMessageHeight = lastMessage.height();
+            var receiveLastMessage = $('#chatTalk sinclo-chat div:last-of-type').find('.sinclo_re:last-of-type');
+            if(receiveLastMessage.length > 0) {
+              var lastMessageHeight = receiveLastMessage.height();
               var paddingBottom = parseFloat($('#chatTalk sinclo-typing').css('padding-bottom'));
               if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
                 $('#sincloBox #chatTalk').animate({
