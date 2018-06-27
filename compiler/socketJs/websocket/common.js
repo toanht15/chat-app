@@ -1096,7 +1096,8 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul li.selected::before{ color: ' + colorList['mainColor'] + '; }';
       //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
       if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
-        html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; }';
+        html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background-color: rgb(255, 255, 255); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px;}';
+        html += '      #sincloBox div#sincloBannerBox #sincloBanner:hover { opacity:0.75 !important}';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fal { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fal.fa-comment:before { content: "\\f075" }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 42px; width : -webkit-fit-content !important; width : -moz-fit-content !important; width : fit-content !important; background-color: '+ colorList['mainColor'] +'; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; color: '+ colorList['stringColor'] +'; margin: auto; filter:alpha(opacity=90); -moz-opacity: 0.9; opacity: 0.9; cursor: pointer; }';
@@ -1382,11 +1383,9 @@ var socket, // socket.io
       /* PC版 */
       else {
 //        html += "      #sincloBox { width: " + widgetWidth + "px }";
-        html += "      #sincloBox div#sincloWidgetBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px " + widget.boxShadow + "px " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0;}";
+        html += "      #sincloBox div#sincloWidgetBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px " + widget.boxShadow + "px " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0; background-color: rgb(255, 255, 255);}";
         html += '      #sincloBox * { line-height: 1.4; font-size: '+ sizeList['d12font'] +'px; }';
-        html += '      #sincloBox sinclo-div#widgetHeader:hover #widgetTitle  { background-color: ' + highlightColor + ' }';
-        html += '      #sincloBox sinclo-div#widgetHeader:hover #widgetSubTitle  { background-color: ' + highlightColor + ' }';
-        html += '      #sincloBox sinclo-div#widgetHeader:hover #widgetDescription  { background-color: ' + highlightColor + ' }';
+        html += '      #sincloBox sinclo-div#widgetHeader:hover { opacity: 0.75; }';
         html += '      #sincloBox sinclo-div#widgetHeader:after { top: 32px }';
 //        html += "      #sincloBox section { width: " + widgetWidth + "px }";
 //        html += "      #sincloBox section#navigation ul { width: " + widgetWidth + "px }";

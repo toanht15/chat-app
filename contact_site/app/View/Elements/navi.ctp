@@ -118,9 +118,11 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
             <?= $this->htmlEx->naviFaIconLink('資料設定', 'fa-file-alt', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
           </div>
         <?php endif; ?>
+        <?php if ($adminFlg && isset($coreSettings[C_COMPANY_USE_CHAT]) && $coreSettings[C_COMPANY_USE_CHAT]): ?>
           <div class="icon <?=$otherSettingSelected?> setting-icon new-line" data-type="other">
             <?= $this->htmlEx->naviFaIconLink('その他設定', 'fa-cogs') ?>
           </div>
+        <?php endif; ?>
       <div class="bottom-area">
         <hr class="separator"/>
         <div class="icon">
