@@ -2621,9 +2621,9 @@
           }
           this.scDownTimer = setTimeout(function(){
           var chatTalk = document.getElementById('chatTalk');
-            var lastMessage = $('#chatTalk sinclo-chat div:last-of-type');
-            if(lastMessage.find('.sinclo_re').length > 0) {
-              var lastMessageHeight = lastMessage.height();
+            var receiveLastMessage = $('#chatTalk sinclo-chat div:last-of-type').find('.sinclo_re:last-of-type');
+            if(receiveLastMessage.length > 0) {
+              var lastMessageHeight = receiveLastMessage.parent().outerHeight();
               var paddingBottom = parseFloat($('#chatTalk sinclo-typing').css('padding-bottom'));
               if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
                 $('#sincloBox #chatTalk').animate({
@@ -4716,13 +4716,13 @@
         }
         return result;
       },
-      _goToNextScenario: function(isJunpScenario) {
+      _goToNextScenario: function(isJumpScenario) {
         var self = sinclo.scenarioApi;
-        if(Number(self.get(self._lKey.currentScenarioSeqNum)) === Number(self.get(self._lKey.scenarioLength))-1) {
+        if(!isJumpScenario && Number(self.get(self._lKey.currentScenarioSeqNum)) === Number(self.get(self._lKey.scenarioLength))-1) {
           self._end();
           return false;
         }
-        if(!isJunpScenario) {
+        if(!isJumpScenario) {
           self.set(self._lKey.currentScenarioSeqNum, Number(self.get(self._lKey.currentScenarioSeqNum)) + 1);
         }
         self.set(self._lKey.currentScenario, self.get(self._lKey.scenarios)[String(self.get(self._lKey.currentScenarioSeqNum))]);
@@ -4999,6 +4999,7 @@
             currentIndex++;
           }
         });
+        console.dir(newScenarioObj);
         self.set(self._lKey.scenarios, newScenarioObj);
         self.set(self._lKey.scenarioLength, Object.keys(newScenarioObj).length);
       },
@@ -5601,7 +5602,8 @@
                 targetScenarioId = self._parent.get(self._parent._lKey.scenarioId);
               }
               emit('getScenario', {scenarioId: targetScenarioId}, function(result){
-                self._parent._mergeScenario(result, condition.action.executeNextAction);
+                var executeNext = condition.action.executeNextAction ? condition.action.executeNextAction : false;
+                self._parent._mergeScenario(result, executeNext);
                 if(self._parent._goToNextScenario(true)) {
                   self._parent._process();
                 }
