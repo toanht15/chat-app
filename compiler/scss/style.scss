@@ -948,7 +948,7 @@ ul.ulTab {
       a{
         text-decoration: none;
         display: block;
-        padding: 10px 10px 10px;
+        padding: 10px 10px 10px 6.5px;
       }
       img {
         margin: 0;
@@ -963,7 +963,6 @@ ul.ulTab {
       }
       .smallFal {
         font-size:17px;
-        width: 26px;
         text-align:left;
       }
     }
@@ -1148,12 +1147,12 @@ ul#color-bar-right {
     .fa-angle-down {
       color:#fff;
       line-height: 0.6;
-      margin-left: 6.5px;
+      margin-left: 10px;
     }
     .fa-user-circle {
       color: #fff;
       line-height: 0.6;
-      margin-right: 6.5px;
+      margin-right: 10px;
     }
   }
   &:hover {
