@@ -96,6 +96,8 @@ $(document).ready(function(){
   // チャット呼出中メッセージのON/OFFの切り替わりを監視
   $(document).on('change', '[name="data[MChatSetting][in_flg]"]', inSettingToggle);
   inSettingToggle(); // 初回のみ
+  // ツールチップの表示制御
+  indicateTooltip();
 
   //バリデーションチェック
   checkValidate();
@@ -197,8 +199,6 @@ function addItem(number) {
         }
       }
   }
-  // ツールチップの表示制御
-  indicateTooltip();
   //バリデーションチェック
   checkValidate();
 
@@ -213,6 +213,8 @@ function saveAct() {
   $('#MChatSettingInitialNotificationMessage').val(JSON.stringify(setList));
   document.getElementById('MChatSettingIndexForm').submit();
 }
+
+
 
 function checkValidate() {
   var balloon = $("div.balloon");
@@ -386,48 +388,6 @@ function checkValidate() {
       <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()','class' => 'whiteBtn btn-shadow']) ?>
       <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
       <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
-    </div>
-    <div id='lastSpeechTooltip' class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id='secondSpeechTooltip' class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id='thirdSpeechTooltip' class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id='lastSpeechTooltip' class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span>このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id='secondSpeechTooltip' class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます</span></li>
-        </ul>
-      </icon-annotation>
-    </div>
-    <div id='thirdSpeechTooltip' class="explainTooltip">
-      <icon-annotation>
-        <ul>
-          <li><span>このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します</span></li>
-        </ul>
-      </icon-annotation>
     </div>
   </div>
 
