@@ -5527,7 +5527,7 @@
             var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
             var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
-            var extensionType = self._parent.get(self._parent._lKey.currentScenario).extensionType;
+            var extensionType = self._parent.get(self._parent._lKey.currentScenario).receiveFileType;
             var extendedExtensions = self._parent.get(self._parent._lKey.currentScenario).extendedReceiveFileExtensions.split(',');
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(self._handleFileSelect);
