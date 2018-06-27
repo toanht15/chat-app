@@ -1418,11 +1418,11 @@
           if(check.isJSON(obj.chatMessage)) {
             var result = JSON.parse(obj.chatMessage);
             this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
-            this.chatApi.scDown();
           } else {
             cn = "sinclo_se";
             this.chatApi.createMessage(cn, obj.chatMessage, "");
           }
+          this.chatApi.scDown();
           return false;
         }
 
