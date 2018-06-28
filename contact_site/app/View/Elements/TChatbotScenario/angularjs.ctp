@@ -1782,7 +1782,7 @@ function actionValidationCheck(element, setActionList, actionItem) {
       if(Number(actionItem.elseAction.actionType) === 1 && !actionItem.elseAction.action.message) {
         messageList.push('アクションのメッセージが未入力です');
       }
-      if(Number(actionItem.elseAction.actionType) === 2 && actionItem.elseAction.action.callScenarioId === "") {
+      if(Number(actionItem.elseAction.actionType) === 2 && (!actionItem.elseAction.action.callScenarioId || actionItem.elseAction.action.callScenarioId === "")) {
         messageList.push('呼出先のシナリオを選択して下さい');
       }
     }
