@@ -4024,6 +4024,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                 if ( json ) {
                   scope.customPrevData = angular.copy(value);
                   scope.customerList[scope.detail.userId] = angular.copy(value);
+                  $timeout(function () {
+                    scope.$apply();
+                  },100);
                 }
               }
             });
