@@ -212,7 +212,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params);
+        //$tHistoryCountData = $this->THistory->find('first', $params);
+        $tHistoryCountData = 2;
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -1163,7 +1164,13 @@
         $data = $this->Session->read('Thistory');
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-        if(in_array($data['CustomData'])) {
+        $check = false;
+        foreach($data['CustomData'] as $key => $value) {
+          if(!empty($value)) {
+            $check = true;
+          }
+        }
+        if($check === true) {
           //会社名が入っている場合
           if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
             //会社名がランドスケープテーブルに登録されている場合
@@ -1179,9 +1186,9 @@
             }
             $companyData = $this->MLandscapeData->find('all', $companyConditions);
 
-            if(!empty($companyData)) {
-              $visitorsIds = $this->_searchCustomer($data['History']);
-              $chatCond['visitors_id'] = $visitorsIds;
+              if(!empty($companyData)) {
+                $visitorsIds = $this->_searchCustomer($data['History']);
+                $chatCond['visitors_id'] = $visitorsIds;
 
               $ipAddressList = [];
               foreach($companyData as $k => $v) {
@@ -1822,7 +1829,8 @@
           ]
         ];
         /*必ず治す！！*/
-        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
+        $tHistoryCountData = 2;
       }
       else {
         $tHistoryCountData = "";
