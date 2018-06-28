@@ -33,7 +33,7 @@ popupEvent.closePopup = function(){
         echo '<li>';
         echo '  <p><span>'.$customerInformationList[$i]['item_name'].'</span></p>';
       }
-      echo '  <span>'.$this->htmlEx->visitorSearchInput($customerInformationList[$i], true, false).'</span>';
+      echo '  <span>'.$this->htmlEx->visitorSearchInput($customerInformationList[$i], true, false, $data).'</span>';
       echo '</li>';
     }
     ?>

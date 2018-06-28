@@ -200,7 +200,7 @@ class htmlExHelper extends AppHelper {
       }
     }
 
-  public function visitorSearchInput($record, $forceInputText = false, $showPlaceHolder = true) {
+  public function visitorSearchInput($record, $forceInputText = false, $showPlaceHolder = true, $data) {
     if($forceInputText && strcmp($record['input_type'], 2) === 0) {
       $record['input_type'] = 1;
     }
@@ -210,7 +210,12 @@ class htmlExHelper extends AppHelper {
     }
     switch($record['input_type']) {
       case 1: // テキストボックス
-        return sprintf('<input id="ng-customer-custom-%s" type="text" name="data[CustomData][%s]"/>', $record['id'], $record['item_name']);
+        if(!empty($data["CustomData"][$record['item_name']])) {
+          return sprintf('<input id="ng-customer-custom-%s" type="text" value = '.$data["CustomData"][$record['item_name']].' name="data[CustomData][%s]"/>', $record['id'], $record['item_name']);
+        }
+        else {
+          return sprintf('<input id="ng-customer-custom-%s" type="text" value = "" name="data[CustomData][%s]"/>', $record['id'], $record['item_name']);
+        }
       case 2: // テキストエリア
         return sprintf('<textarea rows="7" id="ng-customer-custom-%s" name="data[CustomData][%s]"></textarea>', $record['id'], $record['item_name']);
       case 3: // テキストエリア

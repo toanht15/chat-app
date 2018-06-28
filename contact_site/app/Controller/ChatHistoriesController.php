@@ -1121,8 +1121,8 @@
       $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
       $historyConditions = [
         'History'=>['company_start_day' => $companyStartDay,
-        'ip_address' => '','company_name' => '','customer_name' => '',
-        'telephone_number' => '','mail_address' => ''],
+        'ip_address' => ''],
+        'CustomData' =>[],
         'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
       ];
       switch ($type) {
@@ -1163,15 +1163,13 @@
         $data = $this->Session->read('Thistory');
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-        if((isset($data['CustomData'])) || (
-          ( isset($data['History']['company_name']) && $data['History']['company_name'] !== ""
-          ) || (
-            isset($data['History']['customer_name']) && $data['History']['customer_name'] !== ""
-          ) || (
-            isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== ""
-          ) || (
-            isset($data['History']['mail_address']) && $data['History']['mail_address'] !== ""
-          )) ) {
+        $check = false;
+        foreach($data['CustomData'] as $key => $value) {
+          if(!empty($value)) {
+            $check = true;
+          }
+        }
+        if($check === true) {
           //会社名が入っている場合
           if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
             //会社名がランドスケープテーブルに登録されている場合
@@ -2097,6 +2095,7 @@
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
       $this->data = $this->Session->read('Thistory');
+      $this->set('data',$this->Session->read('Thistory'));
 
       $chatType =  Configure::read('chatType');
       $chatType = [
