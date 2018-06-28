@@ -208,14 +208,17 @@
           var topCoordinate = offset.top + size.height + 12;
           var ttElement = $(this).attr('class');
 
-          //ボタン系、またはリアルタイムモニタのオペレータのツールチップの場合はボタンの上部に表示するやつ。
+          //ボタン系、またはリアルタイムモニタのオペレータのツールチップの場合はボタンの上部に表示する。
           if(ttElement.indexOf('btn-shadow') !== -1 || ttElement.indexOf('ttposition_top') !== -1){
             topCoordinate = offset.top - ttSize.height*topWeight -10;
+            //上部に表示したがはみ出してしまう場合は元の位置(下に表示する)に戻す
+            if(topCoordinate < 0){
+              topCoordinate = offset.top + size.height + 8;
+            }
           }
 
           if((topCoordinate + ttSize.height + 40) > $(window).outerHeight()){
             topCoordinate = offset.top -ttSize.height - 30;
-          }else{
           }
           $tooltip.css({
             top: topCoordinate,
