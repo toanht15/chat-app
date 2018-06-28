@@ -100,9 +100,6 @@ $(document).ready(function(){
   //バリデーションチェック
   checkValidate();
 
-  // ツールチップの表示制御
-  indicateTooltip();
-
 });
 
 //初回メッセージ項目削除
