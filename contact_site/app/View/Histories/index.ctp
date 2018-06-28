@@ -75,9 +75,7 @@
     <?php } ?>
     <?php
         if(
-          empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
-          &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])
-          &&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])
+          empty($data['History']['ip_address'])&&empty($data['CustomData'])&&empty($data['THistoryChatLog']['responsible_name'])
           &&($data['THistoryChatLog']['achievement_flg'] === "")
           &&empty($data['THistoryChatLog']['message'])){
           $noseach_menu = 'noseach_menu';
@@ -94,30 +92,15 @@
             <span class="value"><?= h($data['History']['ip_address']) ?></span>
           </li>
         <?php } ?>
-        <?php if(!empty($data['History']['company_name'])) { ?>
+        <?php
+      if(!empty($data['CustomData'])) {
+        foreach($data['CustomData'] as $key => $value) {
+          if(!empty($value)) { ?>
           <li>
-            <label>会社名</label>
-            <span class="value"><?= h($data['History']['company_name']) ?></span>
+            <label><?= $key ?></label>
+            <span class="value"><?= h($value) ?></span>
           </li>
-        <?php } ?>
-        <?php if(!empty($data['History']['customer_name'])) { ?>
-          <li>
-            <label class="label">名前</label>
-            <span class="value"><?= h($data['History']['customer_name']) ?></span>
-          </li>
-        <?php } ?>
-        <?php if(!empty($data['History']['telephone_number'])) { ?>
-          <li>
-            <label>電話番号</label>
-            <span class="value"><?= h($data['History']['telephone_number']) ?></span>
-          </li>
-        <?php } ?>
-        <?php if(!empty($data['History']['mail_address'])) { ?>
-          <li>
-            <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
-            <span class="value"><?= h($data['History']['mail_address']) ?></span>
-          </li>
-        <?php } ?>
+        <?php } } } ?>
         <?php if(!empty($data['THistoryChatLog']['responsible_name'])) { ?>
           <li>
             <label>担当者</label>
