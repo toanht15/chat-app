@@ -304,7 +304,10 @@ class CustomersController extends AppController {
 
       $saveData = $this->MCustomer->find('first',
                 [
-                  'conditions' => ['visitors_id' => $visitorId],
+                  'conditions' => [
+                    'visitors_id' => $visitorId,
+                    'm_companies_id' => $this->userInfo['MCompany']['id']
+                  ],
                   'order' => ['id' => 'desc']
                 ]
               );

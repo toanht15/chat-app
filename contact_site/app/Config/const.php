@@ -850,7 +850,7 @@ $config['chatbotScenarioActionList'] = [
       'addCustomerInformations' => [
         [
           'variableName' => '',
-          'targetId' => 0
+          'targetId' => ""
         ]
       ]
     ]
