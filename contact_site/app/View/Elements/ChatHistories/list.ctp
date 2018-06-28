@@ -76,6 +76,8 @@
     //検索条件表示：非表示
     $noseach_menu = '';
     $seach_menu = 'seach_menu';
+    $this->log('チェックして',LOG_DEBUG);
+    $this->log($data,LOG_DEBUG);
   ?>
   <?php //検索をした時の表示
     if(!empty($data['History']['start_day'])||!empty($data['History ']['finish_day'])) { ?>
@@ -88,9 +90,8 @@
   <?php
       if(
         empty($data['History']['chat_type_name'])&&empty($data['History']['campaign'])
-        &&empty($data['History']['ip_address'])&&empty($data['History']['company_name'])
-        &&empty($data['History']['customer_name'])&&empty($data['History']['telephone_number'])
-        &&empty($data['History']['mail_address'])&&empty($data['THistoryChatLog']['responsible_name'])
+        &&empty($data['History']['ip_address'])&&empty($data['CustomData']['会社名'])
+        &&empty($data['CustomData'])&&empty($data['THistoryChatLog']['responsible_name'])
         &&($data['THistoryChatLog']['achievement_flg'] === "")&&empty($data['THistoryChatLog']['send_chat_page'])
         &&empty($data['THistoryChatLog']['message'])){
         $noseach_menu = 'noseach_menu';
@@ -113,30 +114,15 @@
           <span class="value"><?= h($data['History']['ip_address']) ?></span>
         </li>
       <?php } ?>
-      <?php if(!empty($data['History']['company_name'])) { ?>
-        <li>
-          <label>会社名</label>
-          <span class="value"><?= h($data['History']['company_name']) ?></span>
-        </li>
-      <?php } ?>
-      <?php if(!empty($data['History']['customer_name'])) { ?>
-        <li>
-          <label class="label">名前</label>
-          <span class="value"><?= h($data['History']['customer_name']) ?></span>
-        </li>
-      <?php } ?>
-      <?php if(!empty($data['History']['telephone_number'])) { ?>
-        <li>
-          <label>電話番号</label>
-          <span class="value"><?= h($data['History']['telephone_number']) ?></span>
-        </li>
-      <?php } ?>
-      <?php if(!empty($data['History']['mail_address'])) { ?>
-        <li>
-          <label>ﾒｰﾙｱﾄﾞﾚｽ</label>
-          <span class="value"><?= h($data['History']['mail_address']) ?></span>
-        </li>
-      <?php } ?>
+      <?php
+      if(!empty($data['CustomData'])) {
+        foreach($data['CustomData'] as $key => $value) {
+          if(!empty($value)) { ?>
+          <li>
+            <label><?= $key ?></label>
+            <span class="value"><?= h($value) ?></span>
+          </li>
+        <?php } } } ?>
       <?php if(!empty($data['History']['campaign'])) { ?>
         <li>
           <label>ｷｬﾝﾍﾟｰﾝ</label>
