@@ -1163,7 +1163,13 @@
         $data = $this->Session->read('Thistory');
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-        if(in_array($data['CustomData'])) {
+        $check = false;
+        foreach($data['CustomData'] as $key => $value) {
+          if(!empty($value)) {
+            $check = true;
+          }
+        }
+        if($check === true) {
           //会社名が入っている場合
           if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
             //会社名がランドスケープテーブルに登録されている場合
