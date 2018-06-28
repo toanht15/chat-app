@@ -5479,7 +5479,7 @@
         },
         _process: function() {
           var self = sinclo.scenarioApi._getAttributeValue;
-          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+          self._parent._doing(0, function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._getValueFromAttribute(function (result) {
               if(self._parent._goToNextScenario()) {
