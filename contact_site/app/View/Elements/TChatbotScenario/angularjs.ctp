@@ -1494,7 +1494,7 @@ $(document).ready(function() {
     var targetObj = $('.explainTooltip');
     targetObj.find('icon-annotation .detail').html($(this).data('tooltip'));
     targetObj.find('icon-annotation').css('display','block');
-    var targetWidth = targetObj.find('ul').css('width').replace('px','');
+    var targetWidth = Number(targetObj.find('ul').css('width').replace('px',''));
     var targetHeight = Number(targetObj.find('ul').css('height').replace('px',''));
     targetObj.css({
       top: $(this).offset().top - 45 + 15*per_expand + 'px',
@@ -1502,7 +1502,7 @@ $(document).ready(function() {
     });
     //画面の拡大率を取得(どのような状況でもしっかり処理を行えるよう
 
-
+    console.log($(this));
     //画面よりも下にヘルプが行ってしまう場合の処理
     var contentposition = Number(targetObj.css('top').replace('px','')) + targetHeight + 175;
     if(contentposition > window.innerHeight){
@@ -1512,8 +1512,8 @@ $(document).ready(function() {
       //ヘルプを上に出しても下に出してもオーバーしてしまう場合
       if(Number(targetObj.css('top').replace('px','')) - targetHeight + targetObj.outerHeight() < $('#color-bar').outerHeight()){
         targetObj.css({
-          'left':'0px',
-          'top' :$('#content').outerHeight()/2 - targetHeight/2  + 'px'
+          left:$(this).offset().left - (targetWidth*1.2) + 5 + 'px',
+          top :$('#content').outerHeight()/2 - targetHeight/2  + 'px'
         });
       }else{
         targetObj.find('ul').css('top','auto');
