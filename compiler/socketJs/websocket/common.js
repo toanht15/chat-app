@@ -1276,7 +1276,7 @@ var socket, // socket.io
           html += '#sincloBox section#navigation ul li::before { margin-right: ' + (5 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; }';
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
-            html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; }';
+            html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background: initial;}';
             html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
             html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
             html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
@@ -1370,7 +1370,7 @@ var socket, // socket.io
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
             var ratio = 1.9;
-            html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; }';
+            html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background: initial;}';
             html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner { height: '+ (42 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
             html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
             html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
