@@ -1497,7 +1497,7 @@ $(document).ready(function() {
     var targetWidth = targetObj.find('ul').css('width').replace('px','');
     var targetHeight = targetObj.find('ul').css('height').replace('px','');
     targetObj.css({
-      top: $(this).offset().top - 55 + 15*per_expand + 'px',
+      top: $(this).offset().top - 45 + 15*per_expand + 'px',
       left: $(this).offset().left - targetWidth*0.65 + 'px'
     });
     //画面の拡大率を取得(どのような状況でもしっかり処理を行えるよう
