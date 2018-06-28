@@ -14,8 +14,8 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
-  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS= "masashi.shimizu@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "masashi.shimizu@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const PASSWORD = "##PASSWORD##";
@@ -47,6 +47,7 @@ class ContractController extends AppController
     'MUser',
     'MWidgetSetting',
     'MChatSetting',
+    'TCustomerInformationSetting',
     'TAutoMessages',
     'TDictionaries',
     'TDictionaryCategory',
@@ -497,6 +498,7 @@ class ContractController extends AppController
       $this->createAgreementInfo($addedCompanyInfo, $companyInfo,$userInfo,$agreementInfo);
       $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo, $agreementInfo);
       $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
+      $this->addDefaultCustomerInformationSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultWidgetSettings($addedCompanyInfo['id'], $companyInfo);
       $relationIdAssoc = $this->addDefaultScenarioMessage($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultAutoMessages($addedCompanyInfo['id'], $companyInfo, $relationIdAssoc);
@@ -767,6 +769,24 @@ class ContractController extends AppController
       "initial_notification_message" => $this->convertActivityToJSON($default['initial_notification_message']),
     ));
     $this->MChatSetting->save();
+  }
+
+  private function addDefaultCustomerInformationSettings($m_companies_id, $companyInfo) {
+    $default = $this->getDefaultCustomerInformationSettings();
+    foreach($default as $index => $data) {
+      $this->TCustomerInformationSetting->create();
+      $this->TCustomerInformationSetting->set(array(
+        "m_companies_id" => $m_companies_id,
+        'item_name' => $data['item_name'],
+        'input_type' => $data['input_type'],
+        'show_realtime_monitor_flg' => $data['show_realtime_monitor_flg'],
+        'show_send_mail_flg' => $data['show_send_mail_flg'],
+        'sync_custom_variable_flg' => $data['sync_custom_variable_flg'],
+        't_custom_variable_flg' => $data['t_custom_variable_flg'],
+        'sort' => $data['sort']
+      ));
+      $this->TCustomerInformationSetting->save();
+    }
   }
 
   private function addDefaultWidgetSettings($m_companies_id, $companyInfo) {
@@ -1150,6 +1170,10 @@ class ContractController extends AppController
     } else {
       return Configure::read('default.chat.basic_without_scenario');
     }
+  }
+
+  private function getDefaultCustomerInformationSettings() {
+    return Configure::read('default.customerInformation');
   }
 
   private function getDefaultDictionaryConfigurations() {
