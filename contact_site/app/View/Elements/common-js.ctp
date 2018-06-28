@@ -170,7 +170,7 @@
           var $this = $(self);
           var text = $this.attr('data-text');
           if(text ===undefined){
-            return();
+            return;
           }
           var $tooltip = $('<div class="tooltips">'+text+'</div>');
           var topWeight = 1;
