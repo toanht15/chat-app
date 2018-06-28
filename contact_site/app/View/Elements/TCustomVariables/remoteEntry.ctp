@@ -14,7 +14,7 @@
         'position':'relative'
       });
       //画面よりも下にヘルプが行ってしまう場合の処理
-      var contentposition = targetHeight + 175;
+      var contentposition = targetHeight + 305;
       console.log(window.innerHeight);
       if(contentposition > window.innerHeight){
         targetObj.css({
