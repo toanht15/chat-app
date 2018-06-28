@@ -891,7 +891,7 @@ var db = {
         });
       }
       if (found) {
-        pool.query('SELECT * from m_customers where m_companies_id = ? AND visitors_id = ?', [companyList[obj.siteKey], obj.userId], function (err, row) {
+        pool.query('SELECT * from m_customers where m_companies_id = ? AND visitors_id = ? order by id desc', [companyList[obj.siteKey], obj.userId], function (err, row) {
           if (err !== null && err !== '') {
             callback(false);
             return false;
@@ -1870,7 +1870,7 @@ io.sockets.on('connection', function (socket) {
   // 顧客情報取得
   var customerApi = {
     getInformations: function (visitorId, siteKey, callback) {
-      pool.query('SELECT informations FROM m_customers WHERE m_companies_id = ? AND visitors_id = ? LIMIT 1;', [companyList[siteKey], visitorId], function(err, row) {
+      pool.query('SELECT informations FROM m_customers WHERE m_companies_id = ? AND visitors_id = ? order by id desc LIMIT 1;', [companyList[siteKey], visitorId], function(err, row) {
         if ( err !== null && err !== '' ) callback([]); // DB接続断対応
         if(isset(row) && isset(row[0]) && isset(row[0].informations)) {
           callback(JSON.parse(row[0].informations));
