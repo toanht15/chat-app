@@ -1768,7 +1768,6 @@ class HistoriesController extends AppController {
       if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
         $value = 'MAX';
       }
-
       //成果でCVを検索する場合
       else if(!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
         $value = 'MIN';
