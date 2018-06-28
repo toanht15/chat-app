@@ -1,4 +1,4 @@
- <?php
+  <?php
   App::uses('CustomerInformationUtil', 'Vendor/Util');
 
   /**
@@ -212,8 +212,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params);
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params);
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -1162,14 +1161,11 @@
       //履歴検索機能
       if ($this->Session->check('Thistory')) {
         $data = $this->Session->read('Thistory');
-        if(!empty($data['CustomData'])) {
-
-        }
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
         if(in_array($data['CustomData'])) {
           //会社名が入っている場合
-          if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
+          if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
             //会社名がランドスケープテーブルに登録されている場合
             $companyConditions = [
               'fields' => 'lbc_code,ip_address,org_name',
@@ -1826,8 +1822,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
       }
       else {
         $tHistoryCountData = "";
