@@ -130,3 +130,4 @@ Configure::load("autoMessageDefaultConfiguration");
 Configure::load("chatBasicDefaultConfiguration");
 Configure::load("mailTemplateDefaultConfiguration");
 Configure::load("scenarioDefaultConfiguration");
+Configure::load("customerInformationDefaultConfiguration");

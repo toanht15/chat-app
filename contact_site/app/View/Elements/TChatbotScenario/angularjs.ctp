@@ -1494,24 +1494,31 @@ $(document).ready(function() {
     var targetObj = $('.explainTooltip');
     targetObj.find('icon-annotation .detail').html($(this).data('tooltip'));
     targetObj.find('icon-annotation').css('display','block');
-    var targetWidth = targetObj.find('ul').css('width').replace('px','');
-    var targetHeight = targetObj.find('ul').css('height').replace('px','');
+    var targetWidth = Number(targetObj.find('ul').css('width').replace('px',''));
+    var targetHeight = Number(targetObj.find('ul').css('height').replace('px',''));
     targetObj.css({
       top: $(this).offset().top - 45 + 15*per_expand + 'px',
       left: $(this).offset().left - targetWidth*0.65 + 'px'
     });
     //画面の拡大率を取得(どのような状況でもしっかり処理を行えるよう
 
-
+    console.log($(this));
     //画面よりも下にヘルプが行ってしまう場合の処理
-    var contentposition = Number(targetObj.css('top').replace('px','')) + Number(targetHeight) + 175;
-    console.log(contentposition);
+    var contentposition = Number(targetObj.css('top').replace('px','')) + targetHeight + 175;
     if(contentposition > window.innerHeight){
       targetObj.css({
         top: $(this).offset().top - 60 - 30*per_expand + 'px',
       });
-      targetObj.find('ul').css('top','auto');
-      targetObj.find('ul').css('bottom','0px');
+      //ヘルプを上に出しても下に出してもオーバーしてしまう場合
+      if(Number(targetObj.css('top').replace('px','')) - targetHeight + targetObj.outerHeight() < $('#color-bar').outerHeight()){
+        targetObj.css({
+          left:$(this).offset().left - (targetWidth*1.2) + 5 + 'px',
+          top :$('#content').outerHeight()/2 - targetHeight/2  + 'px'
+        });
+      }else{
+        targetObj.find('ul').css('top','auto');
+        targetObj.find('ul').css('bottom','0px');
+      }
     }
     //画面よりも左にヘルプが行ってしまう場合の処理
     if(targetObj.css('left').replace("px","") < 50){
@@ -1775,7 +1782,7 @@ function actionValidationCheck(element, setActionList, actionItem) {
       if(Number(actionItem.elseAction.actionType) === 1 && !actionItem.elseAction.action.message) {
         messageList.push('アクションのメッセージが未入力です');
       }
-      if(Number(actionItem.elseAction.actionType) === 2 && actionItem.elseAction.action.callScenarioId === "") {
+      if(Number(actionItem.elseAction.actionType) === 2 && (!actionItem.elseAction.action.callScenarioId || actionItem.elseAction.action.callScenarioId === "")) {
         messageList.push('呼出先のシナリオを選択して下さい');
       }
     }
