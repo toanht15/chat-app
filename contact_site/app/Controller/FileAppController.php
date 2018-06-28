@@ -166,7 +166,7 @@ class FileAppController extends AppController
   }
 
   protected function createDownloadUrl($created, $fileId, $isScenarioDownload = false) {
-    return C_NODE_SERVER_ADDR.'//download?param='.$this->encryptParameterForDownload($created, $fileId, $isScenarioDownload);
+    return C_NODE_SERVER_ADDR.'/File/download?param='.$this->encryptParameterForDownload($created, $fileId, $isScenarioDownload);
   }
 
   protected function setScenarioMode($isScenarioMode) {

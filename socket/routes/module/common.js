@@ -369,11 +369,11 @@ function loadCustomVariableSettings(siteKey, callback) {
           // row = array
           customerInfoSettings[siteKey] = rows;
           syslogger.info("Load Customer Info settings OK. siteKey : " + siteKey);
-          module.exports.customerInfoSettings = chatSettings;
+          module.exports.customerInfoSettings = customerInfoSettings;
         } else {
           syslogger.info('siteKey: %s Customer Info settings is not found.',siteKey);
           customerInfoSettings[siteKey] = [];
-          module.exports.customerInfoSettings = chatSettings;
+          module.exports.customerInfoSettings = customerInfoSettings;
         }
         if(callback) callback();
       }
