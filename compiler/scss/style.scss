@@ -934,10 +934,11 @@ ul.ulTab {
       cursor:pointer;
       text-align: center;
       display:flex;
+      padding-left: 3px;
       a{
         text-decoration: none;
         display: block;
-        padding: 10px 10px 10px;
+        padding: 10px 10px 10px 7.5px;
       }
       img {
         margin: 0;
@@ -952,8 +953,8 @@ ul.ulTab {
       }
       .smallFal {
         font-size:17px;
-        width: 26px;
         text-align:left;
+        margin-left: 10px;
       }
     }
   }
@@ -1137,12 +1138,12 @@ ul#color-bar-right {
     .fa-angle-down {
       color:#fff;
       line-height: 0.6;
-      margin-left: 6.5px;
+      margin-left: 10px;
     }
     .fa-user-circle {
       color: #fff;
       line-height: 0.6;
-      margin-right: 6.5px;
+      margin-right: 10px;
     }
   }
   &:hover {
@@ -6978,7 +6979,6 @@ ul.naviBtn {
               }
 
               h5.condition-separator {
-                cursor: pointer;
                 font-size: inherit;
                 border-color: #C3D69B;
                 border-style: solid;
@@ -6989,6 +6989,9 @@ ul.naviBtn {
 
                 span {
                   &.removeArea {
+                    i.deleteBtn {
+                      cursor: pointer;
+                    }
                     width: 2em;
                     float: left;
                     text-align: center;

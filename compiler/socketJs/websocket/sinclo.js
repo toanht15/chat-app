@@ -1194,9 +1194,9 @@
             console.log("userName : %s",userName);
           }
 
-          if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "1") {
+          if(sinclo.scenarioApi.isProcessing() && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "1") {
             sinclo.displayTextarea();
-          } else if((!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "2") {
+          } else if(sinclo.scenarioApi.isProcessing() && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false") && chat.showTextarea && chat.showTextarea === "2") {
             sinclo.hideTextarea();
           }
           if(key.indexOf('_') >= 0 && 'applied' in chat && chat.applied) continue;
@@ -1418,11 +1418,11 @@
           if(check.isJSON(obj.chatMessage)) {
             var result = JSON.parse(obj.chatMessage);
             this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
-            this.chatApi.scDown();
           } else {
             cn = "sinclo_se";
             this.chatApi.createMessage(cn, obj.chatMessage, "");
           }
+          this.chatApi.scDown();
           return false;
         }
 
@@ -4360,7 +4360,8 @@
         sendCustomerMessageType: "s_sendCustomerMessageType",
         showSequenceSet: "s_showSequenceList",
         scenarioMessageType: "s_scenarioMessageType",
-        previousChatMessageLength: "s_prevChatMessageLength"
+        previousChatMessageLength: "s_prevChatMessageLength",
+        stackReturnSettings: "s_stackReturnSettings",
       },
       defaultVal: {
         "s_id": 0,
@@ -4377,7 +4378,8 @@
         "s_storedVariableKeys": [],
         "s_sendCustomerMessageType": 1,
         "s_showSequenceList": {},
-        "s_scenarioMessageType": 3
+        "s_scenarioMessageType": 3,
+        "s_stackReturnSettings": {}
       },
       _events: {
         inputCompleted: "sinclo:scenario:inputComplete",
@@ -4446,6 +4448,7 @@
           self.set(self._lKey.allowSave, false);
           self.set(self._lKey.showSequenceSet, {});
           self.set(self._lKey.previousChatMessageLength, 0);
+          self.set(self._lKey.stackReturnSettings, {});
           console.log("〜〜〜〜〜〜〜〜〜〜 SET SCENARIO 〜〜〜〜〜〜〜〜〜〜");
           console.log("self.set(self._lKey.scenarioId " + id);
           console.log("self.set(self._lKey.scenarios " + JSON.stringify(scenarioObj));
@@ -4476,7 +4479,8 @@
           "s_storedVariableKeys": [],
           "s_sendCustomerMessageType": 1,
           "s_showSequenceList": {},
-          "s_scenarioMessageType": 3
+          "s_scenarioMessageType": 3,
+          "s_stackReturnSettings": {}
         };
       },
       begin: function() {
@@ -4991,6 +4995,7 @@
               newScenarioObj[String(currentIndex)] = targetScenario[elm];
               currentIndex++;
             });
+            self._saveReturnSettings(currentIndex-1, executeNextAction, Object.keys(targetScenario).length);
             if(!executeNextAction) {
               return true;
             }
@@ -5002,6 +5007,32 @@
         console.dir(newScenarioObj);
         self.set(self._lKey.scenarios, newScenarioObj);
         self.set(self._lKey.scenarioLength, Object.keys(newScenarioObj).length);
+      },
+      _saveReturnSettings: function(lastSequenceNum, isReturn, incrementSeqVal) {
+        var self = sinclo.scenarioApi;
+        var savedSettings = self.get(self._lKey.stackReturnSettings);
+        var newSettings = {};
+        Object.keys(savedSettings).forEach(function(elm, idx, key){
+          newSettings[Number(elm) + incrementSeqVal-1] = savedSettings[elm];
+        });
+        newSettings[lastSequenceNum] = isReturn;
+        self.set(self._lKey.stackReturnSettings, newSettings);
+      },
+      _getReturnSettingsOnCallerScenario: function(currentSequenceNum) {
+        var self = sinclo.scenarioApi;
+        var savedSettings = self.get(self._lKey.stackReturnSettings);
+        var settings = {
+          lastSequenceNum: 0,
+          isReturn: false
+        };
+        Object.keys(savedSettings).some(function(e){
+          if(Number(e) >= currentSequenceNum) {
+            settings.lastSequenceNum = Number(e);
+            settings.isReturn = savedSettings[e];
+            return true;
+          }
+        });
+        return settings;
       },
       /**
        * メール送信したアップロード済み情報をフラグ付けする
@@ -5496,7 +5527,7 @@
             var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
             var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
-            var extensionType = self._parent.get(self._parent._lKey.currentScenario).extensionType;
+            var extensionType = self._parent.get(self._parent._lKey.currentScenario).receiveFileType;
             var extendedExtensions = self._parent.get(self._parent._lKey.currentScenario).extendedReceiveFileExtensions.split(',');
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(self._handleFileSelect);
@@ -5611,7 +5642,16 @@
               break;
             case 3:
               // シナリオ終了
-              self._parent._end();
+              var currentSequenceNum = Number(self._parent.get(self._parent._lKey.currentScenarioSeqNum));
+              var savedReturnSettings = self._parent._getReturnSettingsOnCallerScenario(currentSequenceNum);
+              if(savedReturnSettings.isReturn) {
+                self._parent.set(self._parent._lKey.currentScenarioSeqNum, savedReturnSettings.lastSequenceNum);
+                if(self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
+              } else {
+                self._parent._end();
+              }
               break;
             case 4:
               // 何もしない（次のアクションへ）
