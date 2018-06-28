@@ -155,13 +155,11 @@
   function addTooltipEvent() {
     $(".commontooltip").off('mouseenter').off('mouseleave');
     tooltipEventTimer = setTimeout(function(){
-      console.log('addTooltipEvent');
       // 共通ツールチップの配置（内容はdata-textで指定する）
       $(".commontooltip").each(function(index){
         // サイズ調整用
         var debug = $(this).attr('data-debug');
         var self = this;
-        console.log($(this).attr('class'));
         this.addEventListener('mouseenter', function(e){
 
           // クラスにcommontooltipを含まないとき、処理を実行しない(radio, checkbox, selectで二重表示されるため)
@@ -212,7 +210,6 @@
 
           //ボタン系、またはリアルタイムモニタのオペレータのツールチップの場合はボタンの上部に表示するやつ。
           if(ttElement.indexOf('btn-shadow') !== -1 || ttElement.indexOf('ttposition_top') !== -1){
-            console.log(ttSize.height);
             topCoordinate = offset.top - ttSize.height*topWeight -10;
           }
 
