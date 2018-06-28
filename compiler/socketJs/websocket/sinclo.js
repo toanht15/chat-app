@@ -2054,6 +2054,8 @@
             sinclo.resizeTextArea();
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
+              var chatTalk = document.getElementById('chatTalk');
+              $('#chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
               $('#miniSincloChatMessage').focus();
             }
           }
@@ -2072,6 +2074,8 @@
             sinclo.resizeTextArea();
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
+              var chatTalk = document.getElementById('chatTalk');
+              $('#chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
               $('#sincloChatMessage').focus();
             }
           }

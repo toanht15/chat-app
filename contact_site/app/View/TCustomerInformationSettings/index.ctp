@@ -24,12 +24,13 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           <a>
             <?= $this->Html->image('add.png', array(
                 'alt' => '登録',
-                'id' => 'tcustomerinformationsettings_add_btn',
-                'class'=>'btn-shadow disOffgreenBtn  commontooltip',
-                'data-text' => '新規追加',
+                'id' => $coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS] ? "tcustomerinformationsettings_add_btn" : "tcustomerinformationsettings_disable_btn",
+                'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS] ? " btn-shadow disOffgreenBtn commontooltip" : " disOffgrayBtn  commontooltip disabled"),
+                'data-text' => $coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS] ? "新規追加" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
+                'disabled' => !$coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS],
                 'width' => 45,
                 'height' => 45,
-                'onclick' => 'openAddDialog()'
+                'onclick' => $coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS] ? "openAddDialog()" : ""
             )) ?>
           </a>
         </span>
@@ -61,7 +62,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <!-- 訪問ユーザー情報の並び替えモード -->
       <div class="tabpointer">
         <label class="pointer">
-          <?= $this->Form->checkbox('sort', array('onchange' => 'toggleSort()')); ?><span id="sortText">並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; ">（！）並び替え中（保存する場合はチェックを外してください）</span>
+          <?= $this->Form->checkbox('sort', array('onchange' => $coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS] ? "toggleSort()" : "")); ?><span id="sortText">並び替え</span><span id="sortTextMessage" style="display: none; font-size: 1.1em; color: rgb(192, 0, 0); font-weight: bold; ">（！）並び替え中（保存する場合はチェックを外してください）</span>
         </label>
       </div>
       <!-- 訪問ユーザー情報の並び替えモード -->
@@ -91,7 +92,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
     <table>
       <thead>
       <tr>
-        <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
+        <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck" <?php if(isset($coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS]) && !$coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS]){ ?> disabled = "disabled" <?php } ?>><label for="allCheck"></label></th>
         <th width=" 5%">No</th>
         <th width="21%" class="tCenter">項目名</th>
         <th width="10%" class="tCenter">タイプ</th>
@@ -105,10 +106,10 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <?php $allCondList = []; ?>
       <?php $allActionList = []; ?>
       <?php foreach((array)$tCustomerInformationSettingList as $key => $val):?>
-        <tr class="pointer" data-id="<?=$val['TCustomerInformationSetting']['id']?>" data-sort="<?=$val['TCustomerInformationSetting']['sort']?>" onclick="openEditDialog('<?=$val['TCustomerInformationSetting']['id']?>')">
+        <tr class="pointer" data-id="<?=$val['TCustomerInformationSetting']['id']?>" data-sort="<?=$val['TCustomerInformationSetting']['sort']?>" <?php if(isset($coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS]) && $coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS]){ ?> onclick="openEditDialog('<?=$val['TCustomerInformationSetting']['id']?>')" <?php } ?>>
           <!-- この記述が無いとチェックボックスをクリックしてもedit画面が開いてしまう -->
         <td width="5%" class="tCenter" onclick="event.stopPropagation()">
-          <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCustomerInformationSetting']['id']?>">
+          <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['TCustomerInformationSetting']['id']?>" <?php if(isset($coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS]) && !$coreSettings[C_COMPANY_USE_EDITCUSTOMERINFORMATIONS]){ ?> disabled = "disabled" <?php } ?>>
           <label for="selectTab<?=$key?>"></label>
         </td>
         <td width="5%" class="tCenter"><?=$prevCnt + h($key+1)?></td>

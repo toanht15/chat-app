@@ -209,17 +209,19 @@ if(isset($this->request->data['TCustomerInformationSetting'])){
 }
 ?>"></div>
 <div id = "length_counter" class="<?php
-$max_str_length = 0;
-$str_array = explode("\n", $pulldown_str);
-foreach($str_array as $str_value){
-  if($max_str_length < mb_strwidth($str_value)){
-    $max_str_length = mb_strwidth($str_value);
+if(isset($this->request->data['TCustomerInformationSetting'])){
+  $max_str_length = 0;
+  $str_array = explode("\n", $pulldown_str);
+  foreach($str_array as $str_value){
+    if($max_str_length < mb_strwidth($str_value)){
+      $max_str_length = mb_strwidth($str_value);
+    }
   }
-}
-if($max_str_length > 39){
-  echo "true";
-}else{
-  echo "false";
+  if($max_str_length > 39){
+    echo "true";
+  }else{
+    echo "false";
+  }
 }
 ?>"></div>
   <div class="form01">

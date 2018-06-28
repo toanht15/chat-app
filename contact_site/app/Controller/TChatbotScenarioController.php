@@ -172,6 +172,7 @@ sinclo@medialink-ml.co.jp
 
     // 呼び出し元情報を取得する
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $scenarioList = array_merge($scenarioList, $this->_findScenarioByActionType(C_SCENARIO_ACTION_BRANCH_ON_CONDITION));
     $this->request->data['callerInfo'] = $this->_getScenarioCallerInfo($id, $scenarioList);
     // シナリオ設定の一覧を取得する
     $this->request->data['scenarioList'] = $this->_getScenarioList($id);
@@ -198,6 +199,7 @@ sinclo@medialink-ml.co.jp
 
     // 呼び出し設定されている場合は削除しない
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $scenarioList = array_merge($scenarioList, $this->_findScenarioByActionType(C_SCENARIO_ACTION_BRANCH_ON_CONDITION));
     $callerInfo = $this->_getScenarioCallerInfo($scenarioId, $scenarioList);
     if (!empty($callerInfo['TAutoMessage']) || !$this->isDeletableScenario($callerInfo['TChatbotScenario'])) {
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
@@ -266,6 +268,7 @@ sinclo@medialink-ml.co.jp
     // 呼び出し設定されているシナリオは削除対象から外す
     $targetList = [];
     $scenarioList = $this->_findScenarioByActionType(C_SCENARIO_ACTION_CALL_SCENARIO);
+    $scenarioList = array_merge($scenarioList, $this->_findScenarioByActionType(C_SCENARIO_ACTION_BRANCH_ON_CONDITION));
     foreach ($selectedList as $scenarioId) {
       $callerInfo = $this->_getScenarioCallerInfo($scenarioId, $scenarioList);
       if (empty($callerInfo['TAutoMessage']) && $this->isDeletableScenario($callerInfo['TChatbotScenario'])) {
