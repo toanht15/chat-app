@@ -998,7 +998,9 @@ class HistoriesController extends AppController {
       /* チャットに関する検索条件 チャット担当者、チャット内容、チャット成果 */
 
       // 検索条件に成果がある場合
-      $chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
+      if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
+        $chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
+      }
 
       // 検索条件にメッセージがある場合
       if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
@@ -1666,6 +1668,7 @@ class HistoriesController extends AppController {
     // 検索条件に成果がある場合
     if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
       $chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
+    }
 
     // 検索条件にメッセージがある場合
     if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
@@ -1765,6 +1768,7 @@ class HistoriesController extends AppController {
       if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
         $value = 'MAX';
       }
+
       //成果でCVを検索する場合
       else if(!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
         $value = 'MIN';
