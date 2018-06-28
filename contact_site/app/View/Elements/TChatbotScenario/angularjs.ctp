@@ -263,7 +263,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     popupEvent.agree = function() {
       popupEvent.close();
     }
-    popupEvent.closePopup = function () {
+    popupEvent.closeNoPopup = function () {
       obj.receiveFileType = "1";
       popupEvent.close();
       $timeout(function(){
@@ -1770,6 +1770,16 @@ function actionValidationCheck(element, setActionList, actionItem) {
         return true;
       }
     });
+
+    if(actionItem.elseEnabled) {
+      if(Number(actionItem.elseAction.actionType) === 1 && !actionItem.elseAction.action.message) {
+        messageList.push('アクションのメッセージが未入力です');
+      }
+      if(Number(actionItem.elseAction.actionType) === 2 && actionItem.elseAction.action.callScenarioId === "") {
+        messageList.push('呼出先のシナリオを選択して下さい');
+      }
+    }
+
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
     actionItem.addCustomerInformations.some(function(elm){

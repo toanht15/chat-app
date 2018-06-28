@@ -1209,7 +1209,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.getOldChat = function(historyId, oldFlg, event){
       if(event !== undefined) {
         //過去のチャットを選択したとき
-        $('.pastChatShowBold').css('background-color','#fff');
+        $('.pastChatShowBold').css('cssText', 'background-color: #fff');
         $(event.currentTarget).css('cssText', 'background-color: rgb(235, 246, 249)!important');
       }
       $scope.chatLogMessageList = [];
@@ -1371,7 +1371,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
         thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail' style='max-width: 200px; max-height: 140px'>";
       } else {
-        thumbnail = "<i class='sinclo-fa " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+        thumbnail = "<i class='fal " + selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
       }
       divElm.innerHTML =
         "    <div class=\"receiveFileContent\" style='line-height:0; margin-bottom:0;'>" +

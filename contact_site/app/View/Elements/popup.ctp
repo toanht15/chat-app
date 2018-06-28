@@ -382,7 +382,7 @@
           var agreeBtn = _button("合意する");
           closeBtn.onclick = function() {
             // override me!!
-            return popupEvent.closePopup();
+            return popupEvent.closeNoPopup();
           };
           agreeBtn.onclick = function() {
             // override me!!
