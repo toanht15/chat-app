@@ -155,7 +155,6 @@
   function addTooltipEvent() {
     $(".commontooltip").off('mouseenter').off('mouseleave');
     tooltipEventTimer = setTimeout(function(){
-      console.log('addTooltipEvent');
       // 共通ツールチップの配置（内容はdata-textで指定する）
       $(".commontooltip").each(function(index){
         // サイズ調整用
@@ -171,6 +170,7 @@
           var $this = $(self);
           var text = $this.attr('data-text');
           var $tooltip = $('<div class="tooltips">'+text+'</div>');
+          var topWeight = 1;
 
           $('body').append($tooltip);
 
@@ -196,6 +196,7 @@
           var overcount = 1;
           while((leftCoordinate + ttSize.width + 40) > $(window).outerWidth()){
             ttSize.width /= 2;
+            var topWeight = 1.7;
           }
 
           //画面端40px余白を持たせたサイズを、ツールチップのサイズが左側に超過してしまった場合(位置を右にずらす)
@@ -204,13 +205,20 @@
             overcount += 1;
           }
 
-          var topCoordinate = offset.top + size.height + 7;
+          var topCoordinate = offset.top + size.height + 12;
+          var ttElement = $(this).attr('class');
 
-          console.log(topCoordinate + ttSize.height);
-          console.log($(window).outerHeight());
+          //ボタン系、またはリアルタイムモニタのオペレータのツールチップの場合はボタンの上部に表示する。
+          if(ttElement.indexOf('btn-shadow') !== -1 || ttElement.indexOf('ttposition_top') !== -1){
+            topCoordinate = offset.top - ttSize.height*topWeight -10;
+            //上部に表示したがはみ出してしまう場合は元の位置(下に表示する)に戻す
+            if(topCoordinate < 0){
+              topCoordinate = offset.top + size.height + 8;
+            }
+          }
+
           if((topCoordinate + ttSize.height + 40) > $(window).outerHeight()){
             topCoordinate = offset.top -ttSize.height - 30;
-          }else{
           }
           $tooltip.css({
             top: topCoordinate,
