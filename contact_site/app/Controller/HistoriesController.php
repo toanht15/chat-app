@@ -1130,11 +1130,11 @@ class HistoriesController extends AppController {
       );
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
-      if(empty($chatLogCond['chat.achievementFlg']) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
+      if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
         $value = 'MAX';
       }
       //成果でCVを検索する場合
-      else if(!empty($chatLogCond['chat.achievementFlg']) && $chatLogCond['chat.achievementFlg'] == 0) {
+      else if(!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
         $value = 'MIN';
       }
 
@@ -1191,8 +1191,6 @@ class HistoriesController extends AppController {
       }
     }
     $historyList = $this->paginate('THistory');
-    $this->log('historyList',LOG_DEBUG);
-    $this->log($historyList,LOG_DEBUG);
 
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
