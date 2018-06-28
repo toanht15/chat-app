@@ -60,12 +60,11 @@ class MChatSettingsController extends AppController {
         $this->set('data',$data);
       }
       else {
-        $this->log('ここに入っている',LOG_DEBUG);
         //デフォルト値設定
         $data[0]['seconds'] = 0;
         $data[0]['message'] = '';
-        $this->request->data['MChatSetting']['initial_notification_message1'] = '';
-        $this->request->data['MChatSetting']['seconds1'] = 0;
+        $this->request->data['MChatSetting']['initial_notification_message1'] = 'ただいま担当の者を呼び出しておりますので、そのままでお待ちください。';
+        $this->request->data['MChatSetting']['seconds1'] = 1;
         $this->request->data['MChatSetting']['in_flg'] = 2;
         $this->set('in_flg',2);
         $this->set('data',$data);
