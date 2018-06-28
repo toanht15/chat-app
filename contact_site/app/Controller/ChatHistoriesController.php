@@ -1185,9 +1185,9 @@
             }
             $companyData = $this->MLandscapeData->find('all', $companyConditions);
 
-              if(!empty($companyData)) {
-                $visitorsIds = $this->_searchCustomer($data['History']);
-                $chatCond['visitors_id'] = $visitorsIds;
+            if(!empty($companyData)) {
+              $visitorsIds = $this->_searchCustomer($data['History']);
+              $chatCond['visitors_id'] = $visitorsIds;
 
               $ipAddressList = [];
               foreach($companyData as $k => $v) {
