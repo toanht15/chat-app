@@ -934,10 +934,11 @@ ul.ulTab {
       cursor:pointer;
       text-align: center;
       display:flex;
+      padding-left: 3px;
       a{
         text-decoration: none;
         display: block;
-        padding: 10px 10px 10px 6.5px;
+        padding: 10px 10px 10px 7.5px;
       }
       img {
         margin: 0;
@@ -953,6 +954,7 @@ ul.ulTab {
       .smallFal {
         font-size:17px;
         text-align:left;
+        margin-left: 10px;
       }
     }
   }
