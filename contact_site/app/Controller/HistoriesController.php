@@ -1015,8 +1015,6 @@ class HistoriesController extends AppController {
         $chatLogCond['chat.cv != '] = 0;
       }
 
-      $this->log('chatlogcond',LOG_DEBUG);
-      $this->log($chatLogCond,LOG_DEBUG);
       // 検索条件にメッセージがある場合
       if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
       //「%」が含まれていた場合
