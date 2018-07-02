@@ -932,6 +932,20 @@ class ContractController extends AppController
             unset($action['mailTransmission']);
             $action['mMailTemplateId'] = $this->MMailTemplate->getLastInsertId();
           }
+          else if(strcmp($action['actionType'], 11) === 0) { // 訪問ユーザ登録
+            $addCustomerInformations = &$action['addCustomerInformations'];
+            foreach($addCustomerInformations as $index => &$addCustomerInformation) {
+              $customerInfoSetting = $this->TCustomerInformationSetting->find('first', array(
+                'conditions' => array(
+                  'm_companies_id' => $m_companies_id,
+                  'item_name' => $addCustomerInformation['targetItemName'],
+                  'delete_flg' => 0
+                )
+              ));
+              unset($addCustomerInformation['targetItemName']);
+              $addCustomerInformation['targetId'] = $customerInfoSetting['TCustomerInformationSetting']['id'];
+            }
+          }
         }
         $this->TChatbotScenario->create();
         $this->TChatbotScenario->set(array(
