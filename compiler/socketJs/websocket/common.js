@@ -1554,17 +1554,21 @@ var socket, // socket.io
       var subTitle = (widget.subTitle === undefined && Number(widget.showSubtitle) === 1 ) ? "" : widget.subTitle;
       var description = (widget.description === undefined) ? "" : widget.description;
       if ( !chatAndTitleOnly && (Number(widget.showMainImage) === 1 || Number(widget.showSubtitle) === 1 || Number(widget.showDescription) === 1) ) {
-
         // サブタイトル
-        if ( Number(widget.showSubtitle) === 1 ) {
+        if ( Number(widget.showSubtitle) === 1 && (widget.subTitle).length !== 0) {
           html += '    <p id="widgetSubTitle">' + check.escape_html(subTitle) + '</p>';
         }
         else {
-          html += '    <p id="widgetSubTitle"></p>';
+          html += '    <p id="widgetSubTitle">&thinsp;</p>';
         }
 
         // 説明文
-        html += '    <p id="widgetDescription">' + check.escape_html(description) + '</p>';
+        if ( Number(widget.showDescription) === 1 && (widget.description).length !== 0) {
+          html += '    <p id="widgetDescription">' + check.escape_html(description) + '</p>';
+        }
+        else {
+          html += '    <p id="widgetDescription">&thinsp;</p>';
+        }
       }
 
       html += '  </sinclo-div>';
