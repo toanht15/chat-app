@@ -218,27 +218,27 @@
   <table class = "scroll" id = "chatTable">
       <thead>
         <tr>
-          <th style = "width:2%" id = "check" width = "3%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
-          <th width = "3%" id = "info" style = "width:20%">情報</th>
-          <th width = "3%" id = "kind" style = "width:5%; display:none;">種別</th>
+          <th style = "width:2%" id = "check" min-width = "58px"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
+          <th width = "3%" id = "info" style = "max-width:400px">情報</th>
+          <th width = "3%" id = "kind" style = "min-width:5%; display:none;">種別</th>
           <th style = "width:5%;display:none;min-width:79px;" id="firstTimeReceivingLabel">初回チャット<br>受信日時<div class="questionBalloon">
             <icon class="questionBtn commontooltip" data-text="サイト訪問者が一番最初にチャット送信（ラジオボタン操作を含む）した日時">？</icon>
           </div></th>
-          <th style = "width:5%;display:none;" id = "ip">IPアドレス</th>
-          <th style = "width:5%;display:none;" id = "visitor">訪問ユーザ</th>
-          <th id = "campaign" style = "width:3%" >キャンペーン</th>
-          <th id = style = "width:13%" id="sendChatPageLabel">チャット送信ページ<div class="questionBalloon">
+          <th style = "min-width:5%;display:none;" id = "ip">IPアドレス</th>
+          <th style = "min-width:5%;display:none;" id = "visitor">訪問ユーザ</th>
+          <th id = "campaign" style = "min-width:96px" >キャンペーン</th>
+          <th style = "min-width:304px;max-width:304px" id="sendChatPageLabel">チャット送信ページ<div class="questionBalloon">
             <icon class="questionBtn commontooltip" data-text="サイト訪問者が一番最初にチャット送信（ラジオボタン操作を含む）したページ">？</icon>
           </div></th>
-          <th style = "min-width:33px;" id = "achievement">成果</th>
-          <th style = "min-width:79px;" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon">
+          <th style = "min-width:52px;" id = "achievement">成果</th>
+          <th style = "min-width:86px;" id = "manualReceivingLabel">有人チャット<br>受信日時<div class="questionBalloon">
             <icon class="questionBtn commontooltip" data-text="サイト訪問者が送信したチャットが、最初にオペレータに通知された日時">？</icon>
             </div></th>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-          <th style = "min-width:71px;" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon">
+          <th style = "min-width:78px;" id="lastSpeechLabel">最終発言後<br>離脱時間<div class="questionBalloon">
             <icon class="questionBtn commontooltip" data-text="サイト訪問者が最後に発言してからページを離脱するまでの時間">？</icon>
             </div></th>
-           <th style = "width:6%;display:none;" id = "responsible">担当者</th>
+           <th style = "min-width:6%;display:none;" id = "responsible">担当者</th>
         <?php endif; ?>
       </tr>
       </thead>
