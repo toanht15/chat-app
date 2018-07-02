@@ -293,6 +293,7 @@ class AppController extends Controller {
    * @return void
    * */
   public function checkPort(){
+    if(strcmp($this->request->params['controller'], 'FC') === 0) return;
     $params = $this->request->params;
     $query = $this->request->query;
 
