@@ -2756,19 +2756,21 @@
               messageRequestFlg = flg;
             }
 
+            var isScenarioMessage = false;
+            console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
+            if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
+              && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+              sinclo.scenarioApi.triggerInputWaitComplete(value);
+              messageType = sinclo.scenarioApi.getCustomerMessageType();
+              // シナリオ中の返答はオペレータへの通知をしない
+              isScenarioMessage = true;
+            }
+
             sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
               if(result && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 storage.s.set('chatAct', false); // オートメッセージを表示しない
               }
 
-              var isScenarioMessage = false;
-              console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
-              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput() && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
-                sinclo.scenarioApi.triggerInputWaitComplete(value);
-                messageType = sinclo.scenarioApi.getCustomerMessageType();
-                // シナリオ中の返答はオペレータへの通知をしない
-                isScenarioMessage = true;
-              }
               //初回通知メッセージの場合
               if(storage.s.get('initialNotification') === null || storage.s.get('initialNotification') === 'true') {
                 initialNotification = true;
@@ -4124,6 +4126,7 @@
               // 2. シナリオ中ではない
               // 3. シナリオの入力待ち状態ではない
               // 4. マッチ設定が存在する
+              console.log("matchAllSpeechContent ::: sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
               if(
                 (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
                 && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() && this.speechContentRegEx.length > 0) {
@@ -4497,8 +4500,8 @@
         var self = sinclo.scenarioApi;
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         self._resetDefaultVal();
+        self._saveProcessingState(false);
         self._saveStoredMessage(function(){
-          self._saveProcessingState(false);
           self._enablePreviousRadioButton();
           self._unsetBaseObj();
           self.setPlaceholderMessage(self.getPlaceholderMessage());
