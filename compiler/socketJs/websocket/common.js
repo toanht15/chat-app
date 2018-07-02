@@ -1560,11 +1560,16 @@ var socket, // socket.io
           html += '    <p id="widgetSubTitle">' + check.escape_html(subTitle) + '</p>';
         }
         else {
-          html += '    <p id="widgetSubTitle"></p>';
+          html += '    <p id="widgetSubTitle">&thinsp;</p>';
         }
 
-        // 説明文
-        html += '    <p id="widgetDescription">' + check.escape_html(description) + '</p>';
+        if ( Number(widget.showDescription) === 1 ) {
+          // 説明文
+          html += '    <p id="widgetDescription">' + check.escape_html(description) + '</p>';
+        }
+        else {
+          html += '    <p id="widgetDescription">&thinsp;</p>';
+        }
       }
 
       html += '  </sinclo-div>';
