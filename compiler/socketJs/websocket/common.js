@@ -2989,11 +2989,15 @@ var socket, // socket.io
     },
     setCustomVariables: function() {
       if(sincloInfo.customVariable.length > 0) {
-        for(var i=0; i < sincloInfo.customVariable.length; i++) {
-          var getValue = userInfo._getText($(sincloInfo.customVariable[i].attribute_value));
-          if(getValue) {
-            userInfo.customVariables[sincloInfo.customVariable[i].item_name] = getValue.trim();
+        try {
+          for (var i = 0; i < sincloInfo.customVariable.length; i++) {
+            var getValue = userInfo._getText($(sincloInfo.customVariable[i].attribute_value));
+            if (getValue) {
+              userInfo.customVariables[sincloInfo.customVariable[i].item_name] = getValue.trim();
+            }
           }
+        } catch(e) {
+
         }
       }
     },
