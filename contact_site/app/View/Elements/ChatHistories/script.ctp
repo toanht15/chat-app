@@ -89,7 +89,24 @@ var actBtnShow = function(){
       document.getElementById("history_dustbox_btn").addEventListener('click', openDeleteDialog, false);
     }
     if(authorityCsv == 1 || authorityDelete == 1) {
-      SetListHeight();
+      //横並びの場合
+      if(screenMode == 1) {
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (220 + parseInt($("#style").css('height'))));
+        }
+      }
+      //縦並びの場合
+      if(screenMode == 2) {
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 179);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (195 + parseInt($("#style").css('height'))));
+        }
+      }
     }
   }
   else {
@@ -111,9 +128,26 @@ var actBtnShow = function(){
       document.getElementById("history_dustbox_btn").removeEventListener('click', openDeleteDialog, false);
     }
     if(authorityCsv == 1 || authorityDelete == 1) {
-      $("#btnSet").css('display', 'none');
-      SetListHeight();
+      //横並びの場合
+      if(screenMode == 1) {
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+        }
+      }
+      //縦並びの場合
+      if(screenMode == 2) {
+        if($("#style")[0] == null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 130);
+        }
+        else {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (146 + parseInt($("#style").css('height'))));
+        }
+      }
     }
+    $("#btnSet").css('display', 'none');
   }
   if(authorityDelete == "" ) {
     return false;
@@ -170,18 +204,11 @@ var  table = $('.scroll');
 var  bodyCells = table.find('tbody tr:first').children();
 var  colWidth;
 
-
-
-/****************************/
-/**一番最初に呼ばれる関数群**/
-/****************************/
-
 $(function(){
-  $("#btnSet").css('display');
+
   $("#disabled_history_csv_btn").click(function(){
     return false;
   });
-  $("#info").css('max-width','30%');
 
   var calcHeaderHeight = function() {
     return $('#history_menu').outerHeight() + $('div.btnSet').outerHeight() + $('label[for="g_chat"]').outerHeight() + $('.dataTables_scrollHead').outerHeight();
@@ -213,14 +240,20 @@ $(function(){
     tableObj.on('draw', function(){
       if(<?= $screenFlg ?> == 1) {
         $(".info").css('width',$("#info").outerWidth());
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
         $(".dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerWidth() - 17);
         $("#chatHistory").css('height','100%');
+        if($("#style")[0] != null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+        }
       }
       if(<?= $screenFlg ?> == 2) {
         $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 130);
         $("#chatHistory").css('height','100%');
+        if($("#style")[0] != null) {
+          $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (146 + parseInt($("#style").css('height'))));
+        }
       }
-      SetListHeight();
     });
   });
 
@@ -251,7 +284,24 @@ $(function(){
     document.getElementById("history_dustbox_btn").classList.remove("disOffgreenBtn");
     document.getElementById("history_dustbox_btn").classList.add("disOffgrayBtn");
     $("#btnSet").css('display', 'none');
-    SetListHeight();
+    //横並びの場合
+    if(screenMode == 1) {
+      if($("#style")[0] != null) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+      }
+      else {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+      }
+    }
+    //縦並びの場合
+    if(screenMode == 2) {
+      if($("#style")[0] != null) {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (146 + parseInt($("#style").css('height'))));
+      }
+      else {
+        $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 130);
+      }
+    }
   })
 
   // 全選択用チェックボックス
@@ -262,37 +312,36 @@ $(function(){
   var screenMode = <?= $screenFlg ?>;
 
   $(window).resize(function() {
-    $("#history_list_side").css('height', window.innerHeight - 135);
+    $("#history_list_side").css('height', window.innerHeight - 145);
     //横並びの場合
     if(screenMode == 1) {
-      splitterObj.refresh();
       document.getElementById('history_body_side').style.width = $('#history_body_side').outerWidth() + 'px';
       document.getElementById('history_body_side').style.height = $('#history_list_side').outerHeight() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
       $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
+      //$("#chatHistory").css('height',window.innerHeight - 355);
       $("#chatHistory").css('height','100%');
-      $("#info").css({'width':'50px','word-break':'break-all'});
-      tableObj.columns.adjust();
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
     }
     //縦並びの場合
     if(screenMode == 2) {
       document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
+      //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
       $("#chatHistory").css('height','100%');
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
     }
-    SetListHeight(1);
+    tableObj.columns.adjust();
   });
 
   //縦並びをクリックした場合
   $(document).on('click', '.vertical', function(){
-    if(screenMode == 2){
-      return;
-    }
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
       "orientation": "horizontal",
+      //"limit": 50,
       "position": "40%",
       onDrag: function(ev) {
         tableObj.columns.adjust();
@@ -318,6 +367,7 @@ $(function(){
     $(".responsible").css('display','');
     $("#chatContent").css('height', $("#detail").outerHeight() - 65);
     $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
+    //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
     $("#chatHistory").css('height','100%');
     $(".trHeight").css('height','50px');
     $(".deleteChat").attr('data-balloon-position',45);
@@ -331,16 +381,13 @@ $(function(){
       }
     });
     tableObj.columns.adjust();
+    $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - calcHeaderHeight() - 15);
     screenMode = 2;
     changeScreenMode = 2;
-    SetListHeight();
  });
 
   //横並びをクリックした場合
   $(document).on('click', '.side', function(){
-    if(screenMode == 1){
-        return;
-      }
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -369,9 +416,12 @@ $(function(){
     $(".eachVisitor").css('display','none');
     $(".responsible").css('display','none');
     $(".trHeight").css('height','72px');
+
     $("#chatContent").css('height', $("#detail").outerHeight() - 105);
     $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
+    //$("#chatHistory").css('height',window.innerHeight - 355);
     $("#chatHistory").css('height','100%');
+    $(".deleteChat").attr('data-balloon-position',89);
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -381,36 +431,47 @@ $(function(){
       }
     });
     tableObj.columns.adjust();
-    $(".info").css('width',$("#info").outerWidth());
+    if($("#btnSet").css('display') == "none" && $("#style")[0] == null) {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
+    }
+    else if($("#btnSet").css('display') == "none" && $("#style")[0] != null) {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (170 + parseInt($("#style").css('height'))));
+    }
+    else if($("#btnSet").css('display') == "block" && $("#style")[0] != null) {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (220 + parseInt($("#style").css('height'))));
+    }
+    else {
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 220);
+    }
+     $(".info").css('width',$("#info").outerWidth());
     screenMode = 1;
     changeScreenMode = 1;
-    SetListHeight();
  });
 
 
-    //横並びの場合(ここで無駄にinfoが伸びている)
+    //横並びの場合
     if(<?= $screenFlg ?> == 1) {
       var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
+        //"limit": 500,
         "position": "60%",
         onDrag: function(ev) {
           tableObj.columns.adjust();
-        }});
-
-
-
+        }
+      });
       document.getElementById('detail').style.height = "100%";
       document.getElementById('verticalToggleMenu').style.display = "block";
       $("#chatContent").css('height', $("#detail").outerHeight() - 105);
       $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height','100%');
+      $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 170);
       $(".trHeight").css('height','72px');
-      SetListHeight();
     }
     //縦並びの場合$this.attr('data-balloon-position');
     if(<?= $screenFlg ?> == 2) {
       splitterObj = $("#history_list_side").split({
         "orientation": "horizontal",
+        //"limit": 50,
         "position": "40%",
         onDrag: function(ev) {
           tableObj.columns.adjust();
@@ -436,7 +497,6 @@ $(function(){
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
       $("#chatHistory").css('height','100%');
       $(".trHeight").css('height','50px');
-      SetListHeight();
     }
 
     setTimeout(function(){
@@ -571,28 +631,5 @@ function clearChatAndPersonalInfo() {
     $(elem).find('input,textarea').val("");
   });
   document.getElementById('customerId').value= "";
-}
-
-function SetListHeight(resizeFlg){
-  //リストの高さを計算するための変数群を初期化
-  var List_offsetHeight = 0;
-  var btnHeight = 0;
-  var menuHeight = 0;
-  var adjustHeight = 137;
-  //CSV出力、削除ボタンが表示されている場合、高さを取得
-  if($("#btnSet").css('display') != "none"){
-    btnHeight = parseInt($("#btnSet").css('height'));
-  }
-
-  //検索条件が表示されている場合、高さを取得
-  if($(".seach_menu")[0] != null){
-    menuHeight = parseInt($(".seach_menu").css('height')) + 13;
-  }
-
-  //縦方向リサイズ時の表示破壊を防ぐ
-  $(".dataTables_scrollBody").css('min-height',List_offsetHeight);
-
-    List_offsetHeight = $("#history_body_side").outerHeight() - (adjustHeight + btnHeight + menuHeight);
-  $(".dataTables_scrollBody").css({'height':List_offsetHeight,"min-height":List_offsetHeight});
 }
 </script>
