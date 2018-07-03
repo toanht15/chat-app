@@ -11,12 +11,14 @@ function openSearchRefine(){
     url: "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'remoteSearchCustomerInfo']) ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-thistory-entry', '高度な検索', 'moment');
+      loading.load.finish();
     }
   });
 }
 
 //セッションクリア(条件クリア)
 function sessionClear(){
+  loading.load.start();
   location.href = "<?=$this->Html->url(array('controller' => 'ChatHistories', 'action' => 'portionClearSession'))?>";
 }
 
@@ -288,6 +290,7 @@ $(function(){
     if(screenMode == 2){
       return;
     }
+    loading.load.start();
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -327,6 +330,7 @@ $(function(){
       cache: false,
       url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
       success: function(html){
+        loading.load.finish();
       }
     });
     tableObj.columns.adjust();
@@ -338,8 +342,9 @@ $(function(){
   //横並びをクリックした場合
   $(document).on('click', '.side', function(){
     if(screenMode == 1){
-        return;
-      }
+      return;
+    }
+    loading.load.start();
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -377,6 +382,7 @@ $(function(){
       cache: false,
       url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
       success: function(html){
+        loading.load.finish();
       }
     });
     tableObj.columns.adjust();

@@ -7,6 +7,7 @@ $(document).ready(function(){
     $(".infoData").each(function(){
       dataList[$(this).data('key')] = this.value;
     });
+    loading.load.start();
     $.ajax({
       type: 'GET',
       url: "<?= $this->Html->url(array('controller' => 'Histories', 'action' => 'remoteSaveCustomerInfo')) ?>",

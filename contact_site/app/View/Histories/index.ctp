@@ -57,7 +57,7 @@
     <?= $this->Html->link(
       '高度な検索',
       'javascript:void(0)',
-      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'openSearchRefine()'));
+      array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'searchRefine','onclick' => 'loading.load.start();openSearchRefine()'));
     ?>
     <span id="searchPeriod">検索期間</span>
     <?php
@@ -138,7 +138,7 @@
           $checked = "checked=\"\"";
         }
       ?>
-        <label for="g_chat" class="pointer <?=$class?>">
+        <label for="g_chat" class="pointer <?=$class?>" onclick="loading.load.start()">
           <input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
           チャット履歴があるもののみ表示
         </label>

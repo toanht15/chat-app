@@ -825,6 +825,7 @@ sincloApp.controller('MainController', function($scope){
    * @return void(0)
    */
   $scope.openDocumentList3 = function(id) {
+    loading.load.start();
     $.ajax({
       type: 'post',
       data: {
@@ -853,6 +854,7 @@ sincloApp.controller('MainController', function($scope){
     if ( $('#pageListToggleBtn').is('.on') ) {
       $('#pageListToggleBtn').trigger('click');
     }
+    loading.load.start();
     $.ajax({
       type: 'GET',
       url: '<?=$this->Html->url(["controller" => "Customers", "action" => "remoteOpenDocumentLists"])?>',
@@ -865,6 +867,7 @@ sincloApp.controller('MainController', function($scope){
         $scope.documentList = ( json.hasOwnProperty('documentList') ) ? JSON.parse(json.documentList) : {};
         $scope.$apply();
         setPositionDocumentList(); // 資料選択ダイアログの表示位置の計算
+        loading.load.finish();
       }
     });
   };
@@ -1146,6 +1149,7 @@ function openConfirmDialog(){
   }
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '資料設定', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
+    loading.load.start();
     $.ajax({
       type: 'post',
       cache: false,
@@ -1195,6 +1199,7 @@ function openAdd(){
 //資料設定編集
 function openEdit(id){
   //資料設定並べ替えチェックボックスが入っているときはリンク無効とする
+  loading.load.start();
   if (!document.getElementById("sort").checked) {
     var url = "<?= $this->Html->url('/TDocuments/edit') ?>";
     location.href = url + "/" + id;
@@ -1239,9 +1244,11 @@ function toggleSort(){
 var confirmSort = function(){
   modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', '資料設定並び替えの保存', 'moment');
   popupEvent.saveClicked = function(){
+    loading.load.start();
     saveToggleSort();
   }
   popupEvent.cancelClicked = function(){
+  loading.load.start();
     var url = "<?= $this->Html->url('/TDocuments/index') ?>";
     location.href = url;
   }

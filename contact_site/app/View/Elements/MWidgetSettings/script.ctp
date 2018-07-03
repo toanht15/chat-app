@@ -1728,6 +1728,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     }
 
     $scope.reloadAct = function (){
+      loading.load.start();
       // 元に戻すボタンが押されたらconfirmを出さない
       $scope.changeFlg = false;
       window.location.reload();

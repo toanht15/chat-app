@@ -206,23 +206,6 @@ function isActive(flg, id){
   });
 }
 
-// function removeAct(no, id){
-//  modalOpen.call(window, "No." + no + " を削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
-//  popupEvent.closePopup = function(){
-//    $.ajax({
-//      type: 'post',
-//      data: {
-//        id: id
-//      },
-//      cache: false,
-//      url: "/TAutoMessages/remoteDelete",
-//      success: function(){
-//        location.href = "/TAutoMessages/index";
-//      }
-//    });
-//  };
-// }
-
 //オートメッセージ設定の削除
 function openConfirmDialog(){
   //チェックボックスのチェック状態の取得
@@ -241,9 +224,9 @@ function openConfirmDialog(){
   if(countList >= current && index > 1){
     index = index - 1;
   }
-  //modalOpen.call(window, "選択された定型文を削除します。<br/><br/>よろしいですか？<br/>", 'p-dictionary-del', '削除', 'moment');
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'オートメッセージ設定', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
+    loading.load.start();
     $.ajax({
       type: 'post',
       cache: false,
@@ -257,7 +240,6 @@ function openConfirmDialog(){
         location.href = url + "/page:" + index;
       },
       error: function() {
-        //debugger;
         console.log('error');
         TabIndex = document.getElementById("select_tab_index").value;
         var url = "<?= $this->Html->url('/TAutoMessages/index') ?>";
@@ -312,6 +294,7 @@ var toExecutableOnce = function(f){
 
 //オートメッセージ新規追加
 function openAdd(){
+  loading.load.start();
   //オートメッセージ設定並べ替えチェックボックスが入っているときはリンク無効とする
   if (!document.getElementById("sort").checked) {
     //現在のページ番号
@@ -374,6 +357,7 @@ function toggleSort(){
 var confirmSort = function(){
   modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', 'オートメッセージ設定並び替えの保存', 'moment');
   popupEvent.saveClicked = function(){
+    loading.load.start();
     saveToggleSort();
   }
   popupEvent.cancelClicked = function(){

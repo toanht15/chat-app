@@ -8,12 +8,14 @@ function openSearchRefine(){
     url: "<?= $this->Html->url(['controller' => 'Histories', 'action' => 'remoteSearchCustomerInfo']) ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-thistory-entry', '高度な検索', 'moment');
+      loading.load.finish();
     }
   });
 }
 
 //セッションクリア(条件クリア)
 function sessionClear(){
+  loading.load.start();
   location.href = "<?=$this->Html->url(array('controller' => 'Histories', 'action' => 'portionClearSession'))?>";
 }
 
