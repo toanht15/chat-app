@@ -226,7 +226,6 @@ $(function(){
 
   //選択したチャット履歴CSV出力
   $('#history_csv_btn').click(function(){
-    //return false;
     var authorityCsv = "<?= $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ?>";
     if(authorityCsv == "") {
       $("#disabled_history_csv_btn").click(function(){
@@ -272,7 +271,6 @@ $(function(){
       $("#customerInfoScrollArea").css('height', $("#detail").outerHeight() - 39);
       $("#chatHistory").css('height','100%');
       $("#info").css({'width':'50px','word-break':'break-all'});
-      tableObj.columns.adjust();
     }
     //縦並びの場合
     if(screenMode == 2) {
@@ -281,6 +279,7 @@ $(function(){
       $("#chatHistory").css('height','100%');
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
+    tableObj.columns.adjust();
     SetListHeight(1);
   });
 
@@ -388,7 +387,7 @@ $(function(){
  });
 
 
-    //横並びの場合(ここで無駄にinfoが伸びている)
+    //横並びの場合
     if(<?= $screenFlg ?> == 1) {
       var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",
