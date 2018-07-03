@@ -724,7 +724,7 @@
       if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
         thumbnail = "<img src='" + url + "' class='recieveFileThumbnail'>";
       } else {
-        thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
+        thumbnail = "<i class='fal " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         height = "style = 'height:64px;'"
       }
       var content    = "<div class='recieveFileContent'>";
@@ -741,17 +741,17 @@
     function selectFontIconClassFromExtension(ext) {
       var selectedClass = "",
         icons = {
-          image:      'fa-file-image-o',
-          pdf:        'fa-file-pdf-o',
-          word:       'fa-file-word-o',
-          powerpoint: 'fa-file-powerpoint-o',
-          excel:      'fa-file-excel-o',
-          audio:      'fa-file-audio-o',
-          video:      'fa-file-video-o',
-          zip:        'fa-file-zip-o',
-          code:       'fa-file-code-o',
-          text:       'fa-file-text-o',
-          file:       'fa-file-o'
+          image:      'fa-file-image',
+          pdf:        'fa-file-pdf',
+          word:       'fa-file-word',
+          powerpoint: 'fa-file-powerpoint',
+          excel:      'fa-file-excel',
+          audio:      'fa-file-audio',
+          video:      'fa-file-video',
+          zip:        'fa-file-zip',
+          code:       'fa-file-code',
+          text:       'fa-file-text',
+          file:       'fa-file'
         },
         extensions = {
           gif: icons.image,

@@ -274,7 +274,7 @@ class htmlExHelper extends AppHelper {
       if(preg_match('/(jpeg|jpg|gif|png)$/', $value['extension'])) {
         $thumbnail = "<img src='" . $value['downloadUrl'] . "' class='recieveFileThumbnail' style='max-width: 200px; max-height: 140px'>";
       } else {
-        $thumbnail = "<i class='fa " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
+        $thumbnail = "<i class='fal " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         $height = "style = 'height:64px'";
       }
       $content .= "<span class='cName'>シナリオメッセージ（ファイル受信）</span>";
@@ -296,17 +296,17 @@ class htmlExHelper extends AppHelper {
     private function selectFontIconClassFromExtension($ext) {
       $selectedClass = "";
       $icons = [
-        "image" =>     'fa-file-image-o',
-        "pdf"   =>     'fa-file-pdf-o',
-        "word"  =>     'fa-file-word-o',
-        "powerpoint" => 'fa-file-powerpoint-o',
-        "excel" =>      'fa-file-excel-o',
-        "audio" =>      'fa-file-audio-o',
-        "video" =>      'fa-file-video-o',
-        "zip" =>        'fa-file-zip-o',
-        "code" =>       'fa-file-code-o',
-        "text" =>       'fa-file-text-o',
-        "file" =>       'fa-file-o'
+        "image" =>     'fa-file-image',
+        "pdf"   =>     'fa-file-pdf',
+        "word"  =>     'fa-file-word',
+        "powerpoint" => 'fa-file-powerpoint',
+        "excel" =>      'fa-file-excel',
+        "audio" =>      'fa-file-audio',
+        "video" =>      'fa-file-video',
+        "zip" =>        'fa-file-zip',
+        "code" =>       'fa-file-code',
+        "text" =>       'fa-file-text',
+        "file" =>       'fa-file'
       ];
       $extensions = [
         "gif"  => $icons['image'],

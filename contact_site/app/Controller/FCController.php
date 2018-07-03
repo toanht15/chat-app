@@ -18,6 +18,7 @@ class FCController extends FileAppController
   public $uses = array('MCompany', 'TReceiveVisitorFile');
 
   public function beforeFilter() {
+    ini_set('memory_limit', '512M');
     parent::beforeFilter();
     $this->Auth->allow(array('pu','gd'));
     $this->response->header('Access-Control-Allow-Origin','*');
