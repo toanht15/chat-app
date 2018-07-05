@@ -912,7 +912,8 @@ $headerNo = 1;
               <div id="imageSelectBtns" ng-class="{chooseImg: showChooseImg()}">
 
                 <div id="picDiv">
-                  <img id = "trim" ng-src="{{main_image}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" width="62" height="70" alt="チャットに設定している画像">
+                  <img ng-if="isPictureImage(main_image)" ng-src="{{main_image}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" width="62" height="70" alt="チャットに設定している画像">
+                  <i ng-if="isIconImage(main_image)" class="fal {{main_image}}" alt="チャット画像" ng-style="getIconColor(main_image)"></i>
                 </div>
                 <div id="picChooseDiv">
                   <div class="greenBtn btn-shadow" ng-click="showGallary()">ギャラリーから選択</div>

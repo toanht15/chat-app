@@ -104,7 +104,7 @@
   <section>
     <?=$this->Form->hidden('id')?>
     <div id="tautomessages_actions" class="fotterBtnArea">
-      <?=$this->Html->link('戻る','/TDocuments/index', ['class'=>'whiteBtn btn-shadow'])?>
+      <?=$this->Html->link('戻る','/TDocuments/index', ['class'=>'whiteBtn btn-shadow', 'onclick'=>'loading.load.start()'])?>
       <a href="javascript:void(0)"  onclick="saveAct()" class="greenBtn btn-shadow">保存</a>
       <?php
         $class = "";

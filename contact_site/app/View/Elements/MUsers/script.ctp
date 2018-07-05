@@ -19,6 +19,7 @@ function openEntryDialog(setting){
     url: "<?= $this->Html->url('/MUsers/remoteOpenEntryForm') ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-muser-entry', 'ユーザー情報', 'moment');
+      loading.load.finish();
     },
     error: function(html) {
       console.log('error');
@@ -134,6 +135,7 @@ function openConfirmDialog(){
   //modalOpen.call(window, "選択された定型文を削除します。<br/><br/>よろしいですか？<br/>", 'p-dictionary-del', '削除', 'moment');
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'ユーザー情報', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
+    loading.load.start();
     $.ajax({
       type: 'post',
       cache: false,

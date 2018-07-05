@@ -18,6 +18,7 @@
   });
 
   popupEvent.closePopup = function(){
+    loading.load.start();
     var id = document.getElementById('MUserId').value;
     var userName = document.getElementById('MUserUserName').value;
     var displayName = document.getElementById('MUserDisplayName').value;
@@ -74,6 +75,7 @@
                       $(this).css("overflow", "");
                   }
               });
+              loading.load.finish();
           }
         }
     });
