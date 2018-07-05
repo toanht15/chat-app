@@ -368,6 +368,13 @@ sincloApp.factory('SimulatorService', function() {
       }
       return res;
     },
+    isIconImage: function() {
+      return this.settings['main_image'].match(/^fa/) !== null;
+    },
+    isPictureImage: function() {
+      return this.settings['main_image'].match(/^http/) !== null;
+    }
+
     /**
      * 表示用HTMLへの変換
      * @param String val    変換したいメッセージ
@@ -409,6 +416,7 @@ sincloApp.factory('SimulatorService', function() {
     isImage: function(extension) {
       return /jpeg|jpg|gif|png/i.test(extension);
     },
+
     /**
      * ファイルタイプ別ごとに、font-awesome用のクラスを出し分ける
      * @param String extension ファイルの拡張子
