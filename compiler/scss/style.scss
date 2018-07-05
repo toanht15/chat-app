@@ -5358,6 +5358,16 @@ ul.naviBtn {
             border: 1px solid #444;
             width: 64px;
             height: 72px;
+          i {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 62px;
+            height: 70px;
+            font-size: 45px;
+          }
+
+
         }
 
         div#picChooseDiv {
