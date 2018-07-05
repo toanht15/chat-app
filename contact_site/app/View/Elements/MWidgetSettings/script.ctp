@@ -1029,58 +1029,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       return "#FFFFFF"; // 白に設定
     }
 
-    //ウィジェットサイズがクリックされた時の動作
-    $scope.clickWidgetSizeTypeToggle = function(size){
-      var settingTitle = document.getElementById('MWidgetSettingTitle');
-      var settingSubTitle = document.getElementById('MWidgetSettingSubTitle');
-      var settingDescription = document.getElementById('MWidgetSettingDescription');
-      var titleLength = 12;
-      var subTitleLength = 15;
-      var descriptionLength = 15;
-      switch (size) {
-       //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
-        case 1: //小
-          titleLength = 12;
-          subTitleLength = 15;
-          descriptionLength = 15;
-          break;
-        case 2: //中
-          titleLength = 16;
-          subTitleLength = 20;
-          descriptionLength = 20;
-          break;
-        case 3: //大
-          titleLength = 19;
-          subTitleLength = 24;
-          descriptionLength = 24;
-          break;
-      }
-      settingTitle.maxLength = titleLength;
-//       if(settingTitle.value.length > titleLength){
-//         $scope.title = settingTitle.value.substring(0, titleLength);
-//       }
-      settingSubTitle.maxLength = subTitleLength;
-//       if(settingSubTitle.value.length > subTitleLength){
-//         $scope.sub_title = settingSubTitle.value.substring(0, subTitleLength);
-//       }
-      settingDescription.maxLength = descriptionLength;
-//       if(settingDescription.value.length > descriptionLength){
-//         $scope.description = settingDescription.value.substring(0, descriptionLength);
-//       }
-      $scope.revertStandardTextSize('header_text_size');
-      $scope.revertStandardTextSize('re_text_size');
-      $scope.revertStandardTextSize('se_text_size');
-      if($('#chatTalk').length > 0) {
-        $('#chatTalk').css('height', '');
-      } else {
-        $('#telContent').css('height', '');
-      }
-      $scope.resizeWidgetHeightByWindowHeight();
-      setTimeout(function(){
-        $('#miniTarget').css('height', 'auto');
-      },0);
-    }
-
     //ウィジェットタイトルの位置がクリックされたときの動作
     $scope.clickWidgetSizeTypeToggle = function(size){
       var settingTitle = document.getElementById('MWidgetSettingTitle');
@@ -1543,22 +1491,22 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     });
 
     angular.element('input[name="data[MWidgetSetting][widget_title_name_type]"]').on('change', function(e){
-      //説明文を表示する場合
+      //企業名を左寄せにする場合
       if(e.currentTarget.id == 'widgetTitleNameType1') {
         $('#widgetSubTitle').css('text-align','left');
       }
-      //説明文を表示しない場合
+      //企業名を中央寄せにする倍
       if(e.currentTarget.id == 'widgetTitleNameType2') {
         $('#widgetSubTitle').css('text-algin','center');
       }
     });
 
     angular.element('input[name="data[MWidgetSetting][widget_title_explain_type]"]').on('change', function(e){
-      //説明文を表示する場合
+      //説明文を左寄せにする場合
       if(e.currentTarget.id == 'widgetTitleNameTypeLabel1') {
         $('#widgetSubTitle').css('text-align','left');
       }
-      //説明文を表示しない場合
+      //説明文を中央寄せにする場合
       if(e.currentTarget.id == 'widgetTitleNameTypeLabel2') {
         $('#widgetSubTitle').css('text-algin','center');
       }
@@ -1794,7 +1742,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     //位置調整
     $scope.$watch(function(){
-      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType, 'widgetSizeType': $scope.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.chat_radio_behavior, 'chat_trigger': $scope.chat_trigger, 'show_name': $scope.show_name, 'show_automessage_name': $scope.show_automessage_name, 'widget.showTab': $scope.widget.showTab, 'sp_maximize_size_type': $scope.sp_maximize_size_type, 'widget_title_top_type': $scope.widget_title_top_type, 'widget_title_name_type': $scope.widget_title_name_type, 'widget_title_explain_type': $scope.widget_title_explain_type};
+      return {'openFlg': $scope.openFlg, 'showWidgetType': $scope.showWidgetType, 'widgetSizeType': $scope.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.chat_radio_behavior, 'chat_trigger': $scope.chat_trigger, 'show_name': $scope.show_name, 'show_automessage_name': $scope.show_automessage_name, 'widget.showTab': $scope.widget.showTab, 'sp_maximize_size_type': $scope.sp_maximize_size_type};
     },
     function(){
       var main = document.getElementById("miniTarget");

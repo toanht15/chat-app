@@ -306,7 +306,12 @@ router.get("/", function(req, res, next) {
           spHeaderLightFlg: isNumeric(settings.spHeaderLightFlg),
           spAutoOpenFlg: isNumeric(settings.spAutoOpenFlg),
           spMaximizeSizeType: isNumeric(spMaximizeSizeType),
-          chatMessageCopy: chatMessageCopy
+          chatMessageCopy: chatMessageCopy,
+
+          //タイトル位置
+          widget_title_top_type: isNumeric(settings.widget_title_top_type),
+          widget_title_name_type: isNumeric(settings.widget_title_name_type),
+          widget_title_explain_type: isNumeric(settings.widget_title_explain_type)
         };
 
         var actionTypeList = [];

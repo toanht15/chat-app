@@ -258,7 +258,7 @@ $headerNo = 1;
               'label' => false,
               'maxlength' => $descriptionLength_maxlength,
               'error' => false,
-              'ng-maxlength' => "false",
+              'ng-maxlength' => "false"
             ],
             [
               'entity' => 'MWidgetSetting.description'

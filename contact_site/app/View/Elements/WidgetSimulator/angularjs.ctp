@@ -694,7 +694,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
   //位置調整
   $scope.$watch(function(){
-    return {'openFlg': $scope.simulatorSettings.openFlg, 'showWidgetType': $scope.simulatorSettings.showWidgetType, 'widgetSizeType': $scope.simulatorSettings.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.simulatorSettings.settings['chat_radio_behavior'], 'chat_trigger': $scope.simulatorSettings.settings['chat_trigger'], 'show_name': $scope.simulatorSettings.settings['show_name'], 'widget.showTab': $scope.simulatorSettings.showTab,'widget_title_top_type': $scope.widget_title_top_type, 'widget_title_name_type': $scope.widget_title_name_type, 'widget_title_explain_type': $scope.widget_title_explain_type};
+    return {'openFlg': $scope.simulatorSettings.openFlg, 'showWidgetType': $scope.simulatorSettings.showWidgetType, 'widgetSizeType': $scope.simulatorSettings.widgetSizeTypeToggle, 'chat_radio_behavior': $scope.simulatorSettings.settings['chat_radio_behavior'], 'chat_trigger': $scope.simulatorSettings.settings['chat_trigger'], 'show_name': $scope.simulatorSettings.settings['show_name'], 'widget.showTab': $scope.simulatorSettings.showTab};
   },
   function(){
     var main = document.getElementById("miniTarget");
