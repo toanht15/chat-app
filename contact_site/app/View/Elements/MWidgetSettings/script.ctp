@@ -1029,7 +1029,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       return "#FFFFFF"; // 白に設定
     }
 
-    //ウィジェットタイトルの位置がクリックされたときの動作
+    //ウィジェットサイズがクリックされた時の動作
     $scope.clickWidgetSizeTypeToggle = function(size){
       var settingTitle = document.getElementById('MWidgetSettingTitle');
       var settingSubTitle = document.getElementById('MWidgetSettingSubTitle');
