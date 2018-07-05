@@ -772,32 +772,32 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return defColor;
   };
 
-    $scope.isIconImage = function(main_image) {
-      return main_image.match(/^fa/) !== null;
-    }
+  $scope.isIconImage = function(main_image) {
+    return main_image.match(/^fa/) !== null;
+  };
 
   $scope.isPictureImage = function(main_image) {
     return main_image.match(/^http/) !== null;
-  }
+  };
 
-    $scope.inputInitToggle = function(item){
-      return (item) ? 1 : 2;
-    };
+  $scope.inputInitToggle = function(item){
+    return (item) ? 1 : 2;
+  };
 
-    $scope.getIconColor = function(main_image) {
-      var isInvert = main_image.match(/invert$/) !== null;
-      if(isInvert) {
-        return {
-          'background-color': $scope.string_color,
-          'color': $scope.main_color
-        };
-      } else {
-        return {
-          'background-color': $scope.main_color,
-          'color': $scope.string_color
-        };
-      }
-    };
+  $scope.getIconColor = function(main_image) {
+    var isInvert = main_image.match(/invert$/) !== null;
+    if(isInvert) {
+      return {
+        'background-color': $scope.string_color,
+        'color': $scope.main_color
+      };
+    } else {
+      return {
+        'background-color': $scope.main_color,
+        'color': $scope.string_color
+      };
+    }
+  };
 
     //シンプル表示判定
     /*
