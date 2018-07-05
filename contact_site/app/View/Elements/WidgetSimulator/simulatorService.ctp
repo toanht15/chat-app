@@ -373,7 +373,7 @@ sincloApp.factory('SimulatorService', function() {
     },
     isPictureImage: function() {
       return this.settings['main_image'].match(/^http/) !== null;
-    }
+    },
 
     /**
      * 表示用HTMLへの変換
