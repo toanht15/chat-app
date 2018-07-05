@@ -1400,11 +1400,11 @@ var socket, // socket.io
         }
         //トップタイトル 左寄せ・画像なしの場合
         if(widget.widget_title_top_type == 1 && widget.showMainImage == 2) {
-          style = 'text-align:center;padding-left:70px !important;';
+          style = 'text-align:left;padding-left:15px !important;';
         }
         //トップタイトル 中央寄せ・画像ありの場合
         if(widget.widget_title_top_type == 2 && widget.showMainImage == 1) {
-          style = 'text-align:left;padding-left:15px !important;';
+          style = 'text-align:center;padding-left:70px !important;';
         }
         //トップタイトル 中央寄せ・画像なしの場合
         if(widget.widget_title_top_type == 2 && widget.showMainImage == 2) {
