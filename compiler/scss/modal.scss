@@ -49,22 +49,16 @@
         }
         #popup-main ul {
           padding: 0;
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-around;
-          margin: 0px;
-
+          display: inline-block;
 
           li {
             float: left;
-            padding: 3px 4px 3px 4px;
+            padding: 3px 4px 0 4px;
             margin: 5px;
             position: relative;
             cursor: pointer;
             background-color: #B7B7B7;
             box-shadow: 0 0 2px rgba(0,0,0,0.3);
-            width: 70px;
-            height: 77px;
 
             &:after {
                 content: " ";
@@ -89,17 +83,6 @@
                 color: #FFF;
                 text-align: center;
                 font-size: 11px;
-            }
-            i{
-              height: 100%;
-              width: 100%;
-              font-size: 46px;
-              text-align: center;
-              vertical-align: center;
-
-              &:before{
-                vertical-align: middle;
-              }
             }
 
             > img {

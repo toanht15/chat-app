@@ -878,18 +878,12 @@ $headerNo = 1;
             <span ng-class="{require: mainImageToggle=='1'}"><label>画像の設定</label></span>
             <div ng-init="mainImageToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_main_image'))?>'">
               <?= $this->Form->hidden('main_image') ?>
-              <?= $this->Form->hidden('image_display') ?>
-              <?= $this->Form->hidden('icon_class') ?>
-              <?= $this->Form->hidden('icon_bgcolor') ?>
-              <?= $this->Form->hidden('icon_fontcolor') ?>
-              <?= $this->Form->hidden('icon_display') ?>
               <label class="pointer" for="showMainImage1"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage1" value="1" >画像を表示する</label><br>
               <div id="imageSelectBtns" ng-class="{chooseImg: showChooseImg()}">
-                <div id="picDiv">
-                  <img id = "trim" ng-src="{{main_image}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" width="62" height="70" alt="チャットに設定している画像" style="display:{{image_display}}">
-                  <i class="fal {{icon_class}}" style="background-color: {{icon_bgcolor}};color: {{icon_fontcolor}};display:{{icon_display}}"></i>
-                </div>
 
+                <div id="picDiv">
+                  <img id = "trim" ng-src="{{main_image}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" width="62" height="70" alt="チャットに設定している画像">
+                </div>
                 <div id="picChooseDiv">
                   <div class="greenBtn btn-shadow" ng-click="showGallary()">ギャラリーから選択</div>
                   <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage', array('accept' => '.png,.jpeg,.jpg')); ?>画像をアップロード</div>

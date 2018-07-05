@@ -5349,24 +5349,15 @@ ul.naviBtn {
         display: none;
 
         &.chooseImg {
-          display: flex;
-          flex-direction: row;
+            display: flex;
+            flex-direction: row;
         }
 
         div#picDiv {
-          margin-right: 10px;
-          border: 1px solid #444;
-          width: 64px;
-          height: 72px;
-          i{
-            height:100%;
-            width: 100%;
-            font-size: 46px;
-            text-align:center;
-            &:before{
-              vertical-align:middle;
-            }
-          }
+            margin-right: 10px;
+            border: 1px solid #444;
+            width: 64px;
+            height: 72px;
         }
 
         div#picChooseDiv {
@@ -5442,8 +5433,6 @@ ul.naviBtn {
         width: 17em;
         padding-top: 5px;
         display: block;
-
-
       }
 
       div#imageSelectBtns {

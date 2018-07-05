@@ -324,8 +324,7 @@
   </style>
     <!-- 画像 -->
     <span id="mainImage" class="widgetOpener" ng-hide="spHeaderLightToggle() || mainImageToggle !== '1'">
-      <img ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像" style="display:{{image_display}}">
-      <i class="fal {{icon_class}}" style="background-color:{{icon_bgcolor}};color:{{icon_fontcolor}};display:{{icon_display}}"></i>
+      <img ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
     </span>
   <div class="widgetHeaderWrap" ng-class="{sp:showWidgetType === 3}">
     <!-- 画像 -->

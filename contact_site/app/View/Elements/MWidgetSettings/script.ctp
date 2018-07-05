@@ -977,8 +977,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $.ajax({
         type: 'post',
         data: {
-          m_color: $scope.main_color,
-          t_color: $scope.string_color,
+          color: $scope.main_color,
         },
         cache: false,
         dataType: 'html',
@@ -986,24 +985,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         success: function(html){
           modalOpen.call(window, html, 'p-show-gallary', 'ギャラリー', 'moment');
           popupEvent.customizeBtn = function(name){
-            //フォントアイコンの場合
-            if(name.match(/icon/)){
-              $scope.main_image = "";
-              //背景色:メインカラー、文字色:タイトルカラー
-              $scope.icon_bgcolor = $scope.main_color;
-              $scope.icon_fontcolor = $scope.string_color;
-              if(!name.match(/normal/)){
-                $scope.icon_bgcolor = $scope.string_color;
-                $scope.icon_fontcolor = $scope.main_color;
-              }
-              $scope.icon_class = name;
-              $scope.icon_display = "block";
-              $scope.image_display = "none";
-            }else{
-              $scope.icon_display = "none";
-              $scope.image_display = "block";
-              $scope.main_image = "<?=$gallaryPath?>" + name;
-            }
+            $scope.main_image = "<?=$gallaryPath?>" + name;
             $("#MWidgetSettingUploadImage").val("");
             $scope.$apply();
             popupEvent.close();
@@ -1741,11 +1723,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $scope.changeFlg = false;
         $('#widgetShowTab').val($scope.widget.showTab);
         $('#MWidgetSettingMainImage').val($scope.main_image);
-        $('#MWidgetSettingIconClass').val($scope.icon_class);
-        $('#MWidgetSettingIconBgcolor').val($scope.icon_bgcolor);
-        $('#MWidgetSettingIconFontcolor').val($scope.icon_fontcolor);
-        $('#MWidgetSettingIconDisplay').val($scope.icon_display);
-        $('#MWidgetSettingImageDisplay').val($scope.image_display);
         $('#TrimmingInfo').val($scope.trimmingInfo);
         $('#MWidgetSettingIndexForm').submit();
     }

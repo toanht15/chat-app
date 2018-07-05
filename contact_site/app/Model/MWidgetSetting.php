@@ -85,11 +85,6 @@ class MWidgetSetting extends AppModel {
 
       'show_main_image' => "showMainImage",
       'main_image' => "mainImage",
-      'image_display' => "imageDisplay",
-      'icon_class' => "iconClass",
-      'icon_bgcolor' => "iconBgcolor",
-      'icon_fontcolor' => "iconFontcolor",
-      'icon_display' => "iconDisplay",
       'radius_ratio' => "radiusRatio",
       //背景の影
       'box_shadow' => "boxShadow",
@@ -228,12 +223,12 @@ class MWidgetSetting extends AppModel {
               'message' => '３ケタ、もしくは６ケタの１６進数を使用して設定してください'
             ]
         ],
-        /*'main_image' => [ // ギャラリーから選択
+        'main_image' => [ // ギャラリーから選択
             'setImage' => [
               'rule' => 'setImage',
               'message' => '画像を選択してください'
             ],
-        ],*/
+        ],
         'uploadImage' => [
             // ルール：extension => pathinfoを使用して拡張子を検証
             'extension' => [

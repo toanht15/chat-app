@@ -12,7 +12,7 @@ class MWidgetSettingsController extends AppController {
     'common' => [
       'display_style_type', 'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
-      'show_main_image','main_image','image_display','icon_class,','icon_bgcolor','icon_fontcolor','icon_display','radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
+      'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
       /* カラー設定styat */
       'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
@@ -36,7 +36,6 @@ class MWidgetSettingsController extends AppController {
   public function index() {
     //$image->resize('/img/Penguins.jpg?1517909330', 60, 60, true);
     if ( $this->request->is('post') ) {
-      $this->log($this->request->data,LOG_DEBUG);
       $errors = $this->_update($this->request->data);
       if ( empty($errors) ) {
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
@@ -229,14 +228,9 @@ class MWidgetSettingsController extends AppController {
 
     $cssStyle = [];
 
-    if (  isset($this->request->data['m_color']) ) {
+    if (  isset($this->request->data['color']) ) {
       $cssStyle['.p-show-gallary .bgOn'] = [
-      'background-color' => $this->request->data['m_color'],
-      'color' => $this->request->data['t_color']
-      ];
-      $cssStyle['.p-show-gallary .bgOff'] = [
-      'background-color' => $this->request->data['t_color'],
-      'color' => $this->request->data['m_color']
+      'background-color' => $this->request->data['color']
       ];
     }
 
@@ -298,11 +292,9 @@ class MWidgetSettingsController extends AppController {
 
     $uploadImage = $inputData['MWidgetSetting']['uploadImage'];
 
-    if(isset($inputData['MWidgetSetting']['main_image'])){
-      $prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
-      if ( is_numeric($inputData['MWidgetSetting']['show_main_image']) === 1 && count($prevFileInfo) > 0 ) {
-        $filename = $prevFileInfo[count($prevFileInfo) - 1];
-      }
+    $prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
+    if ( is_numeric($inputData['MWidgetSetting']['show_main_image']) === 1 && count($prevFileInfo) > 0 ) {
+      $filename = $prevFileInfo[count($prevFileInfo) - 1];
     }
 
     if ( !(isset($uploadImage['tmp_name']) && is_uploaded_file($uploadImage['tmp_name'])) ) {
@@ -440,7 +432,6 @@ class MWidgetSettingsController extends AppController {
     foreach ($objData as $key => $val ) {
       if ( isset($this->MWidgetSetting->styleColumns[$key]) ) {
       $settings[$this->MWidgetSetting->styleColumns[$key]] = $val;
-      $this->log($val,LOG_DEBUG);
       }
     }
     if ( isset($settings['showMainImage']) && strcmp($settings['showMainImage'], "2") === 0 ) {
