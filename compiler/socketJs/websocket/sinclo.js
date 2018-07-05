@@ -3136,7 +3136,7 @@
               "    <div class=\"receiveFileContent\">" +
               "      <div class=\"selectFileArea\">" +
               "        <p class=\"preview\"></p><p class=\"commentLabel\">コメント</p>" +
-              "        <p class=\"commentarea\"><textarea style=\"font-size: " + textareaFontSize + "px; border-width: 1px; padding: 5px; line-height: 1.5;\"></textarea></p>" +
+              "        <p class=\"commentarea\"><textarea maxlength=\"1000\" style=\"font-size: " + textareaFontSize + "px; border-width: 1px; padding: 5px; line-height: 1.5;\"></textarea></p>" +
               "        <div class=\"actionButtonWrap\">" +
               "          <a class=\"cancel-file-button\">選択し直す</a>" +
               "          <a class=\"send-file-button\">送信する</a>" +

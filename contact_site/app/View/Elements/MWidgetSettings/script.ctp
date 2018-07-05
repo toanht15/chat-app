@@ -772,9 +772,32 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return defColor;
   };
 
-    $scope.inputInitToggle = function(item){
-      return (item) ? 1 : 2;
-    };
+  $scope.isIconImage = function(main_image) {
+    return main_image.match(/^fa/) !== null;
+  };
+
+  $scope.isPictureImage = function(main_image) {
+    return main_image.match(/^http/) !== null;
+  };
+
+  $scope.inputInitToggle = function(item){
+    return (item) ? 1 : 2;
+  };
+
+  $scope.getIconColor = function(main_image) {
+    var isInvert = main_image.match(/invert$/) !== null;
+    if(isInvert) {
+      return {
+        'background-color': $scope.string_color,
+        'color': $scope.main_color
+      };
+    } else {
+      return {
+        'background-color': $scope.main_color,
+        'color': $scope.string_color
+      };
+    }
+  };
 
     //シンプル表示判定
     /*
@@ -978,6 +1001,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         type: 'post',
         data: {
           color: $scope.main_color,
+          string_color: $scope.string_color,
         },
         cache: false,
         dataType: 'html',
@@ -985,7 +1009,12 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         success: function(html){
           modalOpen.call(window, html, 'p-show-gallary', 'ギャラリー', 'moment');
           popupEvent.customizeBtn = function(name){
-            $scope.main_image = "<?=$gallaryPath?>" + name;
+            if(name.match(/^fa/)) {
+              $scope.main_image = name;
+            } else {
+              $scope.main_image = "<?=$gallaryPath?>" + name;
+            }
+
             $("#MWidgetSettingUploadImage").val("");
             $scope.$apply();
             popupEvent.close();
