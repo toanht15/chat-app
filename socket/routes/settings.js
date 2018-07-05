@@ -628,12 +628,14 @@ router.get("/", function(req, res, next) {
       else {
         var err = new Error(' Service Unavailable');
         err.status = 503;
+        console.log(1);
         next(err);
         return false;
       }
     } catch (e) {
         var err = new Error(' Service Unavailable');
         err.status = 503;
+        console.log(2 + e.getMessage());
         next(err);
         return false;
     }
