@@ -163,6 +163,24 @@ router.get("/", function(req, res, next) {
           spMaximizeSizeType = settings.spMaximizeSizeType;
         }
 
+        // タイトル位置のデフォルトを設定
+        var widget_title_top_type = 2;
+        if(('widget_title_top_type' in settings)) {
+          widget_title_top_type = settings.widget_title_top_type;
+        }
+
+        // 企業名位置のデフォルトを設定
+        var widget_title_name_type = 1;
+        if(('widget_title_name_type' in settings)) {
+          widget_title_name_type = settings.widget_title_name_type;
+        }
+
+        // 説明文位置のデフォルトを設定
+        var widget_title_explain_type = 1;
+        if(('widget_title_explain_type' in settings)) {
+          widget_title_explain_type = settings.widget_title_explain_type;
+        }
+
         var headerTextSize = 0;
         var seTextSize = 0;
         var reTextSize = 0;
@@ -309,9 +327,9 @@ router.get("/", function(req, res, next) {
           chatMessageCopy: chatMessageCopy,
 
           //タイトル位置
-          widget_title_top_type: isNumeric(settings.widget_title_top_type),
-          widget_title_name_type: isNumeric(settings.widget_title_name_type),
-          widget_title_explain_type: isNumeric(settings.widget_title_explain_type)
+          widget_title_top_type: isNumeric(widget_title_top_type),
+          widget_title_name_type: isNumeric(widget_title_name_type),
+          widget_title_explain_type: isNumeric(widget_title_explain_type)
         };
 
         var actionTypeList = [];

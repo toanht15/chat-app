@@ -1712,6 +1712,21 @@ class TAutoMessagesController extends AppController {
 //             }
             /* カラー設定end */
 
+            //タイトル位置
+            if ( strcmp($v, 'widget_title_top_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_title_top_type'] = WIDGET_TITLE_TOP_TYPE; // デフォルト値
+            }
+
+            //企業名位置
+            if ( strcmp($v, 'widget_title_name_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_title_name_type'] = WIDGET_TITLE_NAME_TYPE; // デフォルト値
+            }
+
+            //説明文位置
+            if ( strcmp($v, 'widget_title_explain_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_title_explain_type'] = WIDGET_TITLE_EXPLAIN_TYPE; // デフォルト値
+            }
+
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];
             }
