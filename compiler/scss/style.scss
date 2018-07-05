@@ -9771,3 +9771,56 @@ div.balloon {
 .in_hidden {
   height:0;
 }
+
+.leftPositionImage {
+  text-align:left !important;
+  padding-left:78px !important;
+}
+
+.centerPositionImage {
+  text-align:center !important;
+  padding-left:70px !important;
+}
+
+.leftPositionNoImage {
+  text-align:left !important;
+  padding-left:15px !important;
+}
+
+.centerPositionNoImage {
+  text-align:center !important;
+  padding-left:0px !important;
+}
+
+.leftPositionImageCompany {
+  text-align:left !important;
+  height:52px !important;
+  line-height:52px !important;
+  padding:0 0 0 78px !important;
+}
+
+.centerPositionImageCompany {
+  text-align:center;
+  height:52px !important;
+  line-height:52px !important;
+  padding:0 0 0 70px !important;
+}
+
+.leftPositionNoImageCompany {
+  text-align:left !important;
+  height:52px !important;
+  line-height:52px !important;
+  padding:0 0 0 15px !important;
+}
+
+.centerPositionNoImageCompany {
+  text-align:center !important;
+  height:52px !important;
+  line-height:52px !important;
+  padding:0 0 0 0px !important;
+}
+
+.noCompanyImageExplain {
+  height:0px !important;
+  padding:0px !important;
+}
