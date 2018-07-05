@@ -1398,14 +1398,111 @@ var socket, // socket.io
         html += "      #sincloBox section { width: " + sizeList['boxWidth'] + "px }";
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 8px }';
-        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 26px 7px 30px; height: auto; line-height: ' + widget.headerTextSize + 'px;}';
+
+        var style;
+        //トップタイトル 左寄せ・画像ありの場合
+        if(widget.widget_title_top_type == 1 && widget.showMainImage == 1) {
+          style = 'text-align:left;padding-left:78px !important;';
+        }
+        //トップタイトル 左寄せ・画像なしの場合
+        if(widget.widget_title_top_type == 1 && widget.showMainImage == 2) {
+          style = 'text-align:left;padding-left:15px !important;';
+        }
+        //トップタイトル 中央寄せ・画像ありの場合
+        if(widget.widget_title_top_type == 2 && widget.showMainImage == 1) {
+          style = 'text-align:center;padding-left:70px !important;';
+        }
+        //トップタイトル 中央寄せ・画像なしの場合
+        if(widget.widget_title_top_type == 2 && widget.showMainImage == 2) {
+          style = 'text-align:center;padding-left:0px !important;';
+        }
+        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px !important; height: auto; line-height: ' + widget.headerTextSize + 'px;'+style+'}';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
-        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 74px; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; }';
+
+        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
+        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 1 && widget.showDescription == 1 && widget.showMainImage == 1) {
+          style = 'text-align:left;padding-left:78px;';
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
+        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 2 && widget.showDescription == 1 && widget.showMainImage == 1) {
+          style = 'text-align:center;padding-left:70px;';
+        }
+        //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
+        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 1 && widget.showDescription == 1 && widget.showMainImage == 2) {
+          style = "text-align:left;padding-left:15px";
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
+        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 2 && widget.showDescription == 1 && widget.showMainImage == 2) {
+          style = "text-align:center;padding-left:0px;";
+        }
+        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
+        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 1 && widget.showDescription == 2 && widget.showMainImage == 1) {
+          style = 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;';
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
+        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 2 && widget.showDescription == 2 && widget.showMainImage == 1) {
+          style = 'text-align:center;height:52px;line-height:52px;padding:0 0 0 70px;';
+        }
+        //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
+        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 1 && widget.showDescription == 2 && widget.showMainImage == 2) {
+          style = 'text-align:left;height:52px;line-height:52px;padding:0 0 0 15px;';
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
+        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 2 && widget.showDescription == 2 && widget.showMainImage == 2) {
+          style = 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;';
+        }
+        //企業名 企業名表示しない・説明文表示する・画像ありの場合
+        //企業名 企業名表示しない・説明文表示する・画像なしの場合
+        if(widget.showSubtitle == 2 && widget.showDescription == 1 && widget.showMainImage == 1 ||
+          widget.showSubtitle == 2 && widget.showDescription == 1 && widget.showMainImage == 2) {
+          style = 'height:0px;padding:0px;';
+        }
+
+        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;'+style+'}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetSubTitle { border:none; }';
         }
-        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 74px; height: auto; line-height: ' + sizeList['widgetDescriptionHeight'] + 'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; }';
+        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
+        if(widget.showDescription == 1 && widget.widget_title_explain_type == 1 && widget.showSubtitle == 1 && widget.showMainImage == 1) {
+          style = 'text-align:left;padding-left:78px;';
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
+        if(widget.showDescription == 1 && widget.widget_title_explain_type == 2 && widget.showSubtitle == 1 && widget.showMainImage == 1) {
+          style = 'text-align:center;padding-left:70px;';
+        }
+        //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
+        if(widget.showDescription == 1 && widget.widget_title_explain_type == 1 && widget.showSubtitle == 1 && widget.showMainImage == 2) {
+          style = "text-align:left;padding-left:15px";
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
+        if(widget.showDescription == 1 && widget.widget_title_explain_type == 2 && widget.showSubtitle == 1 && widget.showMainImage == 2) {
+          style = "text-align:center;padding-left:0px;";
+        }
+        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
+        if(widget.showDescription == 1 && widget.widget_title_explain_type == 1 && widget.showSubtitle == 2 && widget.showMainImage == 1) {
+          style = 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;';
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
+        if(widget.showDescription == 1 && widget.widget_title_explain_type == 2 && widget.showSubtitle == 2 && widget.showMainImage == 1) {
+          style = 'text-align:center;height:52px;line-height:52px;padding:0 0 0 70px;';
+        }
+        //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
+        if(widget.showDescription == 1 && widget.widget_title_explain_type == 1 && widget.showSubtitle == 2 && widget.showMainImage == 2) {
+          style = 'text-align:left;height:52px;line-height:52px;padding:0 0 0 15px;';
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
+        if(widget.showDescription == 1 && widget.widget_title_explain_type == 2 && widget.showSubtitle == 2 && widget.showMainImage == 2) {
+          style = 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;';
+        }
+        //説明文 説明文表示しない・企業名表示する・画像ありの場合
+        //説明文 説明文表示しない・企業名表示する・画像なしの場合
+        if((widget.showDescription == 2 && widget.showSubtitle == 1 && widget.showMainImage == 1) ||
+        (widget.showDescription == 2 && widget.showSubtitle == 1 && widget.showMainImage == 2)) {
+          style = 'height:0px;padding:0px;';
+        }
+
+        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; height: auto; line-height: ' + sizeList['widgetDescriptionHeight'] + 'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;'+style+'}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetDescription { border-left:none; border-right:none;}';
         }
@@ -1425,7 +1522,7 @@ var socket, // socket.io
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
           html += '      #sincloBox ul#chatTalk { height: '+ sizeList['chatTalkHeight'] +'px; padding: 5px 5px 0px 5px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
-          html += '      #sincloBox ul#chatTalk li { border-radius: 12px; margin: 5px 0 0 0; padding: 10px 15px; }';
+          html += '      #sincloBox ul#chatTalk li { border-radius: 12px; margin: 10px 0 0 0; padding: 10px 15px; }';
           if(colorList['seBorderNone'] === 0){
             html += '      #sincloBox ul#chatTalk li.sinclo_se { border: 1px solid '+ colorList['seBorderColor'] +'; }';
           }

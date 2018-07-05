@@ -192,6 +192,10 @@ $headerNo = 1;
             ],[
               'entity' => 'MWidgetSetting.title'
             ]) ?>
+            <div ng-init="widget_title_top_type ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'widget_title_top_type'))?>'" style = "margin-top: 37px; margin-left: -275px;">
+              <label class="pointer choose" for="widgetTitleTopType1"><input type="radio" name="data[MWidgetSetting][widget_title_top_type]" ng-model="widget_title_top_type" id="widgetTitleTopType1" class="showHeader" value="1" >左寄せ</label><br>
+              <label class="pointer choose" for="widgetTitleTopType2"><input type="radio" name="data[MWidgetSetting][widget_title_top_type]" ng-model="widget_title_top_type" id="widgetTitleTopType2" class="showHeader" value="2">中央寄せ</label><br>
+            </div>
           </li>
           <?php if ($this->Form->isFieldError('title')) echo $this->Form->error('title', null, ['wrap' => 'li']); ?>
           <!-- ウィジェットタイトル -->
@@ -221,7 +225,20 @@ $headerNo = 1;
             ?>
             <div ng-init="subTitleToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_subtitle'))?>'">
               <label class="pointer" for="showSubtitle1"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle1" class="showHeader" value="1" >企業名を表示する</label><br>
-              <?=$subTitle?><br>
+              <?=$subTitle?>
+              <div ng-init="widget_title_name_type ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'widget_title_name_type'))?>'" style = "margin-top: 0px; margin-left: 20px;" id = "widgetTitleNameType">
+                <?php
+                  if($this->data['MWidgetSetting']['show_subtitle'] == 1) {
+                    $display = 'block';
+                  }
+                  else if($this->data['MWidgetSetting']['show_subtitle'] == 2) {
+                    $display = 'none';
+                  }
+                ?>
+                <label  class="pointer choose" for="widgetTitleNameType1" id = "widgetTitleNameTypeLabel1" style = "display:<?=$display?>"><input type="radio" name="data[MWidgetSetting][widget_title_name_type]" ng-model="widget_title_name_type" id="widgetTitleNameType1" class="showHeader" value="1" >左寄せ<br></label>
+                <label  class="pointer choose" for="widgetTitleNameType2" id = "widgetTitleNameTypeLabel2" style = "display:<?=$display?>"><input type="radio" name="data[MWidgetSetting][widget_title_name_type]" ng-model="widget_title_name_type" id="widgetTitleNameType2" class="showHeader" value="2">中央寄せ<br></label>
+              </div>
+            <br>
               <label class="pointer" for="showSubtitle2"><input type="radio" name="data[MWidgetSetting][show_subtitle]" ng-model="subTitleToggle" id="showSubtitle2" class="showHeader" value="2" >企業名を表示しない</label>
             </div>
           </li>
@@ -246,8 +263,21 @@ $headerNo = 1;
             [
               'entity' => 'MWidgetSetting.description'
             ]) ?>
-            <div ng-init="descriptionToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_description'))?>'">
-              <label class="pointer" for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?><br>
+            <div ng-init="descriptionToggle ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_description'))?>'">
+              <label class="pointer" for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?>
+                <div ng-init="widget_title_explain_type ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'widget_title_explain_type'))?>'" style = "margin-top: 0px; margin-left: 20px;" id = "widgetTitleExplainType">
+                  <?php
+                  if($this->data['MWidgetSetting']['show_description'] == 1) {
+                    $display = 'block';
+                  }
+                  else if($this->data['MWidgetSetting']['show_description'] == 2) {
+                    $display = 'none';
+                  }
+                  ?>
+                  <label class="pointer choose" for="widgetTitleExplainType1" id = "widgetTitleExplainTypeLabel1" style = "display:<?=$display?>"><input type="radio" name="data[MWidgetSetting][widget_title_explain_type]" ng-model="widget_title_explain_type" id="widgetTitleExplainType1" class="showHeader" value="1" >左寄せ<br></label>
+                  <label class="pointer choose" for="widgetTitleExplainType2" id = "widgetTitleExplainTypeLabel2" style = "display:<?=$display?>"><input type="radio" name="data[MWidgetSetting][widget_title_explain_type]" ng-model="widget_title_explain_type" id="widgetTitleExplainType2" class="showHeader" value="2">中央寄せ<br></label>
+                </div>
+              <br>
               <label class="pointer" for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
             </div>
           </li>

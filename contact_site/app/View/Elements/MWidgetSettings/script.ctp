@@ -1487,6 +1487,60 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
     });
 
+    angular.element('input[name="data[MWidgetSetting][show_subtitle]"]').on('change', function(e){
+      //企業名を表示する場合
+      if(e.currentTarget.id == 'showSubtitle1') {
+        $('#widgetTitleNameTypeLabel1').css('display','block');
+        $('#widgetTitleNameTypeLabel2').css('display','block');
+        if($('#MWidgetSettingSubTitle').val() == "") {
+          $('#widgetSubTitle').css('height','23px');
+        }
+      }
+      //企業名を表示しない場合
+      if(e.currentTarget.id == 'showSubtitle2') {
+        $('#widgetTitleNameTypeLabel1').css('display','none');
+        $('#widgetTitleNameTypeLabel2').css('display','none');
+      }
+    });
+
+    angular.element('input[name="data[MWidgetSetting][show_description]"]').on('change', function(e){
+      //説明文を表示する場合
+      if(e.currentTarget.id == 'showDescription1') {
+        $('#widgetTitleExplainTypeLabel1').css('display','block');
+        $('#widgetTitleExplainTypeLabel2').css('display','block');
+        if($('#MWidgetSettingDescription').val() == "") {
+          $('#widgetDescription').css('height','23px');
+        }
+      }
+      //説明文を表示しない場合
+      if(e.currentTarget.id == 'showDescription2') {
+        $('#widgetTitleExplainTypeLabel1').css('display','none');
+        $('#widgetTitleExplainTypeLabel2').css('display','none');
+      }
+    });
+
+    angular.element('input[name="data[MWidgetSetting][widget_title_name_type]"]').on('change', function(e){
+      //企業名を左寄せにする場合
+      if(e.currentTarget.id == 'widgetTitleNameType1') {
+        $('#widgetSubTitle').css('text-align','left');
+      }
+      //企業名を中央寄せにする倍
+      if(e.currentTarget.id == 'widgetTitleNameType2') {
+        $('#widgetSubTitle').css('text-algin','center');
+      }
+    });
+
+    angular.element('input[name="data[MWidgetSetting][widget_title_explain_type]"]').on('change', function(e){
+      //説明文を左寄せにする場合
+      if(e.currentTarget.id == 'widgetTitleNameTypeLabel1') {
+        $('#widgetSubTitle').css('text-align','left');
+      }
+      //説明文を中央寄せにする場合
+      if(e.currentTarget.id == 'widgetTitleNameTypeLabel2') {
+        $('#widgetSubTitle').css('text-algin','center');
+      }
+    });
+
     $scope.$watch('closeButtonModeTypeToggle', function() {
       switch($scope.closeButtonModeTypeToggle) {
         case "1": // 小さなバナー表示

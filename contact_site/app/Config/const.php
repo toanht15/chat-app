@@ -1,4 +1,5 @@
 <?php
+
 /* 定数定義 */
 define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
@@ -361,6 +362,13 @@ define('CHAT_SEND_BTN_BACKGROUND_COLOR', "#ABCD05");
 //26.ウィジット内枠線色
 define('WIDGET_INSIDE_BORDER_COLOR', "#E8E7E0");
 /* カラー設定初期値end */
+
+
+//タイトル位置
+define('WIDGET_TITLE_TOP_TYPE', 2); //中央寄せ
+define('WIDGET_TITLE_NAME_TYPE', 1); //左寄せ
+define('WIDGET_TITLE_EXPLAIN_TYPE', 1); //左寄せ
+
 
 //最小化時のデザインタイプ
 define('C_MINIMIZED_DESIGN_NO_SIMPLE', 1); // シンプル表示しない
