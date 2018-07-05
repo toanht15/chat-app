@@ -578,7 +578,7 @@ function SetListHeight(resizeFlg){
   var List_offsetHeight = 0;
   var btnHeight = 0;
   var menuHeight = 0;
-  var adjustHeight = 137;
+  var adjustHeight = 145;
   //CSV出力、削除ボタンが表示されている場合、高さを取得
   if($("#btnSet").css('display') != "none"){
     btnHeight = parseInt($("#btnSet").css('height'));
@@ -590,9 +590,7 @@ function SetListHeight(resizeFlg){
   }
 
   //縦方向リサイズ時の表示破壊を防ぐ
-  $(".dataTables_scrollBody").css('min-height',List_offsetHeight);
-
-    List_offsetHeight = $("#history_body_side").outerHeight() - (adjustHeight + btnHeight + menuHeight);
-  $(".dataTables_scrollBody").css({'height':List_offsetHeight,"min-height":List_offsetHeight});
+    List_offsetHeight = $("#history_body_side").outerHeight() - parseInt(adjustHeight + btnHeight + menuHeight);
+  $(".dataTables_scrollBody").css({'height':List_offsetHeight,'min-height':List_offsetHeight});
 }
 </script>
