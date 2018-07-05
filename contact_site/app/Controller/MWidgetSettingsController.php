@@ -36,8 +36,6 @@ class MWidgetSettingsController extends AppController {
   public function index() {
     //$image->resize('/img/Penguins.jpg?1517909330', 60, 60, true);
     if ( $this->request->is('post') ) {
-      $this->log('来たデータ',LOG_DEBUG);
-      $this->log($this->request->data,LOG_DEBUG);
       $errors = $this->_update($this->request->data);
       if ( empty($errors) ) {
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
@@ -344,6 +342,7 @@ class MWidgetSettingsController extends AppController {
       $this->MWidgetSetting->validate = $validate;
     }
 
+
     // バリデーションチェック
     $this->MWidgetSetting->set($inputData);
     $this->MWidgetSetting->begin();
@@ -558,6 +557,7 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'sp_maximize_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_maximize_size_type'] = C_SELECT_CAN; // デフォルト値
             }
+
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];
             }
