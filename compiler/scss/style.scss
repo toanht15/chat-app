@@ -5354,10 +5354,18 @@ ul.naviBtn {
         }
 
         div#picDiv {
-            margin-right: 10px;
-            border: 1px solid #444;
-            width: 64px;
-            height: 72px;
+          margin-right: 10px;
+          border: 1px solid #444;
+          width: 64px;
+          height: 72px;
+          i {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 62px;
+            height: 70px;
+            font-size: 45px;
+          }
         }
 
         div#picChooseDiv {
@@ -9781,4 +9789,77 @@ div.balloon {
 }
 .in_hidden {
   height:0;
+}
+
+.leftPositionImage {
+  text-align:left !important;
+  padding-left:78px !important;
+}
+
+.centerPositionImage {
+  text-align:center !important;
+  padding-left:70px !important;
+}
+
+.leftPositionNoImage {
+  text-align:left !important;
+  padding-left:15px !important;
+}
+
+.centerPositionNoImage {
+  text-align:center !important;
+  padding-left:0px !important;
+}
+
+.leftPositionImageCompany {
+  text-align:left !important;
+  height:52px !important;
+  line-height:52px !important;
+  padding:0 0 0 78px !important;
+}
+
+.centerPositionImageCompany {
+  text-align:center !important;
+  height:52px !important;
+  line-height:52px !important;
+  padding:0 0 0 70px !important;
+}
+
+.leftPositionNoImageCompany {
+  text-align:left !important;
+  height:52px !important;
+  line-height:52px !important;
+  padding:0 0 0 15px !important;
+}
+
+.centerPositionNoImageCompany {
+  text-align:center !important;
+  height:52px !important;
+  line-height:52px !important;
+  padding:0 0 0 0px !important;
+}
+
+.noCompanyImageExplain {
+  height:0px !important;
+  padding:0px !important;
+}
+
+.leftPositionImageTitle{
+  text-align: left !important;
+  padding:7px 0px 7px 78px !important;
+}
+
+.centerPositionImageTitle {
+  text-align: center !important;
+  padding: 7px 0px 7px 70px !important;
+}
+
+.leftPositionNoImageTitle {
+  text-align: left !important;
+  padding: 7px 0px 7px 15px !important;
+}
+
+.centerPositionNoImageTitle {
+  text-align: center !important;
+  padding: 7px 0px 7px 0px !important;
 }
