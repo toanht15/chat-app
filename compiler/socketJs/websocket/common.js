@@ -486,18 +486,6 @@ var socket, // socket.io
           spMinRes = false;
           //sp最大化中
           spMaxRes = true;
-          //最小化時 スマホ 画像ある場合
-          if(sinclo.widget.condifiton.get() == 'true' && check.smartphone() === true && widget.showMainImage === '1') {
-            common.indicateSimpleImage();
-          }
-          //最小化時 スマホ 画像ない場合
-          if(sinclo.widget.condifiton.get() == 'true' && check.smartphone() === true && widget.showMainImage === '2') {
-            common.indicateSimpleNoImage();
-          }
-          //最大化時 スマホ
-          if(sinclo.widget.condifiton.get() === 'false' && check.smartphone() === true) {
-            common.indicateSimpleNoImage();
-          }
         }
         else{
           //最大時のシンプル表示(スマホ)しない
@@ -509,22 +497,6 @@ var socket, // socket.io
           spMinRes = false;
           //sp最大化中
           spMaxRes = false;
-          //最小化時 スマホ 画像ある場合
-          if(sinclo.widget.condifiton.get() == 'true' && check.smartphone() === true && widget.showMainImage === '1') {
-            common.indicateSimpleImage();
-          }
-          //最小化時 スマホ 画像ない場合
-          if(sinclo.widget.condifiton.get() == 'true' && check.smartphone() === true && widget.showMainImage === '2') {
-            common.indicateSimpleNoImage();
-          }
-          //最大化時 スマホ 画像ある場合
-          if(sinclo.widget.condifiton.get() === 'false' && check.smartphone() === true && widget.showMainImage === '1') {
-            common.indicateSimpleImage();
-          }
-          //最大化時 スマホ 画像ない場合
-          if(sinclo.widget.condifiton.get() === 'false' && check.smartphone() === true && widget.showMainImage === '2') {
-            common.indicateSimpleNoImage();
-          }
         }
         break;
       case 2: //スマホのみシンプル表示する
@@ -538,14 +510,6 @@ var socket, // socket.io
           spMinRes = true;
           //sp最大化中
           spMaxRes = true;
-          //最小化時 スマホ
-          if(sinclo.widget.condifiton.get() == 'true' && check.smartphone() === true) {
-            common.indicateSimpleNoImage();
-          }
-          //最大化時 スマホ
-          if(sinclo.widget.condifiton.get() === 'false' && check.smartphone() === true ) {
-            common.indicateSimpleNoImage();
-          }
         }
         else{
           //最大時のシンプル表示(スマホ)しない
@@ -557,18 +521,6 @@ var socket, // socket.io
           spMinRes = true;
           //sp最大化中
           spMaxRes = false;
-          //最小化時 スマホ
-          if(sinclo.widget.condifiton.get() == 'true' && check.smartphone() === true) {
-            common.indicateSimpleNoImage();
-          }
-          //最大化時 スマホ 画像ある場合
-          if(sinclo.widget.condifiton.get() === 'false' && check.smartphone() === true && widget.showMainImage === '1') {
-            common.indicateSimpleImage();
-          }
-          //最大化時 スマホ 画像ない場合
-          if(sinclo.widget.condifiton.get() === 'false' && check.smartphone() === true && widget.showMainImage === '2') {
-            common.indicateSimpleNoImage();
-          }
         }
         break;
       case 3: //すべての端末でシンプル表示する
@@ -582,18 +534,6 @@ var socket, // socket.io
           spMinRes = true;
           //sp最大化中
           spMaxRes = true;
-          //最小化時
-          if(sinclo.widget.condifiton.get() == 'true') {
-            common.indicateSimpleNoImage();
-          }
-          //最大化時 スマホ
-          if(sinclo.widget.condifiton.get() === 'false' && check.smartphone() === true ) {
-            common.indicateSimpleNoImage();
-          }
-          //最大化時 PC
-          else if(sinclo.widget.condifiton.get() === 'false' && check.smartphone() === false) {
-            common.indicateSimpleImage();
-          }
         }
         else{
           //最大時のシンプル表示(スマホ)しない
@@ -605,14 +545,6 @@ var socket, // socket.io
           spMinRes = true;
           //sp最大化中
           spMaxRes = false;
-          //最小化時
-          if(sinclo.widget.condifiton.get() == 'true') {
-            common.indicateSimpleNoImage();
-          }
-          //最大化時
-          if(sinclo.widget.condifiton.get() == 'false') {
-            common.indicateSimpleImage();
-          }
         }
         break;
       default ://該当しない場合はシンプル表示しない
@@ -2149,6 +2081,14 @@ var socket, // socket.io
               sinclo.chatApi.lockPageScroll();
               common.widgetHandler._handleResizeEvent();
             }
+          }
+          //画像がない時のタイトル位置
+          if($('#mainImage').css('display') === 'none') {
+            common.indicateSimpleNoImage();
+          }
+          //画像がある時のタイトル位置
+          else if($('#mainImage').css('display') === 'block') {
+            common.indicateSimpleImage();
           }
         }
       },
