@@ -123,7 +123,7 @@
         <?= $this->Html->link(
           '条件クリア',
           'javascript:void(0)',
-          ['escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()']);
+          ['escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear();loading.load.start();']);
         ?>
       </ul>
     </div>

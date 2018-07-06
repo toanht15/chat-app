@@ -60,6 +60,21 @@
             background-color: #B7B7B7;
             box-shadow: 0 0 2px rgba(0,0,0,0.3);
 
+            &.icon-view {
+              padding: 3px 4px;
+            }
+
+            i {
+              &.icon {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 62px;
+                height: 70px;
+                font-size: 45px;
+              }
+            }
+
             &:after {
                 content: " ";
                 position: absolute;
@@ -88,6 +103,8 @@
             > img {
               box-shadow: 0 0 1px rgba(0,0,0,0.3);
             }
+
+
 
           }
 

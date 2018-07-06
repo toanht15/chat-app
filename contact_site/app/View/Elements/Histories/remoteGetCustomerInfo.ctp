@@ -22,6 +22,7 @@ $(document).ready(function(){
     });
   }
   popupEvent.closePopup = function(){
+    loading.load.start();
     customerInfoSave();
     // popupEvent.close();
   };
