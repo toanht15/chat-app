@@ -154,7 +154,7 @@
       <?= $this->Html->link(
         '条件クリア',
         'javascript:void(0)',
-        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()'));
+        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear();loading.load.start()'));
       ?>
     </ul>
   </div>
@@ -594,7 +594,7 @@
           </ul>
           <div id="personal_action">
               <?= $this->Html->link('元に戻す', 'javascript:void(0)', array('onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton')) ?>
-              <?= $this->Html->link('更新', 'javascript:void(0)', array('onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton')) ?>
+              <?= $this->Html->link('更新', 'javascript:void(0)', array('onclick' => 'customerInfoSave('.$historyId.');loading.load.start()','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton')) ?>
           </div>
           <?php } ?>
         </div>
