@@ -365,9 +365,12 @@ define('WIDGET_INSIDE_BORDER_COLOR', "#E8E7E0");
 
 
 //タイトル位置
-define('WIDGET_TITLE_TOP_TYPE', 2); //中央寄せ
-define('WIDGET_TITLE_NAME_TYPE', 1); //左寄せ
-define('WIDGET_TITLE_EXPLAIN_TYPE', 1); //左寄せ
+define('WIDGET_TITLE_TOP_TYPE_LEFT', 1); //タイトル左寄せ
+define('WIDGET_TITLE_TOP_TYPE_CENTER', 2); //タイトル中央寄せ
+define('WIDGET_TITLE_NAME_TYPE_LEFT', 1); //企業名左寄せ
+define('WIDGET_TITLE_NAME_TYPE_CENTER', 2); //企業名中央寄せ
+define('WIDGET_TITLE_EXPLAIN_TYPE_LEFT', 1); //説明文左寄せ
+define('WIDGET_TITLE_EXPLAIN_TYPE_CENTER', 2); //説明文中央寄せ
 
 
 //最小化時のデザインタイプ
