@@ -116,16 +116,6 @@
       -webkit-font-smoothing: subpixel-antialiased;
       direction: ltr;
     }
-
-    #sincloBox .sinclo-fal {
-      font-family: 'Font Awesome 5 Pro';
-      display: inline-block;
-      font-style: normal;
-      font-weight: 300;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
     /* HTML5 display-role reset for older browsers */
     #sincloBox article, #sincloBox aside, #sincloBox details, #sincloBox figcaption, #sincloBox figure, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox section { display: block; }
     #sincloBox ol, #sincloBox ul { list-style: none; }
@@ -139,9 +129,6 @@
     #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
     #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 8px; }
     #sincloBox span#mainImage img { background-color: {{main_color}}; width: 62px; height: 70px }
-    #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 62px; height: 70px; font-size: 45px }
-    #sincloBox span#mainImage i.normal { color: {{string_color}}; background-color: {{main_color}}; }
-    #sincloBox span#mainImage i.invert { color: {{main_color}}; background-color: {{string_color}}; }
     #sincloBox .pb07 { padding-bottom: 7px }
     #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
     #sincloBox .center { text-align: center!important; padding: 7px 30px!important }
@@ -337,8 +324,7 @@
   </style>
     <!-- 画像 -->
     <span id="mainImage" class="widgetOpener" ng-hide="spHeaderLightToggle() || mainImageToggle !== '1'">
-      <img ng-if="isPictureImage(main_image)" ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
-      <i ng-if="isIconImage(main_image)" class="sinclo-fal {{main_image}}" alt="チャット画像"></i>
+      <img ng-src="{{main_image}}" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像">
     </span>
   <div class="widgetHeaderWrap" ng-class="{sp:showWidgetType === 3}">
     <!-- 画像 -->
