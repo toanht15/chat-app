@@ -282,6 +282,7 @@ $(function(){
     }
     tableObj.columns.adjust();
     SetListHeight();
+    $('#content').css('overflow-y','hidden');
   });
 
   //縦並びをクリックした場合
@@ -578,7 +579,7 @@ function SetListHeight(){
   var List_offsetHeight = 0;
   var btnHeight = 0;
   var menuHeight = 0;
-  var adjustHeight = $("#history_menu").outerHeight() + $(".fLeft").outerHeight() + $(".dataTables_scrollHead").outerHeight();
+  var adjustHeight = $('#chatHistory').offset().top - $('#history_body_side').offset().top;
   //CSV出力、削除ボタンが表示されている場合、高さを取得
   if($("#btnSet").css('display') != "none"){
     btnHeight = parseInt($("#btnSet").css('height'));
