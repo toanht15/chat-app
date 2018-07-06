@@ -35,6 +35,7 @@ function openAddDialog(dayOfWeek,timeData){
 }
 
 function openEntryDialog(setting){
+  loading.load.start();
   $.ajax({
     type: 'post',
     data: setting,
@@ -43,6 +44,7 @@ function openEntryDialog(setting){
     url: "<?= $this->Html->url('/MOperatingHours/remoteOpenEntryForm') ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-operatinghours-entry', setting.title, 'moment');
+      loading.load.finish();
     }
   });
   //ページ遷移の際にアラート出す

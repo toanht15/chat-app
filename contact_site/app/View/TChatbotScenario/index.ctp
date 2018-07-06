@@ -24,7 +24,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
                 'data-balloon-position' => '36',
                 'width' => 45,
                 'height' => 45,
-                'onclick' => 'openAdd()',
+                'onclick' => 'openAdd();loading.load.start()',
             )) ?>
           </a>
         </span>
@@ -113,7 +113,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
 
         $no = $prevCnt + h($key+1);
         ?>
-        <tr class="pointer" data-sort="<?=$val['TChatbotScenario']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>)">
+        <tr class="pointer" data-sort="<?=$val['TChatbotScenario']['sort']?>" data-id="<?=h($id)?>" onclick="openEdit(<?= $id ?>);loading.load.start()">
           <td class="tCenter" onclick="event.stopPropagation();" width=" 5%">
             <input type="checkbox" name="selectTab" id="selectTab<?=h($id)?>" value="<?=h($id)?>">
             <label for="selectTab<?=h($id)?>"></label>

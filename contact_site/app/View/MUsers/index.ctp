@@ -21,7 +21,7 @@
                   'data-balloon-position' => '36',
                   'width' => 45,
                   'height' => 45,
-                  'onclick' => 'openAddDialog()',
+                  'onclick' => 'openAddDialog();loading.load.start()',
               )) ?>
             </a>
           </span>
@@ -89,7 +89,7 @@
         $prevCnt = ($params['page'] - 1) * $params['limit'];
         $no = $prevCnt + h($key+1);
         ?>
-        <tr class="pointer" onclick="<?="openEditDialog('".h($val['MUser']['id'])."')"?>">
+        <tr class="pointer" onclick="<?="openEditDialog('".h($val['MUser']['id'])."');loading.load.start()"?>">
 <!-- UI/UX統合対応start -->
           <td class="tCenter" onclick="event.stopPropagation();">
             <input type="checkbox" name="selectTab" id="selectTab<?=$key?>" value="<?=$val['MUser']['id']?>">
