@@ -1164,9 +1164,11 @@
         /* ○ 検索処理 */
         /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
         $check = false;
-        foreach($data['CustomData'] as $key => $value) {
-          if(!empty($value)) {
-            $check = true;
+        if(!empty($data['CustomData'])) {
+          foreach ($data['CustomData'] as $key => $value) {
+            if (!empty($value)) {
+              $check = true;
+            }
           }
         }
         if($check === true) {
