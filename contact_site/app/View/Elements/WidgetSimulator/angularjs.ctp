@@ -740,19 +740,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     if ( Number(type) === 3 ) { // ｽﾏｰﾄﾌｫﾝ（縦）の表示
       $scope.simulatorSettings.showTab = 'chat'; // 強制でチャットにする
-      if($scope.simulatorSettings._settings.sp_header_light_flg == 1) {
-        $scope.indicateSimpleNoImage();
-      }
       $("#sincloBox ul#chatTalk li.boxType.chat_left").css('margin-right','17.5px');
     }
 
     if ( Number(type) === 1 ) { // 通常の表示
-      if($scope.simulatorSettings._settings.show_main_image == 1) {
-        $scope.indicateSimpleImage();
-      }
-      if($scope.simulatorSettings._settings.show_main_image == 2) {
-        $scope.indicateSimpleNoImage();
-      }
       $("#sincloBox ul#chatTalk li.boxType.chat_left").css('margin-right','');
     }
 
@@ -788,6 +779,24 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       document.getElementById('sincloChatMessage').value = textareaMessage;
       // タブ切替の通知
       $scope.$emit('switchWidget', type)
+      //画像がない場合
+      if($('#mainImage').css('display') == 'none') {
+        if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
+          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
+        }
+        if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
+          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;'});
+        }
+      }
+      //画像がある場合
+      else if($('#mainImage').css('display') == 'block') {
+        if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
+          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
+        }
+        if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
+          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;'});
+        }
+      }
     },0);
   };
 
@@ -800,24 +809,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     });
     $scope.resizeWidgetHeightByWindowHeight();
   });
-
-  $scope.indicateSimpleNoImage = function(){
-    if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
-      $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
-    }
-    if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
-      $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;'});
-    }
-  }
-
-  $scope.indicateSimpleImage = function(){
-    if($scope.simulatorSettings._settings.widget_title_top_typee == 1) {
-      $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
-    }
-    if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
-      $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;'});
-    }
-  }
 
   $scope.resizeWidgetHeightByWindowHeight = function() {
     var windowHeight = $(window).innerHeight(),
