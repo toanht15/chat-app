@@ -114,6 +114,14 @@
               sinclo.chatApi.showUnreadCnt();
               sinclo.chatApi.scDown();
             }
+            //画像がない時のタイトル位置
+            if($('#mainImage').css('display') === 'none') {
+              common.indicateSimpleNoImage();
+            }
+            //画像がある時のタイトル位置
+            else if($('#mainImage').css('display') === 'block') {
+              common.indicateSimpleImage();
+            }
             sinclo.chatApi.lockPageScroll();
           }
           else {
@@ -127,6 +135,14 @@
             else{
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
+            }
+            //画像がない時のタイトル位置
+            if($('#mainImage').css('display') === 'none') {
+              common.indicateSimpleNoImage();
+            }
+            //画像がある時のタイトル位置
+            else if($('#mainImage').css('display') === 'block') {
+              common.indicateSimpleImage();
             }
             height = this.header.offsetHeight;
             sinclo.widget.condifiton.set(false, true);
