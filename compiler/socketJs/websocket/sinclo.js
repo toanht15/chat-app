@@ -2203,6 +2203,7 @@
           switch(displayStyleType) {
             case "1": // 最大化
               if(!widgetOpen) {
+                console.log('ここはいってるね”！');
                 var flg = sinclo.widget.condifiton.get();
                 if ( String(flg) === "false" ) {
                   console.log("SHOW WIDGET MAXIMIZE");
