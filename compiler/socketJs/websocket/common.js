@@ -609,15 +609,26 @@ var socket, // socket.io
         $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
       }
       if(sincloInfo.widget.widget_title_top_type == 2 && sincloInfo.widget.showMainImage == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;'});
+        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
       }
     },
     indicateSimpleImage: function() {
-      if(sincloInfo.widget.widget_title_top_type == 1 && sincloInfo.widget.showMainImage == 1) {
+      if(sincloInfo.widget.widget_title_top_type == 1 && sincloInfo.widget.showMainImage == 1 && check.smartphone()) {
+        // TODO 関数化
+        if(widget.spMaximizeSizeType === 2) {
+          widgetWidth = $(window).width();
+        } else {
+          widgetWidth = $(window).width() - 20 ;
+        }
+        ratio = widgetWidth * (1/285);
+
+        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: ' + (78 * ratio) + 'px !important;'});
+      }
+      else if(sincloInfo.widget.widget_title_top_type == 1 && sincloInfo.widget.showMainImage == 1 && !check.smartphone()) {
         $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
       }
       if(sincloInfo.widget.widget_title_top_type == 2 && sincloInfo.widget.showMainImage == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;'});
+        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
       }
     },
     //ヘッダ表示（通常表示）
@@ -1226,7 +1237,7 @@ var socket, // socket.io
             html += '#sincloBox section { border-bottom:none!important;}';
           }
           // 画像がセットされている場合のスタイル
-          html += '#sincloBox p#widgetTitle.notSimple { padding-left: ' + (70 * ratio) + 'px; text-indent: 1em; }';
+          html += '#sincloBox p#widgetTitle.notSimple { padding-left: ' + (70 * ratio) + 'px; }';
           // 画像がセットされていない場合のスタイル
           html += '#sincloBox p#widgetTitle.noImage { padding-left: ' + (30 * ratio) + 'px; text-indent: 1em; }';
           html += '#sincloBox #mainImage em { top: -' + (10 * ratio) + 'px; right: -' + (10 * ratio) + 'px; width: ' + (25 * ratio) + 'px; height: ' + (20 * ratio) + 'px; font-size: ' + (11 * ratio) + 'px; padding: ' + (1 * ratio) + 'px; }';

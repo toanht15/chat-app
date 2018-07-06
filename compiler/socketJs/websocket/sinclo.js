@@ -71,7 +71,6 @@
           if ( String(flg) === "false" ) {
             //最大化時ボタン表示
             common.whenMaximizedBtnShow();
-
             //最大化
             if(abridgementType['MaxRes']){
               //ヘッダ非表示（シンプル表示）
