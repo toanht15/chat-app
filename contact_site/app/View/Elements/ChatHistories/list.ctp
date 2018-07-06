@@ -22,7 +22,7 @@
   <?= $this->Html->link(
     '高度な検索',
     'javascript:void(0)',
-    array('escape' => false,'class'=>'btn-shadow skyBlueBtn','id' => 'searchRefine','onclick' => 'openSearchRefine();loading.load.start()','style' => 'position: absolute;
+    array('escape' => false,'class'=>'btn-shadow skyBlueBtn','id' => 'searchRefine','onclick' => 'openSearchRefine()','style' => 'position: absolute;
   top: 15px;
   left: 32em;
   width: 8em;
@@ -154,7 +154,7 @@
       <?= $this->Html->link(
         '条件クリア',
         'javascript:void(0)',
-        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()'));
+        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear();loading.load.start()'));
       ?>
     </ul>
   </div>
@@ -203,7 +203,7 @@
           $checked = "checked=\"\"";
         }
       ?>
-        <label for="g_chat" class="pointer <?=$class?>" onclick="loading.load.start()">
+        <label for="g_chat" class="pointer <?=$class?>">
           <input type="checkbox" id="g_chat" name="group_by_chat" <?=$checked?> />
           CV(コンバージョン)のみ表示する
         </label>
@@ -595,7 +595,7 @@
             ?>
           </ul>
           <div id="personal_action">
-              <?= $this->Html->link('元に戻す', 'javascript:void(0)', array('onclick' => 'reloadAct('.$historyId.');loading.load.start()', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton')) ?>
+              <?= $this->Html->link('元に戻す', 'javascript:void(0)', array('onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton')) ?>
               <?= $this->Html->link('更新', 'javascript:void(0)', array('onclick' => 'customerInfoSave('.$historyId.');loading.load.start()','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton')) ?>
           </div>
           <?php } ?>
