@@ -47,42 +47,43 @@
         .ms-container {
           margin: 0 auto;
         }
-        #popup-main ul {
+
+        #popup-main{
+          background-color: #ddd;
+
+          ul {
           padding: 0;
           display: flex;
           flex-wrap: wrap;
           justify-content: space-evenly;
-          background-color: #eee;
 
-          li {
-            float: left;
-            padding: 3px 4px 0 4px;
-            margin: 5px;
-            position: relative;
-            cursor: pointer;
-            background-color: #B7B7B7;
-            box-shadow: 0 0 2px rgba(0,0,0,0.3);
+            li {
+              float: left;
+              padding: 3px 4px 0 4px;
+              margin: 5px;
+              position: relative;
+              cursor: pointer;
 
-            &.icon-view {
-              padding: 3px 4px;
-            }
-
-            i {
-              &.icon {
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 62px;
-                height: 70px;
-                font-size: 43px;
-                border: 1px solid;
+              &.icon-view {
+                padding: 3px 4px;
               }
-              &.fa-robot{
-                padding-bottom: 3px;
-              }
-            }
 
-            &:after {
+              i {
+                &.icon {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 62px;
+                  height: 70px;
+                  font-size: 43px;
+                  border: 1px solid;
+                }
+                &.fa-robot{
+                  padding-bottom: 3px;
+                }
+              }
+
+              &:after {
                 content: " ";
                 position: absolute;
                 bottom: 0;
@@ -93,8 +94,8 @@
                 background-color: #333;
                 transition: height 100ms linear;
                 opacity: 0.9;
-            }
-            &:hover:after {
+              }
+              &:hover:after {
                 content: "これに決定";
                 height: 1.5em;
                 padding: 0.25em 0;
@@ -105,20 +106,23 @@
                 color: #FFF;
                 text-align: center;
                 font-size: 11px;
+              }
+
+              > img {
+                box-shadow: 0 0 1px rgba(0,0,0,0.3);
+              }
+
+
+
             }
-
-            > img {
-              box-shadow: 0 0 1px rgba(0,0,0,0.3);
-            }
-
-
 
           }
-
         }
         #popup-button {
           width: 200px;
           margin: 0 auto;
+          display:flex;
+          align-items: center;
 
           .textBtn {
             width: 5em;
