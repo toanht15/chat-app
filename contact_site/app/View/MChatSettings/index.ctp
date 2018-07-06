@@ -388,7 +388,7 @@ function checkValidate() {
     <?= $this->Form->end(); ?>
     <div id="m_widget_setting_action" class="fotterBtnArea">
       <?= $this->Html->link('元に戻す', 'javascript:void(0)', ['onclick' => 'reloadAct()','class' => 'whiteBtn btn-shadow']) ?>
-      <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct();loading.load.start()', 'class' => 'greenBtn btn-shadow']) ?>
+      <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
       <?= $this->Html->link('dummy', 'javascript:void(0)', ['onclick' => '', 'class' => 'whiteBtn btn-shadow', 'style' => 'visibility: hidden;']) ?>
     </div>
   </div>

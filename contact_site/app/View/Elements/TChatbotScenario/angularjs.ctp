@@ -345,7 +345,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シナリオ設定の保存
   this.saveAct = function(e) {
-    loading.load.start();
     if($('#submitBtn').hasClass('disabled')) return false;
     // localStorageから一時保存データを削除する
     LocalStorageService.remove($scope.storageKey);
@@ -362,7 +361,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'シナリオ設定', 'moment');
     popupEvent.closePopup = function(){
-      loading.load.start();
 
       // ファイルIDの削除リストを取得
       $scope.setActionList.forEach(function(action) {
