@@ -247,14 +247,16 @@
         <?php
         /* キャンペーン名の取得 */
         $campaignParam = "";
-        $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-        if ( $tmp !== "" ) {
-          foreach($campaignList as $k => $v){
-            if ( strpos($tmp, $k) !== false ) {
-              if ( $campaignParam !== "" ) {
-                $campaignParam .= "\n";
+        if(!empty($stayList[$history['THistory']['id']])) {
+          $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+          if ( $tmp !== "" ) {
+            foreach($campaignList as $k => $v){
+              if ( strpos($tmp, $k) !== false ) {
+                if ( $campaignParam !== "" ) {
+                  $campaignParam .= "\n";
+                }
+                $campaignParam .= h($v);
               }
-              $campaignParam .= h($v);
             }
           }
         }
