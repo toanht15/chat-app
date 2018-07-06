@@ -266,14 +266,16 @@
         }
         if($historyId == $history['THistory']['id']) {
           $userCampaignParam = "";
-          $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-          if ( $tmp !== "" ) {
-            foreach($campaignList as $k => $v){
-              if ( strpos($tmp, $k) !== false ) {
-                if ( $userCampaignParam !== "" ) {
-                  $userCampaignParam .= "\n";
+          if(!empty($stayList[$history['THistory']['id']])) {
+            $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+            if ( $tmp !== "" ) {
+              foreach($campaignList as $k => $v){
+                if ( strpos($tmp, $k) !== false ) {
+                  if ( $userCampaignParam !== "" ) {
+                    $userCampaignParam .= "\n";
+                  }
+                  $userCampaignParam .= h($v);
                 }
-                $userCampaignParam .= h($v);
               }
             }
           }
