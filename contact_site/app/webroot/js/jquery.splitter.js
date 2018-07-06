@@ -172,20 +172,26 @@
                                 splitter.css('top', pw);
                                 $("#chatContent").css('height', $("#detail").outerHeight() - 65);
                                 $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-                                //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
                                 $("#chatHistory").css('height','100%');
-                                if($("#btnSet").css('display') == "none" && $("#style")[0] == null) {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 130);
+                                //リストの高さを計算するための変数群を初期化
+                                var List_offsetHeight = 0;
+                                var btnHeight = 0;
+                                var menuHeight = 0;
+                                var adjustHeight = $("#history_menu").outerHeight() + $(".fLeft").outerHeight() + $(".dataTables_scrollHead").outerHeight();
+                                //CSV出力、削除ボタンが表示されている場合、高さを取得
+                                if($("#btnSet").css('display') != "none"){
+                                  btnHeight = parseInt($("#btnSet").css('height'));
                                 }
-                                else if($("#btnSet").css('display') == "none" && $("#style")[0] != null) {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (146 + parseInt($("#style").css('height'))));
+
+                                //検索条件が表示されている場合、高さを取得
+                                if($(".seach_menu")[0] != null){
+                                  menuHeight = parseInt($(".seach_menu").css('height')) + 13;
                                 }
-                                else if($("#btnSet").css('display') == "block" && $("#style")[0] != null) {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (195 + parseInt($("#style").css('height'))));
-                                }
-                                else {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 180);
-                                }
+                                //スクロール変化対象のリスト以外の高さを取得し計算する。
+
+                                List_offsetHeight = $("#history_body_side").outerHeight() - (adjustHeight + btnHeight + menuHeight);
+                                $(".dataTables_scrollBody").css({'height':List_offsetHeight});
+
                             }
                         }
                         if (!silent) {
