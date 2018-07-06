@@ -779,8 +779,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       document.getElementById('sincloChatMessage').value = textareaMessage;
       // タブ切替の通知
       $scope.$emit('switchWidget', type)
-      console.log('ここチェック');
-      console.log($('#mainImage').css('display'));
       //画像がない場合
       if($('#mainImage').css('display') == 'none') {
         if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
