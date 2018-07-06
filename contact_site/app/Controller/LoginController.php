@@ -232,7 +232,7 @@ class LoginController extends AppController {
 
             //お客さん向け
             $sender = new MailSenderComponent();
-            $sender->setFrom(self::ML_MAIL_ADDRESS);
+            $sender->setFrom($this->getMailAddress());
             $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
             $sender->setTo($inputData['MUser']['mail_address']);
             $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
@@ -242,9 +242,9 @@ class LoginController extends AppController {
 
           //会社(メディアリンク)向けにメール
           $sender = new MailSenderComponent();
-          $sender->setFrom(self::ML_MAIL_ADDRESS);
+          $sender->setFrom($this->getMailAddress());
           $sender->setFromName('sinclo（シンクロ）');
-          $sender->setTo(self::ML_MAIL_ADDRESS);
+          $sender->setTo($this->getMailAddress());
           $sender->setSubject($mailTemplateData[2]['MSystemMailTemplate']['subject']);
           $mailBodyData = $mailTemplateData[2]['MSystemMailTemplate']['mail_body'];
           $sender->setSubject($mailTemplateData[2]['MSystemMailTemplate']['subject']);
@@ -471,6 +471,7 @@ class LoginController extends AppController {
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['administrator_mail_address'], self::ADMIN_MAIL_ADDRESS, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['telephone_number'], self::PHONE_NUMBER, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreement']['installation_url'], self::URL, $mailBodyData);
+    $mailBodyData = $this->replaceConstToString($data['MAgreement']['note'], self::OTHER, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MCompany']['limit_users'], self::USABLE_USER_COUNT, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getPlanNameStr($data), self::PLAN_NAME, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($this->getBeginDate($data), self::BEGIN_DATE, $mailBodyData);
@@ -544,6 +545,22 @@ class LoginController extends AppController {
       return '画面キャプチャオプション：あり（最大同時セッション数：'.$data['MCompany']['la_limit_users'].'）';
     } else {
       return '画面キャプチャオプション：なし';
+    }
+  }
+
+  private function getMailAddress() {
+    if (env('DEV_ENV') === 'dev') { // 開発環境
+      return 'masashi.shimizu@medialink-ml.co.jp';
+    } else {
+      return 'cloud-service@medialink-ml.co.jp';
+    }
+  }
+
+  private function getMailAddressAndAlex() {
+    if (env('DEV_ENV') === 'dev') { // 開発環境
+      return 'masashi.shimizu@medialink-ml.co.jp';
+    } else {
+      return 'cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp';
     }
   }
 }

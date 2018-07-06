@@ -724,7 +724,7 @@
       if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
         thumbnail = "<img src='" + url + "' class='recieveFileThumbnail'>";
       } else {
-        thumbnail = "<i class='fa " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
+        thumbnail = "<i class='fal " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         height = "style = 'height:64px;'"
       }
       var content    = "<div class='recieveFileContent'>";
@@ -741,17 +741,17 @@
     function selectFontIconClassFromExtension(ext) {
       var selectedClass = "",
         icons = {
-          image:      'fa-file-image-o',
-          pdf:        'fa-file-pdf-o',
-          word:       'fa-file-word-o',
-          powerpoint: 'fa-file-powerpoint-o',
-          excel:      'fa-file-excel-o',
-          audio:      'fa-file-audio-o',
-          video:      'fa-file-video-o',
-          zip:        'fa-file-zip-o',
-          code:       'fa-file-code-o',
-          text:       'fa-file-text-o',
-          file:       'fa-file-o'
+          image:      'fa-file-image',
+          pdf:        'fa-file-pdf',
+          word:       'fa-file-word',
+          powerpoint: 'fa-file-powerpoint',
+          excel:      'fa-file-excel',
+          audio:      'fa-file-audio',
+          video:      'fa-file-video',
+          zip:        'fa-file-zip',
+          code:       'fa-file-code',
+          text:       'fa-file-text',
+          file:       'fa-file'
         },
         extensions = {
           gif: icons.image,
@@ -840,6 +840,7 @@
 
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
     angular.element('label[for="g_chat"]').on('change', function(e){
+      loading.load.start();
       var url = "<?=$this->Html->url(['controller' => 'ChatHistories', 'action'=>'index'])?>?isChat=" + e.target.checked;
       location.href = url;
     });
@@ -952,6 +953,23 @@
 }());
 
 $(document).ready(function(){
+
+  // ツールチップの表示制御
+  $('.questionBtn').off("mouseenter").on('mouseenter',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','block');
+    targetObj.css({
+      top: $(this).offset().top -160 + 'px',
+      left:$(this).offset().left - 100 + 'px'
+    });
+  });
+
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+    var parentTdId = $(this).parent().parent().attr('id');
+    var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
+    targetObj.find('icon-annotation').css('display','none');
+  });
 
   var outputCSVBtn = document.getElementById('outputCSV');
   outputCSVBtn.addEventListener('click', function(){
@@ -1345,6 +1363,7 @@ $(document).ready(function(){
     historySearchConditions.History.finish_day = $("input[name=daterangepicker_end]").val();
     historySearchConditions.History.period = search_day;
 
+    loading.load.start();
     $.ajax({
       type: 'post',
       dataType: 'html',
@@ -1353,6 +1372,7 @@ $(document).ready(function(){
       url: "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>",
       success: function(html){
         location.href ="<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>";
+        loading.load.finish();
       }
     });
   });

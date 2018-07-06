@@ -16,7 +16,8 @@ class MWidgetSettingsController extends AppController {
       /* カラー設定styat */
       'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
-      'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none'
+      'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
+      'widget_title_top_type','widget_title_name_type','widget_title_explain_type'
       /* カラー設定end */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
@@ -182,6 +183,7 @@ class MWidgetSettingsController extends AppController {
           $inputData['MWidgetSetting']['color_setting_type'] = '0';
         }
       }
+
       $this->data = $inputData;
 
       //営業時間設定確認
@@ -230,7 +232,12 @@ class MWidgetSettingsController extends AppController {
 
     if (  isset($this->request->data['color']) ) {
       $cssStyle['.p-show-gallary .bgOn'] = [
-      'background-color' => $this->request->data['color']
+        'background-color' => $this->request->data['color'],
+        'color' => $this->request->data['string_color']
+      ];
+      $cssStyle['.p-show-gallary .bgOff'] = [
+        'background-color' => $this->request->data['string_color'],
+        'color' => $this->request->data['color']
       ];
     }
 
@@ -867,6 +874,20 @@ class MWidgetSettingsController extends AppController {
 //             }
             /* カラー設定end */
 
+            //タイトル位置
+            if ( strcmp($v, 'widget_title_top_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_title_top_type'] = WIDGET_TITLE_TOP_TYPE; // デフォルト値
+            }
+
+            //企業名位置
+            if ( strcmp($v, 'widget_title_name_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_title_name_type'] = WIDGET_TITLE_NAME_TYPE; // デフォルト値
+            }
+
+            //説明文位置
+            if ( strcmp($v, 'widget_title_explain_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_title_explain_type'] = WIDGET_TITLE_EXPLAIN_TYPE; // デフォルト値
+            }
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];
             }

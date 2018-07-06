@@ -65,6 +65,29 @@ $config['default'] = array(
           ),
           "2" => array(
             "chatTextArea" => "2",
+            "actionType" => "11",
+            "messageIntervalTimeSec" => "2",
+            "addCustomerInformations" => array(
+              array(
+                "variableName" => "会社名",
+                "targetItemName" => "会社名"
+              ),
+              array(
+                "variableName" => "名前",
+                "targetItemName" => "名前"
+              ),
+              array(
+                "variableName" => "電話番号",
+                "targetItemName" => "電話番号"
+              ),
+              array(
+                "variableName" => "メールアドレス",
+                "targetItemName" => "メールアドレス"
+              )
+            )
+          ),
+          "3" => array(
+            "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
             "mailType" => "3",
@@ -116,7 +139,7 @@ $config['default'] = array(
 ──────────────────────────────'
             )
           ),
-          "3" => array(
+          "4" => array(
             "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
@@ -145,13 +168,13 @@ sinclo@medialink-ml.co.jp
 ------------------------------------------------------------------'
             )
           ),
-          "4" => array(
+          "5" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "2",
             "message" => "{{名前}}様からの資料請求を受付いたしました。\n{{メールアドレス}}宛てに資料をお送りさせて頂きます。"
           ),
-          "5" => array(
+          "6" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "2",
@@ -184,6 +207,12 @@ sinclo@medialink-ml.co.jp
                 "inputType" => "1",
                 "message" => "お客様の会社名、お名前、電話番号、メールアドレスを入力して下さい。（メール署名をコピー＆ペーストで可）",
                 "inputLFType" => "2"
+              ),
+              array(
+                "variableName" => "その他要望など",
+                "inputType" => "1",
+                "message" => "その他ご要望などございましたらこちらにご記入ください。（特にない方は「なし」と入力してください。）",
+                "inputLFType" => "2"
               )
             ),
             "errorMessage" => "入力が正しく確認できませんでした。",
@@ -195,24 +224,15 @@ sinclo@medialink-ml.co.jp
             "cvCondition" => 1
           ),
           "2" => array(
-            "chatTextArea" => "1",
-            "actionType" => "2",
+            "chatTextArea" => "2",
+            "actionType" => "11",
             "messageIntervalTimeSec" => "2",
-            "hearings" => array(
+            "addCustomerInformations" => array(
               array(
-                "variableName" => "その他要望など",
-                "inputType" => "1",
-                "message" => "その他ご要望などございましたらこちらにご記入ください。（特にない方は「なし」と入力してください。）",
-                "inputLFType" => "2"
+                "variableName" => "顧客情報",
+                "targetItemName" => "メモ"
               )
-            ),
-            "errorMessage" => "入力が確認できませんでした。",
-            "isConfirm" => "2",
-            "confirmMessage" => "",
-            "success" => "",
-            "cancel" => "",
-            "cv" => "2",
-            "cvCondition" => 1
+            )
           ),
           "3" => array(
             "chatTextArea" => "2",
@@ -349,6 +369,25 @@ sinclo@medialink-ml.co.jp
           ),
           "5" => array(
             "chatTextArea" => "2",
+            "actionType" => "11",
+            "messageIntervalTimeSec" => "2",
+            "addCustomerInformations" => array(
+              array(
+                "variableName" => "名前",
+                "targetItemName" => "名前"
+              ),
+              array(
+                "variableName" => "電話番号",
+                "targetItemName" => "電話番号"
+              ),
+              array(
+                "variableName" => "メールアドレス",
+                "targetItemName" => "メールアドレス"
+              )
+            )
+          ),
+          "6" => array(
+            "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
             "mailType" => "1",
@@ -376,7 +415,7 @@ sinclo@medialink-ml.co.jp
 ------------------------------------------------------------------'
             )
           ),
-          "6" => array(
+          "7" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "2",
@@ -581,6 +620,29 @@ sinclo@medialink-ml.co.jp
           ),
           "2" => array(
             "chatTextArea" => "2",
+            "actionType" => "11",
+            "messageIntervalTimeSec" => "2",
+            "addCustomerInformations" => array(
+              array(
+                "variableName" => "会社名",
+                "targetItemName" => "会社名"
+              ),
+              array(
+                "variableName" => "名前",
+                "targetItemName" => "名前"
+              ),
+              array(
+                "variableName" => "電話番号",
+                "targetItemName" => "電話番号"
+              ),
+              array(
+                "variableName" => "メールアドレス",
+                "targetItemName" => "メールアドレス"
+              )
+            )
+          ),
+          "3" => array(
+            "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "1",
             "mailType" => "3",
@@ -627,7 +689,7 @@ sinclo@medialink-ml.co.jp
 ────────────────────────────'
             )
           ),
-          "3" => array(
+          "4" => array(
             "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "1",
@@ -656,13 +718,13 @@ sinclo@medialink-ml.co.jp
 ------------------------------------------------------------------'
             )
           ),
-          "4" => array(
+          "5" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "1",
             "message" => "{{名前}}様からのお問い合わせを受付いたしました。"
           ),
-          "5" => array(
+          "6" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "1",

@@ -14,8 +14,8 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  const ML_MAIL_ADDRESS= "masashi.shimizu@medialink-ml.co.jp";
-  const ML_MAIL_ADDRESS_AND_ALEX = "masashi.shimizu@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const PASSWORD = "##PASSWORD##";
@@ -176,7 +176,7 @@ class ContractController extends AppController
 
           //お客さん向け
           $sender = new MailSenderComponent();
-          $sender->setFrom(self::ML_MAIL_ADDRESS);
+          $sender->setFrom($this->getMailAddress());
           $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
           $sender->setTo($data['MAgreements']['application_mail_address']);
           $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
@@ -219,7 +219,7 @@ class ContractController extends AppController
             $data['MAgreements']['application_name'] = '';
           }
           $sender->setFromName($data['MCompany']['company_name'].'　'.$data['MAgreements']['application_name']);
-          $sender->setTo(self::ML_MAIL_ADDRESS_AND_ALEX);
+          $sender->setTo($this->getMailAddressAndAlex());
           $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
 
           $mailBodyData = $this->replaceAllMailConstString($data, $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
@@ -932,6 +932,20 @@ class ContractController extends AppController
             unset($action['mailTransmission']);
             $action['mMailTemplateId'] = $this->MMailTemplate->getLastInsertId();
           }
+          else if(strcmp($action['actionType'], 11) === 0) { // 訪問ユーザ登録
+            $addCustomerInformations = &$action['addCustomerInformations'];
+            foreach($addCustomerInformations as $index => &$addCustomerInformation) {
+              $customerInfoSetting = $this->TCustomerInformationSetting->find('first', array(
+                'conditions' => array(
+                  'm_companies_id' => $m_companies_id,
+                  'item_name' => $addCustomerInformation['targetItemName'],
+                  'delete_flg' => 0
+                )
+              ));
+              unset($addCustomerInformation['targetItemName']);
+              $addCustomerInformation['targetId'] = $customerInfoSetting['TCustomerInformationSetting']['id'];
+            }
+          }
         }
         $this->TChatbotScenario->create();
         $this->TChatbotScenario->set(array(
@@ -1230,5 +1244,21 @@ class ContractController extends AppController
       'fields' => array('SUM(MCompany.limit_users) as allUsers')
     ));
     return intval($addUserCount[0]['allUsers']);
+  }
+
+  private function getMailAddress() {
+    if (env('DEV_ENV') === 'dev') { // 開発環境
+      return 'masashi.shimizu@medialink-ml.co.jp';
+    } else {
+      return 'cloud-service@medialink-ml.co.jp';
+    }
+  }
+
+  private function getMailAddressAndAlex() {
+    if (env('DEV_ENV') === 'dev') { // 開発環境
+      return 'masashi.shimizu@medialink-ml.co.jp';
+    } else {
+      return 'cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp';
+    }
   }
 }
