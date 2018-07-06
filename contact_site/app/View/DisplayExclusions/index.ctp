@@ -42,6 +42,6 @@
 
 <!-- /* 操作 */ -->
     <div id="m_widget_setting_action" class="fotterBtnArea">
-      <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => ['loading.load.start();saveAct()'], 'class' => 'greenBtn btn-shadow']) ?>
+      <?= $this->Html->link('更新', 'javascript:void(0)', ['onclick' => 'saveAct()', 'class' => 'greenBtn btn-shadow']) ?>
     </div>
 

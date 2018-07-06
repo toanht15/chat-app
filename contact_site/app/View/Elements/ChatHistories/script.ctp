@@ -11,14 +11,12 @@ function openSearchRefine(){
     url: "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'remoteSearchCustomerInfo']) ?>",
     success: function(html){
       modalOpen.call(window, html, 'p-thistory-entry', '高度な検索', 'moment');
-      loading.load.finish();
     }
   });
 }
 
 //セッションクリア(条件クリア)
 function sessionClear(){
-  loading.load.start();
   location.href = "<?=$this->Html->url(array('controller' => 'ChatHistories', 'action' => 'portionClearSession'))?>";
 }
 
@@ -276,13 +274,14 @@ $(function(){
     }
     //縦並びの場合
     if(screenMode == 2) {
+      splitterObj.refresh();
       document.getElementById('history_body_side').style.width = $('#history_list_side').outerWidth() + 'px';
       $("#chatContent").css('height', $("#detail").outerHeight() - 65);
       $("#chatHistory").css('height','100%');
       $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
     }
     tableObj.columns.adjust();
-    SetListHeight(1);
+    SetListHeight();
   });
 
   //縦並びをクリックした場合
@@ -290,7 +289,6 @@ $(function(){
     if(screenMode == 2){
       return;
     }
-    loading.load.start();
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -330,7 +328,6 @@ $(function(){
       cache: false,
       url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
       success: function(html){
-        loading.load.finish();
       }
     });
     tableObj.columns.adjust();
@@ -342,9 +339,8 @@ $(function(){
   //横並びをクリックした場合
   $(document).on('click', '.side', function(){
     if(screenMode == 1){
-      return;
-    }
-    loading.load.start();
+        return;
+      }
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -382,7 +378,6 @@ $(function(){
       cache: false,
       url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
       success: function(html){
-        loading.load.finish();
       }
     });
     tableObj.columns.adjust();
@@ -412,9 +407,9 @@ $(function(){
       $(".trHeight").css('height','72px');
       SetListHeight();
     }
-    //縦並びの場合$this.attr('data-balloon-position');
+    //縦並びの場合
     if(<?= $screenFlg ?> == 2) {
-      splitterObj = $("#history_list_side").split({
+      var splitterObj = $("#history_list_side").split({
         "orientation": "horizontal",
         "position": "40%",
         onDrag: function(ev) {
@@ -578,12 +573,12 @@ function clearChatAndPersonalInfo() {
   document.getElementById('customerId').value= "";
 }
 
-function SetListHeight(resizeFlg){
+function SetListHeight(){
   //リストの高さを計算するための変数群を初期化
   var List_offsetHeight = 0;
   var btnHeight = 0;
   var menuHeight = 0;
-  var adjustHeight = 145;
+  var adjustHeight = $("#history_menu").outerHeight() + $(".fLeft").outerHeight() + $(".dataTables_scrollHead").outerHeight();
   //CSV出力、削除ボタンが表示されている場合、高さを取得
   if($("#btnSet").css('display') != "none"){
     btnHeight = parseInt($("#btnSet").css('height'));
@@ -593,9 +588,9 @@ function SetListHeight(resizeFlg){
   if($(".seach_menu")[0] != null){
     menuHeight = parseInt($(".seach_menu").css('height')) + 13;
   }
+  //スクロール変化対象のリスト以外の高さを取得し計算する。
 
-  //縦方向リサイズ時の表示破壊を防ぐ
-    List_offsetHeight = $("#history_body_side").outerHeight() - parseInt(adjustHeight + btnHeight + menuHeight);
-  $(".dataTables_scrollBody").css({'height':List_offsetHeight,'min-height':List_offsetHeight});
+  List_offsetHeight = $("#history_body_side").outerHeight() - (adjustHeight + btnHeight + menuHeight);
+  $(".dataTables_scrollBody").css({'height':List_offsetHeight});
 }
 </script>

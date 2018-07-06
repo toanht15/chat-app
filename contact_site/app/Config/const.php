@@ -279,7 +279,7 @@ define('C_STATUS_AVAILABLE', 0); // 有効
 define('C_STATUS_UNAVAILABLE', 1); // 無効
 
 // 成果
-define('C_ACHIEVEMENT_TERMINATE_SCENARIO', -1); // 途中離脱
+//define('C_ACHIEVEMENT_TERMINATE_SCENARIO', -1); // 途中離脱
 define('C_ACHIEVEMENT_CV', 0); // CV
 define('C_ACHIEVEMENT_UNAVAILABLE', 1); // なし
 define('C_ACHIEVEMENT_AVAILABLE', 2); // あり
@@ -993,7 +993,7 @@ $config['chatbotScenarioBranchOnConditionActionType'] = [
 
 /* 成果種別 */
 $config['achievementType'] = [
-  C_ACHIEVEMENT_TERMINATE_SCENARIO => "途中離脱",
+//  C_ACHIEVEMENT_TERMINATE_SCENARIO => "途中離脱",
   C_ACHIEVEMENT_CV => "CV",
   C_ACHIEVEMENT_UNAVAILABLE => "無効",
   C_ACHIEVEMENT_AVAILABLE => "有効"
