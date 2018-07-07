@@ -139,7 +139,6 @@ function openConfirmDialog(){
   }
   modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', 'キャンペーン情報', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
-  loading.load.start();
     $.ajax({
       type: 'post',
       cache: false,
@@ -180,7 +179,6 @@ function openCopyDialog(){
   }
   modalOpen.call(window, "コピーします、よろしいですか？", 'p-confirm', 'キャンペーン情報', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
-  loading.load.start();
     $.ajax({
       type: 'post',
       cache: false,
@@ -239,7 +237,6 @@ function toggleSort(){
 var confirmSort = function(){
   modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-sort-save-confirm', 'キャンペーン設定並び替えの保存', 'moment');
   popupEvent.saveClicked = function(){
-  loading.load.start();
     saveToggleSort();
   }
   popupEvent.cancelClicked = function(){

@@ -92,7 +92,7 @@ $prevCnt = ($params['page'] - 1);
 <!-- UI/UX統合対応end -->
             <td class="tCenter" width=" 5%"><?=$no?></td>
             <td class="tCenter" width="15%">
-              <div class = "document_image" ng-click="$event.stopPropagation();openDocumentList3(<?=$id?>)">
+              <div class = "document_image" ng-click="$event.stopPropagation(); openDocumentList3(<?=$id?>)">
                 <?php
                 $settings = (!empty($val['TDocument']['settings'])) ? (array)json_decode($val['TDocument']['settings']) : [];
                 $rotation = (!empty($settings['rotation'])) ? $settings['rotation'] : 0;

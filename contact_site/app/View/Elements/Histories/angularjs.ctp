@@ -39,6 +39,7 @@
 
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
     angular.element('label[for="g_chat"]').on('change', function(e){
+      loading.load.start();
       var url = "<?=$this->Html->url(['controller' => 'Histories', 'action'=>'index'])?>?isChat=" + e.target.checked;
       location.href = url;
     });
@@ -385,6 +386,7 @@ $(document).ready(function(){
     historySearchConditions.History.finish_day = $("input[name=daterangepicker_end]").val();
     historySearchConditions.History.period = search_day;
 
+    loading.load.start();
     $.ajax({
       type: 'post',
       dataType: 'html',

@@ -56,7 +56,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 </div>
 <div id="colorBarMenu">
   <ul>
-    <li class="t-link" onclick="loading.load.start();editPersonalInfo()">
+    <li class="t-link" onclick="editPersonalInfo()">
       <i class="fal fa-user-circle fa-2x smallFal"></i>
       <a href="javascript:void(0)">
         プロフィール
@@ -70,7 +70,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       </a>
     </li>
     <hr class="separator">
-    <li class="t-link" onclick = 'location.href = "/Login/logout";loading.load.start()'>
+    <li class="t-link" onclick = 'location.href = "/Login/logout"'>
       <i class="fal fa-sign-out-alt fa-2x smallFal"></i>
       <a href="javascript:void(0)">
         ログアウト
@@ -88,7 +88,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 <div id="sidebar-main">
     <div>
         <div class="icon <?=$monitorSelected?>">
-            <?= $this->htmlEx->naviFaIconLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'fa-home', ['href' => ['controller' => 'Customers', 'action' => 'index'], 'onclick' => 'window.loading.load.start()']) ?>
+            <?= $this->htmlEx->naviFaIconLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'fa-home', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
         <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
           <div class="icon <?=$statisticsSelected?> setting-icon" data-type="statistics" >
@@ -115,7 +115,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
         <?php endif; ?>
         <?php if ($adminFlg && isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]): ?>
           <div class="icon <?=$docSettingSelected?>">
-            <?= $this->htmlEx->naviFaIconLink('資料設定', 'fa-file-alt', ['href' => ['controller' => 'TDocuments', 'action' => 'index'], 'onclick' => 'window.loading.load.start()']) ?>
+            <?= $this->htmlEx->naviFaIconLink('資料設定', 'fa-file-alt', ['href' => ['controller' => 'TDocuments', 'action' => 'index']]) ?>
           </div>
         <?php endif; ?>
         <?php if ($adminFlg && isset($coreSettings[C_COMPANY_USE_CHAT]) && $coreSettings[C_COMPANY_USE_CHAT]): ?>
@@ -146,7 +146,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
                 <?= $this->htmlEx->naviFaIconLink('ユーザー管理', 'fa-user-friends', ['href' => ['controller' => 'MUsers', 'action' => 'index']], true) ?>
             </div>
             <div class="icon">
-                <?= $this->htmlEx->naviFaIconLink('ウィジェット設定', 'fa-window-maximize', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index'], 'onclick' => 'window.loading.load.start()'], true) ?>
+                <?= $this->htmlEx->naviFaIconLink('ウィジェット設定', 'fa-window-maximize', ['href' => ['controller' => 'MWidgetSettings', 'action' => 'index']], true) ?>
             </div>
         <?php endif; ?>
         <div class="icon">
@@ -198,7 +198,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       <div >
       <?php if ( $adminFlg ): ?>
         <div class="icon">
-          <?= $this->htmlEx->naviFaIconLink('オートメッセージ設定', 'fa-comments', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index'], 'onclick' => 'window.loading.load.start()'], true) ?>
+          <?= $this->htmlEx->naviFaIconLink('オートメッセージ設定', 'fa-comments', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']], true) ?>
         </div>
         <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('シナリオ設定', 'fa-code-merge', ['href' => ['controller' => 'TChatbotScenario', 'action' => 'index']], true) ?>
@@ -355,7 +355,6 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       url: "<?= $this->Html->url('/PersonalSettings/remoteOpenEntryForm') ?>",
       success: function(html){
         modalOpen.call(window, html, 'p-personal-update', 'プロフィール', 'moment');
-        loading.load.finish();
       },
       error: function(html) {
         console.log('error');

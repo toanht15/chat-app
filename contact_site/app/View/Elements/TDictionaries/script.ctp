@@ -113,7 +113,6 @@ function openConfirmDialog(){
   var select_tab_index = document.getElementById("select_tab_index").value;
   modalOpen.call(window, "選択された定型文を削除します。<br/><br/>よろしいですか？<br/>", 'p-dictionary-del', '削除', 'moment');
   popupEvent.closePopup = toExecutableOnce(function(){
-    loading.load.start();
     $.ajax({
       type: 'post',
             cache: false,
@@ -249,7 +248,6 @@ var getTabSort = function(){
 var confirmTabSort = function(){
   modalOpen.call(window, "編集内容を保存します。<br/><br/>よろしいですか？<br/>", 'p-tabsort-save-confirm', 'カテゴリ並び替えの保存', 'moment');
   popupEvent.saveClicked = function(){
-   loading.load.start();
     saveTabSort();
   }
   popupEvent.cancelClicked = function(){
