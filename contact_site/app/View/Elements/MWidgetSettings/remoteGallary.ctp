@@ -35,13 +35,4 @@ for(var i = 0; imageList.length > i; i++) {
   <li class="icon-view" data-name="fa-robot normal">
     <i class="icon fal fa-robot bgOn"/>
   </li>
-  <li class="icon-view" data-name="fa-comments invert">
-    <i class="icon fal fa-comments bgOff"/>
-  </li>
-  <li class="icon-view" data-name="fa-phone invert">
-    <i class="icon fal fa-phone bgOff"/>
-  </li>
-  <li class="icon-view" data-name="fa-robot invert">
-    <i class="icon fal fa-robot bgOff"/>
-  </li>
 </ul>
