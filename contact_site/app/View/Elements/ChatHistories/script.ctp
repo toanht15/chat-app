@@ -329,12 +329,12 @@ $(function(){
       cache: false,
       url: "<?= $this->Html->url('/ChatHistories/changeScreen') ?>",
       success: function(html){
+        SetListHeight(screenMode);
       }
     });
     tableObj.columns.adjust();
     screenMode = 2;
     changeScreenMode = 2;
-    SetListHeight(screenMode);
  });
 
   //横並びをクリックした場合
