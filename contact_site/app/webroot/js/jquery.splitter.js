@@ -174,7 +174,7 @@
                                 $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
                                 $("#chatHistory").css('height','100%');
                                 var adjustHeight = $('#chatHistory').offset().top - $('#history_body_side').offset().top;
-                                var List_offsetHeight = $("#history_body_side").outerHeight() - adjustHeight;
+                                var List_offsetHeight = $("#history_body_side").outerHeight() - adjustHeight + 1; // +1はサイズ調整用マージン
                                 $(".dataTables_scrollBody").css({'height':List_offsetHeight});
 
                             }

@@ -577,11 +577,13 @@ function clearChatAndPersonalInfo() {
 function SetListHeight(type){
   console.log(type);
   //リストの高さを計算するための変数群を初期化
+  var List_offsetHeight = 0;
   if(type==1){
-    var List_offsetHeight = 0;
     var btnHeight = 0;
     var menuHeight = 0;
-    var adjustHeight = $("#history_menu").outerHeight() + $(".fLeft").outerHeight() + $(".dataTables_scrollHead").outerHeight();
+    // history_menuはpaddingを高さに含めない
+    // 3はスクロールバーを表示させないようにするマージン
+    var adjustHeight = $("#history_menu").height() + $(".fLeft").outerHeight() + $(".dataTables_scrollHead").outerHeight() - 3;
     //CSV出力、削除ボタンが表示されている場合、高さを取得
     if($("#btnSet").css('display') != "none"){
       btnHeight = parseInt($("#btnSet").css('height'));
@@ -593,8 +595,8 @@ function SetListHeight(type){
     //スクロール変化対象のリスト以外の高さを取得し計算する。
     List_offsetHeight = $("#history_body_side").outerHeight() - (adjustHeight + btnHeight + menuHeight);
   }else if(type==2){
-    var adjustHeight = $('#chatHistory').offset().top - $('#history_body_side').offset().top;
-    var List_offsetHeight = $("#history_body_side").outerHeight() - adjustHeight;
+    var adjustHeight = $('#chatHistory').offset().top - $('#history_body_side').offset().top + 1; // +1はサイズ調整用マージン
+    List_offsetHeight = $("#history_body_side").outerHeight() - adjustHeight;
   }
   $(".dataTables_scrollBody").css({'height':List_offsetHeight});
 }
