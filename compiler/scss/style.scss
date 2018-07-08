@@ -4045,6 +4045,7 @@ ul.naviBtn {
   }
 
   #history_body_side {
+    overflow-y: hidden;
     /* override datatables design */
     table.dataTable {
       &.no-footer {
