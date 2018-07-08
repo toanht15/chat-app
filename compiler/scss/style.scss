@@ -5365,7 +5365,12 @@ ul.naviBtn {
             align-items: center;
             width: 62px;
             height: 70px;
-            font-size: 45px;
+            font-size: 43px;
+            border: 1px solid;
+
+            &.fa-robot{
+              padding-bottom: 3px;
+            }
           }
         }
 

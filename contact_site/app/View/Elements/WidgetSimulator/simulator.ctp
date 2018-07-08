@@ -233,9 +233,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
         #sincloBox span#mainImage { cursor: pointer; z-index: 2; position: absolute; top: 7px; left: 8px; }
         #sincloBox span#mainImage img { background-color: {{widget.settings['main_color']}}; width: 62px; height: 70px }
-        #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 62px; height: 70px; font-size: 45px }
+        #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 62px; height: 70px; font-size: 43px; border: 1px solid; }
         #sincloBox span#mainImage i.normal { color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}}; }
-        #sincloBox span#mainImage i.invert { color: {{widget.settings['main_color']}}; background-color: {{widget.settings['string_color']}}; }
+        #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px }
         #sincloBox .pb07 { padding-bottom: 7px }
         #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
         #sincloBox .sinclo_re a { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; text-decoration: underline;}
