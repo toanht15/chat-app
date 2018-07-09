@@ -9798,7 +9798,8 @@ div.balloon {
 
 .centerPositionImage {
   text-align:center !important;
-  padding-left:0px !important;
+  padding-right: 26px !important;
+  padding-left: 70px !important;
 }
 
 .leftPositionNoImage {
@@ -9809,6 +9810,7 @@ div.balloon {
 .centerPositionNoImage {
   text-align:center !important;
   padding-left:0px !important;
+  padding-right:0px !important;
 }
 
 .leftPositionImageCompany {
@@ -9822,7 +9824,8 @@ div.balloon {
   text-align:center !important;
   height:52px !important;
   line-height:52px !important;
-  padding:0 0 0 0px !important;
+  padding-right: 26px !important;
+  padding-left: 70px !important;
 }
 
 .leftPositionNoImageCompany {
@@ -9851,7 +9854,7 @@ div.balloon {
 
 .centerPositionImageTitle {
   text-align: center !important;
-  padding: 7px 0px 7px 0px !important;
+  padding: 7px 26px 7px 70px !important;
 }
 
 .leftPositionNoImageTitle {
