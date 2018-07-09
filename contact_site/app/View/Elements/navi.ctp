@@ -86,7 +86,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 
 <!-- /* サイドバー１（ここから） */ -->
 <div id="sidebar-main">
-    <div>
+    <div class="submenulist">
         <div class="icon <?=$monitorSelected?>">
             <?= $this->htmlEx->naviFaIconLink('ﾘｱﾙﾀｲﾑﾓﾆﾀ', 'fa-home', ['href' => ['controller' => 'Customers', 'action' => 'index']]) ?>
         </div>
@@ -137,7 +137,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 <!-- /* サイドバー２（ここから） */ -->
 <div data-sidebar-type="common" class="sidebar-sub hide">
     <!-- /* 共通 */ -->
-    <div >
+    <div class="submenulist">
         <?php if ( $adminFlg ): ?>
             <div class="icon" style="display:none">
                 <?= $this->htmlEx->naviFaIconLink('企業設定', 'company.png', ['href' => ['controller' => 'Customers', 'action' => 'index']], true) ?>
@@ -167,7 +167,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 <div data-sidebar-type="chat" class="sidebar-sub hide">
   <!-- /* チャット */ -->
   <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
-    <div>
+    <div class="submenulist">
       <?php if ( $adminFlg ): ?>
         <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('基本設定', 'fa-cog', ['href' => ['controller' => 'MChatSettings', 'action' => 'index']], true) ?>
@@ -195,7 +195,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 <div data-sidebar-type="chatbot" class="sidebar-sub hide">
     <!-- /* シナリオ */ -->
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
-      <div >
+      <div class="submenulist">
       <?php if ( $adminFlg ): ?>
         <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('オートメッセージ設定', 'fa-comments', ['href' => ['controller' => 'TAutoMessages', 'action' => 'index']], true) ?>
@@ -208,10 +208,10 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
     <?php endif; ?>
     <!-- /* シナリオ */ -->
 </div>
-<div data-sidebar-type="statistics" class="sidebar-sub with-splitter hide">
+<div data-sidebar-type="statistics" class="sidebar-sub hide">
     <!-- /* 履歴・統計 */ -->
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]) : ?>
-      <div>
+      <div class="submenulist with-splitter">
         <div class="splitter">
           <i class='fal fa-history'></i><span class="splitter-label">履歴</span>
         </div>
