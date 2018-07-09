@@ -2014,7 +2014,7 @@
               }
             });
             $("input[name^='sinclo-radio']").each(function(index){
-              if(!sinclo.scenarioApi.isProcessing() && $(this).parents('.sinclo-scenario-message').length !== 0) {
+              if(!sinclo.scenarioApi.isProcessing() && $(this).parents('.sinclo-scenario-msg').length !== 0) {
                 $(this).prop('disabled', true).parent().css('opacity', 0.5);
               } else {
                 $(this).prop('disabled', false);
