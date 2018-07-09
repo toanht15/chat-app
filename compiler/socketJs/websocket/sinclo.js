@@ -2015,7 +2015,17 @@
             });
             $("input[name^='sinclo-radio']").each(function(index){
               if(!sinclo.scenarioApi.isProcessing() && $(this).parents('.sinclo-scenario-msg').length !== 0) {
-                $(this).prop('disabled', true).parent().css('opacity', 0.5);
+                var selected = false;
+                $(this).parents("li.sinclo_re").find('.sinclo-chat-radio').each(function(index){
+                  if($(this).is(':checked')) {
+                    selected = true;
+                  }
+                });
+                if(selected) {
+                  $(this).prop('disabled', true).parent().css('opacity', 0.5);
+                } else {
+                  $(this).prop('disabled', false);
+                }
               } else {
                 $(this).prop('disabled', false);
               }
