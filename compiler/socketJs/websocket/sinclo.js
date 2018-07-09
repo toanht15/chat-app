@@ -34,7 +34,6 @@
         //ウィジェットを開いた回数
         if(String(flg) === "true" && typeof ga == "function"){
           ga('send', 'event', 'sinclo', 'clickMaximize', location.href, 1);
-
         }
         if(String(flg) === "false" && typeof ga == "function"){
           ga('send', 'event', 'sinclo', 'clickMinimize', location.href, 1);
@@ -82,15 +81,6 @@
               common.abridgementTypeShow();
             }
 
-            //画像がない時のタイトル位置
-            if($('#mainImage').css('display') === 'none') {
-              common.indicateSimpleNoImage();
-            }
-            //画像がある時のタイトル位置
-            else if($('#mainImage').css('display') === 'block') {
-              common.indicateSimpleImage();
-            }
-
             //自由入力エリアが閉まっているか空いているかチェック
             var textareaOpend = storage.l.get('textareaOpend');
             //チャットのテキストエリア表示
@@ -123,6 +113,14 @@
             if ( window.sincloInfo.contract.chat ) {
               sinclo.chatApi.showUnreadCnt();
               sinclo.chatApi.scDown();
+            }
+            //画像がない時のタイトル位置
+            if($('#mainImage').css('display') === 'none') {
+              common.indicateSimpleNoImage();
+            }
+            //画像がある時のタイトル位置
+            else if($('#mainImage').css('display') === 'block') {
+              common.indicateSimpleImage();
             }
             sinclo.chatApi.lockPageScroll();
           }

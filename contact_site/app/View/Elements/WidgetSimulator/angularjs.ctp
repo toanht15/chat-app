@@ -1,5 +1,6 @@
 <script type="text/javascript">
 'use strict';
+
 sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
   //thisを変数にいれておく
   var self = this;
@@ -24,7 +25,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * @param String prefix  ラジオボタンに付与するプレフィックス
    */
   $scope.$on('addReMessage', function(event, message, prefix) {
-    console.log('変数追加');
     $scope.addMessage('re', message, prefix);
   });
 
@@ -38,7 +38,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * @param String message 追加するメッセージ
    */
   $scope.$on('addSeMessage', function(event, message) {
-    console.log('変数追加2');
     console.log("=== SimulatorController::addSeMessage ===");
   });
 
@@ -81,7 +80,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * サイト訪問者のメッセージ受信と、呼び出し元アクションへの通知
    */
   $scope.visitorSendMessage = function() {
-    console.log('変数追加3');
     var message = $('#sincloChatMessage').val() ? $('#sincloChatMessage').val() : $('#miniSincloChatMessage').val();
     if (typeof message === 'undefined' || message.trim() === '') {
       return;
@@ -106,7 +104,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * @param String prefix   ラジオボタンに付与するプレフィックス
    */
   $scope.addMessage = function(type, message, prefix, appendClass) {
-    console.log('変数追加4');
     // ベースとなる要素をクローンし、メッセージを挿入する
     if (type === 're') {
       var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
@@ -372,7 +369,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   };
 
     $scope.showPreview = function(target, fileObj, loadData) {
-      console.log('変数追加5');
     $scope.effectScene(false, $(target).parents('li.sinclo_re.recv_file_left').parent(), function(){
       // ベースとなる要素をクローン
       var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').parentNode.cloneNode(true);
