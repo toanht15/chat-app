@@ -4045,6 +4045,7 @@ ul.naviBtn {
   }
 
   #history_body_side {
+    overflow-y: hidden;
     /* override datatables design */
     table.dataTable {
       &.no-footer {
@@ -7213,9 +7214,15 @@ ul.naviBtn {
                       margin-top: 12px;
                       padding-bottom: 0;
                       grid-column: 1/5;
+                      -ms-grid-column: 1;
+                      -ms-grid-column-span: 5;
+                      -ms-grid-row: 2;
                       width: 101%;
                       &.short {
                         grid-column: 1/4;
+                        -ms-grid-column: 1;
+                        -ms-grid-column-span: 4;
+                        -ms-grid-row: 2;
                       }
                     }
                   }
@@ -7263,17 +7270,19 @@ ul.naviBtn {
                     grid-row-end: g3;
                     grid-column-start: g1;
                     grid-column-end: g3;
-                    -ms-grid-column: 3;
+                    -ms-grid-column: 2;
                     -ms-grid-row: 1;
-                    -ms-grid-row-span: 2;
+                    -ms-grid-column-span: 2;
+
                     &.short {
                       grid-row-start: g1;
                       grid-row-end: g2;
                       grid-column-start: g1;
                       grid-column-end: g2;
-                      -ms-grid-column: 3;
-                      -ms-grid-row: 1;
-                      -ms-grid-row-span: 2;
+                      -ms-grid-row-start: g1;
+                      -ms-grid-row-end: g2;
+                      -ms-grid-column-start: g1;
+                      -ms-grid-column-end: g2;
                     }
                     .textarea-message{
                       width: calc(100% - 6.5em);
@@ -7391,6 +7400,9 @@ ul.naviBtn {
                       padding-top: 0.5em;
                     }
                     li {
+                      div.direction-column {
+                        width: 100%; //FOR IE 11
+                      }
                       div.conditionTypeSelect {
                         flex-grow: 0;
                       }

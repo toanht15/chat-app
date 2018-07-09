@@ -172,20 +172,16 @@
                                 splitter.css('top', pw);
                                 $("#chatContent").css('height', $("#detail").outerHeight() - 65);
                                 $("#customerInfoScrollArea").css('height',$("#detail").outerHeight());
-                                //$("#chatHistory").css('height',$("#history_body_side").outerHeight() - 170);
                                 $("#chatHistory").css('height','100%');
-                                if($("#btnSet").css('display') == "none" && $("#style")[0] == null) {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 130);
+                                var adjustHeight = $('#list_body').offset().top - $('#history_body_side').offset().top + $('.dataTables_scrollHead').outerHeight();
+                                var List_offsetHeight = $("#history_body_side").outerHeight() - adjustHeight + 1; // +1はサイズ調整用マージン
+                                $(".dataTables_scrollBody").css({'height':List_offsetHeight});
+                                if($('#chatHistory').outerHeight() <= $('.dataTables_scrollBody').outerHeight()){
+                                  $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').width());
+                                }else{
+                                	$('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').outerWidth());
                                 }
-                                else if($("#btnSet").css('display') == "none" && $("#style")[0] != null) {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (146 + parseInt($("#style").css('height'))));
-                                }
-                                else if($("#btnSet").css('display') == "block" && $("#style")[0] != null) {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - (195 + parseInt($("#style").css('height'))));
-                                }
-                                else {
-                                  $(".dataTables_scrollBody").css('height',$("#history_body_side").outerHeight() - 180);
-                                }
+
                             }
                         }
                         if (!silent) {

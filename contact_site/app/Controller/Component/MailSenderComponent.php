@@ -56,7 +56,7 @@ class MailSenderComponent extends Component
         ->from([$this->from => $this->fromName])
         ->to($this->to)
         ->subject($this->subject)
-        ->send($this->body);
+        ->send($this->_preventGarbledCharacters($this->body));
   }
 
   private function setup() {
@@ -73,5 +73,20 @@ class MailSenderComponent extends Component
 
   private function setDefaultSettings() {
     $this->from = self::MAIL_SYSTEM_FROM_ADDRESS;
+  }
+
+  /**
+   * 文字が長い場合に自動改行で文字化けするため、強制改行を入れる
+   * @see https://qiita.com/saekis/items/7ef6b0d6a9a7180e3ebe
+   * @param $bigText
+   * @param int $width
+   * @return null|string|string[]
+   */
+  private function _preventGarbledCharacters($bigText, $width=249) {
+    // wordwrap()はマルチバイト未対応のため正規表現を使う。
+    $pattern = "/(.{1,{$width}})(?:\\s|$)|(.{{$width}})/uS";
+    $replace = '$1$2' . "\n";
+    $wrappedText = preg_replace($pattern, $replace, $bigText);
+    return $wrappedText;
   }
 }
