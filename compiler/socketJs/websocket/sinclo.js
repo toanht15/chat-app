@@ -1727,8 +1727,11 @@
               var widgetDescriptionHeight = $('#widgetSubTitle').height()*0.3;
             }
             //説明文が空の場合
-            if($('#widgetDescription').text() !== " " && $('#widgetSubTitle').text() == " ") {
+            else if($('#widgetDescription').text() !== " " && $('#widgetSubTitle').text() == " ") {
               var widgetDescriptionHeight = $('#widgetDescription').height()*0.3;
+            }
+            else {
+               var widgetDescriptionHeight = $('#widgetDescription').height();
             }
             var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - widgetDescriptionHeight - $('#sincloBox #fotter').height() - (5.5 * ratio));
 
