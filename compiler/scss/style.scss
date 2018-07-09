@@ -1034,18 +1034,21 @@ ul.ulTab {
 
 .sidebar-sub {
   display: inline-block;
-  background-color: #A6A6A6;
   z-index: $sub-sidebar-z-index;
   width: 221px;
   left: -20px;
-  padding: 7.5px 0px;
-  &.with-splitter {
-    padding: 0px;
-    div.icon {
-      p.icon-wrap {
-        flex-basis: auto;
-        i.icon {
-          width: 14px;
+  .submenulist {
+    margin-left: 1px;
+    background-color: #A6A6A6;
+    padding: 7.5px 0px;
+    &.with-splitter {
+      padding: 0px;
+      div.icon {
+        p.icon-wrap {
+          flex-basis: auto;
+          i.icon {
+            width: 14px;
+          }
         }
       }
     }
@@ -4045,6 +4048,7 @@ ul.naviBtn {
   }
 
   #history_body_side {
+    overflow-y: hidden;
     /* override datatables design */
     table.dataTable {
       &.no-footer {
@@ -5364,7 +5368,12 @@ ul.naviBtn {
             align-items: center;
             width: 62px;
             height: 70px;
-            font-size: 45px;
+            font-size: 43px;
+            border: 1px solid;
+
+            &.fa-robot{
+              padding-bottom: 3px;
+            }
           }
         }
 
