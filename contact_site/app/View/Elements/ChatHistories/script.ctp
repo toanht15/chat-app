@@ -341,7 +341,8 @@ $(function(){
   $(document).on('click', '.side', function(){
     if(screenMode == 1){
         return;
-      }
+    }
+    $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').width());
     splitterObj.destroy();
     splitterObj = null;
     splitterObj = $("#history_list_side").split({
@@ -386,6 +387,12 @@ $(function(){
     screenMode = 1;
     changeScreenMode = 1;
     SetListHeight(screenMode);
+    if($('#chatHistory').outerHeight() <= $('.dataTables_scrollBody').outerHeight()){
+      $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').width());
+    }else{
+      $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').outerWidth());
+    }
+
  });
 
 
