@@ -86,7 +86,7 @@
         }
 
         var self = $.extend(this, {
-            refresh: function() {
+            refresh: function(screenMode) {
                 var new_width = this.width();
                 var new_height = this.height();
                 if (width != new_width || height != new_height) {
@@ -112,6 +112,7 @@
                                 pw = panel_1.width(position-sw2).outerWidth();
                                 panel_2.width(self.width()-pw-sw);
                                 splitter.css('left', pw);
+                                $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').outerWidth());
                                 //スクロールバーがある場合
                                 if($('.dataTables_scrollBody').hasScrollBar()){
                                   $(".dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerWidth() - 17);
@@ -179,7 +180,7 @@
                                 if($('#chatHistory').outerHeight() <= $('.dataTables_scrollBody').outerHeight()){
                                   $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').width());
                                 }else{
-                                	$('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').outerWidth());
+                                  $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').outerWidth());
                                 }
 
                             }
