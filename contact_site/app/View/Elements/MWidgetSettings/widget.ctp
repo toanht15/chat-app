@@ -385,7 +385,7 @@
       <!-- 企業名 企業名表示しない・説明文表示しない・画像ありの場合 -->
       <p ng-if="subTitleToggle == '2' && descriptionToggle == '2' && mainImageToggle == '1'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, sp:showWidgetType === 3}">&thinsp;</p>
       <!-- 企業名 企業名表示しない・説明文表示しない・画像なしの場合 -->
-      <p ng-if="subTitleToggle == '2' && descriptionToggle == '2' mainImageToggle == '2'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, sp:showWidgetType === 3}">&thinsp;</p>
+      <p ng-if="subTitleToggle == '2' && descriptionToggle == '2' && mainImageToggle == '2'" id="widgetSubTitle" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, sp:showWidgetType === 3}">&thinsp;</p>
       <!-- サブタイトル -->
 
       <!-- 説明文 -->
