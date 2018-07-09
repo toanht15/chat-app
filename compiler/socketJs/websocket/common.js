@@ -605,15 +605,15 @@ var socket, // socket.io
       return res;
     },
     indicateSimpleNoImage: function() {
-      if(sincloInfo.widget.widget_title_top_type == 1 && sincloInfo.widget.showMainImage == 1) {
+      if(sincloInfo.widget.widget_title_top_type == 1) {
         $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
       }
-      if(sincloInfo.widget.widget_title_top_type == 2 && sincloInfo.widget.showMainImage == 1) {
+      if(sincloInfo.widget.widget_title_top_type == 2) {
         $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
       }
-    },
-    indicateSimpleImage: function() {
-      if(sincloInfo.widget.widget_title_top_type == 1 && sincloInfo.widget.showMainImage == 1 && check.smartphone()) {
+
+      //スマホの場合
+      if(check.smartphone()) {
         var widgetWidth;
 
         // TODO 関数化
@@ -622,15 +622,242 @@ var socket, // socket.io
         } else {
           widgetWidth = $(window).width() - 20 ;
         }
-        var ratio = widgetWidth * (1/285);
+          var ratio = widgetWidth * (1/285);
+        //画像を表示しない場合
+        if($('#mainImage').css('display') === undefined) {
+          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+            sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'});
+          }
+          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+            sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'});
+          }
+          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+            sincloInfo.widget.showDescription == 2) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'});
+          }
+          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+            sincloInfo.widget.showDescription == 2) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'});
+          }
+          //企業名 企業名表示しない・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'});
+          }
+          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+            sincloInfo.widget.showSubtitle == 1) {
+            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px'});
+          }
+          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+            sincloInfo.widget.showSubtitle == 1) {
+            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'});
+          }
+          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+            sincloInfo.widget.showSubtitle == 2) {
+            $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'});
+          }
+          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+            sincloInfo.widget.showSubtitle == 2) {
+            $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'});
+          }
+          //説明文 説明文表示しない・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
+            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'});
+          }
+        }
+      }
+      //PC
+      else {
+        //画像を表示しない場合
+        if($('#mainImage').css('display') === undefined) {
+          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+            sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'});
+          }
+          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+            sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'});
+          }
+          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+            sincloInfo.widget.showDescription == 2) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:52px;line-height:52px;padding:0 0 0 15px;'});
+          }
+          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+            sincloInfo.widget.showDescription == 2) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:52px;line-height:52px;padding:0 0 0 0px;'});
+          }
+          //企業名 企業名表示しない・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'});
+          }
+          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+            sincloInfo.widget.showSubtitle == 1) {
+            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px'});
+          }
+          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+            sincloInfo.widget.showSubtitle == 1) {
+            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'});
+          }
+          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+            sincloInfo.widget.showSubtitle == 2) {
+            $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 15px;'});
+          }
+          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+            sincloInfo.widget.showSubtitle == 2) {
+            $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;'});
+          }
+          //説明文 説明文表示しない・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
+            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'});
+          }
+        }
+      }
+    },
+    indicateSimpleImage: function() {
+      //スマホの場合
+      if(check.smartphone()) {
+        var widgetWidth;
 
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: ' + (78 * ratio) + 'px !important;'});
+        // TODO 関数化
+        if(sincloInfo.widget.spMaximizeSizeType === 2) {
+          widgetWidth = $(window).width();
+        } else {
+          widgetWidth = $(window).width() - 20 ;
+        }
+          var ratio = widgetWidth * (1/285);
+        //画像あり　タイトル左寄せの場合
+        if(sincloInfo.widget.widget_title_top_type == 1) {
+          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: ' + (78 * ratio) + 'px !important;'});
+        }
+        if(sincloInfo.widget.widget_title_top_type == 2) {
+          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: ' + (70 * ratio) + 'px !important;padding-right: ' + (26 * ratio) + 'px !important;'});
+        }
+
+        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+          sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'});
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+          sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'});
+        }
+        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+          sincloInfo.widget.showDescription == 2) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'});
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+          sincloInfo.widget.showDescription == 2) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'});
+        }
+        //企業名 企業名表示しない・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'});
+        }
+
+        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+          sincloInfo.widget.showSubtitle == 1) {
+          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'});
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+          sincloInfo.widget.showSubtitle == 1) {
+          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'});
+        }
+        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+          sincloInfo.widget.showSubtitle == 2) {
+          $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'});
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+          sincloInfo.widget.showSubtitle == 2) {
+          $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'});
+        }
+        //説明文 説明文表示しない・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
+          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'});
+        }
       }
-      else if(sincloInfo.widget.widget_title_top_type == 1 && sincloInfo.widget.showMainImage == 1 && !check.smartphone()) {
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
-      }
-      if(sincloInfo.widget.widget_title_top_type == 2 && sincloInfo.widget.showMainImage == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
+      //PC
+      else {
+        if(sincloInfo.widget.widget_title_top_type == 1) {
+          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
+        }
+        if(sincloInfo.widget.widget_title_top_type == 2) {
+          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 70px !important;padding-right: 26px !important;'});
+        }
+
+        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+          sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:78px;'});
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+          sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:70px;padding-right:26px;'});
+        }
+        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+          sincloInfo.widget.showDescription == 2) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;'});
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+          sincloInfo.widget.showDescription == 2) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px'});
+        }
+        //企業名 企業名表示しない・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'});
+        }
+
+        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+          sincloInfo.widget.showSubtitle == 1) {
+          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:78px;'});
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+          sincloInfo.widget.showSubtitle == 1) {
+          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:70px;padding-right:26px;'});
+        }
+        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+          sincloInfo.widget.showSubtitle == 2) {
+          $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;'});
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+          sincloInfo.widget.showSubtitle == 2) {
+          $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px;'});
+        }
+        //説明文 説明文表示しない・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
+          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'});
+        }
       }
     },
     //ヘッダ表示（通常表示）
@@ -1241,7 +1468,7 @@ var socket, // socket.io
           // 画像がセットされている場合のスタイル
           html += '#sincloBox p#widgetTitle.notSimple { padding-left: ' + (70 * ratio) + 'px; }';
           // 画像がセットされていない場合のスタイル
-          html += '#sincloBox p#widgetTitle.noImage { padding-left: ' + (30 * ratio) + 'px; text-indent: 1em; }';
+          html += '#sincloBox p#widgetTitle.noImage { padding-left: ' + (30 * ratio) + 'px; }';
           html += '#sincloBox #mainImage em { top: -' + (10 * ratio) + 'px; right: -' + (10 * ratio) + 'px; width: ' + (25 * ratio) + 'px; height: ' + (20 * ratio) + 'px; font-size: ' + (11 * ratio) + 'px; padding: ' + (1 * ratio) + 'px; }';
           if(widget.spMaximizeSizeType === 2) {
             html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-top:0px; padding-bottom: ' + (60 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
@@ -1428,110 +1655,16 @@ var socket, // socket.io
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 8px }';
 
-        var style;
-        //トップタイトル 左寄せ・画像ありの場合
-        if(widget.widget_title_top_type == 1 && widget.showMainImage == 1) {
-          style = 'text-align:left;padding-left:78px !important;';
-        }
-        //トップタイトル 左寄せ・画像なしの場合
-        if(widget.widget_title_top_type == 1 && widget.showMainImage == 2) {
-          style = 'text-align:left;padding-left:15px !important;';
-        }
-        //トップタイトル 中央寄せ・画像ありの場合
-        if(widget.widget_title_top_type == 2 && widget.showMainImage == 1) {
-          style = 'text-align:center;padding-left:0px !important;';
-        }
-        //トップタイトル 中央寄せ・画像なしの場合
-        if(widget.widget_title_top_type == 2 && widget.showMainImage == 2) {
-          style = 'text-align:center;padding-left:0px !important;';
-        }
-        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px !important; height: auto; line-height: ' + widget.headerTextSize + 'px;'+style+'}';
+        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px !important; height: auto; line-height: ' + widget.headerTextSize + 'px;}';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
 
-        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
-        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 1 && widget.showDescription == 1 && widget.showMainImage == 1) {
-          style = 'text-align:left;padding-left:78px;';
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
-        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 2 && widget.showDescription == 1 && widget.showMainImage == 1) {
-          style = 'text-align:center;padding-left:0px;';
-        }
-        //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
-        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 1 && widget.showDescription == 1 && widget.showMainImage == 2) {
-          style = "text-align:left;padding-left:15px";
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
-        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 2 && widget.showDescription == 1 && widget.showMainImage == 2) {
-          style = "text-align:center;padding-left:0px;";
-        }
-        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
-        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 1 && widget.showDescription == 2 && widget.showMainImage == 1) {
-          style = 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;';
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
-        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 2 && widget.showDescription == 2 && widget.showMainImage == 1) {
-          style = 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;';
-        }
-        //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
-        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 1 && widget.showDescription == 2 && widget.showMainImage == 2) {
-          style = 'text-align:left;height:52px;line-height:52px;padding:0 0 0 15px;';
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
-        if(widget.showSubtitle == 1 && widget.widget_title_name_type == 2 && widget.showDescription == 2 && widget.showMainImage == 2) {
-          style = 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;';
-        }
-        //企業名 企業名表示しない・説明文表示する・画像ありの場合
-        //企業名 企業名表示しない・説明文表示する・画像なしの場合
-        if(widget.showSubtitle == 2 && widget.showDescription == 1 && widget.showMainImage == 1 ||
-          widget.showSubtitle == 2 && widget.showDescription == 1 && widget.showMainImage == 2) {
-          style = 'height:0px;padding:0px;';
-        }
-
-        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;'+style+'}';
+        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetSubTitle { border:none; }';
         }
-        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
-        if(widget.showDescription == 1 && widget.widget_title_explain_type == 1 && widget.showSubtitle == 1 && widget.showMainImage == 1) {
-          style = 'text-align:left;padding-left:78px;';
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
-        if(widget.showDescription == 1 && widget.widget_title_explain_type == 2 && widget.showSubtitle == 1 && widget.showMainImage == 1) {
-          style = 'text-align:center;padding-left:0px;';
-        }
-        //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
-        if(widget.showDescription == 1 && widget.widget_title_explain_type == 1 && widget.showSubtitle == 1 && widget.showMainImage == 2) {
-          style = "text-align:left;padding-left:15px";
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
-        if(widget.showDescription == 1 && widget.widget_title_explain_type == 2 && widget.showSubtitle == 1 && widget.showMainImage == 2) {
-          style = "text-align:center;padding-left:0px;";
-        }
-        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
-        if(widget.showDescription == 1 && widget.widget_title_explain_type == 1 && widget.showSubtitle == 2 && widget.showMainImage == 1) {
-          style = 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;';
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
-        if(widget.showDescription == 1 && widget.widget_title_explain_type == 2 && widget.showSubtitle == 2 && widget.showMainImage == 1) {
-          style = 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;';
-        }
-        //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
-        if(widget.showDescription == 1 && widget.widget_title_explain_type == 1 && widget.showSubtitle == 2 && widget.showMainImage == 2) {
-          style = 'text-align:left;height:52px;line-height:52px;padding:0 0 0 15px;';
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
-        if(widget.showDescription == 1 && widget.widget_title_explain_type == 2 && widget.showSubtitle == 2 && widget.showMainImage == 2) {
-          style = 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;';
-        }
-        //説明文 説明文表示しない・企業名表示する・画像ありの場合
-        //説明文 説明文表示しない・企業名表示する・画像なしの場合
-        if((widget.showDescription == 2 && widget.showSubtitle == 1 && widget.showMainImage == 1) ||
-        (widget.showDescription == 2 && widget.showSubtitle == 1 && widget.showMainImage == 2)) {
-          style = 'height:0px;padding:0px;';
-        }
 
-        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; height: auto; line-height: ' + sizeList['widgetDescriptionHeight'] + 'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;'+style+'}';
+        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; height: auto; line-height: ' + sizeList['widgetDescriptionHeight'] + 'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetDescription { border-left:none; border-right:none;}';
         }
@@ -2096,7 +2229,7 @@ var socket, // socket.io
             }
           }
           //画像がない時のタイトル位置
-          if($('#mainImage').css('display') === 'none') {
+          if($('#mainImage').css('display') === 'none'　|| $('#mainImage').css('display') === undefined) {
             common.indicateSimpleNoImage();
           }
           //画像がある時のタイトル位置
