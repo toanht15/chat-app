@@ -841,14 +841,12 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           if($scope.sp_header_light_flg === '<?=C_SELECT_CAN?>'){
             //最大時のシンプル表示(スマホ)する
             if(!$scope.openFlg){
-              $scope.indicateSimpleImage();
               //最小化中
               var res = false;
             }
             else{
               //最大化中
               var res = true;
-              $scope.indicateSimpleNoImage();
             }
           }
           else{
@@ -897,12 +895,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
             if(!$scope.openFlg){
               //最小化中
               var res = true;
-              $scope.indicateSimpleNoImage();
             }
             else{
               //最大化中
               var res = true;
-              $scope.indicateSimpleNoImage();
             }
           }
           else{
@@ -910,12 +906,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
             if(!$scope.openFlg){
               //最小化中
               var res = true;
-              $scope.indicateSimpleNoImage();
             }
             else{
               //最大化中
               var res = false;
-              $scope.indicateSimpleImage();
             }
           }
         }
@@ -928,10 +922,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
             if(!$scope.openFlg){
               //最小化中
               var res = true;
-              $scope.indicateSimpleNoImage();
             }
             else{
-              $scope.indicateSimpleImage();
               //最大化中
               var res = false;
             }
@@ -941,12 +933,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
             if(!$scope.openFlg){
               //最小化中
               var res = true;
-              $scope.indicateSimpleNoImage();
             }
             else{
               //最大化中
               var res = false;
-              $scope.indicateSimpleImage();
             }
           }
         }
@@ -961,7 +951,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
             else{
               //最大化中
               var res = true;
-              $scope.indicateSimpleNoImage();
             }
           }
           else{
@@ -969,13 +958,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
             if(!$scope.openFlg){
               //最小化中
               var res = true;
-              $scope.indicateSimpleNoImage();
             }
             else{
               //最大化中
               var res = false;
-              $scope.indicateSimpleImage();
-
             }
           }
         }
@@ -986,6 +972,16 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         $("#minimizeBtn").show();
         $("#addBtn").hide();
         $("#closeBtn").hide();
+        //画像あるときタイトル位置
+        setTimeout(function(){
+          if($('#mainImage').is(':visible')) {
+            $scope.indicateSimpleImage();
+          }
+          //画像ないときタイトル位置
+          else {
+            $scope.indicateSimpleNoImage();
+          }
+        }, 100);
       }
       else{
         //最小化時
@@ -1001,6 +997,16 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         if(coreSettingsChat){
           document.getElementById("switch_widget").value = $scope.showWidgetType;
         }
+        //画像あるときタイトル位置
+        setTimeout(function(){
+          if($('#mainImage').is(':visible')) {
+            $scope.indicateSimpleImage();
+          }
+          //画像ないときタイトル位置
+          else {
+            $scope.indicateSimpleNoImage();
+          }
+        }, 100);
       }
       return res;
     };
