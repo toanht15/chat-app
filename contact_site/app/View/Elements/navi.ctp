@@ -237,7 +237,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
 <div data-sidebar-type="other" class="sidebar-sub hide">
     <!-- /* その他設定 */ -->
     <?php if ($coreSettings[C_COMPANY_USE_CHAT]): ?>
-      <div >
+      <div class="submenulist">
         <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('訪問ユーザ情報設定', 'fa-address-card', ['href' => ['controller' => 'TCustomerInformationSettings', 'action' => 'index']], true) ?>
         </div>
@@ -283,9 +283,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       var subMenuHeight = $('[data-sidebar-type="' + type + '"]').height();
       $('[data-sidebar-type="' + type + '"]').addClass('hide');
       if(window.innerHeight < subMenuIconTop + subMenuHeight) {
-        $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: window.innerHeight - subMenuHeight - 6.5}).animate({left: 81}, duration_time); // 6.5はメニューの下部padding分
+        $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: window.innerHeight - subMenuHeight - 6.5}).animate({left: 80}, duration_time); // 6.5はメニューの下部padding分
       } else {
-        $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 81}, duration_time);
+        $('[data-sidebar-type="' + type + '"]').removeClass('hide').offset({top: self.offset().top}).animate({left: 80}, duration_time);
       }
     });
   });
