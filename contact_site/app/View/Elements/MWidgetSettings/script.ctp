@@ -1016,7 +1016,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
       }
       if($scope.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;'});
+        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
       }
     }
 
@@ -1025,7 +1025,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
       }
       if($scope.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;'});
+        $('#widgetTitle').css({'cssText': 'text-align: center !important; padding-right:26px !important; padding-left:70px !important;'});
       }
     }
 

@@ -1722,7 +1722,19 @@
           widgetWidth = $(window).width();
           ratio = widgetWidth * (1/285);
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
-            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() - (5.5 * ratio));
+            //企業名が空の場合
+            if($('#widgetDescription').text() == " " && $('#widgetSubTitle').text() !== " ") {
+              var widgetDescriptionHeight = $('#widgetSubTitle').height()*0.3;
+            }
+            //説明文が空の場合
+            else if($('#widgetDescription').text() !== " " && $('#widgetSubTitle').text() == " ") {
+              var widgetDescriptionHeight = $('#widgetDescription').height()*0.3;
+            }
+            else {
+               var widgetDescriptionHeight = $('#widgetDescription').height();
+            }
+            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - widgetDescriptionHeight - $('#sincloBox #fotter').height() - (5.5 * ratio));
+
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
           } else {
@@ -2030,7 +2042,7 @@
               }
             });
             $("input[name^='sinclo-radio']").each(function(index){
-              if(!sinclo.scenarioApi.isProcessing() && $(this).parents('.sinclo-scenario-message').length !== 0) {
+              if(!sinclo.scenarioApi.isProcessing() && $(this).parents('.sinclo-scenario-msg').length !== 0) {
                 $(this).prop('disabled', true).parent().css('opacity', 0.5);
               } else {
                 $(this).prop('disabled', false);
