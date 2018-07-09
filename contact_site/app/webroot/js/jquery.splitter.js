@@ -112,13 +112,16 @@
                                 pw = panel_1.width(position-sw2).outerWidth();
                                 panel_2.width(self.width()-pw-sw);
                                 splitter.css('left', pw);
+
                                 //スクロールバーがある場合
                                 if($('.dataTables_scrollBody').hasScrollBar()){
                                   $(".dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerWidth() - 17);
+                                  $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').outerWidth());
                                 }
                                 //スクロールバーがない場合
                                 else {
                                   $(".dataTables_scrollHeadInner").css('width',$(".dataTables_scrollHead").outerWidth());
+                                  $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').width());
                                 }
                                 $("#manualReceivingLabel").css('width','');
                                 $("#lastSpeechLabel").css('width','');
@@ -179,7 +182,7 @@
                                 if($('#chatHistory').outerHeight() <= $('.dataTables_scrollBody').outerHeight()){
                                   $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').width());
                                 }else{
-                                	$('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').outerWidth());
+                                  $('.dataTables_scrollBody').width($('.dataTables_scrollHeadInner').outerWidth());
                                 }
 
                             }

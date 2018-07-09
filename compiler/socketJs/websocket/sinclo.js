@@ -2013,7 +2013,13 @@
                 }
               }
             });
-            $("input[name^='sinclo-radio']").prop('disabled', false);
+            $("input[name^='sinclo-radio']").each(function(index){
+              if(!sinclo.scenarioApi.isProcessing() && $(this).parents('.sinclo-scenario-msg').length !== 0) {
+                $(this).prop('disabled', true).parent().css('opacity', 0.5);
+              } else {
+                $(this).prop('disabled', false);
+              }
+            });
         },
         removeAllEvent: function() {
           if ( window.sincloInfo.contract.chat ) {
