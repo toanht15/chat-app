@@ -930,12 +930,12 @@ class HistoriesController extends AppController {
       }
       if($check === true) {
         //会社名が入っている場合
-        if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
+        if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
           //会社名がランドスケープテーブルに登録されている場合
           $companyData = $this->MLandscapeData->find('all', [
             'fields' => 'lbc_code,ip_address,org_name',
             'conditions' => [
-              'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
+              'MLandscapeData.org_name LIKE' => '%'. $data['CustomData']['会社名'].'%'
             ]
           ]);
           if(!empty($companyData)) {
@@ -1582,12 +1582,12 @@ class HistoriesController extends AppController {
     /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
     if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
       //会社名が入っている場合
-      if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['History']['company_name']) && $data['History']['company_name'] !== "")) {
+      if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
         //会社名がランドスケープテーブルに登録されている場合
         $companyConditions = [
           'fields' => 'lbc_code,ip_address,org_name',
           'conditions' => [
-            'MLandscapeData.org_name LIKE' => '%'. $data['History']['company_name'].'%'
+            'MLandscapeData.org_name LIKE' => '%'. $data['CustomData']['会社名'].'%'
           ]
         ];
         // MLの企業情報を閲覧できない企業であれば
