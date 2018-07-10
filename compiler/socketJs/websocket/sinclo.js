@@ -2448,6 +2448,12 @@
                     str = str.replace(tel[0], span);
                   }
                 }
+                var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+                var img = unEscapeStr.match(imgTagReg);
+                if(img !== null && link === null && linkTab === null) {
+                  imgTag = "<img "+img[1]+">";
+                  str = unEscapeStr.replace(img[0], imgTag);
+                }
                 content += str + "\n";
             }
 

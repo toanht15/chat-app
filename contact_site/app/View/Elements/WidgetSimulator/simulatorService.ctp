@@ -382,6 +382,7 @@ sincloApp.factory('SimulatorService', function() {
      * @return String       変換したメッセージ
      */
     createMessage: function(val, prefix) {
+      console.log('多分ここだ');
       if (val === '') return;
       prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
       var isSmartphone = this._showWidgetType != 1;
@@ -394,6 +395,8 @@ sincloApp.factory('SimulatorService', function() {
 
       for (var i = 0; strings.length > i; i++) {
         var str = escape_html(strings[i]);
+        console.log('str1');
+        console.log(str);
         // ラジオボタン
         var radio = str.indexOf('[]');
         if ( radio > -1 ) {
@@ -402,6 +405,8 @@ sincloApp.factory('SimulatorService', function() {
             str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
             str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
         }
+        console.log('str2');
+        console.log(str);
         //リンク、電話番号
         str = replaceVariable(str,isSmartphone);
         content += str + "\n";
