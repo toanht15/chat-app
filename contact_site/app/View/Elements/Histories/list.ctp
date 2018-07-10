@@ -77,7 +77,11 @@ if ( isset($history['THistory']['visitors_id']) ) {
             <td class="tCenter"><?php
               if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
                 if (isset($history['THistoryChatLog']['achievementFlg'])){
-                  echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
+                  if(intval($history['THistoryChatLog']['achievementFlg']) >= 0) {
+                    echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
+                  } else {
+                    echo '途中離脱';
+                  }
                 }
               }
               else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {
