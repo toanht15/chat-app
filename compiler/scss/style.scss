@@ -4058,6 +4058,15 @@ ul.naviBtn {
       thead th, table.dataTable thead td {
         border-bottom: 1px solid #8B8B8B;
       }
+      tbody#chatHistory {
+        td {
+          &.eachInfo {
+            div.info {
+              height: 60px;
+            }
+          }
+        }
+      }
     }
   }
 

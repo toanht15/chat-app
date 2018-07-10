@@ -288,7 +288,7 @@
             <td style = "width:35%; padding-left:10px;" class = "eachInfo">
             <div class = "info">
               <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
-                <div class = "firstChatTime" style = "height:60px;">
+                <div class = "firstChatTime">
                   <?php if (!empty($history['SpeechTime']['firstSpeechTime']) && date('Y/m/d') == date_format(date_create($history['SpeechTime']['firstSpeechTime']), "Y/m/d")){ ?>
                    <?=date_format(date_create($history['SpeechTime']['firstSpeechTime']), "H:i")?>
                   <?php }
