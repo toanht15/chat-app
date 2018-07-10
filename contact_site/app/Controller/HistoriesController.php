@@ -404,7 +404,11 @@ class HistoriesController extends AppController {
           $row['achievement'] = "";
           if($history['THistoryChatLog2']['eff'] == 0 || $history['THistoryChatLog2']['cv'] == 0 ) {
             if (isset($history['THistoryChatLog2']['achievementFlg'])){
-              $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
+              if(intval($history['THistoryChatLog2']['achievementFlg']) >= 0) {
+                $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
+              } else {
+                $row['achievement'] = '途中離脱';
+              }
             }
           }
           else if ($history['THistoryChatLog2']['eff'] != 0 && $history['THistoryChatLog2']['cv'] != 0) {
