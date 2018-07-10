@@ -898,6 +898,9 @@ ul.ulTab {
     border: solid 1px #ccc;
     display: block;
     filter: drop-shadow(5px 5px 3px rgba(0, 0, 0, 0.5));
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    }
     padding: 5px 0px !important;
     background: #fff;
     position: relative;
