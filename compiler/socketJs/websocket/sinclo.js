@@ -2451,6 +2451,7 @@
                     str = str.replace(tel[0], span);
                   }
                 }
+                //imgタグ
                 var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
                 var img = unEscapeStr.match(imgTagReg);
                 if(img !== null && link === null && linkTab === null) {
