@@ -47,7 +47,6 @@ class TCustomerInformationSettingsController extends AppController {
     Configure::write('debug', 2);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
-    // const
     if ( strcmp($this->request->data['type'], 2) === 0 ) {
       $this->request->data = $this->TCustomerInformationSetting->read(null, $this->request->data['id']);
     }

@@ -784,7 +784,29 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         };
     };
 
+
+
+
     $scope.confirmSharingWindowOpen = function(tabId, accessId) {
+      /*START:ポップアップブロックの判定処理*/
+      //○○共有を使えないのであれば判定自体を行わない
+      var popupblock;
+      var dummywindow = window.open('','','width = 1,height = 1,top = 20000,left = 20000');
+      dummywindow.close();
+      var judgewindow = window.open('','','width = 1,height = 1,top = 20000,left = 20000');
+      if(judgewindow == null){
+        popupblock = true;
+        message="画面共有を行うには、ポップアップブロックを解除してください。"
+        modalOpen.call(window, message,"p-cus-block-popup",'ポップアップブロックの解除', 'fade', '');
+      }else{
+        popupblock = false;
+        judgewindow.close();
+      }
+      if(popupblock){
+        return;
+      }
+      /*FINISH:ポップアップブロックの判定処理*/
+
       var message = "アクセスID【" + accessId + "】のユーザーと共有するモードを選択してください。<br><br>";
       var ua = $scope.monitorList[tabId].userAgent.toLowerCase();
       var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
@@ -1020,13 +1042,42 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             return true;
           };
           popupEvent.closePopup = function(){
+              popupEvent.close();
               $("#sendMessage").focus();
               $scope.ngChatApi.connect();
               $("#sendMessage").val("").focus();
+              if(document.cookie.indexOf('block_notify=true') == -1){
+                  //離席中→待機中に変化する場合にチャット通知設定の状態を見る
+                  if($('#changeOpStatus').data('status') == 0){
+
+                    var browsertype = navigator.userAgent.toLowerCase();
+
+                    //IEの場合は設定ができないという文言を出す。
+                    if(browsertype.indexOf("msie") !== -1 || browsertype.indexOf("trident") !== -1){
+                      message = "インターネットエクスプローラーではチャット通知設定を使用することができません<br><br>"
+                              + "<label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                              + "以降、このメッセージを表示しない</label>";
+                      setTimeout(function(){
+                        modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の解除', 'fade', '');
+                      },600);
+                    }else{
+
+                      //通知設定が許可されていない場合は警告を出す
+                      if(Notification.permission !== "granted"){
+                        console.log('are?');
+                        message = "チャット通知を望む場合はデスクトップ通知を許可してください。<br><br>"
+                                + "<label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                                + "以降、このメッセージを表示しない</label>";
+                        setTimeout(function(){
+                          modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の解除', 'fade', '');
+                        },600);
+                      }
+                    }
+                  }
+                }
               if ( String($('#changeOpStatus').data('status')) !== "<?=C_OPERATOR_ACTIVE?>" ) {
                 chgOpStatus(); // 在席ステータスにする
               }
-              popupEvent.close();
               $scope.confirmFlg = false;
               return true;
           };
@@ -1621,9 +1672,54 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return cn;
     };
 
+
+
+
     $scope.chgOpStatus = function(){
       var opState = $('#changeOpStatus'),
-          status = opState.data('status');
+        status = opState.data('status');
+      //START:チャット通知設定のブロック状況
+      <?php if(isset($coreSettings[C_COMPANY_USE_CHAT]) && $coreSettings[C_COMPANY_USE_CHAT]): ?>
+      //以降、表示しないを選択していない場合は通知設定警告を出す
+      if(document.cookie.indexOf('block_notify=true') == -1){
+
+        //離席中→待機中に変化する場合にチャット通知設定の状態を見る
+        if(status == 0){
+
+          //uesrAgentを全て小文字に設定している
+          var browsertype = navigator.userAgent.toLowerCase();
+
+          //IEの場合は設定ができないという文言を出す。
+          if(browsertype.indexOf("msie") !== -1 || browsertype.indexOf("trident") !== -1){
+            message = "インターネットエクスプローラーではチャット通知設定を使用することができません<br><br>"
+                    + "<label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                    + "以降、このメッセージを表示しない</label>";
+            modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の解除', 'fade', '');
+          }else{
+            //通知設定が許可されていない場合は警告を出す
+            if(Notification.permission !== "granted"){
+
+
+              var add_settingURL;
+              if(browsertype.indexOf("chrome") !== -1){
+                add_settingURL = "chrome://settings/content　へアクセスして設定を変更してください";
+              }else if(browsertype.indexOf("firefox") !== -1){
+                add_settingURL = "about:preferences#privacy　へアクセスして設定を変更してください";
+              }
+              message = "チャット通知を望む場合はデスクトップ通知を許可してください。<br><br>"
+                      + add_settingURL
+                      + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                      + "以降、このメッセージを表示しない</label>";
+              modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の解除', 'fade', '');
+            }
+          }
+        }
+      }
+      <?php endif;?>
+      //FINISH:チャット通知設定がのブロック状況
+
+
+
 
       // 在席⇒退席でチャット中の場合
       if ( String(status) === "<?=C_OPERATOR_ACTIVE?>" && $scope.chatList.length > 0 ) {

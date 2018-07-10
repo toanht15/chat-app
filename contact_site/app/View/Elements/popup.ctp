@@ -15,6 +15,8 @@
  */
 ?>
 <script type="text/javascript">
+
+
   'use strict';
 
   <?php if (isset($coreSettings[C_COMPANY_USE_LA_CO_BROWSE]) && $coreSettings[C_COMPANY_USE_LA_CO_BROWSE]): ?>
@@ -147,6 +149,12 @@
           };
           var closeBtn = _button("接続しない");
           closeBtn.onclick = function () {
+            return popupEvent.closeNoPopup();
+          };
+          break;
+        case 'p-cus-block-popup':
+          var closeBtn = _button("閉じる");
+          closeBtn.onclick = function (){
             return popupEvent.closeNoPopup();
           };
           break;
@@ -448,13 +456,24 @@
       // コンテンツを作成
       this._popupCreate();
 
+      //type別のポップアップ表示方法
       if (this.moveType === 'moment') {
+
+        //*****typeがmomentだった場合のアニメーション*****//
         // ポップアップを表示状態にする
         $(".popup-off").addClass('popup-on').removeClass('popup-off');
         var contHeight = $('#popup-content').height();
         $('#popup-frame').css('top', 0).css('height', contHeight);
-      }
-      else {
+      }else if(this.moveType ==='fade'){
+
+      //*****typeがfadeだった場合のアニメーション*****//
+        $(".popup-off").addClass('popup-on').removeClass('popup-off');
+        var contHeight = $('#popup-content').height();
+        $('#popup-frame').css('top', 0).css('height', contHeight);
+        $('#popup-frame').hide().fadeIn('slow');
+      }else{
+
+      //*****typeが指定されていない(moveup)場合のアニメーション*****//
         // 一時的にスクロール非表示に
         $('body').css('overflow', 'hidden');
         // ポップアップを表示状態にする
@@ -462,7 +481,6 @@
         var contHeight = $('#popup-content').height();
         $('#popup-frame').css('height', contHeight);
         this.elm.popup.style.top = (window.innerHeight) + "px";
-
         $('#popup-frame').animate(
           {
             top: 0
@@ -476,10 +494,21 @@
 
     },
     close: function () {
+      //type別のポップアップ除去方法
       if (this.moveType === 'moment') {
+
+        //*****typeがmomentだった場合のアニメーション*****//
         $('.popup-on').addClass('popup-off').removeClass('popup-on');
-      }
-      else {
+      }else if(this.moveType ==='fade'){
+
+      //*****typeがfadeだった場合のアニメーション*****//
+        $('#popup-frame').fadeOut('slow');
+        setTimeout(function(){
+          $('.popup-on').addClass('popup-off').removeClass('popup-on');
+        },600);
+      }else{
+
+      //*****typeが指定されていない(moveup)場合のアニメーション*****//
         $('body').css('overflow', 'hidden');
         $('#popup-frame').animate(
           {
@@ -568,6 +597,10 @@
 
   !function (pe, se) {
     window.modalOpen = function (contents, id, title, type, ua) {
+      $('#popup-bg').css('background-color','rgba(0, 0, 0, 0.7)');
+      if(id.indexOf("p-cus-block") != -1){
+        $('#popup-bg').css('background-color','rgba(0, 0, 0, 0)');
+      }
       if (typeof(type) !== 'undefined') {
         pe.moveType = type;
       } else {

@@ -39,6 +39,31 @@
         }
       }
 
+      /*ポップアップブロック解除通告用*/
+      &.p-cus-block-popup{
+        border: 1px solid;
+        width:450px;
+        #popup-button .textBtn {
+          width: 5em;
+          margin: 0 auto;
+        }
+
+      }
+
+      /*デスクトップ通知解除通告用*/
+      &.p-cus-block-notify{
+        border: 1px solid;
+        width:450px;
+        #popup-button .textBtn {
+          width: 5em;
+          margin: 0 auto;
+        }
+        label {
+          cursor: pointer;
+        }
+
+      }
+
       /* ウィジェット設定-ギャラリー用 */
       &.p-show-gallary, &.p-show-notification-gallary {
         width: 290px;
