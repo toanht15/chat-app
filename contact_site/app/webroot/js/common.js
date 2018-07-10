@@ -85,6 +85,21 @@ function addVariable(type,sendMessage){
             sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-38);
           }
           break;
+        case 5:
+          if (sendMessage.value.length > 0) {
+            sendMessage.value += "\n";
+          }
+          sendMessage.value += '画像を追加';
+          sendMessage.focus();
+          // 開始と終了タブの真ん中にカーソルを配置する
+          if (sendMessage.createTextRange) {
+            var range = sendMessage.createTextRange();
+            range.move('character', sendMessage.value.length-38);
+            range.select();
+          } else if (sendMessage.setSelectionRange) {
+            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-38);
+          }
+          break;
     }
     return sendMessage;
 }
@@ -102,6 +117,7 @@ function replaceVariable(str,isSmartphone){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+  var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
   var unEscapeStr = unEscapeHTML(str);
   // リンク
   var link = str.match(linkReg);
@@ -137,6 +153,12 @@ function replaceVariable(str,isSmartphone){
       var span = "<span class='telno'>" + telno + "</span>";
       str = str.replace(tel[0], span);
     }
+  }
+  //imgタグ有効化
+  var img = unEscapeStr.match(imgTagReg);
+  if(img !== null && link === null && linkTab === null) {
+    imgTag = "<img "+img[1]+">";
+    str = unEscapeStr.replace(img[0], imgTag);
   }
   return str;
 }
