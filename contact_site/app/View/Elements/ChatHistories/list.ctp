@@ -154,7 +154,7 @@
       <?= $this->Html->link(
         '条件クリア',
         'javascript:void(0)',
-        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear()'));
+        array('escape' => false, 'class'=>'skyBlueBtn btn-shadow','id' => 'sessionClear','onclick' => 'sessionClear();loading.load.start()'));
       ?>
     </ul>
   </div>
@@ -247,14 +247,16 @@
         <?php
         /* キャンペーン名の取得 */
         $campaignParam = "";
-        $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-        if ( $tmp !== "" ) {
-          foreach($campaignList as $k => $v){
-            if ( strpos($tmp, $k) !== false ) {
-              if ( $campaignParam !== "" ) {
-                $campaignParam .= "\n";
+        if(!empty($stayList[$history['THistory']['id']])) {
+          $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+          if ( $tmp !== "" ) {
+            foreach($campaignList as $k => $v){
+              if ( strpos($tmp, $k) !== false ) {
+                if ( $campaignParam !== "" ) {
+                  $campaignParam .= "\n";
+                }
+                $campaignParam .= h($v);
               }
-              $campaignParam .= h($v);
             }
           }
         }
@@ -264,14 +266,16 @@
         }
         if($historyId == $history['THistory']['id']) {
           $userCampaignParam = "";
-          $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-          if ( $tmp !== "" ) {
-            foreach($campaignList as $k => $v){
-              if ( strpos($tmp, $k) !== false ) {
-                if ( $userCampaignParam !== "" ) {
-                  $userCampaignParam .= "\n";
+          if(!empty($stayList[$history['THistory']['id']])) {
+            $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+            if ( $tmp !== "" ) {
+              foreach($campaignList as $k => $v){
+                if ( strpos($tmp, $k) !== false ) {
+                  if ( $userCampaignParam !== "" ) {
+                    $userCampaignParam .= "\n";
+                  }
+                  $userCampaignParam .= h($v);
                 }
-                $userCampaignParam .= h($v);
               }
             }
           }
@@ -594,7 +598,7 @@
           </ul>
           <div id="personal_action">
               <?= $this->Html->link('元に戻す', 'javascript:void(0)', array('onclick' => 'reloadAct('.$historyId.')', 'id' => 'restore','class' => 'whiteBtn btn-shadow lineUpSaveBtn historyReturnButton')) ?>
-              <?= $this->Html->link('更新', 'javascript:void(0)', array('onclick' => 'customerInfoSave('.$historyId.')','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton')) ?>
+              <?= $this->Html->link('更新', 'javascript:void(0)', array('onclick' => 'customerInfoSave('.$historyId.');loading.load.start()','id' => 'customerInfo', 'class' => 'greenBtn btn-shadow lineUpSaveBtn hitoryUpdateButton')) ?>
           </div>
           <?php } ?>
         </div>

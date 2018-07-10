@@ -772,9 +772,32 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return defColor;
   };
 
-    $scope.inputInitToggle = function(item){
-      return (item) ? 1 : 2;
-    };
+  $scope.isIconImage = function(main_image) {
+    return main_image.match(/^fa/) !== null;
+  };
+
+  $scope.isPictureImage = function(main_image) {
+    return main_image.match(/^http/) !== null;
+  };
+
+  $scope.inputInitToggle = function(item){
+    return (item) ? 1 : 2;
+  };
+
+  $scope.getIconColor = function(main_image) {
+    var isInvert = main_image.match(/invert$/) !== null;
+    if(isInvert) {
+      return {
+        'background-color': $scope.string_color,
+        'color': $scope.main_color
+      };
+    } else {
+      return {
+        'background-color': $scope.main_color,
+        'color': $scope.string_color
+      };
+    }
+  };
 
     //シンプル表示判定
     /*
@@ -949,6 +972,16 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         $("#minimizeBtn").show();
         $("#addBtn").hide();
         $("#closeBtn").hide();
+        //画像あるときタイトル位置
+        setTimeout(function(){
+          if($('#mainImage').is(':visible')) {
+            $scope.indicateSimpleImage();
+          }
+          //画像ないときタイトル位置
+          else {
+            $scope.indicateSimpleNoImage();
+          }
+        }, 100);
       }
       else{
         //最小化時
@@ -964,9 +997,37 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         if(coreSettingsChat){
           document.getElementById("switch_widget").value = $scope.showWidgetType;
         }
+        //画像あるときタイトル位置
+        setTimeout(function(){
+          if($('#mainImage').is(':visible')) {
+            $scope.indicateSimpleImage();
+          }
+          //画像ないときタイトル位置
+          else {
+            $scope.indicateSimpleNoImage();
+          }
+        }, 100);
       }
       return res;
     };
+
+    $scope.indicateSimpleNoImage = function(){
+      if($scope.widget_title_top_type == 1) {
+        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
+      }
+      if($scope.widget_title_top_type == 2) {
+        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
+      }
+    }
+
+    $scope.indicateSimpleImage = function(){
+      if($scope.widget_title_top_type == 1) {
+        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
+      }
+      if($scope.widget_title_top_type == 2) {
+        $('#widgetTitle').css({'cssText': 'text-align: center !important; padding-right:26px !important; padding-left:70px !important;'});
+      }
+    }
 
 //     //旧・シンプル表示
 //     $scope.spHeaderLightToggle = function(){
@@ -978,6 +1039,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         type: 'post',
         data: {
           color: $scope.main_color,
+          string_color: $scope.string_color,
         },
         cache: false,
         dataType: 'html',
@@ -985,7 +1047,12 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         success: function(html){
           modalOpen.call(window, html, 'p-show-gallary', 'ギャラリー', 'moment');
           popupEvent.customizeBtn = function(name){
-            $scope.main_image = "<?=$gallaryPath?>" + name;
+            if(name.match(/^fa/)) {
+              $scope.main_image = name;
+            } else {
+              $scope.main_image = "<?=$gallaryPath?>" + name;
+            }
+
             $("#MWidgetSettingUploadImage").val("");
             $scope.$apply();
             popupEvent.close();
@@ -1458,6 +1525,60 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
     });
 
+    angular.element('input[name="data[MWidgetSetting][show_subtitle]"]').on('change', function(e){
+      //企業名を表示する場合
+      if(e.currentTarget.id == 'showSubtitle1') {
+        $('#widgetTitleNameTypeLabel1').css('display','block');
+        $('#widgetTitleNameTypeLabel2').css('display','block');
+        if($('#MWidgetSettingSubTitle').val() == "") {
+          $('#widgetSubTitle').css('height','23px');
+        }
+      }
+      //企業名を表示しない場合
+      if(e.currentTarget.id == 'showSubtitle2') {
+        $('#widgetTitleNameTypeLabel1').css('display','none');
+        $('#widgetTitleNameTypeLabel2').css('display','none');
+      }
+    });
+
+    angular.element('input[name="data[MWidgetSetting][show_description]"]').on('change', function(e){
+      //説明文を表示する場合
+      if(e.currentTarget.id == 'showDescription1') {
+        $('#widgetTitleExplainTypeLabel1').css('display','block');
+        $('#widgetTitleExplainTypeLabel2').css('display','block');
+        if($('#MWidgetSettingDescription').val() == "") {
+          $('#widgetDescription').css('height','23px');
+        }
+      }
+      //説明文を表示しない場合
+      if(e.currentTarget.id == 'showDescription2') {
+        $('#widgetTitleExplainTypeLabel1').css('display','none');
+        $('#widgetTitleExplainTypeLabel2').css('display','none');
+      }
+    });
+
+    angular.element('input[name="data[MWidgetSetting][widget_title_name_type]"]').on('change', function(e){
+      //企業名を左寄せにする場合
+      if(e.currentTarget.id == 'widgetTitleNameType1') {
+        $('#widgetSubTitle').css('text-align','left');
+      }
+      //企業名を中央寄せにする倍
+      if(e.currentTarget.id == 'widgetTitleNameType2') {
+        $('#widgetSubTitle').css('text-algin','center');
+      }
+    });
+
+    angular.element('input[name="data[MWidgetSetting][widget_title_explain_type]"]').on('change', function(e){
+      //説明文を左寄せにする場合
+      if(e.currentTarget.id == 'widgetTitleNameTypeLabel1') {
+        $('#widgetSubTitle').css('text-align','left');
+      }
+      //説明文を中央寄せにする場合
+      if(e.currentTarget.id == 'widgetTitleNameTypeLabel2') {
+        $('#widgetSubTitle').css('text-algin','center');
+      }
+    });
+
     $scope.$watch('closeButtonModeTypeToggle', function() {
       switch($scope.closeButtonModeTypeToggle) {
         case "1": // 小さなバナー表示
@@ -1772,7 +1893,6 @@ $("body").on('focus', '#sincloChatMessage', function(e){
 
 //モーダル画面
 function openTrimmingDialog(callback){
-  console.log('入ってるかチェック');
   $.ajax({
     type: 'post',
     dataType: 'html',

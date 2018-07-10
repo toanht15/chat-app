@@ -604,6 +604,262 @@ var socket, // socket.io
       }
       return res;
     },
+    indicateSimpleNoImage: function() {
+      if(sincloInfo.widget.widget_title_top_type == 1) {
+        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
+      }
+      if(sincloInfo.widget.widget_title_top_type == 2) {
+        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
+      }
+
+      //スマホの場合
+      if(check.smartphone()) {
+        var widgetWidth;
+
+        // TODO 関数化
+        if(sincloInfo.widget.spMaximizeSizeType === 2) {
+          widgetWidth = $(window).width();
+        } else {
+          widgetWidth = $(window).width() - 20 ;
+        }
+          var ratio = widgetWidth * (1/285);
+        //画像を表示しない場合
+        if($('#mainImage').css('display') === undefined) {
+          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+            sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'});
+          }
+          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+            sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'});
+          }
+          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+            sincloInfo.widget.showDescription == 2) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'});
+          }
+          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+            sincloInfo.widget.showDescription == 2) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'});
+          }
+          //企業名 企業名表示しない・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'});
+          }
+          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+            sincloInfo.widget.showSubtitle == 1) {
+            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px'});
+          }
+          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+            sincloInfo.widget.showSubtitle == 1) {
+            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'});
+          }
+          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+            sincloInfo.widget.showSubtitle == 2) {
+            $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'});
+          }
+          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+            sincloInfo.widget.showSubtitle == 2) {
+            $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'});
+          }
+          //説明文 説明文表示しない・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
+            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'});
+          }
+        }
+      }
+      //PC
+      else {
+        //画像を表示しない場合
+        if($('#mainImage').css('display') === undefined) {
+          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+            sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'});
+          }
+          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+            sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'});
+          }
+          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+            sincloInfo.widget.showDescription == 2) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:52px;line-height:52px;padding:0 0 0 15px;'});
+          }
+          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+            sincloInfo.widget.showDescription == 2) {
+            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:52px;line-height:52px;padding:0 0 0 0px;'});
+          }
+          //企業名 企業名表示しない・説明文表示する・画像なしの場合
+          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
+            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'});
+          }
+          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+            sincloInfo.widget.showSubtitle == 1) {
+            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px'});
+          }
+          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+            sincloInfo.widget.showSubtitle == 1) {
+            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'});
+          }
+          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+            sincloInfo.widget.showSubtitle == 2) {
+            $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 15px;'});
+          }
+          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
+          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+            sincloInfo.widget.showSubtitle == 2) {
+            $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;'});
+          }
+          //説明文 説明文表示しない・企業名表示する・画像なしの場合
+          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
+            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'});
+          }
+        }
+      }
+    },
+    indicateSimpleImage: function() {
+      //スマホの場合
+      if(check.smartphone()) {
+        var widgetWidth;
+
+        // TODO 関数化
+        if(sincloInfo.widget.spMaximizeSizeType === 2) {
+          widgetWidth = $(window).width();
+        } else {
+          widgetWidth = $(window).width() - 20 ;
+        }
+          var ratio = widgetWidth * (1/285);
+        //画像あり　タイトル左寄せの場合
+        if(sincloInfo.widget.widget_title_top_type == 1) {
+          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: ' + (78 * ratio) + 'px !important;'});
+        }
+        if(sincloInfo.widget.widget_title_top_type == 2) {
+          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: ' + (70 * ratio) + 'px !important;padding-right: ' + (26 * ratio) + 'px !important;'});
+        }
+
+        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+          sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'});
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+          sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'});
+        }
+        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+          sincloInfo.widget.showDescription == 2) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'});
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+          sincloInfo.widget.showDescription == 2) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'});
+        }
+        //企業名 企業名表示しない・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'});
+        }
+
+        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+          sincloInfo.widget.showSubtitle == 1) {
+          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'});
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+          sincloInfo.widget.showSubtitle == 1) {
+          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'});
+        }
+        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+          sincloInfo.widget.showSubtitle == 2) {
+          $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'});
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+          sincloInfo.widget.showSubtitle == 2) {
+          $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'});
+        }
+        //説明文 説明文表示しない・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
+          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'});
+        }
+      }
+      //PC
+      else {
+        if(sincloInfo.widget.widget_title_top_type == 1) {
+          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
+        }
+        if(sincloInfo.widget.widget_title_top_type == 2) {
+          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 70px !important;padding-right: 26px !important;'});
+        }
+
+        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+          sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:78px;'});
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+          sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:70px;padding-right:26px;'});
+        }
+        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
+          sincloInfo.widget.showDescription == 2) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;'});
+        }
+        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
+          sincloInfo.widget.showDescription == 2) {
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px'});
+        }
+        //企業名 企業名表示しない・説明文表示する・画像ありの場合
+        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
+          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'});
+        }
+
+        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+          sincloInfo.widget.showSubtitle == 1) {
+          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:78px;'});
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+          sincloInfo.widget.showSubtitle == 1) {
+          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:70px;padding-right:26px;'});
+        }
+        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
+          sincloInfo.widget.showSubtitle == 2) {
+          $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;'});
+        }
+        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
+        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
+          sincloInfo.widget.showSubtitle == 2) {
+          $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px;'});
+        }
+        //説明文 説明文表示しない・企業名表示する・画像ありの場合
+        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
+          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'});
+        }
+      }
+    },
     //ヘッダ表示（通常表示）
     abridgementTypeShow: function() {
       $("#mainImage").show();
@@ -839,6 +1095,9 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-code:before { content: "\\f1c9" }';
       html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-text:before { content: "\\f15c" }';
       html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-cloud-upload:before { content: "\\f0ee" }';
+      html += '      #sincloBox .sinclo-fal.fa-comments:before { content: "\\f086" }';
+      html += '      #sincloBox .sinclo-fal.fa-phone:before { content: "\\f095" }';
+      html += '      #sincloBox .sinclo-fal.fa-robot:before { content: "\\f544" }';
       //アイコンフォント用
       /* http://meyerweb.com/eric/tools/css/reset/
          v2.0 | 20110126
@@ -906,6 +1165,9 @@ var socket, // socket.io
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { cursor:pointer; z-index: 2; position: absolute; }';
       html += '      #sincloBox span#mainImage img { background-color: ' + colorList['mainColor'] + ' }';
+      html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 62px; height: 70px; font-size: 43px; border: 1px solid; }';
+      html += '      #sincloBox span#mainImage i.normal { color: ' + colorList['stringColor'] + '; background-color: ' + colorList['mainColor'] + '; }';
+      html += '      #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px; }';
       html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border: 1px solid ' + colorList['mainColor'] + '; border-bottom:none; background-color: ' + colorList['mainColor'] + ';text-align: center; margin: 0; color: ' + colorList['stringColor'] + ' }';
       html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; }';
       html += '      #sincloBox div#minimizeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/minimize.png"); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
@@ -990,7 +1252,7 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + colorList['cNameTextColor'] + '; font-weight: bold; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: block; margin-top: 0.1em; margin-bottom: -1.25em; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: block; margin-top: 0.2em; margin-bottom: -1.25em; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin 0; padding: 0 0 0 ' + (Number(widget.reTextSize) + 7) + 'px; color:' + colorList['reTextColor'] + '; min-height: 12px; font-size: ' + widget.reTextSize + 'px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: ' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; left: 0px; margin-top: -' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; width: ' + (Number(widget.reTextSize)) + 'px; height: ' + (Number(widget.reTextSize)) + 'px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; } ';
@@ -1204,14 +1466,14 @@ var socket, // socket.io
             html += '#sincloBox section { border-bottom:none!important;}';
           }
           // 画像がセットされている場合のスタイル
-          html += '#sincloBox p#widgetTitle.notSimple { padding-left: ' + (70 * ratio) + 'px; text-indent: 1em; }';
+          html += '#sincloBox p#widgetTitle.notSimple { padding-left: ' + (70 * ratio) + 'px; }';
           // 画像がセットされていない場合のスタイル
-          html += '#sincloBox p#widgetTitle.noImage { padding-left: ' + (30 * ratio) + 'px; text-indent: 1em; }';
+          html += '#sincloBox p#widgetTitle.noImage { padding-left: ' + (30 * ratio) + 'px; }';
           html += '#sincloBox #mainImage em { top: -' + (10 * ratio) + 'px; right: -' + (10 * ratio) + 'px; width: ' + (25 * ratio) + 'px; height: ' + (20 * ratio) + 'px; font-size: ' + (11 * ratio) + 'px; padding: ' + (1 * ratio) + 'px; }';
           if(widget.spMaximizeSizeType === 2) {
-            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-bottom: ' + (60 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-top:0px; padding-bottom: ' + (60 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
           } else {
-            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-bottom: ' + (60 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-top:0px; padding-bottom: ' + (60 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
           }
           html += '#sincloBox ul#chatTalk li { border-radius: ' + (12 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (10 * ratio) + 'px ' + (10 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li.sinclo_se { font-size: ' + (12 * ratio) + 'px; margin-left: '+ (widgetWidth/342.5)*45 +'px;}';
@@ -1223,7 +1485,7 @@ var socket, // socket.io
           if(colorList['reBorderNone'] === 0){
             html += '#sincloBox ul#chatTalk li.sinclo_re { border: ' + (1 * ratio) + 'px solid '+ colorList['reBorderColor'] +'; }';
           }
-          html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.15em 0 -1em 0.5em; display: block; } ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.25em 0 -1em 0.5em; display: block; } ';
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
             html += '#sincloBox ul#chatTalk li { line-height: 1.4; padding: ' + (10 * ratio) + 'px ' + (15 * ratio) + 'px !important; border-radius: ' + (12 * ratio) + 'px !important;}';
@@ -1315,7 +1577,7 @@ var socket, // socket.io
 */
           html += '#sincloBox[data-openflg="true"] p#widgetTitle:after { margin-top: 0.5em; }';
           html += '#sincloBox #widgetTitle em { width: 2em; height: 2em; font-size: 0.8em; padding: 0.25em; border-radius: 5em; margin: 0.25em; }';
-          html += '#sincloBox ul#chatTalk { padding: 0.3em; padding-bottom:' + (60 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +'}';
+          html += '#sincloBox ul#chatTalk { padding: 0.3em; padding-top:0px; padding-bottom:' + (60 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +'}';
           html += '#sincloBox ul#chatTalk li { font-size: 0.8em; border-radius: 0.72em; margin: 0.3em 0; padding: 0.3em; }';
           html += '#sincloBox ul#chatTalk li div.sendFileThumbnailArea { display: table-cell; width: ' + (64 * ratio) + 'px; height: ' + (64 * ratio) + 'px; border: 1px solid #D9D9D9; }';
           html += '#sincloBox ul#chatTalk li.sinclo_se { font-size: 0.8em; margin-left: '+ (widgetWidth/342.5)*45 +'px;}';
@@ -1326,7 +1588,7 @@ var socket, // socket.io
           if(colorList['reBorderNone'] === 0){
             html += '#sincloBox ul#chatTalk li.sinclo_re { border: ' + (1 * ratio) + 'px solid '+ colorList['reBorderColor'] +'; }';
           }
-          html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.15em 0 -1em 0.5em; display: inline-block; } ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.25em 0 -1em 0.5em; display: inline-block; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"], #sincloBox ul#chatTalk li sinclo-radio label { webkit-transform: scale(1.3); transform: scale(1.3); moz-transform: scale(1.3); } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1em; font-size: 0.8em; } ';
@@ -1392,14 +1654,17 @@ var socket, // socket.io
         html += "      #sincloBox section { width: " + sizeList['boxWidth'] + "px }";
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 8px }';
-        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 26px 7px 30px; height: auto; line-height: ' + widget.headerTextSize + 'px;}';
+
+        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px !important; height: auto; line-height: ' + widget.headerTextSize + 'px;}';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
-        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 74px; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; }';
+
+        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetSubTitle { border:none; }';
         }
-        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; padding-left: 74px; height: auto; line-height: ' + sizeList['widgetDescriptionHeight'] + 'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; }';
+
+        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; height: auto; line-height: ' + sizeList['widgetDescriptionHeight'] + 'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetDescription { border-left:none; border-right:none;}';
         }
@@ -1418,8 +1683,8 @@ var socket, // socket.io
         // チャットを使用する際
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
-          html += '      #sincloBox ul#chatTalk { height: '+ sizeList['chatTalkHeight'] +'px; padding: 5px 5px 0px 5px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
-          html += '      #sincloBox ul#chatTalk li { border-radius: 12px; margin: 5px 0 0 0; padding: 10px 15px; }';
+          html += '      #sincloBox ul#chatTalk { height: '+ sizeList['chatTalkHeight'] +'px; padding: 0px 5px 0px 5px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+          html += '      #sincloBox ul#chatTalk li { border-radius: 12px; margin: 10px 0 0 0; padding: 10px 15px; }';
           if(colorList['seBorderNone'] === 0){
             html += '      #sincloBox ul#chatTalk li.sinclo_se { border: 1px solid '+ colorList['seBorderColor'] +'; }';
           }
@@ -1540,7 +1805,11 @@ var socket, // socket.io
           ratio = ($(window).width() - 20) * (1/285);
         }
         html += '  <span id="mainImage" onclick="sinclo.operatorInfo.toggle()">';
-        html += '    <img src="' + widget.mainImage + '" width="' + (ratio * 62) + '" height="' + (ratio * 70) + '" style="width:' + (ratio * 62) + 'px!important; height:' + (ratio * 70) + 'px!important;" alt="チャット画像">';
+        if(widget.mainImage.match(/^fa/) !== null) {
+          html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:' + (ratio * 62) + 'px!important; height:' + (ratio * 70) + 'px!important;" alt="チャット画像"></i>';
+        } else {
+          html += '    <img src="' + widget.mainImage + '" width="' + (ratio * 62) + '" height="' + (ratio * 70) + '" style="width:' + (ratio * 62) + 'px!important; height:' + (ratio * 70) + 'px!important;" alt="チャット画像">';
+        }
         html += '  </span>';
       }
       html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
@@ -1958,6 +2227,14 @@ var socket, // socket.io
               sinclo.chatApi.lockPageScroll();
               common.widgetHandler._handleResizeEvent();
             }
+          }
+          //画像がない時のタイトル位置
+          if($('#mainImage').css('display') === 'none'　|| $('#mainImage').css('display') === undefined) {
+            common.indicateSimpleNoImage();
+          }
+          //画像がある時のタイトル位置
+          else if($('#mainImage').css('display') === 'block') {
+            common.indicateSimpleImage();
           }
         }
       },

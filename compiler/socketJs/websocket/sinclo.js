@@ -114,6 +114,14 @@
               sinclo.chatApi.showUnreadCnt();
               sinclo.chatApi.scDown();
             }
+            //画像がない時のタイトル位置
+            if($('#mainImage').css('display') === 'none') {
+              common.indicateSimpleNoImage();
+            }
+            //画像がある時のタイトル位置
+            else if($('#mainImage').css('display') === 'block') {
+              common.indicateSimpleImage();
+            }
             sinclo.chatApi.lockPageScroll();
           }
           else {
@@ -127,6 +135,14 @@
             else{
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
+            }
+            //画像がない時のタイトル位置
+            if($('#mainImage').css('display') === 'none') {
+              common.indicateSimpleNoImage();
+            }
+            //画像がある時のタイトル位置
+            else if($('#mainImage').css('display') === 'block') {
+              common.indicateSimpleImage();
             }
             height = this.header.offsetHeight;
             sinclo.widget.condifiton.set(false, true);
@@ -1706,7 +1722,19 @@
           widgetWidth = $(window).width();
           ratio = widgetWidth * (1/285);
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
-            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() - (5.5 * ratio));
+            //企業名が空の場合
+            if($('#widgetDescription').text() == " " && $('#widgetSubTitle').text() !== " ") {
+              var widgetDescriptionHeight = $('#widgetSubTitle').height()*0.3;
+            }
+            //説明文が空の場合
+            else if($('#widgetDescription').text() !== " " && $('#widgetSubTitle').text() == " ") {
+              var widgetDescriptionHeight = $('#widgetDescription').height()*0.3;
+            }
+            else {
+               var widgetDescriptionHeight = $('#widgetDescription').height();
+            }
+            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - widgetDescriptionHeight - $('#sincloBox #fotter').height() - (5.5 * ratio));
+
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
           } else {
