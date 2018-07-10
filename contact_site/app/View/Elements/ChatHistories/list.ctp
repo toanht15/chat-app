@@ -327,7 +327,7 @@
                 <?php elseif(!empty($history['LandscapeData']['org_name'])): ?>
                    <li style = "white-space: nowrap;overflow: hidden;"> <p><?=h($history['LandscapeData']['org_name'])?></p></li><?='\n'?>
                 <?php elseif(empty($history['LandscapeData']['org_name'])): ?>
-                <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
+                <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;width:calc(100% - 10px);">{{ ip('<?=h($history['THistory']['ip_address'])?>', <?php echo !empty($history['LandscapeData']['org_name']) ? 'true' : 'false' ?>) }}</div></li>
                 <?php endif; ?>
               <?php } else { ?>
               <li style = "white-space: nowrap;overflow: hidden;"><div class = "largeCharacters" style = "padding-top:1px;font-weight:bold;margin-top:3px;">
