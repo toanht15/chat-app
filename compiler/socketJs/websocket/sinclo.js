@@ -4881,9 +4881,13 @@
       },
       _saveStoredMessage: function(callback) {
         var self = sinclo.scenarioApi;
-        var json = self.get(self._lKey.messages);
-        var array = json ? json : [];
-        self._storeMessageToDB(array,callback);
+        if(!self._disallowSaveing()) {
+          var json = self.get(self._lKey.messages);
+          var array = json ? json : [];
+          self._storeMessageToDB(array,callback);
+        } else {
+          callback();
+        }
       },
       _unsetScenarioMessage: function() {
         var self = sinclo.scenarioApi;
