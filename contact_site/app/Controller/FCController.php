@@ -16,6 +16,7 @@ class FCController extends FileAppController
   const PARAM_SITE_KEY = 'k';
 
   public $uses = array('MCompany', 'TReceiveVisitorFile');
+  public $components = array('Amazon', 'ImageThumbnailCreator');
 
   public function beforeFilter() {
     ini_set('memory_limit', '512M');
@@ -40,6 +41,15 @@ class FCController extends FileAppController
     $saveFileName = $this->getFilenameForSave($file);
 
     $filePath = $this->putFile($file, $saveFileName);
+
+    // サムネイル生成
+    $component = new ImageThumbnailCreatorComponent();
+    $component->setFileData($file);
+    $component->setFilename($saveFileName);
+    $component->setScale(0.2);
+    $pathAndFilename = $component->create();
+    $thumbFilepath = $this->putFileByFullpath($pathAndFilename['path'], $pathAndFilename['filename']);
+
     return $this->saveUploadFile($sitekey, $file, $saveFileName, $filePath, $comment);
   }
 
@@ -162,7 +172,7 @@ class FCController extends FileAppController
       return false;
     }
 
-    $fileObj = $this->getFile($this->getSaveKey($data['TReceiveVisitorFile']['saved_file_key']));
+    $fileObj = $this->getFile($this->getSaveKey('thumb_'.$data['TReceiveVisitorFile']['saved_file_key']));
     $data['fileObj'] = $fileObj;
 
     return $data;
