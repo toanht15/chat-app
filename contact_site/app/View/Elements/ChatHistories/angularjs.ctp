@@ -236,8 +236,17 @@
       for(var i=0;i<img.length;i++) {
         var imgTagReg = RegExp(/<img ([\s\S]*?)style="([\s\S]*?)"([\s\S]*?)>/);
         var imgTag = img[i].match(imgTagReg);
-        var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTag[2],imgTag[2]+';width:100%') + "div";
-        message = message.replace(imgTag[0], imgTagSize);
+        //スタイルが設定されていない場合
+        if(imgTag === null) {
+          var imgTagNoStyleReg = RegExp(/<img ([\s\S]*?)>/);
+          var imgTagNoStyle = img[i].match(imgTagNoStyleReg);
+          var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTagNoStyle[1],imgTagNoStyle[1]+'style:width:100%;') + "<div>";
+          message = message.replace(imgTagNoStyle[0], imgTagSize);
+        }
+        else {
+          var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTag[2],imgTag[2]+';width:100%') + "<div>";
+          message = message.replace(imgTag[0], imgTagSize);
+        }
       }
       return message;
     };
