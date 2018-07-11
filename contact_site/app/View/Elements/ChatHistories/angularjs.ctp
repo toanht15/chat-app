@@ -296,16 +296,16 @@
         }
       }
       if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
-        fontSize = '7px;';
-        timeFontSize = '6px;';
+        fontSize = '7px';
+        timeFontSize = '6px';
       }
       else if(window.parent.screen.width <= 1024) {
-        fontSize = '4px;';
-        timeFontSize = '3px;';
+        fontSize = '4px';
+        timeFontSize = '3px';
       }
       else {
-        fontSize = '13px;';
-        timeFontSize = '12px;';
+        fontSize = '13px';
+        timeFontSize = '12px';
       }
       // 消費者からのメッセージの場合
       if ( type === chatApi.messageType.customer) {

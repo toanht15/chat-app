@@ -1333,8 +1333,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
           str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
         }
-        console.log('チェック');
-        console.log(this._showWidgetType);
         //リンク、電話番号,img
         str = replaceVariable(str,isSmartphone,widgetSize);
         custom += str + "\n";

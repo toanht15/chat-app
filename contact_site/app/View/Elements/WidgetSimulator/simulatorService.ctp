@@ -391,10 +391,6 @@ sincloApp.factory('SimulatorService', function() {
       var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
       var radioName = prefix + "sinclo-radio" + messageIndex;
       var content = "";
-      console.log('ここ');
-      console.log(this._settings['widget_size_type']);
-      console.log(isSmartphone);
-      //if(this._settings['widget_size_type'] ==)
 
       for (var i = 0; strings.length > i; i++) {
         var str = escape_html(strings[i]);

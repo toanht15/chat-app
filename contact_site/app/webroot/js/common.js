@@ -122,9 +122,6 @@ function replaceVariable(str,isSmartphone,widgetSize){
   else if(widgetSize === '4') {
     className = 'detailImg';
   }
-  console.log('クラスネームだよ');
-  console.log(className);
-  console.log(isSmartphone);
 
   // リンク
   var link = str.match(linkReg);
