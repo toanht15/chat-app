@@ -60,9 +60,9 @@ if ( isset($history['THistory']['visitors_id']) ) {
             <td class="tLeft pre">{{ ui('<?=h($history['THistory']['ip_address'])?>', '<?=$visitorsId?>') }}</td>
             <td class="tLeft pre">{{ ua('<?=h($history['THistory']['user_agent'])?>') }}</td>
             <td class="tCenter pre"><?=$campaignParam?></td>
-            <td class="pre" style = "font-size:11px;padding:8px 5px !important"><a href = "<?=h($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing"><?= $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] ?></a></td>
+            <td class="pre" style = "font-size:11px;padding:8px 5px !important"><a href = "<?=h((!empty($stayList[$history['THistory']['id']])) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'] : '')?> " target = "landing"><?= (!empty($stayList[$history['THistory']['id']]) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] : '') ?></a></td>
             <td class="tCenter">
-                <?php if( is_numeric($stayList[$history['THistory']['id']]['THistoryStayLog']['count']) ): ?>
+                <?php if( !empty($stayList[$history['THistory']['id']]) && is_numeric($stayList[$history['THistory']['id']]['THistoryStayLog']['count']) ): ?>
                     <a class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($history['THistory']['id'])?>')" ><?=h($stayList[$history['THistory']['id']]['THistoryStayLog']['count'])?></a>
                 <?php endif; ?>
             </td>

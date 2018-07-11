@@ -296,6 +296,9 @@ class HistoriesController extends AppController {
           'THistory.access_date' => 'desc',
           'THistory.id' => 'desc'
         ],
+        'group' => [
+          'THistory.id'
+        ],
         'fields' => [
           '*'
         ],
@@ -460,6 +463,7 @@ class HistoriesController extends AppController {
         'fields' => '*',
         'joins' => $returnData['joinList'],
         'conditions' => $returnData['conditions'],
+        'group' => ['THistoryChatLog.id'],
         'order' => [
           'THistory.access_date' => 'desc',
           'THistory.id' => 'desc',
@@ -949,13 +953,13 @@ class HistoriesController extends AppController {
             $customDataWithoutCompany = $data['CustomData'];
             unset($customDataWithoutCompany['会社名']);
             $visitorIdsWithoutCompany = $this->_searchCustomer($customDataWithoutCompany);
-            $chatCond['visitors_id'] = $visitorsIds;
 
             $ipAddressList = [];
             foreach($companyData as $k => $v) {
               $ipAddressList[] = $v['MLandscapeData']['ip_address'];
             }
             if(count($visitorIdsWithoutCompany) > 0) {
+              $chatCond['visitors_id'] = $visitorIdsWithoutCompany;
               $this->paginate['THistory']['conditions'] = array(
                 'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
                 'OR' => array(
@@ -967,6 +971,7 @@ class HistoriesController extends AppController {
                 )
               );
             } else {
+              $chatCond['visitors_id'] = $visitorsIds;
               $this->paginate['THistory']['conditions'] = array(
                 'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
                 'OR' => array(
@@ -1631,13 +1636,13 @@ class HistoriesController extends AppController {
           $customDataWithoutCompany = $data['CustomData'];
           unset($customDataWithoutCompany['会社名']);
           $visitorIdsWithoutCompany = $this->_searchCustomer($customDataWithoutCompany);
-          $chatCond['visitors_id'] = $visitorsIds;
 
           $ipAddressList = [];
           foreach($companyData as $k => $v) {
             $ipAddressList[] = $v['MLandscapeData']['ip_address'];
           }
           if(count($visitorIdsWithoutCompany) > 0) {
+            $chatCond['visitors_id'] = $visitorIdsWithoutCompany;
             $conditions[] = array(
               'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
               'OR' => array(
@@ -1649,6 +1654,7 @@ class HistoriesController extends AppController {
               )
             );
           } else {
+            $chatCond['visitors_id'] = $visitorsIds;
             $conditions[] = array(
               'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
               'OR' => array(
