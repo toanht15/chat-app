@@ -15,8 +15,6 @@ var socket, // socket.io
 (function(jquery){
   'use strict';
   var $ = jquery;
-  console.log('ログでないよ！');
-  console.dir('ログでないよ！');
 
   cnst = {
     access_type: {
