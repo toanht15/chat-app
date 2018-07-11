@@ -1307,8 +1307,8 @@
 
   #popup-button,#popup-button-overlap{
     display: flex;
-    justify-content:space-evenly;
-    align-items:self-start;
+    justify-content:space-around;
+    align-items:flex-start;
     text-align: center;
     a {
       width: 12em;

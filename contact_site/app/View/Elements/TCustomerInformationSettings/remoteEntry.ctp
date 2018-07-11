@@ -29,6 +29,13 @@
     <?php } ?>
 
 
+    $('#TCustomerInformationSettingItemName').keydown(function(event){
+      var str = event.keyCode;
+      if(str == 13){
+        return false;
+      }
+    });
+
 
 
     //各種変数の設定
