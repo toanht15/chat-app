@@ -2623,12 +2623,12 @@
           }
           return selectedClass;
         },
-        createMessageUnread: function(cs, val, name){
-            if ( cs === "sinclo_re" ) {
-                sinclo.chatApi.unread++;
-                sinclo.chatApi.showUnreadCnt();
-            }
-            sinclo.chatApi.createMessage(cs, val, name);
+        createMessageUnread: function(cs, val, name, isScenarioMessage){
+          if ( cs && cs.indexOf("sinclo_re") >= 0 ) {
+            sinclo.chatApi.unread++;
+            sinclo.chatApi.showUnreadCnt();
+          }
+          sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
         },
         clearChatMessages: function() {
           var chatTalk = document.getElementsByTagName("sinclo-chat")[0];
@@ -4776,9 +4776,9 @@
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
           if(String(categoryNum).indexOf("delete_") >= 0) {
-            sinclo.chatApi.createMessage('sinclo_re ' + categoryNum, message, name, true);
+            sinclo.chatApi.createMessageUnread('sinclo_re ' + categoryNum, message, name, true);
           } else {
-            sinclo.chatApi.createMessage('sinclo_re', message, name, true);
+            sinclo.chatApi.createMessageUnread('sinclo_re', message, name, true);
           }
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
@@ -4792,6 +4792,8 @@
         var self = sinclo.scenarioApi;
         resultDataSet.message = self._replaceVariable(resultDataSet.message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
+          sinclo.chatApi.unread++;
+          sinclo.chatApi.showUnreadCnt();
           sinclo.chatApi.createSendFileMessage(resultDataSet, "auto");
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
@@ -5558,6 +5560,8 @@
             var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
             var extensionType = self._parent.get(self._parent._lKey.currentScenario).receiveFileType;
             var extendedExtensions = self._parent.get(self._parent._lKey.currentScenario).extendedReceiveFileExtensions.split(',');
+            sinclo.chatApi.unread++;
+            sinclo.chatApi.showUnreadCnt();
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(self._handleFileSelect);
           });
