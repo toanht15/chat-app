@@ -231,6 +231,17 @@
       return custom;
     };
 
+    $scope.validateImg = function(img,message){
+      var result = message.match(/<img ([\s\S]*?)>/g);
+      for(var i=0;i<img.length;i++) {
+        var imgTagReg = RegExp(/<img ([\s\S]*?)style="([\s\S]*?)"([\s\S]*?)>/);
+        var imgTag = img[i].match(imgTagReg);
+        var imgTagSize = result[i].replace(imgTag[2],imgTag[2]+';width:120px;height:auto;');
+        message = message.replace(imgTag[0], imgTagSize);
+      }
+      return message;
+    };
+
     // 【チャット】チャット枠の構築
     $scope.createMessage = function(elem, chat){
       var chatApi = {
@@ -285,16 +296,6 @@
       if(<?= $screenFlg ?> == 2) {
         dataBaloon = 45;
       }
-      //imgタグ
-      if(img !== null) {
-        var result = message.match(/<img ([\s\S]*?)>/g);
-        for(var i=0;i<img.length;i++) {
-          var imgTagReg = RegExp(/<img ([\s\S]*?)style="([\s\S]*?)"([\s\S]*?)>/);
-          var imgTag = img[i].match(imgTagReg);
-          var imgTagSize = result[i].replace(imgTag[2],imgTag[2]+';width:120px;height:auto;');
-          message = message.replace(imgTag[0], imgTagSize);
-        }
-      }
       if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
         fontSize = '7px';
         timeFontSize = '6px';
@@ -334,6 +335,7 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
+
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       }
@@ -366,6 +368,9 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -403,6 +408,9 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
+          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -430,6 +438,9 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"　data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -494,6 +505,9 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
+          }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       } else if ( type === chatApi.messageType.scenario.customer.selection ) {
@@ -521,6 +535,9 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
           }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
@@ -550,6 +567,9 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
+          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -578,6 +598,9 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
+          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -605,6 +628,9 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
+          }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
