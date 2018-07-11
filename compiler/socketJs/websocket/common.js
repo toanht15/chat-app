@@ -15,6 +15,8 @@ var socket, // socket.io
 (function(jquery){
   'use strict';
   var $ = jquery;
+  console.log('ログでないよ！');
+  console.dir('ログでないよ！');
 
   cnst = {
     access_type: {
@@ -2236,7 +2238,7 @@ var socket, // socket.io
             common.indicateSimpleNoImage();
           }
           //画像がある時のタイトル位置
-          else if($('#mainImage').css('display') === 'block') {
+          else if($('#mainImage').css('display') === 'block' || $('#mainImage').css('display') === 'inline') {
             common.indicateSimpleImage();
           }
         }
