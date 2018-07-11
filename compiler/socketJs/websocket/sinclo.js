@@ -1465,8 +1465,6 @@
         if (obj.notification === true) {
           storage.s.set('notificationTime',obj.created);
           var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
-          console.log('データだよ');
-          console.log(data);
           for (var i = 0; i < Object.keys(data).length; i++) {
             (function(times) {
                 setTimeout(function() {
