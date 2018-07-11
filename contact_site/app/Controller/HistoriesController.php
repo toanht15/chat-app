@@ -296,6 +296,9 @@ class HistoriesController extends AppController {
           'THistory.access_date' => 'desc',
           'THistory.id' => 'desc'
         ],
+        'group' => [
+          'THistory.id'
+        ],
         'fields' => [
           '*'
         ],
@@ -460,6 +463,7 @@ class HistoriesController extends AppController {
         'fields' => '*',
         'joins' => $returnData['joinList'],
         'conditions' => $returnData['conditions'],
+        'group' => ['THistoryChatLog.id'],
         'order' => [
           'THistory.access_date' => 'desc',
           'THistory.id' => 'desc',
@@ -823,10 +827,10 @@ class HistoriesController extends AppController {
 
   /**
    *  入力された条件にマッチした顧客のIDを取得
-   * @param $data array 入力データ
+   * @param $searchData array 入力データ
    * @return array 顧客のIDリスト
    * */
-  private function _searchCustomer($data){
+  private function _searchCustomer($searchData){
     $visitorsIds = [];
     $userCond = [
       'MCustomer.m_companies_id' => $this->userInfo['MCompany']['id'],
@@ -849,7 +853,7 @@ class HistoriesController extends AppController {
 
     $customerInfoDisplaySettingMap = array();
     foreach($customerSettingList as $index => $customerData) {
-      $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['item_name'];
+      $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
     }
 
     $allusers = $this->MCustomer->find('all', [
@@ -859,15 +863,16 @@ class HistoriesController extends AppController {
 
     foreach($allusers as $alluser) {
       $setFlg = false;
-      $settings = CustomerInformationUtil::convertOldIFData((array)json_decode($alluser['MCustomer']['informations']));
+      $userInfo = CustomerInformationUtil::convertOldIFData((array)json_decode($alluser['MCustomer']['informations']));
       foreach ($customerInfoDisplaySettingMap as $key => $val) {
-        if ( isset($data[$key]) && $data[$key] != "" ) {
-          if ( !(isset($settings[$val]) && $settings[$val] != "" && strstr($settings[$val], $data[$key])) ) {
+        if ( isset($searchData[$key]) && $searchData[$key] != "" ) {
+          if ( !isset($userInfo[$key]) || $userInfo[$key] === "") {
             $setFlg = false;
             continue 2;
-          }
-          else {
+          } else if(strpos($userInfo[$key], $searchData[$key]) !== false) {
             $setFlg = true;
+          } else {
+            $setFlg = false;
           }
         }
       }
@@ -942,21 +947,39 @@ class HistoriesController extends AppController {
               'MLandscapeData.org_name LIKE' => '%'. $data['CustomData']['会社名'].'%'
             ]
           ]);
+
           if(!empty($companyData)) {
-            $visitorsIds = $this->_searchCustomer($data['History']);
-            $chatCond['visitors_id'] = $visitorsIds;
+            $visitorsIds = $this->_searchCustomer($data['CustomData']);
+            $customDataWithoutCompany = $data['CustomData'];
+            unset($customDataWithoutCompany['会社名']);
+            $visitorIdsWithoutCompany = $this->_searchCustomer($customDataWithoutCompany);
 
             $ipAddressList = [];
             foreach($companyData as $k => $v) {
               $ipAddressList[] = $v['MLandscapeData']['ip_address'];
             }
-            $this->paginate['THistory']['conditions'] = array(
-              'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
-              'OR' => array(
-                'THistory.ip_address' => $ipAddressList,
-                'THistory.visitors_id' => $visitorsIds
-              )
-            );
+            if(count($visitorIdsWithoutCompany) > 0) {
+              $chatCond['visitors_id'] = $visitorIdsWithoutCompany;
+              $this->paginate['THistory']['conditions'] = array(
+                'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+                'OR' => array(
+                  'THistory.ip_address' => $ipAddressList,
+                  'THistory.visitors_id' => $visitorsIds
+                ),
+                'AND' => array(
+                  'THistory.visitors_id' => $visitorIdsWithoutCompany
+                )
+              );
+            } else {
+              $chatCond['visitors_id'] = $visitorsIds;
+              $this->paginate['THistory']['conditions'] = array(
+                'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+                'OR' => array(
+                  'THistory.ip_address' => $ipAddressList,
+                  'THistory.visitors_id' => $visitorsIds
+                )
+              );
+            }
           }
           else {
             $visitorsIds = $this->_searchCustomer($data['CustomData']);
@@ -1584,7 +1607,15 @@ class HistoriesController extends AppController {
     $data = $this->Session->read('Thistory');
 
     /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-    if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
+    $check = false;
+    if(!empty($data['CustomData'])) {
+      foreach ($data['CustomData'] as $key => $value) {
+        if (!empty($value)) {
+          $check = true;
+        }
+      }
+    }
+    if($check) {
       //会社名が入っている場合
       if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
         //会社名がランドスケープテーブルに登録されている場合
@@ -1601,29 +1632,46 @@ class HistoriesController extends AppController {
         $companyData = $this->MLandscapeData->find('all', $companyConditions);
 
         if(!empty($companyData)) {
-          $visitorsIds = $this->_searchCustomer($data['History']);
-          $chatCond['visitors_id'] = $visitorsIds;
+          $visitorsIds = $this->_searchCustomer($data['CustomData']);
+          $customDataWithoutCompany = $data['CustomData'];
+          unset($customDataWithoutCompany['会社名']);
+          $visitorIdsWithoutCompany = $this->_searchCustomer($customDataWithoutCompany);
 
           $ipAddressList = [];
           foreach($companyData as $k => $v) {
             $ipAddressList[] = $v['MLandscapeData']['ip_address'];
           }
-          $conditions[] = [
-            'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
-            'OR' => [
-              'THistory.ip_address' => $ipAddressList,
-              'THistory.visitors_id' => $visitorsIds
-            ]
-          ];
-        }
-        else {
-            $visitorsIds = $this->_searchCustomer($data['History']);
-            $conditions[] = [
-              'THistory.visitors_id'=> $visitorsIds
-            ];
+          if(count($visitorIdsWithoutCompany) > 0) {
+            $chatCond['visitors_id'] = $visitorIdsWithoutCompany;
+            $conditions[] = array(
+              'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+              'OR' => array(
+                'THistory.ip_address' => $ipAddressList,
+                'THistory.visitors_id' => $visitorsIds
+              ),
+              'AND' => array(
+                'THistory.visitors_id' => $visitorIdsWithoutCompany
+              )
+            );
+          } else {
             $chatCond['visitors_id'] = $visitorsIds;
+            $conditions[] = array(
+              'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
+              'OR' => array(
+                'THistory.ip_address' => $ipAddressList,
+                'THistory.visitors_id' => $visitorsIds
+              )
+            );
           }
         }
+        else {
+          $visitorsIds = $this->_searchCustomer($data['CustomData']);
+          $conditions[] = [
+            'THistory.visitors_id'=> $visitorsIds
+          ];
+          $chatCond['visitors_id'] = $visitorsIds;
+        }
+      }
       else {
         $visitorsIds = $this->_searchCustomer($data['History']);
         $conditions[] = [
