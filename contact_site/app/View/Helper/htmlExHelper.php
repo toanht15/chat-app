@@ -130,7 +130,7 @@ class htmlExHelper extends AppHelper {
       return "<a ".$matches[0].">".$matches[1]."</a>";
     }
 
-    public function makeChatView($value, $isSendFile = false,$isRecieveFile = false){
+    public function makeChatView($value, $isSendFile = false,$isRecieveFile = false,$imgTag = false){
         if($isSendFile) {
           return $this->makeSendChatView($value);
         }
@@ -158,6 +158,9 @@ class htmlExHelper extends AppHelper {
             if ( preg_match('/<telno>([\s\S]*?)<\/telno>/', $tmp)) {
                 $ret = "<span style='font-weight: normal;'>". preg_replace('/^<telno>|<\/telno>$/', "", $tmp) . "</span>";
                 $str = preg_replace('/<telno>([\s\S]*?)<\/telno>/', $ret, $tmp);
+            }
+            if ( preg_match('/<img([\s\S]*?)>/', $tmp) && $imgTag) {
+                $str = preg_replace('/style="([\s\S]*?)"/', 'style = "display:block;width:120px;height:auto;"',$tmp);
             }
             $content .= $str."\n";
         }

@@ -212,7 +212,7 @@
     $scope.createTextOfMessage = function(chat, message, opt) {
       var strings = message.split('\n');
       var custom = "";
-      var isSmartphone = this._showWidgetType != 1;
+      var isSmartphone = false;
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
       for (var i = 0; strings.length > i; i++) {
@@ -276,6 +276,7 @@
       var timeFontSize;
       var dataBaloon;
       var coreSettings = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
+      var img = message.match(/<img ([\s\S]*?)>/g);
       //横並びの場合
       if(<?= $screenFlg ?> == 1) {
         dataBaloon = 89;
@@ -284,17 +285,27 @@
       if(<?= $screenFlg ?> == 2) {
         dataBaloon = 45;
       }
+      //imgタグ
+      if(img !== null) {
+        var result = message.match(/<img ([\s\S]*?)>/g);
+        for(var i=0;i<img.length;i++) {
+          var imgTagReg = RegExp(/<img ([\s\S]*?)style="([\s\S]*?)"([\s\S]*?)>/);
+          var imgTag = img[i].match(imgTagReg);
+          var imgTagSize = result[i].replace(imgTag[2],imgTag[2]+';width:120px;height:auto;');
+          message = message.replace(imgTag[0], imgTagSize);
+        }
+      }
       if(1024 < window.parent.screen.width && window.parent.screen.width < 1367) {
-        fontSize = '7px';
-        timeFontSize = '6px';
+        fontSize = '7px;';
+        timeFontSize = '6px;';
       }
       else if(window.parent.screen.width <= 1024) {
-        fontSize = '4px';
-        timeFontSize = '3px';
+        fontSize = '4px;';
+        timeFontSize = '3px;';
       }
       else {
-        fontSize = '13px';
-        timeFontSize = '12px';
+        fontSize = '13px;';
+        timeFontSize = '12px;';
       }
       // 消費者からのメッセージの場合
       if ( type === chatApi.messageType.customer) {

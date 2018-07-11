@@ -98,12 +98,34 @@ function unEscapeHTML(str) {
     .replace(/(&amp;)/g, '&');
 };
 
-function replaceVariable(str,isSmartphone){
+function replaceVariable(str,isSmartphone,widgetSize){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
   var unEscapeStr = unEscapeHTML(str);
+  var className;
+
+  //ウィジェットサイズが小の場合
+  if(widgetSize === '1' || isSmartphone) {
+    className = 'smallSizeImg';
+  }
+  //ウィジェットサイズが中の場合
+  else if(widgetSize === '2') {
+    className = 'middleSizeImg';
+  }
+  //ウィジェットサイズが大の場合
+  else if(widgetSize === '3') {
+    className = 'largeSizeImg';
+  }
+  //リアルタイムモニタ詳細画面の場合
+  else if(widgetSize === '4') {
+    className = 'detailImg';
+  }
+  console.log('クラスネームだよ');
+  console.log(className);
+  console.log(isSmartphone);
+
   // リンク
   var link = str.match(linkReg);
   var linkTab = unEscapeStr.match(linkTabReg);
@@ -111,6 +133,12 @@ function replaceVariable(str,isSmartphone){
       if ( linkTab !== null) {
         if(link !== null) {
           var a = linkTab[0];
+          //imgタグ有効化
+          var img = unEscapeStr.match(imgTagReg);
+          if(img !== null) {
+            imgTag = "<img "+img[1]+" class = "+className+">";
+            a = a.replace(img[0], imgTag);
+          }
         }
         else {
           // ただの文字列にする
@@ -122,6 +150,12 @@ function replaceVariable(str,isSmartphone){
       else {
         var url = link[0];
         var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
+        //imgタグ有効化
+        var img = unEscapeStr.match(imgTagReg);
+        if(img !== null) {
+          imgTag = "<img "+img[1]+" class = "+className+">";
+          a = a.replace(img[0], imgTag);
+        }
         str = str.replace(url, a);
       }
   }
@@ -142,7 +176,7 @@ function replaceVariable(str,isSmartphone){
   //imgタグ有効化
   var img = unEscapeStr.match(imgTagReg);
   if(img !== null && link === null && linkTab === null) {
-    imgTag = "<img "+img[1]+">";
+    imgTag = "<img "+img[1]+" class = "+className+">";
     str = unEscapeStr.replace(img[0], imgTag);
   }
   return str;

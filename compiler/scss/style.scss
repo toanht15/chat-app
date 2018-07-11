@@ -1961,6 +1961,7 @@ ul.naviBtn {
                         }
                       }
                     }
+
                   }
                   &.sinclo_se, &.sinclo_auto {
                     display: inline-block;
@@ -1973,6 +1974,10 @@ ul.naviBtn {
                       font-weight: bold;
                       font-size: 13px;
                       margin: 0 0 5px 0;
+                    }
+                    .detailImg {
+                      max-width: 200px;
+                      max-height: 140px;
                     }
                     div.sendFileContent {
                       display: table;
@@ -6240,6 +6245,21 @@ ul.naviBtn {
             height: 631px;
           }
 
+          .smallSizeImg {
+            max-width: 165px;
+            max-height: 120px;
+          }
+
+          .middleSizeImg {
+            max-width: 215px;
+            max-height: 188px;
+          }
+
+          .largeSizeImg {
+            max-width: 265px;
+            max-height: 285px;
+          }
+
           > div {
             position: absolute;
             bottom: -66px;
@@ -7554,6 +7574,21 @@ ul.naviBtn {
           &.largeSize {
             flex-basis: 400px;
             min-width: 400px;
+          }
+
+          .smallSizeImg {
+            max-width: 165px;
+            max-height: 120px;
+          }
+
+          .middleSizeImg {
+            max-width: 215px;
+            max-height: 188px;
+          }
+
+          .largeSizeImg {
+            max-width: 265px;
+            max-height: 285px;
           }
 
           .blueBtn {
@@ -9875,3 +9910,4 @@ div.balloon {
   text-align: center !important;
   padding: 7px 0px 7px 0px !important;
 }
+

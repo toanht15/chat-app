@@ -2382,8 +2382,21 @@
             var radioCnt = 1;
             var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
             var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+            var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
             var radioName = "sinclo-radio" + chatList.children.length;
             var content = "";
+            var className;
+
+            if(sincloInfo.widget.widgetSizeType === 1 || check.smartphone()) {
+              className = 'smallSizeImg';
+            }
+            else if(sincloInfo.widget.widgetSizeType === 2) {
+              className = 'middleSizeImg';
+            }
+            else if(sincloInfo.widget.widgetSizeType === 3) {
+              className = 'largeSizeImg';
+            }
+
             if ( check.isset(cName) === false ) {
               cName = "";
             }
@@ -2423,6 +2436,12 @@
                     if ( linkTab !== null) {
                       if(link !== null) {
                         var a = linkTab[0];
+                        //imgタグ有効化
+                        var img = unEscapeStr.match(imgTagReg);
+                        if(img !== null) {
+                          imgTag = "<img "+img[1]+" class = "+className+">";
+                          a = a.replace(img[0], imgTag);
+                        }
                       }
                       else {
                         // ただの文字列にする
@@ -2434,6 +2453,12 @@
                     else {
                       var url = link[0];
                       var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
+                      //imgタグ有効化
+                      var img = unEscapeStr.match(imgTagReg);
+                      if(img !== null) {
+                        imgTag = "<img "+img[1]+" class = "+className+">";
+                        a = a.replace(img[0], imgTag);
+                      }
                       str = str.replace(url, a);
                     }
                 }
@@ -2455,7 +2480,7 @@
                 var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
                 var img = unEscapeStr.match(imgTagReg);
                 if(img !== null && link === null && linkTab === null) {
-                  imgTag = "<img "+img[1]+">";
+                  imgTag = "<img "+img[1]+" class = "+className+">";
                   str = unEscapeStr.replace(img[0], imgTag);
                 }
                 content += str + "\n";
