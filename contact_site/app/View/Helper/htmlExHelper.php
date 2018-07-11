@@ -160,7 +160,8 @@ class htmlExHelper extends AppHelper {
                 $str = preg_replace('/<telno>([\s\S]*?)<\/telno>/', $ret, $tmp);
             }
             if ( preg_match('/<img([\s\S]*?)>/', $tmp) && $imgTag) {
-                $str = preg_replace('/style="([\s\S]*?)"/', 'style = "display:block;width:120px;height:auto;"',$tmp);
+                $ret = preg_replace('/style="/', 'style="width:100%!important;', $tmp);
+                $str = "<div class='imgTag'>" . $ret . "</div>";
             }
             $content .= $str."\n";
         }
