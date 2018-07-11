@@ -943,7 +943,7 @@ class HistoriesController extends AppController {
             ]
           ]);
           if(!empty($companyData)) {
-            $visitorsIds = $this->_searchCustomer($data['History']);
+            $visitorsIds = $this->_searchCustomer($data['CustomData']);
             $chatCond['visitors_id'] = $visitorsIds;
 
             $ipAddressList = [];
@@ -1584,7 +1584,15 @@ class HistoriesController extends AppController {
     $data = $this->Session->read('Thistory');
 
     /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-    if((isset($data['History']['company_name']) && $data['History']['company_name'] !== "") || (isset($data['History']['customer_name']) && $data['History']['customer_name'] !== "") || (isset($data['History']['telephone_number']) && $data['History']['telephone_number'] !== "") || (isset($data['History']['mail_address']) && $data['History']['mail_address'] !== "") ) {
+    $check = false;
+    if(!empty($data['CustomData'])) {
+      foreach ($data['CustomData'] as $key => $value) {
+        if (!empty($value)) {
+          $check = true;
+        }
+      }
+    }
+    if($check) {
       //会社名が入っている場合
       if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
         //会社名がランドスケープテーブルに登録されている場合
@@ -1601,7 +1609,7 @@ class HistoriesController extends AppController {
         $companyData = $this->MLandscapeData->find('all', $companyConditions);
 
         if(!empty($companyData)) {
-          $visitorsIds = $this->_searchCustomer($data['History']);
+          $visitorsIds = $this->_searchCustomer($data['CustomData']);
           $chatCond['visitors_id'] = $visitorsIds;
 
           $ipAddressList = [];
@@ -1617,13 +1625,13 @@ class HistoriesController extends AppController {
           ];
         }
         else {
-            $visitorsIds = $this->_searchCustomer($data['History']);
-            $conditions[] = [
-              'THistory.visitors_id'=> $visitorsIds
-            ];
-            $chatCond['visitors_id'] = $visitorsIds;
-          }
+          $visitorsIds = $this->_searchCustomer($data['CustomData']);
+          $conditions[] = [
+            'THistory.visitors_id'=> $visitorsIds
+          ];
+          $chatCond['visitors_id'] = $visitorsIds;
         }
+      }
       else {
         $visitorsIds = $this->_searchCustomer($data['History']);
         $conditions[] = [
