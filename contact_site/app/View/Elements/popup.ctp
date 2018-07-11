@@ -395,6 +395,16 @@
             return popupEvent.closeNoPopup();
           };
           break;
+        case 'p-tcustomerinformation-alert':
+          var closeBtn = _button("キャンセルする");
+          closeBtn.onclick = function () {
+            return popupEvent.closeNoPopup();
+          };
+          var entryBtn = _button("削除する");
+          entryBtn.onclick = function () {
+            return popupEvent.closePopup();
+          };
+          break;
         default:
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {

@@ -154,11 +154,30 @@ var isCheck = function(){
 function openConfirmDialog(){
   //チェックボックスのチェック状態の取得
   var list = document.querySelectorAll('input[name^="selectTab"]:checked');
+
+  var company_delete = false;
+  var selectedItem;
   var selectedList = [];
+  //項目名が会社名、という文字列と完全に一致してる場合は削除警告フラグを立てる
   for (var i = 0; i < list.length; i++){
     selectedList.push(Number(list[i].value));
+    <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]){ ?>
+    selectedItem = "#itemnameTab"+list[i].value;
+    if($(selectedItem).text() === "会社名"){
+      company_delete = true;
+    }
+    <?php } ?>
   }
-  modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '訪問ユーザー情報設定', 'moment');
+
+
+  //削除警告フラグが立っている場合は違うモーダルウィンドウを表示する
+  if(company_delete){
+    message = "会社名を削除すると企業情報付与された会社名の検索ができなくなります。<br>"
+            + "本当に削除しますか？";
+    modalOpen.call(window, message, 'p-tcustomerinformation-alert', '必ず確認してください', 'moment');
+  }else{
+    modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '訪問ユーザー情報設定', 'moment');
+  }
   popupEvent.closePopup = toExecutableOnce(function(){
     loading.load.start();
     $.ajax({
@@ -172,7 +191,6 @@ function openConfirmDialog(){
         location.href = "<?= $this->Html->url('/TCustomerInformationSettings/index') ?>";
       },
       error: function() {
-        //debugger;
         console.log('error');
         location.href = "<?= $this->Html->url('/TCustomerInformationSettings/index') ?>";
       }

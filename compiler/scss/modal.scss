@@ -1294,6 +1294,28 @@
   }
 
 }
+/*訪問ユーザー情報"会社名"削除時アラート用*/
+.p-tcustomerinformation-alert {
+  font-size: 1.1em;
+  line-height: 1.5em;
+
+  width: 490px;
+
+  #popup-main, #popup-main-overlap{
+    color: #c00000;
+  }
+
+  #popup-button,#popup-button-overlap{
+    display: flex;
+    justify-content:space-evenly;
+    align-items:self-start;
+    text-align: center;
+    a {
+      width: 12em;
+      margin: 0;
+    }
+  }
+}
 
 /* フラッシュメッセージ用スタイル */
 #shortMessage {
