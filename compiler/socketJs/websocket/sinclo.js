@@ -2043,7 +2043,17 @@
             });
             $("input[name^='sinclo-radio']").each(function(index){
               if(!sinclo.scenarioApi.isProcessing() && $(this).parents('.sinclo-scenario-msg').length !== 0) {
-                $(this).prop('disabled', true).parent().css('opacity', 0.5);
+                var selected = false;
+                $(this).parents("li.sinclo_re").find('.sinclo-chat-radio').each(function(index){
+                  if($(this).is(':checked')) {
+                    selected = true;
+                  }
+                });
+                if(selected) {
+                  $(this).prop('disabled', true).parent().css('opacity', 0.5);
+                } else {
+                  $(this).prop('disabled', false);
+                }
               } else {
                 $(this).prop('disabled', false);
               }
@@ -4518,7 +4528,7 @@
           self.set(self._lKey.currentScenarioSeqNum, 0);
           self.set(self._lKey.storedVariableKeys, []);
           self.set(self._lKey.sendCustomerMessageType, 1);
-          self.set(self._lKey.allowSave, false);
+          self.set(self._lKey.allowSave, self._getChatSaveFlg());
           self.set(self._lKey.showSequenceSet, {});
           self.set(self._lKey.previousChatMessageLength, 0);
           self.set(self._lKey.stackReturnSettings, {});
@@ -4530,10 +4540,13 @@
           console.log("self.set(self._lKey.currentScenarioSeqNum " + 0);
           console.log("self.set(self._lKey.storedVariableKeys " + []);
           console.log("self.set(self._lKey.sendCustomerMessageType " + 1);
-          console.log("self.set(self._lKey.allowSave " + false);
+          console.log("self.set(self._lKey.allowSave " + self._getChatSaveFlg());
           console.log("self.set(self._lKey.showSequenceSet " + {});
           console.log("self.set(self._lKey.previousChatMessageLength " + 0);
         }
+      },
+      _getChatSaveFlg: function() {
+        return sinclo.chatApi.saveFlg;
       },
       _resetDefaultVal: function() {
         var self = sinclo.scenarioApi;
@@ -4544,7 +4557,7 @@
           "s_waiting": false,
           "s_variables": {},
           "s_messages": [],
-          "s_allowSave": false,
+          "s_allowSave": self._getChatSaveFlg(),
           "s_scenarios": {},
           "s_scenarioLength": 0,
           "s_currentScenario": 0,
@@ -4928,9 +4941,13 @@
       },
       _saveStoredMessage: function(callback) {
         var self = sinclo.scenarioApi;
-        var json = self.get(self._lKey.messages);
-        var array = json ? json : [];
-        self._storeMessageToDB(array,callback);
+        if(!self._disallowSaveing()) {
+          var json = self.get(self._lKey.messages);
+          var array = json ? json : [];
+          self._storeMessageToDB(array,callback);
+        } else {
+          callback();
+        }
       },
       _unsetScenarioMessage: function() {
         var self = sinclo.scenarioApi;
@@ -4938,10 +4955,9 @@
         self.set(self._lKey.allowSave, true);
       },
       _disallowSaveing: function() {
-        // var self = sinclo.scenarioApi;
-        // var flg = self.get(self._lKey.allowSave);
-        // return flg == null || flg === "false" || flg === false;
-        return false;
+        var self = sinclo.scenarioApi;
+        var flg = self.get(self._lKey.allowSave);
+        return flg == null || flg === "false" || flg === false;
       },
       _saveVariable: function(valKey, value) {
         var self = sinclo.scenarioApi;

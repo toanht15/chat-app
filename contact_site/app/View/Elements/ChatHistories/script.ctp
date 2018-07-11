@@ -396,7 +396,7 @@ $(function(){
  });
 
 
-    //横並びの場合
+    //横並びの場合(ここで無駄にinfoが伸びている)
     if(<?= $screenFlg ?> == 1) {
       var splitterObj = $("#history_list_side").split({
         "orientation": "vertical",

@@ -891,12 +891,16 @@ ul.ulTab {
   top: 48px;
   right: 15px;
   width: 193px;
+  height: 153px;
   font-size: 12px;
   z-index: 9999;
   ul {
     border: solid 1px #ccc;
     display: block;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    filter: drop-shadow(5px 5px 3px rgba(0, 0, 0, 0.5));
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    }
     padding: 5px 0px !important;
     background: #fff;
     position: relative;
@@ -4061,6 +4065,15 @@ ul.naviBtn {
       }
       thead th, table.dataTable thead td {
         border-bottom: 1px solid #8B8B8B;
+      }
+      tbody#chatHistory {
+        td {
+          &.eachInfo {
+            div.info {
+              height: 60px;
+            }
+          }
+        }
       }
     }
   }

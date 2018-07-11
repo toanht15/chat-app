@@ -51,17 +51,17 @@ $(document).ready(function(){
           $infoVal = $data['informations'][$key];
         }
 
-        echo $this->htmlEx->visitorInput($val, true, false, false, $infoVal);
+        echo $this->htmlEx->visitorInput($val, false, false, false, $infoVal);
       ?>
       </span>
     </li>
   <?php endforeach; ?>
 </ul>
-<?= $this->Form->input('visitorsId', ['type'=>'hidden', 'value'=>$data['THistory']['visitors_id'], 'label' => false, 'div'=> false]); ?>
+<?= $this->Form->input('visitorsId', array('type'=>'hidden', 'value'=>$data['THistory']['visitors_id'], 'label' => false, 'div'=> false)); ?>
 <?php
 $customerId = "";
 if ( isset($data['MCustomer']['id']) ) {
   $customerId = $data['MCustomer']['id'];
 }
-echo $this->Form->input('customerId', ['type'=>'hidden', 'value' => $customerId, 'label' => false, 'div'=> false]);
+echo $this->Form->input('customerId', array('type'=>'hidden', 'value' => $customerId, 'label' => false, 'div'=> false));
 ?>
