@@ -236,7 +236,7 @@
       for(var i=0;i<img.length;i++) {
         var imgTagReg = RegExp(/<img ([\s\S]*?)style="([\s\S]*?)"([\s\S]*?)>/);
         var imgTag = img[i].match(imgTagReg);
-        var imgTagSize = result[i].replace(imgTag[2],imgTag[2]+';width:120px;height:auto;');
+        var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTag[2],imgTag[2]+';width:100%') + "div";
         message = message.replace(imgTag[0], imgTagSize);
       }
       return message;
