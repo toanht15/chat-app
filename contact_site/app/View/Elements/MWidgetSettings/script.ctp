@@ -777,7 +777,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
   };
 
   $scope.isPictureImage = function(main_image) {
-    return main_image.match(/^http/) !== null;
+    return main_image.match(/^http|data/) !== null;
   };
 
   $scope.inputInitToggle = function(item){
