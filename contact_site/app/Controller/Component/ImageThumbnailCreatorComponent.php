@@ -12,6 +12,8 @@ class ImageThumbnailCreatorComponent extends Component
 {
   const TMP_DIR = '/tmp';
   const THUMBNAIL_PREFIX = 'thumb_';
+  const MAX_WIDTH = 265; // ウィジェット：大の最大サイズ
+  const MAX_HEIGHT = 285; // ウィジェット：大の最大サイズ
 
   private $scale;
   private $filename;
@@ -67,11 +69,14 @@ class ImageThumbnailCreatorComponent extends Component
     $imageSize = $this->getImagesize();
     $isWidthLargerThanHeight = $imageSize[0] >= $imageSize[1];
     if($isWidthLargerThanHeight) {
-      $this->image = $this->manager->make($this->file['tmp_name'])->resize($imageSize[0] * $this->scale, NULL, function ($constraint) {
+      $imageWidth = self::MAX_WIDTH > $imageSize[0] ? $imageSize[0] : self::MAX_WIDTH;
+      $this->image = $this->manager->make($this->file['tmp_name'])->resize($imageWidth, NULL, function ($constraint) {
         $constraint->aspectRatio();
       });
     } else {
-      $this->image = $this->manager->make($this->file['tmp_name'])->resize(NULL, $imageSize[1] * $this->scale, function ($constraint) {
+      $imageHeight = self::MAX_HEIGHT > $imageSize[1] ? $imageSize[1] : self::MAX_HEIGHT;
+
+      $this->image = $this->manager->make($this->file['tmp_name'])->resize(NULL, $imageHeight, function ($constraint) {
         $constraint->aspectRatio();
       });
     }

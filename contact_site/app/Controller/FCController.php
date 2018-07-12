@@ -172,9 +172,27 @@ class FCController extends FileAppController
       return false;
     }
 
-    $fileObj = $this->getFile($this->getSaveKey('thumb_'.$data['TReceiveVisitorFile']['saved_file_key']));
+    $saveFileName = $data['TReceiveVisitorFile']['saved_file_key'];
+    if($this->isRequiredThumbnail()) {
+      $saveFileName = ImageThumbnailCreatorComponent::THUMBNAIL_PREFIX.$saveFileName;
+    }
+    try {
+      $fileObj = $this->getFile($this->getSaveKey($saveFileName));
+    } catch(NotFoundException $e) {
+      if($this->isRequiredThumbnail()) {
+        // オリジナル画像を再取得してみる
+        $fileObj = $this->getFile($this->getSaveKey($data['TReceiveVisitorFile']['saved_file_key']));
+      } else {
+        throw $e;
+      }
+    }
+
     $data['fileObj'] = $fileObj;
 
     return $data;
+  }
+
+  private function isRequiredThumbnail() {
+    return isset($this->request->query['thumb']);
   }
 }
