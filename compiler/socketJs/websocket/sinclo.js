@@ -115,11 +115,11 @@
               sinclo.chatApi.scDown();
             }
             //画像がない時のタイトル位置
-            if($('#mainImage').css('display') === 'none') {
+            if($('#mainImage').css('display') === 'none' || $('#mainImage').css('display') === undefined) {
               common.indicateSimpleNoImage();
             }
             //画像がある時のタイトル位置
-            else if($('#mainImage').css('display') === 'block') {
+            else if($('#mainImage').css('display') === 'block' || $('#mainImage').css('display') === 'inline') {
               common.indicateSimpleImage();
             }
             sinclo.chatApi.lockPageScroll();
@@ -137,11 +137,11 @@
               common.abridgementTypeShow();
             }
             //画像がない時のタイトル位置
-            if($('#mainImage').css('display') === 'none') {
+            if($('#mainImage').css('display') === 'none' || $('#mainImage').css('display') === undefined) {
               common.indicateSimpleNoImage();
             }
             //画像がある時のタイトル位置
-            else if($('#mainImage').css('display') === 'block') {
+            else if($('#mainImage').css('display') === 'block'　|| $('#mainImage').css('display') === 'inline') {
               common.indicateSimpleImage();
             }
             height = this.header.offsetHeight;
