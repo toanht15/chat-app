@@ -10,6 +10,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
 var imageList = document.querySelectorAll('#gallaryImage li');
 var clickEvnt = function(){
     popupEvent.customizeBtn(this.getAttribute("data-name"));
+    popupEvent.moveType = "moment"
     popupEvent.close();
 }
 for(var i = 0; imageList.length > i; i++) {

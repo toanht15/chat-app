@@ -48,6 +48,10 @@ class FileAppController extends AppController
     return $this->Amazon->putObject($this->getSaveKey($saveFileName), $file['tmp_name']);
   }
 
+  protected function putFileByFullpath($fileFullPath, $saveFileName) {
+    return $this->Amazon->putObject($this->getSaveKey($saveFileName), $fileFullPath);
+  }
+
   /**
    * ファイル削除
    * @param  String $file 保存先パス + ファイル名
