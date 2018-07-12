@@ -722,7 +722,7 @@
       var thumbnail = "";
       var height = "";
       if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
-        thumbnail = "<img src='" + url + "' class='recieveFileThumbnail'>";
+        thumbnail = "<img src='" + url + '?thumb' + "' class='recieveFileThumbnail'>";
       } else {
         thumbnail = "<i class='fal " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         height = "style = 'height:64px;'"
