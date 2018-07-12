@@ -402,8 +402,8 @@ sincloApp.factory('SimulatorService', function() {
             str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
             str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
         }
-        //リンク、電話番号
-        str = replaceVariable(str,isSmartphone);
+        //リンク、電話番号、imgタグ
+        str = replaceVariable(str,isSmartphone,this._settings['widget_size_type']);
         content += str + "\n";
       }
 

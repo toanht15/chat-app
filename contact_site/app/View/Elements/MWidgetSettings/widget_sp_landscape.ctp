@@ -73,7 +73,8 @@
     <!-- chat_message_copy 0 stayt -->
     <div ng-if="chat_message_copy == '0'">
       <!-- タイトル -->
-      <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" >{{title}}</p>
+      <p ng-if="widget_title_top_type == '1'" id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" style = "text-align: left !important;padding-left:15px !important;">{{title}}</p>
+      <p ng-if="widget_title_top_type == '2'" id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" style = "text-align: center !important;padding-left:0px !important;padding-right: 0px !important;">{{title}}</p>
       <!-- タイトル -->
     </div>
   <!-- chat_message_copy 0 end -->
@@ -81,7 +82,8 @@
   <!-- chat_message_copy 1 stayt -->
   <div ng-if="chat_message_copy == '1'">
     <!-- タイトル -->
-    <p id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">{{title}}</p>
+    <p ng-if="widget_title_top_type == '1'" id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;text-align: left !important;padding-left: 15px !important">{{title}}</p>
+    <p ng-if="widget_title_top_type == '2'" id="widgetTitle" class="widgetOpener" ng-class="{center: mainImageToggle == '2'}" style = "user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;text-align: center !important;padding-left: 0px !important;padding-right: 0px !important">{{title}}</p>
     <!-- タイトル -->
   </div>
   <!-- chat_message_copy 1 end -->
