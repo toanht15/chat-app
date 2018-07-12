@@ -1978,6 +1978,12 @@ ul.naviBtn {
                       font-size: 13px;
                       margin: 0 0 5px 0;
                     }
+                    .detailImg {
+                      max-width: 200px;
+                      max-height: 140px;
+                      margin-left:auto;
+                      margin-right:auto;
+                    }
                     div.sendFileContent {
                       display: table;
                       table-layout:fixed;
@@ -4049,6 +4055,11 @@ ul.naviBtn {
       border-top: 1px solid #bfbfbf;
       border-bottom: 1px solid #bfbfbf;
     }
+  }
+
+  .imgTag {
+    width:120px;
+    height:auto;
   }
 
   #history_body_side {
@@ -6253,6 +6264,27 @@ ul.naviBtn {
             height: 631px;
           }
 
+          .smallSizeImg {
+            max-width: 165px;
+            max-height: 120px;
+            margin-left:auto;
+            margin-right:auto;
+          }
+
+          .middleSizeImg {
+            max-width: 215px;
+            max-height: 188px;
+            margin-left:auto;
+            margin-right:auto;
+          }
+
+          .largeSizeImg {
+            max-width: 265px;
+            max-height: 285px;
+            margin-left:auto;
+            margin-right:auto;
+          }
+
           > div {
             position: absolute;
             bottom: -66px;
@@ -7567,6 +7599,27 @@ ul.naviBtn {
           &.largeSize {
             flex-basis: 400px;
             min-width: 400px;
+          }
+
+          .smallSizeImg {
+            max-width: 165px;
+            max-height: 120px;
+            margin-left:auto;
+            margin-right:auto;
+          }
+
+          .middleSizeImg {
+            max-width: 215px;
+            max-height: 188px;
+            margin-left:auto;
+            margin-right:auto;
+          }
+
+          .largeSizeImg {
+            max-width: 265px;
+            max-height: 285px;
+            margin-left:auto;
+            margin-right:auto;
           }
 
           .blueBtn {

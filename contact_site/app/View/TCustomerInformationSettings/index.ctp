@@ -113,7 +113,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           <label for="selectTab<?=$key?>"></label>
         </td>
         <td width="5%" class="tCenter"><?=$prevCnt + h($key+1)?></td>
-        <td width="21%" class="tCenter"><?=$val['TCustomerInformationSetting']['item_name']?></td>
+        <td width="21%" id="itemnameTab<?=$val['TCustomerInformationSetting']['id']?>" class="tCenter"><?=$val['TCustomerInformationSetting']['item_name']?></td>
         <td width="10%" class="tCenter">
           <?php
             switch($val['TCustomerInformationSetting']['input_type']){
