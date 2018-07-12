@@ -1731,15 +1731,17 @@ function actionValidationCheck(element, setActionList, actionItem) {
     }
 
   }else
-  if (actionItem.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
-    if(!actionItem.dropAreaMessage) {
-      messageList.push("見出し文が未入力です");
-    }
-
-  } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
     if (!actionItem.tChatbotScenarioSendFileId || !actionItem.file || !actionItem.file.download_url || !actionItem.file.file_size) {
       messageList.push('ファイルが未選択です');
+    }
+    if (!actionItem.message) {
+      messageList.push('発言内容が未入力です');
+    }
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
+    if(!actionItem.dropAreaMessage) {
+      messageList.push("見出し文が未入力です");
     }
     if (Number(actionItem.receiveFileType) === 2 && !actionItem.extendedReceiveFileExtensions) {
       messageList.push('拡張設定を選択した場合は拡張子の指定が必須です');
