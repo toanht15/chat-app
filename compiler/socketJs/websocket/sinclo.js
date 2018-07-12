@@ -2500,7 +2500,7 @@
                 //imgタグ
                 var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
                 var img = unEscapeStr.match(imgTagReg);
-                if(img !== null && link === null && linkTab === null) {
+                if(img !== null) {
                   imgTag = "<img "+img[1]+" class = "+className+">";
                   str = unEscapeStr.replace(img[0], imgTag);
                 }
@@ -4597,6 +4597,7 @@
         sinclo.chatApi.initEvent();
         var type = (beforeTextareaOpened === "close") ? "2" : "1";
         self._handleChatTextArea(type);
+        
         self._resetDefaultVal();
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
