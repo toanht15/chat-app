@@ -2083,7 +2083,7 @@
             return;
           }
           // シナリオのヒアリングモードのみ有効
-          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
+          if(sinclo.scenarioApi.isProcessing()) {
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
@@ -4521,13 +4521,12 @@
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         // 元のメッセージ入力欄に戻す
         sinclo.chatApi.hideMiniMessageArea();
+        self._saveProcessingState(false);
         sinclo.chatApi.removeAllEvent();
         sinclo.chatApi.initEvent();
         var type = (beforeTextareaOpened === "close") ? "2" : "1";
         self._handleChatTextArea(type);
-        
         self._resetDefaultVal();
-        self._saveProcessingState(false);
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
