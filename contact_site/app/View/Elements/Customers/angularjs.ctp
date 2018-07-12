@@ -796,7 +796,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var judgewindow = window.open('','','width = 1,height = 1,top = 20000,left = 20000');
       if(judgewindow == null){
         popupblock = true;
-        message="画面共有を行うには、ポップアップブロックを解除してください。"
+        message="共有機能を使用する場合は<br>"
+               +"<a href=''>こちらのヘルプページ</a>を参考に設定変更を行ってください";
         modalOpen.call(window, message,"p-cus-block-popup",'ポップアップブロックの解除', 'fade', '');
       }else{
         popupblock = false;
@@ -1065,8 +1066,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       //通知設定が許可されていない場合は警告を出す
                       if(Notification.permission !== "granted"){
                         console.log('are?');
-                        message = "チャット通知を望む場合はデスクトップ通知を許可してください。<br><br>"
-                                + "<label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                        message = "ユーザーからのチャット通知を受け取りたい場合<br>"
+                                + "<a href=''>こちらのヘルプページ</a>を参考に設定変更を行ってください。"
+                                + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
                                 + "以降、このメッセージを表示しない</label>";
                         setTimeout(function(){
                           modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の解除', 'fade', '');
@@ -1694,7 +1696,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             message = "インターネットエクスプローラーではチャット通知設定を使用することができません<br><br>"
                     + "<label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
                     + "以降、このメッセージを表示しない</label>";
-            modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の解除', 'fade', '');
+            modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の許可', 'fade', '');
           }else{
             //通知設定が許可されていない場合は警告を出す
             if(Notification.permission !== "granted"){
@@ -1706,11 +1708,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               }else if(browsertype.indexOf("firefox") !== -1){
                 add_settingURL = "about:preferences#privacy　へアクセスして設定を変更してください";
               }
-              message = "チャット通知を望む場合はデスクトップ通知を許可してください。<br><br>"
-                      + add_settingURL
+              message = "ユーザーからのチャット通知を受け取りたい場合<br>"
+                      + "<a href=''>こちらのヘルプページ</a>を参考に設定変更を行ってください。"
                       + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
                       + "以降、このメッセージを表示しない</label>";
-              modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の解除', 'fade', '');
+              modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の許可', 'fade', '');
             }
           }
         }
