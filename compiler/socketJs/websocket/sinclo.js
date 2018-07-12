@@ -5615,8 +5615,8 @@
         _handleFileSelect: function(event, result, data){
           console.log("FIRE _handleFileSelect :::: %s, $s", result, data);
           var self = sinclo.scenarioApi._sendFile;
-          self._parent._handleStoredMessage();
           if(result) {
+            self._parent._handleStoredMessage();
             if(data) {
               self._pushDownloadUrlData(data);
             }
