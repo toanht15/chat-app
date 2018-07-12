@@ -1709,7 +1709,6 @@
       }
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
-
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
       }
       document.getElementById("flexBoxWrap").style.display = '';
@@ -1722,11 +1721,11 @@
           widgetWidth = $(window).width();
           ratio = widgetWidth * (1/285);
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
-            //企業名が空の場合
+            //説明文が空の場合
             if($('#widgetDescription').text() == " " && $('#widgetSubTitle').text() !== " ") {
               var widgetDescriptionHeight = $('#widgetSubTitle').height()*0.3;
             }
-            //説明文が空の場合
+            //企業名が空の場合
             else if($('#widgetDescription').text() !== " " && $('#widgetSubTitle').text() == " ") {
               var widgetDescriptionHeight = $('#widgetDescription').height()*0.3;
             }
@@ -1772,7 +1771,18 @@
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
             widgetWidth = $(window).width();
             ratio = widgetWidth * (1/285);
-            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() + 3*ratio);
+            //説明文が空の場合
+            if($('#widgetDescription').text() == " " && $('#widgetSubTitle').text() !== " ") {
+              var widgetDescriptionHeight = $('#widgetSubTitle').height()*0.3;
+            }
+            //企業名が空の場合
+            else if($('#widgetDescription').text() !== " " && $('#widgetSubTitle').text() == " ") {
+              var widgetDescriptionHeight = $('#widgetDescription').height()*0.3;
+            }
+            else {
+              var widgetDescriptionHeight = $('#widgetDescription').height();
+            }
+            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - widgetDescriptionHeight - $('#sincloBox #fotter').height() + 3*ratio);
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
           } else {
