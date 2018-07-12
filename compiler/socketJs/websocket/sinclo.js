@@ -2783,7 +2783,8 @@
             }
 
             sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
-              if(result && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+              if((isScenarioMessage || result) && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+                result = true;
                 storage.s.set('chatAct', false); // オートメッセージを表示しない
               }
 
