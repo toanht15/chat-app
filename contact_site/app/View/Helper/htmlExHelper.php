@@ -285,7 +285,7 @@ class htmlExHelper extends AppHelper {
 
       $thumbnail = "";
       if(preg_match('/(jpeg|jpg|gif|png)$/', $value['extension'])) {
-        $thumbnail = "<img src='" . $value['downloadUrl'] . "' class='recieveFileThumbnail' style='max-width: 200px; max-height: 140px'>";
+        $thumbnail = "<img src='" . $value['downloadUrl'] . "?thumb' class='recieveFileThumbnail' style='max-width: 200px; max-height: 140px'>";
       } else {
         $thumbnail = "<i class='fal " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         $height = "style = 'height:64px'";
