@@ -173,7 +173,7 @@ function openConfirmDialog(){
   //削除警告フラグが立っている場合は違うモーダルウィンドウを表示する
   if(company_delete){
     message = "会社名を削除すると企業情報付与された会社名の検索ができなくなります。<br>"
-            + "本当に削除しますか？";
+            + "<br><b>本当に削除しますか？</b>";
     modalOpen.call(window, message, 'p-tcustomerinformation-alert', '必ず確認してください', 'moment');
   }else{
     modalOpen.call(window, "削除します、よろしいですか？", 'p-confirm', '訪問ユーザー情報設定', 'moment');

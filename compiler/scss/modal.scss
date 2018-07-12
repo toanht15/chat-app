@@ -1302,7 +1302,10 @@
   width: 490px;
 
   #popup-main, #popup-main-overlap{
-    color: #c00000;
+    text-align: center;
+    b{
+      color: #c00000;
+    }
   }
 
   #popup-button,#popup-button-overlap{

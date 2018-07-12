@@ -8,8 +8,8 @@
     if($('#company_name_exist').length){
       $('#TCustomerInformationSettingItemName').blur(function(){
         if($('#TCustomerInformationSettingItemName')[0].value != "会社名"){
-          message = "項目名を変更すると企業情報付与された会社名の検索ができなくなります。<br>"
-                  + "本当に項目名を変更しますか？";
+          message = "項目名を変更すると企業情報付与された<br>会社名の検索ができなくなります。<br>"
+                  + "<br><b>本当に項目名を変更しますか？</b>";
           modalOpenOverlap.call(window, message, 'p-tcustomerinformation-alert', '必ず確認してください', 'moment');
           $('#popupCloseOverlapBtn').on('click', function(){
             $('#TCustomerInformationSettingItemName')[0].value = "会社名";
