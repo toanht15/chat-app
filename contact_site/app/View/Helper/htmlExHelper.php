@@ -163,12 +163,12 @@ class htmlExHelper extends AppHelper {
                 //スタイル設定されている場合
                 if(strpos($tmp,'style') !== false){
                   preg_match('/style="([\s\S]*?)"/', $tmp, $result);
-                  $ret = preg_replace('/style="([\s\S]*?)"/', "style=".$result[1]."width:100%;", $tmp);
+                  $ret = preg_replace('/style="([\s\S]*?)"/', "style=".$result[1]."width:100%;transform: none;", $tmp);
                   $str = "<div class='imgTag'>" . $ret . "</div>";
                 }
                 //スタイル設定されていない場合
                 else {
-                  $ret = preg_replace('/<img/', '<img style="width:100%;"', $tmp);
+                  $ret = preg_replace('/<img/', '<img style="width:100%;transform: none;"', $tmp);
                   $str = "<div class='imgTag'>" . $ret . "</div>";
                 }
             }
