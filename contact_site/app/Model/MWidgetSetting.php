@@ -26,6 +26,10 @@ class MWidgetSetting extends AppModel {
       'show_subtitle' => "showSubtitle",
       'sub_title' => "subTitle",
       'description' => "description",
+      //タイトル位置
+      'widget_title_top_type' => "widget_title_top_type",
+      'widget_title_name_type' => "widget_title_name_type",
+      'widget_title_explain_type' => "widget_title_explain_type",
 
       /* カラー設定styat */
       //0.通常設定・高度設定

@@ -1,5 +1,7 @@
 <script type="text/javascript">
 popupEvent.closePopup = function(){
+  popupEvent.close();
+  loading.load.start();
   if ($("#g_chat").prop("checked")) {
     document.getElementById('historySearch').action = "ChatHistories?isChat=true";
   }
