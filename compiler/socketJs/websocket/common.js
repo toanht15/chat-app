@@ -806,7 +806,6 @@ var socket, // socket.io
       }
       //PC
       else {
-        console.log('まずここに入れてないよ');
         if(sincloInfo.widget.widget_title_top_type == 1) {
           $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'+display});
         }
