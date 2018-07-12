@@ -126,7 +126,7 @@ function replaceVariable(str,isSmartphone,widgetSize){
   // リンク
   var link = str.match(linkReg);
   var linkTab = unEscapeStr.match(linkTabReg);
-  if (link !== null || linkTab !== null) {
+  if ( link !== null || linkTab !== null) {
       if ( linkTab !== null) {
         if(link !== null) {
           var a = linkTab[0];
