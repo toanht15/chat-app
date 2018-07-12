@@ -469,6 +469,10 @@
                   }
                 }
               }
+              .imgTag {
+                width:120px;
+                height:auto;
+              }
               div.recieveFileContent {
                 display: table;
                 table-layout:fixed;
@@ -1293,6 +1297,31 @@
 
   }
 
+}
+/*訪問ユーザー情報"会社名"削除時アラート用*/
+.p-tcustomerinformation-alert {
+  font-size: 1.1em;
+  line-height: 1.5em;
+
+  width: 490px;
+
+  #popup-main, #popup-main-overlap{
+    text-align: center;
+    b{
+      color: #c00000;
+    }
+  }
+
+  #popup-button,#popup-button-overlap{
+    display: flex;
+    justify-content:space-around;
+    align-items:flex-start;
+    text-align: center;
+    a {
+      width: 12em;
+      margin: 0;
+    }
+  }
 }
 
 /* フラッシュメッセージ用スタイル */

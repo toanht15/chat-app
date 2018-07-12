@@ -212,7 +212,7 @@
     $scope.createTextOfMessage = function(chat, message, opt) {
       var strings = message.split('\n');
       var custom = "";
-      var isSmartphone = this._showWidgetType != 1;
+      var isSmartphone = false;
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
       for (var i = 0; strings.length > i; i++) {
@@ -229,6 +229,26 @@
           custom += str + "\n";
         }
       return custom;
+    };
+
+    $scope.validateImg = function(img,message){
+      var result = message.match(/<img ([\s\S]*?)>/g);
+      for(var i=0;i<img.length;i++) {
+        var imgTagReg = RegExp(/<img ([\s\S]*?)style="([\s\S]*?)"([\s\S]*?)>/);
+        var imgTag = img[i].match(imgTagReg);
+        //スタイルが設定されていない場合
+        if(imgTag === null) {
+          var imgTagNoStyleReg = RegExp(/<img ([\s\S]*?)>/);
+          var imgTagNoStyle = img[i].match(imgTagNoStyleReg);
+          var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTagNoStyle[1],imgTagNoStyle[1]+'style:width:100%;') + "<div>";
+          message = message.replace(imgTagNoStyle[0], imgTagSize);
+        }
+        else {
+          var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTag[2],imgTag[2]+';width:100%') + "<div>";
+          message = message.replace(imgTag[0], imgTagSize);
+        }
+      }
+      return message;
     };
 
     // 【チャット】チャット枠の構築
@@ -276,6 +296,7 @@
       var timeFontSize;
       var dataBaloon;
       var coreSettings = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
+      var img = message.match(/<img ([\s\S]*?)>/g);
       //横並びの場合
       if(<?= $screenFlg ?> == 1) {
         dataBaloon = 89;
@@ -323,6 +344,7 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
+
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       }
@@ -355,6 +377,9 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -392,6 +417,9 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
+          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -419,6 +447,9 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"　data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
+          }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -483,6 +514,9 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
+          }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       } else if ( type === chatApi.messageType.scenario.customer.selection ) {
@@ -510,6 +544,9 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
           }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
@@ -539,6 +576,9 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
+          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -567,6 +607,9 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
+          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -594,6 +637,9 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
+          }
+          if(img !== null) {
+            message = $scope.validateImg(img,message);
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -722,7 +768,7 @@
       var thumbnail = "";
       var height = "";
       if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
-        thumbnail = "<img src='" + url + "' class='recieveFileThumbnail'>";
+        thumbnail = "<img src='" + url + '?thumb' + "' class='recieveFileThumbnail'>";
       } else {
         thumbnail = "<i class='fal " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         height = "style = 'height:64px;'"
