@@ -4546,20 +4546,18 @@
         // シナリオ終了
         var self = sinclo.scenarioApi;
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
+        // 元のメッセージ入力欄に戻す
+        sinclo.chatApi.hideMiniMessageArea();
+        sinclo.chatApi.removeAllEvent();
+        sinclo.chatApi.initEvent();
+        var type = (beforeTextareaOpened === "close") ? "2" : "1";
+        self._handleChatTextArea(type);
+        
         self._resetDefaultVal();
         self._saveProcessingState(false);
-        self._saveStoredMessage(function(){
-          self._enablePreviousRadioButton();
-          self._unsetBaseObj();
-          self.setPlaceholderMessage(self.getPlaceholderMessage());
-
-          // 元のメッセージ入力欄に戻す
-          sinclo.chatApi.hideMiniMessageArea();
-          sinclo.chatApi.removeAllEvent();
-          sinclo.chatApi.initEvent();
-          var type = (beforeTextareaOpened === "close") ? "2" : "1";
-          self._handleChatTextArea(type);
-        });
+        self._enablePreviousRadioButton();
+        self._unsetBaseObj();
+        self.setPlaceholderMessage(self.getPlaceholderMessage());
       },
       isProcessing: function() {
         var self = sinclo.scenarioApi;
@@ -4911,13 +4909,9 @@
       },
       _saveStoredMessage: function(callback) {
         var self = sinclo.scenarioApi;
-        if(!self._disallowSaveing()) {
-          var json = self.get(self._lKey.messages);
-          var array = json ? json : [];
-          self._storeMessageToDB(array,callback);
-        } else {
-          callback();
-        }
+        var json = self.get(self._lKey.messages);
+        var array = json ? json : [];
+        self._storeMessageToDB(array,callback);
       },
       _unsetScenarioMessage: function() {
         var self = sinclo.scenarioApi;
