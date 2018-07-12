@@ -19,6 +19,24 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var setActionListTmp = jsonData.scenarios;
     for (var key in setActionListTmp) {
       if (setActionListTmp.hasOwnProperty(key)) {
+        if(setActionListTmp[key].actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
+          if(!setActionListTmp[key].requestHeaders || setActionListTmp[key].requestHeaders.length === 0) {
+            setActionListTmp[key].requestHeaders = [
+              {
+                name: "",
+                value: ""
+              }
+            ]
+          }
+          if(!setActionListTmp[key].responseBodyMaps || setActionListTmp[key].responseBodyMaps.length === 0) {
+            setActionListTmp[key].responseBodyMaps = [
+              {
+                sourceKey: "",
+                variableName: ""
+              }
+            ]
+          }
+        }
         $scope.setActionList.push(setActionListTmp[key]);
       }
     }
