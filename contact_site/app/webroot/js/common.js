@@ -172,7 +172,7 @@ function replaceVariable(str,isSmartphone,widgetSize){
   }
   //imgタグ有効化
   var img = unEscapeStr.match(imgTagReg);
-  if(img !== null && link === null && linkTab === null) {
+  if(img !== null) {
     imgTag = "<img "+img[1]+" class = "+className+">";
     str = unEscapeStr.replace(img[0], imgTag);
   }
