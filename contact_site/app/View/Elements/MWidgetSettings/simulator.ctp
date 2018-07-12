@@ -79,7 +79,7 @@
 
     #sincloBox.sp-preview.fullSize #chatTalk {
       height: 258px;
-      padding: 5px 5px 41.4px 5px;
+      padding: 0px 5px 41.4px 5px;
     }
 
     #sincloBox.sp-preview.fullSize.simpleHeader #chatTalk {

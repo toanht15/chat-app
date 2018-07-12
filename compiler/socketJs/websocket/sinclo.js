@@ -114,6 +114,14 @@
               sinclo.chatApi.showUnreadCnt();
               sinclo.chatApi.scDown();
             }
+            //画像がない時のタイトル位置
+            if($('#mainImage').css('display') === 'none') {
+              common.indicateSimpleNoImage();
+            }
+            //画像がある時のタイトル位置
+            else if($('#mainImage').css('display') === 'block') {
+              common.indicateSimpleImage();
+            }
             sinclo.chatApi.lockPageScroll();
           }
           else {
@@ -127,6 +135,14 @@
             else{
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
+            }
+            //画像がない時のタイトル位置
+            if($('#mainImage').css('display') === 'none') {
+              common.indicateSimpleNoImage();
+            }
+            //画像がある時のタイトル位置
+            else if($('#mainImage').css('display') === 'block') {
+              common.indicateSimpleImage();
             }
             height = this.header.offsetHeight;
             sinclo.widget.condifiton.set(false, true);
@@ -1706,7 +1722,19 @@
           widgetWidth = $(window).width();
           ratio = widgetWidth * (1/285);
           if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
-            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - $('#sincloBox #widgetDescription').height() - $('#sincloBox #fotter').height() - (5.5 * ratio));
+            //企業名が空の場合
+            if($('#widgetDescription').text() == " " && $('#widgetSubTitle').text() !== " ") {
+              var widgetDescriptionHeight = $('#widgetSubTitle').height()*0.3;
+            }
+            //説明文が空の場合
+            else if($('#widgetDescription').text() !== " " && $('#widgetSubTitle').text() == " ") {
+              var widgetDescriptionHeight = $('#widgetDescription').height()*0.3;
+            }
+            else {
+               var widgetDescriptionHeight = $('#widgetDescription').height();
+            }
+            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - widgetDescriptionHeight - $('#sincloBox #fotter').height() - (5.5 * ratio));
+
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
           } else {
@@ -2623,12 +2651,12 @@
           }
           return selectedClass;
         },
-        createMessageUnread: function(cs, val, name){
-            if ( cs === "sinclo_re" ) {
-                sinclo.chatApi.unread++;
-                sinclo.chatApi.showUnreadCnt();
-            }
-            sinclo.chatApi.createMessage(cs, val, name);
+        createMessageUnread: function(cs, val, name, isScenarioMessage){
+          if ( cs && cs.indexOf("sinclo_re") >= 0 ) {
+            sinclo.chatApi.unread++;
+            sinclo.chatApi.showUnreadCnt();
+          }
+          sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
         },
         clearChatMessages: function() {
           var chatTalk = document.getElementsByTagName("sinclo-chat")[0];
@@ -4776,9 +4804,9 @@
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
           if(String(categoryNum).indexOf("delete_") >= 0) {
-            sinclo.chatApi.createMessage('sinclo_re ' + categoryNum, message, name, true);
+            sinclo.chatApi.createMessageUnread('sinclo_re ' + categoryNum, message, name, true);
           } else {
-            sinclo.chatApi.createMessage('sinclo_re', message, name, true);
+            sinclo.chatApi.createMessageUnread('sinclo_re', message, name, true);
           }
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
@@ -4792,6 +4820,8 @@
         var self = sinclo.scenarioApi;
         resultDataSet.message = self._replaceVariable(resultDataSet.message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
+          sinclo.chatApi.unread++;
+          sinclo.chatApi.showUnreadCnt();
           sinclo.chatApi.createSendFileMessage(resultDataSet, "auto");
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
@@ -5558,6 +5588,8 @@
             var cancelLabel = self._parent.get(self._parent._lKey.currentScenario).cancelLabel;
             var extensionType = self._parent.get(self._parent._lKey.currentScenario).receiveFileType;
             var extendedExtensions = self._parent.get(self._parent._lKey.currentScenario).extendedReceiveFileExtensions.split(',');
+            sinclo.chatApi.unread++;
+            sinclo.chatApi.showUnreadCnt();
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(self._handleFileSelect);
           });
