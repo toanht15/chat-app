@@ -49,6 +49,7 @@ $(function(){
     $deletedUserDisplayName = "";
     $isSendFile = false;
     $isRecieveFile = false;
+    $imgTag = false;
 
     if ( strcmp($val['THistoryChatLog']['message_type'], 1) === 0 ) {
       $className = "sinclo_re";
@@ -60,6 +61,7 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
       $isRecieveFile = false;
+      $imgTag = false;
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 2) === 0 && !empty($val['MUser']['display_name'])) {
       $className = "sinclo_se";
@@ -72,6 +74,9 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
       $isRecieveFile = false;
+      if(strpos($val['THistoryChatLog']['message'],'<img') !== false){
+         $imgTag = true;
+      }
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 3) === 0 || strcmp($val['THistoryChatLog']['message_type'], 4) === 0 ) {
       $className = "sinclo_auto";
@@ -85,6 +90,9 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
       $isRecieveFile = false;
+      if(strpos($val['THistoryChatLog']['message'],'<img') !== false){
+         $imgTag = true;
+      }
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 5) === 0 || strcmp($val['THistoryChatLog']['message_type'], 4) === 0
       || strcmp($val['THistoryChatLog']['message_type'], 7) === 0) {
@@ -99,6 +107,9 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
       $isRecieveFile = false;
+      if(strpos($val['THistoryChatLog']['message'],'<img') !== false){
+         $imgTag = true;
+      }
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 6) === 0 ) {
       $className = "sinclo_se";
@@ -110,6 +121,7 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = true;
       $isRecieveFile = false;
+      $imgTag = false;
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 12) === 0 ) {
       $className = "sinclo_re";
@@ -121,6 +133,7 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
       $isRecieveFile = false;
+      $imgTag = false;
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 13) === 0 ) {
       $className = "sinclo_re";
@@ -132,6 +145,7 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
       $isRecieveFile = false;
+      $imgTag = false;
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 19) === 0 ) {
       if(!json_decode($val['THistoryChatLog']['message'])) {
@@ -146,6 +160,7 @@ $(function(){
         $isSendFile = false;
         $isRecieveFile = false;
         $number = $number + 1;
+        $imgTag = false;
       } else {
         $className = "sinclo_re";
         $name = "シナリオメッセージ（ファイル受信）";
@@ -160,6 +175,7 @@ $(function(){
         $isSendFile = false;
         $isRecieveFile = true;
         $number = $number + 1;
+        $imgTag = false;
       }
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 21) === 0 ) {
@@ -173,6 +189,9 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
       $isRecieveFile = false;
+      if(strpos($val['THistoryChatLog']['message'],'<img') !== false){
+         $imgTag = true;
+      }
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 22) === 0 ) {
       $className = "sinclo_auto";
@@ -185,6 +204,9 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
       $isRecieveFile = false;
+      if(strpos($val['THistoryChatLog']['message'],'<img') !== false){
+         $imgTag = true;
+      }
     }
     else if (  strcmp($val['THistoryChatLog']['message_type'], 23) === 0  ) {
       $className = "sinclo_auto";
@@ -197,6 +219,9 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = false;
       $isRecieveFile = false;
+      if(strpos($val['THistoryChatLog']['message'],'<img') !== false){
+         $imgTag = true;
+      }
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 27) === 0 ) {
       $className = "sinclo_auto";
@@ -208,6 +233,7 @@ $(function(){
       $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
       $isSendFile = true;
       $isRecieveFile = false;
+      $imgTag = false;
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 98) === 0 ) {
       $className = "sinclo_etc";
@@ -225,10 +251,10 @@ $(function(){
     <?php } //権限が管理者、削除されていない履歴の場合
     else if(strcmp($permissionLevel,1) === 0 && strcmp($val['THistoryChatLog']['delete_flg'], 0) === 0) { ?>
       <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><?= $this->Html->image('close_b.png', array('class' => ($coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "commontooltip"),'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",'data-balloon-position' => '43.5','alt' => '履歴一覧','width' => 17,'height' => 17,'style' => 'margin-top: -24px; float:right; margin-right:1px; opacity:0.7; cursor:pointer','onclick' => !$coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : 'openDeleteDialog('.$id.','.$historyId.',"'.(intval($val['THistoryChatLog']['message_type']) === 6 ? json_decode($deleteMessage, TRUE)["fileName"] : $deleteMessage).'","'.$created.'")')) ?>
-      <span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'],$isSendFile,$isRecieveFile)?></li>
+      <span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'],$isSendFile,$isRecieveFile,$imgTag)?></li>
     <?php }
     else { //権限が一般の場合 ?>
-      <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'],$isSendFile,$isRecieveFile)?></li>
+      <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'],$isSendFile,$isRecieveFile,$imgTag)?></li>
   <?php }
   } else { ?>
     <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><?=h($message)?></li>
