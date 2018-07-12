@@ -126,7 +126,6 @@ function replaceVariable(str,isSmartphone,widgetSize){
   // リンク
   var link = str.match(linkReg);
   var linkTab = unEscapeStr.match(linkTabReg);
-  var img = unEscapeStr.match(imgTagReg);
   if (link !== null || linkTab !== null) {
       if ( linkTab !== null) {
         if(link !== null) {
@@ -172,6 +171,7 @@ function replaceVariable(str,isSmartphone,widgetSize){
     }
   }
   //imgタグ有効化
+  var img = unEscapeStr.match(imgTagReg);
   if(img !== null) {
     imgTag = "<img "+img[1]+" class = "+className+">";
     str = unEscapeStr.replace(img[0], imgTag);
