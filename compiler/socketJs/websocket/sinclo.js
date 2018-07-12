@@ -4595,6 +4595,7 @@
         sinclo.chatApi.initEvent();
         var type = (beforeTextareaOpened === "close") ? "2" : "1";
         self._handleChatTextArea(type);
+
         self._resetDefaultVal();
         self._saveProcessingState(false);
         self._enablePreviousRadioButton();
