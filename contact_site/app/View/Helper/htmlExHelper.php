@@ -164,13 +164,13 @@ class htmlExHelper extends AppHelper {
                 //スタイル設定されている場合
                 if(strpos($value,'style') !== false){
                   preg_match('/style="([\s\S]*?)"/', $value, $result);
-                  $ret = "<div class='imgTag'>".preg_replace('/style="([\s\S]*?)"/', "style='".$result[1]."width:100%;transform:none;'", $value)."</div>";
-                  $str = str_replace($value,$ret,$str);
+                  $ret = preg_replace('/style="([\s\S]*?)"/', "style='".$result[1]."transform:none;max-width: 265px;max-height: 285px;'", $value);
+                  $str = str_replace($value,$ret,$tmp);
                 }
                 else {
                   //スタイル設定されていない場合
-                  $ret = "<div class='imgTag'>".preg_replace('/<img/', '<img style="width:100%;transform:none;"', $value)."</div>";
-                  $str = str_replace($value,$ret,$str);
+                  $ret = preg_replace('/<img/', '<img style="transform:none;max-width: 265px;max-height: 285px;"', $value);
+                  $str = preg_replace($value,$ret,$tmp);
                 }
               }
             }
