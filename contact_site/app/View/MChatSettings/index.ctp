@@ -59,7 +59,7 @@ function addOption(type,sorryMessageName){
       $('#'+sorryMessageName).closest('li').find('.validation').show();
     }
     //変数追加
-    addVariable(type,sendMessage);
+    addVariable(type,sendMessage,$('#'+sorryMessageName).get(0).selectionStart);
 }
 
 //スクロール位置把握

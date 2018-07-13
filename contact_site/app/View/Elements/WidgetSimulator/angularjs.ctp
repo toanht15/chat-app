@@ -18,6 +18,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   // 入力制御
   $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
 
+  console.log('ちぇええっく');
+  console.log($scope.simulatorSettings._settings);
+
   /**
    * addReMessage
    * 企業側メッセージの追加
@@ -781,19 +784,22 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       $scope.$emit('switchWidget', type)
       //画像がない場合
       if($('#mainImage').css('display') == 'none'　|| $('#mainImage').css('display') == undefined) {
+        console.log('画像あるよ');
         if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
           $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
         }
-        if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
+        else if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
           $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
         }
       }
       //画像がある場合
       else if($('#mainImage').css('display') == 'block') {
+        console.log('画像あるよ2');
+        console.log($scope.simulatorSettings._settings.widget_title_top_type);
         if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
           $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
         }
-        if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
+        else if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
           $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 70px !important;padding-right: 26px !important;'});
         }
       }
