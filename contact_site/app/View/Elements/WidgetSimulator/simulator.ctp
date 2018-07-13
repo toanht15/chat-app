@@ -318,12 +318,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li.boxType.chat_left.middleSize { border-radius: 12px 12px 12px 0; margin-right: 21px; margin-left:10px; }
         #sincloBox ul#chatTalk li.boxType.chat_right.largeSize { border-radius: 12px 12px 0 12px; margin-left: 52.7px; margin-right:10px; }
         #sincloBox ul#chatTalk li.boxType.chat_left.largeSize { border-radius: 12px 12px 12px 0; margin-right: 24.6px; margin-left:10px; }
-        #sincloBox ul#chatTalk li.boxType.chat_right .smallSizeImg {max-width: 165px; max-height: 120px; margin-left:auto; margin-right:auto; transform:none;}
-        #sincloBox ul#chatTalk li.boxType.chat_left .smallSizeImg { max-width: 165px; max-height: 120px; margin-left:auto; margin-right:auto; transform:none;}
-        #sincloBox ul#chatTalk li.boxType.chat_right .middleSizeImg {max-width: 215px; max-height: 188px; margin-left:auto; margin-right:auto; transform:none;}
-        #sincloBox ul#chatTalk li.boxType.chat_left .middleSizeImg { max-width: 215px; max-height: 188px; margin-left:auto; margin-right:auto; transform:none;}
-        #sincloBox ul#chatTalk li.boxType.chat_right .largeSizeImg { max-width: 265px; max-height: 285px; margin-left:auto; margin-right:auto; transform:none;}
-        #sincloBox ul#chatTalk li.boxType.chat_left .largeSizeImg { max-width: 265px; max-height: 285px; margin-left:auto; margin-right:auto; transform:none;}
+        #sincloBox ul#chatTalk li.boxType.chat_right .smallSizeImg {max-width: 165px; max-height: 120px; margin-left:auto; margin-right:auto; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_left .smallSizeImg { max-width: 165px; max-height: 120px; margin-left:auto; margin-right:auto; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_right .middleSizeImg {max-width: 215px; max-height: 188px; margin-left:auto; margin-right:auto; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_left .middleSizeImg { max-width: 215px; max-height: 188px; margin-left:auto; margin-right:auto; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_right .largeSizeImg { max-width: 265px; max-height: 285px; margin-left:auto; margin-right:auto; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_left .largeSizeImg { max-width: 265px; max-height: 285px; margin-left:auto; margin-right:auto; transform:none; display:block;}
         #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 37.5px }
         #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 17.5px }
         #sincloBox ul#chatTalk li.balloonType.chat_right.middleSize { margin-left: 45px }
