@@ -1057,14 +1057,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       //通知設定が許可されていない場合は警告を出す
                     if(document.cookie.indexOf('block_notify=true') == -1){
                       if(Notification.permission !== "granted"){
-                        message = "通知の表示がブロックされているため、新着チャットを受信した際にデスクトップ通知が表示されません。<br>"
-                                + "<br>チャット受信時の通知を受け取りたい場合は通知の設定を「許可」に変更してください。"
+                        message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
+                                + "<br>チャット受信時の通知を受け取りたい場合は<br>通知の設定を「許可」に変更してください。"
                                 + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
                                 + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
-                                + "以降、このメッセージを表示しない</label>";
+                                + "今後、このメッセージを表示しない</label>";
                         setTimeout(function(){
-                          modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の解除', 'fade', '');
-                        },600);
+                          modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
+                        },505);
                       }
                     }
 
@@ -1687,12 +1687,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
             //通知設定が許可されていない場合は警告を出す
             if(Notification.permission !== "granted"){
-              message = "通知の表示がブロックされているため、新着チャットを受信した際に<br>デスクトップ通知が表示されません。<br>"
-                      + "<br>チャット受信時の通知を受け取りたい場合は通知の設定を「許可」に<br>変更してください。"
+              message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
+                      + "<br>チャット受信時の通知を受け取りたい場合は<br>通知の設定を「許可」に変更してください。"
                       + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
                       + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
-                      + "以降、このメッセージを表示しない</label>";
-              modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の許可', 'fade', '');
+                      + "今後、このメッセージを表示しない</label>";
+              modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
 
           }
         }

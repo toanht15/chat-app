@@ -42,7 +42,6 @@
       /*ポップアップブロック解除通告用*/
       &.p-cus-block-popup{
         width:490px;
-        box-shadow:0 0 30px rgba(0,0,0,0.5);
         text-align : center;
         #popup-button .textBtn {
           width: 5em;
@@ -53,8 +52,7 @@
 
       /*デスクトップ通知解除通告用*/
       &.p-cus-block-notify{
-        width:450px;
-        box-shadow:0 0 30px rgba(0,0,0,0.5);
+        width: 450px;
         text-align : center;
         #popup-button .textBtn {
           width: 5em;
