@@ -2122,7 +2122,7 @@
             return;
           }
           // シナリオのヒアリングモードのみ有効
-          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
+          if(sinclo.scenarioApi.isProcessing()) {
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
@@ -2628,7 +2628,7 @@
           divElm.style.textAlign = "right";
           var thumbnail = "";
           if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
-            thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail " + sinclo.chatApi.fileUploader._selectPreviewImgClass() + "'>";
+            thumbnail = "<img src='" + downloadUrl + '?thumb' + "' class='sendFileThumbnail " + sinclo.chatApi.fileUploader._selectPreviewImgClass() + "'>";
           } else {
             thumbnail = "<i class='sinclo-fal " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
@@ -2854,7 +2854,8 @@
             }
 
             sinclo.trigger.judge.matchAllSpeechContent(value, function(result){
-              if(result && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+              if((isScenarioMessage || result) && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+                result = true;
                 storage.s.set('chatAct', false); // オートメッセージを表示しない
               }
 
@@ -4591,13 +4592,13 @@
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         // 元のメッセージ入力欄に戻す
         sinclo.chatApi.hideMiniMessageArea();
+        self._saveProcessingState(false);
         sinclo.chatApi.removeAllEvent();
         sinclo.chatApi.initEvent();
         var type = (beforeTextareaOpened === "close") ? "2" : "1";
         self._handleChatTextArea(type);
-
+        
         self._resetDefaultVal();
-        self._saveProcessingState(false);
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
@@ -5658,8 +5659,8 @@
         _handleFileSelect: function(event, result, data){
           console.log("FIRE _handleFileSelect :::: %s, $s", result, data);
           var self = sinclo.scenarioApi._sendFile;
-          self._parent._handleStoredMessage();
           if(result) {
+            self._parent._handleStoredMessage();
             if(data) {
               self._pushDownloadUrlData(data);
             }
