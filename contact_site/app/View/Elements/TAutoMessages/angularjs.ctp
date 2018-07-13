@@ -185,7 +185,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
     $scope.addOption = function(type) {
       var sendMessage = document.getElementById('TAutoMessageAction');
       //変数追加
-      sendMessage = addVariable(type,sendMessage);
+      sendMessage = addVariable(type,sendMessage,$('#TAutoMessageAction').get(0).selectionStart);
       $scope.action = sendMessage.value;
       // シミュレーター上のメッセージ表示更新
       $scope.createMessage();
