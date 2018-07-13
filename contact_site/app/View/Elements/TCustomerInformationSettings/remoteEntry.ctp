@@ -1,32 +1,62 @@
 <script type="text/javascript">
+
   //特定項目を選択した際に、追加メニュー分の高さを確保する
   //特定項目から選択が外れた場合は、その分の高さを削減する
   $(function () {
-    addTooltipEvent();
-    <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]){ ?>
-    //項目名が会社名のものを編集するときはcompany_name_existのidが存在する
-    if($('#company_name_exist').length){
-      $('#TCustomerInformationSettingItemName').blur(function(){
-        if($('#TCustomerInformationSettingItemName')[0].value != "会社名"){
-          message = "項目名を変更すると企業情報付与された<br>会社名の検索ができなくなります。<br>"
-                  + "<br><b>本当に項目名を変更しますか？</b>";
-          modalOpenOverlap.call(window, message, 'p-tcustomerinformation-alert', '必ず確認してください', 'moment');
-          $('#popupCloseOverlapBtn').on('click', function(){
-            $('#TCustomerInformationSettingItemName')[0].value = "会社名";
-          });
+  var mX;
+  var mY;
+  document.body.addEventListener("mousemove", function(e){
+    //マウスの座標を取得する
+    mX = e.pageX;  //X座標
+    mY = e.pageY;  //Y座標
+  });
+  var save_minheight;
+  var save_minwidth;
+  var click_save = false;
+  addTooltipEvent();
+  <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]){ ?>
+  //項目名が会社名のものを編集するときはcompany_name_existのidが存在する
+  if($('#company_name_exist').length){
+    $('#TCustomerInformationSettingItemName').blur(function(){
+      //保存ボタンの位置を取得する
+        save_minheight = $("#popup-button > .textBtn").offset().top;
+        save_minwidth = $("#popup-button > .textBtn").offset().left;
 
-          popupEventOverlap.cancelPopup = (function(){
-            $('#TCustomerInformationSettingItemName')[0].value = "会社名";
-            popupEventOverlap.close();
-          });
 
-
-
-
+      //X軸とY軸で判定を行い
+      //保存ボタンが押された状態での項目名変更であればフラグを立てておく
+      if(save_minheight < mY && mY < Number(save_minheight)+25){
+        if(save_minwidth < mX && mX < Number(save_minwidth)+75){
+          click_save = true;
         }
-      });
-    }
+      }
+
+    if($('#TCustomerInformationSettingItemName')[0].value != "会社名"){
+      message = "項目名を変更すると企業情報付与された<br>会社名の検索ができなくなります。<br>"
+              + "<br><b>本当に項目名を変更しますか？</b>";
+      modalOpenOverlap.call(window, message, 'p-tcustomerinformation-alert', '必ず確認してください', 'moment');
+        $('#popupCloseOverlapBtn').on('click', function(){
+          $('#TCustomerInformationSettingItemName')[0].value = "会社名";
+        });
+
+        popupEventOverlap.cancelPopup = (function(){
+          $('#TCustomerInformationSettingItemName')[0].value = "会社名";
+          change_save = false;
+          popupEventOverlap.close();
+        });
+
+        popupEventOverlap.closeNoPopupOverlap = (function(){
+          popupEventOverlap.close();
+          if(click_save){
+            popupEvent.closePopup();
+          }
+        });
+      }
+    });
+  }
     <?php } ?>
+
+
 
 
     $('#TCustomerInformationSettingItemName').keydown(function(event){
