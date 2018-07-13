@@ -798,7 +798,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         popupblock = true;
         message="ポップアップがブロックされているため、共有機能が利用できません。<br>"
                +"<br>共有機能を利用される場合はポップアップの設定を「許可」に変更して下さい。"
-               +"<br><br><a href='https://info.sinclo.jp/manual/ポップアップブロック解除方法/'>設定方法はこちら</a>";
+               +"<br><br><a target='_blank' href='https://info.sinclo.jp/manual/ポップアップブロック解除方法/'>設定方法はこちら</a>";
         modalOpen.call(window, message,"p-cus-block-popup",'ポップアップの設定', 'fade', '');
       }else{
         popupblock = false;
@@ -1059,7 +1059,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                       if(Notification.permission !== "granted"){
                         message = "通知の表示がブロックされているため、新着チャットを受信した際にデスクトップ通知が表示されません。<br>"
                                 + "<br>チャット受信時の通知を受け取りたい場合は通知の設定を「許可」に変更してください。"
-                                + "<br><br><a href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
+                                + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
                                 + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
                                 + "以降、このメッセージを表示しない</label>";
                         setTimeout(function(){
@@ -1689,7 +1689,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             if(Notification.permission !== "granted"){
               message = "通知の表示がブロックされているため、新着チャットを受信した際に<br>デスクトップ通知が表示されません。<br>"
                       + "<br>チャット受信時の通知を受け取りたい場合は通知の設定を「許可」に<br>変更してください。"
-                      + "<br><br><a href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
+                      + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
                       + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
                       + "以降、このメッセージを表示しない</label>";
               modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の許可', 'fade', '');
