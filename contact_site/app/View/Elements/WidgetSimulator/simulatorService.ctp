@@ -400,7 +400,7 @@ sincloApp.factory('SimulatorService', function() {
             var value = str.slice(radio+2).trim();
             var name = value.replace(htmlTagReg, '');
             str = "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-            str += "<label for='" + radioName + "-" + i + "'>" + value + "</label></span>";
+            str += "<label for='" + radioName + "-" + i + "'><p>" + value + "</p></label></span>";
         }
         //リンク、電話番号、imgタグ
         str = replaceVariable(str,isSmartphone,this._settings['widget_size_type']);
