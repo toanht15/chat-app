@@ -141,9 +141,14 @@ class htmlExHelper extends AppHelper {
 
         foreach(explode("\n", $value) as $key => $tmp){
             $str = h($tmp);
+            $this->log('tmp',LOG_DEBUG);
+            $this->log($tmp,LOG_DEBUG);
             if ( preg_match("/^\[\]/", $tmp) ) {
+                $this->log('まずこのなかに入っているか確認',LOG_DEBUG);
                 $str = "<input type='radio' id='radio".$key."' disabled=''>";
                 $str .= "<label class='pointer' for='radio".$key."'>".trim(preg_replace("/^\[\]/", "", $tmp))."</label>";
+                $this->log('str事件',LOG_DEBUG);
+                $this->log($str,LOG_DEBUG);
             }
             $linkData = [];
             if ( preg_match('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $tmp) ) {
@@ -159,18 +164,20 @@ class htmlExHelper extends AppHelper {
                 $ret = "<span style='font-weight: normal;'>". preg_replace('/^<telno>|<\/telno>$/', "", $tmp) . "</span>";
                 $str = preg_replace('/<telno>([\s\S]*?)<\/telno>/', $ret, $tmp);
             }
-            if ( preg_match('/<img([\s\S]*?)>/', $tmp) && $imgTag) {
+            if ( preg_match_all('/<img([\s\S]*?)>/', $tmp, $allResult) && $imgTag) {
+              foreach($allResult[0] as $key => $value){
                 //スタイル設定されている場合
-                if(strpos($tmp,'style') !== false){
-                  preg_match('/style="([\s\S]*?)"/', $tmp, $result);
-                  $ret = preg_replace('/style="([\s\S]*?)"/', "style=".$result[1]."width:100%;transform: none;", $tmp);
-                  $str = "<div class='imgTag'>" . $ret . "</div>";
+                if(strpos($value,'style') !== false){
+                  preg_match('/style="([\s\S]*?)"/', $value, $result);
+                  $ret = "<div class='imgTag'>".preg_replace('/style="([\s\S]*?)"/', "style='".$result[1]."width:100%;transform:none;'", $value)."</div>";
+                  $str = str_replace($value,$ret,$str);
                 }
-                //スタイル設定されていない場合
                 else {
-                  $ret = preg_replace('/<img/', '<img style="width:100%;transform: none;"', $tmp);
-                  $str = "<div class='imgTag'>" . $ret . "</div>";
+                  //スタイル設定されていない場合
+                  $ret = "<div class='imgTag'>".preg_replace('/<img/', '<img style="width:100%;transform:none;"', $value)."</div>";
+                  $str = str_replace($value,$ret,$str);
                 }
+              }
             }
             $content .= $str."\n";
         }

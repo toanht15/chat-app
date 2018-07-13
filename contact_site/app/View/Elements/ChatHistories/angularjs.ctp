@@ -240,7 +240,7 @@
         if(imgTag === null) {
           var imgTagNoStyleReg = RegExp(/<img ([\s\S]*?)>/);
           var imgTagNoStyle = img[i].match(imgTagNoStyleReg);
-          var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTagNoStyle[1],imgTagNoStyle[1]+'style:width:100%;transform: none;') + "</div>";
+          var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTagNoStyle[1],imgTagNoStyle[1]+'style="width:100%;transform: none;"') + "</div>";
           message = message.replace(imgTagNoStyle[0], imgTagSize);
         }
         else {
