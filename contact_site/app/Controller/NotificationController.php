@@ -246,7 +246,7 @@ class NotificationController extends AppController {
           'query' => $parsedUrl['query'],
           'fragment' => $parsedUrl['fragment'],
         ],
-        'body' => json_encode($settings->requestBody),
+        'body' => $settings->requestBody,
         'header' => $requestHeaders
       ];
 

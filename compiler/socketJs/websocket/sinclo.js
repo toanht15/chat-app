@@ -2122,7 +2122,7 @@
             return;
           }
           // シナリオのヒアリングモードのみ有効
-          if(sinclo.scenarioApi.isProcessing()) {
+          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
@@ -2446,7 +2446,7 @@
                     if ( radio > -1 ) {
                         var name = str.slice(radio+2).trim();
                         str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-                        str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
+                        str += "<label for='" + radioName + "-" + i + "'><p>" + name + "</p></label></sinclo-radio>";
                     }
                 }
                 // リンク
