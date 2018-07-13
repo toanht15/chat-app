@@ -240,11 +240,11 @@
         if(imgTag === null) {
           var imgTagNoStyleReg = RegExp(/<img ([\s\S]*?)>/);
           var imgTagNoStyle = img[i].match(imgTagNoStyleReg);
-          var imgTagSize = result[i].replace(imgTagNoStyle[1],imgTagNoStyle[1]+'style="transform: none;max-width: 265px;max-height: 285px;"');
+          var imgTagSize = result[i].replace(imgTagNoStyle[1],imgTagNoStyle[1]+'style="display:block;transform: none;max-width: 265px;max-height: 285px;"');
           message = message.replace(imgTagNoStyle[0], imgTagSize);
         }
         else {
-          var imgTagSize = result[i].replace(imgTag[2],imgTag[2]+';transform: none;max-width: 265px;max-height: 285px;');
+          var imgTagSize = result[i].replace(imgTag[2],imgTag[2]+';display:block;transform: none;max-width: 265px;max-height: 285px;');
           message = message.replace(imgTag[0], imgTagSize);
         }
       }
