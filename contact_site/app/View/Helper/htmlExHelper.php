@@ -141,14 +141,9 @@ class htmlExHelper extends AppHelper {
 
         foreach(explode("\n", $value) as $key => $tmp){
             $str = h($tmp);
-            $this->log('tmp',LOG_DEBUG);
-            $this->log($tmp,LOG_DEBUG);
             if ( preg_match("/^\[\]/", $tmp) ) {
-                $this->log('まずこのなかに入っているか確認',LOG_DEBUG);
                 $str = "<input type='radio' id='radio".$key."' disabled=''>";
                 $str .= "<label class='pointer' for='radio".$key."'>".trim(preg_replace("/^\[\]/", "", $tmp))."</label>";
-                $this->log('str事件',LOG_DEBUG);
-                $this->log($str,LOG_DEBUG);
             }
             $linkData = [];
             if ( preg_match('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $tmp) ) {
