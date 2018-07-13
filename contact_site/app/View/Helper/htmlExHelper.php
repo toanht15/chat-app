@@ -159,18 +159,20 @@ class htmlExHelper extends AppHelper {
                 $ret = "<span style='font-weight: normal;'>". preg_replace('/^<telno>|<\/telno>$/', "", $tmp) . "</span>";
                 $str = preg_replace('/<telno>([\s\S]*?)<\/telno>/', $ret, $tmp);
             }
-            if ( preg_match('/<img([\s\S]*?)>/', $tmp) && $imgTag) {
+            if ( preg_match_all('/<img([\s\S]*?)>/', $tmp, $allResult) && $imgTag) {
+              foreach($allResult[0] as $key => $value){
                 //スタイル設定されている場合
-                if(strpos($tmp,'style') !== false){
-                  preg_match('/style="([\s\S]*?)"/', $tmp, $result);
-                  $ret = preg_replace('/style="([\s\S]*?)"/', "style=".$result[1]."width:100%;transform: none;", $tmp);
-                  $str = "<div class='imgTag'>" . $ret . "</div>";
+                if(strpos($value,'style') !== false){
+                  preg_match('/style="([\s\S]*?)"/', $value, $result);
+                  $ret = preg_replace('/style="([\s\S]*?)"/', "style='".$result[1]."display:block;transform:none;max-width: 265px;max-height: 285px;'", $value);
+                  $str = str_replace($value,$ret,$tmp);
                 }
-                //スタイル設定されていない場合
                 else {
-                  $ret = preg_replace('/<img/', '<img style="width:100%;transform: none;"', $tmp);
-                  $str = "<div class='imgTag'>" . $ret . "</div>";
+                  //スタイル設定されていない場合
+                  $ret = preg_replace('/<img/', '<img style="display:block;transform:none;max-width: 265px;max-height: 285px;"', $value);
+                  $str = preg_replace($value,$ret,$tmp);
                 }
+              }
             }
             $content .= $str."\n";
         }
