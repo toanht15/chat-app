@@ -240,11 +240,11 @@
         if(imgTag === null) {
           var imgTagNoStyleReg = RegExp(/<img ([\s\S]*?)>/);
           var imgTagNoStyle = img[i].match(imgTagNoStyleReg);
-          var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTagNoStyle[1],imgTagNoStyle[1]+'style:width:100%;') + "<div>";
+          var imgTagSize = result[i].replace(imgTagNoStyle[1],imgTagNoStyle[1]+'style="display:block;transform: none;max-width: 265px;max-height: 285px;"');
           message = message.replace(imgTagNoStyle[0], imgTagSize);
         }
         else {
-          var imgTagSize = "<div class=imgTag>" + result[i].replace(imgTag[2],imgTag[2]+';width:100%') + "<div>";
+          var imgTagSize = result[i].replace(imgTag[2],imgTag[2]+';display:block;transform: none;max-width: 265px;max-height: 285px;');
           message = message.replace(imgTag[0], imgTagSize);
         }
       }
@@ -768,7 +768,7 @@
       var thumbnail = "";
       var height = "";
       if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
-        thumbnail = "<img src='" + url + "' class='recieveFileThumbnail'>";
+        thumbnail = "<img src='" + url + '?thumb' + "' class='recieveFileThumbnail'>";
       } else {
         thumbnail = "<i class='fal " + selectFontIconClassFromExtension(extension) + " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         height = "style = 'height:64px;'"

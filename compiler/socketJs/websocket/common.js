@@ -654,7 +654,7 @@ var socket, // socket.io
           //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
           if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
             sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px'+display});
+            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
           }
           //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
           if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
@@ -708,7 +708,7 @@ var socket, // socket.io
           //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
           if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
             sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px'+display});
+            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
           }
           //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
           if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
@@ -772,7 +772,7 @@ var socket, // socket.io
         //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
         if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
           sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;padding-top:0px;'+display});
         }
         //企業名 企業名表示しない・説明文表示する・画像ありの場合
         if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
@@ -831,7 +831,7 @@ var socket, // socket.io
         //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
         if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
           sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px'+display});
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px;'+display});
         }
         //企業名 企業名表示しない・説明文表示する・画像ありの場合
         if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
@@ -1159,9 +1159,9 @@ var socket, // socket.io
       html += '      #sincloBox .sinclo_re a { color: '+ colorList['reTextColor'] +' }';
       html += '      #sincloBox ul#chatTalk li.sinclo_re span.telno { color: ' + colorList['reTextColor'] + '; }';
       html += '      #sincloBox ul#chatTalk li.sinclo_re span.link { color: ' + colorList['reTextColor'] + '; }';
-      html += '      #sincloBox ul#chatTalk li.sinclo_re .smallSizeImg { max-width: 165px; max-height: 120px; margin-left:auto; margin-right:auto;}';
-      html += '      #sincloBox ul#chatTalk li.sinclo_re .middleSizeImg { max-width: 215px; max-height: 188px; margin-left:auto; margin-right:auto;}';
-      html += '      #sincloBox ul#chatTalk li.sinclo_re .largeSizeImg { max-width: 265px; max-height: 285px; margin-left:auto; margin-right:auto;}';
+      html += '      #sincloBox ul#chatTalk li.sinclo_re .smallSizeImg { max-width: 165px; max-height: 120px; display:block;}';
+      html += '      #sincloBox ul#chatTalk li.sinclo_re .middleSizeImg { max-width: 215px; max-height: 188px; display:block;}';
+      html += '      #sincloBox ul#chatTalk li.sinclo_re .largeSizeImg { max-width: 265px; max-height: 285px; display:block;}';
       html += '      #sincloBox sinclo-div {display: block; }';
       html += '      #sincloBox label { display: inline; max-width: 100%; margin-bottom: 0; font-weight: normal;}';
       html += '      #sincloBox a:hover { color: ' + colorList['mainColor'] + '; }';
@@ -1259,11 +1259,12 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + colorList['cNameTextColor'] + '; font-weight: bold; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: block; margin-top: 0.2em; margin-bottom: -1.25em; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: inline-block; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin 0; padding: 0 0 0 ' + (Number(widget.reTextSize) + 7) + 'px; color:' + colorList['reTextColor'] + '; min-height: 12px; font-size: ' + widget.reTextSize + 'px; } ';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: ' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; left: 0px; margin-top: -' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; width: ' + (Number(widget.reTextSize)) + 'px; height: ' + (Number(widget.reTextSize)) + 'px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; } ';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: ' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; left: ' + ((widget.reTextSize/2 - ((widget.reTextSize-6)/2))+1) + 'px; margin-top: -' + (Math.round(widget.reTextSize/2)-4) + 'px; width: ' + (Number(widget.reTextSize)-7) + 'px; height: ' + (Number(widget.reTextSize)-7) + 'px; background: ' + colorList['mainColor'] + '; border-radius: 50%; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-flex; width: 100%; cursor: pointer; margin 0; color:' + colorList['reTextColor'] + '; min-height: 12px; font-size: ' + widget.reTextSize + 'px; line-height: ' + ((Number(widget.reTextSize)+2) * 1.4) + 'px; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label p { display:table-cell; font-size: ' + widget.reTextSize + 'px; vertical-align: middle; margin-left: 5px; line-height: ' + ((Number(widget.reTextSize)+2) * 1.4) + 'px; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; display: flex; flex: 0 0 auto; align-self: flex-start; margin-top: ' + (Number(widget.reTextSize)+1) * (1.4 - 1) / 2 + 'px; width: ' + (Number(widget.reTextSize)+1) + 'px; height: ' + (Number(widget.reTextSize)+1) + 'px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: flex; align-self: flex-start; position: absolute; margin-top: ' + (Number(widget.reTextSize)+1) * (1.4 - 1) / 2 + 'px; left: ' + ((widget.reTextSize/2 - ((widget.reTextSize-6)/2))+1) + 'px; top: ' + ((widget.reTextSize/2 - ((widget.reTextSize-6)/2))+1) + 'px; width: ' + (Number(widget.reTextSize)-6) + 'px; height: ' + (Number(widget.reTextSize)-6) + 'px; background: ' + colorList['mainColor'] + '; border-radius: 50%; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver { cursor: pointer; display: none; position: absolute; left: 0; right: 0; width: 100%; height: 1.5em; background-color: rgba(0, 0, 0, 0.45); vertical-align: middle; word-wrap: break-word; z-index: 2; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver:before {content: ""; display: inline-block; border: 6px solid transparent; position: absolute; top: 50%; margin-top: -3px; left: 5px; height: 8px; border-top: 8px solid white; border-bottom: 0; }';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { overflow: hidden; font-size: 10px; height: 100%; line-height: 2em; padding-left: 2em; color: #FFF; }';
@@ -1498,7 +1499,7 @@ var socket, // socket.io
             html += '#sincloBox ul#chatTalk li { line-height: 1.4; padding: ' + (10 * ratio) + 'px ' + (15 * ratio) + 'px !important; border-radius: ' + (12 * ratio) + 'px !important;}';
           }
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
-          html += '#sincloBox ul#chatTalk li sinclo-radio * { webkit-transform: scale(' + (1 * ratio) + '); transform: scale(' + (1 * ratio) + '); moz-transform: scale(' + (1 * ratio) + '); } ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio * { -webkit-transform: scale(' + (1 * ratio) + '); -webkit-transform-origin: left top;  transform: scale(' + (1 * ratio) + '); transform-origin: left top; -moz-transform: scale(' + (1 * ratio) + '); -mox-transform-origin: left top; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1.5em; font-size: ' + (12 * ratio) + 'px; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: ' + (11 * ratio)/2 + 'px; margin-top: -' + (11 * ratio)/2 + 'px; left: '+ (0 * ratio) +'px; width: '+ (11 * ratio) +'px; height: '+ (11 * ratio) +'px; border: 0.5px solid ' + chatContentTextColor + '; border-radius: 50%; background-color: #FFF; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: ' + (11 * ratio)/2 + 'px; left: '+ (11 * ratio)/4 +'px; margin-top: -'+ (11 * ratio)/4 +'px; width: '+ Math.ceil(((11 * ratio)/2)) +'px; height: '+ Math.ceil(((11 * ratio)/2)) +'px; background: ' + colorList['mainColor'] + '; border-radius: 50%; } ';

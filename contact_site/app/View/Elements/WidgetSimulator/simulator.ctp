@@ -187,7 +187,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox audio,
         #sincloBox video
         {
-          font-family: 'Helvetica Neue', Helvetica, Arial, Verdana, 'ヒラギノ角ゴ ProN W3', 'Hiragino Kaku Gothic ProN', 'メイリオ', Meiryo, 'ＭＳ Ｐゴシック', 'MS PGothic', sans-serif;
+          font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica,Helvetica Neue,Arial,Verdana;
           font-weight: normal;
           font-variant: normal;
           position: static;
@@ -318,12 +318,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li.boxType.chat_left.middleSize { border-radius: 12px 12px 12px 0; margin-right: 21px; margin-left:10px; }
         #sincloBox ul#chatTalk li.boxType.chat_right.largeSize { border-radius: 12px 12px 0 12px; margin-left: 52.7px; margin-right:10px; }
         #sincloBox ul#chatTalk li.boxType.chat_left.largeSize { border-radius: 12px 12px 12px 0; margin-right: 24.6px; margin-left:10px; }
-        #sincloBox ul#chatTalk li.boxType.chat_right .smallSizeImg {max-width: 165px; max-height: 120px; margin-left:auto; margin-right:auto;}
-        #sincloBox ul#chatTalk li.boxType.chat_left .smallSizeImg { max-width: 165px; max-height: 120px; margin-left:auto; margin-right:auto;}
-        #sincloBox ul#chatTalk li.boxType.chat_right .middleSizeImg {max-width: 215px; max-height: 188px; margin-left:auto; margin-right:auto;}
-        #sincloBox ul#chatTalk li.boxType.chat_left .middleSizeImg { max-width: 215px; max-height: 188px; margin-left:auto; margin-right:auto;}
-        #sincloBox ul#chatTalk li.boxType.chat_right .largeSizeImg { max-width: 265px; max-height: 285px; margin-left:auto; margin-right:auto;}
-        #sincloBox ul#chatTalk li.boxType.chat_left .largeSizeImg { max-width: 265px; max-height: 285px; margin-left:auto; margin-right:auto;}
+        #sincloBox ul#chatTalk li.boxType.chat_right .smallSizeImg {max-width: 165px; max-height: 120px; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_left .smallSizeImg { max-width: 165px; max-height: 120px; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_right .middleSizeImg {max-width: 215px; max-height: 188px; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_left .middleSizeImg { max-width: 215px; max-height: 188px; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_right .largeSizeImg { max-width: 265px; max-height: 285px; transform:none; display:block;}
+        #sincloBox ul#chatTalk li.boxType.chat_left .largeSizeImg { max-width: 265px; max-height: 285px; transform:none; display:block;}
         #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 37.5px }
         #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 17.5px }
         #sincloBox ul#chatTalk li.balloonType.chat_right.middleSize { margin-left: 45px }
@@ -337,11 +337,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.cName:not(.details){ color: {{widget.settings['main_color']}}!important;}
         #sincloBox ul#chatTalk li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; }
         #sincloBox ul#chatTalk li.sinclo_se span.details{ color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio { display: block; margin-top: 0.2em; margin-bottom: -1.25em; }
+        #sincloBox ul#chatTalk li span.sinclo-radio { display: inline-block; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin: 0; padding: 0 0 0 {{widget.re_text_size+7}}px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: {{widget.radioButtonBeforeTop}}px; left: 0px; margin-top: -{{widget.radioButtonBeforeTop}}px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: {{widget.radioButtonAfterTop}}px; left: {{widget.radioButtonAfterLeft}}px;; margin-top: -{{widget.radioButtonAfterMarginTop}}px; width: {{widget.re_text_size-7}}px; height: {{widget.re_text_size-7}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-flex; width: 100%; cursor: pointer; margin: 0; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; line-height: {{(widget.re_text_size+2) * 1.4}}px; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label p { display:table-cell; font-size: {{widget.re_text_size}}px; vertical-align: middle; margin-left: 5px; line-height: {{(widget.re_text_size+2) * 1.4}}px; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; display: flex; flex: 0 0 auto; align-self: flex-start; margin-top:{{(widget.re_text_size+2) * (1.4 - 1) / 2}}px; width: {{widget.re_text_size+1}}px; height: {{widget.re_text_size+1}}px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; display: flex; align-self: flex-start; margin-top:{{(widget.re_text_size+2) * (1.4 - 1) / 2}}px; position: absolute; left: {{widget.radioButtonAfterLeft}}px; top: {{widget.radioButtonAfterLeft}}px; width: {{widget.re_text_size-6}}px; height: {{widget.re_text_size-6}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:disabled + label { opacity: 0.5;}
 
         /* ファイル送信 */
