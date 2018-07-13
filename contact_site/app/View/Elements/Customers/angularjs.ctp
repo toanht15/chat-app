@@ -796,9 +796,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var judgewindow = window.open('','','width = 1,height = 1,top = 20000,left = 20000');
       if(judgewindow == null){
         popupblock = true;
-        message="共有機能を使用する場合は<br>"
-               +"<a href=''>こちらのヘルプページ</a>を参考に設定変更を行ってください";
-        modalOpen.call(window, message,"p-cus-block-popup",'ポップアップブロックの解除', 'fade', '');
+        message="ポップアップがブロックされているため、共有機能が利用できません。<br>"
+               +"<br>共有機能を利用される場合はポップアップの設定を「許可」に変更して下さい。"
+               +"<br><br><a href='https://info.sinclo.jp/manual/ポップアップブロック解除方法/'>設定方法はこちら</a>";
+        modalOpen.call(window, message,"p-cus-block-popup",'ポップアップの設定', 'fade', '');
       }else{
         popupblock = false;
         judgewindow.close();
@@ -1051,23 +1052,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                   //離席中→待機中に変化する場合にチャット通知設定の状態を見る
                   if($('#changeOpStatus').data('status') == 0){
 
-                    var browsertype = navigator.userAgent.toLowerCase();
-
-                    //IEの場合は設定ができないという文言を出す。
-                    if(browsertype.indexOf("msie") !== -1 || browsertype.indexOf("trident") !== -1){
-                      message = "インターネットエクスプローラーではチャット通知設定を使用することができません<br><br>"
-                              + "<label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
-                              + "以降、このメッセージを表示しない</label>";
-                      setTimeout(function(){
-                        modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の解除', 'fade', '');
-                      },600);
-                    }else{
+                    <?php if(isset($coreSettings[C_COMPANY_USE_CHAT]) && $coreSettings[C_COMPANY_USE_CHAT]): ?>
 
                       //通知設定が許可されていない場合は警告を出す
+                    if(document.cookie.indexOf('block_notify=true') == -1){
                       if(Notification.permission !== "granted"){
-                        console.log('are?');
-                        message = "ユーザーからのチャット通知を受け取りたい場合<br>"
-                                + "<a href=''>こちらのヘルプページ</a>を参考に設定変更を行ってください。"
+                        message = "通知の表示がブロックされているため、新着チャットを受信した際にデスクトップ通知が表示されません。<br>"
+                                + "<br>チャット受信時の通知を受け取りたい場合は通知の設定を「許可」に変更してください。"
+                                + "<br><br><a href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
                                 + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
                                 + "以降、このメッセージを表示しない</label>";
                         setTimeout(function(){
@@ -1075,6 +1067,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                         },600);
                       }
                     }
+
+                    <?php endif; ?>
                   }
                 }
               if ( String($('#changeOpStatus').data('status')) !== "<?=C_OPERATOR_ACTIVE?>" ) {
@@ -1688,32 +1682,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         //離席中→待機中に変化する場合にチャット通知設定の状態を見る
         if(status == 0){
 
-          //uesrAgentを全て小文字に設定している
-          var browsertype = navigator.userAgent.toLowerCase();
 
-          //IEの場合は設定ができないという文言を出す。
-          if(browsertype.indexOf("msie") !== -1 || browsertype.indexOf("trident") !== -1){
-            message = "インターネットエクスプローラーではチャット通知設定を使用することができません<br><br>"
-                    + "<label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
-                    + "以降、このメッセージを表示しない</label>";
-            modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の許可', 'fade', '');
-          }else{
+
             //通知設定が許可されていない場合は警告を出す
             if(Notification.permission !== "granted"){
-
-
-              var add_settingURL;
-              if(browsertype.indexOf("chrome") !== -1){
-                add_settingURL = "chrome://settings/content　へアクセスして設定を変更してください";
-              }else if(browsertype.indexOf("firefox") !== -1){
-                add_settingURL = "about:preferences#privacy　へアクセスして設定を変更してください";
-              }
-              message = "ユーザーからのチャット通知を受け取りたい場合<br>"
-                      + "<a href=''>こちらのヘルプページ</a>を参考に設定変更を行ってください。"
+              message = "通知の表示がブロックされているため、新着チャットを受信した際に<br>デスクトップ通知が表示されません。<br>"
+                      + "<br>チャット受信時の通知を受け取りたい場合は通知の設定を「許可」に<br>変更してください。"
+                      + "<br><br><a href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
                       + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
                       + "以降、このメッセージを表示しない</label>";
               modalOpen.call(window, message,"p-cus-block-notify",'チャット通知設定の許可', 'fade', '');
-            }
+
           }
         }
       }
