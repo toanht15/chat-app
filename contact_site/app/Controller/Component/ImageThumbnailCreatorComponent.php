@@ -15,7 +15,6 @@ class ImageThumbnailCreatorComponent extends Component
   const MAX_WIDTH = 265; // ウィジェット：大の最大サイズ
   const MAX_HEIGHT = 285; // ウィジェット：大の最大サイズ
 
-  private $scale;
   private $filename;
   private $file;
 
@@ -24,15 +23,6 @@ class ImageThumbnailCreatorComponent extends Component
 
   public function __construct()
   {
-    $this->scale = 0.5; //default
-  }
-
-  public function setScale($scale)
-  {
-    if(0 > $scale && $scale > 1) {
-      throw new InvalidArgumentException('引数は0より大きく、1未満の値を指定してください');
-    }
-    $this->scale = $scale;
   }
 
   public function setFilename($fileName) {

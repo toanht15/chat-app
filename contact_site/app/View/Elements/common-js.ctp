@@ -2,6 +2,7 @@
   function chgOpStatus(){
     var opState = $('#changeOpStatus'),
         status = opState.data('status');
+
     $.ajax({
       type: 'GET',
       url: '<?=$this->Html->url(array("action" => "remoteChangeOperatorStatus"))?>',
@@ -11,10 +12,10 @@
       dataType: 'json',
       cache: false,
       success: function(json){
-
         if ( json.status == "<?=C_OPERATOR_ACTIVE?>" ) {
           chgOpStatusView("<?=C_OPERATOR_ACTIVE?>");
           sendRegularlyRequest("<?=C_OPERATOR_ACTIVE?>");
+          //以降、表示しないを選択していない場合は通知設定警告を出す
         }
         else {
           chgOpStatusView("<?=C_OPERATOR_PASSIVE?>");
@@ -24,6 +25,20 @@
       }
     });
 
+  }
+
+  function notify_cookie(){
+    //チャット通知設定で以降メッセージを表示しない場合にクッキーにかきこむ
+    if($('#block_notify_chat').prop('checked')){
+      document.cookie = "block_notify=true";
+    }else{
+      document.cookie = "block_notify=false";
+    }
+    var cookielist = document.cookie.split('; ');
+    console.log(cookielist[1]);
+    if(cookielist[1] == 'block_notify=true'){
+      console.log('aiueo');
+    }
   }
 
   function makeToken(){

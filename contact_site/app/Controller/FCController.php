@@ -43,12 +43,17 @@ class FCController extends FileAppController
     $filePath = $this->putFile($file, $saveFileName);
 
     // サムネイル生成
-    $component = new ImageThumbnailCreatorComponent();
-    $component->setFileData($file);
-    $component->setFilename($saveFileName);
-    $component->setScale(0.2);
-    $pathAndFilename = $component->create();
-    $thumbFilepath = $this->putFileByFullpath($pathAndFilename['path'], $pathAndFilename['filename']);
+    if(preg_match('/(jpeg|jpg|gif|png)$/i', $saveFileName)) {
+      try {
+        $component = new ImageThumbnailCreatorComponent();
+        $component->setFileData($file);
+        $component->setFilename($saveFileName);
+        $pathAndFilename = $component->create();
+        $thumbFilepath = $this->putFileByFullpath($pathAndFilename['path'], $pathAndFilename['filename']);
+      } catch(Exception $e) {
+
+      }
+    }
 
     return $this->saveUploadFile($sitekey, $file, $saveFileName, $filePath, $comment);
   }
