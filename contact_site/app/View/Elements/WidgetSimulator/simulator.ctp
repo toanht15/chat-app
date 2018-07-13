@@ -337,11 +337,11 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.cName:not(.details){ color: {{widget.settings['main_color']}}!important;}
         #sincloBox ul#chatTalk li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; }
         #sincloBox ul#chatTalk li.sinclo_se span.details{ color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio { display: block; margin-bottom: -19px; }
+        #sincloBox ul#chatTalk li span.sinclo-radio { display: inline-block; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: flex; width: 100%; cursor: pointer; margin: 0; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; line-height: {{(widget.re_text_size+2) * 1.4}}px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label p { display:table-cell; font-size: {{widget.re_text_size}}px; vertical-align: middle; margin-left: 5px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; display: flex; align-self: center; width: {{widget.re_text_size+1}}px; height: {{widget.re_text_size+1}}px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-flex; width: 100%; cursor: pointer; margin: 0; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; line-height: {{(widget.re_text_size+2) * 1.4}}px; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label p { display:table-cell; font-size: {{widget.re_text_size}}px; vertical-align: middle; margin-left: 5px; line-height: {{(widget.re_text_size+2) * 1.4}}px; }
+        #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; display: flex; align-self: center; width: {{widget.re_text_size+1}}px; height: {{widget.re_text_size+1}}px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; display: flex; align-self: center; position: absolute; left: {{widget.radioButtonAfterLeft}}px; width: {{widget.re_text_size-6}}px; height: {{widget.re_text_size-6}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:disabled + label { opacity: 0.5;}
 
