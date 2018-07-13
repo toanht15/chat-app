@@ -59,16 +59,26 @@ var popupEventOverlap = {
             }
             switch ( popupEventOverlap.id ) {
                 case 'p-history-del':
-                    var closeBtn = _button("はい");
-                    closeBtn.onclick = function(){
-                      popupEventOverlap.closeNoPopupOverlap();
-                      return popupEventOverlap.closePopup();
-                    };
-                    var cancelBtn = _button("いいえ");
-                    cancelBtn.onclick = function(){
-                      return popupEventOverlap.closeNoPopupOverlap();
-                    };
-                    break;
+                  var closeBtn = _button("はい");
+                  closeBtn.onclick = function(){
+                    popupEventOverlap.closeNoPopupOverlap();
+                    return popupEventOverlap.closePopup();
+                  };
+                  var cancelBtn = _button("いいえ");
+                  cancelBtn.onclick = function(){
+                    return popupEventOverlap.closeNoPopupOverlap();
+                  };
+                break;
+                case 'p-tcustomerinformation-alert':
+                  var closeBtn = _button("キャンセルする");
+                  closeBtn.onclick = function () {
+                    return popupEventOverlap.cancelPopup();
+                  };
+                  var entryBtn = _button("項目名を変更する");
+                  entryBtn.onclick = function () {
+                    return popupEventOverlap.closeNoPopupOverlap();
+                  };
+                break;
             }
             function _button(text){
                 var a = document.createElement('a');

@@ -891,12 +891,16 @@ ul.ulTab {
   top: 48px;
   right: 15px;
   width: 193px;
+  height: 153px;
   font-size: 12px;
   z-index: 9999;
   ul {
     border: solid 1px #ccc;
     display: block;
-    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    filter: drop-shadow(5px 5px 3px rgba(0, 0, 0, 0.5));
+    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    }
     padding: 5px 0px !important;
     background: #fff;
     position: relative;
@@ -1973,6 +1977,13 @@ ul.naviBtn {
                       font-weight: bold;
                       font-size: 13px;
                       margin: 0 0 5px 0;
+                    }
+                    .detailImg {
+                      max-width: 200px;
+                      max-height: 140px;
+                      margin-left:auto;
+                      margin-right:auto;
+                      transform: none;
                     }
                     div.sendFileContent {
                       display: table;
@@ -4047,6 +4058,11 @@ ul.naviBtn {
     }
   }
 
+  .imgTag {
+    width:120px;
+    height:auto;
+  }
+
   #history_body_side {
     overflow-y: hidden;
     /* override datatables design */
@@ -4056,6 +4072,15 @@ ul.naviBtn {
       }
       thead th, table.dataTable thead td {
         border-bottom: 1px solid #8B8B8B;
+      }
+      tbody#chatHistory {
+        td {
+          &.eachInfo {
+            div.info {
+              height: 60px;
+            }
+          }
+        }
       }
     }
   }
@@ -6240,6 +6265,27 @@ ul.naviBtn {
             height: 631px;
           }
 
+          .smallSizeImg {
+            max-width: 165px;
+            max-height: 120px;
+            margin-left:auto;
+            margin-right:auto;
+          }
+
+          .middleSizeImg {
+            max-width: 215px;
+            max-height: 188px;
+            margin-left:auto;
+            margin-right:auto;
+          }
+
+          .largeSizeImg {
+            max-width: 265px;
+            max-height: 285px;
+            margin-left:auto;
+            margin-right:auto;
+          }
+
           > div {
             position: absolute;
             bottom: -66px;
@@ -7554,6 +7600,30 @@ ul.naviBtn {
           &.largeSize {
             flex-basis: 400px;
             min-width: 400px;
+          }
+
+          .smallSizeImg {
+            max-width: 165px;
+            max-height: 120px;
+            margin-left:auto;
+            margin-right:auto;
+            transform:none;
+          }
+
+          .middleSizeImg {
+            max-width: 215px;
+            max-height: 188px;
+            margin-left:auto;
+            margin-right:auto;
+            transform:none;
+          }
+
+          .largeSizeImg {
+            max-width: 265px;
+            max-height: 285px;
+            margin-left:auto;
+            margin-right:auto;
+            transform:none;
           }
 
           .blueBtn {

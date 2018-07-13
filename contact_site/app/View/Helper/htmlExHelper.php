@@ -130,7 +130,7 @@ class htmlExHelper extends AppHelper {
       return "<a ".$matches[0].">".$matches[1]."</a>";
     }
 
-    public function makeChatView($value, $isSendFile = false,$isRecieveFile = false){
+    public function makeChatView($value, $isSendFile = false,$isRecieveFile = false,$imgTag = false){
         if($isSendFile) {
           return $this->makeSendChatView($value);
         }
@@ -158,6 +158,19 @@ class htmlExHelper extends AppHelper {
             if ( preg_match('/<telno>([\s\S]*?)<\/telno>/', $tmp)) {
                 $ret = "<span style='font-weight: normal;'>". preg_replace('/^<telno>|<\/telno>$/', "", $tmp) . "</span>";
                 $str = preg_replace('/<telno>([\s\S]*?)<\/telno>/', $ret, $tmp);
+            }
+            if ( preg_match('/<img([\s\S]*?)>/', $tmp) && $imgTag) {
+                //スタイル設定されている場合
+                if(strpos($tmp,'style') !== false){
+                  preg_match('/style="([\s\S]*?)"/', $tmp, $result);
+                  $ret = preg_replace('/style="([\s\S]*?)"/', "style=".$result[1]."width:100%;transform: none;", $tmp);
+                  $str = "<div class='imgTag'>" . $ret . "</div>";
+                }
+                //スタイル設定されていない場合
+                else {
+                  $ret = preg_replace('/<img/', '<img style="width:100%;transform: none;"', $tmp);
+                  $str = "<div class='imgTag'>" . $ret . "</div>";
+                }
             }
             $content .= $str."\n";
         }
@@ -272,7 +285,7 @@ class htmlExHelper extends AppHelper {
 
       $thumbnail = "";
       if(preg_match('/(jpeg|jpg|gif|png)$/', $value['extension'])) {
-        $thumbnail = "<img src='" . $value['downloadUrl'] . "' class='recieveFileThumbnail' style='max-width: 200px; max-height: 140px'>";
+        $thumbnail = "<img src='" . $value['downloadUrl'] . "?thumb' class='recieveFileThumbnail' style='max-width: 200px; max-height: 140px'>";
       } else {
         $thumbnail = "<i class='fal " . $this->selectFontIconClassFromExtension($value['extension']) . " fa-4x recieveFileThumbnail' aria-hidden='true'></i>";
         $height = "style = 'height:64px'";

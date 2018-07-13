@@ -780,7 +780,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       // タブ切替の通知
       $scope.$emit('switchWidget', type)
       //画像がない場合
-      if($('#mainImage').css('display') == 'none') {
+      if($('#mainImage').css('display') == 'none'　|| $('#mainImage').css('display') == undefined) {
         if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
           $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
         }

@@ -3521,7 +3521,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           var reqSettings = row[0];
 
           var url = replaceVariable(obj.variables, reqSettings.url);
-          var reqBody = replaceVariable(data.variables, reqSettings.request_body);
+          var reqBody = replaceVariable(obj.variables, reqSettings.request_body);
 
           var headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -3537,7 +3537,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 url: url,
                 requestHeaders: JSON.parse(reqSettings.request_headers),
                 methodType: reqSettings.method_type,
-                requestBody: reqSettings.request_body,
+                requestBody: reqBody,
                 responseBodyMaps: JSON.parse(reqSettings.response_body_maps),
               })
             }
