@@ -2446,7 +2446,7 @@
                     if ( radio > -1 ) {
                         var name = str.slice(radio+2).trim();
                         str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-                        str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
+                        str += "<label for='" + radioName + "-" + i + "'><p>" + name + "</p></label></sinclo-radio>";
                     }
                 }
                 // リンク
