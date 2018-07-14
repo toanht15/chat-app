@@ -31,14 +31,25 @@ var getData = function(elm, key){
     return data;
 }
 
-function addVariable(type,sendMessage){
+function addVariable(type,sendMessage,focusPosition){
   switch(type){
         case 1:
-            if (sendMessage.value.length > 0) {
-                sendMessage.value += "\n";
+            if (sendMessage.value.length == 0) {
+              sendMessage.value += "\n";
+              sendMessage.value += "[] ";
             }
-            sendMessage.value += "[] ";
+            else {
+              sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "[] " + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            }
             sendMessage.focus();
+            // 開始と終了タブの真ん中にカーソルを配置する
+            if (sendMessage.createTextRange) {;
+              var range = sendMessage.createTextRange();
+              range.move('character', focusPosition+4);
+              range.select();
+            } else if (sendMessage.setSelectionRange) {
+              sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+4);
+            }
             break;
         case 2:
           if (sendMessage.value.length > 0) {
