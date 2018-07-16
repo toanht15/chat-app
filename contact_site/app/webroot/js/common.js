@@ -33,7 +33,7 @@ var getData = function(elm, key){
 
 function addVariable(type,sendMessage,focusPosition){
   switch(type){
-        case 1:
+      case 1:
             if (sendMessage.value.length == 0) {
               sendMessage.value += "\n";
               sendMessage.value += "[] ";
@@ -41,7 +41,9 @@ function addVariable(type,sendMessage,focusPosition){
             else {
               sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "[] " + sendMessage.value.substr(focusPosition,sendMessage.value.length);
             }
+            var beforeScrollTop = $(sendMessage).scrollTop();
             sendMessage.focus();
+            $(sendMessage).scrollTop(beforeScrollTop);
             // 開始と終了タブの真ん中にカーソルを配置する
             if (sendMessage.createTextRange) {;
               var range = sendMessage.createTextRange();
