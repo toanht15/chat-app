@@ -36,13 +36,9 @@
               + "<br><b>本当に項目名を変更しますか？</b>";
       modalOpenOverlap.call(window, message, 'p-tcustomerinformation-alert', '必ず確認してください', 'moment');
 
-        popupEventOverlap.cancelPopup = (function(){
+        popupEventOverlap.closeNoPopupOverlap = (function(){
           $('#TCustomerInformationSettingItemName')[0].value = "会社名";
           popupEventOverlap.close();
-        });
-
-        popupEventOverlap.closeNoPopupOverlap = (function(){
-          popupEventOverlap.cancelPopup();
         });
 
         popupEventOverlap.closePopup = (function(){

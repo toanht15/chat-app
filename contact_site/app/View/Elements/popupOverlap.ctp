@@ -72,7 +72,7 @@ var popupEventOverlap = {
                 case 'p-tcustomerinformation-alert':
                   var closeBtn = _button("キャンセルする");
                   closeBtn.onclick = function () {
-                    return popupEventOverlap.cancelPopup();
+                    return popupEventOverlap.closeNoPopupOverlap();
                   };
                   var entryBtn = _button("項目名を変更する");
                   entryBtn.onclick = function () {
