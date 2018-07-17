@@ -179,13 +179,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       addOption: function(type){
         var sendMessage = document.getElementById('sendMessage');
+        var focusPosition = $('#sendMessage').get(0).selectionStart;
         switch(type){
-            case 1:
-            if (sendMessage.value.length > 0) {
-                sendMessage.value += "\n";
-            }
+          case 1:
+          if (sendMessage.value.length == 0) {
             sendMessage.value += "[] ";
-            sendMessage.focus();
+          }
+          else {
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "[] " + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+          }
+          sendMessage.focus();
+          // 開始と終了タブの真ん中にカーソルを配置する
+          if (sendMessage.createTextRange) {
+            var range = sendMessage.createTextRange();
+            range.move('character', focusPosition+4);
+            range.select();
+          } else if (sendMessage.setSelectionRange) {
+            sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+4);
+          }
         }
       },
       pushMessageFlg: false,

@@ -35,7 +35,6 @@ function addVariable(type,sendMessage,focusPosition){
   switch(type){
       case 1:
             if (sendMessage.value.length == 0) {
-              sendMessage.value += "\n";
               sendMessage.value += "[] ";
             }
             else {
