@@ -160,18 +160,9 @@ class htmlExHelper extends AppHelper {
                 $str = preg_replace('/<telno>([\s\S]*?)<\/telno>/', $ret, $tmp);
             }
             if ( preg_match_all('/<img([\s\S]*?)>/', $tmp, $allResult) && $imgTag) {
+              preg_match('/<img ([\s\S]*?)src="([\s\S]*?)"/', $tmp, $linkUrl);
               foreach($allResult[0] as $key => $value){
-                //スタイル設定されている場合
-                if(strpos($value,'style') !== false){
-                  preg_match('/style="([\s\S]*?)"/', $value, $result);
-                  $ret = preg_replace('/style="([\s\S]*?)"/', "style='".$result[1]."display:block;transform:none;max-width: 265px;max-height: 285px;'", $value);
-                  $str = str_replace($value,$ret,$tmp);
-                }
-                else {
-                  //スタイル設定されていない場合
-                  $ret = preg_replace('/<img/', '<img style="display:block;transform:none;max-width: 265px;max-height: 285px;"', $value);
-                  $str = preg_replace($value,$ret,$tmp);
-                }
+                $str = str_replace($value,"＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞",$tmp);
               }
             }
             $content .= $str."\n";

@@ -4,7 +4,7 @@
 #tchatbotscenario_form_preview_body .actionTitle.active { color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}};}
 
 #tchatbotscenario_form_preview_body .chatTalk { width: 100%; padding: 5px 5px 10px 5px; list-style-type: none; margin: 0px}
-#tchatbotscenario_form_preview_body .chatTalk li { border-radius: 5px; background-color: #FFF; margin: 5px 0 0; padding: 12px; font-size: 12px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
+#tchatbotscenario_form_preview_body .chatTalk li { border-radius: 5px; background-color: #FFF; margin: 10px 0 0; padding: 12px; font-size: 12px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
 #tchatbotscenario_form_preview_body .chatTalk li { word-break: break-all; white-space: pre-wrap; }
 #tchatbotscenario_form_preview_body .chatTalk li.boxType { display: inline-block; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
 #tchatbotscenario_form_preview_body .chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-left: 10px; margin-right: 17.5px; }
@@ -19,9 +19,9 @@
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; z-index: 2; border: 5px solid transparent; border-right: 5px solid {{widget.makeFaintColor()}}; border-bottom: 5px solid {{widget.makeFaintColor()}}; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; z-index: 1; border: 5px solid transparent; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.balloonType.notNone:after { border-right: 5px solid {{widget.getTalkBorderColor('re')}}; border-bottom: 5px solid {{widget.getTalkBorderColor('re')}}; }
-#tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left { margin-right: 17.5px }
-#tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left.middleSize { margin-right: 21px }
-#tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left.largeSize { margin-right: 24.6px }
+#tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left { margin-right: 17.5px; font-size:0px; }
+#tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left.middleSize { margin-right: 21px; font-size:0px; }
+#tchatbotscenario_form_preview_body .chatTalk li.balloonType.chat_left.largeSize { margin-right: 24.6px; font-size:0px; }
 
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.recv_file_left, #tchatbotscenario_form_preview_body .chatTalk li.sinclo_se.recv_file_right { display: block; padding: 10px; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.recv_file_left.middleSize, #tchatbotscenario_form_preview_body .chatTalk li.sinclo_se.recv_file_right.middleSize { display: block; padding: 12px; }
@@ -43,10 +43,9 @@
 #tchatbotscenario_form_preview_body .chatTalk li span.cName.details{ color: {{widget.settings['c_name_text_color']}}!important;}
 
 #tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
-#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-flex; width: 100%; cursor: pointer; margin: 0; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; line-height: {{(widget.re_text_size+2) * 1.4}}px; }
-#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label p { display:table-cell; font-size: {{widget.re_text_size}}px; vertical-align: middle; margin: 0 0 0 5px; line-height: {{(widget.re_text_size+2) * 1.4}}px; }
-#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; display: flex; flex: 0 0 auto; align-self: flex-start; margin-top:{{(widget.re_text_size+2) * (1.4 - 1) / 2}}px; width: {{widget.re_text_size+1}}px; height: {{widget.re_text_size+1}}px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; }
-#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; display: flex; align-self: flex-start; margin-top:{{(widget.re_text_size+2) * (1.4 - 1) / 2}}px; position: absolute; left: {{widget.radioButtonAfterLeft}}px; top: {{widget.radioButtonAfterLeft}}px; width: {{widget.re_text_size-6}}px; height: {{widget.re_text_size-6}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
+#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin: 0; padding: 0 0 0 {{widget.re_text_size+7}}px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; }
+#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: {{widget.radioButtonBeforeTop}}px; left: 0px; margin-top: -{{widget.radioButtonBeforeTop}}px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; }
+#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: {{widget.radioButtonAfterTop}}px; left: {{widget.radioButtonAfterLeft}}px;; margin-top: -{{widget.radioButtonAfterMarginTop}}px; width: {{widget.re_text_size-7}}px; height: {{widget.re_text_size-7}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re span.telno { color: {{widget.settings['re_text_color']}};}
 #tchatbotscenario_form_preview_body a:hover { color: {{widget.settings['main_color']}}; }
 

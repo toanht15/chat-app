@@ -31,58 +31,88 @@ var getData = function(elm, key){
     return data;
 }
 
-function addVariable(type,sendMessage){
+function addVariable(type,sendMessage,focusPosition){
   switch(type){
-        case 1:
-            if (sendMessage.value.length > 0) {
-                sendMessage.value += "\n";
+      case 1:
+            if (sendMessage.value.length == 0) {
+              sendMessage.value += "[] ";
             }
-            sendMessage.value += "[] ";
+            else {
+              sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "[] " + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            }
+            var beforeScrollTop = $(sendMessage).scrollTop();
             sendMessage.focus();
+            $(sendMessage).scrollTop(beforeScrollTop);
+            // 開始と終了タブの真ん中にカーソルを配置する
+            if (sendMessage.createTextRange) {;
+              var range = sendMessage.createTextRange();
+              range.move('character', focusPosition+4);
+              range.select();
+            } else if (sendMessage.setSelectionRange) {
+              sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+4);
+            }
             break;
         case 2:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
+          if (sendMessage.value.length == 0) {
+            sendMessage.value += "<telno></telno>";
+            addPosition = 7;
           }
-          sendMessage.value += "<telno></telno>";
+          else {
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<telno></telno>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            addPosition = 8;
+          }
+          var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
+          $(sendMessage).scrollTop(beforeScrollTop);
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-8);
+            range.move('character', focusPosition+addPosition);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
+            sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+addPosition);
           }
           break;
         case 3:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
+          if (sendMessage.value.length == 0) {
+            sendMessage.value += '<a href="ここにURLを記載">リンクテキスト</a>';
+            addPosition = 9;
           }
-          sendMessage.value += '<a href="ここにURLを記載">リンクテキスト</a>';
+          else {
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<a href='ここにURLを記載'>リンクテキスト</a>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            addPosition = 10;
+          }
+          var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
+          $(sendMessage).scrollTop(beforeScrollTop);
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-22);
+            range.move('character', focusPosition+addPosition);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-22);
+            sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+addPosition);
           }
           break;
         case 4:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
+          if (sendMessage.value.length == 0) {
+            sendMessage.value += '<a href="ここにURLを記載" target="_blank">リンクテキスト</a>';
+            addPosition = 9;
           }
-          sendMessage.value += '<a href="ここにURLを記載" target="_blank">リンクテキスト</a>';
+          else {
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<a href='ここにURLを記載' target='_blank'>リンクテキスト</a>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            addPosition = 10;
+          }
+          var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
+          $(sendMessage).scrollTop(beforeScrollTop);
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-38);
+            range.move('character', focusPosition+addPosition);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-38);
+            sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+addPosition);
           }
           break;
     }
@@ -103,6 +133,7 @@ function replaceVariable(str,isSmartphone,widgetSize){
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+  var choiseImgTagReg = RegExp(/<label([\s\S]*?)><img ([\s\S]*?)>/);
   var unEscapeStr = unEscapeHTML(str);
   var className;
 
@@ -121,6 +152,10 @@ function replaceVariable(str,isSmartphone,widgetSize){
   //リアルタイムモニタ詳細画面の場合
   else if(widgetSize === '4') {
     className = 'detailImg';
+  }
+  //サイト訪問者からのimgタグの場合
+  else if(widgetSize === '5') {
+    return str;
   }
 
   // リンク
@@ -172,7 +207,13 @@ function replaceVariable(str,isSmartphone,widgetSize){
   }
   //imgタグ有効化
   var img = unEscapeStr.match(imgTagReg);
-  if(img !== null) {
+  var choiseImg = unEscapeStr.match(choiseImgTagReg);
+  //選択肢に画像を入れる場合
+  if(img !== null && choiseImg !== null) {
+    imgTag = "<label "+choiseImg[1]+"><img "+img[1]+" class = "+className+">";
+    str = unEscapeStr.replace(choiseImg[0], imgTag);
+  }
+  if(img !== null && choiseImg === null) {
     imgTag = "<img "+img[1]+" class = "+className+">";
     str = unEscapeStr.replace(img[0], imgTag);
   }

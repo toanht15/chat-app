@@ -2446,7 +2446,7 @@
                     if ( radio > -1 ) {
                         var name = str.slice(radio+2).trim();
                         str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-                        str += "<label for='" + radioName + "-" + i + "'><p>" + name + "</p></label></sinclo-radio>";
+                        str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
                     }
                 }
                 // リンク
@@ -2497,12 +2497,14 @@
                     str = str.replace(tel[0], span);
                   }
                 }
-                //imgタグ
-                var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
-                var img = unEscapeStr.match(imgTagReg);
-                if(img !== null) {
-                  imgTag = "<img "+img[1]+" class = "+className+">";
-                  str = unEscapeStr.replace(img[0], imgTag);
+                if ( cs === "sinclo_re" ) {
+                  //imgタグ
+                  var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+                  var img = unEscapeStr.match(imgTagReg);
+                  if(img !== null) {
+                    imgTag = "<img "+img[1]+" class = "+className+">";
+                    str = unEscapeStr.replace(img[0], imgTag);
+                  }
                 }
                 content += str + "\n";
             }
@@ -4597,7 +4599,7 @@
         sinclo.chatApi.initEvent();
         var type = (beforeTextareaOpened === "close") ? "2" : "1";
         self._handleChatTextArea(type);
-        
+
         self._resetDefaultVal();
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
