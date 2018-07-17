@@ -38,14 +38,18 @@ function addVariable(type,sendMessage){
                 sendMessage.value += "\n";
             }
             sendMessage.value += "[] ";
-            sendMessage.focus();
+          var beforeScrollTop = $(sendMessage).scrollTop();
+          sendMessage.focus();
+          $(sendMessage).scrollTop(beforeScrollTop);
             break;
         case 2:
           if (sendMessage.value.length > 0) {
             sendMessage.value += "\n";
           }
           sendMessage.value += "<telno></telno>";
+          var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
+          $(sendMessage).scrollTop(beforeScrollTop);
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
@@ -60,7 +64,9 @@ function addVariable(type,sendMessage){
             sendMessage.value += "\n";
           }
           sendMessage.value += '<a href="ここにURLを記載">リンクテキスト</a>';
+          var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
+          $(sendMessage).scrollTop(beforeScrollTop);
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
@@ -75,7 +81,9 @@ function addVariable(type,sendMessage){
             sendMessage.value += "\n";
           }
           sendMessage.value += '<a href="ここにURLを記載" target="_blank">リンクテキスト</a>';
+          var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
+          $(sendMessage).scrollTop(beforeScrollTop);
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
