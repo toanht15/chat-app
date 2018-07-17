@@ -2497,12 +2497,14 @@
                     str = str.replace(tel[0], span);
                   }
                 }
-                //imgタグ
-                var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
-                var img = unEscapeStr.match(imgTagReg);
-                if(img !== null) {
-                  imgTag = "<img "+img[1]+" class = "+className+">";
-                  str = unEscapeStr.replace(img[0], imgTag);
+                if ( cs === "sinclo_re" ) {
+                  //imgタグ
+                  var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+                  var img = unEscapeStr.match(imgTagReg);
+                  if(img !== null) {
+                    imgTag = "<img "+img[1]+" class = "+className+">";
+                    str = unEscapeStr.replace(img[0], imgTag);
+                  }
                 }
                 content += str + "\n";
             }
