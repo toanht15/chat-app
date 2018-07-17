@@ -797,7 +797,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if(judgewindow == null){
         popupblock = true;
         message="ポップアップがブロックされているため、共有機能が利用できません。<br>"
-               +"<br>共有機能を利用される場合はポップアップの設定を「許可」に変更して下さい。"
+               +"<br>共有機能を利用される場合は<span class='red_font'>ポップアップの設定を「許可」に変更</span>して下さい。"
                +"<br><br><a target='_blank' href='https://info.sinclo.jp/manual/ポップアップブロック解除方法/'>設定方法はこちら</a>";
         modalOpen.call(window, message,"p-cus-block-popup",'ポップアップの設定', 'fade', '');
       }else{
@@ -1058,7 +1058,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
                     if(document.cookie.indexOf('block_notify=true') == -1){
                       if(Notification.permission !== "granted"){
                         message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
-                                + "<br>チャット受信時の通知を受け取りたい場合は<br>通知の設定を「許可」に変更してください。"
+                                + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
                                 + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
                                 + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
                                 + "今後、このメッセージを表示しない</label>";
@@ -1688,7 +1688,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             //通知設定が許可されていない場合は警告を出す
             if(Notification.permission !== "granted"){
               message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
-                      + "<br>チャット受信時の通知を受け取りたい場合は<br>通知の設定を「許可」に変更してください。"
+                      + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
                       + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
                       + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
                       + "今後、このメッセージを表示しない</label>";
