@@ -1376,6 +1376,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
+      console.log('チェック');
+      console.log(chat);
+      console.log(message);
+      console.log(opt);
       var strings = message.split('\n');
       var isSmartphone = false;
       var custom = "";
@@ -1390,6 +1394,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           var val = str.slice(radio+2);
           str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
           str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
+        }
+        if(chat.messageType === 1) {
+          widgetSize = '5';
         }
         //リンク、電話番号,img
         str = replaceVariable(str,isSmartphone,widgetSize);

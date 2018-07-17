@@ -129,10 +129,12 @@ function unEscapeHTML(str) {
 };
 
 function replaceVariable(str,isSmartphone,widgetSize){
+  console.log('入ってきたよ～');
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+  var choiseImgTagReg = RegExp(/<label([\s\S]*?)><img ([\s\S]*?)>/);
   var unEscapeStr = unEscapeHTML(str);
   var className;
 
@@ -151,6 +153,10 @@ function replaceVariable(str,isSmartphone,widgetSize){
   //リアルタイムモニタ詳細画面の場合
   else if(widgetSize === '4') {
     className = 'detailImg';
+  }
+  //サイト訪問者からのimgタグの場合
+  else if(widgetSize === '5') {
+    return str;
   }
 
   // リンク
@@ -202,7 +208,13 @@ function replaceVariable(str,isSmartphone,widgetSize){
   }
   //imgタグ有効化
   var img = unEscapeStr.match(imgTagReg);
-  if(img !== null) {
+  var choiseImg = unEscapeStr.match(choiseImgTagReg);
+  //選択肢に画像を入れる場合
+  if(img !== null && choiseImg !== null) {
+    imgTag = "<label "+choiseImg[1]+"><img "+img[1]+" class = "+className+">";
+    str = unEscapeStr.replace(choiseImg[0], imgTag);
+  }
+  if(img !== null && choiseImg === null) {
     imgTag = "<img "+img[1]+" class = "+className+">";
     str = unEscapeStr.replace(img[0], imgTag);
   }
