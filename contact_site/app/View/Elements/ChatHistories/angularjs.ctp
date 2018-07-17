@@ -232,10 +232,11 @@
     };
 
     $scope.validateImg = function(img,message){
-      var result = message.match(/<img ([\s\S]*?)>/g);
       for(var i=0;i<img.length;i++) {
         var imgTagReg = RegExp(/<img ([\s\S]*?)src="([\s\S]*?)"/);
         var imgTag = img[i].match(imgTagReg);
+        var aTagReg = RegExp(/<a ([\s\S]*?)/);
+        var aTag = message.match(aTagReg);
         message = message.replace(img[i], '<'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'>');
       }
       return message;
