@@ -2446,7 +2446,7 @@
                     if ( radio > -1 ) {
                         var name = str.slice(radio+2).trim();
                         str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-                        str += "<label for='" + radioName + "-" + i + "'><p>" + name + "</p></label></sinclo-radio>";
+                        str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
                     }
                 }
                 // リンク
@@ -2628,7 +2628,7 @@
           divElm.style.textAlign = "right";
           var thumbnail = "";
           if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
-            thumbnail = "<img src='" + downloadUrl + '?thumb' + "' class='sendFileThumbnail " + sinclo.chatApi.fileUploader._selectPreviewImgClass() + "'>";
+            thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail " + sinclo.chatApi.fileUploader._selectPreviewImgClass() + "'>";
           } else {
             thumbnail = "<i class='sinclo-fal " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
