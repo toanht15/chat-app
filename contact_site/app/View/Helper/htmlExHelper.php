@@ -160,8 +160,9 @@ class htmlExHelper extends AppHelper {
                 $str = preg_replace('/<telno>([\s\S]*?)<\/telno>/', $ret, $tmp);
             }
             if ( preg_match_all('/<img([\s\S]*?)>/', $tmp, $allResult) && $imgTag) {
+              preg_match('/<img ([\s\S]*?)src="([\s\S]*?)"/', $tmp, $linkUrl);
               foreach($allResult[0] as $key => $value){
-                $str = str_replace($value,"＜".mb_substr($value,(mb_strrpos($value, "/")+1),((mb_strrpos($value, "jpg")+3))-(mb_strrpos($value, "/")+1))."＞",$tmp);
+                $str = str_replace($value,"＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞",$tmp);
               }
             }
             $content .= $str."\n";
