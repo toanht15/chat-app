@@ -76,7 +76,7 @@ var popupEventOverlap = {
                   };
                   var entryBtn = _button("項目名を変更する");
                   entryBtn.onclick = function () {
-                    return popupEventOverlap.closeNoPopupOverlap();
+                    return popupEventOverlap.closePopup();
                   };
                 break;
             }
