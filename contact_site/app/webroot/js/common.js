@@ -129,7 +129,6 @@ function unEscapeHTML(str) {
 };
 
 function replaceVariable(str,isSmartphone,widgetSize){
-  console.log('入ってきたよ～');
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);

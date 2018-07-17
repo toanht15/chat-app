@@ -1376,10 +1376,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
-      console.log('チェック');
-      console.log(chat);
-      console.log(message);
-      console.log(opt);
       var strings = message.split('\n');
       var isSmartphone = false;
       var custom = "";

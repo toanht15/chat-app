@@ -1280,7 +1280,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param Object actionDetail アクションの詳細
    */
   $scope.doHearingAction = function(actionDetail) {
-    console.log('こんにちは！');
     if (!$scope.hearingInputResult) {
       // エラーメッセージ
       var message = actionDetail.errorMessage;

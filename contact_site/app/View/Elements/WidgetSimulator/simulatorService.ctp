@@ -382,7 +382,6 @@ sincloApp.factory('SimulatorService', function() {
      * @return String       変換したメッセージ
      */
     createMessage: function(val, prefix) {
-      console.log('まずここ！');
       if (val === '') return;
       prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
       var isSmartphone = this._showWidgetType != 1;
