@@ -161,17 +161,7 @@ class htmlExHelper extends AppHelper {
             }
             if ( preg_match_all('/<img([\s\S]*?)>/', $tmp, $allResult) && $imgTag) {
               foreach($allResult[0] as $key => $value){
-                //スタイル設定されている場合
-                if(strpos($value,'style') !== false){
-                  preg_match('/style="([\s\S]*?)"/', $value, $result);
-                  $ret = preg_replace('/style="([\s\S]*?)"/', "style='".$result[1]."display:block;transform:none;max-width: 265px;max-height: 285px;'", $value);
-                  $str = str_replace($value,$ret,$tmp);
-                }
-                else {
-                  //スタイル設定されていない場合
-                  $ret = preg_replace('/<img/', '<img style="display:block;transform:none;max-width: 265px;max-height: 285px;"', $value);
-                  $str = preg_replace($value,$ret,$tmp);
-                }
+                $str = str_replace($value,"＜".mb_substr($value,(mb_strrpos($value, "/")+1),((mb_strrpos($value, "jpg")+3))-(mb_strrpos($value, "/")+1))."＞",$tmp);
               }
             }
             $content .= $str."\n";
