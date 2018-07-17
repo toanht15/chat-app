@@ -608,9 +608,6 @@
   !function (pe, se) {
     window.modalOpen = function (contents, id, title, type, ua) {
       $('#popup-bg').css('background-color','rgba(0, 0, 0, 0.7)');
-      if(id.indexOf("p-cus-block") != -1){
-        $('#popup-bg').css('background-color','rgba(0, 0, 0, 0)');
-      }
       if (typeof(type) !== 'undefined') {
         pe.moveType = type;
       } else {
