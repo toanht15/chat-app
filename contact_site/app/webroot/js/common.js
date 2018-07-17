@@ -53,54 +53,66 @@ function addVariable(type,sendMessage,focusPosition){
             }
             break;
         case 2:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
+          if (sendMessage.value.length == 0) {
+            sendMessage.value += "<telno></telno>";
+            addPosition = 7;
           }
-          sendMessage.value += "<telno></telno>";
+          else {
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<telno></telno>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            addPosition = 8;
+          }
           var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
           $(sendMessage).scrollTop(beforeScrollTop);
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-8);
+            range.move('character', focusPosition+addPosition);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-8);
+            sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+addPosition);
           }
           break;
         case 3:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
+          if (sendMessage.value.length == 0) {
+            sendMessage.value += '<a href="ここにURLを記載">リンクテキスト</a>';
+            addPosition = 9;
           }
-          sendMessage.value += '<a href="ここにURLを記載">リンクテキスト</a>';
+          else {
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<a href='ここにURLを記載'>リンクテキスト</a>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            addPosition = 10;
+          }
           var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
           $(sendMessage).scrollTop(beforeScrollTop);
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-22);
+            range.move('character', focusPosition+addPosition);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-22);
+            sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+addPosition);
           }
           break;
         case 4:
-          if (sendMessage.value.length > 0) {
-            sendMessage.value += "\n";
+          if (sendMessage.value.length == 0) {
+            sendMessage.value += '<a href="ここにURLを記載" target="_blank">リンクテキスト</a>';
+            addPosition = 9;
           }
-          sendMessage.value += '<a href="ここにURLを記載" target="_blank">リンクテキスト</a>';
+          else {
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<a href='ここにURLを記載' target='_blank'>リンクテキスト</a>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            addPosition = 10;
+          }
           var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
           $(sendMessage).scrollTop(beforeScrollTop);
           // 開始と終了タブの真ん中にカーソルを配置する
           if (sendMessage.createTextRange) {
             var range = sendMessage.createTextRange();
-            range.move('character', sendMessage.value.length-38);
+            range.move('character', focusPosition+addPosition);
             range.select();
           } else if (sendMessage.setSelectionRange) {
-            sendMessage.setSelectionRange(sendMessage.value.length, sendMessage.value.length-38);
+            sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+addPosition);
           }
           break;
     }
