@@ -1102,6 +1102,9 @@ var socket, // socket.io
       html += '      #sincloBox .sinclo-fal.fa-comments:before { content: "\\f086" }';
       html += '      #sincloBox .sinclo-fal.fa-phone:before { content: "\\f095" }';
       html += '      #sincloBox .sinclo-fal.fa-robot:before { content: "\\f544" }';
+      html += '      #sincloBox .sinclo-fal.fa-comment-alt-lines:before { content: "\\f4a6" }';
+      html += '      #sincloBox .sinclo-fal.fa-comments-alt:before { content: "\\f4b6" }';
+      html += '      #sincloBox .sinclo-fal.fa-comment-lines:before { content: "\\f4b0" }';
       //アイコンフォント用
       /* http://meyerweb.com/eric/tools/css/reset/
          v2.0 | 20110126
