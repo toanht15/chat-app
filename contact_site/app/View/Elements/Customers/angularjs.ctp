@@ -1059,15 +1059,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               $("#sendMessage").focus();
               $scope.ngChatApi.connect();
               $("#sendMessage").val("").focus();
-              if(document.cookie.indexOf('block_notify=true') == -1){
                   //離席中→待機中に変化する場合にチャット通知設定の状態を見る
                   if($('#changeOpStatus').data('status') == 0){
 
                     <?php if(isset($coreSettings[C_COMPANY_USE_CHAT]) && $coreSettings[C_COMPANY_USE_CHAT]): ?>
 
                       //通知設定が許可されていない場合は警告を出す
+                    var userAgent = window.navigator.userAgent.toLowerCase();
                     if(document.cookie.indexOf('block_notify=true') == -1){
-                      if(Notification.permission !== "granted"){
+                      if(userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1){
+                        message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
+                                + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
+                                + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
+                                + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                                + "今後、このメッセージを表示しない</label>";
+                        setTimeout(function(){
+                          modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
+                        },505);
+                      }else if(Notification.permission !== "granted"){
                         message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
                                 + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
                                 + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
@@ -1081,7 +1090,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
                     <?php endif; ?>
                   }
-                }
               if ( String($('#changeOpStatus').data('status')) !== "<?=C_OPERATOR_ACTIVE?>" ) {
                 chgOpStatus(); // 在席ステータスにする
               }
@@ -1686,10 +1694,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.chgOpStatus = function(){
       var opState = $('#changeOpStatus'),
         status = opState.data('status');
+      console.log(status);
       //START:チャット通知設定のブロック状況
       <?php if(isset($coreSettings[C_COMPANY_USE_CHAT]) && $coreSettings[C_COMPANY_USE_CHAT]): ?>
       //以降、表示しないを選択していない場合は通知設定警告を出す
-      if(document.cookie.indexOf('block_notify=true') == -1){
+
 
         //離席中→待機中に変化する場合にチャット通知設定の状態を見る
         if(status == 0){
@@ -1697,17 +1706,29 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
 
             //通知設定が許可されていない場合は警告を出す
-            if(Notification.permission !== "granted"){
-              message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
-                      + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
-                      + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
-                      + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
-                      + "今後、このメッセージを表示しない</label>";
-              modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
-
-          }
+            var userAgent = window.navigator.userAgent.toLowerCase();
+            if(document.cookie.indexOf('block_notify=true') == -1){
+              if(userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1){
+                message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
+                        + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
+                        + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
+                        + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                        + "今後、このメッセージを表示しない</label>";
+                setTimeout(function(){
+                  modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
+                },5);
+              }else if(Notification.permission !== "granted"){
+                message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
+                        + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
+                        + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
+                        + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                        + "今後、このメッセージを表示しない</label>";
+                setTimeout(function(){
+                  modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
+                },5);
+              }
+            }
         }
-      }
       <?php endif;?>
       //FINISH:チャット通知設定がのブロック状況
 
