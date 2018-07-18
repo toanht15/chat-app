@@ -133,6 +133,7 @@ function replaceVariable(str,isSmartphone,widgetSize){
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+  var choiseImgTagReg = RegExp(/<label([\s\S]*?)><img ([\s\S]*?)>/);
   var unEscapeStr = unEscapeHTML(str);
   var className;
 
@@ -152,6 +153,10 @@ function replaceVariable(str,isSmartphone,widgetSize){
   else if(widgetSize === '4') {
     className = 'detailImg';
   }
+  //サイト訪問者からのimgタグの場合
+  else if(widgetSize === '5') {
+    return str;
+  }
 
   // リンク
   var link = str.match(linkReg);
@@ -163,7 +168,7 @@ function replaceVariable(str,isSmartphone,widgetSize){
           //imgタグ有効化
           var img = unEscapeStr.match(imgTagReg);
           if(img !== null) {
-            imgTag = "<img "+img[1]+" class = "+className+">";
+            imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
             a = a.replace(img[0], imgTag);
           }
         }
@@ -180,7 +185,7 @@ function replaceVariable(str,isSmartphone,widgetSize){
         //imgタグ有効化
         var img = unEscapeStr.match(imgTagReg);
         if(img !== null) {
-          imgTag = "<img "+img[1]+" class = "+className+">";
+          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
           a = a.replace(img[0], imgTag);
         }
         str = str.replace(url, a);
@@ -202,8 +207,14 @@ function replaceVariable(str,isSmartphone,widgetSize){
   }
   //imgタグ有効化
   var img = unEscapeStr.match(imgTagReg);
-  if(img !== null) {
-    imgTag = "<img "+img[1]+" class = "+className+">";
+  var choiseImg = unEscapeStr.match(choiseImgTagReg);
+  //選択肢に画像を入れる場合
+  if(img !== null && choiseImg !== null) {
+    imgTag = "<label "+choiseImg[1]+"><div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div></label>";
+    str = unEscapeStr.replace(choiseImg[0], imgTag);
+  }
+  if(img !== null && choiseImg === null) {
+    imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
     str = unEscapeStr.replace(img[0], imgTag);
   }
   return str;

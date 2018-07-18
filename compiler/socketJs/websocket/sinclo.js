@@ -2460,7 +2460,7 @@
                         //imgタグ有効化
                         var img = unEscapeStr.match(imgTagReg);
                         if(img !== null) {
-                          imgTag = "<img "+img[1]+" class = "+className+">";
+                          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                           a = a.replace(img[0], imgTag);
                         }
                       }
@@ -2477,7 +2477,7 @@
                       //imgタグ有効化
                       var img = unEscapeStr.match(imgTagReg);
                       if(img !== null) {
-                        imgTag = "<img "+img[1]+" class = "+className+">";
+                        imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                         a = a.replace(img[0], imgTag);
                       }
                       str = str.replace(url, a);
@@ -2497,12 +2497,14 @@
                     str = str.replace(tel[0], span);
                   }
                 }
-                //imgタグ
-                var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
-                var img = unEscapeStr.match(imgTagReg);
-                if(img !== null) {
-                  imgTag = "<img "+img[1]+" class = "+className+">";
-                  str = unEscapeStr.replace(img[0], imgTag);
+                if ( cs === "sinclo_re" ) {
+                  //imgタグ
+                  var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+                  var img = unEscapeStr.match(imgTagReg);
+                  if(img !== null) {
+                    imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+                    str = unEscapeStr.replace(img[0], imgTag);
+                  }
                 }
                 content += str + "\n";
             }

@@ -1399,6 +1399,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
           str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
         }
+        if(chat.messageType === 1) {
+          widgetSize = '5';
+        }
         //リンク、電話番号,img
         str = replaceVariable(str,isSmartphone,widgetSize);
         custom += str + "\n";
