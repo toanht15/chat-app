@@ -1694,7 +1694,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.chgOpStatus = function(){
       var opState = $('#changeOpStatus'),
         status = opState.data('status');
-      console.log(status);
       //START:チャット通知設定のブロック状況
       <?php if(isset($coreSettings[C_COMPANY_USE_CHAT]) && $coreSettings[C_COMPANY_USE_CHAT]): ?>
       //以降、表示しないを選択していない場合は通知設定警告を出す
