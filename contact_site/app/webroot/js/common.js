@@ -168,7 +168,7 @@ function replaceVariable(str,isSmartphone,widgetSize){
           //imgタグ有効化
           var img = unEscapeStr.match(imgTagReg);
           if(img !== null) {
-            imgTag = "<div><img "+img[1]+" class = "+className+"></div>";
+            imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
             a = a.replace(img[0], imgTag);
           }
         }
@@ -185,7 +185,7 @@ function replaceVariable(str,isSmartphone,widgetSize){
         //imgタグ有効化
         var img = unEscapeStr.match(imgTagReg);
         if(img !== null) {
-          imgTag = "<div><img "+img[1]+" class = "+className+"></div>";
+          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
           a = a.replace(img[0], imgTag);
         }
         str = str.replace(url, a);
