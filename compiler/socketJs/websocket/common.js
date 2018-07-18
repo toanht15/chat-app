@@ -654,7 +654,7 @@ var socket, // socket.io
           //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
           if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
             sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px'+display});
+            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
           }
           //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
           if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
@@ -708,7 +708,7 @@ var socket, // socket.io
           //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
           if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
             sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px'+display});
+            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
           }
           //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
           if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
@@ -772,7 +772,7 @@ var socket, // socket.io
         //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
         if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
           sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;padding-top:0px;'+display});
         }
         //企業名 企業名表示しない・説明文表示する・画像ありの場合
         if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
@@ -831,7 +831,7 @@ var socket, // socket.io
         //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
         if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
           sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px'+display});
+          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px;'+display});
         }
         //企業名 企業名表示しない・説明文表示する・画像ありの場合
         if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
@@ -1159,9 +1159,9 @@ var socket, // socket.io
       html += '      #sincloBox .sinclo_re a { color: '+ colorList['reTextColor'] +' }';
       html += '      #sincloBox ul#chatTalk li.sinclo_re span.telno { color: ' + colorList['reTextColor'] + '; }';
       html += '      #sincloBox ul#chatTalk li.sinclo_re span.link { color: ' + colorList['reTextColor'] + '; }';
-      html += '      #sincloBox ul#chatTalk li.sinclo_re .smallSizeImg { max-width: 165px; max-height: 120px; margin-left:auto; margin-right:auto;}';
-      html += '      #sincloBox ul#chatTalk li.sinclo_re .middleSizeImg { max-width: 215px; max-height: 188px; margin-left:auto; margin-right:auto;}';
-      html += '      #sincloBox ul#chatTalk li.sinclo_re .largeSizeImg { max-width: 265px; max-height: 285px; margin-left:auto; margin-right:auto;}';
+      html += '      #sincloBox ul#chatTalk li.sinclo_re .smallSizeImg { max-width: 165px; max-height: 120px; display:block;}';
+      html += '      #sincloBox ul#chatTalk li.sinclo_re .middleSizeImg { max-width: 215px; max-height: 188px; display:block;}';
+      html += '      #sincloBox ul#chatTalk li.sinclo_re .largeSizeImg { max-width: 265px; max-height: 285px; display:block;}';
       html += '      #sincloBox sinclo-div {display: block; }';
       html += '      #sincloBox label { display: inline; max-width: 100%; margin-bottom: 0; font-weight: normal;}';
       html += '      #sincloBox a:hover { color: ' + colorList['mainColor'] + '; }';

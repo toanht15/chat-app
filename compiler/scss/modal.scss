@@ -39,6 +39,43 @@
         }
       }
 
+      /*ポップアップブロック解除通告用*/
+      &.p-cus-block-popup{
+        width:516px;
+        text-align : center;
+        font-size:1.1em;
+        line-height:1.5em;
+        #popup-button .textBtn {
+          width: 5em;
+          margin: 0 auto;
+        }
+        .red_font{
+          color: #c00000;
+        }
+
+      }
+
+      /*デスクトップ通知解除通告用*/
+      &.p-cus-block-notify{
+        width: 450px;
+        text-align : center;
+        font-size:1.1em;
+        line-height:1.5em;
+        #popup-button .textBtn {
+          width: 5em;
+          margin: 0 auto;
+        }
+
+        .red_font{
+          color: #c00000;
+        }
+
+        label {
+          cursor: pointer;
+        }
+
+      }
+
       /* ウィジェット設定-ギャラリー用 */
       &.p-show-gallary, &.p-show-notification-gallary {
         width: 290px;

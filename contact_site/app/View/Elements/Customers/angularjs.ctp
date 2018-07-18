@@ -179,13 +179,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       },
       addOption: function(type){
         var sendMessage = document.getElementById('sendMessage');
+        var focusPosition = $('#sendMessage').get(0).selectionStart;
         switch(type){
-            case 1:
-            if (sendMessage.value.length > 0) {
-                sendMessage.value += "\n";
-            }
+          case 1:
+          if (sendMessage.value.length == 0) {
             sendMessage.value += "[] ";
-            sendMessage.focus();
+          }
+          else {
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "[] " + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+          }
+          sendMessage.focus();
+          // 開始と終了タブの真ん中にカーソルを配置する
+          if (sendMessage.createTextRange) {
+            var range = sendMessage.createTextRange();
+            range.move('character', focusPosition+4);
+            range.select();
+          } else if (sendMessage.setSelectionRange) {
+            sendMessage.setSelectionRange(sendMessage.value.length, focusPosition+4);
+          }
         }
       },
       pushMessageFlg: false,
@@ -784,7 +795,31 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         };
     };
 
+
+
+
     $scope.confirmSharingWindowOpen = function(tabId, accessId) {
+      /*START:ポップアップブロックの判定処理*/
+      //○○共有を使えないのであれば判定自体を行わない
+      var popupblock;
+      var dummywindow = window.open('','','width = 1,height = 1,top = 20000,left = 20000');
+      dummywindow.close();
+      var judgewindow = window.open('','','width = 1,height = 1,top = 20000,left = 20000');
+      if(judgewindow == null){
+        popupblock = true;
+        message="ポップアップがブロックされているため、共有機能が利用できません。<br>"
+               +"<br>共有機能を利用される場合は<span class='red_font'>ポップアップの設定を「許可」に変更</span>して下さい。"
+               +"<br><br><a target='_blank' href='https://info.sinclo.jp/manual/ポップアップブロック解除方法/'>設定方法はこちら</a>";
+        modalOpen.call(window, message,"p-cus-block-popup",'ポップアップの設定', 'fade', '');
+      }else{
+        popupblock = false;
+        judgewindow.close();
+      }
+      if(popupblock){
+        return;
+      }
+      /*FINISH:ポップアップブロックの判定処理*/
+
       var message = "アクセスID【" + accessId + "】のユーザーと共有するモードを選択してください。<br><br>";
       var ua = $scope.monitorList[tabId].userAgent.toLowerCase();
       var smartphone = (ua.indexOf('iphone') > 0 || ua.indexOf('ipod') > 0 || ua.indexOf('android') > 0);
@@ -1020,13 +1055,44 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             return true;
           };
           popupEvent.closePopup = function(){
+              popupEvent.close();
               $("#sendMessage").focus();
               $scope.ngChatApi.connect();
               $("#sendMessage").val("").focus();
+                  //離席中→待機中に変化する場合にチャット通知設定の状態を見る
+                  if($('#changeOpStatus').data('status') == 0){
+
+                    <?php if(isset($coreSettings[C_COMPANY_USE_CHAT]) && $coreSettings[C_COMPANY_USE_CHAT]): ?>
+
+                      //通知設定が許可されていない場合は警告を出す
+                    var userAgent = window.navigator.userAgent.toLowerCase();
+                    if(document.cookie.indexOf('block_notify=true') == -1){
+                      if(userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1){
+                        message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
+                                + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
+                                + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
+                                + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                                + "今後、このメッセージを表示しない</label>";
+                        setTimeout(function(){
+                          modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
+                        },505);
+                      }else if(Notification.permission !== "granted"){
+                        message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
+                                + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
+                                + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
+                                + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                                + "今後、このメッセージを表示しない</label>";
+                        setTimeout(function(){
+                          modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
+                        },505);
+                      }
+                    }
+
+                    <?php endif; ?>
+                  }
               if ( String($('#changeOpStatus').data('status')) !== "<?=C_OPERATOR_ACTIVE?>" ) {
                 chgOpStatus(); // 在席ステータスにする
               }
-              popupEvent.close();
               $scope.confirmFlg = false;
               return true;
           };
@@ -1333,6 +1399,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
           str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
         }
+        if(chat.messageType === 1) {
+          widgetSize = '5';
+        }
         //リンク、電話番号,img
         str = replaceVariable(str,isSmartphone,widgetSize);
         custom += str + "\n";
@@ -1622,9 +1691,51 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       return cn;
     };
 
+
+
+
     $scope.chgOpStatus = function(){
       var opState = $('#changeOpStatus'),
-          status = opState.data('status');
+        status = opState.data('status');
+      //START:チャット通知設定のブロック状況
+      <?php if(isset($coreSettings[C_COMPANY_USE_CHAT]) && $coreSettings[C_COMPANY_USE_CHAT]): ?>
+      //以降、表示しないを選択していない場合は通知設定警告を出す
+
+
+        //離席中→待機中に変化する場合にチャット通知設定の状態を見る
+        if(status == 0){
+
+
+
+            //通知設定が許可されていない場合は警告を出す
+            var userAgent = window.navigator.userAgent.toLowerCase();
+            if(document.cookie.indexOf('block_notify=true') == -1){
+              if(userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1){
+                message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
+                        + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
+                        + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
+                        + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                        + "今後、このメッセージを表示しない</label>";
+                setTimeout(function(){
+                  modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
+                },5);
+              }else if(Notification.permission !== "granted"){
+                message = "通知の表示がブロックされているため、新着チャットを<br>受信した際にデスクトップ通知が表示されません。<br>"
+                        + "<br>チャット受信時の通知を受け取りたい場合は<br><span class='red_font'>通知の設定を「許可」に変更</span>してください。"
+                        + "<br><br><a target='_blank' href='https://info.sinclo.jp/manual/デスクトップ通知のブロック解除方法/'>設定方法はこちら</a>"
+                        + "<br><br><label for='block_notify_chat'><input type='checkbox' id='block_notify_chat' onclick='notify_cookie()'>"
+                        + "今後、このメッセージを表示しない</label>";
+                setTimeout(function(){
+                  modalOpen.call(window, message,"p-cus-block-notify",'通知の表示', 'fade', '');
+                },5);
+              }
+            }
+        }
+      <?php endif;?>
+      //FINISH:チャット通知設定がのブロック状況
+
+
+
 
       // 在席⇒退席でチャット中の場合
       if ( String(status) === "<?=C_OPERATOR_ACTIVE?>" && $scope.chatList.length > 0 ) {

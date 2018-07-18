@@ -1981,8 +1981,7 @@ ul.naviBtn {
                     .detailImg {
                       max-width: 200px;
                       max-height: 140px;
-                      margin-left:auto;
-                      margin-right:auto;
+                      transform: none;
                     }
                     div.sendFileContent {
                       display: table;
@@ -6267,22 +6266,19 @@ ul.naviBtn {
           .smallSizeImg {
             max-width: 165px;
             max-height: 120px;
-            margin-left:auto;
-            margin-right:auto;
+            display:block;
           }
 
           .middleSizeImg {
             max-width: 215px;
             max-height: 188px;
-            margin-left:auto;
-            margin-right:auto;
+            display:block;
           }
 
           .largeSizeImg {
             max-width: 265px;
             max-height: 285px;
-            margin-left:auto;
-            margin-right:auto;
+            display:block;
           }
 
           > div {
@@ -7604,22 +7600,22 @@ ul.naviBtn {
           .smallSizeImg {
             max-width: 165px;
             max-height: 120px;
-            margin-left:auto;
-            margin-right:auto;
+            display:block;
+            transform:none;
           }
 
           .middleSizeImg {
             max-width: 215px;
             max-height: 188px;
-            margin-left:auto;
-            margin-right:auto;
+            display:block;
+            transform:none;
           }
 
           .largeSizeImg {
             max-width: 265px;
             max-height: 285px;
-            margin-left:auto;
-            margin-right:auto;
+            display:block;
+            transform:none;
           }
 
           .blueBtn {
@@ -9899,8 +9895,7 @@ div.balloon {
   text-align:center !important;
   height:52px !important;
   line-height:52px !important;
-  padding-right: 26px !important;
-  padding-left: 70px !important;
+  padding: 0 26px 0 70px !important;
 }
 
 .leftPositionNoImageCompany {

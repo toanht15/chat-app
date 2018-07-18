@@ -2122,7 +2122,7 @@
             return;
           }
           // シナリオのヒアリングモードのみ有効
-          if(sinclo.scenarioApi.isProcessing()) {
+          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
@@ -2460,7 +2460,7 @@
                         //imgタグ有効化
                         var img = unEscapeStr.match(imgTagReg);
                         if(img !== null) {
-                          imgTag = "<img "+img[1]+" class = "+className+">";
+                          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                           a = a.replace(img[0], imgTag);
                         }
                       }
@@ -2477,7 +2477,7 @@
                       //imgタグ有効化
                       var img = unEscapeStr.match(imgTagReg);
                       if(img !== null) {
-                        imgTag = "<img "+img[1]+" class = "+className+">";
+                        imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                         a = a.replace(img[0], imgTag);
                       }
                       str = str.replace(url, a);
@@ -2497,12 +2497,14 @@
                     str = str.replace(tel[0], span);
                   }
                 }
-                //imgタグ
-                var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
-                var img = unEscapeStr.match(imgTagReg);
-                if(img !== null && link === null && linkTab === null) {
-                  imgTag = "<img "+img[1]+" class = "+className+">";
-                  str = unEscapeStr.replace(img[0], imgTag);
+                if ( cs === "sinclo_re" ) {
+                  //imgタグ
+                  var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+                  var img = unEscapeStr.match(imgTagReg);
+                  if(img !== null) {
+                    imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+                    str = unEscapeStr.replace(img[0], imgTag);
+                  }
                 }
                 content += str + "\n";
             }
@@ -2628,7 +2630,7 @@
           divElm.style.textAlign = "right";
           var thumbnail = "";
           if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
-            thumbnail = "<img src='" + downloadUrl + '?thumb' + "' class='sendFileThumbnail " + sinclo.chatApi.fileUploader._selectPreviewImgClass() + "'>";
+            thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail " + sinclo.chatApi.fileUploader._selectPreviewImgClass() + "'>";
           } else {
             thumbnail = "<i class='sinclo-fal " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
           }
@@ -4597,6 +4599,7 @@
         sinclo.chatApi.initEvent();
         var type = (beforeTextareaOpened === "close") ? "2" : "1";
         self._handleChatTextArea(type);
+
         self._resetDefaultVal();
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
