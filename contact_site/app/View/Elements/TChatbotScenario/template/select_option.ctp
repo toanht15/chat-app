@@ -10,7 +10,7 @@
     <li class="styleFlexbox">
       <span class="fb7em"><label>質問内容<span class="questionBalloon"><icon class="questionBtn" data-tooltip="チャットボットが自動送信する質問内容を設定します。<br><br>例）お客様の性別を選択して下さい。">?</icon></span></label></span>
       <div>
-        <resize-textarea name="message" ng-model="setItem.message" cols="48" rows="1" placeholder="質問内容のメッセージを入力してください" data-maxRow="10"></resize-textarea>
+        <resize-textarea name="message" maxlength="4000" ng-model="setItem.message" cols="48" rows="1" placeholder="質問内容のメッセージを入力してください" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li>

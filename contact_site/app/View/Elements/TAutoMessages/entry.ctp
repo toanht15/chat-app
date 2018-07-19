@@ -156,7 +156,7 @@
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(3)">リンク(ページ遷移)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(4)">リンク(新規ページ)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
               </span>
-              <?=$this->Form->textarea('action', ['maxlength'=>1000, 'cols' => 48, 'rows' => 15, 'ng-init' => 'decodeHtmlSpecialChar("'.h(!empty($this->data['TAutoMessage']['action']) ? $this->data['TAutoMessage']['action'] : "").'")', 'ng-model' => 'action'])?>
+              <?=$this->Form->textarea('action', ['maxlength'=>4000, 'cols' => 48, 'rows' => 15, 'ng-init' => 'decodeHtmlSpecialChar("'.h(!empty($this->data['TAutoMessage']['action']) ? $this->data['TAutoMessage']['action'] : "").'")', 'ng-model' => 'action'])?>
               <?php if (!empty($errors['action'])) echo "<pre class='error-message'>" . h($errors['action'][0]) . "</pre>"; ?>
 
           </li>
