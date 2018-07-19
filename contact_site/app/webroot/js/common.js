@@ -128,7 +128,7 @@ function unEscapeHTML(str) {
     .replace(/(&amp;)/g, '&');
 };
 
-function replaceVariable(str,isSmartphone,widgetSize){
+function replaceVariable(str,isSmartphone,type){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
@@ -138,25 +138,28 @@ function replaceVariable(str,isSmartphone,widgetSize){
   var className;
 
   //ウィジェットサイズが小の場合
-  if(widgetSize === '1' || isSmartphone) {
+  if(type === '1' || isSmartphone) {
     className = 'smallSizeImg';
   }
   //ウィジェットサイズが中の場合
-  else if(widgetSize === '2') {
+  else if(type === '2') {
     className = 'middleSizeImg';
   }
   //ウィジェットサイズが大の場合
-  else if(widgetSize === '3') {
+  else if(type === '3') {
     className = 'largeSizeImg';
   }
   //リアルタイムモニタ詳細画面の場合
-  else if(widgetSize === '4') {
+  else if(type === '4') {
     className = 'detailImg';
   }
   //サイト訪問者からのimgタグの場合
-  else if(widgetSize === '5') {
+  else if(type === '5') {
     return str;
   }
+  //チャット履歴からのimgタグの場合
+  /*else if(type === '6') {
+  }*/
 
   // リンク
   var link = str.match(linkReg);
@@ -209,13 +212,59 @@ function replaceVariable(str,isSmartphone,widgetSize){
   var img = unEscapeStr.match(imgTagReg);
   var choiseImg = unEscapeStr.match(choiseImgTagReg);
   //選択肢に画像を入れる場合
-  if(img !== null && choiseImg !== null) {
+  if(img !== null && choiseImg !== null && type !== '6') {
     imgTag = "<label "+choiseImg[1]+"><div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div></label>";
     str = unEscapeStr.replace(choiseImg[0], imgTag);
   }
-  if(img !== null && choiseImg === null) {
+  else if(img !== null && choiseImg === null && type !== '6') {
     imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
     str = unEscapeStr.replace(img[0], imgTag);
+  }
+  //チャット履歴の場合
+  else if(img !== null && type === '6') {
+    var imgTagReg = RegExp(/<img ([\s\S]*?)src="([\s\S]*?)"/);
+    var imgTag = img[0].match(imgTagReg);
+    var imgTagStyleReg = RegExp(/<img ([\s\S]*?)style="([\s\S]*?)"/);
+    var imgTagStyle = img[0].match(imgTagStyleReg);
+    //styleが設定されている場合
+    if(imgTagStyle !== null) {
+      //中央揃えの場合
+      if (imgTagStyle[2].match(/display:block/) && imgTagStyle[2].match(/margin-left:auto/) && imgTagStyle[2].match(/margin-right:auto/)) {
+        //リンクがある場合
+        if ( link !== null || linkTab !== null) {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:center;margin-bottom:0px;text-decoration: underline;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
+        else {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:center;margin-bottom:0px;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
+      }
+      //右揃えの場合
+      else if (imgTagStyle[2].match(/display:block/) && imgTagStyle[2].match(/margin-left:auto/) && imgTagStyle[2].match(/margin-right:auto/) === null) {
+        //リンクがある場合
+        if ( link !== null || linkTab !== null) {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:right;margin-bottom:0px;text-decoration: underline;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
+        else {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:right;margin-bottom:0px;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
+      }
+      //左揃えの場合
+      else if (imgTagStyle[2].match(/display:block/) && imgTagStyle[2].match(/margin-left:auto/) === null && imgTagStyle[2].match(/margin-right:auto/)) {
+        //リンクがある場合
+        if ( link !== null || linkTab !== null) {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:left;margin-bottom:0px;text-decoration: underline;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
+        else {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:left;margin-bottom:0px;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
+      }
+      else {
+        str = unEscapeStr.replace(img[0], '<span>＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+      }
+    }
+    else {
+      str = unEscapeStr.replace(img[0], '<span>＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+    }
   }
   return str;
 }

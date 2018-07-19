@@ -159,10 +159,55 @@ class htmlExHelper extends AppHelper {
                 $ret = "<span style='font-weight: normal;'>". preg_replace('/^<telno>|<\/telno>$/', "", $tmp) . "</span>";
                 $str = preg_replace('/<telno>([\s\S]*?)<\/telno>/', $ret, $tmp);
             }
+            //アクセス履歴の場合
             if ( preg_match_all('/<img([\s\S]*?)>/', $tmp, $allResult) && $imgTag) {
               preg_match('/<img ([\s\S]*?)src="([\s\S]*?)"/', $tmp, $linkUrl);
+              preg_match('/<img ([\s\S]*?)style="([\s\S]*?)"/', $tmp, $style);
               foreach($allResult[0] as $key => $value){
-                $str = str_replace($value,"＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞",$tmp);
+                if(!empty($style)) {
+                  //中央揃えの場合
+                  if(strpos($style[2],'display:block') !== false && strpos($style[2],'margin-left:auto') !== false && strpos($style[2],'margin-right:auto') !== false){
+                    //リンクがある場合
+                    if ( preg_match('/<a ([\s\S]*?)<\/a>/', $tmp)) {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:center;font-weight:normal;text-decoration: underline;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
+                    else {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:center;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
+                  }
+                  //右揃えの場合
+                  else if(strpos($style[2],'display:block') !== false && strpos($style[2],'margin-left:auto') !== false && strpos($style[2],'margin-right:auto') === false){
+                    //リンクがある場合
+                    if ( preg_match('/<a ([\s\S]*?)<\/a>/', $tmp)) {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:right;font-weight:normal;text-decoration: underline;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
+                    else {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:right;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
+                  }
+                  //左揃えの場合
+                  else if(strpos($style[2],'display:block') !== false && strpos($style[2],'margin-left:auto') === false && strpos($style[2],'margin-right:auto') !== false){
+                    //リンクがある場合
+                    if ( preg_match('/<a ([\s\S]*?)<\/a>/', $tmp)) {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;text-decoration: underline;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
+                    else {
+                       $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
+                  }
+                  else {
+                    $str = str_replace($value,"<span style='display:inline-block;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                  }
+                }
+                else {
+                  $str = str_replace($value,"<span style='display:inline-block;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                }
+              }
+            }
+            else if ( preg_match_all('/<img([\s\S]*?)>/', $tmp, $allResult) && !preg_match('/<a([\s\S]*?)<\/a>/', $tmp) && $imgTag === false) {
+              preg_match('/<img ([\s\S]*?)src="([\s\S]*?)">/', $tmp, $linkUrl);
+              foreach($allResult[0] as $key => $value){
+                $str = str_replace($value,$linkUrl[0],$tmp);
               }
             }
             $content .= $str."\n";
