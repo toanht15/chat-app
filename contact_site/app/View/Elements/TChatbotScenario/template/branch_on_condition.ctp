@@ -34,7 +34,7 @@
             <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = condition.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 1">
-            <resize-textarea ng-model="condition.action.message" placeholder="メッセージを入力してください"></resize-textarea>
+            <resize-textarea maxlength="4000" ng-model="condition.action.message" placeholder="メッセージを入力してください"></resize-textarea>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 2">
             <select ng-model="condition.action.callScenarioId" ng-init="condition.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioListForBranchOnCond">
@@ -63,7 +63,7 @@
               <select class="m10r" ng-model="setItem.elseAction.actionType" ng-init="setItem.elseAction.actionType = setItem.elseAction.actionType.toString()" ng-options="index as type.label for (index, type) in processElseActionTypeList"></select>
             </div>
             <div class="conditionAction elseCondition" ng-if="setItem.elseAction.actionType == 1">
-              <resize-textarea ng-model="setItem.elseAction.action.message" placeholder="メッセージを入力してください"></resize-textarea>
+              <resize-textarea maxlength="4000" ng-model="setItem.elseAction.action.message" placeholder="メッセージを入力してください"></resize-textarea>
             </div>
             <div class="conditionAction elseCondition" ng-if="setItem.elseAction.actionType == 2">
               <select ng-model="setItem.elseAction.action.callScenarioId" ng-if="setItem.elseAction.actionType == 2" ng-init="setItem.elseAction.action.callScenarioId" ng-options="item.id as item.name for item in main.scenarioList">

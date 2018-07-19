@@ -30,6 +30,15 @@ for(var i = 0; imageList.length > i; i++) {
   <li class="icon-view" data-name="fa-comments normal">
     <i class="icon fal fa-comments bgOn"/>
   </li>
+  <li class="icon-view" data-name="fa-comments-alt normal">
+    <i class="icon fal fa-comments-alt bgOn"/>
+  </li>
+  <li class="icon-view" data-name="fa-comment-lines normal">
+    <i class="icon fal fa-comment-lines bgOn"/>
+  </li>
+  <li class="icon-view" data-name="fa-comment-alt-lines normal">
+    <i class="icon fal fa-comment-alt-lines bgOn"/>
+  </li>
   <li class="icon-view" data-name="fa-phone normal">
     <i class="icon fal fa-phone bgOn"/>
   </li>

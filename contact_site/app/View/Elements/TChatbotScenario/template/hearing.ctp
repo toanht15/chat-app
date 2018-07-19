@@ -12,7 +12,7 @@
         <div class='area-type'>
           <select ng-model="hearingItem.inputType" ng-init="hearingItem.inputType = hearingItem.inputType.toString()" ng-options="index as type.label for (index, type) in inputTypeList"></select>
         </div>
-        <div class='area-message'><resize-textarea ng-model="hearingItem.message" rows="1" data-maxRow="10"></resize-textarea></div>
+        <div class='area-message'><resize-textarea maxlength="4000" ng-model="hearingItem.message" rows="1" data-maxRow="10"></resize-textarea></div>
         <div class='area-btn'>
           <div class="btnBlock">
             <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
@@ -30,7 +30,7 @@
     <li class="styleFlexbox">
       <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="サイト訪問者の発言内容がタイプに当てはまらなかった場合（整合性チェックエラーの場合）に自動返信するメッセージを設定します。">?</icon></span></label></span>
       <div>
-        <resize-textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="1" placeholder="入力エラー時の返信メッセージを入力してください" data-maxRow="10"></resize-textarea>
+        <resize-textarea name="errorMessage" maxlength="4000" ng-model="setItem.errorMessage" cols="48" rows="1" placeholder="入力エラー時の返信メッセージを入力してください" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li>

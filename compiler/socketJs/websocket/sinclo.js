@@ -2460,7 +2460,7 @@
                         //imgタグ有効化
                         var img = unEscapeStr.match(imgTagReg);
                         if(img !== null) {
-                          imgTag = "<img "+img[1]+" class = "+className+">";
+                          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                           a = a.replace(img[0], imgTag);
                         }
                       }
@@ -2477,7 +2477,7 @@
                       //imgタグ有効化
                       var img = unEscapeStr.match(imgTagReg);
                       if(img !== null) {
-                        imgTag = "<img "+img[1]+" class = "+className+">";
+                        imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                         a = a.replace(img[0], imgTag);
                       }
                       str = str.replace(url, a);
@@ -2502,7 +2502,7 @@
                   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
                   var img = unEscapeStr.match(imgTagReg);
                   if(img !== null) {
-                    imgTag = "<img "+img[1]+" class = "+className+">";
+                    imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                     str = unEscapeStr.replace(img[0], imgTag);
                   }
                 }

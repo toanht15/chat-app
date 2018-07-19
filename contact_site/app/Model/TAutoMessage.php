@@ -29,6 +29,11 @@ class TAutoMessage extends AppModel {
         'rule' => 'notBlank',
         'allowEmpty' => false,
         'message' => 'メッセージを入力してください'
+      ],
+      'maxLength' => [
+        'rule' => ['maxLength', 4000],
+        'allowEmpty' => false,
+        'message' => 'メッセージは４０００文字以内で入力してください'
       ]
     ]
   ];

@@ -1656,6 +1656,11 @@ function actionValidationCheck(element, setActionList, actionItem) {
     if (!actionItem.message) {
       messageList.push('発言内容が未入力です');
     }
+    if (actionItem.message) {
+      if(actionItem.message.length > 4000){
+        messageList.push('発言内容は4000文字以内で入力してください');
+      }
+    }
 
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
@@ -1663,11 +1668,15 @@ function actionValidationCheck(element, setActionList, actionItem) {
       return !!obj.variableName && !!obj.message;
     });
     if (!validVariables) {
-      messageList.push('変数名と質問内容が未入力です')
+      messageList.push('変数名と質問内容が未入力です');
     }
 
     if (!actionItem.errorMessage) {
-      messageList.push('入力エラー時の返信メッセージが未入力です')
+      messageList.push('入力エラー時の返信メッセージが未入力です');
+    }
+
+    if (actionItem.errorMessage && actionItem.errorMessage.length > 4000) {
+        messageList.push('入力エラー時の返信メッセージは4000文字以内で入力してください');
     }
 
     if (actionItem.isConfirm) {
@@ -1692,11 +1701,15 @@ function actionValidationCheck(element, setActionList, actionItem) {
       messageList.push('質問内容が未入力です');
     }
 
+    if (actionItem.message  && actionItem.message.length > 4000) {
+        messageList.push('質問内容は4000文字以内で入力してください');
+    }
+
     var validOptions = actionItem.selection.options.some(function(obj) {
       return !!obj;
     });
     if (!validOptions) {
-      messageList.push('選択肢が未入力です')
+      messageList.push('選択肢が未入力です');
     }
 
   } else
@@ -1755,6 +1768,8 @@ function actionValidationCheck(element, setActionList, actionItem) {
     }
     if (!actionItem.message) {
       messageList.push('発言内容が未入力です');
+    }else if(actionItem.message.length){
+      messageList.push('発言内容は4000文字以内で入力してください');
     }
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
@@ -1766,6 +1781,8 @@ function actionValidationCheck(element, setActionList, actionItem) {
     }
     if (!actionItem.errorMessage) {
       messageList.push('ファイルエラー時の返信メッセージが未入力です');
+    }else if(actionItem.errorMessage.length > 4000){
+      messageList.push('ファイルエラー時の返信メッセージは4000文字以内で入力してください');
     }
     if (actionItem.cancelEnabled && !actionItem.cancelLabel) {
       messageList.push('キャンセルできるようにする場合は名称の入力が必須です');
@@ -1788,6 +1805,8 @@ function actionValidationCheck(element, setActionList, actionItem) {
       if(Number(elm.actionType) === 1 && !elm.action.message) {
         messageList.push('アクションのメッセージが未入力です');
         return true;
+      }else if(elm.action.message.length > 4000){
+        messageList.push('アクションのメッセージは4000文字以内で入力してください');
       }
     });
 
@@ -1801,6 +1820,8 @@ function actionValidationCheck(element, setActionList, actionItem) {
     if(actionItem.elseEnabled) {
       if(Number(actionItem.elseAction.actionType) === 1 && !actionItem.elseAction.action.message) {
         messageList.push('アクションのメッセージが未入力です');
+      }else if(actionItem.elseAction.action.message.length > 4000){
+        messageList.push('アクションのメッセージは4000文字以内で入力してください');
       }
       if(Number(actionItem.elseAction.actionType) === 2 && (!actionItem.elseAction.action.callScenarioId || actionItem.elseAction.action.callScenarioId === "")) {
         messageList.push('呼出先のシナリオを選択して下さい');
