@@ -225,21 +225,10 @@
               str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
           }
           //リンク、電話番号
-          str = replaceVariable(str,isSmartphone);
+          str = replaceVariable(str,isSmartphone,'6');
           custom += str + "\n";
         }
       return custom;
-    };
-
-    $scope.validateImg = function(img,message){
-      for(var i=0;i<img.length;i++) {
-        var imgTagReg = RegExp(/<img ([\s\S]*?)src="([\s\S]*?)"/);
-        var imgTag = img[i].match(imgTagReg);
-        var aTagReg = RegExp(/<a ([\s\S]*?)/);
-        var aTag = message.match(aTagReg);
-        message = message.replace(img[i], '<'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'>');
-      }
-      return message;
     };
 
     // 【チャット】チャット枠の構築
@@ -369,9 +358,6 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
           }
-          if(img !== null) {
-            message = $scope.validateImg(img,message);
-          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -408,9 +394,6 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
-          if(img !== null) {
-            message = $scope.validateImg(img,message);
-          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -438,9 +421,6 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\"　data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">'
-          }
-          if(img !== null) {
-            message = $scope.validateImg(img,message);
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
@@ -505,9 +485,6 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
           }
-          if(img !== null) {
-            message = $scope.validateImg(img,message);
-          }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       } else if ( type === chatApi.messageType.scenario.customer.selection ) {
@@ -535,9 +512,6 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
-          }
-          if(img !== null) {
-            message = $scope.validateImg(img,message);
           }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
@@ -567,9 +541,6 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
-          if(img !== null) {
-            message = $scope.validateImg(img,message);
-          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -598,9 +569,6 @@
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
-          if(img !== null) {
-            message = $scope.validateImg(img,message);
-          }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
@@ -628,9 +596,6 @@
           }
           else if(chat.permissionLevel == 1 && coreSettings == "") {
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
-          }
-          if(img !== null) {
-            message = $scope.validateImg(img,message);
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
