@@ -157,7 +157,7 @@ function replaceVariable(str,isSmartphone,type){
   else if(type === '5') {
     return str;
   }
-  //履歴からのimgタグの場合
+  //チャット履歴からのimgタグの場合
   /*else if(type === '6') {
   }*/
 
