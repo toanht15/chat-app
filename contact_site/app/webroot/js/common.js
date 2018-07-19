@@ -226,12 +226,14 @@ function replaceVariable(str,isSmartphone,type){
     var imgTag = img[0].match(imgTagReg);
     var imgTagStyleReg = RegExp(/<img ([\s\S]*?)style="([\s\S]*?)"/);
     var imgTagStyle = img[0].match(imgTagStyleReg);
+    var linkImgTabReg = RegExp(/<a ([\s\S]*?)><img ([\s\S]*?)><\/a>/);
+    var linkimgTag = unEscapeStr.match(linkImgTabReg);
     //styleが設定されている場合
     if(imgTagStyle !== null) {
       //中央揃えの場合
       if (imgTagStyle[2].match(/display:block/) && imgTagStyle[2].match(/margin-left:auto/) && imgTagStyle[2].match(/margin-right:auto/)) {
         //リンクがある場合
-        if ( link !== null || linkTab !== null) {
+        if ( linkimgTag !== null) {
           str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:center;margin-bottom:0px;text-decoration: underline;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
         }
         else {
@@ -241,7 +243,7 @@ function replaceVariable(str,isSmartphone,type){
       //右揃えの場合
       else if (imgTagStyle[2].match(/display:block/) && imgTagStyle[2].match(/margin-left:auto/) && imgTagStyle[2].match(/margin-right:auto/) === null) {
         //リンクがある場合
-        if ( link !== null || linkTab !== null) {
+        if ( linkimgTag !== null) {
           str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:right;margin-bottom:0px;text-decoration: underline;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
         }
         else {
@@ -251,7 +253,7 @@ function replaceVariable(str,isSmartphone,type){
       //左揃えの場合
       else if (imgTagStyle[2].match(/display:block/) && imgTagStyle[2].match(/margin-left:auto/) === null && imgTagStyle[2].match(/margin-right:auto/)) {
         //リンクがある場合
-        if ( link !== null || linkTab !== null) {
+        if ( linkimgTag !== null) {
           str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:left;margin-bottom:0px;text-decoration: underline;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
         }
         else {
