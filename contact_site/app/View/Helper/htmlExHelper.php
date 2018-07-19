@@ -165,14 +165,35 @@ class htmlExHelper extends AppHelper {
               preg_match('/<img ([\s\S]*?)style="([\s\S]*?)"/', $tmp, $style);
               foreach($allResult[0] as $key => $value){
                 if(!empty($style)) {
+                  //中央揃えの場合
                   if(strpos($style[2],'display:block') !== false && strpos($style[2],'margin-left:auto') !== false && strpos($style[2],'margin-right:auto') !== false){
-                    $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:center;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    //リンクがある場合
+                    if ( preg_match('/<a ([\s\S]*?)<\/a>/', $tmp)) {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:center;font-weight:normal;text-decoration: underline;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
+                    else {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:center;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
                   }
+                  //右揃えの場合
                   else if(strpos($style[2],'display:block') !== false && strpos($style[2],'margin-left:auto') !== false && strpos($style[2],'margin-right:auto') === false){
-                    $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:right;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    //リンクがある場合
+                    if ( preg_match('/<a ([\s\S]*?)<\/a>/', $tmp)) {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:right;font-weight:normal;text-decoration: underline;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
+                    else {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:right;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
                   }
+                  //左揃えの場合
                   else if(strpos($style[2],'display:block') !== false && strpos($style[2],'margin-left:auto') === false && strpos($style[2],'margin-right:auto') !== false){
-                    $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    //リンクがある場合
+                    if ( preg_match('/<a ([\s\S]*?)<\/a>/', $tmp)) {
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;text-decoration: underline;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
+                    else {
+                       $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                    }
                   }
                   else {
                     $str = str_replace($value,"<span style='display:inline-block;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);

@@ -230,15 +230,33 @@ function replaceVariable(str,isSmartphone,type){
     if(imgTagStyle !== null) {
       //中央揃えの場合
       if (imgTagStyle[2].match(/display:block/) && imgTagStyle[2].match(/margin-left:auto/) && imgTagStyle[2].match(/margin-right:auto/)) {
-        str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:center;margin-bottom:0px;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        //リンクがある場合
+        if ( link !== null || linkTab !== null) {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:center;margin-bottom:0px;text-decoration: underline;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
+        else {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:center;margin-bottom:0px;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
       }
       //右揃えの場合
       else if (imgTagStyle[2].match(/display:block/) && imgTagStyle[2].match(/margin-left:auto/) && imgTagStyle[2].match(/margin-right:auto/) === null) {
-        str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:right;margin-bottom:0px;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        //リンクがある場合
+        if ( link !== null || linkTab !== null) {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:right;margin-bottom:0px;text-decoration: underline;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
+        else {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:right;margin-bottom:0px;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
       }
       //左揃えの場合
       else if (imgTagStyle[2].match(/display:block/) && imgTagStyle[2].match(/margin-left:auto/) === null && imgTagStyle[2].match(/margin-right:auto/)) {
-        str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:left;margin-bottom:0px;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        //リンクがある場合
+        if ( link !== null || linkTab !== null) {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:left;margin-bottom:0px;text-decoration: underline;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
+        else {
+          str = unEscapeStr.replace(img[0], '<span style="display:inline-block;width:100%;text-align:left;margin-bottom:0px;">＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
+        }
       }
       else {
         str = unEscapeStr.replace(img[0], '<span>＜'+imgTag[2].substr((imgTag[2].lastIndexOf("/"))+1)+'＞</span>');
