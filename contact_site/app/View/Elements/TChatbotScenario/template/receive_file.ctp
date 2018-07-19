@@ -17,7 +17,7 @@
     <li class="styleFlexbox">
       <span class="fb11em" style="white-space:normal;"><label>ファイルエラー時の<br>返信メッセージ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="指定外のファイル形式のファイルが選択された場合や複数のファイルが選択された場合にチャットボットに発言させるテキストメッセージを設定します。">?</icon></span></label></span>
       <div style="display:flex; align-items: center;">
-        <resize-textarea name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
+        <resize-textarea maxlength="4000" name="errorMessage" ng-model="setItem.errorMessage" cols="48" rows="1" placeholder="メッセージを入力してください" ng-required="true" data-maxRow="10"></resize-textarea>
       </div>
     </li>
     <li>

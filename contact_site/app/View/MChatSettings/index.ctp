@@ -51,6 +51,11 @@ function reloadAct(){
 
 function addOption(type,sorryMessageName){
     sendMessage = document.getElementById(sorryMessageName);
+    //既にギリギリまで入力されている場合は挿入を行わない
+    console.log(sendMessage.value.length);
+    if(sendMessage.value.length >= 3950){
+      return;
+    }
     //バリデーション
     if($('#'+sorryMessageName).val().length < 300) {
       $('#'+sorryMessageName).closest('li').find('.validation').hide();
@@ -345,7 +350,7 @@ function checkValidate() {
           <li style = "padding: 0 0 15px 0;">
             <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
               <span style = "display:flex;">
-                <?=$this->Form->textarea('outside_hours_sorry_message')?>
+                <?=$this->Form->textarea('outside_hours_sorry_message',['maxlength'=>4000])?>
                 <span class = "summarized">
                   <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
                   <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  telno  &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
@@ -358,7 +363,7 @@ function checkValidate() {
           <li style = "padding: 0 0 15px 0;">
             <pre id = "wating_call">(2)対応上限数を超えてのチャットが受信された場合</pre>
             <span style = "display:flex;">
-              <?=$this->Form->textarea('wating_call_sorry_message')?>
+              <?=$this->Form->textarea('wating_call_sorry_message',['maxlength'=>4000])?>
               <span class = "summarized">
                 <span class="greenBtn btn-shadow actBtn choiseButton settingWatingCallChoice" onclick="addOption(1,'MChatSettingWatingCallSorryMessage')">選択肢を追加する</span>
                 <span class="greenBtn btn-shadow actBtn phoneButton settingWatingCallPhone" onclick="addOption(2,'MChatSettingWatingCallSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される &gt;telno&lt; タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
@@ -371,7 +376,7 @@ function checkValidate() {
           <li style = "padding: 0 0 40px 0;">
             <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
             <span style = "display:flex;">
-              <?=$this->Form->textarea('no_standby_sorry_message')?>
+              <?=$this->Form->textarea('no_standby_sorry_message',['maxlength'=>4000])?>
               <span class = "summarized">
                 <span class="greenBtn btn-shadow actBtn choiseButton" onclick="addOption(1,'MChatSettingNoStandbySorryMessage')">選択肢を追加する</span>
                 <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingNoStandbySorryMessage')">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; telno &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
