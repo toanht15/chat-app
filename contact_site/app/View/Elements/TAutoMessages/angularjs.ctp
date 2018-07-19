@@ -184,6 +184,12 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
     $scope.addOption = function(type) {
       var sendMessage = document.getElementById('TAutoMessageAction');
+
+      //既に文字数が十分入力されていた場合は挿入を行わない
+      if(sendMessage.value.length > 3950){
+        return;
+      }
+
       //変数追加
       sendMessage = addVariable(type,sendMessage,$('#TAutoMessageAction').get(0).selectionStart);
       $scope.action = sendMessage.value;

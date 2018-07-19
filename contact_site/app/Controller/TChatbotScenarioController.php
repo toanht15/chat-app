@@ -781,6 +781,16 @@ sinclo@medialink-ml.co.jp
     }
 
     $saveData['TChatbotScenario']['activity'] = json_encode($activity);
+    //DB保存時、テーブルサイズを越えてしまうようであればエラーを吐かせる
+    if(strlen($saveData['TChatbotScenario']['activity']) > 65535){
+
+      $this->log('文字数超過エラー',LOG_DEBUG);
+      $this->log($saveData['TChatbotScenario']['activity'],LOG_DEBUG);
+      $exception = new ChatbotScenarioException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
     $this->TChatbotScenario->set($saveData);
 
     $validate = $this->TChatbotScenario->validates();
