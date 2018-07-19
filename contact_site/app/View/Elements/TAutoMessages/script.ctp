@@ -41,8 +41,9 @@ document.body.onload = function(){
   // 「アクション」の「内容」ラベル
   var targetBalloonList = document.querySelectorAll('.actionValueLabel');
   for (var i = 0; i < targetBalloonList.length; i++) {
+    console.log('このなかには入っている');
     targetBalloonList[i].addEventListener('mouseenter', balloonApi.show('act')); // 設定したアクション内容のポップアップ表示
-    targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定したアクション内容のポップアップ非表示
+    //targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定したアクション内容のポップアップ非表示
   }
 };
 
