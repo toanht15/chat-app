@@ -752,7 +752,6 @@ sinclo@medialink-ml.co.jp
     // その他のチェック
     if ( !empty($saveData['TChatbotScenario']) ) {
       $activity = json_decode($saveData['TChatbotScenario']['activity']);
-
       foreach($activity->scenarios as &$action) {
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の保存と、IDの取得
@@ -1700,6 +1699,10 @@ sinclo@medialink-ml.co.jp
             $action->template = $mailTemplateData['MMailTemplate']['template'];
           }
         }
+        if(!empty($action->mailTemplate)){
+          unset($action->mailTemplate);
+        }
+
       } else
       if ($action->actionType == C_SCENARIO_ACTION_CALL_SCENARIO) {
         // シナリオ呼び出し設定
