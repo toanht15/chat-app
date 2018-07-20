@@ -139,12 +139,16 @@ var balloonApi = {
       if (id) {
         var elm = $(this);
         var offset = elm.offset();
+        $("[id='balloon_" + type + "_" +id+"']").css("display:block");
+          var balloon_height = $("[id='balloon_" + type + "_" +id+"']").outerHeight();
+          var balloon_width = $("[id='balloon_" + type + "_" +id+"']").outerWidth();
+        $("[id='balloon_" + type + "_" +id+"']").css("display:none");
 
         $("[id='balloon_" + type + "_" +id+"']").animate({
           top: offset.top + elm.prop("offsetHeight") + 3,
           left: offset.left + 3
         }, {
-          duration: "first",
+          duration: 10,
           complete: function(){
             $("[id^='balloon_']").hide();
             if (balloonApi.flg) {
@@ -152,8 +156,6 @@ var balloonApi = {
               //表示されたので、位置を取得して下部が見切れるようであれば位置修正
               var balloon_top =  $("[id='balloon_" + type + "_" +id+"']").offset().top;
               var balloon_left = $("[id='balloon_" + type + "_" +id+"']").offset().left;
-              var balloon_height = $("[id='balloon_" + type + "_" +id+"']").outerHeight();
-              var balloon_width = $("[id='balloon_" + type + "_" +id+"']").outerWidth();
               var label_height = 0;
               switch(type){
               case "act":
@@ -169,8 +171,9 @@ var balloonApi = {
               }
 
               //画面上部にも見切れてしまうようであれば、ボタン左に表示
-              if($("[id='balloon_" + type + "_" +id+"']").offset().top < 20){
+              if($("[id='balloon_" + type + "_" +id+"']").offset().top < $("#color-bar").outerHeight() + 20){
                 var reset_left = balloon_left - balloon_width - 6;
+
 
                 $("[id='balloon_" + type + "_" +id+"']").offset({top:(window.innerHeight- balloon_height)/2,left:reset_left});
               }
