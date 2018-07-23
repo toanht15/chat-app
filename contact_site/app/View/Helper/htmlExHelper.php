@@ -192,7 +192,7 @@ class htmlExHelper extends AppHelper {
                       $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;text-decoration: underline;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
                     }
                     else {
-                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                        $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
                     }
                   }
                   else {
