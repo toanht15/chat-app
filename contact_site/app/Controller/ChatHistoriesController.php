@@ -1541,6 +1541,7 @@
                   't_histories_id' => $idList,
                   'url LIKE' => '%?%'.$campaignParam[0].'%'
                 ],
+                'group' => 't_histories_id'
               ],
               $this->THistoryStayLog
             );
@@ -1557,6 +1558,7 @@
                   't_histories_id' => $idList,
                   'url LIKE' => '%?'.$tmp.'%'
                 ],
+                'group' => 't_histories_id'
               ],
               $this->THistoryStayLog
             );
