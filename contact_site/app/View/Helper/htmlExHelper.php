@@ -192,7 +192,7 @@ class htmlExHelper extends AppHelper {
                       $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;text-decoration: underline;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
                     }
                     else {
-                       $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
+                      $str = str_replace($value,"<span style='display:inline-block;width: 98%;text-align:left;font-weight:normal;'>＜".mb_substr($linkUrl[2],(mb_strrpos($linkUrl[2], "/")+1))."＞</span>",$tmp);
                     }
                   }
                   else {
@@ -204,9 +204,16 @@ class htmlExHelper extends AppHelper {
                 }
               }
             }
-            else if ( preg_match_all('/<img([\s\S]*?)>/', $tmp, $allResult) && !preg_match('/<a([\s\S]*?)<\/a>/', $tmp) && $imgTag === false) {
+            else if ( (preg_match_all('/<img([\s\S]*?)>/', $tmp, $allResult) || preg_match_all('/<a([\s\S]*?)><img([\s\S]*?)><\/a>/', $tmp, $allResult)) && $imgTag === false) {
               preg_match('/<img ([\s\S]*?)src="([\s\S]*?)">/', $tmp, $linkUrl);
+              preg_match('/<img ([\s\S]*?)style="([\s\S]*?)">/', $tmp, $imgStyle);
               foreach($allResult[0] as $key => $value){
+                if(!empty($imgStyle)) {
+                  $tmp = str_replace($imgStyle[2],$imgStyle[2].';max-width:265px;max-height:285px;',$tmp);
+                }
+                else {
+                  $tmp = str_replace($linkUrl[2],$linkUrl[2].'" style="max-width:265px;max-height:285px;"',$tmp);
+                }
                 $str = str_replace($value,$linkUrl[0],$tmp);
               }
             }
