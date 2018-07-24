@@ -2528,6 +2528,9 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
       sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
       sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
+      console.log('obj');
+      console.log(obj);
+      console.log(getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
       emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     }
 
@@ -3729,6 +3732,27 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       console.log("assistAgentIsReady >>> Tab ID : " + obj.to + " is NOT found.");
       //FIXME  画面共有セッションは切れていない可能性もあるのでハンドリング方法を考える
     }
+  });
+
+  //画面共有キャンセル
+  socket.on('scShareCansel', function(d){
+    //var obj = JSON.parse(d);
+    //var targetId = obj.tabId.replace("_frame", "");
+    console.log('画面共有終了したよ');
+    var obj = JSON.parse(d);
+    console.log(obj);
+    var targetId = obj.tabId.replace("_frame", "");
+    emit.toCompany('scShareCansel2', 'aaaaa', obj.siteKey);
+  });
+
+  //画面共有キャンセル
+  socket.on('cancelSharing', function(d){
+    //var obj = JSON.parse(d);
+    //var targetId = obj.tabId.replace("_frame", "");
+    console.log('画面共有キャンセルしたよ');
+    var obj = JSON.parse(d);
+    console.log(obj);
+    emit.toUser('cancelSharing2', d, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
   });
 
   socket.on('coBrowseReconnectConfirm', function (data) {

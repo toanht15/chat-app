@@ -4242,6 +4242,12 @@ var socket, // socket.io
       sinclo.getWindowInfo(obj);
     }); // socket-on: getWindowInfo
 
+    // 画面共有
+    socket.on('cancelSharing2', function(d){
+      var obj = common.jParse(d);
+      sinclo.cancelSharing2(obj);
+    }); // socket-on: getWindowInfo
+
     // 画面共有(LiveAssist)
     socket.on('startCoBrowseOpen', function(d){
       var obj = common.jParse(d);

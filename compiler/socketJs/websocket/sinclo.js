@@ -668,6 +668,7 @@
       emit('customerInfo', emitData);
     },
     createShareWindow: function(obj) { // 外部接続
+      console.log('入ってきている2');
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = location.host + 'の内容';
@@ -692,7 +693,11 @@
       };
       popup.set(title, content);
     },
+    cancelSharing2: function(obj){
+      popup.remove();
+    },
     getWindowInfo: function(obj) {
+      console.log('入ってる');
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareBrowse.begin.headerMessage)) ? window.sincloInfo.custom.shareBrowse.begin.headerMessage : location.host + 'の内容';
@@ -718,6 +723,12 @@
           // スクロール位置の取得
           scrollPosition: browserInfo.windowScroll()
         });
+        this.remove();
+      };
+      popup.no = function(){
+        emit('scShareCansel', obj);
+        console.log('this');
+        console.log(this);
         this.remove();
       };
       popup.set(title, content);
@@ -1605,6 +1616,7 @@
 
     },
     docDisconnect: function(){
+      console.log('資料共有終了だよ');
       // 終了通知
       var title = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareDocument.end.headerMessage)) ? window.sincloInfo.custom.shareDocument.end.headerMessage : location.host + 'の内容';
       var content = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareDocument.end.content)) ? window.sincloInfo.custom.shareDocument.end.content : location.host + 'との資料共有を終了しました';
@@ -2353,7 +2365,7 @@
 
           if (obj.status === false) {
             if (typeMessage) {
-              typeMessage.parentNode.removeChild(typeMessage);
+              //typeMessage.parentNode.removeChild(typeMessage);
             }
             clearInterval(this.createTypingTimer);
             return false;

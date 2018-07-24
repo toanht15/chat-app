@@ -837,6 +837,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               type: type,
               connectToken: connectToken
             });
+            modalClose();
+            $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 2: // 画面キャプチャ共有
             coBrowseConnectToken = makeToken();
@@ -854,6 +856,52 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             break;
         }
       };
+    };
+
+    $scope.closeSharingApplication = function(tabId) {
+      $("#afs-popup").removeClass("show");
+      $("#cs-popup").addClass("show");
+      clearInterval(this.createTimer);
+      var contHeight = $('#cs-popup-content').height();
+      $('#cs-popup-frame').css('height', contHeight);
+      socket.emit('cancelSharing', {
+        tabId: tabId
+      });
+    };
+
+    $scope.closeCanselSharingApplication = function() {
+      clearInterval(this.createTimer);
+      $("#cs-popup").removeClass("show");
+      $("#afs-popup").hide();
+    };
+
+    $scope.closeSharingRejection = function() {
+      clearInterval(this.createTimer);
+      $("#rsh-popup").removeClass("show");
+      $("#afs-popup").hide();
+    };
+
+    createTimer: null,
+    $scope.sharingApplicationOpen = function(tabId, accessId){
+      $scope.tabId = tabId;
+      $scope.accessId = accessId;
+      $('#afs-popup').show();
+      $("#afs-popup").addClass("show");
+      var contHeight = $('#afs-popup-content').height();
+      $('#afs-popup-frame').css('height', contHeight);
+      $scope.message = "お客様に共有の許可を求めています。";
+      $scope.title = "共有申請中";
+      this.createTimer = setInterval(function () {
+        if ($scope.title.length > 7) {
+          $scope.title = "共有申請中";
+          $scope.$apply();
+        }
+        else {
+          $scope.title　+= '・';
+          $scope.$apply();
+        }
+      }, 500);
+      $scope.$apply();
     };
 
     // 成果表示チェック
@@ -2446,6 +2494,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           height: 300
         }
       });
+      $('#afs-popup').hide();
     });
 
     socket.on('requestCoBrowseAllowed', function (data) {
@@ -2515,6 +2564,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     socket.on('docDisconnect', function(data){ // 資料共有終了
+      console.log('終了したよ');
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].docShare = "";
@@ -2522,6 +2572,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.monitorList[obj.tabId].responderId = "";
         }
       }
+    });
+
+    socket.on('scShareCansel2', function(data){ // 画面共有終了
+      $("#rsh-popup").addClass("show");
+      var contHeight = $('#rsh-popup-content').height();
+      $('#rsh-popup-frame').css('height', contHeight);
+      $scope.message = "お客様に共有の許可を求めています。";
+      $scope.$apply();
+      $('#rsh-popup-content').jrumble({
+        x: 5, //横の揺れ幅を設定
+        y: 0, //縦の揺れ幅を設定
+        rotation: 0 //回転角度の幅を設定
+      });
+      $('#rsh-popup-content').trigger('startRumble');
+      setTimeout(function(){
+        $('#rsh-popup-content').trigger('stopRumble');
+      },250);
     });
 
     socket.on('activeOpCnt', function(data){
