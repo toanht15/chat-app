@@ -613,6 +613,7 @@
         createStartTimer,
         createStart = function(){
           console.log("create start");
+          reloadWidget();
           var sincloBox = document.getElementById('sincloBox');
           if ( window.sincloInfo.contract.chat && check.smartphone() ) {
             common.widgetHandler.show();
@@ -1127,6 +1128,7 @@
       sessionStorage.removeItem('chatEmit');
     },
     chatMessageData:function(d){
+      reloadWidgetRemove();
       console.log("chatMessgeData");
       console.log("DATA : %s",d);
       var obj = JSON.parse(d);
