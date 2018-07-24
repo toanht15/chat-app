@@ -4243,10 +4243,10 @@ var socket, // socket.io
       sinclo.getWindowInfo(obj);
     }); // socket-on: getWindowInfo
 
-    // 画面共有
-    socket.on('cancelSharing2', function(d){
+    // 画面共有キャンセル
+    socket.on('cancelSharingApplication', function(d){
       var obj = common.jParse(d);
-      sinclo.cancelSharing2(obj);
+      sinclo.cancelSharingApplication(obj);
     }); // socket-on: getWindowInfo
 
     // 画面共有(LiveAssist)

@@ -2564,7 +2564,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     socket.on('docDisconnect', function(data){ // 資料共有終了
-      console.log('終了したよ');
       var obj = JSON.parse(data);
       if ( obj.tabId !== undefined && angular.isDefined($scope.monitorList[obj.tabId])) {
         $scope.monitorList[obj.tabId].docShare = "";
@@ -2574,11 +2573,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     });
 
-    socket.on('scShareCansel2', function(data){ // 画面共有終了
+    socket.on('sharingApplicationRejection', function(data){ // 画面共有終了
       $("#rsh-popup").addClass("show");
       var contHeight = $('#rsh-popup-content').height();
       $('#rsh-popup-frame').css('height', contHeight);
-      $scope.message = "お客様に共有の許可を求めています。";
       $scope.$apply();
       $('#rsh-popup-content').jrumble({
         x: 5, //横の揺れ幅を設定

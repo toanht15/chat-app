@@ -693,11 +693,10 @@
       };
       popup.set(title, content);
     },
-    cancelSharing2: function(obj){
+    cancelSharingApplication: function(obj){
       popup.remove();
     },
     getWindowInfo: function(obj) {
-      console.log('入ってる');
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareBrowse.begin.headerMessage)) ? window.sincloInfo.custom.shareBrowse.begin.headerMessage : location.host + 'の内容';
@@ -726,9 +725,7 @@
         this.remove();
       };
       popup.no = function(){
-        emit('scShareCansel', obj);
-        console.log('this');
-        console.log(this);
+        emit('sharingRejection', obj);
         this.remove();
       };
       popup.set(title, content);
