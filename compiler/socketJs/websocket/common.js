@@ -4247,7 +4247,7 @@ var socket, // socket.io
     socket.on('cancelSharingApplication', function(d){
       var obj = common.jParse(d);
       sinclo.cancelSharingApplication(obj);
-    }); // socket-on: getWindowInfo
+    });
 
     // 画面共有(LiveAssist)
     socket.on('startCoBrowseOpen', function(d){

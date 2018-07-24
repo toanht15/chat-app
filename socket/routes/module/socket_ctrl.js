@@ -2528,7 +2528,6 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
       sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
       sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
-      console.log(getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
       emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     }
 

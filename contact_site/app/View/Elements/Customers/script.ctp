@@ -225,7 +225,7 @@ if ( window.hasOwnProperty('io') ) {
 
   function changeSizeOfTbl(){
     // リアルタイムモニタの高さを指定
-    $("#list_body").height($(window).height() - $("#customer_list").offset().top - 45);
+    $("#list_body").height($(window).height() - $("#customer_list").offset().top - 60);
   }
 
 
@@ -253,16 +253,6 @@ if ( window.hasOwnProperty('io') ) {
         changePositionOfPresenseView();
       }
     });
-
-    $('#rsh-popup-content').jrumble({
-      x: 5, //横の揺れ幅を設定
-      y: 0, //縦の揺れ幅を設定
-      rotation: 0 //回転角度の幅を設定
-    });
-    $('#rsh-popup-content').trigger('startRumble');
-    setTimeout(function(){
-      $('#rsh-popup-content').trigger('stopRumble');
-    },2200);
 
   });
 

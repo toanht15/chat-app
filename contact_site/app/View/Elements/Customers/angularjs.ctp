@@ -2573,7 +2573,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
     });
 
-    socket.on('sharingApplicationRejection', function(data){ // 画面共有終了
+    socket.on('sharingApplicationRejection', function(data){ // 画面共有拒否
       $("#rsh-popup").addClass("show");
       var contHeight = $('#rsh-popup-content').height();
       $('#rsh-popup-frame').css('height', contHeight);
