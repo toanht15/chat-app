@@ -4487,6 +4487,24 @@ function f_url(url){
 }
 
 function emit(evName, data, callback){
+/*チャットメッセージが特定の文字列だった場合
+ * ローディングを表示させる処理を
+ ここから実行(後で削除するためログを残しておく)*/
+if(evName == "sendChat"){
+  console.log('ローディング判定開始');
+  console.log(data.chatMessage);
+  if(data.chatMessage == 'リロードアニメーション表示'){
+    reloadWidget();
+  }else if(data.chatMessage == 'リロードアニメーション非表示'){
+    reloadWidgetRemove();
+  }else if(data.chatMessage == 'ウェイトアニメーション表示'){
+    chatBotTyping();
+  }else if(data.chatMessage == 'ウェイトアニメーション非表示'){
+    chatBotTypingRemove();
+  }
+}
+
+
   /* ここから：イベント名指定なし */
   data.siteKey = sincloInfo.site.key; // サイトの識別キー
   if ( check.isset(userInfo.sendTabId) ) {
@@ -4583,6 +4601,7 @@ function reloadWidgetRemove(){
 function reloadWidget(){
   var widget = window.sincloInfo.widget;
   var sizeList = common.getSizeType(widget.widgetSizeType);
+  var loadPadding = Number(widget.widgetSizeType) * 29 + 61;
   var html  = "";
       html += "<div class='reloadCover'>";
       html += "  <div class='reload_dot_left'></div>";
@@ -4596,18 +4615,18 @@ function reloadWidget(){
       css += "  background-color:"+widget.reBackgroundColor+";";
       css += "}";
       css += "#sincloBox .reloadCover div[class$='left']{";
-      css += "  animation:dotScale 1.4s ease-in-out 0s infinite both";
-      css += "}";
-      css += "#sincloBox .reloadCover div[class$='center']{";
       css += "  animation:dotScale 1.4s ease-in-out -0.32s infinite both";
       css += "}";
-      css += "#sincloBox .reloadCover div[class$='right']{";
+      css += "#sincloBox .reloadCover div[class$='center']{";
       css += "  animation:dotScale 1.4s ease-in-out -0.16s infinite both";
+      css += "}";
+      css += "#sincloBox .reloadCover div[class$='right']{";
+      css += "  animation:dotScale 1.4s ease-in-out 0s infinite both";
       css += "}";
       css += "#sincloBox div.reloadCover{";
       css += "  position:absolute;z-index:1000;display:flex;justify-content:space-around;align-items:center;";
       css += "  background-color:"+widget.chatTalkBackgroundColor+";";
-      css += "  width:"+sizeList.boxWidth+"px;height:"+sizeList.chatTalkHeight+"px;padding:0 90px;"
+      css += "  width:"+sizeList.boxWidth+"px;height:"+sizeList.chatTalkHeight+"px;padding:0 "+loadPadding+"px;"
       css += "}";
       css += "@keyframes dotScale{";
       css += "   0%,80%,100%{transform: scale(0);}";
@@ -4622,7 +4641,7 @@ function chatBotTyping(){
   var widget = window.sincloInfo.widget;
   var sizeList = common.getSizeType(widget.widgetSizeType);
   var html  = "";
-      html += "<div>";
+      html += "<div class='botNowTypingDiv'>";
       html += "  <li class='sinclo_re effect_left botNowTyping'>"
       html += "    <div class='reload_dot_left'></div>";
       html += "    <div class='reload_dot_center'></div>";
@@ -4636,13 +4655,13 @@ function chatBotTyping(){
       css += "  background-color:"+widget.reTextColor+";";
       css += "}";
       css += "#sincloBox .botNowTyping div[class$='left']{";
-      css += "  animation:dotScale 1.4s ease-in-out 0s infinite both";
-      css += "}";
-      css += "#sincloBox .botNowTyping div[class$='center']{";
       css += "  animation:dotScale 1.4s ease-in-out -0.32s infinite both";
       css += "}";
-      css += "#sincloBox .botNowTyping div[class$='right']{";
+      css += "#sincloBox .botNowTyping div[class$='center']{";
       css += "  animation:dotScale 1.4s ease-in-out -0.16s infinite both";
+      css += "}";
+      css += "#sincloBox .botNowTyping div[class$='right']{";
+      css += "  animation:dotScale 1.4s ease-in-out 0s infinite both";
       css += "}";
       css += "#sincloBox ul#chatTalk li.botNowTyping{";
       css += "  display:flex;justify-content:space-around;align-items:center;";
@@ -4654,13 +4673,18 @@ function chatBotTyping(){
       css += "  40%{transform: scale(1);opacity:1.0}";
       css += "}";
   $("#sincloBox > style").append(css);
-  $("sinclo-chat").append(html);
+  $("sinclo-typing").append(html);
   return;
 }
 
 function chatBotTypingRemove(){
-  $('li.botNowTyping').remove();
+  $('div.botNowTypingDiv').remove();
 }
+
+
+
+
+
 // get type
 var myTag = document.querySelector("script[src$='/client/" + sincloInfo.site.key + ".js']");
 if (myTag.getAttribute('data-hide')) {
