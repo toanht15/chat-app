@@ -668,7 +668,6 @@
       emit('customerInfo', emitData);
     },
     createShareWindow: function(obj) { // 外部接続
-      console.log('入ってきている2');
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
       var title = location.host + 'の内容';
@@ -1613,7 +1612,6 @@
 
     },
     docDisconnect: function(){
-      console.log('資料共有終了だよ');
       // 終了通知
       var title = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareDocument.end.headerMessage)) ? window.sincloInfo.custom.shareDocument.end.headerMessage : location.host + 'の内容';
       var content = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareDocument.end.content)) ? window.sincloInfo.custom.shareDocument.end.content : location.host + 'との資料共有を終了しました';
@@ -2362,7 +2360,7 @@
 
           if (obj.status === false) {
             if (typeMessage) {
-              //typeMessage.parentNode.removeChild(typeMessage);
+              typeMessage.parentNode.removeChild(typeMessage);
             }
             clearInterval(this.createTypingTimer);
             return false;
