@@ -4600,6 +4600,7 @@ function reloadWidgetRemove(){
 
 function reloadWidget(){
   var widget = window.sincloInfo.widget;
+
   var sizeList = common.getSizeType(widget.widgetSizeType);
   var loadPadding = Number(widget.widgetSizeType) * 29 + 61;
   var html  = "";
@@ -4612,7 +4613,11 @@ function reloadWidget(){
   var css  = "";
       css += "#sincloBox .reloadCover div[class^='reload_dot']{";
       css += "  width:18px;height:18px;border-radius:100%;";
-      css += "  background-color:"+widget.reBackgroundColor+";";
+      if(widget.mainColor == widget.chatTalkBackgroundColor){
+        css += "  background-color:"+widget.reBackgroundColor+";";
+      }else{
+        css += "  background-color:"+widget.mainColor+";";
+      }
       css += "}";
       css += "#sincloBox .reloadCover div[class$='left']{";
       css += "  animation:dotScale 1.4s ease-in-out -0.32s infinite both";
