@@ -3569,7 +3569,7 @@
                           var cloneCondition = JSON.parse(JSON.stringify(conditions[0]));
                           this.judge.setMatchSpeechContent(1, window.sincloInfo.messages[key].id, cloneCondition,function(err, timer){
                             console.log("【AND】setMatchSpeechContent triggered!! : " + JSON.stringify(cloneCondition));
-                            chatBotTyping();
+                            setTimeout(chatBotTyping,500);
                             if (err) {
                               ret = null;
                               return;
@@ -3679,7 +3679,7 @@
 
                         this.judge.setMatchSpeechContent(2, window.sincloInfo.messages[key].id, condition, function (err, timer) {
                           console.log("【OR】setMatchSpeechContent triggered!! : " + JSON.stringify(condition));
-                          chatBotTyping();
+                          setTimeout(chatBotTyping,500);
                           if (err) {
                             return;
                           }
