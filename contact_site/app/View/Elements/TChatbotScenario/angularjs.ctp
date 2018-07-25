@@ -1084,6 +1084,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (!!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
         time = setTime || '0';
       }
+      if($scope.actionStep !== 0){
+        setTimeout(chatBotTyping,500);
+      }
 
       $timeout.cancel($scope.actionTimer);
       $scope.actionTimer = $timeout(function() {
@@ -1163,6 +1166,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             $scope.doBranchOnCondAction(actionDetail.elseAction);
           }
         }
+        chatBotTypingRemove();
+        console.log('>>>******remove******');
       }, parseInt(time, 10) * 1000);
     } else {
       $scope.actionStop();
@@ -1293,8 +1298,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 質問する
       var message = hearingDetail.message;
       $scope.$broadcast('addReMessage', $scope.replaceVariable(message), 'action' + $scope.actionStep);
-      // 改行設定を元に、シミュレーターの設定変更
       $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
+      // 改行設定を元に、シミュレーターの設定変更
       if (hearingDetail.inputLFType == <?= C_SCENARIO_INPUT_LF_TYPE_ALLOW ?>) {
         $scope.$broadcast('allowSendMessageByShiftEnter', true, hearingDetail.inputType);
       } else {
