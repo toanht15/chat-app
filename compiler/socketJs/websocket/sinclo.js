@@ -3743,7 +3743,13 @@
             }
 
             console.log("IS SPEECH CONTENT : " + isSpeechContent);
-
+  
+            // 外部連携実装後に外す
+            if(sendMail) {
+              sinclo.api.callFunction('am', id);
+            }
+            // 外部連携実装後に外す
+            
             //CVに登録するオートメッセージの場合
             if(cond.cv == 1) {
               var data = {
@@ -5463,6 +5469,9 @@
             variables: targetVariables
           };
 
+          // 外部連携実装後に外す
+          sinclo.api.callFunction('sc', self._parent.get(self._parent._lKey.scenarioId));
+          // 外部連携実装後に外す
           emit('processSendMail', sendData, function(ev) {
             self._parent._applyAllDataSent();
           });
@@ -5869,6 +5878,20 @@
           value = userInfo.accessId;
         }
         return value;
+      },
+      callFunction: function(type, id) {
+        try{
+          if(sincloInfo.custom.callFunc
+            && typeof sincloInfo.custom.callFunc === 'object'
+            && sincloInfo.custom.callFunc.hasOwnProperty(type)
+            && typeof sincloInfo.custom.callFunc[type] === 'object') {
+            if(sincloInfo.custom.callFunc[type].hasOwnProperty(Number(id)) && typeof sincloInfo.custom.callFunc[type][Number(id)] === 'function') {
+              sincloInfo.custom.callFunc[type][id]();
+            }
+          }
+        } catch (e) {
+          console.log("api::callFunction Error => %s",e.message);
+        }
       }
     }
   };
