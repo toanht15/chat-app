@@ -491,7 +491,6 @@
         var contHeight = $('#popup-content').height();
         $('#popup-frame').css('height', contHeight);
         this.elm.popup.style.top = (window.innerHeight) + "px";
-        console.log('open');
         $('#popup-frame').animate(
           {
             top: 0
@@ -521,7 +520,6 @@
 
       //*****typeが指定されていない(moveup)場合のアニメーション*****//
         $('body').css('overflow', 'hidden');
-        console.log('close');
         $('#popup-frame').animate(
           {
             top: (window.innerHeight + $('#popup-frame').height())
@@ -609,7 +607,6 @@
 
   !function (pe, se) {
     window.modalOpen = function (contents, id, title, type, ua) {
-      console.log('modalOpen');
       $('#popup-bg').css('background-color','rgba(0, 0, 0, 0.7)');
       if (typeof(type) !== 'undefined') {
         pe.moveType = type;
