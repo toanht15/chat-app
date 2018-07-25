@@ -4631,9 +4631,6 @@
           result = true;
         }
         console.log("scenarioApi::isProcessing => " + result);
-        if(result){
-          setTimeout(chatBotTypingRemove,501);
-        }
         return result;
       },
       isWaitingInput: function() {
@@ -4931,7 +4928,7 @@
       _storeMessageToDB: function(array, callback) {
         var self = sinclo.scenarioApi;
         if(!callback) callback = function(){};
-
+        chatBotTyping();
         emit('storeScenarioMessage', {messages:array}, callback);
       },
       _saveProcessingState: function(isProcessing) {
