@@ -4657,7 +4657,7 @@ function chatBotTyping(){
 
   var css  = "";
       css += "#sincloBox ul#chatTalk li.botNowTyping div[class^='reload_dot']{";
-      css += "  width:15px;height:15px;border-radius:100%;";
+      css += "  min-width:15px;width:15px;min-height:15px;height:15px;border-radius:100%;";
       css += "  background-color:"+widget.reTextColor+";";
       css += "}";
       css += "#sincloBox .botNowTyping div[class$='left']{";

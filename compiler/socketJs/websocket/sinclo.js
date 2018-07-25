@@ -1542,6 +1542,7 @@
         sinclo.chatApi.autoMessages.push(obj.chatId, obj);
     },
     resScenarioMessage: function(d) {
+      setTimeout(chatBotTyping,500);
       console.log("resScenarioMessage");
       var obj = JSON.parse(d);
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
@@ -2815,7 +2816,6 @@
             elm = document.getElementById('miniSincloChatMessage');
           }
           var req = new RegExp(/^\s*$/);
-
           if ( check.isset(elm.value) && !req.test(elm.value) ) {
             this.send(elm.value);
             elm.value = "";
@@ -3569,6 +3569,7 @@
                           var cloneCondition = JSON.parse(JSON.stringify(conditions[0]));
                           this.judge.setMatchSpeechContent(1, window.sincloInfo.messages[key].id, cloneCondition,function(err, timer){
                             console.log("【AND】setMatchSpeechContent triggered!! : " + JSON.stringify(cloneCondition));
+                            chatBotTyping();
                             if (err) {
                               ret = null;
                               return;
@@ -3678,6 +3679,7 @@
 
                         this.judge.setMatchSpeechContent(2, window.sincloInfo.messages[key].id, condition, function (err, timer) {
                           console.log("【OR】setMatchSpeechContent triggered!! : " + JSON.stringify(condition));
+                          chatBotTyping();
                           if (err) {
                             return;
                           }
@@ -3723,7 +3725,6 @@
         },
         setAutoMessage: function(id, cond, sendMail){
             if(sincloInfo.widget.showTiming === 3) {
-              console.log("オートメッセージ表示処理発動");
               // 初回オートメッセージ表示時にフラグを立てる
               sincloInfo.widgetDisplay = true;
               common.widgetHandler.show();
@@ -3795,6 +3796,9 @@
             }
             else {
               console.log("EMIT sendAutoChatMessage::setAutoMessage");
+              if(isSpeechContent){
+                chatBotTypingRemove();
+              }
                 emit('sendAutoChatMessage', data);
             }
         },
@@ -3844,6 +3848,12 @@
                 }, 1);
             } else if(String(type) === "2") {
               console.log("SENARIO TRIGGERED!!!!!! " + scenarioId);
+              console.log(cond.conditions);
+              for(var key in cond.conditions) {
+                if(key === "7") {//発言内容からのシナリオ起動だったら
+                  chatBotTypingRemove();
+                }
+              }
               if(scenarioId && !sinclo.scenarioApi.isProcessing()) {
                 emit('getScenario', {"scenarioId": scenarioId});
                 if(sincloInfo.widget.showTiming === 3) {
@@ -4230,6 +4240,7 @@
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
+                    chatBotTypingRemove();
                     continue;
                   }
                   if(sinclo.trigger.timerTriggeredList.hasOwnProperty(this.speechContentRegEx[index].id)
@@ -4620,6 +4631,9 @@
           result = true;
         }
         console.log("scenarioApi::isProcessing => " + result);
+        if(result){
+          setTimeout(chatBotTypingRemove,501);
+        }
         return result;
       },
       isWaitingInput: function() {
@@ -4958,6 +4972,7 @@
         }
       },
       _pushScenarioMessage: function(targetObj, callback) {
+        chatBotTypingRemove();
         emit('sendScenarioMessage', targetObj, callback);
       },
       _saveStoredMessage: function(callback) {
