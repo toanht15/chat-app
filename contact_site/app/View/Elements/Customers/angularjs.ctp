@@ -847,6 +847,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               type: type,
               coBrowseConnectToken: coBrowseConnectToken
             });
+            modalClose();
+            $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 3: // 資料共有
             modalClose();
@@ -2539,6 +2541,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           height: 680
         }
       });
+      $('#afs-popup').hide();
     });
 
     socket.on('cngOpStatus', function(data){
@@ -2596,7 +2599,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $('#rsh-popup-frame').css('height', contHeight);
       $scope.$apply();
       $('#rsh-popup-content').jrumble({
-        x: 5, //横の揺れ幅を設定
+        x: 15, //横の揺れ幅を設定
         y: 0, //縦の揺れ幅を設定
         rotation: 0 //回転角度の幅を設定
       });
