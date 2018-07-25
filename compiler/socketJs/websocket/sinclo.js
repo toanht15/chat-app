@@ -2731,13 +2731,13 @@
                 //「○○が入力中です」のメッセージが残っていない場合
                 if(document.getElementById('sinclo_typeing_message') === null) {
                   $('#sincloBox #chatTalk').animate({
-                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom * ratio)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom)) // FIXME ウィジェットサイズに合わせた余白で計算すること
                   }, 300);
                 }
                 //「○○が入力中です」のメッセージが残っている場合
                 else {
                   $('#sincloBox #chatTalk').animate({
-                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom * ratio + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
                   }, 300);
                 }
               }
@@ -3748,13 +3748,13 @@
             }
 
             console.log("IS SPEECH CONTENT : " + isSpeechContent);
-  
+
             // 外部連携実装後に外す
             if(sendMail) {
               sinclo.api.callFunction('am', id);
             }
             // 外部連携実装後に外す
-            
+
             //CVに登録するオートメッセージの場合
             if(cond.cv == 1) {
               var data = {
