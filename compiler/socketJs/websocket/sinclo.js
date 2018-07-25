@@ -3748,13 +3748,11 @@
             }
 
             console.log("IS SPEECH CONTENT : " + isSpeechContent);
-
             // 外部連携実装後に外す
             if(sendMail) {
               sinclo.api.callFunction('am', id);
             }
             // 外部連携実装後に外す
-
             //CVに登録するオートメッセージの場合
             if(cond.cv == 1) {
               var data = {
