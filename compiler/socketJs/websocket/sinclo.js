@@ -2744,13 +2744,13 @@
                 //「○○が入力中です」のメッセージが残っていない場合
                 if(document.getElementById('sinclo_typeing_message') === null) {
                   $('#sincloBox #chatTalk').animate({
-                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom * ratio)) // FIXME ウィジェットサイズに合わせた余白で計算すること
                   }, 300);
                 }
                 //「○○が入力中です」のメッセージが残っている場合
                 else {
                   $('#sincloBox #chatTalk').animate({
-                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom * ratio + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
                   }, 300);
                 }
               }

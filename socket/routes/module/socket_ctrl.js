@@ -13,7 +13,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db2'
+      database: process.env.DB_NAME || 'sinclo_db'
     });
 
 // log4js
@@ -3734,8 +3734,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   //画面共有許可しない
   socket.on('sharingRejection', function(d){
     var obj = JSON.parse(d);
-    console.log('画面共有拒否');
-    console.log(obj);
     var targetId = obj.tabId.replace("_frame", "");
     emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
   });
