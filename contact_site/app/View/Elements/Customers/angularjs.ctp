@@ -898,6 +898,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.sharingApplicationOpen = function(tabId, accessId){
       $scope.tabId = tabId;
       $scope.accessId = accessId;
+      $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
       $('#afs-popup').show();
       $("#afs-popup").addClass("show");
       var contHeight = $('#afs-popup-content').height();
@@ -2594,6 +2595,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     socket.on('sharingApplicationRejection', function(data){ // 画面共有拒否
+      var obj = JSON.parse(data);
+      //画面キャプチャ共有の場合
+      if(isset(obj.coBrowseConnectToken)) {
+        if (coBrowseConnectToken !== obj.coBrowseConnectToken) return false;
+      }
+      //画面共有の場合
+      if(isset(obj.connectToken)) {
+        if (connectToken !== obj.connectToken) return false;
+      }
       $("#rsh-popup").addClass("show");
       var contHeight = $('#rsh-popup-content').height();
       $('#rsh-popup-frame').css('height', contHeight);

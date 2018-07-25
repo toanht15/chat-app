@@ -9946,6 +9946,8 @@ div.balloon {
   right: 0;
   z-index: 47;
   display: none;
+  font-size: 1.1em;
+  line-height: 1.5em;
 
   &.show {
     display: block;
@@ -10046,6 +10048,8 @@ div.balloon {
   right: 0;
   z-index: 47;
   display: none;
+  font-size: 1.1em;
+  line-height: 1.5em;
 
   &.show {
     display: block;
@@ -10057,7 +10061,7 @@ div.balloon {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    /*background-color: rgba(0, 0, 0, 0.7);*/
     z-index: 48;
   }
 
@@ -10165,6 +10169,8 @@ div.balloon {
   right: 0;
   z-index: 47;
   display: none;
+  font-size: 1.1em;
+  line-height: 1.5em;
 
   &.show {
     display: block;
@@ -10176,7 +10182,7 @@ div.balloon {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.7);
+    /*background-color: rgba(0, 0, 0, 0.7);*/
     z-index: 48;
   }
 
