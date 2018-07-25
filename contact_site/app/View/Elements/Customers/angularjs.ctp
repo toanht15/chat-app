@@ -864,6 +864,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       clearInterval(this.createTimer);
       var contHeight = $('#cs-popup-content').height();
       $('#cs-popup-frame').css('height', contHeight);
+      document.getElementById('cs-popup-frame').style.top = (window.innerHeight) + "px";
+      $('#cs-popup-frame').animate(
+          {
+            top: 0
+          },
+          500,
+          function () {
+            $('body').css('overflow', 'auto');
+          }
+        );
       socket.emit('cancelSharing', {
         tabId: tabId
       });
@@ -875,6 +885,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $("#afs-popup").hide();
     };
 
+    notFirstTime: null,
     $scope.closeSharingRejection = function() {
       clearInterval(this.createTimer);
       $("#rsh-popup").removeClass("show");
@@ -888,7 +899,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $('#afs-popup').show();
       $("#afs-popup").addClass("show");
       var contHeight = $('#afs-popup-content').height();
-      $('#afs-popup-frame').css('height', contHeight);
+      if(this.notFirstTime === undefined) {
+        $('#afs-popup-frame').css('height', contHeight+38);
+      }
+      else {
+        $('#afs-popup-frame').css('height', contHeight);
+      }
+      this.notFirstTime = true;
       $scope.message = "お客様に共有の許可を求めています。";
       $scope.title = "共有申請中";
       this.createTimer = setInterval(function () {
