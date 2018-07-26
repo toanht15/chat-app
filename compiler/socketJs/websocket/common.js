@@ -4603,6 +4603,7 @@ function reloadWidget(){
   var widget = window.sincloInfo.widget;
 
   var sizeList = common.getSizeType(widget.widgetSizeType);
+  var coverHeight = sizeList.chatTalkHeight + sizeList.classFlexBoxRowHeight;
   var loadPadding = Number(widget.widgetSizeType) * 29 + 61;
   var html  = "";
       html += "<div class='reloadCover'>";
@@ -4632,7 +4633,7 @@ function reloadWidget(){
       css += "#sincloBox div.reloadCover{";
       css += "  position:absolute;z-index:1000;display:flex;justify-content:space-around;align-items:center;";
       css += "  background-color:"+widget.chatTalkBackgroundColor+";";
-      css += "  width:"+sizeList.boxWidth+"px;height:"+sizeList.chatTalkHeight+"px;padding:0 "+loadPadding+"px;"
+      css += "  width:"+sizeList.boxWidth+"px;height:"+coverHeight+"px;padding:0 "+loadPadding+"px;"
       css += "}";
       css += "@keyframes dotScale{";
       css += "   0%,80%,100%{transform: scale(0);}";
@@ -4657,27 +4658,28 @@ function chatBotTyping(){
 
   var css  = "";
       css += "#sincloBox ul#chatTalk li.botNowTyping div[class^='reload_dot']{";
-      css += "  min-width:15px;width:15px;min-height:15px;height:15px;border-radius:100%;";
+      css += "  min-width:11px;width:11px;min-height:11px;height:11px;border-radius:100%;";
       css += "  background-color:"+widget.reTextColor+";";
       css += "}";
       css += "#sincloBox .botNowTyping div[class$='left']{";
-      css += "  animation:dotScale 1.4s ease-in-out -0.32s infinite both";
+      css += "  animation:dotScale 0.8s ease-in-out -0.32s infinite both";
       css += "}";
       css += "#sincloBox .botNowTyping div[class$='center']{";
-      css += "  animation:dotScale 1.4s ease-in-out -0.16s infinite both";
+      css += "  animation:dotScale 0.8s ease-in-out -0.16s infinite both";
       css += "}";
       css += "#sincloBox .botNowTyping div[class$='right']{";
-      css += "  animation:dotScale 1.4s ease-in-out 0s infinite both";
+      css += "  animation:dotScale 0.8s ease-in-out 0s infinite both";
       css += "}";
       css += "#sincloBox ul#chatTalk li.botNowTyping{";
       css += "  display:flex;justify-content:space-around;align-items:center;";
-      css += "  width:100px;height:40px;padding:0 22px;margin-left: 10px;"
+      css += "  width:86px;height:40px;padding:0 15px;margin-left: 10px;"
       css += "  background-color:"+widget.reBackgroundColor+";border-radius:12px!important"
       css += "  "
       css += "}";
       css += "@keyframes dotScale{";
-      css += "   0%,80%,100%{transform: scale(0);opacity:0.3}";
-      css += "  40%{transform: scale(1);opacity:1.0}";
+      css += "   0%,100%{transform: scale(0.4);opacity:0.3}";
+      css += "  30%,70%{opacity:0.7}";
+      css += "  50%{transform: scale(1);opacity:1.0}";
       css += "}";
   $("#sincloBox > style").append(css);
   $("sinclo-typing").append(html);
