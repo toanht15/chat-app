@@ -3731,6 +3731,19 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     }
   });
 
+  //画面共有許可しない
+  socket.on('sharingRejection', function(d){
+    var obj = JSON.parse(d);
+    var targetId = obj.tabId.replace("_frame", "");
+    emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
+  });
+
+  //画面共有キャンセル
+  socket.on('cancelSharing', function(d){
+    var obj = JSON.parse(d);
+    emit.toUser('cancelSharingApplication', d, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+  });
+
   socket.on('coBrowseReconnectConfirm', function (data) {
     var obj = JSON.parse(data), timer, i = 1;
     timer = setInterval(function(){

@@ -693,6 +693,9 @@
       };
       popup.set(title, content);
     },
+    cancelSharingApplication: function(obj){
+      popup.remove();
+    },
     getWindowInfo: function(obj) {
       if ( obj.tabId !== userInfo.tabId ) return false;
       if ( userInfo.accessType !== Number(cnst.access_type.guest) ) return false;
@@ -719,6 +722,10 @@
           // スクロール位置の取得
           scrollPosition: browserInfo.windowScroll()
         });
+        this.remove();
+      };
+      popup.no = function(){
+        emit('sharingRejection', obj);
         this.remove();
       };
       popup.set(title, content);
@@ -780,6 +787,10 @@
         emit('beginToCoBrowse', params);
         this.remove();
       }
+      popup.no = function(){
+        emit('sharingRejection', obj);
+        this.remove();
+      };
       popup.set(title, content);
     },
     assistAgentIsReady: function(d) {

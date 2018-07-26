@@ -279,3 +279,75 @@
 </div>
 <!-- 資料 -->
 
+<!-- 画面共有申請 -->
+<div id="afs-popup">
+  <div id="afs-base">
+    <div id="afs-popup-background"></div>
+    <div id="afs-popup-frame">
+      <div id="afs-popup-content" class="document_list">
+        <div id="title_area">{{title}}</div>
+        <pre id="description_area">{{message}}</pre>
+        <div id="btn_area">
+          <a class="btn-shadow greenBtn" ng-click="closeSharingApplication(tabId)" href="javascript:void(0)">共有申請をキャンセルする</a>
+        </div>
+      </div>
+    </div>
+    <div id="afs-ballons">
+    </div>
+  </div>
+</div>
+<!-- 画面共有申請 -->
+
+<!-- 画面共有キャンセル -->
+<div id="cs-popup">
+  <div id="cs-base">
+    <div id="cs-popup-background"></div>
+    <div id="cs-popup-frame">
+      <div id="cs-popup-content" class="document_list">
+      <div id="popup-ctrl-btn">
+          <?php echo $this->Html->link(
+            $this->Html->image('close.png', array('alt' => '閉じる', 'width' => 20, 'height' => 20)),
+            'javascript:void(0)',
+            array('escape' => false, 'class' => 'redBtn btn-shadow', 'id' => 'popupCloseBtn', 'ng-click'=>'closeCanselSharingApplication()'));
+          ?>
+        </div>
+        <div id="title_area">メッセージ</div>
+        <pre id="description_area">共有申請をキャンセルしました</pre>
+        <div id="btn_area">
+          <a class="btn-shadow greenBtn" ng-click="closeCanselSharingApplication()" href="javascript:void(0)">閉じる</a>
+        </div>
+      </div>
+    </div>
+    <div id="cs-ballons">
+    </div>
+  </div>
+</div>
+<!-- 画面共有キャンセル -->
+
+<!-- 画面共有拒否 -->
+<div id="rsh-popup">
+  <div id="rsh-base">
+    <div id="rsh-popup-background"></div>
+    <div id="rsh-popup-frame">
+      <div id="rsh-popup-content" class="document_list">
+      <div id="popup-ctrl-btn">
+          <?php echo $this->Html->link(
+            $this->Html->image('close.png', array('alt' => '閉じる', 'width' => 20, 'height' => 20)),
+            'javascript:void(0)',
+            array('escape' => false, 'class' => 'redBtn btn-shadow', 'id' => 'popupCloseBtn', 'ng-click'=>'closeSharingRejection()'));
+          ?>
+        </div>
+        <div id="title_area">拒否されました</div>
+        <pre id="description_area">お客様から共有が拒否されました。</pre>
+        <div id="btn_area">
+          <a class="btn-shadow greenBtn" ng-click="closeSharingRejection()" href="javascript:void(0)">閉じる</a>
+        </div>
+      </div>
+    </div>
+    <div id="rsh-ballons">
+    </div>
+  </div>
+</div>
+<!-- 画面共有拒否 -->
+
+
