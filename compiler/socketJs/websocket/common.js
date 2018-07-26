@@ -1408,7 +1408,6 @@ var socket, // socket.io
         html += '#sincloBox { -webkit-transition: 100ms linear 0ms;  transition: opacity 100ms linear 0ms; }';
         html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { position: relative }';
         html += '#sincloBox section#chatTab sinclo-chat-alert { position: absolute; background-color: rgba(0,0,0,0.6); box-shadow: 0px 0px 4px 4px rgba(0,0,0,0.1); color: #FFF; text-align: center; }';
-        html += '#sincloBox ul sinclo-typing { padding-bottom: '+ (Number(sizeList['paddingBottom']) * ratio) +'px; display: block; }';
         if ( sinclo.chatApi.sendErrCatchFlg ) {
           html += '#sincloBox section#chatTab sinclo-chat-alert { display:block }';
         }
@@ -1482,9 +1481,9 @@ var socket, // socket.io
           html += '#sincloBox p#widgetTitle.noImage { padding-left: ' + (30 * ratio) + 'px; }';
           html += '#sincloBox #mainImage em { top: -' + (10 * ratio) + 'px; right: -' + (10 * ratio) + 'px; width: ' + (25 * ratio) + 'px; height: ' + (20 * ratio) + 'px; font-size: ' + (11 * ratio) + 'px; padding: ' + (1 * ratio) + 'px; }';
           if(widget.spMaximizeSizeType === 2) {
-            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-top:0px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-top:0px; padding-bottom: ' + (60 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
           } else {
-            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-top:0px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
+            html += '#sincloBox ul#chatTalk { padding: ' + (5 * ratio) + 'px; padding-top:0px; padding-bottom: ' + (60 * ratio) + 'px; height: ' + (194 * ratio) + 'px; background-color: '+ colorList['chatTalkBackgroundColor'] +' }';
           }
           html += '#sincloBox ul#chatTalk li { border-radius: ' + (12 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (10 * ratio) + 'px ' + (10 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li.sinclo_se { font-size: ' + (12 * ratio) + 'px; margin-left: '+ (widgetWidth/342.5)*45 +'px;}';
