@@ -4650,6 +4650,11 @@ function reloadWidget(){
 function chatBotTyping(){
   var widget = window.sincloInfo.widget;
   var sizeList = common.getSizeType(widget.widgetSizeType);
+  var fontSize = widget.reTextSize;
+  var waitHeight = 1.4 * fontSize + 20;
+  var waitWidth = waitHeight * 2;
+  var waitPadding = waitWidth * 0.172;
+  var loadDotSize = fontSize * 0.8;
   var html  = "";
       html += "<div class='botNowTypingDiv'>";
       html += "  <li class='effect_left botNowTyping'>"
@@ -4661,21 +4666,21 @@ function chatBotTyping(){
 
   var css  = "";
       css += "#sincloBox ul#chatTalk li.botNowTyping div[class^='reload_dot']{";
-      css += "  min-width:11px;width:11px;min-height:11px;height:11px;border-radius:100%;";
+      css += "  min-width:"+loadDotSize+"px;width:"+loadDotSize+"px;min-height:"+loadDotSize+"px;height:"+loadDotSize+"px;border-radius:100%;";
       css += "  background-color:"+widget.reTextColor+";";
       css += "}";
       css += "#sincloBox .botNowTyping div[class$='left']{";
-      css += "  animation:dotScale 0.8s ease-in-out -0.32s infinite both";
+      css += "  animation:dotScale 1.0s ease-in-out -0.32s infinite both";
       css += "}";
       css += "#sincloBox .botNowTyping div[class$='center']{";
-      css += "  animation:dotScale 0.8s ease-in-out -0.16s infinite both";
+      css += "  animation:dotScale 1.0s ease-in-out -0.16s infinite both";
       css += "}";
       css += "#sincloBox .botNowTyping div[class$='right']{";
-      css += "  animation:dotScale 0.8s ease-in-out 0s infinite both";
+      css += "  animation:dotScale 1.0s ease-in-out 0s infinite both";
       css += "}";
       css += "#sincloBox ul#chatTalk li.botNowTyping{";
       css += "  display:flex;justify-content:space-around;align-items:center;";
-      css += "  width:86px;height:40px;padding:0 15px;margin-left: 10px;"
+      css += "  width:"+waitWidth+"px;height:"+waitHeight+"px;padding:0 "+waitPadding+"px;margin-left: 10px;"
       css += "  background-color:"+widget.reBackgroundColor+";border-radius:12px!important"
       css += "  "
       css += "}";

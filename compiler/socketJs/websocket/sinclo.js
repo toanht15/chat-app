@@ -3847,12 +3847,6 @@
                 }, 1);
             } else if(String(type) === "2") {
               console.log("SENARIO TRIGGERED!!!!!! " + scenarioId);
-              console.log(cond.conditions);
-              for(var key in cond.conditions) {
-                if(key === "7") {//発言内容からのシナリオ起動だったら
-                  chatBotTypingRemove();
-                }
-              }
               if(scenarioId && !sinclo.scenarioApi.isProcessing()) {
                 emit('getScenario', {"scenarioId": scenarioId});
                 if(sincloInfo.widget.showTiming === 3) {
@@ -5530,7 +5524,7 @@
         },
         _process: function() {
           var self = sinclo.scenarioApi._callExternalApi;
-          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+          self._parent._doing(0, function () {
             self._callApi(function (response) {
               Object.keys(response).forEach(function (elm, index, arr) {
                 self._parent._saveVariable(response[elm].variableName, response[elm].value);

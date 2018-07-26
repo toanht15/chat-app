@@ -1078,14 +1078,36 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
       var actionDetail = $scope.setActionList[$scope.actionStep];
-
       // メッセージ間隔
       var time =  actionDetail.messageIntervalTimeSec;
-      if (!!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> ||  actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
-        time = setTime || '0';
+      var branchOnConditon = false;
+
+      //条件分岐の場合は複雑な時間指定が必要になるので括りだしておく
+      if(actionDetail.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>){
+        branchOnConditon = true;
+        var value = LocalStorageService.getItem('chatbotVariables', actionDetail.referenceVariable);
+        for(var i=0; i<actionDetail.conditionList.length; i++) {
+          if($scope.isMatch(value, actionDetail.conditionList[i])) {
+            if(actionDetail.conditionList[i].actionType =='1'){
+              setTimeout(chatBotTyping,500);
+              break;
+            }
+          }else if(actionDetail.elseEnabled){
+            if(actionDetail.elseAction.actionType == '1'){
+              setTimeout(chatBotTyping,500);
+              break;
+            }
+          }
+          time = setTime || '0';
+        }
       }
-      if($scope.actionStep !== 0){
-        setTimeout(chatBotTyping,500);
+
+      if(!branchOnConditon){
+        if (!!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+          time = setTime || '0';
+        }else{
+          setTimeout(chatBotTyping,500);
+        }
       }
 
       $timeout.cancel($scope.actionTimer);
@@ -1154,16 +1176,23 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
           // 指定の変数を取得
+          chatBotTypingRemove();
           var value = LocalStorageService.getItem('chatbotVariables', actionDetail.referenceVariable);
           for(var i=0; i<actionDetail.conditionList.length; i++) {
             if($scope.isMatch(value, actionDetail.conditionList[i])) {
               $scope.doBranchOnCondAction(actionDetail.conditionList[i]);
+              if(actionDetail.conditionList[i] =='1'){
+                setTimeout(chatBotTyping,500);
+              }
               return;
             }
           }
           // どの条件にもマッチしなかった場合
           if(actionDetail.elseEnabled) {
             $scope.doBranchOnCondAction(actionDetail.elseAction);
+          }else{
+            $scope.actionStep++;
+            $scope.doAction();
           }
         }
         chatBotTypingRemove();
@@ -1773,7 +1802,7 @@ function actionValidationCheck(element, setActionList, actionItem) {
     }
     if (!actionItem.message) {
       messageList.push('発言内容が未入力です');
-    }else if(actionItem.message.length){
+    }else if(actionItem.message.length > 4000){
       messageList.push('発言内容は4000文字以内で入力してください');
     }
   } else
