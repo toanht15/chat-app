@@ -1542,7 +1542,6 @@
         sinclo.chatApi.autoMessages.push(obj.chatId, obj);
     },
     resScenarioMessage: function(d) {
-      setTimeout(chatBotTyping,500);
       console.log("resScenarioMessage");
       var obj = JSON.parse(d);
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
@@ -4840,6 +4839,7 @@
         var self = sinclo.scenarioApi;
         if(!isJumpScenario && Number(self.get(self._lKey.currentScenarioSeqNum)) === Number(self.get(self._lKey.scenarioLength))-1) {
           self._end();
+          setTimeout(chatBotTypingRemove,801);
           return false;
         }
         if(!isJumpScenario) {
@@ -4928,7 +4928,6 @@
       _storeMessageToDB: function(array, callback) {
         var self = sinclo.scenarioApi;
         if(!callback) callback = function(){};
-        chatBotTyping();
         emit('storeScenarioMessage', {messages:array}, callback);
       },
       _saveProcessingState: function(isProcessing) {
@@ -4940,6 +4939,7 @@
         self.set(self._lKey.waitingInput, isWaitingInput);
       },
       _putScenarioMessage: function(type, message, categoryNum, showTextArea, callback) {
+      chatBotTypingRemove();
         var self = sinclo.scenarioApi,
             storeObj = {
               scenarioId: self.get(self._lKey.scenarioId),
@@ -4951,6 +4951,10 @@
               showTextarea: showTextArea,
               message: message
             };
+        //メッセージタイプが22か23でなかったら(ヒアリングか選択肢でなかったら)ウェイト表示
+        if(storeObj.messageType != 22 && storeObj.messageType != 23){
+          setTimeout(chatBotTyping,800);
+        }
         if(self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(data){
             self._saveMessage(data.data);
@@ -4969,7 +4973,6 @@
         }
       },
       _pushScenarioMessage: function(targetObj, callback) {
-        chatBotTypingRemove();
         emit('sendScenarioMessage', targetObj, callback);
       },
       _saveStoredMessage: function(callback) {
@@ -5773,6 +5776,7 @@
               } else {
                 self._parent._end();
               }
+              setTimeout(chatBotTypingRemove,801);
               break;
             case 4:
               // 何もしない（次のアクションへ）

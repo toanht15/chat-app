@@ -4503,6 +4503,9 @@ if(evName == "sendChat"){
   }else if(data.chatMessage == 'ウェイトアニメーション非表示'){
     chatBotTypingRemove();
   }
+  if(data.isScenarioMessage){
+    setTimeout(chatBotTyping,800);
+  }
 }
 
 
