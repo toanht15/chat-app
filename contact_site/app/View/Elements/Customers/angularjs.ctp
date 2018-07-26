@@ -830,24 +830,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         switch(type) {
           case 1: // ブラウジング共有
             sessionStorage.clear();
-            popupEvent.close();
+            $('.popup-on').addClass('popup-off').removeClass('popup-on');
             connectToken = makeToken();
             socket.emit('requestWindowSync', {
               tabId: tabId,
               type: type,
               connectToken: connectToken
             });
-            modalClose();
             $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 2: // 画面キャプチャ共有
             coBrowseConnectToken = makeToken();
+            $('.popup-on').addClass('popup-off').removeClass('popup-on');
             socket.emit('requestCoBrowseOpen', {
               tabId: tabId,
               type: type,
               coBrowseConnectToken: coBrowseConnectToken
             });
-            modalClose();
             $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 3: // 資料共有
@@ -861,7 +860,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.closeSharingApplication = function(tabId) {
-      $("#afs-popup").removeClass("show");
+      $("#afs-popup").hide();
       $("#cs-popup").addClass("show");
       var contHeight = $('#cs-popup-content').height();
       $('#cs-popup-frame').css('height', contHeight);
@@ -2601,6 +2600,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if(isset(obj.connectToken)) {
         if (connectToken !== obj.connectToken) return false;
       }
+      $("#afs-popup").hide();
       $("#rsh-popup").addClass("show");
       var contHeight = $('#rsh-popup-content').height();
       $('#rsh-popup-frame').css('height', contHeight);
