@@ -787,6 +787,10 @@
         emit('beginToCoBrowse', params);
         this.remove();
       }
+      popup.no = function(){
+        emit('sharingRejection', obj);
+        this.remove();
+      };
       popup.set(title, content);
     },
     assistAgentIsReady: function(d) {

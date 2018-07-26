@@ -863,7 +863,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.closeSharingApplication = function(tabId) {
       $("#afs-popup").removeClass("show");
       $("#cs-popup").addClass("show");
-      clearInterval(this.createTimer);
       var contHeight = $('#cs-popup-content').height();
       $('#cs-popup-frame').css('height', contHeight);
       document.getElementById('cs-popup-frame').style.top = (window.innerHeight) + "px";
@@ -882,22 +881,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.closeCanselSharingApplication = function() {
-      clearInterval(this.createTimer);
       $("#cs-popup").removeClass("show");
       $("#afs-popup").hide();
     };
 
     notFirstTime: null,
     $scope.closeSharingRejection = function() {
-      clearInterval(this.createTimer);
       $("#rsh-popup").removeClass("show");
       $("#afs-popup").hide();
     };
 
     createTimer: null,
     $scope.sharingApplicationOpen = function(tabId, accessId){
+      clearInterval(this.createTimer);
       $scope.tabId = tabId;
       $scope.accessId = accessId;
+      $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
       $('#afs-popup').show();
       $("#afs-popup").addClass("show");
       var contHeight = $('#afs-popup-content').height();
@@ -2499,7 +2498,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       // 担当しているユーザーかチェック
       var obj = JSON.parse(data), url;
       if (connectToken !== obj.connectToken) return false;
-
       connectToken = null; // リセット
       url  = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'frame')) ?>?type=" + _access_type_host;
       url += "&url=" + encodeURIComponent(obj.url) + "&userId=" + obj.userId;
@@ -2594,6 +2592,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     });
 
     socket.on('sharingApplicationRejection', function(data){ // 画面共有拒否
+      var obj = JSON.parse(data);
+      //画面キャプチャ共有の場合
+      if(isset(obj.coBrowseConnectToken)) {
+        if (coBrowseConnectToken !== obj.coBrowseConnectToken) return false;
+      }
+      //画面共有の場合
+      if(isset(obj.connectToken)) {
+        if (connectToken !== obj.connectToken) return false;
+      }
       $("#rsh-popup").addClass("show");
       var contHeight = $('#rsh-popup-content').height();
       $('#rsh-popup-frame').css('height', contHeight);
