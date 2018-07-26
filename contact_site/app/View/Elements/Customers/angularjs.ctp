@@ -898,13 +898,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
       $('#afs-popup').show();
       $("#afs-popup").addClass("show");
-      var contHeight = $('#afs-popup-content').height();
-      if(this.notFirstTime === undefined) {
-        $('#afs-popup-frame').css('height', contHeight+38);
-      }
-      else {
-        $('#afs-popup-frame').css('height', contHeight);
-      }
+      $('#afs-popup-frame').css('height', $('#popup-frame').height());
       this.notFirstTime = true;
       $scope.message = "お客様に共有の許可を求めています。";
       $scope.title = "共有申請中";
