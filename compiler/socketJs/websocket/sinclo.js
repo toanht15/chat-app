@@ -2718,11 +2718,6 @@
             if(receiveLastMessage.length > 0) {
               var lastMessageHeight = receiveLastMessage.parent().outerHeight();
               var paddingBottom = parseFloat($('#chatTalk sinclo-typing').css('padding-bottom'));
-              var ratio = 1;
-              if(check.smartphone()) {
-                ratio = $(window).width() * (1/285);
-                paddingBottom = paddingBottom + (10 * ratio);
-              }
               if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
                 $('#sincloBox #chatTalk').animate({
                   scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
