@@ -916,6 +916,20 @@
     });
   };
 
+  window.openHistoryById2 = function(id){
+    $.ajax({
+      type: 'GET',
+      url: "<?= $this->Html->url(array('controller' => 'ChatHistories', 'action' => 'remoteGetStayLogs2')) ?>",
+      data: {
+        historyId: id
+      },
+      dataType: 'html',
+      success: function(html){
+        modalOpen.call(window, html, 'p-history-logs', 'リンククリックURL');
+      }
+    });
+  };
+
   <?php if(isset($coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $coreSettings[C_COMPANY_REF_COMPANY_DATA]): ?>
   window.openCompanyDetailInfo = function(lbc){
     var retList = {};

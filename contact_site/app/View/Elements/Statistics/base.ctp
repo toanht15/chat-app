@@ -118,6 +118,13 @@
           </ul>
         </icon-annotation>
       </div>
+      <div id='chatLinkClickTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>サイト訪問者がリンクをクリックした回数</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
 
     <!-- /* テーブル表示エリア */ -->
 
@@ -279,6 +286,17 @@
         <?php } ?>
         <td><?php echo number_format($data['coherentDatas']['allCVNumberData']) ?></td>
       </tr>
+       <tr>
+        <td id = 'chatLinkClickTooltip'  class = 'tooltip'>リンククリック数
+          <div class="questionBalloon questionBalloonPosition8">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+                <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']) ?></td>
+          <?php } ?>
+          <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
+        </tr>
       <tr>
         <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
           <div class="questionBalloon questionBalloonPosition13">
@@ -474,6 +492,17 @@
             <td><?php echo $data['coherentDatas']['cvNumberData'][sprintf("%02d",$i).':00'] ?></td>
           <?php } ?>
           <td><?php echo $data['coherentDatas']['allCVNumberData'] ?></td>
+        </tr>
+        <tr>
+        <td id = 'chatLinkClickTooltip'  class = 'tooltip'>リンククリック数
+          <div class="questionBalloon questionBalloonPosition8">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+                <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']) ?></td>
+          <?php } ?>
+          <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
         </tr>
         <tr>
           <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
