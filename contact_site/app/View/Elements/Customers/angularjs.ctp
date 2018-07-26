@@ -861,7 +861,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.closeSharingApplication = function(tabId) {
-      //$("#afs-popup").css("display","none");
       $('#afs-popup-frame').animate(
         {
           top: (window.innerHeight + $('#afs-popup-frame').height())
