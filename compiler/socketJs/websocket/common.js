@@ -4654,7 +4654,7 @@ function chatBotTyping(){
   var sizeList = common.getSizeType(widget.widgetSizeType);
   var html  = "";
       html += "<div class='botNowTypingDiv'>";
-      html += "  <li class='sinclo_re effect_left botNowTyping'>"
+      html += "  <li class='effect_left botNowTyping'>"
       html += "    <div class='reload_dot_left'></div>";
       html += "    <div class='reload_dot_center'></div>";
       html += "    <div class='reload_dot_right'></div>";
@@ -4677,8 +4677,9 @@ function chatBotTyping(){
       css += "}";
       css += "#sincloBox ul#chatTalk li.botNowTyping{";
       css += "  display:flex;justify-content:space-around;align-items:center;";
-      css += "  width:100px;height:40px;padding:0 22px;"
-      css += "  border-bottom-left-radius:12px;";
+      css += "  width:100px;height:40px;padding:0 22px;margin-left: 10px;"
+      css += "  background-color:"+widget.reBackgroundColor+";border-radius:12px!important"
+      css += "  "
       css += "}";
       css += "@keyframes dotScale{";
       css += "   0%,80%,100%{transform: scale(0);opacity:0.3}";
