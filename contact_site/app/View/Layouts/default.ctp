@@ -110,6 +110,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->script("cidr2regex.js");
     echo $this->element("common-js");
     echo $this->Html->script("moment.min.js");
+    if(strcmp($this->name, 'Customers') === 0) {
+      echo $this->Html->script("jquery.jrumble.1.3.js");
+    }
     if(strcmp($this->name, 'MWidgetSettings') === 0 || strcmp($this->name, 'MChatNotifications') === 0) {
       //echo $this->Html->script("cropper.min.js");
       //cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
