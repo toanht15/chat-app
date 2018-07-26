@@ -120,7 +120,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
     $('#chatTalk > div:last-child').show();
-
     self.autoScroll();
   };
 
@@ -161,7 +160,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
     $('#chatTalk > div:last-child').show();
-
     self.autoScroll()
   };
 
@@ -1041,5 +1039,22 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor();
   });
 }]);
+
+function chatBotTyping(){
+  var html  = "";
+      html += "<div class='botNowTypingDiv'>";
+      html += "  <li class='sinclo_re effect_left botNowTyping'>"
+      html += "    <div class='reload_dot_left'></div>";
+      html += "    <div class='reload_dot_center'></div>";
+      html += "    <div class='reload_dot_right'></div>";
+      html += "  </li>";
+      html += "</div>";
+  $("#chatTalk").append(html);
+  return;
+}
+
+function chatBotTypingRemove(){
+  $('div.botNowTypingDiv').remove();
+}
 
 </script>
