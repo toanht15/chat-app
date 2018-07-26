@@ -830,24 +830,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         switch(type) {
           case 1: // ブラウジング共有
             sessionStorage.clear();
-            popupEvent.close();
+            $('.popup-on').addClass('popup-off').removeClass('popup-on');
             connectToken = makeToken();
             socket.emit('requestWindowSync', {
               tabId: tabId,
               type: type,
               connectToken: connectToken
             });
-            modalClose();
             $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 2: // 画面キャプチャ共有
             coBrowseConnectToken = makeToken();
+            $('.popup-on').addClass('popup-off').removeClass('popup-on');
             socket.emit('requestCoBrowseOpen', {
               tabId: tabId,
               type: type,
               coBrowseConnectToken: coBrowseConnectToken
             });
-            modalClose();
             $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 3: // 資料共有
@@ -861,16 +860,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.closeSharingApplication = function(tabId) {
-      $('#afs-popup-frame').animate(
-        {
-          top: (window.innerHeight + $('#afs-popup-frame').height())
-        },
-        500,
-        function () {
-          $('body').css('overflow', 'auto');
-        }
-      );
-      $("#afs-popup").removeClass("show");
+      $("#afs-popup").hide();
       $("#cs-popup").addClass("show");
       var contHeight = $('#cs-popup-content').height();
       $('#cs-popup-frame').css('height', contHeight);
@@ -903,7 +893,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     createTimer: null,
     $scope.sharingApplicationOpen = function(tabId, accessId){
       clearInterval(this.createTimer);
-      $('#afs-popup-frame').css('top',0);
       $scope.tabId = tabId;
       $scope.accessId = accessId;
       $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
