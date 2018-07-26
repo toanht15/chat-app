@@ -929,7 +929,7 @@ class ContractController extends AppController
             if(!$this->MMailTemplate->save()) {
               throw new Exception('シナリオのメールテンプレート設定登録に失敗しました');
             }
-            unset($action['mailTransmission']);
+            unset($action['mailTemplate']);
             $action['mMailTemplateId'] = $this->MMailTemplate->getLastInsertId();
           }
           else if(strcmp($action['actionType'], 11) === 0) { // 訪問ユーザ登録
