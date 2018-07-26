@@ -861,6 +861,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.closeSharingApplication = function(tabId) {
+      //$("#afs-popup").css("display","none");
+      $('#afs-popup-frame').animate(
+        {
+          top: (window.innerHeight + $('#afs-popup-frame').height())
+        },
+        500,
+        function () {
+          $('body').css('overflow', 'auto');
+        }
+      );
       $("#afs-popup").removeClass("show");
       $("#cs-popup").addClass("show");
       var contHeight = $('#cs-popup-content').height();
@@ -894,6 +904,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     createTimer: null,
     $scope.sharingApplicationOpen = function(tabId, accessId){
       clearInterval(this.createTimer);
+      $('#afs-popup-frame').css('top',0);
       $scope.tabId = tabId;
       $scope.accessId = accessId;
       $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
@@ -2601,6 +2612,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if(isset(obj.connectToken)) {
         if (connectToken !== obj.connectToken) return false;
       }
+      $("#afs-popup").hide();
       $("#rsh-popup").addClass("show");
       var contHeight = $('#rsh-popup-content').height();
       $('#rsh-popup-frame').css('height', contHeight);
