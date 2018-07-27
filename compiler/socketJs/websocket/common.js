@@ -4494,23 +4494,11 @@ function f_url(url){
 }
 
 function emit(evName, data, callback){
-/*チャットメッセージが特定の文字列だった場合
- * ローディングを表示させる処理を
- ここから実行(後で削除するためログを残しておく)*/
 if(evName == "sendChat"){
-  console.log('ローディング判定開始');
-  console.log(data.chatMessage);
-  if(data.chatMessage == 'リロードアニメーション表示'){
-    reloadWidget();
-  }else if(data.chatMessage == 'リロードアニメーション非表示'){
-    reloadWidgetRemove();
-  }else if(data.chatMessage == 'ウェイトアニメーション表示'){
-    chatBotTyping();
-  }else if(data.chatMessage == 'ウェイトアニメーション非表示'){
-    chatBotTypingRemove();
-  }
   if(data.isScenarioMessage){
-    setTimeout(chatBotTyping,800);
+    if(sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.processing) == true){
+      setTimeout(chatBotTyping,800);
+    }
   }
 }
 

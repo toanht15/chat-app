@@ -4804,7 +4804,9 @@
             self._callExternalApi._init(self);
             self._callExternalApi._process();
             break;
+          //ファイルをお客様が受信
           case self._actionType.receiveFile:
+            chatBotTypingRemove();
             self._receiveFile._init(self);
             self._receiveFile._process();
             break;
@@ -4812,6 +4814,7 @@
             self._getAttributeValue._init(self);
             self._getAttributeValue._process();
             break;
+          //ファイルをお客様が送信
           case self._actionType.sendFile:
             self._sendFile._init(self);
             self._sendFile._process();
@@ -4956,8 +4959,8 @@
               showTextarea: showTextArea,
               message: message
             };
-        //メッセージタイプが22か23でなかったら(ヒアリングか選択肢でなかったら)ウェイト表示
-        if(storeObj.messageType != 22 && storeObj.messageType != 23){
+        //ヒアリング、ファイル受信エラーメッセージ、選択肢でなかったらウェイト表示
+        if(storeObj.messageType != 22 && storeObj.messageType != 23 && storeObj.type != 9){
           setTimeout(chatBotTyping,800);
         }
         if(self._disallowSaveing()) {
@@ -5649,6 +5652,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._sendFile;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            chatBotTypingRemove();
             self._parent._handleChatTextArea("2");
             var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
@@ -5659,6 +5663,7 @@
             sinclo.chatApi.showUnreadCnt();
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(self._handleFileSelect);
+            chatBotTypingRemove();
           });
         },
         _waitUserAction: function(callback) {
