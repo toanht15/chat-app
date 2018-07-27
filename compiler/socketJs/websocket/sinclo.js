@@ -3757,6 +3757,7 @@
               console.log("DEBUG => key : " + key);
               if(key === "7") { // FIXME マジックナンバー
                 isSpeechContent = true;
+                chatBotTypingRemove();
               }
             }
 
@@ -4244,7 +4245,7 @@
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
-                    chatBotTypingRemove();
+                    setTimeout(chatBotTypingRemove,801);
                     continue;
                   }
                   if(sinclo.trigger.timerTriggeredList.hasOwnProperty(this.speechContentRegEx[index].id)
