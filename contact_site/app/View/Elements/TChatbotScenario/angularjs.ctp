@@ -1199,6 +1199,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         console.log('>>>******remove******');
       }, parseInt(time, 10) * 1000);
     } else {
+      setTimeout(chatBotTypingRemove,801);
       $scope.actionStop();
     }
   }
