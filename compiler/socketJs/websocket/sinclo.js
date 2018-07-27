@@ -4245,7 +4245,7 @@
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
-                    setTimeout(chatBotTypingRemove,801);
+                    setTimeout(chatBotTypingRemove,1301);
                     continue;
                   }
                   if(sinclo.trigger.timerTriggeredList.hasOwnProperty(this.speechContentRegEx[index].id)
@@ -4848,7 +4848,7 @@
         var self = sinclo.scenarioApi;
         if(!isJumpScenario && Number(self.get(self._lKey.currentScenarioSeqNum)) === Number(self.get(self._lKey.scenarioLength))-1) {
           self._end();
-          setTimeout(chatBotTypingRemove,801);
+          setTimeout(chatBotTypingRemove,1301);
           return false;
         }
         if(!isJumpScenario) {
@@ -4962,7 +4962,7 @@
             };
         //ヒアリング、ファイル受信エラーメッセージ、選択肢でなかったらウェイト表示
         if(storeObj.messageType != 22 && storeObj.messageType != 23 && storeObj.type != 9){
-          setTimeout(chatBotTyping,800);
+          setTimeout(chatBotTyping,1300);
         }
         if(self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(data){
@@ -5787,7 +5787,7 @@
               } else {
                 self._parent._end();
               }
-              setTimeout(chatBotTypingRemove,801);
+              setTimeout(chatBotTypingRemove,1301);
               break;
             case 4:
               // 何もしない（次のアクションへ）
