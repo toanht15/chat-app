@@ -1553,7 +1553,6 @@
         sinclo.chatApi.autoMessages.push(obj.chatId, obj);
     },
     resScenarioMessage: function(d) {
-      setTimeout(chatBotTyping,500);
       console.log("resScenarioMessage");
       var obj = JSON.parse(d);
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
@@ -3859,12 +3858,6 @@
                 }, 1);
             } else if(String(type) === "2") {
               console.log("SENARIO TRIGGERED!!!!!! " + scenarioId);
-              console.log(cond.conditions);
-              for(var key in cond.conditions) {
-                if(key === "7") {//発言内容からのシナリオ起動だったら
-                  chatBotTypingRemove();
-                }
-              }
               if(scenarioId && !sinclo.scenarioApi.isProcessing()) {
                 emit('getScenario', {"scenarioId": scenarioId});
                 if(sincloInfo.widget.showTiming === 3) {
@@ -4811,7 +4804,9 @@
             self._callExternalApi._init(self);
             self._callExternalApi._process();
             break;
+          //ファイルをお客様が受信
           case self._actionType.receiveFile:
+            chatBotTypingRemove();
             self._receiveFile._init(self);
             self._receiveFile._process();
             break;
@@ -4819,6 +4814,7 @@
             self._getAttributeValue._init(self);
             self._getAttributeValue._process();
             break;
+          //ファイルをお客様が送信
           case self._actionType.sendFile:
             self._sendFile._init(self);
             self._sendFile._process();
@@ -4851,6 +4847,7 @@
         var self = sinclo.scenarioApi;
         if(!isJumpScenario && Number(self.get(self._lKey.currentScenarioSeqNum)) === Number(self.get(self._lKey.scenarioLength))-1) {
           self._end();
+          setTimeout(chatBotTypingRemove,801);
           return false;
         }
         if(!isJumpScenario) {
@@ -4939,7 +4936,6 @@
       _storeMessageToDB: function(array, callback) {
         var self = sinclo.scenarioApi;
         if(!callback) callback = function(){};
-        chatBotTyping();
         emit('storeScenarioMessage', {messages:array}, callback);
       },
       _saveProcessingState: function(isProcessing) {
@@ -4951,6 +4947,7 @@
         self.set(self._lKey.waitingInput, isWaitingInput);
       },
       _putScenarioMessage: function(type, message, categoryNum, showTextArea, callback) {
+      chatBotTypingRemove();
         var self = sinclo.scenarioApi,
             storeObj = {
               scenarioId: self.get(self._lKey.scenarioId),
@@ -4962,6 +4959,10 @@
               showTextarea: showTextArea,
               message: message
             };
+        //ヒアリング、ファイル受信エラーメッセージ、選択肢でなかったらウェイト表示
+        if(storeObj.messageType != 22 && storeObj.messageType != 23 && storeObj.type != 9){
+          setTimeout(chatBotTyping,800);
+        }
         if(self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(data){
             self._saveMessage(data.data);
@@ -4980,7 +4981,6 @@
         }
       },
       _pushScenarioMessage: function(targetObj, callback) {
-        chatBotTypingRemove();
         emit('sendScenarioMessage', targetObj, callback);
       },
       _saveStoredMessage: function(callback) {
@@ -5538,7 +5538,7 @@
         },
         _process: function() {
           var self = sinclo.scenarioApi._callExternalApi;
-          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+          self._parent._doing(0, function () {
             self._callApi(function (response) {
               Object.keys(response).forEach(function (elm, index, arr) {
                 self._parent._saveVariable(response[elm].variableName, response[elm].value);
@@ -5652,6 +5652,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._sendFile;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            chatBotTypingRemove();
             self._parent._handleChatTextArea("2");
             var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
@@ -5662,6 +5663,7 @@
             sinclo.chatApi.showUnreadCnt();
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(self._handleFileSelect);
+            chatBotTypingRemove();
           });
         },
         _waitUserAction: function(callback) {
@@ -5784,6 +5786,7 @@
               } else {
                 self._parent._end();
               }
+              setTimeout(chatBotTypingRemove,801);
               break;
             case 4:
               // 何もしない（次のアクションへ）

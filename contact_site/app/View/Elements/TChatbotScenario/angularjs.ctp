@@ -1080,6 +1080,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var actionDetail = $scope.setActionList[$scope.actionStep];
       // メッセージ間隔
       var time =  actionDetail.messageIntervalTimeSec;
+      console.log(time);
       var branchOnConditon = false;
 
       //条件分岐の場合は複雑な時間指定が必要になるので括りだしておく
@@ -1103,7 +1104,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
 
       if(!branchOnConditon){
-        if (!!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+        if (time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
           time = setTime || '0';
         }else{
           setTimeout(chatBotTyping,500);
@@ -1196,9 +1197,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           }
         }
         chatBotTypingRemove();
-        console.log('>>>******remove******');
       }, parseInt(time, 10) * 1000);
     } else {
+      setTimeout(chatBotTypingRemove,801);
       $scope.actionStop();
     }
   }
@@ -1802,7 +1803,7 @@ function actionValidationCheck(element, setActionList, actionItem) {
     }
     if (!actionItem.message) {
       messageList.push('発言内容が未入力です');
-    }else if(actionItem.message.length){
+    }else if(actionItem.message.length > 4000){
       messageList.push('発言内容は4000文字以内で入力してください');
     }
   } else
