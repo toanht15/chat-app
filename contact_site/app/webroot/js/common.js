@@ -79,7 +79,7 @@ function addVariable(type,sendMessage,focusPosition){
             addPosition = 9;
           }
           else {
-            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<a href='ここにURLを記載'>リンクテキスト</a>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + '<a href="ここにURLを記載">リンクテキスト</a>' + sendMessage.value.substr(focusPosition,sendMessage.value.length);
             addPosition = 10;
           }
           var beforeScrollTop = $(sendMessage).scrollTop();
@@ -100,7 +100,7 @@ function addVariable(type,sendMessage,focusPosition){
             addPosition = 9;
           }
           else {
-            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<a href='ここにURLを記載' target='_blank'>リンクテキスト</a>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + '<a href="ここにURLを記載" target="_blank">リンクテキスト</a>' + sendMessage.value.substr(focusPosition,sendMessage.value.length);
             addPosition = 10;
           }
           var beforeScrollTop = $(sendMessage).scrollTop();
@@ -167,6 +167,7 @@ function replaceVariable(str,isSmartphone,type){
   if ( link !== null || linkTab !== null) {
       if ( linkTab !== null) {
         if(link !== null) {
+          console.log('入ってきてるよ2');
           var a = linkTab[0];
           //imgタグ有効化
           var img = unEscapeStr.match(imgTagReg);
@@ -184,7 +185,7 @@ function replaceVariable(str,isSmartphone,type){
       //URLのみのリンクの場合
       else {
         var url = link[0];
-        var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
+        var a = "<a href='" + url + "' target=\"_blank\" onclick = link()>" + url + "</a>";
         //imgタグ有効化
         var img = unEscapeStr.match(imgTagReg);
         if(img !== null) {
