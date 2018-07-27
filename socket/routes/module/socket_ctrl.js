@@ -2313,6 +2313,9 @@ io.sockets.on('connection', function (socket) {
         if(typeof(obj.tmpAutoMessages[key]['created']) === "string") {
           obj.tmpAutoMessages[key]['created'] = new Date(obj.tmpAutoMessages[key]['created']);
         }
+        if(isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]).autoMessages) {
+          sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages = [];
+        }
         sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[key] = obj.tmpAutoMessages[key];
       }
     }
