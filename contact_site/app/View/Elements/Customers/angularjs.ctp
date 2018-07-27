@@ -830,24 +830,23 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         switch(type) {
           case 1: // ブラウジング共有
             sessionStorage.clear();
-            popupEvent.close();
+            $('.popup-on').addClass('popup-off').removeClass('popup-on');
             connectToken = makeToken();
             socket.emit('requestWindowSync', {
               tabId: tabId,
               type: type,
               connectToken: connectToken
             });
-            modalClose();
             $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 2: // 画面キャプチャ共有
             coBrowseConnectToken = makeToken();
+            $('.popup-on').addClass('popup-off').removeClass('popup-on');
             socket.emit('requestCoBrowseOpen', {
               tabId: tabId,
               type: type,
               coBrowseConnectToken: coBrowseConnectToken
             });
-            modalClose();
             $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 3: // 資料共有
@@ -861,7 +860,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     };
 
     $scope.closeSharingApplication = function(tabId) {
-      $("#afs-popup").removeClass("show");
+      $("#afs-popup").hide();
       $("#cs-popup").addClass("show");
       var contHeight = $('#cs-popup-content').height();
       $('#cs-popup-frame').css('height', contHeight);
@@ -899,13 +898,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
       $('#afs-popup').show();
       $("#afs-popup").addClass("show");
-      var contHeight = $('#afs-popup-content').height();
-      if(this.notFirstTime === undefined) {
-        $('#afs-popup-frame').css('height', contHeight+38);
-      }
-      else {
-        $('#afs-popup-frame').css('height', contHeight);
-      }
+      $('#afs-popup-frame').css('height', $('#popup-frame').height());
       this.notFirstTime = true;
       $scope.message = "お客様に共有の許可を求めています。";
       $scope.title = "共有申請中";
@@ -2601,6 +2594,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if(isset(obj.connectToken)) {
         if (connectToken !== obj.connectToken) return false;
       }
+      $("#afs-popup").hide();
       $("#rsh-popup").addClass("show");
       var contHeight = $('#rsh-popup-content').height();
       $('#rsh-popup-frame').css('height', contHeight);
