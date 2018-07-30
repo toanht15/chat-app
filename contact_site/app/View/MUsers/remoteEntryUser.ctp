@@ -6,65 +6,65 @@
   <?php $this->request->data['MUser']['permission_level'] = htmlspecialchars($this->request->data['MUser']['permission_level'], ENT_QUOTES, 'UTF-8');?>
 
   popupEvent.closePopup = function () {
-      var page = Number("<?=$page?>");
-      var userId = document.getElementById('MUserId').value;
-      var userName = document.getElementById('MUserUserName').value;
-      var displayName = document.getElementById('MUserDisplayName').value;
-      var mailAddress = document.getElementById('MUserMailAddress').value;
-      var password = document.getElementById('MUserNewPassword').value;
-      var permissionLevel = document.getElementById('MUserPermissionLevel').value;
-      var accessToken = "<?=$token?>";
-      $.ajax({
-          type: "post",
-          url: "<?=$this->Html->url('/MUsers/remoteSaveEntryForm')?>",
-          data: {
-              userId: userId,
-              userName: userName,
-              displayName: displayName,
-              mailAddress: mailAddress,
-              password: password,
-              permissionLevel: permissionLevel,
-              accessToken: accessToken
-          },
-          cache: false,
-          dataType: "JSON",
-          success: function (data) {
-              var keys = Object.keys(data), num = 0, popup = $("#popup-frame");
-              popup.removeAttr('style');
-              $(".error-message").remove();
+    var page = Number("<?=$page?>");
+    var userId = document.getElementById('MUserId').value;
+    var userName = document.getElementById('MUserUserName').value;
+    var displayName = document.getElementById('MUserDisplayName').value;
+    var mailAddress = document.getElementById('MUserMailAddress').value;
+    var password = document.getElementById('MUserNewPassword').value;
+    var permissionLevel = document.getElementById('MUserPermissionLevel').value;
+    var accessToken = "<?=$token?>";
+    $.ajax({
+      type: "post",
+      url: "<?=$this->Html->url('/MUsers/remoteSaveEntryForm')?>",
+      data: {
+        userId: userId,
+        userName: userName,
+        displayName: displayName,
+        mailAddress: mailAddress,
+        password: password,
+        permissionLevel: permissionLevel,
+        accessToken: accessToken
+      },
+      cache: false,
+      dataType: "JSON",
+      success: function (data) {
+        var keys = Object.keys(data), num = 0, popup = $("#popup-frame");
+        popup.removeAttr('style');
+        $(".error-message").remove();
 
-              if (keys.length === 0) {
-                  var url = "<?= $this->Html->url('/MUsers/index') ?>";
-                  location.href = url + "/page:" + page;
-                  return false;
-              }
-              for (var i = 0; i < keys.length; i++) {
-                  if (data[keys[i]].length > 0) {
-                      var target = $("[name='data[MUser][" + keys[i] + "]']");
-                      for (var u = 0; u < data[keys[i]].length; u++) {
-                          target.after("<p class='error-message hide'>" + data[keys[i]][u] + "</p>");
-                          num++;
-                      }
-                  }
-              }
-              if (num > 0) {
-                  var newHeight = popup.height() + (num * 15);
-                  popup.animate({
-                      height: newHeight + "px"
-                  }, {
-                      duration: 500,
-                      complete: function () {
-                          $(".error-message.hide").removeClass("hide");
-                          $(this).css("overflow", "");
-                      }
-                  });
-              }
-          },
-          error: function (data) {
-              var url = "<?= $this->Html->url('/MUsers/index') ?>";
-              location.href = url + "/page:" + page;
+        if (keys.length === 0) {
+          var url = "<?= $this->Html->url('/MUsers/index') ?>";
+          location.href = url + "/page:" + page;
+          return false;
+        }
+        for (var i = 0; i < keys.length; i++) {
+          if (data[keys[i]].length > 0) {
+            var target = $("[name='data[MUser][" + keys[i] + "]']");
+            for (var u = 0; u < data[keys[i]].length; u++) {
+              target.after("<p class='error-message hide'>" + data[keys[i]][u] + "</p>");
+              num++;
+            }
           }
-      });
+        }
+        if (num > 0) {
+          var newHeight = popup.height() + (num * 15);
+          popup.animate({
+            height: newHeight + "px"
+          }, {
+            duration: 500,
+            complete: function () {
+              $(".error-message.hide").removeClass("hide");
+              $(this).css("overflow", "");
+            }
+          });
+        }
+      },
+      error: function (data) {
+        var url = "<?= $this->Html->url('/MUsers/index') ?>";
+        location.href = url + "/page:" + page;
+      }
+    });
   };
 </script>
 <?= $this->Form->create('MUser', array('action' => 'add')); ?>

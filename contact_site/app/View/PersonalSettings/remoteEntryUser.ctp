@@ -2,81 +2,81 @@
   <?php $this->request->data['MUser']['user_name'] = htmlspecialchars($this->request->data['MUser']['user_name'], ENT_QUOTES, 'UTF-8');?>
   <?php $this->request->data['MUser']['display_name'] = htmlspecialchars($this->request->data['MUser']['display_name'], ENT_QUOTES, 'UTF-8');?>
   $(function () {
-      var passwordElm = $("[type='password']");
-      var editCheck = document.getElementById('MUserEditPassword');
-      var pwArea = $('#set_password_area span');
-      editCheck.addEventListener('click', function (e) {
-          if (e.target.checked) {
-              passwordElm.prop('disabled', '');
-              pwArea.addClass('require');
-          }
-          else {
-              passwordElm.prop('disabled', 'disabled');
-              pwArea.removeClass('require');
-          }
-      });
+    var passwordElm = $("[type='password']");
+    var editCheck = document.getElementById('MUserEditPassword');
+    var pwArea = $('#set_password_area span');
+    editCheck.addEventListener('click', function (e) {
+      if (e.target.checked) {
+        passwordElm.prop('disabled', '');
+        pwArea.addClass('require');
+      }
+      else {
+        passwordElm.prop('disabled', 'disabled');
+        pwArea.removeClass('require');
+      }
+    });
   });
 
   popupEvent.closePopup = function () {
-      var id = document.getElementById('MUserId').value;
-      var userName = document.getElementById('MUserUserName').value;
-      var displayName = document.getElementById('MUserDisplayName').value;
-      var settings = document.getElementById('MUserSettings').value;
-      var mailAddress = document.getElementById('MUserMailAddress').value;
-      var password = document.getElementById('MUserNewPassword').value;
-      var edit_password = document.getElementById("MUserEditPassword").checked;
-      var current_password = document.getElementById('MUserCurrentPassword').value;
-      var new_password = document.getElementById('MUserNewPassword').value;
-      var confirm_password = document.getElementById('MUserConfirmPassword').value;
-      var accessToken = "<?=$token?>";
-      $.ajax({
-          type: "post",
-          url: "<?=$this->Html->url('/PersonalSettings/remoteSaveEntryForm')?>",
-          data: {
-              id: id,
-              userName: userName,
-              displayName: displayName,
-              settings: settings,
-              mailAddress: mailAddress,
-              edit_password: edit_password,
-              current_password: current_password,
-              new_password: new_password,
-              confirm_password: confirm_password,
-              accessToken: accessToken
-          },
-          cache: false,
-          dataType: "JSON",
-          success: function (data) {
-              var keys = Object.keys(data), num = 0, popup = $("#popup-frame");
-              $(".error-message").remove();
-              console.log(keys.length);
-              if (keys.length === 0) {
-                  location.href = location.href;
-                  return false;
-              }
-              for (var i = 0; i < keys.length; i++) {
-                  if (data[keys[i]].length > 0) {
-                      var target = $("[name='data[MUser][" + keys[i] + "]']");
-                      for (var u = 0; u < data[keys[i]].length; u++) {
-                          target.after("<p class='error-message hide'>" + data[keys[i]][u] + "</p>");
-                          num++;
-                      }
-                  }
-              }
-              if (num > 0) {
-                  var newHeight = popup.height() + (num * 15);
-                  popup.animate({
-                      height: newHeight + "px"
-                  }, {
-                      duration: 500,
-                      complete: function () {
-                          $(".error-message.hide").removeClass("hide");
-                          $(this).css("overflow", "");
-                      }
-                  });
-              }
+    var id = document.getElementById('MUserId').value;
+    var userName = document.getElementById('MUserUserName').value;
+    var displayName = document.getElementById('MUserDisplayName').value;
+    var settings = document.getElementById('MUserSettings').value;
+    var mailAddress = document.getElementById('MUserMailAddress').value;
+    var password = document.getElementById('MUserNewPassword').value;
+    var edit_password = document.getElementById("MUserEditPassword").checked;
+    var current_password = document.getElementById('MUserCurrentPassword').value;
+    var new_password = document.getElementById('MUserNewPassword').value;
+    var confirm_password = document.getElementById('MUserConfirmPassword').value;
+    var accessToken = "<?=$token?>";
+    $.ajax({
+      type: "post",
+      url: "<?=$this->Html->url('/PersonalSettings/remoteSaveEntryForm')?>",
+      data: {
+        id: id,
+        userName: userName,
+        displayName: displayName,
+        settings: settings,
+        mailAddress: mailAddress,
+        edit_password: edit_password,
+        current_password: current_password,
+        new_password: new_password,
+        confirm_password: confirm_password,
+        accessToken: accessToken
+      },
+      cache: false,
+      dataType: "JSON",
+      success: function (data) {
+        var keys = Object.keys(data), num = 0, popup = $("#popup-frame");
+        $(".error-message").remove();
+        console.log(keys.length);
+        if (keys.length === 0) {
+          location.href = location.href;
+          return false;
+        }
+        for (var i = 0; i < keys.length; i++) {
+          if (data[keys[i]].length > 0) {
+            var target = $("[name='data[MUser][" + keys[i] + "]']");
+            for (var u = 0; u < data[keys[i]].length; u++) {
+              target.after("<p class='error-message hide'>" + data[keys[i]][u] + "</p>");
+              num++;
+            }
           }
-      });
+        }
+        if (num > 0) {
+          var newHeight = popup.height() + (num * 15);
+          popup.animate({
+            height: newHeight + "px"
+          }, {
+            duration: 500,
+            complete: function () {
+              $(".error-message.hide").removeClass("hide");
+              $(this).css("overflow", "");
+            }
+          });
+        }
+      }
+    });
   }
 
 </script>
