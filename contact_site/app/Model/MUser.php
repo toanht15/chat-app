@@ -60,7 +60,7 @@ class MUser extends AppModel
     ],
     'new_password' => [
       'minLength' => [
-        'rule' => ['between', 6, 12],
+        'rule' => ['between', 8, 24],
         'allowEmpty' => false,
         'message' => 'パスワードは６～１２文字の間で設定してください。'
       ],
@@ -133,9 +133,9 @@ class MUser extends AppModel
     ],
     'new_password' => [
       'minLength' => [
-        'rule' => ['between', 6, 12],
+        'rule' => ['between', 8, 24],
         'allowEmpty' => false,
-        'message' => 'パスワードは６～１２文字の間で設定してください。'
+        'message' => 'パスワードは８～２４文字の間で設定してください。'
       ],
       'checkLargeAlphabet' => [
         'rule' => '/[A-Z]/',//半角英大小文字、数字のみ
