@@ -4,28 +4,28 @@
             "type": "dateFile",
             "filename": "./logs/request_",
             "pattern": "yyyyMMdd.log",
-            "backups": 3,
+            "daysToKeep": 365,
             "alwaysIncludePattern": "true"
         },
         "error": {
             "type": "dateFile",
             "filename": "./logs/error_",
             "pattern": "yyyyMMdd.log",
-            "backups": 7,
+            "daysToKeep": 365,
             "alwaysIncludePattern": "true"
         },
         "debug": {
             "type": "dateFile",
             "filename": "./logs/debug_",
             "pattern": "yyyyMMdd.log",
-            "backups": 3,
+            "daysToKeep": 365,
             "alwaysIncludePattern": "false"
         },
         "system": {
             "type": "file",
             "filename": "./logs/system.log",
             "maxLogSize": 10240000,
-            "backups": 3
+            "backups": 100
         }
     },
     "categories": {
