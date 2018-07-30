@@ -85,46 +85,52 @@ Cache::config('default', array('engine' => 'File'));
  * Feel free to remove or add filters as you see fit for your application. A few examples:
  *
  * Configure::write('Dispatcher.filters', array(
- *		'MyCacheFilter', //  will use MyCacheFilter class from the Routing/Filter package in your app.
- *		'MyCacheFilter' => array('prefix' => 'my_cache_'), //  will use MyCacheFilter class from the Routing/Filter package in your app with settings array.
- *		'MyPlugin.MyFilter', // will use MyFilter class from the Routing/Filter package in MyPlugin plugin.
- *		array('callable' => $aFunction, 'on' => 'before', 'priority' => 9), // A valid PHP callback type to be called on beforeDispatch
- *		array('callable' => $anotherMethod, 'on' => 'after'), // A valid PHP callback type to be called on afterDispatch
+ *    'MyCacheFilter', //  will use MyCacheFilter class from the Routing/Filter package in your app.
+ *    'MyCacheFilter' => array('prefix' => 'my_cache_'), //  will use MyCacheFilter class from the Routing/Filter package in your app with settings array.
+ *    'MyPlugin.MyFilter', // will use MyFilter class from the Routing/Filter package in MyPlugin plugin.
+ *    array('callable' => $aFunction, 'on' => 'before', 'priority' => 9), // A valid PHP callback type to be called on beforeDispatch
+ *    array('callable' => $anotherMethod, 'on' => 'after'), // A valid PHP callback type to be called on afterDispatch
  *
  * ));
  */
 Configure::write('Dispatcher.filters', array(
-	'AssetDispatcher',
-	'CacheDispatcher'
+  'AssetDispatcher',
+  'CacheDispatcher'
 ));
 
 /**
  * Configures default file logging options
  */
 App::uses('CakeLog', 'Log');
+
 CakeLog::config('debug', array(
-	'engine' => 'File',
-	'types' => array('notice', 'info', 'debug'),
-	'file' => 'debug',
+  'engine' => 'File',
+  'types' => array('notice', 'info', 'debug'),
+  'file' => 'debug',
+  'rotate' => 365,
 ));
+
 CakeLog::config('error', array(
-	'engine' => 'File',
-	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
-	'file' => 'error',
+  'engine' => 'File',
+  'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
+  'file' => 'error',
+  'rotate' => 365,
 ));
+
 CakeLog::config('apiLog', array(
-    'engine' => 'File',
-    'types' => array('mail-request', 'mail-response', 'mail-api-error'),
-    'file' => 'apiLog',
-    'size' => '10MB',
-    'rotate' => 10,
+  'engine' => 'File',
+  'types' => array('mail-request', 'mail-response', 'mail-api-error'),
+  'file' => 'apiLog',
+  'size' => '10MB',
+  'rotate' => 365,
 ));
+
 CakeLog::config('externalApiLog', array(
   'engine' => 'File',
   'types' => array('external-api-request', 'external-api-response', 'external-api-error'),
   'file' => 'externalApiLog',
   'size' => '10MB',
-  'rotate' => 10,
+  'rotate' => 365,
 ));
 
 CakeLog::config('batchLog', array(
@@ -132,11 +138,11 @@ CakeLog::config('batchLog', array(
   'types' => array('batch-info', 'batch-error'),
   'file' => 'batchLog',
   'size' => '10MB',
-  'rotate' => 10,
+  'rotate' => 365,
 ));
 
 if (!isset($_SERVER['SERVER_NAME'])) {
-    $_SERVER['SERVER_NAME'] = php_uname("n");
+  $_SERVER['SERVER_NAME'] = php_uname("n");
 }
 
 CakePlugin::load('WebSocket');
