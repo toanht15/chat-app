@@ -17,170 +17,170 @@ class MUser extends AppModel
    *
    * @var array
    */
-  public $validate = [
-    'user_name' => [
-      'maxLength' => [
-        'rule' => ['maxLength', 50],
+  public $validate = array(
+    'user_name' => array(
+      'maxLength' => array(
+        'rule' => array('maxLength', 50),
         'allowEmpty' => false,
         'message' => 'ユーザー名は５０文字以内で設定してください。'
-      ],
-      'prohibitedCharacters' => [
+      ),
+      'prohibitedCharacters' => array(
         'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
         'message' => '<,>,&.",\'を含まずに設定してください。'
-      ]
-    ],
-    'display_name' => [
-      'maxLength' => [
-        'rule' => ['maxLength', 10],
+      )
+    ),
+    'display_name' => array(
+      'maxLength' => array(
+        'rule' => array('maxLength', 10),
         'allowEmpty' => false,
         'message' => '表示名は１０文字以内で設定してください。'
-      ],
-      'prohibitedCharacters' => [
+      ),
+      'prohibitedCharacters' => array(
         'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
         'message' => '<,>,&.",\'を含まずに設定してください。'
-      ]
-    ],
-    'mail_address' => [
-      'email' => [
+      )
+    ),
+    'mail_address' => array(
+      'email' => array(
         'rule' => 'email',
         'message' => 'メールアドレスの形式が不正です。'
-      ],
-      'isUniqueChk' => [
+      ),
+      'isUniqueChk' => array(
         'rule' => 'isUniqueChk',
         'message' => '既に登録されているアドレスです。'
-      ],
-      'isFreeAddressChk' => [
+      ),
+      'isFreeAddressChk' => array(
         'rule' => 'isFreeAddressChk',
         'message' => 'フリーアドレスのご利用はできません。'
-      ],
-      'isCareerDomainChk' => [
+      ),
+      'isCareerDomainChk' => array(
         'rule' => 'isCareerDomainChk',
         'message' => '携帯電話のメールアドレスのご利用はできません。'
-      ],
-    ],
-    'new_password' => [
-      'minLength' => [
-        'rule' => ['between', 8, 24],
-        'allowEmpty' => false,
-        'message' => 'パスワードは６～１２文字の間で設定してください。'
-      ],
-      'checkLargeAlphabet' => [
-        'rule' => '/[A-Z]/',//半角英大小文字、数字のみ
-        'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
-      ],
-      'checkSmallAlphabet' => [
-        'rule' => '/[a-z]/',//半角英大小文字、数字のみ
-        'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
-      ],
-      'checkNumber' => [
-        'rule' => '/[0-9]/',//半角英大小文字、数字のみ
-        'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
-      ],
-      'checkOverlapMail' => [
-        'rule' => 'notOverlapMail',
-        'message' => 'メールアドレスを含めずに設定してください'
-      ],
-    ],
-    'permission_level' => [
-      'notBlank' => [
-        'rule' => 'notBlank',
-        'message' => '権限レベルを選択してください。'
-      ]
-    ],
-    'sc_num' => [
-      'range' => [
-        'rule' => ['range', -1, 100],
-        'allowEmpty' => false,
-        'message' => '０～９９以内で設定してください。'
-      ]
-    ],
-    'settings' => [
-      'prohibitedCharacters' => [
-        'rule' => '/^(?!.*(<|>|&|\')).*$/',
-        'message' => '<,>,&,\'を含まずに設定してください。'
-      ]
-    ]
-  ];
-
-  public $updateValidate = [
-    'user_name' => [
-      'maxLength' => [
-        'rule' => ['maxLength', 50],
-        'allowEmpty' => false,
-        'message' => 'ユーザー名は５０文字以内で設定してください。'
-      ],
-      'prohibitedCharacters' => [
-        'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-        'message' => '<,>,&.",\'を含まずに設定してください。'
-      ]
-    ],
-    'display_name' => [
-      'maxLength' => [
-        'rule' => ['maxLength', 10],
-        'allowEmpty' => false,
-        'message' => '表示名は１０文字以内で設定してください。'
-      ],
-      'prohibitedCharacters' => [
-        'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
-        'message' => '<,>,&.",\'を含まずに設定してください。'
-      ]
-    ],
-    'mail_address' => [
-      'email' => [
-        'rule' => 'email',
-        'message' => 'メールアドレスの形式が不正です。'
-      ]
-    ],
-    'new_password' => [
-      'minLength' => [
-        'rule' => ['between', 8, 24],
+      ),
+    ),
+    'new_password' => array(
+      'minLength' => array(
+        'rule' => array('between', 8, 24),
         'allowEmpty' => false,
         'message' => 'パスワードは８～２４文字の間で設定してください。'
-      ],
-      'checkLargeAlphabet' => [
+      ),
+      'checkLargeAlphabet' => array(
         'rule' => '/[A-Z]/',//半角英大小文字、数字のみ
         'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
-      ],
-      'checkSmallAlphabet' => [
+      ),
+      'checkSmallAlphabet' => array(
         'rule' => '/[a-z]/',//半角英大小文字、数字のみ
         'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
-      ],
-      'checkNumber' => [
+      ),
+      'checkNumber' => array(
         'rule' => '/[0-9]/',//半角英大小文字、数字のみ
         'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
-      ],
-      'checkOverlapMail' => [
+      ),
+      'checkOverlapMail' => array(
         'rule' => 'notOverlapMail',
         'message' => 'メールアドレスを含めずに設定してください'
-      ],
-    ],
-    'permission_level' => [
-      'notBlank' => [
+      ),
+    ),
+    'permission_level' => array(
+      'notBlank' => array(
         'rule' => 'notBlank',
         'message' => '権限レベルを選択してください。'
-      ]
-    ],
-    'current_password' => [
-      'checkCurrentPw' => [
+      )
+    ),
+    'sc_num' => array(
+      'range' => array(
+        'rule' => array('range', -1, 100),
+        'allowEmpty' => false,
+        'message' => '０～９９以内で設定してください。'
+      )
+    ),
+    'settings' => array(
+      'prohibitedCharacters' => array(
+        'rule' => '/^(?!.*(<|>|&|\')).*$/',
+        'message' => '<,>,&,\'を含まずに設定してください。'
+      )
+    )
+  );
+
+  public $updateValidate = array(
+    'user_name' => array(
+      'maxLength' => array(
+        'rule' => array('maxLength', 50),
+        'allowEmpty' => false,
+        'message' => 'ユーザー名は５０文字以内で設定してください。'
+      ),
+      'prohibitedCharacters' => array(
+        'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+        'message' => '<,>,&.",\'を含まずに設定してください。'
+      )
+    ),
+    'display_name' => array(
+      'maxLength' => array(
+        'rule' => array('maxLength', 10),
+        'allowEmpty' => false,
+        'message' => '表示名は１０文字以内で設定してください。'
+      ),
+      'prohibitedCharacters' => array(
+        'rule' => '/^(?!.*(<|>|&|"|\')).*$/',
+        'message' => '<,>,&.",\'を含まずに設定してください。'
+      )
+    ),
+    'mail_address' => array(
+      'email' => array(
+        'rule' => 'email',
+        'message' => 'メールアドレスの形式が不正です。'
+      )
+    ),
+    'new_password' => array(
+      'minLength' => array(
+        'rule' => array('between', 8, 24),
+        'allowEmpty' => false,
+        'message' => 'パスワードは８～２４文字の間で設定してください。'
+      ),
+      'checkLargeAlphabet' => array(
+        'rule' => '/[A-Z]/',//半角英大小文字、数字のみ
+        'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+      ),
+      'checkSmallAlphabet' => array(
+        'rule' => '/[a-z]/',//半角英大小文字、数字のみ
+        'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+      ),
+      'checkNumber' => array(
+        'rule' => '/[0-9]/',//半角英大小文字、数字のみ
+        'message' => 'パスワードは英大小文字、数字を含んで設定してください。'
+      ),
+      'checkOverlapMail' => array(
+        'rule' => 'notOverlapMail',
+        'message' => 'メールアドレスを含めずに設定してください'
+      ),
+    ),
+    'permission_level' => array(
+      'notBlank' => array(
+        'rule' => 'notBlank',
+        'message' => '権限レベルを選択してください。'
+      )
+    ),
+    'current_password' => array(
+      'checkCurrentPw' => array(
         'rule' => 'isCurrentPw',
         'allowEmpty' => false,
         'message' => '現在のパスワードが一致しません。'
-      ]
-    ],
-    'confirm_password' => [
-      'checkConfirmPw' => [
+      )
+    ),
+    'confirm_password' => array(
+      'checkConfirmPw' => array(
         'rule' => 'canMatchConfirmPw',
         'allowEmpty' => false,
         'message' => '新しいパスワードが一致しません。'
-      ]
-    ],
-    'settings' => [
-      'prohibitedCharacters' => [
+      )
+    ),
+    'settings' => array(
+      'prohibitedCharacters' => array(
         'rule' => '/^(?!.*(<|>|&|\')).*$/',
         'message' => '<,>,&,\'を含まずに設定してください。'
-      ]
-    ]
-  ];
+      )
+    )
+  );
 
   // フリーメールアドレスドメイン
   private $freeMailaddressDomains = array(
@@ -243,16 +243,16 @@ class MUser extends AppModel
     $data = $this->data['MUser'];
     if (empty($currentPw['current_password'])) return false;
 
-    $params = [
+    $params = array(
       'fields' => '*',
-      'conditions' => [
+      'conditions' => array(
         'id' => $data['id'],
         'del_flg' => 0,
         'password' => $this->makePassword($currentPw['current_password'])
-      ],
+      ),
       'limit' => 1,
       'recursive' => -1
-    ];
+    );
     $ret = $this->find('all', $params);
     if (!empty($ret)) {
       return true;
@@ -297,7 +297,7 @@ class MUser extends AppModel
     )
   );
 
-  public function beforeSave($options = [])
+  public function beforeSave($options = array())
   {
     if (empty($this->data['MUser'])) return true;
     $data = $this->data['MUser'];
@@ -330,7 +330,7 @@ class MUser extends AppModel
     if (!empty($this->id)) {
       $str[$this->name . '.id !='] = $this->id;
     }
-    $ret = $this->find('all', ['fields' => $this->name . '.*', 'conditions' => $str, 'recursive' => -1]);
+    $ret = $this->find('all', array('fields' => $this->name . '.*', 'conditions' => $str, 'recursive' => -1));
     if (!empty($ret)) {
       return false;
     } else {
@@ -345,19 +345,19 @@ class MUser extends AppModel
    * */
   public function getUser($id = null)
   {
-    $conditions = [
-      'fields' => [
+    $conditions = array(
+      'fields' => array(
         'id',
         'display_name',
         'settings'
-      ],
-      'conditions' => [
+      ),
+      'conditions' => array(
         'm_companies_id' => Configure::read('logged_company_id'),
         'permission_level != ' => C_AUTHORITY_SUPER,
         'del_flg' => 0
-      ],
+      ),
       'recursive' => -1
-    ];
+    );
 
     if (!empty($id)) {
       $conditions['conditions']['id'] = $id;
