@@ -1080,7 +1080,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var actionDetail = $scope.setActionList[$scope.actionStep];
       // メッセージ間隔
       var time =  actionDetail.messageIntervalTimeSec;
-      console.log(time);
       var branchOnConditon = false;
 
       //条件分岐の場合は複雑な時間指定が必要になるので括りだしておく
@@ -1159,6 +1158,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           }
         } else
         if (actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+          $scope.actionStep++;
+          $scope.doAction();
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
           $scope.actionStep++;
           $scope.doAction();
         } else
