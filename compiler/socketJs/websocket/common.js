@@ -4600,8 +4600,15 @@ function reloadWidget(){
   var widget = window.sincloInfo.widget;
 
   var sizeList = common.getSizeType(widget.widgetSizeType);
-  var coverHeight = sizeList.chatTalkHeight + sizeList.classFlexBoxRowHeight;
-  var loadPadding = Number(widget.widgetSizeType) * 29 + 61;
+
+  if(check.smartphone()){
+    var coverWidth = widgetWidth;
+  }else{
+    var coverWidth = sizeList.boxWidth;
+  }
+    var coverHeight = $('#chatTalk').outerHeight() + $('#flexBoxHeight').outerHeight();
+    var loadPadding = Number(widget.widgetSizeType) * 29 + 61;
+
   var html  = "";
       html += "<div class='reloadCover'>";
       html += "  <div class='reload_dot_left'></div>";
@@ -4630,7 +4637,7 @@ function reloadWidget(){
       css += "#sincloBox div.reloadCover{";
       css += "  position:absolute;z-index:1000;display:flex;justify-content:space-around;align-items:center;";
       css += "  background-color:"+widget.chatTalkBackgroundColor+";";
-      css += "  width:"+sizeList.boxWidth+"px;height:"+coverHeight+"px;padding:0 "+loadPadding+"px;"
+      css += "  width:"+coverWidth+"px;height:"+coverHeight+"px;padding:0 "+loadPadding+"px;"
       css += "}";
       css += "@keyframes dotScale{";
       css += "   0%,80%,100%{transform: scale(0);}";
