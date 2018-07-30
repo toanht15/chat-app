@@ -2758,7 +2758,7 @@
                 scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
               }, 300);
             }
-          }, 500);
+          }, 0);
         },
         scDownImmediate: function(){
           var chatTalk = document.getElementById('chatTalk');
