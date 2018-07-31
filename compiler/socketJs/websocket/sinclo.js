@@ -613,7 +613,7 @@
         createStartTimer,
         createStart = function(){
           console.log("create start");
-          reloadWidget();
+          common.reloadWidget();
           var sincloBox = document.getElementById('sincloBox');
           if ( window.sincloInfo.contract.chat && check.smartphone() ) {
             common.widgetHandler.show();
@@ -1139,7 +1139,7 @@
       sessionStorage.removeItem('chatEmit');
     },
     chatMessageData:function(d){
-      reloadWidgetRemove();
+      common.reloadWidgetRemove();
       console.log("chatMessgeData");
       console.log("DATA : %s",d);
       var obj = JSON.parse(d);
@@ -2721,11 +2721,14 @@
           while (chatTalk.firstChild) chatTalk.removeChild(chatTalk.firstChild);
         },
         scDownTimer: null,
-        scDown: function(){
+        scDown: function(callback){
           if ( this.scDownTimer ) {
             clearTimeout(this.scDownTimer);
           }
           this.scDownTimer = setTimeout(function(){
+          if(callback != null){
+            callback();
+          }
           var chatTalk = document.getElementById('chatTalk');
             var receiveLastMessage = $('#chatTalk sinclo-chat div:last-of-type').find('.sinclo_re:last-of-type');
             if(receiveLastMessage.length > 0) {
@@ -2759,7 +2762,7 @@
                 scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
               }, 300);
             }
-          }, 0);
+          }, 500);
         },
         scDownImmediate: function(){
           var chatTalk = document.getElementById('chatTalk');
@@ -3579,7 +3582,7 @@
                           var cloneCondition = JSON.parse(JSON.stringify(conditions[0]));
                           this.judge.setMatchSpeechContent(1, window.sincloInfo.messages[key].id, cloneCondition,function(err, timer){
                             console.log("【AND】setMatchSpeechContent triggered!! : " + JSON.stringify(cloneCondition));
-                            setTimeout(chatBotTyping,500);
+                            setTimeout(common.chatBotTyping,500);
                             if (err) {
                               ret = null;
                               return;
@@ -3689,7 +3692,7 @@
 
                         this.judge.setMatchSpeechContent(2, window.sincloInfo.messages[key].id, condition, function (err, timer) {
                           console.log("【OR】setMatchSpeechContent triggered!! : " + JSON.stringify(condition));
-                          setTimeout(chatBotTyping,500);
+                          setTimeout(common.chatBotTyping,500);
                           if (err) {
                             return;
                           }
@@ -3757,7 +3760,7 @@
               console.log("DEBUG => key : " + key);
               if(key === "7") { // FIXME マジックナンバー
                 isSpeechContent = true;
-                chatBotTypingRemove();
+                common.chatBotTypingRemove();
               }
             }
 
@@ -3808,7 +3811,7 @@
             else {
               console.log("EMIT sendAutoChatMessage::setAutoMessage");
               if(isSpeechContent){
-                chatBotTypingRemove();
+                common.chatBotTypingRemove();
               }
                 emit('sendAutoChatMessage', data);
             }
@@ -4245,7 +4248,7 @@
                 for (var index in this.speechContentRegEx) {
                   if(sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                     console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
-                    setTimeout(chatBotTypingRemove,1301);
+                    setTimeout(common.chatBotTypingRemove,1301);
                     continue;
                   }
                   if(sinclo.trigger.timerTriggeredList.hasOwnProperty(this.speechContentRegEx[index].id)
@@ -4807,7 +4810,7 @@
             break;
           //ファイルをお客様が受信
           case self._actionType.receiveFile:
-            chatBotTypingRemove();
+            common.chatBotTypingRemove();
             self._receiveFile._init(self);
             self._receiveFile._process();
             break;
@@ -4848,7 +4851,7 @@
         var self = sinclo.scenarioApi;
         if(!isJumpScenario && Number(self.get(self._lKey.currentScenarioSeqNum)) === Number(self.get(self._lKey.scenarioLength))-1) {
           self._end();
-          setTimeout(chatBotTypingRemove,1301);
+          setTimeout(common.chatBotTypingRemove,1301);
           return false;
         }
         if(!isJumpScenario) {
@@ -4948,7 +4951,7 @@
         self.set(self._lKey.waitingInput, isWaitingInput);
       },
       _putScenarioMessage: function(type, message, categoryNum, showTextArea, callback) {
-      chatBotTypingRemove();
+      common.chatBotTypingRemove();
         var self = sinclo.scenarioApi,
             storeObj = {
               scenarioId: self.get(self._lKey.scenarioId),
@@ -4962,7 +4965,7 @@
             };
         //ヒアリング、ファイル受信エラーメッセージ、選択肢でなかったらウェイト表示
         if(storeObj.messageType != 22 && storeObj.messageType != 23 && storeObj.type != 9){
-          setTimeout(chatBotTyping,1300);
+          setTimeout(common.chatBotTyping,1300);
         }
         if(self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(data){
@@ -5653,7 +5656,7 @@
         _process: function() {
           var self = sinclo.scenarioApi._sendFile;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
-            chatBotTypingRemove();
+            common.chatBotTypingRemove();
             self._parent._handleChatTextArea("2");
             var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
@@ -5664,7 +5667,7 @@
             sinclo.chatApi.showUnreadCnt();
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(self._handleFileSelect);
-            chatBotTypingRemove();
+            common.chatBotTypingRemove();
           });
         },
         _waitUserAction: function(callback) {
@@ -5787,7 +5790,7 @@
               } else {
                 self._parent._end();
               }
-              setTimeout(chatBotTypingRemove,1301);
+              setTimeout(common.chatBotTypingRemove,1301);
               break;
             case 4:
               // 何もしない（次のアクションへ）
