@@ -1720,6 +1720,11 @@
         sinclo.hideTextarea();
         return;
       }
+      var delayTime = 0;
+      if(window.sincloInfo.widget.chatMessageWithAnimation === 1){
+        delayTime = 1105;
+      }
+      setTimeout(function(){
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
 
@@ -1765,9 +1770,16 @@
           }
         }
       }
+      sinclo.chatApi.scDownImmediate();
+      },delayTime);
     },
     hideTextarea : function(){
       if(!document.getElementById("flexBoxWrap")) return;
+      var delayTime = 0;
+      if(window.sincloInfo.widget.chatMessageWithAnimation === 1){
+        delayTime = 1100;
+      }
+      setTimeout(function(){
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === '') {
         document.getElementById("flexBoxWrap").style.display = 'none';
@@ -1813,6 +1825,7 @@
           document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
         }
       }
+      },delayTime);
     },
     resizeTextArea: function() {
       if(!document.getElementById('flexBoxWrap')) return;
