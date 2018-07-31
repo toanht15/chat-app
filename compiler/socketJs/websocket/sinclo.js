@@ -2721,14 +2721,12 @@
           while (chatTalk.firstChild) chatTalk.removeChild(chatTalk.firstChild);
         },
         scDownTimer: null,
-        scDown: function(callback){
+        scDown: function(){
           if ( this.scDownTimer ) {
             clearTimeout(this.scDownTimer);
           }
           this.scDownTimer = setTimeout(function(){
-          if(callback != null){
-            callback();
-          }
+          common.chatBotTypingRemove();
           var chatTalk = document.getElementById('chatTalk');
             var receiveLastMessage = $('#chatTalk sinclo-chat div:last-of-type').find('.sinclo_re:last-of-type');
             if(receiveLastMessage.length > 0) {
@@ -3582,7 +3580,7 @@
                           var cloneCondition = JSON.parse(JSON.stringify(conditions[0]));
                           this.judge.setMatchSpeechContent(1, window.sincloInfo.messages[key].id, cloneCondition,function(err, timer){
                             console.log("【AND】setMatchSpeechContent triggered!! : " + JSON.stringify(cloneCondition));
-                            setTimeout(common.chatBotTyping,500);
+                            setTimeout(common.chatBotTyping,1000);
                             if (err) {
                               ret = null;
                               return;
@@ -3692,7 +3690,7 @@
 
                         this.judge.setMatchSpeechContent(2, window.sincloInfo.messages[key].id, condition, function (err, timer) {
                           console.log("【OR】setMatchSpeechContent triggered!! : " + JSON.stringify(condition));
-                          setTimeout(common.chatBotTyping,500);
+                          setTimeout(common.chatBotTyping,1000);
                           if (err) {
                             return;
                           }
@@ -3760,7 +3758,6 @@
               console.log("DEBUG => key : " + key);
               if(key === "7") { // FIXME マジックナンバー
                 isSpeechContent = true;
-                common.chatBotTypingRemove();
               }
             }
 
@@ -3811,7 +3808,6 @@
             else {
               console.log("EMIT sendAutoChatMessage::setAutoMessage");
               if(isSpeechContent){
-                common.chatBotTypingRemove();
               }
                 emit('sendAutoChatMessage', data);
             }
@@ -4810,7 +4806,6 @@
             break;
           //ファイルをお客様が受信
           case self._actionType.receiveFile:
-            common.chatBotTypingRemove();
             self._receiveFile._init(self);
             self._receiveFile._process();
             break;
@@ -4951,7 +4946,6 @@
         self.set(self._lKey.waitingInput, isWaitingInput);
       },
       _putScenarioMessage: function(type, message, categoryNum, showTextArea, callback) {
-      common.chatBotTypingRemove();
         var self = sinclo.scenarioApi,
             storeObj = {
               scenarioId: self.get(self._lKey.scenarioId),
@@ -4965,7 +4959,7 @@
             };
         //ヒアリング、ファイル受信エラーメッセージ、選択肢でなかったらウェイト表示
         if(storeObj.messageType != 22 && storeObj.messageType != 23 && storeObj.type != 9){
-          setTimeout(common.chatBotTyping,1300);
+          setTimeout(common.chatBotTyping,1000);
         }
         if(self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(data){
@@ -5656,7 +5650,6 @@
         _process: function() {
           var self = sinclo.scenarioApi._sendFile;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
-            common.chatBotTypingRemove();
             self._parent._handleChatTextArea("2");
             var dropAreaMessage = self._parent.get(self._parent._lKey.currentScenario).dropAreaMessage;
             var cancelEnabled = self._parent.get(self._parent._lKey.currentScenario).cancelEnabled;
@@ -5667,7 +5660,6 @@
             sinclo.chatApi.showUnreadCnt();
             sinclo.chatApi.createSelectUploadFileMessage(dropAreaMessage, cancelEnabled, cancelLabel, extensionType, extendedExtensions);
             self._waitUserAction(self._handleFileSelect);
-            common.chatBotTypingRemove();
           });
         },
         _waitUserAction: function(callback) {

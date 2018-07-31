@@ -2876,7 +2876,7 @@ var socket, // socket.io
           css += "  50%{transform: scale(1);opacity:1.0}";
           css += "}";
       $("#sincloBox > style").append(css);
-      $("sinclo-typing").append(html);
+      $("sinclo-chat").append(html);
       return;
     },
     chatBotTypingRemove: function(){
@@ -4614,7 +4614,7 @@ function emit(evName, data, callback){
 if(evName == "sendChat"){
   if(data.isScenarioMessage){
     if(sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.processing) == true){
-      setTimeout(common.chatBotTyping,800);
+      common.chatBotTyping();
     }
   }
 }
