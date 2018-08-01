@@ -1746,6 +1746,7 @@
         }
       }
         $('#flexBoxWrap').css('display', '');
+        chatTalk.scrollTop = (chatTalk.scrollHeight - chatTalk.clientHeight - 2);
       //スマホの場合
       if ( check.smartphone() ) {
         // 縦の場合
@@ -2160,8 +2161,11 @@
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
             sinclo.resizeTextArea();
             if(!check.smartphone()) {
-              sinclo.resizeTextArea();
               common.widgetHandler._handleResizeEvent();
+              var chatTalk = document.getElementById('chatTalk');
+              $('#sincloBox #chatTalk').animate({
+                scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
+              }, 300);
               $('#miniSincloChatMessage').focus();
             }
           }
@@ -2178,10 +2182,13 @@
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
+            sinclo.resizeTextArea();
             if(!check.smartphone()) {
-              sinclo.resizeTextArea();
               common.widgetHandler._handleResizeEvent();
-              //sinclo.resizeTextArea();
+              var chatTalk = document.getElementById('chatTalk');
+              $('#sincloBox #chatTalk').animate({
+                scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
+              }, 300);
               $('#sincloChatMessage').focus();
             }
           }
