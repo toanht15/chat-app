@@ -2299,7 +2299,7 @@ var socket, // socket.io
         }
       },
       _handleResizeEvent: function() {
-        console.log("widgetHandler::_handleResizeEvent");
+        console.log("<><><><><><><><><>widgetHandler::_handleResizeEvent");
         if(storage.s.get('widgetMaximized') === "true") {
           $('#sincloBox').css('height', 'auto');
         }
@@ -2310,20 +2310,25 @@ var socket, // socket.io
           changeTarget = ($('#chatTab').length > 0) ? $('#chatTalk') : $('#telContent'),
           delta = windowHeight - common.widgetHandler._currentWindowHeight;
 
-        if (windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
-          delta = (windowHeight * 0.7) - currentWidgetHeight;
+        if(windowHeight * 0.7 > maxCurrentWidgetHeight) {
+          changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
+          return;
+        }
+
+        if (windowHeight * 0.85 < currentWidgetHeight && delta === 0) {
+          delta = (windowHeight * 0.85) - currentWidgetHeight;
         }
 
         // 変更後サイズ
         var afterWidgetHeight = $('#sincloWidgetBox').height() + delta;
         if (delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
-          console.log('1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
+          console.log('<><><><><><><><><>1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
           changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
         } else if (delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
-          console.log('2 %s %s %s', delta,afterWidgetHeight, minCurrentWidgetHeight);
+          console.log('<><><><><><><><><>2 %s %s %s', delta,afterWidgetHeight, minCurrentWidgetHeight);
           changeTarget.height(common.widgetHandler._getMinChatTalkHeight());
-        } else if ((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
-          console.log('3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
+        } else if ((delta < 0 && windowHeight * 0.85 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.85 >= afterWidgetHeight)) {
+          console.log('<><><><><><><><><>3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
           changeTarget.height(changeTarget.height() + delta);
         }
         common.widgetHandler._currentWindowHeight = windowHeight;
@@ -2416,6 +2421,9 @@ var socket, // socket.io
         var invisibleUIOffset = 0;
         if(!forChatTalkOffset) {
           if(!$('#sincloAccessInfo').is(':visible')) {
+            invisibleUIOffset += 26.5;
+          }
+          if(!$('#sincloWidgetBox #footer').is(':visible')) {
             invisibleUIOffset += 26.5;
           }
           if(!$('#widgetSubTitle').is(':visible') && !$('#widgetDescription').is(':visible')) {
