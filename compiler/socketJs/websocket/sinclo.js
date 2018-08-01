@@ -1808,8 +1808,9 @@
       sinclo.hideTextareaDelayTimer = setTimeout(function(){
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === '') {
+        var isMiniDisplayShow = $('#miniFlexBoxHeight').is(':visible');
         document.getElementById("flexBoxWrap").style.display = 'none';
-        if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
+        if(sinclo.scenarioApi.isProcessing() && isMiniDisplayShow) {
           document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 48 + 'px';
         } else {
           document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
