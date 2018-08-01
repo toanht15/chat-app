@@ -2315,7 +2315,10 @@ var socket, // socket.io
           maxCurrentWidgetHeight = common.widgetHandler._getMaxWidgetHeight(),
           changeTarget = ($('#chatTab').length > 0) ? $('#chatTalk') : $('#telContent'),
           delta = windowHeight - common.widgetHandler._currentWindowHeight;
-
+        if(windowHeight * 0.7 > maxCurrentWidgetHeight) {
+          changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
+          return;
+        }
         if (windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
           delta = (windowHeight * 0.7) - currentWidgetHeight;
         }

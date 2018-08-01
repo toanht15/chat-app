@@ -1721,17 +1721,12 @@
         sinclo.hideTextarea();
         return;
       }
-      var delayTime = 0;
-      if(window.sincloInfo.widget.chatMessageWithAnimation === 1){
-        delayTime = 1105;
-      }
-      setTimeout(function(){
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
-
         document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
       }
       document.getElementById("flexBoxWrap").style.display = '';
+      chatTalk.scrollTop = (chatTalk.scrollHeight - chatTalk.clientHeight - 2);
       //スマホの場合
       if ( check.smartphone() ) {
         // 縦の場合
@@ -1771,16 +1766,9 @@
           }
         }
       }
-      sinclo.chatApi.scDownImmediate();
-      },delayTime);
     },
     hideTextarea : function(){
       if(!document.getElementById("flexBoxWrap")) return;
-      var delayTime = 0;
-      if(window.sincloInfo.widget.chatMessageWithAnimation === 1){
-        delayTime = 1100;
-      }
-      setTimeout(function(){
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === '') {
         document.getElementById("flexBoxWrap").style.display = 'none';
@@ -1826,7 +1814,6 @@
           document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
         }
       }
-      },delayTime);
     },
     resizeTextArea: function() {
       if(!document.getElementById('flexBoxWrap')) return;
@@ -2137,7 +2124,9 @@
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
-              $('#chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+              $('#sincloBox #chatTalk').animate({
+                scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
+              }, 300);
               $('#miniSincloChatMessage').focus();
             }
           }
@@ -2153,11 +2142,13 @@
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
-            sinclo.resizeTextArea();
+            setTimeout(sinclo.resizeTextArea,1110);
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
-              $('#chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+              $('#sincloBox #chatTalk').animate({
+                scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
+              }, 300);
               $('#sincloChatMessage').focus();
             }
           }
@@ -4868,13 +4859,17 @@
         return true;
       },
       _handleChatTextArea: function(type) {
+      var delayTime = 1100;
+      if(window.sincloInfo.widget.chatMessageWithAnimation === 1){
+        delayTime = 1100;
+      }
         switch(type) {
           case "1":
-            sinclo.displayTextarea();
+            setTimeout(sinclo.displayTextarea,delayTime);
             storage.l.set('textareaOpend', 'open');
             break;
           case "2":
-            sinclo.hideTextarea();
+            setTimeout(sinclo.hideTextarea,delayTime);
             storage.l.set('textareaOpend', 'close');
             break;
         }
@@ -4890,7 +4885,7 @@
             sinclo.chatApi.createMessageUnread('sinclo_re', message, name, true);
           }
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
-          sinclo.chatApi.scDown();
+          //sinclo.chatApi.scDown();
           // ローカルに蓄積しておく
           self._putScenarioMessage(type, message, categoryNum, showTextArea, callback);
         } else {
