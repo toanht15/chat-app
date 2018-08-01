@@ -1809,7 +1809,11 @@
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === '') {
         document.getElementById("flexBoxWrap").style.display = 'none';
-        document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
+        if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
+          document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 48 + 'px';
+        } else {
+          document.getElementById("chatTalk").style.height = chatTalk.clientHeight + 75 + 'px';
+        }
       }
       //スマホの場合
       if ( check.smartphone() ) {
