@@ -1821,6 +1821,7 @@
       if(sinclo.firstCallDisplayTextarea) {
         //スマホの場合
         if ( check.smartphone() ) {
+          $('#flexBoxWrap').css('display', '');
           // 縦の場合
           var widgetWidth = 0,
             ratio = 0;
