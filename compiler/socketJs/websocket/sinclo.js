@@ -1728,7 +1728,7 @@
         sinclo.hideTextarea();
         return;
       }
-      var delayTime = 1000;
+      var delayTime = 900;
       if(window.sincloInfo.widget.chatMessageWithAnimation === 1){
         delayTime = 1105;
       }
