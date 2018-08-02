@@ -686,6 +686,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
      * ************************************************************/
 
     $scope.docShareId = null;
+    $scope.createTimer=null;
     $scope.documentOpen = function(tabId, accessId){
       $scope.docShareId = null;
       $.ajax({
@@ -759,12 +760,42 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
      * @return {void}     open new Window.
      */
     $scope.shareDocument = function(doc) {
-      window.open(
-        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + doc.id,
-        "doc_monitor_" + $scope.docShareId,
-        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
-      );
       $scope.closeDocumentList();
+      clearInterval($scope.createTimer);
+      $scope.tabId = $scope.docShareId;
+      $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
+      $('#afs-popup').show();
+      $("#afs-popup").addClass("show");
+      $('#afs-popup-frame').css('height', $('#popup-frame').height());
+      this.notFirstTime = true;
+      $scope.message = "お客様に共有の許可を求めています。";
+      $scope.title = "共有申請中";
+      $scope.createTimer = setInterval(function () {
+        if ($scope.title.length > 7) {
+          $scope.title = "共有申請中";
+          $scope.$apply();
+        }
+        else {
+          $scope.title　+= '・';
+          $scope.$apply();
+        }
+      }, 500);
+
+      var settings = JSON.parse(doc.settings);
+      var rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : 0;
+      socket.emit('docShareConnect', {
+        id: doc.id,
+        from: 'company',
+        responderId: '<?=$userInfo["id"]?>',
+        directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
+        fileName: doc.file_name,
+        pagenation_flg: doc.pagenation_flg,
+        pages: settings.pages,
+        rotation: rotation,
+        download_flg: doc.download_flg,
+        tabId: $scope.docShareId,
+        popup:'true'
+      });
     };
 
     $scope.closeDocumentList = function() {
@@ -890,9 +921,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $("#afs-popup").hide();
     };
 
-    createTimer: null,
     $scope.sharingApplicationOpen = function(tabId, accessId){
-      clearInterval(this.createTimer);
+      clearInterval($scope.createTimer);
       $scope.tabId = tabId;
       $scope.accessId = accessId;
       $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
@@ -902,7 +932,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       this.notFirstTime = true;
       $scope.message = "お客様に共有の許可を求めています。";
       $scope.title = "共有申請中";
-      this.createTimer = setInterval(function () {
+      $scope.createTimer = setInterval(function () {
         if ($scope.title.length > 7) {
           $scope.title = "共有申請中";
           $scope.$apply();
@@ -2507,6 +2537,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $('#afs-popup').hide();
     });
 
+  socket.on('docShare', function (data) {
+    var obj = JSON.parse(data);
+    if(obj && obj.responderId && Number(obj.responderId) === Number(<?=$userInfo["id"]?>)) {
+      window.open(
+        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + obj.id,
+        "doc_monitor_" + $scope.docShareId,
+        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+      );
+      $('#afs-popup').hide();
+    }
+  });
+
     socket.on('requestCoBrowseAllowed', function (data) {
       sessionStorage.clear();
       popupEvent.close();
@@ -2594,6 +2636,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if(isset(obj.connectToken)) {
         if (connectToken !== obj.connectToken) return false;
       }
+      //資料共有の場合
+      if(obj === null || obj.responderId === null || Number(obj.responderId) !== Number(<?=$userInfo["id"]?>)) {
+        return false;
+      }
+
       $("#afs-popup").hide();
       $("#rsh-popup").addClass("show");
       var contHeight = $('#rsh-popup-content').height();

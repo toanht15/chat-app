@@ -1365,6 +1365,7 @@
       sinclo.chatApi.showUnreadCnt();
     },
     sendChatResult: function(d){
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>sendChatResult>>>");
       var obj = JSON.parse(d);
       common.chatBotTypingRemove();
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
@@ -1426,7 +1427,8 @@
             storage.s.set('requestFlg',false);
           };
           if(obj.tabId === userInfo.tabId) {
-            this.chatApi.scDown(obj);
+            setTimeout(function(){common.chatBotTyping(obj)},800);
+            //this.chatApi.scDown(obj);
             return false;
           } else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
             // 別タブで送信された自動返信は表示する
@@ -1439,7 +1441,8 @@
         if (obj.messageType === sinclo.chatApi.messageType.sendFile || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           sinclo.chatApi.call();
           this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
-          this.chatApi.scDown(obj);
+          this.chatApi.scDown();
+          setTimeout(function(){common.chatBotTyping(obj)},800);
           return false;
         }
 
@@ -1452,7 +1455,8 @@
             cn = "sinclo_se";
             this.chatApi.createMessage(cn, obj.chatMessage, "");
           }
-          this.chatApi.scDown(obj);
+          this.chatApi.scDown();
+          setTimeout(function(){common.chatBotTyping(obj)},800);
           return false;
         }
 
@@ -1463,7 +1467,7 @@
           if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
             this.chatApi.notify(obj.chatMessage);
           } else {
-            this.chatApi.scDown(obj);
+            this.chatApi.scDown();
           }
           // チャットの契約をしている場合
           if ( window.sincloInfo.contract.chat ) {
@@ -1508,7 +1512,8 @@
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
         } else {
-          this.chatApi.scDown(obj);
+          this.chatApi.scDown();
+          setTimeout(function(){common.chatBotTyping(obj)},800);
         }
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
@@ -1609,6 +1614,19 @@
         var url = window.sincloInfo.site.files + "/docFrame/" + encodeURIComponent(JSON.stringify(params));
 
         window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=yes,scrollbars=yes,status=no");
+        emit('docShare', {
+          id: obj.id,
+          responderId: obj.responderId,
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          connectToken: userInfo.connectToken,
+          // 解像度
+          screen: browserInfo.windowScreen(),
+          // ブラウザのサイズ
+          windowSize: browserInfo.windowSize(),
+          // スクロール位置の取得
+          scrollPosition: browserInfo.windowScroll()
+        });
         this.remove();
       };
       popup.no = function(){
@@ -1715,7 +1733,7 @@
     },
     displayTextareaDelayTimer: null,
     displayTextarea : function(){
-      console.log("displayTextArea");
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaCalled");
       if(!document.getElementById("flexBoxWrap")) return;
       if((check.isset(window.sincloInfo.custom)
         && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
@@ -1723,7 +1741,7 @@
         sinclo.hideTextarea();
         return;
       }
-      var delayTime = 0;
+      var delayTime = 900;
       if(window.sincloInfo.widget.chatMessageWithAnimation === 1){
         delayTime = 1105;
       }
@@ -1736,6 +1754,7 @@
         sinclo.hideTextareaDelayTimer = null;
       }
       sinclo.displayTextareaDelayTimer = setTimeout(function(){
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaNow");
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
         if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
@@ -1745,7 +1764,16 @@
         }
       }
         $('#flexBoxWrap').css('display', '');
-        chatTalk.scrollTop = (chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+      if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
+        $('#miniSincloChatMessage').focus();
+      } else {
+        $('#sincloChatMessage').focus();
+      }
+        console.log('<><><><><><><><><><><>自由入力欄が<><><><><><><><><><><>');
+        console.log('<><><><><><><><><><><>表示されます<><><><><><><><><><><>');
+        $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+        console.log('<><><><><><><><><><><>位置調整が<><><><><><><><><><><>');
+        console.log('<><><><><><><><><><><>行われます<><><><><><><><><><><>');
       //スマホの場合
       if ( check.smartphone() ) {
         // 縦の場合
@@ -1787,12 +1815,11 @@
           }
         }
       }
-      sinclo.chatApi.scDownImmediate();
       },delayTime);
     },
     hideTextareaDelayTimer: null,
     hideTextarea : function(){
-      console.log("hideTextarea");
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>hideTextareaCalled");
       if(!document.getElementById("flexBoxWrap") ) return;
       var delayTime = 0;
       if(window.sincloInfo.widget.chatMessageWithAnimation === 1){
@@ -1807,6 +1834,7 @@
         sinclo.hideTextareaDelayTimer = null;
       }
       sinclo.hideTextareaDelayTimer = setTimeout(function(){
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>hideTextareaNow");
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === '') {
         var isMiniDisplayShow = $('#miniFlexBoxHeight').is(':visible');
@@ -1860,6 +1888,7 @@
       },delayTime);
     },
     resizeTextArea: function() {
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>resizetextarea");
       if(!document.getElementById('flexBoxWrap')) return;
       var flexBoxWrapHeight = $('#flexBoxWrap').height(), // 現在の入力サイズ
           defaultChatTalkHeight = common.getSizeType(sincloInfo.widget.widgetSizeType)['chatTalkHeight'],
@@ -2154,10 +2183,10 @@
           $("input[name^='sinclo-radio']").prop('disabled', true);
         },
         showMiniMessageArea: function() {
+          console.log(">>>>>>>>>>>>>>>>>>>>>showMiniMessageArea");
           if((check.isset(window.sincloInfo.custom)
             && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)
-          || $('#miniFlexBoxHeight').is(':visible')) {
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
             return;
           }
           // オペレータ未入室のシナリオのヒアリングモードのみ有効
@@ -2165,22 +2194,19 @@
             $('#flexBoxHeight').addClass('sinclo-hide');
             $('#miniFlexBoxHeight').removeClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
-            sinclo.resizeTextArea();
+            //sinclo.resizeTextArea();
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
-              $('#sincloBox #chatTalk').animate({
-                scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
-              }, 300);
               $('#miniSincloChatMessage').focus();
             }
           }
         },
         hideMiniMessageArea: function() {
+        console.log(">>>>>>>>>>>>>>>>>>>>>hideMiniMessageArea");
           if((check.isset(window.sincloInfo.custom)
             && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)
-          || !$('#miniFlexBoxHeight').is(':visible')) {
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
             return;
           }
           // シナリオのヒアリングモードのみ有効
@@ -2188,13 +2214,10 @@
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
-            sinclo.resizeTextArea();
+            //sinclo.resizeTextArea();
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
-              $('#sincloBox #chatTalk').animate({
-                scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
-              }, 300);
               $('#sincloChatMessage').focus();
             }
           }
@@ -2632,6 +2655,7 @@
           li.innerHTML = content;
         },
         createSelectUploadFileMessage: function(message, cancelable, cancelLabel, extensionType, extendedExtensions) {
+          common.chatBotTypingRemove();
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
           div.style.cursor = "pointer";
@@ -2774,11 +2798,13 @@
         },
         scDownTimer: null,
         scDown: function(obj){
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownCalled!!');
           if ( this.scDownTimer ) {
             clearTimeout(this.scDownTimer);
           }
-          setTimeout(function(){common.chatBotTyping(obj)},800);
+          //setTimeout(function(){common.chatBotTyping(obj)},800);
           this.scDownTimer = setTimeout(function(){
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownNow!!');
           var chatTalk = document.getElementById('chatTalk');
             var receiveLastMessage = $('#chatTalk sinclo-chat div:last-of-type').find('.sinclo_re:last-of-type');
             if(receiveLastMessage.length > 0) {
@@ -2814,6 +2840,7 @@
           }, 500);
         },
         scDownImmediate: function(){
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownImmediate");
           var chatTalk = document.getElementById('chatTalk');
           var receiveLastMessage = $('#chatTalk sinclo-chat div:last-of-type').find('.sinclo_re:last-of-type');
           if(receiveLastMessage.length > 0) {
@@ -4943,6 +4970,7 @@
         }
       },
       _showMessage: function(type, message, categoryNum, showTextArea, callback) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showMessage');
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
