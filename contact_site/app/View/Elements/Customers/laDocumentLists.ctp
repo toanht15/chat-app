@@ -698,7 +698,7 @@ sincloApp.controller('MainController', function($scope){
 
     var settings = JSON.parse(doc.settings);
     var rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : 0;
-    socket.emit('docShareConnect', {
+    emit('docShareConnect', {
       id: doc.id,
       from: 'company',
       responderId: '<?=$userInfo["id"]?>',
