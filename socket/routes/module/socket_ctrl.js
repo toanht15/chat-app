@@ -13,7 +13,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
+      database: process.env.DB_NAME || 'sinclo_db2'
     });
 
 // log4js
@@ -2543,6 +2543,16 @@ io.sockets.on('connection', function (socket) {
     emit.toUser('windowSyncInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncHostSessionId'));
   });
 
+  // 同形ウィンドウを作成するための情報受け取り
+  socket.on('eee', function (data) {
+    console.log('もう一歩！');
+    var obj = JSON.parse(data);
+    console.log(getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+    // 同形ウィンドウを作成するための情報渡し
+    emit.toCompany('www', obj, obj.siteKey);
+  });
+
+
   // iframe用（接続直後と企業側リロード時）
   socket.on('connectFrame', function (data) {
     var obj = JSON.parse(data);
@@ -3739,6 +3749,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     var obj = JSON.parse(d);
     var targetId = obj.tabId.replace("_frame", "");
     emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
+    //emit.toUser('docDisconnect', obj, doc_connectList[targetId]["company"]);
   });
 
   //画面共有キャンセル
@@ -4084,6 +4095,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
  // 資料共有開始(企業から)
   socket.on('docShareConnect', function(d) {
     var obj = JSON.parse(d);
+    console.log(obj);
     if ( !getSessionId(obj.siteKey, obj.tabId, "sessionId") ) {
       // TODO 接続失敗
       return false;
@@ -4100,17 +4112,24 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       // 資料共有中ユーザーをセットする
       var targetId = (getSessionId(obj.siteKey, obj.tabId, "parentTabId")) ? getSessionId(obj.siteKey, obj.tabId, "parentTabId") : obj.tabId;
       sincloCore[obj.siteKey][targetId].docShareId = obj.responderId; // 資料共有中ユーザーをセットする
-      // 消費者側に確認ポップアップを表示する
-      emit.toUser('docShareConnect', d, sessionId);
-      obj.tabId = targetId;
-      emit.toCompany('docShareConnect', obj, obj.siteKey); // リアルタイムモニタへ通知
+      if(obj.popup === 'true') {
+        // 消費者側に確認ポップアップを表示する
+        emit.toUser('docShareConnect', d, sessionId);
+      }
+      else {
+        obj.tabId = targetId;
+        emit.toCompany('docShareConnect', obj, obj.siteKey); // リアルタイムモニタへ通知
+      }
     }
   });
+
+
 
   // 資料共有のキャンセル
   socket.on('docShareCancel', function(d){
     var obj = JSON.parse(d);
     var targetId = obj.tabId.replace("_frame", "");
+    emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
     emit.toUser('docDisconnect', obj, doc_connectList[targetId]["company"]);
   });
 
