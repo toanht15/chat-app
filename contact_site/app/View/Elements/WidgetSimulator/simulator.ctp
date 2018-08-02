@@ -280,7 +280,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
       <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
         @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
         @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
-        @keyframes dotScale { 0%,80%,100%{transform: scale(0);opacity:0.3;} 40% {transform: scale(1);opacity:1.0; } }
+        @keyframes dotScale { 0%,100%{transform: scale(0.4);opacity:0.3;} 30%,70%{opacity:0.7} 50% {transform: scale(1);opacity:1.0; } }
         #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 0px 5px 30.8px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
         #sincloBox ul#chatTalk.middleSize { height: 284px; padding: 0px 5px 45.6px 5px;}
         #sincloBox ul#chatTalk.largeSize { height: 374px; padding: 0px 5px 60px 5px;}
@@ -289,11 +289,11 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk div.liBoxRight { text-align: right; }
         #sincloBox ul#chatTalk div.liRight { text-align: right; }
         #sincloBox ul#chatTalk li { border-radius: 5px; background-color: #FFF; margin: 10px 0 0; padding: 10px 10px; font-size: 12px; line-height: 1.4; white-space: pre-wrap; }
-        #sincloBox ul#chatTalk li.botNowTyping div[class^='reload_dot'] { min-width: 15px;width: 15px;min-height: 15px; height: 15px; border-radius: 100%; background-color: {{widget.settings['re_text_color']}};}
-        #sincloBox ul#chatTalk li.botNowTyping div[class$='left'] {animation:dotScale 1.4s ease-in-out -0.32s infinite both}
-        #sincloBox ul#chatTalk li.botNowTyping div[class$='center'] {animation:dotScale 1.4s ease-in-out -0.16s infinite both}
-        #sincloBox ul#chatTalk li.botNowTyping div[class$='right'] {animation:dotScale 1.4s ease-in-out 0s infinite both}
-        #sincloBox ul#chatTalk li.botNowTyping {display:flex;justify-content:space-around;align-items:center;width:100px;height:40px;padding:0 22px;border-radius:12px;margin-left:10px;}
+        #sincloBox ul#chatTalk li.botNowTyping div[class^='reload_dot'] { min-width: {{widget.re_text_size*0.8}}px;width: {{widget.re_text_size*0.8}}px;min-height: {{widget.re_text_size*0.8}}px; height: {{widget.re_text_size*0.8}}px; border-radius: 100%; background-color: {{widget.settings['re_text_color']}};}
+        #sincloBox ul#chatTalk li.botNowTyping div[class$='left'] {animation:dotScale 1.0s ease-in-out -0.32s infinite both}
+        #sincloBox ul#chatTalk li.botNowTyping div[class$='center'] {animation:dotScale 1.0s ease-in-out -0.16s infinite both}
+        #sincloBox ul#chatTalk li.botNowTyping div[class$='right'] {animation:dotScale 1.0s ease-in-out 0s infinite both}
+        #sincloBox ul#chatTalk li.botNowTyping {display:flex;justify-content:space-around;align-items:center;width:{{(widget.re_text_size*1.4+20)*2}}px;height:{{widget.re_text_size*1.4+20}}px;padding:0 {{(widget.re_text_size*1.4+20)*2*0.172}}px;border-radius:12px;margin-left:10px;}
         #sincloBox ul#chatTalk li.middleSize { font-size: 13px; }
         #sincloBox ul#chatTalk li.largeSize { font-size: 13px; }
         #sincloBox ul#chatTalk li.boxType { display: inline-block; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
