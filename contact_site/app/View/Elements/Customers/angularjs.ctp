@@ -2629,15 +2629,18 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     socket.on('sharingApplicationRejection', function(data){ // 画面共有拒否
       var obj = JSON.parse(data);
       //画面キャプチャ共有の場合
+      var isSyncBrowser = false;
       if(isset(obj.coBrowseConnectToken)) {
+        isSyncBrowser = true;
         if (coBrowseConnectToken !== obj.coBrowseConnectToken) return false;
       }
       //画面共有の場合
       if(isset(obj.connectToken)) {
+        isSyncBrowser = true;
         if (connectToken !== obj.connectToken) return false;
       }
       //資料共有の場合
-      if(obj === null || obj.responderId === null || Number(obj.responderId) !== Number(<?=$userInfo["id"]?>)) {
+      if(!isSyncBrowser && (obj === null || obj === undefined || obj.responderId === null || Number(obj.responderId) !== Number(<?=$userInfo["id"]?>))) {
         return false;
       }
 

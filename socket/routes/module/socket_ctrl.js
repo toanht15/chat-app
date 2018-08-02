@@ -4091,7 +4091,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
  // 資料共有開始(企業から)
   socket.on('docShareConnect', function(d) {
-    console.log('資料共有');
     var obj = JSON.parse(d);
     if ( !getSessionId(obj.siteKey, obj.tabId, "sessionId") ) {
       // TODO 接続失敗
