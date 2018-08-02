@@ -1614,6 +1614,19 @@
         var url = window.sincloInfo.site.files + "/docFrame/" + encodeURIComponent(JSON.stringify(params));
 
         window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=yes,scrollbars=yes,status=no");
+        emit('docShare', {
+          id: obj.id,
+          responderId: obj.responderId,
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          connectToken: userInfo.connectToken,
+          // 解像度
+          screen: browserInfo.windowScreen(),
+          // ブラウザのサイズ
+          windowSize: browserInfo.windowSize(),
+          // スクロール位置の取得
+          scrollPosition: browserInfo.windowScroll()
+        });
         this.remove();
       };
       popup.no = function(){
