@@ -1728,7 +1728,7 @@
         sinclo.hideTextarea();
         return;
       }
-      var delayTime = 805;
+      var delayTime = 900;
       if(window.sincloInfo.widget.chatMessageWithAnimation === 1){
         delayTime = 1105;
       }
@@ -1758,7 +1758,7 @@
       }
         console.log('<><><><><><><><><><><>自由入力欄が<><><><><><><><><><><>');
         console.log('<><><><><><><><><><><>表示されます<><><><><><><><><><><>');
-        chatTalk.scrollTop = (chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+        $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
         console.log('<><><><><><><><><><><>位置調整が<><><><><><><><><><><>');
         console.log('<><><><><><><><><><><>行われます<><><><><><><><><><><>');
       //スマホの場合
