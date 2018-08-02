@@ -2642,6 +2642,7 @@
           li.innerHTML = content;
         },
         createSelectUploadFileMessage: function(message, cancelable, cancelLabel, extensionType, extendedExtensions) {
+          common.chatBotTypingRemove();
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
           div.style.cursor = "pointer";
