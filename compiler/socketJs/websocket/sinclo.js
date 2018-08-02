@@ -1738,7 +1738,6 @@
       sinclo.displayTextareaDelayTimer = setTimeout(function(){
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
-        debugger;
         if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
           document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 48 + 'px';
         } else {
@@ -1771,10 +1770,12 @@
 
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
+            $('#sincloBox ul sinclo-typing').css('padding-bottom', (fullHeight * 0.1604) + 'px');
           } else {
             widgetWidth = $(window).width() - 20;
             ratio = widgetWidth * (1/285);
             document.getElementById("chatTalk").style.height = (194 * ratio) + 'px';
+            $('#sincloBox ul sinclo-typing').css('padding-bottom', ((194 * ratio) * 0.1604) + 'px');
           }
         }
         //横の場合
