@@ -2539,12 +2539,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
   socket.on('docShare', function (data) {
     var obj = JSON.parse(data);
-    window.open(
-      "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + obj.id,
-      "doc_monitor_" + $scope.docShareId,
-      "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
-    );
-    $('#afs-popup').hide();
+    if(obj && obj.responderId && Number(obj.responderId) === Number(<?=$userInfo["id"]?>)) {
+      window.open(
+        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + obj.id,
+        "doc_monitor_" + $scope.docShareId,
+        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+      );
+      $('#afs-popup').hide();
+    }
   });
 
     socket.on('requestCoBrowseAllowed', function (data) {
@@ -2634,6 +2636,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       if(isset(obj.connectToken)) {
         if (connectToken !== obj.connectToken) return false;
       }
+      //資料共有の場合
+      if(obj === null || obj.responderId === null || Number(obj.responderId) !== Number(<?=$userInfo["id"]?>)) {
+        return false;
+      }
+
       $("#afs-popup").hide();
       $("#rsh-popup").addClass("show");
       var contHeight = $('#rsh-popup-content').height();
@@ -2648,6 +2655,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       setTimeout(function(){
         $('#rsh-popup-content').trigger('stopRumble');
       },250);
+      //}
     });
 
     socket.on('activeOpCnt', function(data){

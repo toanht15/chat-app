@@ -1611,6 +1611,7 @@
         window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=yes,scrollbars=yes,status=no");
         emit('docShare', {
           id: obj.id,
+          responderId: obj.responderId,
           userId: userInfo.userId,
           tabId: userInfo.tabId,
           connectToken: userInfo.connectToken,
