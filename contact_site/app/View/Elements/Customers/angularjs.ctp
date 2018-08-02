@@ -2637,7 +2637,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if (connectToken !== obj.connectToken) return false;
       }
       //資料共有の場合
-      if(obj === null || obj.responderId === null || Number(obj.responderId) !== Number(<?=$userInfo["id"]?>)) {
+      if(obj === null || obj === undefined || obj.responderId === null || Number(obj.responderId) !== Number(<?=$userInfo["id"]?>)) {
         return false;
       }
 

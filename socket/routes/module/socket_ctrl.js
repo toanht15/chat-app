@@ -13,7 +13,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
+      database: process.env.DB_NAME || 'sinclo_db2'
     });
 
 // log4js
@@ -4091,7 +4091,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
  // 資料共有開始(企業から)
   socket.on('docShareConnect', function(d) {
-    console.log('資料共有');
     var obj = JSON.parse(d);
     if ( !getSessionId(obj.siteKey, obj.tabId, "sessionId") ) {
       // TODO 接続失敗
