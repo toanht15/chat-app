@@ -2540,9 +2540,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
   socket.on('docShare', function (data) {
     var obj = JSON.parse(data);
     if(obj && obj.responderId && Number(obj.responderId) === Number(<?=$userInfo["id"]?>)) {
+      if($scope.docShareId !== null) {
+        var shareId = $scope.docShareId;
+      }
+      else {
+        var shareId = obj.tabId;
+      }
       window.open(
-        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + obj.id,
-        "doc_monitor_" + $scope.docShareId,
+        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent(shareId) + "&docId=" + obj.id,
+        "doc_monitor_" + shareId,
         "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
       );
       $('#afs-popup').hide();
