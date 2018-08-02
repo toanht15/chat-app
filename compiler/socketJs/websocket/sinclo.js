@@ -1819,8 +1819,6 @@
       }
       },delayTime);
       if(sinclo.firstCallDisplayTextarea) {
-        sinclo.firstCallDisplayTextarea = false;
-        sinclo.firstCallHideTextarea = false;
         //スマホの場合
         if ( check.smartphone() ) {
           // 縦の場合
@@ -1934,8 +1932,6 @@
       }
       },delayTime);
       if(sinclo.firstCallHideTextarea) {
-        sinclo.firstCallHideTextarea = false;
-        sinclo.firstCallDisplayTextarea = false;
         if ( check.smartphone() ) {
           // 縦の場合
           var widgetWidth = 0,
