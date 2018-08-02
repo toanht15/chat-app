@@ -1751,6 +1751,11 @@
         }
       }
         $('#flexBoxWrap').css('display', '');
+      if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
+        $('#miniSincloChatMessage').focus();
+      } else {
+        $('#sincloChatMessage').focus();
+      }
         console.log('<><><><><><><><><><><>自由入力欄が<><><><><><><><><><><>');
         console.log('<><><><><><><><><><><>表示されます<><><><><><><><><><><>');
         $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
@@ -1780,10 +1785,12 @@
 
             console.log(fullHeight);
             document.getElementById("chatTalk").style.height = fullHeight + 'px';
+            $('#sincloBox ul sinclo-typing').css('padding-bottom', (fullHeight * 0.1604) + 'px');
           } else {
             widgetWidth = $(window).width() - 20;
             ratio = widgetWidth * (1/285);
             document.getElementById("chatTalk").style.height = (194 * ratio) + 'px';
+            $('#sincloBox ul sinclo-typing').css('padding-bottom', ((194 * ratio) * 0.1604) + 'px');
           }
         }
         //横の場合
@@ -2166,8 +2173,7 @@
           console.log(">>>>>>>>>>>>>>>>>>>>>showMiniMessageArea");
           if((check.isset(window.sincloInfo.custom)
             && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)
-          || $('#miniFlexBoxHeight').is(':visible')) {
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
             return;
           }
           // オペレータ未入室のシナリオのヒアリングモードのみ有効
@@ -2187,8 +2193,7 @@
         console.log(">>>>>>>>>>>>>>>>>>>>>hideMiniMessageArea");
           if((check.isset(window.sincloInfo.custom)
             && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)
-          || !$('#miniFlexBoxHeight').is(':visible')) {
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
             return;
           }
           // シナリオのヒアリングモードのみ有効
@@ -2792,7 +2797,6 @@
             if(receiveLastMessage.length > 0) {
               var lastMessageHeight = receiveLastMessage.parent().outerHeight();
               var paddingBottom = parseFloat($('#chatTalk sinclo-typing').css('padding-bottom'));
-              var ratio = 1;
               if(check.smartphone()) {
                 ratio = $(window).width() * (1/285);
                 paddingBottom = paddingBottom + (10 * ratio);
@@ -2805,13 +2809,13 @@
                 //「○○が入力中です」のメッセージが残っていない場合
                 if(document.getElementById('sinclo_typeing_message') === null) {
                   $('#sincloBox #chatTalk').animate({
-                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom * ratio)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom)) // FIXME ウィジェットサイズに合わせた余白で計算すること
                   }, 300);
                 }
                 //「○○が入力中です」のメッセージが残っている場合
                 else {
                   $('#sincloBox #chatTalk').animate({
-                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom * ratio + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
                   }, 300);
                 }
               }
@@ -3842,6 +3846,12 @@
             }
 
             console.log("IS SPEECH CONTENT : " + isSpeechContent);
+
+            // 外部連携実装後に外す
+            if(sendMail) {
+              sinclo.api.callFunction('am', id);
+            }
+            // 外部連携実装後に外す
 
             //CVに登録するオートメッセージの場合
             if(cond.cv == 1) {
@@ -5567,6 +5577,9 @@
             variables: targetVariables
           };
 
+          // 外部連携実装後に外す
+          sinclo.api.callFunction('sc', self._parent.get(self._parent._lKey.scenarioId));
+          // 外部連携実装後に外す
           emit('processSendMail', sendData, function(ev) {
             self._parent._applyAllDataSent();
           });
@@ -5974,6 +5987,20 @@
           value = userInfo.accessId;
         }
         return value;
+      },
+      callFunction: function(type, id) {
+        try{
+          if(sincloInfo.custom.callFunc
+            && typeof sincloInfo.custom.callFunc === 'object'
+            && sincloInfo.custom.callFunc.hasOwnProperty(type)
+            && typeof sincloInfo.custom.callFunc[type] === 'object') {
+            if(sincloInfo.custom.callFunc[type].hasOwnProperty(Number(id)) && typeof sincloInfo.custom.callFunc[type][Number(id)] === 'function') {
+              sincloInfo.custom.callFunc[type][id]();
+            }
+          }
+        } catch (e) {
+          console.log("api::callFunction Error => %s",e.message);
+        }
       }
     }
   };

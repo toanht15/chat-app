@@ -1414,7 +1414,7 @@ var socket, // socket.io
         html += '#sincloBox { -webkit-transition: 100ms linear 0ms;  transition: opacity 100ms linear 0ms; }';
         html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { position: relative }';
         html += '#sincloBox section#chatTab sinclo-chat-alert { position: absolute; background-color: rgba(0,0,0,0.6); box-shadow: 0px 0px 4px 4px rgba(0,0,0,0.1); color: #FFF; text-align: center; }';
-        html += '#sincloBox ul sinclo-typing { padding-bottom: '+ (Number(sizeList['paddingBottom']) * ratio) +'px; display: block; }';
+        html += '#sincloBox ul sinclo-typing { padding-bottom: '+ (30.8 * ratio) +'px; display: block; }';
         if ( sinclo.chatApi.sendErrCatchFlg ) {
           html += '#sincloBox section#chatTab sinclo-chat-alert { display:block }';
         }

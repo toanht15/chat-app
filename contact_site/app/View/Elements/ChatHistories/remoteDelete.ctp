@@ -2,6 +2,7 @@
 
 //はいをクリック
 popupEventOverlap.closePopup = function(){
+  loading.load.start();
   var data=JSON.parse('<?php echo  $data; ?>');
   //履歴削除処理
   var url = "<?= $this->Html->url('/ChatHistories/remoteDeleteChat') ?>";
