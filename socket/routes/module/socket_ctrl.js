@@ -13,7 +13,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db2'
+      database: process.env.DB_NAME || 'sinclo_db'
     });
 
 // log4js
@@ -2543,13 +2543,11 @@ io.sockets.on('connection', function (socket) {
     emit.toUser('windowSyncInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncHostSessionId'));
   });
 
-  // 同形ウィンドウを作成するための情報受け取り
-  socket.on('eee', function (data) {
-    console.log('もう一歩！');
+  // 同形ウィンドウを作成するための情報受け取り(資料共有)
+  socket.on('docShare', function (data) {
     var obj = JSON.parse(data);
-    console.log(getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     // 同形ウィンドウを作成するための情報渡し
-    emit.toCompany('www', obj, obj.siteKey);
+    emit.toCompany('docShare', obj, obj.siteKey);
   });
 
 
@@ -3749,7 +3747,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     var obj = JSON.parse(d);
     var targetId = obj.tabId.replace("_frame", "");
     emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
-    //emit.toUser('docDisconnect', obj, doc_connectList[targetId]["company"]);
   });
 
   //画面共有キャンセル
@@ -4095,7 +4092,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
  // 資料共有開始(企業から)
   socket.on('docShareConnect', function(d) {
     var obj = JSON.parse(d);
-    console.log(obj);
     if ( !getSessionId(obj.siteKey, obj.tabId, "sessionId") ) {
       // TODO 接続失敗
       return false;

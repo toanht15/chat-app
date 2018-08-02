@@ -910,8 +910,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     };
 
-
-
     $scope.closeCanselSharingApplication = function() {
       $("#cs-popup").removeClass("show");
       $("#afs-popup").hide();
@@ -2539,34 +2537,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       $('#afs-popup').hide();
     });
 
-  socket.on('www', function (data) {
-      // 担当しているユーザーかチェック
-      /*var obj = JSON.parse(data), url;
-      if (connectToken !== obj.connectToken) return false;
-      connectToken = null; // リセット
-      url  = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'frame')) ?>?type=" + _access_type_host;
-      url += "&url=" + encodeURIComponent(obj.url) + "&userId=" + obj.userId;
-      url += "&connectToken=" + obj.connectToken + "&id=" + obj.tabId;
-      url += "&width=" + obj.windowSize.width + "&height=" + obj.windowSize.height;
-      modalFunc.set.call({
-        option: {
-          url: url,
-          tabId: obj.tabId,
-          width: 300,
-          height: 300
-        }
-      });
-      $('#afs-popup').hide();*/
-      console.log('入った！');
-      console.log(data);
-      var obj = JSON.parse(data);
-      window.open(
-        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + obj.id,
-        "doc_monitor_" + $scope.docShareId,
-        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
-      );
-      $('#afs-popup').hide();
-    });
+  socket.on('docShare', function (data) {
+    var obj = JSON.parse(data);
+    window.open(
+      "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + obj.id,
+      "doc_monitor_" + $scope.docShareId,
+      "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+    );
+    $('#afs-popup').hide();
+  });
 
     socket.on('requestCoBrowseAllowed', function (data) {
       sessionStorage.clear();

@@ -45,7 +45,6 @@ var socket, emit, tabId = '<?=$tabInfo?>', url, emit, slideJsApi, frameSize, win
 
 // WebSocketサーバ接続イベント
 socket.on('connect', function(){
-  console.log('あれれれ');
   var doc = <?=json_encode($docData['TDocument'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_FORCE_OBJECT )?>;
   var firstFlg = true;
   if ( sessionStorage.getItem("doc") !== null ) {
@@ -55,7 +54,6 @@ socket.on('connect', function(){
   slideJsApi.readFile(doc);
 
   if (firstFlg) {
-    console.log('入っていない？');
     var settings = JSON.parse(doc.settings);
     var rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : 0;
     emit('docShareConnect', {

@@ -1606,12 +1606,10 @@
           data: obj,
           site: window.sincloInfo.site
         };
-        console.log('params');
-        console.log(params);
         var url = window.sincloInfo.site.files + "/docFrame/" + encodeURIComponent(JSON.stringify(params));
 
         window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=yes,scrollbars=yes,status=no");
-        emit('eee', {
+        emit('docShare', {
           id: obj.id,
           userId: userInfo.userId,
           tabId: userInfo.tabId,
