@@ -13,7 +13,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
+      database: process.env.DB_NAME || 'sinclo_db2'
     });
 
 // log4js
@@ -974,6 +974,8 @@ io.sockets.on('connection', function (socket) {
       }
     },
     set: function(d){ // メッセージが渡されてきたと
+      console.log('commit前入ってきた');
+      console.log(d);
       if ( !getSessionId(d.siteKey, d.tabId, 'sessionId') ) {
         sincloReconnect(socket);
         return false;
@@ -1058,6 +1060,8 @@ io.sockets.on('connection', function (socket) {
         }
     },
     commit: function(d){ // DBに書き込むとき
+      console.log('commit入ってきた');
+      console.log(d);
       var insertData = {
         t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
         m_companies_id: companyList[d.siteKey],
@@ -1072,6 +1076,7 @@ io.sockets.on('connection', function (socket) {
 
       pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
         function(err, rows){
+          console.log('commit入ってきた2');
           if ( err !== null && err !== '' ) return false; // DB接続断対応
           if ( rows && rows[0] ) {
             insertData.t_history_stay_logs_id = isset(d.stayLogsId) ? d.stayLogsId : rows[0].id;
@@ -1091,7 +1096,9 @@ io.sockets.on('connection', function (socket) {
           }
 
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
+            console.log('commit入ってきた3');
             if ( !isset(error) ) {
+              console.log('commit入ってきた4');
               if ( !isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
               var sendData = {
                 tabId: d.tabId,
@@ -1311,6 +1318,7 @@ io.sockets.on('connection', function (socket) {
             }
 
             else {
+              console.log('commit入ってきた5');
               // 書き込みが失敗したらエラーを渡す
               return emit.toUser('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey}, d.siteKey);
             }
@@ -2260,6 +2268,33 @@ io.sockets.on('connection', function (socket) {
   socket.on("connectSuccessForClient", function (data) {
     var obj = JSON.parse(data);
     // sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
+  });
+
+  socket.on("link", function (data) {
+    var d = new Date();
+    console.log(d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2));
+    pool.query('INSERT INTO sinclo_db2.t_history_link_count_logs (m_companies_id,t_histories_id,t_history_stay_logs_id,link_url,created) VALUES(?,?,?,?,?)',[companyList[data.siteKey],data.historyId,data.stayLogsId,data.link,d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2)],function(error,res) {
+      if(isset(error)) {
+        console.log("RECORD INSERT ERROR: t_history_widget_close_counts:" + error);
+      }
+    });
+    console.log('リンク');
+    console.log(data);
+    var ret = {
+        siteKey: data.siteKey,
+        tabId: data.tabId,
+        userId: data.userId,
+        mUserId: null,
+        chatMessage: data.link,
+        messageType: 8,
+        created: new Date(),
+        messageDistinction: 1,
+        messageRequestFlg:data.messageRequestFlg,
+        sendMailFlg: 0,
+        autoMessageId: null
+    };
+    chatApi.set(ret);
+    emit.toUser('aaa', data, getSessionId(data.siteKey, data.tabId, 'sessionId'));
   });
 
   socket.on("connectSuccess", function (data, ack) {
@@ -3228,6 +3263,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // オートチャット
   socket.on("sendAutoChat", function(d){
     var obj = JSON.parse(d);
+    console.log('results');
+    console.log(obj);
     //応対数検索、登録
     getConversationCountUser(obj.userId,function(results) {
       var messageDistinction;
@@ -3244,6 +3281,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if ( !err && (rows && rows[0]) ) {
               var activity = JSON.parse(rows[0].activity);
               if(activity.cv == 1) {
+                console.log('cvだよ');
                 var ret = {
                   siteKey: obj.siteKey,
                   tabId: obj.tabId,
@@ -3259,6 +3297,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 };
               }
               else {
+                console.log('cvじゃないよ');
                 var ret = {
                     siteKey: obj.siteKey,
                     tabId: obj.tabId,

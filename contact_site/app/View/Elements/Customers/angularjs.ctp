@@ -1516,6 +1516,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var type = Number(chat.messageType);
       var message = chat.message;
       var userId = Number(chat.userId);
+      console.log('メッセージ');
+      console.log(message);
       // 消費者からのメッセージの場合
       if ( type === chatApi.messageType.customer) {
         cn = "sinclo_re";
@@ -1527,6 +1529,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       }
       // オートメッセージの場合
       else if ( type === chatApi.messageType.company) {
+        console.log('オートメッセージ');
         cn = "sinclo_se";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -1539,6 +1542,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         content = $scope.createTextOfMessage(chat, message);
       }
       else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry ) {
+        console.log('オートメッセージ1');
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -1547,6 +1551,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         content += $scope.createTextOfMessage(chat, message);
       }
       else if ( type === chatApi.messageType.autoSpeech || type === chatApi.messageType.notification) {
+        console.log('オートメッセージ2');
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
@@ -1656,6 +1661,17 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           div.style.padding = '0';
           content += $scope.createTextOfMessage(chat, message);
         }
+      } else if ( type === 8 ) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        li.className = cn;
+        //message = '（「'+message+'」をクリック）';
+        content = $scope.createTextOfMessage(chat, message);
+        var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+        var linkTab = content.match(linkTabReg);
+        content = '（「'+linkTab[0]+'」をクリック）';
       }
       else  {
         cn = "sinclo_etc";

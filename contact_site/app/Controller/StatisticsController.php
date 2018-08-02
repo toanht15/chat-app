@@ -1508,6 +1508,11 @@ class StatisticsController extends AppController {
     $widgetDatas = $this->getWidgetData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
     $this->log("END   getWidgetData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
+    //リンククリック件数
+    $this->log("BEGIN getLinkData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+    $linkDatas = $this->getLinkData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log("END   getLinkData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
     //チャットリクエスト件数
     $this->log("BEGIN getRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $requestDatas = $this->getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
@@ -1544,7 +1549,7 @@ class StatisticsController extends AppController {
 
     $this->log('終わり',LOG_DEBUG);
 
-    return ["accessDatas" => $accessDatas,"widgetDatas" => $widgetDatas,"requestDatas" => $requestDatas,'responseDatas' => $responseDatas,
+    return ["accessDatas" => $accessDatas,"widgetDatas" => $widgetDatas,"linkDatas" => $linkDatas,"requestDatas" => $requestDatas,'responseDatas' => $responseDatas,
     "automaticResponseData" => $automaticResponseData,"coherentDatas" => $coherentDatas,"avgRequestTimeDatas" => $avgRequestTimeDatas,"consumerWatingAvgTimeDatas" => $consumerWatingAvgTimeDatas,
     "responseAvgTimeData" => $responseAvgTimeData];
   }
@@ -1642,6 +1647,54 @@ class StatisticsController extends AppController {
     $allWidgetNumberData = array_sum($widgetNumberData);
 
     return['widgetNumberData' => $widgetNumberData,'allWidgetNumberData' => $allWidgetNumberData];
+  }
+
+  private function getLinkData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      return ['linkNumberData' => $this->convertBaseDataForNone($baseData),'allLinkNumberData' => self::LABEL_NONE];
+    }
+    $linkNumberData =[];
+
+    //ウィジェット表示件数
+    //月別
+    if($period == 'month') {
+      $link = "SELECT CONCAT(year, '-', month) as date,sum(link_count)
+      FROM t_history_link_counts
+      where m_companies_id = ? and year = ?
+      group by year,month";
+      $linkNumber = $this->THistory->query($link,
+       array($this->userInfo['MCompany']['id'],date('Y',  $startDate)));
+    }
+    //日別
+    if($period == 'day') {
+      $link = "SELECT CONCAT(year, '-', month,'-',day) as date,sum(link_count)
+      FROM t_history_link_counts
+      where m_companies_id = ? and year = ? and month = ?
+      group by year,month,day";
+      $linkNumber = $this->THistory->query($link,
+       array($this->userInfo['MCompany']['id'],date('Y',  $startDate),date('m',  $startDate)));
+    }
+    //時別
+    if($period == 'hour') {
+      $link = "SELECT CONCAT(hour, ':00') as date,sum(link_count)
+      FROM t_history_link_counts
+      where m_companies_id = ? and year = ? and month = ? and day = ?
+      group by year,month,day,hour;";
+      $linkNumber = $this->THistory->query($link,
+       array($this->userInfo['MCompany']['id'],date('Y',  $startDate),date('m',  $startDate),date('d',  $startDate)));
+    }
+
+    foreach($linkNumber as $k => $v) {
+      $linkNumberData =  $linkNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['sum(link_count)']));
+    }
+
+    //ウィジェット件数
+    $linkNumberData = array_merge($baseData,$linkNumberData);
+
+    //ウィジェット件数合計値
+    $allLinkNumberData = array_sum($linkNumberData);
+
+    return['linkNumberData' => $linkNumberData,'allLinkNumberData' => $allLinkNumberData];
   }
 
   private function getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
@@ -2189,6 +2242,8 @@ class StatisticsController extends AppController {
     $effectivenessNumber[] = 'チャット有効件数';
     $cvNumber = [];
     $cvNumber[] = 'チャットCV件数';
+    $linkNumber = [];
+    $linkNumber[] = 'リンククリック件数';
     $requestAvgTime = [];
     $requestAvgTime[] = '平均チャットリクエスト時間';
     $consumerWatingAvgTime = [];
@@ -2203,7 +2258,7 @@ class StatisticsController extends AppController {
     $effectivenessRate[] = 'チャット有効率';
 
     $csvData = $this->insertEachItemCsvData($csvData,$accessNumber,$widgetNumber,$requestNumber,
-            $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,
+            $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,$linkNumber,
             $requestAvgTime,$consumerWatingAvgTime,$responseAvgTime,$responseRate,$automaticResponseRate,
             $effectivenessRate);
 
@@ -2215,6 +2270,7 @@ class StatisticsController extends AppController {
     $csv[] = $csvData['noNumber'];
     $csv[] = $csvData['effectivenessNumber'];
     $csv[] = $csvData['cvNumber'];
+    $csv[] = $csvData['linkNumber'];
     $csv[] = $csvData['requestAvgTime'];
     $csv[] = $csvData['consumerWatingAvgTime'];
     $csv[] = $csvData['responseAvgTime'];
@@ -2226,7 +2282,7 @@ class StatisticsController extends AppController {
   }
 
   private function insertEachItemCsvData($csvData,$accessNumber,$widgetNumber,$requestNumber,
-    $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,
+    $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,$linkNumber,
     $requestAvgTime,$consumerWatingAvgTime,$responseAvgTime,$responseRate,$automaticResponseRate,
     $effectivenessRate) {
 
@@ -2239,6 +2295,11 @@ class StatisticsController extends AppController {
       $widgetNumber[] = $v;
     }
     $widgetNumber[] = $csvData['widgetDatas']['allWidgetNumberData'];
+
+    foreach($csvData['linkDatas']['linkNumberData'] as $key => $v) {
+      $linkNumber[] = $v;
+    }
+    $linkNumber[] = $csvData['linkDatas']['allLinkNumberData'];
 
     foreach($csvData['requestDatas']['requestNumberData'] as $key => $v) {
       $requestNumber[] = $v;
@@ -2326,7 +2387,7 @@ class StatisticsController extends AppController {
 
     return ['accessNumber' => $accessNumber,'widgetNumber' => $widgetNumber,'requestNumber' => $requestNumber,
       'responseNumber' => $responseNumber,'automaticResponseNumber' => $automaticResponseNumber, 'noNumber' =>$noNumber,
-      'effectivenessNumber' => $effectivenessNumber,'cvNumber' => $cvNumber,'requestAvgTime' =>$requestAvgTime,'consumerWatingAvgTime' => $consumerWatingAvgTime,
+      'effectivenessNumber' => $effectivenessNumber,'cvNumber' => $cvNumber,'linkNumber' => $linkNumber,'requestAvgTime' =>$requestAvgTime,'consumerWatingAvgTime' => $consumerWatingAvgTime,
       'responseAvgTime' => $responseAvgTime,'responseRate' => $responseRate,'automaticResponseRate' => $automaticResponseRate,
       'effectivenessRate' => $effectivenessRate];
   }

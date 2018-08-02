@@ -835,6 +835,90 @@
         }
       }
 
+      /* 履歴リンククリック数-ポップアップ用 */
+      &.p-history-link-logs {
+        width: 470px;
+        height: 300px;
+        // display: inline-table;
+        .ms-container {
+          margin: 0 auto;
+        }
+        #popup-button .textBtn {
+          width: 5em;
+          margin: 0 auto;
+        }
+        #popup-main #frame {
+          height: 160px;
+          width: 100%;
+          overflow: auto;
+          display: flex;
+        }
+        // #popup-button {
+        //   height: 50px;
+        // }
+        #popup-main {
+          position: relative;
+          height: 280px;
+          margin: 20px 0;
+          padding: 0 !important;
+          #tHeadDiv {
+            position: absolute;
+            top: 0;
+            left: 30px;
+          }
+          #tBodyDiv {
+            height: 250px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            position: absolute;
+            top: 20px;
+            left: 30px;
+          }
+          table {
+            table-layout: fixed;
+            border-collapse: collapse;
+          }
+        }
+        table {
+          th {
+            background-color: #C3D69B;
+            border: none;
+            border-bottom: 1px solid #595959;
+            border-left: 1px solid #595959;
+            &:first-child {
+              border-left: none;
+            }
+          }
+          td {
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0);
+            border-left: 1px solid rgba(0, 0, 0, 0);
+            padding: 3px;
+
+            &:first-child {
+              border-left: none;
+            }
+          }
+          .popupHistoryNo {
+            width: 60px;
+          }
+          .popupHistoryUrl {
+            width: 350px;
+          }
+          .popupHistoryTimer {
+            width: 100px;
+          }
+          td span {
+            word-wrap: break-word;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            display: block;
+            overflow: hidden;
+            padding: 2px;
+          }
+        }
+      }
+
       /* 履歴一覧-詳細情報ダイアログ用 */
       &.p-history-cus {
         width: 48em;

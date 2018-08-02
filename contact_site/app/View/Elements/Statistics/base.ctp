@@ -3,7 +3,7 @@
 
 <div id="sincloApp">
 
-  <div id='statistic_menu' class="p20trl">
+  <div id='statistic_menu' class="p20x">
     <!-- /* 対象期間選択エリア */ -->
     <condition-bar>
       <left-parts>
@@ -33,7 +33,7 @@
       <!-- /* 対象期間選択エリア */ -->
     </div><!-- #statistic_menu -->
 
-    <div id='statistics_content' class="p20trl" style="visibility:hidden;">
+    <div id='statistics_content' class="p20x" style="visibility:hidden;">
       <div id='chatRequestTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
@@ -121,7 +121,7 @@
       <div id='chatLinkClickTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>サイト訪問者がリンクをクリックした回数</span></li>
+            <li><span>サイト訪問者がリンクを選択した件数（※リンクを選択した回数分カウント）</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -286,17 +286,22 @@
         <?php } ?>
         <td><?php echo number_format($data['coherentDatas']['allCVNumberData']) ?></td>
       </tr>
-       <tr>
-        <td id = 'chatLinkClickTooltip'  class = 'tooltip'>リンククリック数
-          <div class="questionBalloon questionBalloonPosition8">
+      <tr>
+        <td id = 'chatLinkClickTooltip' class = 'tooltip'>リンククリック件数
+          <div class="questionBalloon questionBalloonPosition8s">
             <icon class="questionBtn">？</icon>
           </div>
         </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-                <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
-          <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
-        </tr>
+        <?php for ($i = $start; $i <= $end; $i++) { ?>
+          <?php if(is_int($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php }
+            else { ?>
+              <td><?php echo ($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php } ?>
+        <?php } ?>
+        <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
+      </tr>
       <tr>
         <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
           <div class="questionBalloon questionBalloonPosition13">
@@ -494,15 +499,15 @@
           <td><?php echo $data['coherentDatas']['allCVNumberData'] ?></td>
         </tr>
         <tr>
-        <td id = 'chatLinkClickTooltip'  class = 'tooltip'>リンククリック数
-          <div class="questionBalloon questionBalloonPosition8">
-            <icon class="questionBtn">？</icon>
-          </div>
-        </td>
+          <td id = 'chatLinkClickTooltip' class = 'tooltip'>リンククリック件数
+            <div class="questionBalloon questionBalloonPosition8s">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-                <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']) ?></td>
+            <td><?php echo number_format($data['linkDatas']['linkNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
-          <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
+          <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
         </tr>
         <tr>
           <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間

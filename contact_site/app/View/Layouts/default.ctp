@@ -43,6 +43,15 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
 <!DOCTYPE html>
 <html>
 <head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-92257656-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-92257656-1');
+</script>
   <?php echo $this->Html->charset(); ?>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -146,7 +155,6 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
 <script type="text/javascript">
   <?php echo $this->element('loadScreen'); ?>
 </script>
-
 </head>
 <body>
   <div id="container">

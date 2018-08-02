@@ -94,7 +94,13 @@ $(window).load(function(){
 
   //リサイズ処理
   var resizeDataTable = function() {
-    $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 120 + 'px');
+    console.log('リサイズ処理');
+    $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 80 + 'px');
+    console.log($('.dataTables_scrollBody').css('height'));
+    console.log($('#statistics_content').outerHeight());
+    $('#statistics_content').css('max-height',$('.dataTables_scrollBody').outerHeight() + 80 + 'px');
+    //$('#statistics_content').css('max-height','580px');
+    //$('#statistics_content').css('height',calc('100vh - 190px')+'px');
   }
   // ページ読み込み時にもリサイズ処理を実行
   tableObj.on( 'draw', function () {

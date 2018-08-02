@@ -15,7 +15,7 @@ var companySettings = {},
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
+      database: process.env.DB_NAME || 'sinclo_db2'
     });
 /* ======================= */
 /* Private Variables */
@@ -63,6 +63,8 @@ function loadWidgetSettings(siteKey, callback) {
     getWidgetSettingSql += ' WHERE ws.del_flg = 0 ORDER BY id DESC LIMIT 1;';
     pool.query(getWidgetSettingSql, siteKey,
       function(err, row){
+        console.log('row');
+        console.log(row);
         if(err) {
           syslogger.error('Unable load Widget settings. siteKey : ' + siteKey);
           return;
@@ -101,6 +103,8 @@ function loadWidgetSettings(siteKey, callback) {
     getWidgetSettingSql += ' WHERE ws.del_flg = 0;';
     pool.query(getWidgetSettingSql,
       function(err, rows){
+        console.log('rows');
+        console.log(rows);
         if(err) {
 
           syslogger.error('Unable load ALL Widget settings.');

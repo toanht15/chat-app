@@ -578,7 +578,7 @@
             <dd>
             <?php if( is_numeric($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count']) ): ?>
               <span id = "pageCount"><?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count'])?></span>
-              <a id = "moveHistory" class="underL" href="javascript:void(0)" onclick="openHistoryById2('<?=h($defaultHistoryList['THistory']['id'])?>')" >(移動履歴)</a>
+              <a id = "moveHistory" class="underL" href="javascript:void(0)" onclick="openHistoryById2('<?=h($defaultHistoryList['THistory']['id'])?>')" >(リンク履歴)</a>
             <?php endif; ?></dd>
           </li>
           </dl>

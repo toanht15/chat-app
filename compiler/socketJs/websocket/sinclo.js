@@ -403,6 +403,7 @@
       }
     },
     connect: function(){
+      console.log('こんにちは');
       // 新規アクセスの場合
       if ( !check.isset(userInfo.getTabId()) ) {
         userInfo.firstConnection = true;
@@ -657,6 +658,10 @@
       emitData.widget = window.sincloInfo.widgetDisplay;
       emitData.stayCount = userInfo.getStayCount();
       emit('sendAccessInfo', emitData);
+    },
+    aaa: function(d) {
+      console.log('あはは');
+      emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
     },
     confirmCustomerInfo: function(d) {
       var obj = common.jParse(d);
@@ -1130,6 +1135,8 @@
       console.log("chatMessgeData");
       console.log("DATA : %s",d);
       var obj = JSON.parse(d);
+      console.log('メッセージタイプ2');
+      console.log(obj.messageType);
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;
       var keys = Object.keys(obj.chat.messages);
@@ -1228,7 +1235,11 @@
           }
           else if(Number(chat.messageType) === 7){
             return false;
-          } else if(Number(chat.messageType) === 19) {
+          }
+          else if(Number(chat.messageType) === 8){
+            return false;
+          }
+           else if(Number(chat.messageType) === 19) {
             if(check.isJSON(chat.message)) {
               var result = JSON.parse(chat.message);
               this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
@@ -1352,7 +1363,10 @@
       sinclo.chatApi.showUnreadCnt();
     },
     sendChatResult: function(d){
+      console.log('メッセージタイプ');
       var obj = JSON.parse(d);
+      console.log('メッセージタイプ3');
+      console.log(obj.messageType);
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
       if ( obj.ret ) {
@@ -1488,6 +1502,10 @@
           }
         }
         if(obj.messageType == sinclo.chatApi.messageType.notification) {
+          return false;
+        }
+        if(obj.messageType == 8) {
+          console.log('ここには入っているうううう');
           return false;
         }
         this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
@@ -2457,6 +2475,8 @@
                     if ( linkTab !== null) {
                       if(link !== null) {
                         var a = linkTab[0];
+                        var link = link[0].replace('&quot;', '');
+                        a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+link+"')");
                         //imgタグ有効化
                         var img = unEscapeStr.match(imgTagReg);
                         if(img !== null) {
@@ -2474,6 +2494,7 @@
                     else {
                       var url = link[0];
                       var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
+                      a = a.replace('target="_blank"','target="_blank" onclick="link(\''+link[0]+'\')"');
                       //imgタグ有効化
                       var img = unEscapeStr.match(imgTagReg);
                       if(img !== null) {
@@ -2841,8 +2862,13 @@
               if(typeof ga == "function"){
                 ga('send', 'event', 'sinclo', 'sendChat', location.href, 1);
               }
-              storage.s.set('requestFlg',true);
-              messageRequestFlg = flg;
+              if(storage.s.get('requestFlg') !== 'true') {
+                storage.s.set('requestFlg',true);
+                messageRequestFlg = flg;
+              }
+              else {
+                messageRequestFlg = noFlg;
+              }
             }
 
             var isScenarioMessage = false;

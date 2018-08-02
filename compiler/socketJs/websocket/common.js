@@ -4355,6 +4355,12 @@ var socket, // socket.io
       sinclo.sendChatResult(d);
     }); // socket-on: sendChatResult
 
+    // リンク
+    socket.on('aaa', function (d) {
+      console.log('りんくー');
+      sinclo.aaa(d);
+    });
+
     // 新着チャット
     socket.on('resGetScenario', function (d) {
       var obj = common.jParse(d);
@@ -4575,6 +4581,25 @@ function emit(evName, data, callback){
 function now(){
   var d = new Date();
   return "【" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "】";
+}
+
+function link(link) {
+  var data = sinclo.chatApi;
+  data.link = link;
+  data.siteKey = sincloInfo.site.key;
+  data.tabId = userInfo.tabId;
+  data.userId = userInfo.userId;
+  console.log('link');
+  console.log(link);
+  if(storage.s.get('requestFlg') === 'true') {
+    data.messageRequestFlg = 0;
+  }
+  else {
+    data.messageRequestFlg = 1;
+    storage.s.set('requestFlg',true);
+  }
+  ga('send', 'event', 'sinclo', 'clickLink', link, 1);
+  socket.emit('link', data);
 }
 
 // get type
