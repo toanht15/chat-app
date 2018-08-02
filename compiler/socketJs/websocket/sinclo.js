@@ -2166,8 +2166,7 @@
           console.log(">>>>>>>>>>>>>>>>>>>>>showMiniMessageArea");
           if((check.isset(window.sincloInfo.custom)
             && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)
-          || $('#miniFlexBoxHeight').is(':visible')) {
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
             return;
           }
           // オペレータ未入室のシナリオのヒアリングモードのみ有効
@@ -2187,8 +2186,7 @@
         console.log(">>>>>>>>>>>>>>>>>>>>>hideMiniMessageArea");
           if((check.isset(window.sincloInfo.custom)
             && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)
-          || !$('#miniFlexBoxHeight').is(':visible')) {
+            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
             return;
           }
           // シナリオのヒアリングモードのみ有効
