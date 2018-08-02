@@ -2655,7 +2655,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       setTimeout(function(){
         $('#rsh-popup-content').trigger('stopRumble');
       },250);
-      //}
     });
 
     socket.on('activeOpCnt', function(data){
