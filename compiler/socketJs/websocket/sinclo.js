@@ -1596,7 +1596,6 @@
     },
     docShareConnect: function(obj){
       sessionStorage.removeItem('doc');
-      console.log('画面共有？');
 
       // 終了通知
       var title = (check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.shareDocument.begin.headerMessage)) ? window.sincloInfo.custom.shareDocument.begin.headerMessage : location.host + 'の内容';
