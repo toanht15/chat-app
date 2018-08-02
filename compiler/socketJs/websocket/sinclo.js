@@ -2166,7 +2166,8 @@
           console.log(">>>>>>>>>>>>>>>>>>>>>showMiniMessageArea");
           if((check.isset(window.sincloInfo.custom)
             && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+            && window.sincloInfo.custom.widget.forceHideMessageArea)
+          || $('#miniFlexBoxHeight').is(':visible')) {
             return;
           }
           // オペレータ未入室のシナリオのヒアリングモードのみ有効
@@ -2186,7 +2187,8 @@
         console.log(">>>>>>>>>>>>>>>>>>>>>hideMiniMessageArea");
           if((check.isset(window.sincloInfo.custom)
             && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+            && window.sincloInfo.custom.widget.forceHideMessageArea)
+          || !$('#miniFlexBoxHeight').is(':visible')) {
             return;
           }
           // シナリオのヒアリングモードのみ有効
@@ -2635,6 +2637,7 @@
           li.innerHTML = content;
         },
         createSelectUploadFileMessage: function(message, cancelable, cancelLabel, extensionType, extendedExtensions) {
+          common.chatBotTypingRemove();
           var chatList = document.getElementsByTagName('sinclo-chat')[0];
           var div = document.createElement('div');
           div.style.cursor = "pointer";
