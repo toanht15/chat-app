@@ -1206,6 +1206,8 @@ var socket, // socket.io
         html += '      @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% { } 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
         html += '      @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
         html += '      @keyframes fadeIn { 0% { opacity :0; } 100% { opacity :1; } }';
+        html += '      @keyframes noneRightEffect { 0% { opacity :0; } 100% { opacity :1; } }';
+        html += '      @keyframes noneLeftEffect { 0% { opacity :0; } 100% { opacity :1; } }';
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.sincloInfo.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         // ファイルフォントアイコン-----------
         html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-4x { font-size:4em; }';
@@ -1255,8 +1257,12 @@ var socket, // socket.io
           html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + colorList['reBackgroundColor'] + '; color:' + colorList['reTextColor'] + '; font-size: '+ widget.reTextSize +'px; display: inline-block; position: relative;}';
         }
         if (widget.chatMessageWithAnimation === 1) {
-          html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:rightEffect; -moz-animation-name:rightEffect; -o-animation-name:rightEffect; -ms-animation-name:rightEffect; animation-name:rightEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; -moz-animation-fill-mode:both; -o-animation-fill-mode:both; -ms-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }';
-          html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; -moz-animation-fill-mode:both; -o-animation-fill-mode:both; -ms-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }';
+          html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:rightEffect; animation-name:rightEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }';
+          html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }';
+        }else{
+          html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:noneRightEffect; animation-name:noneRightEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }';
+          html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }';
+
         }
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message { position: relative; color: #d5d5d5; border: none; text-align: center; }';
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
@@ -2299,7 +2305,7 @@ var socket, // socket.io
         }
       },
       _handleResizeEvent: function() {
-        console.log("widgetHandler::_handleResizeEvent");
+        console.log("<><><><><><><><><>widgetHandler::_handleResizeEvent");
         if(storage.s.get('widgetMaximized') === "true") {
           $('#sincloBox').css('height', 'auto');
         }
@@ -2309,21 +2315,24 @@ var socket, // socket.io
           maxCurrentWidgetHeight = common.widgetHandler._getMaxWidgetHeight(),
           changeTarget = ($('#chatTab').length > 0) ? $('#chatTalk') : $('#telContent'),
           delta = windowHeight - common.widgetHandler._currentWindowHeight;
-
-        if (windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
-          delta = (windowHeight * 0.7) - currentWidgetHeight;
+        if(windowHeight * 0.85 > maxCurrentWidgetHeight) {
+          changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
+          return;
+        }
+        if (windowHeight * 0.85 < currentWidgetHeight && delta === 0) {
+          delta = (windowHeight * 0.85) - currentWidgetHeight;
         }
 
         // 変更後サイズ
         var afterWidgetHeight = $('#sincloWidgetBox').height() + delta;
         if (delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
-          console.log('1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
+          console.log('<><><><><><><><><>1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
           changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
         } else if (delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
-          console.log('2 %s %s %s', delta,afterWidgetHeight, minCurrentWidgetHeight);
+          console.log('<><><><><><><><><>2 %s %s %s', delta,afterWidgetHeight, minCurrentWidgetHeight);
           changeTarget.height(common.widgetHandler._getMinChatTalkHeight());
-        } else if ((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
-          console.log('3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
+        } else if ((delta < 0 && windowHeight * 0.85 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.85 >= afterWidgetHeight)) {
+          console.log('<><><><><><><><><>3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
           changeTarget.height(changeTarget.height() + delta);
         }
         common.widgetHandler._currentWindowHeight = windowHeight;
@@ -2416,6 +2425,9 @@ var socket, // socket.io
         var invisibleUIOffset = 0;
         if(!forChatTalkOffset) {
           if(!$('#sincloAccessInfo').is(':visible')) {
+            invisibleUIOffset += 26.5;
+          }
+          if(!$('#sincloWidgetBox #footer').is(':visible')) {
             invisibleUIOffset += 26.5;
           }
           if(!$('#widgetSubTitle').is(':visible') && !$('#widgetDescription').is(':visible')) {
