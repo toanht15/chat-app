@@ -13,7 +13,7 @@ class FreeTrialMailJobBatchShell extends AppShell
   const LOG_INFO = 'batch-info';
   const LOG_ERROR = 'batch-error';
 
-  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
 
   const COMPANY_NAME = "##COMPANY_NAME##";
   const BUSINESS_MODEL = "##BUSINESS_MODEL##";
@@ -92,7 +92,6 @@ class FreeTrialMailJobBatchShell extends AppShell
         'm_companies_id' => $companyIds
       ]
     ]);
-    $this->log('ここまでは来ている2',LOG_DEBUG);
 
     $trialJobMailTemplatesData = [];
     $jobMailTemplatesData = [];
@@ -154,7 +153,6 @@ class FreeTrialMailJobBatchShell extends AppShell
           }
       }
     }
-    $this->log('ここまでは来ている3',LOG_DEBUG);
 
     $trialAgreementsList = $this->MAgreement->find('all',[
       'conditions' => [
@@ -193,11 +191,9 @@ class FreeTrialMailJobBatchShell extends AppShell
         'permission_level' => [1,2]
       ]
     ]);
-    $this->log($trialMailAdressData,LOG_DEBUG);
     if(empty($trialMailAdressData)) {
       $this->log('trialSchedule is not found.', self::LOG_INFO);
     } else {
-      $this->log('ここまでは来ている4',LOG_DEBUG);
       $this->log('BEGIN sendmail schedule4.', self::LOG_INFO);
       foreach($trialJobMailTemplatesData as $templateId => $trialJobs) {
         $trialCompanyNames = "";
@@ -207,11 +203,9 @@ class FreeTrialMailJobBatchShell extends AppShell
           foreach ($trialMailAdressData as $index => $mailAdress) {
             try {
               if ($mailAdress['MUser']['m_companies_id'] == $jobMailTemplate['m_companies_id']) {
-                $this->log('ここまでは来ている5',LOG_DEBUG);
                 //m_companies_idが変わるごとに会社名取得
                 if ((!empty($trialMailAdressData[$index - 1]) && $trialMailAdressData[$index - 1]['MUser']['m_companies_id'] != $mailAdress['MUser']['m_companies_id'] && $index != 0) ||
                   $index == 0) {
-                  $this->log('ここまでは来ている6',LOG_DEBUG);
                   $trialCompanyData = $this->MCompany->find('all', [
                     'conditions' => [
                       'id' => $mailAdress['MUser']['m_companies_id']
@@ -228,7 +222,6 @@ class FreeTrialMailJobBatchShell extends AppShell
                   $isAdminAllUserSended = false;
                 }
                 if ($jobMailTemplate['send_mail_sinclo_all_users_flg']) {
-                  $this->log('ここまでは来ている9',LOG_DEBUG);
                   $id = $jobMailTemplate['id'];
                   $to = $mailAdress['MUser']['mail_address'];
                   $sender = $jobMailTemplate['sender'];
@@ -259,7 +252,6 @@ class FreeTrialMailJobBatchShell extends AppShell
                   $isAdminAllUserSended = true;
                 }
                 else if (!$isApplicationUserSended && !$isAdminUserSended && $jobMailTemplate['send_mail_application_user_flg']) {
-                  $this->log('ここまでは来ている7',LOG_DEBUG);
                   $id = $jobMailTemplate['id'];
                   $to = $this->getRecordFromCompanyId($trialAgreementsList, $mailAdress['MUser']['m_companies_id'])['application_mail_address'];
                   $sender = $jobMailTemplate['sender'];
@@ -284,7 +276,6 @@ class FreeTrialMailJobBatchShell extends AppShell
                   $isApplicationUserSended = true;
                 }
                 else if (!$isAdminUserSended && !$isApplicationUserSended && $jobMailTemplate['send_mail_administrator_user_flg']) {
-                  $this->log('ここまでは来ている8',LOG_DEBUG);
                   $id = $jobMailTemplate['id'];
                   $to = $this->getRecordFromCompanyId($trialAgreementsList, $mailAdress['MUser']['m_companies_id'])['administrator_mail_address'];
                   $sender = $jobMailTemplate['sender'];
@@ -308,12 +299,10 @@ class FreeTrialMailJobBatchShell extends AppShell
                 }
               }
             } catch (Exception $e) {
-              $this->log('ここまでは来ている10',LOG_DEBUG);
               $this->log('send mail trial error !!!!', self::LOG_ERROR);
             }
           }
           if ($jobMailTemplate['send_mail_ml_flg'] == 0 && $jobMailTemplate === end($trialJobs)) {
-            $this->log('たぶんここには入っている');
             $this->component->setFrom(self::ML_MAIL_ADDRESS);
             $this->component->setFromName($jobMailTemplate['sender']);
             $this->component->setTo(self::ML_MAIL_ADDRESS);
