@@ -1744,11 +1744,11 @@
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaNow");
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
-        /*if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
+        if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
           document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 48 + 'px';
         } else {
           document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
-        }*/
+        }
       }
       sinclo.resizeTextArea();
         $('#flexBoxWrap').css('display', '');
