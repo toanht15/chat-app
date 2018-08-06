@@ -45,6 +45,8 @@ class MailTemplateSettingsController extends AppController
       $this->autoRender = false;
       $this->layout = "ajax";
       $data = $this->getParams();
+      $this->log('mailInfo',LOG_DEBUG);
+      $this->log($data,LOG_DEBUG);
 
       try {
         $this->processTransaction($data);
@@ -75,7 +77,21 @@ class MailTemplateSettingsController extends AppController
   }
 
   private function processTransaction($mailInfo) {
+    $this->log('ここまでは入っている1',LOG_DEBUG);
     try {
+      //時間設定
+      if($mailInfo['MJobMailTemplate']['time'] == 0) {
+        $mailInfo['MJobMailTemplate']['time'] = 9;
+      }
+      if($mailInfo['MJobMailTemplate']['time'] == 1) {
+        $mailInfo['MJobMailTemplate']['time'] = 12;
+      }
+      if($mailInfo['MJobMailTemplate']['time'] == 2) {
+        $mailInfo['MJobMailTemplate']['time'] = 15;
+      }
+      if($mailInfo['MJobMailTemplate']['time'] == 2) {
+        $mailInfo['MJobMailTemplate']['time'] = 19;
+      }
       //N日後orN日前
       if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_DAYS || $mailInfo['MailTemplateSettings']['timeToSendMail'] == C_BEFORE_DAYS) {
         //N日後
@@ -113,6 +129,7 @@ class MailTemplateSettingsController extends AppController
   }
 
   private function createMailInfo($mailInfo) {
+    $this->log('ここまでは入っている2',LOG_DEBUG);
     $errors = [];
     $mailInfo = $mailInfo['MJobMailTemplate'];
     $tmpData = [
@@ -124,8 +141,13 @@ class MailTemplateSettingsController extends AppController
         "value" => $mailInfo["value"],
         "time" => $mailInfo["time"],
         "agreement_flg" => $mailInfo["agreement_flg"],
-        "send_mail_ml_flg" => $mailInfo["mail_body"]
+        "send_mail_application_user_flg" => $mailInfo["send_mail_application_user_flg"],
+        "send_mail_administrator_user_flg" => $mailInfo["send_mail_administrator_user_flg"],
+        "send_mail_sinclo_all_users_flg" => $mailInfo["send_mail_sinclo_all_users_flg"],
+        "send_mail_ml_flg" => $mailInfo["send_mail_ml_flg"]
     ];
+    $this->log('tmpData',LOG_DEBUG);
+    $this->log($tmpData,LOG_DEBUG);
     $this->MJobMailTemplate->create();
     $this->MJobMailTemplate->set($tmpData);
     if(!$this->MJobMailTemplate->validates()) {
