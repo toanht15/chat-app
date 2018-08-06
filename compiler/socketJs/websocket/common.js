@@ -2852,6 +2852,8 @@ var socket, // socket.io
       console.log(obj);
       if(obj == null){
         return;
+      }else if(obj.forceWaitAnimation){
+
       }else if(obj.messageType === sinclo.chatApi.messageType.customer){
         if(!obj.matchAutoSpeech){
           return;
@@ -2885,7 +2887,7 @@ var socket, // socket.io
       var loadDotSize = fontSize * 0.8;
       var html  = "";
           html += "<div class='botNowTypingDiv'>";
-          html += "  <li class='effect_left_none botNowTyping'>"
+          html += "  <li class='effect_left botNowTyping'>";
           html += "    <div class='reload_dot_left'></div>";
           html += "    <div class='reload_dot_center'></div>";
           html += "    <div class='reload_dot_right'></div>";
@@ -2897,9 +2899,6 @@ var socket, // socket.io
           css += "  min-width:"+loadDotSize+"px;width:"+loadDotSize+"px;min-height:"+loadDotSize+"px;height:"+loadDotSize+"px;border-radius:100%;";
           css += "  background-color:"+widget.reTextColor+";";
           css += "}";
-          if(widget.chatMessageWithAnimation === 1){
-          css += ".effect_left_none{ -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; -moz-animation-fill-mode:both; -o-animation-fill-mode:both; -ms-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0;}";
-          }
           css += "#sincloBox .botNowTyping div[class$='left']{";
           css += "  animation:dotScale 1.0s ease-in-out -0.32s infinite both";
           css += "}";
@@ -2920,6 +2919,7 @@ var socket, // socket.io
           css += "  30%,70%{opacity:0.7}";
           css += "  50%{transform: scale(1);opacity:1.0}";
           css += "}";
+      sinclo.chatApi.scDown();
       $("#sincloBox > style").append(css);
       $("sinclo-chat").append(html);
       return;
