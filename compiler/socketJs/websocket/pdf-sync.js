@@ -539,6 +539,16 @@ var pdfjsCNST, slideJsApi, frameSize, scrollFlg;
     slideJsApi.readFile(obj);
   });
 
+  st.on("docShare", function(d){
+    var obj = JSON.parse(d);
+    slideJsApi.readFile(obj);
+  });
+
+   st.on("sharingApplicationRejection", function(d){
+    var obj = JSON.parse(d);
+    slideJsApi.readFile(obj);
+  });
+
   // 同期イベント
   st.on('docSendAction', function(d){
     var obj = JSON.parse(d), cursor;
