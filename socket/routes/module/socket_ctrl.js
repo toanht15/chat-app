@@ -973,7 +973,7 @@ io.sockets.on('connection', function (socket) {
         flg: 1
       }
     },
-    set: function(d){ // メッセージが渡されてきたと
+    set: function(d){ // メッセージが渡されてきたとき
       if ( !getSessionId(d.siteKey, d.tabId, 'sessionId') ) {
         sincloReconnect(socket);
         return false;
@@ -1201,7 +1201,7 @@ io.sockets.on('connection', function (socket) {
                       obj.messageType = chatApi.cnst.observeType.sorry;
                       obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
                       chatApi.set(obj);
-                    }, 3000);
+                    }, 10);
                   }
                 });
               }

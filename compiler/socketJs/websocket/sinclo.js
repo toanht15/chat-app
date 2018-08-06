@@ -1461,23 +1461,26 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
-          cn = "sinclo_re";
-          sinclo.chatApi.call();
-          this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
-          if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
-            this.chatApi.notify(obj.chatMessage);
-          } else {
-            this.chatApi.scDown();
-          }
-          // チャットの契約をしている場合
-          if ( window.sincloInfo.contract.chat ) {
-            //sorryメッセージを出した数
-            //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-            if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-              ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+          setTimeout(function(){common.chatBotTyping(obj)},800);
+          setTimeout(function(){
+            cn = "sinclo_re";
+            sinclo.chatApi.call();
+            sinclo.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
+            if(sinclo.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
+              sinclo.chatApi.notify(obj.chatMessage);
+            } else {
+              sinclo.chatApi.scDown();
             }
-          }
-          return false;
+            // チャットの契約をしている場合
+            if ( window.sincloInfo.contract.chat ) {
+              //sorryメッセージを出した数
+              //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
+              if(typeof ga == "function" && obj.tabId === userInfo.tabId){
+                ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+              }
+            }
+            return false;
+          },3000);
         }
         //初回通知メッセージを利用している場合
         if (obj.notification === true) {
@@ -1508,7 +1511,9 @@
         if(obj.messageType == sinclo.chatApi.messageType.notification) {
           return false;
         }
-        this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
+        if(obj.messageType != sinclo.chatApi.messageType.sorry){
+          this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
+        }
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
         } else {

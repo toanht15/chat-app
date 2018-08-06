@@ -2861,7 +2861,6 @@ var socket, // socket.io
           return;
         }
       }else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech
-             ||obj.messageType === sinclo.chatApi.messageType.sorry
              ||obj.messageType === sinclo.chatApi.messageType.auto
              ||obj.messageType === sinclo.chatApi.messageType.company
              ||obj.messageType === sinclo.chatApi.messageType.end
