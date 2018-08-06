@@ -4701,7 +4701,6 @@
       },
       _end: function() {
         // シナリオ終了
-        common.chatBotTypingRemove();
         setTimeout(common.chatBotTypingRemove,801);
         var self = sinclo.scenarioApi;
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
@@ -4965,7 +4964,7 @@
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
-          var waitTimer = setTimeout(function(){common.chatBotTyping(sinclo.chatApi)},800);
+          var waitTimer = setTimeout(function(){common.chatBotTyping({forceWaitAnimation:true})},800);
           if(type == self._actionType.hearing || type == self._actionType.selection){
             clearTimeout(waitTimer);
           }

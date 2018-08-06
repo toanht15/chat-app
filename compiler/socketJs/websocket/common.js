@@ -2852,6 +2852,8 @@ var socket, // socket.io
       console.log(obj);
       if(obj == null){
         return;
+      }else if(obj.forceWaitAnimation){
+
       }else if(obj.messageType === sinclo.chatApi.messageType.customer){
         if(!obj.matchAutoSpeech){
           return;
