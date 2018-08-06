@@ -1744,12 +1744,13 @@
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaNow");
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
       if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === 'none') {
-        if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
+        /*if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
           document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 48 + 'px';
         } else {
           document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
-        }
+        }*/
       }
+      sinclo.resizeTextArea();
         $('#flexBoxWrap').css('display', '');
       if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
         $('#miniSincloChatMessage').focus();
@@ -4965,7 +4966,7 @@
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
           var waitTimer = setTimeout(function(){common.chatBotTyping({forceWaitAnimation:true})},800);
-          if(type == self._actionType.hearing || type == self._actionType.selection){
+          if(type == self._actionType.hearing || type == self._actionType.selection || type == self._actionType.sendFile){
             clearTimeout(waitTimer);
           }
           if(String(categoryNum).indexOf("delete_") >= 0) {
@@ -5681,7 +5682,6 @@
           });
         },
         _getDownloadInfo: function(callback) {
-          common.chatBotTypingRemove();
           var self = sinclo.scenarioApi._receiveFile;
           var sendFileId = self._parent.get(self._parent._lKey.currentScenario).tChatbotScenarioSendFileId;
           emit('getScenarioDownloadInfo', {
