@@ -13,7 +13,7 @@ class FreeTrialMailJobBatchShell extends AppShell
   const LOG_INFO = 'batch-info';
   const LOG_ERROR = 'batch-error';
 
-  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
 
   const COMPANY_NAME = "##COMPANY_NAME##";
   const BUSINESS_MODEL = "##BUSINESS_MODEL##";
