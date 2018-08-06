@@ -4806,6 +4806,7 @@
       },
       _end: function() {
         // シナリオ終了
+        setTimeout(common.chatBotTypingRemove,801);
         var self = sinclo.scenarioApi;
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         // 元のメッセージ入力欄に戻す
@@ -5062,11 +5063,16 @@
         }
       },
       _showMessage: function(type, message, categoryNum, showTextArea, callback) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showMessage');
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showMessage:type'+type);
         var self = sinclo.scenarioApi;
+        console.log(sinclo.chatApi);
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
+          var waitTimer = setTimeout(function(){common.chatBotTyping({forceWaitAnimation:true})},800);
+          if(type == self._actionType.hearing || type == self._actionType.selection){
+            clearTimeout(waitTimer);
+          }
           if(String(categoryNum).indexOf("delete_") >= 0) {
             sinclo.chatApi.createMessageUnread('sinclo_re ' + categoryNum, message, name, true);
           } else {
@@ -5967,6 +5973,7 @@
               break;
             case 3:
               // シナリオ終了
+              common.chatBotTypingRemove();
               var currentSequenceNum = Number(self._parent.get(self._parent._lKey.currentScenarioSeqNum));
               var savedReturnSettings = self._parent._getReturnSettingsOnCallerScenario(currentSequenceNum);
               if(savedReturnSettings.isReturn) {
