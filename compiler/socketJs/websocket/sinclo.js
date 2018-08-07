@@ -24,6 +24,7 @@
         }
       },
     },
+    sorryMsgTimer: null,
     syncTimeout: "",
     operatorInfo: {
       header: null,
@@ -1461,8 +1462,12 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
+          //sorryメッセージが複数回呼ばれた場合は、タイマーが重複しないよう削除する
+          if(sinclo.sorryMsgTimer){
+            clearTimeout(sinclo.sorryMsgTimer);
+          }
           setTimeout(function(){common.chatBotTyping(obj)},800);
-          setTimeout(function(){
+          sinclo.sorryMsgTimer = setTimeout(function(){
             cn = "sinclo_re";
             sinclo.chatApi.call();
             sinclo.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
@@ -1479,6 +1484,7 @@
                 ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
               }
             }
+            sinclo.sorryMsgTimer = null;
             return false;
           },3000);
         }
