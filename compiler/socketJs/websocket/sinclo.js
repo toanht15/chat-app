@@ -1145,7 +1145,7 @@
       var obj = JSON.parse(d);
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;
-      var keys = Object.keys(obj.chat.messages);
+      var keys = (typeof(obj.chat.messages) === 'object') ? Object.keys(obj.chat.messages) : [];
       var prevMessageBlock = null;
       var firstCheck = true;
       for (var key in obj.chat.messages) {
@@ -1358,8 +1358,18 @@
         sinclo.trigger.init();
       }
       if(sinclo.scenarioApi.isProcessing()) {
-        sinclo.scenarioApi.init(null, null);
-        sinclo.scenarioApi.begin();
+        if(!keys || ($.isArray(keys) && keys.length === 0)) {
+          // シナリオ実行中にも関わらず受け取ったメッセージが空の場合はシナリオで>出力したメッセージが復旧できないためいったん削除する
+          console.log('<><><><><><><><> RESTORE SCENARIO DATA <><><><><><><<><><>');
+          var scenarioId = sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.scenarioId);
+          var scenarioData = sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.scenarios);
+          sinclo.scenarioApi.reset();
+          sinclo.scenarioApi.init(scenarioId, scenarioData);
+          sinclo.scenarioApi.begin();
+        } else {
+          sinclo.scenarioApi.init(null, null);
+          sinclo.scenarioApi.begin();
+        }
       }
       // 未読数
       sinclo.chatApi.showUnreadCnt();
