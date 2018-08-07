@@ -686,6 +686,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
      * ************************************************************/
 
     $scope.docShareId = null;
+    $scope.createTimer=null;
     $scope.documentOpen = function(tabId, accessId){
       $scope.docShareId = null;
       $.ajax({
@@ -759,12 +760,42 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
      * @return {void}     open new Window.
      */
     $scope.shareDocument = function(doc) {
-      window.open(
-        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + doc.id,
-        "doc_monitor_" + $scope.docShareId,
-        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
-      );
       $scope.closeDocumentList();
+      clearInterval($scope.createTimer);
+      $scope.tabId = $scope.docShareId;
+      $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
+      $('#afs-popup').show();
+      $("#afs-popup").addClass("show");
+      $('#afs-popup-frame').css('height', $('#popup-frame').height());
+      this.notFirstTime = true;
+      $scope.message = "お客様に共有の許可を求めています。";
+      $scope.title = "共有申請中";
+      $scope.createTimer = setInterval(function () {
+        if ($scope.title.length > 7) {
+          $scope.title = "共有申請中";
+          $scope.$apply();
+        }
+        else {
+          $scope.title　+= '・';
+          $scope.$apply();
+        }
+      }, 500);
+
+      var settings = JSON.parse(doc.settings);
+      var rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : 0;
+      socket.emit('docShareConnect', {
+        id: doc.id,
+        from: 'company',
+        responderId: '<?=$userInfo["id"]?>',
+        directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
+        fileName: doc.file_name,
+        pagenation_flg: doc.pagenation_flg,
+        pages: settings.pages,
+        rotation: rotation,
+        download_flg: doc.download_flg,
+        tabId: $scope.docShareId,
+        popup:'true'
+      });
     };
 
     $scope.closeDocumentList = function() {
@@ -830,21 +861,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         switch(type) {
           case 1: // ブラウジング共有
             sessionStorage.clear();
-            popupEvent.close();
+            $('.popup-on').addClass('popup-off').removeClass('popup-on');
             connectToken = makeToken();
             socket.emit('requestWindowSync', {
               tabId: tabId,
               type: type,
               connectToken: connectToken
             });
+            $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 2: // 画面キャプチャ共有
             coBrowseConnectToken = makeToken();
+            $('.popup-on').addClass('popup-off').removeClass('popup-on');
             socket.emit('requestCoBrowseOpen', {
               tabId: tabId,
               type: type,
               coBrowseConnectToken: coBrowseConnectToken
             });
+            $scope.sharingApplicationOpen(tabId, accessId);
             break;
           case 3: // 資料共有
             modalClose();
@@ -854,6 +888,61 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             break;
         }
       };
+    };
+
+    $scope.closeSharingApplication = function(tabId) {
+      $("#afs-popup").hide();
+      $("#cs-popup").addClass("show");
+      var contHeight = $('#cs-popup-content').height();
+      $('#cs-popup-frame').css('height', contHeight);
+      document.getElementById('cs-popup-frame').style.top = (window.innerHeight) + "px";
+      $('#cs-popup-frame').animate(
+          {
+            top: 0
+          },
+          500,
+          function () {
+            $('body').css('overflow', 'auto');
+          }
+        );
+      socket.emit('cancelSharing', {
+        tabId: tabId
+      });
+    };
+
+    $scope.closeCanselSharingApplication = function() {
+      $("#cs-popup").removeClass("show");
+      $("#afs-popup").hide();
+    };
+
+    notFirstTime: null,
+    $scope.closeSharingRejection = function() {
+      $("#rsh-popup").removeClass("show");
+      $("#afs-popup").hide();
+    };
+
+    $scope.sharingApplicationOpen = function(tabId, accessId){
+      clearInterval($scope.createTimer);
+      $scope.tabId = tabId;
+      $scope.accessId = accessId;
+      $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
+      $('#afs-popup').show();
+      $("#afs-popup").addClass("show");
+      $('#afs-popup-frame').css('height', $('#popup-frame').height());
+      this.notFirstTime = true;
+      $scope.message = "お客様に共有の許可を求めています。";
+      $scope.title = "共有申請中";
+      $scope.createTimer = setInterval(function () {
+        if ($scope.title.length > 7) {
+          $scope.title = "共有申請中";
+          $scope.$apply();
+        }
+        else {
+          $scope.title　+= '・';
+          $scope.$apply();
+        }
+      }, 500);
+      $scope.$apply();
     };
 
     // 成果表示チェック
@@ -2432,7 +2521,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       // 担当しているユーザーかチェック
       var obj = JSON.parse(data), url;
       if (connectToken !== obj.connectToken) return false;
-
       connectToken = null; // リセット
       url  = "<?= $this->Html->url(array('controller'=>'Customers', 'action'=>'frame')) ?>?type=" + _access_type_host;
       url += "&url=" + encodeURIComponent(obj.url) + "&userId=" + obj.userId;
@@ -2446,7 +2534,26 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           height: 300
         }
       });
+      $('#afs-popup').hide();
     });
+
+  socket.on('docShare', function (data) {
+    var obj = JSON.parse(data);
+    if(obj && obj.responderId && Number(obj.responderId) === Number(<?=$userInfo["id"]?>)) {
+      if($scope.docShareId !== null) {
+        var shareId = $scope.docShareId;
+      }
+      else {
+        var shareId = obj.tabId;
+      }
+      window.open(
+        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent(shareId) + "&docId=" + obj.id,
+        "doc_monitor_" + shareId,
+        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+      );
+      $('#afs-popup').hide();
+    }
+  });
 
     socket.on('requestCoBrowseAllowed', function (data) {
       sessionStorage.clear();
@@ -2473,6 +2580,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           height: 680
         }
       });
+      $('#afs-popup').hide();
     });
 
     socket.on('cngOpStatus', function(data){
@@ -2522,6 +2630,40 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           $scope.monitorList[obj.tabId].responderId = "";
         }
       }
+    });
+
+    socket.on('sharingApplicationRejection', function(data){ // 画面共有拒否
+      var obj = JSON.parse(data);
+      //画面キャプチャ共有の場合
+      var isSyncBrowser = false;
+      if(isset(obj.coBrowseConnectToken)) {
+        isSyncBrowser = true;
+        if (coBrowseConnectToken !== obj.coBrowseConnectToken) return false;
+      }
+      //画面共有の場合
+      if(isset(obj.connectToken)) {
+        isSyncBrowser = true;
+        if (connectToken !== obj.connectToken) return false;
+      }
+      //資料共有の場合
+      if(!isSyncBrowser && (obj === null || obj === undefined || obj.responderId === null || Number(obj.responderId) !== Number(<?=$userInfo["id"]?>))) {
+        return false;
+      }
+
+      $("#afs-popup").hide();
+      $("#rsh-popup").addClass("show");
+      var contHeight = $('#rsh-popup-content').height();
+      $('#rsh-popup-frame').css('height', contHeight);
+      $scope.$apply();
+      $('#rsh-popup-content').jrumble({
+        x: 15, //横の揺れ幅を設定
+        y: 0, //縦の揺れ幅を設定
+        rotation: 0 //回転角度の幅を設定
+      });
+      $('#rsh-popup-content').trigger('startRumble');
+      setTimeout(function(){
+        $('#rsh-popup-content').trigger('stopRumble');
+      },250);
     });
 
     socket.on('activeOpCnt', function(data){

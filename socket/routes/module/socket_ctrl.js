@@ -2543,6 +2543,14 @@ io.sockets.on('connection', function (socket) {
     emit.toUser('windowSyncInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncHostSessionId'));
   });
 
+  // 同形ウィンドウを作成するための情報受け取り(資料共有)
+  socket.on('docShare', function (data) {
+    var obj = JSON.parse(data);
+    // 同形ウィンドウを作成するための情報渡し
+    emit.toCompany('docShare', obj, obj.siteKey);
+  });
+
+
   // iframe用（接続直後と企業側リロード時）
   socket.on('connectFrame', function (data) {
     var obj = JSON.parse(data);
@@ -3734,6 +3742,19 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
     }
   });
 
+  //画面共有許可しない
+  socket.on('sharingRejection', function(d){
+    var obj = JSON.parse(d);
+    var targetId = obj.tabId.replace("_frame", "");
+    emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
+  });
+
+  //画面共有キャンセル
+  socket.on('cancelSharing', function(d){
+    var obj = JSON.parse(d);
+    emit.toUser('cancelSharingApplication', d, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
+  });
+
   socket.on('coBrowseReconnectConfirm', function (data) {
     var obj = JSON.parse(data), timer, i = 1;
     timer = setInterval(function(){
@@ -4087,17 +4108,25 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       // 資料共有中ユーザーをセットする
       var targetId = (getSessionId(obj.siteKey, obj.tabId, "parentTabId")) ? getSessionId(obj.siteKey, obj.tabId, "parentTabId") : obj.tabId;
       sincloCore[obj.siteKey][targetId].docShareId = obj.responderId; // 資料共有中ユーザーをセットする
-      // 消費者側に確認ポップアップを表示する
-      emit.toUser('docShareConnect', d, sessionId);
-      obj.tabId = targetId;
-      emit.toCompany('docShareConnect', obj, obj.siteKey); // リアルタイムモニタへ通知
+      if(obj.popup === 'true') {
+        console.log('popup');
+        // 消費者側に確認ポップアップを表示する
+        emit.toUser('docShareConnect', d, sessionId);
+      }
+      else {
+        obj.tabId = targetId;
+        emit.toCompany('docShareConnect', obj, obj.siteKey); // リアルタイムモニタへ通知
+      }
     }
   });
+
+
 
   // 資料共有のキャンセル
   socket.on('docShareCancel', function(d){
     var obj = JSON.parse(d);
     var targetId = obj.tabId.replace("_frame", "");
+    emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
     emit.toUser('docDisconnect', obj, doc_connectList[targetId]["company"]);
   });
 
