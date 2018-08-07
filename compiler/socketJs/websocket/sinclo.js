@@ -5413,10 +5413,53 @@
           }
           return self._inputType[inputTypeStr];
         },
+        _easyApi: {
+          labelMap: {
+            "lbc_office_id"     :"",
+            "lbc_head_office_id":"",
+            "pref_code"         :"都道府県コード",
+            "city_code"         :"市区町村コード",
+            "addr"              :"住所",
+            "cname"             :"企業名",
+            "oname"             :"事業所名",
+            "pname"             :"姓名",
+            "pname_kana"        :"姓名カナ",
+            "pname_kana2"       :"姓名かな",
+            "busho"             :"部署名",
+            "yakushoku"         :"役職名",
+            "zip"               :"郵便番号",
+            "tel"               :"電話番号",
+            "fax"               :"FAX番号",
+            "ktai"              :"携帯番号",
+            "chokutsu"          :"直通番号",
+            "daihyo"            :"代表番号",
+            "mail"              :"メールアドレス",
+            "url"               :"URL",
+            "extra"             :"その他",
+            "unknown"           :"その他",
+            "org_addr"          :"住所",
+            "org_zip"           :"郵便番号",
+            "exist_cname"       :"企業名マスタ存在",
+            "exist_addr"        :"住所マスタ存在",
+            "exist_zip"         :"郵便番号マスタ存在",
+            "match_pref_add"    :"都道府県・住所一致",
+            "match_pref_zip"    :"都道府県・郵便番号一致",
+            "match_pref_tel"    :"都道府県・電話番号一致"
+          },
+          targetCondition: {
+            validOnce: "1",
+            validAll: "2"
+          },
+        },
+
         _init: function (parent, currentScenario) {
           this._parent = parent;
           this._setCurrentSeq(this._getCurrentSeq());
-          this._setLength(this._parent.get(this._parent._lKey.currentScenario).hearings.length);
+          if(this._isParseSignatureMode()) {
+            this._setLength(1);
+          } else {
+            this._setLength(this._parent.get(this._parent._lKey.currentScenario).hearings.length);
+          }
         },
         _setCurrentSeq: function (val) {
           var self = sinclo.scenarioApi._hearing;
@@ -5610,6 +5653,14 @@
           var self = sinclo.scenarioApi._hearing;
           return self._parent.get(self._parent._lKey.currentScenario).cv === "1";
         },
+        _isParseSignatureMode: function() {
+          var self = sinclo.scenarioApi._hearing;
+          return self._parent.get(self._parent._lKey.currentScenario).parseSignatureMode;
+        },
+        _easyApiRequireAll: function() {
+          var self = sinclo.scenarioApi._hearing;
+          return self._parent.get(self._parent._lKey.currentScenario).hearingTargetCondition === self._easyApi.targetCondition.validAll;
+        },
         _showConfirmMessage: function() {
           var self = sinclo.scenarioApi._hearing;
           var messageBlock = self._parent._createSelectionMessage(self._parent.get(self._parent._lKey.currentScenario).confirmMessage, [self._parent.get(self._parent._lKey.currentScenario).success, self._parent.get(self._parent._lKey.currentScenario).cancel]);
@@ -5642,6 +5693,24 @@
             });
           });
         },
+        _createSignatureMessage: function(obj) {
+          var self = sinclo.scenarioApi._hearing;
+          var message = "";
+          Object.keys(obj).forEach(function(elm, index, arr){
+            if(obj[elm] !== "") {
+              if(typeof (obj[elm]) === "string") {
+                message += self._easyApi.labelMap[elm] + "：" + obj[elm] + "\n";
+              } else if  (typeof(obj[elm]) === "object") {
+                var concatStr = self._easyApi.labelMap[elm] + "：";
+                for(var i=0; i < obj[elm].length; i++) {
+                  concatStr += obj[elm][i] + " ";
+                }
+                message += concatStr + "\n";
+              }
+            }
+          });
+          return message;
+        }
       },
       _selection: {
         _parent: null,
