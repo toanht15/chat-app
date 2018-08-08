@@ -261,7 +261,10 @@ module.exports = function(format, charset) {
 
   var convertUnderscoreToCamelCase = function(str) {
     if(str) {
-      return str.replace(/(\_\w)/g, function(m){return m[1].toUpperCase();});
+      str = str.charAt(0).toLowerCase() + str.slice(1);
+      return str.replace(/[-_](.)/g, function(match, group1) {
+        return group1.toUpperCase();
+      });
     }
     return "";
   };
