@@ -37,7 +37,7 @@ $config['default'] = [
       /**
        * ウィジットサイズ
        */
-      "widgetSizeType" => "2",
+      "widgetSizeType" => "3",
       //ウィジットサイズ対応
 
       //最小化時デザイン対応
