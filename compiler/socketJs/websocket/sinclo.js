@@ -1146,7 +1146,7 @@
       var obj = JSON.parse(d);
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;
-      var keys = Object.keys(obj.chat.messages);
+      var keys = (typeof(obj.chat.messages) === 'object') ? Object.keys(obj.chat.messages) : [];
       var prevMessageBlock = null;
       var firstCheck = true;
       for (var key in obj.chat.messages) {
@@ -1359,8 +1359,18 @@
         sinclo.trigger.init();
       }
       if(sinclo.scenarioApi.isProcessing()) {
-        sinclo.scenarioApi.init(null, null);
-        sinclo.scenarioApi.begin();
+        if(!keys || ($.isArray(keys) && keys.length === 0)) {
+          // シナリオ実行中にも関わらず受け取ったメッセージが空の場合はシナリオで>出力したメッセージが復旧できないためいったん削除する
+          console.log('<><><><><><><><> RESTORE SCENARIO DATA <><><><><><><<><><>');
+          var scenarioId = sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.scenarioId);
+          var scenarioData = sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.scenarios);
+          sinclo.scenarioApi.reset();
+          sinclo.scenarioApi.init(scenarioId, scenarioData);
+          sinclo.scenarioApi.begin();
+        } else {
+          sinclo.scenarioApi.init(null, null);
+          sinclo.scenarioApi.begin();
+        }
       }
       // 未読数
       sinclo.chatApi.showUnreadCnt();
@@ -1625,6 +1635,19 @@
         var url = window.sincloInfo.site.files + "/docFrame/" + encodeURIComponent(JSON.stringify(params));
 
         window.open(url, "_blank", "width=" + size.width + ", height=" + size.height + ", resizable=yes,scrollbars=yes,status=no");
+        emit('docShare', {
+          id: obj.id,
+          responderId: obj.responderId,
+          userId: userInfo.userId,
+          tabId: userInfo.tabId,
+          connectToken: userInfo.connectToken,
+          // 解像度
+          screen: browserInfo.windowScreen(),
+          // ブラウザのサイズ
+          windowSize: browserInfo.windowSize(),
+          // スクロール位置の取得
+          scrollPosition: browserInfo.windowScroll()
+        });
         this.remove();
       };
       popup.no = function(){
@@ -1730,6 +1753,8 @@
       }, 500);
     },
     displayTextareaDelayTimer: null,
+    firstCallDisplayTextarea: true,
+    firstCallHideTextarea: true,
     displayTextarea : function(){
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaCalled");
       if(!document.getElementById("flexBoxWrap")) return;
@@ -1815,6 +1840,53 @@
         }
       }
       },delayTime);
+      if(sinclo.firstCallDisplayTextarea) {
+        //スマホの場合
+        $('#flexBoxWrap').css('display', '');
+        sinclo.adjustSpWidgetSize();
+      }
+    },
+    adjustSpWidgetSize: function() {
+      if ( check.smartphone() ) {
+        // 縦の場合
+        var widgetWidth = 0,
+          ratio = 0;
+        if ( $(window).height() > $(window).width() ) {
+          widgetWidth = $(window).width();
+          ratio = widgetWidth * (1/285);
+          if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
+            //説明文が空の場合
+            if($('#widgetDescription').text() == " " && $('#widgetSubTitle').text() !== " ") {
+              var widgetDescriptionHeight = $('#widgetSubTitle').height()*0.3;
+            }
+            //企業名が空の場合
+            else if($('#widgetDescription').text() !== " " && $('#widgetSubTitle').text() == " ") {
+              var widgetDescriptionHeight = $('#widgetDescription').height()*0.3;
+            }
+            else {
+              var widgetDescriptionHeight = $('#widgetDescription').height();
+            }
+            var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - $('#flexBoxHeight').height() - widgetDescriptionHeight - $('#sincloBox #fotter').height() - (5.5 * ratio));
+
+            console.log(fullHeight);
+            document.getElementById("chatTalk").style.height = fullHeight + 'px';
+            $('#sincloBox ul sinclo-typing').css('padding-bottom', (fullHeight * 0.1604) + 'px');
+          } else {
+            widgetWidth = $(window).width() - 20;
+            ratio = widgetWidth * (1/285);
+            document.getElementById("chatTalk").style.height = (194 * ratio) + 'px';
+            $('#sincloBox ul sinclo-typing').css('padding-bottom', ((194 * ratio) * 0.1604) + 'px');
+          }
+        }
+        //横の場合
+        else {
+          if(!check.android()) {
+            var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
+            var hRatio = chatAreaHeight * 0.07;
+            document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + 'px';
+          }
+        }
+      }
     },
     hideTextareaDelayTimer: null,
     hideTextarea : function(){
@@ -1885,6 +1957,47 @@
         }
       }
       },delayTime);
+      if(sinclo.firstCallHideTextarea) {
+        if ( check.smartphone() ) {
+          // 縦の場合
+          var widgetWidth = 0,
+            ratio = 0;
+          document.getElementById("flexBoxWrap").style.display = 'none';
+          if ( $(window).height() > $(window).width() ) {
+            console.log("ratio : " + ratio);
+
+            if(window.sincloInfo.widget.spMaximizeSizeType === 2) {
+              widgetWidth = $(window).width();
+              ratio = widgetWidth * (1/285);
+              //説明文が空の場合
+              if($('#widgetDescription').text() == " " && $('#widgetSubTitle').text() !== " ") {
+                var widgetDescriptionHeight = $('#widgetSubTitle').height()*0.3;
+              }
+              //企業名が空の場合
+              else if($('#widgetDescription').text() !== " " && $('#widgetSubTitle').text() == " ") {
+                var widgetDescriptionHeight = $('#widgetDescription').height()*0.3;
+              }
+              else {
+                var widgetDescriptionHeight = $('#widgetDescription').height();
+              }
+              var fullHeight = (window.innerHeight - $('#sincloBox #widgetHeader').height() - widgetDescriptionHeight - $('#sincloBox #fotter').height() + 3*ratio);
+              console.log(fullHeight);
+              document.getElementById("chatTalk").style.height = fullHeight + 'px';
+            } else {
+              widgetWidth = $(window).width() - 20;
+              ratio = widgetWidth * (1/285);
+              document.getElementById("chatTalk").style.height = (194 * ratio) + (60*ratio) + 'px';
+            }
+          }
+          //横の場合
+          else {
+            document.getElementById("flexBoxWrap").style.display = 'none';
+            var chatAreaHeight = window.innerHeight * (document.body.clientWidth / window.innerWidth);
+            var hRatio = chatAreaHeight * 0.07;
+            document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
+          }
+        }
+      }
     },
     resizeTextArea: function() {
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>resizetextarea");
@@ -2045,7 +2158,7 @@
           },
           unset: function() {
             // 論理的にフラグを付ける
-            var list = this.get();
+            var list = this.get(true);
             Object.keys(list).forEach(function(id, index, arr) {
               list[id]['applied'] = true;
             });
@@ -2198,6 +2311,8 @@
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
               $('#miniSincloChatMessage').focus();
+            } else {
+              sinclo.adjustSpWidgetSize();
             }
           }
         },
@@ -3593,7 +3708,7 @@
                           sinclo.chatApi.saveAutoSpeechTriggered(autoSpeechCondition.speechTriggerCond, message.id);
                         }
                       }
-                      sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                      sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
                       // if(conditionKey === 7) {
                       //   // 自動返信実行後はチャット中のフラグを立てる
                       //   storage.s.set('chatAct','true');

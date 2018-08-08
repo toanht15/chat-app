@@ -6,6 +6,7 @@ var api = require('../api');
 var uuid = require('node-uuid');
 var request = require('request');
 var common = require('./common');
+var LandscapeAPI = require('./landscape');
 
 // mysql
 var mysql = require('mysql'),
@@ -529,49 +530,10 @@ function getMessageTypeBySenarioActionType(type) {
 // Landscapeの企業情報取得
 //requestをrequire
 var http = require('http');
-http.globalAgent.maxSockets = 100;
+http.globalAgent.maxSockets = 1000;
 function getCompanyInfoFromApi(ip, callback) {
-  //ヘッダーを定義
-  var headers = {
-    'Content-Type':'application/json'
-  };
-
-  //オプションを定義
-  var options = {
-    host: process.env.GET_CD_API_HOST,
-    port: process.env.GET_CD_API_PORT,
-    path: process.env.GET_CD_API_PATH,
-    method: 'POST',
-    headers: headers,
-    json: true,
-    agent: false
-  };
-
-  if(process.env.DB_HOST === 'localhost') {
-    options.rejectUnauthorized = false;
-  }
-
-  //リクエスト送信
-  var req = http.request(options, function (response) {
-    if(response.statusCode === 200) {
-      response.setEncoding('utf8');
-      response.on('data', callback);
-      return;
-    } else {
-      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
-      callback(false);
-      return;
-    }
-  });
-
-  req.on('error', function(error) {
-    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
-    callback(false);
-    return;
-  });
-
-  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "ipAddress":ip}));
-  req.end();
+  var api = new LandscapeAPI('json', 'utf8');
+  api.getFrom(ip, callback);
 }
 
 function sendMail(autoMessageId, lastChatLogId, callback) {
@@ -2348,9 +2310,9 @@ io.sockets.on('connection', function (socket) {
         getCompanyInfoFromApi(obj.ipAddress, function(data){
           try {
             if (data) {
-              var response = JSON.parse(data);
-              obj.orgName = response.data.orgName;
-              obj.lbcCode = response.data.lbcCode;
+              var response = data;
+              obj.orgName = response.orgName;
+              obj.lbcCode = response.lbcCode;
               sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
               sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
               if (isset(customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id])) {
@@ -2359,7 +2321,7 @@ io.sockets.on('connection', function (socket) {
               }
             }
           } catch(e) {
-            console.log('getCompanyInfoFromApiのcallbackでエラー : ' + data + ' message : ' + e.getMessage());
+            console.log('getCompanyInfoFromApiのcallbackでエラー : ' + data + ' message : ' + e.message);
           }
           if(!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
             emit.toCompany('syncNewInfo', obj, obj.siteKey);
@@ -2533,6 +2495,14 @@ io.sockets.on('connection', function (socket) {
     // 同形ウィンドウを作成するための情報渡し
     emit.toUser('windowSyncInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncHostSessionId'));
   });
+
+  // 同形ウィンドウを作成するための情報受け取り(資料共有)
+  socket.on('docShare', function (data) {
+    var obj = JSON.parse(data);
+    // 同形ウィンドウを作成するための情報渡し
+    emit.toCompany('docShare', obj, obj.siteKey);
+  });
+
 
   // iframe用（接続直後と企業側リロード時）
   socket.on('connectFrame', function (data) {
@@ -4091,17 +4061,25 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       // 資料共有中ユーザーをセットする
       var targetId = (getSessionId(obj.siteKey, obj.tabId, "parentTabId")) ? getSessionId(obj.siteKey, obj.tabId, "parentTabId") : obj.tabId;
       sincloCore[obj.siteKey][targetId].docShareId = obj.responderId; // 資料共有中ユーザーをセットする
-      // 消費者側に確認ポップアップを表示する
-      emit.toUser('docShareConnect', d, sessionId);
-      obj.tabId = targetId;
-      emit.toCompany('docShareConnect', obj, obj.siteKey); // リアルタイムモニタへ通知
+      if(obj.popup === 'true') {
+        console.log('popup');
+        // 消費者側に確認ポップアップを表示する
+        emit.toUser('docShareConnect', d, sessionId);
+      }
+      else {
+        obj.tabId = targetId;
+        emit.toCompany('docShareConnect', obj, obj.siteKey); // リアルタイムモニタへ通知
+      }
     }
   });
+
+
 
   // 資料共有のキャンセル
   socket.on('docShareCancel', function(d){
     var obj = JSON.parse(d);
     var targetId = obj.tabId.replace("_frame", "");
+    emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
     emit.toUser('docDisconnect', obj, doc_connectList[targetId]["company"]);
   });
 
