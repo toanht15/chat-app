@@ -1145,7 +1145,7 @@
       var obj = JSON.parse(d);
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;
-      var keys = Object.keys(obj.chat.messages);
+      var keys = (typeof(obj.chat.messages) === 'object') ? Object.keys(obj.chat.messages) : [];
       var prevMessageBlock = null;
       var firstCheck = true;
       for (var key in obj.chat.messages) {
@@ -1358,8 +1358,18 @@
         sinclo.trigger.init();
       }
       if(sinclo.scenarioApi.isProcessing()) {
-        sinclo.scenarioApi.init(null, null);
-        sinclo.scenarioApi.begin();
+        if(!keys || ($.isArray(keys) && keys.length === 0)) {
+          // シナリオ実行中にも関わらず受け取ったメッセージが空の場合はシナリオで>出力したメッセージが復旧できないためいったん削除する
+          console.log('<><><><><><><><> RESTORE SCENARIO DATA <><><><><><><<><><>');
+          var scenarioId = sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.scenarioId);
+          var scenarioData = sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.scenarios);
+          sinclo.scenarioApi.reset();
+          sinclo.scenarioApi.init(scenarioId, scenarioData);
+          sinclo.scenarioApi.begin();
+        } else {
+          sinclo.scenarioApi.init(null, null);
+          sinclo.scenarioApi.begin();
+        }
       }
       // 未読数
       sinclo.chatApi.showUnreadCnt();
@@ -2136,7 +2146,7 @@
           },
           unset: function() {
             // 論理的にフラグを付ける
-            var list = this.get();
+            var list = this.get(true);
             Object.keys(list).forEach(function(id, index, arr) {
               list[id]['applied'] = true;
             });
@@ -3686,7 +3696,7 @@
                           sinclo.chatApi.saveAutoSpeechTriggered(autoSpeechCondition.speechTriggerCond, message.id);
                         }
                       }
-                      sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                      sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
                       // if(conditionKey === 7) {
                       //   // 自動返信実行後はチャット中のフラグを立てる
                       //   storage.s.set('chatAct','true');
