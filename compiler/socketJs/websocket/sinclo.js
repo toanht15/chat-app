@@ -3696,7 +3696,7 @@
                           sinclo.chatApi.saveAutoSpeechTriggered(autoSpeechCondition.speechTriggerCond, message.id);
                         }
                       }
-                      sinclo.trigger.setAction(message.id, message.action_type, message.activity);
+                      sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
                       // if(conditionKey === 7) {
                       //   // 自動返信実行後はチャット中のフラグを立てる
                       //   storage.s.set('chatAct','true');
