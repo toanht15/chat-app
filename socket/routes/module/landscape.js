@@ -13,7 +13,7 @@ var moment = require('moment');
 /* Private Variables */
 var log4js = require('log4js'); // log4jsモジュール読み込み
 log4js.configure('./log4js_setting.json'); // 設定ファイル読み込み
-var lbcLogger = log4js.getLogger('system'); // リクエスト用のロガー取得
+var lbcLogger = log4js.getLogger('lbc'); // リクエスト用のロガー取得
 /* ================= */
 
 module.exports = function(format, charset) {

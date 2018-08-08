@@ -24,6 +24,7 @@
         }
       },
     },
+    sorryMsgTimer: null,
     syncTimeout: "",
     operatorInfo: {
       header: null,
@@ -1471,23 +1472,31 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
-          cn = "sinclo_re";
-          sinclo.chatApi.call();
-          this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
-          if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
-            this.chatApi.notify(obj.chatMessage);
-          } else {
-            this.chatApi.scDown();
+          //sorryメッセージが複数回呼ばれた場合は、タイマーが重複しないよう削除する
+          if(sinclo.sorryMsgTimer){
+            clearTimeout(sinclo.sorryMsgTimer);
           }
-          // チャットの契約をしている場合
-          if ( window.sincloInfo.contract.chat ) {
-            //sorryメッセージを出した数
-            //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-            if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-              ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+          setTimeout(function(){common.chatBotTyping(obj)},800);
+          sinclo.sorryMsgTimer = setTimeout(function(){
+            cn = "sinclo_re";
+            sinclo.chatApi.call();
+            sinclo.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
+            if(sinclo.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
+              sinclo.chatApi.notify(obj.chatMessage);
+            } else {
+              sinclo.chatApi.scDown();
             }
-          }
-          return false;
+            // チャットの契約をしている場合
+            if ( window.sincloInfo.contract.chat ) {
+              //sorryメッセージを出した数
+              //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
+              if(typeof ga == "function" && obj.tabId === userInfo.tabId){
+                ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+              }
+            }
+            sinclo.sorryMsgTimer = null;
+            return false;
+          },3000);
         }
         //初回通知メッセージを利用している場合
         if (obj.notification === true) {
@@ -1518,7 +1527,9 @@
         if(obj.messageType == sinclo.chatApi.messageType.notification) {
           return false;
         }
-        this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
+        if(obj.messageType != sinclo.chatApi.messageType.sorry){
+          this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
+        }
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
         } else {
@@ -1775,6 +1786,7 @@
           document.getElementById("chatTalk").style.height = chatTalk.clientHeight - 75 + 'px';
         }
       }
+      sinclo.resizeTextArea();
         $('#flexBoxWrap').css('display', '');
       if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
         $('#miniSincloChatMessage').focus();
@@ -5080,7 +5092,7 @@
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
           var waitTimer = setTimeout(function(){common.chatBotTyping({forceWaitAnimation:true})},800);
-          if(type == self._actionType.hearing || type == self._actionType.selection){
+          if(type == self._actionType.hearing || type == self._actionType.selection || type == self._actionType.sendFile){
             clearTimeout(waitTimer);
           }
           if(String(categoryNum).indexOf("delete_") >= 0) {
@@ -5796,7 +5808,6 @@
           });
         },
         _getDownloadInfo: function(callback) {
-          common.chatBotTypingRemove();
           var self = sinclo.scenarioApi._receiveFile;
           var sendFileId = self._parent.get(self._parent._lKey.currentScenario).tChatbotScenarioSendFileId;
           emit('getScenarioDownloadInfo', {
