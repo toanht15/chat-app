@@ -109,7 +109,7 @@ class FreeTrialMailJobBatchShell extends AppShell
           if($val['MJobMailTemplate']['value_type'] == 1) {
             $trialTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('-'.$val['MJobMailTemplate']['value'].'day',strtotime($trial['MAgreement']['trial_end_day'])));
           }
-          $nowTime = date('Y-m-d H');
+          $nowTime = date('Y-m-d G');
           $this->log('BEGIN sendmail schedule3.', self::LOG_INFO);
           //現在の時刻と比較(無料トライアルの場合)
           if($trialTime == $nowTime && $val['MJobMailTemplate']['agreement_flg'] == 1) {
@@ -135,7 +135,7 @@ class FreeTrialMailJobBatchShell extends AppShell
             //何日前の日付、時間
             $agreementTime = date('Y-m-d '.$val['MJobMailTemplate']['time'], strtotime('-'.$val['MJobMailTemplate']['value'].'day',strtotime($agreement['MAgreement']['agreement_end_day'])));
           }
-          $nowTime = date('Y-m-d H');
+          $nowTime = date('Y-m-d G');
           //現在の時刻と比較(いきなり本契約の場合)
           if($agreementTime == $nowTime && $val['MJobMailTemplate']['agreement_flg'] == 2) {
             $jobMailTemplatesData[$val['MJobMailTemplate']['id']][$agreementNumber]['id'] = $val['MJobMailTemplate']['id'];
