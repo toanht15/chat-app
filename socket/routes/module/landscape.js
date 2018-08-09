@@ -289,8 +289,8 @@ module.exports = function(format, charset) {
     if(data && data['updated']) {
       var updatedDatetime = data['updated'];
       var now = (new Date()).getTime();
-      var updatedTimestamp = (new Date(updatedDatetime)).getTime();
-      return now - updatedTimestamp > expireSec;
+      var updatedTimestamp = moment(data['updated']).format('x');
+      return Number(now) - Number(updatedTimestamp) > expireSec;
     } else {
       // データが無いため有効期限切れとする
       return true;
