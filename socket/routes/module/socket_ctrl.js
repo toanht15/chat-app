@@ -1069,12 +1069,6 @@ io.sockets.on('connection', function (socket) {
 
               // 担当者のいない消費者からのメッセージの場合
               if ( d.messageType === 1 && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat') ) {
-                // 自動返信（チャットボット）の対象ではないメッセージが到達し、sorryメッセージ発動用のタイマーがあればクリアする。（重複表示防止）
-                if (chatApi.sendCheckTimerList.hasOwnProperty(d.tabId) && (!d.hasOwnProperty('isAutoSpeech') || !d.isAutoSpeech)) {
-                  clearTimeout(chatApi.sendCheckTimerList[d.tabId]);
-                  chatApi.sendCheckTimerList[d.tabId] = null;
-                }
-
                 // 応対可能かチェック(対応できるのであれば trueが返る)
                 chatApi.sendCheck(d, function(err, ret){
                   sendData.opFlg = ret.opFlg;
@@ -1155,15 +1149,12 @@ io.sockets.on('connection', function (socket) {
 
                   // 自動応対メッセージではなく、Sorryメッセージがある場合は送る
                   if ( ret.message !== "" && (!d.hasOwnProperty('isAutoSpeech') || !d.isAutoSpeech)) {
-                    chatApi.sendCheckTimerList[d.tabId] = setTimeout(function(){
-                      delete chatApi.sendCheckTimerList[d.tabId];
-                      // Sorryメッセージを送る
-                      var obj = d;
-                      obj.chatMessage = ret.message;
-                      obj.messageType = chatApi.cnst.observeType.sorry;
-                      obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
-                      chatApi.set(obj);
-                    }, 10);
+                    // Sorryメッセージを送る
+                    var obj = d;
+                    obj.chatMessage = ret.message;
+                    obj.messageType = chatApi.cnst.observeType.sorry;
+                    obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
+                    chatApi.set(obj);
                   }
                 });
               }
