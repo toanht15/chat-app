@@ -156,11 +156,11 @@ module.exports = function(format, charset) {
       if(error) {
         throw new Error('API呼出時にエラーが発生しました。 error: ' + error);
       }
+      lbcLogger.info('LBC api response body: ' + JSON.stringify(body));
+      self.apiData = body;
       if("502".indexOf(self.apiData.status) >= 0) {
         throw new Error('API呼出時にLBCからエラーを取得しました。 body: ' + body);
       }
-      lbcLogger.info('LBC api response body: ' + JSON.stringify(body));
-      self.apiData = body;
       callback();
     });
   };
