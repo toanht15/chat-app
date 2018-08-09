@@ -262,6 +262,7 @@
         //バナー非表示状態になった
         storage.s.set('bannerAct', false);
         $("#sincloWidgetBox").show();
+        sinclo.resizeTextArea();
         $("#sincloBannerBox").hide();
         $("#sincloBox").css("bottom","0");
         //スマホかつ横かを判定
@@ -2005,6 +2006,11 @@
       var flexBoxWrapHeight = $('#flexBoxWrap').height(), // 現在の入力サイズ
           defaultChatTalkHeight = common.getSizeType(sincloInfo.widget.widgetSizeType)['chatTalkHeight'],
           defaultFlexBoxRowHeight = common.getSizeType(sincloInfo.widget.widgetSizeType)['classFlexBoxRowHeight'];
+      //自由入力欄のサイズに関わらず、表示されてないときはWrapHeightは0
+      if($('#flexBoxWrap').css('display') === 'none'){
+        flexBoxWrapHeight = 0;
+      }
+
       console.log('現在：%s デフォ（チャット）：%s デフォ（入力）：%s', flexBoxWrapHeight, defaultChatTalkHeight, defaultFlexBoxRowHeight);
       if(!check.smartphone()) {
         document.getElementById("chatTalk").style.height = (defaultChatTalkHeight + (defaultFlexBoxRowHeight - flexBoxWrapHeight)) + 'px';
