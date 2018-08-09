@@ -262,6 +262,7 @@
         //バナー非表示状態になった
         storage.s.set('bannerAct', false);
         $("#sincloWidgetBox").show();
+        common.widgetHandler._handleResizeEvent();
         $("#sincloBannerBox").hide();
         $("#sincloBox").css("bottom","0");
         //スマホかつ横かを判定
@@ -1789,7 +1790,7 @@
         console.log('<><><><><><><><><><><>表示されます<><><><><><><><><><><>');
         console.log('<><><><><><><><><><><>位置調整が<><><><><><><><><><><>');
         console.log('<><><><><><><><><><><>行われます<><><><><><><><><><><>');
-      sinclo.resizeTextArea();
+      common.widgetHandler._handleResizeEvent();
       $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
       //スマホの場合
       if ( check.smartphone() ) {
@@ -1998,19 +1999,6 @@
         }
       }
       sinclo.firstCallHideTextarea = false;
-    },
-    resizeTextArea: function() {
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>resizetextarea");
-      if(!document.getElementById('flexBoxWrap')) return;
-      var flexBoxWrapHeight = $('#flexBoxWrap').height(), // 現在の入力サイズ
-          defaultChatTalkHeight = common.getSizeType(sincloInfo.widget.widgetSizeType)['chatTalkHeight'],
-          defaultFlexBoxRowHeight = common.getSizeType(sincloInfo.widget.widgetSizeType)['classFlexBoxRowHeight'];
-      console.log('現在：%s デフォ（チャット）：%s デフォ（入力）：%s', flexBoxWrapHeight, defaultChatTalkHeight, defaultFlexBoxRowHeight);
-      if(!check.smartphone()) {
-        document.getElementById("chatTalk").style.height = (defaultChatTalkHeight + (defaultFlexBoxRowHeight - flexBoxWrapHeight)) + 'px';
-      } else {
-
-      }
     },
     syncApi: {
       init : function(type){
@@ -2306,7 +2294,6 @@
             $('#flexBoxHeight').addClass('sinclo-hide');
             $('#miniFlexBoxHeight').removeClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
-            //sinclo.resizeTextArea();
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
@@ -2328,7 +2315,6 @@
             $('#flexBoxHeight').removeClass('sinclo-hide');
             $('#miniFlexBoxHeight').addClass('sinclo-hide');
             $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
-            //sinclo.resizeTextArea();
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
