@@ -152,7 +152,7 @@ module.exports = function(format, charset) {
     };
 
     request(options, function(error, response, body) {
-      lbcLogger.info('LBC api response body: ' + body);
+      lbcLogger.info('LBC api response body: ' + JSON.stringify(body));
       self.apiData = body;
       if("502".indexOf(self.apiData.status) >= 0) {
         throw new Error('API呼出時にエラーを取得しました。 body: ' + body);
