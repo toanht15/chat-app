@@ -142,6 +142,7 @@ module.exports = function(format, charset) {
       method: api.lbc.method,
       headers: header,
       json: true,
+      timeout: 3000, // 3秒
       form: {
         "key1": api.lbc.key1,
         "key2": api.lbc.key2,
@@ -152,11 +153,14 @@ module.exports = function(format, charset) {
     };
 
     request(options, function(error, response, body) {
+      if(error) {
+        throw new Error('API呼出時にエラーが発生しました。 error: ' + error);
+      }
+      if("502".indexOf(self.apiData.status) >= 0) {
+        throw new Error('API呼出時にLBCからエラーを取得しました。 body: ' + body);
+      }
       lbcLogger.info('LBC api response body: ' + JSON.stringify(body));
       self.apiData = body;
-      if("502".indexOf(self.apiData.status) >= 0) {
-        throw new Error('API呼出時にエラーを取得しました。 body: ' + body);
-      }
       callback();
     });
   };
