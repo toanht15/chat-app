@@ -1440,7 +1440,6 @@
           };
           if(obj.tabId === userInfo.tabId) {
             setTimeout(function(){common.chatBotTyping(obj)},800);
-            //this.chatApi.scDown(obj);
             return false;
           } else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
             // 別タブで送信された自動返信は表示する
@@ -1454,7 +1453,7 @@
           sinclo.chatApi.call();
           this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
           this.chatApi.scDown();
-          setTimeout(function(){common.chatBotTyping(obj)},800);
+          //setTimeout(function(){common.chatBotTyping(obj)},800);
           return false;
         }
 
@@ -1468,7 +1467,6 @@
             this.chatApi.createMessage(cn, obj.chatMessage, "");
           }
           this.chatApi.scDown();
-          setTimeout(function(){common.chatBotTyping(obj)},800);
           return false;
         }
 
@@ -1838,8 +1836,8 @@
         //スマホの場合
         if ( check.smartphone() ){
           $('#flexBoxWrap').css('display', '');
-          sinclo.adjustSpWidgetSize();
         }
+          sinclo.adjustSpWidgetSize();
       }
       sinclo.firstCallDisplayTextarea = false;
     },
@@ -2189,6 +2187,7 @@
             $(document).on("focus", "#sincloChatMessage,#miniSincloChatMessage", function(e){
               if(e) e.stopPropagation();
               sinclo.chatApi.observeType.start();
+              console.log('エラー');
             });
           }
 
@@ -2204,6 +2203,7 @@
             .on('focus', "#sincloChatMessage,#miniSincloChatMessage",function(e){
               if(e) e.stopPropagation();
               sinclo.chatApi.clearPlaceholderMessage();
+              console.log('サバ');
               if(check.smartphone()) {
                 $(document).one('touchstart', function(e){
                   $(document).trigger('blur');
@@ -2902,7 +2902,6 @@
           if ( this.scDownTimer ) {
             clearTimeout(this.scDownTimer);
           }
-          //setTimeout(function(){common.chatBotTyping(obj)},800);
           this.scDownTimer = setTimeout(function(){
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownNow!!');
           var chatTalk = document.getElementById('chatTalk');
@@ -5073,7 +5072,6 @@
       _showMessage: function(type, message, categoryNum, showTextArea, callback) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showMessage:type'+type);
         var self = sinclo.scenarioApi;
-        console.log(sinclo.chatApi);
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
