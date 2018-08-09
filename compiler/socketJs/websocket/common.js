@@ -2884,9 +2884,10 @@ var socket, // socket.io
       var waitWidth = waitHeight * 2;
       var waitPadding = waitWidth * 0.172;
       var loadDotSize = fontSize * 0.8;
+      var heightWeight = widget.widgetSizeType - 3;
       var html  = "";
           html += "<div class='botNowTypingDiv'>";
-          html += "  <li class='effect_left botNowTyping'>";
+          html += "  <li class='effect_left_wait botNowTyping'>";
           html += "    <div class='reload_dot_left'></div>";
           html += "    <div class='reload_dot_center'></div>";
           html += "    <div class='reload_dot_right'></div>";
@@ -2896,7 +2897,11 @@ var socket, // socket.io
       var css  = "";
           css += "#sincloBox ul#chatTalk li.botNowTyping div[class^='reload_dot']{";
           css += "  min-width:"+loadDotSize+"px;width:"+loadDotSize+"px;min-height:"+loadDotSize+"px;height:"+loadDotSize+"px;border-radius:100%;";
-          css += "  background-color:"+widget.reTextColor+";";
+          if(widget.widgetSizeType == 1){
+            css += "  background-color:"+widget.reBackgroundColor+";";
+          }else{
+            css += "  background-color:"+widget.reTextColor+";";
+          }
           css += "}";
           css += "#sincloBox .botNowTyping div[class$='left']{";
           css += "  animation:dotScale 1.0s ease-in-out -0.32s infinite both";
@@ -2907,10 +2912,26 @@ var socket, // socket.io
           css += "#sincloBox .botNowTyping div[class$='right']{";
           css += "  animation:dotScale 1.0s ease-in-out 0s infinite both";
           css += "}";
+          if(widget.chatMessageWithAnimation === 1){
+            css += "#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0;}";
+          }else{
+            css += '#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0;}';
+          }
+          //吹き出しの構造をウィジェットタイプで変える
           css += "#sincloBox ul#chatTalk li.botNowTyping{";
-          css += "  display:flex;justify-content:space-around;align-items:center;";
-          css += "  width:"+waitWidth+"px;height:"+waitHeight+"px;padding:0 "+waitPadding+"px;margin-left: 10px;"
-          css += "  background-color:"+widget.reBackgroundColor+";border-radius:12px!important"
+          css += "  display:flex;justify-content:space-around;align-items:center;border-radius:12px!important;";
+          if(!check.smartphone()){
+            if(widget.widgetSizeType == 1){
+              css += "  width:"+waitWidth+"px;height:"+(waitHeight + 13*heightWeight)+"px;padding:0 "+waitPadding+"px;margin-left: 10px;";
+              css += "  background-color:"+widget.chatTalkBackgroundColor+";";
+            }else{
+              css += "  width:"+waitWidth+"px;height:"+(waitHeight + 4*heightWeight)+"px;padding:0 "+waitPadding+"px;margin-left: 10px;";
+              css += "  background-color:"+widget.reBackgroundColor+";";
+            }
+          }else{
+            css += "  width:"+waitWidth+"px;height:"+waitHeight+"px;padding:0 "+waitPadding+"px;margin-left: 10px;";
+            css += "  background-color:"+widget.reBackgroundColor+";";
+          }
           css += "  "
           css += "}";
           css += "@keyframes dotScale{";
@@ -2918,7 +2939,6 @@ var socket, // socket.io
           css += "  30%,70%{opacity:0.7}";
           css += "  50%{transform: scale(1);opacity:1.0}";
           css += "}";
-      sinclo.chatApi.scDown();
       $("#sincloBox > style").append(css);
       $("sinclo-chat").append(html);
       return;
