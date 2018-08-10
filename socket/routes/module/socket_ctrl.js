@@ -574,7 +574,7 @@ function getCompanyInfoFromApi(ip, callback) {
   req.end();
 }
 
-function parseSignature(src, callback) {
+function parseSignature(src, ip, callback) {
   //ヘッダーを定義
   var headers = {
     'Content-Type':'application/json'
@@ -614,7 +614,7 @@ function parseSignature(src, callback) {
     return;
   });
 
-  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "targetText":src}));
+  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "targetText":src, 'ip':ip}));
   req.end();
 }
 
@@ -3709,7 +3709,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   socket.on('sendParseSignature', function(data, ack){
     var obj = JSON.parse(data);
-    parseSignature(obj.targetText, function(result){
+    parseSignature(obj.targetText, obj.ip, function(result){
       ack(result);
     });
   });

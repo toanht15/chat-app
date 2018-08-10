@@ -60,14 +60,10 @@ class TChatbotScenario extends AppModel {
         }
       } else
       if ($action['actionType'] == C_SCENARIO_ACTION_HEARING) {
-        if($action['parseSignatureMode']) {
-
-        } else {
-          // ヒアリング
-          foreach ($action['hearings'] as $key => $item) {
-            if (empty($item['variableName']) || empty($item['message'])) {
-              return false;
-            }
+        // ヒアリング
+        foreach ($action['hearings'] as $key => $item) {
+          if (empty($item['variableName']) || empty($item['message'])) {
+            return false;
           }
         }
         if (empty($action['errorMessage'])) {
