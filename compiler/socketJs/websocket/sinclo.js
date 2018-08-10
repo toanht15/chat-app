@@ -1439,7 +1439,7 @@
             storage.s.set('requestFlg',false);
           };
           if(obj.tabId === userInfo.tabId) {
-            common.chatBotTyping(obj);
+            common.chatBotTypingCall(obj);
             return false;
           } else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
             // 別タブで送信された自動返信は表示する
@@ -1474,7 +1474,7 @@
           if(sinclo.sorryMsgTimer){
             clearTimeout(sinclo.sorryMsgTimer);
           }
-         common.chatBotTyping(obj);
+         common.chatBotTypingCall(obj);
           sinclo.sorryMsgTimer = setTimeout(function(){
             cn = "sinclo_re";
             sinclo.chatApi.call();
@@ -1532,7 +1532,7 @@
           this.chatApi.notify(obj.chatMessage);
         } else {
           this.chatApi.scDown();
-          common.chatBotTyping(obj);
+          common.chatBotTypingCall(obj);
         }
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
@@ -4814,8 +4814,8 @@
       },
       _end: function() {
         // シナリオ終了
-        console.log('シナリオ終了時にそもそもウェイトアニメーションを出さないフラグを立てる');
-        common.forceStopBotTypingFlg = true;
+        console.log('シナリオ終了時にそもそもウェイトアニメーションを出さない');
+        common.chatBotTypingTimerClear();
         var self = sinclo.scenarioApi;
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         // 元のメッセージ入力欄に戻す

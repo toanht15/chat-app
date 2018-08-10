@@ -2841,67 +2841,71 @@ var socket, // socket.io
         }
       }
     },
-    forceStopBotTypingFlg: false,
+    chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
+    chatBotTypingCall: function(obj){
+      if(!common.chatBotTypingDelayTimer){
+        common.chatBotTypingDelayTimer = setTimeout(function(){
+          chatBotTyping(obj);
+          common.chatBotTypingDelayTimer = null;
+        },820)
+      }
+    },
+    chatBotTypingTimerClear: function(){
+      common.chatBotTypingDelayTimer = null;
+    },
     chatBotTyping: function(obj){
       //予期せぬエラーを回避するため、ローディングの重複表示を避ける
-      setTimeout(function(){
-        if($(".botNowDiv").length > 0){
+      if($(".botNowDiv").length > 0){
+        return;
+      }
+      //チャットが発言内容によるオートメッセージ・シナリオ発動
+      //シナリオ中のヒアリング・ファイル受信・選択肢である場合
+      //ウェイトアニメーションを表示するという処理
+      console.log(obj);
+      if(obj == null){
+        return;
+      }else if(obj.forceWaitAnimation){
+      }else if(obj.messageType === sinclo.chatApi.messageType.customer){
+        if(!obj.matchAutoSpeech){
+          return;
+        }else if(obj.isScenarioMessage){
           return;
         }
-        //シナリオ終了の時はこのフラグを先に立てておき、ウェイトアニメーションをリターンさせる
-        if(common.forceStopBotTypingFlg){
-          common.forceStopBotTypingFlg = false;
+      }else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech
+             ||obj.messageType === sinclo.chatApi.messageType.auto
+             ||obj.messageType === sinclo.chatApi.messageType.company
+             ||obj.messageType === sinclo.chatApi.messageType.end
+             ||obj.messageType === sinclo.chatApi.messageType.notification
+             ||obj.messageType === sinclo.chatApi.messageType.start){
+        return;
+      }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile){
+        return;
+      }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text){
+        if(!sinclo.scenarioApi.isProcessing()){
           return;
         }
-        //チャットが発言内容によるオートメッセージ・シナリオ発動
-        //シナリオ中のヒアリング・ファイル受信・選択肢である場合
-        //ウェイトアニメーションを表示するという処理
-        console.log(obj);
-        if(obj == null){
-          return;
-        }else if(obj.forceWaitAnimation){
-        }else if(obj.messageType === sinclo.chatApi.messageType.customer){
-          if(!obj.matchAutoSpeech){
-            return;
-          }else if(obj.isScenarioMessage){
-            return;
-          }
-        }else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech
-               ||obj.messageType === sinclo.chatApi.messageType.auto
-               ||obj.messageType === sinclo.chatApi.messageType.company
-               ||obj.messageType === sinclo.chatApi.messageType.end
-               ||obj.messageType === sinclo.chatApi.messageType.notification
-               ||obj.messageType === sinclo.chatApi.messageType.start){
-          return;
-        }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
-               ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
-               ||obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile){
-          return;
-        }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text){
-          if(!sinclo.scenarioApi.isProcessing()){
-            return;
-          }
-        }
-
-        var widget = window.sincloInfo.widget;
-        var sizeList = common.getSizeType(widget.widgetSizeType);
-        var fontSize = widget.reTextSize;
-        var waitHeight = 1.4 * fontSize + 20;
-        var waitWidth = waitHeight * 2;
-        var waitPadding = waitWidth * 0.172;
-        var loadDotSize = fontSize * 0.8;
-        var heightWeight = widget.widgetSizeType - 3;
-        var html  = "";
-            html += "<div class='botNowDiv'>";
-            //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
-            if(widget.widgetSizeType === 1 && $('#chatTalk').get(0).offsetHeight < $('#chatTalk').get(0).scrollHeight){
-              html += "<li class='effect_left_wait botDotOnlyTyping'>";
-              html += "  <div class='reload_only_dot_left'></div>";
-              html += "  <div class='reload_only_dot_center'></div>";
-              html += "  <div class='reload_only_dot_right'></div>";
-            }else{
-              //スマホかウィジェットサイズが大の場合
+      }
+      var widget = window.sincloInfo.widget;
+      var sizeList = common.getSizeType(widget.widgetSizeType);
+      var fontSize = widget.reTextSize;
+      var waitHeight = 1.4 * fontSize + 20;
+      var waitWidth = waitHeight * 2;
+      var waitPadding = waitWidth * 0.172;
+      var loadDotSize = fontSize * 0.8;
+      var heightWeight = widget.widgetSizeType - 3;
+      var html  = "";
+          html += "<div class='botNowDiv'>";
+          //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
+          if(widget.widgetSizeType === 1 && $('#chatTalk').get(0).offsetHeight < $('#chatTalk').get(0).scrollHeight){
+            html += "<li class='effect_left_wait botDotOnlyTyping'>";
+            html += "  <div class='reload_only_dot_left'></div>";
+            html += "  <div class='reload_only_dot_center'></div>";
+            html += "  <div class='reload_only_dot_right'></div>";
+          }else{
+            //スマホかウィジェットサイズが大の場合
               if(check.smartphone() || widget.widgetSizeType === 3){
                 html += "<li class='effect_left_wait botNowTypingLarge'>";
               //ウィジェットサイズが中の場合
@@ -2990,7 +2994,6 @@ var socket, // socket.io
         }
         $("sinclo-chat").append(html);
         return;
-      },820);
     },
     chatBotTypingRemove: function(){
       //ウェイトアニメーションが存在しない場合はリターンする
