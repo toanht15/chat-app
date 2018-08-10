@@ -1439,7 +1439,7 @@
             storage.s.set('requestFlg',false);
           };
           if(obj.tabId === userInfo.tabId) {
-            setTimeout(function(){common.chatBotTyping(obj)},820);
+            common.chatBotTyping(obj);
             return false;
           } else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
             // 別タブで送信された自動返信は表示する
@@ -1474,7 +1474,7 @@
           if(sinclo.sorryMsgTimer){
             clearTimeout(sinclo.sorryMsgTimer);
           }
-          setTimeout(function(){common.chatBotTyping(obj)},820);
+         common.chatBotTyping(obj);
           sinclo.sorryMsgTimer = setTimeout(function(){
             cn = "sinclo_re";
             sinclo.chatApi.call();
@@ -1532,7 +1532,7 @@
           this.chatApi.notify(obj.chatMessage);
         } else {
           this.chatApi.scDown();
-          setTimeout(function(){common.chatBotTyping(obj)},820);
+          common.chatBotTyping(obj);
         }
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
@@ -1778,10 +1778,12 @@
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaNow");
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
         $('#flexBoxWrap').css('display', '');
-      if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
-        $('#miniSincloChatMessage').focus();
-      } else {
-        $('#sincloChatMessage').focus();
+      if(!check.smartphone()){
+        if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
+          $('#miniSincloChatMessage').focus();
+        } else {
+          $('#sincloChatMessage').focus();
+        }
       }
         console.log('<><><><><><><><><><><>自由入力欄が<><><><><><><><><><><>');
         console.log('<><><><><><><><><><><>表示されます<><><><><><><><><><><>');
@@ -5074,9 +5076,8 @@
         message = self._replaceVariable(message);
         if(!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
-          var waitTimer = setTimeout(function(){common.chatBotTyping({forceWaitAnimation:true})},820);
-          if(type == self._actionType.hearing || type == self._actionType.selection || type == self._actionType.sendFile){
-            clearTimeout(waitTimer);
+          if(type != self._actionType.hearing && type != self._actionType.selection && type != self._actionType.sendFile){
+            common.chatBotTyping({forceWaitAnimation:true});
           }
           if(String(categoryNum).indexOf("delete_") >= 0) {
             sinclo.chatApi.createMessageUnread('sinclo_re ' + categoryNum, message, name, true);
