@@ -2846,13 +2846,13 @@ var socket, // socket.io
     chatBotTypingCall: function(obj){
       if(!common.chatBotTypingDelayTimer){
         common.chatBotTypingDelayTimer = setTimeout(function(){
-          chatBotTyping(obj);
+          common.chatBotTyping(obj);
           common.chatBotTypingDelayTimer = null;
         },820)
       }
     },
     chatBotTypingTimerClear: function(){
-      common.chatBotTypingDelayTimer = null;
+      clearTimeout(common.chatBotTypingDelayTimer);
     },
     chatBotTyping: function(obj){
       //予期せぬエラーを回避するため、ローディングの重複表示を避ける
