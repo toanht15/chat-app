@@ -2841,16 +2841,23 @@ var socket, // socket.io
         }
       }
     },
-    forceStopBotTypingFlg: false,
+    chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
+    chatBotTypingCall: function(obj){
+      if(!common.chatBotTypingDelayTimer){
+        common.chatBotTypingDelayTimer = setTimeout(function(){
+          common.chatBotTyping(obj);
+          common.chatBotTypingDelayTimer = null;
+        },820)
+      }
+    },
+    chatBotTypingTimerClear: function(){
+      clearTimeout(common.chatBotTypingDelayTimer);
+      common.chatBotTypingDelayTimer = null;
+    },
     chatBotTyping: function(obj){
       //予期せぬエラーを回避するため、ローディングの重複表示を避ける
       if($(".botNowDiv").length > 0){
-        return;
-      }
-      //シナリオ終了の時はこのフラグを先に立てておき、ウェイトアニメーションをリターンさせる
-      if(common.forceStopBotTypingFlg){
-        common.forceStopBotTypingFlg = false;
         return;
       }
       //チャットが発言内容によるオートメッセージ・シナリオ発動
@@ -2860,7 +2867,6 @@ var socket, // socket.io
       if(obj == null){
         return;
       }else if(obj.forceWaitAnimation){
-
       }else if(obj.messageType === sinclo.chatApi.messageType.customer){
         if(!obj.matchAutoSpeech){
           return;
@@ -2883,7 +2889,6 @@ var socket, // socket.io
           return;
         }
       }
-
       var widget = window.sincloInfo.widget;
       var sizeList = common.getSizeType(widget.widgetSizeType);
       var fontSize = widget.reTextSize;
@@ -2902,94 +2907,94 @@ var socket, // socket.io
             html += "  <div class='reload_only_dot_right'></div>";
           }else{
             //スマホかウィジェットサイズが大の場合
-            if(check.smartphone() || widget.widgetSizeType === 3){
-              html += "<li class='effect_left_wait botNowTypingLarge'>";
+              if(check.smartphone() || widget.widgetSizeType === 3){
+                html += "<li class='effect_left_wait botNowTypingLarge'>";
               //ウィジェットサイズが中の場合
-            }else if(widget.widgetSizeType === 2){
-              html += "<li class='effect_left_wait botNowTypingMedium'>";
-              //ウィジェットサイズが小の場合
-            }else if(widget.widgetSizeType === 1){
-              html += "<li class='effect_left_wait botNowTypingSmall'>";
+              }else if(widget.widgetSizeType === 2){
+                html += "<li class='effect_left_wait botNowTypingMedium'>";
+                //ウィジェットサイズが小の場合
+              }else if(widget.widgetSizeType === 1){
+                html += "<li class='effect_left_wait botNowTypingSmall'>";
+              }
+            html += "    <div class='reload_dot_left'></div>";
+            html += "    <div class='reload_dot_center'></div>";
+            html += "    <div class='reload_dot_right'></div>";
             }
-          html += "    <div class='reload_dot_left'></div>";
-          html += "    <div class='reload_dot_center'></div>";
-          html += "    <div class='reload_dot_right'></div>";
-          }
-          html += "  </li>";
-          html += "</div>";
+            html += "  </li>";
+            html += "</div>";
 
-      var css  = "";
-          //ドットのサイズは共通
-          css += "#sincloBox ul#chatTalk div[class^='reload']{";
-          css += "  min-width:"+loadDotSize+"px;width:"+loadDotSize+"px;min-height:"+loadDotSize+"px;height:"+loadDotSize+"px;border-radius:100%;";
-          css += "}";
-          //吹き出しがある場合はテキストカラーを採用
-          css += "#sincloBox ul#chatTalk div[class^='reload_dot']{";
-          css += "  background-color:"+widget.reTextColor+";";
-          css += "}";
-          //吹き出しがない場合はメインカラー、または吹き出し背景色を採用
-          if(widget.mainColor == "#FFFFFF"){
-            css += "#sincloBox ul#chatTalk div[class^='reload_only_dot']{";
+        var css  = "";
+            //ドットのサイズは共通
+            css += "#sincloBox ul#chatTalk div[class^='reload']{";
+            css += "  min-width:"+loadDotSize+"px;width:"+loadDotSize+"px;min-height:"+loadDotSize+"px;height:"+loadDotSize+"px;border-radius:100%;";
+            css += "}";
+            //吹き出しがある場合はテキストカラーを採用
+            css += "#sincloBox ul#chatTalk div[class^='reload_dot']{";
+            css += "  background-color:"+widget.reTextColor+";";
+            css += "}";
+            //吹き出しがない場合はメインカラー、または吹き出し背景色を採用
+            if(widget.mainColor == "#FFFFFF"){
+              css += "#sincloBox ul#chatTalk div[class^='reload_only_dot']{";
+              css += "  background-color:"+widget.reBackgroundColor+";";
+              css += "}";
+            }else{
+              css += "#sincloBox ul#chatTalk div[class^='reload_only_dot']{";
+              css += "  background-color:"+widget.mainColor+";";
+              css += "}";
+            }
+            css += "#sincloBox ul#chatTalk div[class$='left']{";
+            css += "  animation:dotScale 1.0s ease-in-out -0.32s infinite both";
+            css += "}";
+            css += "#sincloBox ul#chatTalk div[class$='center']{";
+            css += "  animation:dotScale 1.0s ease-in-out -0.16s infinite both";
+            css += "}";
+            css += "#sincloBox ul#chatTalk div[class$='right']{";
+            css += "  animation:dotScale 1.0s ease-in-out 0s infinite both";
+            css += "}";
+            if(widget.chatMessageWithAnimation === 1){
+              css += "#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0;}";
+            }else{
+              css += '#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0;}';
+            }
+            //吹き出しの大きさをウィジェットタイプで変える
+            //基準(共通)の設定
+            css += "#sincloBox ul#chatTalk li[class*='botNowTyping']{";
+            css += "  display:flex;justify-content:space-around;align-items:center;border-radius:12px!important;";
+            css += "  width:"+waitWidth+"px;padding:0 "+waitPadding+"px;margin-left: 10px;";
             css += "  background-color:"+widget.reBackgroundColor+";";
             css += "}";
-          }else{
-            css += "#sincloBox ul#chatTalk div[class^='reload_only_dot']{";
-            css += "  background-color:"+widget.mainColor+";";
+            //小(余白あり)の場合
+            css += "#sincloBox ul#chatTalk li.botNowTypingSmall{";
+            css += "  height:"+(waitHeight-8)+"px;"
             css += "}";
-          }
-          css += "#sincloBox ul#chatTalk div[class$='left']{";
-          css += "  animation:dotScale 1.0s ease-in-out -0.32s infinite both";
-          css += "}";
-          css += "#sincloBox ul#chatTalk div[class$='center']{";
-          css += "  animation:dotScale 1.0s ease-in-out -0.16s infinite both";
-          css += "}";
-          css += "#sincloBox ul#chatTalk div[class$='right']{";
-          css += "  animation:dotScale 1.0s ease-in-out 0s infinite both";
-          css += "}";
-          if(widget.chatMessageWithAnimation === 1){
-            css += "#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0;}";
-          }else{
-            css += '#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0;}';
-          }
-          //吹き出しの大きさをウィジェットタイプで変える
-          //基準(共通)の設定
-          css += "#sincloBox ul#chatTalk li[class*='botNowTyping']{";
-          css += "  display:flex;justify-content:space-around;align-items:center;border-radius:12px!important;";
-          css += "  width:"+waitWidth+"px;padding:0 "+waitPadding+"px;margin-left: 10px;";
-          css += "  background-color:"+widget.reBackgroundColor+";";
-          css += "}";
-          //小(余白あり)の場合
-          css += "#sincloBox ul#chatTalk li.botNowTypingSmall{";
-          css += "  height:"+(waitHeight-8)+"px;"
-          css += "}";
-          //中の場合
-          css += "#sincloBox ul#chatTalk li.botNowTypingMedium{";
-          css += "  height:"+(waitHeight-8)+"px;"
-          css += "}";
-          //大の場合
-          css += "#sincloBox ul#chatTalk li.botNowTypingLarge{";
-          css += "  height:"+waitHeight+"px;"
-          css += "}";
-          //小(余白なし)の場合は、色と大きさが変化する
-          css += "#sincloBox ul#chatTalk li.botDotOnlyTyping{";
-          css += "  display:flex;justify-content:space-around;align-items:center;border-radius:12px!important;";
-          css += "  width:"+waitWidth+"px;height:"+(waitHeight-21)+"px;;padding:0 "+waitPadding+"px;margin-left: 10px;";
-          css += "  background-color:"+widget.chatTalkBackgroundColor+";";
-          css += "}";
-          //共通アニメーションの設定
-          css += "@keyframes dotScale{";
-          css += "   0%,100%{transform: scale(0.4);opacity:0.3}";
-          css += "  30%,70%{opacity:0.7}";
-          css += "  50%{transform: scale(1);opacity:1.0}";
-          css += "}";
+            //中の場合
+            css += "#sincloBox ul#chatTalk li.botNowTypingMedium{";
+            css += "  height:"+(waitHeight-8)+"px;"
+            css += "}";
+            //大の場合
+            css += "#sincloBox ul#chatTalk li.botNowTypingLarge{";
+            css += "  height:"+waitHeight+"px;"
+            css += "}";
+            //小(余白なし)の場合は、色と大きさが変化する
+            css += "#sincloBox ul#chatTalk li.botDotOnlyTyping{";
+            css += "  display:flex;justify-content:space-around;align-items:center;border-radius:12px!important;";
+            css += "  width:"+waitWidth+"px;height:"+(waitHeight-21)+"px;;padding:0 "+waitPadding+"px;margin-left: 10px;";
+            css += "  background-color:"+widget.chatTalkBackgroundColor+";";
+            css += "}";
+            //共通アニメーションの設定
+            css += "@keyframes dotScale{";
+            css += "   0%,100%{transform: scale(0.4);opacity:0.3}";
+            css += "  30%,70%{opacity:0.7}";
+            css += "  50%{transform: scale(1);opacity:1.0}";
+            css += "}";
 
-      //一回も呼び出されていなかった場合のみCSSを追加する
-      if(common.firstTimeChatBotTyping){
-        $("#sincloBox > style").append(css);
-        common.firstTimeChatBotTyping = false;
-      }
-      $("sinclo-chat").append(html);
-      return;
+        //一回も呼び出されていなかった場合のみCSSを追加する
+        if(common.firstTimeChatBotTyping){
+          $("#sincloBox > style").append(css);
+          common.firstTimeChatBotTyping = false;
+        }
+        $("sinclo-chat").append(html);
+        return;
     },
     chatBotTypingRemove: function(){
       //ウェイトアニメーションが存在しない場合はリターンする
