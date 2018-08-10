@@ -2900,7 +2900,7 @@ var socket, // socket.io
       var html  = "";
           html += "<div class='botNowDiv'>";
           //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
-          if(widget.widgetSizeType === 1 && $('#chatTalk').get(0).offsetHeight < $('#chatTalk').get(0).scrollHeight){
+          if(!check.smartphone() && widget.widgetSizeType === 1 && $('#chatTalk').get(0).offsetHeight < $('#chatTalk').get(0).scrollHeight){
             html += "<li class='effect_left_wait botDotOnlyTyping'>";
             html += "  <div class='reload_only_dot_left'></div>";
             html += "  <div class='reload_only_dot_center'></div>";
