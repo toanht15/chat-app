@@ -2853,6 +2853,7 @@ var socket, // socket.io
     },
     chatBotTypingTimerClear: function(){
       clearTimeout(common.chatBotTypingDelayTimer);
+      common.chatBotTypingDelayTimer = null;
     },
     chatBotTyping: function(obj){
       //予期せぬエラーを回避するため、ローディングの重複表示を避ける
