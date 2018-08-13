@@ -2856,6 +2856,7 @@ var socket, // socket.io
       common.chatBotTypingDelayTimer = null;
     },
     chatBotTyping: function(obj){
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>waitAnimationFuncStart');
       //予期せぬエラーを回避するため、ローディングの重複表示を避ける
       if($(".botNowDiv").length > 0){
         return;

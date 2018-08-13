@@ -270,6 +270,7 @@
           $("#sincloBox").css("left","");
         }
         else{
+          common.widgetHandler._handleResizeEvent();
           switch ( Number(window.sincloInfo.widget.showPosition) ) {
           case 1: // 右下
             //right: 10px;
