@@ -531,9 +531,14 @@ function getMessageTypeBySenarioActionType(type) {
 //requestをrequire
 var http = require('http');
 http.globalAgent.maxSockets = 1000;
-function getCompanyInfoFromApi(ip, callback) {
-  var api = new LandscapeAPI('json', 'utf8');
-  api.getFrom(ip, callback);
+function getCompanyInfoFromApi(obj, ip, callback) {
+  if(functionManager.isEnabled(obj.siteKey, functionManager.keyList.refCompanyData)) {
+    var api = new LandscapeAPI('json', 'utf8');
+    api.getFrom(ip, callback);
+  } else {
+    deblogger.debug("refCompanyData is false. siteKey : " + obj.siteKey);
+    callback({});
+  }
 }
 
 function sendMail(autoMessageId, lastChatLogId, callback) {
@@ -2307,7 +2312,7 @@ io.sockets.on('connection', function (socket) {
         }
 
         //FIXME 企業別機能設定（企業情報連携）
-        getCompanyInfoFromApi(obj.ipAddress, function(data){
+        getCompanyInfoFromApi(obj, obj.ipAddress, function(data){
           try {
             if (data) {
               var response = data;
