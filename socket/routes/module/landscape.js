@@ -157,6 +157,7 @@ module.exports = function(format, charset) {
         throw new Error('API呼出時にエラーが発生しました。 error: ' + error);
       }
       if(typeof(body) === "string") {
+        lbcLogger.warn("Error found. see request log.");
         throw new Error('想定したメッセージbodyが返却されていない可能性があります。 body : ' + body);
       }
       lbcLogger.info('LBC api response body: ' + JSON.stringify(body));
