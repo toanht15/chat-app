@@ -2911,6 +2911,8 @@
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownNow!!');
           var chatTalk = document.getElementById('chatTalk');
             var receiveLastMessage = $('#chatTalk sinclo-chat div:last-of-type').find('.sinclo_re:last-of-type');
+            var chatScrollHeight = chatTalk.scrollHeight;
+            var chatClientHeight = chatTalk.clientHeight;
             if(receiveLastMessage.length > 0) {
               var lastMessageHeight = receiveLastMessage.parent().outerHeight();
               var paddingBottom = parseFloat($('#chatTalk sinclo-typing').css('padding-bottom'));
@@ -2920,25 +2922,25 @@
               }
               if(chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
                 $('#sincloBox #chatTalk').animate({
-                  scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
+                  scrollTop: (chatScrollHeight - chatClientHeight - 2)
                 }, 300);
               } else {
                 //「○○が入力中です」のメッセージが残っていない場合
                 if(document.getElementById('sinclo_typeing_message') === null) {
                   $('#sincloBox #chatTalk').animate({
-                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                    scrollTop: (chatScrollHeight - (lastMessageHeight + paddingBottom)) // FIXME ウィジェットサイズに合わせた余白で計算すること
                   }, 300);
                 }
                 //「○○が入力中です」のメッセージが残っている場合
                 else {
                   $('#sincloBox #chatTalk').animate({
-                    scrollTop: (chatTalk.scrollHeight - (lastMessageHeight + paddingBottom + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                    scrollTop: (chatScrollHeight - (lastMessageHeight + paddingBottom + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
                   }, 300);
                 }
               }
             } else {
               $('#sincloBox #chatTalk').animate({
-                scrollTop: (chatTalk.scrollHeight - chatTalk.clientHeight - 2)
+                scrollTop: (chatScrollHeight - chatClientHeight - 2)
               }, 300);
             }
           }, 500);
