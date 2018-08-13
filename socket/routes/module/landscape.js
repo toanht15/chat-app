@@ -21,7 +21,7 @@ module.exports = function(format, charset) {
   var expireSec = 7776000; // 90日
   var api = {
     lbc: {
-      url: "https://cla.liveaccess.jp/api",
+      url: "https://api.cladb.usonar.jp/lbcinfoex/getlbc",
       method: "GET",
       key1: "BN7WjEygVK32UqSV",
       key2: ""
