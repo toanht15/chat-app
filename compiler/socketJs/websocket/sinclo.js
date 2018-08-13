@@ -267,6 +267,7 @@
         $("#sincloBox").css("bottom","0");
         //スマホかつ横かを判定
         if (check.smartphone()) {
+          sinclo.adjustSpWidgetSize();
           $("#sincloBox").css("right","");
           $("#sincloBox").css("left","");
         }
@@ -1835,13 +1836,14 @@
           }
         }
       }
+      sinclo.adjustSpWidgetSize();
       },delayTime);
       if(sinclo.firstCallDisplayTextarea) {
         //スマホの場合
         if ( check.smartphone() ){
           $('#flexBoxWrap').css('display', '');
-        }
           sinclo.adjustSpWidgetSize();
+        }
       }
       sinclo.firstCallDisplayTextarea = false;
     },
@@ -1957,6 +1959,7 @@
           var hRatio = chatAreaHeight * 0.07;
           document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
         }
+      sinclo.adjustSpWidgetSize();
       }
       },delayTime);
       if(sinclo.firstCallHideTextarea) {
@@ -1998,6 +2001,7 @@
             var hRatio = chatAreaHeight * 0.07;
             document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
           }
+        sinclo.adjustSpWidgetSize();
         }
       }
       sinclo.firstCallHideTextarea = false;
@@ -2323,6 +2327,8 @@
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
               $('#sincloChatMessage').focus();
+            }else{
+              sinclo.adjustSpWidgetSize();
             }
           }
         },
