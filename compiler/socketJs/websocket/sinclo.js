@@ -262,7 +262,6 @@
         //バナー非表示状態になった
         storage.s.set('bannerAct', false);
         $("#sincloWidgetBox").show();
-        common.widgetHandler._handleResizeEvent();
         $("#sincloBannerBox").hide();
         $("#sincloBox").css("bottom","0");
         //スマホかつ横かを判定
@@ -271,6 +270,7 @@
           $("#sincloBox").css("left","");
         }
         else{
+          common.widgetHandler._handleResizeEvent();
           switch ( Number(window.sincloInfo.widget.showPosition) ) {
           case 1: // 右下
             //right: 10px;
