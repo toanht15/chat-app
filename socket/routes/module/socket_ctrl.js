@@ -982,9 +982,13 @@ io.sockets.on('connection', function (socket) {
               }
               var autoMessages = [];
               if(obj.sincloSessionId in sincloCore[obj.siteKey] && 'autoMessages' in sincloCore[obj.siteKey][obj.sincloSessionId] ) {
-                var autoMessageArray = sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
-                for(var key in autoMessageArray) {
-                  autoMessages.push(autoMessageArray[key]);
+                var autoMessageObj = sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
+                try {
+                  Object.keys(autoMessageObj).forEach(function(automessageKey, index, array){
+                    autoMessages.push(autoMessageObj[automessageKey]);
+                  });
+                } catch(e) {
+
                 }
               }
               for (var i = 0; i < autoMessages.length; i++) {
