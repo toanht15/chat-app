@@ -2191,7 +2191,7 @@
           },
           unset: function() {
             // 論理的にフラグを付ける
-            var list = this.get(true);
+            var list = this.get();
             Object.keys(list).forEach(function(id, index, arr) {
               list[id]['applied'] = true;
             });
