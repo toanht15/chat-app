@@ -24,7 +24,7 @@ module.exports = function(format, charset) {
       url: "https://cla.liveaccess.jp/api",
       method: "GET",
       key1: "BN7WjEygVK32UqSV",
-      key2: null
+      key2: ""
     }
   };
   var validate =  {
@@ -148,13 +148,16 @@ module.exports = function(format, charset) {
         "key2": api.lbc.key2,
         "format": "json",
         "charset": "utf8",
-        "ipadr": self.ip
+        "ipadr": self.ip.trim()
       }
     };
 
     request(options, function(error, response, body) {
       if(error) {
         throw new Error('API呼出時にエラーが発生しました。 error: ' + error);
+      }
+      if(typeof(body) === "string") {
+        throw new Error('想定したメッセージbodyが返却されていない可能性があります。 body : ' + body);
       }
       lbcLogger.info('LBC api response body: ' + JSON.stringify(body));
       self.apiData = body;
