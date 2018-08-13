@@ -287,7 +287,6 @@
         if(!showMinimize) {
           sinclo.operatorInfo.ev();
         }
-        common.widgetHandler._handleResizeEvent();
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();
@@ -2942,6 +2941,7 @@
                 scrollTop: (chatScrollHeight - chatClientHeight - 2)
               }, 300);
             }
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownNowEnd!!');
           }, 500);
         },
         scDownImmediate: function(){
