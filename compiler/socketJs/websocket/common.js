@@ -2844,11 +2844,11 @@ var socket, // socket.io
     chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
     chatBotTypingCall: function(obj){
-      if(!common.chatBotTypingDelayTimer){
+      if(!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry){
         common.chatBotTypingDelayTimer = setTimeout(function(){
           common.chatBotTyping(obj);
           common.chatBotTypingDelayTimer = null;
-        },820)
+        },850)
       }
     },
     chatBotTypingTimerClear: function(){
@@ -2881,10 +2881,11 @@ var socket, // socket.io
              ||obj.messageType === sinclo.chatApi.messageType.start){
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
-             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
-             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile){
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection){
         return;
-      }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text){
+      }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.sendFile){
         if(!sinclo.scenarioApi.isProcessing()){
           return;
         }

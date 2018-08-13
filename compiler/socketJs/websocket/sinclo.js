@@ -1458,6 +1458,7 @@
 
         if (obj.messageType === sinclo.chatApi.messageType.scenario.customer.sendFile) {
           sinclo.chatApi.call();
+          common.chatBotTypingCall(obj);
           if(check.isJSON(obj.chatMessage)) {
             var result = JSON.parse(obj.chatMessage);
             this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
@@ -1589,6 +1590,7 @@
         || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
         || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
         if(obj.tabId === userInfo.tabId) {
+          common.chatBotTypingCall(obj);
           this.chatApi.scDown();
           return false;
         } else {
@@ -1791,6 +1793,7 @@
         console.log('<><><><><><><><><><><>行われます<><><><><><><><><><><>');
       common.widgetHandler._handleResizeEvent();
       $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+
       //スマホの場合
       if ( check.smartphone() ) {
         // 縦の場合
