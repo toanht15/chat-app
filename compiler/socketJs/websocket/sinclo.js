@@ -266,7 +266,6 @@
         $("#sincloBox").css("bottom","0");
         //スマホかつ横かを判定
         if (check.smartphone()) {
-          sinclo.adjustSpWidgetSize();
           $("#sincloBox").css("right","");
           $("#sincloBox").css("left","");
         }
