@@ -2271,6 +2271,19 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
     }
     if (isset(obj.tmpAutoMessages)) {
+      try {
+        Object.keys(obj.tmpAutoMessages).forEach(function(automessageKey, index, array){
+          if(typeof(obj.tmpAutoMessages[automessageKey]['created']) === "string") {
+            obj.tmpAutoMessages[automessageKey]['created'] = new Date(obj.tmpAutoMessages[automessageKey]['created']);
+          }
+          if(isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]).autoMessages) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages = {};
+          }
+          sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[automessageKey] = obj.tmpAutoMessages[automessageKey];
+        });
+      } catch(e) {
+
+      }
       for(var key in obj.tmpAutoMessages) {
         if(typeof(obj.tmpAutoMessages[key]['created']) === "string") {
           obj.tmpAutoMessages[key]['created'] = new Date(obj.tmpAutoMessages[key]['created']);
