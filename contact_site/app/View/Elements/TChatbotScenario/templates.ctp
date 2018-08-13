@@ -9,3 +9,4 @@
 <?= $this->element('TChatbotScenario/template/external_api_connection'); ?>
 <?= $this->element('TChatbotScenario/template/send_mail'); ?>
 <?= $this->element('TChatbotScenario/template/add_customer_information'); ?>
+<?= $this->element('TChatbotScenario/template/bulk_hearing'); ?>
