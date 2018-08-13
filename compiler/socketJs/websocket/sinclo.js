@@ -287,7 +287,6 @@
         if(!showMinimize) {
           sinclo.operatorInfo.ev();
         }
-        //common.widgetHandler._handleResizeEvent();
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();

@@ -2848,7 +2848,7 @@ var socket, // socket.io
         common.chatBotTypingDelayTimer = setTimeout(function(){
           common.chatBotTyping(obj);
           common.chatBotTypingDelayTimer = null;
-        },800)
+        },850)
       }
     },
     chatBotTypingTimerClear: function(){
