@@ -2276,22 +2276,13 @@ io.sockets.on('connection', function (socket) {
           if(typeof(obj.tmpAutoMessages[automessageKey]['created']) === "string") {
             obj.tmpAutoMessages[automessageKey]['created'] = new Date(obj.tmpAutoMessages[automessageKey]['created']);
           }
-          if(isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]).autoMessages) {
+          if(isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages)) {
             sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages = {};
           }
           sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[automessageKey] = obj.tmpAutoMessages[automessageKey];
         });
       } catch(e) {
 
-      }
-      for(var key in obj.tmpAutoMessages) {
-        if(typeof(obj.tmpAutoMessages[key]['created']) === "string") {
-          obj.tmpAutoMessages[key]['created'] = new Date(obj.tmpAutoMessages[key]['created']);
-        }
-        if(isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]).autoMessages) {
-          sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages = {};
-        }
-        sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[key] = obj.tmpAutoMessages[key];
       }
     }
     if ( obj.subWindow ) {
