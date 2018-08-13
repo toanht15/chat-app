@@ -268,6 +268,7 @@
         if (check.smartphone()) {
           $("#sincloBox").css("right","");
           $("#sincloBox").css("left","");
+          sinclo.adjustSpWidgetSize();
         }
         else{
           common.widgetHandler._handleResizeEvent();
