@@ -1206,8 +1206,8 @@ var socket, // socket.io
         html += '      @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
         html += '      @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
         html += '      @keyframes fadeIn { 0% { opacity :0; } 100% { opacity :1; } }';
-        html += '      @keyframes noneRightEffect { 0% { opacity :0; } 70% {} 100% { opacity :1; } }';
-        html += '      @keyframes noneLeftEffect { 0% { opacity :0; } 69% {} 100% { opacity :1; } }';
+        html += '      @keyframes noneRightEffect { 0% { transform :translate3d(0px, 0px, 0px); opacity :0; } 70% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
+        html += '      @keyframes noneLeftEffect { 0% { transform :translate3d(0px, 0px, 0px); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.sincloInfo.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         // ファイルフォントアイコン-----------
         html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-4x { font-size:4em; }';
@@ -2846,17 +2846,8 @@ var socket, // socket.io
     chatBotTypingCall: function(obj){
       if(!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry){
         common.chatBotTypingDelayTimer = setTimeout(function(){
-          var scWaitChecker = setInterval(function(){
-            console.log("スクロール中");
-            if(!$('#sincloBox #chatTalk').is(':animated')){
-              console.log('スクロール終了');
-              clearInterval(scWaitChecker);
-              setTimeout(function(){
-                common.chatBotTyping(obj);
-              },50);
-              common.chatBotTypingDelayTimer = null;
-            }
-          },50);
+          common.chatBotTyping(obj);
+          common.chatBotTypingDelayTimer = null;
         },800)
       }
     },
@@ -3004,6 +2995,7 @@ var socket, // socket.io
           common.firstTimeChatBotTyping = false;
         }
         $("sinclo-chat").append(html);
+        console.log('waitAnimationAdded!');
         return;
     },
     chatBotTypingRemove: function(){
