@@ -262,7 +262,6 @@
         //バナー非表示状態になった
         storage.s.set('bannerAct', false);
         $("#sincloWidgetBox").show();
-        common.widgetHandler._handleResizeEvent();
         $("#sincloBannerBox").hide();
         $("#sincloBox").css("bottom","0");
         //スマホかつ横かを判定
@@ -289,6 +288,7 @@
         if(!showMinimize) {
           sinclo.operatorInfo.ev();
         }
+        common.widgetHandler._handleResizeEvent();
       },
       widgetHide: function(e) {
         if(e) e.stopPropagation();
@@ -1836,7 +1836,6 @@
           }
         }
       }
-      sinclo.adjustSpWidgetSize();
       },delayTime);
       if(sinclo.firstCallDisplayTextarea) {
         //スマホの場合
@@ -1959,7 +1958,6 @@
           var hRatio = chatAreaHeight * 0.07;
           document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
         }
-      sinclo.adjustSpWidgetSize();
       }
       },delayTime);
       if(sinclo.firstCallHideTextarea) {
@@ -2001,7 +1999,6 @@
             var hRatio = chatAreaHeight * 0.07;
             document.getElementById("chatTalk").style.height = (chatAreaHeight - (6.5 * hRatio)) + (hRatio * 4 ) + 'px';
           }
-        sinclo.adjustSpWidgetSize();
         }
       }
       sinclo.firstCallHideTextarea = false;
@@ -2327,8 +2324,6 @@
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
               $('#sincloChatMessage').focus();
-            }else{
-              sinclo.adjustSpWidgetSize();
             }
           }
         },
