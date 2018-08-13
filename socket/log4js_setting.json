@@ -38,7 +38,7 @@
         "default": {"appenders":["debug"], "level": "error"},
         "request": {"appenders":["request"], "level": "info"},
         "error": {"appenders":["error"], "level": "info"},
-        "debug": {"appenders":["debug"], "level": "debug"},
+        "debug": {"appenders":["debug"], "level": "info"},
         "system": {"appenders":["system"], "level":"info"},
         "lbc": {"appenders":["lbc"], "level":"info"}
     }
