@@ -1667,7 +1667,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.height = 'auto';
         div.style.padding = '0';
         li.className = cn;
-        //message = '（「'+message+'」をクリック）';
         content = $scope.createTextOfMessage(chat, message);
         var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
         var linkTab = content.match(linkTabReg);
@@ -2662,6 +2661,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // チャット接続終了
     socket.on("chatEndResult", function(d){
+      console.log('チャット終了');
       var obj = JSON.parse(d);
       if ( 'tabId' in obj && obj.tabId in $scope.monitorList && 'chat' in $scope.monitorList[obj.tabId] ) {
         $scope.chatList = $scope.chatList.filter(function(v){

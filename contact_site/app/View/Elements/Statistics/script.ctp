@@ -324,11 +324,11 @@ $(window).load(function(){
     });
   });
 
-  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+  /*$('.questionBtn').off("mouseleave").on('mouseleave',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
-  });
+  });*/
 
   // DataTablesの検索時にツールチップを非表示にする
   tableObj.on('search',function(event){

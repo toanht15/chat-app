@@ -30,6 +30,10 @@ class StatisticsController extends AppController {
       'cv' => 0,
       'invalid' => 1,
       'effectiveness' => 2
+    ],
+    'noticeFlg' => [
+      'invalid' => 0,
+      'effectiveness' => 1
     ]
   ];
 
@@ -1498,7 +1502,7 @@ class StatisticsController extends AppController {
 
   private function summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
 
-    //アクセス件数件数
+    //アクセス件数
     $this->log("BEGIN getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $accessDatas = $this->getAccessData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
     $this->log("END   getAccessData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
@@ -1513,24 +1517,40 @@ class StatisticsController extends AppController {
     $linkDatas = $this->getLinkData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
     $this->log("END   getLinkData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
+    //有人チャットリクエスト件数
+    $this->log("BEGIN getmannedRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+    $mannedRequestDatas = $this->getmannedRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log("END   getmannedRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
+    //チャット放棄件数
+    $this->log("BEGIN getAbandonRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+    $abandonRequestDatas = $this->getAbandonRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $this->log("END   getAbandonRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
     //チャットリクエスト件数
     $this->log("BEGIN getRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $requestDatas = $this->getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
     $this->log("END   getRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
-    //チャット応答件数,チャット応答率　書き換え必要
-    $this->log("BEGIN getResponseData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-    $responseDatas = $this->getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
-    $this->log("END   getResponseData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-
     //自動返信応対件数、自動返信応対率
     $this->log("BEGIN getAutoResponseData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $automaticResponseData = $this->getAutomaticResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
     $this->log("END   getAutoResponseData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
     //チャット有効件数、チャット有効率、チャット拒否件数
     $this->log("BEGIN getCoherentData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $coherentDatas = $this->getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
     $this->log("END   getCoherentData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+
+
+    $this->log('チャット放棄件数',LOG_DEBUG);
+    $this->log($abandonRequestDatas,LOG_DEBUG);
+    $this->log('チャット有効件数',LOG_DEBUG);
+    $this->log($coherentDatas,LOG_DEBUG);
+    //チャット応答件数,有人チャット応対率　書き換え必要
+    $this->log("BEGIN getResponseData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
+    $responseDatas = $this->getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$abandonRequestDatas['abandonRequestNumberData'],$abandonRequestDatas['allAbandonRequestNumberData'],$coherentDatas['denialNumberData'],$coherentDatas['allDenialNumberData'],$coherentDatas['effectivenessNumberData'],$coherentDatas['allEffectivenessNumberData'],$coherentDatas['effectiveness']);
+    $this->log("END   getResponseData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     //平均チャットリクエスト時間
     $this->log("BEGIN getAvgRequestTimeData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
@@ -1549,7 +1569,7 @@ class StatisticsController extends AppController {
 
     $this->log('終わり',LOG_DEBUG);
 
-    return ["accessDatas" => $accessDatas,"widgetDatas" => $widgetDatas,"linkDatas" => $linkDatas,"requestDatas" => $requestDatas,'responseDatas' => $responseDatas,
+    return ["accessDatas" => $accessDatas,"widgetDatas" => $widgetDatas,"linkDatas" => $linkDatas,"requestDatas" => $requestDatas,"mannedRequestDatas" => $mannedRequestDatas,"abandonRequestDatas" => $abandonRequestDatas,'responseDatas' => $responseDatas,
     "automaticResponseData" => $automaticResponseData,"coherentDatas" => $coherentDatas,"avgRequestTimeDatas" => $avgRequestTimeDatas,"consumerWatingAvgTimeDatas" => $consumerWatingAvgTimeDatas,
     "responseAvgTimeData" => $responseAvgTimeData];
   }
@@ -1655,7 +1675,7 @@ class StatisticsController extends AppController {
     }
     $linkNumberData =[];
 
-    //ウィジェット表示件数
+    //リンククリック件数
     //月別
     if($period == 'month') {
       $link = "SELECT CONCAT(year, '-', month) as date,sum(link_count)
@@ -1688,14 +1708,101 @@ class StatisticsController extends AppController {
       $linkNumberData =  $linkNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['sum(link_count)']));
     }
 
-    //ウィジェット件数
+    //リンククリック件数
     $linkNumberData = array_merge($baseData,$linkNumberData);
 
-    //ウィジェット件数合計値
+    //リンククリック件数合計値
     $allLinkNumberData = array_sum($linkNumberData);
 
     return['linkNumberData' => $linkNumberData,'allLinkNumberData' => $allLinkNumberData];
   }
+
+  private function getmannedRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      return ['getmannedRequestData' => $this->convertBaseDataForNone($baseData),'allMannedRequestNumberData' => self::LABEL_NONE];
+    }
+    $mannedRequestNumberData = [];
+
+    //有人チャットリクエスト件数
+      $mannedRequestNumber = "SELECT
+      date_format(th.access_date, ?) as date,
+      count(th.id) as request_count
+      FROM (select t_histories_id,m_companies_id,message_request_flg from
+      t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
+      where message_request_flg = ? and m_companies_id = ? and notice_flg = ?)
+      as thcl,t_histories as th
+      WHERE
+        thcl.t_histories_id = th.id
+      AND
+        th.access_date between ? and ?
+      group by date";
+
+    $mannedRequestNumber = $this->THistory->query($mannedRequestNumber, array($date_format,
+      $this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
+      $correctStartDate,$correctEndDate));
+
+    foreach($mannedRequestNumber as $k => $v) {
+      $mannedRequestNumberData =  $mannedRequestNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['request_count']));
+    }
+
+    //有人チャットリクエスト件数
+    $mannedRequestNumberData = array_merge($baseData,$mannedRequestNumberData);
+
+    //有人チャットリクエスト件数合計値
+    $allMannedRequestNumberData = array_sum($mannedRequestNumberData);
+
+    return['mannedRequestNumberData' => $mannedRequestNumberData,'allMannedRequestNumberData' => $allMannedRequestNumberData];
+  }
+
+  private function getAbandonRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
+    if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
+      return ['abandonRequestNumberData' => $this->convertBaseDataForNone($baseData),'allAbandonRequestNumberData' => self::LABEL_NONE];
+    }
+    $abandonRequestNumberData = [];
+
+    //放棄チャット件数
+      $abandonRequestNumber = "SELECT
+      date_format(th.access_date, ?) as date,
+      count(th.id) as request_count
+      FROM (select t_histories_id,m_companies_id,message_request_flg,message_distinction from
+      t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
+      where m_companies_id = ? and notice_flg = ? group by t_histories_id,
+       message_distinction)
+      as thcl
+      LEFT JOIN (select t_histories_id, message_type,
+      message_distinction from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
+       where message_type = ? and m_companies_id = ?) as thcl2
+      ON
+      thcl.t_histories_id = thcl2.t_histories_id
+      AND
+      thcl.message_distinction = thcl2.message_distinction,
+      t_histories as th
+      WHERE
+        thcl2.t_histories_id IS NULL
+      AND
+        th.access_date between ? and ?
+      AND
+        thcl.t_histories_id = th.id
+      group by date";
+
+
+    $abandonRequestNumber = $this->THistory->query($abandonRequestNumber, array($date_format,
+      $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
+      $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+
+    foreach($abandonRequestNumber as $k => $v) {
+      $abandonRequestNumberData =  $abandonRequestNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['request_count']));
+    }
+
+    //放棄チャット件数
+    $abandonRequestNumberData = array_merge($baseData,$abandonRequestNumberData);
+
+    //放棄チャット件数合計値
+    $allAbandonRequestNumberData = array_sum($abandonRequestNumberData);
+
+    return['abandonRequestNumberData' => $abandonRequestNumberData,'allAbandonRequestNumberData' => $allAbandonRequestNumberData];
+  }
+
 
   private function getRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period) {
     if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
@@ -1735,7 +1842,7 @@ class StatisticsController extends AppController {
 
   }
 
-  private function getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestNumberData,$allRequestNumberData) {
+  private function getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$abandonmentNumberData,$allAbandonmentNumberData,$denialNumberData,$allDenialNumberData,$effectivenessNumberData2,$allEffectivenessNumberData,$effectiveness) {
     if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
       $noneBaseData = $this->convertBaseDataForNone($baseData);
       return [
@@ -1757,7 +1864,7 @@ class StatisticsController extends AppController {
        message_distinction) as thcl
       LEFT JOIN (select t_histories_id, message_request_flg,
       message_distinction from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-       where message_request_flg = ? and m_companies_id = ?) as thcl2
+       where notice_flg = ? and m_companies_id = ?) as thcl2
       ON
       thcl.t_histories_id = thcl2.t_histories_id
       AND
@@ -1773,23 +1880,58 @@ class StatisticsController extends AppController {
 
     $responseNumber = $this->THistory->query($response,
       array($date_format,$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
-        $this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
+        $this->chatMessageType['noticeFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
         $correctStartDate,$correctEndDate,));
 
-    foreach($responseNumber as $k => $v) {
-      if($v[0]['response_count'] != 0 and $requestNumberData[$v[0]['date']] != 0) {
+    $this->log('放棄件数',LOG_DEBUG);
+    $this->log($abandonmentNumberData,LOG_DEBUG);
+    $this->log('拒否件数',LOG_DEBUG);
+    $this->log($denialNumberData,LOG_DEBUG);
 
-        $responseRate = $responseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['response_count']/$requestNumberData[$v[0]['date']]*100));
+    foreach($responseNumber as $k => $v) {
+      $this->log('v',LOG_DEBUG);
+      $this->log($v,LOG_DEBUG);
+      if($v[0]['response_count'] != 0 and ($v[0]['response_count']+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']]) != 0) {
+        $responseRate = $responseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['response_count']/($v[0]['response_count']+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']])*100));
       } else if ($requestNumberData[$v[0]['date']] === 0) {
         $responseRate = $responseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : self::LABEL_INVALID);
       }
       $responseNumberData = $responseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['response_count']));
     }
 
+    $this->log('effectiveness',LOG_DEBUG);
+    $this->log($effectiveness,LOG_DEBUG);
+    $effectivenessNumberData = [];
+    $effectivenessRate = [];
+    $this->log('応対件数',LOG_DEBUG);
+    $this->log($responseNumberData,LOG_DEBUG);
+
+    if(!empty($effectiveness)) {
+      foreach($effectiveness as $k => $v) {
+        $this->log('vだよ～',LOG_DEBUG);
+        $this->log($v,LOG_DEBUG);
+        $effectivenessNumberData = $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['effectiveness']));
+        if( $v[0]['effectiveness'] != 0 and ($responseNumberData[$v[0]['date']]+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']]) != 0){
+          $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['effectiveness']/($responseNumberData[$v[0]['date']]+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']])*100));
+        } else if($responseNumberData[$v[0]['date']]+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']] === 0) {
+          $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : self::LABEL_INVALID);
+        }
+      }
+    }
+
+    //チャット有効件数
+    $effectivenessNumberData = array_merge($baseData,$effectivenessNumberData);
+
+    //チャット有効率
+    $effectivenessRate = array_merge($this->convertBaseDataForPercent($baseData),$effectivenessRate);
+
+    $this->log('チャット有効率',LOG_DEBUG);
+    $this->log($effectivenessRate,LOG_DEBUG);
+
     //チャット応答率
     $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
 
-    foreach($requestNumberData as $k2 => $v2) {
+    foreach($abandonmentNumberData as $k2 => $v2) {
       if(intval($v2) !== 0 && strcmp($responseRate[$k2],self::LABEL_INVALID) === 0) {
         // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（応対なし）として返却
         $responseRate[$k2] = 0;
@@ -1804,17 +1946,29 @@ class StatisticsController extends AppController {
 
     //合計チャット応答率
     $allResponseRate = 0;
-    if($allResponseNumberData != 0 and $allRequestNumberData != 0) {
-      $allResponseRate = round($allResponseNumberData/$allRequestNumberData*100);
-    } else if($allResponseNumberData === 0 && $allRequestNumberData != 0) {
-      // リクエストチャット件数はあるけど応答がない場合
+    if($allResponseNumberData != 0 and ($allAbandonmentNumberData+$allDenialNumberData) != 0) {
+      $allResponseRate = round($allResponseNumberData/($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData)*100);
+    } else if($allResponseNumberData === 0 && $allAbandonmentNumberData+$allDenialNumberData != 0) {
+      // 有人リクエストチャット件数はあるけど応答がない場合
       $allResponseRate = 0;
     } else {
-      // リクエストチャットが0件の場合（無効データ）
+      // 有人リクエストチャットが0件の場合（無効データ）
       $allResponseRate = self::LABEL_INVALID;
     }
 
-    return ['responseRate' => $responseRate,'responseNumberData' => $responseNumberData,'allResponseNumberData' => $allResponseNumberData,'allResponseRate' => $allResponseRate];
+    //合計有効率
+    $allEffectivenessRate = 0;
+    if($allEffectivenessNumberData != 0 and $allRequestNumberData != 0) {
+      $allEffectivenessRate = round($allEffectivenessNumberData/$allRequestNumberData*100);
+    } else if($allEffectivenessNumberData === 0 && $allRequestNumberData != 0) {
+      // リクエストチャット件数はあるけど自動返信がない場合
+      $allEffectivenessRate = 0;
+    } else {
+      // リクエストチャットが0件の場合（無効データ）
+      $allEffectivenessRate = self::LABEL_INVALID;
+    }
+
+    return ['responseRate' => $responseRate,'responseNumberData' => $responseNumberData,'allResponseNumberData' => $allResponseNumberData,'allResponseRate' => $allResponseRate,'effectivenessRate' => $effectivenessRate,'allEffectivenessRate' => $allEffectivenessRate];
   }
 
 
@@ -1946,17 +2100,29 @@ class StatisticsController extends AppController {
       $correctStartDate,$correctEndDate));
 
     $denial = "SELECT date_format(th.access_date,?) as date,SUM(case when thcl.message_type = ? THEN 1 ELSE 0 END) denial
-      FROM (select t_histories_id, m_companies_id,message_type from t_history_chat_logs
-       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = ? and m_companies_id = ?) as thcl,
+      FROM (select t_histories_id, m_companies_id,message_type,message_distinction from t_history_chat_logs
+       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = ? and m_companies_id = ?
+       group by t_histories_id,message_distinction) as thcl
+       LEFT JOIN (select t_histories_id, message_type,message_distinction from
+       t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
+       where (message_type = ? and m_companies_id = ?)or(notice_flg = ? and m_companies_id = ?)) as thcl2
+       ON
+       thcl.t_histories_id = thcl2.t_histories_id
+       AND
+       thcl.message_distinction = thcl2.message_distinction,
        t_histories as th
       WHERE
-        thcl.t_histories_id = th.id
+        thcl2.t_histories_id IS NULL
       AND
         th.access_date between ? and ?
+      AND
+        thcl.t_histories_id = th.id
       group by date";
 
     $denial = $this->THistory->query($denial, array($date_format,$this->chatMessageType['messageType']['denial'],
       $this->chatMessageType['messageType']['denial'],$this->userInfo['MCompany']['id'],
+      $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
+      $this->chatMessageType['noticeFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate));
 
     if(!empty($effectiveness)) {
@@ -2023,7 +2189,8 @@ class StatisticsController extends AppController {
       'allEffectivenessNumberData' => $allEffectivenessNumberData,
       'allCVNumberData' => $allCVNumberData,
       'allDenialNumberData' => $allDenialNumberData,
-      'allEffectivenessRate' => $allEffectivenessRate
+      'allEffectivenessRate' => $allEffectivenessRate,
+      'effectiveness' => $effectiveness
     ];
 
   }
@@ -2099,7 +2266,7 @@ class StatisticsController extends AppController {
       - UNIX_TIMESTAMP(thcl.created)) as average
     FROM (select t_histories_id, message_request_flg,created,message_distinction
     from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-    where message_request_flg = ? and m_companies_id = ? group by t_histories_id) as thcl,
+    where (notice_flg = ? or message_type = ?) and m_companies_id = ? group by t_histories_id) as thcl,
     (select t_histories_id, message_type,created,message_distinction
     from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id)
     where message_type = ? and m_companies_id = ? group by t_histories_id) as thcl2,
@@ -2116,7 +2283,7 @@ class StatisticsController extends AppController {
       th.access_date between ? and ?
     group by date";
 
-    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
+    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
       $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate));
 
@@ -2165,7 +2332,7 @@ class StatisticsController extends AppController {
       - UNIX_TIMESTAMP(thcl.created)) as average
     FROM (select t_histories_id, message_request_flg,created,message_distinction
     from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-    where message_request_flg = ? and m_companies_id = ? group by t_histories_id) as thcl,
+    where (notice_flg = ? or message_type = ?) and m_companies_id = ? group by t_histories_id) as thcl,
     (select t_histories_id, message_type,created,message_distinction
     from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id)
     where message_type = ? and m_companies_id = ? group by t_histories_id) as thcl2,
@@ -2182,7 +2349,7 @@ class StatisticsController extends AppController {
       th.id = thcl2.t_histories_id
     group by date";
 
-    $responseTime = $this->THistory->query($responseTime, array($date_format,$this->chatMessageType['requestFlg']['effectiveness'],
+    $responseTime = $this->THistory->query($responseTime, array($date_format,$this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
       $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['operatorMessage'],
       $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
 
@@ -2232,18 +2399,22 @@ class StatisticsController extends AppController {
     $widgetNumber[] = 'ウィジェット件数';
     $requestNumber = [];
     $requestNumber[] = 'チャットリクエスト件数';
-    $responseNumber = [];
-    $responseNumber[] = 'チャット応対件数';
     $automaticResponseNumber = [];
     $automaticResponseNumber[] = '自動返信応対件数';
+    $linkNumber = [];
+    $linkNumber[] = 'リンククリック件数';
+    $responseNumber = [];
+    $responseNumber[] = 'チャット応対件数';
+    $requestMannedNumber = [];
+    $requestMannedNumber[] = '有人チャットリクエスト件数';
+    $abandonmentNumber = [];
+    $abandonmentNumber[] = 'チャット放棄件数';
     $noNumber = [];
     $noNumber[] = 'チャット拒否件数';
     $effectivenessNumber = [];
     $effectivenessNumber[] = 'チャット有効件数';
     $cvNumber = [];
     $cvNumber[] = 'チャットCV件数';
-    $linkNumber = [];
-    $linkNumber[] = 'リンククリック件数';
     $requestAvgTime = [];
     $requestAvgTime[] = '平均チャットリクエスト時間';
     $consumerWatingAvgTime = [];
@@ -2258,19 +2429,21 @@ class StatisticsController extends AppController {
     $effectivenessRate[] = 'チャット有効率';
 
     $csvData = $this->insertEachItemCsvData($csvData,$accessNumber,$widgetNumber,$requestNumber,
-            $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,$linkNumber,
-            $requestAvgTime,$consumerWatingAvgTime,$responseAvgTime,$responseRate,$automaticResponseRate,
+            $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,$linkNumber,$requestMannedNumber,
+            $abandonmentNumber,$requestAvgTime,$consumerWatingAvgTime,$responseAvgTime,$responseRate,$automaticResponseRate,
             $effectivenessRate);
 
     $csv[] = $csvData['accessNumber'];
     $csv[] = $csvData['widgetNumber'];
     $csv[] = $csvData['requestNumber'];
-    $csv[] = $csvData['responseNumber'];
     $csv[] = $csvData['automaticResponseNumber'];
+    $csv[] = $csvData['linkNumber'];
+    $csv[] = $csvData['requestMannedNumber'];
+    $csv[] = $csvData['responseNumber'];
+    $csv[] = $csvData['abandonmentNumber'];
     $csv[] = $csvData['noNumber'];
     $csv[] = $csvData['effectivenessNumber'];
     $csv[] = $csvData['cvNumber'];
-    $csv[] = $csvData['linkNumber'];
     $csv[] = $csvData['requestAvgTime'];
     $csv[] = $csvData['consumerWatingAvgTime'];
     $csv[] = $csvData['responseAvgTime'];
@@ -2282,9 +2455,10 @@ class StatisticsController extends AppController {
   }
 
   private function insertEachItemCsvData($csvData,$accessNumber,$widgetNumber,$requestNumber,
-    $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,$linkNumber,
-    $requestAvgTime,$consumerWatingAvgTime,$responseAvgTime,$responseRate,$automaticResponseRate,
+    $responseNumber,$automaticResponseNumber, $noNumber,$effectivenessNumber,$cvNumber,$linkNumber,$requestMannedNumber,
+    $abandonmentNumber,$requestAvgTime,$consumerWatingAvgTime,$responseAvgTime,$responseRate,$automaticResponseRate,
     $effectivenessRate) {
+
 
     foreach($csvData['accessDatas']['accessNumberData'] as $key => $v) {
       $accessNumber[] = $v;
@@ -2301,6 +2475,12 @@ class StatisticsController extends AppController {
     }
     $linkNumber[] = $csvData['linkDatas']['allLinkNumberData'];
 
+    foreach($csvData['abandonRequestDatas']['abandonRequestNumberData'] as $key => $v) {
+      $abandonmentNumber[] = $v;
+    }
+    $abandonmentNumber[] = $csvData['abandonRequestDatas']['allAbandonRequestNumberData'];
+    $requestManned[] = $abandonmentNumber;
+
     foreach($csvData['requestDatas']['requestNumberData'] as $key => $v) {
       $requestNumber[] = $v;
     }
@@ -2310,6 +2490,7 @@ class StatisticsController extends AppController {
       $responseNumber[] = $v;
     }
     $responseNumber[] = $csvData['responseDatas']['allResponseNumberData'];
+    $requestManned[] = $responseNumber;
 
     foreach($csvData['automaticResponseData']['automaticResponseNumberData'] as $key => $v) {
       $automaticResponseNumber[] = $v;
@@ -2320,6 +2501,10 @@ class StatisticsController extends AppController {
       $noNumber[] = $v;
     }
     $noNumber[] = $csvData['coherentDatas']['allDenialNumberData'];
+    $requestManned[] = $noNumber;
+    for ($i = 1; $i < count($requestManned[0]); $i++) {
+      $requestMannedNumber[$i] = $requestManned[0][$i]+$requestManned[1][$i]+$requestManned[2][$i];
+    }
 
     foreach($csvData['coherentDatas']['effectivenessNumberData'] as $key => $v) {
       $effectivenessNumber[] = $v;
@@ -2386,7 +2571,7 @@ class StatisticsController extends AppController {
     $effectivenessRate[] = $csvData['coherentDatas']['allEffectivenessRate'].$percentMark;
 
     return ['accessNumber' => $accessNumber,'widgetNumber' => $widgetNumber,'requestNumber' => $requestNumber,
-      'responseNumber' => $responseNumber,'automaticResponseNumber' => $automaticResponseNumber, 'noNumber' =>$noNumber,
+      'responseNumber' => $responseNumber,'automaticResponseNumber' => $automaticResponseNumber,'abandonmentNumber' => $abandonmentNumber, 'noNumber' =>$noNumber,'requestMannedNumber'=>$requestMannedNumber,
       'effectivenessNumber' => $effectivenessNumber,'cvNumber' => $cvNumber,'linkNumber' => $linkNumber,'requestAvgTime' =>$requestAvgTime,'consumerWatingAvgTime' => $consumerWatingAvgTime,
       'responseAvgTime' => $responseAvgTime,'responseRate' => $responseRate,'automaticResponseRate' => $automaticResponseRate,
       'effectivenessRate' => $effectivenessRate];

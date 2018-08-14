@@ -4583,14 +4583,17 @@ function now(){
   return "【" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "】";
 }
 
-function link(link) {
+function link(word,link) {
+  console.log('リンクううううう');
+  console.log(link);
+  console.log(word);
+  var link2 = "<a "+link.replace(/\$nbsp;/g, " ")+">"+word+"</a>";
+  console.log(link2);
   var data = sinclo.chatApi;
-  data.link = link;
+  data.link = link2;
   data.siteKey = sincloInfo.site.key;
   data.tabId = userInfo.tabId;
   data.userId = userInfo.userId;
-  console.log('link');
-  console.log(link);
   if(storage.s.get('requestFlg') === 'true') {
     data.messageRequestFlg = 0;
   }
@@ -4598,7 +4601,9 @@ function link(link) {
     data.messageRequestFlg = 1;
     storage.s.set('requestFlg',true);
   }
-  ga('send', 'event', 'sinclo', 'clickLink', link, 1);
+  if(typeof ga == "function") {
+    ga('send', 'event', 'sinclo', 'clickLink', link, 1);
+  }
   socket.emit('link', data);
 }
 

@@ -37,28 +37,28 @@
       <div id='chatRequestTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>サイト訪問者がチャットを送信した件数(※初回メッセージのみカウント)</span></li>
+            <li><span>サイト訪問者がチャットを利用（発言／選択肢を選択／リンククリック）した件数（※初回のみカウント）</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='chatResponseTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
+            <li><span>有人チャットリクエストに対してオペレータが入室した件数（※初回入室のみカウント）</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='chatAutomaticResponseTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>サイト訪問者からのチャットを企業側が自動返信で応対した件数(※初回メッセージのみカウント)</span></li>
+            <li><span>オートリプライまたはシナリオが利用された件数（※初回のみカウント）</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='chatDenialTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>Sorryメッセージが消費者に送信された件数</span></li>
+            <li><span>有人チャットリクエストに対してSorryメッセージを返却した件数（※初回のみカウント）</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -86,21 +86,21 @@
       <div id='chatConsumerWaitAverageTimeTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータがチャットに入室するまでの平均時間</span></li>
+            <li><span>初回有人チャットリクエストを受信してからオペレータが入室するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='chatResponseAverageTimeTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>サイト訪問者の初回メッセージを受信してから、オペレータが初回メッセージを送信するまでの平均時間</span></li>
+            <li><span>初回有人チャットリクエストを受信してからオペレータが初回メッセージを送信するまでの平均時間</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='chatResponseRateTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>チャット応対件数／チャットリクエスト件数</span></li>
+            <li><span>有人チャット応対率：チャット応対件数／有人チャットリクエスト件数</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -114,14 +114,28 @@
       <div id='chatEffectivenessResponseRateTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>チャット有効件数／チャットリクエスト件数</span></li>
+            <li><span>チャット有効件数／有人チャットリクエスト件数</span></li>
           </ul>
         </icon-annotation>
       </div>
       <div id='chatLinkClickTooltip' class="explainTooltip">
         <icon-annotation>
           <ul>
-            <li><span>サイト訪問者がリンクを選択した件数（※リンクを選択した回数分カウント）</span></li>
+            <li><span>サイト訪問者がリンクをクリックした件数（※複数回リンクをクリックした場合、クリックした件数分カウント）</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatRequestAbandonTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>有人チャットリクエストに対してオペレータが入室せず放棄した件数（※初回のみカウント）</span></li>
+          </ul>
+        </icon-annotation>
+      </div>
+      <div id='chatRequestMannedTooltip' class="explainTooltip">
+        <icon-annotation>
+          <ul>
+            <li><span>有人チャットリクエストの対象となる件数（※初回のみカウント）</span></li>
           </ul>
         </icon-annotation>
       </div>
@@ -223,6 +237,33 @@
         <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
       </tr>
       <tr>
+        <td id = 'chatLinkClickTooltip' class = 'tooltip'>リンククリック件数
+          <div class="questionBalloon questionBalloonPosition8s">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+        <?php for ($i = $start; $i <= $end; $i++) { ?>
+          <?php if(is_int($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php }
+            else { ?>
+              <td><?php echo ($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php } ?>
+        <?php } ?>
+        <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
+      </tr>
+      <tr>
+        <td id = 'chatRequestMannedTooltip' class = 'tooltip'>有人チャットリクエスト件数
+          <div class="questionBalloon questionBalloonPosition8s">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+        <?php for ($i = $start; $i <= $end; $i++) { ?>
+          <td><?php echo number_format($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]+$data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]+$data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+        <?php } ?>
+        <td><?php echo number_format($data['responseDatas']['allResponseNumberData']+$data['abandonRequestDatas']['allAbandonRequestNumberData']+$data['coherentDatas']['allDenialNumberData']) ?></td>
+      </tr>
+      <tr>
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
           <div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
@@ -237,6 +278,22 @@
             <?php } ?>
         <?php } ?>
         <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
+      </tr>
+      <tr>
+        <td id = 'chatRequestAbandonTooltip' class = 'tooltip'>チャット放棄件数
+          <div class="questionBalloon questionBalloonPosition8s">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+        <?php for ($i = $start; $i <= $end; $i++) { ?>
+          <?php if(is_int($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
+            <td><?php echo number_format($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php }
+            else { ?>
+              <td><?php echo ($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+            <?php } ?>
+        <?php } ?>
+        <td><?php echo number_format($data['abandonRequestDatas']['allAbandonRequestNumberData']) ?></td>
       </tr>
       <tr>
         <td id = 'chatDenialLabel' class = 'tooltip'>チャット拒否件数
@@ -287,22 +344,6 @@
         <td><?php echo number_format($data['coherentDatas']['allCVNumberData']) ?></td>
       </tr>
       <tr>
-        <td id = 'chatLinkClickTooltip' class = 'tooltip'>リンククリック件数
-          <div class="questionBalloon questionBalloonPosition8s">
-            <icon class="questionBtn">？</icon>
-          </div>
-        </td>
-        <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <?php if(is_int($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
-            <td><?php echo number_format($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
-            <?php }
-            else { ?>
-              <td><?php echo ($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
-            <?php } ?>
-        <?php } ?>
-        <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
-      </tr>
-      <tr>
         <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
           <div class="questionBalloon questionBalloonPosition13">
             <icon class="questionBtn">？</icon>
@@ -336,32 +377,6 @@
         <td><?php echo $data['responseAvgTimeData']['allResponseAvgTimeData'] ?></td>
       </tr>
       <tr>
-        <td id = 'chatResponseRateLabel' class = 'tooltip'>チャット応対率
-          <div class="questionBalloon questionBalloonPosition7">
-            <icon class="questionBtn">？</icon>
-          </div>
-        </td>
-          <?php
-            for ($i = $start; $i <= $end; $i++) {
-              if(is_numeric($data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)])) {
-                $checkData = ' %';
-              }
-              else {
-                $checkData = '';
-              } ?>
-            <td><?php echo $data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)].$checkData ?></td>
-          <?php } ?>
-        <?php
-          if(is_numeric($data['responseDatas']['allResponseRate'])) {
-            $checkData = ' %';
-          }
-          else {
-            $checkData = '';
-          }
-        ?>
-        <td><?php echo $data['responseDatas']['allResponseRate'].$checkData ?></td>
-      </tr>
-      <tr>
         <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
           <div class="questionBalloon questionBalloonPosition7">
             <icon class="questionBtn">？</icon>
@@ -386,6 +401,32 @@
           }
         ?>
       <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'].$checkData ?></td>
+      </tr>
+      <tr>
+        <td id = 'chatResponseRateLabel' class = 'tooltip'>有人チャット応対率
+          <div class="questionBalloon questionBalloonPosition7">
+            <icon class="questionBtn">？</icon>
+          </div>
+        </td>
+          <?php
+            for ($i = $start; $i <= $end; $i++) {
+              if(is_numeric($data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)])) {
+                $checkData = ' %';
+              }
+              else {
+                $checkData = '';
+              } ?>
+            <td><?php echo $data['responseDatas']['responseRate'][$type.'-'.sprintf("%02d",$i)].$checkData ?></td>
+          <?php } ?>
+        <?php
+          if(is_numeric($data['responseDatas']['allResponseRate'])) {
+            $checkData = ' %';
+          }
+          else {
+            $checkData = '';
+          }
+        ?>
+        <td><?php echo $data['responseDatas']['allResponseRate'].$checkData ?></td>
       </tr>
       <tr>
         <td id = 'chatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
@@ -455,6 +496,28 @@
           <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
         </tr>
         <tr>
+          <td id = 'chatLinkClickTooltip' class = 'tooltip'>リンククリック件数
+            <div class="questionBalloon questionBalloonPosition8s">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+            <td><?php echo number_format($data['linkDatas']['linkNumberData'][sprintf("%02d",$i).':00']) ?></td>
+          <?php } ?>
+          <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
+        </tr>
+        <tr>
+          <td id="chatRequestMannedTooltip" class = 'tooltip'>有人チャットリクエスト件数
+            <div class="questionBalloon questionBalloonPosition11">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+            <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']+$data['abandonRequestDatas']['abandonRequestNumberData'][sprintf("%02d",$i).':00']+$data['coherentDatas']['denialNumberData'][sprintf("%02d",$i).':00']) ?></td>
+          <?php } ?>
+          <td><?php echo number_format($data['responseDatas']['allResponseNumberData']+$data['abandonRequestDatas']['allAbandonRequestNumberData']+$data['coherentDatas']['allDenialNumberData']) ?></td>
+        </tr>
+        <tr>
         <td id = 'chatResponseLabel'  class = 'tooltip'>チャット応対件数
           <div class="questionBalloon questionBalloonPosition8">
             <icon class="questionBtn">？</icon>
@@ -464,6 +527,17 @@
                 <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
           <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
+        </tr>
+        <tr>
+          <td id="chatRequestAbandonTooltip" class = 'tooltip'>チャット放棄件数
+            <div class="questionBalloon questionBalloonPosition11">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+            <td><?php echo number_format($data['abandonRequestDatas']['abandonRequestNumberData'][sprintf("%02d",$i).':00']) ?></td>
+          <?php } ?>
+          <td><?php echo number_format($data['abandonRequestDatas']['allAbandonRequestNumberData']) ?></td>
         </tr>
         <tr>
           <td id = 'chatDenialLabel' class = 'tooltip'>チャット拒否件数
@@ -499,17 +573,6 @@
           <td><?php echo $data['coherentDatas']['allCVNumberData'] ?></td>
         </tr>
         <tr>
-          <td id = 'chatLinkClickTooltip' class = 'tooltip'>リンククリック件数
-            <div class="questionBalloon questionBalloonPosition8s">
-              <icon class="questionBtn">？</icon>
-            </div>
-          </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo number_format($data['linkDatas']['linkNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
-          <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
-        </tr>
-        <tr>
           <td id = 'chatRequestAverageTimeLabel' class = 'tooltip'>平均チャットリクエスト時間
             <div class="questionBalloon questionBalloonPosition13">
               <icon class="questionBtn">？</icon>
@@ -543,7 +606,33 @@
           <td><?php echo $data['responseAvgTimeData']['allResponseAvgTimeData'] ?></td>
         </tr>
         <tr>
-          <td id = 'chatResponseRateLabel' class = 'tooltip'>チャット応対率
+          <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
+            <div class="questionBalloon questionBalloonPosition7">
+              <icon class="questionBtn">？</icon>
+            </div>
+          </td>
+          <?php
+            for ($i = $start; $i <= $end; $i++) {
+              if(is_numeric($data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'])) {
+                $checkData = ' %';
+              }
+              else {
+                $checkData = '';
+              } ?>
+            <td><?php echo $data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'].$checkData ?></td>
+          <?php } ?>
+          <?php
+            if(is_numeric($data['automaticResponseData']['allAutomaticResponseRate'])) {
+              $checkData = ' %';
+            }
+            else {
+              $checkData = '';
+            }
+          ?>
+        <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'].$checkData ?></td>
+          </tr>
+        <tr>
+          <td id = 'chatResponseRateLabel' class = 'tooltip'>有人チャット応対率
              <div class="questionBalloon questionBalloonPosition7">
                <icon class="questionBtn">？</icon>
              </div>
@@ -569,32 +658,6 @@
         <td><?php echo $data['responseDatas']['allResponseRate'].$checkData ?></td>
         </tr>
         <tr>
-          <td id = 'chatAutomaticResponseRateLabel' class = 'tooltip'>自動返信応対率
-            <div class="questionBalloon questionBalloonPosition7">
-              <icon class="questionBtn">？</icon>
-            </div>
-          </td>
-          <?php
-            for ($i = $start; $i <= $end; $i++) {
-              if(is_numeric($data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'])) {
-                $checkData = ' %';
-              }
-              else {
-                $checkData = '';
-              } ?>
-            <td><?php echo $data['automaticResponseData']['automaticResponseRate'][sprintf("%02d",$i).':00'].$checkData ?></td>
-          <?php } ?>
-          <?php
-            if(is_numeric($data['automaticResponseData']['allAutomaticResponseRate'])) {
-              $checkData = ' %';
-            }
-            else {
-              $checkData = '';
-            }
-          ?>
-        <td><?php echo $data['automaticResponseData']['allAutomaticResponseRate'].$checkData ?></td>
-        </tr>
-        <tr>
           <td id = 'chatEffectivenessResponseRateLabel' class = 'tooltip'>チャット有効率
             <div class="questionBalloon questionBalloonPosition7">
               <icon class="questionBtn">？</icon>
@@ -602,23 +665,23 @@
           </td>
           <?php
             for ($i = $start; $i <= $end; $i++) {
-              if(is_numeric($data['coherentDatas']['effectivenessRate'][sprintf("%02d",$i).':00'])) {
+              if(is_numeric($data['responseDatas']['effectivenessRate'][sprintf("%02d",$i).':00'])) {
                 $checkData = ' %';
               }
               else {
                 $checkData = '';
               } ?>
-            <td><?php echo $data['coherentDatas']['effectivenessRate'][sprintf("%02d",$i).':00'].$checkData ?></td>
+            <td><?php echo $data['responseDatas']['effectivenessRate'][sprintf("%02d",$i).':00'].$checkData ?></td>
           <?php } ?>
           <?php
-            if(is_numeric($data['coherentDatas']['allEffectivenessRate'])) {
+            if(is_numeric($data['responseDatas']['allEffectivenessRate'])) {
               $checkData = ' %';
             }
             else {
               $checkData = '';
             }
           ?>
-          <td><?php echo $data['coherentDatas']['allEffectivenessRate'].$checkData ?></td>
+          <td><?php echo $data['responseDatas']['allEffectivenessRate'].$checkData ?></td>
         </tr>
       <?php } ?>
       </tbody>

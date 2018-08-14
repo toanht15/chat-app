@@ -1,4 +1,4 @@
-(function(jquery){
+ (function(jquery){
   // -----------------------------------------------------------------------------
   //   websocket通信
   // -----------------------------------------------------------------------------
@@ -1105,10 +1105,13 @@
       sinclo.chatApi.createNotifyMessage(opUser + "が入室しました");
       // チャットの契約をしている場合
       if ( window.sincloInfo.contract.chat ) {
-        //OPが入室した数
-        //入室数についてはタブでカウントする
-        if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-          ga('send', 'event', 'sinclo', 'manualChat', sinclo.chatApi.opUserName, 1);
+        if(storage.s.get('mannedRequestFlg') === 'true') {
+          console.log('入室扱い');
+          //OPが入室した数
+          //入室数についてはタブでカウントする
+          if(typeof ga == "function" && obj.tabId === userInfo.tabId){
+            ga('send', 'event', 'sinclo', 'manualChat', sinclo.chatApi.opUserName, 1);
+          }
         }
       }
     },
@@ -1237,7 +1240,6 @@
             return false;
           }
           else if(Number(chat.messageType) === 8){
-            return false;
           }
            else if(Number(chat.messageType) === 19) {
             if(check.isJSON(chat.message)) {
@@ -1419,6 +1421,7 @@
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           if(obj.messageType !== sinclo.chatApi.messageType.auto && storage.s.get('requestFlg') === 'true') {
+            console.log('自動返信1');
             //自動返信を出した数
             if(typeof ga == "function"){
               ga('send', 'event', 'sinclo', 'autoChat', location.href, 1);
@@ -1457,6 +1460,7 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
+          console.log('ソーリーメッセージ');
           cn = "sinclo_re";
           sinclo.chatApi.call();
           this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
@@ -1467,10 +1471,16 @@
           }
           // チャットの契約をしている場合
           if ( window.sincloInfo.contract.chat ) {
-            //sorryメッセージを出した数
-            //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-            if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-              ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+            if(storage.s.get('sorryMessageFlg') !== 'true') {
+              if(storage.s.get('mannedRequestFlg') !== 'true') {
+                storage.s.set('mannedRequestFlg',true);
+              }
+              storage.s.set('sorryMessageFlg',true);
+              //sorryメッセージを出した数
+              //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
+              if(typeof ga == "function" && obj.tabId === userInfo.tabId){
+                ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+              }
             }
           }
           return false;
@@ -1536,6 +1546,9 @@
         sinclo.displayTextarea();
         storage.l.set('textareaOpend', 'open');
         storage.s.set('initialNotification', 'false');
+        if(storage.s.get('mannedRequestFlg') !== 'true') {
+          storage.s.set('mannedRequestFlg', true);
+        }
       }
     },
     sendReqAutoChatMessages: function(d){
@@ -2475,13 +2488,24 @@
                     if ( linkTab !== null) {
                       if(link !== null) {
                         var a = linkTab[0];
-                        var link = link[0].replace('&quot;', '');
-                        a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+link+"')");
+                        console.log('aaaaaaaaaaaaaaaaaaaaa');
+                        console.log(a);
                         //imgタグ有効化
                         var img = unEscapeStr.match(imgTagReg);
-                        if(img !== null) {
+                        if(img == null) {
+                          var linkTab3 = linkTab[1].replace(/ /g, "\$nbsp;");
+                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+linkTab3+"')");
+                        }
+                        else {
+                          var linkTab3 = linkTab[1].replace(img[0], "");
+                          linkTab3 = linkTab3.replace(/ /g, "\$nbsp;");
                           imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                           a = a.replace(img[0], imgTag);
+                          var urlTagReg = RegExp(/href="([\s\S]*?)"([\s\S]*?)/);
+                          var url = a.match(urlTagReg);
+                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+linkTab3+"')");
+                          console.log('a2');
+                          console.log(a)
                         }
                       }
                       else {
@@ -2493,8 +2517,11 @@
                     //URLのみのリンクの場合
                     else {
                       var url = link[0];
-                      var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
-                      a = a.replace('target="_blank"','target="_blank" onclick="link(\''+link[0]+'\')"');
+                      var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
+                      var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+                      var linkTab = a.match(linkTabReg);
+                      linkTab3 = linkTab[1].replace(/ /g, "\$nbsp;");
+                      a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+linkTab3+"')");
                       //imgタグ有効化
                       var img = unEscapeStr.match(imgTagReg);
                       if(img !== null) {
@@ -2519,10 +2546,11 @@
                   }
                 }
                 if ( cs === "sinclo_re" ) {
+                  console.log('ここにはいってちゃおわりだ');
                   //imgタグ
                   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
                   var img = unEscapeStr.match(imgTagReg);
-                  if(img !== null) {
+                  if(img !== null && link == null && linkTab == null) {
                     imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                     str = unEscapeStr.replace(img[0], imgTag);
                   }
@@ -5933,5 +5961,4 @@
       return false;
     }
   };
-
 }(sincloJquery));
