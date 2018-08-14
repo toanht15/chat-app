@@ -1203,11 +1203,11 @@ var socket, // socket.io
       }
       // チャットを使用する際
       if ( window.sincloInfo.contract.chat ) {
-        html += '      @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% { } 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
+        html += '      @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
         html += '      @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
         html += '      @keyframes fadeIn { 0% { opacity :0; } 100% { opacity :1; } }';
-        html += '      @keyframes noneRightEffect { 0% { opacity :0; } 100% { opacity :1; } }';
-        html += '      @keyframes noneLeftEffect { 0% { opacity :0; } 100% { opacity :1; } }';
+        html += '      @keyframes noneRightEffect { 0% { opacity :0; } 70% {} 100% { opacity :1; } }';
+        html += '      @keyframes noneLeftEffect { 0% { opacity :0; } 69% {} 100% { opacity :1; } }';
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.sincloInfo.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         // ファイルフォントアイコン-----------
         html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-4x { font-size:4em; }';
@@ -1327,6 +1327,30 @@ var socket, // socket.io
         html += '@-ms-keyframes spin { 0% {-ms-transform: rotate(0deg);} 100% {-ms-transform: rotate(360deg);} }';
         html += '@-o-keyframes spin { 0% {-o-transform: rotate(0deg);} 100% {-o-transform: rotate(360deg);} }';
         html += '@keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }';
+
+        // 一括ヒアリング
+        html += '#sincloBox #chatTalk li.sinclo_re.sinclo_form { display: block; padding: 15px; line-height: 0; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formContentArea { margin: 0; line-height: 0; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formArea { background-color: #FFF; line-height: 0; padding: 10px 10px 0 10px; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formElement { color: #333; display: flex; justify-content: stretch; flex-flow: column nowrap; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formElement.withMB { margin-bottom: 8px; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formElement label.formLabel { margin-bottom: 3px; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formElement label.formLabel span.require { color: #7F0000 }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formElement input.formInput { padding: 5px; border: 1px solid ' + colorList['reBackgroundColor'] + '; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea { margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;  }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton { width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + ';  }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton:hover { opacity: 0.8; }';
+
+        html += '#sincloBox #chatTalk li.sinclo_se.sinclo_form { display: block; padding: 10px 15px 15px 15px; line-height: 0; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formContentArea { margin: 0; line-height: 0; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formArea { background-color: #FFF; line-height: 0; padding: 10px 10px 0 10px; margin-top: 10px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formElement { color: #333; display: flex; justify-content: stretch; flex-flow: column nowrap; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formElement.withMB { margin-bottom: 8px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formElement label.formLabel { margin-bottom: 3px; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formElement label.formLabel span.require { color: #7F0000 }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formElement input.formInput { padding: 5px; border: 1px solid ' + colorList['seBackgroundColor'] + '; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea { margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;  }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton { width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; opacity:0.38;  }';
 
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
@@ -2844,11 +2868,11 @@ var socket, // socket.io
     chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
     chatBotTypingCall: function(obj){
-      if(!common.chatBotTypingDelayTimer){
+      if(!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry){
         common.chatBotTypingDelayTimer = setTimeout(function(){
           common.chatBotTyping(obj);
           common.chatBotTypingDelayTimer = null;
-        },820)
+        },850)
       }
     },
     chatBotTypingTimerClear: function(){
@@ -2856,6 +2880,7 @@ var socket, // socket.io
       common.chatBotTypingDelayTimer = null;
     },
     chatBotTyping: function(obj){
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>waitAnimationFuncStart');
       //予期せぬエラーを回避するため、ローディングの重複表示を避ける
       if($(".botNowDiv").length > 0){
         return;
@@ -2881,10 +2906,11 @@ var socket, // socket.io
              ||obj.messageType === sinclo.chatApi.messageType.start){
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
-             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
-             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile){
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection){
         return;
-      }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text){
+      }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.sendFile){
         if(!sinclo.scenarioApi.isProcessing()){
           return;
         }
@@ -2900,7 +2926,7 @@ var socket, // socket.io
       var html  = "";
           html += "<div class='botNowDiv'>";
           //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
-          if(widget.widgetSizeType === 1 && $('#chatTalk').get(0).offsetHeight < $('#chatTalk').get(0).scrollHeight){
+          if(!check.smartphone() && widget.widgetSizeType === 1 && $('#chatTalk').get(0).offsetHeight < $('#chatTalk').get(0).scrollHeight){
             html += "<li class='effect_left_wait botDotOnlyTyping'>";
             html += "  <div class='reload_only_dot_left'></div>";
             html += "  <div class='reload_only_dot_center'></div>";
@@ -2994,6 +3020,7 @@ var socket, // socket.io
           common.firstTimeChatBotTyping = false;
         }
         $("sinclo-chat").append(html);
+        console.log('waitAnimationAdded!');
         return;
     },
     chatBotTypingRemove: function(){
