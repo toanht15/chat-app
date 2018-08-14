@@ -1329,9 +1329,9 @@ var socket, // socket.io
         html += '@keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }';
 
         // 一括ヒアリング
-        html += '#sincloBox #chatTalk li.sinclo_re.sinclo_form { display: block; padding: 15px; line-height: 0; }';
+        html += '#sincloBox #chatTalk li.sinclo_re.sinclo_form { display: block; padding: 10px 15px 15px 15px; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formContentArea { margin: 0; line-height: 0; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.formArea { background-color: #FFF; line-height: 0; padding: 10px 10px 0 10px; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formArea { background-color: #FFF; line-height: 0; padding: 10px 10px 0 10px; margin-top: 10px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formElement { color: #333; display: flex; justify-content: stretch; flex-flow: column nowrap; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formElement.withMB { margin-bottom: 8px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formElement label.formLabel { margin-bottom: 3px; }';
