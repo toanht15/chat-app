@@ -1164,8 +1164,16 @@
           if (Number(chat.messageType) === 3 && 'chatId' in chat) {
             if(check.isset(window.sincloInfo.messages)) {
               var found = false;
-              for(var index in window.sincloInfo.messages) {
-                if(window.sincloInfo.messages[index].id === chat.chatId) {
+              for (var i=0; i<window.sincloInfo.messages.length; i++) {
+                if(Number(window.sincloInfo.messages[i].id) === Number(chat.chatId)) {
+                  var conditions = window.sincloInfo.messages[i].activity.conditions;
+                  var isAutoSpeechMessage = false;
+                  Object.keys(conditions).forEach(function(e,i,a){
+                    if(Number(e) === 7) {
+                      isAutoSpeechMessage = true;
+                    }
+                  });
+                  if(isAutoSpeechMessage) continue;
                   console.log("push " + chat.chatId);
                   this.chatApi.autoMessages.push(chat.chatId, {
                     chatId: chat.chatId,
@@ -2198,7 +2206,7 @@
             storage.s.set('amsg', JSON.stringify(list));
           },
           delete: function(id) {
-            var list = this.get();
+            var list = this.get(true);
             delete list[id];
             storage.s.set('amsg', JSON.stringify(list));
           }
