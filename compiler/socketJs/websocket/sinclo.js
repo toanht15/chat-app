@@ -1164,8 +1164,16 @@
           if (Number(chat.messageType) === 3 && 'chatId' in chat) {
             if (check.isset(window.sincloInfo.messages)) {
               var found = false;
-              for (var index in window.sincloInfo.messages) {
-                if (window.sincloInfo.messages[index].id === chat.chatId) {
+              for (var i=0; i<window.sincloInfo.messages.length; i++) {
+                if(Number(window.sincloInfo.messages[i].id) === Number(chat.chatId)) {
+                  var conditions = window.sincloInfo.messages[i].activity.conditions;
+                  var isAutoSpeechMessage = false;
+                  Object.keys(conditions).forEach(function(e,i,a){
+                    if(Number(e) === 7) {
+                      isAutoSpeechMessage = true;
+                    }
+                  });
+                  if(isAutoSpeechMessage) continue;
                   console.log("push " + chat.chatId);
                   this.chatApi.autoMessages.push(chat.chatId, {
                     chatId: chat.chatId,
@@ -2134,100 +2142,100 @@
       }
     },
     chatApi: {
-      saveFlg: false,
-      online: false, // 現在の対応状況
-      historyId: null,
-      stayLogsId: null,
-      unread: 0,
-      opUser: "",
-      opUserName: "",
-      messageType: {
-        customer: 1,
-        company: 2,
-        auto: 3,
-        sorry: 4,
-        autoSpeech: 5,
-        sendFile: 6,
-        notification: 7,
-        start: 98,
-        end: 99,
-        scenario: {
-          customer: {
-            hearing: 12,
-            selection: 13,
-            sendFile: 19,
-            bulkHearing: 32
+        saveFlg: false,
+        online: false, // 現在の対応状況
+        historyId: null,
+        stayLogsId: null,
+        unread: 0,
+        opUser: "",
+        opUserName: "",
+        messageType: {
+          customer: 1,
+          company: 2,
+          auto: 3,
+          sorry: 4,
+          autoSpeech: 5,
+          sendFile: 6,
+          notification: 7,
+          start: 98,
+          end: 99,
+          scenario: {
+            customer: {
+              hearing: 12,
+              selection: 13,
+              sendFile: 19,
+              bulkHearing: 32
+            },
+            message: {
+              text: 21,
+              hearing: 22,
+              selection: 23,
+              receiveFile: 27,
+            }
+          }
+        },
+        autoMessages: {
+          push: function(id, obj) {
+            var list = this.get(true);
+            if(!this.exists(id)) {
+              list[id] = obj;
+              storage.s.set('amsg', JSON.stringify(list));
+              return true;
+            } else if(!('created' in list[id])) {
+              console.log("OVERWRITE OBJECT ID: " + id + "B : " + JSON.stringify(list[id]) + "A : " + JSON.stringify(obj));
+              list[id] = obj;
+              storage.s.set('amsg', JSON.stringify(list));
+              return true;
+            }
+            return false;
           },
-          message: {
-            text: 21,
-            hearing: 22,
-            selection: 23,
-            receiveFile: 27
-          }
-        }
-      },
-      autoMessages: {
-        push: function (id, obj) {
-          var list = this.get(true);
-          if (!this.exists(id)) {
-            list[id] = obj;
-            storage.s.set('amsg', JSON.stringify(list));
-            return true;
-          } else if (!('created' in list[id])) {
-            console.log("OVERWRITE OBJECT ID: " + id + "B : " + JSON.stringify(list[id]) + "A : " + JSON.stringify(obj));
-            list[id] = obj;
-            storage.s.set('amsg', JSON.stringify(list));
-            return true;
-          }
-          return false;
-        },
-        get: function (allData) {
-          var json = storage.s.get('amsg');
-          var returnData = {};
-          if (json) {
-            var array = JSON.parse(json);
-            Object.keys(array).forEach(function (id, index, ar) {
-              if (allData || !array[id].applied) {
-                returnData[id] = array[id];
-              }
+          get: function(allData) {
+            var json = storage.s.get('amsg');
+            var returnData = {};
+            if(json) {
+              var array = JSON.parse(json);
+              Object.keys(array).forEach(function(id, index, ar) {
+                if(allData || !array[id].applied) {
+                  returnData[id] = array[id];
+                }
+              });
+            }
+            return returnData;
+          },
+          getByArray: function(allData) {
+            var json = storage.s.get('amsg');
+            var returnData = [];
+            if(json) {
+              var array = JSON.parse(json);
+              Object.keys(array).forEach(function(id, index, ar) {
+                if(allData || !array[id].applied) {
+                  returnData.push(array[id]);
+                }
+              });
+            }
+            return returnData;
+          },
+          exists: function(chatId) {
+            var list = this.get(true);
+            console.log(">>>>>>>>>>>>>>> " + JSON.stringify(list));
+            return chatId in list;
+          },
+          unset: function() {
+            // 論理的にフラグを付ける
+            var list = this.get(true);
+            Object.keys(list).forEach(function(id, index, arr) {
+              list[id]['applied'] = true;
             });
+            storage.s.set('amsg', JSON.stringify(list));
+          },
+          delete: function(id) {
+            var list = this.get(true);
+            delete list[id];
+            storage.s.set('amsg', JSON.stringify(list));
           }
-          return returnData;
         },
-        getByArray: function (allData) {
-          var json = storage.s.get('amsg');
-          var returnData = [];
-          if (json) {
-            var array = JSON.parse(json);
-            Object.keys(array).forEach(function (id, index, ar) {
-              if (allData || !array[id].applied) {
-                returnData.push(array[id]);
-              }
-            });
-          }
-          return returnData;
-        },
-        exists: function (chatId) {
-          var list = this.get(true);
-          console.log(">>>>>>>>>>>>>>> " + JSON.stringify(list));
-          return chatId in list;
-        },
-        unset: function () {
-          // 論理的にフラグを付ける
-          var list = this.get(true);
-          Object.keys(list).forEach(function (id, index, arr) {
-            list[id]['applied'] = true;
-          });
-          storage.s.set('amsg', JSON.stringify(list));
-        },
-        delete: function (id) {
-          var list = this.get();
-          delete list[id];
-          storage.s.set('amsg', JSON.stringify(list));
-        }
-      },
-      init: function () {
-        this.initEvent();
+        init: function(){
+          this.initEvent();
 
         var textareaOpend = storage.l.get('textareaOpend');
         //チャットのテキストエリア表示
