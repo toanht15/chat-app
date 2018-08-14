@@ -1251,6 +1251,11 @@
             } else {
               this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
+          } else if (Number(chat.messageType) === 32) {
+            // ヒアリング時に取得した文字列（署名を想定）は出さない
+            continue;
+          } else if (Number(chat.messageType) === 33) {
+            this.chatApi.createFormFromLog(JSON.parse(chat.message));
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
@@ -1398,7 +1403,10 @@
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
-
+        if (obj.messageType === sinclo.chatApi.messageType.scenario.customer.bulkHearing) {
+          common.chatBotTyping(value);
+          return;
+        }
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1468,6 +1476,15 @@
             this.chatApi.createMessage(cn, obj.chatMessage, "");
           }
           this.chatApi.scDown();
+          return false;
+        }
+
+        if (obj.messageType === 33) {
+          this.chatApi.createFormFromLog(JSON.parse(obj.chatMessage));
+          this.chatApi.scDown();
+          setTimeout(function () {
+            common.chatBotTyping(obj)
+          }, 800);
           return false;
         }
 
@@ -2138,14 +2155,14 @@
           customer: {
             hearing: 12,
             selection: 13,
-            sendFile: 19
+            sendFile: 19,
+            bulkHearing: 32
           },
           message: {
             text: 21,
             hearing: 22,
             selection: 23,
-            receiveFile: 27,
-            bulkHearing: 42
+            receiveFile: 27
           }
         }
       },
@@ -2862,103 +2879,207 @@
           });
         }
 
-          sinclo.chatApi.fileUploader.init($('#sincloBox'),
-            $(li.querySelector('div.receiveFileContent div.selectFileArea')),
-            $(li.querySelector('div.receiveFileContent div.selectFileArea p.drop-area-button a.select-file-button')),
-            $(li.querySelector('div.receiveFileContent div.selectFileArea input.receiveFileInput')),
-            extensionType,
-            extendedExtensions);
-          this.scDown();
-        },
-        createSentFileMessage: function(comment, downloadUrl, extension) {
-          var divElm = document.createElement('div');
-          divElm.style.textAlign = "right";
-          var thumbnail = "";
-          if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
-            thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail " + sinclo.chatApi.fileUploader._selectPreviewImgClass() + "'>";
-          } else {
-            thumbnail = "<i class='sinclo-fal " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
-          }
-          divElm.innerHTML = "  <li class=\"sinclo_se effect_right chat_right uploaded details\">" +
-            "    <div class=\"receiveFileContent\">" +
-            "      <div class=\"selectFileArea\">" +
-            "        <p class=\"preview\">" + thumbnail + "</p>" +
-            "        <p class=\"commentLabel\">＜コメント＞</p>" +
-            "        <p class=\"commentarea\" style='text-align: left;'>" + comment + "</p>" +
-            "      </div>" +
-            "    </div>" +
-            "  </li>";
-          // 要素を追加する
-          document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
-        },
-        _selectFontIconClassFromExtension: function(ext) {
-          var selectedClass = "",
-            icons = {
-              image: 'fa-file-image',
-              pdf: 'fa-file-pdf',
-              word: 'fa-file-word',
-              powerpoint: 'fa-file-powerpoint',
-              excel: 'fa-file-excel',
-              audio: 'fa-file-audio',
-              video: 'fa-file-video',
-              zip: 'fa-file-zip',
-              code: 'fa-file-code',
-              text: 'fa-file-text',
-              file: 'fa-file'
-            },
-            extensions = {
-              gif: icons.image,
-              jpeg: icons.image,
-              jpg: icons.image,
-              png: icons.image,
-              pdf: icons.pdf,
-              doc: icons.word,
-              docx: icons.word,
-              ppt: icons.powerpoint,
-              pptx: icons.powerpoint,
-              xls: icons.excel,
-              xlsx: icons.excel,
-              aac: icons.audio,
-              mp3: icons.audio,
-              ogg: icons.audio,
-              avi: icons.video,
-              flv: icons.video,
-              mkv: icons.video,
-              mp4: icons.video,
-              gz: icons.zip,
-              zip: icons.zip,
-              css: icons.code,
-              html: icons.code,
-              js: icons.code,
-              txt: icons.text,
-              csv: icons.csv,
-              file: icons.file
-            };
-          if(check.isset(extensions[ext])) {
-            selectedClass = extensions[ext]
-          } else {
-            selectedClass = extensions['file'];
-          }
-          return selectedClass;
-        },
-        createMessageUnread: function(cs, val, name, isScenarioMessage){
-          if ( cs && cs.indexOf("sinclo_re") >= 0 ) {
-            sinclo.chatApi.unread++;
-            sinclo.chatApi.showUnreadCnt();
-          }
-          sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
-        },
-        clearChatMessages: function() {
-          var chatTalk = document.getElementsByTagName("sinclo-chat")[0];
-          while (chatTalk.firstChild) chatTalk.removeChild(chatTalk.firstChild);
-        },
-        scDownTimer: null,
-        scDown: function(obj){
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownCalled!!');
-          if ( this.scDownTimer ) {
-            clearTimeout(this.scDownTimer);
-          }
-          this.scDownTimer = setTimeout(function(){
+        sinclo.chatApi.fileUploader.init($('#sincloBox'),
+          $(li.querySelector('div.receiveFileContent div.selectFileArea')),
+          $(li.querySelector('div.receiveFileContent div.selectFileArea p.drop-area-button a.select-file-button')),
+          $(li.querySelector('div.receiveFileContent div.selectFileArea input.receiveFileInput')),
+          extensionType,
+          extendedExtensions);
+        this.scDown();
+      },
+      createSentFileMessage: function (comment, downloadUrl, extension) {
+        var divElm = document.createElement('div');
+        divElm.style.textAlign = "right";
+        var thumbnail = "";
+        if (extension.match(/(jpeg|jpg|gif|png)$/i) != null) {
+          thumbnail = "<img src='" + downloadUrl + "' class='sendFileThumbnail " + sinclo.chatApi.fileUploader._selectPreviewImgClass() + "'>";
+        } else {
+          thumbnail = "<i class='sinclo-fal " + this._selectFontIconClassFromExtension(extension) + " fa-4x sendFileThumbnail' aria-hidden='true'></i>";
+        }
+        divElm.innerHTML = "  <li class=\"sinclo_se effect_right chat_right uploaded details\">" +
+          "    <div class=\"receiveFileContent\">" +
+          "      <div class=\"selectFileArea\">" +
+          "        <p class=\"preview\">" + thumbnail + "</p>" +
+          "        <p class=\"commentLabel\">＜コメント＞</p>" +
+          "        <p class=\"commentarea\" style='text-align: left;'>" + comment + "</p>" +
+          "      </div>" +
+          "    </div>" +
+          "  </li>";
+        // 要素を追加する
+        document.getElementById('chatTalk').querySelector('sinclo-chat').appendChild(divElm);
+      },
+      _selectFontIconClassFromExtension: function (ext) {
+        var selectedClass = "",
+          icons = {
+            image: 'fa-file-image',
+            pdf: 'fa-file-pdf',
+            word: 'fa-file-word',
+            powerpoint: 'fa-file-powerpoint',
+            excel: 'fa-file-excel',
+            audio: 'fa-file-audio',
+            video: 'fa-file-video',
+            zip: 'fa-file-zip',
+            code: 'fa-file-code',
+            text: 'fa-file-text',
+            file: 'fa-file'
+          },
+          extensions = {
+            gif: icons.image,
+            jpeg: icons.image,
+            jpg: icons.image,
+            png: icons.image,
+            pdf: icons.pdf,
+            doc: icons.word,
+            docx: icons.word,
+            ppt: icons.powerpoint,
+            pptx: icons.powerpoint,
+            xls: icons.excel,
+            xlsx: icons.excel,
+            aac: icons.audio,
+            mp3: icons.audio,
+            ogg: icons.audio,
+            avi: icons.video,
+            flv: icons.video,
+            mkv: icons.video,
+            mp4: icons.video,
+            gz: icons.zip,
+            zip: icons.zip,
+            css: icons.code,
+            html: icons.code,
+            js: icons.code,
+            txt: icons.text,
+            csv: icons.csv,
+            file: icons.file
+          };
+        if (check.isset(extensions[ext])) {
+          selectedClass = extensions[ext]
+        } else {
+          selectedClass = extensions['file'];
+        }
+        return selectedClass;
+      },
+      createForm: function (isConfirm, hearingTarget, resultData, callback) {
+        common.chatBotTypingRemove();
+        var chatList = document.getElementsByTagName('sinclo-chat')[0];
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+
+        div.appendChild(li);
+        chatList.appendChild(div);
+
+        var formElements = "";
+        var isEmptyRequire = false;
+
+        var content = "";
+        if(isConfirm) {
+          hearingTarget.forEach(function(elm, idx, arr){
+            if(elm.required && resultData[Number(elm.inputType)].length === 0) {
+              isEmptyRequire = true;
+            }
+            formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
+            formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'>*</span>" : "") + "</label>";
+            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
+            formElements += "    </div>";
+          });
+
+          content +=  (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
+          content += "<div class='formContentArea'>";
+          content += "  <p class='formMessage'>" + ((isEmptyRequire) ? "必須項目の入力が認識できませんでした。\n*印の項目を入力してください。" : "こちらの内容でよろしいでしょうか？")  + "</p>";
+          content += "  <div class='formArea'>";
+          content += formElements;
+          content += "    <p class='formOKButtonArea'><span class='formOKButton'>OK</span></p>";
+          content += "  </div>";
+          content += "</div>";
+          li.className = 'sinclo_re effect_left sinclo_form';
+        } else {
+          hearingTarget.forEach(function(elm, idx, arr){
+            if(elm.required && resultData[elm.variableName].value.length === 0) {
+              isEmptyRequire = true;
+            }
+            formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
+            formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'>*</span>" : "") + "</label>";
+            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.variableName + "' value='" + resultData[elm.variableName].value + "' readonly/>";
+            formElements += "    </div>";
+          });
+
+          content += (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
+          content += "<div class='formContentArea'>";
+          content += "  <div class='formArea'>";
+          content += formElements;
+          content += "    <p class='formOKButtonArea'><span class='formOKButton disabled'>OK</span></p>";
+          content += "  </div>";
+          content += "</div>";
+          li.className = 'sinclo_se effect_right sinclo_form';
+        }
+        li.innerHTML = content;
+        $(li).find('span.formOKButton').on('click', function(e){
+          if($(this).hasClass('disabled')) return;
+          var returnValue = {};
+          var targetArray = $(li).find('.formInput');
+          targetArray.each(function(index, element) {
+            returnValue[$(element).attr('name')] = {
+              label: $(element).data('label-text'),
+              value: $(element).val(),
+              required: $(element).data('required')
+            }
+          });
+          console.log("return Value : %s",JSON.stringify(returnValue));
+          callback(returnValue);
+        });
+        this.scDown();
+      },
+      createFormFromLog: function (data) {
+        var chatList = document.getElementsByTagName('sinclo-chat')[0];
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+
+        div.appendChild(li);
+        chatList.appendChild(div);
+
+        var formElements = "";
+        var isEmptyRequire = false;
+
+        var content = "";
+        var objKeys = Object.keys(data);
+        objKeys.forEach(function(variableName, index, array){
+          formElements += (array.length - 1 === index) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
+          formElements += "      <label class='formLabel'>" + data[variableName].label + (data[variableName].required ? "<span class='require'>*</span>" : "") + "</label>";
+          formElements += "      <input type='text' class='formInput' placeholder='" + data[variableName].label + "を入力してください' data-label-text='" + data[variableName].label + "' name='" + data[variableName].variableName + "' value='" + data[variableName].value + "' readonly/>";
+          formElements += "    </div>";
+        });
+
+        content += (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
+        content += "<div class='formContentArea'>";
+        content += "  <div class='formArea'>";
+        content += formElements;
+        content += "    <p class='formOKButtonArea'><span class='formOKButton disabled'>OK</span></p>";
+        content += "  </div>";
+        content += "</div>";
+        li.className = 'sinclo_se effect_right sinclo_form';
+        li.innerHTML = content;
+      },
+      hideForm: function() {
+        $('li.sinclo_re.sinclo_form').remove();
+      },
+      createMessageUnread: function (cs, val, name, isScenarioMessage) {
+        if (cs && cs.indexOf("sinclo_re") >= 0) {
+          sinclo.chatApi.unread++;
+          sinclo.chatApi.showUnreadCnt();
+        }
+        sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
+      },
+      clearChatMessages: function () {
+        var chatTalk = document.getElementsByTagName("sinclo-chat")[0];
+        while (chatTalk.firstChild) chatTalk.removeChild(chatTalk.firstChild);
+      },
+      scDownTimer: null,
+      scDown: function (obj) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownCalled!!');
+        if (this.scDownTimer) {
+          clearTimeout(this.scDownTimer);
+        }
+        //setTimeout(function(){common.chatBotTyping(obj)},800);
+        this.scDownTimer = setTimeout(function () {
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownNow!!');
           var chatTalk = document.getElementById('chatTalk');
             var receiveLastMessage = $('#chatTalk sinclo-chat div:last-of-type').find('.sinclo_re:last-of-type');
@@ -5112,6 +5233,7 @@
           case self._actionType.bulkHearing:
             self._bulkHearing._init(self);
             self._bulkHearing._process();
+            self.set(self._lKey.sendCustomerMessageType, 32);
             break;
         }
       },
@@ -6271,15 +6393,25 @@
                     if(resultValue && Object.keys(resultValue).length > 0) {
                       var keys = Object.keys(resultValue);
                       keys.forEach(function(e, i, a){
-                        self._parent._saveVariable(keys[i], resultValue[keys[i]]);
+                        // 保存時は変数名を利用
+                        self._parent._saveVariable(keys[i], resultValue[keys[i]].value);
+                      });
+                      emit('sendChat', {
+                        historyId: sinclo.chatApi.historyId,
+                        stayLogsId: sinclo.chatApi.stayLogsId,
+                        chatMessage: JSON.stringify(resultValue),
+                        mUserId: null,
+                        messageType: 33,
+                        messageRequestFlg: 0,
+                        isAutoSpeech: false,
+                        notifyToCompany: false,
+                        isScenarioMessage: true
+                      }, function () {
+                        if (self._parent._goToNextScenario()) {
+                          self._parent._process();
+                        }
                       });
                       sinclo.chatApi.hideForm();
-                      sinclo.chatApi.createForm(false, self._parent.get(self._parent._lKey.currentScenario).multipleHearings, resultValue, function(modifiedValue){
-                        // FIXME 各値を修正したときのハンドラ
-                      });
-                      if (self._parent._goToNextScenario()) {
-                        self._parent._process();
-                      }
                     }
                   });
                   self._parent._handleChatTextArea("2"); // 強制非表示
