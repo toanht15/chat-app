@@ -4,26 +4,32 @@
             "type": "dateFile",
             "filename": "./logs/request_",
             "pattern": "yyyyMMdd.log",
-            "backups": 3,
+            "daysToKeep": 7,
             "alwaysIncludePattern": "true"
         },
         "error": {
             "type": "dateFile",
             "filename": "./logs/error_",
             "pattern": "yyyyMMdd.log",
-            "backups": 7,
+            "daysToKeep": 7,
             "alwaysIncludePattern": "true"
         },
         "debug": {
             "type": "dateFile",
             "filename": "./logs/debug_",
             "pattern": "yyyyMMdd.log",
-            "backups": 3,
+            "daysToKeep": 7,
             "alwaysIncludePattern": "false"
         },
         "system": {
             "type": "file",
             "filename": "./logs/system.log",
+            "maxLogSize": 10240000,
+            "backups": 3
+        },
+        "lbc": {
+            "type": "file",
+            "filename": "./logs/lbcLog.log",
             "maxLogSize": 10240000,
             "backups": 3
         }
@@ -32,7 +38,8 @@
         "default": {"appenders":["debug"], "level": "error"},
         "request": {"appenders":["request"], "level": "info"},
         "error": {"appenders":["error"], "level": "info"},
-        "debug": {"appenders":["debug"], "level": "debug"},
-        "system": {"appenders":["system"], "level":"info"}
+        "debug": {"appenders":["debug"], "level": "info"},
+        "system": {"appenders":["system"], "level":"info"},
+        "lbc": {"appenders":["lbc"], "level":"info"}
     }
 }

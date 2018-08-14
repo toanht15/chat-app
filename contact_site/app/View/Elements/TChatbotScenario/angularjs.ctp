@@ -1104,12 +1104,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         for(var i=0; i<actionDetail.conditionList.length; i++) {
           if($scope.isMatch(value, actionDetail.conditionList[i])) {
             if(actionDetail.conditionList[i].actionType =='1'){
-              setTimeout(chatBotTyping,500);
+              chatBotTyping();
               break;
             }
           }else if(actionDetail.elseEnabled){
             if(actionDetail.elseAction.actionType == '1'){
-              setTimeout(chatBotTyping,500);
+              chatBotTyping();
               break;
             }
           }
@@ -1121,7 +1121,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
           time = setTime || '0';
         }else{
-          setTimeout(chatBotTyping,500);
+          chatBotTyping();
         }
       }
 
@@ -1201,7 +1201,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             if($scope.isMatch(value, actionDetail.conditionList[i])) {
               $scope.doBranchOnCondAction(actionDetail.conditionList[i]);
               if(actionDetail.conditionList[i] =='1'){
-                setTimeout(chatBotTyping,500);
+                chatBotTyping();
               }
               return;
             }
