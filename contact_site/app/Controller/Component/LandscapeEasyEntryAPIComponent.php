@@ -157,11 +157,31 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
     foreach($selectVariablePriority as $key => $priority) {
       foreach($priority as $index => $attribute) {
         if(array_key_exists($attribute, $data)) {
-          $value[$key] = $data[$attribute];
+          $value[$key] = $this->convertData($key, $data[$attribute]);
           break;
         }
       }
     }
     return $value;
+  }
+
+  private function convertData($key, $value)
+  {
+    $separatorStr = "";
+    switch($key) {
+      case self::INPUT_TYPE_TEL_ID:
+      case self::INPUT_TYPE_FAX_ID:
+      case self::INPUT_TYPE_ZIP_ID:
+        $separatorStr = '-';
+        break;
+      case self::INPUT_TYPE_PERSONAL_NAME_ID:
+        $separatorStr = '　';
+        break;
+    }
+    if(!empty($separatorStr)) {
+      return join($separatorStr, $value);
+    } else {
+      return $value;
+    }
   }
 }
