@@ -2208,7 +2208,11 @@ var socket, // socket.io
               }
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
-              common.widgetHandler._handleResizeEvent();
+              if(!check.smartphone()){
+                common.widgetHandler._handleResizeEvent();
+              }else{
+                sinclo.adjustSpWidgetSize();
+              }
             }
           }
           else{
@@ -2226,7 +2230,11 @@ var socket, // socket.io
               //最小化時ボタン表示
               common.whenMinimizedBtnShow();
               sinclo.chatApi.unlockPageScroll();
-              common.widgetHandler._handleResizeEvent();
+              if(!check.smartphone()){
+                common.widgetHandler._handleResizeEvent();
+              }else{
+                sinclo.adjustSpWidgetSize();
+              }
             }
             else{
               console.log("saidaika");
@@ -2242,7 +2250,11 @@ var socket, // socket.io
               //最大化時ボタン表示
               common.whenMaximizedBtnShow();
               sinclo.chatApi.lockPageScroll();
-              common.widgetHandler._handleResizeEvent();
+              if(!check.smartphone()){
+                common.widgetHandler._handleResizeEvent();
+              }else{
+                sinclo.adjustSpWidgetSize();
+              }
             }
           }
           //画像がない時のタイトル位置
