@@ -76,6 +76,19 @@ class MailTemplateSettingsController extends AppController
 
   private function processTransaction($mailInfo) {
     try {
+      //時間設定
+      if($mailInfo['MJobMailTemplate']['time'] == 0) {
+        $mailInfo['MJobMailTemplate']['time'] = 9;
+      }
+      if($mailInfo['MJobMailTemplate']['time'] == 1) {
+        $mailInfo['MJobMailTemplate']['time'] = 12;
+      }
+      if($mailInfo['MJobMailTemplate']['time'] == 2) {
+        $mailInfo['MJobMailTemplate']['time'] = 15;
+      }
+      if($mailInfo['MJobMailTemplate']['time'] == 3) {
+        $mailInfo['MJobMailTemplate']['time'] = 19;
+      }
       //N日後orN日前
       if($mailInfo['MailTemplateSettings']['timeToSendMail'] == C_AFTER_DAYS || $mailInfo['MailTemplateSettings']['timeToSendMail'] == C_BEFORE_DAYS) {
         //N日後
@@ -124,7 +137,10 @@ class MailTemplateSettingsController extends AppController
         "value" => $mailInfo["value"],
         "time" => $mailInfo["time"],
         "agreement_flg" => $mailInfo["agreement_flg"],
-        "send_mail_ml_flg" => $mailInfo["mail_body"]
+        "send_mail_application_user_flg" => $mailInfo["send_mail_application_user_flg"],
+        "send_mail_administrator_user_flg" => $mailInfo["send_mail_administrator_user_flg"],
+        "send_mail_sinclo_all_users_flg" => $mailInfo["send_mail_sinclo_all_users_flg"],
+        "send_mail_ml_flg" => $mailInfo["send_mail_ml_flg"]
     ];
     $this->MJobMailTemplate->create();
     $this->MJobMailTemplate->set($tmpData);
@@ -229,7 +245,7 @@ class MailTemplateSettingsController extends AppController
         if($saveData['MJobMailTemplate']['time'] == 2) {
           $saveData['MJobMailTemplate']['time'] = 15;
         }
-        if($saveData['MJobMailTemplate']['time'] == 2) {
+        if($saveData['MJobMailTemplate']['time'] == 3) {
           $saveData['MJobMailTemplate']['time'] = 19;
         }
         //何日後、何日前更新の場合

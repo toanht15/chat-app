@@ -120,7 +120,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
     $('#chatTalk > div:last-child').show();
-
     self.autoScroll();
   };
 
@@ -161,7 +160,6 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
     $('#chatTalk > div:last-child').show();
-
     self.autoScroll()
   };
 
@@ -1041,5 +1039,55 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor();
   });
 }]);
+
+function chatBotTyping(){
+  var widgetSizeType = getWidgetSettings().widget_size_type;
+  var html  = "";
+      html += "<div class='botNowDiv'>";
+      html += "<li class='";
+      if(getWidgetSettings().chat_message_with_animation == 1){
+      html += "effect_left_wait ";
+      }else{
+      html += "effect_left_wait_none ";
+      }
+      //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
+      if(widgetSizeType == 1 && $('#chatTalk').get(0).offsetHeight < $('#chatTalk').get(0).scrollHeight){
+        html += "botDotOnlyTyping'>";
+        //メインカラーが白の場合は、違うクラスになる
+        if(getWidgetSettings().main_color != "#FFFFFF"){
+          html += "  <div class='reload_only_dot_left'></div>";
+          html += "  <div class='reload_only_dot_center'></div>";
+          html += "  <div class='reload_only_dot_right'></div>";
+        }else{
+          html += "  <div class='reload_only_white_left'></div>";
+          html += "  <div class='reload_only_white_center'></div>";
+          html += "  <div class='reload_only_white_right'></div>";
+        }
+      }else{
+        //ウィジェットサイズが大の場合
+        if(widgetSizeType == 3){
+          html += "botNowTypingLarge'>";
+          //ウィジェットサイズが中の場合
+        }else if(widgetSizeType == 2){
+          html += "botNowTypingMedium'>";
+          //ウィジェットサイズが小の場合
+        }else if(widgetSizeType == 1){
+          html += "botNowTypingSmall'>";
+        }
+        html += "    <div class='reload_dot_left'></div>";
+        html += "    <div class='reload_dot_center'></div>";
+        html += "    <div class='reload_dot_right'></div>";
+      }
+    html += "  </li>";
+    html += "</div>";
+  setTimeout(function(){
+    $("#chatTalk").append(html)
+  },800);
+  return;
+}
+
+function chatBotTypingRemove(){
+  $('div.botNowDiv').remove();
+}
 
 </script>

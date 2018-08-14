@@ -674,20 +674,55 @@ sincloApp.controller('MainController', function($scope){
     });
   };
 
-  /**
-   * [shareDocument description]
-   * @param  {object} doc documentInfo
-   * @return {void}     open new Window.
-   */
   $scope.shareDocument = function(doc) {
-    var targetTabId = tabId.replace("_frame", "");
-    sessionStorage.removeItem('doc');
-    window.open(
-      "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent(targetTabId) + "&docId=" + doc.id,
-      "doc_monitor_" + targetTabId,
-      "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
-    );
     $scope.closeDocumentList();
+    clearInterval($scope.createTimer);
+    $scope.tabId = $scope.docShareId;
+    $("#popup-bg").css("background-color","rgba(0, 0, 0, 0.0)");
+    $('#afs-popup').show();
+    $("#afs-popup").addClass("show");
+    $('#afs-popup-frame').css('height', $('#popup-frame').height());
+    this.notFirstTime = true;
+    $scope.message = "お客様に共有の許可を求めています。";
+    $scope.title = "共有申請中";
+    $scope.createTimer = setInterval(function () {
+      if ($scope.title.length > 7) {
+        $scope.title = "共有申請中";
+        $scope.$apply();
+      }
+      else {
+        $scope.title　+= '・';
+        $scope.$apply();
+      }
+    }, 500);
+
+    var settings = JSON.parse(doc.settings);
+    var rotation = (settings.hasOwnProperty('rotation')) ? settings.rotation : 0;
+    emit('docShareConnect', {
+      id: doc.id,
+      from: 'company',
+      responderId: '<?=$userInfo["id"]?>',
+      directory: "<?=C_AWS_S3_HOSTNAME.C_AWS_S3_BUCKET."/medialink/"?>",
+      fileName: doc.file_name,
+      pagenation_flg: doc.pagenation_flg,
+      pages: settings.pages,
+      rotation: rotation,
+      download_flg: doc.download_flg,
+      tabId: tabId.replace("_frame", ""),
+      popup:'true'
+    });
+  };
+
+  $scope.docShare = function(doc){
+    var obj = JSON.parse(data);
+    if(obj && obj.responderId && Number(obj.responderId) === Number(<?=$userInfo["id"]?>)) {
+      window.open(
+        "<?= $this->Html->url(['controller' => 'Customers', 'action' => 'docFrame']) ?>?tabInfo=" + encodeURIComponent($scope.docShareId) + "&docId=" + obj.id,
+        "doc_monitor_" + $scope.docShareId,
+        "width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no"
+      );
+      $('#afs-popup').hide();
+    }
   };
 
   /**

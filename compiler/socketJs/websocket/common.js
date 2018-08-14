@@ -1203,9 +1203,11 @@ var socket, // socket.io
       }
       // チャットを使用する際
       if ( window.sincloInfo.contract.chat ) {
-        html += '      @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% { } 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
+        html += '      @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
         html += '      @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }';
         html += '      @keyframes fadeIn { 0% { opacity :0; } 100% { opacity :1; } }';
+        html += '      @keyframes noneRightEffect { 0% { opacity :0; } 70% {} 100% { opacity :1; } }';
+        html += '      @keyframes noneLeftEffect { 0% { opacity :0; } 69% {} 100% { opacity :1; } }';
         html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' + window.sincloInfo.site.files + '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         // ファイルフォントアイコン-----------
         html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-4x { font-size:4em; }';
@@ -1255,8 +1257,12 @@ var socket, // socket.io
           html += '      #sincloBox ul#chatTalk li.sinclo_re { ' + chatPosition.re + 'background-color:' + colorList['reBackgroundColor'] + '; color:' + colorList['reTextColor'] + '; font-size: '+ widget.reTextSize +'px; display: inline-block; position: relative;}';
         }
         if (widget.chatMessageWithAnimation === 1) {
-          html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:rightEffect; -moz-animation-name:rightEffect; -o-animation-name:rightEffect; -ms-animation-name:rightEffect; animation-name:rightEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:3s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; -moz-animation-fill-mode:both; -o-animation-fill-mode:both; -ms-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }';
-          html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; -moz-animation-fill-mode:both; -o-animation-fill-mode:both; -ms-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }';
+          html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:rightEffect; animation-name:rightEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }';
+          html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }';
+        }else{
+          html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:noneRightEffect; animation-name:noneRightEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0; -webkit-animation-delay:0.7s; animation-delay:0.7s; }';
+          html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0; -webkit-animation-delay:0.7s; animation-delay:0.7s; }';
+
         }
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message { position: relative; color: #d5d5d5; border: none; text-align: center; }';
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
@@ -1408,7 +1414,7 @@ var socket, // socket.io
         html += '#sincloBox { -webkit-transition: 100ms linear 0ms;  transition: opacity 100ms linear 0ms; }';
         html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { position: relative }';
         html += '#sincloBox section#chatTab sinclo-chat-alert { position: absolute; background-color: rgba(0,0,0,0.6); box-shadow: 0px 0px 4px 4px rgba(0,0,0,0.1); color: #FFF; text-align: center; }';
-        html += '#sincloBox ul sinclo-typing { padding-bottom: '+ (Number(sizeList['paddingBottom']) * ratio) +'px; display: block; }';
+        html += '#sincloBox ul sinclo-typing { padding-bottom: '+ (30.8 * ratio) +'px; display: block; }';
         if ( sinclo.chatApi.sendErrCatchFlg ) {
           html += '#sincloBox section#chatTab sinclo-chat-alert { display:block }';
         }
@@ -2299,7 +2305,7 @@ var socket, // socket.io
         }
       },
       _handleResizeEvent: function() {
-        console.log("widgetHandler::_handleResizeEvent");
+        console.log("<><><><><><><><><>widgetHandler::_handleResizeEvent");
         if(storage.s.get('widgetMaximized') === "true") {
           $('#sincloBox').css('height', 'auto');
         }
@@ -2309,21 +2315,24 @@ var socket, // socket.io
           maxCurrentWidgetHeight = common.widgetHandler._getMaxWidgetHeight(),
           changeTarget = ($('#chatTab').length > 0) ? $('#chatTalk') : $('#telContent'),
           delta = windowHeight - common.widgetHandler._currentWindowHeight;
-
-        if (windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
-          delta = (windowHeight * 0.7) - currentWidgetHeight;
+        if(windowHeight * 0.85 > maxCurrentWidgetHeight) {
+          changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
+          return;
+        }
+        if (windowHeight * 0.85 < currentWidgetHeight && delta === 0) {
+          delta = (windowHeight * 0.85) - currentWidgetHeight;
         }
 
         // 変更後サイズ
         var afterWidgetHeight = $('#sincloWidgetBox').height() + delta;
         if (delta > 0 && afterWidgetHeight > maxCurrentWidgetHeight) {
-          console.log('1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
+          console.log('<><><><><><><><><>1 %s %s %s', delta,afterWidgetHeight, maxCurrentWidgetHeight);
           changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
         } else if (delta < 0 && afterWidgetHeight < minCurrentWidgetHeight) {
-          console.log('2 %s %s %s', delta,afterWidgetHeight, minCurrentWidgetHeight);
+          console.log('<><><><><><><><><>2 %s %s %s', delta,afterWidgetHeight, minCurrentWidgetHeight);
           changeTarget.height(common.widgetHandler._getMinChatTalkHeight());
-        } else if ((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
-          console.log('3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
+        } else if ((delta < 0 && windowHeight * 0.85 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.85 >= afterWidgetHeight)) {
+          console.log('<><><><><><><><><>3 %s %s %s %s', delta, windowHeight, currentWidgetHeight, afterWidgetHeight);
           changeTarget.height(changeTarget.height() + delta);
         }
         common.widgetHandler._currentWindowHeight = windowHeight;
@@ -2416,6 +2425,9 @@ var socket, // socket.io
         var invisibleUIOffset = 0;
         if(!forChatTalkOffset) {
           if(!$('#sincloAccessInfo').is(':visible')) {
+            invisibleUIOffset += 26.5;
+          }
+          if(!$('#sincloWidgetBox #footer').is(':visible')) {
             invisibleUIOffset += 26.5;
           }
           if(!$('#widgetSubTitle').is(':visible') && !$('#widgetDescription').is(':visible')) {
@@ -2828,6 +2840,234 @@ var socket, // socket.io
           }
         }
       }
+    },
+    chatBotTypingDelayTimer: null,
+    firstTimeChatBotTyping: true,
+    chatBotTypingCall: function(obj){
+      if(!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry){
+        common.chatBotTypingDelayTimer = setTimeout(function(){
+          common.chatBotTyping(obj);
+          common.chatBotTypingDelayTimer = null;
+        },850)
+      }
+    },
+    chatBotTypingTimerClear: function(){
+      clearTimeout(common.chatBotTypingDelayTimer);
+      common.chatBotTypingDelayTimer = null;
+    },
+    chatBotTyping: function(obj){
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>waitAnimationFuncStart');
+      //予期せぬエラーを回避するため、ローディングの重複表示を避ける
+      if($(".botNowDiv").length > 0){
+        return;
+      }
+      //チャットが発言内容によるオートメッセージ・シナリオ発動
+      //シナリオ中のヒアリング・ファイル受信・選択肢である場合
+      //ウェイトアニメーションを表示するという処理
+      console.log(obj);
+      if(obj == null){
+        return;
+      }else if(obj.forceWaitAnimation){
+      }else if(obj.messageType === sinclo.chatApi.messageType.customer){
+        if(!obj.matchAutoSpeech){
+          return;
+        }else if(obj.isScenarioMessage){
+          return;
+        }
+      }else if(obj.messageType === sinclo.chatApi.messageType.autoSpeech
+             ||obj.messageType === sinclo.chatApi.messageType.auto
+             ||obj.messageType === sinclo.chatApi.messageType.company
+             ||obj.messageType === sinclo.chatApi.messageType.end
+             ||obj.messageType === sinclo.chatApi.messageType.notification
+             ||obj.messageType === sinclo.chatApi.messageType.start){
+        return;
+      }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection){
+        return;
+      }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.sendFile){
+        if(!sinclo.scenarioApi.isProcessing()){
+          return;
+        }
+      }
+      var widget = window.sincloInfo.widget;
+      var sizeList = common.getSizeType(widget.widgetSizeType);
+      var fontSize = widget.reTextSize;
+      var waitHeight = 1.4 * fontSize + 20;
+      var waitWidth = waitHeight * 2;
+      var waitPadding = waitWidth * 0.172;
+      var loadDotSize = fontSize * 0.8;
+      var heightWeight = widget.widgetSizeType - 3;
+      var html  = "";
+          html += "<div class='botNowDiv'>";
+          //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
+          if(!check.smartphone() && widget.widgetSizeType === 1 && $('#chatTalk').get(0).offsetHeight < $('#chatTalk').get(0).scrollHeight){
+            html += "<li class='effect_left_wait botDotOnlyTyping'>";
+            html += "  <div class='reload_only_dot_left'></div>";
+            html += "  <div class='reload_only_dot_center'></div>";
+            html += "  <div class='reload_only_dot_right'></div>";
+          }else{
+            //スマホかウィジェットサイズが大の場合
+              if(check.smartphone() || widget.widgetSizeType === 3){
+                html += "<li class='effect_left_wait botNowTypingLarge'>";
+              //ウィジェットサイズが中の場合
+              }else if(widget.widgetSizeType === 2){
+                html += "<li class='effect_left_wait botNowTypingMedium'>";
+                //ウィジェットサイズが小の場合
+              }else if(widget.widgetSizeType === 1){
+                html += "<li class='effect_left_wait botNowTypingSmall'>";
+              }
+            html += "    <div class='reload_dot_left'></div>";
+            html += "    <div class='reload_dot_center'></div>";
+            html += "    <div class='reload_dot_right'></div>";
+            }
+            html += "  </li>";
+            html += "</div>";
+
+        var css  = "";
+            //ドットのサイズは共通
+            css += "#sincloBox ul#chatTalk div[class^='reload']{";
+            css += "  min-width:"+loadDotSize+"px;width:"+loadDotSize+"px;min-height:"+loadDotSize+"px;height:"+loadDotSize+"px;border-radius:100%;";
+            css += "}";
+            //吹き出しがある場合はテキストカラーを採用
+            css += "#sincloBox ul#chatTalk div[class^='reload_dot']{";
+            css += "  background-color:"+widget.reTextColor+";";
+            css += "}";
+            //吹き出しがない場合はメインカラー、または吹き出し背景色を採用
+            if(widget.mainColor == "#FFFFFF"){
+              css += "#sincloBox ul#chatTalk div[class^='reload_only_dot']{";
+              css += "  background-color:"+widget.reBackgroundColor+";";
+              css += "}";
+            }else{
+              css += "#sincloBox ul#chatTalk div[class^='reload_only_dot']{";
+              css += "  background-color:"+widget.mainColor+";";
+              css += "}";
+            }
+            css += "#sincloBox ul#chatTalk div[class$='left']{";
+            css += "  animation:dotScale 1.0s ease-in-out -0.32s infinite both";
+            css += "}";
+            css += "#sincloBox ul#chatTalk div[class$='center']{";
+            css += "  animation:dotScale 1.0s ease-in-out -0.16s infinite both";
+            css += "}";
+            css += "#sincloBox ul#chatTalk div[class$='right']{";
+            css += "  animation:dotScale 1.0s ease-in-out 0s infinite both";
+            css += "}";
+            if(widget.chatMessageWithAnimation === 1){
+              css += "#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0;}";
+            }else{
+              css += '#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0;}';
+            }
+            //吹き出しの大きさをウィジェットタイプで変える
+            //基準(共通)の設定
+            css += "#sincloBox ul#chatTalk li[class*='botNowTyping']{";
+            css += "  display:flex;justify-content:space-around;align-items:center;border-radius:12px!important;";
+            css += "  width:"+waitWidth+"px;padding:0 "+waitPadding+"px;margin-left: 10px;";
+            css += "  background-color:"+widget.reBackgroundColor+";";
+            css += "}";
+            //小(余白あり)の場合
+            css += "#sincloBox ul#chatTalk li.botNowTypingSmall{";
+            css += "  height:"+(waitHeight-8)+"px;"
+            css += "}";
+            //中の場合
+            css += "#sincloBox ul#chatTalk li.botNowTypingMedium{";
+            css += "  height:"+(waitHeight-8)+"px;"
+            css += "}";
+            //大の場合
+            css += "#sincloBox ul#chatTalk li.botNowTypingLarge{";
+            css += "  height:"+waitHeight+"px;"
+            css += "}";
+            //小(余白なし)の場合は、色と大きさが変化する
+            css += "#sincloBox ul#chatTalk li.botDotOnlyTyping{";
+            css += "  display:flex;justify-content:space-around;align-items:center;border-radius:12px!important;";
+            css += "  width:"+waitWidth+"px;height:"+(waitHeight-21)+"px;;padding:0 "+waitPadding+"px;margin-left: 10px;";
+            css += "  background-color:"+widget.chatTalkBackgroundColor+";";
+            css += "}";
+            //共通アニメーションの設定
+            css += "@keyframes dotScale{";
+            css += "   0%,100%{transform: scale(0.4);opacity:0.3}";
+            css += "  30%,70%{opacity:0.7}";
+            css += "  50%{transform: scale(1);opacity:1.0}";
+            css += "}";
+
+        //一回も呼び出されていなかった場合のみCSSを追加する
+        if(common.firstTimeChatBotTyping){
+          $("#sincloBox > style").append(css);
+          common.firstTimeChatBotTyping = false;
+        }
+        $("sinclo-chat").append(html);
+        console.log('waitAnimationAdded!');
+        return;
+    },
+    chatBotTypingRemove: function(){
+      //ウェイトアニメーションが存在しない場合はリターンする
+      //エラーを防ぐため
+      if($(".botNowDiv").length == 0){
+        return;
+      }
+      $('div.botNowDiv').remove();
+    },
+    reloadWidget: function(){
+      var widget = window.sincloInfo.widget;
+      var sizeList = common.getSizeType(widget.widgetSizeType);
+
+      if(check.smartphone()){
+        var widgetWidth;
+        if(sincloInfo.widget.spMaximizeSizeType === 2) {
+          widgetWidth = $(window).width();
+        }else{
+          widgetWidth = $(window).width() - 20 ;
+        }
+        var coverWidth = widgetWidth;
+      }else{
+        var coverWidth = sizeList.boxWidth;
+      }
+      var coverHeight = $('#chatTalk').outerHeight() + $('#flexBoxHeight').outerHeight();
+      var loadPadding = Number(widget.widgetSizeType) * 29 + 61;
+
+      var html  = "";
+          html += "<div class='reloadCover'>";
+          html += "  <div class='reload_dot_left'></div>";
+          html += "  <div class='reload_dot_center'></div>";
+          html += "  <div class='reload_dot_right'></div>";
+          html += "</div>";
+
+      var css  = "";
+          css += "#sincloBox .reloadCover div[class^='reload_dot']{";
+          css += "  width:18px;height:18px;border-radius:100%;";
+          if(widget.mainColor == widget.chatTalkBackgroundColor){
+            css += "  background-color:"+widget.reBackgroundColor+";";
+          }else{
+            css += "  background-color:"+widget.mainColor+";";
+          }
+          css += "}";
+          css += "#sincloBox .reloadCover div[class$='left']{";
+          css += "  animation:dotScale 1.4s ease-in-out -0.32s infinite both";
+          css += "}";
+          css += "#sincloBox .reloadCover div[class$='center']{";
+          css += "  animation:dotScale 1.4s ease-in-out -0.16s infinite both";
+          css += "}";
+          css += "#sincloBox .reloadCover div[class$='right']{";
+          css += "  animation:dotScale 1.4s ease-in-out 0s infinite both";
+          css += "}";
+          css += "#sincloBox div.reloadCover{";
+          css += "  position:absolute;z-index:1000;display:flex;justify-content:space-around;align-items:center;";
+          css += "  background-color:"+widget.chatTalkBackgroundColor+";";
+          css += "  width:"+coverWidth+"px;height:"+coverHeight+"px;padding:0 "+loadPadding+"px;"
+          css += "}";
+          css += "@keyframes dotScale{";
+          css += "   0%,80%,100%{transform: scale(0);}";
+          css += "  40%{transform: scale(1);}";
+          css += "}";
+      $("#sincloBox > style").append(css);
+      $("#chatTab").prepend(html);
+      return;
+    },
+    reloadWidgetRemove: function(){
+      $("div.reloadCover").remove();
+    },
+    waitDelayTimer: function(){
+      return 20;
     }
   };
 
@@ -4243,6 +4483,12 @@ var socket, // socket.io
       sinclo.getWindowInfo(obj);
     }); // socket-on: getWindowInfo
 
+    // 画面共有キャンセル
+    socket.on('cancelSharingApplication', function(d){
+      var obj = common.jParse(d);
+      sinclo.cancelSharingApplication(obj);
+    });
+
     // 画面共有(LiveAssist)
     socket.on('startCoBrowseOpen', function(d){
       var obj = common.jParse(d);
@@ -4494,6 +4740,7 @@ function f_url(url){
 }
 
 function emit(evName, data, callback){
+
   /* ここから：イベント名指定なし */
   data.siteKey = sincloInfo.site.key; // サイトの識別キー
   if ( check.isset(userInfo.sendTabId) ) {
