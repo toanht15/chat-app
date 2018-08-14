@@ -86,18 +86,34 @@ class StatisticsController extends AppController {
     else {
       $date = '時別';
       $type = date("Y-m-d");
+      $this->request->data['datefilter'] = date("Y-m-d");
       $data = $this->calculateHourlyData($type);
+      $this->log('このデータ',LOG_DEBUG);
+      $this->log($type,LOG_DEBUG);
     }
 
     //各企業の日付けの範囲
     $rangeData = $this->determineRange();
 
+    //$data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
+    //$data['History']['finish_day'] = htmlspecialchars($data['History']['finish_day']);
+    //$this->set('data', $data);
     $this->set('companyRangeDate',$rangeData['companyRangeDate']);
     $this->set('companyRangeYear',$rangeData['companyRangeYear']);
     $this->set('date',$date);
     $this->set('daylyEndDate',date("d",strtotime('last day of' .$type)));
     $this->set('type',$type);
     $this->set('data',$data);
+    if($date == '時別') {
+      $this->set('period',$this->request->data['datefilter']);
+    }
+    if($date == '日別') {
+      $this->set('period',$this->request->data['daylyName']);
+    }
+    if($date == '月別') {
+      $this->set('period',$this->request->data['monthlyName']);
+    }
+    $this->log('dateだよ',LOG_DEBUG);
   }
 
   /* *
@@ -1460,7 +1476,7 @@ class StatisticsController extends AppController {
     }
     $startDate = strtotime($data);
 
-    $sqlData =$this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $sqlData = $this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
     return $sqlData;
 
   }
@@ -1496,6 +1512,12 @@ class StatisticsController extends AppController {
       }
       $companyStartYear = strtotime("+1 year", $companyStartYear);
     }
+
+    //降順処理
+    $companyRangeDate = array_reverse($companyRangeDate, true);
+
+    //降順処理
+    $companyRangeYear = array_reverse($companyRangeYear, true);
 
     return ['companyRangeDate' => $companyRangeDate,'companyRangeYear' => $companyRangeYear];
   }
@@ -1542,11 +1564,6 @@ class StatisticsController extends AppController {
     $coherentDatas = $this->getCoherentData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$requestDatas['requestNumberData'],$requestDatas['allRequestNumberData']);
     $this->log("END   getCoherentData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
-
-    $this->log('チャット放棄件数',LOG_DEBUG);
-    $this->log($abandonRequestDatas,LOG_DEBUG);
-    $this->log('チャット有効件数',LOG_DEBUG);
-    $this->log($coherentDatas,LOG_DEBUG);
     //チャット応答件数,有人チャット応対率　書き換え必要
     $this->log("BEGIN getResponseData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $responseDatas = $this->getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$abandonRequestDatas['abandonRequestNumberData'],$abandonRequestDatas['allAbandonRequestNumberData'],$coherentDatas['denialNumberData'],$coherentDatas['allDenialNumberData'],$coherentDatas['effectivenessNumberData'],$coherentDatas['allEffectivenessNumberData'],$coherentDatas['effectiveness']);
@@ -1883,14 +1900,7 @@ class StatisticsController extends AppController {
         $this->chatMessageType['noticeFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
         $correctStartDate,$correctEndDate,));
 
-    $this->log('放棄件数',LOG_DEBUG);
-    $this->log($abandonmentNumberData,LOG_DEBUG);
-    $this->log('拒否件数',LOG_DEBUG);
-    $this->log($denialNumberData,LOG_DEBUG);
-
     foreach($responseNumber as $k => $v) {
-      $this->log('v',LOG_DEBUG);
-      $this->log($v,LOG_DEBUG);
       if($v[0]['response_count'] != 0 and ($v[0]['response_count']+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']]) != 0) {
         $responseRate = $responseRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['response_count']/($v[0]['response_count']+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']])*100));
       } else if ($requestNumberData[$v[0]['date']] === 0) {
@@ -1899,17 +1909,11 @@ class StatisticsController extends AppController {
       $responseNumberData = $responseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['response_count']));
     }
 
-    $this->log('effectiveness',LOG_DEBUG);
-    $this->log($effectiveness,LOG_DEBUG);
     $effectivenessNumberData = [];
     $effectivenessRate = [];
-    $this->log('応対件数',LOG_DEBUG);
-    $this->log($responseNumberData,LOG_DEBUG);
 
     if(!empty($effectiveness)) {
       foreach($effectiveness as $k => $v) {
-        $this->log('vだよ～',LOG_DEBUG);
-        $this->log($v,LOG_DEBUG);
         $effectivenessNumberData = $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['effectiveness']));
         if( $v[0]['effectiveness'] != 0 and ($responseNumberData[$v[0]['date']]+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']]) != 0){
           $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['effectiveness']/($responseNumberData[$v[0]['date']]+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']])*100));
@@ -1924,9 +1928,6 @@ class StatisticsController extends AppController {
 
     //チャット有効率
     $effectivenessRate = array_merge($this->convertBaseDataForPercent($baseData),$effectivenessRate);
-
-    $this->log('チャット有効率',LOG_DEBUG);
-    $this->log($effectivenessRate,LOG_DEBUG);
 
     //チャット応答率
     $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
