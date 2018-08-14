@@ -1248,6 +1248,11 @@
             } else {
               this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
+          } else if (Number(chat.messageType) === 32) {
+            // ヒアリング時に取得した文字列（署名を想定）は出さない
+            continue;
+          } else if (Number(chat.messageType) === 33) {
+            this.chatApi.createFormFromLog(JSON.parse(chat.message));
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
@@ -1385,7 +1390,10 @@
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
-
+        if (obj.messageType === sinclo.chatApi.messageType.scenario.customer.bulkHearing) {
+          common.chatBotTyping(value);
+          return;
+        }
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1460,6 +1468,15 @@
             cn = "sinclo_se";
             this.chatApi.createMessage(cn, obj.chatMessage, "");
           }
+          this.chatApi.scDown();
+          setTimeout(function () {
+            common.chatBotTyping(obj)
+          }, 800);
+          return false;
+        }
+
+        if (obj.messageType === 33) {
+          this.chatApi.createFormFromLog(JSON.parse(obj.chatMessage));
           this.chatApi.scDown();
           setTimeout(function () {
             common.chatBotTyping(obj)
@@ -2092,14 +2109,14 @@
           customer: {
             hearing: 12,
             selection: 13,
-            sendFile: 19
+            sendFile: 19,
+            bulkHearing: 32
           },
           message: {
             text: 21,
             hearing: 22,
             selection: 23,
-            receiveFile: 27,
-            bulkHearing: 42
+            receiveFile: 27
           }
         }
       },
@@ -2896,7 +2913,6 @@
         return selectedClass;
       },
       createForm: function (isConfirm, hearingTarget, resultData, callback) {
-        debugger;
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
@@ -2916,7 +2932,7 @@
             }
             formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
             formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'>*</span>" : "") + "</label>";
-            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
+            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
             formElements += "    </div>";
           });
 
@@ -2931,12 +2947,12 @@
           li.className = 'sinclo_re effect_left sinclo_form';
         } else {
           hearingTarget.forEach(function(elm, idx, arr){
-            if(elm.required && resultData[elm.variableName].length === 0) {
+            if(elm.required && resultData[elm.variableName].value.length === 0) {
               isEmptyRequire = true;
             }
             formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
             formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'>*</span>" : "") + "</label>";
-            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' name='" + elm.label + "' value='" + resultData[elm.variableName] + "' readonly/>";
+            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.variableName + "' value='" + resultData[elm.variableName].value + "' readonly/>";
             formElements += "    </div>";
           });
 
@@ -2955,12 +2971,46 @@
           var returnValue = {};
           var targetArray = $(li).find('.formInput');
           targetArray.each(function(index, element) {
-            returnValue[$(element).attr('name')] = $(element).val();
+            returnValue[$(element).attr('name')] = {
+              label: $(element).data('label-text'),
+              value: $(element).val(),
+              required: $(element).data('required')
+            }
           });
           console.log("return Value : %s",JSON.stringify(returnValue));
           callback(returnValue);
         });
         this.scDown();
+      },
+      createFormFromLog: function (data) {
+        var chatList = document.getElementsByTagName('sinclo-chat')[0];
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+
+        div.appendChild(li);
+        chatList.appendChild(div);
+
+        var formElements = "";
+        var isEmptyRequire = false;
+
+        var content = "";
+        var objKeys = Object.keys(data);
+        objKeys.forEach(function(variableName, index, array){
+          formElements += (array.length - 1 === index) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
+          formElements += "      <label class='formLabel'>" + data[variableName].label + (data[variableName].required ? "<span class='require'>*</span>" : "") + "</label>";
+          formElements += "      <input type='text' class='formInput' placeholder='" + data[variableName].label + "を入力してください' data-label-text='" + data[variableName].label + "' name='" + data[variableName].variableName + "' value='" + data[variableName].value + "' readonly/>";
+          formElements += "    </div>";
+        });
+
+        content += (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
+        content += "<div class='formContentArea'>";
+        content += "  <div class='formArea'>";
+        content += formElements;
+        content += "    <p class='formOKButtonArea'><span class='formOKButton disabled'>OK</span></p>";
+        content += "  </div>";
+        content += "</div>";
+        li.className = 'sinclo_se effect_right sinclo_form';
+        li.innerHTML = content;
       },
       hideForm: function() {
         $('li.sinclo_re.sinclo_form').remove();
@@ -5132,6 +5182,7 @@
           case self._actionType.bulkHearing:
             self._bulkHearing._init(self);
             self._bulkHearing._process();
+            self.set(self._lKey.sendCustomerMessageType, 32);
             break;
         }
       },
@@ -6289,15 +6340,25 @@
                     if(resultValue && Object.keys(resultValue).length > 0) {
                       var keys = Object.keys(resultValue);
                       keys.forEach(function(e, i, a){
-                        self._parent._saveVariable(keys[i], resultValue[keys[i]]);
+                        // 保存時は変数名を利用
+                        self._parent._saveVariable(keys[i], resultValue[keys[i]].value);
+                      });
+                      emit('sendChat', {
+                        historyId: sinclo.chatApi.historyId,
+                        stayLogsId: sinclo.chatApi.stayLogsId,
+                        chatMessage: JSON.stringify(resultValue),
+                        mUserId: null,
+                        messageType: 33,
+                        messageRequestFlg: 0,
+                        isAutoSpeech: false,
+                        notifyToCompany: false,
+                        isScenarioMessage: true
+                      }, function () {
+                        if (self._parent._goToNextScenario()) {
+                          self._parent._process();
+                        }
                       });
                       sinclo.chatApi.hideForm();
-                      sinclo.chatApi.createForm(false, self._parent.get(self._parent._lKey.currentScenario).multipleHearings, resultValue, function(modifiedValue){
-                        // FIXME 各値を修正したときのハンドラ
-                      });
-                      if (self._parent._goToNextScenario()) {
-                        self._parent._process();
-                      }
                     }
                   });
                   self._parent._handleChatTextArea("2"); // 強制非表示
