@@ -2,6 +2,9 @@
 process.env.GET_CD_API_HOST = '127.0.0.1';
 process.env.GET_CD_API_PORT = '80';
 process.env.GET_CD_API_PATH = '/CompanyData/getDetailInfo';
+process.env.PARSE_SIGNATURE_API_HOST = '127.0.0.1';
+process.env.PARSE_SIGNATURE_API_PORT = '80';
+process.env.PARSE_SIGNATURE_API_PATH = '/CompanyData/parseSignature';
 process.env.SEND_AUTO_MESSAGE_MAIL_API_HOST = '127.0.0.1';
 process.env.SEND_AUTO_MESSAGE_MAIL_API_PORT = '80';
 process.env.SEND_AUTO_MESSAGE_MAIL_API_PATH = '/Notification/autoMessages';
