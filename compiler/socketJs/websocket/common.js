@@ -2870,18 +2870,9 @@ var socket, // socket.io
     chatBotTypingCall: function(obj){
       if(!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry){
         common.chatBotTypingDelayTimer = setTimeout(function(){
-          var scWaitChecker = setInterval(function(){
-            console.log("スクロール中");
-            if(!$('#sincloBox #chatTalk').is(':animated')){
-              console.log('スクロール終了');
-              clearInterval(scWaitChecker);
-              setTimeout(function(){
-                common.chatBotTyping(obj);
-              },50);
-              common.chatBotTypingDelayTimer = null;
-            }
-          },50);
-        },800)
+          common.chatBotTyping(obj);
+          common.chatBotTypingDelayTimer = null;
+        },850)
       }
     },
     chatBotTypingTimerClear: function(){
@@ -2889,6 +2880,7 @@ var socket, // socket.io
       common.chatBotTypingDelayTimer = null;
     },
     chatBotTyping: function(obj){
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>waitAnimationFuncStart');
       //予期せぬエラーを回避するため、ローディングの重複表示を避ける
       if($(".botNowDiv").length > 0){
         return;
@@ -3028,6 +3020,7 @@ var socket, // socket.io
           common.firstTimeChatBotTyping = false;
         }
         $("sinclo-chat").append(html);
+        console.log('waitAnimationAdded!');
         return;
     },
     chatBotTypingRemove: function(){

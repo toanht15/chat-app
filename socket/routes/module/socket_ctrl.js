@@ -531,9 +531,14 @@ function getMessageTypeBySenarioActionType(type) {
 //requestをrequire
 var http = require('http');
 http.globalAgent.maxSockets = 1000;
-function getCompanyInfoFromApi(ip, callback) {
-  var api = new LandscapeAPI('json', 'utf8');
-  api.getFrom(ip, callback);
+function getCompanyInfoFromApi(obj, ip, callback) {
+  if(functionManager.isEnabled(obj.siteKey, functionManager.keyList.refCompanyData)) {
+    var api = new LandscapeAPI('json', 'utf8');
+    api.getFrom(ip, callback);
+  } else {
+    deblogger.debug("refCompanyData is false. siteKey : " + obj.siteKey);
+    callback({});
+  }
 }
 
 function parseSignature(src, ip, callback) {
@@ -1021,9 +1026,13 @@ io.sockets.on('connection', function (socket) {
               }
               var autoMessages = [];
               if(obj.sincloSessionId in sincloCore[obj.siteKey] && 'autoMessages' in sincloCore[obj.siteKey][obj.sincloSessionId] ) {
-                var autoMessageArray = sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
-                for(var key in autoMessageArray) {
-                  autoMessages.push(autoMessageArray[key]);
+                var autoMessageObj = sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages;
+                try {
+                  Object.keys(autoMessageObj).forEach(function(automessageKey, index, array){
+                    autoMessages.push(autoMessageObj[automessageKey]);
+                  });
+                } catch(e) {
+
                 }
               }
               for (var i = 0; i < autoMessages.length; i++) {
@@ -2306,14 +2315,18 @@ io.sockets.on('connection', function (socket) {
       sincloCore[obj.siteKey][obj.sincloSessionId].sessionIds[socket.id] = socket.id;
     }
     if (isset(obj.tmpAutoMessages)) {
-      for(var key in obj.tmpAutoMessages) {
-        if(typeof(obj.tmpAutoMessages[key]['created']) === "string") {
-          obj.tmpAutoMessages[key]['created'] = new Date(obj.tmpAutoMessages[key]['created']);
-        }
-        if(isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId]).autoMessages) {
-          sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages = [];
-        }
-        sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[key] = obj.tmpAutoMessages[key];
+      try {
+        Object.keys(obj.tmpAutoMessages).forEach(function(automessageKey, index, array){
+          if(typeof(obj.tmpAutoMessages[automessageKey]['created']) === "string") {
+            obj.tmpAutoMessages[automessageKey]['created'] = new Date(obj.tmpAutoMessages[automessageKey]['created']);
+          }
+          if(isset(sincloCore[obj.siteKey][obj.sincloSessionId]) && !isset(sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages)) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages = {};
+          }
+          sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[automessageKey] = obj.tmpAutoMessages[automessageKey];
+        });
+      } catch(e) {
+
       }
     }
     if ( obj.subWindow ) {
@@ -2351,7 +2364,7 @@ io.sockets.on('connection', function (socket) {
         }
 
         //FIXME 企業別機能設定（企業情報連携）
-        getCompanyInfoFromApi(obj.ipAddress, function(data){
+        getCompanyInfoFromApi(obj, obj.ipAddress, function(data){
           try {
             if (data) {
               var response = data;

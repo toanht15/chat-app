@@ -18,13 +18,13 @@ var lbcLogger = log4js.getLogger('lbc'); // リクエスト用のロガー取得
 
 module.exports = function(format, charset) {
   var mlLbcCode = "10102363864";
-  var expireSec = 7776000; // 90日
+  var expireSec = 7776000000; // 90日
   var api = {
     lbc: {
       url: "https://api.cladb.usonar.jp/lbcinfoex/getlbc",
       method: "GET",
       key1: "BN7WjEygVK32UqSV",
-      key2: null
+      key2: ""
     }
   };
   var validate =  {
@@ -148,13 +148,17 @@ module.exports = function(format, charset) {
         "key2": api.lbc.key2,
         "format": "json",
         "charset": "utf8",
-        "ipadr": self.ip
+        "ipadr": self.ip.trim()
       }
     };
 
     request(options, function(error, response, body) {
       if(error) {
         throw new Error('API呼出時にエラーが発生しました。 error: ' + error);
+      }
+      if(typeof(body) === "string") {
+        lbcLogger.warn("Error found. see request log.");
+        throw new Error('想定したメッセージbodyが返却されていない可能性があります。 body : ' + body);
       }
       lbcLogger.info('LBC api response body: ' + JSON.stringify(body));
       self.apiData = body;
@@ -288,9 +292,9 @@ module.exports = function(format, charset) {
   var isExpireDbData = function(data) {
     if(data && data['updated']) {
       var updatedDatetime = data['updated'];
-      var now = (new Date()).getTime();
+      var now = moment().format('x');
       var updatedTimestamp = moment(data['updated']).format('x');
-      return Number(now) - Number(updatedTimestamp) > expireSec;
+      return Number(now) - Number(updatedTimestamp) > expireSec; // ここはミリ秒での比較
     } else {
       // データが無いため有効期限切れとする
       return true;
