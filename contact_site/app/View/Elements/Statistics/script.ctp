@@ -30,6 +30,7 @@ function timeChange()　{
     document.getElementById("hourlyForm").value = '選択してください';
     document.getElementById("hourlyForm").options = value;
     document.getElementById("triangle").style.borderTop = "6px solid";
+    var eee = "2018/08/11";
   }
 }
 
@@ -261,7 +262,10 @@ $(window).load(function(){
       }
     }
   });
-
+  console.log('あっはっは');
+  var eee = "<?=$periodo;?>";
+  console.log(eee);
+  console.log('いいい');
   //datepicke
   $('input[name="datefilter"]').daterangepicker({
     "locale": {
@@ -290,6 +294,7 @@ $(window).load(function(){
         "12月"
       ],
     },
+    "startDate": "<?=$periodo;?>",
     singleDatePicker: true,
     minDate: '2017-07-01'
   },

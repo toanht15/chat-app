@@ -105,14 +105,17 @@ class StatisticsController extends AppController {
     $this->set('type',$type);
     $this->set('data',$data);
     if($date == '時別') {
-      $this->set('period',$this->request->data['datefilter']);
+      $this->log('だりい',LOG_DEBUG);
+      $this->log($this->request->data['datefilter'],LOG_DEBUG);
+      $this->set('periodo',$this->request->data['datefilter']);
     }
     if($date == '日別') {
-      $this->set('period',$this->request->data['daylyName']);
+      $this->set('periodo',date("Y-m-d"));
     }
     if($date == '月別') {
-      $this->set('period',$this->request->data['monthlyName']);
+      $this->set('periodo',date("Y-m-d"));
     }
+    $this->set('period2','aaaa');
     $this->log('dateだよ',LOG_DEBUG);
   }
 
