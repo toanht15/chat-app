@@ -1332,6 +1332,7 @@ var socket, // socket.io
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
         }
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + colorList['messageBoxTextColor'] + '!important; background-color: '+ colorList['messageBoxBackgroundColor'] +'; }';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:disabled, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:disabled { background-color: '+ colorList['messageBoxBackgroundColor'] +'; opacity: 1; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:focus { outline: none; border-color: ' + colorList['mainColor'] + '!important }';
         if(colorList['messageBoxBorderNone'] === 0){
           html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { border-right-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important; }';
@@ -1524,7 +1525,7 @@ var socket, // socket.io
           if(colorList['widgetInsideBorderNone'] === 0){
             html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: ' + (1 * ratio) + 'px solid '+ colorList['widgetInsideBorderColor'] +'; }';
           }
-          html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { font-size: 1em; padding: ' + (5 * ratio) + 'px;  }';
+          html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { font-size: 17px; padding: ' + (5 * ratio) + 'px;  }';
           if(colorList['messageBoxBorderNone'] === 0){
             html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border-radius: ' + (5 * ratio) +'px 0 0 ' + (5 * ratio) +'px!important; border: ' + (1 * ratio) + 'px solid '+ colorList['messageBoxBorderColor'] +'!important; }';
           }

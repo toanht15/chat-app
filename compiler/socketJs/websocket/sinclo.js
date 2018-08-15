@@ -1447,9 +1447,9 @@
             storage.s.set('requestFlg',false);
           };
           if(obj.tabId === userInfo.tabId) {
-          //ヒアリングと1:1対応になるようにここで終了をさせる
+          //シナリオ中のみ発動
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ヒアリングの入力無効終了(ｽﾏﾎ)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
-          if(check.smartphone()){
+          if(check.smartphone() && sinclo.scenarioApi.isProcessing()){
             var miniTextarea = document.getElementById("miniSincloChatMessage"),
                 textarea = document.getElementById("sincloChatMessage");
             if(textarea){
@@ -4640,7 +4640,7 @@
         "s_scenarioMessageType": 3,
         "s_stackReturnSettings": {}
       },
-      isReload: false,
+      _isReload: false,
       _events: {
         inputCompleted: "sinclo:scenario:inputComplete",
         fileUploaded: "sinclo:scenario:fileUploaded"
@@ -4694,7 +4694,7 @@
         var self = sinclo.scenarioApi;
         self._resetDefaultVal();
         if(self.isProcessing()) {
-          self.isReload = true;
+          self._isReload = true;
         } else {
           self._setBaseObj({});
           self.set(self._lKey.beforeTextareaOpened, storage.l.get('textareaOpend'));
@@ -4750,7 +4750,7 @@
         this._disablePreviousRadioButton();
         this._saveProcessingState(true);
         this._process();
-        this.isReload = false;
+        this._isReload = false;
       },
       _end: function() {
         // シナリオ終了
@@ -5204,7 +5204,7 @@
       },
       _doing: function(intervalSec, callFunction) {
         var self = sinclo.scenarioApi;
-        if(self._isTheFiestScenaroAndSequence() || self.isReload) {
+        if(self._isTheFiestScenaroAndSequence()) {
           // 一番最初のシナリオ開始は即時実行
           callFunction();
         } else {
@@ -5477,7 +5477,13 @@
           var message = hearing.message;
           // クロージャー用
           var self = sinclo.scenarioApi._hearing;
-          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+          //リロード直後のヒアリングは即時実行される
+          var intervalTimeSec = self._parent._getIntervalTimeSec();
+          if(sinclo.scenarioApi._isReload){
+            intervalTimseSec = 0;
+            sinclo.scenarioApi._isReload = false;
+          }
+          self._parent._doing(intervalTimeSec, function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._beginValidInputWatcher();
             self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
