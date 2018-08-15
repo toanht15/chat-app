@@ -26,13 +26,20 @@
             "filename": "./logs/system.log",
             "maxLogSize": 10240000,
             "backups": 100
+        },
+        "lbc": {
+            "type": "file",
+            "filename": "./logs/lbcLog.log",
+            "maxLogSize": 10240000,
+            "backups": 3
         }
     },
     "categories": {
         "default": {"appenders":["debug"], "level": "error"},
         "request": {"appenders":["request"], "level": "info"},
         "error": {"appenders":["error"], "level": "info"},
-        "debug": {"appenders":["debug"], "level": "debug"},
-        "system": {"appenders":["system"], "level":"info"}
+        "debug": {"appenders":["debug"], "level": "info"},
+        "system": {"appenders":["system"], "level":"info"},
+        "lbc": {"appenders":["lbc"], "level":"info"}
     }
 }
