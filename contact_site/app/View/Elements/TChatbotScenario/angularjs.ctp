@@ -466,6 +466,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllAddCustomerInformationView(actionStep);
 
+    } else if (actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+      var src = $scope.actionList[actionType].default.multipleHearings[0];
+      var target = $scope.setActionList[actionStep].multipleHearings;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllBulkHearings(actionStep);
     }
   };
 
@@ -830,6 +835,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).then(function() {
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
       var targetObjList = $scope.setActionList[actionStep].addCustomerInformations;
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
+    });
+  };
+
+  this.controllBulkHearings = function(actionStep) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
+      var targetObjList = $scope.setActionList[actionStep].multipleHearings;
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
     });
   };

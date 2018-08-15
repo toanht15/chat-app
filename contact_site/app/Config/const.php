@@ -215,6 +215,7 @@ define('C_SCENARIO_ACTION_GET_ATTRIBUTE', 8); // 属性値取得
 define('C_SCENARIO_ACTION_RECEIVE_FILE', 9); // ファイル受信
 define('C_SCENARIO_ACTION_BRANCH_ON_CONDITION', 10); // 条件分岐
 define('C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION', 11); // 訪問ユーザ登録
+define('C_SCENARIO_ACTION_BULK_HEARING', 12); // 一括ヒアリング
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -862,6 +863,21 @@ $config['chatbotScenarioActionList'] = [
         [
           'variableName' => '',
           'targetId' => ""
+        ]
+      ]
+    ]
+  ],  // 一括ヒアリング
+  C_SCENARIO_ACTION_BULK_HEARING => [
+    'label' => '一括ヒアリング',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'multipleHearing' => [
+        [
+          'variableName' => '',
+          'inputType' => "1",
+          'label' => "",
+          'required' => true
         ]
       ]
     ]
