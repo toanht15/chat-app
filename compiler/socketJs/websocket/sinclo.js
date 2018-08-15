@@ -1454,6 +1454,18 @@
             storage.s.set('requestFlg',false);
           };
           if(obj.tabId === userInfo.tabId) {
+          //ヒアリングと1:1対応になるようにここで終了をさせる
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ヒアリングの入力無効終了(ｽﾏﾎ)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+          if(check.smartphone()){
+            var miniTextarea = document.getElementById("miniSincloChatMessage"),
+                textarea = document.getElementById("sincloChatMessage");
+            if(textarea){
+              textarea.readOnly = false;
+            }
+            if(miniTextarea){
+              miniTextarea.readOnly = false;
+            }
+          }
             common.chatBotTypingCall(obj);
             return false;
           } else if (obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
@@ -2263,6 +2275,8 @@
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
               $('#sincloChatMessage').focus();
+            } else {
+               sinclo.adjustSpWidgetSize();
             }
           }
         },
@@ -5624,6 +5638,21 @@
           var self = sinclo.scenarioApi._hearing;
           if (!check.isIE() && self._watcher) {
             console.log("END TIMER");
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ヒアリングの入力無効開始(ｽﾏﾎ)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+            //入力待機が終わったらreadOnly属性をtrueにする
+            //要素が存在するか確認してから行うこと
+            if(check.smartphone()){
+              var miniTextarea = document.getElementById("miniSincloChatMessage"),
+                  textarea = document.getElementById("sincloChatMessage");
+              if(textarea){
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>テキストエリアが無効になります<<<<<<<<<<<<<<<<<<<<<<<<');
+                textarea.readOnly = true;
+              }
+              if(miniTextarea){
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>ミニテキストエリアが無効になります<<<<<<<<<<<<<<<<<<<<<<<<');
+                miniTextarea.readOnly = true;
+              }
+            }
             clearInterval(self._watcher);
             self._watcher = null;
           }
@@ -5675,6 +5704,18 @@
         },
         _executeConfirm: function () {
           var self = sinclo.scenarioApi._hearing;
+          //ヒアリングが終わるときはチャットエリアのreadOnlyを解除しておく
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ヒアリングの入力無効終了(ｽﾏﾎ)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+          if(check.smartphone()){
+            var miniTextarea = document.getElementById("miniSincloChatMessage"),
+                textarea = document.getElementById("sincloChatMessage");
+            if(textarea){
+              textarea.readOnly = false;
+            }
+            if(miniTextarea){
+              miniTextarea.readOnly = false;
+            }
+          }
           if (self._requireConfirm()) {
             self._showConfirmMessage();
           } else {
