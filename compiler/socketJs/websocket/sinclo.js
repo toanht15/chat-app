@@ -2146,9 +2146,6 @@
             })
             .on('blur', "#sincloChatMessage,#miniSincloChatMessage",function(e){
               if(e) e.stopPropagation();
-              if(check.smartphone()){
-                sinclo.adjustSpWidgetSize();
-              }
               sinclo.chatApi.setPlaceholderMessage(sinclo.chatApi.getPlaceholderMessage());
             })
             .on("click", "input[name^='sinclo-radio']", function(e){
