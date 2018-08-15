@@ -52,15 +52,9 @@
           });
         }
       },
-<<<<<<< HEAD
       ev: function() {
-
         sinclo.adjustSpWidgetSize();
         if(!common.widgetHandler.isShown()) {
-=======
-      ev: function () {
-        if (!common.widgetHandler.isShown()) {
->>>>>>> refs/remotes/origin/development_review
           console.log("非表示状態のため動作させない");
           return;
         }
@@ -624,12 +618,8 @@
         createStart = function () {
           console.log("create start");
           var sincloBox = document.getElementById('sincloBox');
-<<<<<<< HEAD
           common.reloadWidget();
           if ( window.sincloInfo.contract.chat && check.smartphone() ) {
-=======
-          if (window.sincloInfo.contract.chat && check.smartphone()) {
->>>>>>> refs/remotes/origin/development_review
             common.widgetHandler.show();
             sincloBox.style.opacity = 0;
             sinclo.operatorInfo.widgetHide();
@@ -639,17 +629,9 @@
           }
           // ウィジェット表示
           sinclo.chatApi.widgetOpen();
-<<<<<<< HEAD
           if ( window.sincloInfo.contract.chat ) {
-              // チャット情報読み込み
-              sinclo.chatApi.init();
-=======
-
-          if (window.sincloInfo.contract.chat) {
             // チャット情報読み込み
             sinclo.chatApi.init();
->>>>>>> refs/remotes/origin/development_review
-
           }
         };
 
@@ -1158,12 +1140,7 @@
       //退室した後に同じ消費者からメッセージが来た場合、それもGAのイベントとしてカウントするため
       sessionStorage.removeItem('chatEmit');
     },
-<<<<<<< HEAD
     chatMessageData:function(d){
-=======
-    chatMessageData: function (d) {
-      common.reloadWidgetRemove();
->>>>>>> refs/remotes/origin/development_review
       console.log("chatMessgeData");
       console.log("DATA : %s", d);
       var obj = JSON.parse(d);
@@ -4852,13 +4829,8 @@
       init: function (id, scenarioObj) {
         var self = sinclo.scenarioApi;
         self._resetDefaultVal();
-<<<<<<< HEAD
         if(self.isProcessing()) {
           self.isReload = true;
-=======
-        if (self.isProcessing()) {
-
->>>>>>> refs/remotes/origin/development_review
         } else {
           self._setBaseObj({});
           self.set(self._lKey.beforeTextareaOpened, storage.l.get('textareaOpend'));
@@ -5374,11 +5346,7 @@
       },
       _doing: function (intervalSec, callFunction) {
         var self = sinclo.scenarioApi;
-<<<<<<< HEAD
         if(self._isTheFiestScenaroAndSequence() || self.isReload) {
-=======
-        if (self._isTheFiestScenaroAndSequence()) {
->>>>>>> refs/remotes/origin/development_review
           // 一番最初のシナリオ開始は即時実行
           callFunction();
         } else {
