@@ -53,7 +53,6 @@
         }
       },
       ev: function() {
-
         sinclo.adjustSpWidgetSize();
         if(!common.widgetHandler.isShown()) {
           console.log("非表示状態のため動作させない");
