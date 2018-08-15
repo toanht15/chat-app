@@ -1,4 +1,4 @@
- (function(jquery){
+(function(jquery){
   // -----------------------------------------------------------------------------
   //   websocket通信
   // -----------------------------------------------------------------------------
@@ -406,7 +406,6 @@
       }
     },
     connect: function(){
-      console.log('こんにちは');
       // 新規アクセスの場合
       if ( !check.isset(userInfo.getTabId()) ) {
         userInfo.firstConnection = true;
@@ -1154,8 +1153,6 @@
       console.log("chatMessgeData");
       console.log("DATA : %s",d);
       var obj = JSON.parse(d);
-      console.log('メッセージタイプ2');
-      console.log(obj.messageType);
       if ( obj.token !== common.token ) return false;
       this.chatApi.historyId = obj.chat.historyId;
       var keys = (typeof(obj.chat.messages) === 'object') ? Object.keys(obj.chat.messages) : [];
@@ -1265,7 +1262,7 @@
           }
           else if(Number(chat.messageType) === 8){
           }
-           else if(Number(chat.messageType) === 19) {
+          else if(Number(chat.messageType) === 19) {
             if(check.isJSON(chat.message)) {
               var result = JSON.parse(chat.message);
               this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
@@ -1454,7 +1451,6 @@
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
             || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           if(obj.messageType !== sinclo.chatApi.messageType.auto && storage.s.get('requestFlg') === 'true') {
-            console.log('自動返信1');
             //自動返信を出した数
             if(typeof ga == "function"){
               ga('send', 'event', 'sinclo', 'autoChat', location.href, 1);
@@ -1494,7 +1490,6 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
-          console.log('ソーリーメッセージ');
           cn = "sinclo_re";
           sinclo.chatApi.call();
           this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
@@ -1515,6 +1510,8 @@
               if(typeof ga == "function" && obj.tabId === userInfo.tabId){
                 ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
               }
+            }
+          }
           //Sorryメッセージが複数回呼ばれた場合は、タイマーが重複しないよう削除する
           if(sinclo.sorryMsgTimer){
             clearTimeout(sinclo.sorryMsgTimer);
@@ -1571,10 +1568,8 @@
           return false;
         }
         if(obj.messageType == 8) {
-          console.log('ここには入っているうううう');
           return false;
         }
-        this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         if(obj.messageType != sinclo.chatApi.messageType.sorry){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
@@ -2743,8 +2738,6 @@
                     if ( linkTab !== null) {
                       if(link !== null) {
                         var a = linkTab[0];
-                        console.log('aaaaaaaaaaaaaaaaaaaaa');
-                        console.log(a);
                         //imgタグ有効化
                         var img = unEscapeStr.match(imgTagReg);
                         if(img == null) {
@@ -2759,8 +2752,6 @@
                           var urlTagReg = RegExp(/href="([\s\S]*?)"([\s\S]*?)/);
                           var url = a.match(urlTagReg);
                           a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+linkTab3+"')");
-                          console.log('a2');
-                          console.log(a)
                         }
                       }
                       else {
@@ -2801,7 +2792,6 @@
                   }
                 }
                 if ( cs === "sinclo_re" ) {
-                  console.log('ここにはいってちゃおわりだ');
                   //imgタグ
                   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
                   var img = unEscapeStr.match(imgTagReg);
@@ -6256,4 +6246,5 @@
       return false;
     }
   };
+
 }(sincloJquery));
