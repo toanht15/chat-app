@@ -154,8 +154,6 @@ class htmlExHelper extends AppHelper {
                   $ret = preg_replace_callback('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', [$this, 'addLinkNewTab'], $tmp);
                   $str = preg_replace('/(http(s)?:\/\/[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $ret, $tmp);
                 }
-                $this->log('strrrrrrrrr',LOG_DEBUG);
-                $this->log($str,LOG_DEBUG);
             }
             if ( preg_match('/<telno>([\s\S]*?)<\/telno>/', $tmp)) {
                 $ret = "<span style='font-weight: normal;'>". preg_replace('/^<telno>|<\/telno>$/', "", $tmp) . "</span>";

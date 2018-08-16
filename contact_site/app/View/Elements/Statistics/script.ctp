@@ -30,7 +30,6 @@ function timeChange()　{
     document.getElementById("hourlyForm").value = '選択してください';
     document.getElementById("hourlyForm").options = value;
     document.getElementById("triangle").style.borderTop = "6px solid";
-    var eee = "2018/08/11";
   }
 }
 
@@ -95,13 +94,8 @@ $(window).load(function(){
 
   //リサイズ処理
   var resizeDataTable = function() {
-    console.log('リサイズ処理');
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 80 + 'px');
-    console.log($('.dataTables_scrollBody').css('height'));
-    console.log($('#statistics_content').outerHeight());
     $('#statistics_content').css('max-height',$('.dataTables_scrollBody').outerHeight() + 80 + 'px');
-    //$('#statistics_content').css('max-height','580px');
-    //$('#statistics_content').css('height',calc('100vh - 190px')+'px');
   }
   // ページ読み込み時にもリサイズ処理を実行
   tableObj.on( 'draw', function () {
@@ -262,10 +256,6 @@ $(window).load(function(){
       }
     }
   });
-  console.log('あっはっは');
-  var eee = "<?=$periodo;?>";
-  console.log(eee);
-  console.log('いいい');
   //datepicke
   $('input[name="datefilter"]').daterangepicker({
     "locale": {
@@ -294,7 +284,7 @@ $(window).load(function(){
         "12月"
       ],
     },
-    "startDate": "<?=$periodo;?>",
+    "startDate": "<?=$datePeriod;?>",
     singleDatePicker: true,
     minDate: '2017-07-01'
   },
@@ -329,11 +319,11 @@ $(window).load(function(){
     });
   });
 
-  /*$('.questionBtn').off("mouseleave").on('mouseleave',function(event){
+  $('.questionBtn').off("mouseleave").on('mouseleave',function(event){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
-  });*/
+  });
 
   // DataTablesの検索時にツールチップを非表示にする
   tableObj.on('search',function(event){

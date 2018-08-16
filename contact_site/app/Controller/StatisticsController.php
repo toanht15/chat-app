@@ -88,16 +88,10 @@ class StatisticsController extends AppController {
       $type = date("Y-m-d");
       $this->request->data['datefilter'] = date("Y-m-d");
       $data = $this->calculateHourlyData($type);
-      $this->log('このデータ',LOG_DEBUG);
-      $this->log($type,LOG_DEBUG);
     }
 
     //各企業の日付けの範囲
     $rangeData = $this->determineRange();
-
-    //$data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
-    //$data['History']['finish_day'] = htmlspecialchars($data['History']['finish_day']);
-    //$this->set('data', $data);
     $this->set('companyRangeDate',$rangeData['companyRangeDate']);
     $this->set('companyRangeYear',$rangeData['companyRangeYear']);
     $this->set('date',$date);
@@ -105,18 +99,11 @@ class StatisticsController extends AppController {
     $this->set('type',$type);
     $this->set('data',$data);
     if($date == '時別') {
-      $this->log('だりい',LOG_DEBUG);
-      $this->log($this->request->data['datefilter'],LOG_DEBUG);
-      $this->set('periodo',$this->request->data['datefilter']);
+      $this->set('datePeriod',$this->request->data['datefilter']);
     }
-    if($date == '日別') {
-      $this->set('periodo',date("Y-m-d"));
+    if($date == '日別' || $date == '月別') {
+      $this->set('datePeriod',date("Y-m-d"));
     }
-    if($date == '月別') {
-      $this->set('periodo',date("Y-m-d"));
-    }
-    $this->set('period2','aaaa');
-    $this->log('dateだよ',LOG_DEBUG);
   }
 
   /* *
@@ -1479,7 +1466,7 @@ class StatisticsController extends AppController {
     }
     $startDate = strtotime($data);
 
-    $sqlData = $this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
+    $sqlData =$this->summarySql($date_format,$baseData,$baseTimeData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
     return $sqlData;
 
   }
@@ -1969,8 +1956,6 @@ class StatisticsController extends AppController {
       // リクエストチャットが0件の場合（無効データ）
       $allEffectivenessRate = self::LABEL_INVALID;
     }
-    $this->log($allEffectivenessRate,LOG_DEBUG);
-
     return ['responseRate' => $responseRate,'responseNumberData' => $responseNumberData,'allResponseNumberData' => $allResponseNumberData,'allResponseRate' => $allResponseRate,'effectivenessRate' => $effectivenessRate,'allEffectivenessRate' => $allEffectivenessRate];
   }
 

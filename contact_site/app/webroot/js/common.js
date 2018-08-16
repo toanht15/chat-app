@@ -167,7 +167,6 @@ function replaceVariable(str,isSmartphone,type){
   if ( link !== null || linkTab !== null) {
       if ( linkTab !== null) {
         if(link !== null) {
-          console.log('入ってきてるよ2');
           var a = linkTab[0];
           //imgタグ有効化
           var img = unEscapeStr.match(imgTagReg);
@@ -185,7 +184,7 @@ function replaceVariable(str,isSmartphone,type){
       //URLのみのリンクの場合
       else {
         var url = link[0];
-        var a = "<a href='" + url + "' target=\"_blank\" onclick = link()>" + url + "</a>";
+        var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
         //imgタグ有効化
         var img = unEscapeStr.match(imgTagReg);
         if(img !== null) {
