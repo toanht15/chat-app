@@ -248,6 +248,7 @@
           autoSpeech: 5,
           sendFile: 6,
           notification: 7,
+          linkClick: 8,
           start: 98,
           end: 99,
           scenario: {
@@ -328,7 +329,7 @@
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
       }
-      else if ( type === 8) {
+      else if ( type === chatApi.messageType.linkClick) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
         forDeletionMessage = escape_html(forDeletionMessage);

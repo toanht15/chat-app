@@ -4602,8 +4602,8 @@ var socket, // socket.io
     }); // socket-on: sendChatResult
 
     // リンク
-    socket.on('aaa', function (d) {
-      sinclo.aaa(d);
+    socket.on('clickLink', function (d) {
+      sinclo.clickLink(d);
     });
 
     // 新着チャット
@@ -4830,9 +4830,9 @@ function now(){
 }
 
 function link(word,link) {
-  var link2 = "<a "+link.replace(/\$nbsp;/g, " ")+">"+word+"</a>";
+  link = "<a "+link.replace(/\$nbsp;/g, " ")+">"+word+"</a>";
   var data = sinclo.chatApi;
-  data.link = link2;
+  data.link = link;
   data.siteKey = sincloInfo.site.key;
   data.tabId = userInfo.tabId;
   data.userId = userInfo.userId;

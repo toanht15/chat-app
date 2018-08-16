@@ -14,7 +14,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db2'
+      database: process.env.DB_NAME || 'sinclo_db'
     });
 
 // log4js
@@ -2246,7 +2246,7 @@ io.sockets.on('connection', function (socket) {
         autoMessageId: null
     };
     chatApi.set(ret);
-    emit.toUser('aaa', data, getSessionId(data.siteKey, data.tabId, 'sessionId'));
+    emit.toUser('clickLink', data, getSessionId(data.siteKey, data.tabId, 'sessionId'));
   });
 
   socket.on("connectSuccess", function (data, ack) {
