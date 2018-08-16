@@ -1259,9 +1259,6 @@
             } else {
               this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
-          } else if (Number(chat.messageType) === 32) {
-            // ヒアリング時に取得した文字列（署名を想定）は出さない
-            continue;
           } else if (Number(chat.messageType) === 33) {
             this.chatApi.createFormFromLog(JSON.parse(chat.message));
           } else {
@@ -1410,10 +1407,6 @@
         // スマートフォンの場合はメッセージ送信時に、到達確認タイマーをリセットする
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
-        }
-        if (obj.messageType === sinclo.chatApi.messageType.scenario.customer.bulkHearing) {
-          common.chatBotTyping(value);
-          return;
         }
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
