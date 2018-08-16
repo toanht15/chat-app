@@ -1542,11 +1542,6 @@ class StatisticsController extends AppController {
     $linkDatas = $this->getLinkData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
     $this->log("END   getLinkData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
-    //有人チャットリクエスト件数
-    $this->log("BEGIN getmannedRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-    $mannedRequestDatas = $this->getmannedRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
-    $this->log("END   getmannedRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
-
     //チャット放棄件数
     $this->log("BEGIN getAbandonRequestData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     $abandonRequestDatas = $this->getAbandonRequestData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period);
@@ -1589,7 +1584,7 @@ class StatisticsController extends AppController {
 
     $this->log('終わり',LOG_DEBUG);
 
-    return ["accessDatas" => $accessDatas,"widgetDatas" => $widgetDatas,"linkDatas" => $linkDatas,"requestDatas" => $requestDatas,"mannedRequestDatas" => $mannedRequestDatas,"abandonRequestDatas" => $abandonRequestDatas,'responseDatas' => $responseDatas,
+    return ["accessDatas" => $accessDatas,"widgetDatas" => $widgetDatas,"linkDatas" => $linkDatas,"requestDatas" => $requestDatas,"abandonRequestDatas" => $abandonRequestDatas,'responseDatas' => $responseDatas,
     "automaticResponseData" => $automaticResponseData,"coherentDatas" => $coherentDatas,"avgRequestTimeDatas" => $avgRequestTimeDatas,"consumerWatingAvgTimeDatas" => $consumerWatingAvgTimeDatas,
     "responseAvgTimeData" => $responseAvgTimeData];
   }
@@ -1785,12 +1780,12 @@ class StatisticsController extends AppController {
       date_format(th.access_date, ?) as date,
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg,message_distinction from
-      t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
+      t_history_chat_logs force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id)
       where m_companies_id = ? and notice_flg = ? group by t_histories_id,
        message_distinction)
       as thcl
       LEFT JOIN (select t_histories_id, message_type,
-      message_distinction from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
+      message_distinction from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id_users_id)
        where message_type = ? and m_companies_id = ?) as thcl2
       ON
       thcl.t_histories_id = thcl2.t_histories_id
@@ -1962,15 +1957,19 @@ class StatisticsController extends AppController {
 
     //合計有効率
     $allEffectivenessRate = 0;
-    if($allEffectivenessNumberData != 0 and $allRequestNumberData != 0) {
-      $allEffectivenessRate = round($allEffectivenessNumberData/$allRequestNumberData*100);
-    } else if($allEffectivenessNumberData === 0 && $allRequestNumberData != 0) {
+    $this->log('よーうチェック',LOG_DEBUG);
+    $this->log($allEffectivenessNumberData,LOG_DEBUG);
+    $this->log($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData,LOG_DEBUG);
+    if($allEffectivenessNumberData != 0 and ($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData) != 0) {
+      $allEffectivenessRate = round($allEffectivenessNumberData/($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData)*100);
+    } else if($allEffectivenessNumberData === 0 && ($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData) != 0) {
       // リクエストチャット件数はあるけど自動返信がない場合
       $allEffectivenessRate = 0;
     } else {
       // リクエストチャットが0件の場合（無効データ）
       $allEffectivenessRate = self::LABEL_INVALID;
     }
+    $this->log($allEffectivenessRate,LOG_DEBUG);
 
     return ['responseRate' => $responseRate,'responseNumberData' => $responseNumberData,'allResponseNumberData' => $allResponseNumberData,'allResponseRate' => $allResponseRate,'effectivenessRate' => $effectivenessRate,'allEffectivenessRate' => $allEffectivenessRate];
   }
@@ -2425,10 +2424,10 @@ class StatisticsController extends AppController {
     $consumerWatingAvgTime[] = '平均消費者待機時間';
     $responseAvgTime = [];
     $responseAvgTime[] = '平均応答時間';
-    $responseRate = [];
-    $responseRate[] = 'チャット応対率';
     $automaticResponseRate = [];
     $automaticResponseRate[] = '自動返信応対率';
+    $responseRate = [];
+    $responseRate[] = '有人チャット応対率';
     $effectivenessRate = [];
     $effectivenessRate[] = 'チャット有効率';
 
@@ -2451,8 +2450,8 @@ class StatisticsController extends AppController {
     $csv[] = $csvData['requestAvgTime'];
     $csv[] = $csvData['consumerWatingAvgTime'];
     $csv[] = $csvData['responseAvgTime'];
-    $csv[] = $csvData['responseRate'];
     $csv[] = $csvData['automaticResponseRate'];
+    $csv[] = $csvData['responseRate'];
     $csv[] = $csvData['effectivenessRate'];
 
     return $csv;
@@ -2561,7 +2560,7 @@ class StatisticsController extends AppController {
     }
     $automaticResponseRate[] = $csvData['automaticResponseData']['allAutomaticResponseRate'].$percentMark;
 
-    foreach($csvData['coherentDatas']['effectivenessRate'] as $key => $v3) {
+    foreach($csvData['responseDatas']['effectivenessRate'] as $key => $v3) {
       $percentMark = '';
       if(is_numeric($v3)) {
         $percentMark = '%';
@@ -2569,10 +2568,10 @@ class StatisticsController extends AppController {
       $effectivenessRate[] = $v3.$percentMark;
     }
     $percentMark = '';
-    if(is_numeric($csvData['coherentDatas']['allEffectivenessRate'])) {
+    if(is_numeric($csvData['responseDatas']['allEffectivenessRate'])) {
       $percentMark = '%';
     }
-    $effectivenessRate[] = $csvData['coherentDatas']['allEffectivenessRate'].$percentMark;
+    $effectivenessRate[] = $csvData['responseDatas']['allEffectivenessRate'].$percentMark;
 
     return ['accessNumber' => $accessNumber,'widgetNumber' => $widgetNumber,'requestNumber' => $requestNumber,
       'responseNumber' => $responseNumber,'automaticResponseNumber' => $automaticResponseNumber,'abandonmentNumber' => $abandonmentNumber, 'noNumber' =>$noNumber,'requestMannedNumber'=>$requestMannedNumber,

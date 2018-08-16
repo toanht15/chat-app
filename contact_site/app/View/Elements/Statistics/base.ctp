@@ -436,23 +436,23 @@
         </td>
         <?php
           for ($i = $start; $i <= $end; $i++) {
-            if(is_numeric($data['coherentDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)])) {
+            if(is_numeric($data['responseDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)])) {
               $checkData = ' %';
             }
             else {
               $checkData = '';
             } ?>
-          <td><?php echo $data['coherentDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)].$checkData ?></td>
+          <td><?php echo $data['responseDatas']['effectivenessRate'][$type.'-'.sprintf("%02d",$i)].$checkData ?></td>
         <?php } ?>
         <?php
-          if(is_numeric($data['coherentDatas']['allEffectivenessRate'])) {
+          if(is_numeric($data['responseDatas']['allEffectivenessRate'])) {
             $checkData = ' %';
           }
           else {
             $checkData = '';
           }
         ?>
-      <td><?php echo $data['coherentDatas']['allEffectivenessRate'].$checkData ?></td>
+      <td><?php echo $data['responseDatas']['allEffectivenessRate'].$checkData ?></td>
       </tr>
 
       <?php }
