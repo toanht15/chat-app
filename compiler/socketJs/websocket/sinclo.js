@@ -2740,17 +2740,17 @@
                         //imgタグ有効化
                         var img = unEscapeStr.match(imgTagReg);
                         if(img == null) {
-                          var linkTab3 = linkTab[1].replace(/ /g, "\$nbsp;");
-                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+linkTab3+"')");
+                          var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
                         }
                         else {
-                          var linkTab3 = linkTab[1].replace(img[0], "");
-                          linkTab3 = linkTab3.replace(/ /g, "\$nbsp;");
+                          var processedLink = linkTab[1].replace(img[0], "");
+                          processedLink = processedLink.replace(/ /g, "\$nbsp;");
                           imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                           a = a.replace(img[0], imgTag);
                           var urlTagReg = RegExp(/href="([\s\S]*?)"([\s\S]*?)/);
                           var url = a.match(urlTagReg);
-                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+linkTab3+"')");
+                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+processedLink+"')");
                         }
                       }
                       else {
@@ -2765,8 +2765,8 @@
                       var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
                       var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
                       var linkTab = a.match(linkTabReg);
-                      linkTab3 = linkTab[1].replace(/ /g, "\$nbsp;");
-                      a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+linkTab3+"')");
+                      processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                      a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
                       //imgタグ有効化
                       var img = unEscapeStr.match(imgTagReg);
                       if(img !== null) {
