@@ -1846,9 +1846,9 @@
           widgetFotterHeight = $('#sincloBox #fotter').outerHeight(),
           ratio = ($(window).width() - 20) * (1 / 285);
       //余白なし表示の場合
-      if(window.sincloInfo.widget.spMaximizeSizeType === 2){
+      if(Number(window.sincloInfo.widget.spMaximizeSizeType) === 2){
         //最大化時シンプル表示が有効の場合
-        if(window.sincloInfo.widget.spHeaderLightFlg === 1){
+        if(Number(window.sincloInfo.widget.spHeaderLightFlg) === 1){
           widgetHeaderHeight = $('#sincloBox #widgetTitle').outerHeight();
         }
         //自由入力欄があるならば、その高さを取得してチャットウィジェット全体の高さを計算する
@@ -1875,7 +1875,7 @@
         if ($(window).height() > $(window).width()) {
           $("#chatTalk").outerHeight(sinclo.calcSpWidgetHeight());
           //余白なし(画面いっぱいに表示)の場合
-          if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
+          if (Number(window.sincloInfo.widget.spMaximizeSizeType) === 2) {
             if ($('#flexBoxWrap').is(':visible')) {
               $('#sincloBox ul sinclo-typing').css('padding-bottom', (sinclo.calcSpWidgetHeight() * 0.1604) + 'px');
             }
