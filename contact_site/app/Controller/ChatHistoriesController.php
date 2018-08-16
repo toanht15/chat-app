@@ -212,8 +212,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params);
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params);
         $this->log("END tHistoryCountData : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
         $mCusData = ['MCustomer' => []];
@@ -342,28 +341,6 @@
       /* 除外情報取得 */
       $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
       return $this->render('/Elements/ChatHistories/remoteGetStayLogs');
-    }
-
-
-    public function remoteGetStayLogs2() {
-      Configure::write('debug', 0);
-      $this->autoRender = FALSE;
-      $this->layout = 'ajax';
-
-      $historyId = $this->params->query['historyId'];
-
-      $params = [
-        'fields' => '*',
-        'conditions' => [
-        'THistoryStayLog.t_histories_id' => $historyId
-        ],
-        'recursive' => -1
-      ];
-      $ret = $this->THistoryStayLog->find('all', $params);
-      $this->set('THistoryStayLog', $ret);
-      /* 除外情報取得 */
-      $this->set('excludeList', $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']));
-      return $this->render('/Elements/ChatHistories/remoteGetStayLogs2');
     }
 
     public function getOldChat(){
@@ -1876,8 +1853,7 @@
           ]
         ];
         /*必ず治す！！*/
-        //$tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
-        $tHistoryCountData = 2;
+        $tHistoryCountData = $this->THistory->find('first', $params)[0]['cnt'];
       }
       else {
         $tHistoryCountData = "";

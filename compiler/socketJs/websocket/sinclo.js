@@ -663,7 +663,6 @@
       emit('sendAccessInfo', emitData);
     },
     aaa: function(d) {
-      console.log('あはは');
       emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
     },
     confirmCustomerInfo: function(d) {
@@ -1120,7 +1119,6 @@
       // チャットの契約をしている場合
       if ( window.sincloInfo.contract.chat ) {
         if(storage.s.get('mannedRequestFlg') === 'true') {
-          console.log('入室扱い');
           //OPが入室した数
           //入室数についてはタブでカウントする
           if(typeof ga == "function" && obj.tabId === userInfo.tabId){
@@ -1567,7 +1565,7 @@
         if(obj.messageType == sinclo.chatApi.messageType.notification) {
           return false;
         }
-        if(obj.messageType == 8) {
+        if(obj.messageType == sinclo.chatApi.messageType.linkClick) {
           return false;
         }
         if(obj.messageType != sinclo.chatApi.messageType.sorry){
@@ -2173,6 +2171,7 @@
           autoSpeech: 5,
           sendFile: 6,
           notification: 7,
+          linkClick: 8,
           start: 98,
           end: 99,
           scenario: {

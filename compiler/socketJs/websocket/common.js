@@ -4603,7 +4603,6 @@ var socket, // socket.io
 
     // リンク
     socket.on('aaa', function (d) {
-      console.log('りんくー');
       sinclo.aaa(d);
     });
 
@@ -4831,11 +4830,7 @@ function now(){
 }
 
 function link(word,link) {
-  console.log('リンクううううう');
-  console.log(link);
-  console.log(word);
   var link2 = "<a "+link.replace(/\$nbsp;/g, " ")+">"+word+"</a>";
-  console.log(link2);
   var data = sinclo.chatApi;
   data.link = link2;
   data.siteKey = sincloInfo.site.key;

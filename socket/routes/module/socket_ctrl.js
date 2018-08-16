@@ -1029,8 +1029,6 @@ io.sockets.on('connection', function (socket) {
         }
     },
     commit: function(d){ // DBに書き込むとき
-      console.log('commit入ってきた');
-      console.log(d);
       var insertData = {
         t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
         m_companies_id: companyList[d.siteKey],
@@ -1045,7 +1043,6 @@ io.sockets.on('connection', function (socket) {
 
       pool.query('SELECT * FROM t_history_stay_logs WHERE t_histories_id = ? ORDER BY id DESC LIMIT 1;', insertData.t_histories_id,
         function(err, rows){
-          console.log('commit入ってきた2');
           if ( err !== null && err !== '' ) return false; // DB接続断対応
           if ( rows && rows[0] ) {
             insertData.t_history_stay_logs_id = isset(d.stayLogsId) ? d.stayLogsId : rows[0].id;
@@ -1065,9 +1062,7 @@ io.sockets.on('connection', function (socket) {
           }
 
           pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error,results,fields){
-            console.log('commit入ってきた3');
             if ( !isset(error) ) {
-              console.log('commit入ってきた4');
               if ( !isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
               var sendData = {
                 tabId: d.tabId,
@@ -1278,7 +1273,6 @@ io.sockets.on('connection', function (socket) {
             }
 
             else {
-              console.log('commit入ってきた5');
               // 書き込みが失敗したらエラーを渡す
               return emit.toUser('sendChatResult', {tabId: d.tabId, messageType: d.messageType, ret: false, siteKey: d.siteKey}, d.siteKey);
             }
@@ -2238,8 +2232,6 @@ io.sockets.on('connection', function (socket) {
         console.log("RECORD INSERT ERROR: t_history_widget_close_counts:" + error);
       }
     });
-    console.log('リンク');
-    console.log(data);
     var ret = {
         siteKey: data.siteKey,
         tabId: data.tabId,
@@ -3235,8 +3227,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   // オートチャット
   socket.on("sendAutoChat", function(d){
     var obj = JSON.parse(d);
-    console.log('results');
-    console.log(obj);
     //応対数検索、登録
     getConversationCountUser(obj.userId,function(results) {
       var messageDistinction;
@@ -3253,7 +3243,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if ( !err && (rows && rows[0]) ) {
               var activity = JSON.parse(rows[0].activity);
               if(activity.cv == 1) {
-                console.log('cvだよ');
                 var ret = {
                   siteKey: obj.siteKey,
                   tabId: obj.tabId,
@@ -3269,7 +3258,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 };
               }
               else {
-                console.log('cvじゃないよ');
                 var ret = {
                     siteKey: obj.siteKey,
                     tabId: obj.tabId,
