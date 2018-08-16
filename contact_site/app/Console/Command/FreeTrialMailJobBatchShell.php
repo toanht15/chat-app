@@ -13,7 +13,7 @@ class FreeTrialMailJobBatchShell extends AppShell
   const LOG_INFO = 'batch-info';
   const LOG_ERROR = 'batch-error';
 
-  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
 
   const COMPANY_NAME = "##COMPANY_NAME##";
   const BUSINESS_MODEL = "##BUSINESS_MODEL##";
@@ -170,7 +170,8 @@ class FreeTrialMailJobBatchShell extends AppShell
       ],
       'conditions' => [
         'm_companies_id' => $trialCompanyIds,
-        'permission_level' => [1,2]
+        'permission_level' => [1,2],
+        'MUser.del_flg' => 0
       ]
     ]);
 
@@ -183,9 +184,11 @@ class FreeTrialMailJobBatchShell extends AppShell
       ],
       'conditions' => [
         'm_companies_id' => $companyIds,
-        'permission_level' => [1,2]
+        'permission_level' => [1,2],
+        'MUser.del_flg' => 0
       ]
     ]);
+
     if(empty($trialMailAdressData)) {
       $this->log('trialSchedule is not found.', self::LOG_INFO);
     } else {
@@ -219,7 +222,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                 $agreementData = $this->getRecordFromCompanyId($trialAgreementsList, $mailAdress['MUser']['m_companies_id']);
                 //申込者に送る場合
                 if ($jobMailTemplate['send_mail_application_user_flg']) {
-                  if(end($trialMailAdressData)['MUser']['mail_address'] == $mailAdress['MUser']['mail_address'] && !$isApplicationUserSended ) {
+                  if(strcmp(end($trialMailAdressData)['MUser']['mail_address'], $mailAdress['MUser']['mail_address']) == 0 && !$isApplicationUserSended ) {
                     $id = $jobMailTemplate['id'];
                     $to = $agreementData['application_mail_address'];
                     $sender = $jobMailTemplate['sender'];
@@ -239,15 +242,15 @@ class FreeTrialMailJobBatchShell extends AppShell
                     $this->component->setSubject($subject);
                     $this->component->send();
                     $isApplicationUserSended = true;
-                    if($mailAdress['MUser']['mail_address'] == $agreementData['application_mail_address']) {
+                    if(strcmp($mailAdress['MUser']['mail_address'], $agreementData['application_mail_address']) == 0) {
                       $applicationSameAdress = true;
                     }
                   }
                 }
                 //管理者に送る場合
                 if ($jobMailTemplate['send_mail_administrator_user_flg']) {
-                  if((($isApplicationUserSended && $agreementData['application_mail_address'] !== $agreementData['administrator_mail_address'])
-                    || !$isApplicationUserSended) && ($agreementData['administrator_mail_address'] == $mailAdress['MUser']['mail_address'] || (end($trialMailAdressData)['MUser']['mail_address'] == $mailAdress['MUser']['mail_address'] && !$isAdminUserSended))) {
+                  if((($isApplicationUserSended && strcmp($agreementData['application_mail_address'], $agreementData['administrator_mail_address']) !== 0)
+                    || !$isApplicationUserSended) && (strcmp($agreementData['administrator_mail_address'], $mailAdress['MUser']['mail_address']) == 0 || (strcmp(end($trialMailAdressData)['MUser']['mail_address'], $mailAdress['MUser']['mail_address']) == 0 && !$isAdminUserSended))) {
                     $id = $jobMailTemplate['id'];
                     $to = $agreementData['administrator_mail_address'];
                     $sender = $jobMailTemplate['sender'];
@@ -362,7 +365,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                 $agreementData = $this->getRecordFromCompanyId($agreementsList, $mailAdress['MUser']['m_companies_id']);
                 //申込者に送る場合
                 if ($jobMailTemplate['send_mail_application_user_flg']) {
-                  if(end($agreementMailAdressData)['MUser']['mail_address'] == $mailAdress['MUser']['mail_address'] && !$isApplicationUserSended ) {
+                  if(strcmp(end($agreementMailAdressData)['MUser']['mail_address'], $mailAdress['MUser']['mail_address']) == 0 && !$isApplicationUserSended ) {
                     $id = $jobMailTemplate['id'];
                     $to = $agreementData['application_mail_address'];
                     $sender = $jobMailTemplate['sender'];
@@ -389,8 +392,8 @@ class FreeTrialMailJobBatchShell extends AppShell
                 }
                 //管理者に送る場合
                 if ($jobMailTemplate['send_mail_administrator_user_flg']) {
-                  if((($isApplicationUserSended && $agreementData['application_mail_address'] !== $agreementData['administrator_mail_address'])
-                    || !$isApplicationUserSended) && ($agreementData['administrator_mail_address'] == $mailAdress['MUser']['mail_address'] || (end($agreementMailAdressData)['MUser']['mail_address'] == $mailAdress['MUser']['mail_address'] && !$isAdminUserSended))) {
+                  if((($isApplicationUserSended && strcmp($agreementData['application_mail_address'], $agreementData['administrator_mail_address']) !== 0 )
+                    || !$isApplicationUserSended) && (strcmp($agreementData['administrator_mail_address'], $mailAdress['MUser']['mail_address']) == 0 || (strcmp(end($agreementMailAdressData)['MUser']['mail_address'], $mailAdress['MUser']['mail_address']) == 0 && !$isAdminUserSended))) {
                     $id = $jobMailTemplate['id'];
                     $to = $agreementData['administrator_mail_address'];
                     $sender = $jobMailTemplate['sender'];
@@ -410,7 +413,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                     $this->component->setSubject($subject);
                     $this->component->send();
                     $isAdminUserSended = true;
-                    if($mailAdress['MUser']['mail_address'] == $agreementData['administrator_mail_address']) {
+                    if(strcmp($mailAdress['MUser']['mail_address'], $agreementData['administrator_mail_address']) == 0) {
                       $administratorSameAdress = true;
                     }
                   }
