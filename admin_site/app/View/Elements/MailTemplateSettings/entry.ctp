@@ -84,14 +84,10 @@
         <tr><td>##COMPANY_NAME##</td><td>会社名</td></tr>
         <tr class="initialVariable"><td>##PASSWORD##</td><td>パスワード</td></tr>
         <tr><td>##BUSINESS_MODEL##</td><td>ビジネスモデル</td></tr>
-        <tr><td>##DEPARTMENT##</td><td>申込者：部署</td></tr>
-        <tr><td>##POSITION##</td><td>申込者：役職</td></tr>
-        <tr><td>##USER_NAME##</td><td>申込者：お名前<br>（sincloのユーザー送信時は各人の「氏名」）</td></tr>
-        <tr><td>##MAIL_ADDRESS##</td><td>申込者：メールアドレス<br>（sincloのユーザー送信時は各人の「メールアドレス」）</td></tr>
-        <tr><td>##ADMIN_DEPARTMENT##</td><td>管理者：部署</td></tr>
-        <tr><td>##ADMIN_POSITION##</td><td>管理者：役職</td></tr>
-        <tr><td>##ADMIN_USER_NAME##</td><td>管理者：お名前</td></tr>
-        <tr><td>##ADMIN_MAIL_ADDRESS##</td><td>管理者：メールアドレス</td></tr>
+        <tr><td>##DEPARTMENT##</td><td>申込者のメールアドレスに送る場合は申込者の部署、管理者のメールアドレスに送る場合は管理者の部署</td></tr>
+        <tr><td>##POSITION##</td><td>申込者のメールアドレスに送る場合は申込者の役職、管理者のメールアドレスに送る場合は管理者の役職</td></tr>
+        <tr><td>##USER_NAME##</td><td>申込者のメールアドレスに送る場合は申込者のお名前、管理者のメールアドレスに送る場合は管理者のお名前、<br>「sincloユーザ一覧に送る」の場合はユーザ管理に登録されているお名前</td></tr>
+        <tr><td>##MAIL_ADDRESS##</td><td>申込者のメールアドレスに送る場合は申込者のメールアドレス、管理者のメールアドレスに送る場合は管理者のメールアドレス、<br>「sincloユーザ一覧に送る」の場合はユーザ管理に登録されているメールアドレス</td></tr>
         <tr><td>##PHONE_NUMBER##</td><td>電話番号</td></tr>
         <tr><td>##URL##</td><td>サイトURL</td></tr>
         <tr><td>##PLAN_NAME##</td><td>プラン名</td></tr>
