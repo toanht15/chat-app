@@ -330,9 +330,17 @@
         }
       }
       else if ( type === chatApi.messageType.linkClick) {
-        var created = chat.created.replace(" ","%");
+        var created = chat.created.replace(" ","%");;
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
-        forDeletionMessage = escape_html(forDeletionMessage);
+        if(message.indexOf('<') > -1){
+          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
+        }
+        if(message.indexOf('>') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
+        }
+        if(message.indexOf('"') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/"/g, "");
+        }
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
