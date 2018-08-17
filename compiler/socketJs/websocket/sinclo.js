@@ -1894,6 +1894,14 @@
         console.log("<><><><>adjustSpWidgetSize<><><><>");
         // 縦の場合
         if ($(window).height() > $(window).width()) {
+          //案② focusが当たってる場合かつ自由入力欄が表示されている場合はリサイズしないようにする
+          //(hideするときはfocusが当たっててもリサイズする)
+          if($('#sincloChatMessage').is(':focus') || $('#miniSincloChatMessage').is(':focus')){
+            if ($('#flexBoxWrap').is(':visible')) {
+              console.log('リサイズは行われません');
+              return;
+            }
+          }
           $("#chatTalk").outerHeight(sinclo.calcSpWidgetHeight());
           //余白なし(画面いっぱいに表示)の場合
           if (Number(window.sincloInfo.widget.spMaximizeSizeType) === 2) {
@@ -1919,6 +1927,7 @@
           }
         }
       }
+      console.log('リサイズ処理が行われました');
     },
     syncApi: {
       init: function (type) {

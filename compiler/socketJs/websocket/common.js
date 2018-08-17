@@ -2105,7 +2105,7 @@ var socket, // socket.io
             window.addEventListener('resize', function(e){
               if(e) e.stopPropagation();
               if ( $(window).height() > $(window).width() || document.activeElement.id === "sincloChatMessage") return false; // 横向きの場合のみ使用
-               sinclo.operatorInfo.reCreateWidget();
+              sinclo.operatorInfo.reCreateWidget();
             });
           }
       }
