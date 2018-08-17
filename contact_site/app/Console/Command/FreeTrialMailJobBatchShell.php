@@ -13,7 +13,7 @@ class FreeTrialMailJobBatchShell extends AppShell
   const LOG_INFO = 'batch-info';
   const LOG_ERROR = 'batch-error';
 
-  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
 
   const COMPANY_NAME = "##COMPANY_NAME##";
   const BUSINESS_MODEL = "##BUSINESS_MODEL##";
@@ -232,8 +232,23 @@ class FreeTrialMailJobBatchShell extends AppShell
                     $replaceData = array(
                       'MCompany' => $trialCompanyData[0]['MCompany'],
                       'MAgreement' => $agreementData
-                    );
+                    );;
                     $body = $this->replaceAllMailConstString($replaceData, $body,'send_mail_application_user');
+                    // 送信前にログを生成
+                    $this->TMailTransmissionLog->create();
+                    $this->TMailTransmissionLog->set(array(
+                      'm_companies_id' => 0, // システムメールなので0で登録
+                      'mail_type_cd' => 'JOB'.$id,
+                      'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+                      'from_name' => $sender,
+                      'to_address' => $to,
+                      'subject' => $subject,
+                      'body' => $body,
+                      'send_flg' => 0
+                    ));
+                    $this->TMailTransmissionLog->save();
+                    $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
+
                     $this->log("【TRIAL】Sending mail to Application User: " . $to . " subject : " . $subject . " JOB ID: " . $id, self::LOG_INFO);
                     $this->component->setFrom(self::ML_MAIL_ADDRESS);
                     $this->component->setFromName($sender);
@@ -245,6 +260,13 @@ class FreeTrialMailJobBatchShell extends AppShell
                     if(strcmp($mailAdress['MUser']['mail_address'], $agreementData['application_mail_address']) == 0) {
                       $applicationSameAdress = true;
                     }
+                    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+                    $this->TMailTransmissionLog->read(null, $lastInsertId);
+                    $this->TMailTransmissionLog->set([
+                      'send_flg' => 1,
+                      'sent_datetime' => $now->format("Y/m/d H:i:s")
+                    ]);
+                    $this->TMailTransmissionLog->save();
                   }
                 }
                 //管理者に送る場合
@@ -262,6 +284,20 @@ class FreeTrialMailJobBatchShell extends AppShell
                       'MAgreement' => $agreementData
                     );
                     $body = $this->replaceAllMailConstString($replaceData, $body,'send_mail_administrator_user');
+                    // 送信前にログを生成
+                    $this->TMailTransmissionLog->create();
+                    $this->TMailTransmissionLog->set(array(
+                      'm_companies_id' => 0, // システムメールなので0で登録
+                      'mail_type_cd' => 'JOB'.$id,
+                      'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+                      'from_name' => $sender,
+                      'to_address' => $to,
+                      'subject' => $subject,
+                      'body' => $body,
+                      'send_flg' => 0
+                    ));
+                    $this->TMailTransmissionLog->save();
+                    $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
                     $this->log("【TRIAL】Sending mail to Administrator User: " . $to . " subject : " . $subject . " JOB ID: " . $id, self::LOG_INFO);
                     $this->component->setFrom(self::ML_MAIL_ADDRESS);
                     $this->component->setFromName($sender);
@@ -273,6 +309,13 @@ class FreeTrialMailJobBatchShell extends AppShell
                     if(strcmp($mailAdress['MUser']['mail_address'], $agreementData['administrator_mail_address']) == 0) {
                       $administratorSameAdress = true;
                     }
+                    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+                    $this->TMailTransmissionLog->read(null, $lastInsertId);
+                    $this->TMailTransmissionLog->set([
+                      'send_flg' => 1,
+                      'sent_datetime' => $now->format("Y/m/d H:i:s")
+                    ]);
+                    $this->TMailTransmissionLog->save();
                   }
                 }
                 //sincloのユーザー一覧にいる全員に送る場合
@@ -298,6 +341,20 @@ class FreeTrialMailJobBatchShell extends AppShell
                     $body = $this->replaceAllMailConstString($replaceData, $body,'send_mail_sinclo_all_users');
                     unset($agreementData['MAgreement']['sinclo_user_name']);
                     unset($agreementData['MAgreement']['sinclo_user_mail_address']);
+                    // 送信前にログを生成
+                    $this->TMailTransmissionLog->create();
+                    $this->TMailTransmissionLog->set(array(
+                      'm_companies_id' => 0, // システムメールなので0で登録
+                      'mail_type_cd' => 'JOB'.$id,
+                      'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+                      'from_name' => $sender,
+                      'to_address' => $to,
+                      'subject' => $subject,
+                      'body' => $body,
+                      'send_flg' => 0
+                    ));
+                    $this->TMailTransmissionLog->save();
+                    $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
                     $this->log("【TRIAL】Sending mail to sinclo User: " . $to . " subject : " . $subject . " JOB ID: " . $id, self::LOG_INFO);
                     $this->component->setFrom(self::ML_MAIL_ADDRESS);
                     $this->component->setFromName($sender);
@@ -305,6 +362,13 @@ class FreeTrialMailJobBatchShell extends AppShell
                     $this->component->setBody($body);
                     $this->component->setSubject($subject);
                     $this->component->send();
+                    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+                    $this->TMailTransmissionLog->read(null, $lastInsertId);
+                    $this->TMailTransmissionLog->set([
+                      'send_flg' => 1,
+                      'sent_datetime' => $now->format("Y/m/d H:i:s")
+                    ]);
+                    $this->TMailTransmissionLog->save();
                   }
                 }
               }
@@ -377,6 +441,19 @@ class FreeTrialMailJobBatchShell extends AppShell
                       'MAgreement' => $agreementData
                     );
                     $body = $this->replaceAllMailConstString($replaceData, $body,'send_mail_application_user');
+                    // 送信前にログを生成
+                    $this->TMailTransmissionLog->create();
+                    $this->TMailTransmissionLog->set(array(
+                      'm_companies_id' => 0, // システムメールなので0で登録
+                      'mail_type_cd' => 'JOB'.$id,
+                      'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+                      'from_name' => $sender,
+                      'to_address' => $to,
+                      'subject' => $subject,
+                      'body' => $body,
+                      'send_flg' => 0
+                    ));
+                    $this->TMailTransmissionLog->save();
                     $this->log("【TRIAL】Sending mail to Application User: " . $to . " subject : " . $subject . " JOB ID: " . $id, self::LOG_INFO);
                     $this->component->setFrom(self::ML_MAIL_ADDRESS);
                     $this->component->setFromName($sender);
@@ -388,6 +465,13 @@ class FreeTrialMailJobBatchShell extends AppShell
                     if($mailAdress['MUser']['mail_address'] == $agreementData['application_mail_address']) {
                       $applicationSameAdress = true;
                     }
+                    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+                    $this->TMailTransmissionLog->read(null, $lastInsertId);
+                    $this->TMailTransmissionLog->set([
+                      'send_flg' => 1,
+                      'sent_datetime' => $now->format("Y/m/d H:i:s")
+                    ]);
+                    $this->TMailTransmissionLog->save();
                   }
                 }
                 //管理者に送る場合
@@ -405,6 +489,19 @@ class FreeTrialMailJobBatchShell extends AppShell
                       'MAgreement' => $agreementData
                     );
                     $body = $this->replaceAllMailConstString($replaceData, $body,'send_mail_administrator_user');
+                    // 送信前にログを生成
+                    $this->TMailTransmissionLog->create();
+                    $this->TMailTransmissionLog->set(array(
+                      'm_companies_id' => 0, // システムメールなので0で登録
+                      'mail_type_cd' => 'JOB'.$id,
+                      'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+                      'from_name' => $sender,
+                      'to_address' => $to,
+                      'subject' => $subject,
+                      'body' => $body,
+                      'send_flg' => 0
+                    ));
+                    $this->TMailTransmissionLog->save();
                     $this->log("【TRIAL】Sending mail to Administrator User: " . $to . " subject : " . $subject . " JOB ID: " . $id, self::LOG_INFO);
                     $this->component->setFrom(self::ML_MAIL_ADDRESS);
                     $this->component->setFromName($sender);
@@ -416,6 +513,13 @@ class FreeTrialMailJobBatchShell extends AppShell
                     if(strcmp($mailAdress['MUser']['mail_address'], $agreementData['administrator_mail_address']) == 0) {
                       $administratorSameAdress = true;
                     }
+                    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+                    $this->TMailTransmissionLog->read(null, $lastInsertId);
+                    $this->TMailTransmissionLog->set([
+                      'send_flg' => 1,
+                      'sent_datetime' => $now->format("Y/m/d H:i:s")
+                    ]);
+                    $this->TMailTransmissionLog->save();
                   }
                 }
                 //sincloのユーザー一覧にいる全員に送る場合
@@ -441,6 +545,19 @@ class FreeTrialMailJobBatchShell extends AppShell
                     $body = $this->replaceAllMailConstString($replaceData, $body,'send_mail_sinclo_all_users');
                     unset($agreementData['MAgreement']['sinclo_user_name']);
                     unset($agreementData['MAgreement']['sinclo_user_mail_address']);
+                    // 送信前にログを生成
+                    $this->TMailTransmissionLog->create();
+                    $this->TMailTransmissionLog->set(array(
+                      'm_companies_id' => 0, // システムメールなので0で登録
+                      'mail_type_cd' => 'JOB'.$id,
+                      'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+                      'from_name' => $sender,
+                      'to_address' => $to,
+                      'subject' => $subject,
+                      'body' => $body,
+                      'send_flg' => 0
+                    ));
+                    $this->TMailTransmissionLog->save();
                     $this->log("【TRIAL】Sending mail to sinclo User: " . $to . " subject : " . $subject . " JOB ID: " . $id, self::LOG_INFO);
                     $this->component->setFrom(self::ML_MAIL_ADDRESS);
                     $this->component->setFromName($sender);
@@ -448,6 +565,13 @@ class FreeTrialMailJobBatchShell extends AppShell
                     $this->component->setBody($body);
                     $this->component->setSubject($subject);
                     $this->component->send();
+                    $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+                    $this->TMailTransmissionLog->read(null, $lastInsertId);
+                    $this->TMailTransmissionLog->set([
+                      'send_flg' => 1,
+                      'sent_datetime' => $now->format("Y/m/d H:i:s")
+                    ]);
+                    $this->TMailTransmissionLog->save();
                   }
                 }
               }
