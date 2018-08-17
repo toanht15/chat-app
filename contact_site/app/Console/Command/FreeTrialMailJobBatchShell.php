@@ -13,7 +13,7 @@ class FreeTrialMailJobBatchShell extends AppShell
   const LOG_INFO = 'batch-info';
   const LOG_ERROR = 'batch-error';
 
-  const ML_MAIL_ADDRESS= "henmi0201@gmail.com";
+  const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
 
   const COMPANY_NAME = "##COMPANY_NAME##";
   const BUSINESS_MODEL = "##BUSINESS_MODEL##";
@@ -223,7 +223,6 @@ class FreeTrialMailJobBatchShell extends AppShell
                 //申込者に送る場合
                 if ($jobMailTemplate['send_mail_application_user_flg']) {
                   if((strcmp($agreementData['application_mail_address'], $mailAdress['MUser']['mail_address']) == 0) || (strcmp(end($trialMailAdressData)['MUser']['mail_address'], $mailAdress['MUser']['mail_address']) == 0 && !$isApplicationUserSended )) {
-                    $this->log('ここに入ってしまっている1？',LOG_DEBUG);
                     $id = $jobMailTemplate['id'];
                     $to = $agreementData['application_mail_address'];
                     $sender = $jobMailTemplate['sender'];
