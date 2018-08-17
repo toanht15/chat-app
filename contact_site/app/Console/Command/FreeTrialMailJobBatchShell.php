@@ -200,6 +200,8 @@ class FreeTrialMailJobBatchShell extends AppShell
         $trialCompanyNames = "";
         foreach($trialJobs as $key => $jobMailTemplate) {
           foreach ($trialMailAdressData as $index => $mailAdress) {
+            $applicationSameAdress = false;
+            $administratorSameAdress = false;
             try {
               if ($mailAdress['MUser']['m_companies_id'] == $jobMailTemplate['m_companies_id']) {
                 //m_companies_idが変わるごとに会社名取得
@@ -216,13 +218,11 @@ class FreeTrialMailJobBatchShell extends AppShell
                   } else {
                     $trialCompanyNames .= ',' . $trialCompanyName;
                   }
-                  $applicationSameAdress = false;
-                  $administratorSameAdress = false;
                 }
                 $agreementData = $this->getRecordFromCompanyId($trialAgreementsList, $mailAdress['MUser']['m_companies_id']);
                 //申込者に送る場合
                 if ($jobMailTemplate['send_mail_application_user_flg']) {
-                  if(strcmp(end($trialMailAdressData)['MUser']['mail_address'], $mailAdress['MUser']['mail_address']) == 0 && !$isApplicationUserSended ) {
+                  if((strcmp($agreementData['application_mail_address'], $mailAdress['MUser']['mail_address']) == 0) || (strcmp(end($trialMailAdressData)['MUser']['mail_address'], $mailAdress['MUser']['mail_address']) == 0 && !$isApplicationUserSended )) {
                     $id = $jobMailTemplate['id'];
                     $to = $agreementData['application_mail_address'];
                     $sender = $jobMailTemplate['sender'];
@@ -429,7 +429,7 @@ class FreeTrialMailJobBatchShell extends AppShell
                 $agreementData = $this->getRecordFromCompanyId($agreementsList, $mailAdress['MUser']['m_companies_id']);
                 //申込者に送る場合
                 if ($jobMailTemplate['send_mail_application_user_flg']) {
-                  if(strcmp(end($agreementMailAdressData)['MUser']['mail_address'], $mailAdress['MUser']['mail_address']) == 0 && !$isApplicationUserSended ) {
+                  if((strcmp($agreementData['application_mail_address'], $mailAdress['MUser']['mail_address']) == 0) || (strcmp(end($agreementMailAdressData)['MUser']['mail_address'], $mailAdress['MUser']['mail_address']) == 0 && !$isApplicationUserSended )) {
                     $id = $jobMailTemplate['id'];
                     $to = $agreementData['application_mail_address'];
                     $sender = $jobMailTemplate['sender'];
