@@ -1886,10 +1886,15 @@
               var fullHeight = sinclo.calcSpWidgetHeight();
               $("#chatTalk").outerHeight(fullHeight);
               $('#sincloBox ul sinclo-typing').css('padding-bottom', (fullHeight * 0.1604) + 'px');
+            //余白ありの場合
             } else {
               widgetWidth = $(window).width() - 20;
               ratio = widgetWidth * (1 / 285);
-              document.getElementById("chatTalk").style.height = (194 * ratio) + 'px';
+              var chatTalkHeight = (194 * ratio) + (60 * ratio);
+              if($('#flexBoxWrap').is(':visible')){
+                chatTalkHeight -= $('#flexBoxWrap').outerHeight();
+              }
+              document.getElementById("chatTalk").style.height = chatTalkHeight + 'px';
               $('#sincloBox ul sinclo-typing').css('padding-bottom', ((194 * ratio) * 0.1604) + 'px');
             }
           }
@@ -1910,10 +1915,11 @@
             $('#flexBoxWrap').css('display', 'none');
             if ($(window).height() > $(window).width()) {
               console.log("ratio : " + ratio);
-            
+
               if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
                 var fullHeight = sinclo.calcSpWidgetHeight();
                 $("#chatTalk").outerHeight(fullHeight);
+              //余白ありの場合
               } else {
                 widgetWidth = $(window).width() - 20;
                 ratio = widgetWidth * (1 / 285);
