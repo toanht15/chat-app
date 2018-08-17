@@ -563,6 +563,11 @@ class HistoriesController extends AppController {
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
           $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
         }
+        if($val['THistoryChatLog']['message_type'] == 8) {
+          $row['transmissionKind'] = '訪問者';
+          $row['transmissionPerson'] = '';
+          $val['THistoryChatLog']['message'] = "（「".$val['THistoryChatLog']['message']."」をクリック）";
+        }
         if($val['THistoryChatLog']['message_type'] == 12) {
           $row['transmissionKind'] = '訪問者（ヒアリング回答）';
           $row['transmissionPerson'] = '';
