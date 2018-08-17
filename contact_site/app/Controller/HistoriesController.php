@@ -716,6 +716,9 @@ class HistoriesController extends AppController {
           }
           $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
           break;
+        case 8: // リンククリック
+            $row = $this->_setData($date, "訪問者","","（「".$message."」をクリック）");
+          break;
         case 12: // 訪問者（シナリオ：ヒアリング回答）
           $row = $this->_setData($date, "訪問者（ヒアリング回答）", "", $message);
           break;
