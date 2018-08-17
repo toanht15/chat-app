@@ -1944,9 +1944,6 @@ class StatisticsController extends AppController {
 
     //合計有効率
     $allEffectivenessRate = 0;
-    $this->log('よーうチェック',LOG_DEBUG);
-    $this->log($allEffectivenessNumberData,LOG_DEBUG);
-    $this->log($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData,LOG_DEBUG);
     if($allEffectivenessNumberData != 0 and ($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData) != 0) {
       $allEffectivenessRate = round($allEffectivenessNumberData/($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData)*100);
     } else if($allEffectivenessNumberData === 0 && ($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData) != 0) {
