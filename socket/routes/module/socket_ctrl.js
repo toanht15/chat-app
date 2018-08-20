@@ -1095,7 +1095,7 @@ io.sockets.on('connection', function (socket) {
 
 
           // オートメッセージとシナリオの場合は既読
-          if (Number(insertData.message_type === 3) || Number(insertData.message_type === 22) || Number(insertData.message_type === 23)) {
+          if (Number(insertData.message_type === 3) || Number(insertData.message_type === 22) || Number(insertData.message_type === 40) || Number(insertData.message_type === 23)) {
             insertData.message_read_flg = 1;
             insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
             insertData.message_distinction = d.messageDistinction;
@@ -3676,7 +3676,14 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
   socket.on('sendParseSignature', function(data, ack){
     var obj = JSON.parse(data);
     parseSignature(obj.targetText, obj.ip, function(result){
-      ack(result);
+      var resultObj = JSON.parse(result);
+      var storeData = {
+        message: resultObj.data,
+        target: obj.targetVariable
+      };
+      obj.chatMessage = JSON.stringify(storeData);
+      obj.messageType = 40;
+      chatApi.set(obj);
     });
   });
 

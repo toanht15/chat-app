@@ -1329,7 +1329,7 @@ var socket, // socket.io
         html += '@keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }';
 
         // 一括ヒアリング
-        html += '#sincloBox #chatTalk li.sinclo_re.sinclo_form { display: block; padding: 10px 15px 15px 15px; line-height: 0; }';
+        html += '#sincloBox #chatTalk li.sinclo_re.sinclo_form { display: block; padding: 10px 15px 15px 15px; line-height: 0; color: ' + widget.reTextColor + '; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formContentArea { margin: 0; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formArea { background-color: #FFF; line-height: 0; padding: 10px 10px 0 10px; margin-top: 10px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formElement { color: #333; display: flex; justify-content: stretch; flex-flow: column nowrap; }';
@@ -1351,6 +1351,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.formElement input.formInput { padding: 5px; border: 1px solid ' + colorList['seBackgroundColor'] + '; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea { margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;  }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton { width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; opacity:0.38;  }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton.disabled { opacity: 0.38; }';
 
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
@@ -4794,7 +4795,7 @@ function emit(evName, data, callback){
     data.title = common.title();
   }
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat" ||
-  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue") {
+  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue" || evName === "sendParseSignature") {
     data.userId = userInfo.userId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||
