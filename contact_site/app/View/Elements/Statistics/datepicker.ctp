@@ -1183,7 +1183,7 @@
             }
 
             //if a new date range was selected, invoke the user callback function
-            if (!this.startDate.isSame(this.oldStartDate) || !this.endDate.isSame(this.oldEndDate))
+            if (e)
                 this.callback(this.startDate, this.endDate, this.chosenLabel);
 
             //if picker is attached to a text input, update it
@@ -1556,7 +1556,7 @@
             if (this.singleDatePicker) {
                 this.setEndDate(this.startDate);
                 if (!this.timePicker)
-                    this.clickApply();
+                    this.clickApply("clicked");
             }
 
             this.updateView();
@@ -1599,7 +1599,7 @@
         },
 
         clickApply: function(e) {
-            this.hide();
+            this.hide(e);
             this.element.trigger('apply.daterangepicker', this);
         },
 
