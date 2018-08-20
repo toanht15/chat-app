@@ -38,9 +38,6 @@ var uglify = require('gulp-uglify'),
 gulp.task('admin-scss-compile', function(){
   return gulp.src(path.adScss + '**/*.scss')
     .pipe(sass({outputStyle: 'expanded'}))
-    .on('error', function(err) {
-      console.log(err.message);
-    })
     .pipe(cssnext())
     .pipe(gulp.dest(path.adCss));
 });
@@ -54,9 +51,6 @@ gulp.task('compress-gzip-admin-css', function(){
 gulp.task('contact-scss-compile', function(){
   return gulp.src(path.scss + '**/*.scss')
     .pipe(sass({outputStyle: 'expanded'}))
-    .on('error', function(err) {
-      console.log(err.message);
-    })
     .pipe(cssnext())
     .pipe(gulp.dest(path.css));
 });
@@ -83,9 +77,6 @@ gulp.task('compress-gzip-socket-css', function(){
 gulp.task('minify-js', function(){
   return gulp.src(path.js)
     .pipe(uglify(uglifyOpt))
-    .on('error', function(e){
-      console.log(e);
-    })
     .pipe(rename({
       extname: '.min.js'
     }))
@@ -100,9 +91,6 @@ gulp.task('minify-js-dev', function(){
     .pipe(sourcemaps.init())
     .pipe(gulp.dest(path.minjs))
     .pipe(uglify(uglifyOpt))
-    .on('error', function(e){
-      console.log(e);
-    })
     .pipe(rename({
       extname: '.min.js'
     }))
