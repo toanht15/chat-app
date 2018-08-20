@@ -1153,7 +1153,7 @@
         if (!obj.chat.messages.hasOwnProperty(key)) return false;
         var chat = obj.chat.messages[key], userName;
         if (Number(chat.messageType) < 90) {
-          var cn = (Number(chat.messageType) === 1 || Number(chat.messageType) === 12 || Number(chat.messageType) === 13) ? "sinclo_se" : "sinclo_re";
+          var cn = (Number(chat.messageType) === 1 || Number(chat.messageType) === 12 || Number(chat.messageType) === 13 || Number(chat.messageType) === 30) ? "sinclo_se" : "sinclo_re";
           if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
             this.chatApi.unread++;
           }
@@ -1257,10 +1257,12 @@
             } else {
               this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
-          } else if (Number(chat.messageType) === 32) {
-            // ヒアリング時に取得した文字列（署名を想定）は出さない
-            continue;
-          } else if (Number(chat.messageType) === 33) {
+          } else if (Number(chat.messageType) === 40) {
+            if(sinclo.scenarioApi.isProcessing()) {
+              var data = JSON.parse(chat.message);
+              sinclo.chatApi.createForm(true, data.target, data.message, sinclo.scenarioApi._bulkHearing.handleFormOK);
+            }
+          } else if (Number(chat.messageType) === 31 || Number(chat.messageType) === 32) {
             this.chatApi.createFormFromLog(JSON.parse(chat.message));
           } else {
             //通知した場合
@@ -1409,10 +1411,6 @@
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
-        if (obj.messageType === sinclo.chatApi.messageType.scenario.customer.bulkHearing) {
-          common.chatBotTyping(value);
-          return;
-        }
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1437,7 +1435,10 @@
           }
           console.log("sendChatResult :: userName : %s", userName);
         }
-        else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
+        else if (obj.messageType === sinclo.chatApi.messageType.customer
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.answerBulkHearing ) {
           cn = "sinclo_se";
           elm.value = "";
         }
@@ -1497,7 +1498,16 @@
           return false;
         }
 
-        if (obj.messageType === 33) {
+        if (obj.messageType === 40) {
+          var data = JSON.parse(obj.chatMessage);
+          common.chatBotTypingRemove();
+          if(sinclo.scenarioApi.isProcessing()) {
+            sinclo.chatApi.createForm(true, data.target, data.message, sinclo.scenarioApi._bulkHearing.handleFormOK);
+          }
+          return false;
+        }
+
+        if (obj.messageType === 31 || obj.messageType === 32) {
           this.chatApi.createFormFromLog(JSON.parse(obj.chatMessage));
           this.chatApi.scDown();
           setTimeout(function () {
@@ -2047,13 +2057,16 @@
               hearing: 12,
               selection: 13,
               sendFile: 19,
-              bulkHearing: 32
+              answerBulkHearing: 30,
+              noModBulkHearing: 31,
+              modifyBulkHearing: 32
             },
             message: {
               text: 21,
               hearing: 22,
               selection: 23,
               receiveFile: 27,
+              returnBulkHearing: 40
             }
           }
         },
@@ -2854,6 +2867,9 @@
       },
       createForm: function (isConfirm, hearingTarget, resultData, callback) {
         common.chatBotTypingRemove();
+        if(sinclo.scenarioApi.isProcessing()) {
+          sinclo.hideTextarea();
+        }
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
@@ -2872,7 +2888,7 @@
             }
             formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
             formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'>*</span>" : "") + "</label>";
-            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
+            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-input-type='" + elm.inputType + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
             formElements += "    </div>";
           });
 
@@ -2906,19 +2922,34 @@
           li.className = 'sinclo_se effect_right sinclo_form';
         }
         li.innerHTML = content;
+        if(isEmptyRequire) {
+          $(li).find('span.formOKButton').addClass('disabled');
+        }
         $(li).find('span.formOKButton').on('click', function(e){
           if($(this).hasClass('disabled')) return;
           var returnValue = {};
           var targetArray = $(li).find('.formInput');
           targetArray.each(function(index, element) {
+            console.log("CHANGED : %s vs %s", $(element).val(), resultData[$(element).data('input-type')]);
             returnValue[$(element).attr('name')] = {
               label: $(element).data('label-text'),
               value: $(element).val(),
-              required: $(element).data('required')
+              required: $(element).data('required'),
+              changed: $(element).val() !== resultData[Number($(element).data('input-type'))]
             }
           });
           console.log("return Value : %s",JSON.stringify(returnValue));
           callback(returnValue);
+        });
+        $(li).find('input.formInput').on('input', function(){
+          $(li).find('input.formInput').each(function(idx, elem){
+            if(hearingTarget[idx].required && $(this).val().length === 0) {
+              $(li).find('span.formOKButton').addClass('disabled');
+              return false;
+            } else if (hearingTarget.length - 1 === idx){
+              $(li).find('span.formOKButton').removeClass('disabled');
+            }
+          });
         });
         this.scDown();
       },
@@ -5129,7 +5160,7 @@
           case self._actionType.bulkHearing:
             self._bulkHearing._init(self);
             self._bulkHearing._process();
-            self.set(self._lKey.sendCustomerMessageType, 32);
+            self.set(self._lKey.sendCustomerMessageType, 30);
             break;
         }
       },
@@ -6305,18 +6336,51 @@
       },
       _bulkHearing: { // 一括ヒアリング
         _parent: null,
+        _analyseResult: {},
         _init: function (parent) {
           this._parent = parent;
         },
+        handleFormOK: function(resultValue) {
+          var self = sinclo.scenarioApi._bulkHearing;
+          if(resultValue && Object.keys(resultValue).length > 0) {
+            var changed = false;
+            var keys = Object.keys(resultValue);
+            keys.forEach(function(e, i, a){
+              // 保存時は変数名を利用
+              self._parent._saveVariable(keys[i], resultValue[keys[i]].value);
+              if(!changed) {
+                changed = resultValue[keys[i]].changed;
+              }
+            });
+            emit('sendChat', {
+              historyId: sinclo.chatApi.historyId,
+              stayLogsId: sinclo.chatApi.stayLogsId,
+              chatMessage: JSON.stringify(resultValue),
+              mUserId: null,
+              messageType: changed ? 32 : 31,
+              messageRequestFlg: 0,
+              isAutoSpeech: false,
+              notifyToCompany: false,
+              isScenarioMessage: true
+            }, function () {
+              if (self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
+            });
+            sinclo.chatApi.hideForm();
+          }
+        },
         _process: function () {
           var self = sinclo.scenarioApi._bulkHearing;
-          self._parent._doing(self._parent._getIntervalTimeSec(), function () { // 即時実行
+          self._parent._doing(0, function () { // 即時実行
+            common.chatBotTypingRemove();
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             sinclo.chatApi.hideMiniMessageArea(); // 改行可のメッセージエリアにする
             self._parent._waitingInput(function (inputVal) {
               self._parent._unWaitingInput();
               self._analyseInput(inputVal, function (result) {
                 var resultObj = JSON.parse(result);
+                /*
                 if(resultObj.success) {
                   sinclo.chatApi.createForm(true, self._parent.get(self._parent._lKey.currentScenario).multipleHearings, resultObj.data, function(resultValue){
                     if(resultValue && Object.keys(resultValue).length > 0) {
@@ -6345,14 +6409,22 @@
                   });
                   self._parent._handleChatTextArea("2"); // 強制非表示
                 }
+                */
               });
             });
           });
         },
         _analyseInput: function (inputVal, callback) {
+          var self = sinclo.scenarioApi._bulkHearing;
           emit('sendParseSignature', {
+            historyId: sinclo.chatApi.historyId,
+            stayLogsId: sinclo.chatApi.stayLogsId,
             targetText: inputVal,
-            ip: userInfo.getIp()
+            ip: userInfo.getIp(),
+            isAutoSpeech: false,
+            notifyToCompany: false,
+            isScenarioMessage: true,
+            targetVariable: self._parent.get(self._parent._lKey.currentScenario).multipleHearings
           }, callback);
         }
       }
