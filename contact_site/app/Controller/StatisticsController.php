@@ -1979,15 +1979,8 @@ class StatisticsController extends AppController {
     $automaticResponse = "SELECT date_format(th.access_date,?) as date,
     count(distinct thcl.message_distinction,thcl.t_histories_id) as automaticResponse_count
     FROM
-      ((select id,t_histories_id,message_distinction,message_type,message_request_flg from t_history_chat_logs
+      (select id,t_histories_id,message_distinction,message_type,message_request_flg from t_history_chat_logs
        force index(idx_t_history_chat_logs_message_type_companies_id) where (message_type = ? or message_type = ? or message_type = ? or message_type = ? or message_type = ?)  and m_companies_id = ?) as thcl
-    LEFT JOIN
-      (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs
-       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = ? and m_companies_id = ?) as thcl2
-    ON
-      thcl.t_histories_id = thcl2.t_histories_id
-    AND
-      thcl.message_distinction = thcl2.message_distinction)
     LEFT JOIN
       (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs
        force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where message_request_flg = ? and m_companies_id = ?) as thcl3
@@ -1997,11 +1990,9 @@ class StatisticsController extends AppController {
       thcl.message_distinction = thcl3.message_distinction,
     t_histories as th
     WHERE
-      thcl2.t_histories_id IS NULL
-    AND
       th.id = thcl.t_histories_id
     AND
-      thcl.id > thcl3.id
+      th.id > thcl3.id
     AND
       th.access_date between ? and ?
     group by date";
@@ -2010,7 +2001,6 @@ class StatisticsController extends AppController {
     $this->chatMessageType['messageType']['automatic'],$this->chatMessageType['messageType']['scenarioText'],
     $this->chatMessageType['messageType']['scenarioHearing'],$this->chatMessageType['messageType']['scenarioSelection'],
     $this->chatMessageType['messageType']['scenarioReceiveFile'],$this->userInfo['MCompany']['id'],
-    $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
     $this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
     $correctStartDate,$correctEndDate));
 
