@@ -1260,13 +1260,11 @@
               this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           } else if (Number(chat.messageType) === 40) {
-            if (obj.messageType === 40) {
-              var data = JSON.parse(obj.chatMessage);
-              sinclo.chatApi.createForm(true, data.target, data.message, function(){
-
-              });
+            if(sinclo.scenarioApi.isProcessing()) {
+              var data = JSON.parse(chat.message);
+              sinclo.chatApi.createForm(true, data.target, data.message, sinclo.scenarioApi._bulkHearing.handleFormOK);
             }
-          } else if (Number(obj.messageType) === 31 || Number(obj.messageType) === 32) {
+          } else if (Number(chat.messageType) === 31 || Number(chat.messageType) === 32) {
             this.chatApi.createFormFromLog(JSON.parse(chat.message));
           } else {
             //通知した場合
@@ -2177,7 +2175,8 @@
               selection: 13,
               sendFile: 19,
               answerBulkHearing: 30,
-              modifyBulkHearing: 31
+              noModBulkHearing: 31,
+              modifyBulkHearing: 32
             },
             message: {
               text: 21,
@@ -2982,6 +2981,9 @@
       },
       createForm: function (isConfirm, hearingTarget, resultData, callback) {
         common.chatBotTypingRemove();
+        if(sinclo.scenarioApi.isProcessing()) {
+          sinclo.hideTextarea();
+        }
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
