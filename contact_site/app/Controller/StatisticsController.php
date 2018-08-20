@@ -1844,7 +1844,7 @@ class StatisticsController extends AppController {
 
   }
 
-  private function getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$abandonmentNumberData,$allAbandonmentNumberData,$denialNumberData,$allDenialNumberData,$effectivenessNumberData2,$allEffectivenessNumberData,$effectiveness) {
+  private function getResponseData($date_format,$baseData,$startDate,$endDate,$correctStartDate,$correctEndDate,$period,$abandonmentNumberData,$allAbandonmentNumberData,$denialNumberData,$allDenialNumberData,$effectivenessNumberData,$allEffectivenessNumberData,$effectiveness) {
     if($this->isInValidDatetime($correctStartDate) && $this->isInValidDatetime($correctEndDate)) {
       $noneBaseData = $this->convertBaseDataForNone($baseData);
       return [
@@ -1866,7 +1866,7 @@ class StatisticsController extends AppController {
        message_distinction) as thcl
       LEFT JOIN (select t_histories_id, message_request_flg,
       message_distinction from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-       where notice_flg = ? and m_companies_id = ?) as thcl2
+       where (message_type = ? and m_companies_id = ?)or(notice_flg = ? and m_companies_id = ?)) as thcl2
       ON
       thcl.t_histories_id = thcl2.t_histories_id
       AND
@@ -1882,6 +1882,7 @@ class StatisticsController extends AppController {
 
     $responseNumber = $this->THistory->query($response,
       array($date_format,$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
+        $this->chatMessageType['messageType']['denial'],$this->userInfo['MCompany']['id'],
         $this->chatMessageType['noticeFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
         $correctStartDate,$correctEndDate,));
 
@@ -1917,15 +1918,19 @@ class StatisticsController extends AppController {
     //チャット応答率
     $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
 
+    //チャット応答件数
+    $responseNumberData = array_merge($baseData,$responseNumberData);
+
     foreach($abandonmentNumberData as $k2 => $v2) {
-      if(intval($v2) !== 0 && strcmp($responseRate[$k2],self::LABEL_INVALID) === 0) {
+      if(intval($v2+$denialNumberData[$k2]+$responseNumberData[$k2]) !== 0 && strcmp($responseRate[$k2],self::LABEL_INVALID) === 0) {
         // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（応対なし）として返却
         $responseRate[$k2] = 0;
       }
+      if(intval($v2+$denialNumberData[$k2]+$responseNumberData[$k2]) !== 0 && strcmp($effectivenessRate[$k2],self::LABEL_INVALID) === 0) {
+        // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（応対なし）として返却
+        $effectivenessRate[$k2] = 0;
+      }
     }
-
-    //チャット応答件数
-    $responseNumberData = array_merge($baseData,$responseNumberData);
 
     //応対件数合計値
     $allResponseNumberData = array_sum($responseNumberData);
@@ -2155,18 +2160,6 @@ class StatisticsController extends AppController {
     //拒否件数合計値
     $allDenialNumberData = array_sum($denialNumberData);
 
-    //合計有効率
-    $allEffectivenessRate = 0;
-    if($allEffectivenessNumberData != 0 and $allRequestNumberData != 0) {
-      $allEffectivenessRate = round($allEffectivenessNumberData/$allRequestNumberData*100);
-    } else if($allEffectivenessNumberData === 0 && $allRequestNumberData != 0) {
-      // リクエストチャット件数はあるけど自動返信がない場合
-      $allEffectivenessRate = 0;
-    } else {
-      // リクエストチャットが0件の場合（無効データ）
-      $allEffectivenessRate = self::LABEL_INVALID;
-    }
-
     return ['effectivenessNumberData' => $effectivenessNumberData,
       'cvNumberData' => $cvNumberData,
       'denialNumberData' => $denialNumberData,
@@ -2174,7 +2167,6 @@ class StatisticsController extends AppController {
       'allEffectivenessNumberData' => $allEffectivenessNumberData,
       'allCVNumberData' => $allCVNumberData,
       'allDenialNumberData' => $allDenialNumberData,
-      'allEffectivenessRate' => $allEffectivenessRate,
       'effectiveness' => $effectiveness
     ];
 
