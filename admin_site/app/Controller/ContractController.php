@@ -14,8 +14,8 @@ App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
 class ContractController extends AppController
 {
-  const ML_MAIL_ADDRESS= "masashi.shimizu@medialink-ml.co.jp";
-  const ML_MAIL_ADDRESS_AND_ALEX = "masashi.shimizu@medialink-ml.co.jp";
+	const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
+	const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const PASSWORD = "##PASSWORD##";
