@@ -1246,11 +1246,19 @@ class ContractController extends AppController
     return intval($addUserCount[0]['allUsers']);
   }
 
-  private function getMailAddress() {
-  	return 'masashi.shimizu@medialink-ml.co.jp';
-  }
+	private function getMailAddress() {
+		if (env('DEV_ENV') === 'dev') { // 開発環境
+			return 'masashi.shimizu@medialink-ml.co.jp';
+		} else {
+			return 'cloud-service@medialink-ml.co.jp';
+		}
+	}
 
-  private function getMailAddressAndAlex() {
-    return 'masashi.shimizu@medialink-ml.co.jp';
-  }
+	private function getMailAddressAndAlex() {
+		if (env('DEV_ENV') === 'dev') { // 開発環境
+			return 'masashi.shimizu@medialink-ml.co.jp';
+		} else {
+			return 'cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp';
+		}
+	}
 }
