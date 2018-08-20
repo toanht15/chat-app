@@ -259,8 +259,11 @@
           </div>
         </td>
         <?php for ($i = $start; $i <= $end; $i++) { ?>
-          <td><?php echo number_format($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]+$data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]+$data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
-        <?php } ?>
+          <td><?php
+          if($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)] !== "" && $data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)] !== ""
+            && $data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)] !== "") {
+            echo number_format($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]+$data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]+$data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
+        <?php } } ?>
         <td><?php echo number_format($data['responseDatas']['allResponseNumberData']+$data['abandonRequestDatas']['allAbandonRequestNumberData']+$data['coherentDatas']['allDenialNumberData']) ?></td>
       </tr>
       <tr>
@@ -513,8 +516,11 @@
             </div>
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']+$data['abandonRequestDatas']['abandonRequestNumberData'][sprintf("%02d",$i).':00']+$data['coherentDatas']['denialNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
+            <td><?php
+            if($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00'] !== "" && $data['abandonRequestDatas']['abandonRequestNumberData'][sprintf("%02d",$i).':00'] !== ""
+            && $data['coherentDatas']['denialNumberData'][sprintf("%02d",$i).':00'] !== "") {
+              echo number_format($data['responseDatas']['responseNumberData'][sprintf("%02d",$i).':00']+$data['abandonRequestDatas']['abandonRequestNumberData'][sprintf("%02d",$i).':00']+$data['coherentDatas']['denialNumberData'][sprintf("%02d",$i).':00']) ?></td>
+          <?php } } ?>
           <td><?php echo number_format($data['responseDatas']['allResponseNumberData']+$data['abandonRequestDatas']['allAbandonRequestNumberData']+$data['coherentDatas']['allDenialNumberData']) ?></td>
         </tr>
         <tr>
