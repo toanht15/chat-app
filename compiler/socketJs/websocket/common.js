@@ -4641,6 +4641,11 @@ var socket, // socket.io
       sinclo.sendChatResult(d);
     }); // socket-on: sendChatResult
 
+    // リンク
+    socket.on('clickLink', function (d) {
+      sinclo.clickLink(d);
+    });
+
     // 新着チャット
     socket.on('resGetScenario', function (d) {
       var obj = common.jParse(d);
@@ -4864,6 +4869,25 @@ function now(){
   return "【" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "】";
 }
 
+function link(word,link) {
+  link = "<a "+link.replace(/\$nbsp;/g, " ")+">"+word+"</a>";
+  var data = sinclo.chatApi;
+  data.link = link;
+  data.siteKey = sincloInfo.site.key;
+  data.tabId = userInfo.tabId;
+  data.userId = userInfo.userId;
+  if(storage.s.get('requestFlg') === 'true') {
+    data.messageRequestFlg = 0;
+  }
+  else {
+    data.messageRequestFlg = 1;
+    storage.s.set('requestFlg',true);
+  }
+  if(typeof ga == "function") {
+    ga('send', 'event', 'sinclo', 'clickLink', link, 1);
+  }
+  socket.emit('link', data);
+}
 
 // get type
 var myTag = document.querySelector("script[src$='/client/" + sincloInfo.site.key + ".js']");
