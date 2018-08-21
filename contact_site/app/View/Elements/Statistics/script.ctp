@@ -94,7 +94,8 @@ $(window).load(function(){
 
   //リサイズ処理
   var resizeDataTable = function() {
-    $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 120 + 'px');
+    $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 80 + 'px');
+    $('#statistics_content').css('max-height',$('.dataTables_scrollBody').outerHeight() + 80 + 'px');
   }
   // ページ読み込み時にもリサイズ処理を実行
   tableObj.on( 'draw', function () {
@@ -255,7 +256,6 @@ $(window).load(function(){
       }
     }
   });
-
   //datepicke
   $('input[name="datefilter"]').daterangepicker({
     "locale": {
@@ -284,6 +284,7 @@ $(window).load(function(){
         "12月"
       ],
     },
+    "startDate": "<?=$datePeriod;?>",
     singleDatePicker: true,
     minDate: '2017-07-01'
   },

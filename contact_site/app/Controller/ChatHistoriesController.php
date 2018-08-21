@@ -804,6 +804,11 @@
             $json = json_decode($val['THistoryChatLog']['message'], TRUE);
             $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
           }
+          if($val['THistoryChatLog']['message_type'] == 8) {
+            $row['transmissionKind'] = '訪問者';
+            $row['transmissionPerson'] = '';
+            $val['THistoryChatLog']['message'] = "（「".$val['THistoryChatLog']['message']."」をクリック）";
+          }
           if($val['THistoryChatLog']['message_type'] == 12) {
             $row['transmissionKind'] = '訪問者（ヒアリング回答）';
             $row['transmissionPerson'] = '';
@@ -984,6 +989,9 @@
                   $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
                 }
                 $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
+                break;
+              case 8: // リンククリック
+                $row = $this->_setData($date, "訪問者","","（「".$message."」をクリック）");
                 break;
               case 12: // 訪問者（シナリオ：ヒアリング回答）
                 $row = $this->_setData($date, "訪問者（ヒアリング回答）", "", $message);
