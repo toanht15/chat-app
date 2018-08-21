@@ -15,22 +15,31 @@ class AddTHistoryLinkCountLogsTHistoryLinkCounts extends CakeMigration {
  */
 	public $migration = array(
 		'up' => array(
+			'create_field' => array(
+				't_history_chat_logs' => array(
+					'indexes' => array(
+					'idx_m_companies_id_message_type_notice_flg' => array('column' => array('m_companies_id', 'message_type', 'notice_flg'), 'unique' => 0),
+					),
+				),
+			),
 			'create_table' => array(
 				't_history_link_count_logs' => array(
 					'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-					'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+					'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
 					't_histories_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 					't_history_stay_logs_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 					'link_url' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 300, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 					'created' => array('type' => 'datetime', 'null' => false, 'default' => null),
 					'indexes' => array(
 						'PRIMARY' => array('column' => 'id', 'unique' => 1),
+						'idx_m_companies_id' => array('column' => 'm_companies_id', 'unique' => 0),
+						'idx_m_companies_id_t_histories_id' => array('column' => array('m_companies_id', 't_histories_id'), 'unique' => 0),
 					),
-					'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+				'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 				),
 				't_history_link_counts' => array(
 					'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
-					'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
+					'm_companies_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index'),
 					'year' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 4, 'unsigned' => false),
 					'month' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 2, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
 					'day' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 2, 'collate' => 'utf8_general_ci', 'charset' => 'utf8'),
@@ -38,8 +47,9 @@ class AddTHistoryLinkCountLogsTHistoryLinkCounts extends CakeMigration {
 					'link_count' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false),
 					'indexes' => array(
 						'PRIMARY' => array('column' => 'id', 'unique' => 1),
+						'idx_m_companies_id_year' => array('column' => array('m_companies_id', 'year'), 'unique' => 0),
 					),
-					'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
+				'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB'),
 				),
 			),
 		),
