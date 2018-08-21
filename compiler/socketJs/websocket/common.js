@@ -1236,6 +1236,8 @@ var socket, // socket.io
         html += '      #sincloBox ul sinclo-chat { clear: both!important; }';
         html += '      #sincloBox ul sinclo-typing { padding-bottom: '+ sizeList['paddingBottom'] +'px; display: block; }';
         html += '      #sincloBox ul#chatTalk li { text-align: left!important; word-wrap: break-word; word-break: break-all; white-space: pre-wrap!important; background-color: transparent; white-space: pre; color: ' + chatContentTextColor + '; font-weight: normal!important; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_se { color:'+ colorList['seTextColor'] + '; font-size: '+ widget.seTextSize +'px; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_re { color:'+ colorList['reTextColor'] + '; font-size: '+ widget.reTextSize +'px; }';
         if (widget.chatMessageDesignType === 2) {
           // 吹き出し型
           html += '      #sincloBox ul#chatTalk li { line-height: 1.4; padding: 10px 15px; border-radius: 12px !important;}';
