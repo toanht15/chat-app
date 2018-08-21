@@ -2270,7 +2270,7 @@ io.sockets.on('connection', function (socket) {
 
   socket.on("link", function (data) {
     var d = new Date();
-    pool.query('INSERT INTO sinclo_db2.t_history_link_count_logs (m_companies_id,t_histories_id,t_history_stay_logs_id,link_url,created) VALUES(?,?,?,?,?)',[companyList[data.siteKey],data.historyId,data.stayLogsId,data.link,d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2)],function(error,res) {
+    pool.query('INSERT INTO t_history_link_count_logs (m_companies_id,t_histories_id,t_history_stay_logs_id,link_url,created) VALUES(?,?,?,?,?)',[companyList[data.siteKey],data.historyId,data.stayLogsId,data.link,d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2)],function(error,res) {
       if(isset(error)) {
         console.log("RECORD INSERT ERROR: t_history_widget_close_counts:" + error);
       }
