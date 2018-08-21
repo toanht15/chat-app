@@ -69,7 +69,9 @@ class CompanyDataController extends AppController
       $this->isValidAccessToken($jsonObj[self::PARAM_ACCESS_TOKEN]);
       $component = new LandscapeEasyEntryAPIComponent();
       $targetText = !empty($jsonObj[self::PARAM_TARGET_TEXT]) ? $jsonObj[self::PARAM_TARGET_TEXT] : null;
+      $targetIp = !empty($jsonObj['ip']) ? $jsonObj['ip'] : null;
       $component->setText($targetText);
+      $component->setIp($targetIp);
       $component->execute();
       $this->log('HOGE!! : '.var_export($component->getData(),TRUE), 'response');
     } catch(Exception $e) {

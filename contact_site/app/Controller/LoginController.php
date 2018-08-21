@@ -89,7 +89,7 @@ class LoginController extends AppController {
           'fields' => array('id','change_password_flg'),
           'conditions' => [
             'm_companies_id' => $userInfo['MCompany']['id'],
-            'mail_address' => $this->request->data['MUser']['mail_address']
+            'mail_address' => $userInfo['mail_address']
           ],
         ]);
 
