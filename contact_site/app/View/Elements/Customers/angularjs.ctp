@@ -171,7 +171,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
       },
       getMessage: function(obj){
-        console.log('オートメッセージ');
         // オートメッセージの取得
         this.getMessageToken = makeToken();
         emit('getAutoChatMessages', {userId: obj.userId, mUserId: myUserId, tabId: obj.tabId, chatToken: this.getMessageToken});
@@ -1266,7 +1265,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // チャットメッセージを取得する
     $scope.getChatMessage = function(tabId){
-      console.log('開いた！');
       var data = $scope.monitorList[tabId];
       chatApi.getMessage(data); // Nodeサーバーより最新のチャットメッセージを取得
       // 新着チャットチェック
@@ -1365,7 +1363,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 顧客の詳細情報を取得する
     $scope.getOldChat = function(historyId, oldFlg, event){
-      console.log('はいはいここまで');
       if(event !== undefined) {
         //過去のチャットを選択したとき
         $('.pastChatShowBold').css('cssText', 'background-color: #fff');
@@ -1601,7 +1598,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 【チャット】チャット枠の構築
     $scope.createMessage = function(elem, chat){
-      console.log('ここには入ってるよね？');
       var cn = "";
       var div = document.createElement('div');
       var li = document.createElement('li');
@@ -2427,8 +2423,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     socket.on('resAutoChatMessages', function(d){
         var obj = JSON.parse(d);
-        console.log('ここか！');
-        console.log(obj);
 
         if(obj.chatToken !== chatApi.getMessageToken) return false;
 
@@ -2843,8 +2837,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
       if(obj.getMessageToken !== chatApi.getMessageToken) return;
 
-      console.log('はいはい呼ばれてあいめーん');
-      console.log(obj.chat.messages);
       for (var key in obj.chat.messages) {
         var chat = {};
         if ( typeof(obj.chat.messages[key]) === "object" ) {
@@ -2867,8 +2859,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             return true;
           }
         });
-        console.log('chat');
-        console.log($scope.messageList);
         if(!exists) {
           $scope.messageList.push(chat);
           scDown(); // チャットのスクロール
@@ -2965,13 +2955,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     // チャット入力中ステータスの要求リクエスト
     socket.on('reqTypingMessage', function(d){
       var obj = JSON.parse(d);
-      console.log('ここまで1');
       if (
         $scope.monitorList[obj.tabId].chat === myUserId && // 自身が対応中
         obj.tabId === chatApi.tabId && // 詳細画面を開いている
         document.getElementById('sendMessage').value !== ""  // メッセージが入力されている
       ) {
-        console.log('ここまで2');
         emit('retTypingMessage', {
           type: chatApi.observeType.cnst.company, // company
           to: obj.from,
