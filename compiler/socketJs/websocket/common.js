@@ -1331,7 +1331,7 @@ var socket, // socket.io
         // 一括ヒアリング
         html += '#sincloBox #chatTalk li.sinclo_re.sinclo_form { display: block; padding: 10px 15px 15px 15px; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formContentArea { margin: 0; line-height: 0; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.formContentArea div.formMessage { color: ' + widget.reTextColor + '; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formContentArea p.formMessage { color: ' + widget.reTextColor + '; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formArea { background-color: #FFF; line-height: 0; padding: 10px 10px 0 10px; margin-top: 10px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formElement { color: #333; display: flex; justify-content: stretch; flex-flow: column nowrap; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formElement.withMB { margin-bottom: 8px; }';
