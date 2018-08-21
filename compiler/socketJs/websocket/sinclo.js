@@ -2671,7 +2671,11 @@
               str = unEscapeStr.replace(img[0], imgTag);
             }
           }
-          content += str + "\n";
+          if(str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
+            content += "" + str + "\n";
+          } else {
+            content += "<span class='sinclo-text-line'>" + str + "</span>\n";
+          }
         }
 
         if (cs === "sinclo_re") {
@@ -6373,9 +6377,10 @@
         _process: function () {
           var self = sinclo.scenarioApi._bulkHearing;
           self._parent._doing(0, function () { // 即時実行
-            common.chatBotTypingRemove();
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             sinclo.chatApi.hideMiniMessageArea(); // 改行可のメッセージエリアにする
+            common.chatBotTypingTimerClear();
+            common.chatBotTypingRemove();
             self._parent._waitingInput(function (inputVal) {
               self._parent._unWaitingInput();
               self._analyseInput(inputVal, function (result) {
