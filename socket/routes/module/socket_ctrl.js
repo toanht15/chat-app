@@ -14,7 +14,7 @@ var mysql = require('mysql'),
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASS || 'password',
-      database: process.env.DB_NAME || 'sinclo_db'
+      database: process.env.DB_NAME || 'sinclo_db2'
     });
 
 // log4js
@@ -541,6 +541,50 @@ function getCompanyInfoFromApi(obj, ip, callback) {
   }
 }
 
+function parseSignature(src, ip, callback) {
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+
+  //オプションを定義
+  var options = {
+    host: process.env.PARSE_SIGNATURE_API_HOST,
+    port: process.env.PARSE_SIGNATURE_API_PORT,
+    path: process.env.PARSE_SIGNATURE_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true,
+    agent: false
+  };
+
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
+  }
+
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', callback);
+      return;
+    } else {
+      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+      return;
+    }
+  });
+
+  req.on('error', function(error) {
+    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+    return;
+  });
+
+  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "targetText":src, 'ip':ip}));
+  req.end();
+}
+
 function sendMail(autoMessageId, lastChatLogId, callback) {
   //ヘッダーを定義
   var headers = {
@@ -1051,7 +1095,7 @@ io.sockets.on('connection', function (socket) {
 
 
           // オートメッセージとシナリオの場合は既読
-          if (Number(insertData.message_type === 3) || Number(insertData.message_type === 22) || Number(insertData.message_type === 23)) {
+          if (Number(insertData.message_type === 3) || Number(insertData.message_type === 22) || Number(insertData.message_type === 40) || Number(insertData.message_type === 23)) {
             insertData.message_read_flg = 1;
             insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
             insertData.message_distinction = d.messageDistinction;
@@ -2897,9 +2941,7 @@ io.sockets.on('connection', function (socket) {
 
   // 一括：チャットデータ取得(オートメッセージのみ)
   socket.on("getAutoChatMessages", function(d){
-    console.log('ここまでは入っている');
     var obj = JSON.parse(d);
-    console.log(obj);
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
     obj.messageType = chatApi.cnst.observeType.auto;
@@ -2908,7 +2950,6 @@ io.sockets.on('connection', function (socket) {
 
     // ユーザーがチャット中の場合
     if ( getSessionId(obj.siteKey, obj.tabId, 'chatSessionId') ) {
-      console.log('ここにも入ってるよ');
       var sessionId = getSessionId(obj.siteKey, obj.tabId, 'chatSessionId');
       emit.toUser('reqTypingMessage', {siteKey: obj.siteKey, from: obj.mUserId, tabId: obj.tabId }, sessionId);
     }
@@ -3241,7 +3282,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           messageDistinction = results[0].conversation_count;
         }
         var loop = function(err, rows){
-          console.log('このループが少し怪しい');
           if ( !err && (rows && rows[0]) ) {
               var activity = JSON.parse(rows[0].activity);
               if(activity.cv == 1) {
@@ -3273,7 +3313,6 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                     autoMessageId: rows[0].id
                 };
               }
-              console.log(ret);
               chatApi.set(ret);
           }
         };
@@ -3656,6 +3695,20 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       return variables[name] || name;
     });
   }
+
+  socket.on('sendParseSignature', function(data, ack){
+    var obj = JSON.parse(data);
+    parseSignature(obj.targetText, obj.ip, function(result){
+      var resultObj = JSON.parse(result);
+      var storeData = {
+        message: resultObj.data,
+        target: obj.targetVariable
+      };
+      obj.chatMessage = JSON.stringify(storeData);
+      obj.messageType = 40;
+      chatApi.set(obj);
+    });
+  });
 
   // ============================================
   //  画面キャプチャ共有イベントハンドラ
