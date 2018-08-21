@@ -160,6 +160,12 @@ class StatisticsController extends AppController {
     $this->set('time',$timeData['timeType']);
     $this->set('data',$data);
     $this->log('終了',LOG_DEBUG);
+    if($date == '時別') {
+      $this->set('datePeriod',$timeData['correctStartDate']);
+    }
+    if($date == '日別' || $date == '月別') {
+      $this->set('datePeriod',date("Y-m-d"));
+    }
   }
 
   /* *
@@ -1865,8 +1871,8 @@ class StatisticsController extends AppController {
       where message_type = ? and m_companies_id = ? group by t_histories_id,
        message_distinction) as thcl
       LEFT JOIN (select t_histories_id, message_request_flg,
-      message_distinction from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-       where (message_type = ? and m_companies_id = ?)or(notice_flg = ? and m_companies_id = ?)) as thcl2
+      message_distinction from t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
+       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?)) as thcl2
       ON
       thcl.t_histories_id = thcl2.t_histories_id
       AND
@@ -1882,8 +1888,8 @@ class StatisticsController extends AppController {
 
     $responseNumber = $this->THistory->query($response,
       array($date_format,$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
-        $this->chatMessageType['messageType']['denial'],$this->userInfo['MCompany']['id'],
-        $this->chatMessageType['noticeFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
+        $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],
+        $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
         $correctStartDate,$correctEndDate,));
 
     foreach($responseNumber as $k => $v) {
@@ -1895,13 +1901,18 @@ class StatisticsController extends AppController {
       $responseNumberData = $responseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['response_count']));
     }
 
+    //チャット応答率
+    $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
+
+    //チャット応答件数
+    $responseNumberData = array_merge($baseData,$responseNumberData);
+
     $effectivenessNumberData = [];
     $effectivenessRate = [];
-
     if(!empty($effectiveness)) {
       foreach($effectiveness as $k => $v) {
         $effectivenessNumberData = $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['effectiveness']));
-        if( $v[0]['effectiveness'] != 0 and ($responseNumberData[$v[0]['date']]+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']]) != 0){
+        if( $v[0]['effectiveness'] != 0 and ($responseNumberData[$v[0]['date']]+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']]) !== 0){
           $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['effectiveness']/($responseNumberData[$v[0]['date']]+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']])*100));
         } else if($responseNumberData[$v[0]['date']]+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']] === 0) {
           $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : self::LABEL_INVALID);
@@ -1914,12 +1925,6 @@ class StatisticsController extends AppController {
 
     //チャット有効率
     $effectivenessRate = array_merge($this->convertBaseDataForPercent($baseData),$effectivenessRate);
-
-    //チャット応答率
-    $responseRate = array_merge($this->convertBaseDataForPercent($baseData),$responseRate);
-
-    //チャット応答件数
-    $responseNumberData = array_merge($baseData,$responseNumberData);
 
     foreach($abandonmentNumberData as $k2 => $v2) {
       if(intval($v2+$denialNumberData[$k2]+$responseNumberData[$k2]) !== 0 && strcmp($responseRate[$k2],self::LABEL_INVALID) === 0) {
@@ -2084,8 +2089,8 @@ class StatisticsController extends AppController {
        force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = ? and m_companies_id = ?
        group by t_histories_id,message_distinction) as thcl
        LEFT JOIN (select t_histories_id, message_type,message_distinction from
-       t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-       where (message_type = ? and m_companies_id = ?)or(notice_flg = ? and m_companies_id = ?)) as thcl2
+       t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
+       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?)) as thcl2
        ON
        thcl.t_histories_id = thcl2.t_histories_id
        AND
@@ -2101,19 +2106,14 @@ class StatisticsController extends AppController {
 
     $denial = $this->THistory->query($denial, array($date_format,$this->chatMessageType['messageType']['denial'],
       $this->chatMessageType['messageType']['denial'],$this->userInfo['MCompany']['id'],
-      $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
-      $this->chatMessageType['noticeFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
+      $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['enteringRoom'],
+      $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
       $correctStartDate,$correctEndDate));
 
     if(!empty($effectiveness)) {
       foreach($effectiveness as $k => $v) {
         $effectivenessNumberData =  $effectivenessNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['effectiveness']));
         $cvNumberData =  $cvNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['cv']));
-        if( $v[0]['effectiveness'] != 0 and $requestNumberData[$v[0]['date']] != 0){
-          $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : round($v[0]['effectiveness']/$requestNumberData[$v[0]['date']]*100));
-        } else if($requestNumberData[$v[0]['date']] === 0) {
-          $effectivenessRate = $effectivenessRate + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : self::LABEL_INVALID);
-        }
       }
     }
 
@@ -2131,16 +2131,6 @@ class StatisticsController extends AppController {
     //チャット拒否件数
     $denialNumberData = array_merge($baseData,$denialNumberData);
 
-    //チャット有効率
-    $effectivenessRate = array_merge($this->convertBaseDataForPercent($baseData),$effectivenessRate);
-
-    foreach($requestNumberData as $k2 => $v2) {
-      if(intval($v2) !== 0 && strcmp($effectivenessRate[$k2],self::LABEL_INVALID) === 0) {
-        // 無効データと判定されたがリクエストチャット件数が存在する場合は0%（自動返信なし）として返却
-        $effectivenessRate[$k2] = 0;
-      }
-    }
-
     //有効件数合計値
     $allEffectivenessNumberData = array_sum($effectivenessNumberData);
 
@@ -2153,7 +2143,6 @@ class StatisticsController extends AppController {
     return ['effectivenessNumberData' => $effectivenessNumberData,
       'cvNumberData' => $cvNumberData,
       'denialNumberData' => $denialNumberData,
-      'effectivenessRate' => $effectivenessRate,
       'allEffectivenessNumberData' => $allEffectivenessNumberData,
       'allCVNumberData' => $allCVNumberData,
       'allDenialNumberData' => $allDenialNumberData,
@@ -2232,8 +2221,8 @@ class StatisticsController extends AppController {
     $consumerWatingTime = "SELECT date_format(th.access_date,?) as date,AVG(UNIX_TIMESTAMP(thcl2.created)
       - UNIX_TIMESTAMP(thcl.created)) as average
     FROM (select t_histories_id, message_request_flg,created,message_distinction
-    from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-    where (notice_flg = ? or message_type = ?) and m_companies_id = ? group by t_histories_id) as thcl,
+    from t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
+    where  m_companies_id = ? and (message_type = ? or notice_flg = ?) group by t_histories_id) as thcl,
     (select t_histories_id, message_type,created,message_distinction
     from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id)
     where message_type = ? and m_companies_id = ? group by t_histories_id) as thcl2,
@@ -2250,8 +2239,8 @@ class StatisticsController extends AppController {
       th.access_date between ? and ?
     group by date";
 
-    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
-      $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
+    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],
+      $this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate));
 
     $totalConsumerWaitingAvgTimeDataCnt = 0;
@@ -2298,8 +2287,8 @@ class StatisticsController extends AppController {
     $responseTime = "SELECT date_format(th.access_date,?) as date,AVG(UNIX_TIMESTAMP(thcl2.created)
       - UNIX_TIMESTAMP(thcl.created)) as average
     FROM (select t_histories_id, message_request_flg,created,message_distinction
-    from t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-    where (notice_flg = ? or message_type = ?) and m_companies_id = ? group by t_histories_id) as thcl,
+    from t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
+    where  m_companies_id = ? and (message_type = ? or notice_flg = ?) group by t_histories_id) as thcl,
     (select t_histories_id, message_type,created,message_distinction
     from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id)
     where message_type = ? and m_companies_id = ? group by t_histories_id) as thcl2,
@@ -2316,9 +2305,8 @@ class StatisticsController extends AppController {
       th.id = thcl2.t_histories_id
     group by date";
 
-    $responseTime = $this->THistory->query($responseTime, array($date_format,$this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
-      $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['operatorMessage'],
-      $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+    $responseTime = $this->THistory->query($responseTime, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],$this->chatMessageType['noticeFlg']['effectiveness'],
+      $this->chatMessageType['messageType']['operatorMessage'],$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
 
     $totalResponseAvgTimeDataCnt = 0;
     foreach($responseTime as $k => $v) {

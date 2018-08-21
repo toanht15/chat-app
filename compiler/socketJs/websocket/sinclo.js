@@ -661,9 +661,6 @@
       emitData.stayCount = userInfo.getStayCount();
       emit('sendAccessInfo', emitData);
     },
-    clickLink: function(d) {
-      emit("sendAutoChat", {messageList: sinclo.chatApi.autoMessages.getByArray()});
-    },
     confirmCustomerInfo: function (d) {
       var obj = common.jParse(d);
       if (userInfo.tabId !== obj.tabId) return false;

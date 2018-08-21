@@ -2289,7 +2289,6 @@ io.sockets.on('connection', function (socket) {
         autoMessageId: null
     };
     chatApi.set(ret);
-    emit.toUser('clickLink', data, getSessionId(data.siteKey, data.tabId, 'sessionId'));
   });
 
   socket.on("connectSuccess", function (data, ack) {
