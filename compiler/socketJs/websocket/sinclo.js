@@ -1395,13 +1395,13 @@
       // 未読数
       sinclo.chatApi.showUnreadCnt();
     },
-    sendChatResult: function(d){
+    sendChatResult: function (d) {
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>sendChatResult>>>");
       var obj = JSON.parse(d);
       common.chatBotTypingRemove();
-      if (obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
+      if (obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
-      if (obj.ret ) {
+      if (obj.ret) {
         if (obj.messageType === sinclo.chatApi.messageType.customer && storage.s.get('chatAct') !== "true" && !obj.matchAutoSpeech) {
           // 別タブで送信した自分のメッセージを受けたのでチャット応対中とする
           console.log("self message received. set chatAct = true");
@@ -1440,7 +1440,10 @@
           }
           console.log("sendChatResult :: userName : %s", userName);
         }
-        else if (obj.messageType === sinclo.chatApi.messageType.customer || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection) {
+        else if (obj.messageType === sinclo.chatApi.messageType.customer
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.answerBulkHearing ) {
           cn = "sinclo_se";
           elm.value = "";
         }
