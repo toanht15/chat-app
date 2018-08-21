@@ -15,6 +15,13 @@ class AddTHistoryLinkCountLogsTHistoryLinkCounts extends CakeMigration {
  */
 	public $migration = array(
 		'up' => array(
+			'create_field' => array(
+				't_history_chat_logs' => array(
+					'indexes' => array(
+					'idx_m_companies_id_message_type_notice_flg' => array('column' => array('m_companies_id', 'message_type', 'notice_flg'), 'unique' => 0),
+					),
+				),
+			),
 			'create_table' => array(
 				't_history_link_count_logs' => array(
 					'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
