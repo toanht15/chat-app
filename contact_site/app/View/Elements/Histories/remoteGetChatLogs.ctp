@@ -123,6 +123,20 @@ $(function(){
       $isRecieveFile = false;
       $imgTag = false;
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 8) === 0 ) {
+      $className = "sinclo_re";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $deleteMessage = str_replace('"', '', $deleteMessage);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      $imgTag = false;
+      $val['THistoryChatLog']['message'] = '（「'.$val['THistoryChatLog']['message'].'」をクリック）';
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 12) === 0 ) {
       $className = "sinclo_re";
       $id = $val['THistoryChatLog']['id'];

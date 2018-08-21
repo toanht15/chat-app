@@ -248,6 +248,7 @@
           autoSpeech: 5,
           sendFile: 6,
           notification: 7,
+          linkClick: 8,
           start: 98,
           end: 99,
           scenario: {
@@ -330,6 +331,45 @@
           }
 
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
+        }
+      }
+      else if ( type === chatApi.messageType.linkClick) {
+        var created = chat.created.replace(" ","%");;
+        var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
+        if(message.indexOf('<') > -1){
+          forDeletionMessage = forDeletionMessage.replace(/</g, '&lt;');
+        }
+        if(message.indexOf('>') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/>/g, '&gt;');
+        }
+        if(message.indexOf('"') > -1) {
+          forDeletionMessage = forDeletionMessage.replace(/"/g, "");
+        }
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        div.style.borderBottom = '1px solid #bfbfbf';
+        div.style.marginTop = '6px';
+        li.className = cn;
+        if(chat.delete_flg == 1) {
+          var deleteUser = userList[Number(chat.deleted_user_id)];
+          content = "<span class='cName' style = 'color:#bdbdbd !important;font-size:"+fontSize+"'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
+        }
+        else {
+          content = "<span class='cName' style = 'color:#333333 !important; font-size:"+fontSize+"'>ゲスト(" + Number($('#visitorsId').text()) + ")</span>";
+          content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
+          if(chat.permissionLevel == 1 && coreSettings == 1) {
+            content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          }
+          else if(chat.permissionLevel == 1 && coreSettings == "") {
+            content += '<img src= /img/close_b.png alt=履歴削除 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\"  width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
+          }
+
+          content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>（「"+$scope.createTextOfMessage(chat, message, {radio: false})+"」をクリック）</span>";
+          content = content.replace(/\r?\n/g,"");
         }
       }
       // オートメッセージの場合
