@@ -160,6 +160,12 @@ class StatisticsController extends AppController {
     $this->set('time',$timeData['timeType']);
     $this->set('data',$data);
     $this->log('終了',LOG_DEBUG);
+    if($date == '時別') {
+      $this->set('datePeriod',$timeData['correctStartDate']);
+    }
+    if($date == '日別' || $date == '月別') {
+      $this->set('datePeriod',date("Y-m-d"));
+    }
   }
 
   /* *
@@ -1882,8 +1888,8 @@ class StatisticsController extends AppController {
 
     $responseNumber = $this->THistory->query($response,
       array($date_format,$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
-        $this->chatMessageType['messageType']['denial'],$this->userInfo['MCompany']['id'],
-        $this->chatMessageType['noticeFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
+        $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],
+        $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
         $correctStartDate,$correctEndDate,));
 
     foreach($responseNumber as $k => $v) {
@@ -2100,8 +2106,8 @@ class StatisticsController extends AppController {
 
     $denial = $this->THistory->query($denial, array($date_format,$this->chatMessageType['messageType']['denial'],
       $this->chatMessageType['messageType']['denial'],$this->userInfo['MCompany']['id'],
-      $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
-      $this->chatMessageType['noticeFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
+      $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['enteringRoom'],
+      $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
       $correctStartDate,$correctEndDate));
 
     if(!empty($effectiveness)) {
@@ -2233,8 +2239,8 @@ class StatisticsController extends AppController {
       th.access_date between ? and ?
     group by date";
 
-    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
-      $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
+    $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],
+      $this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate));
 
     $totalConsumerWaitingAvgTimeDataCnt = 0;
@@ -2299,9 +2305,8 @@ class StatisticsController extends AppController {
       th.id = thcl2.t_histories_id
     group by date";
 
-    $responseTime = $this->THistory->query($responseTime, array($date_format,$this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['denial'],
-      $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['operatorMessage'],
-      $this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+    $responseTime = $this->THistory->query($responseTime, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],$this->chatMessageType['noticeFlg']['effectiveness'],
+      $this->chatMessageType['messageType']['operatorMessage'],$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
 
     $totalResponseAvgTimeDataCnt = 0;
     foreach($responseTime as $k => $v) {
