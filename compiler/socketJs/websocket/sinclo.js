@@ -1431,7 +1431,7 @@
               userName = "";
               break;
             default: // 設定が存在しない場合
-              if(sincloInfo.widget.showName === 1) {
+              if (sincloInfo.widget.showName === 1) {
                 userName = sinclo.chatApi.opUserName;
               } else {
                 userName = sincloInfo.widget.subTitle;
@@ -1503,6 +1503,24 @@
           return false;
         }
 
+        if (obj.messageType === 40) {
+          var data = JSON.parse(obj.chatMessage);
+          common.chatBotTypingRemove();
+          if(sinclo.scenarioApi.isProcessing()) {
+            sinclo.chatApi.createForm(true, data.target, data.message, sinclo.scenarioApi._bulkHearing.handleFormOK);
+          }
+          return false;
+        }
+
+        if (obj.messageType === 31 || obj.messageType === 32) {
+          this.chatApi.createFormFromLog(JSON.parse(obj.chatMessage));
+          this.chatApi.scDown();
+          setTimeout(function () {
+            common.chatBotTyping(obj)
+          }, 800);
+          return false;
+        }
+
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
           //Sorryメッセージが複数回呼ばれた場合は、タイマーが重複しないよう削除する
           if(sinclo.sorryMsgTimer){
@@ -1520,10 +1538,16 @@
             }
             // チャットの契約をしている場合
             if ( window.sincloInfo.contract.chat ) {
-              //sorryメッセージを出した数
-              //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-              if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-                ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+              if(storage.s.get('sorryMessageFlg') !== 'true') {
+                if(storage.s.get('mannedRequestFlg') !== 'true') {
+                  storage.s.set('mannedRequestFlg',true);
+                }
+                storage.s.set('sorryMessageFlg',true);
+                //sorryメッセージを出した数
+                //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
+                if(typeof ga == "function" && obj.tabId === userInfo.tabId){
+                  ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+                }
               }
             }
             sinclo.sorryMsgTimer = null;
