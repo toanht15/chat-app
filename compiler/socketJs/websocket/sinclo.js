@@ -6,7 +6,7 @@
   sinclo = {
     widget: {
       condifiton: {
-        get: function(){a
+        get: function(){
           var sincloBox = document.getElementById('sincloBox');
           if(storage.s.get("widgetMaximized") !== null && sincloBox.getAttribute('data-openflg') !== storage.s.get("widgetMaximized")) {
             sincloBox.setAttribute('data-openflg', storage.s.get("widgetMaximized"));
