@@ -1268,7 +1268,8 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + colorList['cNameTextColor'] + '; font-weight: bold; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: block; margin-top: 0.2em; margin-bottom: -1.25em; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: inline-block; margin-top: ' + widget.btwButtonMargin + 'px; } ';
+        html += '      #sincloBox ul#chatTalk li span.sinclo-text-line + sinclo-radio { margin-top: ' + widget.lineButtonMargin + 'px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin 0; padding: 0 0 0 ' + (Number(widget.reTextSize) + 7) + 'px; color:' + colorList['reTextColor'] + '; min-height: 12px; font-size: ' + widget.reTextSize + 'px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: ' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; left: 0px; margin-top: -' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; width: ' + (Number(widget.reTextSize)) + 'px; height: ' + (Number(widget.reTextSize)) + 'px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; } ';
@@ -2884,7 +2885,8 @@ var socket, // socket.io
     chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
     chatBotTypingCall: function(obj){
-      if(!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry){
+      console.log("sinclo.scenarioApi._bulkHearing.isInMode() %s", sinclo.scenarioApi._bulkHearing.isInMode());
+      if(!sinclo.scenarioApi._bulkHearing.isInMode() && (!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry)){
         common.chatBotTypingDelayTimer = setTimeout(function(){
           common.chatBotTyping(obj);
           common.chatBotTypingDelayTimer = null;
@@ -2892,6 +2894,7 @@ var socket, // socket.io
       }
     },
     chatBotTypingTimerClear: function(){
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>chatBotTypingTimerClear');
       clearTimeout(common.chatBotTypingDelayTimer);
       common.chatBotTypingDelayTimer = null;
     },
