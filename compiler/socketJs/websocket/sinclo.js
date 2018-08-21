@@ -1249,9 +1249,7 @@
               this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           }
-          else if(Number(chat.messageType) === 7){
-            return false;
-          } else if(Number(chat.messageType) === 19) {
+          else if(Number(chat.messageType) === 19) {
             if(check.isJSON(chat.message)) {
               var result = JSON.parse(chat.message);
               this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
@@ -1267,26 +1265,29 @@
               var diff = (now.getTime() - targetDate.getTime()) / 1000;
               var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
               for (var i = 0; i < Object.keys(data).length; i++) {
-                (function(times) {
-                  setTimeout(function() {
-                    //オペレータが入室していなかった場合
-                    if(storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
-                      sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
-                      sinclo.chatApi.scDown();
-                      var sendData = {
-                        siteKey: obj.siteKey,
-                        tabId: obj.tabId,
-                        chatMessage: data[times].message,
-                        messageType: sinclo.chatApi.messageType.notification,
-                        messageDistinction: chat.messageDistinction,
-                        mUserId: chat.userId,
-                        userId: chat.visitorsId,
+                if(storage.s.get('callingMessageSeconds') < data[i].seconds) {
+                  (function(times) {
+                    setTimeout(function() {
+                      //オペレータが入室していなかった場合
+                      if(storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
+                        sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
+                        sinclo.chatApi.scDown();
+                        var sendData = {
+                          siteKey: obj.siteKey,
+                          tabId: obj.tabId,
+                          chatMessage: data[times].message,
+                          messageType: sinclo.chatApi.messageType.notification,
+                          messageDistinction: chat.messageDistinction,
+                          mUserId: chat.userId,
+                          userId: chat.visitorsId,
+                        }
+                        emit("sendInitialNotificationChat", {messageList: sendData});
                       }
-                      emit("sendInitialNotificationChat", {messageList: sendData});
-                    }
-                  },(data[times].seconds-diff)*1000);
-                  firstCheck = false;
-                })(i);
+                      storage.s.set('callingMessageSeconds',data[times].seconds);
+                    },(data[times].seconds-diff)*1000);
+                    firstCheck = false;
+                  })(i);
+                }
               }
             }
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
@@ -1387,6 +1388,7 @@
     sendChatResult: function(d){
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>sendChatResult>>>");
       var obj = JSON.parse(d);
+      var aa = 0;
       common.chatBotTypingRemove();
       if ( obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId ) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
@@ -1539,6 +1541,7 @@
                   }
                   emit("sendInitialNotificationChat", {messageList: sendData});
                 }
+                storage.s.set('callingMessageSeconds',data[times].seconds);
               },data[times].seconds*1000);
             })(i);
           }
