@@ -2885,7 +2885,8 @@ var socket, // socket.io
     chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
     chatBotTypingCall: function(obj){
-      if(!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry){
+      console.log("sinclo.scenarioApi._bulkHearing.isInMode() %s", sinclo.scenarioApi._bulkHearing.isInMode());
+      if(!sinclo.scenarioApi._bulkHearing.isInMode() && (!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry)){
         common.chatBotTypingDelayTimer = setTimeout(function(){
           common.chatBotTyping(obj);
           common.chatBotTypingDelayTimer = null;
@@ -2893,6 +2894,7 @@ var socket, // socket.io
       }
     },
     chatBotTypingTimerClear: function(){
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>chatBotTypingTimerClear');
       clearTimeout(common.chatBotTypingDelayTimer);
       common.chatBotTypingDelayTimer = null;
     },

@@ -6374,6 +6374,15 @@
             sinclo.chatApi.hideForm();
           }
         },
+        isInMode: function () {
+          var self = sinclo.scenarioApi._bulkHearing;
+          if (!self._parent) {
+            // initがコールされていないのでヒアリング開始していない
+            return false;
+          } else {
+            return String(self._parent.get(self._parent._lKey.currentScenario).actionType) === self._parent._actionType.bulkHearing;
+          }
+        },
         _process: function () {
           var self = sinclo.scenarioApi._bulkHearing;
           self._parent._doing(0, function () { // 即時実行
