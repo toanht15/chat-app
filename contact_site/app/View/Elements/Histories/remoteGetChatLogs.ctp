@@ -249,6 +249,58 @@ $(function(){
       $isRecieveFile = false;
       $imgTag = false;
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 30) === 0 ) {
+      $className = "sinclo_re";
+      $name = "シナリオメッセージ(一括ヒアリング回答)";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      $imgTag = false;
+    }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 31) === 0 ) {
+      $className = "sinclo_re";
+      $name = "シナリオメッセージ(一括ヒアリング解析結果未修正)";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      $imgTag = false;
+    }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 32) === 0 ) {
+      $className = "sinclo_re";
+      $name = "シナリオメッセージ(一括ヒアリング内容修正)";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      $imgTag = false;
+    }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 40) === 0 ) {
+      $className = "sinclo_se";
+      $name = 'シナリオメッセージ(一括ヒアリング解析結果)';
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      $imgTag = false;
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 98) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が入室しました -";
@@ -265,7 +317,29 @@ $(function(){
     <?php } //権限が管理者、削除されていない履歴の場合
     else if(strcmp($permissionLevel,1) === 0 && strcmp($val['THistoryChatLog']['delete_flg'], 0) === 0) { ?>
       <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><?= $this->Html->image('close_b.png', array('class' => ($coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "commontooltip"),'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",'data-balloon-position' => '43.5','alt' => '履歴一覧','width' => 17,'height' => 17,'style' => 'margin-top: -24px; float:right; margin-right:1px; opacity:0.7; cursor:pointer','onclick' => !$coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : 'openDeleteDialog('.$id.','.$historyId.',"'.(intval($val['THistoryChatLog']['message_type']) === 6 ? json_decode($deleteMessage, TRUE)["fileName"] : $deleteMessage).'","'.$created.'")')) ?>
-      <span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'],$isSendFile,$isRecieveFile,$imgTag)?></li>
+      <span><?=h($name)?></span><?php
+        if(intval($val['THistoryChatLog']['message_type']) === 31 || intval($val['THistoryChatLog']['message_type']) === 32 || intval($val['THistoryChatLog']['message_type']) === 40) {
+          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          switch(intval($val['THistoryChatLog']['message_type'])) {
+            case 32:
+              $message = "";
+              foreach($json as $variableName => $object) {
+                $message .= $object['label'].'：'.($object['value'])."\n";
+              }
+              echo $message;
+              break;
+            case 40:
+              $message = "";
+              foreach($json['target'] as $variableName => $object) {
+                $message .= $object['label'].'：'.((!empty($json['message'][$object['inputType']])) ? $json['message'][$object['inputType']] : "（なし）")."\n";
+              }
+              echo $message;
+              break;
+          }
+        } else {
+          echo $this->htmlEx->makeChatView($val['THistoryChatLog']['message'], $isSendFile, $isRecieveFile, $imgTag);
+        }
+      ?></li>
     <?php }
     else { //権限が一般の場合 ?>
       <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><span><?=h($name)?></span><?=$this->htmlEx->makeChatView($val['THistoryChatLog']['message'],$isSendFile,$isRecieveFile,$imgTag)?></li>

@@ -727,6 +727,7 @@
          ];
 
         foreach($userList as $val){
+          $outputTarget = true;
           $infoData = $this->Session->read('Thistory');
            if ((isset($val['THistoryChatLog2']['type']) && isset($infoData['History']['chat_type']) &&
             $val['THistoryChatLog2']['type'] === Configure::read('chatType')[$infoData['History']['chat_type']]) || empty($infoData['History']['chat_type'])) {
@@ -840,6 +841,34 @@
             $json = json_decode($val['THistoryChatLog']['message'], TRUE);
             $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['downloadUrl'];
           }
+          if($val['THistoryChatLog']['message_type'] == 30) {
+            $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング回答）';
+            $row['transmissionPerson'] = "";
+          }
+          if($val['THistoryChatLog']['message_type'] == 31) {
+            // 一括ヒアリング内容（未修正OK）は管理画面側で表示しない
+            $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング解析結果未修正）';
+            $row['transmissionPerson'] = "";
+            $outputTarget = false;
+          }
+          if($val['THistoryChatLog']['message_type'] == 32) {
+            $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング内容修正）';
+            $row['transmissionPerson'] = "";
+            $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+            $val['THistoryChatLog']['message'] = "";
+            foreach($json as $variableName => $object) {
+              $val['THistoryChatLog']['message'] .= $object['label'].'：'.($object['value'])."\n";
+            }
+          }
+          if($val['THistoryChatLog']['message_type'] == 40) {
+            $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング解析結果）';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+            $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+            $val['THistoryChatLog']['message'] = "";
+            foreach($json['target'] as $index => $object) {
+              $val['THistoryChatLog']['message'] .= $object['label'].'：'.((!empty($json['message'][$object['inputType']])) ? $json['message'][$object['inputType']] : "（なし）")."\n";
+            }
+          }
           if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
             $row['transmissionKind'] = '通知メッセージ';
             $row['transmissionPerson'] = "";
@@ -856,7 +885,10 @@
           if($val['THistoryChatLog']['message_type'] == 2 || $val['THistoryChatLog']['message_type'] == 6) {
             $row['user'] = $val['User'];
           }
-          $csv[] = $row;
+
+          if($outputTarget) {
+            $csv[] = $row;
+          }
         }
       }
       $this->_outputCSV($name, $csv);
