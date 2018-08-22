@@ -582,7 +582,7 @@ var socket, // socket.io
       var smartphone = check.smartphone();
       if(smartphone){
         //スマホだったら縦か横かを判定
-        if($(window).height() > $(window).width()){
+        if(common.isPortrait()){
           //縦
           var MinRes = abridgementType['spMinRes'];
           var MaxRes = abridgementType['spMaxRes'];
@@ -871,7 +871,7 @@ var socket, // socket.io
       $("#widgetDescription").show();
       var smartphone = check.smartphone();
       if(smartphone){
-        if( $(window).height() > $(window).width() ){
+        if( common.isPortrait() ){
           if(!$('#sincloBox p#widgetTitle').hasClass("notSimple")){
             $('#sincloBox p#widgetTitle').addClass("notSimple");
           }
@@ -900,7 +900,7 @@ var socket, // socket.io
       if(smartphone){
         //スマホ時
         //スマホだったら縦か横かを判定
-        if($(window).height() > $(window).width()){
+        if(common.isPortrait()){
           //縦
           if($('#sincloBox p#widgetTitle').hasClass("notSimple")){
             $('#sincloBox p#widgetTitle').removeClass("notSimple");
@@ -944,7 +944,7 @@ var socket, // socket.io
         if(smartphone){
           //スマホ時
           //スマホだったら縦か横かを判定
-          if($(window).height() > $(window).width()){
+          if(common.isPortrait()){
             //縦
             $("#closeBtn").show();
           }
@@ -972,6 +972,9 @@ var socket, // socket.io
         }
         return "rgb(" + parseInt(r,16) + ", " + parseInt(g,16) + ", " + parseInt(b,16) + ")";
       }
+    },
+    isPortrait: function () {
+      return window.orientation % 180 == 0;
     },
     widgetCssTemplate: function(widget){
       // システムで出力するテキストのカラー
@@ -1426,7 +1429,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { font-size: 16px; }';
 
         /* 縦の場合 */
-        if ( $(window).height() > $(window).width() ) {
+        if ( this.isPortrait() ) {
           if(widget.spMaximizeSizeType === 2) {
             html += '#sincloBox { width: ' + ($(window).width()) + 'px; right: 0px; }';
           } else {
@@ -1779,7 +1782,7 @@ var socket, // socket.io
       var widgetWidth = $(window).width() - 20;
       var ratio = widgetWidth * (1/285);
       if ( check.smartphone() ) {
-        if ( $(window).height() > $(window).width() ) {
+        if ( common.isPortrait() ) {
           //縦
           var paddingpx = 'padding: '+ 10 * ratio +'px 0';
         }
@@ -2080,7 +2083,7 @@ var socket, // socket.io
             // サイズが変わった時は、サイズ感を変える
             window.addEventListener('resize', function(e){
               if(e) e.stopPropagation();
-              if ( $(window).height() > $(window).width() || document.activeElement.id === "sincloChatMessage") return false; // 横向きの場合のみ使用
+              if ( common.isPortrait() || document.activeElement.id === "sincloChatMessage") return false; // 横向きの場合のみ使用
               sinclo.operatorInfo.reCreateWidget();
             });
           }

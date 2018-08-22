@@ -207,7 +207,7 @@
               towByteCount++;
             }
           }
-          if($(window).height() > $(window).width()){
+          if(common.isPortrait()){
             var widgetWidth = $(window).width() - 20;
             var ratio = widgetWidth * (1/285);
             var bannerBasicSize = (63 * ratio);
@@ -1879,7 +1879,7 @@
           // 縦の場合
           var widgetWidth = 0,
               ratio = 0;
-          if ($(window).height() > $(window).width()) {
+          if (common.isPortrait()) {
             widgetWidth = $(window).width();
             ratio = widgetWidth * (1 / 285);
             if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
@@ -1913,7 +1913,7 @@
             var widgetWidth = 0,
                 ratio = 0;
             $('#flexBoxWrap').css('display', 'none');
-            if ($(window).height() > $(window).width()) {
+            if (common.isPortrait()) {
               console.log("ratio : " + ratio);
 
               if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
