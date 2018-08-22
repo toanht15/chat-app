@@ -973,8 +973,10 @@ var socket, // socket.io
         return "rgb(" + parseInt(r,16) + ", " + parseInt(g,16) + ", " + parseInt(b,16) + ")";
       }
     },
+    defaultOrientation: true,
     isPortrait: function () {
-      return window.orientation % 180 == 0;
+      var o = (window.orientation % 180 == 0);
+      return (o && common.defaultOrientation) || !(o || common.defaultOrientation);
     },
     widgetCssTemplate: function(widget){
       // システムで出力するテキストのカラー
@@ -4410,6 +4412,14 @@ var socket, // socket.io
   };
 
   var init = function(){
+    window.addEventListener('load', function() {
+      if('orientation' in window) {
+        var o1 = (window.innerWidth < window.innerHeight);
+        var o2 = (window.orientation % 180 == 0);
+        common.defaultOrientation = (o1 && o2) || !(o1 || o2);
+        console.log("common.defaultOrientation = %s",common.defaultOrientation);
+      }
+    }, false);
     var tabStateTimer = null;
     // ウィジェット最大化設定をクリア
     storage.s.unset("preWidgetOpened");
