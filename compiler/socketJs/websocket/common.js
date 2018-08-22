@@ -2173,12 +2173,14 @@ var socket, // socket.io
           //バナー表示フラグ設定をクリア
 //          storage.s.unset("bannerAct");
         }
-        if(closeAct === "true"){
+        if(closeAct === "true") {
           //強制的に非表示とする
           //チャットを閉じる
           $("#sincloWidgetBox").hide();
           //非表示フラグ設定をクリア
 //          storage.s.unset("closeAct");
+        } else {
+          $("#sincloWidgetBox").show();
         }
         if((common.widgetHandler.isShown() || window.sincloInfo.widgetDisplay)
           && sincloBox && (sincloBox.style.display === 'none' || sincloBox.style.display === '')) {
