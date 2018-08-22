@@ -4411,6 +4411,7 @@ var socket, // socket.io
     no: function(){ this.remove(); }
   };
 
+  var showTimer = null;
   var init = function(){
     window.addEventListener('load', function() {
       if('orientation' in window) {
@@ -4420,6 +4421,25 @@ var socket, // socket.io
         console.log("common.defaultOrientation = %s",common.defaultOrientation);
       }
     }, false);
+    if(check.android()) {
+      $('textarea:not(#sincloChatMessage), input:not(#miniSincloChatMessage)').on('DOMFocusIn',function(e){
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusIn');
+        if(showTimer) {
+          clearTimeout(showTimer);
+          showTimer = null;
+        }
+        common.widgetHandler.hide();
+        storage.s.set('closeAct', true);
+      }).on('DOMFocusOut', function(e){
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusOut');
+        if(!showTimer) {
+          showTimer = setTimeout(function () {
+            storage.s.set('closeAct', false);
+            common.widgetHandler.show();
+          }, 100);
+        }
+      });
+    }
     var tabStateTimer = null;
     // ウィジェット最大化設定をクリア
     storage.s.unset("preWidgetOpened");
