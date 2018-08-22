@@ -4436,6 +4436,7 @@ var socket, // socket.io
   };
 
   var showTimer = null;
+  var focusTargetType = ["text", "search", "tel", "url", "email", "password", "datetime"];
   var init = function(){
     window.addEventListener('load', function() {
       if('orientation' in window) {
@@ -4445,19 +4446,26 @@ var socket, // socket.io
         console.log("common.defaultOrientation = %s",common.defaultOrientation);
       }
     }, false);
-    if(check.android()) {
+    if(check.smartphone()) {
       $('textarea:not(#sincloChatMessage), input:not(#miniSincloChatMessage)').on('DOMFocusIn',function(e){
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusIn');
-        if(showTimer) {
-          clearTimeout(showTimer);
-          showTimer = null;
+        if(!event.target) {
+          return;
         }
-        common.widgetHandler.hide();
-        storage.s.set('closeAct', true);
+        if(focusTargetType.indexOf(e.target.type) >= 0) {
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> HIDE WIDGET');
+          if(showTimer) {
+            clearTimeout(showTimer);
+            showTimer = null;
+          }
+          common.widgetHandler.hide();
+          storage.s.set('closeAct', true);
+        }
       }).on('DOMFocusOut', function(e){
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusOut');
         if(!showTimer) {
           showTimer = setTimeout(function () {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW WIDGET');
             storage.s.set('closeAct', false);
             common.widgetHandler.show();
           }, 100);
