@@ -255,7 +255,12 @@
           sinclo.operatorInfo.ev();
         }
       },
+      widgetHideTimer: null,
       widgetHide: function(e) {
+        if(sinclo.operatorInfo.widgetHideTimer) {
+          clearTimeout(sinclo.operatorInfo.widgetHideTimer);
+          sinclo.operatorInfo.widgetHideTimer = null;
+        }
         if(e) e.stopPropagation();
         var sincloBox = document.getElementById('sincloBox');
         if ( !sincloBox ) return false;
@@ -275,7 +280,7 @@
         else {
           sincloBox.style.opacity = 1;
         }
-        setTimeout(function(){
+        sinclo.operatorInfo.widgetHideTimer = setTimeout(function(){
           if ( Number(sincloBox.style.opacity) === 0 ) {
             sincloBox.style.display = "none";
           }
