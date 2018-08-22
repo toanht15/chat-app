@@ -2642,7 +2642,15 @@
                         //imgタグ有効化
                         var img = unEscapeStr.match(imgTagReg);
                         if(img == null) {
-                          var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                          //ボタンのCSSを外す
+                          var linkButtonTabReg = RegExp(/<a ([\s\S]*?)style=([\s\S]*?)>([\s\S]*?)<\/a>/);
+                          var linkButtonTab = unEscapeStr.match(linkButtonTabReg);
+                          if(linkButtonTab !== null) {
+                            var processedLink = linkButtonTab[1].replace(/ /g, "\$nbsp;");
+                          }
+                          else {
+                            var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                          }
                           a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
                         }
                         else {
