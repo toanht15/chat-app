@@ -4436,7 +4436,7 @@ var socket, // socket.io
   };
 
   var showTimer = null;
-  var focusTargetType = ["text", "search", "tel", "url", "email", "password", "datetime"];
+  var focusTargetType = ["text", "search", "tel", "url", "email", "number", "password", "datetime"];
   var init = function(){
     window.addEventListener('load', function() {
       if('orientation' in window) {
