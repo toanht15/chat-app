@@ -1583,17 +1583,16 @@
         if (obj.messageType == sinclo.chatApi.messageType.notification) {
           return false;
         }
-        if(obj.messageType == sinclo.chatApi.messageType.linkClick) {
-          return false;
-        }
-        if(obj.messageType != sinclo.chatApi.messageType.sorry){
+        if(obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
         } else {
-          this.chatApi.scDown();
-          common.chatBotTypingCall(obj);
+          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
+            this.chatApi.scDown();
+            common.chatBotTypingCall(obj);
+          }
         }
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
