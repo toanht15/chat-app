@@ -1522,28 +1522,6 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
-          cn = "sinclo_re";
-          sinclo.chatApi.call();
-          this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
-          if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
-            this.chatApi.notify(obj.chatMessage);
-          } else {
-            this.chatApi.scDown();
-          }
-          // チャットの契約をしている場合
-          if ( window.sincloInfo.contract.chat ) {
-            if(storage.s.get('sorryMessageFlg') !== 'true') {
-              if(storage.s.get('mannedRequestFlg') !== 'true') {
-                storage.s.set('mannedRequestFlg',true);
-              }
-              storage.s.set('sorryMessageFlg',true);
-              //sorryメッセージを出した数
-              //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-              if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-                ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
-              }
-            }
-          }
           //Sorryメッセージが複数回呼ばれた場合は、タイマーが重複しないよう削除する
           if(sinclo.sorryMsgTimer){
             clearTimeout(sinclo.sorryMsgTimer);
@@ -1560,10 +1538,16 @@
             }
             // チャットの契約をしている場合
             if ( window.sincloInfo.contract.chat ) {
-              //sorryメッセージを出した数
-              //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-              if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-                ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+              if(storage.s.get('sorryMessageFlg') !== 'true') {
+                if(storage.s.get('mannedRequestFlg') !== 'true') {
+                  storage.s.set('mannedRequestFlg',true);
+                }
+                storage.s.set('sorryMessageFlg',true);
+                //sorryメッセージを出した数
+                //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
+                if(typeof ga == "function" && obj.tabId === userInfo.tabId){
+                  ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+                }
               }
             }
             sinclo.sorryMsgTimer = null;
@@ -1599,17 +1583,16 @@
         if (obj.messageType == sinclo.chatApi.messageType.notification) {
           return false;
         }
-        if(obj.messageType == sinclo.chatApi.messageType.linkClick) {
-          return false;
-        }
-        if(obj.messageType != sinclo.chatApi.messageType.sorry){
+        if(obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
         } else {
-          this.chatApi.scDown();
-          common.chatBotTypingCall(obj);
+          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
+            this.chatApi.scDown();
+            common.chatBotTypingCall(obj);
+          }
         }
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
