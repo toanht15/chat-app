@@ -1660,14 +1660,14 @@ var socket, // socket.io
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
             html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background: initial;}';
             if(Number(window.sincloInfo.widget.showPosition) === 1) {
-              html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (15 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+              html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (22.5 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
             } else {
-              html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (15 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+              html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (22.5 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
             }
-            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (8.75 * ratio) +'px; padding: 0 '+ (1 * ratio) +'px 0 '+ (5 * ratio) +'px; }';
-            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (8.75 * ratio) + 'px; padding: 0 '+ (1 * ratio) +'px 0 '+ (6.5 * ratio) +'px; }';
-            html += '      #sincloBox div#sincloBannerBox div#sincloBanner #bannerIcon { width: ' + Math.ceil(10.5 * ratio) + 'px; height: ' + Math.ceil(10.5 * ratio) + 'px; opacity: 1; margin: 0px ' + (2.5 * ratio) + 'px; }';
-            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (5 * ratio) +'px; vertical-align: middle; margin-right: ' + (2.5 * ratio) + 'px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (13.125 * ratio) +'px; padding: 0 '+ (1.5 * ratio) +'px 0 '+ (7.5 * ratio) +'px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (13.125 * ratio) + 'px; padding: 0 '+ (1.5 * ratio) +'px 0 '+ (7.5 * ratio) +'px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner #bannerIcon { width: ' + Math.ceil(15.75 * ratio) + 'px; height: ' + Math.ceil(15.75 * ratio) + 'px; opacity: 1; margin: 0px ' + (3.75 * ratio) + 'px; }';
+            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (7.5 * ratio) +'px; vertical-align: middle; margin-right: ' + (3.75 * ratio) + 'px; }';
             html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .notext{ cursor: pointer; }';
           }
         }
