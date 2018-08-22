@@ -1433,7 +1433,7 @@ var socket, // socket.io
         /* 縦の場合 */
         if ( this.isPortrait() ) {
           if(widget.spMaximizeSizeType === 2) {
-            html += '#sincloBox { width: ' + ($(window).width()) + 'px; right: 0px; }';
+            html += '#sincloBox { width: ' + ($(window).width()) + 'px; right: 0px; left: 0px; }';
           } else {
             html += '#sincloBox { width: ' + widgetWidth + 'px; }';
           }
