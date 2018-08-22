@@ -1851,7 +1851,7 @@
           // 縦の場合
           var widgetWidth = 0,
               ratio = 0;
-          if (common.isPortrait()) {
+          if (!check.android() && common.isPortrait()) {
             widgetWidth = $(window).width();
             ratio = widgetWidth * (1 / 285);
             if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
@@ -1885,7 +1885,7 @@
             var widgetWidth = 0,
                 ratio = 0;
             $('#flexBoxWrap').css('display', 'none');
-            if (common.isPortrait()) {
+            if (check.android() && common.isPortrait()) {
               console.log("ratio : " + ratio);
 
               if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
