@@ -1793,6 +1793,7 @@
       },delayTime);
       if(sinclo.firstCallDisplayTextarea) {
         if ( check.smartphone() ){
+          $('#flexBoxWrap').css('display', '');
           sinclo.adjustSpWidgetSize();
           $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
         }
@@ -1823,6 +1824,7 @@
       },delayTime);
       if(sinclo.firstCallHideTextarea) {
         if ( check.smartphone() ) {
+          $('#flexBoxWrap').css('display', 'none');
           sinclo.adjustSpWidgetSize();
         }
       }
