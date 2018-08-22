@@ -192,58 +192,22 @@
       },
       //バナー表示時の位置を設定
       bannerBottomLeftRight: function() {
-        if ( check.smartphone() ) {
-          //スマホだったら縦か横かを判定
-
-          var text = check.escape_html(window.sincloInfo.widget.bannertext);
-          var oneByteCount = 0;
-          var towByteCount = 0;
-          for (var i=0; i<text.length; i++){
-            var n = escape(text.charAt(i));
-            if (n.length < 4){
-              oneByteCount++;
-            }
-            else{
-              towByteCount++;
-            }
-          }
-          if(common.isPortrait()){
-            var widgetWidth = $(window).width() - 20;
-            var ratio = widgetWidth * (1/285);
-            var bannerBasicSize = (63 * ratio);
-            var fontSize = (12.5 * ratio);
-            var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1/2))) + (towByteCount * fontSize)
-            //縦
-            var bottom = (10 * ratio) + "px" ;
-            var leftRight = (-(widgetWidth * (1/2)) + (bannerSize * (1/2))) + "px" ;
-          }
-          else{
-            var ratio = 1.9;
-            var widgetWidth = $(window).width() * ratio;
-            var bannerBasicSize = (63 * ratio);
-            var fontSize = (12.5 * ratio);
-            var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1/2))) + (towByteCount * fontSize)
-            //横
-            var bottom = "2em";
-            var leftRight = (-(widgetWidth * (1/2)) + ((bannerSize * (1/2)) * ratio) - (12 * ratio) ) + "px" ;
-            //var leftRight = (-(widgetWidth * (1/2))) + "px" ;
-          }
-        }
-        else{
+        if ( !check.smartphone() ) {
           //pc
           var bottom = "20px";
           var leftRight = "20px";
-        }
-        $("#sincloBox").css("bottom",bottom);
-        switch ( Number(window.sincloInfo.widget.showPosition) ) {
-          case 1: // 右下
-            //right: 10px;
-            $("#sincloBox").css("right",leftRight);
-            break;
-          case 2: // 左下
-            //left: 10px;
-            $("#sincloBox").css("left",leftRight);
-            break;
+
+          $("#sincloBox").css("bottom",bottom);
+          switch ( Number(window.sincloInfo.widget.showPosition) ) {
+            case 1: // 右下
+              //right: 10px;
+              $("#sincloBox").css("right",leftRight);
+              break;
+            case 2: // 左下
+              //left: 10px;
+              $("#sincloBox").css("left",leftRight);
+              break;
+          }
         }
       },
       //バナー表示にする
