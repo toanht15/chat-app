@@ -4452,7 +4452,7 @@ var socket, // socket.io
         if(!event.target) {
           return;
         }
-        if(focusTargetType.indexOf(e.target.type) >= 0) {
+        if(event.target.nodeName.toLowerCase() === 'textarea' || focusTargetType.indexOf(e.target.type) >= 0) {
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> HIDE WIDGET');
           if(showTimer) {
             clearTimeout(showTimer);
