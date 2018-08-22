@@ -22,7 +22,7 @@
           'style' => 'display:none;vertical-align:middle;','selected' => $type,'empty' => '選択してください')); ?>
 
           <?= $this->Form->input('dateForm', array('type'=>'text','name' => 'datefilter','id' => 'hourlyForm',
-          'div'=>false, 'label'=>false,'style' => 'width:11em;cursor:pointer;display:none','value' => substr($type,0,10),'placeholder' => date("Y/m/d "))); ?>
+          'div'=>false, 'label'=>false,'style' => 'width:11em;cursor:pointer;display:none','value' => substr($type,0,10),'placeholder' => date("Y/m/d "),'autocomplete'=>'off')); ?>
           <b id = 'triangle'></b>
 
         <?= $this->Form->end(); ?>

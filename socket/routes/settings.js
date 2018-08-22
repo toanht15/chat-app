@@ -211,6 +211,16 @@ router.get("/", function(req, res, next) {
           reTextSize = settings.reTextSize;
         }
 
+        var lineButtonMargin = 2.6;
+        if('lineButtonMargin' in settings) {
+          lineButtonMargin = settings.lineButtonMargin;
+        }
+
+        var btwButtonMargin = 2.6;
+        if('btwButtonMargin' in settings) {
+          btwButtonMargin = settings.btwButtonMargin;
+        }
+
         // 自動メッセージの見出し設定が存在しない場合は「表示する」
         var showAutomessageName = 1;
         if(('showAutomessageName' in settings)) {
@@ -302,6 +312,9 @@ router.get("/", function(req, res, next) {
           //26.ウィジット内枠線色
           widgetInsideBorderColor: settings.widgetInsideBorderColor,
           /* カラー設定end */
+
+          lineButtonMargin: isNumeric(lineButtonMargin),
+          btwButtonMargin: isNumeric(btwButtonMargin),
 
           showMainImage: settings.showMainImage,
           mainImage: settings.mainImage,
