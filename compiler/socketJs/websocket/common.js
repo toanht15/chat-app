@@ -2179,7 +2179,7 @@ var socket, // socket.io
           $("#sincloWidgetBox").hide();
           //非表示フラグ設定をクリア
 //          storage.s.unset("closeAct");
-        } else if (bannerAct === "false") {
+        } else {
           $("#sincloWidgetBox").show();
         }
         if((common.widgetHandler.isShown() || window.sincloInfo.widgetDisplay)
