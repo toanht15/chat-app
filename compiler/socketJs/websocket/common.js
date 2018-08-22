@@ -1581,7 +1581,7 @@ var socket, // socket.io
           html += '#sincloBox #chatTalk li.sinclo_se div.formElement label.formLabel { margin-bottom: ' + (3 * ratio) + 'px; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.formElement input.formInput { padding: ' + (5 * ratio) + 'px; border: ' + (1 * ratio) + 'px solid ' + colorList['seBackgroundColor'] + '; }';
           html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea { margin-top: ' + (20 * ratio) + 'px; margin-bottom: ' + (20 * ratio) + 'px; }';
-          html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton { width: ' + (100 * ratio) + 'px; height: ' + (30 * ratio) + 'px; border-radius: ' + (12 * ratio) + 'px;  }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton.disabled { opacity: 0.38; }';
 
           html += '#sincloBox section#chatTab sinclo-div#miniFlexBoxHeight { height: ' + (48 * ratio) + 'px;  }';
           html += '#sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding:  ' + (16.5 * ratio) + 'px 0; border: ' + ratio + 'px solid ' + colorList['chatSendBtnBackgroundColor'] + '; }';
