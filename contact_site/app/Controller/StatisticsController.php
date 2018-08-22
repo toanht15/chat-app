@@ -1997,7 +1997,7 @@ class StatisticsController extends AppController {
     WHERE
       th.id = thcl.t_histories_id
     AND
-      th.id > thcl3.id
+      thcl.id > thcl3.id
     AND
       th.access_date between ? and ?
     group by date";
@@ -2220,10 +2220,10 @@ class StatisticsController extends AppController {
     //平均消費者待機時間
     $consumerWatingTime = "SELECT date_format(th.access_date,?) as date,AVG(UNIX_TIMESTAMP(thcl2.created)
       - UNIX_TIMESTAMP(thcl.created)) as average
-    FROM (select t_histories_id, message_request_flg,created,message_distinction
+    FROM (select id,t_histories_id, message_request_flg,created,message_distinction
     from t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
-    where  m_companies_id = ? and (message_type = ? or notice_flg = ?) group by t_histories_id) as thcl,
-    (select t_histories_id, message_type,created,message_distinction
+    where  (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?) group by t_histories_id) as thcl,
+    (select id,t_histories_id, message_type,created,message_distinction
     from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id)
     where message_type = ? and m_companies_id = ? group by t_histories_id) as thcl2,
     t_histories as th
@@ -2236,11 +2236,13 @@ class StatisticsController extends AppController {
     AND
       thcl.message_distinction = thcl2.message_distinction
     AND
+      thcl.id < thcl2.id
+    AND
       th.access_date between ? and ?
     group by date";
 
     $consumerWatingTime = $this->THistory->query($consumerWatingTime, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],
-      $this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
+      $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],$this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate));
 
     $totalConsumerWaitingAvgTimeDataCnt = 0;
@@ -2286,10 +2288,10 @@ class StatisticsController extends AppController {
     //平均応答時間
     $responseTime = "SELECT date_format(th.access_date,?) as date,AVG(UNIX_TIMESTAMP(thcl2.created)
       - UNIX_TIMESTAMP(thcl.created)) as average
-    FROM (select t_histories_id, message_request_flg,created,message_distinction
+    FROM (select id,t_histories_id, message_request_flg,created,message_distinction
     from t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
     where  m_companies_id = ? and (message_type = ? or notice_flg = ?) group by t_histories_id) as thcl,
-    (select t_histories_id, message_type,created,message_distinction
+    (select id,t_histories_id, message_type,created,message_distinction
     from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id)
     where message_type = ? and m_companies_id = ? group by t_histories_id) as thcl2,
     t_histories as th
@@ -2303,6 +2305,8 @@ class StatisticsController extends AppController {
       thcl.t_histories_id = th.id
     AND
       th.id = thcl2.t_histories_id
+    AND
+      thcl.id < thcl2.id
     group by date";
 
     $responseTime = $this->THistory->query($responseTime, array($date_format,$this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],$this->chatMessageType['noticeFlg']['effectiveness'],
