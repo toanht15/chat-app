@@ -1530,7 +1530,7 @@ var socket, // socket.io
           if(colorList['widgetInsideBorderNone'] === 0){
             html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: ' + (1 * ratio) + 'px solid '+ colorList['widgetInsideBorderColor'] +'; }';
           }
-          html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { font-size: 17px; padding: ' + (5 * ratio) + 'px;  }';
+          html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { font-size: ' + (17 * ratio) + 'px; padding: ' + (5 * ratio) + 'px;  }';
           if(colorList['messageBoxBorderNone'] === 0){
             html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border-radius: ' + (5 * ratio) +'px 0 0 ' + (5 * ratio) +'px!important; border: ' + (1 * ratio) + 'px solid '+ colorList['messageBoxBorderColor'] +'!important; }';
           }
