@@ -2299,7 +2299,6 @@ var socket, // socket.io
       },
       hide: function() {
         sincloBox.style.display = "none";
-        storage.s.set("widgetShown", "false");
       },
       saveShownFlg: function() {
         storage.s.set("widgetShown", "true");
