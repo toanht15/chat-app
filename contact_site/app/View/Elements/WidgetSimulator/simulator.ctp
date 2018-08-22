@@ -358,7 +358,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.cName:not(.details){ color: {{widget.settings['main_color']}}!important;}
         #sincloBox ul#chatTalk li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; }
         #sincloBox ul#chatTalk li.sinclo_se span.details{ color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
-        #sincloBox ul#chatTalk li span.sinclo-radio { display: block; margin-top: 0.2em; margin-bottom: -1.25em; }
+        #sincloBox ul#chatTalk li.sinclo_re span.sinclo-text-line{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; }
+        #sincloBox ul#chatTalk li.sinclo_se span.sinclo-text-line{ color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; }
+        #sincloBox ul#chatTalk li span.sinclo-radio { display: inline-block; margin-top: {{widget.settings['btw_button_margin']}}px; }
+        #sincloBox ul#chatTalk li span.sinclo-text-line + span.sinclo-radio { margin-top: {{widget.settings['line_button_margin']}}px; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin: 0; padding: 0 0 0 {{widget.re_text_size+7}}px; color:{{widget.settings['re_text_color']}}; min-height: 12px; font-size: {{widget.re_text_size}}px; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: {{widget.radioButtonBeforeTop}}px; left: 0px; margin-top: -{{widget.radioButtonBeforeTop}}px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; }

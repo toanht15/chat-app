@@ -1236,6 +1236,8 @@ var socket, // socket.io
         html += '      #sincloBox ul sinclo-chat { clear: both!important; }';
         html += '      #sincloBox ul sinclo-typing { padding-bottom: '+ sizeList['paddingBottom'] +'px; display: block; }';
         html += '      #sincloBox ul#chatTalk li { text-align: left!important; word-wrap: break-word; word-break: break-all; white-space: pre-wrap!important; background-color: transparent; white-space: pre; color: ' + chatContentTextColor + '; font-weight: normal!important; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_se span.sinclo-text-line { color:'+ colorList['seTextColor'] + '; font-size: '+ widget.seTextSize +'px; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_re span.sinclo-text-line { color:'+ colorList['reTextColor'] + '; font-size: '+ widget.reTextSize +'px; }';
         if (widget.chatMessageDesignType === 2) {
           // 吹き出し型
           html += '      #sincloBox ul#chatTalk li { line-height: 1.4; padding: 10px 15px; border-radius: 12px !important;}';
@@ -1268,7 +1270,8 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + colorList['cNameTextColor'] + '; font-weight: bold; }';
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: block; margin-top: 0.2em; margin-bottom: -1.25em; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio { display: inline-block; margin-top: ' + widget.btwButtonMargin + 'px; } ';
+        html += '      #sincloBox ul#chatTalk li span.sinclo-text-line + sinclo-radio { margin-top: ' + widget.lineButtonMargin + 'px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin 0; padding: 0 0 0 ' + (Number(widget.reTextSize) + 7) + 'px; color:' + colorList['reTextColor'] + '; min-height: 12px; font-size: ' + widget.reTextSize + 'px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: ' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; left: 0px; margin-top: -' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; width: ' + (Number(widget.reTextSize)) + 'px; height: ' + (Number(widget.reTextSize)) + 'px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; } ';
@@ -1523,6 +1526,8 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li { border-radius: ' + (12 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0; padding: ' + (10 * ratio) + 'px ' + (10 * ratio) + 'px; font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li.sinclo_se { font-size: ' + (12 * ratio) + 'px; margin-left: '+ (widgetWidth/342.5)*45 +'px;}';
           html += '#sincloBox ul#chatTalk li.sinclo_re { font-size: ' + (12 * ratio) + 'px; margin-right: '+ (widgetWidth/342.5)*21 +'px;}';
+          html += '#sincloBox ul#chatTalk li.sinclo_se span.sinclo-text-line { font-size: ' + (12 * ratio) + 'px; }';
+          html += '#sincloBox ul#chatTalk li.sinclo_re span.sinclo-text-line { font-size: ' + (12 * ratio) + 'px; }';
           html += '#sincloBox ul#chatTalk li div.sendFileThumbnailArea { display: table-cell; width: ' + (64 * ratio) + 'px; height: ' + (64 * ratio) + 'px; border: 1px solid #D9D9D9; }';
           if(colorList['seBorderNone'] === 0){
             html += '#sincloBox ul#chatTalk li.sinclo_se { border: ' + (1 * ratio) + 'px solid '+ colorList['seBorderColor'] +'; }';
@@ -1559,7 +1564,25 @@ var socket, // socket.io
           else{
             html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border: none!important; }';
           }
-          console.log("20180405");
+
+          // 一括ヒアリング
+          html += '#sincloBox #chatTalk li.sinclo_re.sinclo_form { padding: ' + (10 * ratio) + 'px ' + (15 * ratio) + 'px ' + (15 * ratio) + 'px ' + (15 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.formArea { padding: ' + (10 * ratio) + 'px ' + (10 * ratio) + 'px 0 ' + (10 * ratio) + 'px; margin-top: ' + (10 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.formElement.withMB { margin-bottom: ' + (8 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.formElement label.formLabel { margin-bottom: ' + (3 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.formElement input.formInput { padding: ' + (5 * ratio) + 'px; border: ' + (1 * ratio) + 'px solid ' + colorList['reBackgroundColor'] + '; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea { margin-top: ' + (20 * ratio) + 'px; margin-bottom: ' + (20 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton { width: ' + (100 * ratio) + 'px; height: ' + (30 * ratio) + 'px; border-radius: ' + (12 * ratio) + 'px; }';
+
+          html += '#sincloBox #chatTalk li.sinclo_se.sinclo_form { padding: ' + (15 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.formContentArea { margin: 0; line-height: 0; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.formArea { padding: ' + (10 * ratio) + 'px ' + (10 * ratio) + 'px 0 ' + (10 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.formElement.withMB { margin-bottom: ' + (8 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.formElement label.formLabel { margin-bottom: ' + (3 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.formElement input.formInput { padding: ' + (5 * ratio) + 'px; border: ' + (1 * ratio) + 'px solid ' + colorList['seBackgroundColor'] + '; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea { margin-top: ' + (20 * ratio) + 'px; margin-bottom: ' + (20 * ratio) + 'px; }';
+          html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton { width: ' + (100 * ratio) + 'px; height: ' + (30 * ratio) + 'px; border-radius: ' + (12 * ratio) + 'px;  }';
+
           html += '#sincloBox section#chatTab sinclo-div#miniFlexBoxHeight { height: ' + (48 * ratio) + 'px;  }';
           html += '#sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding:  ' + (16.5 * ratio) + 'px 0; border: ' + ratio + 'px solid ' + colorList['chatSendBtnBackgroundColor'] + '; }';
           html += '#sincloBox section#chatTab a#miniSincloChatSendBtn { padding: ' + (8 * ratio) + 'px 0;  }';
@@ -2884,7 +2907,8 @@ var socket, // socket.io
     chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
     chatBotTypingCall: function(obj){
-      if(!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry){
+      console.log("sinclo.scenarioApi._bulkHearing.isInMode() %s", sinclo.scenarioApi._bulkHearing.isInMode());
+      if(!sinclo.scenarioApi._bulkHearing.isInMode() && (!common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry)){
         common.chatBotTypingDelayTimer = setTimeout(function(){
           common.chatBotTyping(obj);
           common.chatBotTypingDelayTimer = null;
@@ -2892,6 +2916,7 @@ var socket, // socket.io
       }
     },
     chatBotTypingTimerClear: function(){
+      console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>chatBotTypingTimerClear');
       clearTimeout(common.chatBotTypingDelayTimer);
       common.chatBotTypingDelayTimer = null;
     },
