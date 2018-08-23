@@ -4627,6 +4627,7 @@
         scenarioMessageType: "s_scenarioMessageType",
         previousChatMessageLength: "s_prevChatMessageLength",
         stackReturnSettings: "s_stackReturnSettings",
+        isSentMail: "s_isSentMail"
       },
       defaultVal: {
         "s_id": 0,
@@ -4644,7 +4645,8 @@
         "s_sendCustomerMessageType": 1,
         "s_showSequenceList": {},
         "s_scenarioMessageType": 3,
-        "s_stackReturnSettings": {}
+        "s_stackReturnSettings": {},
+        "s_isSentMail": false
       },
       _isReload: false,
       _events: {
@@ -4715,6 +4717,7 @@
           self.set(self._lKey.showSequenceSet, {});
           self.set(self._lKey.previousChatMessageLength, 0);
           self.set(self._lKey.stackReturnSettings, {});
+          self.set(self._lKey.isSentMail, false);
           console.log("〜〜〜〜〜〜〜〜〜〜 SET SCENARIO 〜〜〜〜〜〜〜〜〜〜");
           console.log("self.set(self._lKey.scenarioId " + id);
           console.log("self.set(self._lKey.scenarios " + JSON.stringify(scenarioObj));
@@ -4749,7 +4752,8 @@
           "s_sendCustomerMessageType": 1,
           "s_showSequenceList": {},
           "s_scenarioMessageType": 3,
-          "s_stackReturnSettings": {}
+          "s_stackReturnSettings": {},
+          "s_isSentMail": false
         };
       },
       begin: function() {
@@ -5283,6 +5287,11 @@
         console.dir(newScenarioObj);
         self.set(self._lKey.scenarios, newScenarioObj);
         self.set(self._lKey.scenarioLength, Object.keys(newScenarioObj).length);
+        var isSentMail = self.get(self._lKey.isSentMail);
+        if(isSentMail === 'true') {
+          // 別のシナリオを呼び出す時、既にメールを送っている状態であればダウンロード用のURLを送信済みとする
+          self._applyAllDataSent();
+        }
       },
       _saveReturnSettings: function(lastSequenceNum, isReturn, incrementSeqVal) {
         var self = sinclo.scenarioApi;
@@ -5677,7 +5686,7 @@
           sinclo.api.callFunction('sc', self._parent.get(self._parent._lKey.scenarioId));
           // 外部連携実装後に外す
           emit('processSendMail', sendData, function(ev) {
-            self._parent._applyAllDataSent();
+            self._parent.set(self._parent._lKey.isSentMail, true);
           });
           if(self._parent._goToNextScenario()) {
             self._parent._process();
