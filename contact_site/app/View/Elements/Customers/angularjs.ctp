@@ -65,6 +65,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         autoSpeech: 5,
         sendFile: 6,
         notification: 7,
+        linkClick: 8,
         start: 98,
         end: 99,
         scenario: {
@@ -1745,6 +1746,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           div.style.padding = '0';
           content += $scope.createTextOfMessage(chat, message);
         }
+      } else if ( type === chatApi.messageType.linkClick ) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        li.className = cn;
+        content = $scope.createTextOfMessage(chat, message);
+        var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+        var linkTab = content.match(linkTabReg);
+        content = '（「'+linkTab[0]+'」をクリック）';
       }
       else  {
         cn = "sinclo_etc";
