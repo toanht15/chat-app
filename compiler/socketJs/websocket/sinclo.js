@@ -5288,7 +5288,7 @@
         self.set(self._lKey.scenarios, newScenarioObj);
         self.set(self._lKey.scenarioLength, Object.keys(newScenarioObj).length);
         var isSentMail = self.get(self._lKey.isSentMail);
-        if(isSentMail === 'true') {
+        if(isSentMail || isSentMail === "true") {
           // 別のシナリオを呼び出す時、既にメールを送っている状態であればダウンロード用のURLを送信済みとする
           self._applyAllDataSent();
         }
