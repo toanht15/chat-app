@@ -3004,6 +3004,34 @@
         chatList.appendChild(div);
 
         var formElements = "";
+        var content = "";
+        var objKeys = Object.keys(data);
+        objKeys.forEach(function(variableName, index, array){
+          formElements += (array.length - 1 === index) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
+          formElements += "      <span class='formLabel'>" + data[variableName].label + (data[variableName].required ? "<span class='require'>*</span>" : "") + "</span>";
+          formElements += "      <span class='formLabelSeparator'>：</span>";
+          formElements += "      <span class='formValue'>" + (data[variableName].value ? data[variableName].value : "（なし）") + "</span>";
+          formElements += "    </div>";
+        });
+
+        content += "<div class='formContentArea'>";
+        content += "  <div class='formSubmitArea'>";
+        content += formElements;
+        content += "  </div>";
+        content += "</div>";
+        li.className = 'sinclo_se effect_right sinclo_form';
+        li.innerHTML = content;
+      },
+      /* Ph.2用のフォーム
+      createFormFromLog: function (data) {
+        var chatList = document.getElementsByTagName('sinclo-chat')[0];
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+
+        div.appendChild(li);
+        chatList.appendChild(div);
+
+        var formElements = "";
         var isEmptyRequire = false;
 
         var content = "";
@@ -3025,6 +3053,7 @@
         li.className = 'sinclo_se effect_right sinclo_form';
         li.innerHTML = content;
       },
+      */
       hideForm: function() {
         $('li.sinclo_re.sinclo_form').remove();
       },
@@ -6436,37 +6465,7 @@
             self._parent._waitingInput(function (inputVal) {
               self._parent._unWaitingInput();
               self._analyseInput(inputVal, function (result) {
-                var resultObj = JSON.parse(result);
-                /*
-                if(resultObj.success) {
-                  sinclo.chatApi.createForm(true, self._parent.get(self._parent._lKey.currentScenario).multipleHearings, resultObj.data, function(resultValue){
-                    if(resultValue && Object.keys(resultValue).length > 0) {
-                      var keys = Object.keys(resultValue);
-                      keys.forEach(function(e, i, a){
-                        // 保存時は変数名を利用
-                        self._parent._saveVariable(keys[i], resultValue[keys[i]].value);
-                      });
-                      emit('sendChat', {
-                        historyId: sinclo.chatApi.historyId,
-                        stayLogsId: sinclo.chatApi.stayLogsId,
-                        chatMessage: JSON.stringify(resultValue),
-                        mUserId: null,
-                        messageType: 33,
-                        messageRequestFlg: 0,
-                        isAutoSpeech: false,
-                        notifyToCompany: false,
-                        isScenarioMessage: true
-                      }, function () {
-                        if (self._parent._goToNextScenario()) {
-                          self._parent._process();
-                        }
-                      });
-                      sinclo.chatApi.hideForm();
-                    }
-                  });
-                  self._parent._handleChatTextArea("2"); // 強制非表示
-                }
-                */
+                // 描画処理はsendChatResultで実行している
               });
             });
           });

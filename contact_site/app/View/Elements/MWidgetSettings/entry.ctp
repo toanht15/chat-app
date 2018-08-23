@@ -426,6 +426,27 @@ $headerNo = 1;
                     [
                       'entity' => 'MWidgetSetting.re_text_size'
                     ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('re_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px;" >標準に戻す</span></span><br>
+                <?php /* 隠しパラメータ */ ?>
+                <?= $this->ngForm->input('line_button_margin', [
+                    'type' => 'hidden',
+                    'div' => false,
+                    'label' => false,
+                    'string-to-number' => true,
+                    'default' => 2.6
+                  ],
+                  [
+                    'entity' => 'MWidgetSetting.line_button_margin'
+                  ]) ?>
+                <?= $this->ngForm->input('btw_button_margin', [
+                    'type' => 'hidden',
+                    'div' => false,
+                    'label' => false,
+                    'string-to-number' => true,
+                    'default' => 2.6
+                  ],
+                  [
+                    'entity' => 'MWidgetSetting.btw_button_margin'
+                  ]) ?>
                 <hr class="separator">
                 <!-- 16.訪問者側吹き出し背景色 -->
                 <span style="height: 35px;"><label>訪問者側吹き出し背景色</label><?= $this->ngForm->input('se_background_color', [
