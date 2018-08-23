@@ -91,7 +91,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
    */
   protected function createMetaDataMessage($isFullData, $withDownloadURL) {
     if($isFullData) {
-      $this->scenarioMessageBlock  = "シナリオ実行ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
+      $this->scenarioMessageBlock .= "シナリオ実行ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
       $this->scenarioMessageBlock .= "シナリオ実行ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
       $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
       if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
@@ -103,8 +103,6 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
           $this->scenarioMessageBlock .= $key."：".$value."\n";
         }
       }
-    } else {
-      $this->scenarioMessageBlock = "";
     }
     if($withDownloadURL && !empty($this->variables[self::RECEIVE_FILE_VARIABLE_KEY])) {
       if(!empty($this->scenarioMessageBlock)) {
