@@ -1250,26 +1250,29 @@
               var diff = (now.getTime() - targetDate.getTime()) / 1000;
               var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
               for (var i = 0; i < Object.keys(data).length; i++) {
-                (function (times) {
-                  setTimeout(function () {
-                    //オペレータが入室していなかった場合
-                    if (storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
-                      sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
-                      sinclo.chatApi.scDown();
-                      var sendData = {
-                        siteKey: obj.siteKey,
-                        tabId: obj.tabId,
-                        chatMessage: data[times].message,
-                        messageType: sinclo.chatApi.messageType.notification,
-                        messageDistinction: chat.messageDistinction,
-                        mUserId: chat.userId,
-                        userId: chat.visitorsId,
+                if(storage.s.get('callingMessageSeconds') < data[i].seconds) {
+                  (function(times) {
+                    setTimeout(function() {
+                      //オペレータが入室していなかった場合
+                      if(storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
+                        sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
+                        sinclo.chatApi.scDown();
+                        var sendData = {
+                          siteKey: obj.siteKey,
+                          tabId: obj.tabId,
+                          chatMessage: data[times].message,
+                          messageType: sinclo.chatApi.messageType.notification,
+                          messageDistinction: chat.messageDistinction,
+                          mUserId: chat.userId,
+                          userId: chat.visitorsId,
+                        }
+                        emit("sendInitialNotificationChat", {messageList: sendData});
                       }
-                      emit("sendInitialNotificationChat", {messageList: sendData});
-                    }
-                  }, (data[times].seconds - diff) * 1000);
-                  firstCheck = false;
-                })(i);
+                      storage.s.set('callingMessageSeconds',data[times].seconds);
+                    },(data[times].seconds-diff)*1000);
+                    firstCheck = false;
+                  })(i);
+                }
               }
             }
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
@@ -1548,7 +1551,8 @@
                   }
                   emit("sendInitialNotificationChat", {messageList: sendData});
                 }
-              }, data[times].seconds * 1000);
+                storage.s.set('callingMessageSeconds',data[times].seconds);
+              },data[times].seconds*1000);
             })(i);
           }
         }
