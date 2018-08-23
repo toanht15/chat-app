@@ -191,59 +191,23 @@
         }
       },
       //バナー表示時の位置を設定
-      bannerBottomLeftRight: function () {
-        if (check.smartphone()) {
-          //スマホだったら縦か横かを判定
-
-          var text = check.escape_html(window.sincloInfo.widget.bannertext);
-          var oneByteCount = 0;
-          var towByteCount = 0;
-          for (var i = 0; i < text.length; i++) {
-            var n = escape(text.charAt(i));
-            if (n.length < 4) {
-              oneByteCount++;
-            }
-            else {
-              towByteCount++;
-            }
-          }
-          if ($(window).height() > $(window).width()) {
-            var widgetWidth = $(window).width() - 20;
-            var ratio = widgetWidth * (1 / 285);
-            var bannerBasicSize = (63 * ratio);
-            var fontSize = (12.5 * ratio);
-            var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1 / 2))) + (towByteCount * fontSize)
-            //縦
-            var bottom = (10 * ratio) + "px";
-            var leftRight = (-(widgetWidth * (1 / 2)) + (bannerSize * (1 / 2))) + "px";
-          }
-          else {
-            var ratio = 1.9;
-            var widgetWidth = $(window).width() * ratio;
-            var bannerBasicSize = (63 * ratio);
-            var fontSize = (12.5 * ratio);
-            var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1 / 2))) + (towByteCount * fontSize)
-            //横
-            var bottom = "2em";
-            var leftRight = (-(widgetWidth * (1 / 2)) + ((bannerSize * (1 / 2)) * ratio) - (12 * ratio)) + "px";
-            //var leftRight = (-(widgetWidth * (1/2))) + "px" ;
-          }
-        }
-        else {
+      bannerBottomLeftRight: function() {
+        if ( !check.smartphone() ) {
           //pc
           var bottom = "20px";
           var leftRight = "20px";
-        }
-        $("#sincloBox").css("bottom", bottom);
-        switch (Number(window.sincloInfo.widget.showPosition)) {
-          case 1: // 右下
-            //right: 10px;
-            $("#sincloBox").css("right", leftRight);
-            break;
-          case 2: // 左下
-            //left: 10px;
-            $("#sincloBox").css("left", leftRight);
-            break;
+
+          $("#sincloBox").css("bottom",bottom);
+          switch ( Number(window.sincloInfo.widget.showPosition) ) {
+            case 1: // 右下
+              //right: 10px;
+              $("#sincloBox").css("right",leftRight);
+              break;
+            case 2: // 左下
+              //left: 10px;
+              $("#sincloBox").css("left",leftRight);
+              break;
+          }
         }
       },
       //バナー表示にする
@@ -291,10 +255,18 @@
           sinclo.operatorInfo.ev();
         }
       },
-      widgetHide: function (e) {
-        if (e) e.stopPropagation();
+      widgetHideTimer: null,
+      widgetHide: function(e) {
+        if(sinclo.operatorInfo.widgetHideTimer) {
+          clearTimeout(sinclo.operatorInfo.widgetHideTimer);
+          sinclo.operatorInfo.widgetHideTimer = null;
+        }
+        if(e) e.stopPropagation();
         var sincloBox = document.getElementById('sincloBox');
-        if (!sincloBox) return false;
+        if ( !sincloBox ) return false;
+        if ( check.android() && storage.s.get('closeAct') === 'true') {
+          return false;
+        }
         var openflg = sinclo.widget.condifiton.get();
 
         var height = document.getElementById('widgetTitle').clientHeight;
@@ -308,8 +280,8 @@
         else {
           sincloBox.style.opacity = 1;
         }
-        setTimeout(function () {
-          if (Number(sincloBox.style.opacity) === 0) {
+        sinclo.operatorInfo.widgetHideTimer = setTimeout(function(){
+          if ( Number(sincloBox.style.opacity) === 0 ) {
             sincloBox.style.display = "none";
           }
           else {
@@ -1278,26 +1250,29 @@
               var diff = (now.getTime() - targetDate.getTime()) / 1000;
               var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
               for (var i = 0; i < Object.keys(data).length; i++) {
-                (function (times) {
-                  setTimeout(function () {
-                    //オペレータが入室していなかった場合
-                    if (storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
-                      sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
-                      sinclo.chatApi.scDown();
-                      var sendData = {
-                        siteKey: obj.siteKey,
-                        tabId: obj.tabId,
-                        chatMessage: data[times].message,
-                        messageType: sinclo.chatApi.messageType.notification,
-                        messageDistinction: chat.messageDistinction,
-                        mUserId: chat.userId,
-                        userId: chat.visitorsId,
+                if(storage.s.get('callingMessageSeconds') < data[i].seconds) {
+                  (function(times) {
+                    setTimeout(function() {
+                      //オペレータが入室していなかった場合
+                      if(storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
+                        sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
+                        sinclo.chatApi.scDown();
+                        var sendData = {
+                          siteKey: obj.siteKey,
+                          tabId: obj.tabId,
+                          chatMessage: data[times].message,
+                          messageType: sinclo.chatApi.messageType.notification,
+                          messageDistinction: chat.messageDistinction,
+                          mUserId: chat.userId,
+                          userId: chat.visitorsId,
+                        }
+                        emit("sendInitialNotificationChat", {messageList: sendData});
                       }
-                      emit("sendInitialNotificationChat", {messageList: sendData});
-                    }
-                  }, (data[times].seconds - diff) * 1000);
-                  firstCheck = false;
-                })(i);
+                      storage.s.set('callingMessageSeconds',data[times].seconds);
+                    },(data[times].seconds-diff)*1000);
+                    firstCheck = false;
+                  })(i);
+                }
               }
             }
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
@@ -1522,28 +1497,6 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
-          cn = "sinclo_re";
-          sinclo.chatApi.call();
-          this.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
-          if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
-            this.chatApi.notify(obj.chatMessage);
-          } else {
-            this.chatApi.scDown();
-          }
-          // チャットの契約をしている場合
-          if ( window.sincloInfo.contract.chat ) {
-            if(storage.s.get('sorryMessageFlg') !== 'true') {
-              if(storage.s.get('mannedRequestFlg') !== 'true') {
-                storage.s.set('mannedRequestFlg',true);
-              }
-              storage.s.set('sorryMessageFlg',true);
-              //sorryメッセージを出した数
-              //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-              if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-                ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
-              }
-            }
-          }
           //Sorryメッセージが複数回呼ばれた場合は、タイマーが重複しないよう削除する
           if(sinclo.sorryMsgTimer){
             clearTimeout(sinclo.sorryMsgTimer);
@@ -1560,10 +1513,16 @@
             }
             // チャットの契約をしている場合
             if ( window.sincloInfo.contract.chat ) {
-              //sorryメッセージを出した数
-              //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-              if(typeof ga == "function" && obj.tabId === userInfo.tabId){
-                ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+              if(storage.s.get('sorryMessageFlg') !== 'true') {
+                if(storage.s.get('mannedRequestFlg') !== 'true') {
+                  storage.s.set('mannedRequestFlg',true);
+                }
+                storage.s.set('sorryMessageFlg',true);
+                //sorryメッセージを出した数
+                //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
+                if(typeof ga == "function" && obj.tabId === userInfo.tabId){
+                  ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+                }
               }
             }
             sinclo.sorryMsgTimer = null;
@@ -1592,24 +1551,24 @@
                   }
                   emit("sendInitialNotificationChat", {messageList: sendData});
                 }
-              }, data[times].seconds * 1000);
+                storage.s.set('callingMessageSeconds',data[times].seconds);
+              },data[times].seconds*1000);
             })(i);
           }
         }
         if (obj.messageType == sinclo.chatApi.messageType.notification) {
           return false;
         }
-        if(obj.messageType == sinclo.chatApi.messageType.linkClick) {
-          return false;
-        }
-        if(obj.messageType != sinclo.chatApi.messageType.sorry){
+        if(obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
         } else {
-          this.chatApi.scDown();
-          common.chatBotTypingCall(obj);
+          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
+            this.chatApi.scDown();
+            common.chatBotTypingCall(obj);
+          }
         }
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
@@ -1885,6 +1844,7 @@
       },delayTime);
       if(sinclo.firstCallDisplayTextarea) {
         if ( check.smartphone() ){
+          $('#flexBoxWrap').css('display', '');
           sinclo.adjustSpWidgetSize();
           $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
         }
@@ -1915,6 +1875,7 @@
       },delayTime);
       if(sinclo.firstCallHideTextarea) {
         if ( check.smartphone() ) {
+          $('#flexBoxWrap').css('display', 'none');
           sinclo.adjustSpWidgetSize();
         }
       }
@@ -1943,7 +1904,7 @@
           // 縦の場合
           var widgetWidth = 0,
               ratio = 0;
-          if ($(window).height() > $(window).width()) {
+          if (common.isPortrait() && $(window).height() > $(window).width()) {
             widgetWidth = $(window).width();
             ratio = widgetWidth * (1 / 285);
             if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
@@ -1977,7 +1938,7 @@
             var widgetWidth = 0,
                 ratio = 0;
             $('#flexBoxWrap').css('display', 'none');
-            if ($(window).height() > $(window).width()) {
+            if (common.isPortrait() && $(window).height() > $(window).width()) {
               console.log("ratio : " + ratio);
 
               if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
@@ -2659,7 +2620,15 @@
                         //imgタグ有効化
                         var img = unEscapeStr.match(imgTagReg);
                         if(img == null) {
-                          var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                          //ボタンのCSSを外す
+                          var linkButtonTabReg = RegExp(/<a ([\s\S]*?)style=([\s\S]*?)>([\s\S]*?)<\/a>/);
+                          var linkButtonTab = unEscapeStr.match(linkButtonTabReg);
+                          if(linkButtonTab !== null) {
+                            var processedLink = linkButtonTab[1].replace(/ /g, "\$nbsp;");
+                          }
+                          else {
+                            var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                          }
                           a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
                         }
                         else {
