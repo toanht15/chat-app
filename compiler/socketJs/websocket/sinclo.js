@@ -191,59 +191,23 @@
         }
       },
       //バナー表示時の位置を設定
-      bannerBottomLeftRight: function () {
-        if (check.smartphone()) {
-          //スマホだったら縦か横かを判定
-
-          var text = check.escape_html(window.sincloInfo.widget.bannertext);
-          var oneByteCount = 0;
-          var towByteCount = 0;
-          for (var i = 0; i < text.length; i++) {
-            var n = escape(text.charAt(i));
-            if (n.length < 4) {
-              oneByteCount++;
-            }
-            else {
-              towByteCount++;
-            }
-          }
-          if ($(window).height() > $(window).width()) {
-            var widgetWidth = $(window).width() - 20;
-            var ratio = widgetWidth * (1 / 285);
-            var bannerBasicSize = (63 * ratio);
-            var fontSize = (12.5 * ratio);
-            var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1 / 2))) + (towByteCount * fontSize)
-            //縦
-            var bottom = (10 * ratio) + "px";
-            var leftRight = (-(widgetWidth * (1 / 2)) + (bannerSize * (1 / 2))) + "px";
-          }
-          else {
-            var ratio = 1.9;
-            var widgetWidth = $(window).width() * ratio;
-            var bannerBasicSize = (63 * ratio);
-            var fontSize = (12.5 * ratio);
-            var bannerSize = bannerBasicSize + (oneByteCount * (fontSize * (1 / 2))) + (towByteCount * fontSize)
-            //横
-            var bottom = "2em";
-            var leftRight = (-(widgetWidth * (1 / 2)) + ((bannerSize * (1 / 2)) * ratio) - (12 * ratio)) + "px";
-            //var leftRight = (-(widgetWidth * (1/2))) + "px" ;
-          }
-        }
-        else {
+      bannerBottomLeftRight: function() {
+        if ( !check.smartphone() ) {
           //pc
           var bottom = "20px";
           var leftRight = "20px";
-        }
-        $("#sincloBox").css("bottom", bottom);
-        switch (Number(window.sincloInfo.widget.showPosition)) {
-          case 1: // 右下
-            //right: 10px;
-            $("#sincloBox").css("right", leftRight);
-            break;
-          case 2: // 左下
-            //left: 10px;
-            $("#sincloBox").css("left", leftRight);
-            break;
+
+          $("#sincloBox").css("bottom",bottom);
+          switch ( Number(window.sincloInfo.widget.showPosition) ) {
+            case 1: // 右下
+              //right: 10px;
+              $("#sincloBox").css("right",leftRight);
+              break;
+            case 2: // 左下
+              //left: 10px;
+              $("#sincloBox").css("left",leftRight);
+              break;
+          }
         }
       },
       //バナー表示にする
@@ -291,10 +255,18 @@
           sinclo.operatorInfo.ev();
         }
       },
-      widgetHide: function (e) {
-        if (e) e.stopPropagation();
+      widgetHideTimer: null,
+      widgetHide: function(e) {
+        if(sinclo.operatorInfo.widgetHideTimer) {
+          clearTimeout(sinclo.operatorInfo.widgetHideTimer);
+          sinclo.operatorInfo.widgetHideTimer = null;
+        }
+        if(e) e.stopPropagation();
         var sincloBox = document.getElementById('sincloBox');
-        if (!sincloBox) return false;
+        if ( !sincloBox ) return false;
+        if ( check.android() && storage.s.get('closeAct') === 'true') {
+          return false;
+        }
         var openflg = sinclo.widget.condifiton.get();
 
         var height = document.getElementById('widgetTitle').clientHeight;
@@ -308,8 +280,8 @@
         else {
           sincloBox.style.opacity = 1;
         }
-        setTimeout(function () {
-          if (Number(sincloBox.style.opacity) === 0) {
+        sinclo.operatorInfo.widgetHideTimer = setTimeout(function(){
+          if ( Number(sincloBox.style.opacity) === 0 ) {
             sincloBox.style.display = "none";
           }
           else {
@@ -1868,6 +1840,7 @@
       },delayTime);
       if(sinclo.firstCallDisplayTextarea) {
         if ( check.smartphone() ){
+          $('#flexBoxWrap').css('display', '');
           sinclo.adjustSpWidgetSize();
           $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
         }
@@ -1898,6 +1871,7 @@
       },delayTime);
       if(sinclo.firstCallHideTextarea) {
         if ( check.smartphone() ) {
+          $('#flexBoxWrap').css('display', 'none');
           sinclo.adjustSpWidgetSize();
         }
       }
@@ -1926,7 +1900,7 @@
           // 縦の場合
           var widgetWidth = 0,
               ratio = 0;
-          if ($(window).height() > $(window).width()) {
+          if (common.isPortrait() && $(window).height() > $(window).width()) {
             widgetWidth = $(window).width();
             ratio = widgetWidth * (1 / 285);
             if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
@@ -1960,7 +1934,7 @@
             var widgetWidth = 0,
                 ratio = 0;
             $('#flexBoxWrap').css('display', 'none');
-            if ($(window).height() > $(window).width()) {
+            if (common.isPortrait() && $(window).height() > $(window).width()) {
               console.log("ratio : " + ratio);
 
               if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
