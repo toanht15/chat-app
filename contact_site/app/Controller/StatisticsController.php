@@ -62,6 +62,9 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function forChat() {
+    //$data = Cache::read('cacheData');
+    $this->log('統計データ',LOG_DEBUG);
+    $this->log($data,LOG_DEBUG);
     if($this->request->is('post')) {
       if ($this->THistory->validates() ) {
         $date = $this->request->data['dateFormat'];
@@ -104,6 +107,7 @@ class StatisticsController extends AppController {
     if($date == '日別' || $date == '月別') {
       $this->set('datePeriod',date("Y-m-d"));
     }
+    Cache::write('cacheData', $data);
   }
 
   /* *
@@ -1773,7 +1777,7 @@ class StatisticsController extends AppController {
       date_format(th.access_date, ?) as date,
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg,message_distinction from
-      t_history_chat_logs force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id)
+      t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
       where m_companies_id = ? and notice_flg = ? group by t_histories_id,
        message_distinction)
       as thcl
@@ -1863,6 +1867,7 @@ class StatisticsController extends AppController {
     $responseNumberData = [];
     $responseRate = [];
 
+    $this->log("BEGIN 応対件数 : ".$this->getDateWithMilliSec(),LOG_DEBUG);
     //応対件数
     $response = "SELECT date_format(th.access_date, ?) as date,
       count(thcl.t_histories_id) as response_count
@@ -1891,6 +1896,7 @@ class StatisticsController extends AppController {
         $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],
         $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
         $correctStartDate,$correctEndDate,));
+    $this->log("END 応対件数 : ".$this->getDateWithMilliSec(),LOG_DEBUG);
 
     foreach($responseNumber as $k => $v) {
       if($v[0]['response_count'] != 0 and ($v[0]['response_count']+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']]) != 0) {
