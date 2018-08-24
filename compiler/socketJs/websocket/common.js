@@ -1365,7 +1365,7 @@ var socket, // socket.io
 
         html += '#sincloBox #chatTalk li.sinclo_se.sinclo_form { display: block; padding: 10px 15px; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea { background-color: transparent; line-height: 0; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement { display: grid; grid-template-columns: 36% max-content 1fr;  color: #333; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement { display: grid; grid-template-columns: 36% max-content 1fr;  color: #333; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement.withMB { margin-bottom: 7px; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel { margin-bottom: 3px; grid-column: 1/2; grid-row: 1/2; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel span.require { color: #7F0000 }';
