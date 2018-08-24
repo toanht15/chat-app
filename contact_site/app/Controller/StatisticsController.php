@@ -1942,7 +1942,7 @@ class StatisticsController extends AppController {
 
     //合計チャット応答率
     $allResponseRate = 0;
-    if($allResponseNumberData != 0 and ($allAbandonmentNumberData+$allDenialNumberData) != 0) {
+    if($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData != 0) {
       $allResponseRate = round($allResponseNumberData/($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData)*100);
     } else if($allResponseNumberData === 0 && $allAbandonmentNumberData+$allDenialNumberData != 0) {
       // 有人リクエストチャット件数はあるけど応答がない場合
