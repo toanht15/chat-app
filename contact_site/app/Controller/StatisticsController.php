@@ -1773,7 +1773,7 @@ class StatisticsController extends AppController {
       date_format(th.access_date, ?) as date,
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg,message_distinction from
-      t_history_chat_logs force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id)
+      t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
       where m_companies_id = ? and notice_flg = ? group by t_histories_id,
        message_distinction)
       as thcl
