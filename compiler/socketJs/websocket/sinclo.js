@@ -385,7 +385,6 @@
         window.opener = null;
         userInfo.strageReset();
         userInfo.setReferrer();
-        userInfo.setStayCount();
         userInfo.gFrame = false;
       }
       userInfo.init();
@@ -536,6 +535,10 @@
           userInfo.set(cnst.info_type.time, obj.time, true);
         }
         userInfo.setTabId();
+      }
+
+      if(obj.sincloSessionIdIsNew) {
+        userInfo.setStayCount();
       }
 
       if (obj.sincloSessionIdIsNew || (!check.isset(userInfo.sincloSessionId) && check.isset(obj.sincloSessionId))) {
