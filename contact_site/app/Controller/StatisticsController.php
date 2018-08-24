@@ -1773,7 +1773,7 @@ class StatisticsController extends AppController {
       date_format(th.access_date, ?) as date,
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg,message_distinction from
-      t_history_chat_logs force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id)
+      t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
       where m_companies_id = ? and notice_flg = ? group by t_histories_id,
        message_distinction)
       as thcl
@@ -1872,7 +1872,7 @@ class StatisticsController extends AppController {
        message_distinction) as thcl
       LEFT JOIN (select t_histories_id, message_request_flg,
       message_distinction from t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
-       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?)) as thcl2
+       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?) group by t_histories_id) as thcl2
       ON
       thcl.t_histories_id = thcl2.t_histories_id
       AND
@@ -1942,7 +1942,7 @@ class StatisticsController extends AppController {
 
     //合計チャット応答率
     $allResponseRate = 0;
-    if($allResponseNumberData != 0 and ($allAbandonmentNumberData+$allDenialNumberData) != 0) {
+    if($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData != 0) {
       $allResponseRate = round($allResponseNumberData/($allResponseNumberData+$allAbandonmentNumberData+$allDenialNumberData)*100);
     } else if($allResponseNumberData === 0 && $allAbandonmentNumberData+$allDenialNumberData != 0) {
       // 有人リクエストチャット件数はあるけど応答がない場合
@@ -2090,7 +2090,7 @@ class StatisticsController extends AppController {
        group by t_histories_id,message_distinction) as thcl
        LEFT JOIN (select t_histories_id, message_type,message_distinction from
        t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
-       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?)) as thcl2
+       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?) group by t_histories_id) as thcl2
        ON
        thcl.t_histories_id = thcl2.t_histories_id
        AND
