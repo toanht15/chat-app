@@ -1367,10 +1367,10 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea { background-color: transparent; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement { display: grid; grid-template-columns: 36% max-content 1fr;  color: #333; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement.withMB { margin-bottom: 7px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel { margin-bottom: 3px; grid-column: 1/2; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel { margin-bottom: 3px; grid-column: 1/2; grid-row: 1/2; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel span.require { color: #7F0000 }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { margin-bottom: 3px; grid-column: 3/4;}';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; grid-row: 1/2; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { margin-bottom: 3px; grid-column: 3/4; grid-row: 1/2; }';
 
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
