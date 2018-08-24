@@ -1544,7 +1544,8 @@ var socket, // socket.io
           if(colorList['reBorderNone'] === 0){
             html += '#sincloBox ul#chatTalk li.sinclo_re { border: ' + (1 * ratio) + 'px solid '+ colorList['reBorderColor'] +'; }';
           }
-          html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0.25em 0 -1em 0.5em; display: block; } ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio { margin-top: ' + (Number(widget.btwButtonMargin) * ratio) + 'px; display: inline-block; } ';
+          html += '#sincloBox ul#chatTalk li span.sinclo-text-line + sinclo-radio { margin-top: ' + (Number(widget.lineButtonMargin) * ratio) + 'px; } ';
           if (widget.chatMessageDesignType === 2) {
             // 吹き出し型
             html += '#sincloBox ul#chatTalk li { line-height: 1.4; padding: ' + (10 * ratio) + 'px ' + (15 * ratio) + 'px !important; border-radius: ' + (12 * ratio) + 'px !important;}';
