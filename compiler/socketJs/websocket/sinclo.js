@@ -2635,11 +2635,8 @@
                           a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
                         }
                         else {
-                          console.log('ここに入ってる');
-                          console.log(linkTab);
                           var processedLink = linkTab[1].replace(img[0], "");
                           processedLink = processedLink.replace(/ /g, "\$nbsp;");
-                          console.log(processedLink);
                           imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                           a = a.replace(img[0], imgTag);
                           var urlTagReg = RegExp(/href="([\s\S]*?)"([\s\S]*?)/);
@@ -2691,7 +2688,6 @@
                   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
                   var img = unEscapeStr.match(imgTagReg);
                   if(img !== null && link == null && linkTab == null) {
-                    console.log('ここには入ってる？');
                     imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                     str = unEscapeStr.replace(img[0], imgTag);
                   }
