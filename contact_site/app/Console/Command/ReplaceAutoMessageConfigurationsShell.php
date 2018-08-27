@@ -36,11 +36,11 @@ class ReplaceAutoMessageConfigurationsShell extends AppShell
       foreach ($allData as $index => $data) {
         if (strcmp($data['TAutoMessage']['action_type'], self::ACTION_TYPE_SEND_MESSAGE) === 0) {
           $this->printLog("====================================================");
-          $this->printLog('target automessage id : ' . $data['TAutoMessage']['id'] . ' companies_id : ' . $data['TAutoMessage']['m_companies_id'] . ' name : ' . $data['TAutoMessage']['name']);
           $jsonObj = json_decode($data['TAutoMessage']['activity'], TRUE);
           $targetMessage = $jsonObj['message'];
-          $this->printLog("BEFORE:\n" . $targetMessage);
           if(preg_match('/\n\n\[\]/',$targetMessage)) {
+            $this->printLog('target automessage id : ' . $data['TAutoMessage']['id'] . ' companies_id : ' . $data['TAutoMessage']['m_companies_id'] . ' name : ' . $data['TAutoMessage']['name']);
+            $this->printLog("BEFORE:\n" . $targetMessage);
             $targetMessage = preg_replace('/\n\n\[\]/', "\n[]", $targetMessage);
             $this->printLog("AFTER:\n" . $targetMessage);
             $jsonObj['message'] = $targetMessage;
