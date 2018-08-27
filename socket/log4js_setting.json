@@ -40,6 +40,6 @@
         "error": {"appenders":["error"], "level": "info"},
         "debug": {"appenders":["debug"], "level": "info"},
         "system": {"appenders":["system"], "level":"info"},
-        "lbc": {"appenders":["lbc"], "level":"info"}
+        "lbc": {"appenders":["lbc"], "level":"debug"}
     }
 }

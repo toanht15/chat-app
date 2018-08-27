@@ -65,19 +65,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         autoSpeech: 5,
         sendFile: 6,
         notification: 7,
+        linkClick: 8,
         start: 98,
         end: 99,
         scenario: {
           customer: {
             hearing: 12,
             selection: 13,
-            sendFile: 19
+            sendFile: 19,
+            answerBulkHearing: 30,
+            noModBulkHearing: 31,
+            modifyBulkHearing: 32
           },
           message: {
             text: 21,
             hearing: 22,
             selection: 23,
-            receiveFile: 27
+            receiveFile: 27,
+            returnBulkHearing: 40
           }
         }
       },
@@ -1745,6 +1750,44 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           div.style.padding = '0';
           content += $scope.createTextOfMessage(chat, message);
         }
+      } else if ( type === chatApi.messageType.linkClick ) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        li.className = cn;
+        content = $scope.createTextOfMessage(chat, message);
+        var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+        var linkTab = content.match(linkTabReg);
+        content = '（「'+linkTab[0]+'」をクリック）';
+      }
+      else if ( Number(type) === chatApi.messageType.scenario.customer.answerBulkHearing ) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(一括ヒアリング回答)</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( Number(type) === chatApi.messageType.scenario.customer.noModBulkHearing ) {
+        // 未修正ログは表示しない
+        return;
+      }
+      else if ( Number(type) === chatApi.messageType.scenario.customer.modifyBulkHearing ) {
+        cn = "sinclo_re";
+        div.style.textAlign = 'left';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(一括ヒアリング内容修正)</span>";
+        content += $scope.createBulkHearingKeyValue(chat, message);
+      }
+      else if ( Number(type) === chatApi.messageType.scenario.message.returnBulkHearing ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(一括ヒアリング解析結果)</span>";
+        content += $scope.createBulkHearingAnalyseData(chat, message);
       }
       else  {
         cn = "sinclo_etc";
@@ -1763,6 +1806,32 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       li.innerHTML = content;
       div.appendChild(li);
       $(elem).append(div);
+    };
+
+    $scope.createBulkHearingAnalyseData = function(chat, data) {
+      var resultVal = "";
+      try {
+        var obj = JSON.parse(data);
+        Object.keys(obj.target).forEach(function(elm, idx, arr){
+          resultVal += obj.target[elm].label + "：" + (obj.message[obj.target[elm].inputType] ? obj.message[obj.target[elm].inputType] : "（なし）") + "\n";
+        });
+      } catch(e) {
+        console.log(e.message);
+      }
+      return resultVal;
+    };
+
+    $scope.createBulkHearingKeyValue = function(chat, data) {
+      var resultVal = "";
+      try {
+        var obj = JSON.parse(data);
+        Object.keys(obj).forEach(function(elm, idx, arr){
+          resultVal += obj[elm].label + '：' + obj[elm].value + "\n";
+        });
+      } catch(e) {
+        console.log("createBulkHearingKeyValue : " + e.message);
+      }
+      return resultVal;
     };
 
     // 【チャット】クラス名のジャッジ
