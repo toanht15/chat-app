@@ -1305,7 +1305,7 @@ var socket, // socket.io
         }
 
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent { position: relative; line-height: 0; border: 1px dashed ' + widget.reTextColor + '; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 0; }'
+        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin: 6.5px 0; text-align: center; color:' + widget.reTextColor + '; font-weight: bold; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display:inline-block; width:75%; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; text-align: center; background-color: ' + widget.reTextColor + '!important; color: ' + widget.reBackgroundColor + '; font-weight: normal; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }';
@@ -1341,7 +1341,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re div.formContentArea { margin: 0; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formContentArea p.formMessage { color: ' + widget.reTextColor + '; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formArea { background-color: #FFF; line-height: 0; padding: 10px 10px 0 10px; margin-top: 10px; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.formElement { color: #333; display: flex; justify-content: stretch; flex-flow: column nowrap; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formElement { line-height: 0; color: #333; display: flex; justify-content: stretch; flex-flow: column nowrap; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formElement.withMB { margin-bottom: 8px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formElement label.formLabel { margin-bottom: 3px; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formElement label.formLabel span.require { color: #7F0000 }';
@@ -1365,12 +1365,13 @@ var socket, // socket.io
 
         html += '#sincloBox #chatTalk li.sinclo_se.sinclo_form { display: block; padding: 10px 15px; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea { background-color: transparent; line-height: 0; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement { display: grid; grid-template-columns: 36% max-content 1fr;  color: #333; line-height: 0; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement { display: grid; display: -ms-grid; grid-template-columns: 36% max-content 1fr; -ms-grid-columns: 36% max-content 1fr; color: #333; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement.withMB { margin-bottom: 7px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel { margin-bottom: 3px; grid-column: 1/2; grid-row: 1/2; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span { display: inline-block; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel { grid-column: 1/2; grid-row: 1/2; -ms-grid-column: 1; -ms-grid-row: 1; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel span.require { color: #7F0000 }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; grid-row: 1/2; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { margin-bottom: 3px; grid-column: 3/4; grid-row: 1/2; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; grid-row: 1/2; -ms-grid-column: 2; -ms-grid-row: 1; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { grid-column: 3/4; grid-row: 1/2; -ms-grid-column: 3; -ms-grid-row: 1; }';
 
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
