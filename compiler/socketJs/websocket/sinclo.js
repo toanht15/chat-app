@@ -2653,18 +2653,20 @@
                     //URLのみのリンクの場合
                     else {
                       var url = link[0];
-                      var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
-                      var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
-                      var linkTab = a.match(linkTabReg);
-                      processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
-                      a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
                       //imgタグ有効化
                       var img = unEscapeStr.match(imgTagReg);
-                      if(img !== null) {
-                        imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-                        a = a.replace(img[0], imgTag);
+                      if(img == null) {
+                        var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
+                        var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+                        var linkTab = a.match(linkTabReg);
+                        processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                        a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
+                        str = str.replace(url, a);
                       }
-                      str = str.replace(url, a);
+                      else {
+                        var a = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+                        str = a;
+                      }
                     }
                 }
                 // 電話番号（スマホのみリンク化）
