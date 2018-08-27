@@ -2648,7 +2648,7 @@
                         // ただの文字列にする
                         var a = "<span class='link'>"+ linkTab[2] + "</span>";
                       }
-                      str = unEscapeStr.replace(linkTab[0], a);
+                      str = unEscapeStr.replace(linkTab[0], '<span class="sinclo-text-line">' + a +'</span>');
                     }
                     //URLのみのリンクの場合
                     else {
@@ -2664,7 +2664,7 @@
                         imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
                         a = a.replace(img[0], imgTag);
                       }
-                      str = str.replace(url, a);
+                      str = str.replace(url, '<span class="sinclo-text-line">' + a + '</span>');
                     }
                 }
                 // 電話番号（スマホのみリンク化）
@@ -2687,7 +2687,7 @@
                   var img = unEscapeStr.match(imgTagReg);
                   if(img !== null && link == null && linkTab == null) {
                     imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-                    str = unEscapeStr.replace(img[0], imgTag);
+                    str = unEscapeStr.replace(img[0], '<span class="sinclo-text-line">' + imgTag + '</span>');
                   }
                 }
                 if(str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
