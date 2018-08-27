@@ -172,14 +172,14 @@ function replaceVariable(str,isSmartphone,type){
           var img = unEscapeStr.match(imgTagReg);
           if(img !== null) {
             imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-            a = a.replace(img[0], '<span class="sinclo-text-line">' + imgTag + '</span>');
+            a = a.replace(img[0], imgTag);
           }
         }
         else {
           // ただの文字列にする
           var a = "<span class='link'>"+ linkTab[2] + "</span>";
         }
-        str = unEscapeStr.replace(linkTab[0], '<span class="sinclo-text-line">' + a + '</span>');
+        str = unEscapeStr.replace(linkTab[0], a);
       }
       //URLのみのリンクの場合
       else {
@@ -191,7 +191,7 @@ function replaceVariable(str,isSmartphone,type){
           imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
           a = a.replace(img[0], imgTag);
         }
-        str = str.replace(url, '<span class="sinclo-text-line">' + a + '</span>');
+        str = str.replace(url, a);
       }
   }
   // 電話番号（スマホのみリンク化）
@@ -214,11 +214,11 @@ function replaceVariable(str,isSmartphone,type){
   //選択肢に画像を入れる場合
   if(img !== null && choiseImg !== null && type !== '6') {
     imgTag = "<label "+choiseImg[1]+"><div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div></label>";
-    str = unEscapeStr.replace(choiseImg[0], '<span class="sinclo-text-line">' + imgTag + '</span>');
+    str = unEscapeStr.replace(choiseImg[0], imgTag);
   }
   else if(img !== null && choiseImg === null && type !== '6') {
     imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-    str = unEscapeStr.replace(img[0], '<span class="sinclo-text-line">' + imgTag + '</span>');
+    str = unEscapeStr.replace(img[0], imgTag);
   }
   //チャット履歴の場合
   else if(img !== null && type === '6') {
