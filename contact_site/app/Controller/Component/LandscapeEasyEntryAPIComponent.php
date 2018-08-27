@@ -10,7 +10,7 @@ App::uses('LandscapeAPIComponent', 'Controller/Component');
 
 class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
 {
-  const ML_CID = "kttRzcMcssGxq4znx2f";
+  const ML_CID = "AKTmY3Mr9gSxFbZm";
 
   const API_URL = "https://api.kantan-touroku.com/lbc_renkei/parse_info";
   const HEADER_HOST = "https://sinclo.jp";
@@ -18,6 +18,7 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
   const PARAM_CMD = "cmd";
   const PARAM_CID = "cid";
   const PARAM_IN_TEXT = "in_text";
+  const PARAM_IP = "ip";
   const PARAM_CALLBACK = "callback";
 
   const RESPONSE_CODE_SUCCESS = 0;
@@ -26,7 +27,19 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
   const RESPONSE_INVALID_ACCESS = 9;
   const RESPONSE_SYSTEM_ERROR = 99;
 
+  const INPUT_TYPE_COMPANY_NAME_ID = 1;
+  const INPUT_TYPE_PERSONAL_NAME_ID = 2;
+  const INPUT_TYPE_ZIP_ID = 3;
+  const INPUT_TYPE_ADDRESS_ID = 4;
+  const INPUT_TYPE_BUSHO_ID = 5;
+  const INPUT_TYPE_YAKUSHOKU_ID = 6;
+  const INPUT_TYPE_TEL_ID = 7;
+  const INPUT_TYPE_FAX_ID = 8;
+  const INPUT_TYPE_MOBILE_ID = 9;
+  const INPUT_TYPE_MAIL_ID = 10;
+
   protected $inText;
+  protected $ip;
 
   public function __construct(ComponentCollection $collection, array $settings = array())
   {
@@ -41,6 +54,14 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
    */
   public function setText($text) {
     $this->inText = $text;
+  }
+
+  /**
+   * 送信元のIPアドレスをセットする
+   * @param {string} $text
+   */
+  public function setIp($ip) {
+    $this->ip = $ip;
   }
 
   public function execute() {
@@ -94,7 +115,8 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
   public function getData() {
     $matches = array();
     preg_match('/^callback_get_info\((.*)?\)$/', $this->apiData->body, $matches);
-    return json_decode($matches[1], TRUE);
+    $data = json_decode($matches[1], TRUE);
+    return $this->getValueForScenario($data);
   }
 
   private function setParameter() {
@@ -102,7 +124,64 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
       self::PARAM_CMD => "parse", // 固定
       self::PARAM_CID => self::ML_CID,
       self::PARAM_CALLBACK => 'callback_get_info',
-      self::PARAM_IN_TEXT => $this->inText
+      self::PARAM_IN_TEXT => $this->inText,
+      self::PARAM_IP => $this->ip
     );
+  }
+
+  private function getValueForScenario($data) {
+    $value = array(
+      self::INPUT_TYPE_COMPANY_NAME_ID => '', // 会社名
+      self::INPUT_TYPE_PERSONAL_NAME_ID => '', //
+      self::INPUT_TYPE_ZIP_ID => '',
+      self::INPUT_TYPE_ADDRESS_ID => '',
+      self::INPUT_TYPE_BUSHO_ID => '',
+      self::INPUT_TYPE_YAKUSHOKU_ID => '',
+      self::INPUT_TYPE_TEL_ID => '',
+      self::INPUT_TYPE_FAX_ID => '',
+      self::INPUT_TYPE_MOBILE_ID => '',
+      self::INPUT_TYPE_MAIL_ID => ''
+    );
+    $selectVariablePriority = array(
+      self::INPUT_TYPE_COMPANY_NAME_ID => array('cname'),
+      self::INPUT_TYPE_PERSONAL_NAME_ID => array('pname','pname_kana','pname_kana2'),
+      self::INPUT_TYPE_ZIP_ID => array('zip'),
+      self::INPUT_TYPE_ADDRESS_ID => array('addr'),
+      self::INPUT_TYPE_BUSHO_ID => array('busho'),
+      self::INPUT_TYPE_YAKUSHOKU_ID => array('yakushoku'),
+      self::INPUT_TYPE_TEL_ID => array('tel','ktai','chokutsu','daihyo'),
+      self::INPUT_TYPE_FAX_ID => array('fax'),
+      self::INPUT_TYPE_MOBILE_ID => array('ktai'),
+      self::INPUT_TYPE_MAIL_ID => array('mail')
+    );
+    foreach($selectVariablePriority as $key => $priority) {
+      foreach($priority as $index => $attribute) {
+        if(array_key_exists($attribute, $data)) {
+          $value[$key] = $this->convertData($key, $data[$attribute]);
+          break;
+        }
+      }
+    }
+    return $value;
+  }
+
+  private function convertData($key, $value)
+  {
+    $separatorStr = "";
+    switch($key) {
+      case self::INPUT_TYPE_TEL_ID:
+      case self::INPUT_TYPE_FAX_ID:
+      case self::INPUT_TYPE_ZIP_ID:
+        $separatorStr = '-';
+        break;
+      case self::INPUT_TYPE_PERSONAL_NAME_ID:
+        $separatorStr = '　';
+        break;
+    }
+    if(!empty($separatorStr)) {
+      return join($separatorStr, $value);
+    } else {
+      return $value;
+    }
   }
 }
