@@ -211,12 +211,12 @@ router.get("/", function(req, res, next) {
           reTextSize = settings.reTextSize;
         }
 
-        var lineButtonMargin = 2.6;
+        var lineButtonMargin = 8;
         if('lineButtonMargin' in settings) {
           lineButtonMargin = settings.lineButtonMargin;
         }
 
-        var btwButtonMargin = 2.6;
+        var btwButtonMargin = 4;
         if('btwButtonMargin' in settings) {
           btwButtonMargin = settings.btwButtonMargin;
         }
