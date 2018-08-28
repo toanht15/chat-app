@@ -18,6 +18,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const SEND_NAME_AUTO_SPEECH_MESSAGE = '自動返信';
   const SEND_NAME_FILE_TRANSFER = 'ファイル送信';
   const SEND_NAME_FILE_RECEIVE = 'ファイル受信';
+  const SEND_NAME_CLICK_LINK = 'リンククリック';
   const SEND_NAME_SCENARIO_TEXT = 'シナリオメッセージ（テキスト発言）';
   const SEND_NAME_SCENARIO_HEARING = 'シナリオメッセージ（ヒアリング）';
   const SEND_NAME_SCENARIO_SELECTION = 'シナリオメッセージ（選択肢）';
@@ -143,6 +144,9 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 7:
         $message = $this->generateScenarioMessageBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 8:
+        $message = $this->generateLinkClickBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 12:
         $message = $this->generateConsumerScenarioHearingMessageBlockStr($chatLog['created'],$chatLog['message']);
         break;
@@ -240,6 +244,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_AUTO_SPEECH_MESSAGE);
     $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateLinkClickBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_CLICK_LINK);
+    $message .= $this->createMessageContent("（「".$content."」をクリック）");
     return $message;
   }
 
