@@ -8,7 +8,7 @@
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
     public $components = ['LandscapeLbcAPI'];
-    public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
+    public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData', 'THistoryLinkCountLog'];
     public $paginate = [
       'THistory' => [
         'limit' => 100,
@@ -2126,6 +2126,30 @@
               ],
               'recursive' => -1
           ]);
+
+          //リンククリック件数検索
+          $deleteLinkData = $this->THistoryChatLog->find('all', [
+              'fields' => 'THistoryChatLog.*',
+              'conditions' => [
+                  'THistoryChatLog.t_histories_id' => $id,
+                  'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+                  'THistoryChatLog.message_type' => 8
+              ],
+              'recursive' => -1
+          ]);
+
+          //リンククリック件数がある場合
+          if(!empty($deleteLinkData)) {
+            foreach($deleteLinkData as $key => $link){
+              $deleteData = [
+                't_histories_id' => $id,
+                'm_companies_id' => $this->userInfo['MCompany']['id'],
+                'created' => date('Y-m-d H:i:s', strtotime($link['THistoryChatLog']['created']))
+              ];
+              $this->THistoryLinkCountLog->deleteAll($deleteData);
+            }
+          }
+
           if (!empty($ret)) {
             $param = [
               't_histories_id' => $id,
@@ -3012,6 +3036,7 @@
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
+      $this->log('ここが個別の削除機能',LOG_DEBUG);
       //管理者権限チェック
       if($this->userInfo['permission_level'] == 1 &&
       isset($this->coreSettings[C_COMPANY_USE_HISTORY_DELETE]) && $this->coreSettings[C_COMPANY_USE_HISTORY_DELETE]) {
@@ -3047,6 +3072,8 @@
           if($m_companies_id == $this->userInfo['MCompany']['id']) {
             $saveData = [];
             $saveData = $this->THistoryChatLog->read(null, $id);
+            $this->log('saveData',LOG_DEBUG);
+            $this->log($saveData,LOG_DEBUG);
             $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
             $saveData['THistoryChatLog']['delete_flg'] = 1;
             $saveData['THistoryChatLog']['deleted'] = $now;
@@ -3056,6 +3083,27 @@
             $this->THistoryChatLog->begin();
             if ( $this->THistoryChatLog->save() ) {
               $this->THistoryChatLog->commit();
+
+              //リンククリック件数検索
+              $deleteLinkData = $this->THistoryChatLog->find('all', [
+                  'fields' => 'THistoryChatLog.*',
+                  'conditions' => [
+                      'THistoryChatLog.t_histories_id' => $saveData['THistoryChatLog']['t_histories_id'],
+                      'THistoryChatLog.m_companies_id' => $m_companies_id,
+                      'THistoryChatLog.message_type' => 8
+                  ],
+                  'recursive' => -1
+              ]);
+
+              //リンククリック件数がある場合
+              if(!empty($deleteLinkData)) {
+                $deleteData = [
+                  't_histories_id' => $saveData['THistoryChatLog']['t_histories_id'],
+                  'm_companies_id' => $m_companies_id,
+                  'created' => date('Y-m-d H:i:s', strtotime($saveData['THistoryChatLog']['created']))
+                ];
+                $this->THistoryLinkCountLog->deleteAll($deleteData);
+              }
               $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
             }
             else {
