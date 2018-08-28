@@ -74,11 +74,11 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   }
 
   protected function prepareAutoMessageBlock() {
-    $this->createMetaDataMessage();
+    $this->createMetaDataMessage(true, null);
     $this->createAutoMessages();
   }
 
-  protected function createMetaDataMessage() {
+  protected function createMetaDataMessage($isFullData, $withDownloadURL) {
     $this->autoMessageBlock  = "チャット送信ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
     $this->autoMessageBlock .= "チャット送信ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
     $this->autoMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";

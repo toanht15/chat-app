@@ -2013,6 +2013,14 @@ ul.naviBtn {
                       line-height: 0;
                     }
 
+                    span.cName {
+                      display: block;
+                      color: $main-color;
+                      font-weight: bold;
+                      font-size: 13px;
+                      margin: 0 0 5px 0;
+                    }
+
                     div.receiveFileContent {
                       div.selectFileArea {
                         p.commentarea {
