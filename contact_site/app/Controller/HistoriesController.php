@@ -7,7 +7,7 @@ App::uses('CustomerInformationUtil', 'Vendor/Util');
  */
 class HistoriesController extends AppController {
   public $helpers = ['Time'];
-  public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
+  public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData','THistoryLinkCountLog'];
   public $components = ['LandscapeLbcAPI'];
   public $paginate = [
     'THistory' => [
@@ -1510,6 +1510,16 @@ class HistoriesController extends AppController {
           $this->THistoryChatLog->begin();
           if ( $this->THistoryChatLog->save() ) {
             $this->THistoryChatLog->commit();
+
+            //リンククリック件数の場合
+            if($saveData['THistoryChatLog']['message_type'] == 8) {
+              $deleteData = [
+                't_histories_id' => $saveData['THistoryChatLog']['t_histories_id'],
+                'm_companies_id' => $m_companies_id,
+                'created' => date('Y-m-d H:i:s', strtotime($saveData['THistoryChatLog']['created']))
+              ];
+              $this->THistoryLinkCountLog->deleteAll($deleteData);
+            }
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
           }
           else {

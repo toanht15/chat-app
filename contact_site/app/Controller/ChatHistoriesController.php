@@ -8,7 +8,7 @@
   class ChatHistoriesController extends AppController {
     public $helpers = ['Time'];
     public $components = ['LandscapeLbcAPI'];
-    public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData'];
+    public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData', 'THistoryLinkCountLog'];
     public $paginate = [
       'THistory' => [
         'limit' => 100,
@@ -2126,13 +2126,37 @@
               ],
               'recursive' => -1
           ]);
+
           if (!empty($ret)) {
+            //リンククリック件数検索
+            $deleteLinkData = $this->THistoryChatLog->find('all', [
+                'fields' => 'THistoryChatLog.*',
+                'conditions' => [
+                    'THistoryChatLog.t_histories_id' => $id,
+                    'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+                    'THistoryChatLog.message_type' => 8
+                ],
+                'recursive' => -1
+            ]);
+
             $param = [
               't_histories_id' => $id,
               'm_companies_id' => $this->userInfo['MCompany']['id']
             ];
             if (!$this->THistoryChatLog->deleteAll($param) ) {
               $res = false;
+            }
+            else {
+              //リンククリック件数がある場合
+              if(!empty($deleteLinkData)) {
+                foreach($deleteLinkData as $key => $link){
+                  $deleteData = [
+                    't_histories_id' => $id,
+                    'm_companies_id' => $this->userInfo['MCompany']['id'],
+                  ];
+                  $this->THistoryLinkCountLog->deleteAll($deleteData);
+                }
+              }
             }
           }
         }
@@ -3056,6 +3080,16 @@
             $this->THistoryChatLog->begin();
             if ( $this->THistoryChatLog->save() ) {
               $this->THistoryChatLog->commit();
+
+              //リンククリック件数の場合
+              if($saveData['THistoryChatLog']['message_type'] == 8) {
+                $deleteData = [
+                  't_histories_id' => $saveData['THistoryChatLog']['t_histories_id'],
+                  'm_companies_id' => $m_companies_id,
+                  'created' => date('Y-m-d H:i:s', strtotime($saveData['THistoryChatLog']['created']))
+                ];
+                $this->THistoryLinkCountLog->deleteAll($deleteData);
+              }
               $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
             }
             else {
