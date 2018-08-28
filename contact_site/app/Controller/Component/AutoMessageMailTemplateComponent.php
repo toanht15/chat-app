@@ -288,7 +288,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected function generateScenarioAnswerBulkHearingBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_ANSWER_BULK_HEARING);
-    $message .= $this->createFileTransferMessageContent($content);
+    $message .= $this->createMessageContent($content);
     return $message;
   }
 
