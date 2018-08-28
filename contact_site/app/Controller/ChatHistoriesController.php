@@ -2153,7 +2153,6 @@
                   $deleteData = [
                     't_histories_id' => $id,
                     'm_companies_id' => $this->userInfo['MCompany']['id'],
-                    'created' => date('Y-m-d H:i:s', strtotime($link['THistoryChatLog']['created']))
                   ];
                   $this->THistoryLinkCountLog->deleteAll($deleteData);
                 }
@@ -3082,19 +3081,8 @@
             if ( $this->THistoryChatLog->save() ) {
               $this->THistoryChatLog->commit();
 
-              //リンククリック件数検索
-              $deleteLinkData = $this->THistoryChatLog->find('all', [
-                  'fields' => 'THistoryChatLog.*',
-                  'conditions' => [
-                      'THistoryChatLog.t_histories_id' => $saveData['THistoryChatLog']['t_histories_id'],
-                      'THistoryChatLog.m_companies_id' => $m_companies_id,
-                      'THistoryChatLog.message_type' => 8
-                  ],
-                  'recursive' => -1
-              ]);
-
-              //リンククリック件数がある場合
-              if(!empty($deleteLinkData)) {
+              //リンククリック件数の場合
+              if($saveData['THistoryChatLog']['message_type'] == 8) {
                 $deleteData = [
                   't_histories_id' => $saveData['THistoryChatLog']['t_histories_id'],
                   'm_companies_id' => $m_companies_id,
