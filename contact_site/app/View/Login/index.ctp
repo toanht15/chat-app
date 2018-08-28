@@ -5,7 +5,7 @@
         <?= $this->Html->image('sinclo_logo.png', array('alt' => 'アイコン', 'width' => 232, 'height' => 59, 'style'=>'margin: 30px auto 0 auto; display: block'))?>
         <div class="form_area">
             <?= $this->element('Login/entry') ?>
+            <?= $this->Html->link('パスワードをお忘れの場合',['controller' => 'Login', 'action' => 'resetPassword'], array('style'=>'display: flex; justify-content:start; vertical height: 13px; margin: 5px 0px; font-size: 11px;color:#A0BDD2;')) ?>
         </div>
     </div>
-    <?php $this->Html->link('パスワードを忘れた方はこちら', 'javascript:void(0)', array('style'=>'display: block; height: 30px; padding: 5px; font-size: 13px; color: #E7EFF5;')) ?>
 </div>
