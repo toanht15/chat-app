@@ -3036,7 +3036,6 @@
       Configure::write('debug', 0);
       $this->autoRender = FALSE;
       $this->layout = 'ajax';
-      $this->log('ここが個別の削除機能',LOG_DEBUG);
       //管理者権限チェック
       if($this->userInfo['permission_level'] == 1 &&
       isset($this->coreSettings[C_COMPANY_USE_HISTORY_DELETE]) && $this->coreSettings[C_COMPANY_USE_HISTORY_DELETE]) {
@@ -3072,8 +3071,6 @@
           if($m_companies_id == $this->userInfo['MCompany']['id']) {
             $saveData = [];
             $saveData = $this->THistoryChatLog->read(null, $id);
-            $this->log('saveData',LOG_DEBUG);
-            $this->log($saveData,LOG_DEBUG);
             $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
             $saveData['THistoryChatLog']['delete_flg'] = 1;
             $saveData['THistoryChatLog']['deleted'] = $now;
