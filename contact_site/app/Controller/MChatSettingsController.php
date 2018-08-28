@@ -119,7 +119,6 @@ class MChatSettingsController extends AppController {
    * @return boolean true/false 保存処理結果
    * */
   private function _update($inputData){
-
     // トランザクション処理の開始
     $this->MChatSetting->begin();
     $this->MUser->begin();
@@ -179,7 +178,7 @@ class MChatSettingsController extends AppController {
     if ( !$userRet || !$ret || !$inRet) {
       return false;
     }
-
+    $this->log($inputData,LOG_DEBUG);
     // 保存処理
     if ( $this->MChatSetting->save() && $this->MUser->saveAll($saveData)) {
       // 双方コミットし、true を返す

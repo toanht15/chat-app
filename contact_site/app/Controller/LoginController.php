@@ -36,7 +36,7 @@ class LoginController extends AppController {
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->Auth->allow(['index', 'logout', 'loginCheck','editPassword']);
+    $this->Auth->allow(['index', 'logout', 'loginCheck','editPassword','resetPassword','confirmCode','confirmPassword','errorCode']);
     $this->set('title_for_layout', 'ログイン');
 
     $notSupportBrowser = false;
@@ -139,7 +139,7 @@ class LoginController extends AppController {
       else {
         // ログイン失敗カウントを増やす
         $options = array('conditions' => array('MUser.mail_address' => $this->request->data['MUser']['mail_address']));
-        $lockedUser = $this->MUser->find('first', $options);
+        $lockedUser = $this->MUser->find('list', $options);
         if(!empty($lockedUser) && $lockedUser['MUser']['error_count'] >= self::CONTINUOUS_ERROR_COUNT) {
           if(strtotime($lockedUser['MUser']['locked_datetime']) + self::RETRY_INTERVAL_AFTER_LOCKED_SEC > time()) {
             $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"このアカウントはロックされています。しばらく経ってからやり直してください"]);
@@ -170,6 +170,89 @@ class LoginController extends AppController {
     else {
       $this->redirect(['action' => 'index']);
     }
+  }
+
+
+  /* *
+   * パスワードリセット画面
+   */
+  public function generateCode(){
+    $code = mt_rand(100000, 999999);
+    $this->log('終わり',LOG_DEBUG);
+    return $code;
+  }
+  public function resetPassword(){
+    if ( $this->request->is('post') ) {
+      $userData = $this->request->data['MUser']['mail_address'];
+      $userInfo = $this->MUser->find('all',[
+        'fields' => ['id','mail_address']
+      ]);
+      foreach($userInfo as $address){
+        if(in_array($userData,$address['MUser'])){
+          //TODO 入力されたメールアドレスがDBに存在している場合の処理を記述する
+          //その時点で処理を終わらせ、企業idや個人idを取得し、
+          //show_codeに生成した認証コードを投げつつ保存する
+          //保存しつつメールも送信する
+          //同一ユーザーによる認証コードが存在している場合(有効期限内)
+          //そのコードを破棄し、新しく認証コードを保存する
+          $code  = $this->generateCode();
+          $this->set('authenticationCode',$code);
+          mb_language("Japanese");
+          mb_internal_encoding("UTF-8");
+          $to = "mycar.wascrashed@gmail.com";
+          if(mb_send_mail($to,"テスト","テスト送信です")){
+            $this->log('送信完了',LOG_DEBUG);
+          }else{
+            $this->log('送信失敗',LOG_DEBUG);
+          }
+          $this->log('authenticationCode',LOG_DEBUG);
+          $this->render('show_code');
+          break;
+        }
+        if($address === end($userInfo)){
+          // DB上にアドレスが存在しない場合はコードを表示するのみ
+          $code  = $this->generateCode();
+          $this->set('authenticationCode',$code);
+          $this->render('show_code');
+        }
+      }
+      //予期せぬエラーが起きた場合の処理を入れたい
+    }else{
+      //URLパラメータが存在したらconfirmCodeに分岐しなければいけない
+      //それは果たして取得することができるのか
+      //パラメータが存在してなおかつ～～～という処理にすればこのアクションで事足りる
+      $this->set('title_for_layout', 'パスワードの再設定');
+    }
+  }
+
+  /* *
+   * 認証コード入力画面
+   */
+  public function confirmCode(){
+    if ( $this->request->is('post') ) {
+      //認証コードが正しかったら～～～という条件を入れる
+      //正しかったらユーザーIDを取得しつつ再設定画面に移行する
+      $this->redirect(['action' => 'confirmPassword']);
+    }else{
+      $this->set('title_for_layout', 'パスワードの再設定');
+    }
+  }
+  /* *
+   * パスワード変更画面
+   */
+  public function confirmPassword(){
+  /* パスワード変更*/
+    if ( $this->request->is('post') ) {
+      $this->render('reset_end');
+    }
+  }
+  /* *
+   * 認証コードエラー画面
+   */
+  public function errorCode(){
+    //特に何もしない
+    //後でこのコントローラーはconfirmCodeと結合予定
+    //confirmCodeにアクセスしたときにエラーが起きたら・・・という感じ
   }
 
   public function editPassword(){

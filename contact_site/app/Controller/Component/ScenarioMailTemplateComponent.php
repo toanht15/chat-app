@@ -58,14 +58,15 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   private function prepareScenarioMessageBlock($withDownloadURL) {
     switch($this->type) {
       case "1":
-        $this->createMetaDataMessage($withDownloadURL);
+        $this->createMetaDataMessage(true, $withDownloadURL);
         $this->createMessages();
         break;
       case "2":
-        $this->createMetaDataMessage($withDownloadURL);
+        $this->createMetaDataMessage(true, $withDownloadURL);
         $this->createVariablesMessageBlock();
         break;
       case "3":
+        $this->createMetaDataMessage(false, $withDownloadURL);
         break;
     }
   }
@@ -79,7 +80,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
         $this->body = str_replace(self::REPLACE_TARGET_SCENARIO_VARIABLES_BLOCK_DELIMITER, $this->scenarioMessageBlock, $this->template['MMailTemplate']['template']);
         break;
       case "3":
-        $this->body = $this->replaceVariables($this->template['MMailTemplate']['template']);
+        $this->body = $this->scenarioMessageBlock;
+        $this->body .= $this->replaceVariables($this->template['MMailTemplate']['template']);
         break;
     }
   }
@@ -87,21 +89,25 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
   /**
    * @override
    */
-  protected function createMetaDataMessage($withDownloadURL) {
-    $this->scenarioMessageBlock  = "シナリオ実行ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
-    $this->scenarioMessageBlock .= "シナリオ実行ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
-    $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
-    if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
-      $this->scenarioMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
-    }
-    if(!empty($this->customerInfo) && count($this->customerInfo) > 0) {
-      $this->scenarioMessageBlock .= "\n";
-      foreach($this->customerInfo as $key => $value) {
-        $this->scenarioMessageBlock .= $key."：".$value."\n";
+  protected function createMetaDataMessage($isFullData, $withDownloadURL) {
+    if($isFullData) {
+      $this->scenarioMessageBlock .= "シナリオ実行ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
+      $this->scenarioMessageBlock .= "シナリオ実行ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
+      $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
+      if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
+        $this->scenarioMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
+      }
+      if(!empty($this->customerInfo) && count($this->customerInfo) > 0) {
+        $this->scenarioMessageBlock .= "\n";
+        foreach($this->customerInfo as $key => $value) {
+          $this->scenarioMessageBlock .= $key."：".$value."\n";
+        }
       }
     }
     if($withDownloadURL && !empty($this->variables[self::RECEIVE_FILE_VARIABLE_KEY])) {
-      $this->scenarioMessageBlock .= "\n";
+      if(!empty($this->scenarioMessageBlock)) {
+        $this->scenarioMessageBlock .= "\n";
+      }
       $data = json_decode($this->variables[self::RECEIVE_FILE_VARIABLE_KEY], TRUE);
       foreach($data as $obj) {
         if(isset($obj['downloadUrl']) && isset($obj['comment'])) {
