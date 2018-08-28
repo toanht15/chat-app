@@ -4,15 +4,20 @@
     elmEv = {
       submit: {
         func: function () {
-          if (typeof MUserIndexForm === 'undefined') return false;
-          MUserIndexForm.submit();
+          if (typeof MUserIndexForm !== 'undefined'){
+            MUserIndexForm.submit();
+          }else if (typeof MUserResetPasswordForm !== 'undefined'){
+            MUserResetPasswordForm.submit();
+          }
         }
       }
     };
   })();
   window.onload = function(){
-    if (typeof MUserFormButton === 'undefined') return false;
-    MUserFormButton.addEventListener('click', elmEv.submit.func);
+    if (typeof MUserFormButton !== 'undefined'){
+      MUserFormButton.addEventListener('click', elmEv.submit.func);
+    }
+    //全部上記のfunc内に処理を書いておけば平和になるのでは?
     $('#MUserPasswordInput').on('keyup', function(e){
       if(e.keyCode === 13) {
         elmEv.submit.func();
