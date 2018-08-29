@@ -669,7 +669,7 @@ function sendSenarioMail(obj, callback) {
     return;
   });
 
-  var historyId = getSessionId(obj.siteKey, obj.tabId, "historyId");
+  var historyId = isset(getSessionId(obj.siteKey, obj.tabId, "historyId")) ? getSessionId(obj.siteKey, obj.tabId, "historyId") : obj.historyId;
   req.write(JSON.stringify({
     "accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK",
     "userHistoryId": historyId,

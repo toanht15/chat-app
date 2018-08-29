@@ -5990,6 +5990,7 @@
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
           var sendData = {
+            historyId: sinclo.chatApi.historyId,
             mailType: self._parent.get(self._parent._lKey.currentScenario).mailType,
             transmissionId: self._parent.get(self._parent._lKey.currentScenario).mMailTransmissionId,
             templateId: self._parent.get(self._parent._lKey.currentScenario).mMailTemplateId,
