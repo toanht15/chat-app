@@ -15,15 +15,15 @@
 </script>
 <div id="login_idx_bg"></div>
 <div id="login_idx">
-  <div id="content-area">
+  <div id="content-area-wide">
       <?= $this->Html->image('sinclo_logo.png', array('alt' => 'アイコン', 'width' => 116, 'height' => 30, 'style'=>'margin: 5px 0 0 10px; display: block'))?>
-      <div id = "content-area-title" style = "margin-top: 30px;font-weight: bold;font-size: 21px;">送信したメールをご確認ください</div>
+      <div id = "content-area-title" style = "margin-top: 30px;font-weight: bold;font-size: 21px;">パスワード再設定用のメールを送信しました</div>
       <div class="description_area">
-        <p>メールアドレスにパスワード再設定用ＵＲＬを送信いたしました。<br>
-           送信されたＵＲＬにアクセスし、<span class="red">以下の認証コードを入力してください。</span><br>
-           ※認証コードの有効期限は24時間です</p>
-      <div id="code-title">認証コード</div>
-      <div id="authentication-code"><?=$authenticationCode?></div>
+        <p>hoge@gmail.comにメールを送信しました。</p>
+        <div id="code-title">認証コード</div>
+        <div id="authentication-code"><?=$authenticationCode?></div>
+        <p class="m_bottom">メール本文に記載されたＵＲＬにアクセスし、<span class="red">上記の認証コードを入力してください。</span><br>
+           ※認証コードの有効期限は24時間となっております</p>
     </div>
   </div>
 </div>
