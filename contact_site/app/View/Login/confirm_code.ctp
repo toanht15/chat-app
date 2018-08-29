@@ -7,8 +7,9 @@
         <p id="description">認証コードを入力してください</p>
           <?php
           echo $this->Form->create('MUser', array('type' => 'post', 'url' => array('controller' => 'Login', 'action' => 'confirmCode')));
-          echo $this->Form->input('mail_address', ['label' => false, 'placeholder' => '認証コード', 'required' => false]);
-          echo $this->Form->end(['label' => 'パスワードの再設定','id' => 'MUserFormButton']);
+          echo $this->Form->input('authentication_code', ['label' => false, 'placeholder' => '認証コード', 'required' => false]);
+          echo $this->Form->hidden('parameter',['value' => $_SERVER["REQUEST_URI"]]);
+          echo $this->Form->end(['label' => 'パスワードの再設定','id' => 'MUserFormButton','style' => 'cursor:grab']);
           ?>
         </div>
     </div>

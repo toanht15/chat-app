@@ -7,8 +7,8 @@
           <?php
           echo $this->Form->create('MUser', array('type' => 'post', 'url' => array('controller' => 'Login', 'action' => 'confirmPassword')));
           echo $this->Form->input('password', ['label' => false, 'placeholder' => '新しいパスワード', 'required' => false]);
-          echo $this->Form->input('password', ['label' => false, 'placeholder' => 'パスワードの確認', 'required' => false]);
-          echo $this->Form->end(['label' => 'パスワードを変更','id' => 'MUserFormButton']);
+          echo $this->Form->input('confirmpassword', ['label' => false, 'placeholder' => 'パスワードの確認', 'required' => false]);
+          echo $this->Form->end(['label' => 'パスワードを変更','id' => 'MUserFormButton','style' =>'cursor:grab']);
           ?>
         </div>
     </div>
