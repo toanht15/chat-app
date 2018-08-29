@@ -1149,6 +1149,7 @@ var socket, // socket.io
         '  text-shadow: none;' +
         '  -webkit-font-smoothing: subpixel-antialiased;' +
         '  direction: ltr;' +
+        '  cursor: unset;' +
         ' }';
       /* HTML5 display-role reset for older browsers */
       html += '      #sincloBox article, #sincloBox aside, #sincloBox details, #sincloBox figcaption, #sincloBox figure, #sincloBox footer, #sincloBox header, #sincloBox hgroup, #sincloBox menu, #sincloBox nav, #sincloBox section { display: block; }';
