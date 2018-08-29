@@ -1180,8 +1180,8 @@ ul#color-bar-right {
 #login_idx {
   display:flex;
   justify-content:center;
-  align-items:center;
-  margin: 0;
+  align-items:flex-start;
+  margin: 30vh 0 0 0;
   width: 100vw;
   height: 100vh;
 }
@@ -1196,15 +1196,14 @@ ul#color-bar-right {
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
   box-shadow: 0 0 5px $shadow-color;
   padding: 10px 40px 0px 40px;
-  height: 361px;
   .form_area {
     p{
       margin-top: 0px;
-      margin-bottom: 55px;
+      margin-bottom: 17px;
       font-size: 13px;
       &#reset_ended{
-        margin-top: 40px;
-        margin-bottom: 85px;
+        margin-top: 10px;
+        margin-bottom: 40px;
       }
     }
     form{
@@ -1212,9 +1211,16 @@ ul#color-bar-right {
       flex-direction:column;
       align-items:center;
     }
+    #error_code{
+      height: 30px;
+      font-size: 12px;
+      color:#c00000;
+      align-self:flex-start;
+      padding:9px 0;
+    }
     margin-top: 10px;
     margin-bottom: 20px;
-    padding-top: 35px;
+    padding-top:25px;
     text-align: center;
     display:flex;
     flex-direction:column;
@@ -1226,6 +1232,9 @@ ul#color-bar-right {
       margin-bottom: 20px;
       border-radius: 5px;
       box-shadow: 0 0 2px 2px rgb(232, 232, 232) inset;
+      &#TResetPasswordInformationAuthenticationCode{
+        margin-bottom: 0;
+      }
     }
   }
   #content-area-title {
@@ -1236,17 +1245,20 @@ ul#color-bar-right {
     text-decoration: none;
     font-weight: bold;
     font-family: monospace;
-    font-size: 18px;
+    font-size: 16px;
     width: 270px;
-    display: block;
-    padding: 5px 5px;
-    background-color: #CACACA;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding: 8px 5px;
+    background-color: #b2d250;
     box-shadow: 0 0 1px $shadow-color;
     border-radius: 0px;
     height: auto;
     line-height: 1.3em;
+    outline: 0;
     &:hover {
-      background-color: #9A9292;
+      opacity: 0.7;
     }
   }
   .m_bottom{
@@ -1265,19 +1277,6 @@ ul#color-bar-right {
       .red{
         color: #c00000;
       }
-    }
-    #code-title{
-      font-size:19px;
-      text-align:center;
-    }
-    #authentication-code{
-      font-size: 40px;
-      border: 3px solid;
-      margin-top: 2px;
-      width: 175px;
-      display:flex;
-      align-items:center;
-      justify-content: center;
     }
   }
 }
@@ -1301,14 +1300,23 @@ ul#color-bar-right {
       align-items:center;
     }
     //パスワード再設定用メール入力フォーム
-    #MUserResetPasswordForm{
+    #TResetPasswordInformationResetPasswordForm{
       padding:0 20px 16px 20px;
+      .error-message{
+        margin: 0;
+        display: flex;
+        padding: 9px 0;
+        line-height: 1;
+        font-size: 12px;
+        color:#c00000;
+        align-self:flex-start;
+      }
       input{
         width: 520px;
+        margin-bottom:30px;
         border: none;
         background-color: #FFF;
         height: 40px;
-        margin-bottom: 20px;
         border-radius: 5px;
         box-shadow: 0 0 2px 2px rgb(232, 232, 232) inset;
         &#MUserFormButton{
@@ -1316,39 +1324,23 @@ ul#color-bar-right {
           text-decoration: none;
           font-weight: bold;
           font-family: monospace;
-          font-size: 18px;
+          font-size: 16px;
           width: 520px;
-          display: block;
-          padding: 5px 5px;
-          background-color: #CACACA;
+          display: flex;
+          justify-content:center;
+          align-items:center;
+          padding: 8px 5px;
+          background-color: #b2d250;
           box-shadow: 0 0 1px $shadow-color;
           border-radius: 0px;
           height: auto;
           line-height: 1.3em;
+          outline: 0;
           &:hover {
-            background-color: #9A9292;
+            opacity: 0.7;
           }
           margin-bottom: 0;
         }
-      }
-      #MUserFormButton{
-        color: #FFFFFF;
-        text-decoration: none;
-        font-weight: bold;
-        font-family: monospace;
-        font-size: 18px;
-        width: 520px;
-        display: block;
-        padding: 5px 5px;
-        background-color: #CACACA;
-        box-shadow: 0 0 1px $shadow-color;
-        border-radius: 0px;
-        height: auto;
-        line-height: 1.3em;
-        &:hover {
-          background-color: #9A9292;
-        }
-        margin-bottom: 0;
       }
     }
     margin-top: 10px;
@@ -1368,7 +1360,7 @@ ul#color-bar-right {
     p{
       line-height: 1.6;
       margin:0;
-      padding:10px 51px;
+      padding:10px 26.5px;
       font-size: 13px;
       text-align: center;
       .red{
@@ -1379,13 +1371,15 @@ ul#color-bar-right {
       }
     }
     #code-title{
-      font-size:19px;
+      font-size:16px;
       text-align:center;
+      margin: 3px 0;
     }
     #authentication-code{
       font-size: 40px;
       border: 3px solid;
       margin-top: 2px;
+      margin-bottom:10px;
       width: 175px;
       display:flex;
       align-items:center;
@@ -1395,28 +1389,12 @@ ul#color-bar-right {
 }
 
 #content-area-edit {
-  margin: auto;
-  height: 380px;
   border: none;
   border-radius: 5px;
   background: linear-gradient(to top, #F8FCFD, #EEF2F3);
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
   box-shadow: 0 0 5px $shadow-color;
-  padding: 15px;
-  .form_area {
-    margin: 10px auto;
-    padding: 20px 0;
-    text-align: center;
-    input {
-      width: 100%;
-      border: none;
-      background-color: #FFF;
-      height: 40px;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      box-shadow: 0 0 2px 2px rgb(232, 232, 232) inset;
-    }
-  }
+  padding: 20px;
   .edit_form_area {
     margin: 5px auto;
     padding: 20px 0;
@@ -1446,16 +1424,15 @@ ul#color-bar-right {
     color: #FFFFFF;
     text-decoration: none;
     font-weight: bold;
-    letter-spacing: 2px;
     font-family: monospace;
-    font-size: 18px;
+    font-size: 16px;
     width: 100%;
     display: block;
-    padding: 5px 5px;
-    background-color: #CACACA;
+    padding: 8px 5px;
+    background-color: #b2d250;
     box-shadow: 0 0 1px $shadow-color;
     &:hover {
-      background-color: #9A9292;
+      box-shadow: 0 3px 10px $shadow-color;
     }
   }
 }
