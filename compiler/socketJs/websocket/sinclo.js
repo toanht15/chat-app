@@ -3811,33 +3811,35 @@
               if(message.action_type == 2) {
                 var messageIds = {};
                 for (var i = 0;i < messages.length;i++) {
-                  var check;
-                  //曜日・時間の場合
-                  if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
-                    check = true;
-                  }
-                  //発言内容の場合
-                  else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
-                    check = true;
-                  }
-                  //営業時間の場合
-                  else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
-                    check = true;
-                  }
-                  else if(messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
-                    messages[i]['activity']['conditions'][10] !== undefined) {
-                    check = false;
-                  }
-                  else {
-                    check = true;
-                  }
-
-                  if(check == true) {
-                    if(messageIds[ret]) {
-                      messageIds[ret][messageIds[ret].length] = messages[i].id;
+                  if(messages[i]['action_type'] == 2) {
+                    var check;
+                    //曜日・時間の場合
+                    if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                      check = true;
+                    }
+                    //発言内容の場合
+                    else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
+                      check = true;
+                    }
+                    //営業時間の場合
+                    else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
+                      check = true;
+                    }
+                    else if(messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
+                      messages[i]['activity']['conditions'][10] !== undefined) {
+                      check = false;
                     }
                     else {
-                      messageIds[ret] = [messages[i].id];
+                      check = true;
+                    }
+
+                    if(check == true) {
+                      if(messageIds[ret]) {
+                        messageIds[ret][messageIds[ret].length] = messages[i].id;
+                      }
+                      else {
+                        messageIds[ret] = [messages[i].id];
+                      }
                     }
                   }
                 }
@@ -3916,33 +3918,35 @@
                       if(message.action_type == 2) {
                         var messageIds = {};
                         for (var i = 0;i < messages.length;i++) {
-                          var check;
-                          //曜日・時間の場合
-                          if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
-                            check = true;
-                          }
-                          //発言内容の場合
-                          else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
-                            check = true;
-                          }
-                          //営業時間の場合
-                          else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
-                            check = true;
-                          }
-                          else if(messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
-                            messages[i]['activity']['conditions'][10] !== undefined) {
-                            check = false;
-                          }
-                          else {
-                            check = true;
-                          }
-
-                          if(check == true) {
-                            if(messageIds[ret]) {
-                              messageIds[ret][messageIds[ret].length] = messages[i].id;
+                          if(messages[i]['action_type'] == 2) {
+                            var check;
+                            //曜日・時間の場合
+                            if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                              check = true;
+                            }
+                            //発言内容の場合
+                            else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
+                              check = true;
+                            }
+                            //営業時間の場合
+                            else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
+                              check = true;
+                            }
+                            else if(messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
+                              messages[i]['activity']['conditions'][10] !== undefined) {
+                              check = false;
                             }
                             else {
-                              messageIds[ret] = [messages[i].id];
+                              check = true;
+                            }
+
+                            if(check == true) {
+                              if(messageIds[ret]) {
+                                messageIds[ret][messageIds[ret].length] = messages[i].id;
+                              }
+                              else {
+                                messageIds[ret] = [messages[i].id];
+                              }
                             }
                           }
                         }
