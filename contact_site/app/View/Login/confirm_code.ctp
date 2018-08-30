@@ -7,7 +7,7 @@
         <p id="description">認証コードを入力してください</p>
           <?php
           echo $this->Form->create('TResetPasswordInformation', array('type' => 'post', 'url' => array('controller' => 'Login', 'action' => 'confirmCode')));
-          echo $this->Form->input('authentication_code', ['label' => false, 'placeholder' => '認証コード', 'required' => false]);
+          echo $this->Form->input('authentication_code', ['label' => false, 'placeholder' => '認証コード', 'required' => false , 'autocomplete' => 'off']);
           echo $this->Form->hidden('parameter',['value' => $parameter]);
           ?>
           <div id="error_code"><?php if(isset($errorMsg)) echo($errorMsg)?></div>
