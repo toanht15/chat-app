@@ -3045,6 +3045,8 @@
           sinclo.chatApi.unread++;
           sinclo.chatApi.showUnreadCnt();
         }
+        console.log('シナリオメッセージ');
+        console.log(isScenarioMessage);
         sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
       },
       clearChatMessages: function () {
@@ -3807,8 +3809,55 @@
           var message = messages[key];
           if (typeof(ret) === 'number') {
             setTimeout(function () {
-              sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
-              sinclo.trigger.processing = false;
+              //シナリオの場合
+              if(message.action_type == 2) {
+                var messageIds = {};
+                for (var i = 0;i < messages.length;i++) {
+                  var check;
+                  //曜日・時間の場合
+                  if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                    check = true;
+                  }
+                  //発言内容の場合
+                  else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
+                    check = true;
+                  }
+                  //営業時間の場合
+                  else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
+                    check = true;
+                  }
+                  else if(messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
+                    messages[i]['activity']['conditions'][10] !== undefined) {
+                    check = false;
+                  }
+                  else {
+                    check = true;
+                  }
+
+                  if(check == true) {
+                    if(messageIds[ret]) {
+                      messageIds[ret][messageIds[ret].length] = messages[i].id;
+                    }
+                    else {
+                      messageIds[ret] = [messages[i].id];
+                    }
+                  }
+                }
+
+                console.log('messageIds');
+                console.log(messageIds);
+                console.log('message.id');
+                console.log(message.id);
+                if(messageIds[ret][0] == message.id){
+                  sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                  sinclo.trigger.processing = false;
+                  console.log('scenarioStart');
+                }
+              }
+              else {
+                sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                sinclo.trigger.processing = false;
+              }
               // if(conditionKe大変申し訳ございません。 y === 7) {
               //   // 自動返信実行後はチャット中のフラグを立てる
               //   storage.s.set('chatAct','true');
@@ -3865,12 +3914,55 @@
                           sinclo.chatApi.saveAutoSpeechTriggered(autoSpeechCondition.speechTriggerCond, message.id);
                         }
                       }
-                      sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
-                      // if(conditionKey === 7) {
-                      //   // 自動返信実行後はチャット中のフラグを立てる
-                      //   storage.s.set('chatAct','true');
-                      // }
-                      sinclo.trigger.processing = false;
+                      //シナリオの場合
+                      if(message.action_type == 2) {
+                        var messageIds = {};
+                        for (var i = 0;i < messages.length;i++) {
+                          var check;
+                          //曜日・時間の場合
+                          if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                            check = true;
+                          }
+                          //発言内容の場合
+                          else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
+                            check = true;
+                          }
+                          //営業時間の場合
+                          else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
+                            check = true;
+                          }
+                          else if(messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
+                            messages[i]['activity']['conditions'][10] !== undefined) {
+                            check = false;
+                          }
+                          else {
+                            check = true;
+                          }
+
+                          if(check == true) {
+                            if(messageIds[ret]) {
+                              messageIds[ret][messageIds[ret].length] = messages[i].id;
+                            }
+                            else {
+                              messageIds[ret] = [messages[i].id];
+                            }
+                          }
+                        }
+
+                        console.log('messageIds');
+                        console.log(messageIds);
+                        console.log('message.id');
+                        console.log(message.id);
+                        if(messageIds[ret][0] == message.id){
+                          sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                          sinclo.trigger.processing = false;
+                          console.log('scenarioStart');
+                        }
+                      }
+                      else {
+                        sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                        sinclo.trigger.processing = false;
+                      }
                     }, ret);
                 }
             };
@@ -4194,6 +4286,8 @@
         if (!check.isset(chatActFlg)) {
           chatActFlg = "false";
         }
+        console.log('オートメッセージid');
+        console.log(id);
 
         if (String(type) === "1" && ('message' in cond) && (String(chatActFlg) === "false")) {
           if (sinclo.chatApi.autoMessages.exists(id) || sinclo.scenarioApi.isProcessing()) {
@@ -4939,6 +5033,8 @@
         return Object.keys(obj).length !== 0;
       },
       init: function (id, scenarioObj) {
+        console.log('シナリオid');
+        console.log(id);
         var self = sinclo.scenarioApi;
         self._resetDefaultVal();
         if(self.isProcessing()) {
@@ -5163,12 +5259,14 @@
         }
       },
       /**
-       * 現在セットされているシナリオを実行する
+       * 現在セットされている を実行する
        * @param forceFirst シナリオ内に複数の分岐のあるものの場合、一番最初から実行する
        * @private
        */
       _process: function (forceFirst) {
+        console.log('シナリオスタート');
         var self = sinclo.scenarioApi;
+        console.log(String(self.get(self._lKey.currentScenario).actionType));
         switch (String(self.get(self._lKey.currentScenario).actionType)) {
           case self._actionType.speakText:
             self._speakText();
@@ -5228,6 +5326,7 @@
         }
       },
       _isTheFiestScenaroAndSequence: function () {
+        console.log('シナリオ1');
         var self = sinclo.scenarioApi;
         var result = false;
         // 現在の実行シナリオが「テキスト発言」「選択肢」「メール送信」であればシナリオのシーケンス番号だけを見る
@@ -5267,8 +5366,10 @@
       },
       _showMessage: function(type, message, categoryNum, showTextArea, callback) {
         console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showMessage:type'+type);
+        console.log('シナリオメッセージ表示');
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
+        console.log(message);
         if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
           if(type != self._actionType.hearing && type != self._actionType.selection && type != self._actionType.sendFile){
@@ -5324,6 +5425,9 @@
         var self = sinclo.scenarioApi;
         var data = self.get(self._lKey.showSequenceSet);
         var arr = data[scenarioSeqNum] ? data[scenarioSeqNum] : [];
+        console.log('注目点5');
+        console.log(arr);
+        console.log(arr.indexOf(categoryNum));
         return arr.indexOf(categoryNum) !== -1;
       },
       /**
@@ -5778,6 +5882,7 @@
           }
         },
         _execute: function (hearing) {
+          console.log('ヒアリング');
           var message = hearing.message;
           // クロージャー用
           var self = sinclo.scenarioApi._hearing;
@@ -6028,6 +6133,7 @@
           });
         },
         _getScenario: function (callback) {
+          console.log('ここかな1');
           var self = sinclo.scenarioApi._anotherScenario;
           var scenarioId = self._parent.get(self._parent._lKey.currentScenario).tChatbotScenarioId;
           emit('getScenario', {scenarioId: scenarioId}, callback);
@@ -6223,6 +6329,9 @@
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             var targetValKey = self._parent.get(self._parent._lKey.currentScenario).referenceVariable;
             var conditions = self._parent.get(self._parent._lKey.currentScenario).conditionList;
+            console.log('オートメッセージ順番チェック');
+            console.log(targetValKey);
+            console.log(conditions);
             for (var i = 0; i < conditions.length; i++) {
               if (self._isMatch(targetValKey, conditions[i])) {
                 self._doAction(conditions[i]);
@@ -6252,6 +6361,7 @@
           }
         },
         _doAction: function (condition, callback) {
+          console.log('ここに入っていない？');
           var self = sinclo.scenarioApi._branchOnCond;
           switch (Number(condition.actionType)) {
             case 1:
