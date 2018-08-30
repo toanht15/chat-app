@@ -304,10 +304,13 @@ class LoginController extends AppController {
       $this->MUser->validate = $this->MUser->updateValidate;
       $this->MUser->set($saveData);
       if( !$this->MUser->validates() || !$this->MUser->save()){
-        $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"エラーが発生しました。再度入力してください。"]);
+        //バリデーションエラーの場合
         $this->set('parameter',$parameter);
         $this->set('authentication_code',$authentication_code);
         return;
+      }else if(!$this->MUser->save()){
+        //保存時エラーが発生した場合
+        $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"エラーが発生しました。再度入力してください。"]);
       }else{
         $this->log($userInfo,LOG_DEBUG);
         $this->TResetPasswordInformation->delete($userInfo['TResetPasswordInformation']['id']);
