@@ -139,7 +139,8 @@ class LoginController extends AppController {
       else {
         // ログイン失敗カウントを増やす
         $options = array('conditions' => array('MUser.mail_address' => $this->request->data['MUser']['mail_address']));
-        $lockedUser = $this->MUser->find('list', $options);
+        $lockedUser = $this->MUser->find('first', $options);
+        $this->log($lockedUser,LOG_DEBUG);
         if(!empty($lockedUser) && $lockedUser['MUser']['error_count'] >= self::CONTINUOUS_ERROR_COUNT) {
           if(strtotime($lockedUser['MUser']['locked_datetime']) + self::RETRY_INTERVAL_AFTER_LOCKED_SEC > time()) {
             $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"このアカウントはロックされています。しばらく経ってからやり直してください"]);
@@ -202,9 +203,9 @@ class LoginController extends AppController {
         $uuid = str_replace('-','',CakeText::uuid());
         $resetInfo = $this->saveResetUserInformation($userInfo,$uuid,$code);
         if(!$resetInfo){
+          //保存が失敗した場合
+          $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"メールアドレスの認証に失敗しました。再度入力してください。"]);
           return;
-          //保存が失敗したときの処理を記述する
-          //エラー時の処理
         }
         $mailTemplateData = $this->MSystemMailTemplate->find('all');
         foreach ($mailTemplateData as $key => $mailTemplate){
@@ -303,8 +304,7 @@ class LoginController extends AppController {
       $this->MUser->validate = $this->MUser->updateValidate;
       $this->MUser->set($saveData);
       if( !$this->MUser->validates() || !$this->MUser->save()){
-        //パスワードが明らかにおかしいときまたは保存に失敗したときはuuidと認証コードを返却
-        //再度再設定ページへ遷移する
+        $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"エラーが発生しました。再度入力してください。"]);
         $this->set('parameter',$parameter);
         $this->set('authentication_code',$authentication_code);
         return;
@@ -313,7 +313,6 @@ class LoginController extends AppController {
         $this->TResetPasswordInformation->delete($userInfo['TResetPasswordInformation']['id']);
         return $this->render('reset_end');
       }
-      //もし何かしらのエラーで上記の処理に引っ掛からなかった場合はエラーページに遷移させる
       $this->render('error_code');
     }else{
       //直接このページに飛んできた場合はエラー表示
@@ -364,7 +363,7 @@ class LoginController extends AppController {
    * @return mailBodyData
    */
   private function replaceResetMailConstToString($userInfo,$reseturl,$mailTemplateData){
-    //メール本文を作成する機能を書きます
+    //メール本文の定数を変更する
     $companyname = $this->MCompany->find('first',[
       'fields' => 'company_name',
       'recursive' => -1,
