@@ -17,6 +17,8 @@
     //エラーが表示されてるときは入力ボックス下の余白を取り除く処理
     if($('.error-message')[0]){
       $('#TResetPasswordInformationMailAddress').css('margin-bottom',0);
+      $('input.form-error').css('margin-bottom',0);
+      $('#content-area').css('padding','10px 31px 0 31px');
     }
   });
   window.onload = function(){
