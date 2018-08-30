@@ -3264,6 +3264,13 @@
                 isAutoSpeech: result,
                 notifyToCompany: !result,
                 isScenarioMessage: isScenarioMessage
+              }, function(){
+                if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
+                  && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+                  setTimeout(function(){
+                    sinclo.scenarioApi.triggerInputWaitComplete(value);
+                  },100);
+                }
               });
             }, 100);
           });
@@ -5355,7 +5362,7 @@
             type: type,
             messageType: self.get(self._lKey.scenarioMessageType),
             sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
-            requireCv: type === self._actionType.hearing && self._hearing._cvIsEnable(),
+            requireCv: self._bulkHearing.isInMode() || (type === self._actionType.hearing && self._hearing._cvIsEnable()),
             categoryNum: categoryNum,
             showTextarea: showTextArea,
             message: message
@@ -6432,6 +6439,9 @@
               notifyToCompany: false,
               isScenarioMessage: true
             }, function () {
+              setTimeout(function () {
+                emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+              }, 1000);
               if (self._parent._goToNextScenario()) {
                 self._parent._process();
               }
@@ -6451,10 +6461,13 @@
         _process: function () {
           var self = sinclo.scenarioApi._bulkHearing;
           self._parent._doing(0, function () { // 即時実行
-            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._parent._handleChatTextArea("1"); // 必ず表示する
             sinclo.chatApi.hideMiniMessageArea(); // 改行可のメッセージエリアにする
             common.chatBotTypingTimerClear();
             common.chatBotTypingRemove();
+            setTimeout(function(){
+              self._notifyBeginBulkHearing();
+            }, 200);
             self._parent._waitingInput(function (inputVal) {
               self._parent._unWaitingInput();
               self._analyseInput(inputVal, function (result) {
@@ -6470,11 +6483,18 @@
             stayLogsId: sinclo.chatApi.stayLogsId,
             targetText: inputVal,
             ip: userInfo.getIp(),
+            requireCv: true,
             isAutoSpeech: false,
             notifyToCompany: false,
             isScenarioMessage: true,
             targetVariable: self._parent.get(self._parent._lKey.currentScenario).multipleHearings
           }, callback);
+        },
+        _notifyBeginBulkHearing: function() {
+          var self = sinclo.scenarioApi._bulkHearing;
+          emit('beginBulkHearing', {
+            historyId: sinclo.chatApi.historyId
+          });
         }
       }
     },

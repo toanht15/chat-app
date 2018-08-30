@@ -4918,7 +4918,7 @@ function emit(evName, data, callback){
     data.title = common.title();
   }
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat" ||
-  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue" || evName === "sendParseSignature") {
+  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue" || evName === "beginBulkHearing" || evName === "sendParseSignature") {
     data.userId = userInfo.userId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||
