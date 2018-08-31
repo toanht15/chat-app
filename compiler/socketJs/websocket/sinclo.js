@@ -3797,7 +3797,7 @@
         this.flg = true;
         var messages = window.sincloInfo.messages;
         console.log("MESSAGES : " + JSON.stringify(messages));
-
+        var messageIds = {};
         var andFunc = function (conditionKey, condition, key, ret) {
           if (conditionKey === 7) {
             // 自動返信のトリガーの場合は処理中フラグを立てる
@@ -3809,30 +3809,56 @@
             setTimeout(function () {
               //シナリオの場合
               if(message.action_type == 2) {
-                var messageIds = {};
+                var check = true;
                 for (var i = 0;i < messages.length;i++) {
                   if(messages[i]['action_type'] == 2) {
-                    var check;
+                    //滞在時間の場合
+                    if(messages[i]['activity']['conditions'][1] !== undefined && message.activity.conditions[1] !== undefined) {
+                      check = true;
+                    }
+                    //訪問回数の場合
+                    else if(messages[i]['activity']['conditions'][2] !== undefined && message.activity.conditions[2] !== undefined) {
+                      check = true;
+                    }
+                    //ページの場合
+                    else if(messages[i]['activity']['conditions'][3] !== undefined && message.activity.conditions[3] !== undefined) {
+                      check = true;
+                    }
                     //曜日・時間の場合
-                    if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                    else if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                      check = true;
+                    }
+                    //参照元URLの場合
+                    else if(messages[i]['activity']['conditions'][5] !== undefined && message.activity.conditions[5] !== undefined) {
+                      check = true;
+                    }
+                    //検索キーワードの場合
+                    else if(messages[i]['activity']['conditions'][6] !== undefined && message.activity.conditions[6] !== undefined) {
                       check = true;
                     }
                     //発言内容の場合
                     else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
                       check = true;
                     }
+                    //最初に訪れたページの場合
+                    else if(messages[i]['activity']['conditions'][8] !== undefined && message.activity.conditions[8] !== undefined) {
+                      check = true;
+                    }
+                    //前のページの場合
+                    else if(messages[i]['activity']['conditions'][9] !== undefined && message.activity.conditions[9] !== undefined) {
+                      check = true;
+                    }
                     //営業時間の場合
                     else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
                       check = true;
                     }
-                    else if(messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
-                      messages[i]['activity']['conditions'][10] !== undefined) {
+                    else if(messages[i]['activity']['conditions'][1] !== undefined || messages[i]['activity']['conditions'][2] !== undefined ||
+                      messages[i]['activity']['conditions'][3] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
+                      messages[i]['activity']['conditions'][5] !== undefined || messages[i]['activity']['conditions'][6] !== undefined ||
+                      messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][8] !== undefined ||
+                      messages[i]['activity']['conditions'][9] !== undefined || messages[i]['activity']['conditions'][10] !== undefined) {
                       check = false;
                     }
-                    else {
-                      check = true;
-                    }
-
                     if(check == true) {
                       if(messageIds[ret]) {
                         messageIds[ret][messageIds[ret].length] = messages[i].id;
@@ -3843,7 +3869,6 @@
                     }
                   }
                 }
-
                 console.log('messageIds');
                 console.log(messageIds);
                 console.log('message.id');
@@ -3916,30 +3941,56 @@
                       }
                       //シナリオの場合
                       if(message.action_type == 2) {
-                        var messageIds = {};
+                        var check = true;
                         for (var i = 0;i < messages.length;i++) {
                           if(messages[i]['action_type'] == 2) {
-                            var check;
+                            //滞在時間の場合
+                            if(messages[i]['activity']['conditions'][1] !== undefined && message.activity.conditions[1] !== undefined) {
+                              check = true;
+                            }
+                            //訪問回数の場合
+                            else if(messages[i]['activity']['conditions'][2] !== undefined && message.activity.conditions[2] !== undefined) {
+                              check = true;
+                            }
+                            //ページの場合
+                            else if(messages[i]['activity']['conditions'][3] !== undefined && message.activity.conditions[3] !== undefined) {
+                              check = true;
+                            }
                             //曜日・時間の場合
-                            if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                            else if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                              check = true;
+                            }
+                            //参照元URLの場合
+                            else if(messages[i]['activity']['conditions'][5] !== undefined && message.activity.conditions[5] !== undefined) {
+                              check = true;
+                            }
+                            //検索キーワードの場合
+                            else if(messages[i]['activity']['conditions'][6] !== undefined && message.activity.conditions[6] !== undefined) {
                               check = true;
                             }
                             //発言内容の場合
                             else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
                               check = true;
                             }
+                            //最初に訪れたページの場合
+                            else if(messages[i]['activity']['conditions'][8] !== undefined && message.activity.conditions[8] !== undefined) {
+                              check = true;
+                            }
+                            //前のページの場合
+                            else if(messages[i]['activity']['conditions'][9] !== undefined && message.activity.conditions[9] !== undefined) {
+                              check = true;
+                            }
                             //営業時間の場合
                             else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
                               check = true;
                             }
-                            else if(messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
-                              messages[i]['activity']['conditions'][10] !== undefined) {
+                            else if(messages[i]['activity']['conditions'][1] !== undefined || messages[i]['activity']['conditions'][2] !== undefined ||
+                              messages[i]['activity']['conditions'][3] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
+                              messages[i]['activity']['conditions'][5] !== undefined || messages[i]['activity']['conditions'][6] !== undefined ||
+                              messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][8] !== undefined ||
+                              messages[i]['activity']['conditions'][9] !== undefined || messages[i]['activity']['conditions'][10] !== undefined) {
                               check = false;
                             }
-                            else {
-                              check = true;
-                            }
-
                             if(check == true) {
                               if(messageIds[ret]) {
                                 messageIds[ret][messageIds[ret].length] = messages[i].id;
@@ -3950,7 +4001,6 @@
                             }
                           }
                         }
-
                         console.log('messageIds');
                         console.log(messageIds);
                         console.log('message.id');
