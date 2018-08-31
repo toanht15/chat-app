@@ -3859,12 +3859,17 @@
                       messages[i]['activity']['conditions'][9] !== undefined || messages[i]['activity']['conditions'][10] !== undefined) {
                       check = false;
                     }
-                    if(check == true) {
+                    if(check == true && message.activity.conditions[7] == undefined) {
                       if(messageIds[ret]) {
                         messageIds[ret][messageIds[ret].length] = messages[i].id;
                       }
                       else {
                         messageIds[ret] = [messages[i].id];
+                      }
+                    }
+                    else if(check == true && message.activity.conditions[7] !== undefined) {
+                      if(sinclo.trigger.processing == true) {
+                        messageIds[ret] = [message.id];
                       }
                     }
                   }
@@ -3991,12 +3996,17 @@
                               messages[i]['activity']['conditions'][9] !== undefined || messages[i]['activity']['conditions'][10] !== undefined) {
                               check = false;
                             }
-                            if(check == true) {
+                            if(check == true && message.activity.conditions[7] == undefined) {
                               if(messageIds[ret]) {
                                 messageIds[ret][messageIds[ret].length] = messages[i].id;
                               }
                               else {
                                 messageIds[ret] = [messages[i].id];
+                              }
+                            }
+                            else if(check == true && message.activity.conditions[7] !== undefined) {
+                              if(sinclo.trigger.processing == true) {
+                                messageIds[ret] = [message.id];
                               }
                             }
                           }
@@ -4016,7 +4026,7 @@
                         sinclo.trigger.processing = false;
                       }
                     }, ret);
-                }
+                  }
             };
             // 設定ごと
             for( var i = 0; messages.length > i; i++ ){
