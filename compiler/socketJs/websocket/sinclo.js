@@ -4008,6 +4008,7 @@
                         if(messageIds[ret][0] == message.id){
                           sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
                           sinclo.trigger.processing = false;
+                          console.log('scenarioStart');
                         }
                       }
                       else {
