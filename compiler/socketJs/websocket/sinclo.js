@@ -4008,7 +4008,6 @@
                         if(messageIds[ret][0] == message.id){
                           sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
                           sinclo.trigger.processing = false;
-                          storage.s.set('scenarioState', 'true');;
                         }
                       }
                       else {
@@ -5164,7 +5163,6 @@
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
-        storage.s.set('scenarioState', 'false');
       },
       isProcessing: function () {
         var self = sinclo.scenarioApi;
