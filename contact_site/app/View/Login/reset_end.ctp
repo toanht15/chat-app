@@ -2,7 +2,7 @@
 <div id="login_idx">
     <div id="content-area">
         <?= $this->element('Login/script') ?>
-        <?= $this->Html->image('sinclo_logo.png', array('alt' => 'アイコン', 'width' => 232, 'height' => 59, 'style'=>'margin: 30px auto 0 auto; display: block'))?>
+        <?= $this->Html->image('sinclo_logo.png', ['alt' => 'アイコン', 'id' => 'logo_center'])?>
         <div class="form_area">
           <p id="reset_ended">パスワードの変更が完了しました</p>
           <?php echo $this->Html->link('ログイン画面に戻る','Login/index', ['id' => 'MUserFormButton','class' => 'm_bottom']);?>
