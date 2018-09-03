@@ -38,15 +38,15 @@ class ReplaceAutoMessageConfigurationsShell extends AppShell
           $this->printLog("====================================================");
           $jsonObj = json_decode($data['TAutoMessage']['activity'], TRUE);
           $targetMessage = $jsonObj['message'];
-          if(preg_match('/\n\n\[\]/',$targetMessage)) {
+          if(preg_match('/\n\n\[]/',$targetMessage)) {
             $this->printLog('target automessage id : ' . $data['TAutoMessage']['id'] . ' companies_id : ' . $data['TAutoMessage']['m_companies_id'] . ' name : ' . $data['TAutoMessage']['name']);
             $this->printLog("BEFORE:\n" . $targetMessage);
-            $targetMessage = preg_replace('/\n\n\[\]/', "\n[]", $targetMessage);
+            $targetMessage = preg_replace('/\n\n\[]/', "\n[]", $targetMessage);
             $this->printLog("AFTER:\n" . $targetMessage);
             $jsonObj['message'] = $targetMessage;
             $data['TAutoMessage']['activity'] = json_encode($jsonObj);
             $this->TAutoMessage->create();
-            $this->TAutoMessage->set($data);
+            $this->TAutoMessage->set($data['TAutoMessage']);
             $this->TAutoMessage->save();
           } else {
             $this->printLog('message is not match target characters.');

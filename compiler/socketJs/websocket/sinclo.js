@@ -380,6 +380,7 @@
     },
     connect: function () {
       // 新規アクセスの場合
+      var oldIpAddress = userInfo.getIp();
       if (!check.isset(userInfo.getTabId())) {
         userInfo.firstConnection = true;
         window.opener = null;
@@ -477,6 +478,11 @@
         // 再接続扱いとする
         emitData.inactiveReconnect = true;
         storage.s.set('inactiveTimeout', false);
+      }
+
+      if(!check.isset(oldIpAddress)) {
+        console.log("FORCE FIRST CONNECT");
+        emitData.forceFirstConnect = true;
       }
 
       emit('connected', {
@@ -3264,6 +3270,13 @@
                 isAutoSpeech: result,
                 notifyToCompany: !result,
                 isScenarioMessage: isScenarioMessage
+              }, function(){
+                if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
+                  && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+                  setTimeout(function(){
+                    sinclo.scenarioApi.triggerInputWaitComplete(value);
+                  },100);
+                }
               });
             }, 100);
           });
@@ -4782,6 +4795,7 @@
             (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
             && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() && this.speechContentRegEx.length > 0) {
             for (var index in this.speechContentRegEx) {
+              console.log(this.speechContentRegEx[index].id);
               if (sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                 console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
                 continue;
@@ -4795,6 +4809,7 @@
               if (sinclo.trigger.common.pregContainsAndExclsion(this.speechContentRegEx[index].typeObj, this.speechContentRegEx[index].keyword_contains, this.speechContentRegEx[index].keyword_exclusions, msg)) {
                 this.speechContentRegEx[index].callback(false, this.speechContentRegEx[index].delay);
                 matched = true;
+                break;
               }
             }
             callback(matched);
@@ -5509,7 +5524,7 @@
             type: type,
             messageType: self.get(self._lKey.scenarioMessageType),
             sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
-            requireCv: type === self._actionType.hearing && self._hearing._cvIsEnable(),
+            requireCv: self._bulkHearing.isInMode() || (type === self._actionType.hearing && self._hearing._cvIsEnable()),
             categoryNum: categoryNum,
             showTextarea: showTextArea,
             message: message
@@ -6144,6 +6159,7 @@
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
           var sendData = {
+            historyId: sinclo.chatApi.historyId,
             mailType: self._parent.get(self._parent._lKey.currentScenario).mailType,
             transmissionId: self._parent.get(self._parent._lKey.currentScenario).mMailTransmissionId,
             templateId: self._parent.get(self._parent._lKey.currentScenario).mMailTemplateId,
@@ -6585,6 +6601,9 @@
               notifyToCompany: false,
               isScenarioMessage: true
             }, function () {
+              setTimeout(function () {
+                emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+              }, 1000);
               if (self._parent._goToNextScenario()) {
                 self._parent._process();
               }
@@ -6604,10 +6623,13 @@
         _process: function () {
           var self = sinclo.scenarioApi._bulkHearing;
           self._parent._doing(0, function () { // 即時実行
-            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._parent._handleChatTextArea("1"); // 必ず表示する
             sinclo.chatApi.hideMiniMessageArea(); // 改行可のメッセージエリアにする
             common.chatBotTypingTimerClear();
             common.chatBotTypingRemove();
+            setTimeout(function(){
+              self._notifyBeginBulkHearing();
+            }, 200);
             self._parent._waitingInput(function (inputVal) {
               self._parent._unWaitingInput();
               self._analyseInput(inputVal, function (result) {
@@ -6623,11 +6645,18 @@
             stayLogsId: sinclo.chatApi.stayLogsId,
             targetText: inputVal,
             ip: userInfo.getIp(),
+            requireCv: true,
             isAutoSpeech: false,
             notifyToCompany: false,
             isScenarioMessage: true,
             targetVariable: self._parent.get(self._parent._lKey.currentScenario).multipleHearings
           }, callback);
+        },
+        _notifyBeginBulkHearing: function() {
+          var self = sinclo.scenarioApi._bulkHearing;
+          emit('beginBulkHearing', {
+            historyId: sinclo.chatApi.historyId
+          });
         }
       }
     },

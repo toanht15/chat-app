@@ -669,7 +669,7 @@ function sendSenarioMail(obj, callback) {
     return;
   });
 
-  var historyId = getSessionId(obj.siteKey, obj.tabId, "historyId");
+  var historyId = isset(getSessionId(obj.siteKey, obj.tabId, "historyId")) ? getSessionId(obj.siteKey, obj.tabId, "historyId") : obj.historyId;
   req.write(JSON.stringify({
     "accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK",
     "userHistoryId": historyId,
@@ -1923,10 +1923,10 @@ io.sockets.on('connection', function (socket) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
       }
-      if ( !data.inactiveReconnect && ((res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
+      if (data.forceFirstConnect || (data.firstConnection || (!data.inactiveReconnect && ((res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
         || !(res.sincloSessionId in sincloCore[res.siteKey])
-        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined)) {
+        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined)))) {
         send.sincloSessionId = uuid.v4();
         send.sincloSessionIdIsNew = true;
         data.firstConnection = true;
@@ -3512,7 +3512,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   socket.on("addLastMessageToCV", function(d){
     var obj = JSON.parse(d);
-    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
+    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22) OR (30 <= message_type and message_type <= 32) OR (message_type = 40)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
       function(err, row){
         if ( err !== null && err !== '' ) {
           console.log("UPDATE lastMessage to cv is failed. historyId : " + obj.historyId);
@@ -3694,7 +3694,33 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       var name = param.replace(/^{{(.+)}}$/, '$1');
       return variables[name] || name;
     });
-  }
+  };
+
+  socket.on('beginBulkHearing', function(data){
+    var obj = JSON.parse(data),
+        historyId = isset(getSessionId(obj.siteKey, obj.tabId, "historyId")) ? getSessionId(obj.siteKey, obj.tabId, "historyId") : obj.historyId;
+    getConversationCountUser(obj.userId,function(results) {
+      var messageDistinction;
+      if(results !== null) {
+        //カウント数が取れなかったとき
+        if (Object.keys(results) && Object.keys(results).length === 0) {
+          messageDistinction = 1;
+        }
+        //カウント数が取れたとき
+        else {
+          messageDistinction = results[0].conversation_count;
+        }
+
+        console.log(historyId);
+        console.log(messageDistinction);
+        pool.query('UPDATE t_history_chat_logs set achievement_flg = -1 where t_histories_id = ? and message_distinction = ? and message_type = 21;',
+          [historyId, messageDistinction],
+          function(err, row) {
+          }
+        );
+      }
+    });
+  });
 
   socket.on('sendParseSignature', function(data, ack){
     var obj = JSON.parse(data);
@@ -3702,10 +3728,11 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       var resultObj = JSON.parse(result);
       var storeData = {
         message: resultObj.data,
-        target: obj.targetVariable
+        target: obj.targetVariable,
       };
       obj.chatMessage = JSON.stringify(storeData);
       obj.messageType = 40;
+      obj.achievementFlg = obj.requireCv ? -1 : null;
       chatApi.set(obj);
     });
   });
