@@ -4789,6 +4789,7 @@
             (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
             && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() && this.speechContentRegEx.length > 0) {
             for (var index in this.speechContentRegEx) {
+              console.log(this.speechContentRegEx[index].id);
               if (sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                 console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
                 continue;
@@ -4802,6 +4803,7 @@
               if (sinclo.trigger.common.pregContainsAndExclsion(this.speechContentRegEx[index].typeObj, this.speechContentRegEx[index].keyword_contains, this.speechContentRegEx[index].keyword_exclusions, msg)) {
                 this.speechContentRegEx[index].callback(false, this.speechContentRegEx[index].delay);
                 matched = true;
+                break;
               }
             }
             callback(matched);
