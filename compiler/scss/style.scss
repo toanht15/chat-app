@@ -1196,6 +1196,13 @@ ul#color-bar-right {
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
   box-shadow: 0 0 20px 3px $shadow-color;
   padding: 10px 40px 0px 40px;
+  #logo_center{
+    display: block;
+    width: 232px;
+    height: 59px;
+    margin-top: 40px;
+    margin-left: 12px;
+  }
   .form_area {
     p{
       margin-top: 0px;
@@ -1416,6 +1423,12 @@ ul#color-bar-right {
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
   box-shadow: 0 0 20px 3px $shadow-color;
   padding: 20px;
+  #logo_center{
+    display: block;
+    width: 232px;
+    height: 59px;
+    margin: 30px 0 0 43px;
+  }
   .edit_form_area {
     margin: 5px auto;
     padding: 20px 0;
