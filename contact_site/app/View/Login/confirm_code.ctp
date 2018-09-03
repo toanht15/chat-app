@@ -2,7 +2,7 @@
 <div id="login_idx">
     <div id="content-area">
         <?= $this->element('Login/script') ?>
-        <?= $this->Html->image('sinclo_logo.png', array('alt' => 'アイコン', 'width' => 232, 'height' => 59, 'style'=>'margin: 30px auto 10px auto; display: block'))?>
+        <?= $this->Html->image('sinclo_logo.png', array('alt' => 'アイコン', 'width' => 232, 'height' => 59, 'style'=>'margin: 40px 23px 0px 15px; display: block'))?>
         <div class="form_area">
         <p id="description">認証コードを入力してください</p>
           <?php
