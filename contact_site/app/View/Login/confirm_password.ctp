@@ -10,7 +10,7 @@
           echo $this->Form->input('confirm_password', ['label' => false, 'type' => 'password', 'placeholder' => 'パスワードの確認', 'required' => false, 'autocomplete' => 'off']);
           echo $this->Form->hidden('authentication_code',['value' => $authentication_code]);
           echo $this->Form->hidden('parameter',['value' => $parameter]);
-          echo $this->Form->end(['label' => 'パスワードを変更','id' => 'MUserFormButton','style' => 'cursor:grab;margin-bottom:20px']);
+          echo $this->Form->end(['label' => 'パスワードを変更','id' => 'MUserFormButton','style' => 'cursor:pointer;margin-bottom:20px']);
           ?>
         </div>
     </div>

@@ -8,8 +8,12 @@
           <p>アカウントに登録されているメールアドレスを入力してください。</p>
           <?php
           echo $this->Form->create('TResetPasswordInformation', array('type' => 'post', 'url' => array('controller' => 'Login', 'action' => 'resetPassword')));
-          echo $this->Form->input('mail_address', ['label' => false,'placeholder' => 'Mail Address','required' => false]);
-          echo $this->Form->end(['label' => '送信', 'id' => 'MUserFormButton','style' =>'cursor:grab']);
+          $mail_address = "";
+          if( !empty($_COOKIE['CakeCookie']['mail_address'])){
+            $mail_address = $_COOKIE['CakeCookie']['mail_address'];
+          }
+          echo $this->Form->input('mail_address', ['label' => false,'placeholder' => 'Mail Address','required' => false,'value' => $mail_address]);
+          echo $this->Form->end(['label' => '送信', 'id' => 'MUserFormButton','style' =>'cursor:pointer']);
           ?>
         </div>
     </div>

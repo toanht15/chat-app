@@ -12,7 +12,7 @@
           ?>
           <div id="error_code"><?php if(isset($errorMsg)) echo($errorMsg)?></div>
           <?php
-          echo $this->Form->end(['label' => 'パスワードの再設定','id' => 'MUserFormButton','style' => 'cursor:grab']);
+          echo $this->Form->end(['label' => 'パスワードの再設定','id' => 'MUserFormButton','style' => 'cursor:pointer']);
           ?>
         </div>
     </div>
