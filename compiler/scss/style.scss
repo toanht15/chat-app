@@ -1192,7 +1192,7 @@ ul#color-bar-right {
   justify-content: space-between;
   border: none;
   border-radius: 5px;
-  background: linear-gradient(to top, #F8FCFD, #EEF2F3);
+  background: #FFFFFF;
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
   box-shadow: 0 0 5px $shadow-color;
   padding: 10px 40px 0px 40px;
@@ -1301,7 +1301,7 @@ ul#color-bar-right {
 #content-area-wide {
   border: none;
   border-radius: 5px;
-  background: linear-gradient(to top, #F8FCFD, #EEF2F3);
+  background: #FFFFFF;
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
   box-shadow: 0 0 5px $shadow-color;
   padding: 15px 15px 0px 15px;
@@ -1390,18 +1390,21 @@ ul#color-bar-right {
     #code-title{
       font-size:16px;
       text-align:center;
-      margin: 3px 0;
+      margin-top: 15px;
+      margin-bottom: 3px;
     }
     #authentication-code{
       font-size: 40px;
       border: 3px solid rgba(0,0,0,0.4);
       margin-top: 2px;
-      margin-bottom:10px;
-      width: 220px;
+      margin-bottom:15px;
+      width: 270px;
+      padding-left: 13px;
+      height: 81px;
       display:flex;
       align-items:center;
       justify-content: center;
-      letter-spacing: 3px;
+      letter-spacing: 12px;
     }
   }
 }
@@ -1409,7 +1412,7 @@ ul#color-bar-right {
 #content-area-edit {
   border: none;
   border-radius: 5px;
-  background: linear-gradient(to top, #F8FCFD, #EEF2F3);
+  background: #FFFFFF;
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
   box-shadow: 0 0 5px $shadow-color;
   padding: 20px;
