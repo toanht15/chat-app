@@ -23,7 +23,7 @@
         <div id="code-title">認証コード</div>
         <div id="authentication-code"><?=$authenticationCode?></div>
         <p class="m_bottom" style="line-height: 2.5;">メール本文に記載されたＵＲＬにアクセスし、<span class="red">上記の認証コードを入力してください。</span><br>
-           ※認証コードの有効期限は24時間となっております</p>
+           <span class="red">※認証コードの有効期限は24時間となっております</span></p>
     </div>
   </div>
 </div>
