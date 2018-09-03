@@ -1281,6 +1281,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if(Number($scope.closeButtonSettingToggle) !== 2 || Number($scope.closeButtonModeTypeToggle) !== 1) {
         $scope.showTimeBannerSettingDisable();
       }
+
+      $scope.resizeChatArea();
     });
 
     $scope.resizeWidgetHeightByWindowHeight = function() {
@@ -1297,8 +1299,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           changeTarget = ($('#chatTab').length > 0) ? $('#chatTalk') : $('#telContent'),
           delta = windowHeight - $scope.currentWindowHeight;
 
-      if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
-        delta = (windowHeight * 0.7) - currentWidgetHeight;
+      if(windowHeight * 0.85 < currentWidgetHeight && delta === 0) {
+        delta = (windowHeight * 0.85) - currentWidgetHeight;
       }
 
       // 変更後サイズ
@@ -1313,7 +1315,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         changed = true;
         changeTarget.height($scope._getMinChatTalkHeight());
         console.log('2-2 %s ', $('#sincloBox').height());
-      } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
+      } else if((delta < 0 && windowHeight * 0.85 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.85 >= afterWidgetHeight)) {
         console.log('3 %s', delta);
         changed = true;
         changeTarget.height(changeTarget.height() + delta);
@@ -1512,7 +1514,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       switch($('#' + this.id).val()) {
         case "1":
           // 無効
-          $scope.showTimeBannerSettingDisable()
+          $scope.showTimeBannerSettingDisable();
           break;
         case "2":
           // 有効
@@ -1580,15 +1582,30 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     });
 
     $scope.$watch('closeButtonModeTypeToggle', function() {
-      switch($scope.closeButtonModeTypeToggle) {
-        case "1": // 小さなバナー表示
-          if(String($scope.closeButtonSettingToggle) === "2") $scope.showTimeBannerSettingEnable();
-          break;
-        case "2":
-          $scope.showTimeBannerSettingDisable();
-          break;
-      }
-    });
+    switch($scope.closeButtonModeTypeToggle) {
+      case "1": // 小さなバナー表示
+        if(String($scope.closeButtonSettingToggle) === "2") $scope.showTimeBannerSettingEnable();
+        break;
+      case "2":
+        $scope.showTimeBannerSettingDisable();
+        break;
+    }
+  });
+
+  $scope.$watch('chat_init_show_textarea', function() {
+    $scope.resizeChatArea();
+  });
+
+  $scope.resizeChatArea = function() {
+    switch(Number($scope.chat_init_show_textarea)) {
+      case 1:
+        $('#chatTalk').height($('#chatTalk').height() - 75);
+        break;
+      case 2:
+        $('#chatTalk').height($('#chatTalk').height() + 75);
+        break;
+    }
+  };
 
     $('ul.settingList input').on('mousedown', function() {
       if (!$(this).hasClass('ignore-click-event')) {

@@ -1037,6 +1037,26 @@ $headerNo = 1;
       <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．チャット設定</h3>
       <section>
         <ul class="settingList">
+          <!-- 初期表示時の自由入力エリア -->
+          <li>
+            <span class="require"><label>初期表示時の自由入力エリアの状態</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('chat_init_show_textarea', [
+                  'type' => 'radio',
+                  'options' => array("1" => "表示する", "2" => "表示しない"),
+                  'legend' => false,
+                  'separator' => '</label><br><label class="pointer">',
+                  'class' => 'showChat',
+                  'div' => false,
+                  'label' => false,
+                  'error' => false
+                ],
+                [
+                  'entity' => 'MWidgetSetting.chat_init_show_textarea',
+                  'default' => '1'
+                ]) ?></label></pre>
+          </li>
+          <?php if ( $this->Form->isFieldError('chat_init_show_textarea') ) echo $this->Form->error('chat_init_show_textarea', null, ['wrap' => 'li']); ?>
+          <!--  -->
           <!-- ラジオボタン操作時の動作種別 -->
           <li>
             <span class="require"><label>ラジオボタン選択動作</label></span>
