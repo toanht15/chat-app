@@ -380,6 +380,7 @@
     },
     connect: function () {
       // 新規アクセスの場合
+      var oldIpAddress = userInfo.getIp();
       if (!check.isset(userInfo.getTabId())) {
         userInfo.firstConnection = true;
         window.opener = null;
@@ -477,6 +478,11 @@
         // 再接続扱いとする
         emitData.inactiveReconnect = true;
         storage.s.set('inactiveTimeout', false);
+      }
+
+      if(!check.isset(oldIpAddress)) {
+        console.log("FORCE FIRST CONNECT");
+        emitData.forceFirstConnect = true;
       }
 
       emit('connected', {
