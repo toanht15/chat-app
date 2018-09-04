@@ -1714,12 +1714,12 @@ class TAutoMessagesController extends AppController {
 
             //行：ラジオボタン間マージン
             if ( strcmp($v, 'line_button_margin') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['line_button_margin'] = 2.6;
+              $d['line_button_margin'] = 8;
             }
 
             //ラジオボタン間マージン
             if ( strcmp($v, 'btw_button_margin') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['btw_button_margin'] = 2.6;
+              $d['btw_button_margin'] = 4;
             }
 
             //タイトル位置

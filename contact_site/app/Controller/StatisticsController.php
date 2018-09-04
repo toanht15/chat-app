@@ -1872,7 +1872,7 @@ class StatisticsController extends AppController {
        message_distinction) as thcl
       LEFT JOIN (select t_histories_id, message_request_flg,
       message_distinction from t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
-       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?) group by t_histories_id) as thcl2
+       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?) group by t_histories_id,message_distinction) as thcl2
       ON
       thcl.t_histories_id = thcl2.t_histories_id
       AND
@@ -2090,7 +2090,7 @@ class StatisticsController extends AppController {
        group by t_histories_id,message_distinction) as thcl
        LEFT JOIN (select t_histories_id, message_type,message_distinction from
        t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
-       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?) group by t_histories_id) as thcl2
+       where (m_companies_id = ? and message_type = ?)or(m_companies_id = ? and notice_flg = ?) group by t_histories_id,message_distinction) as thcl2
        ON
        thcl.t_histories_id = thcl2.t_histories_id
        AND

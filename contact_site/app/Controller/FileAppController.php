@@ -11,7 +11,7 @@ class FileAppController extends AppController
 
   const ENCRYPT_SECRET_KEY = "FoW3wLKXUB4HiCDC0fpIb63E066L03R57f3r6wwk3VyxTp3AGp68lBb7bghmRU80";
   const ENCRYPT_PARAM_DELIMITER = "@@";
-  const EXPIRE_SEC = 3600; // ここを変更する場合はS3のライフサイクル設定も見直すこと。
+  const EXPIRE_SEC = 157680000; // ここを変更する場合はS3のライフサイクル設定も見直すこと。
 
   const PARAM_FILE = "file";
   const PARAM_TARGET_USER_ID = "targetUserId";
