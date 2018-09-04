@@ -1,8 +1,8 @@
 <div id="login_idx_bg"></div>
 <div id="login_idx">
-    <div id="content-area">
+    <div id="content-area" style="align-items:center;">
         <?= $this->element('Login/script') ?>
-        <?= $this->Html->image('sinclo_logo.png', ['alt' => 'アイコン', 'id' => 'logo_center'])?>
+        <?= $this->Html->image('sinclo_logo.png', ['alt' => 'アイコン', 'id' => 'logo_center', 'style' => ['margin-left:0px;','margin-right:14px;']])?>
         <div class="form_area">
           <?php
           echo $this->Form->create('MUser', array('type' => 'post', 'url' => array('controller' => 'Login', 'action' => 'confirmPassword')));

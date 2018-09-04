@@ -32,7 +32,7 @@ class LoginController extends AppController {
   const OPTION_SCENARIO = "##OPTION_SCENALIO##";
   const OPTION_CAPTURE = "##OPTION_CAPTURE##";
   public $components = ['MailSender','Cookie'];
-  public $uses = ['MUser','TLogin', 'MIpFilterSetting','MCompany','MAgreement','MSystemMailTemplate','TResetPasswordInformation'];
+  public $uses = ['MUser','TLogin', 'MIpFilterSetting','MCompany','MAgreement','MSystemMailTemplate','TResetPasswordInformation','TMailTransmissionLog'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -60,7 +60,6 @@ class LoginController extends AppController {
     if ($this->request->is('post')) {
       if(!empty($this->request->data['startReset'])){
         $this->Cookie->write('mail_address',$this->request->data['MUser']['mail_address'],false,300);
-        $this->log($_COOKIE,LOG_DEBUG);
         return $this->redirect(['action' => 'resetPassword']);
       }
       if ($this->Auth->login()) {
@@ -191,6 +190,7 @@ class LoginController extends AppController {
         return;
       }
       //メールアドレスが該当するレコードを取得する
+      $this->log("入力されたメールアドレス:".$userData['TResetPasswordInformation']['mail_address'],LOG_DEBUG);
       $conditions = ['mail_address' => $userData['TResetPasswordInformation']['mail_address']];
       $userInfo = $this->searchUserInformation("MUser",'first','*',$conditions);
       //認証コードは常に生成される
@@ -218,6 +218,22 @@ class LoginController extends AppController {
         }
         $reseturl = Router::url(null, true)."/".$uuid;
         $mailBodyData = $this->replaceResetMailConstToString($userInfo,$reseturl,$mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
+
+        /*送信前にログを生成*/
+        $this->TMailTransmissionLog->create();
+        $this->TMailTransmissionLog->set(array(
+          'm_companies_id' => 0, // システムメールなので0で登録
+          'mail_type_cd' => 'TL001',
+          'from_address' => $this->getMailAddress(),
+          'from_name' => $mailTemplateData[$mailType]['MSystemMailTemplate']['sender'],
+          'to_address' => $userData['TResetPasswordInformation']['mail_address'],
+          'subject' => $mailTemplateData[$mailType]['MSystemMailTemplate']['subject'],
+          'body' => $mailBodyData,
+          'send_flg' => 0
+        ));
+        $this->TMailTransmissionLog->save();
+        $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
+
         $sender = new MailSenderComponent();
         $sender->setFrom($this->getMailAddress());
         $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
@@ -225,6 +241,14 @@ class LoginController extends AppController {
         $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
         $sender->setBody($mailBodyData);
         $sender->send();
+
+        $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
+        $this->TMailTransmissionLog->read(null, $lastInsertId);
+        $this->TMailTransmissionLog->set([
+          'send_flg' => 1,
+          'sent_datetime' => $now->format("Y/m/d H:i:s")
+        ]);
+        $this->TMailTransmissionLog->save();
       }
       $this->set('authenticationCode',$code);
       $this->set('mailAddress',$userData['TResetPasswordInformation']['mail_address']);
@@ -341,7 +365,6 @@ class LoginController extends AppController {
       'recursive' => -1,
       'conditions' => $conditions
     ]);
-    $this->log($userInfo,LOG_DEBUG);
     return $userInfo;
   }
 
@@ -385,7 +408,6 @@ class LoginController extends AppController {
       'recursive' => -1,
       'conditions' => ['id' => $userInfo['MUser']['m_companies_id']]
     ]);
-    $this->log($companyname,LOG_DEBUG);
     $mailBodyData = $this->replaceConstToString($companyname['MCompany']['company_name'],self::COMPANY_NAME,$mailTemplateData);
     $mailBodyData = $this->replaceConstToString($userInfo['MUser']['user_name'],self::USER_NAME,$mailBodyData);
     $mailBodyData = $this->replaceConstToString($reseturl,self::URL,$mailBodyData);
