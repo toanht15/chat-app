@@ -1,5 +1,5 @@
 /** CompanyDataAPI integrate settings */
-process.env.GET_CD_API_HOST = '127.0.0.1';
+process.env.GET_CD_API_HOST = '172.31.24.71';
 process.env.GET_CD_API_PORT = '80';
 process.env.GET_CD_API_PATH = '/CompanyData/getDetailInfo';
 process.env.SEND_AUTO_MESSAGE_MAIL_API_HOST = '127.0.0.1';
