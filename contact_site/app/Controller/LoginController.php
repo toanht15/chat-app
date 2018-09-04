@@ -31,12 +31,12 @@ class LoginController extends AppController {
   const OPTION_COMPANY_INFO = "##OPTION_COMPANY_INFO##";
   const OPTION_SCENARIO = "##OPTION_SCENALIO##";
   const OPTION_CAPTURE = "##OPTION_CAPTURE##";
-  public $components = ['MailSender'];
-  public $uses = ['MUser','TLogin', 'MIpFilterSetting','MCompany','MAgreement','MSystemMailTemplate'];
+  public $components = ['MailSender','Cookie'];
+  public $uses = ['MUser','TLogin', 'MIpFilterSetting','MCompany','MAgreement','MSystemMailTemplate','TResetPasswordInformation'];
 
   public function beforeFilter(){
     parent::beforeFilter();
-    $this->Auth->allow(['index', 'logout', 'loginCheck','editPassword']);
+    $this->Auth->allow(['index', 'logout', 'loginCheck','editPassword','resetPassword','confirmCode','confirmPassword','errorCode']);
     $this->set('title_for_layout', 'ログイン');
 
     $notSupportBrowser = false;
@@ -58,6 +58,11 @@ class LoginController extends AppController {
 
   public function login() {
     if ($this->request->is('post')) {
+      if(!empty($this->request->data['startReset'])){
+        $this->Cookie->write('mail_address',$this->request->data['MUser']['mail_address'],false,300);
+        $this->log($_COOKIE,LOG_DEBUG);
+        return $this->redirect(['action' => 'resetPassword']);
+      }
       if ($this->Auth->login()) {
         //ログイン情報を送信
         $ipAddress = $this->request->clientIp(false);
@@ -140,6 +145,7 @@ class LoginController extends AppController {
         // ログイン失敗カウントを増やす
         $options = array('conditions' => array('MUser.mail_address' => $this->request->data['MUser']['mail_address']));
         $lockedUser = $this->MUser->find('first', $options);
+        $this->log($lockedUser,LOG_DEBUG);
         if(!empty($lockedUser) && $lockedUser['MUser']['error_count'] >= self::CONTINUOUS_ERROR_COUNT) {
           if(strtotime($lockedUser['MUser']['locked_datetime']) + self::RETRY_INTERVAL_AFTER_LOCKED_SEC > time()) {
             $this->set('alertMessage',['type' => C_MESSAGE_OUT_OF_TERM_TRIAL, 'text'=>"このアカウントはロックされています。しばらく経ってからやり直してください"]);
@@ -170,6 +176,220 @@ class LoginController extends AppController {
     else {
       $this->redirect(['action' => 'index']);
     }
+  }
+
+
+  /* *
+   * パスワードリセット画面
+   */
+  public function resetPassword(){
+    $this->set('title_for_layout', 'パスワードの再設定');
+    if ( $this->request->is('post') ) {
+      $userData['TResetPasswordInformation']['mail_address'] = $this->request->data['TResetPasswordInformation']['mail_address'];
+      $this->TResetPasswordInformation->set($userData);
+      if(!$this->TResetPasswordInformation->validates()){
+        return;
+      }
+      //メールアドレスが該当するレコードを取得する
+      $conditions = ['mail_address' => $userData['TResetPasswordInformation']['mail_address']];
+      $userInfo = $this->searchUserInformation("MUser",'first','*',$conditions);
+      //認証コードは常に生成される
+      $code  = $this->generateCode();
+      if($userInfo){
+        $codeChecker = $this->searchResetUserInformation($userData['TResetPasswordInformation']['mail_address']);
+        while($codeChecker){
+          //既に認証コードが該当ユーザに登録されていた場合はいったん破棄する
+          //複数データが誤って登録されていた場合に備えてwhile
+          $this->TResetPasswordInformation->delete($codeChecker['TResetPasswordInformation']['id']);
+          $codeChecker = $this->searchResetUserInformation($userData['TResetPasswordInformation']['mail_address']);
+        }
+        $uuid = str_replace('-','',CakeText::uuid());
+        $resetInfo = $this->saveResetUserInformation($userInfo,$uuid,$code);
+        if(!$resetInfo){
+          //保存が失敗した場合
+          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>"メールアドレスの認証に失敗しました。再度入力してください。"]);
+          return;
+        }
+        $mailTemplateData = $this->MSystemMailTemplate->find('all');
+        foreach ($mailTemplateData as $key => $mailTemplate){
+          if($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_PASSWORD_RESET_TO_CUSTOMER){
+            $mailType = $key;
+          }
+        }
+        $reseturl = Router::url(null, true)."/".$uuid;
+        $mailBodyData = $this->replaceResetMailConstToString($userInfo,$reseturl,$mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
+        $sender = new MailSenderComponent();
+        $sender->setFrom($this->getMailAddress());
+        $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
+        $sender->setTo($userData['TResetPasswordInformation']['mail_address']);
+        $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
+        $sender->setBody($mailBodyData);
+        $sender->send();
+      }
+      $this->set('authenticationCode',$code);
+      $this->set('mailAddress',$userData['TResetPasswordInformation']['mail_address']);
+      $this->render('show_code');
+    }
+    //URLパラメータがある場合のみ
+    if(!empty($this->params['pass'][0])){
+      $parameter = $this->params['pass'][0];
+      $conditions = ['parameter' => $parameter];
+      $userUUID = $this->searchUserInformation('TResetPasswordInformation','first','*',$conditions);
+      //パラメータが正常でない、或いは有効期限外かどうかの判別
+      $nowdata = date("Y/m/d H:i:s");
+      if(!$userUUID || strtotime($nowdata) > strtotime($userUUID['TResetPasswordInformation']['expire'])){
+        //エラー系
+        $this->render('error_code');
+      }else{
+        //正常系
+        $this->set('parameter',$parameter);
+        $this->render('confirm_code');
+      }
+    }
+  }
+
+  /* *
+   * 認証コード入力画面
+   */
+  public function confirmCode(){
+    $this->set('title_for_layout', 'パスワードの再設定');
+    if ( $this->request->is('post') ) {
+        $parameter = $this->request->data['TResetPasswordInformation']['parameter'];
+        $conditions = ['parameter' => $parameter];
+        $userInfo = $this->searchUserInformation('TResetPasswordInformation','first','authentication_code',$conditions);
+        if(empty($userInfo)){
+          //認証コード入力ページを多重に開き、両方ともPW変更画面に遷移した場合の対策
+          return $this->render('error_code');
+        }
+        $authentication_code = $this->request->data['TResetPasswordInformation']['authentication_code'];
+        //空欄の場合
+        $this->set('parameter',$parameter);
+        if(empty($authentication_code)){
+          $this->set('errorMsg',"認証コードを入力してください");
+        }else{
+          //空欄じゃない場合
+          if(strcmp($userInfo['TResetPasswordInformation']['authentication_code'],$authentication_code) == 0){
+            //認証コードが合っていた場合はuuidと認証コードをブラウザに保持させる(後で確認ができるように)
+            $this->set('authentication_code',$authentication_code);
+            $this->render('confirm_password');
+          }else{
+            $this->set('errorMsg',"認証コードを正しく入力してください");
+          }
+        }
+    }else{
+      //直接このページに飛んでこられるのはNGなためエラー表示
+      $this->render('error_code');
+    }
+  }
+  /* *
+   * パスワード変更画面
+   */
+  public function confirmPassword(){
+  /* パスワード変更*/
+    $this->set('title_for_layout', 'パスワードの再設定');
+    if ( $this->request->is('post') ) {
+      //uuidと認証コードにより、ユーザーIDを取得する
+      $parameter = $this->request->data['MUser']['parameter'];
+      $authentication_code = $this->request->data['MUser']['authentication_code'];
+      $userInfo = $this->TResetPasswordInformation->find('first',[
+        'fields' => '*',
+        'recursive' => -1,
+        'conditions' => ['parameter' => $parameter,'authentication_code' => $authentication_code]
+      ]);
+      if(empty($userInfo)){
+        //認証コード入力ページを多重に開き、両方ともPW変更画面に遷移した場合の対策
+        return $this->render('error_code');
+      }
+      //ユーザーの情報を取得し、保存する
+      $this->MUser->recursive = -1;
+      $saveData = $this->MUser->read(null, $userInfo['TResetPasswordInformation']['m_users_id']);
+      $saveData['MUser']['new_password'] = $this->data['MUser']['new_password'];
+      $saveData['MUser']['confirm_password'] = $this->data['MUser']['confirm_password'];
+      $this->MUser->validate = $this->MUser->updateValidate;
+      $this->MUser->set($saveData);
+      if( !$this->MUser->validates() || !$this->MUser->save()){
+        //バリデーションエラーの場合
+        $this->set('parameter',$parameter);
+        $this->set('authentication_code',$authentication_code);
+        return;
+      }else if(!$this->MUser->save()){
+        //保存時エラーが発生した場合
+        $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ALERT, 'text'=>"エラーが発生しました。再度入力してください。"]);
+      }else{
+        $this->TResetPasswordInformation->delete($userInfo['TResetPasswordInformation']['id']);
+        return $this->render('reset_end');
+      }
+      $this->render('error_code');
+    }else{
+      //直接このページに飛んできた場合はエラー表示
+      $this->render('error_code');
+    }
+  }
+
+  private function generateCode(){
+  //認証コードは1桁ずつ生成する
+    $code = "";
+    while(strlen($code) < 6){
+      $code = $code.mt_rand(0,9);
+    }
+    return $code;
+  }
+
+  private function searchUserInformation($ModelName,$type,$fields,$conditions){
+    $userInfo = $this->$ModelName->find($type,[
+      'fields' => $fields,
+      'recursive' => -1,
+      'conditions' => $conditions
+    ]);
+    $this->log($userInfo,LOG_DEBUG);
+    return $userInfo;
+  }
+
+  private function searchResetUserInformation($userData){
+  //同一ユーザーによる認証コードの有無を検査
+    $codeChecker = $this->TResetPasswordInformation->find('first',[
+      'fields' => 'id',
+      'recursive' => '-1',
+      'conditions' => ['mail_address' => $userData]
+    ]);
+    return $codeChecker;
+  }
+
+  private function saveResetUserInformation($userInfo,$uuid,$code){
+    $this->TResetPasswordInformation->create();
+    $saveData = [];
+    $saveData['TResetPasswordInformation']['m_companies_id'] = $userInfo['MUser']['m_companies_id'];
+    $saveData['TResetPasswordInformation']['m_users_id'] = $userInfo['MUser']['id'];
+    $saveData['TResetPasswordInformation']['mail_address'] = $userInfo['MUser']['mail_address'];
+    $saveData['TResetPasswordInformation']['parameter'] =$uuid;
+    $saveData['TResetPasswordInformation']['authentication_code'] = $code;
+    $saveData['TResetPasswordInformation']['expire'] = date('Y-m-d H:i:s', strtotime('1 day', time()));
+    $this->TResetPasswordInformation->set($saveData);
+    return $this->TResetPasswordInformation->save();
+  }
+
+
+  /**
+   * パスワードリセットに関するメール作成関数
+   *
+   * @param userInfo(ユーザーの情報)
+   * @param reseturl(生成されたURLです)
+   * @param mailTemplateData(定数状態のメール本文)
+   *
+   * @return mailBodyData
+   */
+  private function replaceResetMailConstToString($userInfo,$reseturl,$mailTemplateData){
+    //メール本文の定数を変更する
+    $companyname = $this->MCompany->find('first',[
+      'fields' => 'company_name',
+      'recursive' => -1,
+      'conditions' => ['id' => $userInfo['MUser']['m_companies_id']]
+    ]);
+    $this->log($companyname,LOG_DEBUG);
+    $mailBodyData = $this->replaceConstToString($companyname['MCompany']['company_name'],self::COMPANY_NAME,$mailTemplateData);
+    $mailBodyData = $this->replaceConstToString($userInfo['MUser']['user_name'],self::USER_NAME,$mailBodyData);
+    $mailBodyData = $this->replaceConstToString($reseturl,self::URL,$mailBodyData);
+    return $mailBodyData;
   }
 
   public function editPassword(){

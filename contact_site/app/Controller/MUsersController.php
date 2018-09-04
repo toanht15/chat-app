@@ -49,6 +49,7 @@ class MUsersController extends AppController {
    * @return void
    * */
   public function remoteOpenEntryForm() {
+    $this->log('あいうえお',LOG_DEBUG);
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
