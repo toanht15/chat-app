@@ -79,7 +79,7 @@ function addVariable(type,sendMessage,focusPosition){
             addPosition = 9;
           }
           else {
-            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<a href='ここにURLを記載'>リンクテキスト</a>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + '<a href="ここにURLを記載">リンクテキスト</a>' + sendMessage.value.substr(focusPosition,sendMessage.value.length);
             addPosition = 10;
           }
           var beforeScrollTop = $(sendMessage).scrollTop();
@@ -100,7 +100,7 @@ function addVariable(type,sendMessage,focusPosition){
             addPosition = 9;
           }
           else {
-            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<a href='ここにURLを記載' target='_blank'>リンクテキスト</a>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + '<a href="ここにURLを記載" target="_blank">リンクテキスト</a>' + sendMessage.value.substr(focusPosition,sendMessage.value.length);
             addPosition = 10;
           }
           var beforeScrollTop = $(sendMessage).scrollTop();

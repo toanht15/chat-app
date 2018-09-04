@@ -1178,60 +1178,79 @@ ul#color-bar-right {
 }
 
 #login_idx {
-  position: absolute;
-  margin: auto;
-  min-width: 300px!important;
-  width: 300px!important;
-  height: 350px;
-  right: 0;
-  left: 0;
-  top: 0;
-  bottom: 0;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  margin: 30vh 0 0 0;
+  width: 100vw;
+  height: 100vh;
 }
 
 #content-area {
-  margin: auto;
-  height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   border: none;
   border-radius: 5px;
-  background: linear-gradient(to top, #F8FCFD, #EEF2F3);
+  background: #FFFFFF;
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
-  box-shadow: 0 0 5px $shadow-color;
-  padding: 15px;
+  box-shadow: 0 0 20px 3px $shadow-color;
+  padding: 10px 40px 0px 40px;
+  #logo_center{
+    display: block;
+    width: 232px;
+    height: 59px;
+    margin-top: 40px;
+    margin-left: 12px;
+  }
   .form_area {
-    margin: 10px auto;
-    padding: 20px 0;
+    p{
+      margin-top: 0px;
+      margin-bottom: 17px;
+      font-size: 13px;
+      &#reset_ended{
+        margin-top: 10px;
+        margin-bottom: 40px;
+      }
+    }
+    form{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    #error_code{
+      height: 30px;
+      font-size: 12px;
+      color:#c00000;
+      align-self:flex-start;
+      padding:9px 0;
+    }
+    margin-top: 10px;
+    margin-bottom: 20px;
+    padding-top:25px;
     text-align: center;
+    display:flex;
+    flex-direction:column;
     input {
-      width: 100%;
+      width: 270px;
       border: none;
       background-color: #FFF;
       height: 40px;
       margin-bottom: 20px;
       border-radius: 5px;
       box-shadow: 0 0 2px 2px rgb(232, 232, 232) inset;
+      &#TResetPasswordInformationAuthenticationCode{
+        margin-bottom: 0;
+      }
     }
-  }
-  .edit_form_area {
-    margin: 10px auto;
-    padding: 20px 0;
-    text-align: center;
-    input {
-      width: 100%;
-      border: none;
-      background-color: #FFF;
-      height: 40px;
-      margin-bottom: 15px;
-      border-radius: 5px;
-      box-shadow: 0 0 2px 2px rgb(232, 232, 232) inset;
-    }
-    label.control-label {
-      float:left;
-    }
-    .error-message {
-      padding: 0;
-      margin: -3px 0 15px 0;
-      color: #F57E7E;
+    .error-message{
+      margin: 0;
+      display: flex;
+      padding: 9px 0;
+      line-height: 1;
+      font-size: 12px;
+      color:#c00000;
+      justify-content: center;
     }
   }
   #content-area-title {
@@ -1241,42 +1260,174 @@ ul#color-bar-right {
     color: #FFFFFF;
     text-decoration: none;
     font-weight: bold;
-    letter-spacing: 2px;
     font-family: monospace;
-    font-size: 18px;
-    width: 100%;
-    display: block;
-    padding: 5px 5px;
-    background-color: #CACACA;
+    font-size: 16px;
+    width: 270px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding: 8px 5px;
+    background-color: #b2d250;
     box-shadow: 0 0 1px $shadow-color;
+    border-radius: 0px;
+    height: auto;
+    line-height: 1.3em;
+    outline: 0;
     &:hover {
-      background-color: #9A9292;
+      opacity: 0.7;
+    }
+  }
+  #resetPasswordBtn{
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #A0BDD2;
+  }
+  .m_bottom{
+    margin-bottom: 16px;
+  }
+  .description_area{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    p{
+      line-height: 1.6;
+      margin:0;
+      padding:18px 90px;
+      font-size: 13px;
+      text-align: center;
+      .red{
+        color: #c00000;
+      }
+    }
+  }
+}
+
+#content-area-wide {
+  border: none;
+  border-radius: 5px;
+  background: #FFFFFF;
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
+  box-shadow: 0 0 20px 3px $shadow-color;
+  padding: 15px 15px 0px 15px;
+  .form_area {
+    p{
+      margin-top: 0px;
+      margin-bottom: 20px;
+      font-size: 13px;
+    }
+    form{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+    }
+    //パスワード再設定用メール入力フォーム
+    #TResetPasswordInformationResetPasswordForm{
+      padding:0 20px 16px 20px;
+      .error-message{
+        margin: 0;
+        display: flex;
+        padding: 9px 0;
+        line-height: 1;
+        font-size: 12px;
+        color:#c00000;
+        align-self:flex-start;
+      }
+      input{
+        width: 520px;
+        margin-bottom:30px;
+        border: none;
+        background-color: #FFF;
+        height: 40px;
+        border-radius: 5px;
+        box-shadow: 0 0 2px 2px rgb(232, 232, 232) inset;
+        &#MUserFormButton{
+          color: #FFFFFF;
+          text-decoration: none;
+          font-weight: bold;
+          font-family: monospace;
+          font-size: 16px;
+          width: 520px;
+          display: flex;
+          justify-content:center;
+          align-items:center;
+          padding: 8px 5px;
+          background-color: #b2d250;
+          box-shadow: 0 0 1px $shadow-color;
+          border-radius: 0px;
+          height: auto;
+          line-height: 1.3em;
+          outline: 0;
+          &:hover {
+            opacity: 0.7;
+          }
+          margin-bottom: 0;
+        }
+      }
+    }
+    margin-top: 10px;
+    margin-bottom: 14px;
+    padding-top: 20px;
+    text-align: center;
+    display:flex;
+    flex-direction:column;
+  }
+  #content-area-title {
+    text-align:center;
+  }
+  .description_area{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    p{
+      line-height: 1.6;
+      margin:0;
+      padding:10px 26.5px;
+      font-size: 13px;
+      text-align: center;
+      .red{
+        color: #c00000;
+      }
+      &.m_bottom{
+        margin-bottom:36px;
+      }
+    }
+    #code-title{
+      font-size:16px;
+      text-align:center;
+      margin-top: 15px;
+      margin-bottom: 3px;
+    }
+    #authentication-code{
+      font-size: 40px;
+      border: 3px solid rgba(0,0,0,0.4);
+      margin-top: 2px;
+      margin-bottom:15px;
+      width: 270px;
+      padding-left: 13px;
+      height: 81px;
+      display:flex;
+      align-items:center;
+      justify-content: center;
+      letter-spacing: 12px;
     }
   }
 }
 
 #content-area-edit {
-  margin: auto;
-  height: 380px;
   border: none;
   border-radius: 5px;
-  background: linear-gradient(to top, #F8FCFD, #EEF2F3);
+  background: #FFFFFF;
   -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#F8FCFD', endColorstr='#EEF2F3', GradientType=0)";
-  box-shadow: 0 0 5px $shadow-color;
-  padding: 15px;
-  .form_area {
-    margin: 10px auto;
-    padding: 20px 0;
-    text-align: center;
-    input {
-      width: 100%;
-      border: none;
-      background-color: #FFF;
-      height: 40px;
-      margin-bottom: 20px;
-      border-radius: 5px;
-      box-shadow: 0 0 2px 2px rgb(232, 232, 232) inset;
-    }
+  box-shadow: 0 0 20px 3px $shadow-color;
+  padding: 20px;
+  #logo_center{
+    display: block;
+    width: 232px;
+    height: 59px;
+    margin: 30px 0 0 43px;
   }
   .edit_form_area {
     margin: 5px auto;
@@ -1307,16 +1458,15 @@ ul#color-bar-right {
     color: #FFFFFF;
     text-decoration: none;
     font-weight: bold;
-    letter-spacing: 2px;
     font-family: monospace;
-    font-size: 18px;
+    font-size: 16px;
     width: 100%;
     display: block;
-    padding: 5px 5px;
-    background-color: #CACACA;
+    padding: 8px 5px;
+    background-color: #b2d250;
     box-shadow: 0 0 1px $shadow-color;
     &:hover {
-      background-color: #9A9292;
+      opacity: 0.7;
     }
   }
 }
@@ -1952,6 +2102,14 @@ ul.naviBtn {
 
                     &.recv_file_left {
                       line-height: 0;
+                    }
+
+                    span.cName {
+                      display: block;
+                      color: $main-color;
+                      font-weight: bold;
+                      font-size: 13px;
+                      margin: 0 0 5px 0;
                     }
 
                     div.receiveFileContent {

@@ -575,6 +575,50 @@ function getCompanyInfoFromApi(ip, callback) {
   req.end();
 }
 
+function parseSignature(src, ip, callback) {
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+
+  //オプションを定義
+  var options = {
+    host: process.env.PARSE_SIGNATURE_API_HOST,
+    port: process.env.PARSE_SIGNATURE_API_PORT,
+    path: process.env.PARSE_SIGNATURE_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true,
+    agent: false
+  };
+
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
+  }
+
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', callback);
+      return;
+    } else {
+      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+      return;
+    }
+  });
+
+  req.on('error', function(error) {
+    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+    return;
+  });
+
+  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "targetText":src, 'ip':ip}));
+  req.end();
+}
+
 function sendMail(autoMessageId, lastChatLogId, callback) {
   //ヘッダーを定義
   var headers = {
@@ -659,7 +703,7 @@ function sendSenarioMail(obj, callback) {
     return;
   });
 
-  var historyId = getSessionId(obj.siteKey, obj.tabId, "historyId");
+  var historyId = isset(getSessionId(obj.siteKey, obj.tabId, "historyId")) ? getSessionId(obj.siteKey, obj.tabId, "historyId") : obj.historyId;
   req.write(JSON.stringify({
     "accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK",
     "userHistoryId": historyId,
@@ -1085,7 +1129,7 @@ io.sockets.on('connection', function (socket) {
 
 
           // オートメッセージとシナリオの場合は既読
-          if (Number(insertData.message_type === 3) || Number(insertData.message_type === 22) || Number(insertData.message_type === 23)) {
+          if (Number(insertData.message_type === 3) || Number(insertData.message_type === 22) || Number(insertData.message_type === 40) || Number(insertData.message_type === 23)) {
             insertData.message_read_flg = 1;
             insertData.message_request_flg = chatApi.cnst.requestFlg.noFlg;
             insertData.message_distinction = d.messageDistinction;
@@ -1913,10 +1957,10 @@ io.sockets.on('connection', function (socket) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
       }
-      if ( !data.inactiveReconnect && ((res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
+      if (data.forceFirstConnect || (data.firstConnection || (!data.inactiveReconnect && ((res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
         || !(res.sincloSessionId in sincloCore[res.siteKey])
-        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined)) {
+        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined)))) {
         send.sincloSessionId = uuid.v4();
         send.sincloSessionIdIsNew = true;
         data.firstConnection = true;
@@ -2256,6 +2300,29 @@ io.sockets.on('connection', function (socket) {
   socket.on("connectSuccessForClient", function (data) {
     var obj = JSON.parse(data);
     // sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
+  });
+
+  socket.on("link", function (data) {
+    var d = new Date();
+    pool.query('INSERT INTO t_history_link_count_logs (m_companies_id,t_histories_id,t_history_stay_logs_id,link_url,created) VALUES(?,?,?,?,?)',[companyList[data.siteKey],data.historyId,data.stayLogsId,data.link,d.getFullYear() + "/" + ( "0" + (d.getMonth() + 1) ).slice(-2) + "/" + ("0" + d.getDate()).slice(-2) + " " + ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2) + ":" + ("0" + d.getSeconds()).slice(-2)],function(error,res) {
+      if(isset(error)) {
+        console.log("RECORD INSERT ERROR: t_history_widget_close_counts:" + error);
+      }
+    });
+    var ret = {
+        siteKey: data.siteKey,
+        tabId: data.tabId,
+        userId: data.userId,
+        mUserId: null,
+        chatMessage: data.link,
+        messageType: 8,
+        created: new Date(),
+        messageDistinction: 1,
+        messageRequestFlg:data.messageRequestFlg,
+        sendMailFlg: 0,
+        autoMessageId: null
+    };
+    chatApi.set(ret);
   });
 
   socket.on("connectSuccess", function (data, ack) {
@@ -3479,7 +3546,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
   socket.on("addLastMessageToCV", function(d){
     var obj = JSON.parse(d);
-    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
+    pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22) OR (30 <= message_type and message_type <= 32) OR (message_type = 40)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
       function(err, row){
         if ( err !== null && err !== '' ) {
           console.log("UPDATE lastMessage to cv is failed. historyId : " + obj.historyId);
@@ -3661,7 +3728,48 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       var name = param.replace(/^{{(.+)}}$/, '$1');
       return variables[name] || name;
     });
-  }
+  };
+
+  socket.on('beginBulkHearing', function(data){
+    var obj = JSON.parse(data),
+        historyId = isset(getSessionId(obj.siteKey, obj.tabId, "historyId")) ? getSessionId(obj.siteKey, obj.tabId, "historyId") : obj.historyId;
+    getConversationCountUser(obj.userId,function(results) {
+      var messageDistinction;
+      if(results !== null) {
+        //カウント数が取れなかったとき
+        if (Object.keys(results) && Object.keys(results).length === 0) {
+          messageDistinction = 1;
+        }
+        //カウント数が取れたとき
+        else {
+          messageDistinction = results[0].conversation_count;
+        }
+
+        console.log(historyId);
+        console.log(messageDistinction);
+        pool.query('UPDATE t_history_chat_logs set achievement_flg = -1 where t_histories_id = ? and message_distinction = ? and message_type = 21;',
+          [historyId, messageDistinction],
+          function(err, row) {
+          }
+        );
+      }
+    });
+  });
+
+  socket.on('sendParseSignature', function(data, ack){
+    var obj = JSON.parse(data);
+    parseSignature(obj.targetText, obj.ip, function(result){
+      var resultObj = JSON.parse(result);
+      var storeData = {
+        message: resultObj.data,
+        target: obj.targetVariable,
+      };
+      obj.chatMessage = JSON.stringify(storeData);
+      obj.messageType = 40;
+      obj.achievementFlg = obj.requireCv ? -1 : null;
+      chatApi.set(obj);
+    });
+  });
 
   // ============================================
   //  画面キャプチャ共有イベントハンドラ

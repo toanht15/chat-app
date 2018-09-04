@@ -87,6 +87,9 @@ class MWidgetSetting extends AppModel {
       'widget_inside_border_color' => "widgetInsideBorderColor",
       /* カラー設定end */
 
+      'btw_button_margin' => "btwButtonMargin",
+      'line_button_margin' => "lineButtonMargin",
+
       'show_main_image' => "showMainImage",
       'main_image' => "mainImage",
       'radius_ratio' => "radiusRatio",

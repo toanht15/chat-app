@@ -215,6 +215,7 @@ define('C_SCENARIO_ACTION_GET_ATTRIBUTE', 8); // 属性値取得
 define('C_SCENARIO_ACTION_RECEIVE_FILE', 9); // ファイル受信
 define('C_SCENARIO_ACTION_BRANCH_ON_CONDITION', 10); // 条件分岐
 define('C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION', 11); // 訪問ユーザ登録
+define('C_SCENARIO_ACTION_BULK_HEARING', 12); // 一括ヒアリング
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -412,6 +413,7 @@ define('C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER', 4); // 無料トライアル�
 define('C_AFTER_APPLICATION_TO_CUSTOMER', 5); // いきなり契約登録時 お客さん向けメール
 define('C_AFTER_APPLICATION_TO_COMPANY', 6); // いきなり契約登録時 会社向けメール
 define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // いきなり契約登録後初期パスワード変更 お客さん向けメール
+define('C_AFTER_PASSWORD_RESET_TO_CUSTOMER', 8); //パスワード変更 お客さん向けメール
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
@@ -862,6 +864,21 @@ $config['chatbotScenarioActionList'] = [
         [
           'variableName' => '',
           'targetId' => ""
+        ]
+      ]
+    ]
+  ],  // 一括ヒアリング
+  C_SCENARIO_ACTION_BULK_HEARING => [
+    'label' => '一括ヒアリング',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'chatTextArea' => '2',
+      'multipleHearing' => [
+        [
+          'variableName' => '',
+          'inputType' => "1",
+          'label' => "",
+          'required' => true
         ]
       ]
     ]
