@@ -651,6 +651,8 @@ router.get("/", function (req, res, next) {
     }
   } catch (e) {
     var err = new Error(' Service Unavailable');
+    console.log(e.message);
+    console.log(e.stack);
     err.status = 503;
     next(err);
     return false;
