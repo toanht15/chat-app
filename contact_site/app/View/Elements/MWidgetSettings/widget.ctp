@@ -1,4 +1,4 @@
-<div id="sincloBox" <?= !empty($isSpPreview) ? 'class="sp-preview" ng-class=\'{fullSize:sp_maximize_size_type==="2", simpleHeader:sp_header_light_flg==="1"}\' ng-if="showWidgetType === 3"' : "ng-if=\"showWidgetType !== 2 && showWidgetType !== 3\"" ?>  ng-hide="showWidgetType === 4" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+<div id="sincloBox" <?= !empty($isSpPreview) ? 'class="sp-preview" ng-class=\'{noTextarea: chat_init_show_textarea === "2", fullSize:sp_maximize_size_type==="2", simpleHeader:sp_header_light_flg==="1"}\' ng-if="showWidgetType === 3"' : "ng-if=\"showWidgetType !== 2 && showWidgetType !== 3\"" ?>  ng-hide="showWidgetType === 4" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
   <style>
     /* http://meyerweb.com/eric/tools/css/reset/
        v2.0 | 20110126

@@ -1045,7 +1045,6 @@ $headerNo = 1;
                   'options' => array("1" => "表示する", "2" => "表示しない"),
                   'legend' => false,
                   'separator' => '</label><br><label class="pointer">',
-                  'class' => 'showChat',
                   'div' => false,
                   'label' => false,
                   'error' => false

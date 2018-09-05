@@ -63,7 +63,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         }
       }
       $scope.openFlg = true;
-    }
+    };
 
     //バナーから通常の表示に戻るときの処理
     $scope.bannerSwitchWidget = function(){
@@ -1282,7 +1282,9 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         $scope.showTimeBannerSettingDisable();
       }
 
-      $scope.resizeChatArea();
+      if(Number($scope.chat_init_show_textarea) === 2) {
+        $scope.resizeChatArea();
+      }
     });
 
     $scope.resizeWidgetHeightByWindowHeight = function() {
@@ -1597,12 +1599,13 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
   });
 
   $scope.resizeChatArea = function() {
+    var offset = (Number($scope.showWidgetType) !== 2) ? 74 : 64;
     switch(Number($scope.chat_init_show_textarea)) {
       case 1:
-        $('#chatTalk').height($('#chatTalk').height() - 75);
+        $('#chatTalk').height($('#chatTalk').height() - offset);
         break;
       case 2:
-        $('#chatTalk').height($('#chatTalk').height() + 75);
+        $('#chatTalk').height($('#chatTalk').height() + offset);
         break;
     }
   };
