@@ -113,6 +113,7 @@ class MWidgetSetting extends AppModel {
       'show_description' => "showDescription",
       'display_time_flg' => "displayTimeFlg",
       'time_text' => "timeText",
+      'chat_init_show_textarea' => 'chatInitShowTextarea',
       'chat_radio_behavior' => "chatRadioBehavior",
       'chat_trigger' => "chatTrigger",
       'chat_message_copy' => 'chatMessageCopy',

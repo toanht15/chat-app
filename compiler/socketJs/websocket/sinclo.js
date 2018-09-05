@@ -380,6 +380,7 @@
     },
     connect: function () {
       // 新規アクセスの場合
+      var oldIpAddress = userInfo.getIp();
       if (!check.isset(userInfo.getTabId())) {
         userInfo.firstConnection = true;
         window.opener = null;
@@ -477,6 +478,11 @@
         // 再接続扱いとする
         emitData.inactiveReconnect = true;
         storage.s.set('inactiveTimeout', false);
+      }
+
+      if(!check.isset(oldIpAddress)) {
+        console.log("FORCE FIRST CONNECT");
+        emitData.forceFirstConnect = true;
       }
 
       emit('connected', {
@@ -1830,7 +1836,7 @@
       sinclo.displayTextareaDelayTimer = setTimeout(function(){
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaNow");
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
-      $('#flexBoxWrap').css('display', '');
+      $('#flexBoxWrap').css('display', 'block');
       if(!check.smartphone()){
         common.widgetHandler._handleResizeEvent();
         if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
@@ -1847,7 +1853,7 @@
       },delayTime);
       if(sinclo.firstCallDisplayTextarea) {
         if ( check.smartphone() ){
-          $('#flexBoxWrap').css('display', '');
+          $('#flexBoxWrap').css('display', 'block');
           sinclo.adjustSpWidgetSize();
           $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
         }
@@ -1861,7 +1867,7 @@
       sinclo.hideTextareaDelayTimer = setTimeout(function(){
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>hideTextareaNow");
         $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
-        if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === '') {
+        if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && $('#flexBoxWrap').is(':visible')) {
           var isMiniDisplayShow = $('#miniFlexBoxHeight').is(':visible');
           $('#flexBoxWrap').css('display', 'none');
           if(sinclo.scenarioApi.isProcessing() && isMiniDisplayShow) {
@@ -2653,18 +2659,20 @@
                     //URLのみのリンクの場合
                     else {
                       var url = link[0];
-                      var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
-                      var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
-                      var linkTab = a.match(linkTabReg);
-                      processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
-                      a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
                       //imgタグ有効化
                       var img = unEscapeStr.match(imgTagReg);
-                      if(img !== null) {
-                        imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-                        a = a.replace(img[0], imgTag);
+                      if(img == null) {
+                        var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
+                        var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+                        var linkTab = a.match(linkTabReg);
+                        processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                        a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
+                        str = str.replace(url, a);
                       }
-                      str = str.replace(url, a);
+                      else {
+                        var a = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+                        str = a;
+                      }
                     }
                 }
                 // 電話番号（スマホのみリンク化）
@@ -3262,6 +3270,13 @@
                 isAutoSpeech: result,
                 notifyToCompany: !result,
                 isScenarioMessage: isScenarioMessage
+              }, function(){
+                if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
+                  && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+                  setTimeout(function(){
+                    sinclo.scenarioApi.triggerInputWaitComplete(value);
+                  },100);
+                }
               });
             }, 100);
           });
@@ -3795,7 +3810,7 @@
         this.flg = true;
         var messages = window.sincloInfo.messages;
         console.log("MESSAGES : " + JSON.stringify(messages));
-
+        var messageIds = {};
         var andFunc = function (conditionKey, condition, key, ret) {
           if (conditionKey === 7) {
             // 自動返信のトリガーの場合は処理中フラグを立てる
@@ -3805,8 +3820,87 @@
           var message = messages[key];
           if (typeof(ret) === 'number') {
             setTimeout(function () {
-              sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
-              sinclo.trigger.processing = false;
+              //シナリオの場合
+              if(message.action_type == 2) {
+                var check = true;
+                for (var i = 0;i < messages.length;i++) {
+                  if(messages[i]['action_type'] == 2) {
+                    //滞在時間の場合
+                    if(messages[i]['activity']['conditions'][1] !== undefined && message.activity.conditions[1] !== undefined) {
+                      check = true;
+                    }
+                    //訪問回数の場合
+                    else if(messages[i]['activity']['conditions'][2] !== undefined && message.activity.conditions[2] !== undefined) {
+                      check = true;
+                    }
+                    //ページの場合
+                    else if(messages[i]['activity']['conditions'][3] !== undefined && message.activity.conditions[3] !== undefined) {
+                      check = true;
+                    }
+                    //曜日・時間の場合
+                    else if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                      check = true;
+                    }
+                    //参照元URLの場合
+                    else if(messages[i]['activity']['conditions'][5] !== undefined && message.activity.conditions[5] !== undefined) {
+                      check = true;
+                    }
+                    //検索キーワードの場合
+                    else if(messages[i]['activity']['conditions'][6] !== undefined && message.activity.conditions[6] !== undefined) {
+                      check = true;
+                    }
+                    //発言内容の場合
+                    else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
+                      check = true;
+                    }
+                    //最初に訪れたページの場合
+                    else if(messages[i]['activity']['conditions'][8] !== undefined && message.activity.conditions[8] !== undefined) {
+                      check = true;
+                    }
+                    //前のページの場合
+                    else if(messages[i]['activity']['conditions'][9] !== undefined && message.activity.conditions[9] !== undefined) {
+                      check = true;
+                    }
+                    //営業時間の場合
+                    else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
+                      check = true;
+                    }
+                    else if(messages[i]['activity']['conditions'][1] !== undefined || messages[i]['activity']['conditions'][2] !== undefined ||
+                      messages[i]['activity']['conditions'][3] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
+                      messages[i]['activity']['conditions'][5] !== undefined || messages[i]['activity']['conditions'][6] !== undefined ||
+                      messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][8] !== undefined ||
+                      messages[i]['activity']['conditions'][9] !== undefined || messages[i]['activity']['conditions'][10] !== undefined) {
+                      check = false;
+                    }
+                    if(check == true && message.activity.conditions[7] == undefined) {
+                      if(messageIds[ret]) {
+                        messageIds[ret][messageIds[ret].length] = messages[i].id;
+                      }
+                      else {
+                        messageIds[ret] = [messages[i].id];
+                      }
+                    }
+                    else if(check == true && message.activity.conditions[7] !== undefined) {
+                      if(sinclo.trigger.processing == true) {
+                        messageIds[ret] = [message.id];
+                      }
+                    }
+                  }
+                }
+                console.log('messageIds');
+                console.log(messageIds);
+                console.log('message.id');
+                console.log(message.id);
+                if(messageIds[ret][0] == message.id){
+                  sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                  sinclo.trigger.processing = false;
+                  console.log('scenarioStart');
+                }
+              }
+              else {
+                sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                sinclo.trigger.processing = false;
+              }
               // if(conditionKe大変申し訳ございません。 y === 7) {
               //   // 自動返信実行後はチャット中のフラグを立てる
               //   storage.s.set('chatAct','true');
@@ -3863,14 +3957,89 @@
                           sinclo.chatApi.saveAutoSpeechTriggered(autoSpeechCondition.speechTriggerCond, message.id);
                         }
                       }
-                      sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
-                      // if(conditionKey === 7) {
-                      //   // 自動返信実行後はチャット中のフラグを立てる
-                      //   storage.s.set('chatAct','true');
-                      // }
-                      sinclo.trigger.processing = false;
+                      //シナリオの場合
+                      if(message.action_type == 2) {
+                        var check = true;
+                        for (var i = 0;i < messages.length;i++) {
+                          if(messages[i]['action_type'] == 2) {
+                            //滞在時間の場合
+                            if(messages[i]['activity']['conditions'][1] !== undefined && message.activity.conditions[1] !== undefined) {
+                              check = true;
+                            }
+                            //訪問回数の場合
+                            else if(messages[i]['activity']['conditions'][2] !== undefined && message.activity.conditions[2] !== undefined) {
+                              check = true;
+                            }
+                            //ページの場合
+                            else if(messages[i]['activity']['conditions'][3] !== undefined && message.activity.conditions[3] !== undefined) {
+                              check = true;
+                            }
+                            //曜日・時間の場合
+                            else if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
+                              check = true;
+                            }
+                            //参照元URLの場合
+                            else if(messages[i]['activity']['conditions'][5] !== undefined && message.activity.conditions[5] !== undefined) {
+                              check = true;
+                            }
+                            //検索キーワードの場合
+                            else if(messages[i]['activity']['conditions'][6] !== undefined && message.activity.conditions[6] !== undefined) {
+                              check = true;
+                            }
+                            //発言内容の場合
+                            else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
+                              check = true;
+                            }
+                            //最初に訪れたページの場合
+                            else if(messages[i]['activity']['conditions'][8] !== undefined && message.activity.conditions[8] !== undefined) {
+                              check = true;
+                            }
+                            //前のページの場合
+                            else if(messages[i]['activity']['conditions'][9] !== undefined && message.activity.conditions[9] !== undefined) {
+                              check = true;
+                            }
+                            //営業時間の場合
+                            else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
+                              check = true;
+                            }
+                            else if(messages[i]['activity']['conditions'][1] !== undefined || messages[i]['activity']['conditions'][2] !== undefined ||
+                              messages[i]['activity']['conditions'][3] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
+                              messages[i]['activity']['conditions'][5] !== undefined || messages[i]['activity']['conditions'][6] !== undefined ||
+                              messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][8] !== undefined ||
+                              messages[i]['activity']['conditions'][9] !== undefined || messages[i]['activity']['conditions'][10] !== undefined) {
+                              check = false;
+                            }
+                            if(check == true && message.activity.conditions[7] == undefined) {
+                              if(messageIds[ret]) {
+                                messageIds[ret][messageIds[ret].length] = messages[i].id;
+                              }
+                              else {
+                                messageIds[ret] = [messages[i].id];
+                              }
+                            }
+                            else if(check == true && message.activity.conditions[7] !== undefined) {
+                              if(sinclo.trigger.processing == true) {
+                                messageIds[ret] = [message.id];
+                              }
+                            }
+                          }
+                        }
+                        console.log('messageIds');
+                        console.log(messageIds);
+                        console.log('message.id');
+                        console.log(message.id);
+                        if(messageIds[ret][0] == message.id){
+                          sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                          sinclo.trigger.processing = false;
+                          console.log('scenarioStart');
+                        }
+                      }
+                      else {
+                        sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                        sinclo.trigger.processing = false;
+                      }
                     }, ret);
-                }
+                  }
             };
             // 設定ごと
             for( var i = 0; messages.length > i; i++ ){
@@ -4626,6 +4795,7 @@
             (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
             && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() && this.speechContentRegEx.length > 0) {
             for (var index in this.speechContentRegEx) {
+              console.log(this.speechContentRegEx[index].id);
               if (sinclo.chatApi.triggeredAutoSpeechExists(this.speechContentRegEx[index].id)) {
                 console.log("triggeredAutoSpeechExists. Ignored. id : " + this.speechContentRegEx[index].id);
                 continue;
@@ -4639,6 +4809,7 @@
               if (sinclo.trigger.common.pregContainsAndExclsion(this.speechContentRegEx[index].typeObj, this.speechContentRegEx[index].keyword_contains, this.speechContentRegEx[index].keyword_exclusions, msg)) {
                 this.speechContentRegEx[index].callback(false, this.speechContentRegEx[index].delay);
                 matched = true;
+                break;
               }
             }
             callback(matched);
@@ -5353,7 +5524,7 @@
             type: type,
             messageType: self.get(self._lKey.scenarioMessageType),
             sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
-            requireCv: type === self._actionType.hearing && self._hearing._cvIsEnable(),
+            requireCv: self._bulkHearing.isInMode() || (type === self._actionType.hearing && self._hearing._cvIsEnable()),
             categoryNum: categoryNum,
             showTextarea: showTextArea,
             message: message
@@ -5988,6 +6159,7 @@
           var self = sinclo.scenarioApi._mail;
           var targetVariables = self._parent._getAllTargetVariables();
           var sendData = {
+            historyId: sinclo.chatApi.historyId,
             mailType: self._parent.get(self._parent._lKey.currentScenario).mailType,
             transmissionId: self._parent.get(self._parent._lKey.currentScenario).mMailTransmissionId,
             templateId: self._parent.get(self._parent._lKey.currentScenario).mMailTemplateId,
@@ -6429,6 +6601,9 @@
               notifyToCompany: false,
               isScenarioMessage: true
             }, function () {
+              setTimeout(function () {
+                emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+              }, 1000);
               if (self._parent._goToNextScenario()) {
                 self._parent._process();
               }
@@ -6448,10 +6623,13 @@
         _process: function () {
           var self = sinclo.scenarioApi._bulkHearing;
           self._parent._doing(0, function () { // 即時実行
-            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._parent._handleChatTextArea("1"); // 必ず表示する
             sinclo.chatApi.hideMiniMessageArea(); // 改行可のメッセージエリアにする
             common.chatBotTypingTimerClear();
             common.chatBotTypingRemove();
+            setTimeout(function(){
+              self._notifyBeginBulkHearing();
+            }, 200);
             self._parent._waitingInput(function (inputVal) {
               self._parent._unWaitingInput();
               self._analyseInput(inputVal, function (result) {
@@ -6467,11 +6645,18 @@
             stayLogsId: sinclo.chatApi.stayLogsId,
             targetText: inputVal,
             ip: userInfo.getIp(),
+            requireCv: true,
             isAutoSpeech: false,
             notifyToCompany: false,
             isScenarioMessage: true,
             targetVariable: self._parent.get(self._parent._lKey.currentScenario).multipleHearings
           }, callback);
+        },
+        _notifyBeginBulkHearing: function() {
+          var self = sinclo.scenarioApi._bulkHearing;
+          emit('beginBulkHearing', {
+            historyId: sinclo.chatApi.historyId
+          });
         }
       }
     },

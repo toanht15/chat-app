@@ -1,0 +1,34 @@
+delimiter $$
+
+CREATE TRIGGER insert_link_counts AFTER INSERT ON t_history_link_count_logs FOR EACH ROW BEGIN
+IF (SELECT count(*) from t_history_link_counts
+WHERE
+  m_companies_id = NEW.m_companies_id
+AND
+  year = DATE_FORMAT(NEW.created, '%Y')
+AND
+  month = DATE_FORMAT(NEW.created, '%m')
+AND
+  day = DATE_FORMAT(NEW.created, '%d')
+AND
+  hour = DATE_FORMAT(NEW.created, '%H') ) = 0
+THEN
+INSERT INTO t_history_link_counts(m_companies_id,year,month,day,hour,link_count)
+VALUES(NEW.m_companies_id,DATE_FORMAT(NEW.created, '%Y'),DATE_FORMAT(NEW.created, '%m'),DATE_FORMAT(NEW.created, '%d'),DATE_FORMAT(NEW.created, '%H'),1);
+ELSE
+UPDATE  t_history_link_counts
+SET
+  link_count = link_count+1
+WHERE
+  m_companies_id = NEW.m_companies_id
+AND
+  year = DATE_FORMAT(NEW.created, '%Y')
+AND
+  month = DATE_FORMAT(NEW.created, '%m')
+AND
+  day = DATE_FORMAT(NEW.created, '%d')
+AND
+  hour =DATE_FORMAT(NEW.created, '%H');
+END IF; end; $$
+
+delimiter ;
