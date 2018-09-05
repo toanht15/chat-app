@@ -1836,7 +1836,7 @@
       sinclo.displayTextareaDelayTimer = setTimeout(function(){
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaNow");
       $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.displayTextarea);
-      $('#flexBoxWrap').css('display', '');
+      $('#flexBoxWrap').css('display', 'block');
       if(!check.smartphone()){
         common.widgetHandler._handleResizeEvent();
         if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
@@ -1853,7 +1853,7 @@
       },delayTime);
       if(sinclo.firstCallDisplayTextarea) {
         if ( check.smartphone() ){
-          $('#flexBoxWrap').css('display', '');
+          $('#flexBoxWrap').css('display', 'block');
           sinclo.adjustSpWidgetSize();
           $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
         }
@@ -1867,7 +1867,7 @@
       sinclo.hideTextareaDelayTimer = setTimeout(function(){
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>hideTextareaNow");
         $(window).off('resize', sinclo.displayTextarea).off('resize', sinclo.hideTextarea).on('resize', sinclo.hideTextarea);
-        if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && document.getElementById("flexBoxWrap").style.display === '') {
+        if(!check.smartphone() && $('#sincloWidgetBox').is(':visible') && $('#flexBoxWrap').is(':visible')) {
           var isMiniDisplayShow = $('#miniFlexBoxHeight').is(':visible');
           $('#flexBoxWrap').css('display', 'none');
           if(sinclo.scenarioApi.isProcessing() && isMiniDisplayShow) {
