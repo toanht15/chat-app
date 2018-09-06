@@ -3823,12 +3823,14 @@
             if(!sinclo.trigger.triggerIds[ret]) {
               sinclo.trigger.triggerIds[ret] = [];
             }
-            sinclo.trigger.triggerIds[ret].push(message.id);
+            if (conditionKey !== 7 ) {
+              sinclo.trigger.triggerIds[ret].push(message.id);
+            }
             setTimeout(function () {
               console.log(sinclo.trigger.triggerIds);
               //シナリオの場合
               if(message.action_type == 2) {
-                if(sinclo.trigger.processing || sinclo.trigger.triggerIds[ret][0] == message.id){
+                if(conditionKey === 7 || sinclo.trigger.triggerIds[ret][0] == message.id){
                   sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
                   sinclo.trigger.processing = false;
                   console.log('scenarioStart');
@@ -3862,7 +3864,9 @@
             if(!sinclo.trigger.triggerIds[ret]) {
               sinclo.trigger.triggerIds[ret] = [];
             }
-            sinclo.trigger.triggerIds[ret].push(message.id);
+            if (conditionKey !== 7) {
+              sinclo.trigger.triggerIds[ret].push(message.id);
+            }
             setTimeout(function () {
               console.log(sinclo.trigger.triggerIds);
               console.log("orFunc::setTimeout message : " + JSON.stringify(message) + "conditionKey : " + conditionKey + " condition : " + JSON.stringify(condition));
@@ -3901,7 +3905,7 @@
               }
               //シナリオの場合
               if (message.action_type == 2) {
-                if (sinclo.trigger.processing || sinclo.trigger.triggerIds[ret][0] == message.id) {
+                if (conditionKey === 7 || sinclo.trigger.triggerIds[ret][0] == message.id) {
                   sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
                   sinclo.trigger.processing = false;
                   console.log('scenarioStart');
