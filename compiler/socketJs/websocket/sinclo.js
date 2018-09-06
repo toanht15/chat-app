@@ -3803,6 +3803,7 @@
       nowSaving: false,
       timerTriggeredList: {},
       orTriggeredId: [],
+      triggerIds: {},
       processing: false,
       init: function () {
         console.log("sinclo.trigger.init");
@@ -3810,7 +3811,7 @@
         this.flg = true;
         var messages = window.sincloInfo.messages;
         console.log("MESSAGES : " + JSON.stringify(messages));
-        var messageIds = {};
+        sinclo.trigger.triggerIds = {};
         var andFunc = function (conditionKey, condition, key, ret) {
           if (conditionKey === 7) {
             // 自動返信のトリガーの場合は処理中フラグを立てる
@@ -3819,79 +3820,15 @@
           console.log("AND FUNC key: " + key + " ret: " + ret);
           var message = messages[key];
           if (typeof(ret) === 'number') {
+            if(!sinclo.trigger.triggerIds[ret]) {
+              sinclo.trigger.triggerIds[ret] = [];
+            }
+            sinclo.trigger.triggerIds[ret].push(message.id);
             setTimeout(function () {
+              console.log(sinclo.trigger.triggerIds);
               //シナリオの場合
               if(message.action_type == 2) {
-                var check = true;
-                for (var i = 0;i < messages.length;i++) {
-                  if(messages[i]['action_type'] == 2) {
-                    //滞在時間の場合
-                    if(messages[i]['activity']['conditions'][1] !== undefined && message.activity.conditions[1] !== undefined) {
-                      check = true;
-                    }
-                    //訪問回数の場合
-                    else if(messages[i]['activity']['conditions'][2] !== undefined && message.activity.conditions[2] !== undefined) {
-                      check = true;
-                    }
-                    //ページの場合
-                    else if(messages[i]['activity']['conditions'][3] !== undefined && message.activity.conditions[3] !== undefined) {
-                      check = true;
-                    }
-                    //曜日・時間の場合
-                    else if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
-                      check = true;
-                    }
-                    //参照元URLの場合
-                    else if(messages[i]['activity']['conditions'][5] !== undefined && message.activity.conditions[5] !== undefined) {
-                      check = true;
-                    }
-                    //検索キーワードの場合
-                    else if(messages[i]['activity']['conditions'][6] !== undefined && message.activity.conditions[6] !== undefined) {
-                      check = true;
-                    }
-                    //発言内容の場合
-                    else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
-                      check = true;
-                    }
-                    //最初に訪れたページの場合
-                    else if(messages[i]['activity']['conditions'][8] !== undefined && message.activity.conditions[8] !== undefined) {
-                      check = true;
-                    }
-                    //前のページの場合
-                    else if(messages[i]['activity']['conditions'][9] !== undefined && message.activity.conditions[9] !== undefined) {
-                      check = true;
-                    }
-                    //営業時間の場合
-                    else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
-                      check = true;
-                    }
-                    else if(messages[i]['activity']['conditions'][1] !== undefined || messages[i]['activity']['conditions'][2] !== undefined ||
-                      messages[i]['activity']['conditions'][3] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
-                      messages[i]['activity']['conditions'][5] !== undefined || messages[i]['activity']['conditions'][6] !== undefined ||
-                      messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][8] !== undefined ||
-                      messages[i]['activity']['conditions'][9] !== undefined || messages[i]['activity']['conditions'][10] !== undefined) {
-                      check = false;
-                    }
-                    if(check == true && message.activity.conditions[7] == undefined) {
-                      if(messageIds[ret]) {
-                        messageIds[ret][messageIds[ret].length] = messages[i].id;
-                      }
-                      else {
-                        messageIds[ret] = [messages[i].id];
-                      }
-                    }
-                    else if(check == true && message.activity.conditions[7] !== undefined) {
-                      if(sinclo.trigger.processing == true) {
-                        messageIds[ret] = [message.id];
-                      }
-                    }
-                  }
-                }
-                console.log('messageIds');
-                console.log(messageIds);
-                console.log('message.id');
-                console.log(message.id);
-                if(messageIds[ret][0] == message.id){
+                if(sinclo.trigger.triggerIds[ret][0] == message.id){
                   sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
                   sinclo.trigger.processing = false;
                   console.log('scenarioStart');
@@ -3922,7 +3859,12 @@
             sinclo.trigger.processing = true;
           }
           if (typeof(ret) === 'number') {
+            if(!sinclo.trigger.triggerIds[ret]) {
+              sinclo.trigger.triggerIds[ret] = [];
+            }
+            sinclo.trigger.triggerIds[ret].push(message.id);
             setTimeout(function () {
+              console.log(sinclo.trigger.triggerIds);
               console.log("orFunc::setTimeout message : " + JSON.stringify(message) + "conditionKey : " + conditionKey + " condition : " + JSON.stringify(condition));
 
               // ・OR条件における発言内容発動条件
@@ -3948,110 +3890,41 @@
                 sinclo.trigger.orTriggeredId.push(message.id);
               }
 
-                      if(!isAutoSpeechTrigger && Object.keys(message.activity.conditions).indexOf("7") >= 0) {
-                        console.log("orFunc saveAutoSpeechTriggered");
-                        //ここに入るオートメッセージは他の条件で発動するため、発言内容条件で動作しないようフラグを立てる
-                        var autoSpeechCondition = message.activity.conditions["7"][0];
-                        console.log("autoSpeechCondition : " + JSON.stringify(autoSpeechCondition));
-                        if(autoSpeechCondition) {
-                          sinclo.chatApi.saveAutoSpeechTriggered(autoSpeechCondition.speechTriggerCond, message.id);
-                        }
-                      }
-                      //シナリオの場合
-                      if(message.action_type == 2) {
-                        var check = true;
-                        for (var i = 0;i < messages.length;i++) {
-                          if(messages[i]['action_type'] == 2) {
-                            //滞在時間の場合
-                            if(messages[i]['activity']['conditions'][1] !== undefined && message.activity.conditions[1] !== undefined) {
-                              check = true;
-                            }
-                            //訪問回数の場合
-                            else if(messages[i]['activity']['conditions'][2] !== undefined && message.activity.conditions[2] !== undefined) {
-                              check = true;
-                            }
-                            //ページの場合
-                            else if(messages[i]['activity']['conditions'][3] !== undefined && message.activity.conditions[3] !== undefined) {
-                              check = true;
-                            }
-                            //曜日・時間の場合
-                            else if(messages[i]['activity']['conditions'][4] !== undefined && message.activity.conditions[4] !== undefined) {
-                              check = true;
-                            }
-                            //参照元URLの場合
-                            else if(messages[i]['activity']['conditions'][5] !== undefined && message.activity.conditions[5] !== undefined) {
-                              check = true;
-                            }
-                            //検索キーワードの場合
-                            else if(messages[i]['activity']['conditions'][6] !== undefined && message.activity.conditions[6] !== undefined) {
-                              check = true;
-                            }
-                            //発言内容の場合
-                            else if(messages[i]['activity']['conditions'][7] !== undefined && message.activity.conditions[7] !== undefined) {
-                              check = true;
-                            }
-                            //最初に訪れたページの場合
-                            else if(messages[i]['activity']['conditions'][8] !== undefined && message.activity.conditions[8] !== undefined) {
-                              check = true;
-                            }
-                            //前のページの場合
-                            else if(messages[i]['activity']['conditions'][9] !== undefined && message.activity.conditions[9] !== undefined) {
-                              check = true;
-                            }
-                            //営業時間の場合
-                            else if(messages[i]['activity']['conditions'][10] !== undefined && message.activity.conditions[10] !== undefined) {
-                              check = true;
-                            }
-                            else if(messages[i]['activity']['conditions'][1] !== undefined || messages[i]['activity']['conditions'][2] !== undefined ||
-                              messages[i]['activity']['conditions'][3] !== undefined || messages[i]['activity']['conditions'][4] !== undefined ||
-                              messages[i]['activity']['conditions'][5] !== undefined || messages[i]['activity']['conditions'][6] !== undefined ||
-                              messages[i]['activity']['conditions'][7] !== undefined || messages[i]['activity']['conditions'][8] !== undefined ||
-                              messages[i]['activity']['conditions'][9] !== undefined || messages[i]['activity']['conditions'][10] !== undefined) {
-                              check = false;
-                            }
-                            if(check == true && message.activity.conditions[7] == undefined) {
-                              if(messageIds[ret]) {
-                                messageIds[ret][messageIds[ret].length] = messages[i].id;
-                              }
-                              else {
-                                messageIds[ret] = [messages[i].id];
-                              }
-                            }
-                            else if(check == true && message.activity.conditions[7] !== undefined) {
-                              if(sinclo.trigger.processing == true) {
-                                messageIds[ret] = [message.id];
-                              }
-                            }
-                          }
-                        }
-                        console.log('messageIds');
-                        console.log(messageIds);
-                        console.log('message.id');
-                        console.log(message.id);
-                        if(messageIds[ret][0] == message.id){
-                          sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
-                          sinclo.trigger.processing = false;
-                          console.log('scenarioStart');
-                        }
-                      }
-                      else {
-                        sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
-                        sinclo.trigger.processing = false;
-                      }
-                    }, ret);
-                  }
-            };
-            // 設定ごと
-            for( var i = 0; messages.length > i; i++ ){
-                // AND
-                if ( Number(messages[i].activity.conditionType) === 1 ) {
-                    this.setAndSetting(i, messages[i].activity, andFunc);
+              if (!isAutoSpeechTrigger && Object.keys(message.activity.conditions).indexOf("7") >= 0) {
+                console.log("orFunc saveAutoSpeechTriggered");
+                //ここに入るオートメッセージは他の条件で発動するため、発言内容条件で動作しないようフラグを立てる
+                var autoSpeechCondition = message.activity.conditions["7"][0];
+                console.log("autoSpeechCondition : " + JSON.stringify(autoSpeechCondition));
+                if (autoSpeechCondition) {
+                  sinclo.chatApi.saveAutoSpeechTriggered(autoSpeechCondition.speechTriggerCond, message.id);
                 }
-                // OR
-                else {
-                    this.setOrSetting(i, messages[i].activity, orFunc);
+              }
+              //シナリオの場合
+              if (message.action_type == 2) {
+                if (sinclo.trigger.triggerIds[ret][0] == message.id) {
+                  sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                  sinclo.trigger.processing = false;
+                  console.log('scenarioStart');
                 }
+              }
+              else {
+                sinclo.trigger.setAction(message.id, message.action_type, message.activity, message.send_mail_flg, message.scenario_id);
+                sinclo.trigger.processing = false;
+              }
+            }, ret);
+          }
+        };
+        // 設定ごと
+        for( var i = 0; messages.length > i; i++ ){
+            // AND
+            if ( Number(messages[i].activity.conditionType) === 1 ) {
+                this.setAndSetting(i, messages[i].activity, andFunc);
             }
+            // OR
+            else {
+                this.setOrSetting(i, messages[i].activity, orFunc);
+            }
+        }
         },
         /**
          * return 即時実行(0)、タイマー実行(ミリ秒)、非実行(null)
