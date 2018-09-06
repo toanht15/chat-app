@@ -2390,6 +2390,13 @@ var socket, // socket.io
         }
         return remainingTime;
       },
+      resetMessageAreaState: function() {
+        if(Number(sincloInfo.widget.chatInitShowTextarea) === 1) {
+          storage.l.set('textareaOpend', 'open');
+        } else {
+          storage.l.set('textareaOpend', 'close');
+        }
+      },
       _calcRemainingShowTimingSiteTimeMsec: function() {
         var siteAccessTimeMsec = (Number(userInfo.pageTime) - Number(userInfo.time)),
             showIntervalMsec = window.sincloInfo.widget.maxShowTimingSite * 1000;
@@ -2561,7 +2568,7 @@ var socket, // socket.io
           // とりあえず表示されている状態
           return 0 + invisibleUIOffset;
         }
-      }
+      },
     },
     load: {
       id: "loadingImg",
