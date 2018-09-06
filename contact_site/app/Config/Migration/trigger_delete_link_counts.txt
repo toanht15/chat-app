@@ -1,0 +1,31 @@
+delimiter $$
+
+CREATE TRIGGER delete_link_counts AFTER DELETE ON t_history_link_count_logs FOR EACH ROW BEGIN
+IF (SELECT count(*) from t_history_link_counts
+WHERE
+  m_companies_id = OLD.m_companies_id
+AND
+  year = DATE_FORMAT(OLD.created, '%Y')
+AND
+  month = DATE_FORMAT(OLD.created, '%m')
+AND
+  day = DATE_FORMAT(OLD.created, '%d')
+AND
+  hour = DATE_FORMAT(OLD.created, '%H') ) != 0
+THEN
+UPDATE  t_history_link_counts
+SET
+  link_count = link_count-1
+WHERE
+  m_companies_id = OLD.m_companies_id
+AND
+  year = DATE_FORMAT(OLD.created, '%Y')
+AND
+  month = DATE_FORMAT(OLD.created, '%m')
+AND
+  day = DATE_FORMAT(OLD.created, '%d')
+AND
+  hour =DATE_FORMAT(OLD.created, '%H');
+END IF; end; $$
+
+delimiter ;
