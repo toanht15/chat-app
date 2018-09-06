@@ -387,6 +387,7 @@
         userInfo.strageReset();
         userInfo.setReferrer();
         userInfo.gFrame = false;
+        common.widgetHandler.resetMessageAreaState();
       }
       userInfo.init();
       var emitData = {
@@ -551,7 +552,7 @@
         if (obj.sincloSessionIdIsNew) console.log("sincloSessionIdIsNew");
         userInfo.oldSincloSessionId = userInfo.sincloSessionId ? userInfo.sincloSessionId : "";
         userInfo.set(cnst.info_type.sincloSessionId, obj.sincloSessionId, "sincloSessionId");
-        storage.l.set('textareaOpend', 'open');
+        common.widgetHandler.resetMessageAreaState();
         storage.l.set('leaveFlg', 'false');
         storage.s.unset('amsg');
         storage.s.unset('chatAct');
