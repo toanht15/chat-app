@@ -1,5 +1,5 @@
 <!-- スマホ版 -->
-<div id="sincloBox" <?= !empty($isSpPreview) ? 'class="sp-preview landscape"' : '' ?> ng-if="showWidgetType === 2">
+<div id="sincloBox" <?= !empty($isSpPreview) ? 'class="sp-preview landscape"' : '' ?> ng-class='{noTextarea: chat_init_show_textarea === "2"}' ng-if="showWidgetType === 2">
   <style>
     #sincloBox * { font-size: 12px; }
     #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }
@@ -113,7 +113,7 @@
         </div>
       </ul>
 
-      <div id="messageBox" class="messageBox details" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false }">
+      <div id="messageBox" class="messageBox details" ng-if="chat_init_show_textarea === '1'" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false, notNone:widget_inside_border_none === ''||widget_inside_border_none === false }">
         <textarea name="sincloChat" id="sincloChatMessage" class="details" ng-class="{ notNone:message_box_border_none === ''||message_box_border_none === false}" placeholder="メッセージを入力してください{{chat_area_placeholder_sp}}"></textarea>
         <a id="sincloChatSendBtn" class="notSelect details" ><span class="details">送信</span></a>
       </div>

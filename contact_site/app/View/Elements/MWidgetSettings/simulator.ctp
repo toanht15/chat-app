@@ -87,6 +87,11 @@
       padding: 5px 5px 49.7px 5px;
     }
 
+    #sincloBox.sp-preview.fullSize.simpleHeader.noTextarea #chatTalk {
+      height: 385px;
+      padding: 5px 5px 49.7px 5px;
+    }
+
     #sincloBox.sp-preview.landscape {
       position: absolute;
       width: auto;
@@ -96,6 +101,9 @@
     }
     #sincloBox.sp-preview.landscape #chatTalk {
       height: 189px;
+    }
+    #sincloBox.sp-preview.landscape.noTextarea #chatTalk {
+      height: 254px;
     }
     #sincloBox.middleSize{
       width: 342.5px;
