@@ -1263,6 +1263,26 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           return;
         }
         console.log("changed");
+        //初期表示タイミングと自動最大化設定の齟齬を無くす
+        var MaxShowTimeSite = $("#MWidgetSettingMaxShowTime"),
+            MaxShowTimePage = $("#MWidgetSettingMaxShowTimePage");
+
+        if($scope.showTiming == "1" && $scope.showTime == "4"){
+          $scope.showTime = "1";
+          MaxShowTimeSite.prop('disabled', false);
+          MaxShowTimePage.prop('disabled', true);
+          $("#showTime1").prop('checked', true);
+        } else if($scope.showTiming == "2" && $scope.showTime == "1"){
+          $scope.showTime = "4";
+          MaxShowTimeSite.prop('disabled', true);
+          MaxShowTimePage.prop('disabled', false);
+          $("#showTime4").prop('checked', true);
+        } else if($scope.showTiming == "3" && ($scope.showTime == "1" || $scope.showTime == "4")){
+          $scope.showTime = "5";
+          MaxShowTimeSite.prop('disabled', true);
+          MaxShowTimePage.prop('disabled', true);
+          $("#showTime5").prop('checked', true);
+        }
         $scope.changeFlg = true;
       });
       $(window).on('resize', function(e){
