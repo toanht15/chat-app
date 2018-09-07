@@ -61,13 +61,19 @@ class NotificationController extends AppController {
       $component->createMessageBody();
 
       $transmission = $this->getTransmissionConfigById($targetAutoMessage['TAutoMessage']['m_mail_transmission_settings_id']);
+      $sender = new MailSenderComponent(null, $targetHistory['THistory']['m_companies_id']);
+      $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
+      $sender->setFromName($transmission['MMailTransmissionSetting']['from_name']);
+      $sender->setTo($transmission['MMailTransmissionSetting']['to_address']);
+      $sender->setSubject($transmission['MMailTransmissionSetting']['subject']);
+      $sender->setBody($component->getBody());
 
       // 送信前にログを生成
       $this->TMailTransmissionLog->create();
       $this->TMailTransmissionLog->set([
           'm_companies_id' => $targetHistory['THistory']['m_companies_id'],
           'mail_type_cd' => AutoMessageMailTemplateComponent::MAIL_TYPE_CD,
-          'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+          'from_address' => $sender->getFrom(),
           'from_name' => $transmission['MMailTransmissionSetting']['from_name'],
           'to_address' => $transmission['MMailTransmissionSetting']['to_address'],
           'subject' => $transmission['MMailTransmissionSetting']['subject'],
@@ -77,12 +83,6 @@ class NotificationController extends AppController {
       $this->TMailTransmissionLog->save();
       $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
 
-      $sender = new MailSenderComponent();
-      $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
-      $sender->setFromName($transmission['MMailTransmissionSetting']['from_name']);
-      $sender->setTo($transmission['MMailTransmissionSetting']['to_address']);
-      $sender->setSubject($transmission['MMailTransmissionSetting']['subject']);
-      $sender->setBody($component->getBody());
       $sender->send();
 
       // 送信ログを作る
@@ -153,13 +153,18 @@ class NotificationController extends AppController {
       $component->createMessageBody($jsonObj[self::PARAM_IS_NEED_TO_ADD_DOWNLOAD_URL]);
 
       $transmission = $this->getTransmissionConfigById($jsonObj[self::PARAM_TRANSMISSION_ID]);
-
+      $sender = new MailSenderComponent(null, $targetHistory['THistory']['m_companies_id']);
+      $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
+      $sender->setFromName($component->replaceVariables($transmission['MMailTransmissionSetting']['from_name']));
+      $sender->setTo($component->replaceVariables($transmission['MMailTransmissionSetting']['to_address']));
+      $sender->setSubject($component->replaceVariables($transmission['MMailTransmissionSetting']['subject']));
+      $sender->setBody($component->getBody());
       // 送信前にログを生成
       $this->TMailTransmissionLog->create();
       $this->TMailTransmissionLog->set(array(
         'm_companies_id' => $targetHistory['THistory']['m_companies_id'],
         'mail_type_cd' => ScenarioMailTemplateComponent::MAIL_TYPE_CD,
-        'from_address' => MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS,
+        'from_address' => $sender->getFrom(),
         'from_name' => $component->replaceVariables($transmission['MMailTransmissionSetting']['from_name']),
         'to_address' => $component->replaceVariables($transmission['MMailTransmissionSetting']['to_address']),
         'subject' => $component->replaceVariables($transmission['MMailTransmissionSetting']['subject']),
@@ -169,12 +174,6 @@ class NotificationController extends AppController {
       $this->TMailTransmissionLog->save();
       $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
 
-      $sender = new MailSenderComponent();
-      $sender->setFrom(MailSenderComponent::MAIL_SYSTEM_FROM_ADDRESS);
-      $sender->setFromName($component->replaceVariables($transmission['MMailTransmissionSetting']['from_name']));
-      $sender->setTo($component->replaceVariables($transmission['MMailTransmissionSetting']['to_address']));
-      $sender->setSubject($component->replaceVariables($transmission['MMailTransmissionSetting']['subject']));
-      $sender->setBody($component->getBody());
       $sender->send();
 
       // 送信ログを作る
