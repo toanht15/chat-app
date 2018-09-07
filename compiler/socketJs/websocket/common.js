@@ -1376,6 +1376,9 @@ var socket, // socket.io
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
         }
+        if(widget.chatInitShowTextarea === 2) {
+          html += '    #sincloBox section#chatTab sinclo-div#flexBoxWrap { display: none; }';
+        }
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + colorList['messageBoxTextColor'] + '!important; background-color: '+ colorList['messageBoxBackgroundColor'] +'; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:disabled, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:disabled { background-color: '+ colorList['messageBoxBackgroundColor'] +'; opacity: 1; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:focus { outline: none; border-color: ' + colorList['mainColor'] + '!important }';
@@ -2145,7 +2148,7 @@ var socket, // socket.io
                 sinclo.chatApi.scDown();
               }
           });
-
+          common.widgetHandler._handleResizeEvent();
           if ( window.sincloInfo.contract.chat && check.smartphone() ) {
             // 初期の画面向き
               if ( window.screen.availHeight < window.screen.availWidth ) {
@@ -2387,6 +2390,13 @@ var socket, // socket.io
         }
         return remainingTime;
       },
+      resetMessageAreaState: function() {
+        if(Number(sincloInfo.widget.chatInitShowTextarea) === 1) {
+          storage.l.set('textareaOpend', 'open');
+        } else {
+          storage.l.set('textareaOpend', 'close');
+        }
+      },
       _calcRemainingShowTimingSiteTimeMsec: function() {
         var siteAccessTimeMsec = (Number(userInfo.pageTime) - Number(userInfo.time)),
             showIntervalMsec = window.sincloInfo.widget.maxShowTimingSite * 1000;
@@ -2558,7 +2568,7 @@ var socket, // socket.io
           // とりあえず表示されている状態
           return 0 + invisibleUIOffset;
         }
-      }
+      },
     },
     load: {
       id: "loadingImg",

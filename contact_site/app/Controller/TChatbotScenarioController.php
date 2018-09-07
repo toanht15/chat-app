@@ -47,7 +47,7 @@ class TChatbotScenarioController extends FileAppController {
       'btw_button_margin', 'line_button_margin'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
+    'chat' => ['chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
   ];
 
   const SCENARIO_VARIABLES_TEMPLATE = "※このメールはお客様の設定によりsincloから自動送信されました。

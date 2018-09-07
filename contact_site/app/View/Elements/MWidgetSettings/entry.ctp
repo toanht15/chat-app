@@ -1037,6 +1037,23 @@ $headerNo = 1;
       <h3><?php echo mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．チャット設定</h3>
       <section>
         <ul class="settingList">
+          <!-- 初期表示時の自由入力エリア -->
+          <li>
+            <span class="require"><label>初期表示時の自由入力エリアの状態</label></span>
+            <?php if($coreSettings[C_COMPANY_USE_FREE_INPUT]): ?>
+              <div ng-init="chat_init_show_textarea='1'">
+                <label class="pointer choose" for="MWidgetSettingChatInitShowTextarea1"><input type="radio" name="data[MWidgetSetting][chat_init_show_textarea]" ng-model="chat_init_show_textarea" id="MWidgetSettingChatInitShowTextarea1" class="showHeader" value="1" >表示する</label><br>
+                <label class="pointer choose" for="MWidgetSettingChatInitShowTextarea2"><input type="radio" name="data[MWidgetSetting][chat_init_show_textarea]" ng-model="chat_init_show_textarea" id="MWidgetSettingChatInitShowTextarea2" class="showHeader" value="2" >表示しない</label><br>
+              </div>
+            <?php else: ?>
+              <div ng-init="chat_init_show_textarea='1'">
+                <label class="pointer choose" for="MWidgetSettingChatInitShowTextarea1"><input type="radio" name="data[MWidgetSetting][chat_init_show_textarea]" ng-model="chat_init_show_textarea" id="MWidgetSettingChatInitShowTextarea1" class="showHeader" value="1">表示する</label><br>
+                <label class="pointer choose commontooltip" for="MWidgetSettingChatInitShowTextarea2" style="color: rgb(204, 204, 204);" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。"><input type="radio" name="data[MWidgetSetting][chat_init_show_textarea]" ng-model="chat_init_show_textarea" id="MWidgetSettingChatInitShowTextarea2" class="showHeader" value="2" disabled>表示しない</label><br>
+              </div>
+            <?php endif; ?>
+          </li>
+          <?php if ( $this->Form->isFieldError('chat_init_show_textarea') ) echo $this->Form->error('chat_init_show_textarea', null, ['wrap' => 'li']); ?>
+          <!--  -->
           <!-- ラジオボタン操作時の動作種別 -->
           <li>
             <span class="require"><label>ラジオボタン選択動作</label></span>
