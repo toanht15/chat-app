@@ -245,6 +245,10 @@ $config['default'] = [
       "boxShadow"=>"5",
     ],
     "chat" => [
+			/**
+			 * 初期表示時の自由入力エリア
+			 */
+			"chatInitShowTextarea"=>"1",
       /**
        * ラジオボタン選択動作
        */
