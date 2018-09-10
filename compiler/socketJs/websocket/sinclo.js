@@ -4689,7 +4689,6 @@
               if (sinclo.trigger.common.pregContainsAndExclsion(this.speechContentRegEx[index].typeObj, this.speechContentRegEx[index].keyword_contains, this.speechContentRegEx[index].keyword_exclusions, msg)) {
                 this.speechContentRegEx[index].callback(false, this.speechContentRegEx[index].delay);
                 matched = true;
-                break;
               }
             }
             callback(matched);
