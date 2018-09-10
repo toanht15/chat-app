@@ -234,7 +234,7 @@ class LoginController extends AppController {
         $this->TMailTransmissionLog->save();
         $lastInsertId = $this->TMailTransmissionLog->getLastInsertId();
 
-        $sender = new MailSenderComponent();
+        $sender = new MailSenderComponent(null);
         $sender->setFrom($this->getMailAddress());
         $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
         $sender->setTo($userData['TResetPasswordInformation']['mail_address']);
@@ -243,7 +243,7 @@ class LoginController extends AppController {
         $sender->send();
 
         $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
-        $this->TMailTransmissionLog->read(null, $lastInsertId);
+        $this->TMailTransmissionLog->read(null);
         $this->TMailTransmissionLog->set([
           'send_flg' => 1,
           'sent_datetime' => $now->format("Y/m/d H:i:s")
@@ -473,7 +473,7 @@ class LoginController extends AppController {
             $mailBodyData = $this->replaceAllMailConstString($replaceData, $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
 
             //お客さん向け
-            $sender = new MailSenderComponent();
+            $sender = new MailSenderComponent(null);
             $sender->setFrom($this->getMailAddress());
             $sender->setFromName($mailTemplateData[$mailType]['MSystemMailTemplate']['sender']);
             $sender->setTo($inputData['MUser']['mail_address']);
@@ -483,7 +483,7 @@ class LoginController extends AppController {
           }
 
           //会社(メディアリンク)向けにメール
-          $sender = new MailSenderComponent();
+          $sender = new MailSenderComponent(null);
           $sender->setFrom($this->getMailAddress());
           $sender->setFromName('sinclo（シンクロ）');
           $sender->setTo($this->getMailAddress());
