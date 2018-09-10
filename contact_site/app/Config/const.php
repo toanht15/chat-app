@@ -766,7 +766,7 @@ $config['chatbotScenarioActionList'] = [
   ],
   // シナリオ呼び出し
   C_SCENARIO_ACTION_CALL_SCENARIO => [
-    'label' => 'シナリオ呼び出し',
+    'label' => 'シナリオ呼出',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -788,7 +788,7 @@ $config['chatbotScenarioActionList'] = [
     ]
   ],  // 外部システム連携
   C_SCENARIO_ACTION_EXTERNAL_API => [
-    'label' => '外部システム連携',
+    'label' => '外部連携',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
