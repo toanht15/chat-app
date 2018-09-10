@@ -243,7 +243,7 @@ class LoginController extends AppController {
         $sender->send();
 
         $now = new DateTime('now', new DateTimeZone('Asia/Tokyo'));
-        $this->TMailTransmissionLog->read(null);
+        $this->TMailTransmissionLog->read(null, $lastInsertId);
         $this->TMailTransmissionLog->set([
           'send_flg' => 1,
           'sent_datetime' => $now->format("Y/m/d H:i:s")
