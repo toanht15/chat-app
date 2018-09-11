@@ -3734,6 +3734,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       obj.messageType = 40;
       obj.achievementFlg = obj.requireCv ? -1 : null;
       chatApi.set(obj);
+      ack(obj);
     });
   });
 

@@ -1245,9 +1245,11 @@
               this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           } else if (Number(chat.messageType) === 40) {
-            if(sinclo.scenarioApi.isProcessing()) {
+            if(sinclo.scenarioApi.isProcessing() && Object.keys(obj.chat.messages).indexOf(key) === Object.keys(obj.chat.messages).length - 1) {
               var data = JSON.parse(chat.message);
               sinclo.chatApi.createForm(true, data.target, data.message, sinclo.scenarioApi._bulkHearing.handleFormOK);
+            } else {
+              continue;
             }
           } else if (Number(chat.messageType) === 31 || Number(chat.messageType) === 32) {
             this.chatApi.createFormFromLog(JSON.parse(chat.message));
@@ -4687,7 +4689,6 @@
               if (sinclo.trigger.common.pregContainsAndExclsion(this.speechContentRegEx[index].typeObj, this.speechContentRegEx[index].keyword_contains, this.speechContentRegEx[index].keyword_exclusions, msg)) {
                 this.speechContentRegEx[index].callback(false, this.speechContentRegEx[index].delay);
                 matched = true;
-                break;
               }
             }
             callback(matched);
@@ -6450,9 +6451,13 @@
           callback();
         }
       },
-      _bulkHearing: { // 一括ヒアリング
+        _bulkHearing: { // 一括ヒアリング
         _parent: null,
         _analyseResult: {},
+        _state: {
+          waitInput: 'sbh_waitInput',
+          confirm: 'sbh_confirm'
+        },
         _init: function (parent) {
           this._parent = parent;
         },
@@ -6500,21 +6505,26 @@
         },
         _process: function () {
           var self = sinclo.scenarioApi._bulkHearing;
-          self._parent._doing(0, function () { // 即時実行
-            self._parent._handleChatTextArea("1"); // 必ず表示する
-            sinclo.chatApi.hideMiniMessageArea(); // 改行可のメッセージエリアにする
-            common.chatBotTypingTimerClear();
-            common.chatBotTypingRemove();
-            setTimeout(function(){
-              self._notifyBeginBulkHearing();
-            }, 200);
-            self._parent._waitingInput(function (inputVal) {
-              self._parent._unWaitingInput();
-              self._analyseInput(inputVal, function (result) {
-                // 描画処理はsendChatResultで実行している
+          if(!self._isStatusConfirming()) {
+            self._parent._doing(0, function () { // 即時実行
+              self._parent._handleChatTextArea("1"); // 必ず表示する
+              sinclo.chatApi.hideMiniMessageArea(); // 改行可のメッセージエリアにする
+              common.chatBotTypingTimerClear();
+              common.chatBotTypingRemove();
+              setTimeout(function () {
+                self._notifyBeginBulkHearing();
+              }, 200);
+              self._saveWaitingInputState();
+              self._parent._waitingInput(function (inputVal) {
+                self._parent._unWaitingInput();
+                self._analyseInput(inputVal, function (result) {
+                  // 描画処理はsendChatResultで実行している
+                  self._parent._handleChatTextArea("2");
+                  self._saveConfirmState();
+                });
               });
             });
-          });
+          }
         },
         _analyseInput: function (inputVal, callback) {
           var self = sinclo.scenarioApi._bulkHearing;
@@ -6535,6 +6545,19 @@
           emit('beginBulkHearing', {
             historyId: sinclo.chatApi.historyId
           });
+        },
+        _saveWaitingInputState: function() {
+          var self = sinclo.scenarioApi._bulkHearing;
+          self._parent.set(self._state.waitInput, true);
+        },
+        _saveConfirmState: function() {
+          var self = sinclo.scenarioApi._bulkHearing;
+          self._parent.set(self._state.confirm, true);
+        },
+        _isStatusConfirming: function() {
+          var self = sinclo.scenarioApi._bulkHearing;
+          var state = self._parent.get(self._state.confirm);
+          return state && ((typeof(state) === "boolean" && state) || (typeof(state) === "string" && state === "true"));
         }
       }
     },
