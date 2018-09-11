@@ -341,14 +341,16 @@ class HistoriesController extends AppController {
       $campaignList = $this->TCampaign->getList();
       foreach($userList as $key => $history){
         $campaignParam = "";
-        $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-        if ( $tmp !== "" ) {
-          foreach($campaignList as $k => $v){
-            if ( strpos($tmp, $k) !== false ) {
-              if ( $campaignParam !== "" ) {
-                $campaignParam .= "\n";
+        if(array_key_exists($history['THistory']['id'], $stayList)) {
+          $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+          if ( $tmp !== "" ) {
+            foreach($campaignList as $k => $v){
+              if ( strpos($tmp, $k) !== false ) {
+                if ( $campaignParam !== "" ) {
+                  $campaignParam .= "\n";
+                }
+                $campaignParam .= $v;
               }
-              $campaignParam .= $v;
             }
           }
         }
@@ -392,9 +394,9 @@ class HistoriesController extends AppController {
         //キャンペーン
         $row['campaign'] = $campaignParam;
         //ランディングページ
-        $row['landing'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['title'];
+        $row['landing'] = array_key_exists($history['THistory']['id'], $stayList) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] : "";
         // 閲覧ページ数
-        $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
+        $row['pageCnt'] = array_key_exists($history['THistory']['id'], $stayList) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['count'] : "";
         // 参照元URL
         $params = $excludeList['params'];
         $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
