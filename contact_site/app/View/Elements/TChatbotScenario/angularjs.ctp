@@ -752,7 +752,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         }
       });
       action.responseBodyMaps = responseBodys;
-      //「連携タイプがスクリプト」に関するデータは整理する
     } else
     // 連携タイプがスクリプトの場合
     if (action.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>){

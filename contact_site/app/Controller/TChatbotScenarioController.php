@@ -1734,7 +1734,7 @@ sinclo@medialink-ml.co.jp
         if (!empty($action->tExternalApiConnectionId)) {
           $externalApiData = $this->TExternalApiConnection->findById($action->tExternalApiConnectionId);
           if(!isset($action->externalType)){
-            $action->externalType = C_SCENARIO_EXTERNAL_TYPE_API;
+            $action->externalType = C_SCENARIO_EXTERNAL_TYPE_API;  //デフォルト値
           }
           $action->url = $externalApiData['TExternalApiConnection']['url'];
           $action->methodType = $externalApiData['TExternalApiConnection']['method_type'];
