@@ -616,7 +616,7 @@ class ChatHistoriesController extends AppController
           if (!empty($history['MCustomer']['informations'])) {
             $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($history['MCustomer']['informations']));
             foreach ($customerInfoDisplaySettingMap as $k => $v) {
-              if ($v) {
+              if ($v && array_key_exists($k, $informations)) {
                 $row['customer'] .= $informations[$k] . "\n";
               }
             }
@@ -767,7 +767,7 @@ class ChatHistoriesController extends AppController
           if (!empty($val['MCustomer']['informations'])) {
             $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($val['MCustomer']['informations']));
             foreach ($customerInfoDisplaySettingMap as $k => $v) {
-              if ($v) {
+              if ($v && array_key_exists($k, $informations)) {
                 $row['customer'] .= $informations[$k] . "\n";
               }
             }
