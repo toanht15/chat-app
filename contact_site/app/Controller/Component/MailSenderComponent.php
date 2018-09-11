@@ -6,6 +6,7 @@
  * Time: 21:31
  */
 
+App::uses('ComponentCollection', 'Controller'); //これが大事
 App::uses('CakeEmail', 'Network/Email');
 
 class MailSenderComponent extends Component
@@ -25,6 +26,9 @@ class MailSenderComponent extends Component
 
   public function __construct($collection, $companiesId = 0)
   {
+    if(empty($collection)) {
+      $collection = new ComponentCollection();
+    }
     parent::__construct($collection);
     $this->companiesId = $companiesId;
     $this->setup();

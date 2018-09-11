@@ -1039,7 +1039,7 @@ $headerNo = 1;
         <ul class="settingList">
           <!-- 初期表示時の自由入力エリア -->
           <li>
-            <span class="require"><label>初期表示時の自由入力エリアの状態</label></span>
+            <span class="require"><label>初期表示時の自由入力エリア</label></span>
             <?php if($coreSettings[C_COMPANY_USE_FREE_INPUT]): ?>
               <div ng-init="chat_init_show_textarea='1'">
                 <label class="pointer choose" for="MWidgetSettingChatInitShowTextarea1"><input type="radio" name="data[MWidgetSetting][chat_init_show_textarea]" ng-model="chat_init_show_textarea" id="MWidgetSettingChatInitShowTextarea1" class="showHeader" value="1" >表示する</label><br>
