@@ -753,8 +753,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       });
       action.responseBodyMaps = responseBodys;
     } else
-    // 連携タイプがスクリプトの場合
     if (action.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>){
+      // 連携タイプがスクリプトの場合
       if(typeof action.externalScript == 'undefined' || action.externalScript == ''){
         return null;
       }
