@@ -2287,171 +2287,171 @@
         },
         hideMiniMessageArea: function() {
         console.log(">>>>>>>>>>>>>>>>>>>>>hideMiniMessageArea");
-          if((check.isset(window.sincloInfo.custom)
-            && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
-            && window.sincloInfo.custom.widget.forceHideMessageArea)) {
-            return;
+        if ((check.isset(window.sincloInfo.custom)
+          && check.isset(window.sincloInfo.custom.widget.forceHideMessageArea)
+          && window.sincloInfo.custom.widget.forceHideMessageArea)) {
+          return;
+        }
+        // シナリオのヒアリングモードのみ有効
+        if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
+          $('#flexBoxHeight').removeClass('sinclo-hide');
+          $('#miniFlexBoxHeight').addClass('sinclo-hide');
+          $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
+          if (!check.smartphone()) {
+            common.widgetHandler._handleResizeEvent();
+            var chatTalk = document.getElementById('chatTalk');
+            $('#sincloChatMessage').focus();
+          } else {
+            sinclo.adjustSpWidgetSize();
           }
-          // シナリオのヒアリングモードのみ有効
-          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) {
-            $('#flexBoxHeight').removeClass('sinclo-hide');
-            $('#miniFlexBoxHeight').addClass('sinclo-hide');
-            $('#miniSincloChatMessage').attr('type', 'text'); // とりあえずデフォルトに戻す
-            if(!check.smartphone()) {
-              common.widgetHandler._handleResizeEvent();
-              var chatTalk = document.getElementById('chatTalk');
-              $('#sincloChatMessage').focus();
-            } else {
-               sinclo.adjustSpWidgetSize();
-            }
-          }
-        },
-        addKeyDownEventToSendChat: function() {
-          // 重複登録防止
-          var isScenarioLFDisabled = sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
-              && sinclo.scenarioApi._hearing.isHearingMode() && sinclo.scenarioApi._hearing.isLFModeDisabled();
+        }
+      },
+      addKeyDownEventToSendChat: function() {
+        // 重複登録防止
+        var isScenarioLFDisabled = sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
+          && sinclo.scenarioApi._hearing.isHearingMode() && sinclo.scenarioApi._hearing.isLFModeDisabled();
+        $('#sincloChatMessage,#miniSincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
+        $('#sincloChatMessage,#miniSincloChatMessage').on("keydown", sinclo.chatApi.handleKeyDown);
+      },
+      removeKeyDownEventToSendChat: function() {
+        // 重複登録防止
+        if (!('chatTrigger' in window.sincloInfo.widget) || !(window.sincloInfo.widget.chatTrigger === 2)) {
           $('#sincloChatMessage,#miniSincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
-          $('#sincloChatMessage,#miniSincloChatMessage').on("keydown", sinclo.chatApi.handleKeyDown);
-        },
-        removeKeyDownEventToSendChat: function() {
-          // 重複登録防止
-          if(!('chatTrigger' in window.sincloInfo.widget) || !(window.sincloInfo.widget.chatTrigger === 2)){
-            $('#sincloChatMessage,#miniSincloChatMessage').off("keydown", sinclo.chatApi.handleKeyDown);
+        }
+      },
+      handleKeyDown: function(e) {
+        var isScenarioHearingMode = sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
+          && sinclo.scenarioApi._hearing.isHearingMode(),
+          isScenarioLFDisabled = isScenarioHearingMode && sinclo.scenarioApi._hearing.isLFModeDisabled(),
+          isScenarioLFEnabled = sinclo.scenarioApi._bulkHearing.isInMode() || isScenarioHearingMode && !sinclo.scenarioApi._hearing.isLFModeDisabled();
+        if (isScenarioLFDisabled) {
+          if (e) e.stopImmediatePropagation();
+          if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+            sinclo.chatApi.push();
           }
-        },
-        handleKeyDown: function(e) {
-          var isScenarioHearingMode = sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
-            && sinclo.scenarioApi._hearing.isHearingMode(),
-              isScenarioLFDisabled = isScenarioHearingMode && sinclo.scenarioApi._hearing.isLFModeDisabled(),
-              isScenarioLFEnabled = isScenarioHearingMode && !sinclo.scenarioApi._hearing.isLFModeDisabled();
-          if(isScenarioLFDisabled) {
-            if(e) e.stopImmediatePropagation();
-            if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
+        } else if (isScenarioLFEnabled) {
+          if (e) e.stopImmediatePropagation();
+          if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+            if (e.shiftKey) {
               sinclo.chatApi.push();
             }
-          } else if(isScenarioLFEnabled) {
-            if(e) e.stopImmediatePropagation();
-            if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
-              if ( e.shiftKey ) {
-                sinclo.chatApi.push();
-              }
-            }
-          } else {
-            if(e) e.stopImmediatePropagation();
-            if ( (e.which && e.which === 13) || (e.keyCode && e.keyCode === 13) ) {
-              if ( !e.shiftKey && !e.ctrlKey ) {
-                sinclo.chatApi.push();
-              }
+          }
+        } else {
+          if (e) e.stopImmediatePropagation();
+          if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+            if (!e.shiftKey && !e.ctrlKey) {
+              sinclo.chatApi.push();
             }
           }
-        },
-        getPlaceholderMessage: function() {
-          var msg = "メッセージを入力してください";
-          if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.getPlaceholderMessage() !== "") {
-            msg = sinclo.scenarioApi.getPlaceholderMessage();
-          } else if ( !( 'chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2) ) {
-            if ( check.smartphone() )  {
-              msg += "（改行で送信）";
-            }
-            else {
-              msg += "\n（Shift+Enterで改行/Enterで送信）";
-            }
-          }
-          return msg;
-        },
-        setPlaceholderMessage: function(msg) {
-          var message = document.getElementById('sincloChatMessage');
-          if(message) {
-            message.placeholder = msg;
-          }
-          var miniMessage = document.getElementById('miniSincloChatMessage');
-          if(miniMessage) {
-            miniMessage.placeholder = msg;
-          }
-        },
-        clearPlaceholderMessage: function() {
-          var message = document.getElementById('sincloChatMessage');
-          if(message) {
-            message.placeholder = "";
-          }
-          var miniMessage = document.getElementById('miniSincloChatMessage');
-          if(miniMessage) {
-            miniMessage.placeholder = "";
-          }
-        },
-        targetTextarea: null,
-        lockPageScroll: function() {
-          if(!check.smartphone()) return false;
-          if(!sinclo.chatApi.targetTextarea) {
-            sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
-          }
-          window.addEventListener('touchmove', sinclo.chatApi.lockPageScrollHandler);
-          sinclo.chatApi.targetTextarea.addEventListener('scroll', sinclo.chatApi.unlockPageScrollHandler);
-        },
-        unlockPageScroll: function() {
-          if(!check.smartphone()) return false;
-          if(!sinclo.chatApi.targetTextarea) {
-            sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
-          }
-          window.removeEventListener('touchmove', sinclo.chatApi.lockPageScrollHandler);
-          sinclo.chatApi.targetTextarea.removeEventListener('scroll', sinclo.chatApi.unlockPageScrollHandler);
-        },
-        lockPageScrollHandler: function(event) {
-          if ($(event.target).parents("#chatTalk").get(0) === sinclo.chatApi.targetTextarea
-            && sinclo.chatApi.targetTextarea.scrollTop !== 0
-            && sinclo.chatApi.targetTextarea.scrollTop + sinclo.chatApi.targetTextarea.clientHeight < sinclo.chatApi.targetTextarea.scrollHeight) {
-            console.log("a");
-            event.stopPropagation();
+        }
+      },
+      getPlaceholderMessage: function() {
+        var msg = "メッセージを入力してください";
+        if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.getPlaceholderMessage() !== "") {
+          msg = sinclo.scenarioApi.getPlaceholderMessage();
+        } else if (!('chatTrigger' in window.sincloInfo.widget && window.sincloInfo.widget.chatTrigger === 2)) {
+          if (check.smartphone()) {
+            msg += "（改行で送信）";
           }
           else {
-            console.log("b");
-            event.preventDefault();
+            msg += "\n（Shift+Enterで改行/Enterで送信）";
           }
-        },
-        unlockPageScrollHandler: function(event) {
-          if (sinclo.chatApi.targetTextarea.scrollTop === 0) {
-            sinclo.chatApi.targetTextarea.scrollTop = 1;
-          }
-          else if (sinclo.chatApi.targetTextarea.scrollTop + sinclo.chatApi.targetTextarea.clientHeight === sinclo.chatApi.targetTextarea.scrollHeight) {
-            sinclo.chatApi.targetTextarea.scrollTop = sinclo.chatApi.targetTextarea.scrollTop - 1;
-          }
-        },
-        widgetOpen: function(){
-          console.log("chatApi.widgetOpen start");
-          this.beforeWidgetOpen();
-          var widgetOpen = storage.s.get('widgetOpen');
-          if ( !(('showTime' in window.sincloInfo.widget)
-            && ('maxShowTime' in window.sincloInfo.widget)
-            && String(window.sincloInfo.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null) ) return false;
-          var showTime = String(window.sincloInfo.widget.showTime);
-          var displayStyleType = String(window.sincloInfo.widget.displayStyleType);
-          var maxShowTime = Number(window.sincloInfo.widget.maxShowTime) * 1000;
-          switch(displayStyleType) {
-            case "1": // 最大化
-              if(!widgetOpen) {
-                var flg = sinclo.widget.condifiton.get();
-                if ( String(flg) === "false" ) {
-                  console.log("SHOW WIDGET MAXIMIZE");
-                  storage.s.set('widgetOpen', true);
-                  if(!common.widgetHandler.isShown()) {
-                    storage.s.set('preWidgetOpened', true);
-                  }
-                  if ( !(check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1) ) {
-                    sinclo.operatorInfo.ev();
-                  }
+        }
+        return msg;
+      },
+      setPlaceholderMessage: function(msg) {
+        var message = document.getElementById('sincloChatMessage');
+        if (message) {
+          message.placeholder = msg;
+        }
+        var miniMessage = document.getElementById('miniSincloChatMessage');
+        if (miniMessage) {
+          miniMessage.placeholder = msg;
+        }
+      },
+      clearPlaceholderMessage: function() {
+        var message = document.getElementById('sincloChatMessage');
+        if (message) {
+          message.placeholder = "";
+        }
+        var miniMessage = document.getElementById('miniSincloChatMessage');
+        if (miniMessage) {
+          miniMessage.placeholder = "";
+        }
+      },
+      targetTextarea: null,
+      lockPageScroll: function() {
+        if (!check.smartphone()) return false;
+        if (!sinclo.chatApi.targetTextarea) {
+          sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
+        }
+        window.addEventListener('touchmove', sinclo.chatApi.lockPageScrollHandler);
+        sinclo.chatApi.targetTextarea.addEventListener('scroll', sinclo.chatApi.unlockPageScrollHandler);
+      },
+      unlockPageScroll: function() {
+        if (!check.smartphone()) return false;
+        if (!sinclo.chatApi.targetTextarea) {
+          sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
+        }
+        window.removeEventListener('touchmove', sinclo.chatApi.lockPageScrollHandler);
+        sinclo.chatApi.targetTextarea.removeEventListener('scroll', sinclo.chatApi.unlockPageScrollHandler);
+      },
+      lockPageScrollHandler: function(event) {
+        if ($(event.target).parents("#chatTalk").get(0) === sinclo.chatApi.targetTextarea
+          && sinclo.chatApi.targetTextarea.scrollTop !== 0
+          && sinclo.chatApi.targetTextarea.scrollTop + sinclo.chatApi.targetTextarea.clientHeight < sinclo.chatApi.targetTextarea.scrollHeight) {
+          console.log("a");
+          event.stopPropagation();
+        }
+        else {
+          console.log("b");
+          event.preventDefault();
+        }
+      },
+      unlockPageScrollHandler: function(event) {
+        if (sinclo.chatApi.targetTextarea.scrollTop === 0) {
+          sinclo.chatApi.targetTextarea.scrollTop = 1;
+        }
+        else if (sinclo.chatApi.targetTextarea.scrollTop + sinclo.chatApi.targetTextarea.clientHeight === sinclo.chatApi.targetTextarea.scrollHeight) {
+          sinclo.chatApi.targetTextarea.scrollTop = sinclo.chatApi.targetTextarea.scrollTop - 1;
+        }
+      },
+      widgetOpen: function() {
+        console.log("chatApi.widgetOpen start");
+        this.beforeWidgetOpen();
+        var widgetOpen = storage.s.get('widgetOpen');
+        if (!(('showTime' in window.sincloInfo.widget)
+          && ('maxShowTime' in window.sincloInfo.widget)
+          && String(window.sincloInfo.widget.maxShowTime).match(/^[0-9]{1,2}$/) !== null)) return false;
+        var showTime = String(window.sincloInfo.widget.showTime);
+        var displayStyleType = String(window.sincloInfo.widget.displayStyleType);
+        var maxShowTime = Number(window.sincloInfo.widget.maxShowTime) * 1000;
+        switch (displayStyleType) {
+          case "1": // 最大化
+            if (!widgetOpen) {
+              var flg = sinclo.widget.condifiton.get();
+              if (String(flg) === "false") {
+                console.log("SHOW WIDGET MAXIMIZE");
+                storage.s.set('widgetOpen', true);
+                if (!common.widgetHandler.isShown()) {
+                  storage.s.set('preWidgetOpened', true);
+                }
+                if (!(check.smartphone() && sincloInfo.widget.hasOwnProperty('spAutoOpenFlg') && Number(sincloInfo.widget.spAutoOpenFlg) === 1)) {
+                  sinclo.operatorInfo.ev();
                 }
               }
-              break;
-            case "2": // 最小化
-              break;
-            case "3": // バナー表示
-              if(!storage.s.get('bannerAct')) {
-                console.log("SHOW INITIAL BANNER MODE");
-                //バナー表示にする
-                sinclo.operatorInfo.onBanner();
-              }
-              break;
-          }
+            }
+            break;
+          case "2": // 最小化
+            break;
+          case "3": // バナー表示
+            if (!storage.s.get('bannerAct')) {
+              console.log("SHOW INITIAL BANNER MODE");
+              //バナー表示にする
+              sinclo.operatorInfo.onBanner();
+            }
+            break;
+        }
 
         if (showTime === "5") return false; // 初期表示のままにする
         if (showTime === "1") { // サイト訪問後
