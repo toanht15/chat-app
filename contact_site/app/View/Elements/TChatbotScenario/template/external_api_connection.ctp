@@ -2,7 +2,7 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>" class="set_action_item_body action_external_api_connection" ng-init="main.controllExternalApiSetting(setActionId)">
   <ul>
     <li class="styleFlexbox">
-      <span class="fb13em"><label>連携タイプ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="外部連携先と通信する際のリクエスト方法の種類です。<br><br>＜メソッド種別＞<br>GET ：送信したいデータをURLに付加して、サーバーへ送ります。<br>POST：送信したいデータをリクエストヘッダーとリクエストボディに設定して、サーバーへ送ります。" data-tooltip-width='300'>?</icon></span></label></span>
+      <span class="fb13em"><label>連携タイプ<span class="questionBalloon"><icon class="questionBtn" data-tooltip="外部連携の種類です。<br><br>＜連携タイプ＞<br>API連携 ：外部APIを実行できます<br>スクリプト：自分で入力したスクリプト（JavaScript）を実行できます" data-tooltip-width='300'>?</icon></span></label></span>
       <span>
         <label ng-repeat="(key, item) in externalType" class="pointer"><input type="radio" style="outline:0 ;" ng-model="setItem.externalType" ng-value="key">{{item}}</label>
       </span>
@@ -82,13 +82,13 @@
       </div>
     </li>
     <li class="styleFlexbox" ng-if="setItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>">
-      <span class="fb7em"><label>スクリプト<span class="questionBalloon"><icon class="questionBtn" data-tooltip="スクリプトに関するツールチップを記入します">?</icon></span></label></span>
+      <span class="fb7em"><label>スクリプト<span class="questionBalloon"><icon class="questionBtn" data-tooltip="アクション時に実行したいスクリプト（JavaScript）を設定します。<br>（scriptタグの記入は不要です。また、変数の利用も可能です）">?</icon></span></label></span>
       <div>
         <resize-textarea style="font-size: 13px; border-width: 1px; padding: 5px; margin-left: 72px; line-height: 1.5; height: 29.5px; overflow: hidden; width: calc(100% - 157px);" name="externalScript" maxlength="4000" ng-model="setItem.externalScript" cols="48" rows="1" placeholder="スクリプトを入力してください" ng-required="true" data-maxrow="10" required="required" class="ng-invalid ng-invalid-required ng-valid-maxlength ng-touched"></resize-textarea>
       </div>
     </li>
-    <li class="styleFlexbox" ng-if="setItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>">
-      <a href="/" target="_blank" style="margin-left: 156px;">Google広告のコンバージョン測定をする場合の設定例</a>
+    <li class="styleFlexbox align_center" ng-if="setItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>">
+      <i class="icon fal fa-lightbulb" style="margin:0 5px 0 156px; font-size:20px;"></i><a href="/" target="_blank" id = "help_link">Google広告のコンバージョンをトラッキングする</a>
     </li>
   </ul>
 </div>
