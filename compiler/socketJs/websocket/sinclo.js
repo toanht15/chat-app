@@ -1464,6 +1464,25 @@
           } else if (obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
             // 別タブで送信された自動返信は表示する
             cn = "sinclo_re";
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = "";
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+          } else if (obj.messageType === sinclo.chatApi.messageType.scenario.message.text
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = "sinclo_re";
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = "";
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            sinclo.chatApi.createMessage(cn, obj.chatMessage, userName, true);
+            sinclo.chatApi.scDown();
+            return false;
           } else {
             // 別タブで送信されたオートメッセージは何もしない
             return false;
@@ -1505,6 +1524,9 @@
           setTimeout(function () {
             common.chatBotTyping(obj)
           }, 800);
+          if (obj.tabId !== userInfo.tabId) {
+            $('ul#chatTalk li.sinclo_re.sinclo_form:last-of-type').remove();
+          }
           return false;
         }
 
@@ -2171,6 +2193,10 @@
               sinclo.chatApi.observeType.start();
               console.log('エラー');
             });
+          }
+
+          if ( window.sincloInfo.contract.chatbotScenario ) {
+            sinclo.scenarioApi.addStorageUpdateEvent();
           }
 
         this.sound = document.getElementById('sinclo-sound');
@@ -5045,6 +5071,7 @@
         };
       },
       begin: function () {
+        this.addStorageUpdateEvent();
         this._disablePreviousRadioButton();
         this._saveProcessingState(true);
         this._process();
@@ -5273,6 +5300,41 @@
             self._bulkHearing._process();
             self.set(self._lKey.sendCustomerMessageType, 30);
             break;
+        }
+      },
+      addStorageUpdateEvent: function() {
+        var self = sinclo.scenarioApi;
+        window.addEventListener('storage', self._handleStorageUpdateEvent);
+      },
+      removeStorageUpdateEvent: function() {
+        var self = sinclo.scenarioApi;
+        window.removeEventListener('storage', self._handleStorageUpdateEvent);
+      },
+      _scenarioSeqIsUpdated: false,
+      _handleStorageUpdateEvent: function(event) {
+        var self = sinclo.scenarioApi;
+        console.log(event);
+        if(event.key === self._lKey.scenarioBase) {
+          var oldObj = JSON.parse(event.oldValue);
+          var newObj = JSON.parse(event.newValue);
+          if(self.isProcessing()
+            && check.isset(oldObj[self._lKey.currentScenario])
+            && check.isset(newObj[self._lKey.currentScenario])
+            && JSON.stringify(oldObj[self._lKey.currentScenarioSeqNum]) !== JSON.stringify(newObj[self._lKey.currentScenarioSeqNum])) {
+            console.log("<><><><><><><><><><> sequence moved %s => %s <><><><><><><><><><>", oldObj[self._lKey.currentScenarioSeqNum], newObj[self._lKey.currentScenarioSeqNum]);
+            setTimeout(function(){
+              var action = self.get(self._lKey.currentScenario);
+              if(String(action.actionType) === self._actionType.hearing
+                || String(action.actionType) === self._actionType.selection
+                || String(action.actionType) === self._actionType.bulkHearing
+                || String(action.actionType) === self._actionType.sendFile) {
+                console.log("<><><><><><><><><><> process %s <><><><><><><><><><>", String(action.actionType));
+                self.begin();
+              } else {
+                console.log("<><><><><><><><><><> NOT process %s <><><><><><><><><><>", String(action.actionType));
+              }
+            },100);
+          }
         }
       },
       _isTheFiestScenaroAndSequence: function () {
