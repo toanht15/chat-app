@@ -66,7 +66,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("standalone.css");
     echo $this->Html->css("light.min");
     echo $this->Html->css("solid.min");
-    echo $this->Html->css('fontawesome');
+    echo $this->Html->css('fontawesome.min');
   ?>
   <?php
     if ( strcmp($this->name, 'TAutoMessages') === 0 || strcmp($this->name, 'MOperatingHours') === 0) {
