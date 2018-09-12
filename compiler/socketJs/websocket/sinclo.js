@@ -2730,7 +2730,7 @@
                 if(str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
                   content += "" + str + "\n";
                 } else {
-                  content += "<span class='sinclo-text-line'>" + str + "</span>\n";
+                  content += "<span class='sinclo-text-line'>" + str.replace(/^[\n|\r\n|\r]$/g, "") + "</span>\n";
                 }
             }
 
