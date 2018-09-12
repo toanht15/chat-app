@@ -64,9 +64,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("bootstrap.css");
     echo $this->Html->css("multi-select.css");
     echo $this->Html->css("standalone.css");
-    echo $this->Html->css("fa-light.min");
-    echo $this->Html->css("fa-solid.min");
-    echo $this->Html->css('fontawesome.min');
+    echo $this->Html->css("light.min");
+    echo $this->Html->css("solid.min");
+    echo $this->Html->css('fontawesome');
   ?>
   <?php
     if ( strcmp($this->name, 'TAutoMessages') === 0 || strcmp($this->name, 'MOperatingHours') === 0) {

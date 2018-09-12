@@ -795,7 +795,7 @@ sinclo@medialink-ml.co.jp
 
     $validate = $this->TChatbotScenario->validates();
     $errors = $this->TChatbotScenario->validationErrors;
-
+    $this->log($errors,LOG_DEBUG);
     if ($validate) {
       if( $this->TChatbotScenario->save($saveData,false) ) {
       }
@@ -934,6 +934,7 @@ sinclo@medialink-ml.co.jp
 
       $validate = $this->TExternalApiConnection->validates();
       $errors = $this->TExternalApiConnection->validationErrors;
+      $this->log('konai',LOG_DEBUG);
       if(empty($errors)){
         $this->TExternalApiConnection->save();
         if(empty($saveData->tExternalApiConnectionId)) {
@@ -948,7 +949,6 @@ sinclo@medialink-ml.co.jp
     //スクリプト連携に関する設定をオブジェクトから削除する
     unset($saveData->externalScript);
     }
-
     // API連携に関する設定をオブジェクトから削除する(共通)
     // スクリプト連携の場合は不要、かつAPI連携の場合も別テーブルに保存される領域の為
     unset($saveData->url);
@@ -957,6 +957,7 @@ sinclo@medialink-ml.co.jp
     unset($saveData->requestBody);
     unset($saveData->responseType);
     unset($saveData->responseBodyMaps);
+    $this->log($saveData,LOG_DEBUG);
     return $saveData;
   }
 
