@@ -2376,7 +2376,7 @@
         var isScenarioHearingMode = sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
           && sinclo.scenarioApi._hearing.isHearingMode(),
           isScenarioLFDisabled = isScenarioHearingMode && sinclo.scenarioApi._hearing.isLFModeDisabled(),
-          isScenarioLFEnabled = isScenarioHearingMode && !sinclo.scenarioApi._hearing.isLFModeDisabled();
+          isScenarioLFEnabled = sinclo.scenarioApi._bulkHearing.isInMode() || isScenarioHearingMode && !sinclo.scenarioApi._hearing.isLFModeDisabled();
         if (isScenarioLFDisabled) {
           if (e) e.stopImmediatePropagation();
           if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
