@@ -795,7 +795,6 @@ sinclo@medialink-ml.co.jp
 
     $validate = $this->TChatbotScenario->validates();
     $errors = $this->TChatbotScenario->validationErrors;
-
     if ($validate) {
       if( $this->TChatbotScenario->save($saveData,false) ) {
       }
@@ -948,7 +947,6 @@ sinclo@medialink-ml.co.jp
     //スクリプト連携に関する設定をオブジェクトから削除する
     unset($saveData->externalScript);
     }
-
     // API連携に関する設定をオブジェクトから削除する(共通)
     // スクリプト連携の場合は不要、かつAPI連携の場合も別テーブルに保存される領域の為
     unset($saveData->url);
