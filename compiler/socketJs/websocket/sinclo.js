@@ -5054,7 +5054,6 @@
         // シナリオ終了
         console.log('シナリオ終了時にそもそもウェイトアニメーションを出さない');
         common.chatBotTypingTimerClear();
-        common.chatBotTypingRemove();
         var self = sinclo.scenarioApi;
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         // 元のメッセージ入力欄に戻す
