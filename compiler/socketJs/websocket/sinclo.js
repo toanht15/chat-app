@@ -6100,18 +6100,21 @@
           var self = sinclo.scenarioApi._callExternalApi;
           var externalType = self._parent.get(self._parent._lKey.currentScenario).externalType;
           self._parent._doing(0, function () {
-            if(String(externalType) == self._externalType.useScript){
+            if(String(externalType) === self._externalType.useScript){
               var externalScript = self._parent.get(self._parent._lKey.currentScenario).externalScript;
               self._callScript(self._parent._replaceVariable(externalScript));
+              if (self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
             } else {
               self._callApi(function (response) {
                 Object.keys(response).forEach(function (elm, index, arr) {
                   self._parent._saveVariable(response[elm].variableName, response[elm].value);
                 });
+                if (self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
               });
-            }
-            if (self._parent._goToNextScenario()) {
-              self._parent._process();
             }
           });
         },
