@@ -949,11 +949,13 @@ sinclo@medialink-ml.co.jp
     } else
     if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_SCRIPT){
     //連携タイプがスクリプトの場合
-    //<script>という記述がある場合は削除をする
-      /*$this->log($saveData->externalScript,LOG_DEBUG);
       $scriptPattern = '/<(.*script.*)>/';
-      $saveData->externalScript = preg_replace($scriptPattern,"",$saveData->externalScript);
-      $this->log($saveData->externalScript,LOG_DEBUG);*/
+      if(preg_match($scriptPattern,$saveData->externalScript)){
+        $exception = new ChatbotScenarioException('バリデーションエラー');
+        $exception->setErrors($errors);
+        $exception->setLastPage($nextPage);
+        throw $exception;
+      }
     }
     // API連携に関する設定をオブジェクトから削除する(共通)
     // スクリプト連携の場合は不要、かつAPI連携の場合も別テーブルに保存される領域の為
