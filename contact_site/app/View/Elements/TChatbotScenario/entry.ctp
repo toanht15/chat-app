@@ -59,7 +59,7 @@
         <!-- ファイル送信 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)" class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルを設定できるアクションです。">ファイル送信</a>
         <!-- 外部連携 -->
-        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="連携したい外部システムの設定を行い、アクションの途中で任意のAPIを実行することができるアクションです。">外部連携</a>
+        <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)" class="greenBtn btn-shadow commontooltip" data-text="連携したい外部システムの設定を行い、アクションの途中で任意のAPIまたはスクリプトを実行することができるアクションです。">外部連携</a>
         <!-- 訪問ユーザ情報 -->
         <a ng-click="main.addItem(<?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>)" class="greenBtn btn-shadow commontooltip" data-text="変数の値を訪問ユーザ情報として登録するためのアクションです。">訪問ユーザ登録</a>
         <!-- メール送信 -->

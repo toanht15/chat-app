@@ -7666,6 +7666,10 @@ ul.naviBtn {
                     padding-bottom: 2px;
                   }
 
+                  &.align_center{
+                    align-items: center;
+                  }
+
                   > .fb15em {
                     flex-basis: 15em;
                     min-width: 15em;
@@ -7723,7 +7727,6 @@ ul.naviBtn {
                   > ul {
                     flex-grow: 1;
                   }
-
 
                 }
 
