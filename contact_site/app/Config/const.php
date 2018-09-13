@@ -235,11 +235,8 @@ define('C_SCENARIO_SEND_MESSAGE_BY_BUTTON', 2);
 define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
 define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
 define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
-/* シナリオ設定(外部連携) - 連携タイプ */
-define('C_SCENARIO_EXTERNAL_TYPE_API', 1);
-define('C_SCENARIO_EXTERNAL_TYPE_SCRIPT', 2);
 
-/* シナリオ設定(外部連携) - メソッド種別 */
+/* シナリオ設定(外部システム連携) - メソッド種別 */
 define('C_SCENARIO_METHOD_TYPE_GET', 1);
 define('C_SCENARIO_METHOD_TYPE_POST', 2);
 
@@ -795,7 +792,6 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'externalType' => '1',
       'methodType' => '1',
       'requestHeaders' => [[
         'name' => '',
@@ -962,13 +958,7 @@ $config['chatbotScenarioReceiveFileTypeList'] = [
   ]
 ];
 
-/* シナリオ設定 - 外部連携のタイプ */
-$config['chatbotScenarioExternalType'] = [
-  C_SCENARIO_EXTERNAL_TYPE_API => 'API連携',
-  C_SCENARIO_EXTERNAL_TYPE_SCRIPT => 'スクリプト'
-];
-
-/* シナリオ設定 - 外部連携のメソッド種別 */
+/* シナリオ設定 - 外部システム連携のメソッド種別 */
 $config['chatbotScenarioApiMethodType'] = [
   C_SCENARIO_METHOD_TYPE_GET => 'GET',
   C_SCENARIO_METHOD_TYPE_POST => 'POST'

@@ -68,7 +68,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.inputTypeList = <?php echo json_encode($chatbotScenarioInputType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.inputAttributeList = <?php echo json_encode($chatbotScenarioAttributeType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.sendMailTypeList = <?php echo json_encode($chatbotScenarioSendMailType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
-  $scope.externalType = <?php echo json_encode($chatbotScenarioExternalType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiMethodType = <?php echo json_encode($chatbotScenarioApiMethodType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.apiResponseType = <?php echo json_encode($chatbotScenarioApiResponseType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.receiveFileTypeList = <?php echo json_encode($chatbotScenarioReceiveFileTypeList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
@@ -722,43 +721,36 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   }
 
   /**
-   * 外部連携のバリデーションチェックを行い、保存可能なデータを返す
+   * 外部システム連携のバリデーションチェックを行い、保存可能なデータを返す
    * @param Object  action  アクションの詳細
    */
   this.trimDataExternalApi = function(action) {
-    // 連携タイプがAPI連携の場合
-    if (action.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_API?>){
-      if (typeof action.url == 'undefined' || action.url == '') {
-        return null;
-      }
-      // メソッド種別によって送信するリクエスト情報を整理する
-      if (action.methodType == <?= C_SCENARIO_METHOD_TYPE_POST ?>) {
-        var requestHeaders = [];
-        angular.forEach(action.requestHeaders, function(item, index) {
-          if (typeof item.name !== 'undefined' && item.name !== '' && typeof item.value !== 'undefined' && item.value !== '') {
-            requestHeaders.push(item);
-          }
-        });
-        action.requestHeaders = requestHeaders;
-      } else {
-        action.requestHeaders =$scope.actionList[<?= C_SCENARIO_ACTION_EXTERNAL_API ?>].default.requestHeaders;
-        action.requestBody = '';
-      }
+    if (typeof action.url == 'undefined' || action.url == '') {
+      return null;
+    }
 
-      var responseBodys = [];
-      angular.forEach(action.responseBodyMaps, function(item, index) {
-        if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.sourceKey !== 'undefined' && item.sourceKey !== '') {
-          responseBodys.push(item);
+    // メソッド種別によって送信するリクエスト情報を整理する
+    if (action.methodType == <?= C_SCENARIO_METHOD_TYPE_POST ?>) {
+      var requestHeaders = [];
+      angular.forEach(action.requestHeaders, function(item, index) {
+        if (typeof item.name !== 'undefined' && item.name !== '' && typeof item.value !== 'undefined' && item.value !== '') {
+          requestHeaders.push(item);
         }
       });
-      action.responseBodyMaps = responseBodys;
-    } else
-    if (action.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>){
-      // 連携タイプがスクリプトの場合
-      if(typeof action.externalScript == 'undefined' || action.externalScript == ''){
-        return null;
-      }
+      action.requestHeaders = requestHeaders;
+    } else {
+      action.requestHeaders =$scope.actionList[<?= C_SCENARIO_ACTION_EXTERNAL_API ?>].default.requestHeaders;
+      action.requestBody = '';
     }
+
+    var responseBodys = [];
+    angular.forEach(action.responseBodyMaps, function(item, index) {
+      if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.sourceKey !== 'undefined' && item.sourceKey !== '') {
+        responseBodys.push(item);
+      }
+    });
+    action.responseBodyMaps = responseBodys;
+
     return action;
   }
 
@@ -1818,13 +1810,11 @@ function actionValidationCheck(element, setActionList, actionItem) {
     });
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
-    if (!actionItem.url && actionItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_API ?>) {
+    if (!actionItem.url) {
       messageList.push('連携先URLが未入力です');
-    }else if(!actionItem.externalScript && actionItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>){
-      messageList.push('スクリプトが未入力です');
     }
 
-  } else
+  }else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
     if (!actionItem.tChatbotScenarioSendFileId || !actionItem.file || !actionItem.file.download_url || !actionItem.file.file_size) {
       messageList.push('ファイルが未選択です');

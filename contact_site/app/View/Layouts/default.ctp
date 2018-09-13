@@ -64,8 +64,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("bootstrap.css");
     echo $this->Html->css("multi-select.css");
     echo $this->Html->css("standalone.css");
-    echo $this->Html->css("light.min");
-    echo $this->Html->css("solid.min");
+    echo $this->Html->css("fa-light.min");
+    echo $this->Html->css("fa-solid.min");
     echo $this->Html->css('fontawesome.min');
   ?>
   <?php

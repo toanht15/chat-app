@@ -95,10 +95,7 @@ class TChatbotScenario extends AppModel {
       } else
       if ($action['actionType'] == C_SCENARIO_ACTION_EXTERNAL_API) {
         // 外部システム連携
-        if ($action['externalType'] == C_SCENARIO_EXTERNAL_TYPE_API && empty($action['tExternalApiConnectionId'])) {
-          return false;
-        } else
-        if ($action['externalType'] == C_SCENARIO_EXTERNAL_TYPE_SCRIPT && empty($action['externalScript'])) {
+        if (empty($action['tExternalApiConnectionId'])) {
           return false;
         }
       }

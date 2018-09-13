@@ -88,7 +88,6 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioAttributeType = Configure::read('chatbotScenarioAttributeType');
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
     $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
-    $this->chatbotScenarioExternalType = Configure::read('chatbotScenarioExternalType');
     $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
     $this->chatbotScenarioReceiveFileTypeList = Configure::read('chatbotScenarioReceiveFileTypeList');
     $this->chatbotScenarioBranchOnConditionMatchValueType = Configure::read('chatbotScenarioBranchOnConditionMatchValueType');
@@ -764,7 +763,7 @@ sinclo@medialink-ml.co.jp
           unset($action->scenarioId);
         } else
         if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
-          // 外部連携
+          // 外部システム連携
           $action = $this->_entryProcessForExternalApi($action);
         } else
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
@@ -795,6 +794,7 @@ sinclo@medialink-ml.co.jp
 
     $validate = $this->TChatbotScenario->validates();
     $errors = $this->TChatbotScenario->validationErrors;
+
     if ($validate) {
       if( $this->TChatbotScenario->save($saveData,false) ) {
       }
@@ -914,41 +914,36 @@ sinclo@medialink-ml.co.jp
    * @return Object           t_chatbot_scenarioに保存するアクション詳細
    */
   private function _entryProcessForExternalApi($saveData) {
-    //連携タイプがAPI連携の場合
-    if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_API){
-      if (empty($saveData->tExternalApiConnectionId)) {
-        $this->TExternalApiConnection->create();
-      } else {
-        $this->TExternalApiConnection->read(null, $saveData->tExternalApiConnectionId);
-      }
-      $this->TExternalApiConnection->set([
-        'm_companies_id' => $this->userInfo['MCompany']['id'],
-        'url' => $saveData->url,
-        'method_type' => $saveData->methodType,
-        'request_headers' => json_encode($saveData->requestHeaders),
-        'request_body' => $saveData->requestBody,
-        'responseType' => $saveData->responseType,
-        'response_body_maps' => json_encode($saveData->responseBodyMaps)
-      ]);
-
-      $validate = $this->TExternalApiConnection->validates();
-      $errors = $this->TExternalApiConnection->validationErrors;
-      if(empty($errors)){
-        $this->TExternalApiConnection->save();
-        if(empty($saveData->tExternalApiConnectionId)) {
-          $saveData->tExternalApiConnectionId = $this->TExternalApiConnection->getLastInsertId();
-        }
-      } else {
-        $exception = new ChatbotScenarioException('バリデーションエラー');
-        $exception->setErrors($errors);
-        $exception->setLastPage($nextPage);
-        throw $exception;
-      }
-    //スクリプト連携に関する設定をオブジェクトから削除する
-    unset($saveData->externalScript);
+    if (empty($saveData->tExternalApiConnectionId)) {
+      $this->TExternalApiConnection->create();
+    } else {
+      $this->TExternalApiConnection->read(null, $saveData->tExternalApiConnectionId);
     }
-    // API連携に関する設定をオブジェクトから削除する(共通)
-    // スクリプト連携の場合は不要、かつAPI連携の場合も別テーブルに保存される領域の為
+    $this->TExternalApiConnection->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'url' => $saveData->url,
+      'method_type' => $saveData->methodType,
+      'request_headers' => json_encode($saveData->requestHeaders),
+      'request_body' => $saveData->requestBody,
+      'responseType' => $saveData->responseType,
+      'response_body_maps' => json_encode($saveData->responseBodyMaps)
+    ]);
+
+    $validate = $this->TExternalApiConnection->validates();
+    $errors = $this->TExternalApiConnection->validationErrors;
+    if(empty($errors)){
+      $this->TExternalApiConnection->save();
+      if(empty($saveData->tExternalApiConnectionId)) {
+        $saveData->tExternalApiConnectionId = $this->TExternalApiConnection->getLastInsertId();
+      }
+    } else {
+      $exception = new ChatbotScenarioException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
+
+    // 保存済みの設定をオブジェクトから削除する
     unset($saveData->url);
     unset($saveData->methodType);
     unset($saveData->requestHeaders);
@@ -1009,8 +1004,6 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioAttributeType', $this->chatbotScenarioAttributeType);
     // メール送信タイプ種別
     $this->set('chatbotScenarioSendMailType', $this->chatbotScenarioSendMailType);
-    // 外部連携種別
-    $this->set('chatbotScenarioExternalType', $this->chatbotScenarioExternalType);
     // API通信メソッド種別
     $this->set('chatbotScenarioApiMethodType', $this->chatbotScenarioApiMethodType);
     // API通信レスポンス種別
@@ -1229,6 +1222,9 @@ sinclo@medialink-ml.co.jp
         switch ($key) {
           case 'chat':
             if ( !$this->coreSettings[C_COMPANY_USE_CHAT] ) { continue; }
+            if ( strcmp($v, 'chat_init_show_textarea') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['chat_init_show_textarea'] = C_AUTO_WIDGET_TEXTAREA_OPEN; // デフォルト値
+            }
             if ( strcmp($v, 'chat_radio_behavior') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_radio_behavior'] = C_WIDGET_RADIO_CLICK_SEND; // デフォルト値
             }
@@ -1731,9 +1727,6 @@ sinclo@medialink-ml.co.jp
         // 外部システム連携設定
         if (!empty($action->tExternalApiConnectionId)) {
           $externalApiData = $this->TExternalApiConnection->findById($action->tExternalApiConnectionId);
-          if(!isset($action->externalType)){
-            $action->externalType = C_SCENARIO_EXTERNAL_TYPE_API;  //デフォルト値
-          }
           $action->url = $externalApiData['TExternalApiConnection']['url'];
           $action->methodType = $externalApiData['TExternalApiConnection']['method_type'];
           $action->requestHeaders = json_decode($externalApiData['TExternalApiConnection']['request_headers']);
