@@ -1923,10 +1923,10 @@ io.sockets.on('connection', function (socket) {
       if ( data.userId === undefined || data.userId === '' || data.userId === null ) {
         send.userId = makeUserId();
       }
-      if (data.forceFirstConnect || (data.firstConnection || (!data.inactiveReconnect && ((res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
+      if (data.forceFirstConnect || (!data.inactiveReconnect && ((res.sincloSessionId === undefined || res.sincloSessionId === '' || res.sincloSessionId === null)
         || !(res.siteKey in sincloCore)
         || !(res.sincloSessionId in sincloCore[res.siteKey])
-        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined)))) {
+        || sincloCore[res.siteKey][res.sincloSessionId].sessionIds === undefined))) {
         send.sincloSessionId = uuid.v4();
         send.sincloSessionIdIsNew = true;
         data.firstConnection = true;
