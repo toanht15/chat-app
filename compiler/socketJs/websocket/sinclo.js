@@ -5494,8 +5494,8 @@
       _replaceVariable: function (message) {
         var self = sinclo.scenarioApi;
         if (message) {
-          return message.replace(/{{(.+?)\}}/g, function (param) {
-            var name = param.replace(/^{{(.+)}}$/, '$1');
+          return message.replace(/\{\{(.+?)\}\}/g, function (param) {
+            var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
             return self._getSavedVariable(name) || name;
           });
         } else {
@@ -6089,21 +6089,42 @@
       },
       _callExternalApi: {
         _parent: null,
+        _externalType: {
+          useApi: "1",
+          useScript: "2"
+        },
         _init: function (parent) {
           this._parent = parent;
         },
         _process: function () {
           var self = sinclo.scenarioApi._callExternalApi;
+          var externalType = self._parent.get(self._parent._lKey.currentScenario).externalType;
           self._parent._doing(0, function () {
-            self._callApi(function (response) {
-              Object.keys(response).forEach(function (elm, index, arr) {
-                self._parent._saveVariable(response[elm].variableName, response[elm].value);
-              });
+            if(String(externalType) === self._externalType.useScript){
+              var externalScript = self._parent.get(self._parent._lKey.currentScenario).externalScript;
+              self._callScript(self._parent._replaceVariable(externalScript));
               if (self._parent._goToNextScenario()) {
                 self._parent._process();
               }
-            });
+            } else {
+              self._callApi(function (response) {
+                Object.keys(response).forEach(function (elm, index, arr) {
+                  self._parent._saveVariable(response[elm].variableName, response[elm].value);
+                });
+                if (self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
+              });
+            }
           });
+        },
+        _callScript: function(externalScript){
+          try {
+            eval(externalScript);
+          } catch (e) {
+            console.log(e.message);
+            return;
+          }
         },
         _callApi: function (callback) {
           var self = sinclo.scenarioApi._callExternalApi;
