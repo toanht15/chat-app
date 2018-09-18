@@ -914,13 +914,8 @@ sinclo@medialink-ml.co.jp
    * @return Object           t_chatbot_scenarioに保存するアクション詳細
    */
   private function _entryProcessForExternalApi($saveData) {
-<<<<<<< HEAD
     if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_API){
       //連携タイプがAPI連携の場合
-=======
-    //連携タイプがAPI連携の場合
-    if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_API){
->>>>>>> parent of 2b85cba... Revert "Merge remote branch 'origin/development' into staging"
       if (empty($saveData->tExternalApiConnectionId)) {
         $this->TExternalApiConnection->create();
       } else {
@@ -951,7 +946,6 @@ sinclo@medialink-ml.co.jp
       }
     //スクリプト連携に関する設定をオブジェクトから削除する
     unset($saveData->externalScript);
-<<<<<<< HEAD
     } else
     if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_SCRIPT){
     //連携タイプがスクリプトの場合
@@ -962,8 +956,6 @@ sinclo@medialink-ml.co.jp
         $exception->setLastPage($nextPage);
         throw $exception;
       }
-=======
->>>>>>> parent of 2b85cba... Revert "Merge remote branch 'origin/development' into staging"
     }
     // API連携に関する設定をオブジェクトから削除する(共通)
     // スクリプト連携の場合は不要、かつAPI連携の場合も別テーブルに保存される領域の為

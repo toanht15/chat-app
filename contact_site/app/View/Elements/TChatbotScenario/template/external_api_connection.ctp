@@ -82,16 +82,9 @@
       </div>
     </li>
     <li class="styleFlexbox" ng-if="setItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>">
-<<<<<<< HEAD
       <span class="fb7em"><label>スクリプト<span class="questionBalloon"><icon class="questionBtn" data-tooltip="実行したいスクリプト（JavaScript）を設定します。<br>スクリプト内で変数の利用も可能です。<br>スクリプト内で変数を利用する場合は{{showExpression('変数名')}}<br>をダブルクオーテーションで括る必要があります。<br>（例：&quot;{{showExpression('変数名')}}&quot;）<br><br>※先頭行および最終行のscriptタグの設定は不要です。">?</icon></span></label></span>
       <div>
         <textarea style="font-size: 13px; border-width: 1px; padding: 5px; margin-left: 72px; line-height: 1.5; overflow: auto; width: calc(100% - 157px); resize: vertical;" name="externalScript" maxlength="4000" ng-model="setItem.externalScript" cols="48" rows="9" placeholder="<!-- Google広告トラッキング -->
-=======
-      <span class="fb7em"><label>スクリプト<span class="questionBalloon"><icon class="questionBtn" data-tooltip="実行したいスクリプト（JavaScript）を設定します。<br>（変数の利用も可能です。）<br><br>※先頭行および最終行のscriptタグの設定は不要です。">?</icon></span></label></span>
-      <div>
-        <textarea style="font-size: 13px; border-width: 1px; padding: 5px; margin-left: 72px; line-height: 1.5; overflow: hidden; width: calc(100% - 157px); resize: vertical;" name="externalScript" maxlength="4000" ng-model="setItem.externalScript" cols="48" rows="9" placeholder="<!-- Google広告トラッキング -->
-if(document.getElementById('conversionCaller'+id)) return;
->>>>>>> parent of 2b85cba... Revert "Merge remote branch 'origin/development' into staging"
   var img;
   google_conversion_id = 'YOUR_CONVERSION_ID';
   google_conversion_label = 'YOUR_CONVERSION_LABEL';

@@ -1822,14 +1822,9 @@ function actionValidationCheck(element, setActionList, actionItem) {
       messageList.push('連携先URLが未入力です');
     }else if(!actionItem.externalScript && actionItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>){
       messageList.push('スクリプトが未入力です');
-<<<<<<< HEAD
     }else if(actionItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?> && searchStr(actionItem.externalScript,/<.*script.*>/)){
       messageList.push('scriptタグの設定は不要です');
     }
-=======
-    }
-
->>>>>>> parent of 2b85cba... Revert "Merge remote branch 'origin/development' into staging"
   } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
     if (!actionItem.tChatbotScenarioSendFileId || !actionItem.file || !actionItem.file.download_url || !actionItem.file.file_size) {
