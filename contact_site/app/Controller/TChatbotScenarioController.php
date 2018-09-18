@@ -914,20 +914,22 @@ sinclo@medialink-ml.co.jp
    * @return Object           t_chatbot_scenarioに保存するアクション詳細
    */
   private function _entryProcessForExternalApi($saveData) {
-    if (empty($saveData->tExternalApiConnectionId)) {
-      $this->TExternalApiConnection->create();
-    } else {
-      $this->TExternalApiConnection->read(null, $saveData->tExternalApiConnectionId);
-    }
-    $this->TExternalApiConnection->set([
-      'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'url' => $saveData->url,
-      'method_type' => $saveData->methodType,
-      'request_headers' => json_encode($saveData->requestHeaders),
-      'request_body' => $saveData->requestBody,
-      'responseType' => $saveData->responseType,
-      'response_body_maps' => json_encode($saveData->responseBodyMaps)
-    ]);
+    if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_API){
+      //連携タイプがAPI連携の場合
+      if (empty($saveData->tExternalApiConnectionId)) {
+        $this->TExternalApiConnection->create();
+      } else {
+        $this->TExternalApiConnection->read(null, $saveData->tExternalApiConnectionId);
+      }
+      $this->TExternalApiConnection->set([
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'url' => $saveData->url,
+        'method_type' => $saveData->methodType,
+        'request_headers' => json_encode($saveData->requestHeaders),
+        'request_body' => $saveData->requestBody,
+        'responseType' => $saveData->responseType,
+        'response_body_maps' => json_encode($saveData->responseBodyMaps)
+      ]);
 
     $validate = $this->TExternalApiConnection->validates();
     $errors = $this->TExternalApiConnection->validationErrors;
@@ -936,11 +938,18 @@ sinclo@medialink-ml.co.jp
       if(empty($saveData->tExternalApiConnectionId)) {
         $saveData->tExternalApiConnectionId = $this->TExternalApiConnection->getLastInsertId();
       }
-    } else {
-      $exception = new ChatbotScenarioException('バリデーションエラー');
-      $exception->setErrors($errors);
-      $exception->setLastPage($nextPage);
-      throw $exception;
+    //スクリプト連携に関する設定をオブジェクトから削除する
+    unset($saveData->externalScript);
+    } else
+    if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_SCRIPT){
+    //連携タイプがスクリプトの場合
+      $scriptPattern = '/<(.*script.*)>/';
+      if(preg_match($scriptPattern,$saveData->externalScript)){
+        $exception = new ChatbotScenarioException('バリデーションエラー');
+        $exception->setErrors($errors);
+        $exception->setLastPage($nextPage);
+        throw $exception;
+      }
     }
 
     // 保存済みの設定をオブジェクトから削除する

@@ -1812,9 +1812,12 @@ function actionValidationCheck(element, setActionList, actionItem) {
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
     if (!actionItem.url) {
       messageList.push('連携先URLが未入力です');
+    }else if(!actionItem.externalScript && actionItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>){
+      messageList.push('スクリプトが未入力です');
+    }else if(actionItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?> && searchStr(actionItem.externalScript,/<.*script.*>/)){
+      messageList.push('scriptタグの設定は不要です');
     }
-
-  }else
+  } else
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
     if (!actionItem.tChatbotScenarioSendFileId || !actionItem.file || !actionItem.file.download_url || !actionItem.file.file_size) {
       messageList.push('ファイルが未選択です');
@@ -1968,5 +1971,19 @@ function searchObj (obj, regex) {
     }
   }
   return resultList;
+}
+
+/**
+ * 文字列の正規表現を行う
+ * @param  String str   検索対象の文字列
+ * @param  RegExp regex 正規表現
+ * @return boolean      検索結果(あり、か、なし)
+ **/
+function searchStr (str, regex) {
+  var result = false;
+  if(str.match(regex)){
+    result = true;
+  }
+  return result;
 }
 </script>
