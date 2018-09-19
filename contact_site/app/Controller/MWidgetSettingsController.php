@@ -19,7 +19,7 @@ class MWidgetSettingsController extends AppController {
       'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
       /* 隠しパラメータstart */
-      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_banner_text','sp_widget_view_pattern'
+      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_banner_position_rate','sp_banner_text','sp_widget_view_pattern'
       /* 隠しパラメータend */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
@@ -656,22 +656,31 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'bannertext') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['bannertext'] = C_BANNER_TEXT; // デフォルト値
             }
-            /* スマホ用隠しパラメータstart */
+            /* スマホ用隠しパラメータstart *
+             * デフォルト値は機能が本格的に
+             * 実装されるまで設定しない    */
 
             //スマホ_小さなバナー表示位置
-            if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            /*if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_banner_position'] = C_SP_BANNER_POSITION; // デフォルト値
+            }*/
+
+            //スマホ小さなバナー縦割合
+            if ( strcmp($v, 'sp_banner_position_rate') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_position_rate'] = 50; // デフォルト値
             }
 
             //スマホ_小さなバナーテキスト
-            if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            /*if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_banner_text'] = C_BANNER_TEXT; // デフォルト値
-            }
+            }*/
 
             //スマホ_ウィジェット状態フラグ
-            if ( strcmp($v, 'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            /*if ( strcmp($v, 'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_widget_view_pattern'] = C_SP_WIDGET_VIEW_PATTERN; // デフォルト値
-            }
+            }*/
+
+
 
             /* スマホ用隠しパラメータend */
 

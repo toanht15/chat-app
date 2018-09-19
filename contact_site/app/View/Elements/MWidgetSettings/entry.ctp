@@ -1030,17 +1030,30 @@ $headerNo = 1;
             </div>
           </li>
           <!-- 閉じるボタン -->
-          <?php /*小さなバナー隠しパラメータ*/ ?>
-          <?= $this->ngForm->input('sp_banner_position', [
+          <?php /*スマホ隠しパラメータ*/ ?>
+          <?php if(isset($this->data['MWidgetSetting']['sp_banner_position'])){?>
+            <?= $this->ngForm->input('sp_banner_position', [
+              'type' => 'hidden',
+              'div' => false,
+              'label' => false,
+              'string-to-number' => true,
+              'default' => 1
+            ],
+            [
+              'entity' => 'MWidgetSetting.sp_banner_position'
+            ]) ?>
+          <?php }?>
+          <?= $this->ngForm->input('sp_banner_position_rate', [
             'type' => 'hidden',
             'div' => false,
             'label' => false,
             'string-to-number' => true,
-            'default' => 1
+            'default' => 50
           ],
           [
-            'entity' => 'MWidgetSetting.sp_banner_position'
+            'entity' => 'MWidgetSetting.sp_banner_position_rate'
           ]) ?>
+          <?php if(isset($this->data['MWidgetSetting']['sp_banner_text'])){?>
           <?= $this->ngForm->input('sp_banner_text', [
             'type' => 'hidden',
             'div' => false,
@@ -1050,6 +1063,8 @@ $headerNo = 1;
           [
             'entity' => 'MWidgetSetting.sp_banner_text'
           ]) ?>
+          <?php }?>
+          <?php if(isset($this->data['MWidgetSetting']['sp_widget_view_pattern'])){?>
           <?= $this->ngForm->input('sp_widget_view_pattern', [
             'type' => 'hidden',
             'div' => false,
@@ -1060,6 +1075,7 @@ $headerNo = 1;
           [
             'entity' => 'MWidgetSetting.sp_widget_view_pattern'
           ]) ?>
+          <?php }?>
         </ul>
       </section>
 
