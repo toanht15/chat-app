@@ -272,7 +272,7 @@ function checkValidate() {
                   <dl>
                       <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られるステータスです。）</dt-detail></dt>
                       <dd>
-                          <label style="margin-left:190px;display:inline-block;">
+                          <label id="sc_default_create_status" style="display:inline-block;">
                               <input type="radio" name="zzz" id="MChatSettingScFlg2" value="2" checked="checked"
                                      class="pointer" checked>離席中
                           </label>
@@ -350,7 +350,7 @@ function checkValidate() {
           </div>
       </section>
       <section>
-        <h3>2．同時対応数上限</h3>
+        <h3>２．同時対応数上限</h3>
         <div class ="content">
           <span class = "pre">オペレータが同時にチャット対応できる上限数を設定することができます。&#10;ここで設定した同時対応数に達したオペレータには新着チャットのデスクトップ通知が表示されなくなります。&#10;また、すべてのオペレータが同時対応数の上限に達している際に新着チャットが送信された場合には、&#10;チャット送信者（サイト訪問者）に対してSorryメッセージを自動返信します。（Sorryメッセージは当画面下段にて設定可能）</span>
           <div>
@@ -407,7 +407,7 @@ function checkValidate() {
         </div>
       </section>
       <section>
-        <h3>3．チャット呼出中メッセージ</h3>
+        <h3>３．チャット呼出中メッセージ</h3>
         <div class="content">
           <span class = "pre">有人チャットを受信後、オペレータが入室するまでの間に任意のメッセージを自動送信することができます。&#10;最初の有人チャットを受信してからオペレータが入室するまでの経過時間により、自動送信するメッセージを複数設定することが可能です。</span>
           <label style="display:inline-block;">
@@ -432,7 +432,7 @@ function checkValidate() {
         </div>
       </section>
       <section>
-        <h3 class="require">4．Sorryメッセージ</h3>
+        <h3 class="require">４．Sorryメッセージ</h3>
         <div class="content">
           <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
           <li style = "padding: 0 0 15px 0;">
