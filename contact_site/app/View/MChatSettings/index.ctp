@@ -105,6 +105,14 @@ $(document).ready(function(){
   //バリデーションチェック
   checkValidate();
 
+    $('input[type=radio][name=zzz]').change(function() {
+        if (this.value == '0') {
+            $('.away').prop('checked', true);
+        } else {
+            $('.waiting').prop('checked', true);
+        }
+    });
+
 });
 
 //初回メッセージ項目削除
@@ -265,87 +273,82 @@ function checkValidate() {
           <h3>１．ログイン後の初期ステータス</h3>
           <div class="content">
               <span class="pre">オペレータのログイン直後の初期ステータス（離席中／待機中）を設定することができます。</span>
-          </div>
 
-          <div>
-              <div id="sc_login_default_status">
-                  <dl>
-                      <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られるステータスです。）</dt-detail></dt>
-                      <dd>
-                          <label id="sc_default_create_status" style="display:inline-block;">
-                              <input type="radio" name="zzz" id="MChatSettingScFlg2" value="2" checked="checked"
-                                     class="pointer" checked>離席中
-                          </label>
-                          <br>
-                          <label style="display:inline-block;"><input type="radio" name="zzz"
-                                                                      id="MChatSettingScFlg1" value="1" checked="checked"
-                                                                      class="pointer">待機中
-                          </label>
-                      </dd>
-                      <dt>個別</dt>
-                      <div>
+              <div>
+                  <div id="sc_login_default_status">
+                      <dl>
+                          <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られるステータスです。）</dt-detail></dt>
                           <dd>
-                              <span>田中 太郎</span>
-                              <label style="display:inline-block;">
-                                  <input type="radio" name="a" id="222" value="2"
-                                         class="pointer" checked>離席中
-                              </label>
-                              <br>
-                              <label style="display:inline-block;"><input type="radio" name="a"
-                                                                          id="222" value="1" checked="checked"
-                                                                          class="pointer">待機中
-                              </label>
-                          </dd>
-                          <dd>
-                              <span>清野</span>
-                              <label style="display:inline-block;">
-                                  <input type="radio" name="333" id="MChatSettingScFlg2" value="2"
+                              <label id="sc_default_create_status" style="display:inline-block;">
+                                  <input type="radio" name="zzz" id="abcz" value="0"
                                          class="pointer">離席中
                               </label>
                               <br>
-                              <label style="display:inline-block;"><input type="radio" name="333"
-                                                                          id="MChatSettingScFlg1" value="1" checked="checked"
+                              <label style="display:inline-block;"><input type="radio" name="zzz"
+                                                                          id="abcz" value="1" checked="checked"
                                                                           class="pointer">待機中
                               </label>
                           </dd>
-                          <dd>
-                              <span>山本</span>
-                              <label style="display:inline-block;">
-                                  <input type="radio" name="444" id="MChatSettingScFlg2" value="2" checked="checked"
-                                         class="pointer">離席中
-                              </label>
-                              <br>
-                              <label style="display:inline-block;"><input type="radio" name="444"
-                                                                          id="MChatSettingScFlg1" value="1"
-                                                                          class="pointer">待機中
-                              </label>
-                          </dd>
-                          <dd>
-                              <span>鈴木</span>
-                              <label style="display:inline-block;">
-                                  <input type="radio" name="555" id="MChatSettingScFlg2" value="2"
-                                         class="pointer">離席中
-                              </label>
-                              <br>
-                              <label style="display:inline-block;"><input type="radio" name="555"
-                                                                          id="MChatSettingScFlg1" value="1" checked="checked"
-                                                                          class="pointer">待機中
-                              </label>
-                          </dd>
-                          <dd>
-                              <span>本田</span>
-                              <label style="display:inline-block;">
-                                  <input type="radio" name="666" id="MChatSettingScFlg2" value="2"
-                                         class="pointer">離席中
-                              </label>
-                              <br>
-                              <label style="display:inline-block;"><input type="radio" name="666"
-                                                                          id="MChatSettingScFlg1" value="1" checked="checked"
-                                                                          class="pointer">待機中
-                              </label>
-                          </dd>
-                      </div>
-                  </dl>
+                          <dt>個別</dt>
+                          <div>
+                              <dd>
+                                  <span>田中 太郎</span>
+                                  <label style="display:inline-block;">
+                                      <input type="radio" name="111" id="111" value="2"
+                                             class="pointer away">離席中
+                                  </label>
+                                  <label style="display:inline-block;"><input type="radio" name="111"
+                                                                              id="111" value="1" checked="checked"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                              <dd>
+                                  <span>松本　淳志</span>
+                                  <label style="display:inline-block;">
+                                      <input type="radio" name="a" id="222" value="2"
+                                             class="pointer away" checked="checked">離席中
+                                  </label>
+                                  <label style="display:inline-block;"><input type="radio" name="a"
+                                                                              id="222" value="1"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                              <dd>
+                                  <span>清水　雅司</span>
+                                  <label style="display:inline-block;">
+                                      <input type="radio" name="333" id="333" value="2"
+                                             class="pointer away">離席中
+                                  </label>
+                                  <label style="display:inline-block;"><input type="radio" name="333"
+                                                                              id="333" value="1" checked="checked"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                              <dd>
+                                  <span>細川　諒</span>
+                                  <label style="display:inline-block;">
+                                      <input type="radio" name="444" id="444" value="2"
+                                             class="pointer away" checked="checked">離席中
+                                  </label>
+                                  <label style="display:inline-block;"><input type="radio" name="444"
+                                                                              id="444" value="1"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                              <dd>
+                                  <span>トアン</span>
+                                  <label style="display:inline-block;">
+                                      <input type="radio" name="555" id="555" value="2"
+                                             class="pointer away">離席中
+                                  </label>
+                                  <label style="display:inline-block;"><input type="radio" name="555"
+                                                                              id="555" value="1" checked="checked"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                          </div>
+                      </dl>
+                  </div>
               </div>
           </div>
       </section>
