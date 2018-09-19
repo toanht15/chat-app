@@ -1043,15 +1043,14 @@ $headerNo = 1;
               'entity' => 'MWidgetSetting.sp_banner_position'
             ]) ?>
           <?php }?>
-          <?= $this->ngForm->input('sp_banner_position_rate', [
+          <?= $this->ngForm->input('sp_banner_vertical_position', [
             'type' => 'hidden',
             'div' => false,
             'label' => false,
-            'string-to-number' => true,
-            'default' => 50
+            'default' => "50%"
           ],
           [
-            'entity' => 'MWidgetSetting.sp_banner_position_rate'
+            'entity' => 'MWidgetSetting.sp_banner_vertical_position'
           ]) ?>
           <?php if(isset($this->data['MWidgetSetting']['sp_banner_text'])){?>
           <?= $this->ngForm->input('sp_banner_text', [

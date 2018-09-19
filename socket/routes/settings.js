@@ -236,9 +236,9 @@ router.get("/", function (req, res, next) {
       }
 
 
-      var spBannerPositionRate = 50;
-      if ('spBannerPositionRate' in settings){
-        spBannerPositionRate = settings.spBannerPositionRate;
+      var spBannerVerticalPosition = "50%";
+      if ('spBannerVerticalPosition' in settings){
+        spBannerVerticalPosition = settings.spBannerVerticalPosition;
       }
 
       /*  スマホ隠しパラメータ */
@@ -345,7 +345,7 @@ router.get("/", function (req, res, next) {
         /* スマホ隠しパラメータstart */
         spWidgetViewPattern: isNumeric(spWidgetViewPattern),
         spBannerPosition: isNumeric(spBannerPosition),
-        spBannerPositionRate: isNumeric(spBannerPositionRate),
+        spBannerVerticalPosition: settings.spBannerVerticalPosition,
         spBannerText: settings.spBannerText,
         /* スマホ隠しパラメータend */
 
