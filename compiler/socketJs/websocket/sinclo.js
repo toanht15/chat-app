@@ -1464,6 +1464,25 @@
           } else if (obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
             // 別タブで送信された自動返信は表示する
             cn = "sinclo_re";
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = "";
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+          } else if (obj.messageType === sinclo.chatApi.messageType.scenario.message.text
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
+            || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = "sinclo_re";
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = "";
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            sinclo.chatApi.createMessage(cn, obj.chatMessage, userName, true);
+            sinclo.chatApi.scDown();
+            return false;
           } else {
             // 別タブで送信されたオートメッセージは何もしない
             return false;
@@ -1505,6 +1524,9 @@
           setTimeout(function () {
             common.chatBotTyping(obj)
           }, 800);
+          if (obj.tabId !== userInfo.tabId) {
+            $('ul#chatTalk li.sinclo_re.sinclo_form:last-of-type').remove();
+          }
           return false;
         }
 
@@ -2171,6 +2193,10 @@
               sinclo.chatApi.observeType.start();
               console.log('エラー');
             });
+          }
+
+          if ( window.sincloInfo.contract.chatbotScenario ) {
+            sinclo.scenarioApi.addStorageUpdateEvent();
           }
 
         this.sound = document.getElementById('sinclo-sound');
@@ -5045,6 +5071,7 @@
         };
       },
       begin: function () {
+        this.addStorageUpdateEvent();
         this._disablePreviousRadioButton();
         this._saveProcessingState(true);
         this._process();
@@ -5275,6 +5302,41 @@
             break;
         }
       },
+      addStorageUpdateEvent: function() {
+        var self = sinclo.scenarioApi;
+        window.addEventListener('storage', self._handleStorageUpdateEvent);
+      },
+      removeStorageUpdateEvent: function() {
+        var self = sinclo.scenarioApi;
+        window.removeEventListener('storage', self._handleStorageUpdateEvent);
+      },
+      _scenarioSeqIsUpdated: false,
+      _handleStorageUpdateEvent: function(event) {
+        var self = sinclo.scenarioApi;
+        console.log(event);
+        if(event.key === self._lKey.scenarioBase) {
+          var oldObj = JSON.parse(event.oldValue);
+          var newObj = JSON.parse(event.newValue);
+          if(self.isProcessing()
+            && check.isset(oldObj[self._lKey.currentScenario])
+            && check.isset(newObj[self._lKey.currentScenario])
+            && JSON.stringify(oldObj[self._lKey.currentScenarioSeqNum]) !== JSON.stringify(newObj[self._lKey.currentScenarioSeqNum])) {
+            console.log("<><><><><><><><><><> sequence moved %s => %s <><><><><><><><><><>", oldObj[self._lKey.currentScenarioSeqNum], newObj[self._lKey.currentScenarioSeqNum]);
+            setTimeout(function(){
+              var action = self.get(self._lKey.currentScenario);
+              if(String(action.actionType) === self._actionType.hearing
+                || String(action.actionType) === self._actionType.selection
+                || String(action.actionType) === self._actionType.bulkHearing
+                || String(action.actionType) === self._actionType.sendFile) {
+                console.log("<><><><><><><><><><> process %s <><><><><><><><><><>", String(action.actionType));
+                self.begin();
+              } else {
+                console.log("<><><><><><><><><><> NOT process %s <><><><><><><><><><>", String(action.actionType));
+              }
+            },100);
+          }
+        }
+      },
       _isTheFiestScenaroAndSequence: function () {
         var self = sinclo.scenarioApi;
         var result = false;
@@ -5494,8 +5556,8 @@
       _replaceVariable: function (message) {
         var self = sinclo.scenarioApi;
         if (message) {
-          return message.replace(/{{(.+?)\}}/g, function (param) {
-            var name = param.replace(/^{{(.+)}}$/, '$1');
+          return message.replace(/\{\{(.+?)\}\}/g, function (param) {
+            var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
             return self._getSavedVariable(name) || name;
           });
         } else {
@@ -6089,21 +6151,42 @@
       },
       _callExternalApi: {
         _parent: null,
+        _externalType: {
+          useApi: "1",
+          useScript: "2"
+        },
         _init: function (parent) {
           this._parent = parent;
         },
         _process: function () {
           var self = sinclo.scenarioApi._callExternalApi;
+          var externalType = self._parent.get(self._parent._lKey.currentScenario).externalType;
           self._parent._doing(0, function () {
-            self._callApi(function (response) {
-              Object.keys(response).forEach(function (elm, index, arr) {
-                self._parent._saveVariable(response[elm].variableName, response[elm].value);
-              });
+            if(String(externalType) === self._externalType.useScript){
+              var externalScript = self._parent.get(self._parent._lKey.currentScenario).externalScript;
+              self._callScript(self._parent._replaceVariable(externalScript));
               if (self._parent._goToNextScenario()) {
                 self._parent._process();
               }
-            });
+            } else {
+              self._callApi(function (response) {
+                Object.keys(response).forEach(function (elm, index, arr) {
+                  self._parent._saveVariable(response[elm].variableName, response[elm].value);
+                });
+                if (self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
+              });
+            }
           });
+        },
+        _callScript: function(externalScript){
+          try {
+            eval(externalScript);
+          } catch (e) {
+            console.log(e.message);
+            return;
+          }
         },
         _callApi: function (callback) {
           var self = sinclo.scenarioApi._callExternalApi;

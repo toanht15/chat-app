@@ -914,8 +914,8 @@ sinclo@medialink-ml.co.jp
    * @return Object           t_chatbot_scenarioに保存するアクション詳細
    */
   private function _entryProcessForExternalApi($saveData) {
-    //連携タイプがAPI連携の場合
     if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_API){
+      //連携タイプがAPI連携の場合
       if (empty($saveData->tExternalApiConnectionId)) {
         $this->TExternalApiConnection->create();
       } else {
@@ -946,6 +946,16 @@ sinclo@medialink-ml.co.jp
       }
     //スクリプト連携に関する設定をオブジェクトから削除する
     unset($saveData->externalScript);
+    } else
+    if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_SCRIPT){
+    //連携タイプがスクリプトの場合
+      $scriptPattern = '/<(.*script.*)>/';
+      if(preg_match($scriptPattern,$saveData->externalScript)){
+        $exception = new ChatbotScenarioException('バリデーションエラー');
+        $exception->setErrors($errors);
+        $exception->setLastPage($nextPage);
+        throw $exception;
+      }
     }
     // API連携に関する設定をオブジェクトから削除する(共通)
     // スクリプト連携の場合は不要、かつAPI連携の場合も別テーブルに保存される領域の為
