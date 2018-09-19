@@ -13,12 +13,14 @@ class MWidgetSettingsController extends AppController {
       'display_style_type', 'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
-      /* カラー設定styat */
+      /* カラー設定start */
       'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
       'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
-      'btw_button_margin', 'line_button_margin'
+      /* 隠しパラメータstart */
+      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_banner_text','sp_widget_view_pattern'
+      /* 隠しパラメータend */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
     'chat' => ['chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
@@ -654,6 +656,25 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'bannertext') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['bannertext'] = C_BANNER_TEXT; // デフォルト値
             }
+            /* スマホ用隠しパラメータstart */
+
+            //スマホ_小さなバナー表示位置
+            if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_position'] = C_SP_BANNER_POSITION; // デフォルト値
+            }
+
+            //スマホ_小さなバナーテキスト
+            if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_text'] = C_BANNER_TEXT; // デフォルト値
+            }
+
+            //スマホ_ウィジェット状態フラグ
+            if ( strcmp($v, 'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_widget_view_pattern'] = C_SP_WIDGET_VIEW_PATTERN; // デフォルト値
+            }
+
+            /* スマホ用隠しパラメータend */
+
             //閉じるボタン
             /* カラー設定styat */
             //0.通常設定・高度設定
