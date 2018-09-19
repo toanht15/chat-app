@@ -113,6 +113,13 @@ $(document).ready(function(){
         }
     });
 
+    var default_num = $('#sc_default_num').val();
+    $('#sc_default_num').on('keyup change click', function () {
+        if (this.value != default_num) {
+            $('.sc_num_limit').val(this.value);
+            default_num = this.value;
+        }
+    });
 });
 
 //初回メッセージ項目削除
@@ -385,7 +392,7 @@ function checkValidate() {
               <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られる上限数です。）</dt-detail></dt>
                 <dd>
                   <span>同時対応上限数</span>
-                  <?=$this->Form->input('sc_default_num', ['type' => 'number', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
+                  <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
                 </dd>
                 <?php if ( $this->Form->isFieldError('sc_default_num') ) echo $this->Form->error('sc_default_num', null, ['wrap' => 'p']); ?>
               <dt>個別</dt>
@@ -400,7 +407,7 @@ function checkValidate() {
                   ?>
                   <dd>
                     <span><?=h($val['MUser']['display_name'])?></span>
-                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
+                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'class' => 'sc_num_limit', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
                   </dd>
                   <?php if ( $this->Form->isFieldError('MUser.'.$val['MUser']['id'].'.sc_num') ) echo $this->Form->error('MUser.'.$val['MUser']['id'].'.sc_num', null, ['wrap' => 'p']); ?>
                 <?php } ?>
