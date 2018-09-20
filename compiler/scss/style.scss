@@ -9007,7 +9007,7 @@ ul.naviBtn {
       border-bottom: 3px solid #C3D69B;
       padding-left: 5px;
     }
-    .content { margin: 0 0 2em 2em; }
+    .content { margin: 0 0 0 2em; }
     .pre {
       display: block;
       line-height: 2em;
@@ -9133,7 +9133,7 @@ ul.naviBtn {
       dl {
         overflow: hidden;
         transition: height 200ms linear;
-        height: 24em;
+        height: 22em;
         &.sc_hidden {
           height: 0;
         }
@@ -9177,6 +9177,71 @@ ul.naviBtn {
           display: block;
         }
 
+      }
+    }
+
+    #sc_login_default_status {
+      dl {
+        overflow: hidden;
+        transition: height 200ms linear;
+        margin-top: 5px;
+        height: 22em;
+
+        &.sc_hidden {
+          height: 0;
+        }
+
+        > div {
+          height: 15em;
+          overflow: auto;
+          width: 32em;
+        }
+      }
+
+      dt {
+        border-left: 5px solid #a2a2a2;
+        padding: 0.25em 0.5em;
+        font-weight: bold;
+        background-color: #eee;
+        width: 30em;
+
+        dt-detail {
+          font-size: 0.9em;
+          color: #8b8b8b;
+        }
+      }
+
+      dd {
+        display: flex;
+        align-items: center;
+        padding: 0.5em;
+        width: 28em;
+        height: 38px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-left: 2em;
+
+        &:hover {
+          background-color: rgba(195, 214, 155, 0.1);
+        }
+
+        > span {
+          width: 15em;
+          display: block;
+        }
+
+        > label {
+          display: inline-flex;
+
+          > input {
+            margin-top: 0;
+          }
+        }
+      }
+
+      #sc_default_create_status {
+        margin-left: 195px;
       }
     }
   }
