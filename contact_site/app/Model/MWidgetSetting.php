@@ -103,7 +103,9 @@ class MWidgetSetting extends AppModel {
       'sp_banner_position' => "spBannerPosition",
       'sp_banner_text' => "spBannerText",
       'sp_widget_view_pattern' => "spWidgetViewPattern",
-      'sp_banner_vertical_position' => "spBannerVerticalPosition",
+      'sp_banner_vertical_position_from_top' => "spBannerVerticalPositionFromTop",
+      'sp_banner_vertical_position_from_bottom' => "spBannerVerticalPositionFromBottom",
+      'sp_banner_horizontal_position' => "spBannerHorizontalPosition",
       //スマホ小さなバナー隠しパラメータ
       //閉じるボタン対応
       'close_button_setting' => "closeButtonSetting",

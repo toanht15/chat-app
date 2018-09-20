@@ -19,7 +19,7 @@ class MWidgetSettingsController extends AppController {
       'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
       /* 隠しパラメータstart */
-      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_banner_vertical_position','sp_banner_text','sp_widget_view_pattern'
+      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
       /* 隠しパラメータend */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
@@ -665,10 +665,20 @@ class MWidgetSettingsController extends AppController {
               $d['sp_banner_position'] = C_SP_BANNER_POSITION; // デフォルト値
             }*/
 
-            //スマホ小さなバナー縦割合
-            if ( strcmp($v, 'sp_banner_vertical_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['sp_banner_vertical_position'] = "50%"; // デフォルト値
+            //スマホ小さなバナー縦の上から割合
+            if ( strcmp($v, 'sp_banner_vertical_position_from_top') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_vertical_position_from_top'] = "50%"; // デフォルト値
             }
+
+            //スマホ小さなバナー縦の下から割合
+            /*if ( strcmp($v, 'sp_banner_vertical_position_from_bottom') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_vertical_position_from_bottom'] = "5px"; // デフォルト値
+            }*/
+
+            //スマホ小さなバナー横の割合
+            /*if ( strcmp($v, 'sp_banner_horizontal_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_horizontal_position'] = "5px"; // デフォルト値
+            }*/
 
             //スマホ_小さなバナーテキスト
             /*if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
