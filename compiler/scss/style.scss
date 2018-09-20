@@ -9002,7 +9002,14 @@ ul.naviBtn {
 #m_chat_settings_idx {
   margin: 15px 15px 72px 15px;
   #m_chat_settings_form {
-    label { cursor: pointer; }
+    label {
+      cursor: pointer;
+      display: inline-flex;
+
+      > input {
+        margin-top: 0;
+      }
+    }
     h3 {
       border-bottom: 3px solid #C3D69B;
       padding-left: 5px;
@@ -9229,6 +9236,14 @@ ul.naviBtn {
         > span {
           width: 15em;
           display: block;
+        }
+
+        > label {
+          display: inline-flex;
+
+          > input {
+            margin-top: 0;
+          }
         }
       }
 

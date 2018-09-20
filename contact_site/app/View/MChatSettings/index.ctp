@@ -286,12 +286,12 @@ function checkValidate() {
                       <dl>
                           <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られるステータスです。）</dt-detail></dt>
                           <dd>
-                              <label id="sc_default_create_status" style="display:inline-block;">
+                              <label id="sc_default_create_status">
                                   <input type="radio" name="zzz" id="abcz" value="0"
                                          class="pointer">離席中
                               </label>
                               <br>
-                              <label style="display:inline-block;"><input type="radio" name="zzz"
+                              <label><input type="radio" name="zzz"
                                                                           id="abcz" value="1" checked="checked"
                                                                           class="pointer">待機中
                               </label>
@@ -300,55 +300,55 @@ function checkValidate() {
                           <div>
                               <dd>
                                   <span>田中 太郎</span>
-                                  <label style="display:inline-block;">
+                                  <label>
                                       <input type="radio" name="111" id="111" value="2"
                                              class="pointer away">離席中
                                   </label>
-                                  <label style="display:inline-block;"><input type="radio" name="111"
+                                  <label><input type="radio" name="111"
                                                                               id="111" value="1" checked="checked"
                                                                               class="pointer waiting">待機中
                                   </label>
                               </dd>
                               <dd>
                                   <span>松本　淳志</span>
-                                  <label style="display:inline-block;">
+                                  <label>
                                       <input type="radio" name="a" id="222" value="2"
                                              class="pointer away" checked="checked">離席中
                                   </label>
-                                  <label style="display:inline-block;"><input type="radio" name="a"
+                                  <label><input type="radio" name="a"
                                                                               id="222" value="1"
                                                                               class="pointer waiting">待機中
                                   </label>
                               </dd>
                               <dd>
                                   <span>清水　雅司</span>
-                                  <label style="display:inline-block;">
+                                  <label>
                                       <input type="radio" name="333" id="333" value="2"
                                              class="pointer away">離席中
                                   </label>
-                                  <label style="display:inline-block;"><input type="radio" name="333"
+                                  <label><input type="radio" name="333"
                                                                               id="333" value="1" checked="checked"
                                                                               class="pointer waiting">待機中
                                   </label>
                               </dd>
                               <dd>
                                   <span>細川　諒</span>
-                                  <label style="display:inline-block;">
+                                  <label>
                                       <input type="radio" name="444" id="444" value="2"
                                              class="pointer away" checked="checked">離席中
                                   </label>
-                                  <label style="display:inline-block;"><input type="radio" name="444"
+                                  <label><input type="radio" name="444"
                                                                               id="444" value="1"
                                                                               class="pointer waiting">待機中
                                   </label>
                               </dd>
                               <dd>
                                   <span>トアン</span>
-                                  <label style="display:inline-block;">
+                                  <label>
                                       <input type="radio" name="555" id="555" value="2"
                                              class="pointer away">離席中
                                   </label>
-                                  <label style="display:inline-block;"><input type="radio" name="555"
+                                  <label><input type="radio" name="555"
                                                                               id="555" value="1" checked="checked"
                                                                               class="pointer waiting">待機中
                                   </label>
@@ -364,14 +364,14 @@ function checkValidate() {
         <div class ="content">
           <span class = "pre">オペレータが同時にチャット対応できる上限数を設定することができます。&#10;ここで設定した同時対応数に達したオペレータには新着チャットのデスクトップ通知が表示されなくなります。&#10;また、すべてのオペレータが同時対応数の上限に達している際に新着チャットが送信された場合には、&#10;チャット送信者（サイト訪問者）に対してSorryメッセージを自動返信します。（Sorryメッセージは当画面下段にて設定可能）</span>
           <div>
-            <label style="display:inline-block;" <?php echo $coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : 'style="color: #CCCCCC;" '?>>
+            <label <?php echo $coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : 'style="color: #CCCCCC;" '?>>
               <?php
                 $settings = [
                   'type' => 'radio',
                   'options' => $scFlgOpt,
                   'default' => C_SC_DISABLED,
                   'legend' => false,
-                  'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
+                  'separator' => '</label><br><label '.($coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
                   'label' => false,
                   'div' => false,
                   'disabled' => !$coreSettings[C_COMPANY_USE_CHAT_LIMITER],
@@ -420,14 +420,14 @@ function checkValidate() {
         <h3>３．チャット呼出中メッセージ</h3>
         <div class="content">
           <span class = "pre">有人チャットを受信後、オペレータが入室するまでの間に任意のメッセージを自動送信することができます。&#10;最初の有人チャットを受信してからオペレータが入室するまでの経過時間により、自動送信するメッセージを複数設定することが可能です。</span>
-          <label style="display:inline-block;">
+          <label>
               <?php
                 $settings = [
                   'type' => 'radio',
                   'options' => $scFlgOpt,
                   'default' => C_IN_DISABLED,
                   'legend' => false,
-                  'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_CHATCALLMESSAGES] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
+                  'separator' => '</label><br><label '.($coreSettings[C_COMPANY_USE_CHATCALLMESSAGES] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
                   'label' => false,
                   'div' => false,
                   'disabled' => !$coreSettings[C_COMPANY_USE_CHATCALLMESSAGES],
