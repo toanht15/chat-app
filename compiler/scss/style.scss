@@ -9181,12 +9181,11 @@ ul.naviBtn {
     }
 
     #sc_login_default_status {
-      margin-left: 2em;
-
       dl {
         overflow: hidden;
         transition: height 200ms linear;
-        height: 24em;
+        margin-top: 5px;
+        
         &.sc_hidden {
           height: 0;
         }
@@ -9230,9 +9229,9 @@ ul.naviBtn {
           display: block;
         }
       }
-      
+
       #sc_default_create_status {
-        margin-left: 190px;
+        margin-left: 195px;
       }
     }
   }
