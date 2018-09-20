@@ -150,9 +150,15 @@
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
           }
-          elm.animate({
+          if(check.smartphone() && Number(window.sincloInfo.widget.spWidgetViewPattern) === 3 && $('#minimizeBtn').is(':hidden')){
+            console.log('<><><><><><><><><><>スマホ用隠しパラメータ、即バナー<><><><><><><><><><><>');
+            elm.css('height', height + 'px');
+            sinclo.operatorInfo.closeBtn();
+          } else {
+            elm.animate({
             height: height + "px"
-          }, 'first');
+            }, 'first');
+          }
         }
         else if (closeAct !== "true") {
           //バナー表示時の位置を設定

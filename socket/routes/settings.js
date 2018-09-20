@@ -221,6 +221,28 @@ router.get("/", function (req, res, next) {
         btwButtonMargin = settings.btwButtonMargin;
       }
 
+
+      /* スマホ隠しパラメータ*/
+
+
+      var spWidgetViewPattern = 1;
+      if ('spWidgetViewPattern' in settings) {
+        spWidgetViewPattern = settings.spWidgetViewPattern;
+      }
+
+      var spBannerPosition = settings.showPosition;
+      if ('spBannerPosition' in settings) {
+        spBannerPosition = settings.spBannerPosition;
+      }
+
+
+      var spBannerVerticalPosition = "50%";
+      if ('spBannerVerticalPosition' in settings){
+        spBannerVerticalPosition = settings.spBannerVerticalPosition;
+      }
+
+      /*  スマホ隠しパラメータ */
+
       // 自動メッセージの見出し設定が存在しない場合は「表示する」
       var showAutomessageName = 1;
       if (('showAutomessageName' in settings)) {
@@ -319,6 +341,13 @@ router.get("/", function (req, res, next) {
 
         lineButtonMargin: isNumeric(lineButtonMargin),
         btwButtonMargin: isNumeric(btwButtonMargin),
+
+        /* スマホ隠しパラメータstart */
+        spWidgetViewPattern: isNumeric(spWidgetViewPattern),
+        spBannerPosition: isNumeric(spBannerPosition),
+        spBannerVerticalPosition: settings.spBannerVerticalPosition,
+        spBannerText: settings.spBannerText,
+        /* スマホ隠しパラメータend */
 
         showMainImage: settings.showMainImage,
         mainImage: settings.mainImage,
