@@ -1628,25 +1628,33 @@ var socket, // socket.io
             html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background: initial;}';
             if(window.sincloInfo.widget.spBannerPosition){
             //スマホ隠しパラメータの存在チェック
+            var horizontalPosition = (5 * ratio) +"px";
+            if(widget.spBannerHorizontalPosition){
+              horizontalPosition = widget.spBannerHorizontalPosition;
+            }
+            var verticalPositionFromBottom = (5 * ratio) + "px";
+            if(widget.spBannerVerticalPositionFromBottom){
+              verticalPositionFromBottom = widget.spBannerVerticalPositionFromBottom;
+            }
               switch(Number(window.sincloInfo.widget.spBannerPosition)){
               case 1://右下
-                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' + horizontalPosition + '; bottom: ' + verticalPositionFromBottom + '; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
                 html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; margin-right: ' + (5 * ratio) + 'px; }';
                 html += '      #sincloBox div#sincloBannerBox div#sincloBanner div#sincloBannerText #bannerIcon { width: ' + Math.ceil(21 * ratio) + 'px; height: ' + Math.ceil(21 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
                 break;
               case 2://左下
-                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' + horizontalPosition + '; bottom: ' + verticalPositionFromBottom + '; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
                 html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; margin-right: ' + (5 * ratio) + 'px; }';
                 html += '      #sincloBox div#sincloBannerBox div#sincloBanner div#sincloBannerText #bannerIcon { width: ' + Math.ceil(21 * ratio) + 'px; height: ' + Math.ceil(21 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
                 break;
               case 3://右中央
-                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right:0; top: ' + window.sincloInfo.widget.spBannerVerticalPosition+'; height: auto; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius:' + widget.radiusRatio * ratio + 'px 0 0 ' + widget.radiusRatio * ratio + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right:0; top: ' + widget.spBannerVerticalPositionFromTop+'; height: auto; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius:' + widget.radiusRatio * ratio + 'px 0 0 ' + widget.radiusRatio * ratio + 'px; }';
                 html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext { margin-left: 0px; margin-right: 0; color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; -webkit-writing-mode: vertical-rl; -ms-writing-mode: tb-rl; writing-mode: vertical-rl; letter-spacing: 1px;}';
                 html += '      #sincloBox div#sincloBannerBox #sincloBanner .sincloBannerText{ flex-flow: column nowrap; margin: 10px 0; }';
                 html += '      #sincloBox div#sincloBannerBox div#sincloBanner div#sincloBannerText #bannerIcon { width: ' + Math.ceil(17 * ratio) + 'px; height: ' + Math.ceil(17 * ratio) + 'px; opacity: 1; margin-bottom: 5px; }';
                 break;
               case 4://左中央
-                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left:0; top: '+ window.sincloInfo.widget.spBannerVerticalPosition+'; height: auto; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius:0 ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left:0; top: '+ widget.spBannerVerticalPositionFromTop+'; height: auto; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius:0 ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0; }';
                 html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext { margin-right: 0px; margin-left: 0; color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; -webkit-writing-mode: vertical-rl; -ms-writing-mode: tb-rl; writing-mode: vertical-rl; letter-spacing: 1px;}';
                 html += '      #sincloBox div#sincloBannerBox #sincloBanner .sincloBannerText{ flex-flow: column nowrap; margin: 10px 0; }';
                 html += '      #sincloBox div#sincloBannerBox div#sincloBanner div#sincloBannerText #bannerIcon { width: ' + Math.ceil(17 * ratio) + 'px; height: ' + Math.ceil(17 * ratio) + 'px; opacity: 1; margin-bottom: 5px; }';
