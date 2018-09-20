@@ -1507,6 +1507,12 @@
           if(check.isJSON(obj.chatMessage)) {
             var result = JSON.parse(obj.chatMessage);
             this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
+            if(obj.tabId !== userInfo.tabId) {
+              var deleteTarget = $('#sincloBox sinclo-chat li.recv_file_left');
+              if($('#sincloBox sinclo-chat li.recv_file_left').length > 0) {
+                $('#sincloBox sinclo-chat li.recv_file_left').parent().remove();
+              }
+            }
           } else {
             cn = "sinclo_se";
             this.chatApi.createMessage(cn, obj.chatMessage, "");
