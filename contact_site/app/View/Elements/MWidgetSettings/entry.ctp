@@ -1043,14 +1043,32 @@ $headerNo = 1;
               'entity' => 'MWidgetSetting.sp_banner_position'
             ]) ?>
           <?php }?>
-          <?= $this->ngForm->input('sp_banner_vertical_position', [
+          <?= $this->ngForm->input('sp_banner_vertical_position_from_top', [
             'type' => 'hidden',
             'div' => false,
             'label' => false,
             'default' => "50%"
           ],
           [
-            'entity' => 'MWidgetSetting.sp_banner_vertical_position'
+            'entity' => 'MWidgetSetting.sp_banner_vertical_position_from_top'
+          ]) ?>
+          <?= $this->ngForm->input('sp_banner_vertical_position_from_bottom', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'default' => "5px"
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_banner_vertical_position_from_bottom'
+          ]) ?>
+          <?= $this->ngForm->input('sp_banner_horizontal_position', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'default' => "5px"
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_banner_horizontal_position'
           ]) ?>
           <?php if(isset($this->data['MWidgetSetting']['sp_banner_text'])){?>
           <?= $this->ngForm->input('sp_banner_text', [
