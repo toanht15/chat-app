@@ -5526,7 +5526,10 @@
         // FIXME JSONで突っ込む
         var json = self.get(self._lKey.variables);
         var obj = json;
-        obj[valKey] = value;
+        obj[valKey] = {};
+        obj[valKey].value = value;
+        obj[valKey].created = (new Date()).getTime();
+        obj[valKey].scId = self.get(self._lKey.scenarioId);
         self.set(self._lKey.variables, obj);
         // メール送信シナリオで利用するためシナリオで保存した変数は配列で保持する
         if (self.get(self._lKey.storedVariableKeys) && self.get(self._lKey.storedVariableKeys).indexOf(valKey) === -1) {
@@ -5542,7 +5545,7 @@
         // FIXME JSONで突っ込む
         var obj = self.get(self._lKey.variables);
         if (!obj) obj = {};
-        return obj[valKey] ? obj[valKey] : "";
+        return (obj[valKey] && obj[valKey].value) ? obj[valKey].value : "";
       },
       _getAllTargetVariables: function () {
         var self = sinclo.scenarioApi;
