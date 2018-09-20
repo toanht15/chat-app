@@ -9007,7 +9007,7 @@ ul.naviBtn {
       border-bottom: 3px solid #C3D69B;
       padding-left: 5px;
     }
-    .content { margin: 0 0 2em 2em; }
+    .content { margin: 0 0 0 2em; }
     .pre {
       display: block;
       line-height: 2em;
@@ -9185,7 +9185,9 @@ ul.naviBtn {
         overflow: hidden;
         transition: height 200ms linear;
         margin-top: 5px;
-        
+        margin-bottom: 1em;
+        height: 24em;
+
         &.sc_hidden {
           height: 0;
         }
@@ -9215,6 +9217,7 @@ ul.naviBtn {
         align-items: center;
         padding: 0.5em;
         width: 28em;
+        height: 38px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
