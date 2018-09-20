@@ -672,12 +672,12 @@ class MWidgetSettingsController extends AppController {
 
             //スマホ小さなバナー縦の下から割合
             /*if ( strcmp($v, 'sp_banner_vertical_position_from_bottom') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['sp_banner_vertical_position_from_bottom'] = "7px"; // デフォルト値
+              $d['sp_banner_vertical_position_from_bottom'] = "5px"; // デフォルト値
             }*/
 
             //スマホ小さなバナー横の割合
             /*if ( strcmp($v, 'sp_banner_horizontal_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['sp_banner_horizontal_position'] = "7px"; // デフォルト値
+              $d['sp_banner_horizontal_position'] = "5px"; // デフォルト値
             }*/
 
             //スマホ_小さなバナーテキスト

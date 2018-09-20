@@ -1056,7 +1056,7 @@ $headerNo = 1;
             'type' => 'hidden',
             'div' => false,
             'label' => false,
-            'default' => "7px"
+            'default' => "5px"
           ],
           [
             'entity' => 'MWidgetSetting.sp_banner_vertical_position_from_bottom'
@@ -1065,7 +1065,7 @@ $headerNo = 1;
             'type' => 'hidden',
             'div' => false,
             'label' => false,
-            'default' => "7px"
+            'default' => "5px"
           ],
           [
             'entity' => 'MWidgetSetting.sp_banner_horizontal_position'

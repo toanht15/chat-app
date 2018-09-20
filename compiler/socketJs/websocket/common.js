@@ -1629,11 +1629,15 @@ var socket, // socket.io
             if(window.sincloInfo.widget.spBannerPosition){
             //スマホ隠しパラメータの存在チェック
             var horizontalPosition = (5 * ratio) +"px";
-            if(widget.spBannerHorizontalPosition){
+            if(typeof(widget.spBannerHorizontalPosition) === "string" && widget.spBannerHorizontalPosition.indexOf("px") !== -1){
+              horizontalPosition = parseInt(widget.spBannerHorizontalPosition) * ratio + "px";
+            }else if(typeof(widget.spBannerHorizontal) === "string"){
               horizontalPosition = widget.spBannerHorizontalPosition;
             }
             var verticalPositionFromBottom = (5 * ratio) + "px";
-            if(widget.spBannerVerticalPositionFromBottom){
+            if(typeof(widget.spBannerVerticalPositionFromBottom) === "string" && widget.spBannerVerticalPositionFromBottom.indexOf("px") !== -1){
+              verticalPositionFromBottom = parseInt(widget.spBannerVerticalPositionFromBottom) * ratio + "px";
+            }else if(typeof(widget.spBannerVerticalPositionFromBottom) === "string"){
               verticalPositionFromBottom = widget.spBannerVerticalPositionFromBottom;
             }
               switch(Number(window.sincloInfo.widget.spBannerPosition)){
