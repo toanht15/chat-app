@@ -9128,11 +9128,10 @@ ul.naviBtn {
     }
 
     #sc_content {
-      margin-left: 2em;
-
       .collective-setting {
-        border-bottom: 2px solid;
-        border-top: 2px solid;
+        border-top: 1px solid #b7b7b7;
+        border-bottom: 1px solid #b7b7b7;
+        font-weight: bold;
 
         .p-tcustomvariables-entry {
           width: auto;
@@ -9161,7 +9160,7 @@ ul.naviBtn {
           height: 15em;
           overflow: auto;
           width: 32em;
-          margin-bottom: 1em;
+          margin-bottom: 2em;
         }
 
         > p {
@@ -9206,8 +9205,9 @@ ul.naviBtn {
 
     #sc_login_default_status {
       .collective-setting {
-        border-bottom: 2px solid;
-        border-top: 2px solid;
+        border-top: 1px solid #b7b7b7;
+        border-bottom: 1px solid #b7b7b7;
+        font-weight: bold;
 
         #collective_setting_input {
           margin-left: 29px;
@@ -9229,10 +9229,6 @@ ul.naviBtn {
         margin-top: 5px;
         height: 32em;
 
-        #login_status_default_setting {
-          width: 10%;
-        }
-
         .default-setting-explain {
            margin-bottom: 0;
          }
@@ -9245,7 +9241,7 @@ ul.naviBtn {
           height: 15em;
           overflow: auto;
           width: 32em;
-          margin-bottom: 1em;
+          margin-bottom: 2em;
         }
 
         > P {

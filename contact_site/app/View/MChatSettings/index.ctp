@@ -304,7 +304,7 @@ function checkValidate() {
                               <span>一括設定
                                   <div class="p-tcustomvariables-entry">
                                   <div class="questionBallon">
-                                      <icon class="questionBtn commontooltip" data-text="初期ステータスを一括で設定することができます。">?</icon>
+                                      <icon class="questionBtn commontooltip" data-text="全ユーザを一括で設定することができます。">?</icon>
                                   </div>
                               </div>
                               </span>
@@ -345,16 +345,17 @@ function checkValidate() {
                           <dt>デフォルト設定</dt>
                           <p class="default-setting-explain">新規ユーザー作成時のデフォルト値の設定を行います。</p>
                           <dd id="login_status_default_setting">
-                              <label>
+                              <label style="margin-left: 0">
                                   <?php
                                   $settings = [
                                       'type' => 'radio',
                                       'options' => $scLoginStatusOpt,
                                       'legend' => false,
-                                      'separator' => '</label><br><label style="margin-left: 15px">',
+                                      'separator' => '</label><br><label style="margin: auto; margin-left: 30px;">',
                                       'label' => false,
                                       'div' => false,
-                                      'class' => 'pointer'
+                                      'class' => 'pointer',
+                                      'style' => 'margin-left: -5px;'
                                   ];
                                   ?>
                                   <?=$this->Form->input('sc_login_default_status', $settings)?>
@@ -401,7 +402,7 @@ function checkValidate() {
                     <span>一括設定
                      <div class="p-tcustomvariables-entry">
                         <div class="questionBallon">
-                            <icon class="questionBtn commontooltip" data-text="同時対応数上限を一括で設定することができます。">?</icon>
+                            <icon class="questionBtn commontooltip" data-text="全ユーザを一括で設定することができます。">?</icon>
                         </div>
                     </div>
                     </span>
