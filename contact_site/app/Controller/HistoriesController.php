@@ -1069,6 +1069,7 @@ class HistoriesController extends AppController {
 
       // 検索条件に成果がある場合
       if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
+        $type = "false";
         switch ($data['THistoryChatLog']['achievement_flg']) {
           case '0':
             $chatLogCond['chat.cv !='] = 0;
