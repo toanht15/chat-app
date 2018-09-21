@@ -19,6 +19,7 @@
           var sincloBox = document.getElementById('sincloBox');
           sincloBox.setAttribute('data-openflg', flg);
           if (overwrite || storage.s.get("widgetMaximized") === null) {
+            storage.l.set("widgetMaximized", flg);
             storage.s.set("widgetMaximized", flg);
           }
         }
@@ -63,7 +64,7 @@
         var flg = sinclo.widget.condifiton.get();
         var elm = $('#sincloBox');
         //実際にバナーではないか
-        var bannerAct = storage.s.get('bannerAct');
+        var bannerAct = storage.l.get('bannerAct');
         //非表示の状態
         var closeAct = storage.s.get('closeAct');
         if (bannerAct !== "true" && closeAct !== "true") {
@@ -225,13 +226,13 @@
         //バナー表示時の位置を設定
         sinclo.operatorInfo.bannerBottomLeftRight();
         //バナー表示状態になった
-        storage.s.set('bannerAct', true);
+        storage.l.set('bannerAct', true);
         $("#sincloBannerBox").show();
       },
       //バナーがクリックされた時の挙動
       clickBanner: function (showMinimize) {
         //バナー非表示状態になった
-        storage.s.set('bannerAct', false);
+        storage.l.set('bannerAct', false);
         $("#sincloWidgetBox").show();
         $("#sincloBannerBox").hide();
         $("#sincloBox").css("bottom", "0");
@@ -366,7 +367,7 @@
           }
           else {
             //ここでもしバナーだったら二段階表示防止のために以下の処理を避ける
-            var bannerAct = storage.s.get('bannerAct');
+            var bannerAct = storage.l.get('bannerAct');
             if (bannerAct !== "true") {
               sinclo.widget.condifiton.set(false, true);
               sincloBox.style.height = sinclo.operatorInfo.header.offsetHeight + "px";
@@ -552,6 +553,13 @@
 
       if(obj.sincloSessionIdIsNew) {
         userInfo.setStayCount();
+        storage.l.unset('widgetOpen');
+        storage.l.unset('widgetMaximized');
+      } else {
+        var widgetOpened = storage.l.get('widgetOpen');
+        var widgetMaximized = storage.l.get('widgetMaximized');
+        storage.s.set('widgetOpen', widgetOpened);
+        storage.s.set('widgetMaximized', widgetMaximized);
       }
 
       if (obj.sincloSessionIdIsNew || (!check.isset(userInfo.sincloSessionId) && check.isset(obj.sincloSessionId))) {
@@ -1489,6 +1497,10 @@
             sinclo.chatApi.createMessage(cn, obj.chatMessage, userName, true);
             sinclo.chatApi.scDown();
             return false;
+          } else if (obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
+            this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
+            this.chatApi.scDown();
+            return false;
           } else {
             // 別タブで送信されたオートメッセージは何もしない
             return false;
@@ -1507,6 +1519,12 @@
           if(check.isJSON(obj.chatMessage)) {
             var result = JSON.parse(obj.chatMessage);
             this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
+            if(obj.tabId !== userInfo.tabId) {
+              var deleteTarget = $('#sincloBox sinclo-chat li.recv_file_left');
+              if($('#sincloBox sinclo-chat li.recv_file_left').length > 0) {
+                $('#sincloBox sinclo-chat li.recv_file_left').parent().remove();
+              }
+            }
           } else {
             cn = "sinclo_se";
             this.chatApi.createMessage(cn, obj.chatMessage, "");
@@ -2464,6 +2482,7 @@
               var flg = sinclo.widget.condifiton.get();
               if (String(flg) === "false") {
                 console.log("SHOW WIDGET MAXIMIZE");
+                storage.l.set('widgetOpen', true);
                 storage.s.set('widgetOpen', true);
                 if (!common.widgetHandler.isShown()) {
                   storage.s.set('preWidgetOpened', true);
@@ -2477,7 +2496,7 @@
           case "2": // 最小化
             break;
           case "3": // バナー表示
-            if (!storage.s.get('bannerAct')) {
+            if (!storage.l.get('bannerAct')) {
               console.log("SHOW INITIAL BANNER MODE");
               //バナー表示にする
               sinclo.operatorInfo.onBanner();
@@ -2494,11 +2513,12 @@
           console.log("ウィジェット最大化条件発動");
           var flg = sinclo.widget.condifiton.get();
           if (String(flg) === "false") {
+            storage.l.set('widgetOpen', true);
             storage.s.set('widgetOpen', true);
             if (!common.widgetHandler.isShown()) {
               storage.s.set('preWidgetOpened', true);
             }
-            if (storage.s.get('bannerAct') === 'true') {
+            if (storage.l.get('bannerAct') === 'true') {
               //バナー表示だった場合最小化状態で表示
               sinclo.operatorInfo.clickBanner(true);
             }
@@ -4302,7 +4322,7 @@
                 storage.s.set('preWidgetOpened', true);
               } else if (Number(cond.widgetOpen) === 1 && String(flg) === "false") {
                 console.log("オートメッセージ最大化処理");
-                if (storage.s.get("bannerAct") === "true") {
+                if (storage.l.get("bannerAct") === "true") {
                   sinclo.operatorInfo.clickBanner(true);
                 }
                 sinclo.operatorInfo.ev();
@@ -4322,7 +4342,7 @@
             var flg = sinclo.widget.condifiton.get();
             if (Number(cond.widgetOpen) === 1 && String(flg) === "false") {
               console.log("シナリオ最大化処理");
-              if (storage.s.get("bannerAct") === "true") {
+              if (storage.l.get("bannerAct") === "true") {
                 sinclo.operatorInfo.clickBanner(true);
               }
               sinclo.operatorInfo.ev();
@@ -5338,10 +5358,14 @@
         if(event.key === self._lKey.scenarioBase) {
           var oldObj = JSON.parse(event.oldValue);
           var newObj = JSON.parse(event.newValue);
-          if(self.isProcessing()
-            && check.isset(oldObj[self._lKey.currentScenario])
-            && check.isset(newObj[self._lKey.currentScenario])
-            && JSON.stringify(oldObj[self._lKey.currentScenarioSeqNum]) !== JSON.stringify(newObj[self._lKey.currentScenarioSeqNum])) {
+          if(self.isProcessing() && (!oldObj && newObj)
+            || (
+              oldObj && newObj
+              && check.isset(oldObj[self._lKey.currentScenario])
+              && check.isset(newObj[self._lKey.currentScenario])
+              && JSON.stringify(oldObj[self._lKey.currentScenarioSeqNum]) !== JSON.stringify(newObj[self._lKey.currentScenarioSeqNum])
+            )
+          ) {
             console.log("<><><><><><><><><><> sequence moved %s => %s <><><><><><><><><><>", oldObj[self._lKey.currentScenarioSeqNum], newObj[self._lKey.currentScenarioSeqNum]);
             setTimeout(function(){
               var action = self.get(self._lKey.currentScenario);
@@ -5546,6 +5570,14 @@
           self.set(self._lKey.storedVariableKeys, [valKey]);
         }
       },
+      _getStoredVariable: function (valKey) {
+        var self = sinclo.scenarioApi;
+        if(self.get(self._lKey.storedVariableKeys).indexOf(valKey) !== -1) {
+          return self._getSavedVariable(valKey);
+        } else {
+          return valKey;
+        }
+      },
       _getSavedVariable: function (valKey) {
         var self = sinclo.scenarioApi;
         // FIXME JSONで突っ込む
@@ -5582,7 +5614,7 @@
         if (message) {
           return message.replace(/\{\{(.+?)\}\}/g, function (param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-            return self._getSavedVariable(name) || name;
+            return self._getStoredVariable(name) || name;
           });
         } else {
           return "";
