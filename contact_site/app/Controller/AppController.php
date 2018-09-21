@@ -193,8 +193,8 @@ class AppController extends Controller {
       }
       else {
         $setting = json_decode($newInfo['MUser']['settings']);
-        $status = isset($setting->login_default_status) ? $setting->login_default_status : C_OPERATOR_PASSIVE;
-        $this->Session->write('widget.operator.status', $status);
+        $opStatus = isset($setting->login_default_status) ? $setting->login_default_status : C_OPERATOR_PASSIVE;
+        $this->Session->write('widget.operator.status', $opStatus);
       }
 
       $this->set('widgetCheck', C_OPERATOR_ACTIVE); // オペレーターの在籍/退席を使用するか
