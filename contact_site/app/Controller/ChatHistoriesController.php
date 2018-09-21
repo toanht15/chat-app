@@ -63,7 +63,7 @@ class ChatHistoriesController extends AppController
     $isChat = $this->Session->read('authenticity');
     $this->_searchProcessing(3);
     // 成果の名称リスト
-    $this->set('achievementType', Configure::read('achievementType'));
+    $this->set('achievementType', Configure::read('achievementTypeForSearch'));
     if (!$this->request->is('ajax')) {
       $this->_setList($isChat);
     }
@@ -2239,7 +2239,7 @@ class ChatHistoriesController extends AppController
     $this->set('campaign', $campaignData);
     // 成果種別リスト スタンダードプラン以上
     if (isset($this->coreSettings[C_COMPANY_USE_CV]) && $this->coreSettings[C_COMPANY_USE_CV]) {
-      $this->set('achievementType', Configure::read('achievementType'));
+      $this->set('achievementType', Configure::read('achievementTypeForSearch'));
     } // 成果種別リスト スタンダードプラン以下
     else {
       $achievementType = Configure::read('achievementType');

@@ -83,7 +83,7 @@ if ( isset($history['THistory']['visitors_id']) ) {
                   echo $achievementType[1];
                 }
                 if(isset($history['THistoryChatLog']['terminate']) && $history['THistoryChatLog']['terminate'] != 0 && $history['THistoryChatLog']['cv'] == 0) {
-                  echo '途中離脱';
+                  echo $achievementType[3];
                 } else if($history['THistoryChatLog']['cv'] != 0) {
                   echo $achievementType[0];
                 }

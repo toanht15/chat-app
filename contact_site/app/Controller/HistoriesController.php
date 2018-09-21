@@ -77,7 +77,7 @@ class HistoriesController extends AppController {
     $isChat = $this->Session->read('authenticity');
     $this->_searchProcessing(3);
     // 成果の名称リスト
-    $this->set('achievementType', Configure::read('achievementType'));
+    $this->set('achievementType', Configure::read('achievementTypeForSearch'));
     if(!$this->request->is('ajax')) {
       $this->_setList($isChat);
     }
@@ -405,19 +405,15 @@ class HistoriesController extends AppController {
           $row['lastSpeechTime'] = $this->calcTime(!empty($lastSpeechList[$history['THistory']['id']]) ? $lastSpeechList[$history['THistory']['id']] : "", $history['THistory']['out_date']);
           // 成果
           $row['achievement'] = "";
-          if($history['THistoryChatLog2']['eff'] == 0 || $history['THistoryChatLog2']['cv'] == 0 ) {
-            if (isset($history['THistoryChatLog2']['achievementFlg'])){
-              if(intval($history['THistoryChatLog2']['achievementFlg']) >= 0) {
-                $row['achievement'] = Configure::read('achievementType')[h($history['THistoryChatLog2']['achievementFlg'])];
-              } else {
-                $row['achievement'] = '途中離脱';
-              }
-            }
+          if(!empty($history['THistoryChatLog2']['eff']) && $history['THistoryChatLog2']['eff'] != 0) {
+            $row['achievement'] = Configure::read('achievementTypeForSearch')[2];
+          } else if(!empty($history['THistoryChatLog2']['deny']) && $history['THistoryChatLog2']['deny'] != 0) {
+            $row['achievement'] = Configure::read('achievementTypeForSearch')[1];
           }
-          else if ($history['THistoryChatLog2']['eff'] != 0 && $history['THistoryChatLog2']['cv'] != 0) {
-            if (isset($history['THistoryChatLog2']['achievementFlg'])){
-              $row['achievement'] = Configure::read('achievementType')[2].','.Configure::read('achievementType')[0];
-            }
+          if(isset($history['THistoryChatLog2']['terminate']) && $history['THistoryChatLog2']['terminate'] != 0 && $history['THistoryChatLog2']['cv'] == 0) {
+            $row['achievement'] = Configure::read('achievementTypeForSearch')[3];
+          } else if($history['THistoryChatLog2']['cv'] != 0) {
+            $row['achievement'] .= Configure::read('achievementTypeForSearch')[0];
           }
           //　担当者
           $row['user'] =  $history['User'];
@@ -1564,12 +1560,13 @@ class HistoriesController extends AppController {
 
     // 成果種別リスト スタンダードプラン以上
     if(isset($this->coreSettings[C_COMPANY_USE_CV]) && $this->coreSettings[C_COMPANY_USE_CV]) {
-      $this->set('achievementType', Configure::read('achievementType'));
+      $this->set('achievementType', Configure::read('achievementTypeForSearch'));
     }
     // 成果種別リスト スタンダードプラン以下
     else {
-      $achievementType = Configure::read('achievementType');
+      $achievementType = Configure::read('achievementTypeForSearch');
       unset($achievementType[0]);
+      unset($achievementType[3]);
       $this->set('achievementType', $achievementType);
     }
 
@@ -1781,6 +1778,7 @@ class HistoriesController extends AppController {
 
     // 検索条件に成果がある場合
     if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
+      $type = "false";
       switch ($data['THistoryChatLog']['achievement_flg']) {
         case '0':
           $chatLogCond['chat.cv !='] = 0;
