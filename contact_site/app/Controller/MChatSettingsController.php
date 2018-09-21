@@ -205,17 +205,17 @@ class MChatSettingsController extends AppController {
    * */
   private function _makeSaveUserData($inputData){
     $saveData = [];
-	foreach($inputData['MUser'] as $key => $val){
-	  $saveData[$key] = $this->MUser->getUser($key);
-	  $settings = (array)json_decode($saveData[$key]['MUser']['settings']);
-	  if ( intval($inputData['MChatSetting']['sc_flg']) === intval(C_SC_ENABLED) ) {
-		$settings['sc_num'] = ( !empty($val['sc_num']) ) ? $val['sc_num'] : 0;
-	  }
+    foreach($inputData['MUser'] as $key => $val){
+      $saveData[$key] = $this->MUser->getUser($key);
+      $settings = (array)json_decode($saveData[$key]['MUser']['settings']);
+      if ( intval($inputData['MChatSetting']['sc_flg']) === intval(C_SC_ENABLED) ) {
+        $settings['sc_num'] = ( !empty($val['sc_num']) ) ? $val['sc_num'] : 0;
+        $saveData[$key]['MUser']['sc_num'] = $settings['sc_num'];
+      }
 
-	  $settings['login_default_status'] = ( !empty($val['sc_login_status']) ) ? $val['sc_login_status'] : C_SC_AWAY;
-	  $saveData[$key]['MUser']['settings'] = $this->jsonEncode($settings);
-	  $saveData[$key]['MUser']['sc_num'] = $settings['sc_num'];
-	}
+      $settings['login_default_status'] = ( !empty($val['sc_login_status']) ) ? $val['sc_login_status'] : C_SC_AWAY;
+      $saveData[$key]['MUser']['settings'] = $this->jsonEncode($settings);
+    }
 
     return $saveData;
   }
