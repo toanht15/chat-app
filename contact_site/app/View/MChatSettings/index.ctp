@@ -407,7 +407,7 @@ function checkValidate() {
                     </div>
                     </span>
 
-                    <input name="ScNumCollectiveSetting" id="sc_num_collective_setting" style="width: 58px" min="0" max="99" type="number" required="required">
+                    <input name="ScNumCollectiveSetting" id="sc_num_collective_setting" style="width: 54px" min="0" max="99" type="number" required="required">
                 </dd>
               <div>
                 <?php foreach( $mUserList as $val ){ ?>
@@ -420,7 +420,7 @@ function checkValidate() {
                   ?>
                   <dd>
                     <span><?=h($val['MUser']['display_name'])?></span>
-                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'class' => 'sc_num_limit', 'min' => 0, 'max' => 99, 'style' => 'width: 58px', 'label' => false, 'div' => false, 'error' => false])?>
+                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'class' => 'sc_num_limit', 'min' => 0, 'max' => 99, 'style' => 'width: 54px', 'label' => false, 'div' => false, 'error' => false])?>
                   </dd>
                   <?php if ( $this->Form->isFieldError('MUser.'.$val['MUser']['id'].'.sc_num') ) echo $this->Form->error('MUser.'.$val['MUser']['id'].'.sc_num', null, ['wrap' => 'p']); ?>
                 <?php } ?>
@@ -430,7 +430,7 @@ function checkValidate() {
                 <p class="default-setting-explain">新規ユーザー作成時のデフォルト値の設定を行います。</p>
                 <dd>
                     <span>同時対応上限数</span>
-                    <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'style' => 'width: 58px', 'label' => false, 'div' => false, 'error' => false])?>
+                    <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'style' => 'width: 54px', 'label' => false, 'div' => false, 'error' => false])?>
                 </dd>
                 <?php if ( $this->Form->isFieldError('sc_default_num') ) echo $this->Form->error('sc_default_num', null, ['wrap' => 'p']); ?>
             </dl>
