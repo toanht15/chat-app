@@ -12,6 +12,7 @@
 /tags
 *.mo
 /app/webroot/css/style.css
+/app/webroot/css/*.gz
 /app/webroot/css/modal.css
 /app/webroot/files/*
 !/app/webroot/files/tmp

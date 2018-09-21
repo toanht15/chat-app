@@ -105,6 +105,21 @@ $(document).ready(function(){
   //バリデーションチェック
   checkValidate();
 
+    $('input[type=radio][name=zzz]').change(function() {
+        if (this.value == '0') {
+            $('.away').prop('checked', true);
+        } else {
+            $('.waiting').prop('checked', true);
+        }
+    });
+
+    var default_num = $('#sc_default_num').val();
+    $('#sc_default_num').on('keyup change click', function () {
+        if (this.value != default_num) {
+            $('.sc_num_limit').val(this.value);
+            default_num = this.value;
+        }
+    });
 });
 
 //初回メッセージ項目削除
@@ -262,18 +277,101 @@ function checkValidate() {
   <div id='m_chat_settings_form' class="p20x">
     <?= $this->Form->create('MChatSetting', ['type' => 'post', 'url' => ['controller' => 'MChatSettings', 'action' => 'index', '']]); ?>
       <section>
-        <h3>１．同時対応数上限</h3>
+          <h3>１．ログイン後の初期ステータス</h3>
+          <div class="content">
+              <span class="pre">オペレータのログイン直後の初期ステータス（離席中／待機中）を設定することができます。</span>
+
+              <div>
+                  <div id="sc_login_default_status">
+                      <dl>
+                          <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られるステータスです。）</dt-detail></dt>
+                          <dd>
+                              <label id="sc_default_create_status">
+                                  <input type="radio" name="zzz" id="abcz" value="0"
+                                         class="pointer">離席中
+                              </label>
+                              <br>
+                              <label><input type="radio" name="zzz"
+                                                                          id="abcz" value="1" checked="checked"
+                                                                          class="pointer">待機中
+                              </label>
+                          </dd>
+                          <dt>個別</dt>
+                          <div>
+                              <dd>
+                                  <span>田中 太郎</span>
+                                  <label>
+                                      <input type="radio" name="111" id="111" value="2"
+                                             class="pointer away">離席中
+                                  </label>
+                                  <label><input type="radio" name="111"
+                                                                              id="111" value="1" checked="checked"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                              <dd>
+                                  <span>松本　淳志</span>
+                                  <label>
+                                      <input type="radio" name="a" id="222" value="2"
+                                             class="pointer away" checked="checked">離席中
+                                  </label>
+                                  <label><input type="radio" name="a"
+                                                                              id="222" value="1"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                              <dd>
+                                  <span>清水　雅司</span>
+                                  <label>
+                                      <input type="radio" name="333" id="333" value="2"
+                                             class="pointer away">離席中
+                                  </label>
+                                  <label><input type="radio" name="333"
+                                                                              id="333" value="1" checked="checked"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                              <dd>
+                                  <span>細川　諒</span>
+                                  <label>
+                                      <input type="radio" name="444" id="444" value="2"
+                                             class="pointer away" checked="checked">離席中
+                                  </label>
+                                  <label><input type="radio" name="444"
+                                                                              id="444" value="1"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                              <dd>
+                                  <span>トアン</span>
+                                  <label>
+                                      <input type="radio" name="555" id="555" value="2"
+                                             class="pointer away">離席中
+                                  </label>
+                                  <label><input type="radio" name="555"
+                                                                              id="555" value="1" checked="checked"
+                                                                              class="pointer waiting">待機中
+                                  </label>
+                              </dd>
+                          </div>
+                      </dl>
+                  </div>
+              </div>
+          </div>
+      </section>
+      <section>
+        <h3>２．同時対応数上限</h3>
         <div class ="content">
           <span class = "pre">オペレータが同時にチャット対応できる上限数を設定することができます。&#10;ここで設定した同時対応数に達したオペレータには新着チャットのデスクトップ通知が表示されなくなります。&#10;また、すべてのオペレータが同時対応数の上限に達している際に新着チャットが送信された場合には、&#10;チャット送信者（サイト訪問者）に対してSorryメッセージを自動返信します。（Sorryメッセージは当画面下段にて設定可能）</span>
           <div>
-            <label style="display:inline-block;" <?php echo $coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : 'style="color: #CCCCCC;" '?>>
+            <label <?php echo $coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : 'style="color: #CCCCCC;" '?>>
               <?php
                 $settings = [
                   'type' => 'radio',
                   'options' => $scFlgOpt,
                   'default' => C_SC_DISABLED,
                   'legend' => false,
-                  'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
+                  'separator' => '</label><br><label '.($coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
                   'label' => false,
                   'div' => false,
                   'disabled' => !$coreSettings[C_COMPANY_USE_CHAT_LIMITER],
@@ -294,7 +392,7 @@ function checkValidate() {
               <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られる上限数です。）</dt-detail></dt>
                 <dd>
                   <span>同時対応上限数</span>
-                  <?=$this->Form->input('sc_default_num', ['type' => 'number', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
+                  <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
                 </dd>
                 <?php if ( $this->Form->isFieldError('sc_default_num') ) echo $this->Form->error('sc_default_num', null, ['wrap' => 'p']); ?>
               <dt>個別</dt>
@@ -309,7 +407,7 @@ function checkValidate() {
                   ?>
                   <dd>
                     <span><?=h($val['MUser']['display_name'])?></span>
-                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
+                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'class' => 'sc_num_limit', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
                   </dd>
                   <?php if ( $this->Form->isFieldError('MUser.'.$val['MUser']['id'].'.sc_num') ) echo $this->Form->error('MUser.'.$val['MUser']['id'].'.sc_num', null, ['wrap' => 'p']); ?>
                 <?php } ?>
@@ -319,17 +417,17 @@ function checkValidate() {
         </div>
       </section>
       <section>
-        <h3>２．チャット呼出中メッセージ</h3>
+        <h3>３．チャット呼出中メッセージ</h3>
         <div class="content">
           <span class = "pre">有人チャットを受信後、オペレータが入室するまでの間に任意のメッセージを自動送信することができます。&#10;最初の有人チャットを受信してからオペレータが入室するまでの経過時間により、自動送信するメッセージを複数設定することが可能です。</span>
-          <label style="display:inline-block;">
+          <label>
               <?php
                 $settings = [
                   'type' => 'radio',
                   'options' => $scFlgOpt,
                   'default' => C_IN_DISABLED,
                   'legend' => false,
-                  'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_CHATCALLMESSAGES] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
+                  'separator' => '</label><br><label '.($coreSettings[C_COMPANY_USE_CHATCALLMESSAGES] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
                   'label' => false,
                   'div' => false,
                   'disabled' => !$coreSettings[C_COMPANY_USE_CHATCALLMESSAGES],
@@ -344,7 +442,7 @@ function checkValidate() {
         </div>
       </section>
       <section>
-        <h3 class="require">3．Sorryメッセージ</h3>
+        <h3 class="require">４．Sorryメッセージ</h3>
         <div class="content">
           <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
           <li style = "padding: 0 0 15px 0;">
