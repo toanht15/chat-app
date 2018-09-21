@@ -5560,6 +5560,14 @@
           self.set(self._lKey.storedVariableKeys, [valKey]);
         }
       },
+      _getStoredVariable: function (valKey) {
+        var self = sinclo.scenarioApi;
+        if(self.get(self._lKey.storedVariableKeys).indexOf(valKey) !== -1) {
+          return self._getSavedVariable(valKey);
+        } else {
+          return valKey;
+        }
+      },
       _getSavedVariable: function (valKey) {
         var self = sinclo.scenarioApi;
         // FIXME JSONで突っ込む
@@ -5596,7 +5604,7 @@
         if (message) {
           return message.replace(/\{\{(.+?)\}\}/g, function (param) {
             var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-            return self._getSavedVariable(name) || name;
+            return self._getStoredVariable(name) || name;
           });
         } else {
           return "";
