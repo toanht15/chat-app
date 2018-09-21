@@ -1030,6 +1030,69 @@ $headerNo = 1;
             </div>
           </li>
           <!-- 閉じるボタン -->
+          <?php /*スマホ隠しパラメータ*/ ?>
+          <?php if(isset($this->data['MWidgetSetting']['sp_banner_position'])){?>
+            <?= $this->ngForm->input('sp_banner_position', [
+              'type' => 'hidden',
+              'div' => false,
+              'label' => false,
+              'string-to-number' => true,
+              'default' => 1
+            ],
+            [
+              'entity' => 'MWidgetSetting.sp_banner_position'
+            ]) ?>
+          <?php }?>
+          <?= $this->ngForm->input('sp_banner_vertical_position_from_top', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'default' => "50%"
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_banner_vertical_position_from_top'
+          ]) ?>
+          <?= $this->ngForm->input('sp_banner_vertical_position_from_bottom', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'default' => "5px"
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_banner_vertical_position_from_bottom'
+          ]) ?>
+          <?= $this->ngForm->input('sp_banner_horizontal_position', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'default' => "5px"
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_banner_horizontal_position'
+          ]) ?>
+          <?php if(isset($this->data['MWidgetSetting']['sp_banner_text'])){?>
+          <?= $this->ngForm->input('sp_banner_text', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'default' => "チャットで相談"
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_banner_text'
+          ]) ?>
+          <?php }?>
+          <?php if(isset($this->data['MWidgetSetting']['sp_widget_view_pattern'])){?>
+          <?= $this->ngForm->input('sp_widget_view_pattern', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'string-to-number' => true,
+            'default' => 1
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_widget_view_pattern'
+          ]) ?>
+          <?php }?>
         </ul>
       </section>
 
