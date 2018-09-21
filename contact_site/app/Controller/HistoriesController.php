@@ -1065,7 +1065,6 @@ class HistoriesController extends AppController {
 
       // 検索条件に成果がある場合
       if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
-        $type = "false";
         switch ($data['THistoryChatLog']['achievement_flg']) {
           case '0':
             $chatLogCond['chat.cv !='] = 0;
@@ -1221,7 +1220,11 @@ class HistoriesController extends AppController {
       ];
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
       if ( strcmp($type, 'true') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
-        $joinToChat['type'] = "LEFT";
+        if(isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "") {
+          $joinToChat['type'] = "INNER";
+        } else {
+          $joinToChat['type'] = "LEFT";
+        }
       }
       else if(empty($type)) {
         $joinToChat['type'] = "LEFT";
