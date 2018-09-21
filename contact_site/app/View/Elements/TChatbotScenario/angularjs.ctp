@@ -1712,6 +1712,7 @@ $(document).ready(function() {
  */
 function actionValidationCheck(element, setActionList, actionItem) {
   var messageList = [];
+  var storedVariableList = <?php echo json_encode($storedVariableList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
 
   if (actionItem.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
     if (!actionItem.message) {
@@ -1922,7 +1923,7 @@ function actionValidationCheck(element, setActionList, actionItem) {
     setActionList.every(function(action) {
       // 設定されている変数名を抽出する
       var definedVariableList = searchObj(action, /^variableName$/);
-
+      definedVariableList = $.unique($.merge(definedVariableList, storedVariableList));
       // 使用していない変数名を取り出す
       usedVariableList = usedVariableList.filter(function(usedVariable) {
         var variableName = usedVariable.replace(/{{([^}]+)}}/, '$1');
@@ -1940,7 +1941,7 @@ function actionValidationCheck(element, setActionList, actionItem) {
       return arr.indexOf(value) == index;
     }).forEach(function(string) {
       var variableName = string.replace(/{{([^}]+)}}/, '$1');
-      messageList.push('変数名 "' + variableName + '" がこのアクションより前に設定されていません');
+      messageList.push('変数名 "' + variableName + '" が設定されていません');
     });
   }
 

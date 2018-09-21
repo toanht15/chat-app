@@ -221,6 +221,37 @@ router.get("/", function (req, res, next) {
         btwButtonMargin = settings.btwButtonMargin;
       }
 
+
+      /* スマホ隠しパラメータ*/
+
+
+      var spWidgetViewPattern = 1;
+      if ('spWidgetViewPattern' in settings) {
+        spWidgetViewPattern = settings.spWidgetViewPattern;
+      }
+
+      var spBannerPosition = settings.showPosition;
+      if ('spBannerPosition' in settings) {
+        spBannerPosition = settings.spBannerPosition;
+      }
+
+      var spBannerVerticalPositionFromTop = "50%";
+      if ('spBannerVerticalPositionFromTop' in settings){
+        spBannerVerticalPositionFromTop = settings.spBannerVerticalPositionFromTop;
+      }
+
+      var spBannerVerticalPositionFromBottom = "7px";
+      if ('spBannerVerticalPositionFromBottom' in settings){
+        spBannerVerticalPositionFromBottom = settings.spBannerVerticalPositionFromBottom;
+      }
+
+      var spBannerHorizontalPosition = "7px";
+      if ('spBannerHorizontalPosition' in settings){
+        spBannerHorizontalPosition = settings.spBannerHorizontalPosition;
+      }
+
+      /*  スマホ隠しパラメータ */
+
       // 自動メッセージの見出し設定が存在しない場合は「表示する」
       var showAutomessageName = 1;
       if (('showAutomessageName' in settings)) {
@@ -319,6 +350,15 @@ router.get("/", function (req, res, next) {
 
         lineButtonMargin: isNumeric(lineButtonMargin),
         btwButtonMargin: isNumeric(btwButtonMargin),
+
+        /* スマホ隠しパラメータstart */
+        spWidgetViewPattern: isNumeric(spWidgetViewPattern),
+        spBannerPosition: isNumeric(spBannerPosition),
+        spBannerVerticalPositionFromTop: settings.spBannerVerticalPositionFromTop,
+        spBannerVerticalPositionFromBottom: settings.spBannerVerticalPositionFromBottom,
+        spBannerHorizontalPosition: settings.spBannerHorizontalPosition,
+        spBannerText: settings.spBannerText,
+        /* スマホ隠しパラメータend */
 
         showMainImage: settings.showMainImage,
         mainImage: settings.mainImage,
