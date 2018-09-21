@@ -304,7 +304,7 @@ function checkValidate() {
                               <span>一括設定
                                   <div class="p-tcustomvariables-entry">
                                   <div class="questionBallon">
-                                      <icon class="questionBtn commontooltip ttposition_top" data-text="初期ステータスを一括で設定することができます。">?</icon>
+                                      <icon class="questionBtn commontooltip" data-text="初期ステータスを一括で設定することができます。">?</icon>
                                   </div>
                               </div>
                               </span>
@@ -401,7 +401,7 @@ function checkValidate() {
                     <span>一括設定
                      <div class="p-tcustomvariables-entry">
                         <div class="questionBallon">
-                            <icon class="questionBtn commontooltip ttposition_top" data-text="同時対応数上限を一括で設定することができます。">?</icon>
+                            <icon class="questionBtn commontooltip" data-text="同時対応数上限を一括で設定することができます。">?</icon>
                         </div>
                     </div>
                     </span>
