@@ -9,3 +9,4 @@ logs/*
 npm-debug.log
 webroot/*.html
 webroot/css/*.css
+webroot/css/*.gz
