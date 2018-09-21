@@ -99,6 +99,14 @@ class MWidgetSetting extends AppModel {
       //最小化時デザイン対応
       'minimize_design_type' => "minimizeDesignType",
       //最小化時デザイン対応
+      //スマホ隠しパラメータ
+      'sp_banner_position' => "spBannerPosition",
+      'sp_banner_text' => "spBannerText",
+      'sp_widget_view_pattern' => "spWidgetViewPattern",
+      'sp_banner_vertical_position_from_top' => "spBannerVerticalPositionFromTop",
+      'sp_banner_vertical_position_from_bottom' => "spBannerVerticalPositionFromBottom",
+      'sp_banner_horizontal_position' => "spBannerHorizontalPosition",
+      //スマホ小さなバナー隠しパラメータ
       //閉じるボタン対応
       'close_button_setting' => "closeButtonSetting",
       'close_button_mode_type' => "closeButtonModeType",
@@ -113,6 +121,7 @@ class MWidgetSetting extends AppModel {
       'show_description' => "showDescription",
       'display_time_flg' => "displayTimeFlg",
       'time_text' => "timeText",
+      'chat_init_show_textarea' => 'chatInitShowTextarea',
       'chat_radio_behavior' => "chatRadioBehavior",
       'chat_trigger' => "chatTrigger",
       'chat_message_copy' => 'chatMessageCopy',

@@ -1,8 +1,10 @@
 # User specific & automatically generated files #
 #################################################
 /app/Config/database.php
+/app/Config/myConst.php
 /app/tmp
 /app/webroot/css/*.css
+/app/webroot/css/*.gz
 !/app/webroot/css/font-awesome.min.css
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins

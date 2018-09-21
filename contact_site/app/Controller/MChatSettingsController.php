@@ -111,6 +111,7 @@ class MChatSettingsController extends AppController {
 
     $this->set('mUserList', $this->MUser->getUser()); // ユーザーのリスト
     $this->set('scFlgOpt', [C_SC_DISABLED => '利用しない', C_SC_ENABLED => '利用する']); // 同時対応数上限設定のラベルリスト
+    $this->set('scLoginStatusOpt', [C_SC_AWAY => '離席中', C_SC_WAITING => '待機中']); // 初期ステータス限設定のラベルリスト
   } // index
 
   /**
@@ -119,7 +120,6 @@ class MChatSettingsController extends AppController {
    * @return boolean true/false 保存処理結果
    * */
   private function _update($inputData){
-
     // トランザクション処理の開始
     $this->MChatSetting->begin();
     $this->MUser->begin();
@@ -179,7 +179,7 @@ class MChatSettingsController extends AppController {
     if ( !$userRet || !$ret || !$inRet) {
       return false;
     }
-
+    $this->log($inputData,LOG_DEBUG);
     // 保存処理
     if ( $this->MChatSetting->save() && $this->MUser->saveAll($saveData)) {
       // 双方コミットし、true を返す
@@ -215,6 +215,7 @@ class MChatSettingsController extends AppController {
         $settings = (array)json_decode($saveData[$key]['MUser']['settings']);
         // POSTデータが空の場合、0に置換
         $settings['sc_num'] = ( !empty($val['sc_num']) ) ? $val['sc_num'] : 0;
+        $settings['login_default_status'] = ( !empty($val['sc_login_status']) ) ? $val['sc_login_status'] : 0;
         // POSTデータを含めた配列をJSON文字列にし、保存用配列に格納
         $saveData[$key]['MUser']['settings'] = $this->jsonEncode($settings);
         // バリデーションチェック用にセット

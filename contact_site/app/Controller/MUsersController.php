@@ -49,6 +49,7 @@ class MUsersController extends AppController {
    * @return void
    * */
   public function remoteOpenEntryForm() {
+    $this->log('あいうえお',LOG_DEBUG);
     Configure::write('debug', 0);
     $this->autoRender = FALSE;
     $this->layout = 'ajax';
@@ -159,13 +160,18 @@ class MUsersController extends AppController {
    * @return string(json) JSONデータ(settings)に格納される
    * */
   private function _setChatSetting($tmpData = []){
+    $settings = [];
     $chatSetting = $this->MChatSetting->coFind('first', [], false);
     if ( isset($chatSetting['MChatSetting']['sc_flg']) && strcmp($chatSetting['MChatSetting']['sc_flg'], C_SC_ENABLED) === 0 ) {
-      return $this->jsonEncode([
-        'sc_num' => $chatSetting['MChatSetting']['sc_default_num']
-      ]);
+	  $settings['sc_num'] = $chatSetting['MChatSetting']['sc_default_num'];
     }
-    return "";
+
+    if (isset($chatSetting['MChatSetting']['sc_login_default_status'])) {
+	   $status = $tmpData['MUser']['permission_level'] == C_AUTHORITY_ADMIN ? C_SC_AWAY : $chatSetting['MChatSetting']['sc_login_default_status'];
+       $settings['login_default_status'] = $status;
+    }
+
+	return $this->jsonEncode($settings);
   }
 
 

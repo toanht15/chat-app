@@ -18,9 +18,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const SEND_NAME_AUTO_SPEECH_MESSAGE = '自動返信';
   const SEND_NAME_FILE_TRANSFER = 'ファイル送信';
   const SEND_NAME_FILE_RECEIVE = 'ファイル受信';
+  const SEND_NAME_CLICK_LINK = 'リンククリック';
   const SEND_NAME_SCENARIO_TEXT = 'シナリオメッセージ（テキスト発言）';
   const SEND_NAME_SCENARIO_HEARING = 'シナリオメッセージ（ヒアリング）';
   const SEND_NAME_SCENARIO_SELECTION = 'シナリオメッセージ（選択肢）';
+  const SEND_NAME_SCENARIO_ANSWER_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング回答）';
+  const SEND_NAME_SCENARIO_RETURN_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング解析結果）';
+  const SEND_NAME_SCENARIO_MODIFY_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング内容修正）';
 
   const REPLACE_TARGET_AUTO_MESSAGE_BLOCK_DELIMITER = '##AUTO_MESSAGE_BLOCK##';
 
@@ -74,11 +78,11 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   }
 
   protected function prepareAutoMessageBlock() {
-    $this->createMetaDataMessage();
+    $this->createMetaDataMessage(true, null);
     $this->createAutoMessages();
   }
 
-  protected function createMetaDataMessage() {
+  protected function createMetaDataMessage($isFullData, $withDownloadURL) {
     $this->autoMessageBlock  = "チャット送信ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
     $this->autoMessageBlock .= "チャット送信ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
     $this->autoMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
@@ -140,6 +144,9 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 7:
         $message = $this->generateScenarioMessageBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 8:
+        $message = $this->generateLinkClickBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 12:
         $message = $this->generateConsumerScenarioHearingMessageBlockStr($chatLog['created'],$chatLog['message']);
         break;
@@ -160,6 +167,17 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
         break;
       case 27:
         $message = $this->generateScenarioSendFileBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 30:
+        $message = $this->generateScenarioAnswerBulkHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 31:
+        break;
+      case 32:
+        $message = $this->generateScenarioModifyBulkHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 40:
+        $message = $this->generateScenarioReturnBulkHearingBlockStr($chatLog['created'],$chatLog['message']);
         break;
       case 98:
         $message = $this->generateOperatorEnteredBlockStr($chatLog['created'],$user['display_name']);
@@ -229,6 +247,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     return $message;
   }
 
+  protected function generateLinkClickBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_CLICK_LINK);
+    $message .= $this->createMessageContent("（「".$content."」をクリック）");
+    return $message;
+  }
+
   protected function generateConsumerScenarioHearingMessageBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_CONSUMER_SCENARIO_HEARING);
@@ -268,6 +293,33 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_FILE_TRANSFER);
     $message .= $this->createFileTransferMessageContent($content);
+    return $message;
+  }
+
+  protected function generateScenarioAnswerBulkHearingBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_ANSWER_BULK_HEARING);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateScenarioReturnBulkHearingBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_RETURN_BULK_HEARING);
+    $json = json_decode($content, TRUE);
+    foreach($json['target'] as $index => $object) {
+      $message .= $object['label'].'：'.((!empty($json['message'][$object['inputType']])) ? $json['message'][$object['inputType']] : "（なし）")."\n";
+    }
+    return $message;
+  }
+
+  protected function generateScenarioModifyBulkHearingBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_MODIFY_BULK_HEARING);
+    $json = json_decode($content, TRUE);
+    foreach($json as $variableName => $object) {
+      $message .= $object['label'].'：'.($object['value'])."\n";
+    }
     return $message;
   }
 

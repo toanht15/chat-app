@@ -123,6 +123,10 @@ define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
 define('C_SC_ENABLED', 1); // 利用する
 define('C_SC_DISABLED', 2); // 利用しない
 
+// 初期ステータス
+define('C_SC_AWAY', 0); // 離席中
+define('C_SC_WAITING', 1); // 待機中
+
 // チャット呼出中メッセージ
 define('C_IN_ENABLED', 1); // 利用する
 define('C_IN_DISABLED', 2); // 利用しない
@@ -235,8 +239,11 @@ define('C_SCENARIO_SEND_MESSAGE_BY_BUTTON', 2);
 define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
 define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
 define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
+/* シナリオ設定(外部連携) - 連携タイプ */
+define('C_SCENARIO_EXTERNAL_TYPE_API', 1);
+define('C_SCENARIO_EXTERNAL_TYPE_SCRIPT', 2);
 
-/* シナリオ設定(外部システム連携) - メソッド種別 */
+/* シナリオ設定(外部連携) - メソッド種別 */
 define('C_SCENARIO_METHOD_TYPE_GET', 1);
 define('C_SCENARIO_METHOD_TYPE_POST', 2);
 
@@ -390,6 +397,10 @@ define('C_CLOSE_BUTTON_SETTING_ON', 2);//有効にする
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_BANNER', 1);//小さなバナー表示
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
 
+//スマホ用、小さなバナー隠しパラメータ
+define('C_SP_BANNER_POSITION', 1);//バナー表示位置
+define('C_SP_WIDGET_VIEW_PATTERN', 1);//ウィジェット最大化最小化制御 (3,4は最小化に遷移しなくなる)
+
 //バナーテキスト初期値
 define('C_BANNER_TEXT', "チャットで相談");//バナー文言
 
@@ -413,6 +424,7 @@ define('C_AFTER_FREE_PASSWORD_CHANGE_TO_CUSTOMER', 4); // 無料トライアル�
 define('C_AFTER_APPLICATION_TO_CUSTOMER', 5); // いきなり契約登録時 お客さん向けメール
 define('C_AFTER_APPLICATION_TO_COMPANY', 6); // いきなり契約登録時 会社向けメール
 define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // いきなり契約登録後初期パスワード変更 お客さん向けメール
+define('C_AFTER_PASSWORD_RESET_TO_CUSTOMER', 8); //パスワード変更 お客さん向けメール
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
 $config['Authority'] = [
@@ -765,7 +777,7 @@ $config['chatbotScenarioActionList'] = [
   ],
   // シナリオ呼び出し
   C_SCENARIO_ACTION_CALL_SCENARIO => [
-    'label' => 'シナリオ呼び出し',
+    'label' => 'シナリオ呼出',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -787,10 +799,11 @@ $config['chatbotScenarioActionList'] = [
     ]
   ],  // 外部システム連携
   C_SCENARIO_ACTION_EXTERNAL_API => [
-    'label' => '外部システム連携',
+    'label' => '外部連携',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
+      'externalType' => '1',
       'methodType' => '1',
       'requestHeaders' => [[
         'name' => '',
@@ -957,7 +970,13 @@ $config['chatbotScenarioReceiveFileTypeList'] = [
   ]
 ];
 
-/* シナリオ設定 - 外部システム連携のメソッド種別 */
+/* シナリオ設定 - 外部連携のタイプ */
+$config['chatbotScenarioExternalType'] = [
+  C_SCENARIO_EXTERNAL_TYPE_API => 'API連携',
+  C_SCENARIO_EXTERNAL_TYPE_SCRIPT => 'スクリプト'
+];
+
+/* シナリオ設定 - 外部連携のメソッド種別 */
 $config['chatbotScenarioApiMethodType'] = [
   C_SCENARIO_METHOD_TYPE_GET => 'GET',
   C_SCENARIO_METHOD_TYPE_POST => 'POST'
