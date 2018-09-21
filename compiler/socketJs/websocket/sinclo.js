@@ -4933,7 +4933,7 @@
         scenarioId: "s_id",
         processing: "s_processing",
         waitingInput: "s_waiting",
-        variables: "s_variables",
+        variables: "scl_s_variables",
         messages: "s_messages",
         allowSave: "s_allowSave",
         scenarios: "s_scenarios",
@@ -4953,7 +4953,6 @@
         "s_currentdata": {},
         "s_processing": {},
         "s_waiting": false,
-        "s_variables": {},
         "s_messages": [],
         "s_allowSave": false,
         "s_scenarios": {},
@@ -4988,14 +4987,30 @@
       },
       set: function (key, data) {
         var self = sinclo.scenarioApi;
-        var obj = self._getBaseObj();
-        obj[key] = data;
-        self._setBaseObj(obj);
+        var obj = {};
+        if(key === self._lKey.variables) {
+          storage.l.set(self._lKey.variables, JSON.stringify(data));
+        } else {
+          obj = self._getBaseObj();
+          obj[key] = data;
+          self._setBaseObj(obj);
+        }
       },
       get: function (key) {
         var self = sinclo.scenarioApi;
-        var obj = self._getBaseObj();
-        return obj[key] ? obj[key] : self.defaultVal[key];
+        var obj = {};
+        if(key === self._lKey.variables) {
+          obj = {};
+          obj = storage.l.get(self._lKey.variables) ? storage.l.get(self._lKey.variables) : obj;
+          if(obj && typeof(obj) === 'string') {
+            return JSON.parse(obj);
+          } else {
+            return obj;
+          }
+        } else {
+          obj = self._getBaseObj();
+          return obj[key] ? obj[key] : self.defaultVal[key];
+        }
       },
       unset: function (key) {
         var self = sinclo.scenarioApi;
@@ -5517,7 +5532,10 @@
         // FIXME JSONで突っ込む
         var json = self.get(self._lKey.variables);
         var obj = json;
-        obj[valKey] = value;
+        obj[valKey] = {};
+        obj[valKey].value = value;
+        obj[valKey].created = (new Date()).getTime();
+        obj[valKey].scId = self.get(self._lKey.scenarioId);
         self.set(self._lKey.variables, obj);
         // メール送信シナリオで利用するためシナリオで保存した変数は配列で保持する
         if (self.get(self._lKey.storedVariableKeys) && self.get(self._lKey.storedVariableKeys).indexOf(valKey) === -1) {
@@ -5533,7 +5551,7 @@
         // FIXME JSONで突っ込む
         var obj = self.get(self._lKey.variables);
         if (!obj) obj = {};
-        return obj[valKey] ? obj[valKey] : "";
+        return (obj[valKey] && obj[valKey].value) ? obj[valKey].value : "";
       },
       _getAllTargetVariables: function () {
         var self = sinclo.scenarioApi;
