@@ -105,21 +105,34 @@ $(document).ready(function(){
   //バリデーションチェック
   checkValidate();
 
-    $('input[type=radio][name=zzz]').change(function() {
+  //一括設定
+    $('input[type=radio][name=LoginStatusCollectiveSetting]').change(function() {
         if (this.value == '0') {
+            $('.login-status').each(function () {
+                if (this.value == 0) {
+                    $(this).prop('checked', true);
+                }
+            });
             $('.away').prop('checked', true);
         } else {
+            $('.login-status').each(function () {
+                if (this.value == 1) {
+                    $(this).prop('checked', true);
+                }
+            });
             $('.waiting').prop('checked', true);
         }
     });
 
-    var default_num = $('#sc_default_num').val();
-    $('#sc_default_num').on('keyup change click', function () {
+    var default_num = $('#sc_num_collective_setting').val();
+    $('#sc_num_collective_setting').on('keyup change click', function () {
         if (this.value != default_num) {
             $('.sc_num_limit').val(this.value);
             default_num = this.value;
         }
     });
+
+
 });
 
 //初回メッセージ項目削除
@@ -284,76 +297,69 @@ function checkValidate() {
               <div>
                   <div id="sc_login_default_status">
                       <dl>
-                          <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られるステータスです。）</dt-detail></dt>
-                          <dd>
-                              <label id="sc_default_create_status">
-                                  <input type="radio" name="zzz" id="abcz" value="0"
+                          <dt>ユーザー個別設定</dt>
+                          <p>各ユーザー（オペレータ）毎の設定を行います。</p>
+
+                          <dd class="collective-setting">
+                              <span>一括設定
+                                  <div class="p-tcustomvariables-entry">
+                                  <div class="questionBallon">
+                                      <icon class="questionBtn commontooltip ttposition_top" data-text="初期ステータスを一括で設定することができます。">?</icon>
+                                  </div>
+                              </div>
+                              </span>
+
+                              <label id="collective_setting_input">
+                                  <input style="margin-top: 0;" type="radio" name="LoginStatusCollectiveSetting" value="0"
                                          class="pointer">離席中
                               </label>
-                              <br>
-                              <label><input type="radio" name="zzz"
-                                                                          id="abcz" value="1" checked="checked"
-                                                                          class="pointer">待機中
+                              <label><input type="radio" name="LoginStatusCollectiveSetting" value="1"
+                                            class="pointer">待機中
                               </label>
                           </dd>
-                          <dt>個別</dt>
+
                           <div>
-                              <dd>
-                                  <span>田中 太郎</span>
-                                  <label>
-                                      <input type="radio" name="111" id="111" value="2"
-                                             class="pointer away">離席中
-                                  </label>
-                                  <label><input type="radio" name="111"
-                                                                              id="111" value="1" checked="checked"
-                                                                              class="pointer waiting">待機中
-                                  </label>
-                              </dd>
-                              <dd>
-                                  <span>松本　淳志</span>
-                                  <label>
-                                      <input type="radio" name="a" id="222" value="2"
-                                             class="pointer away" checked="checked">離席中
-                                  </label>
-                                  <label><input type="radio" name="a"
-                                                                              id="222" value="1"
-                                                                              class="pointer waiting">待機中
-                                  </label>
-                              </dd>
-                              <dd>
-                                  <span>清水　雅司</span>
-                                  <label>
-                                      <input type="radio" name="333" id="333" value="2"
-                                             class="pointer away">離席中
-                                  </label>
-                                  <label><input type="radio" name="333"
-                                                                              id="333" value="1" checked="checked"
-                                                                              class="pointer waiting">待機中
-                                  </label>
-                              </dd>
-                              <dd>
-                                  <span>細川　諒</span>
-                                  <label>
-                                      <input type="radio" name="444" id="444" value="2"
-                                             class="pointer away" checked="checked">離席中
-                                  </label>
-                                  <label><input type="radio" name="444"
-                                                                              id="444" value="1"
-                                                                              class="pointer waiting">待機中
-                                  </label>
-                              </dd>
-                              <dd>
-                                  <span>トアン</span>
-                                  <label>
-                                      <input type="radio" name="555" id="555" value="2"
-                                             class="pointer away">離席中
-                                  </label>
-                                  <label><input type="radio" name="555"
-                                                                              id="555" value="1" checked="checked"
-                                                                              class="pointer waiting">待機中
-                                  </label>
-                              </dd>
+                              <?php foreach( $mUserList as $val ){ ?>
+                                  <?php
+                                  $settings = json_decode($val['MUser']['settings']);
+                                  $sc_login_status = ( !empty($settings->login_default_status) ) ? $settings->login_default_status : 0;
+                                  $settings = [
+                                      'type' => 'radio',
+                                      'options' => $scLoginStatusOpt,
+                                      'value' => $sc_login_status,
+                                      'legend' => false,
+                                      'label' => false,
+                                      'div' => false,
+                                      'class' => 'pointer login-status'
+                                  ];
+                                  ?>
+                                  <dd>
+                                      <span><?=h($val['MUser']['display_name'])?></span>
+                                      <label>
+                                      <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_login_status', $settings);?>
+                                      </label>
+                                  </dd>
+                                  <?php if ( $this->Form->isFieldError('MUser.'.$val['MUser']['id'].'.sc_login_status') ) echo $this->Form->error('MUser.'.$val['MUser']['id'].'.sc_num', null, ['wrap' => 'p']); ?>
+                              <?php } ?>
                           </div>
+                          <dt>デフォルト設定</dt>
+                          <p class="default-setting-explain">新規ユーザー作成時のデフォルト値の設定を行います。</p>
+                          <dd id="login_status_default_setting">
+                              <label>
+                                  <?php
+                                  $settings = [
+                                      'type' => 'radio',
+                                      'options' => $scLoginStatusOpt,
+                                      'legend' => false,
+                                      'separator' => '</label><br><label style="margin-left: 15px">',
+                                      'label' => false,
+                                      'div' => false,
+                                      'class' => 'pointer'
+                                  ];
+                                  ?>
+                                  <?=$this->Form->input('sc_login_default_status', $settings)?>
+                              </label>
+                          </dd>
                       </dl>
                   </div>
               </div>
@@ -389,13 +395,19 @@ function checkValidate() {
           </div>
           <div id="sc_content">
             <dl class="<?=$scHiddenClass?>">
-              <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られる上限数です。）</dt-detail></dt>
-                <dd>
-                  <span>同時対応上限数</span>
-                  <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
-                </dd>
-                <?php if ( $this->Form->isFieldError('sc_default_num') ) echo $this->Form->error('sc_default_num', null, ['wrap' => 'p']); ?>
               <dt>個別</dt>
+                <p>各ユーザー（オペレータ）毎の設定を行います。</p>
+                <dd class="collective-setting">
+                    <span>一括設定
+                     <div class="p-tcustomvariables-entry">
+                        <div class="questionBallon">
+                            <icon class="questionBtn commontooltip ttposition_top" data-text="同時対応数上限を一括で設定することができます。">?</icon>
+                        </div>
+                    </div>
+                    </span>
+
+                    <input name="ScNumCollectiveSetting" id="sc_num_collective_setting" min="0" max="99" type="number" required="required">
+                </dd>
               <div>
                 <?php foreach( $mUserList as $val ){ ?>
                   <?php
@@ -412,6 +424,14 @@ function checkValidate() {
                   <?php if ( $this->Form->isFieldError('MUser.'.$val['MUser']['id'].'.sc_num') ) echo $this->Form->error('MUser.'.$val['MUser']['id'].'.sc_num', null, ['wrap' => 'p']); ?>
                 <?php } ?>
               </div>
+
+                <dt>デフォルト設定<dt-detail></dt-detail></dt>
+                <p class="default-setting-explain">新規ユーザー作成時のデフォルト値の設定を行います。</p>
+                <dd>
+                    <span>同時対応上限数</span>
+                    <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
+                </dd>
+                <?php if ( $this->Form->isFieldError('sc_default_num') ) echo $this->Form->error('sc_default_num', null, ['wrap' => 'p']); ?>
             </dl>
           </div>
         </div>

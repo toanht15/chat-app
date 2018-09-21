@@ -123,6 +123,10 @@ define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
 define('C_SC_ENABLED', 1); // 利用する
 define('C_SC_DISABLED', 2); // 利用しない
 
+// 初期ステータス
+define('C_SC_AWAY', 0); // 離席中
+define('C_SC_WAITING', 1); // 待機中
+
 // チャット呼出中メッセージ
 define('C_IN_ENABLED', 1); // 利用する
 define('C_IN_DISABLED', 2); // 利用しない
