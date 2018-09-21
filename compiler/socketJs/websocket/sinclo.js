@@ -5335,6 +5335,17 @@
       _handleStorageUpdateEvent: function(event) {
         var self = sinclo.scenarioApi;
         console.log(event);
+        switch(storage.l.get('textareaOpend')){
+        case 'open':
+          sinclo.displayTextarea();
+          break;
+        case 'close':
+          sinclo.hideTextarea();
+          break;
+        default:
+          console.log('特に何もない');
+          break;
+        }
         if(event.key === self._lKey.scenarioBase) {
           var oldObj = JSON.parse(event.oldValue);
           var newObj = JSON.parse(event.newValue);
