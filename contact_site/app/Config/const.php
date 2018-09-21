@@ -397,6 +397,10 @@ define('C_CLOSE_BUTTON_SETTING_ON', 2);//有効にする
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_BANNER', 1);//小さなバナー表示
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
 
+//スマホ用、小さなバナー隠しパラメータ
+define('C_SP_BANNER_POSITION', 1);//バナー表示位置
+define('C_SP_WIDGET_VIEW_PATTERN', 1);//ウィジェット最大化最小化制御 (3,4は最小化に遷移しなくなる)
+
 //バナーテキスト初期値
 define('C_BANNER_TEXT', "チャットで相談");//バナー文言
 

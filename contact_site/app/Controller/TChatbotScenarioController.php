@@ -139,6 +139,7 @@ sinclo@medialink-ml.co.jp
     ),$this->request->data['scenarioList']);
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
+    $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
   }
 
@@ -186,6 +187,7 @@ sinclo@medialink-ml.co.jp
         )
       )
     ),$this->request->data['scenarioList']);
+    $this->set('storedVariableList', $this->getStoredAllVariableList($id));
     $this->_viewElement();
   }
 
@@ -1822,5 +1824,68 @@ sinclo@medialink-ml.co.jp
 
   private function isDeletableScenario($scenarioCallerInfo) {
     return empty($scenarioCallerInfo) || (count($scenarioCallerInfo) === 1 && strcmp($scenarioCallerInfo[0], self::CALL_SELF_SCENARIO_NAME) === 0);
+  }
+
+  private function getStoredAllVariableList($ignoreId = 0) {
+    $variableList = array();
+    $scenarioList = $this->TChatbotScenario->find('all',array(
+      'conditions' => array(
+        'AND' => array(
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'del_flg' => 0
+        ),
+        'NOT' => array(
+          'id' => $ignoreId
+        )
+      ),
+      'order' => array(
+        'sort' => 'asc'
+      )
+    ));
+    foreach($scenarioList as $key => $scenario) {
+      $activity = json_decode($scenario['TChatbotScenario']['activity'], TRUE);
+      foreach($activity['scenarios'] as $scequenceNum => $action) {
+        if($this->hasVariableInAction($action)) {
+          $variableList = array_merge($variableList, $this->getVariableListInAction($action));
+          $variableList = array_unique($variableList);
+          $variableList = array_diff($variableList, array(''));
+          $variableList = array_values($variableList);
+        }
+      }
+    }
+    return $variableList;
+  }
+
+  private function hasVariableInAction($action) {
+    return strcmp($action['actionType'], C_SCENARIO_ACTION_HEARING) === 0
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_SELECT_OPTION) === 0
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_EXTERNAL_API) === 0
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_GET_ATTRIBUTE) === 0
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_BULK_HEARING) === 0;
+  }
+
+  private function getVariableListInAction($action) {
+    $arr = array();
+    switch($action['actionType']) {
+      case C_SCENARIO_ACTION_HEARING:
+        foreach($action['hearings'] as $index => $hearing) {
+          array_push($arr, $hearing['variableName']);
+        }
+        break;
+      case C_SCENARIO_ACTION_SELECT_OPTION:
+        array_push($arr, $action['selection']['variableName']);
+        break;
+      case C_SCENARIO_ACTION_GET_ATTRIBUTE:
+        foreach($action['getAttributes'] as $index => $getAttribute) {
+          array_push($arr, $getAttribute['variableName']);
+        }
+        break;
+      case C_SCENARIO_ACTION_BULK_HEARING:
+        foreach($action['multipleHearings'] as $index => $multipleHearing) {
+          array_push($arr, $multipleHearing['variableName']);
+        }
+        break;
+    }
+    return $arr;
   }
 }
