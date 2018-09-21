@@ -280,6 +280,7 @@ class CustomersController extends AppController {
       $historyData = $this->THistory->find('first', [
         'fields' => 'id',
         'conditions' => [
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
           'tab_id' => $this->params->query['tabId']
         ],
         'recursive' => -1

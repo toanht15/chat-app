@@ -141,7 +141,7 @@
       <?php if(isset($data['THistoryChatLog']['achievement_flg']) && ($data['THistoryChatLog']['achievement_flg'] !== "" || $data['THistoryChatLog']['achievement_flg'] === 0)) { ?>
         <li>
           <label>成果</label>
-          <span class="value"><?= $achievementType[h($data['THistoryChatLog']['achievement_flg'])] ?></span>
+          <span class="value"><?= array_merge($achievementType, array("3" => '途中離脱'))[h($data['THistoryChatLog']['achievement_flg'])] ?></span>
         </li>
       <?php } ?>
       <?php if(!empty($data['THistoryChatLog']['message'])) { ?>
