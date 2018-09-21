@@ -17,6 +17,13 @@ class MChatSetting extends AppModel {
         'message' => '０～９９以内で設定してください。'
       ]
     ],
+	'sc_login_default_status' => [
+	  'range' => [
+		'rule' => ['range', 0, 1],
+		'allowEmpty' => false,
+		'message' => '０～1以内で設定してください。'
+	  ]
+	],
     'outside_hours_sorry_message' => [
       'maxLength' => [
         'rule' => ['maxLength', 300],
