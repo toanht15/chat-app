@@ -63,7 +63,7 @@ class ChatHistoriesController extends AppController
     $isChat = $this->Session->read('authenticity');
     $this->_searchProcessing(3);
     // 成果の名称リスト
-    $this->set('achievementType', Configure::read('achievementType'));
+    $this->set('achievementType', Configure::read('achievementTypeForSearch'));
     if (!$this->request->is('ajax')) {
       $this->_setList($isChat);
     }
@@ -1362,6 +1362,9 @@ class ChatHistoriesController extends AppController
           case '2':
             $chatLogCond['chat.eff != '] = 0;
             break;
+          case '3':
+            $chatLogCond['chat.cv = 0 AND chat.terminate != '] = 0;
+            break;
         }
       } else if (!empty($type) && $type == 'false') {
         $chatLogCond['chat.cv != '] = 0;
@@ -2236,7 +2239,7 @@ class ChatHistoriesController extends AppController
     $this->set('campaign', $campaignData);
     // 成果種別リスト スタンダードプラン以上
     if (isset($this->coreSettings[C_COMPANY_USE_CV]) && $this->coreSettings[C_COMPANY_USE_CV]) {
-      $this->set('achievementType', Configure::read('achievementType'));
+      $this->set('achievementType', Configure::read('achievementTypeForSearch'));
     } // 成果種別リスト スタンダードプラン以下
     else {
       $achievementType = Configure::read('achievementType');
@@ -2439,8 +2442,8 @@ class ChatHistoriesController extends AppController
       ];
     }
 
-    $joinType = 'INNER';
     // 担当者に関する検索条件
+    $joinType = 'LEFT';
     if (isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "") {
       //「%」が含まれていた場合
       if (strpos($data['THistoryChatLog']['responsible_name'], '%') !== false) {
@@ -2461,6 +2464,9 @@ class ChatHistoriesController extends AppController
           break;
         case '2':
           $chatLogCond['chat.eff != '] = 0;
+          break;
+        case '3': // 途中離脱
+          $chatLogCond['chat.cv = 0 AND chat.terminate != '] = 0;
           break;
       }
     } else if (!empty($type) && $type == 'false') {
