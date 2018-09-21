@@ -1489,6 +1489,10 @@
             sinclo.chatApi.createMessage(cn, obj.chatMessage, userName, true);
             sinclo.chatApi.scDown();
             return false;
+          } else if (obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
+            this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
+            this.chatApi.scDown();
+            return false;
           } else {
             // 別タブで送信されたオートメッセージは何もしない
             return false;
@@ -1507,6 +1511,12 @@
           if(check.isJSON(obj.chatMessage)) {
             var result = JSON.parse(obj.chatMessage);
             this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
+            if(obj.tabId !== userInfo.tabId) {
+              var deleteTarget = $('#sincloBox sinclo-chat li.recv_file_left');
+              if($('#sincloBox sinclo-chat li.recv_file_left').length > 0) {
+                $('#sincloBox sinclo-chat li.recv_file_left').parent().remove();
+              }
+            }
           } else {
             cn = "sinclo_se";
             this.chatApi.createMessage(cn, obj.chatMessage, "");
@@ -5338,10 +5348,14 @@
         if(event.key === self._lKey.scenarioBase) {
           var oldObj = JSON.parse(event.oldValue);
           var newObj = JSON.parse(event.newValue);
-          if(self.isProcessing()
-            && check.isset(oldObj[self._lKey.currentScenario])
-            && check.isset(newObj[self._lKey.currentScenario])
-            && JSON.stringify(oldObj[self._lKey.currentScenarioSeqNum]) !== JSON.stringify(newObj[self._lKey.currentScenarioSeqNum])) {
+          if(self.isProcessing() && (!oldObj && newObj)
+            || (
+              oldObj && newObj
+              && check.isset(oldObj[self._lKey.currentScenario])
+              && check.isset(newObj[self._lKey.currentScenario])
+              && JSON.stringify(oldObj[self._lKey.currentScenarioSeqNum]) !== JSON.stringify(newObj[self._lKey.currentScenarioSeqNum])
+            )
+          ) {
             console.log("<><><><><><><><><><> sequence moved %s => %s <><><><><><><><><><>", oldObj[self._lKey.currentScenarioSeqNum], newObj[self._lKey.currentScenarioSeqNum]);
             setTimeout(function(){
               var action = self.get(self._lKey.currentScenario);
