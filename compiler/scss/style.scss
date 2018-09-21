@@ -9130,10 +9130,29 @@ ul.naviBtn {
     #sc_content {
       margin-left: 2em;
 
+      .collective-setting {
+        border-bottom: 2px solid;
+        border-top: 2px solid;
+
+        .p-tcustomvariables-entry {
+          width: auto;
+          height: auto;
+        }
+
+        > span {
+          display: inherit;
+        }
+      }
+
       dl {
         overflow: hidden;
         transition: height 200ms linear;
-        height: 22em;
+        height: 32em;
+
+        .default-setting-explain {
+          margin-bottom: 0;
+        }
+
         &.sc_hidden {
           height: 0;
         }
@@ -9142,6 +9161,11 @@ ul.naviBtn {
           height: 15em;
           overflow: auto;
           width: 32em;
+          margin-bottom: 1em;
+        }
+
+        > p {
+          margin-left: 2em;
         }
       }
 
@@ -9181,11 +9205,37 @@ ul.naviBtn {
     }
 
     #sc_login_default_status {
+      .collective-setting {
+        border-bottom: 2px solid;
+        border-top: 2px solid;
+
+        #collective_setting_input {
+          margin-left: 29px;
+        }
+
+        .p-tcustomvariables-entry {
+          width: auto;
+          height: auto;
+        }
+
+        > span {
+          display: inherit;
+        }
+      }
+
       dl {
         overflow: hidden;
         transition: height 200ms linear;
         margin-top: 5px;
-        height: 22em;
+        height: 32em;
+
+        #login_status_default_setting {
+          width: 10%;
+        }
+
+        .default-setting-explain {
+           margin-bottom: 0;
+         }
 
         &.sc_hidden {
           height: 0;
@@ -9195,6 +9245,11 @@ ul.naviBtn {
           height: 15em;
           overflow: auto;
           width: 32em;
+          margin-bottom: 1em;
+        }
+
+        > P {
+          margin-left: 2em;
         }
       }
 
