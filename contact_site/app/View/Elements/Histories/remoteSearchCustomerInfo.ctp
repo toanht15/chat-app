@@ -43,7 +43,7 @@ popupEvent.closePopup = function(){
       </li>
       <li>
         <p><span>成果</span></p>
-        <span><label><?= $this->Form->input('THistoryChatLog.achievement_flg',['type' => 'select', 'empty' => ' ', 'options' => $achievementType, 'legend' => false, 'separator' => '</label><br><label>', 'label'=>false,'div' => false]) ?></label></span>
+        <span><label><?= $this->Form->input('THistoryChatLog.achievement_flg',['type' => 'select', 'empty' => ' ', 'options' => array_merge($achievementType, array("3" => '途中離脱')), 'legend' => false, 'separator' => '</label><br><label>', 'label'=>false,'div' => false]) ?></label></span>
       </li>
       <li>
         <p><span>チャット内容</span></p>

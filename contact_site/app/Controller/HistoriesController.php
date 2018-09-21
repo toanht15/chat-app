@@ -1069,7 +1069,22 @@ class HistoriesController extends AppController {
 
       // 検索条件に成果がある場合
       if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
-        $chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
+        switch ($data['THistoryChatLog']['achievement_flg']) {
+          case '0':
+            $chatLogCond['chat.cv !='] = 0;
+            break;
+          case '1':
+            $chatLogCond['chat.eff = 0 AND chat.deny != '] = 0;
+            break;
+          case '2':
+            $chatLogCond['chat.eff != '] = 0;
+            break;
+          case '3': // 途中離脱
+            $chatLogCond['chat.cv = 0 AND chat.terminate != '] = 0;
+            break;
+        }
+      } else if (!empty($type) && $type == 'false') {
+        $chatLogCond['chat.cv != '] = 0;
       }
 
       // 検索条件にメッセージがある場合
@@ -1185,17 +1200,10 @@ class HistoriesController extends AppController {
       );
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
-      if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
-        $value = 'MAX';
-      }
-      //成果でCVを検索する場合
-      else if(!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
-        $value = 'MIN';
-      }
 
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -1772,7 +1780,22 @@ class HistoriesController extends AppController {
 
     // 検索条件に成果がある場合
     if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
-      $chatLogCond['chat.achievementFlg'] = $data['THistoryChatLog']['achievement_flg'];
+      switch ($data['THistoryChatLog']['achievement_flg']) {
+        case '0':
+          $chatLogCond['chat.cv !='] = 0;
+          break;
+        case '1':
+          $chatLogCond['chat.eff = 0 AND chat.deny != '] = 0;
+          break;
+        case '2':
+          $chatLogCond['chat.eff != '] = 0;
+          break;
+        case '3': // 途中離脱
+          $chatLogCond['chat.cv = 0 AND chat.terminate != '] = 0;
+          break;
+      }
+    } else if (!empty($type) && $type == 'false') {
+      $chatLogCond['chat.cv != '] = 0;
     }
 
     // 検索条件にメッセージがある場合
@@ -1879,7 +1902,7 @@ class HistoriesController extends AppController {
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, ".$value."(achievement_flg) AS achievementFlg, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff,SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) cv,SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ."  GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ."  GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
