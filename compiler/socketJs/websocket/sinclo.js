@@ -1489,6 +1489,10 @@
             sinclo.chatApi.createMessage(cn, obj.chatMessage, userName, true);
             sinclo.chatApi.scDown();
             return false;
+          } else if (obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
+            this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
+            this.chatApi.scDown();
+            return false;
           } else {
             // 別タブで送信されたオートメッセージは何もしない
             return false;
