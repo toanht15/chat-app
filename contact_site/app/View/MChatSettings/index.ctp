@@ -304,7 +304,7 @@ function checkValidate() {
                               <span>一括設定
                                   <div class="p-tcustomvariables-entry">
                                   <div class="questionBallon">
-                                      <icon class="questionBtn commontooltip ttposition_top" data-text="初期ステータスを一括で設定することができます。">?</icon>
+                                      <icon class="questionBtn commontooltip" data-text="全ユーザを一括で設定することができます。">?</icon>
                                   </div>
                               </div>
                               </span>
@@ -345,16 +345,17 @@ function checkValidate() {
                           <dt>デフォルト設定</dt>
                           <p class="default-setting-explain">新規ユーザー作成時のデフォルト値の設定を行います。</p>
                           <dd id="login_status_default_setting">
-                              <label>
+                              <label style="margin-left: 0">
                                   <?php
                                   $settings = [
                                       'type' => 'radio',
                                       'options' => $scLoginStatusOpt,
                                       'legend' => false,
-                                      'separator' => '</label><br><label style="margin-left: 15px">',
+                                      'separator' => '</label><br><label style="margin: auto; margin-left: 30px;">',
                                       'label' => false,
                                       'div' => false,
-                                      'class' => 'pointer'
+                                      'class' => 'pointer',
+                                      'style' => 'margin-left: -5px;'
                                   ];
                                   ?>
                                   <?=$this->Form->input('sc_login_default_status', $settings)?>
@@ -401,12 +402,12 @@ function checkValidate() {
                     <span>一括設定
                      <div class="p-tcustomvariables-entry">
                         <div class="questionBallon">
-                            <icon class="questionBtn commontooltip ttposition_top" data-text="同時対応数上限を一括で設定することができます。">?</icon>
+                            <icon class="questionBtn commontooltip" data-text="全ユーザを一括で設定することができます。">?</icon>
                         </div>
                     </div>
                     </span>
 
-                    <input name="ScNumCollectiveSetting" id="sc_num_collective_setting" min="0" max="99" type="number" required="required">
+                    <input name="ScNumCollectiveSetting" id="sc_num_collective_setting" style="width: 58px" min="0" max="99" type="number" required="required">
                 </dd>
               <div>
                 <?php foreach( $mUserList as $val ){ ?>
@@ -419,7 +420,7 @@ function checkValidate() {
                   ?>
                   <dd>
                     <span><?=h($val['MUser']['display_name'])?></span>
-                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'class' => 'sc_num_limit', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
+                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'class' => 'sc_num_limit', 'min' => 0, 'max' => 99, 'style' => 'width: 58px', 'label' => false, 'div' => false, 'error' => false])?>
                   </dd>
                   <?php if ( $this->Form->isFieldError('MUser.'.$val['MUser']['id'].'.sc_num') ) echo $this->Form->error('MUser.'.$val['MUser']['id'].'.sc_num', null, ['wrap' => 'p']); ?>
                 <?php } ?>
@@ -429,7 +430,7 @@ function checkValidate() {
                 <p class="default-setting-explain">新規ユーザー作成時のデフォルト値の設定を行います。</p>
                 <dd>
                     <span>同時対応上限数</span>
-                    <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
+                    <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'style' => 'width: 58px', 'label' => false, 'div' => false, 'error' => false])?>
                 </dd>
                 <?php if ( $this->Form->isFieldError('sc_default_num') ) echo $this->Form->error('sc_default_num', null, ['wrap' => 'p']); ?>
             </dl>
