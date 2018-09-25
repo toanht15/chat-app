@@ -2252,6 +2252,7 @@
               if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput() && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 var name = $(this).attr('name');
                 console.log("DISABLE RADIO NAME : " + name);
+                storage.l.set('sinclo_disable_radio',name);
                 $('input[name=' + name + '][type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
               }
               if ( !(window.sincloInfo.widget.hasOwnProperty('chatRadioBehavior') && window.sincloInfo.widget.chatRadioBehavior === 2) ) {
@@ -5395,6 +5396,10 @@
             var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
             var type = (beforeTextareaOpened === "close") ? "2" : "1";
             self._handleChatTextArea(type);
+          } else if(typeof(storage.l.get('sinclo_disable_radio')) === "string"){
+            console.log("ラジオボタン非活性化");
+            $('input[name=' + storage.l.get('sinclo_disable_radio') + '][type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
+            storage.l.unset('sinclo_disable_radio');
           }
         }
       },
