@@ -5377,8 +5377,24 @@
                 self.begin();
               } else {
                 console.log("<><><><><><><><><><> NOT process %s <><><><><><><><><><>", String(action.actionType));
+                self._handleChatTextArea(self.get(self._lKey.currentScenario).chatTextArea);
               }
             },100);
+          } else if(self.isProcessing() && (String(self.get(self._lKey.currentScenario).actionType) === self._actionType.hearing) ) {
+            setTimeout(function(){
+              console.log('ヒアリング中');
+              self._hearing._beginValidInputWatcher();
+            },self._getIntervalTimeSec() * 1000);
+          } else if((oldObj && newObj) && ((oldObj[self._lKey.currentScenario]).actionType === self._actionType.hearing) && ((newObj[self._lKey.currentScenario]).actionType !== self._actionType.hearing)) {
+            setTimeout(function(){
+              console.log('ヒアリング終了時');
+              self._hearing._endValidInputWatcher();
+            },self._getIntervalTimeSec() * 1000);
+          } else if(oldObj && !newObj){
+            console.log('シナリオ終了時');
+            var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
+            var type = (beforeTextareaOpened === "close") ? "2" : "1";
+            self._handleChatTextArea(type);
           }
         }
       },
