@@ -512,6 +512,7 @@ function getMessageTypeBySenarioActionType(type) {
   var result = 3;
   switch(Number(type)) {
     case 1:
+    case 10:
       result = 21;
       break;
     case 2:

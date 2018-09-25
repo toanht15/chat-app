@@ -2220,7 +2220,7 @@ var socket, // socket.io
             // 画面を回転ときは、向きによってスタイルを変える
             window.addEventListener('orientationchange', function(){
               //バナー表示だった
-              var bannerAct = storage.s.get('bannerAct');
+              var bannerAct = storage.l.get('bannerAct');
               if(bannerAct === "true"){
                 //強制的にバナー表示とする
                 $("#sincloBannerBox").hide();
@@ -2286,7 +2286,7 @@ var socket, // socket.io
          */
         //画面遷移前に閉じるボタンが押下されていたか
         //バナー表示だった
-        var bannerAct = storage.s.get('bannerAct');
+        var bannerAct = storage.l.get('bannerAct');
         //非表示の状態だった
         var closeAct = storage.s.get('closeAct');
         if(bannerAct === "true"){
@@ -3794,7 +3794,7 @@ var socket, // socket.io
     getActiveWindow: function(){
       var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus, sincloBox;
       //バナー表示かどうか　bannerAct === "true"だったらバナー表示
-      var bannerAct = storage.s.get('bannerAct');
+      var bannerAct = storage.l.get('bannerAct');
       //閉じるボタンによる非表示の状態かどうか　closeAct === "true"だったら閉じるボタンによる非表示状態
       var closeAct = storage.s.get('closeAct');
       if ( document.getElementById('sincloBox') ) {
