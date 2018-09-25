@@ -407,7 +407,7 @@ function checkValidate() {
                     </div>
                     </span>
 
-                    <input name="ScNumCollectiveSetting" id="sc_num_collective_setting" style="width: 54px" min="0" max="99" type="number" required="required">
+                    <input name="ScNumCollectiveSetting" id="sc_num_collective_setting" min="0" max="99" type="number" required="required">
                 </dd>
               <div>
                 <?php foreach( $mUserList as $val ){ ?>
@@ -420,7 +420,7 @@ function checkValidate() {
                   ?>
                   <dd>
                     <span><?=h($val['MUser']['display_name'])?></span>
-                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'class' => 'sc_num_limit', 'min' => 0, 'max' => 99, 'style' => 'width: 54px', 'label' => false, 'div' => false, 'error' => false])?>
+                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'class' => 'sc_num_limit', 'style' => 'width: 105px',  'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
                   </dd>
                   <?php if ( $this->Form->isFieldError('MUser.'.$val['MUser']['id'].'.sc_num') ) echo $this->Form->error('MUser.'.$val['MUser']['id'].'.sc_num', null, ['wrap' => 'p']); ?>
                 <?php } ?>
@@ -428,9 +428,9 @@ function checkValidate() {
 
                 <dt>デフォルト設定<dt-detail></dt-detail></dt>
                 <p class="default-setting-explain">新規ユーザー作成時のデフォルト値の設定を行います。</p>
-                <dd>
+                <dd id="sc_num_default_setting">
                     <span>同時対応上限数</span>
-                    <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'style' => 'width: 54px', 'label' => false, 'div' => false, 'error' => false])?>
+                    <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'style' => 'margin-top: -8px; width: 105px;', 'label' => false, 'div' => false, 'error' => false])?>
                 </dd>
                 <?php if ( $this->Form->isFieldError('sc_default_num') ) echo $this->Form->error('sc_default_num', null, ['wrap' => 'p']); ?>
             </dl>
@@ -464,8 +464,8 @@ function checkValidate() {
       </section>
       <section>
         <h3 class="require">４．Sorryメッセージ</h3>
-        <div class="content">
-          <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
+        <div class="content" style="margin-bottom: 2em">
+          <pre style = "padding: 0 0 15px 0; line-height: 2em;">このメッセージは下記の場合に自動送信されます</pre>
           <li style = "padding: 0 0 15px 0;">
             <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
               <span style = "display:flex;">
@@ -492,7 +492,7 @@ function checkValidate() {
             </span>
             <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin-top: 15px;']); ?>
           </li>
-          <li style = "padding: 0 0 40px 0;">
+          <li>
             <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
             <span style = "display:flex;">
               <?=$this->Form->textarea('no_standby_sorry_message',['maxlength'=>4000])?>
