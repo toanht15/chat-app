@@ -5274,10 +5274,13 @@
           $('input[name=' + name + '][type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
         }
       },
-      _enablePreviousRadioButton: function () {
+      _enablePreviousRadioButton: function (length) {
         var self = sinclo.scenarioApi;
         var chatMessageBlock = $('sinclo-chat').find('div:not(.sinclo-scenario-msg)');
-        var length = self.get(self._lKey.previousChatMessageLength);
+        console.log(length);
+        if(typeof length === "undefined"){
+          length = self.get(self._lKey.previousChatMessageLength);
+        }
         for (var i = 0; i < length; i++) {
           var name = $(chatMessageBlock[i]).find('[type="radio"]').attr('name');
           $('input[name=' + name + '][type="radio"]').prop('disabled', false).parent().css('opacity', 1);
@@ -5397,7 +5400,9 @@
             }, 100);
           } else if(oldObj && !newObj){
             console.log('シナリオ終了時');
-            var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
+            var length = oldObj['s_prevChatMessageLength'];
+            self._enablePreviousRadioButton(length);
+            var beforeTextareaOpened = oldObj['s_beforeTextareaOpened'];
             var type = (beforeTextareaOpened === "close") ? "2" : "1";
             self._handleChatTextArea(type);
           } else if(typeof(storage.l.get('sinclo_disable_radio')) === "string"){
