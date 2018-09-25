@@ -5329,6 +5329,7 @@
             self._sendFile._process();
             break;
           case self._actionType.branchOnCond:
+            self.set(self._lKey.scenarioMessageType, 21); // テキスト発言として扱う
             self._branchOnCond._init(self);
             self._branchOnCond._process();
             break;
