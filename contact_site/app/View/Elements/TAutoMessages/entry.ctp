@@ -173,8 +173,8 @@
               'disabled' => !$coreSettings[C_COMPANY_USE_FREE_INPUT],
               ), array(
               'entity' => 'chat_textarea',
-              'default' => (!empty($this->data['TAutoMessage']['chat_textarea'])) ? $this->data['TAutoMessage']['chat_textarea'] : (!empty($this->data['widgetSettings']['chat_init_show_textarea'])) ? $this->data['TAutoMessage']['chat_textarea'] : C_AUTO_WIDGET_TEXTAREA_OPEN,
-              )); ?></label>
+              'default' => (empty($this->data['widgetSettings']['chat_init_show_textarea'])) ? C_AUTO_WIDGET_TEXTAREA_OPEN : (!empty($this->data['TAutoMessage']['chat_textarea'])) ? $this->data['TAutoMessage']['chat_textarea'] : $this->data['widgetSettings']['chat_init_show_textarea'],
+            )); ?></label>
           </li>
           <!-- 自由入力エリア -->
 
