@@ -6059,9 +6059,11 @@
         _getCurrentHearingProcess: function () {
           var self = sinclo.scenarioApi._hearing;
           var result = {};
-          var triggerObj = self._parent.get(self._parent._lKey.currentScenario).hearings[self._getCurrentSeq()];
-          if (typeof(triggerObj) !== 'undefined') {
-            result = triggerObj;
+          if(self._parent.get(self._parent._lKey.currentScenario).hearings) {
+            var triggerObj = self._parent.get(self._parent._lKey.currentScenario).hearings[self._getCurrentSeq()];
+            if (typeof(triggerObj) !== 'undefined') {
+              result = triggerObj;
+            }
           }
           return result;
         },
