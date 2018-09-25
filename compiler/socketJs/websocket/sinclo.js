@@ -5392,12 +5392,12 @@
             setTimeout(function(){
               console.log('ヒアリング中');
               self._hearing._beginValidInputWatcher();
-            }, 100);
+            }, self._getIntervalTimeSec() * 1000);
           } else if((oldObj && newObj && oldObj[self._lKey.currentScenario] && newObj[self._lKey.currentScenario]) && ((oldObj[self._lKey.currentScenario]).actionType === self._actionType.hearing) && ((newObj[self._lKey.currentScenario]).actionType !== self._actionType.hearing)) {
             setTimeout(function(){
               console.log('ヒアリング終了時');
               self._hearing._endValidInputWatcher();
-            }, 100);
+            }, self._getIntervalTimeSec() * 1000);
           } else if(oldObj && !newObj){
             console.log('シナリオ終了時');
             var length = oldObj['s_prevChatMessageLength'];
