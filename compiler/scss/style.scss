@@ -9007,7 +9007,7 @@ ul.naviBtn {
       border-bottom: 3px solid #C3D69B;
       padding-left: 5px;
     }
-    .content { margin: 0 0 0 2em; }
+    .content { margin: 0 0 3em 2em; }
     .pre {
       display: block;
       line-height: 2em;
@@ -9129,7 +9129,7 @@ ul.naviBtn {
 
     #sc_content {
       #sc_num_collective_setting {
-        width: 54px;
+        width: 105px;
       }
 
       .collective-setting {
@@ -9156,8 +9156,13 @@ ul.naviBtn {
           margin-bottom: 0;
         }
 
+        #sc_num_default_setting {
+          height: 38px;
+        }
+
         &.sc_hidden {
           height: 0;
+          margin: 0;
         }
 
         > div {
@@ -9293,10 +9298,6 @@ ul.naviBtn {
             margin-top: 0;
           }
         }
-      }
-
-      #sc_default_create_status {
-        margin-left: 195px;
       }
     }
   }
