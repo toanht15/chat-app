@@ -148,7 +148,7 @@ define('C_OPERATOR_PASSIVE', 0); // 退席
 define('C_OPERATOR_ACTIVE', 1); // 在籍
 
 // 正規表現
-define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
+define('C_MATCH_RULE_TEL', '/^\+?(\d|-){10,}/'); // TEL
 define('C_MATCH_RULE_TIME', '/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/'); // 時間 H:i
 define('C_MATCH_RULE_COLOR_CODE', '/^#([0-9|a-f|A-F]{3}|[0-9|a-f|A-F]{6})$/');
 define('C_MATCH_RULE_IMAGE_FILE', '/.(png|jpg|jpeg)$/i');
@@ -162,7 +162,7 @@ define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]
 define('C_MATCH_INPUT_RULE_ALL', '/.*/');  // 入力制限なし
 define('C_MATCH_INPUT_RULE_NUMBER', '/[\d]*/');  // 数字入力
 define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.\-,;:@"]*/'); // メールアドレス入力(半角英数記号入力)
-define('C_MATCH_INPUT_RULE_TEL', '/^[-\d]{10,}/'); // 電話番号入力（半角英数と一部記号入力）
+define('C_MATCH_INPUT_RULE_TEL', '/^\+?(\d|-)*/'); // 電話番号入力（半角英数と一部記号入力）
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
