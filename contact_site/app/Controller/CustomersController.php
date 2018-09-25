@@ -725,6 +725,6 @@ class CustomersController extends AppController {
       'mail' => 'メールアドレス',
       'memo' => 'メモ'
     );
-    return $keyMap[$key] ? $keyMap[$key] : $key;
+    return array_key_exists($key, $keyMap) ? $keyMap[$key] : $key;
   }
 }
