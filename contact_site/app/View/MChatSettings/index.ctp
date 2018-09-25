@@ -464,8 +464,8 @@ function checkValidate() {
       </section>
       <section>
         <h3 class="require">４．Sorryメッセージ</h3>
-        <div class="content">
-          <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
+        <div class="content" style="margin-bottom: 2em">
+          <pre style = "padding: 0 0 15px 0; line-height: 2em;">このメッセージは下記の場合に自動送信されます</pre>
           <li style = "padding: 0 0 15px 0;">
             <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
               <span style = "display:flex;">
@@ -492,7 +492,7 @@ function checkValidate() {
             </span>
             <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin-top: 15px;']); ?>
           </li>
-          <li style = "padding: 0 0 40px 0;">
+          <li>
             <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
             <span style = "display:flex;">
               <?=$this->Form->textarea('no_standby_sorry_message',['maxlength'=>4000])?>
