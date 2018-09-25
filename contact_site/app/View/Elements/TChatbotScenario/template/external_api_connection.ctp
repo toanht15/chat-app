@@ -84,13 +84,14 @@
     <li class="styleFlexbox" ng-if="setItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>">
       <span class="fb7em"><label>スクリプト<span class="questionBalloon"><icon class="questionBtn" data-tooltip="実行したいスクリプト（JavaScript）を設定します。<br>スクリプト内で変数の利用も可能です。<br>スクリプト内で変数を利用する場合は{{showExpression('変数名')}}<br>をダブルクオーテーションで括る必要があります。<br>（例：&quot;{{showExpression('変数名')}}&quot;）<br><br>※先頭行および最終行のscriptタグの設定は不要です。">?</icon></span></label></span>
       <div>
-        <textarea style="font-size: 13px; border-width: 1px; padding: 5px; margin-left: 72px; line-height: 1.5; overflow: auto; width: calc(100% - 157px); resize: vertical;" name="externalScript" maxlength="4000" ng-model="setItem.externalScript" cols="48" rows="9" placeholder="<!-- Google広告トラッキング -->
+        <textarea style="font-size: 13px; border-width: 1px; padding: 5px; margin-left: 72px; line-height: 1.5; overflow: auto; width: calc(100% - 157px); resize: vertical;" name="externalScript" maxlength="4000" ng-model="setItem.externalScript" cols="48" rows="9" placeholder="/* Google広告トラッキング */
   var img;
   google_conversion_id = 'YOUR_CONVERSION_ID';
   google_conversion_label = 'YOUR_CONVERSION_LABEL';
   google_conversion_value = 0;
-  img.id = 'conversionCaller'+id;
-  img.src = 'https://www.googleadservices.com/pagead/conversion/'+google_conversion_id+'/?label='label+'&script=0';
+  img = new Image(1, 1);
+  img.id = 'conversionCaller'+google_conversion_id;
+  img.src = 'https://www.googleadservices.com/pagead/conversion/'+google_conversion_id+'/?label='google_conversion_label+'&script=0';
   document.body.appendChild(img);" ng-required="true" required="required" class="ng-invalid ng-invalid-required ng-valid-maxlength ng-touched"></textarea>
       </div>
     </li>

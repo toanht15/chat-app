@@ -1494,6 +1494,10 @@
               userName = window.sincloInfo.widget.subTitle;
             }
 
+            if(sinclo.scenarioApi._hearing._isConfirming()) {
+              sinclo.scenarioApi._hearing._endInputProcess();
+              sinclo.scenarioApi._hearing._showConfirmMessage();
+            }
             sinclo.chatApi.createMessage(cn, obj.chatMessage, userName, true);
             sinclo.chatApi.scDown();
             return false;
@@ -4936,7 +4940,7 @@
         "1": '.+',
         "2": '[0-9]+',
         "3": "^(([^<>()\\[\\]\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$",
-        "4": '^0[\\d+-]*'
+        "4": '^[-\\d]{10,}$'
       },
       _validChars: {
         "1": '.+',
@@ -5270,10 +5274,13 @@
           $('input[name=' + name + '][type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
         }
       },
-      _enablePreviousRadioButton: function () {
+      _enablePreviousRadioButton: function (length) {
         var self = sinclo.scenarioApi;
         var chatMessageBlock = $('sinclo-chat').find('div:not(.sinclo-scenario-msg)');
-        var length = self.get(self._lKey.previousChatMessageLength);
+        console.log(length);
+        if(typeof length === "undefined"){
+          length = self.get(self._lKey.previousChatMessageLength);
+        }
         for (var i = 0; i < length; i++) {
           var name = $(chatMessageBlock[i]).find('[type="radio"]').attr('name');
           $('input[name=' + name + '][type="radio"]').prop('disabled', false).parent().css('opacity', 1);
@@ -5330,6 +5337,7 @@
             self._sendFile._process();
             break;
           case self._actionType.branchOnCond:
+            self.set(self._lKey.scenarioMessageType, 21); // テキスト発言として扱う
             self._branchOnCond._init(self);
             self._branchOnCond._process();
             break;
@@ -5352,7 +5360,6 @@
         var self = sinclo.scenarioApi;
         window.removeEventListener('storage', self._handleStorageUpdateEvent);
       },
-      _scenarioSeqIsUpdated: false,
       _handleStorageUpdateEvent: function(event) {
         var self = sinclo.scenarioApi;
         console.log(event);
@@ -5380,20 +5387,22 @@
                 console.log("<><><><><><><><><><> NOT process %s <><><><><><><><><><>", String(action.actionType));
                 self._handleChatTextArea(self.get(self._lKey.currentScenario).chatTextArea);
               }
-            },100);
+            }, 100);
           } else if(self.isProcessing() && (String(self.get(self._lKey.currentScenario).actionType) === self._actionType.hearing) ) {
             setTimeout(function(){
               console.log('ヒアリング中');
               self._hearing._beginValidInputWatcher();
-            },self._getIntervalTimeSec() * 1000);
-          } else if((oldObj && newObj) && ((oldObj[self._lKey.currentScenario]).actionType === self._actionType.hearing) && ((newObj[self._lKey.currentScenario]).actionType !== self._actionType.hearing)) {
+            }, self._getIntervalTimeSec() * 1000);
+          } else if((oldObj && newObj && oldObj[self._lKey.currentScenario] && newObj[self._lKey.currentScenario]) && ((oldObj[self._lKey.currentScenario]).actionType === self._actionType.hearing) && ((newObj[self._lKey.currentScenario]).actionType !== self._actionType.hearing)) {
             setTimeout(function(){
               console.log('ヒアリング終了時');
               self._hearing._endValidInputWatcher();
-            },self._getIntervalTimeSec() * 1000);
+            }, self._getIntervalTimeSec() * 1000);
           } else if(oldObj && !newObj){
             console.log('シナリオ終了時');
-            var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
+            var length = oldObj['s_prevChatMessageLength'];
+            self._enablePreviousRadioButton(length);
+            var beforeTextareaOpened = oldObj['s_beforeTextareaOpened'];
             var type = (beforeTextareaOpened === "close") ? "2" : "1";
             self._handleChatTextArea(type);
           } else if(typeof(storage.l.get('sinclo_disable_radio')) === "string"){
@@ -5403,6 +5412,7 @@
           }
         }
       },
+      _scenarioSeqIsUpdated: false,
       _isTheFiestScenaroAndSequence: function () {
         var self = sinclo.scenarioApi;
         var result = false;
@@ -5684,6 +5694,7 @@
       },
       _waitingInput: function (callback) {
         var self = sinclo.scenarioApi;
+        self._unWaitingInput();
         $(document).on(self._events.inputCompleted, function (e, inputVal) {
           callback(inputVal);
         });
@@ -5773,7 +5784,8 @@
         _state: {
           currentSeq: "sh_currentSeq",
           retry: "sh_retry",
-          length: "sh_length"
+          length: "sh_length",
+          confirming: "sh_comfirming"
         },
         _cvType: {
           validOnce: "1",
@@ -5979,12 +5991,11 @@
             self._beginValidInputWatcher();
             self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
+              self._endInputProcess();
               sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
               self._parent._waitingInput(function (inputVal) {
-                sinclo.chatApi.removeKeyDownEventToSendChat();
-                self._parent._unWaitingInput();
-                self._endValidInputWatcher();
+                self._endInputProcess();
                 self._parent._handleStoredMessage();
                 if (self._parent._valid(hearing.inputType, inputVal)) {
                   self._parent._saveVariable(hearing.variableName, inputVal);
@@ -5999,6 +6010,12 @@
               });
             });
           });
+        },
+        _endInputProcess: function () {
+          var self = sinclo.scenarioApi._hearing;
+          sinclo.chatApi.removeKeyDownEventToSendChat();
+          self._parent._unWaitingInput();
+          self._endValidInputWatcher();
         },
         _executeConfirm: function () {
           var self = sinclo.scenarioApi._hearing;
@@ -6015,6 +6032,7 @@
             }
           }
           if (self._requireConfirm()) {
+            self._saveConfirmFlg(true);
             self._showConfirmMessage();
           } else {
             if (self._cvIsEnable()) {
@@ -6029,6 +6047,16 @@
             }
           }
         },
+        _saveConfirmFlg: function (confirming) {
+          var self = sinclo.scenarioApi._hearing;
+          self._parent.set(self._state.confirming, confirming);
+        },
+        _isConfirming: function () {
+          var self = sinclo.scenarioApi._hearing;
+          if (!self || !self._parent) return false;
+          var isConfirming = self._parent.get(self._state.confirming);
+          return typeof(isConfirming) !== null && (isConfirming || isConfirming === 'true');
+        },
         _requireConfirm: function () {
           var self = sinclo.scenarioApi._hearing;
           return self._parent.get(self._parent._lKey.currentScenario).isConfirm === "1";
@@ -6036,9 +6064,11 @@
         _getCurrentHearingProcess: function () {
           var self = sinclo.scenarioApi._hearing;
           var result = {};
-          var triggerObj = self._parent.get(self._parent._lKey.currentScenario).hearings[self._getCurrentSeq()];
-          if (typeof(triggerObj) !== 'undefined') {
-            result = triggerObj;
+          if(self._parent.get(self._parent._lKey.currentScenario).hearings) {
+            var triggerObj = self._parent.get(self._parent._lKey.currentScenario).hearings[self._getCurrentSeq()];
+            if (typeof(triggerObj) !== 'undefined') {
+              result = triggerObj;
+            }
           }
           return result;
         },
@@ -6104,6 +6134,7 @@
                 self._parent._unWaitingInput();
                 self._parent._handleStoredMessage();
                 console.log("inputVal : " + inputVal + " self._parent._lKey.currentScenario.success : " + self._parent.get(self._parent._lKey.currentScenario).success + " self._parent._lKey.currentScenario.cancel : " + self._parent.get(self._parent._lKey.currentScenario).cancel);
+                self._saveConfirmFlg(false);
                 if (inputVal === self._parent.get(self._parent._lKey.currentScenario).success) {
                   self._clearRetryFlg();
                   if (self._cvIsEnable()) {
