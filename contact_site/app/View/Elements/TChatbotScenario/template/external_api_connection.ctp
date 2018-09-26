@@ -96,7 +96,7 @@
       </div>
     </li>
     <li class="styleFlexbox align_center" ng-if="setItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>">
-      <i class="icon fal fa-lightbulb-on" style="margin:0 5px 0 156px; font-size:16px;"></i><a href="/" target="_blank" id = "help_link">Google広告のコンバージョンをトラッキングするスクリプトの記述例</a>
+      <i class="icon fal fa-lightbulb-on" style="margin:0 5px 0 156px; font-size:16px;"></i><a href="https://info.sinclo.jp/manual/google-ads-conversion-tracking/" target="_blank" id = "help_link">Google広告のコンバージョンをトラッキングするスクリプトの記述例</a>
     </li>
   </ul>
 </div>
