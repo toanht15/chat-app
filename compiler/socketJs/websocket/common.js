@@ -2287,6 +2287,7 @@ var socket, // socket.io
         //画面遷移前に閉じるボタンが押下されていたか
         //バナー表示だった
         var bannerAct = storage.l.get('bannerAct');
+        storage.s.set('bannerAct',bannerAct);
         //非表示の状態だった
         var closeAct = storage.s.get('closeAct');
         if(bannerAct === "true"){
