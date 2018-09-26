@@ -2484,6 +2484,16 @@
         var showTime = String(window.sincloInfo.widget.showTime);
         var displayStyleType = String(window.sincloInfo.widget.displayStyleType);
         var maxShowTime = Number(window.sincloInfo.widget.maxShowTime) * 1000;
+        if (check.smartphone()
+          && Number(sincloInfo.widget.spAutoOpenFlg) === 1
+          && Number(sincloInfo.widget.spWidgetViewPattern) === 3) {
+          if (!storage.l.get('bannerAct')) {
+            console.log("spWidgetViewPattern 3 show banner");
+            //バナー表示にする
+            sinclo.operatorInfo.onBanner();
+          }
+          return;
+        }
         switch (displayStyleType) {
           case "1": // 最大化
             if (!widgetOpen) {
@@ -2502,6 +2512,14 @@
             }
             break;
           case "2": // 最小化
+            if (check.smartphone()
+              && Number(sincloInfo.widget.spWidgetViewPattern) === 3) {
+              if (!storage.l.get('bannerAct')) {
+                console.log("widget minimize and spWidgetViewPattern 3 show banner");
+                //バナー表示にする
+                sinclo.operatorInfo.onBanner();
+              }
+            }
             break;
           case "3": // バナー表示
             if (!storage.l.get('bannerAct')) {
