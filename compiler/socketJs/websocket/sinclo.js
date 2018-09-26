@@ -18,7 +18,7 @@
         set: function (flg, overwrite) {
           var sincloBox = document.getElementById('sincloBox');
           sincloBox.setAttribute('data-openflg', flg);
-          if (overwrite || storage.s.get("widgetMaximized") === null) {
+          if (overwrite || storage.l.get("widgetMaximized") === null) {
             storage.l.set("widgetMaximized", flg);
             storage.s.set("widgetMaximized", flg);
           }
@@ -64,7 +64,7 @@
         var flg = sinclo.widget.condifiton.get();
         var elm = $('#sincloBox');
         //実際にバナーではないか
-        var bannerAct = storage.l.get('bannerAct');
+        var bannerAct = storage.s.get('bannerAct');
         //非表示の状態
         var closeAct = storage.s.get('closeAct');
         if (bannerAct !== "true" && closeAct !== "true") {
@@ -227,12 +227,14 @@
         sinclo.operatorInfo.bannerBottomLeftRight();
         //バナー表示状態になった
         storage.l.set('bannerAct', true);
+        storage.s.set('bannerAct', true);
         $("#sincloBannerBox").show();
       },
       //バナーがクリックされた時の挙動
       clickBanner: function (showMinimize) {
         //バナー非表示状態になった
         storage.l.set('bannerAct', false);
+        storage.s.set('bannerAct', false);
         $("#sincloWidgetBox").show();
         $("#sincloBannerBox").hide();
         $("#sincloBox").css("bottom", "0");
@@ -571,6 +573,7 @@
         storage.s.unset('amsg');
         storage.s.unset('chatAct');
         storage.s.unset('chatEmit');
+        storage.l.unset('bannerAct');
         sinclo.scenarioApi.reset();
         userInfo.setPrevpage(true);
       }

@@ -2284,9 +2284,14 @@ var socket, // socket.io
          * ３：sincloBoxの要素が存在する
          * ４：sincloBoxの要素のdisplayがnoneである
          */
+        //バナーが有効でない場合はbannerActの情報をlocalStorageから削除しておく
+        if(Number(window.sincloInfo.widget.closeButtonSetting) !== 2 || Number(window.sincloInfo.widget.closeButtonModeType) !== 1){
+          storage.l.unset('bannerAct');
+        }
         //画面遷移前に閉じるボタンが押下されていたか
         //バナー表示だった
         var bannerAct = storage.l.get('bannerAct');
+        storage.s.set('bannerAct',bannerAct);
         //非表示の状態だった
         var closeAct = storage.s.get('closeAct');
         if(bannerAct === "true"){
