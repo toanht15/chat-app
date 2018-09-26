@@ -3071,38 +3071,6 @@
         li.className = 'sinclo_se effect_right sinclo_form';
         li.innerHTML = content;
       },
-      /* Ph.2用のフォーム
-      createFormFromLog: function (data) {
-        var chatList = document.getElementsByTagName('sinclo-chat')[0];
-        var div = document.createElement('div');
-        var li = document.createElement('li');
-
-        div.appendChild(li);
-        chatList.appendChild(div);
-
-        var formElements = "";
-        var isEmptyRequire = false;
-
-        var content = "";
-        var objKeys = Object.keys(data);
-        objKeys.forEach(function(variableName, index, array){
-          formElements += (array.length - 1 === index) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
-          formElements += "      <label class='formLabel'>" + data[variableName].label + (data[variableName].required ? "<span class='require'>*</span>" : "") + "</label>";
-          formElements += "      <input type='text' class='formInput' placeholder='" + data[variableName].label + "を入力してください' data-label-text='" + data[variableName].label + "' name='" + data[variableName].variableName + "' value='" + data[variableName].value + "' readonly/>";
-          formElements += "    </div>";
-        });
-
-        content += (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
-        content += "<div class='formContentArea'>";
-        content += "  <div class='formArea'>";
-        content += formElements;
-        content += "    <p class='formOKButtonArea'><span class='formOKButton disabled'>OK</span></p>";
-        content += "  </div>";
-        content += "</div>";
-        li.className = 'sinclo_se effect_right sinclo_form';
-        li.innerHTML = content;
-      },
-      */
       hideForm: function() {
         $('li.sinclo_re.sinclo_form').remove();
       },
