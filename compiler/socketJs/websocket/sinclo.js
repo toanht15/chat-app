@@ -3071,38 +3071,6 @@
         li.className = 'sinclo_se effect_right sinclo_form';
         li.innerHTML = content;
       },
-      /* Ph.2用のフォーム
-      createFormFromLog: function (data) {
-        var chatList = document.getElementsByTagName('sinclo-chat')[0];
-        var div = document.createElement('div');
-        var li = document.createElement('li');
-
-        div.appendChild(li);
-        chatList.appendChild(div);
-
-        var formElements = "";
-        var isEmptyRequire = false;
-
-        var content = "";
-        var objKeys = Object.keys(data);
-        objKeys.forEach(function(variableName, index, array){
-          formElements += (array.length - 1 === index) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
-          formElements += "      <label class='formLabel'>" + data[variableName].label + (data[variableName].required ? "<span class='require'>*</span>" : "") + "</label>";
-          formElements += "      <input type='text' class='formInput' placeholder='" + data[variableName].label + "を入力してください' data-label-text='" + data[variableName].label + "' name='" + data[variableName].variableName + "' value='" + data[variableName].value + "' readonly/>";
-          formElements += "    </div>";
-        });
-
-        content += (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
-        content += "<div class='formContentArea'>";
-        content += "  <div class='formArea'>";
-        content += formElements;
-        content += "    <p class='formOKButtonArea'><span class='formOKButton disabled'>OK</span></p>";
-        content += "  </div>";
-        content += "</div>";
-        li.className = 'sinclo_se effect_right sinclo_form';
-        li.innerHTML = content;
-      },
-      */
       hideForm: function() {
         $('li.sinclo_re.sinclo_form').remove();
       },
@@ -5392,6 +5360,11 @@
             setTimeout(function(){
               console.log('ヒアリング中');
               self._hearing._beginValidInputWatcher();
+              if(newObj['sh_currentSeq'] !== newObj['sh_length'] && oldObj['sh_currentSeq'] !== newObj['sh_currentSeq']) {
+                console.log('hearing sequence num is changed');
+                var hearingProcess = self._hearing._getCurrentHearingProcess();
+                self._hearing._execute(hearingProcess, true);
+              }
             }, self._getIntervalTimeSec() * 1000);
           } else if((oldObj && newObj && oldObj[self._lKey.currentScenario] && newObj[self._lKey.currentScenario]) && ((oldObj[self._lKey.currentScenario]).actionType === self._actionType.hearing) && ((newObj[self._lKey.currentScenario]).actionType !== self._actionType.hearing)) {
             setTimeout(function(){
@@ -5976,7 +5949,7 @@
             self._execute(doHearing);
           }
         },
-        _execute: function (hearing) {
+        _execute: function (hearing, executeSirent) {
           var message = hearing.message;
           // クロージャー用
           var self = sinclo.scenarioApi._hearing;
@@ -5990,7 +5963,7 @@
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._beginValidInputWatcher();
             self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
-            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
+            var afterShowMessageProcess = function () {
               self._endInputProcess();
               sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
@@ -6008,7 +5981,12 @@
                   self._showError();
                 }
               });
-            });
+            };
+            if(executeSirent) {
+              afterShowMessageProcess();
+            } else {
+              self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, afterShowMessageProcess);
+            }
           });
         },
         _endInputProcess: function () {
