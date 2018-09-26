@@ -151,7 +151,7 @@
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
           }
-          if(check.smartphone() && Number(window.sincloInfo.widget.spWidgetViewPattern) === 3 && $('#minimizeBtn').is(':hidden')){
+          if(check.smartphone() && Number(window.sincloInfo.widget.spWidgetViewPattern) === 3 && $('#minimizeBtn').is(':hidden') && Number(window.sincloInfo.widget.closeButtonSetting) === 2 && Number(window.sincloInfo.widget.closeButtonModeType) === 1){
             console.log('<><><><><><><><><><>スマホ用隠しパラメータ、即バナー<><><><><><><><><><><>');
             elm.css('height', height + 'px');
             sinclo.operatorInfo.closeBtn();
