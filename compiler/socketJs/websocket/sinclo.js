@@ -5360,6 +5360,11 @@
             setTimeout(function(){
               console.log('ヒアリング中');
               self._hearing._beginValidInputWatcher();
+              if(newObj['sh_currentSeq'] !== newObj['sh_length'] && oldObj['sh_currentSeq'] !== newObj['sh_currentSeq']) {
+                console.log('hearing sequence num is changed');
+                var hearingProcess = self._hearing._getCurrentHearingProcess();
+                self._hearing._execute(hearingProcess, true);
+              }
             }, self._getIntervalTimeSec() * 1000);
           } else if((oldObj && newObj && oldObj[self._lKey.currentScenario] && newObj[self._lKey.currentScenario]) && ((oldObj[self._lKey.currentScenario]).actionType === self._actionType.hearing) && ((newObj[self._lKey.currentScenario]).actionType !== self._actionType.hearing)) {
             setTimeout(function(){
@@ -5944,7 +5949,7 @@
             self._execute(doHearing);
           }
         },
-        _execute: function (hearing) {
+        _execute: function (hearing, executeSirent) {
           var message = hearing.message;
           // クロージャー用
           var self = sinclo.scenarioApi._hearing;
@@ -5958,7 +5963,7 @@
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._beginValidInputWatcher();
             self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
-            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
+            var afterShowMessageProcess = function () {
               self._endInputProcess();
               sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
@@ -5976,7 +5981,12 @@
                   self._showError();
                 }
               });
-            });
+            };
+            if(executeSirent) {
+              afterShowMessageProcess();
+            } else {
+              self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, afterShowMessageProcess);
+            }
           });
         },
         _endInputProcess: function () {
