@@ -5356,8 +5356,16 @@
         var self = sinclo.scenarioApi;
         console.log(event);
         if(event.key === self._lKey.scenarioBase) {
-          var oldObj = JSON.parse(event.oldValue);
-          var newObj = JSON.parse(event.newValue);
+          if(check.isset(event.oldValue)){
+            var oldObj = JSON.parse(event.oldValue);
+          } else {
+            var oldObj = null;
+          }
+          if(check.isset(event.newValue)){
+            var newObj = JSON.parse(event.newValue);
+          } else {
+            var newObj = null;
+          }
           if(self.isProcessing() && (!oldObj && newObj)
             || (
               oldObj && newObj
