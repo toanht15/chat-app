@@ -5350,6 +5350,9 @@
         window.removeEventListener('storage', self._handleStorageUpdateEvent);
       },
       _handleStorageUpdateEvent: function(event) {
+        if(document.hasFocus()){
+          return;
+        }
         var self = sinclo.scenarioApi;
         console.log(event);
         if(event.key === self._lKey.scenarioBase) {
