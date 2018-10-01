@@ -5395,7 +5395,11 @@
               if(newObj['sh_currentSeq'] !== newObj['sh_length'] && oldObj['sh_currentSeq'] !== newObj['sh_currentSeq']) {
                 console.log('hearing sequence num is changed');
                 var hearingProcess = self._hearing._getCurrentHearingProcess();
-                self._hearing._execute(hearingProcess, true);
+                if(self._hearing._isTheEnd()) {
+                  self._hearing._executeConfirm(true);
+                } else {
+                  self._hearing._execute(hearingProcess, true);
+                }
               }
             }, self._getIntervalTimeSec() * 1000);
           } else if((oldObj && newObj && oldObj[self._lKey.currentScenario] && newObj[self._lKey.currentScenario]) && ((oldObj[self._lKey.currentScenario]).actionType === self._actionType.hearing) && ((newObj[self._lKey.currentScenario]).actionType !== self._actionType.hearing)) {
@@ -5407,6 +5411,7 @@
             console.log('シナリオ終了時');
             var length = oldObj['s_prevChatMessageLength'];
             self._enablePreviousRadioButton(length);
+            self._hearing._endValidInputWatcher();
             var beforeTextareaOpened = oldObj['s_beforeTextareaOpened'];
             var type = (beforeTextareaOpened === "close") ? "2" : "1";
             self._handleChatTextArea(type);
@@ -5981,7 +5986,7 @@
             self._execute(doHearing);
           }
         },
-        _execute: function (hearing, executeSirent) {
+        _execute: function (hearing, executeSilent) {
           var message = hearing.message;
           // クロージャー用
           var self = sinclo.scenarioApi._hearing;
@@ -5993,10 +5998,10 @@
           }
           self._parent._doing(intervalTimeSec, function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            self._endInputProcess();
             self._beginValidInputWatcher();
             self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
             var afterShowMessageProcess = function () {
-              self._endInputProcess();
               sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
               self._parent._waitingInput(function (inputVal) {
@@ -6014,7 +6019,7 @@
                 }
               });
             };
-            if(executeSirent) {
+            if(executeSilent) {
               afterShowMessageProcess();
             } else {
               self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, afterShowMessageProcess);
@@ -6027,7 +6032,7 @@
           self._parent._unWaitingInput();
           self._endValidInputWatcher();
         },
-        _executeConfirm: function () {
+        _executeConfirm: function (executeSilent) {
           var self = sinclo.scenarioApi._hearing;
           //ヒアリングが終わるときはチャットエリアのreadOnlyを解除しておく
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ヒアリングの入力無効終了(ｽﾏﾎ)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
@@ -6043,7 +6048,7 @@
           }
           if (self._requireConfirm()) {
             self._saveConfirmFlg(true);
-            self._showConfirmMessage();
+            self._showConfirmMessage(executeSilent);
           } else {
             if (self._cvIsEnable()) {
               // 全てOKの場合はCV
@@ -6134,37 +6139,42 @@
           var self = sinclo.scenarioApi._hearing;
           return self._parent.get(self._parent._lKey.currentScenario).hearingTargetCondition === self._easyApi.targetCondition.validAll;
         },
-        _showConfirmMessage: function () {
+        _showConfirmMessage: function (executeSilent) {
           var self = sinclo.scenarioApi._hearing;
           var messageBlock = self._parent._createSelectionMessage(self._parent.get(self._parent._lKey.currentScenario).confirmMessage, [self._parent.get(self._parent._lKey.currentScenario).success, self._parent.get(self._parent._lKey.currentScenario).cancel]);
+          var handleConfirmMessageFunc = function () {
+            self._parent._waitingInput(function (inputVal) {
+              self._parent._unWaitingInput();
+              self._parent._handleStoredMessage();
+              console.log("inputVal : " + inputVal + " self._parent._lKey.currentScenario.success : " + self._parent.get(self._parent._lKey.currentScenario).success + " self._parent._lKey.currentScenario.cancel : " + self._parent.get(self._parent._lKey.currentScenario).cancel);
+              self._saveConfirmFlg(false);
+              if (inputVal === self._parent.get(self._parent._lKey.currentScenario).success) {
+                self._clearRetryFlg();
+                if (self._cvIsEnable()) {
+                  // OKを押したタイミングでCVを付ける
+                  setTimeout(function () {
+                    emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
+                  }, 1000);
+                }
+                self._setCurrentSeq(0);
+                if (self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
+              } else if (inputVal === self._parent.get(self._parent._lKey.currentScenario).cancel) {
+                self._setRetryFlg();
+                self._parent._process(true);
+              } else {
+                self._showError();
+              }
+            });
+          };
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea("2"); // 確認ダイアログを出すときはOFF固定
-            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, messageBlock, self._parent.get(self._state.currentSeq) + 1, "2", function () {
-              self._parent._waitingInput(function (inputVal) {
-                self._parent._unWaitingInput();
-                self._parent._handleStoredMessage();
-                console.log("inputVal : " + inputVal + " self._parent._lKey.currentScenario.success : " + self._parent.get(self._parent._lKey.currentScenario).success + " self._parent._lKey.currentScenario.cancel : " + self._parent.get(self._parent._lKey.currentScenario).cancel);
-                self._saveConfirmFlg(false);
-                if (inputVal === self._parent.get(self._parent._lKey.currentScenario).success) {
-                  self._clearRetryFlg();
-                  if (self._cvIsEnable()) {
-                    // OKを押したタイミングでCVを付ける
-                    setTimeout(function () {
-                      emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
-                    }, 1000);
-                  }
-                  self._setCurrentSeq(0);
-                  if (self._parent._goToNextScenario()) {
-                    self._parent._process();
-                  }
-                } else if (inputVal === self._parent.get(self._parent._lKey.currentScenario).cancel) {
-                  self._setRetryFlg();
-                  self._parent._process(true);
-                } else {
-                  self._showError();
-                }
-              });
-            });
+            if(executeSilent) {
+              handleConfirmMessageFunc();
+            } else {
+              self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, messageBlock, self._parent.get(self._state.currentSeq) + 1, "2", handleConfirmMessageFunc);
+            }
           });
         },
         _createSignatureMessage: function (obj) {
