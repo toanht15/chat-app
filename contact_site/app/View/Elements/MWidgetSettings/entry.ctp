@@ -1104,7 +1104,7 @@ $headerNo = 1;
           <li>
             <span class="require"><label>初期表示時の自由入力エリア</label></span>
             <?php if($coreSettings[C_COMPANY_USE_FREE_INPUT]): ?>
-              <div ng-init="chat_init_show_textarea='1'">
+              <div ng-init="chat_init_show_textarea='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'chat_init_show_textarea'))?>'">
                 <label class="pointer choose" for="MWidgetSettingChatInitShowTextarea1"><input type="radio" name="data[MWidgetSetting][chat_init_show_textarea]" ng-model="chat_init_show_textarea" id="MWidgetSettingChatInitShowTextarea1" class="showHeader" value="1" >表示する</label><br>
                 <label class="pointer choose" for="MWidgetSettingChatInitShowTextarea2"><input type="radio" name="data[MWidgetSetting][chat_init_show_textarea]" ng-model="chat_init_show_textarea" id="MWidgetSettingChatInitShowTextarea2" class="showHeader" value="2" >表示しない</label><br>
               </div>
