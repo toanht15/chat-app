@@ -15,7 +15,7 @@ class LandscapeLbcAPIComponent extends LandscapeAPIComponent
   const PATTERN_LBC_CODE = "/^[0-9]+$/";
   const LBC_CODE_LENGTH = 11;
 
-  const LANDSCAPE_API_URL = "https://api.cladb.usonar.jp/lbcinfoex/getlbc";
+  const LANDSCAPE_API_URL = "https://cla.liveaccess.jp/api";
 //  const LANDSCAPE_API_URL = "http://127.0.0.1/testdata.json";
   const LANDSCAPE_API_KEY1 = "BN7WjEygVK32UqSV";
   const LANDSCAPE_API_KEY2 = "null";
@@ -234,11 +234,12 @@ class LandscapeLbcAPIComponent extends LandscapeAPIComponent
   private function saveToTable() {
     try {
       if (!empty($this->apiData)) {
-        $this->apiData['updated'] = date('Y-m-d H:i:s');
         $MLandscapeData = ClassRegistry::init('MLandscapeData');
-        $data = $this->convertAllKeyToUnderscore($this->apiData);
+        $data = $this->convertAllKeyToUnderscore(json_decode($this->apiData['body'], TRUE));
+        $data['updated'] = date('Y-m-d H:i:s');
         if ($this->isEmptyDbData()) { //事前にDB情報を参照していない or データが無かった => 新規追加
           $MLandscapeData->create();
+          $this->log('data : '.var_export($data, TRUE), 'request');
           $MLandscapeData->save($data);
         } else {
           // 更新 CakePHP 2.xでは複合プライマリキーに対応していないため自前で用意
@@ -277,8 +278,8 @@ class LandscapeLbcAPIComponent extends LandscapeAPIComponent
   private function createOutputDataFromAPIData()
   {
     $val = [];
-    if (!empty($this->apiData)) {
-      $convertedData = $this->convertAllKeyToCamelcase($this->apiData);
+    if (!empty($this->apiData['body'])) {
+      $convertedData = $this->convertAllKeyToCamelcase(json_decode($this->apiData['body'],TRUE));
       // 必要なデータのみ抽出する
       foreach($this->defaultOutputData as $k => $v) {
         $val[$k] = $convertedData[$k];

@@ -5996,6 +5996,7 @@
             intervalTimeSec = 0;
             sinclo.scenarioApi._isReload = false;
           }
+          self._endInputProcess();
           self._parent._doing(intervalTimeSec, function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._endInputProcess();
