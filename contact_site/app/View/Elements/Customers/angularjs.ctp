@@ -4427,18 +4427,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               }
             });
           }
-        }, function(){
-          if ( angular.isDefined(scope.detailId) && scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
-            if ( scope.monitorList[scope.detailId].hasOwnProperty('chat') ) {
-              return scope.monitorList[scope.detailId].chat;
-            }
-            else {
-              return scope.monitorList[scope.detailId];
-            }
-          }
-          else {
-            return scope.detailId;
-          }
         });
       }
     }
