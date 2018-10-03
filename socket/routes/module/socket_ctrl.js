@@ -2217,8 +2217,7 @@ io.sockets.on('connection', function (socket) {
       obj.ipAddress = getIp(socket);
     }
 
-    customerApi.getInformations(obj.userId, obj.siteKey, function (information) {
-      obj.customerInfo = information;
+    var afterGetInformationProcess = function() {
       if( functionManager.isEnabled(obj.siteKey, functionManager.keyList.hideRealtimeMonitor) || functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
       } else {
         emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
@@ -2226,7 +2225,16 @@ io.sockets.on('connection', function (socket) {
       customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id] = obj;
       if ( (('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) || functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) return false;
       chatApi.sendUnreadCnt("sendChatInfo", obj, false);
-    });
+    };
+
+    if(isset(company.info[obj.siteKey]) && Object.keys(company.info[obj.siteKey]).length > 0) {
+      customerApi.getInformations(obj.userId, obj.siteKey, function (information) {
+        obj.customerInfo = information;
+        afterGetInformationProcess();
+      });
+    } else {
+      afterGetInformationProcess();
+    }
   });
 
   socket.on("getCustomerInfo", function(data) {
