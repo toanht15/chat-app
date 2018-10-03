@@ -1878,11 +1878,11 @@ io.sockets.on('connection', function (socket) {
   var customerApi = {
     getInformations: function (visitorId, siteKey, callback) {
       pool.query('SELECT informations FROM m_customers WHERE m_companies_id = ? AND visitors_id = ? order by id desc LIMIT 1;', [companyList[siteKey], visitorId], function(err, row) {
-        if ( err !== null && err !== '' ) callback([]); // DB接続断対応
+        if ( err !== null && err !== '' ) callback(null); // DB接続断対応
         if(isset(row) && isset(row[0]) && isset(row[0].informations)) {
           callback(JSON.parse(row[0].informations));
         } else {
-          callback([]);
+          callback(null);
         }
       });
     }
@@ -2217,16 +2217,24 @@ io.sockets.on('connection', function (socket) {
       obj.ipAddress = getIp(socket);
     }
 
-    if( functionManager.isEnabled(obj.siteKey, functionManager.keyList.hideRealtimeMonitor) || functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
+    var afterGetInformationProcess = function() {
+      if( functionManager.isEnabled(obj.siteKey, functionManager.keyList.hideRealtimeMonitor) || functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
+      } else {
+        emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
+      }
+      customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id] = obj;
+      if ( (('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) || functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) return false;
+      chatApi.sendUnreadCnt("sendChatInfo", obj, false);
+    };
 
+    if(isset(company.info[obj.siteKey]) && Object.keys(company.info[obj.siteKey]).length > 0) {
+      customerApi.getInformations(obj.userId, obj.siteKey, function (information) {
+        obj.customerInfo = information;
+        afterGetInformationProcess();
+      });
     } else {
-      emit.toCompany("sendCustomerInfo", obj, obj.siteKey);
+      afterGetInformationProcess();
     }
-
-    customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id] = obj;
-
-    if ( (('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) || functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) return false;
-    chatApi.sendUnreadCnt("sendChatInfo", obj, false);
   });
 
   socket.on("getCustomerInfo", function(data) {
@@ -2408,10 +2416,11 @@ io.sockets.on('connection', function (socket) {
             emit.toCompany('syncNewInfo', obj, obj.siteKey);
           }
         });
+
+        if(ack) {
+          ack(data);
+        }
       });
-    }
-    if(ack) {
-      ack(data);
     }
   });
   // ウィジェットが生成されたことを企業側に通知する

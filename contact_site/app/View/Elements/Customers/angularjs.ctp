@@ -1235,8 +1235,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         chatApi.tabId = "";
         chatApi.sincloSessionId = "";
+        // ポップアップを開く
       }
-      // ポップアップを開く
       else {
         setPositionOfPopup(); // ポップアップの位置調整
         $scope.customerMainClass = "showDetail";
@@ -1348,19 +1348,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 顧客の詳細情報を取得する
     $scope.getCustomerInfo = function(userId, callback){
-      $.ajax({
-        type: "POST",
-        url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetCusInfo'])?>",
-        data: {
-          v:  userId
-        },
-        dataType: "json",
-        success: function(json){
-          var ret = {};
-          if ( typeof(json) !== "string" ) {
-            ret = json;
-          }
-          callback(ret);
+      $timeout(function(){
+        if($scope.customerList[userId]){
+          callback($scope.customerList[userId]);
+        } else {
+          callback({});
         }
       });
     };
@@ -2275,11 +2267,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if (!$scope.checkToIP(obj.ipAddress)) return false;
       }
 
-      $scope.monitorList[obj.tabId] = obj;
-
       if(obj.customerInfo) {
         $scope.getCustomerInfoFromMonitor(obj);
       }
+
+      $scope.monitorList[obj.tabId] = obj;
 
       if ( 'referrer' in obj && 'referrer' in obj) {
         var url = $scope.trimToURL(obj.referrer);
@@ -2582,6 +2574,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
           if (($scope.isViewable() || !$scope.isML(obj)) && 'lbcCode' in obj) {
             $scope.monitorList[tabId].lbcCode = obj.lbcCode;
+          }
+          if('customerInfo' in obj) {
+            $scope.customerList[obj.userId] = obj.customerInfo;
+            $scope.$apply();
           }
         }
     });
@@ -4343,13 +4339,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteSaveCusInfo'])?>",
               data: data,
               dataType: "json",
-              success: function(json){
+              success: function(json) {
                 if ( json ) {
                   scope.customPrevData = angular.copy(value);
                   scope.customerList[scope.detail.userId] = angular.copy(value);
                   $timeout(function () {
                     scope.$apply();
-                  },100);
+                  }, 100);
                 }
               }
             });
