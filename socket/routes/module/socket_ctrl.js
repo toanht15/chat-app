@@ -2408,10 +2408,11 @@ io.sockets.on('connection', function (socket) {
             emit.toCompany('syncNewInfo', obj, obj.siteKey);
           }
         });
+
+        if(ack) {
+          ack(data);
+        }
       });
-    }
-    if(ack) {
-      ack(data);
     }
   });
   // ウィジェットが生成されたことを企業側に通知する
