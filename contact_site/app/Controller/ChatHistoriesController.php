@@ -1533,7 +1533,7 @@ class ChatHistoriesController extends AppController
       //初回チャット受信日時、最終発言後離脱時間
       $joinToSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id = ' . $this->userInfo['MCompany']['id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id)',
+        'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE (message_type = 1 OR message_type = 8) AND m_companies_id = ' . $this->userInfo['MCompany']['id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id)',
         'alias' => 'SpeechTime',
         'field' => 'created as SpeechTime',
         'conditions' => [
@@ -1701,9 +1701,11 @@ class ChatHistoriesController extends AppController
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
+    $this->log($this->paginate['THistory'],LOG_DEBUG);
     $this->log("BEGIN historyList : " . $this->getDateWithMilliSec(), LOG_DEBUG);
     $historyList = $this->paginate('THistory');
     $this->log("END historyList : " . $this->getDateWithMilliSec(), LOG_DEBUG);
+    $this->log($historyList,LOG_DEBUG);
 
     //初回チャット受信日時順に並び替え
     foreach ($historyList as $key => $value) {
@@ -1766,7 +1768,6 @@ class ChatHistoriesController extends AppController
       'group' => 't_histories_id'
     ]);
     $this->log("END tHistoryStayLogList : " . $this->getDateWithMilliSec(), LOG_DEBUG);
-
     $this->log("BEGIN chatSendingPageList : " . $this->getDateWithMilliSec(), LOG_DEBUG);
     $chatSendingPageList = $this->THistoryStayLog->find('all', [
       'fields' => [
