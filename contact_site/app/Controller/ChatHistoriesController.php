@@ -1701,11 +1701,9 @@ class ChatHistoriesController extends AppController
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
     }
-    $this->log($this->paginate['THistory'],LOG_DEBUG);
     $this->log("BEGIN historyList : " . $this->getDateWithMilliSec(), LOG_DEBUG);
     $historyList = $this->paginate('THistory');
     $this->log("END historyList : " . $this->getDateWithMilliSec(), LOG_DEBUG);
-    $this->log($historyList,LOG_DEBUG);
 
     //初回チャット受信日時順に並び替え
     foreach ($historyList as $key => $value) {
