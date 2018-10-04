@@ -63,12 +63,12 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
       </a>
     </li>
     <hr class="separator">
-    <li class="t-link" onclick="window.open('https://info.sinclo.jp/manual/',target = '_blank')">
-      <i class="fal fa-question-circle fa-2x smallFal"></i>
-      <a href="javascript:void(0)">
-        ヘルプ
-      </a>
-    </li>
+    <a class="link_up" href="https://info.sinclo.jp/manual/" target="_blank">
+      <li class="t-link">
+        <i class="fal fa-question-circle fa-2x smallFal" style="margin-right: 8px;"></i>
+      ヘルプ
+      </li>
+    </a>
     <hr class="separator">
     <li class="t-link" onclick = 'location.href = "/Login/logout"'>
       <i class="fal fa-sign-out-alt fa-2x smallFal"></i>
