@@ -12,6 +12,7 @@ $config['default'] = [
       'sc_flg' => 2,
       'in_flg' => 1,
       'sc_default_num' => 2,
+			'sc_login_default_status' => 0, // デフォルトステータス（0: 離席中, 1: 待機中）
       'outside_hours_sorry_message' => 'お問い合わせありがとうございます。
 申し訳ございませんが、只今営業時間外でございます。
 恐れ入りますが営業時間内に改めてお問い合わせください。
@@ -30,6 +31,7 @@ $config['default'] = [
       'sc_flg' => 2,
       'in_flg' => 1,
       'sc_default_num' => 2,
+			'sc_login_default_status' => 0, // デフォルトステータス（0: 離席中, 1: 待機中）
       'outside_hours_sorry_message' => 'お問い合わせありがとうございます。
 申し訳ございませんが、只今営業時間外となりますので、後ほど担当よりご連絡させて頂きます。
 
