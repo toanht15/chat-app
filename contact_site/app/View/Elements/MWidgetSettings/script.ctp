@@ -1117,6 +1117,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           descriptionLength = 20;
           break;
         case 3: //大
+        case 4:
           titleLength = 19;
           subTitleLength = 24;
           descriptionLength = 24;
@@ -1151,12 +1152,14 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     $scope.revertStandardTextSize = function(target) {
       var widgetSize = $scope.widgetSizeTypeToggle;
       var size = 0;
+      console.log(target + widgetSize);
       switch(target + widgetSize) {
         case 'header_text_size1':
           size = 14;
           break;
         case 'header_text_size2':
         case 'header_text_size3':
+        case 'header_text_size4':
           size = 15;
           break;
         case 're_text_size1':
@@ -1164,6 +1167,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           break;
         case 're_text_size2':
         case 're_text_size3':
+        case 're_text_size4':
           size = 13;
           break;
         case 'se_text_size1':
@@ -1171,6 +1175,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           break;
         case 'se_text_size2':
         case 'se_text_size3':
+        case 'se_text_size4':
           size = 13;
           break;
       }
@@ -1357,6 +1362,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 2:
           return 496 - offset;
         case 3:
+        case 4:
           return 596 - offset;
         default:
           return 496 - offset;
@@ -1371,6 +1377,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 2:
           return 364 - offset;
         case 3:
+        case 4:
           return 409 - offset;
         default:
           return 364 - offset;
@@ -1387,6 +1394,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           case 2:
             return 284 + offset;
           case 3:
+          case 4:
             return 374 + offset;
           default:
             return 284 + offset;
@@ -1400,6 +1408,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           case 2:
             return 202;
           case 3:
+          case 4:
             return 280;
           default:
             return 202;
@@ -1417,6 +1426,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           case 2:
             return 142 + offset;
           case 3:
+          case 4:
             return 187 + offset;
           default:
             return 142 + offset;
@@ -1430,6 +1440,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           case 2:
             return 76;
           case 3:
+          case 4:
             return 121;
           default:
             return 76;

@@ -435,6 +435,31 @@ var socket, // socket.io
             d25font: 26
           };
           break;
+        case 4: //最大、だが幅以外の値はwidgethandlerで計算する（要素表示、現状設定の兼ね合い）
+          var sizeArray = {
+            boxHeight: 632,
+            boxWidth: $(window).width(),
+            widgetTitlePadding: 7,
+            widgetTitleHeight: 32,
+            widgetTitleTop: 6,
+            widgetSubTitleHeight: 24,
+            widgetDescriptionHeight: 15,
+            navigationHeight: 40,
+            chatTalkHeight:100,
+            classFlexBoxRowHeight: 75,
+            sincloAccessInfoHeight: 26.5,
+            fotterHeight: 26.5,
+            telContentHeight: 305,
+            paddingBottom: 60,
+            d11font: 12,
+            d12font: 13,
+            d13font: 14,
+            d14font: 15,
+            d18font: 19,
+            d20font: 21,
+            d25font: 26
+          };
+          break;
         default: //該当しないタイプが来たら小
           var sizeArray = {
             boxHeight: 447,
@@ -1023,6 +1048,9 @@ var socket, // socket.io
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
           };
+          if(Number(sincloInfo.widget.widgetSizeType) === 4){
+            showPosition = "bottom: 0; right: 0;"
+          }
           break;
         case 2: // 左下
           showPosition = "bottom: 0; left: 10px;";
@@ -1030,6 +1058,9 @@ var socket, // socket.io
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
           };
+          if(Number(sincloInfo.widget.widgetSizeType) === 4){
+            showPosition = "bottom: 0; left: 0;"
+          }
           break;
       }
 
@@ -1043,7 +1074,7 @@ var socket, // socket.io
             chatPosition.se = "margin-left: 45px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;";
           }
-          if(Number(widget.widgetSizeType) == 3) {
+          if(Number(widget.widgetSizeType) == 3 || Number(widget.widgetSizeType) == 4) {
             chatPosition.se = "margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;";
           }
@@ -1057,7 +1088,7 @@ var socket, // socket.io
             chatPosition.se = "margin-left: 45px;";
             chatPosition.re = "margin-right: 21px;";
           }
-          if(Number(widget.widgetSizeType) == 3) {
+          if(Number(widget.widgetSizeType) == 3 || Number(widget.widgetSizeType) == 4) {
             chatPosition.se = "margin-left: 52.7px;";
             chatPosition.re = "margin-right: 24.6px;";
           }
@@ -1071,7 +1102,7 @@ var socket, // socket.io
             chatPosition.se = "margin-left: 45px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;";
           }
-          if(Number(widget.widgetSizeType) == 3) {
+          if(Number(widget.widgetSizeType) == 3 || Number(widget.widgetSizeType) == 4) {
             chatPosition.se = "margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;";
           }
@@ -2477,10 +2508,24 @@ var socket, // socket.io
           $(window).off('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
         }
       },
+      _widgetFitForWindow: function(){
+        console.log('<><><><><><><><><>最大設定!!!!<><><><><><><><><><>');
+        //他のウィジェットサイズタイプとは大きく違うため、別の関数を用意しました。
+        var maximumRatio = 3.4;
+        $('#sincloBox').css({'transform-origin':'bottom right','transform':'scale('+ maximumRatio +')'});
+        $('#sincloWidgetBox').css('width',$(window).width()/maximumRatio + "px");
+        $('#chatTab').css('width',"100%");
+        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + 26;
+        $('#chatTalk').css('height',$(window).height()/maximumRatio - offset);
+      },
       _handleResizeEvent: function() {
         console.log("<><><><><><><><><>widgetHandler::_handleResizeEvent");
         if(storage.s.get('widgetMaximized') === "true") {
           $('#sincloBox').css('height', 'auto');
+        }
+        if(Number(sincloInfo.widget.widgetSizeType) === 4){
+          common.widgetHandler._widgetFitForWindow();
+          return;
         }
         var windowHeight = $(window).innerHeight(),
           minCurrentWidgetHeight = common.widgetHandler._getMinWidgetHeight(),
@@ -3083,8 +3128,8 @@ var socket, // socket.io
             html += "  <div class='reload_only_dot_center'></div>";
             html += "  <div class='reload_only_dot_right'></div>";
           }else{
-            //スマホかウィジェットサイズが大の場合
-              if(check.smartphone() || widget.widgetSizeType === 3){
+            //スマホかウィジェットサイズが大以上の場合
+              if(check.smartphone() || widget.widgetSizeType === 3  || widget.widgetSizeType === 4){
                 html += "<li class='effect_left_wait botNowTypingLarge'>";
               //ウィジェットサイズが中の場合
               }else if(widget.widgetSizeType === 2){
@@ -3195,7 +3240,7 @@ var socket, // socket.io
         }
         var coverWidth = widgetWidth;
       }else{
-        var coverWidth = sizeList.boxWidth;
+        var coverWidth = parseInt(sizeList.boxWidth);
       }
       var coverHeight = $('#chatTalk').outerHeight() + $('#flexBoxHeight').outerHeight();
       var loadPadding = Number(widget.widgetSizeType) * 29 + 61;

@@ -29,12 +29,13 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
   <!-- 通常/スマートフォン(縦)/スマートフォン(横)のタブ表示 -->
   <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ){?>
   <section id="switch_widget" ng-cloak ng-class="{showBanner:widget.closeButtonModeTypeToggle === '1' && widget.closeButtonSettingToggle === '2' && widget.showWidgetType === 4}" ng-if="isTabDisplay">
+    <p ng-if="widget.isMaximumSize" style="width:400px;">表示されているウィジェットは「大」サイズになります。実際に「最大」サイズのウィジェットをご確認いただくにはデモサイトをご覧ください。</p>
     <ul class="ulTab" data-col=3 ng-hide="widget.closeButtonSettingToggle === '2'">
       <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
       <li ng-class="{choose: widget.showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
       <li ng-class="{choose: widget.showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
     </ul>
-    <ul class="ulTab showType4" data-col=3 ng-hide="widget.closeButtonSettingToggle !== '2'" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
+    <ul class="ulTab showType4" data-col=3 ng-hide="widget.closeButtonSettingToggle !== '2'" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">
       <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
       <li ng-class="{choose: widget.showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
       <li ng-class="{choose: widget.showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
@@ -43,7 +44,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
   </section>
   <?php } else { ?>
   <section id="switch_widget" ng-cloak ng-hide="widget.closeButtonSettingToggle !== '2'" ng-class="{showBanner:closeButtonModeTypeToggle === '1' && widget.closeButtonSettingToggle === '2' && widget.showWidgetType === 4}" ng-if="isTabDisplay">
-    <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
+    <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">
       <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     </ul>
     <input type="hidden" id="switch_widget" value="">
@@ -101,7 +102,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
 
       /* タブアイコンフォント化対応end */
     </style>
-    <div id="sincloBox" ng-if="widget.showWidgetType !== 2" ng-hide="widget.showWidgetType === 4" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
+    <div id="sincloBox" ng-if="widget.showWidgetType !== 2" ng-hide="widget.showWidgetType === 4" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">
       <style>
         /* http://meyerweb.com/eric/tools/css/reset/
        v2.0 | 20110126
@@ -528,12 +529,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
       <!-- 画像 -->
       <div id="titleWrap">
         <!-- タイトル -->
-        <p ng-if="widget.settings['widget_title_top_type'] === '1' && widget.mainImageToggle == '1'" id="widgetTitle" class="widgetOpener notSelect leftPositionImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
-        <p ng-if="widget.settings['widget_title_top_type'] === '2' && widget.mainImageToggle == '1'" id="widgetTitle" class="widgetOpener notSelect centerPositionImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
-        <p ng-if="widget.settings['widget_title_top_type'] === '1' && widget.mainImageToggle == '2'" id="widgetTitle" class="widgetOpener notSelect leftPositionNoImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
-        <p ng-if="widget.settings['widget_title_top_type'] === '2' && widget.mainImageToggle == '2'" id="widgetTitle" class="widgetOpener notSelect centerPositionNoImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
-        <p ng-if="widget.settings['widget_title_top_type'] !== '1' && widget.settings['widget_title_top_type'] !== '2' && widget.mainImageToggle == '1'" id="widgetTitle" class="widgetOpener notSelect centerPositionImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
-        <p ng-if="widget.settings['widget_title_top_type'] !== '1' && widget.settings['widget_title_top_type'] !== '2' && widget.mainImageToggle == '2'" id="widgetTitle" class="widgetOpener notSelect centerPositionNoImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
+        <p ng-if="widget.settings['widget_title_top_type'] === '1' && widget.mainImageToggle == '1'" id="widgetTitle" class="widgetOpener notSelect leftPositionImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
+        <p ng-if="widget.settings['widget_title_top_type'] === '2' && widget.mainImageToggle == '1'" id="widgetTitle" class="widgetOpener notSelect centerPositionImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
+        <p ng-if="widget.settings['widget_title_top_type'] === '1' && widget.mainImageToggle == '2'" id="widgetTitle" class="widgetOpener notSelect leftPositionNoImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
+        <p ng-if="widget.settings['widget_title_top_type'] === '2' && widget.mainImageToggle == '2'" id="widgetTitle" class="widgetOpener notSelect centerPositionNoImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
+        <p ng-if="widget.settings['widget_title_top_type'] !== '1' && widget.settings['widget_title_top_type'] !== '2' && widget.mainImageToggle == '1'" id="widgetTitle" class="widgetOpener notSelect centerPositionImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
+        <p ng-if="widget.settings['widget_title_top_type'] !== '1' && widget.settings['widget_title_top_type'] !== '2' && widget.mainImageToggle == '2'" id="widgetTitle" class="widgetOpener notSelect centerPositionNoImageTitle" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, spText:widget.showWidgetType === 3}">{{widget.settings['title']}}</p>
         <!-- タイトル -->
         <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
         <div id="closeBtn" ng-class="{closeButtonSetting: widget.settings['close_button_mode_type'] === '2'}"></div>
@@ -582,21 +583,21 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
       </div>
       <div id="miniTarget">
       <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-        <section id="chatTab" ng-hide="widget.showTab !== 'chat'" class="details" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">
+        <section id="chatTab" ng-hide="widget.showTab !== 'chat'" class="details" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, notNone:widget.widget_inside_border_none === ''||widget.widget_inside_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">
 
   <!-- chat_message_copy 0 stayt -->
-          <ul id="chatTalk" class="details" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, disableCopy: widget.settings['chat_message_copy']== '1'}">
+          <ul id="chatTalk" class="details" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, disableCopy: widget.settings['chat_message_copy']== '1'}">
             <div style="height: auto!important; padding:0; display: none;" ng-class="{liBoxRight: widget.settings['chat_message_design_type'] == 1, liRight: widget.settings['chat_message_design_type'] == 2}" >
-            <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
+            <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+              <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re chat_left recv_file_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1', middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="drop-area-message" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}"></p><p class="drop-area-icon" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}"><i class="sinclo-fal fa-cloud-upload"></i></p><p ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">または</p><p class="drop-area-button" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}"><a class="select-file-button">ファイルを選択</a></p><input type="file" class="receiveFileInput" name="receiveFileInput" style="display:none"></div><div class='loadingPopup hide'><i class='sinclo-fal fa-spinner load'></i><p class='progressMessage'>読み込み中です。<br>しばらくお待ち下さい。</p></div></div><div class="cancelReceiveFileArea"><a>{{setItem.cancelLabel}}</a></div></li>
+              <li class="sinclo_re chat_left recv_file_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1', middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="drop-area-message" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}"></p><p class="drop-area-icon" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}"><i class="sinclo-fal fa-cloud-upload"></i></p><p ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">または</p><p class="drop-area-button" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}"><a class="select-file-button">ファイルを選択</a></p><input type="file" class="receiveFileInput" name="receiveFileInput" style="display:none"></div><div class='loadingPopup hide'><i class='sinclo-fal fa-spinner load'></i><p class='progressMessage'>読み込み中です。<br>しばらくお待ち下さい。</p></div></div><div class="cancelReceiveFileArea"><a>{{setItem.cancelLabel}}</a></div></li>
             </div>
             <div style="height: auto!important; padding:0; display: none; text-align: right;">
               <li class="sinclo_se chat_right recv_file_right details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1', middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><div class="receiveFileContent"><div class="selectFileArea"><p class="preview"></p><p class="commentLabel">コメント</p><p class="commentarea"><textarea style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea></p><div class="actionButtonWrap"><a class="cancel-file-button">選択し直す</a><a class="send-file-button">送信する</a></div></div><div class='loadingPopup hide'><i class='sinclo-fal fa-spinner load'></i><p class='progressMessage'>読み込み中です。<br>しばらくお待ち下さい。</p></div></div></li>
@@ -642,17 +643,17 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
           <!-- アイコン -->
 
           <!-- 受付電話番号 -->
-          <pre id="telNumber" ng-class="{notUseTime: widget.timeTextToggle !== '1',middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}" >{{widget.settings['tel']}}</pre>
+          <pre id="telNumber" ng-class="{notUseTime: widget.timeTextToggle !== '1',middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}" >{{widget.settings['tel']}}</pre>
           <!-- 受付電話番号 -->
 
           <!-- 受付時間 -->
-          <pre id="telTime" ng-if="widget.timeTextToggle == '1'" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">受付時間： {{widget.settings['time_text']}}</pre>
+          <pre id="telTime" ng-if="widget.timeTextToggle == '1'" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">受付時間： {{widget.settings['time_text']}}</pre>
           <!-- 受付時間 -->
 
           </div>
 
           <!-- テキスト -->
-          <div id="telContent" ng-class="{middleSize: widget.widgetSizeTypeToggle === '2',largeSize: widget.widgetSizeTypeToggle === '3'}"><div class="tblBlock"><span ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize}">{{widget.settings['content']}}</span></div></div>
+          <div id="telContent" ng-class="{middleSize: widget.widgetSizeTypeToggle === '2',largeSize: widget.widgetSizeTypeToggle === '3'}"><div class="tblBlock"><span ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['content']}}</span></div></div>
           <!-- テキスト -->
 
           <span id="accessIdArea" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
