@@ -56,7 +56,7 @@ class TAutoMessagesController extends AppController {
       'btw_button_margin', 'line_button_margin'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
+    'chat' => ['chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
   ];
 
   public function beforeFilter(){
@@ -1379,6 +1379,9 @@ class TAutoMessagesController extends AppController {
         switch ($key) {
           case 'chat':
             if ( !$this->coreSettings[C_COMPANY_USE_CHAT] ) { continue; }
+            if ( strcmp($v, 'chat_init_show_textarea') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['chat_init_show_textarea'] = C_AUTO_WIDGET_TEXTAREA_OPEN; // デフォルト値
+            }
             if ( strcmp($v, 'chat_radio_behavior') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_radio_behavior'] = C_WIDGET_RADIO_CLICK_SEND; // デフォルト値
             }

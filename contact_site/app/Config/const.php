@@ -123,6 +123,10 @@ define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
 define('C_SC_ENABLED', 1); // 利用する
 define('C_SC_DISABLED', 2); // 利用しない
 
+// 初期ステータス
+define('C_SC_AWAY', 0); // 離席中
+define('C_SC_WAITING', 1); // 待機中
+
 // チャット呼出中メッセージ
 define('C_IN_ENABLED', 1); // 利用する
 define('C_IN_DISABLED', 2); // 利用しない
@@ -144,7 +148,7 @@ define('C_OPERATOR_PASSIVE', 0); // 退席
 define('C_OPERATOR_ACTIVE', 1); // 在籍
 
 // 正規表現
-define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
+define('C_MATCH_RULE_TEL', '/^(0|\+)(\d{9,}|[\d-]{11,})/'); // TEL
 define('C_MATCH_RULE_TIME', '/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/'); // 時間 H:i
 define('C_MATCH_RULE_COLOR_CODE', '/^#([0-9|a-f|A-F]{3}|[0-9|a-f|A-F]{6})$/');
 define('C_MATCH_RULE_IMAGE_FILE', '/.(png|jpg|jpeg)$/i');
@@ -158,7 +162,7 @@ define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]
 define('C_MATCH_INPUT_RULE_ALL', '/.*/');  // 入力制限なし
 define('C_MATCH_INPUT_RULE_NUMBER', '/[\d]*/');  // 数字入力
 define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.\-,;:@"]*/'); // メールアドレス入力(半角英数記号入力)
-define('C_MATCH_INPUT_RULE_TEL', '/^0[\d+-]*/'); // 電話番号入力（半角英数と一部記号入力）
+define('C_MATCH_INPUT_RULE_TEL', '/^\+?(\d|-)*/'); // 電話番号入力（半角英数と一部記号入力）
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
@@ -235,8 +239,11 @@ define('C_SCENARIO_SEND_MESSAGE_BY_BUTTON', 2);
 define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
 define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
 define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
+/* シナリオ設定(外部連携) - 連携タイプ */
+define('C_SCENARIO_EXTERNAL_TYPE_API', 1);
+define('C_SCENARIO_EXTERNAL_TYPE_SCRIPT', 2);
 
-/* シナリオ設定(外部システム連携) - メソッド種別 */
+/* シナリオ設定(外部連携) - メソッド種別 */
 define('C_SCENARIO_METHOD_TYPE_GET', 1);
 define('C_SCENARIO_METHOD_TYPE_POST', 2);
 
@@ -280,10 +287,10 @@ define('C_STATUS_AVAILABLE', 0); // 有効
 define('C_STATUS_UNAVAILABLE', 1); // 無効
 
 // 成果
-//define('C_ACHIEVEMENT_TERMINATE_SCENARIO', -1); // 途中離脱
 define('C_ACHIEVEMENT_CV', 0); // CV
 define('C_ACHIEVEMENT_UNAVAILABLE', 1); // なし
 define('C_ACHIEVEMENT_AVAILABLE', 2); // あり
+define('C_ACHIEVEMENT_TERMINATE_SCENARIO', 3); // 途中離脱
 
 // 種別
 define('C_CHAT_AUTO', 1); // 自動応答
@@ -389,6 +396,10 @@ define('C_CLOSE_BUTTON_SETTING_ON', 2);//有効にする
 //小さなバナー表示
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_BANNER', 1);//小さなバナー表示
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
+
+//スマホ用、小さなバナー隠しパラメータ
+define('C_SP_BANNER_POSITION', 1);//バナー表示位置
+define('C_SP_WIDGET_VIEW_PATTERN', 1);//ウィジェット最大化最小化制御 (3,4は最小化に遷移しなくなる)
 
 //バナーテキスト初期値
 define('C_BANNER_TEXT', "チャットで相談");//バナー文言
@@ -766,7 +777,7 @@ $config['chatbotScenarioActionList'] = [
   ],
   // シナリオ呼び出し
   C_SCENARIO_ACTION_CALL_SCENARIO => [
-    'label' => 'シナリオ呼び出し',
+    'label' => 'シナリオ呼出',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
@@ -788,10 +799,11 @@ $config['chatbotScenarioActionList'] = [
     ]
   ],  // 外部システム連携
   C_SCENARIO_ACTION_EXTERNAL_API => [
-    'label' => '外部システム連携',
+    'label' => '外部連携',
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
+      'externalType' => '1',
       'methodType' => '1',
       'requestHeaders' => [[
         'name' => '',
@@ -958,7 +970,13 @@ $config['chatbotScenarioReceiveFileTypeList'] = [
   ]
 ];
 
-/* シナリオ設定 - 外部システム連携のメソッド種別 */
+/* シナリオ設定 - 外部連携のタイプ */
+$config['chatbotScenarioExternalType'] = [
+  C_SCENARIO_EXTERNAL_TYPE_API => 'API連携',
+  C_SCENARIO_EXTERNAL_TYPE_SCRIPT => 'スクリプト'
+];
+
+/* シナリオ設定 - 外部連携のメソッド種別 */
 $config['chatbotScenarioApiMethodType'] = [
   C_SCENARIO_METHOD_TYPE_GET => 'GET',
   C_SCENARIO_METHOD_TYPE_POST => 'POST'
@@ -1010,10 +1028,17 @@ $config['chatbotScenarioBranchOnConditionActionType'] = [
 
 /* 成果種別 */
 $config['achievementType'] = [
-//  C_ACHIEVEMENT_TERMINATE_SCENARIO => "途中離脱",
   C_ACHIEVEMENT_CV => "CV",
+  C_ACHIEVEMENT_AVAILABLE => "有効",
   C_ACHIEVEMENT_UNAVAILABLE => "無効",
-  C_ACHIEVEMENT_AVAILABLE => "有効"
+];
+
+/* 成果種別（検索用） */
+$config['achievementTypeForSearch'] = [
+  C_ACHIEVEMENT_CV => "CV",
+  C_ACHIEVEMENT_TERMINATE_SCENARIO => "途中離脱",
+  C_ACHIEVEMENT_AVAILABLE => "有効",
+  C_ACHIEVEMENT_UNAVAILABLE => "無効",
 ];
 
 /* 種別 */

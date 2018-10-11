@@ -163,18 +163,32 @@
           <!-- メッセージ -->
 
           <!-- 自由入力エリア -->
+          <?php
+            if(!empty($this->data['TAutoMessage']['chat_textarea'])){
+              //オートメッセージの自由入力エリアが設定されている
+              $chat_textarea = $this->data['TAutoMessage']['chat_textarea'];
+            } else {
+              if(!empty($this->data['widgetSettings']['chat_init_show_textarea'])){
+                //初期表示時の自由入力エリアが設定されている
+                $chat_textarea = $this->data['widgetSettings']['chat_init_show_textarea'];
+              } else {
+                //設定値が何もない場合
+                $chat_textarea = C_AUTO_WIDGET_TEXTAREA_OPEN;
+              }
+            }
+          ?>
           <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="bt0">
             <span class="require"><label>自由入力エリア</label></span>
-            <label class="pointer"><?= $this->ngForm->input('main.chat_textarea', [
+            <label class="pointer"><?= $this->ngForm->input('main.chat_textarea', array(
               'type' => 'radio',
               'options' => $outMessageTextarea,
               'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_FREE_INPUT] ? '' : '"color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプランからご利用いただけます。" data-balloon-position="20.5"').'>',
               'error' => false,
               'disabled' => !$coreSettings[C_COMPANY_USE_FREE_INPUT],
-            ], [
+              ), array(
               'entity' => 'chat_textarea',
-              'default' => (!empty($this->data['TAutoMessage']['chat_textarea'])) ? $this->data['TAutoMessage']['chat_textarea'] : C_AUTO_WIDGET_TEXTAREA_OPEN,
-            ]); ?></label>
+              'default' => $chat_textarea,
+            )); ?></label>
           </li>
           <!-- 自由入力エリア -->
 

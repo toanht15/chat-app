@@ -1241,8 +1241,8 @@ var socket, // socket.io
         html += '      #sincloBox ul sinclo-chat { clear: both!important; }';
         html += '      #sincloBox ul sinclo-typing { padding-bottom: '+ sizeList['paddingBottom'] +'px; display: block; }';
         html += '      #sincloBox ul#chatTalk li { text-align: left!important; word-wrap: break-word; word-break: break-all; white-space: pre-wrap!important; background-color: transparent; white-space: pre; color: ' + chatContentTextColor + '; font-weight: normal!important; }';
-        html += '      #sincloBox ul#chatTalk li.sinclo_se span.sinclo-text-line { color:'+ colorList['seTextColor'] + '; font-size: '+ widget.seTextSize +'px; }';
-        html += '      #sincloBox ul#chatTalk li.sinclo_re span.sinclo-text-line { color:'+ colorList['reTextColor'] + '; font-size: '+ widget.reTextSize +'px; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_se span.sinclo-text-line { display: inline-block; color:'+ colorList['seTextColor'] + '; font-size: '+ widget.seTextSize +'px; }';
+        html += '      #sincloBox ul#chatTalk li.sinclo_re span.sinclo-text-line { display: inline-block; color:'+ colorList['reTextColor'] + '; font-size: '+ widget.reTextSize +'px; }';
         if (widget.chatMessageDesignType === 2) {
           // 吹き出し型
           html += '      #sincloBox ul#chatTalk li { line-height: 1.4; padding: 10px 15px; border-radius: 12px !important;}';
@@ -1349,7 +1349,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea { margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;  }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton { width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + ';  }';
         html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton:hover { opacity: 0.8; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton.disabled { opacity: 0.38; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton.disabled { opacity: 0.38; cursor: auto; }';
 
         html += '#sincloBox #chatTalk li.sinclo_se.sinclo_form { display: block; padding: 15px; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formContentArea { margin: 0; line-height: 0; }';
@@ -1361,7 +1361,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.formElement input.formInput { padding: 5px; border: 1px solid ' + colorList['seBackgroundColor'] + '; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea { margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;  }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton { width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; opacity:0.38;  }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton.disabled { opacity: 0.38; }';
+        html += '#sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton.disabled { opacity: 0.38; cursor: auto; }';
 
         html += '#sincloBox #chatTalk li.sinclo_se.sinclo_form { display: block; padding: 10px 15px; line-height: 0; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea { background-color: transparent; line-height: 0; }';
@@ -1375,6 +1375,9 @@ var socket, // socket.io
 
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
+        }
+        if(widget.chatInitShowTextarea === 2) {
+          html += '    #sincloBox section#chatTab sinclo-div#flexBoxWrap { display: none; }';
         }
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + colorList['messageBoxTextColor'] + '!important; background-color: '+ colorList['messageBoxBackgroundColor'] +'; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:disabled, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:disabled { background-color: '+ colorList['messageBoxBackgroundColor'] +'; opacity: 1; }';
@@ -1623,15 +1626,61 @@ var socket, // socket.io
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
             html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background: initial;}';
-            if(Number(window.sincloInfo.widget.showPosition) === 1) {
-              html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
-            } else {
-              html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+            if(window.sincloInfo.widget.spBannerPosition){
+            //スマホ隠しパラメータの存在チェック
+            var horizontalPosition = (5 * ratio) +"px";
+            if(typeof(widget.spBannerHorizontalPosition) === "string" && widget.spBannerHorizontalPosition.indexOf("px") !== -1){
+              horizontalPosition = parseInt(widget.spBannerHorizontalPosition) * ratio + "px";
+            }else if(typeof(widget.spBannerHorizontal) === "string"){
+              horizontalPosition = widget.spBannerHorizontalPosition;
+            }
+            var verticalPositionFromBottom = (5 * ratio) + "px";
+            if(typeof(widget.spBannerVerticalPositionFromBottom) === "string" && widget.spBannerVerticalPositionFromBottom.indexOf("px") !== -1){
+              verticalPositionFromBottom = parseInt(widget.spBannerVerticalPositionFromBottom) * ratio + "px";
+            }else if(typeof(widget.spBannerVerticalPositionFromBottom) === "string"){
+              verticalPositionFromBottom = widget.spBannerVerticalPositionFromBottom;
+            }
+              switch(Number(window.sincloInfo.widget.spBannerPosition)){
+              case 1://右下
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' + horizontalPosition + '; bottom: ' + verticalPositionFromBottom + '; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; margin-right: ' + (5 * ratio) + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner div#sincloBannerText #bannerIcon { width: ' + Math.ceil(21 * ratio) + 'px; height: ' + Math.ceil(21 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
+                break;
+              case 2://左下
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' + horizontalPosition + '; bottom: ' + verticalPositionFromBottom + '; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; margin-right: ' + (5 * ratio) + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner div#sincloBannerText #bannerIcon { width: ' + Math.ceil(21 * ratio) + 'px; height: ' + Math.ceil(21 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
+                break;
+              case 3://右中央
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right:0; top: ' + widget.spBannerVerticalPositionFromTop+'; transform: translateY(-50%); height: auto; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius:' + widget.radiusRatio * ratio + 'px 0 0 ' + widget.radiusRatio * ratio + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext { margin-left: 0px; margin-right: 0; color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; -webkit-writing-mode: vertical-rl; -ms-writing-mode: tb-rl; writing-mode: vertical-rl; letter-spacing: 1px;}';
+                html += '      #sincloBox div#sincloBannerBox #sincloBanner .sincloBannerText{ flex-flow: column nowrap; margin: '+ Math.ceil(10 * ratio) + 'px '+ Math.ceil(5 * ratio) +'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner div#sincloBannerText #bannerIcon { width: ' + Math.ceil(10 * ratio) + 'px; height: ' + Math.ceil(10 * ratio) + 'px; opacity: 1; margin-bottom: 5px; }';
+                break;
+              case 4://左中央
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left:0; top: '+ widget.spBannerVerticalPositionFromTop+'; transform: translateY(-50%); height: auto; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius:0 ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px 0; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext { margin-right: 0px; margin-left: 0; color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; -webkit-writing-mode: vertical-rl; -ms-writing-mode: tb-rl; writing-mode: vertical-rl; letter-spacing: 1px;}';
+                html += '      #sincloBox div#sincloBannerBox #sincloBanner .sincloBannerText{ flex-flow: column nowrap; margin: '+ Math.ceil(10 * ratio) + 'px '+ Math.ceil(5 * ratio) +'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner div#sincloBannerText #bannerIcon { width: ' + Math.ceil(10 * ratio) + 'px; height: ' + Math.ceil(10 * ratio) + 'px; opacity: 1; margin-bottom: 5px; }';
+                break;
+              default://右下
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; margin-right: ' + (5 * ratio) + 'px; }';
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner div#sincloBannerText #bannerIcon { width: ' + Math.ceil(21 * ratio) + 'px; height: ' + Math.ceil(21 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
+                break;
+              }
+            }else{
+            //スマホ隠しパラメータが存在しない場合
+              if(Number(window.sincloInfo.widget.showPosition) === 1) {
+                //右下
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+              } else {
+                //左下
+                html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' + (5 * ratio) + 'px; bottom: ' + (5 * ratio) + 'px; height: '+ (30 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio + 'px ' + widget.boxShadow * ratio + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px ' + widget.radiusRatio * ratio + 'px; }';
+              }
             }
             html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (17.5 * ratio) +'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (10 * ratio) +'px; }';
             html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .sinclo-comment-notext{ font-size: ' + (17.5 * ratio) + 'px; padding: 0 '+ (2 * ratio) +'px 0 '+ (13 * ratio) +'px; }';
-            html += '      #sincloBox div#sincloBannerBox div#sincloBanner #bannerIcon { width: ' + Math.ceil(21 * ratio) + 'px; height: ' + Math.ceil(21 * ratio) + 'px; opacity: 1; margin: 0px ' + (5 * ratio) + 'px; }';
-            html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: '+ widget.stringColor +'; font-size: '+ (10 * ratio) +'px; vertical-align: middle; margin-right: ' + (5 * ratio) + 'px; }';
             html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .notext{ cursor: pointer; }';
           }
         }
@@ -1897,7 +1946,14 @@ var socket, // socket.io
                       '\t\tC376.619,414.89,512,366.282,512,217.458C512,102.036,418.974,19.179,257.135,19.179z" style="fill: ' + common.toRGBCode(sincloInfo.widget.stringColor) + ';"></path>\n' +
                       '</g>\n' +
                     '</svg>';
-      html += '      <span class="' + (widget.bannertext.length !== 0 ? 'bannertext' : 'notext') + '">'+ check.escape_html(widget.bannertext) +'</span>';
+      var bannertext = "";
+      if(check.smartphone() && typeof(widget.spBannerText) === "string"){
+      //スマホかつ隠しパラメータ設定済みの場合
+        bannertext = check.escape_html(widget.spBannerText);
+      }else{
+        bannertext = check.escape_html(widget.bannertext);
+      }
+      html += '      <span class="' + (widget.bannertext.length !== 0 ? 'bannertext' : 'notext') + '">'+ bannertext +'</span>';
       html += '    </div>';
       html += '  </div>';
       return html;
@@ -2145,7 +2201,7 @@ var socket, // socket.io
                 sinclo.chatApi.scDown();
               }
           });
-
+          common.widgetHandler._handleResizeEvent();
           if ( window.sincloInfo.contract.chat && check.smartphone() ) {
             // 初期の画面向き
               if ( window.screen.availHeight < window.screen.availWidth ) {
@@ -2156,11 +2212,15 @@ var socket, // socket.io
               }
 
             // スクロールをした時に、ページ下部であれば透過する
-            window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
+            if(check.isset(window.sincloInfo.widget.spBannerPosition) && (Number(window.sincloInfo.widget.spBannerPosition) === 3 || Number(window.sincloInfo.widget.spBannerPosition) === 4)) {
+
+            } else {
+              window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
+            }
             // 画面を回転ときは、向きによってスタイルを変える
             window.addEventListener('orientationchange', function(){
               //バナー表示だった
-              var bannerAct = storage.s.get('bannerAct');
+              var bannerAct = storage.l.get('bannerAct');
               if(bannerAct === "true"){
                 //強制的にバナー表示とする
                 $("#sincloBannerBox").hide();
@@ -2226,7 +2286,8 @@ var socket, // socket.io
          */
         //画面遷移前に閉じるボタンが押下されていたか
         //バナー表示だった
-        var bannerAct = storage.s.get('bannerAct');
+        var bannerAct = storage.l.get('bannerAct');
+        storage.s.set('bannerAct',bannerAct);
         //非表示の状態だった
         var closeAct = storage.s.get('closeAct');
         if(bannerAct === "true"){
@@ -2386,6 +2447,13 @@ var socket, // socket.io
             break;
         }
         return remainingTime;
+      },
+      resetMessageAreaState: function() {
+        if(Number(sincloInfo.widget.chatInitShowTextarea) === 1) {
+          storage.l.set('textareaOpend', 'open');
+        } else {
+          storage.l.set('textareaOpend', 'close');
+        }
       },
       _calcRemainingShowTimingSiteTimeMsec: function() {
         var siteAccessTimeMsec = (Number(userInfo.pageTime) - Number(userInfo.time)),
@@ -2558,7 +2626,7 @@ var socket, // socket.io
           // とりあえず表示されている状態
           return 0 + invisibleUIOffset;
         }
-      }
+      },
     },
     load: {
       id: "loadingImg",
@@ -3727,7 +3795,7 @@ var socket, // socket.io
     getActiveWindow: function(){
       var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus, sincloBox;
       //バナー表示かどうか　bannerAct === "true"だったらバナー表示
-      var bannerAct = storage.s.get('bannerAct');
+      var bannerAct = storage.l.get('bannerAct');
       //閉じるボタンによる非表示の状態かどうか　closeAct === "true"だったら閉じるボタンによる非表示状態
       var closeAct = storage.s.get('closeAct');
       if ( document.getElementById('sincloBox') ) {
