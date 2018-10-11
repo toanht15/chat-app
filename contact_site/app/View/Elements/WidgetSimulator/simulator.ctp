@@ -29,6 +29,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
   <!-- 通常/スマートフォン(縦)/スマートフォン(横)のタブ表示 -->
   <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ){?>
   <section id="switch_widget" ng-cloak ng-class="{showBanner:widget.closeButtonModeTypeToggle === '1' && widget.closeButtonSettingToggle === '2' && widget.showWidgetType === 4}" ng-if="isTabDisplay">
+    <p ng-if="widget.isMaximumSize" style="width:400px; color:#F57E7E">表示されているウィジェットのサイズは実際のサイズ（最大）ではありません。実際のサイズは ＜<?= $this->Html->link('デモサイト', array('controller' => 'ScriptSettings', 'action' => 'testpage',$companyKey), array('target' => '_demo', 'class' => 'underL', 'style' => 'color:#F57E7E')) ?>＞ から確認してください。</p>
     <ul class="ulTab" data-col=3 ng-hide="widget.closeButtonSettingToggle === '2'">
       <li ng-class="{choose: widget.showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
       <li ng-class="{choose: widget.showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
@@ -424,7 +425,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab textarea#sincloChatMessage, #sincloBox section#chatTab input#miniSincloChatMessage { width: 80%; height: 100%; color: {{widget.settings['other_text_color']}}; margin: 0; resize: none; padding: 5px; }
         #sincloBox section#chatTab input#miniSincloChatMessage { height: 36px; }
         #sincloBox section#chatTab textarea#sincloChatMessage.details, #sincloBox section#chatTab input#miniSincloChatMessage.details { color: {{widget.settings['message_box_text_color']}}; background-color: {{widget.settings['message_box_background_color']}}; }
-        #sincloBox section#chatTab textarea#sincloChatMessage.details.notNone, #sincloBox section#chatTab input#miniSincloChatMessage.details.notNone { border: 1px solid {{widget.settings['message_box_border_color']}}!important; }
+        #sincloBox section#chatTab textarea#sincloChatMessage.details.notNone, #sincloBox section#chatTab input#miniSincloChatMessage.details.notNone { border: 1px solid {{widget.settings['message_box_border_color']}}!important; font-size: {{widget.settings['message_box_text_size']}}px; }
         #sincloBox section#chatTab textarea#sincloChatMessage.notNone, #sincloBox section#chatTab input#miniSincloChatMessage.notNone { border-radius: 5px 0 0 5px!important; border: 1px solid {{widget.settings['chat_talk_border_color']}}!important; border-right-color: transparent!important; }
         #sincloBox section#chatTab textarea#sincloChatMessage.notNone:focus, #sincloBox section#chatTab input#miniSincloChatMessage.notNone:focus { border-color: {{widget.settings['main_color']}}!important; outline: none!important; border-right-color: transparent!important; }
         #sincloBox section#chatTab textarea#sincloChatMessage:not(.notNone), #sincloBox section#chatTab input#miniSincloChatMessage:not(.notNone) { border: none!important; text-align: left; }
@@ -434,7 +435,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab #sincloChatSendBtn.middleSize, #sincloBox section#chatTab #miniSincloChatSendBtn.middleSize { padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
         #sincloBox section#chatTab #sincloChatSendBtn.largeSize, #sincloBox section#chatTab #miniSincloChatSendBtn.largeSize { padding: 20px 0; margin: 0 auto; font-size: 1.2em;}
         #sincloBox section#chatTab #sincloChatSendBtn span, #sincloBox section#chatTab #miniSincloChatSendBtn span { color: {{widget.settings['string_color']}} }
-        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}}; font-weight: bold; }
+        #sincloBox section#chatTab #sincloChatSendBtn span.details, #sincloBox section#chatTab #miniSincloChatSendBtn span.details { color: {{widget.settings['chat_send_btn_text_color']}}; font-weight: bold; font-size: {{widget.settings['chat_send_btn_text_size']}}px; }
         #sincloBox section#chatTab #messageBox.messageBox, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox {border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
         #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder), #sincloBox section#chatTab #miniFlexBoxHeight.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
         #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }

@@ -2477,6 +2477,26 @@ var socket, // socket.io
           $(window).off('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
         }
       },
+      _maximumReverseAnimation: function(){
+        console.log('「最大」設定時に最小化するアニメーションです');
+        $('#sincloWidgetBox').animate({
+          width: "400px"
+        });
+      },
+      _maximumAnimation: function(){
+        console.log('「最大」設定時に最大化するアニメーションです');
+        $('#sincloWidgetBox').animate({
+          width: $(window).width() + "px"
+        },400);
+      },
+      _widgetFitForWindow: function(){
+        console.log('<><><><><><><><><>最大設定!!!!<><><><><><><><><><>');
+        //他のウィジェットサイズタイプとは大きく違うため、別の関数を用意しました。
+        $('#sincloWidgetBox').css('width',$(window).width() + "px");
+        $('#chatTab').css('width',"100%");
+        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + 26;
+        $('#chatTalk').css('height',$(window).height() - offset);
+      },
       _handleResizeEvent: function() {
         console.log("<><><><><><><><><>widgetHandler::_handleResizeEvent");
         if(storage.s.get('widgetMaximized') === "true") {

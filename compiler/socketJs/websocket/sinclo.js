@@ -93,6 +93,9 @@
             //チャットのテキストエリア非表示
             else {
               sinclo.displayTextarea();
+              if(Number(sincloInfo.widget.widgetSizeType) === 4){
+                common.widgetHandler._maximumAnimation();
+              }
             }
 
             sinclo.widget.condifiton.set(true, true);
@@ -148,6 +151,9 @@
               common.indicateSimpleImage();
             }
             height = this.header.offsetHeight;
+            if(Number(window.sincloInfo.widget.widgetSizeType) === 4){
+              common.widgetHandler._maximumReverseAnimation();
+            }
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
           }

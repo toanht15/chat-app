@@ -362,14 +362,15 @@ $headerNo = 1;
                 'type' => 'number',
                 'class' => 'showNormal',
                 'min' => '12',
-                'max' => '20',
+                'max' => $max_header_fontsize,
                 'placeholder' => '',
                 'div' => false,
                 'label' => false,
                 'maxlength' => 7,
                 'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                 'error' => false,
-                  'string-to-number' => true
+                'string-to-number' => true,
+                'ng-max' => false
               ],
               [
                 'entity' => 'MWidgetSetting.header_text_size'
@@ -414,7 +415,7 @@ $headerNo = 1;
                     'type' => 'number',
                     'class' => 'showNormal',
                     'min' => '10',
-                    'max' => '20',
+                    'max' => $max_fontsize,
                     'placeholder' => '',
                     'div' => false,
                     'label' => false,
@@ -482,7 +483,7 @@ $headerNo = 1;
                     'type' => 'number',
                     'class' => 'showNormal',
                     'min' => '10',
-                    'max' => '20',
+                    'max' => $max_fontsize,
                     'placeholder' => '',
                     'div' => false,
                     'label' => false,
@@ -738,6 +739,25 @@ $headerNo = 1;
                   [
                     'entity' => 'MWidgetSetting.message_box_text_color'
                   ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('message_box_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
+                  <!-- .メッセージBOX文字サイズ -->
+                  <span style="display: flex; height: 20px; width: 32em; justify-content: flex-start; align-items: center; margin-bottom: 15px;">
+                    <label>メッセージBOX文字サイズ</label>
+                    <?= $this->ngForm->input('message_box_text_size', [
+                      'type' => 'number',
+                      'class' => 'showNormal',
+                      'min' => '10',
+                      'max' => $max_fontsize,
+                      'placeholder' => '',
+                      'div' => false,
+                      'label' => false,
+                      'maxlength' => 7,
+                      'style' => "width: 102px;",
+                      'error' => false,
+                      'string-to-number' => true
+                    ],
+                    [
+                      'entity' => 'MWidgetSetting.message_box_text_size'
+                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start; margin-left: 5px">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('message_box_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px; margin-left: 9px;" >標準に戻す</span></span>
                   <!-- 22.メッセージBOX枠線色 -->
                   <span style="height: 35px;"><label>メッセージBOX枠線色</label>
                   <?php if($message_box_border_color_flg){?>
@@ -812,6 +832,25 @@ $headerNo = 1;
                   [
                     'entity' => 'MWidgetSetting.chat_send_btn_text_color'
                   ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_send_btn_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
+                  <!-- .送信ボタン文字サイズ -->
+                  <span style="display: flex; height: 20px; width: 32em; justify-content: flex-start; align-items: center; margin-bottom: 15px;">
+                    <label>送信ボタン文字サイズ</label>
+                    <?= $this->ngForm->input('chat_send_btn_text_size', [
+                      'type' => 'number',
+                      'class' => 'showNormal',
+                      'min' => '10',
+                      'max' => $max_fontsize,
+                      'placeholder' => '',
+                      'div' => false,
+                      'label' => false,
+                      'maxlength' => 7,
+                      'style' => "width: 102px;margin-left: 25px",
+                      'error' => false,
+                      'string-to-number' => true
+                    ],
+                    [
+                      'entity' => 'MWidgetSetting.chat_send_btn_text_size'
+                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;margin-left:5px;">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('chat_send_btn_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px; margin-left: 10px;" >標準に戻す</span></span>
                   </div>
                   <!-- メッセージエリア部end -->
                 </div>
