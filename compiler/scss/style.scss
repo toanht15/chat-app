@@ -10146,13 +10146,13 @@ div.balloon {
 
 .leftPositionImage {
   text-align:left !important;
-  padding-left:78px !important;
+  padding-left:calc(2.5em + 46px) !important;
 }
 
 .centerPositionImage {
   text-align:center !important;
   padding-right: 26px !important;
-  padding-left: 70px !important;
+  padding-left: calc(2.5em + 38px) !important;
 }
 
 .leftPositionNoImage {
@@ -10201,12 +10201,12 @@ div.balloon {
 
 .leftPositionImageTitle{
   text-align: left !important;
-  padding:7px 0px 7px 78px !important;
+  padding:7px 0px 7px calc(2.5em + 46px) !important;
 }
 
 .centerPositionImageTitle {
   text-align: center !important;
-  padding: 7px 26px 7px 70px !important;
+  padding: 7px 26px 7px calc(2.5em + 38px) !important;
 }
 
 .leftPositionNoImageTitle {

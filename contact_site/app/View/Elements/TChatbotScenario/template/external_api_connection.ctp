@@ -89,13 +89,14 @@
   google_conversion_id = 'YOUR_CONVERSION_ID';
   google_conversion_label = 'YOUR_CONVERSION_LABEL';
   google_conversion_value = 0;
-  img.id = 'conversionCaller'+id;
-  img.src = 'https://www.googleadservices.com/pagead/conversion/'+google_conversion_id+'/?label='label+'&script=0';
+  img = new Image(1, 1);
+  img.id = 'conversionCaller'+google_conversion_id;
+  img.src = 'https://www.googleadservices.com/pagead/conversion/'+google_conversion_id+'/?label='google_conversion_label+'&script=0';
   document.body.appendChild(img);" ng-required="true" required="required" class="ng-invalid ng-invalid-required ng-valid-maxlength ng-touched"></textarea>
       </div>
     </li>
     <li class="styleFlexbox align_center" ng-if="setItem.externalType == <?= C_SCENARIO_EXTERNAL_TYPE_SCRIPT ?>">
-      <i class="icon fal fa-lightbulb-on" style="margin:0 5px 0 156px; font-size:16px;"></i><a href="/" target="_blank" id = "help_link">Google広告のコンバージョンをトラッキングするスクリプトの記述例</a>
+      <i class="icon fal fa-lightbulb-on" style="margin:0 5px 0 156px; font-size:16px;"></i><a href="https://info.sinclo.jp/manual/google-ads-conversion-tracking/" target="_blank" id = "help_link">Google広告のコンバージョンをトラッキングするスクリプトの記述例</a>
     </li>
   </ul>
 </div>

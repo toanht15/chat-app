@@ -1022,10 +1022,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     $scope.indicateSimpleImage = function(){
       if($scope.widget_title_top_type == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
+        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: calc(2.5em + 46px) !important;'});
       }
       if($scope.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important; padding-right:26px !important; padding-left:70px !important;'});
+        $('#widgetTitle').css({'cssText': 'text-align: center !important; padding-right:26px !important; padding-left:calc(2.5em + 38px) !important;'});
       }
     }
 
@@ -1096,8 +1096,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       return "#FFFFFF"; // 白に設定
     }
 
-    //ウィジェットサイズがクリックされた時の動作
-    $scope.clickWidgetSizeTypeToggle = function(size){
+    $scope.switchMaxLength = function(size){
       var settingTitle = document.getElementById('MWidgetSettingTitle');
       var settingSubTitle = document.getElementById('MWidgetSettingSubTitle');
       var settingDescription = document.getElementById('MWidgetSettingDescription');
@@ -1105,7 +1104,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       var subTitleLength = 15;
       var descriptionLength = 15;
       switch (size) {
-       //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
+       //大きさによってトップタイトル、企業名、説明文の上限文字列長を可変とする
         case 1: //小
           titleLength = 12;
           subTitleLength = 15;
@@ -1117,23 +1116,36 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           descriptionLength = 20;
           break;
         case 3: //大
+        case 4: //最大
           titleLength = 19;
           subTitleLength = 24;
           descriptionLength = 24;
           break;
       }
       settingTitle.maxLength = titleLength;
-//       if(settingTitle.value.length > titleLength){
-//         $scope.title = settingTitle.value.substring(0, titleLength);
-//       }
       settingSubTitle.maxLength = subTitleLength;
-//       if(settingSubTitle.value.length > subTitleLength){
-//         $scope.sub_title = settingSubTitle.value.substring(0, subTitleLength);
-//       }
       settingDescription.maxLength = descriptionLength;
-//       if(settingDescription.value.length > descriptionLength){
-//         $scope.description = settingDescription.value.substring(0, descriptionLength);
-//       }
+    }
+
+    $scope.switchMaxTextSize = function(size){
+      var settingHeaderText = document.getElementById('MWidgetSettingHeaderTextSize');
+      var settingReText = document.getElementById('MWidgetSettingReTextSize');
+      var settingSeText = document.getElementById('MWidgetSettingSeTextSize');
+      var headerTextSize = 20;
+      var textSize = 20;
+      if(Number(size) === 4){
+        headerTextSize = 42;
+        textSize = 64;
+      }
+      settingHeaderText.max = headerTextSize;
+      settingReText.max = textSize;
+      settingSeText.max = textSize;
+    }
+
+    //ウィジェットサイズがクリックされた時の動作
+    $scope.clickWidgetSizeTypeToggle = function(size){
+      $scope.switchMaxLength(size);
+      $scope.switchMaxTextSize(size);
       $scope.revertStandardTextSize('header_text_size');
       $scope.revertStandardTextSize('re_text_size');
       $scope.revertStandardTextSize('se_text_size');
@@ -1157,6 +1169,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           break;
         case 'header_text_size2':
         case 'header_text_size3':
+        case 'header_text_size4':
           size = 15;
           break;
         case 're_text_size1':
@@ -1164,6 +1177,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           break;
         case 're_text_size2':
         case 're_text_size3':
+        case 're_text_size4':
           size = 13;
           break;
         case 'se_text_size1':
@@ -1171,6 +1185,23 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           break;
         case 'se_text_size2':
         case 'se_text_size3':
+        case 'se_text_size4':
+          size = 13;
+          break;
+        case 'chat_send_btn_text_size1':
+          size = 12;
+          break;
+        case 'chat_send_btn_text_size2':
+        case 'chat_send_btn_text_size3':
+        case 'chat_send_btn_text_size4':
+          size = 13;
+          break;
+        case 'message_box_text_size1':
+          size = 12;
+          break;
+        case 'message_box_text_size2':
+        case 'message_box_text_size3':
+        case 'message_box_text_size4':
           size = 13;
           break;
       }
@@ -1357,6 +1388,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 2:
           return 496 - offset;
         case 3:
+        case 4:
           return 596 - offset;
         default:
           return 496 - offset;
@@ -1371,6 +1403,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 2:
           return 364 - offset;
         case 3:
+        case 4:
           return 409 - offset;
         default:
           return 364 - offset;
@@ -1387,6 +1420,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           case 2:
             return 284 + offset;
           case 3:
+          case 4:
             return 374 + offset;
           default:
             return 284 + offset;
@@ -1400,6 +1434,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           case 2:
             return 202;
           case 3:
+          case 4:
             return 280;
           default:
             return 202;
@@ -1417,6 +1452,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           case 2:
             return 142 + offset;
           case 3:
+          case 4:
             return 187 + offset;
           default:
             return 142 + offset;
@@ -1430,6 +1466,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           case 2:
             return 76;
           case 3:
+          case 4:
             return 121;
           default:
             return 76;

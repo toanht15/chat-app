@@ -23,13 +23,14 @@
     }
 </style>
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ){?>
+<p ng-if="widgetSizeTypeToggle==='4' && showWidgetType === 1" style="width:400px; color:#F57E7E">表示されているウィジェットのサイズは実際のサイズ（最大）ではありません。実際のサイズは ＜<?= $this->Html->link('デモサイト', array('controller' => 'ScriptSettings', 'action' => 'testpage',$companyKey), array('target' => '_demo', 'class' => 'underL', 'style' => 'color:#F57E7E')) ?>＞ から確認してください。</p>
 <section id="switch_widget" ng-cloak ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
   <ul class="ulTab" data-col=3 ng-hide="closeButtonSettingToggle === '2'">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     <li ng-class="{choose: showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
     <li ng-class="{choose: showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
   </ul>
-  <ul class="ulTab showType4" data-col=3 ng-hide="closeButtonSettingToggle !== '2'" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+  <ul class="ulTab showType4" data-col=3 ng-hide="closeButtonSettingToggle !== '2'" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4')}">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     <li ng-class="{choose: showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
     <li ng-class="{choose: showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
@@ -39,7 +40,7 @@
 </section>
 <?php } else { ?>
 <section id="switch_widget" ng-cloak ng-hide="closeButtonSettingToggle !== '2'" ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
-  <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+  <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4')}">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     <li ng-class="{choose: showWidgetType === 4}" ng-click="switchWidget(4)">非表示</li>
   </ul>
