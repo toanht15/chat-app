@@ -213,7 +213,6 @@ class MWidgetSettingsController extends AppController {
         $descriptionLength = 20;
         break;
       case '3': //大
-      case '4': //最大
         $titleLength = 19;
         $subTitleLength = 24;
         $descriptionLength = 24;
@@ -330,7 +329,6 @@ class MWidgetSettingsController extends AppController {
           $description_message = '２０文字以内で設定してください';
           break;
         case '3': //大
-        case '4': //大
           $titleLength = 19;
           $subTitleLength = 24;
           $descriptionLength = 24;
@@ -726,7 +724,6 @@ class MWidgetSettingsController extends AppController {
                   break;
                 case 2:
                 case 3:
-                case 4:
                   $d['header_text_size'] = "15";
                   break;
                 default:
@@ -786,7 +783,6 @@ class MWidgetSettingsController extends AppController {
                   break;
                 case 2:
                 case 3:
-                case 4:
                   $d['re_text_size'] = "13";
                   break;
                 default:
@@ -848,7 +844,6 @@ class MWidgetSettingsController extends AppController {
                   break;
                 case 2:
                 case 3:
-                case 4:
                   $d['se_text_size'] = "13";
                   break;
                 default:

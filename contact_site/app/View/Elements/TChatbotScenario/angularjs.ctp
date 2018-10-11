@@ -984,30 +984,22 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.$on('openSimulator', function(event, activity) {
     var scenarios = JSON.parse(activity).scenarios;
     $scope.setActionList = scenarios;
-    var defaultHeight = 101;
-    if(document.getElementById("maximum_description") != null){
-      defaultHeight += 40;
-    }
     $('#tchatbotscenario_simulator_wrapper').show();
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
       $('#simulator_popup').css({
         width: $('#sincloBox').outerWidth() + 28 + 'px',
-        height: $('#sincloBox').outerHeight() + defaultHeight + 'px'
+        height: $('#sincloBox').outerHeight() + 101 + 'px'
       });
       $scope.actionInit();
     }, 0);
   });
 
   $(document).on('onWidgetSizeChanged', function(e){
-    var defaultHeight = 101;
-    if(document.getElementById("maximum_description") != null){
-      defaultHeight += 40;
-    }
     $('#simulator_popup').css({
       width: $('#sincloBox').outerWidth() + 28 + 'px',
-      height: $('#sincloBox').outerHeight() + defaultHeight + 'px'
+      height: $('#sincloBox').outerHeight() + 101 + 'px'
     });
   });
 
