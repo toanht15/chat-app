@@ -256,10 +256,16 @@
           case 1: // 右下
             //right: 10px;
             $("#sincloBox").css("right","10px");
+            if( Number(window.sincloInfo.widget.widgetSizeType) === 4){
+              $("#sincloBox").css("right","0px");
+            }
             break;
           case 2: // 左下
             //left: 10px;
             $("#sincloBox").css("left","10px");
+            if( Number(window.sincloInfo.widget.widgetSizeType) === 4){
+              $("#sincloBox").css("left","0px");
+            }
             break;
           }
         }
