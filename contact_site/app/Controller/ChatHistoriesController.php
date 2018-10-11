@@ -1724,7 +1724,7 @@ class ChatHistoriesController extends AppController
     //表示するユーザー情報
     $defaultHistoryList = [];
     $searchHistoryId = "";
-    $hasCustomDataCondition = 'false';
+    $check = 'false';
     $this->log("BEGIN userInfo : " . $this->getDateWithMilliSec(), LOG_DEBUG);
     foreach ($historyList as $key => $val) {
       //表示するチャット内容
@@ -1737,10 +1737,10 @@ class ChatHistoriesController extends AppController
       } else {
         //表示するユーザー情報(高度な検索の条件で種別が入っていた場合)
         if ((isset($val['THistoryChatLog']['type']) && isset($data['History']['chat_type']) && isset($chatType)
-          && $val['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']] && $hasCustomDataCondition == 'false')) {
+          && $val['THistoryChatLog']['type'] === $chatType[$data['History']['chat_type']] && $check == 'false')) {
           $defaultHistoryList = $val;
           $searchHistoryId = $val['THistory']['id'];
-          $hasCustomDataCondition = 'true';
+          $check = 'true';
         }
         //表示するユーザー情報(上記以外)
         if ($key == 0) {
