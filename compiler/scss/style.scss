@@ -7163,6 +7163,31 @@ ul.naviBtn {
               justify-content: center;
               align-content: space-between;
 
+              .actionMenu {
+                .actionMenuOption {
+                  position: absolute;
+                  background: #fff;
+                  margin-top: -5px;
+                  border: 1px solid #ccc;
+                  display: none;
+                  z-index: 9999;
+
+                  ul {
+                    padding: 0;
+                    margin: 0;
+                  }
+
+                  li {
+                    padding: 5px;
+                  }
+
+                  li:hover {
+                    padding: 5px;
+                    background-color: #C3D69B;
+                  }
+                }
+              }
+
               a {
                 width: 9em;
                 padding: 6px;
@@ -7419,15 +7444,15 @@ ul.naviBtn {
                   height: 100%;
                   display: -ms-grid;
                   display: grid;
-                  grid-template-columns: 160px 118px 1fr 48px;
-                  -ms-grid-columns: 160px 118px 1fr 48px;
+                  grid-template-columns: 20px 50px 130px 140px 1fr 48px;
+                  -ms-grid-columns: 20px 40px 130px 140px 1fr 48px;
                   &.short {
                     grid-template-columns: 170px 236px 60px 1fr;
                     -ms-grid-columns: 170px 236px 60px 1fr;
                   }
                   grid-template-rows: 31px 1fr;
                   -ms-grid-rows: 31px 1fr;
-                  grid-template-areas: 'g0 g1 g3 g4' 'g2 g2 g3 g4';
+                  grid-template-areas: 'g0 g1 g3 g4 g5 g6' 'g0 g2 g2 g2 g2 g6';
 
                   &.grid-container-header {
                     text-align: center;
@@ -7437,7 +7462,7 @@ ul.naviBtn {
                     hr.separator {
                       margin-top: 12px;
                       padding-bottom: 0;
-                      grid-column: 1/5;
+                      grid-column: 1/7;
                       -ms-grid-column: 1;
                       -ms-grid-column-span: 5;
                       -ms-grid-row: 2;
@@ -7458,19 +7483,19 @@ ul.naviBtn {
                   }
 
                   .area-name {
-                    grid-area: g0;
+                    grid-area: g3;
                     -ms-grid-column: 1;
                     -ms-grid-row: 1;
                   }
 
                   .area-type {
-                    grid-area: g1;
+                    grid-area: g4;
                     -ms-grid-column: 2;
                     -ms-grid-row: 1;
                   }
 
                   .area-message {
-                    grid-area: g3;
+                    grid-area: g5;
                     -ms-grid-column: 3;
                     -ms-grid-row: 1;
                     -ms-grid-row-span: 2;
@@ -7524,7 +7549,7 @@ ul.naviBtn {
                   }
 
                   .area-btn {
-                    grid-area: g4;
+                    grid-area: g6;
                     -ms-grid-column: 4;
                     -ms-grid-row: 1;
                     -ms-grid-row-span: 2;
@@ -7554,6 +7579,140 @@ ul.naviBtn {
                       padding: 0;
                     }
                   }
+
+                  .area-require {
+                    grid-area: g1;
+                  }
+
+                  .area-drag-symbol {
+                    grid-area: g0;
+                  }
+                }
+
+                &.action_hearing {
+                  /* The container */
+                  .require-checkbox {
+                    display: block;
+                    position: relative;
+                    padding-left: 35px;
+                    margin-bottom: 12px;
+                    //cursor: pointer;
+                    font-size: 22px;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                  }
+
+                  /* Hide the browser's default checkbox */
+                  .require-checkbox input {
+                    position: absolute;
+                    opacity: 0;
+                    cursor: pointer;
+                    height: 0;
+                    width: 0;
+                  }
+
+                  /* Create a custom checkbox */
+                  .checkmark {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 27px;
+                    width: 27px;
+                    background-color: white;
+                    border: 1px solid #909090;
+                    border-radius: 4px;
+                  }
+
+                  /* On mouse-over, add a grey background color */
+                  .require-checkbox:hover input ~ .checkmark {
+                    background-color: white;
+                  }
+
+                  /* When the checkbox is checked, add a blue background */
+                  .require-checkbox input:checked ~ .checkmark {
+                    //background-color: #2196F3;
+                  }
+
+                  /* Create the checkmark/indicator (hidden when not checked) */
+                  .checkmark:after {
+                    content: "";
+                    position: absolute;
+                    display: none;
+                  }
+
+                  /* Show the checkmark when checked */
+                  .require-checkbox input:checked ~ .checkmark:after {
+                    display: block;
+                  }
+
+                  /* Style the checkmark/indicator */
+                  .require-checkbox .checkmark:after {
+                    left: 9px;
+                    top: 5px;
+                    width: 5px;
+                    height: 10px;
+                    border: solid #C3D69B;
+                    border-width: 0 3px 3px 0;
+                    -webkit-transform: rotate(45deg);
+                    -ms-transform: rotate(45deg);
+                    transform: rotate(45deg);
+                  }
+                }
+
+
+
+                &.action_hearing .grid-container-test {
+                  display: grid;
+                  width: 100%;
+                  height: 100%;
+
+                  grid-template-columns: 20px 50px 160px 118px 1fr 48px;
+                  //-ms-grid-columns: 160px 118px 1fr 48px;
+                  //&.short {
+                  //  grid-template-columns: 170px 236px 60px 1fr;
+                  //  -ms-grid-columns: 170px 236px 60px 1fr;
+                  //}
+                  grid-template-rows: 31px 2fr;
+                  -ms-grid-rows: 31px 2fr;
+                  grid-template-areas: 'g0 g1 g3 g4 g5 g6' 'g2 g2 g2 g4 g5 g6';
+
+                  .area-0 {
+                    grid-area: g0;
+                    background-color: #00aa00;
+                  }
+
+                  .area-1 {
+                    grid-area: g1;
+                    background-color: #9ab562;
+                  }
+
+                  .area-2 {
+                    grid-area: g2;
+                    background-color: #00aa;
+                  }
+
+                  .area-3 {
+                    grid-area: g3;
+                    background-color: #9E2424;
+                  }
+
+                  .area-4 {
+                    grid-area: g4;
+                    background-color: #e65298;
+                  }
+
+                  .area-5 {
+                    grid-area: g5;
+                    background-color: #3c7a8e;
+                  }
+
+                  .area-6 {
+                    grid-area: g6;
+                    background-color: #DF6300;
+                  }
+
                 }
 
                 &.action_external_api_connection table {

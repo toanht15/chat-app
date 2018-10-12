@@ -10,6 +10,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.changeFlg = false;
 
+  // current action
+  $scope.previousAction = null;
+  $scope.currentAction = null;
+
   // アクション設定の取得・初期化
   $scope.setActionList = [];
   $scope.targetDeleteFileIds = [];
@@ -152,6 +156,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }, 0);
     }
   };
+
+    this.showOptionMenu = function (actionType) {
+        $scope.previousAction = $scope.currentAction;
+        $scope.currentAction = actionType;
+        if ($scope.previousAction != $scope.currentAction) {
+            $("#actionMenu" + $scope.previousAction).fadeOut('fast');
+        }
+        if ($("#actionMenu" + actionType).is(":visible")) {
+            $("#actionMenu" + actionType).fadeOut('fast');
+        } else {
+            $("#actionMenu" + actionType).fadeIn('fast');
+        }
+    };
 
   // アクションの削除
   this.removeItem = function(setActionId) {
@@ -1670,14 +1687,41 @@ $(document).ready(function() {
   });
 
   // フォーカスされたアクションに応じて、関連するプレビューを強調表示する
-  $(document).on('focusin', '.set_action_item input, .set_action_item textarea', function() {
-    var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
-    $('.actionTitle').removeClass('active');
-    $('#' + previewId + ' .actionTitle').addClass('active');
-  }).on('focusout', '.set_action_item input, .set_action_item textarea', function() {
-    var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
-    $('#' + previewId + ' .actionTitle').removeClass('active');
-  });
+  // $(document).on('focusin', '.set_action_item input, .set_action_item textarea', function() {
+  //   var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
+  //   $(this).parents('.set_action_item').css('border', '3px solid #C3D69B');
+  //   $('.actionTitle').removeClass('active');
+  //   $('#' + previewId + ' .actionTitle').addClass('active');
+  // }).on('focusout', '.set_action_item input, .set_action_item textarea', function() {
+  //   var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
+  //   $(this).parents('.set_action_item').css('border', '');
+  //   $('#' + previewId + ' .actionTitle').removeClass('active');
+  // });
+
+    $(document).on('focus', '.set_action_item', function() {
+        var previewId = $(this).attr('id').replace(/setting$/, 'preview');
+        $(this).css('border', '3px solid #C3D69B');
+        $('.actionTitle').removeClass('active');
+        $('#' + previewId + ' .actionTitle').addClass('active');
+        $('.closeBtn').css('display', 'none');
+        $('.set_action_item h4').css('background-color', '#DADADA');
+        $(this).find('.closeBtn').css('display', 'block');
+        $(this).find('h4').css('background-color', '#C3D69B');
+    }).on('blur', '.set_action_item', function() {
+        var previewId = $(this).attr('id').replace(/setting$/, 'preview');
+        // $(this).css('border', '');
+        $('.set_action_item').css('border', 'none');
+        console.log("test");
+        $('.set_action_item h4').css('background-color', '#C3D69B');
+        $('.closeBtn').show();
+        // $(this).find('.closeBtn').css('display', 'none');
+        $('#' + previewId + ' .actionTitle').removeClass('active');
+        // $(this).blur();
+    });
+
+    // $(document).on('click', '.set_action_item', function () {
+    //     $(this).focus();
+    // });
 
   // 各アクションのキーイベントに応じて、プレビューのスクロール位置を調整する
   $(document).on('keydown, keyup', '.set_action_item input, .set_action_item textarea', function() {
@@ -1995,4 +2039,25 @@ function searchStr (str, regex) {
   }
   return result;
 }
+
+// check when click on other area of action menu
+$(document).click(function (e) {
+    var previousAction = angular.element(".actionMenu").scope().previousAction;
+
+    // hide previous option menu when click new action
+    // if (!$(e.target).closest('#actionMenu' + previousAction).length) {
+    //     $('#actionMenu' + previousAction).fadeOut('fast');
+    // }
+
+    // hide dropdown when click on other area
+    if (!$(e.target).closest('.actionMenu a').length) {
+        $('.actionMenuOption').fadeOut('fast');
+    }
+
+    if (!$(e.target).closest('.set_action_item').length) {
+        $('.set_action_item').blur();
+        $('.closeBtn').show();
+
+    }
+});
 </script>
