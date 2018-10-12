@@ -2552,6 +2552,10 @@ var socket, // socket.io
         //他のウィジェットサイズタイプとは大きく違うため、別の関数を用意しました。
         var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + 26;
         $('#chatTalk').css('height',$(window).height() - offset);
+        if($('#minimizeBtn').is(':hidden')){
+          //最大化時以外は横幅の調整を行わない
+          return;
+        }
         $('#sincloWidgetBox').css('width',$(window).width() + "px");
         $('#chatTab').css('width',"100%");
       },

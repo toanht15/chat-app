@@ -1591,9 +1591,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if(e.currentTarget.id == 'showSubtitle1') {
         $('#widgetTitleNameTypeLabel1').css('display','block');
         $('#widgetTitleNameTypeLabel2').css('display','block');
-        if($('#MWidgetSettingSubTitle').val() == "") {
-          $('#widgetSubTitle').css('height','23px');
-        }
       }
       //企業名を表示しない場合
       if(e.currentTarget.id == 'showSubtitle2') {
@@ -1607,36 +1604,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if(e.currentTarget.id == 'showDescription1') {
         $('#widgetTitleExplainTypeLabel1').css('display','block');
         $('#widgetTitleExplainTypeLabel2').css('display','block');
-        if($('#MWidgetSettingDescription').val() == "") {
-          $('#widgetDescription').css('height','23px');
-        }
       }
       //説明文を表示しない場合
       if(e.currentTarget.id == 'showDescription2') {
         $('#widgetTitleExplainTypeLabel1').css('display','none');
         $('#widgetTitleExplainTypeLabel2').css('display','none');
-      }
-    });
-
-    angular.element('input[name="data[MWidgetSetting][widget_title_name_type]"]').on('change', function(e){
-      //企業名を左寄せにする場合
-      if(e.currentTarget.id == 'widgetTitleNameType1') {
-        $('#widgetSubTitle').css('text-align','left');
-      }
-      //企業名を中央寄せにする倍
-      if(e.currentTarget.id == 'widgetTitleNameType2') {
-        $('#widgetSubTitle').css('text-algin','center');
-      }
-    });
-
-    angular.element('input[name="data[MWidgetSetting][widget_title_explain_type]"]').on('change', function(e){
-      //説明文を左寄せにする場合
-      if(e.currentTarget.id == 'widgetTitleNameTypeLabel1') {
-        $('#widgetSubTitle').css('text-align','left');
-      }
-      //説明文を中央寄せにする場合
-      if(e.currentTarget.id == 'widgetTitleNameTypeLabel2') {
-        $('#widgetSubTitle').css('text-algin','center');
       }
     });
 
@@ -1929,6 +1901,176 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       // 元に戻すボタンが押されたらconfirmを出さない
       $scope.changeFlg = false;
       window.location.reload();
+    }
+
+    //param : String型 ng-classで付けたい情報を渡す
+    //TODO 受け取った情報をカンマで分割してfor文を回したほうがいい
+    $scope.viewWidgetSetting = function (param){
+      var widgetClasses = {};
+      if(typeof param !== 'undefined' && param.indexOf("size") !== -1){
+        widgetClasses = setWidgetSizeSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("sp") !== -1){
+        widgetClasses = setSmartPhoneSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("toptitle") !== -1){
+        widgetClasses = setTitlePositionSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("topname") !== -1){
+        widgetClasses = setHeaderNamePositionSetting(widgetClasses);;
+      }
+      if(typeof param !== 'undefined' && param.indexOf("desc") !== -1){
+        widgetClasses = setHeaderDescPositionSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("topimg") !== -1){
+        widgetClasses = setHeaderImageSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("outsideborder") !== -1){
+        widgetClasses = setOutSideBorderSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("insideborder") !== -1){
+        widgetClasses = setInSideBorderSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("headercontent") !== -1){
+        widgetClasses = setHeaderContentSetting(widgetClasses);
+      }
+      return widgetClasses;
+    }
+
+    /*ng-class用のオブジェクトを設定する関数群--開始--*/
+
+
+    var setWidgetSizeSetting = function (obj){
+      obj.middleSize = judgeSize("middle");
+      obj.largeSize = judgeSize("large");
+      return obj;
+    }
+
+    var setSmartPhoneSetting = function (obj){
+      obj.spText = isSmartPhonePortrait();
+      obj.sp = isSmartPhonePortrait();
+      return obj;
+    }
+
+    var setTitlePositionSetting = function(obj){
+      if (Number($scope.widget_title_top_type) === 1){
+        obj["leftPositionTitle"] = true;
+      } else if (Number($scope.widget_title_top_type) === 2){
+        obj["centerPositionTitle"] = true;
+      }
+      return obj;
+    }
+
+    var setHeaderNamePositionSetting = function(obj){
+      if (Number($scope.subTitleToggle) === 2){
+        obj["noCompany"] = true;
+      } else if (Number($scope.subTitleToggle) === 1){
+        if (Number($scope.widget_title_name_type) === 1){
+          obj["leftPosition"] = true;
+        } else if (Number($scope.widget_title_name_type) === 2) {
+          obj["centerPosition"] = true;
+        }
+      }
+      return obj;
+    }
+
+    var setHeaderDescPositionSetting = function(obj){
+      if (Number($scope.descriptionToggle) === 2){
+        obj["noExplain"] = true;
+      } else if (Number($scope.descriptionToggle) === 1){
+        if (Number($scope.widget_title_explain_type) === 1){
+          obj["leftPosition"] = true;
+        } else if (Number($scope.widget_title_explain_type) === 2) {
+          obj["centerPosition"] = true;
+        }
+      }
+      return obj;
+    }
+
+    var setHeaderImageSetting = function(obj){
+      if (Number($scope.mainImageToggle) === 1){
+        obj["Image"] = true;
+      } else if (Number($scope.mainImageToggle) === 2){
+        obj["NoImage"] = true;
+      }
+      return obj;
+    }
+
+    var setOutSideBorderSetting = function(obj){
+      if (Number($scope.widget_outside_border_none === '' || $scope.widget_outside_border_none === false)){
+        obj["notNoneWidgetOutsideBorder"] = true;
+      } else {
+
+      }
+      return obj;
+    }
+
+    var setInSideBorderSetting = function(obj){
+      if (Number($scope.widget_inside_border_none === '' || $scope.widget_inside_border_none === false)){
+        obj["notNone"] = true;
+      } else {
+
+      }
+      return obj;
+    }
+
+    var setHeaderContentSetting = function(obj){
+      if(Number($scope.descriptionToggle) === 1 && Number($scope.subTitleToggle) === 1){
+        obj["twoContents"] = true;
+      } else if (Number($scope.descriptionToggle) === 1 || Number($scope.subTitleToggle) === 1){
+        obj["oneContents"] = true;
+      } else if (Number($scope.descriptionToggle) === 2 || Number($scope.subTitleToggle) === 2){
+        obj["noContents"] = true;
+      }
+      return obj;
+    }
+
+    /*ng-class用のオブジェクトを設定する関数群--終了--*/
+
+
+
+
+    //size : String型 small,middle,large のいずれか
+    //現状の設定が渡されたサイズかどうかを判別する
+    //return : boolean型
+    var judgeSize = function(size){
+
+       //通常表示でない場合は判定させない
+      if(Number($scope.showWidgetType !== 1)){
+        return false;
+      }
+
+      switch(size){
+      case "small":
+        //現状設定が無いため判別無し
+        return true;
+      break;
+      case "middle":
+        if(Number($scope.widgetSizeTypeToggle) === 2){
+          return true;
+        } else {
+          return false;
+        }
+      break;
+      case "large":
+        if(Number($scope.widgetSizeTypeToggle) === 3 || Number($scope.widgetSizeTypeToggle) === 4){
+          return true;
+        } else {
+          return false;
+        }
+      break;
+      default:
+        //デフォルトはfalseを返す
+        return false;
+      }
+    }
+
+    var isSmartPhonePortrait = function(){
+      if(Number($scope.showWidgetType) === 3){
+        return true;
+      } else {
+        return false;
+      }
     }
 
     angular.element(window).on("click", ".widgetOpener", function(){
