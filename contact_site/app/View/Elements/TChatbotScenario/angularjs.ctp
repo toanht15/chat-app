@@ -1717,6 +1717,7 @@ $(document).ready(function() {
         // $(this).find('.closeBtn').css('display', 'none');
         $('#' + previewId + ' .actionTitle').removeClass('active');
         // $(this).blur();
+        
     });
 
     // $(document).on('click', '.set_action_item', function () {
