@@ -789,10 +789,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       //画像がある場合
       else if($('#mainImage').css('display') == 'block') {
         if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
-          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
+          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: calc(2.5em + 46px)!important;'});
         }
         if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
-          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 70px !important;padding-right: 26px !important;'});
+          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: calc(2.5em + 38px) !important;padding-right: 26px !important;'});
         }
       }
     },0);
@@ -1065,7 +1065,7 @@ function chatBotTyping(){
         }
       }else{
         //ウィジェットサイズが大の場合
-        if(widgetSizeType == 3){
+        if(widgetSizeType == 3 || widgetSizeType == 4){
           html += "botNowTypingLarge'>";
           //ウィジェットサイズが中の場合
         }else if(widgetSizeType == 2){
