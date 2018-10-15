@@ -635,7 +635,7 @@ class HistoriesController extends AppController {
             $val['THistoryChatLog']['message'] .= $object['label'].'：'.((!empty($json['message'][$object['inputType']])) ? $json['message'][$object['inputType']] : "（なし）")."\n";
           }
         }
-        if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
+        if($val['THistoryChatLog']['message_type'] == 998 || $val['THistoryChatLog']['message_type'] == 999) {
           $row['transmissionKind'] = '通知メッセージ';
           $row['transmissionPerson'] = "";
           $val['THistoryChatLog']['message'] = '-'.$val['MUser']['display_name'].'が'.$val['THistoryChatLog']['message'].'しました-';
@@ -770,8 +770,8 @@ class HistoriesController extends AppController {
         case 23: // シナリオメッセージ（選択肢）
           $row = $this->_setData($date, "シナリオメッセージ（選択肢）", $this->userInfo['MCompany']['company_name'], $message);
           break;
-        case 98: // 入室メッセージ
-        case 99: // 退室メッセージ
+        case 998: // 入室メッセージ
+        case 999: // 退室メッセージ
           $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");
           break;
       }

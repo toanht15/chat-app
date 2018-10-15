@@ -7,6 +7,7 @@ var uuid = require('node-uuid');
 var request = require('request');
 var common = require('./common');
 var LandscapeAPI = require('./landscape');
+var CogmoAttendAPICaller = require('./cogmo_attend');
 
 // mysql
 var mysql = require('mysql'),
@@ -147,7 +148,8 @@ var CompanyFunctionManager = function() {
       loginIpFilter : 'loginIpFilter',
       importExcelAutoMessage : 'importExcelAutoMessage',
       operatorPresenceView : 'operatorPresenceView',
-      monitorPollingMode : 'monitorPollingMode'
+      monitorPollingMode : 'monitorPollingMode',
+      useCogmoAttendApi: 'useCogmoAttendApi'
     },
     set : function(companyKey, coreSettings) {
       try {
@@ -975,8 +977,8 @@ io.sockets.on('connection', function (socket) {
         sorry: 4,
         autoSpeech: 5,
         notification: 7,
-        start: 98,
-        end: 99
+        start: 998,
+        end: 999
       },
       requestFlg: {
         noFlg: 0
@@ -3225,6 +3227,32 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         //カウント数が取れた場合
         else {
           obj.messageDistinction = results[0].conversation_count;
+        }
+        if(functionManager.isEnabled(obj.siteKey, functionManager.keyList.useCogmoAttendApi)) {
+          if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend)) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend = new CogmoAttendAPICaller();
+          }
+          sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendText(obj.message).then(function(text){
+            if(Array.isArray(text)) {
+              for(let i = 0; i < text.length; i++) {
+                sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId, obj.stayLogsId, companyList[obj.siteKey], obj.userId, text[i], obj.messageDistinction, obj.created).then((resultData) => {
+                  var sendData = {
+                    tabId: obj.tabId,
+                    chatId: resultData.insertId,
+                    messageType: 81,
+                    created: resultData.created,
+                    ret: true,
+                    chatMessage: resultData.message,
+                    siteKey: obj.siteKey,
+                    matchAutoSpeech: true,
+                    isScenarioMessage: false
+                  };
+                  emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
+                });
+              }
+            }
+          });
+          if(ack) ack();
         }
         //リクエストメッセージの場合
         if(obj.messageRequestFlg == 1){

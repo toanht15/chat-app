@@ -301,11 +301,11 @@ $(function(){
       $isRecieveFile = false;
       $imgTag = false;
     }
-    else if ( strcmp($val['THistoryChatLog']['message_type'], 98) === 0 ) {
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 998) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が入室しました -";
     }
-    else if ( strcmp($val['THistoryChatLog']['message_type'], 99) === 0 ) {
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 999) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が退室しました -";
     }
