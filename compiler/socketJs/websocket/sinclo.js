@@ -1568,7 +1568,7 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.cogmo.message) {
-          this.chatApi.createMessageUnread(cn, obj.chatMessage, userName, false, true);
+          this.chatApi.createMessageUnread(cn, obj.chatMessage, userName, false, true, obj.isFeedbackMsg && !obj.isExitOnConversation);
           this.chatApi.scDown(obj);
           return false;
         }
@@ -2813,17 +2813,14 @@
         li.className = cs;
         li.innerHTML = content;
       },
-      createCogmoAttendBotMessage: function (cs, val, cName, isScenarioMsg) {
+      createCogmoAttendBotMessage: function (cs, val, cName, isFeedbackMsg) {
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
-        if (isScenarioMsg) {
-          div.classList.add('sinclo-scenario-msg');
-        }
         div.appendChild(li);
         chatList.appendChild(div);
-        var strings = val.split('\n');
+        var strings = val.split(/(\\n|<br>)/);
         var radioCnt = 1;
         var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
         var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
@@ -2885,6 +2882,12 @@
               str = "<span class='sinclo-text-line'>" + str + "</span>";
               str += buttonHtml;
             }
+            // フィードバックボタン（CogmoAttend）
+            if (isFeedbackMsg) {
+              str = "<span class='sinclo-text-line'>" + str + "</span>";
+              str += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"button_はい\")'><span class='sincloButton'>はい</span></p>";
+              str += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"button_いいえ\")'><span class='sincloButton'>いいえ</span></p>"
+            }
           }
           // リンク
           var link = str.match(linkReg);
@@ -2938,8 +2941,10 @@
                 str = str.replace(url, a);
               }
               else {
-                var a = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-                str = a;
+                var imageBlock = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img class='"+className+"' "+img[1]+"></div>";
+
+                str = unEscapeStr.replace(img[0], imageBlock);
+
               }
             }
           }
@@ -3282,13 +3287,13 @@
       hideForm: function() {
         $('li.sinclo_re.sinclo_form').remove();
       },
-      createMessageUnread: function (cs, val, name, isScenarioMessage, isCogmoAttendBotMessage) {
+      createMessageUnread: function (cs, val, name, isScenarioMessage, isCogmoAttendBotMessage, isFeedbackMsg) {
         if (cs && cs.indexOf("sinclo_re") >= 0) {
           sinclo.chatApi.unread++;
           sinclo.chatApi.showUnreadCnt();
         }
         if(isCogmoAttendBotMessage) {
-          sinclo.chatApi.createCogmoAttendBotMessage(cs, val, name);
+          sinclo.chatApi.createCogmoAttendBotMessage(cs, val, name, isFeedbackMsg);
         } else {
           sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
         }

@@ -267,6 +267,9 @@
               receiveFile: 27,
               returnBulkHearing: 40
             }
+          },
+          cogmo: {
+            message: 81
           }
         }
       };
@@ -405,7 +408,7 @@
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
-      else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
+      else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry || type === chatApi.messageType.cogmo.message ) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");

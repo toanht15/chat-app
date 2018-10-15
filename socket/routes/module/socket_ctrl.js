@@ -3233,6 +3233,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend = new CogmoAttendAPICaller();
           }
           var isFeedback = sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isFeedbackMessage();
+          var isExitOnConversation = sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isExitOnConversation();
           var isMessageButton = obj.chatMessage.indexOf('button_') !== -1;
           sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend
             .saveCustomerMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
@@ -3255,10 +3256,10 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                 isScenarioMessage: false
               };
               emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
-              if(isFeedback) {
-                if(resultData.indexOf('はい') !== -1) {
+              if(isFeedback && !isExitOnConversation) {
+                if(resultData.message.indexOf('はい') !== -1) {
                   return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendFeedbackYes();
-                } else if(resultData.indexOf('いいえ') !== -1) {
+                } else if(resultData.message.indexOf('いいえ') !== -1) {
                   return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendFeedbackNo();
                 }
               } else if (isMessageButton) {
@@ -3281,12 +3282,15 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                       siteKey: obj.siteKey,
                       matchAutoSpeech: true,
                       isScenarioMessage: false,
-                      isFeedBackMsg: isFeedback
+                      isFeedbackMsg: sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isFeedbackMessage(),
+                      isExitOnConversation: sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isExitOnConversation()
                     };
                     emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
                   });
                 }
               }
+            }, function(err){
+              console.log('COGMO ATTEND CALLBACK REJECT : ' + err);
             });
             if(ack) ack();
           if(sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isSwitchingOperator()) {
