@@ -3100,7 +3100,7 @@ console.log("chatStart-3: [" + logToken + "] " + logData3);
                 visitorsId: visitorId,
                 userId: obj.userId,
                 chatMessage: "入室",
-                messageType: 98,
+                messageType: 998,
                 messageDistinction: obj.messageDistinction,
                 userName: userName,
                 created: date
@@ -3232,27 +3232,68 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
           if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend)) {
             sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend = new CogmoAttendAPICaller();
           }
-          sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendText(obj.message).then(function(text){
-            if(Array.isArray(text)) {
-              for(let i = 0; i < text.length; i++) {
-                sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId, obj.stayLogsId, companyList[obj.siteKey], obj.userId, text[i], obj.messageDistinction, obj.created).then((resultData) => {
-                  var sendData = {
-                    tabId: obj.tabId,
-                    chatId: resultData.insertId,
-                    messageType: 81,
-                    created: resultData.created,
-                    ret: true,
-                    chatMessage: resultData.message,
-                    siteKey: obj.siteKey,
-                    matchAutoSpeech: true,
-                    isScenarioMessage: false
-                  };
-                  emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
-                });
+          var isFeedback = sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isFeedbackMessage();
+          var isMessageButton = obj.chatMessage.indexOf('button_') !== -1;
+          sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend
+            .saveCustomerMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
+              obj.stayLogsId,
+              companyList[obj.siteKey],
+              obj.userId,
+              obj.chatMessage.replace('button_',''),
+              obj.messageDistinction,
+              obj.created)
+            .then((resultData) => {
+              var sendData = {
+                tabId: obj.tabId,
+                chatId: resultData.insertId,
+                messageType: 1,
+                created: resultData.created,
+                ret: true,
+                chatMessage: resultData.message,
+                siteKey: obj.siteKey,
+                matchAutoSpeech: true,
+                isScenarioMessage: false
+              };
+              emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
+              if(isFeedback) {
+                if(resultData.indexOf('はい') !== -1) {
+                  return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendFeedbackYes();
+                } else if(resultData.indexOf('いいえ') !== -1) {
+                  return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendFeedbackNo();
+                }
+              } else if (isMessageButton) {
+                return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendPushButton(sendData.chatMessage);
+              } else {
+                return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendText(sendData.chatMessage);
               }
-            }
-          });
-          if(ack) ack();
+            })
+            .then(function(text) {
+              if(Array.isArray(text)) {
+                for(let i = 0; i < text.length; i++) {
+                  sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId, obj.stayLogsId, companyList[obj.siteKey], obj.userId, text[i], obj.messageDistinction, obj.created).then((resultData) => {
+                    var sendData = {
+                      tabId: obj.tabId,
+                      chatId: resultData.insertId,
+                      messageType: 81,
+                      created: resultData.created,
+                      ret: true,
+                      chatMessage: resultData.message,
+                      siteKey: obj.siteKey,
+                      matchAutoSpeech: true,
+                      isScenarioMessage: false,
+                      isFeedBackMsg: isFeedback
+                    };
+                    emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
+                  });
+                }
+              }
+            });
+            if(ack) ack();
+          if(sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isSwitchingOperator()) {
+
+          } else {
+            return false;
+          }
         }
         //リクエストメッセージの場合
         if(obj.messageRequestFlg == 1){
@@ -3267,9 +3308,9 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         else {
           chatApi.set(obj);
         }
+        if(ack) ack();
       }
     });
-    if(ack) ack();
   });
 
   //新着チャット
