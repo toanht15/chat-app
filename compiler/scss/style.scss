@@ -10167,7 +10167,10 @@ div.balloon {
   }
   &.noContents {
     text-indent: 100%;
-    height: calc(1em + 8px);
+    height: calc(1em + 12px);
+    &.sp {
+      height: calc(1em + 13px);
+    }
   }
 }
 
@@ -10175,8 +10178,13 @@ div.balloon {
   display: none;
 }
 
-#sincloBox p#widgetDescription.noExplain:not(.noContents){
-  display: none;
+#sincloBox p#widgetDescription{
+  &.noExplain:not(.noContents){
+    display: none;
+  }
+  &.details:not(.notNone){
+    border-bottom: none;
+  }
 }
 
 #sincloBox p#widgetTitle{

@@ -1012,27 +1012,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     };
 
     $scope.indicateSimpleNoImage = function(){
-      if($scope.widget_title_top_type == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
-      }
-      if($scope.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
-      }
     }
 
     $scope.indicateSimpleImage = function(){
-      if($scope.widget_title_top_type == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: calc(2.5em + 46px) !important;'});
-      }
-      if($scope.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important; padding-right:26px !important; padding-left:calc(2.5em + 38px) !important;'});
-      }
     }
-
-//     //旧・シンプル表示
-//     $scope.spHeaderLightToggle = function(){
-//      return ( $scope.showWidgetType === 3 && $scope.sp_header_light_flg === '<?=C_SELECT_CAN?>' );
-//     };
 
     $scope.showGallary = function(){
       $.ajax({
@@ -1128,18 +1111,40 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     }
 
     $scope.switchMaxTextSize = function(size){
+      //テキストサイズの最大値を変更します
       var settingHeaderText = document.getElementById('MWidgetSettingHeaderTextSize');
       var settingReText = document.getElementById('MWidgetSettingReTextSize');
       var settingSeText = document.getElementById('MWidgetSettingSeTextSize');
-      var headerTextSize = 20;
-      var textSize = 20;
-      if(Number(size) === 4){
-        headerTextSize = 42;
-        textSize = 64;
+      var settingSendBtnText = document.getElementById('MWidgetSettingChatSendBtnTextSize');
+      var headerTextSize = 0;
+      var textSize = 0;
+      var sendBtnTextSize = 0;
+      switch(size) {
+      case 1:
+        var headerTextSize = 20;
+        var textSize = 20;
+        var sendBtnTextSize = 26;
+        break;
+      case 2:
+        var headerTextSize = 20;
+        var textSize = 20;
+        var sendBtnTextSize = 30;
+        break;
+      case 3:
+        var headerTextSize = 20;
+        var textSize = 20;
+        var sendBtnTextSize = 36;
+        break;
+      case 4:
+        var headerTextSize = 64;
+        var textSize = 42;
+        var sendBtnTextSize = 36;
+        break;
       }
       settingHeaderText.max = headerTextSize;
       settingReText.max = textSize;
       settingSeText.max = textSize;
+      settingSendBtnText.max = sendBtnTextSize;
     }
 
     //ウィジェットサイズがクリックされた時の動作
@@ -1149,6 +1154,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $scope.revertStandardTextSize('header_text_size');
       $scope.revertStandardTextSize('re_text_size');
       $scope.revertStandardTextSize('se_text_size');
+      $scope.revertStandardTextSize('chat_send_btn_text_size');
+      $scope.revertStandardTextSize('message_box_text_size');
       if($('#chatTalk').length > 0) {
         $('#chatTalk').css('height', '');
       } else {
@@ -1668,6 +1675,24 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         targetMessageUI.css('visibility', 'visible');
       },600);
     });
+
+    $scope.changeSubtitle = function() {
+      if(String ($('#MWidgetSettingSubTitle').val()) === "" && Number($('input[name="data[MWidgetSetting][show_subtitle]"]:checked').val()) === 1) {
+        $('#widgetSubTitle').text("　");
+      } else {
+        $('#widgetSubTitle').text($scope.sub_title);
+      }
+    }
+
+    $scope.changeDescription = function() {
+      if(String ($('#MWidgetSettingDescription').val()) === "" && Number($('input[name="data[MWidgetSetting][show_description]"]:checked').val()) === 1){
+        $('#widgetDescription').text("　");
+      } else {
+        $('#widgetDescription').text($scope.description);
+      }
+    }
+
+
 
     $scope.$watch('chat_message_copy', function(){
       // 代入される値の型にバラつきがあるので文字列で統一させる

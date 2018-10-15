@@ -629,299 +629,70 @@ var socket, // socket.io
       }
       return res;
     },
-    indicateSimpleNoImage: function() {
-      if(sincloInfo.widget.widget_title_top_type == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
-      }
-      if(sincloInfo.widget.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
-      }
-
-      var display = "display:"+$('#widgetDescription').css('display')+";";
-      //スマホの場合
-      if(check.smartphone()) {
-        var widgetWidth;
-
-        // TODO 関数化
-        if(sincloInfo.widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width();
+    _headerContentsSettings: {
+      _processSettings: function(){
+        if(check.smartphone()) {
+          $("#widgetTitle").addClass("spview");
+          $("#widgetSubTitle").addClass("spview");
+          $("#widgetDescription").addClass("spview");
+        }
+        this._deciedPosition("#widgetTitle", Number(sincloInfo.widget.widget_title_top_type));
+        this._deciedPosition("#widgetSubTitle", Number(sincloInfo.widget.widget_title_name_type));
+        this._deciedPosition("#widgetDescription", Number(sincloInfo.widget.widget_title_explain_type));
+        this._setContentsView(Number(this._countContents()));
+      },
+      _deciedPosition: function(selector, position) {
+        if(position === 1){
+          $(selector).addClass("leftPosition");
+        } else if (position === 2){
+          $(selector).addClass("centerPosition");
+        }
+      },
+      _countContents: function() {
+        if(Number(sincloInfo.widget.showDescription) === 1 && Number(sincloInfo.widget.showSubtitle) === 1){
+          return 2;
+        } else if (Number(sincloInfo.widget.showDescription) === 1 || Number(sincloInfo.widget.showSubtitle) === 1){
+          $("#widgetSubTitle").addClass("oneContent");
+          $("#widgetDescription").addClass("oneContent");
+          return 1;
         } else {
-          widgetWidth = $(window).width() - 20 ;
+          $("#widgetSubTitle").addClass("noContent");
+          $("#widgetDescription").addClass("noContent");
+          return 0;
         }
-          var ratio = widgetWidth * (1/285);
-
-        //画像を表示しない場合
-        if($('#mainImage').css('display') === undefined) {
-          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'+display});
+      },
+      _setContentsView: function(contents) {
+      //サブタイトルまたは説明文のどちらかが存在する場合のみ
+        if(contents === 1){
+          if(Number(sincloInfo.widget.showDescription) === 2){
+            $("#widgetDescription").hide();
+            $("#widgetDescription").remove();
+          return;
           }
-          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'+display});
-          }
-          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'+display});
-          }
-          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'+display});
-          }
-          //企業名 企業名表示しない・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'+display});
-          }
-          //説明文 説明文表示しない・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
-            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
-          }
-        }
-      }
-      //PC
-      else {
-        //画像を表示しない場合
-        if($('#mainImage').css('display') === undefined) {
-          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'+display});
-          }
-          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'+display});
-          }
-          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:52px;line-height:52px;padding:0 0 0 15px;'+display});
-          }
-          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:52px;line-height:52px;padding:0 0 0 0px;'+display});
-          }
-          //企業名 企業名表示しない・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;'+display});
-          }
-          //説明文 説明文表示しない・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
-            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
+          if(Number(sincloInfo.widget.showSubtitle) === 2){
+            $("#widgetSubTitle").hide();
+            $("#widgetSubTitle").remove();
+          return;
           }
         }
       }
     },
-    _settingHeaderView: {
-      _decideSubtitleView: function(type) {
-        var ratio = 1;
-        var size = "78px";
-        if(sincloInfo.widget.showSubtitle == 1){
-          common._
-        } else if(sincloInfo.widget.showSubtitle == 2){
-          $('#widgetSubTitle').hide();
-        }
-      },
-      _decideDescriptionView: function(type) {
-        var ratio = 1;
-        var size = "78px"
-        if(sincloInfo.widget.showDescription == 1){
-          common._
-        } else if(sincloInfo.widget.showDescription == 2){
-          $('#widgetDescription').hide();
-        }
-      },
-      _decideTitlePosition: function(name) {
-      //トップタイトル・企業名・説明文の位置を決める(引数nameは識別子)
-      }
+    indicateSimpleNoImage: function() {
+      //画像を表示しない場合
+      $("#widgetSubTitle").addClass("noImage");
+      $("#widgetDescription").addClass("noImage");
+      common._headerContentsSettings._processSettings();
     },
     indicateSimpleImage: function() {
-      var display = "display:"+$('#widgetDescription').css('display')+";";
-
-      //スマホの場合
-      if(check.smartphone()) {
-        var widgetWidth;
-
-        // TODO 関数化
-        if(sincloInfo.widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width();
-        } else {
-          widgetWidth = $(window).width() - 20 ;
-        }
-          var ratio = widgetWidth * (1/285);
-        //画像あり　タイトル左寄せの場合
-        if(sincloInfo.widget.widget_title_top_type == 1) {
-          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: ' + (78 * ratio) + 'px !important;'+display});
-        }
-        if(sincloInfo.widget.widget_title_top_type == 2) {
-          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: ' + (70 * ratio) + 'px !important;padding-right: ' + (26 * ratio) + 'px !important;'+display});
-        }
-
-        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
-        }
-        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;padding-top:0px;'+display});
-        }
-        //企業名 企業名表示しない・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-
-        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示しない・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
-          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-      }
-      //PC
-      else {
-        if(sincloInfo.widget.widget_title_top_type == 1) {
-          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'+display});
-        }
-        if(sincloInfo.widget.widget_title_top_type == 2) {
-          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 70px !important;padding-right: 26px !important;'+display});
-        }
-        //TODO 10月11日中に関数化する check.smartphone()の結果を引数として渡せば2行で解決するのでなんとかする
-        //common._settingHeaderView._decideSubtitleView('pc');
-        //common._settingHeaderView._decideDescriptionView('pc');
-
-        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:calc(2.5em + 46px);'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:calc(2.5em + 38px);padding-right:26px;'+display});
-        }
-        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 calc(2.5em + 46px);'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:calc(2.5em + 38px);padding-right:26px;'+display});
-        }
-        //企業名 企業名表示しない・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-
-        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:calc(2.5em + 46px);'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:(2.5em + 38px);padding-right:26px;'+display});
-        }
-        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 calc(2.5em + 46px);'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:(2.5em + 38px);padding-right:26px;'+display});
-        }
-        //説明文 説明文表示しない・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
-          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-      }
+      //画像を表示する場合
+      common._headerContentsSettings._processSettings();
     },
     //ヘッダ表示（通常表示）
     abridgementTypeShow: function() {
       $("#mainImage").show();
       $("#widgetSubTitle").show();
       $("#widgetDescription").show();
-      var smartphone = check.smartphone();
-      if(smartphone){
+      if(check.smartphone()){
         if( common.isPortrait() ){
           if(!$('#sincloBox p#widgetTitle').hasClass("notSimple")){
             $('#sincloBox p#widgetTitle').addClass("notSimple");
@@ -947,8 +718,7 @@ var socket, // socket.io
       $("#widgetSubTitle").hide();
       $("#widgetDescription").hide();
       //false/true:通常（PC）/スマホ
-      var smartphone = check.smartphone();
-      if(smartphone){
+      if(check.smartphone()){
         //スマホ時
         //スマホだったら縦か横かを判定
         if(common.isPortrait()){
@@ -975,7 +745,6 @@ var socket, // socket.io
     //最大化時ボタン表示
     whenMaximizedBtnShow: function() {
       $("#minimizeBtn").show();
-      //$("#addBtn").hide();
       $("#closeBtn").hide();
     },
     //最小化時ボタン表示
@@ -984,13 +753,11 @@ var socket, // socket.io
       if ( Number(widget.closeButtonSetting) === 1 ) {
         //閉じるボタン無効
         $("#minimizeBtn").hide();
-        //$("#addBtn").show();
         $("#closeBtn").hide();
       }
       else{
         //閉じるボタン有効
         $("#minimizeBtn").hide();
-        //$("#addBtn").show();
         var smartphone = check.smartphone();
         if(smartphone){
           //スマホ時
@@ -1074,7 +841,7 @@ var socket, // socket.io
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
           };
-          if(Number(sincloInfo.widget.widgetSizeType) === 4){
+          if(Number(sincloInfo.widget.widgetSizeType) === 4 && !check.smartphone()){
             showPosition = "bottom: 0; right: 0;"
           }
           break;
@@ -1084,7 +851,7 @@ var socket, // socket.io
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
           };
-          if(Number(sincloInfo.widget.widgetSizeType) === 4){
+          if(Number(sincloInfo.widget.widgetSizeType) === 4 && !check.smartphone()){
             showPosition = "bottom: 0; left: 0;"
           }
           break;
@@ -1566,14 +1333,34 @@ var socket, // socket.io
 */
             html += '#sincloBox div#closeBtn { display: none; top: ' + (7 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; z-index: 2; }';
           }
-          html += '#sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; border-color: '+ colorList['widgetBorderColor'] +'; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; height: ' + (29 * ratio) + 'px; }';
+          html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: 15px; padding: '+ (7 * ratio) + 'px 0px '+ (7 * ratio) + 'px 0px; height: auto; line-height: ' + widget.headerTextSize + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+          html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: calc((2.5em + 46px) * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetTitle.leftPosition.noImage { padding-left: ' +  (15 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: ' + (25 * ratio) + 'px; padding-left: calc((2.5em + 38px) * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px; }';
+
+          html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; border-color: '+ colorList['widgetBorderColor'] +'; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+          html += '      #sincloBox p#widgetSubTitle.leftPosition { padding-left: calc((2.5em + 46px) * ' + ratio + ')}';
+          html += '      #sincloBox p#widgetSubTitle.leftPosition.noImage { padding-left: ' + (15 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetSubTitle.centerPosition { text-align: center; padding-right: ' + (25 * ratio) + 'px; padding-left: calc((2.5em + 38px) * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetSubTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+          html += '      #sincloBox p#widgetSubTitle.oneContent { line-height: calc((1em + 9px)*2*' + ratio + '); border-bottom: 1px '+ colorList['widgetBorderColor'] +' solid;}';
+          if(colorList['widgetInsideBorderNone'] === 1){
+            html += '      #sincloBox p#widgetSubTitle.oneContent{ border:none;}';
+          }
+
+          html += '      #sincloBox p#widgetDescription.leftPosition { padding-left: calc((2.5em + 46px) * ' + ratio + ')}';
+          html += '      #sincloBox p#widgetDescription.leftPosition.noImage { padding-left: ' + (15 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-right: ' + (25 * ratio) + 'px; padding-left: calc((2.5em + 38px) * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetDescription.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+          html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2*' + ratio + '); padding-bottom: ' + (3.5*ratio) + 'px; padding-top: ' + (3.5*ratio) + 'px;}';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetSubTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
           if(colorList['widgetBorderNone'] === 1){
             html += '#sincloBox p#widgetSubTitle { border:none; }';
           }
-          html += '#sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: ' + (7 * ratio) + 'px; border-width: 0 ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; height: ' + (23 * ratio) + 'px; text-align: left; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
+          html += '#sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: ' + (7 * ratio) + 'px; border-width: 0 ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; text-align: left; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetDescription { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
@@ -1871,11 +1658,29 @@ var socket, // socket.io
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 8px }';
 
-        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px !important; height: auto; line-height: ' + widget.headerTextSize + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px; height: auto; line-height: ' + widget.headerTextSize + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+        html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 46px);}';
+        html += '      #sincloBox p#widgetTitle.leftPosition.noImage { padding-left: 15px;}';
+        html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: 25px; padding-left: calc(2.5em + 38px);}';
+        html += '      #sincloBox p#widgetTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px; }';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
 
         html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height:calc(1em + 9px); font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+        html += '      #sincloBox p#widgetSubTitle.leftPosition { padding-left: calc(2.5em + 46px)}';
+        html += '      #sincloBox p#widgetSubTitle.leftPosition.noImage { padding-left: 15px;}';
+        html += '      #sincloBox p#widgetSubTitle.centerPosition { text-align: center; padding-right: 25px; padding-left: calc(2.5em + 38px);}';
+        html += '      #sincloBox p#widgetSubTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+        html += '      #sincloBox p#widgetSubTitle.oneContent { line-height: calc((1em + 9px)*2); border-bottom: 1px '+ colorList['widgetBorderColor'] +' solid;}';
+        if(colorList['widgetInsideBorderNone'] === 1){
+          html += '      #sincloBox p#widgetSubTitle.oneContent{ border:none;}';
+        }
+
+        html += '      #sincloBox p#widgetDescription.leftPosition { padding-left: calc(2.5em + 46px)}';
+        html += '      #sincloBox p#widgetDescription.leftPosition.noImage { padding-left: 15px;}';
+        html += '      #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-right: 25px; padding-left: calc(2.5em + 38px);}';
+        html += '      #sincloBox p#widgetDescription.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+        html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2)}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetSubTitle { border:none; }';
         }
@@ -1892,10 +1697,6 @@ var socket, // socket.io
           html += '#sincloBox p#widgetDescription { border-bottom:none!important;}';
           html += '      #sincloBox section { border-bottom: none!important; }';
         }
-        // 画像がセットされている場合のスタイル
-        html += '      #sincloBox p#widgetTitle.notSimple { padding-left: 70px; }';
-        // 画像がセットされていない場合のスタイル
-        html += '      #sincloBox p#widgetTitle.noImage { padding-left: 30px; }';
         // チャットを使用する際
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
@@ -2029,9 +1830,9 @@ var socket, // socket.io
         }
         html += '  <span id="mainImage" onclick="sinclo.operatorInfo.toggle()">';
         if(widget.mainImage.match(/^fa/) !== null) {
-          html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:calc(' + (ratio * 62) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important; height:calc(' + (ratio * 70) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important;" alt="チャット画像"></i>';
+          html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important;" alt="チャット画像"></i>';
         } else {
-          html += '    <img src="' + widget.mainImage + '" style="width:calc(' + (ratio * 62) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important; height:calc(' + (ratio * 70) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important;" alt="チャット画像">';
+          html += '    <img src="' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important;" alt="チャット画像">';
         }
         html += '  </span>';
       }
@@ -2535,14 +2336,21 @@ var socket, // socket.io
         }
       },
       _maximumReverseAnimation: function(){
+        if(check.smartphone()){
+          return;
+        }
         console.log('「最大」設定時に最小化するアニメーションです');
         $('#sincloWidgetBox').animate({
           width: "400px"
         });
       },
       _maximumAnimation: function(){
+        if(check.smartphone()){
+          return;
+        }
         console.log('「最大」設定時に最大化するアニメーションです');
         var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + 26;
+        $('#chatTalk').css('height',$(window).height() - offset);
         $('#sincloWidgetBox').animate({
           width: $(window).width() + "px"
         },400);
@@ -2553,7 +2361,8 @@ var socket, // socket.io
         var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + 26;
         $('#chatTalk').css('height',$(window).height() - offset);
         if($('#minimizeBtn').is(':hidden')){
-          //最大化時以外は横幅の調整を行わない
+          //最大化時以外は横幅400px
+          $('#sincloWidgetBox').css('width',"400px");
           return;
         }
         $('#sincloWidgetBox').css('width',$(window).width() + "px");
@@ -2564,7 +2373,7 @@ var socket, // socket.io
         if(storage.s.get('widgetMaximized') === "true") {
           $('#sincloBox').css('height', 'auto');
         }
-        if(Number(sincloInfo.widget.widgetSizeType) === 4){
+        if(Number(sincloInfo.widget.widgetSizeType) === 4 && !check.smartphone()){
           common.widgetHandler._widgetFitForWindow();
           return;
         }
