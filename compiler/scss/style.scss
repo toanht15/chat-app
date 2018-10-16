@@ -3368,7 +3368,7 @@ ul.naviBtn {
   #customer_tab {
     position: fixed;
     bottom: 0;
-    left: 60px;
+    left: 83px;
     z-index: $sub-sidebar-z-index;
 
     ul {
@@ -4583,6 +4583,10 @@ ul.naviBtn {
                 display: block;
                 font-size: 13px;
                 color: #333333;
+                img.img-responsive {
+                  width:50%;
+                  height:auto;
+                }
               }
           }
           &.sinclo_se span.cName{
