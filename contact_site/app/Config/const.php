@@ -311,6 +311,7 @@ define('C_WIDGET_DISPLAY_STYLE_TYPE_BANNER', 3); // 小さなバナー
 define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
 define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
+define('C_WIDGET_SIZE_TYPE_MAXIMUM', 4); //最大
 
 // ファイル送信設定タイプ
 define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);
