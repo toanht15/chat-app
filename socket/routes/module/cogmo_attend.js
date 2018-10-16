@@ -56,13 +56,13 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
 
   sendFeedbackYes () {
     this._deleteFeedbackKey();
-    super.body = this._createJSONdata(this.sessionId, 'button_はい', this.messageType.FEEDBACK_YES, this.beforeContext);
+    super.body = this._createJSONdata(this.sessionId, 'button_はい<END>', this.messageType.FEEDBACK_YES, this.beforeContext);
     return this._callApi();
   }
 
   sendFeedbackNo () {
     this._deleteFeedbackKey();
-    super.body = this._createJSONdata(this.sessionId, 'button_いいえ', this.messageType.FEEDBACK_NO, this.beforeContext);
+    super.body = this._createJSONdata(this.sessionId, 'button_いいえ<END>', this.messageType.FEEDBACK_NO, this.beforeContext);
     return this._callApi();
   }
 
