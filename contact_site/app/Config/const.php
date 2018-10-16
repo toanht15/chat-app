@@ -63,6 +63,7 @@ define('C_COMPANY_USE_CAMPAIGN', 'campaign');  // キャンペーン設定
 define('C_COMPANY_USE_CHATCALLMESSAGES', 'chatCallMessages');  // チャット呼出中メッセージ
 define('C_COMPANY_USE_CUSTOMVARIABLES', 'customVariables');  // カスタム変数
 define('C_COMPANY_USE_EDITCUSTOMERINFORMATIONS', 'editCustomerInformations');  // 訪問ユーザ情報
+  define('C_COMPANY_USE_COGMO_ATTEND_API', 'useCogmoAttendApi');  // CogmoAttend連携
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
