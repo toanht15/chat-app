@@ -179,6 +179,12 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 40:
         $message = $this->generateScenarioReturnBulkHearingBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 81:
+        $message = $this->generateAutoMessageBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 82:
+        $message = $this->generateAutoMessageBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 998:
         $message = $this->generateOperatorEnteredBlockStr($chatLog['created'],$user['display_name']);
         break;

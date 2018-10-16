@@ -11,7 +11,7 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
   constructor () {
     super();
     this.systemUUID = 'c0d70609-e31e-4ba0-ac59-d26701f3402c';
-    super.url = 'https://attend.cogmo.jp/conversation/' + this.systemUUID;
+    super.url = 'https://attend.cogmo.jp/api/v2/conversation/' + this.systemUUID;
     super.method = 'post';
     this.messageType = {
       INITIALIZE: 0,
@@ -55,11 +55,13 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
   }
 
   sendFeedbackYes () {
+    this._deleteFeedbackKey();
     super.body = this._createJSONdata(this.sessionId, 'button_はい', this.messageType.FEEDBACK_YES, this.beforeContext);
     return this._callApi();
   }
 
   sendFeedbackNo () {
+    this._deleteFeedbackKey();
     super.body = this._createJSONdata(this.sessionId, 'button_いいえ', this.messageType.FEEDBACK_NO, this.beforeContext);
     return this._callApi();
   }
@@ -141,6 +143,12 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
       return 82;
     }  else {
       return 81;
+    }
+  }
+
+  _deleteFeedbackKey () {
+    if (this.beforeContext) {
+      delete this.beforeContext.feedback;
     }
   }
 };
