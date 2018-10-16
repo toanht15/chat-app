@@ -2172,6 +2172,7 @@ var socket, // socket.io
           common.widgetHandler.saveShownFlg();
           common.widgetHandler.stopToWatchResizeEvent();
           common.widgetHandler.beginToWatchResizeEvent();
+          common.widgetHandler.beginToWatchTabletResize();
           // テキストエリアの表示非表示
           if(!storage.l.get("textareaOpend") || storage.l.get("textareaOpend")  === "open") {
             sinclo.displayTextarea();
@@ -2320,6 +2321,19 @@ var socket, // socket.io
         console.log("showIntervalMsec" + showIntervalMsec);
         console.log("_calcRemainingShowTimingSiteTimeMsec: " + (siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0));
         return siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0;
+      },
+      beginToWatchTabletResize: function() {
+        if(check.smartphone()){
+          return;
+        }
+      //タブレットの拡大縮小を取得する（スマホは対象外）
+        $(window).on('touchstart', function(){
+          console.log('タブレット画面サイズ監視開始');
+        });
+
+        $(window).on('touchend', function(){
+          console.log('タブレット画面サイズ監視終了');
+        });
       },
       beginToWatchResizeEvent: function() {
         if(!check.smartphone()) {
