@@ -1573,7 +1573,7 @@
 
         if (obj.messageType === sinclo.chatApi.messageType.cogmo.message
           || obj.messageType === sinclo.chatApi.messageType.cogmo.feedback) {
-          this.chatApi.createMessageUnread(cn, obj.message, userName, false, true, obj.isFeedbackMsg && !obj.isExitOnConversation);
+          this.chatApi.createMessageUnread(cn, obj.message, userName, false, true, obj.isFeedbackMsg);
           this.chatApi.scDown(obj);
           return false;
         }

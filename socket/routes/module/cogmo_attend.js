@@ -118,14 +118,14 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
   }
 
   saveMessage (historyId, stayLogsId, companiesId, visitorsId, msg, distinction, created) {
-    this.logger.info('SAVE message : %s(%s)',msg,this._getMessageType());
+    this.logger.info('SAVE message : %s(%s)',msg,this._getChatbotMessageType());
     var insertData = {
       t_histories_id: historyId,
       m_companies_id: companiesId,
       visitors_id: visitorsId,
       m_users_id: null,
       message: msg,
-      message_type: this._getMessageType(), // CogmoAttendから返却されたメッセージ
+      message_type: this._getChatbotMessageType(), // CogmoAttendから返却されたメッセージ
       message_distinction: distinction, //FIXME
       message_request_flg: 0,
       achievement_flg: null
@@ -134,10 +134,10 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return this.processSave(insertData, stayLogsId, created);
   }
 
-  _getMessageType () {
+  _getChatbotMessageType () {
     var isFeedback = this.isFeedbackMessage();
-    var isExitOnConversation = this.isExitOnConversation();
-    if (!isExitOnConversation && isFeedback) {
+    //var isExitOnConversation = this.isExitOnConversation();
+    if (isFeedback) {
       return 82;
     }  else {
       return 81;
