@@ -1202,7 +1202,8 @@
             || Number(chat.messageType) === 22
             || Number(chat.messageType) === 23
             || Number(chat.messageType) === 27
-            || Number(chat.messageType) === 81) {
+            || Number(chat.messageType) === 81
+            || Number(chat.messageType) === 82) {
             if (check.isset(window.sincloInfo.widget.showAutomessageName) && window.sincloInfo.widget.showAutomessageName === 2) {
               userName = "";
             } else {
@@ -1272,7 +1273,9 @@
           } else if (Number(chat.messageType) === 31 || Number(chat.messageType) === 32) {
             this.chatApi.createFormFromLog(JSON.parse(chat.message));
           } else if (Number(chat.messageType) === 81) {
-            this.chatApi.createCogmoAttendBotMessage("sinclo_re", chat.message, userName);
+            this.chatApi.createCogmoAttendBotMessage("sinclo_re", chat.message, userName, false);
+          } else if (Number(chat.messageType) === 82) {
+            this.chatApi.createCogmoAttendBotMessage("sinclo_re", chat.message, userName, true);
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
@@ -1453,7 +1456,8 @@
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.answerBulkHearing ) {
           cn = "sinclo_se";
           elm.value = "";
-        } else if (obj.messageType === sinclo.chatApi.messageType.cogmo.message) {
+        } else if (obj.messageType === sinclo.chatApi.messageType.cogmo.message
+          || obj.messageType === sinclo.chatApi.messageType.cogmo.feedback) {
           cn = "sinclo_re";
           elm.value = "";
         }
@@ -1567,7 +1571,8 @@
           return false;
         }
 
-        if (obj.messageType === sinclo.chatApi.messageType.cogmo.message) {
+        if (obj.messageType === sinclo.chatApi.messageType.cogmo.message
+          || obj.messageType === sinclo.chatApi.messageType.cogmo.feedback) {
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName, false, true, obj.isFeedbackMsg && !obj.isExitOnConversation);
           this.chatApi.scDown(obj);
           return false;
@@ -2142,7 +2147,8 @@
             }
           },
           cogmo: {
-            message: 81
+            message: 81,
+            feedback: 82
           }
         },
         autoMessages: {
@@ -2871,7 +2877,7 @@
             }
             // ボタン（CogmoAttend）
             if (str.match(/\[(.*)?]/g)) {
-              li.style.lineHeight = 0;
+              cs += ' withButton';
               var buttons = str.match(/\[(.*?)]/g);
               var buttonHtml = "";
               for (var j=0; j < buttons.length; j++) {
@@ -2884,6 +2890,7 @@
             }
             // フィードバックボタン（CogmoAttend）
             if (isFeedbackMsg) {
+              cs += ' withButton';
               str = "<span class='sinclo-text-line'>" + str + "</span>";
               str += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"button_はい\")'><span class='sincloButton'>はい</span></p>";
               str += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"button_いいえ\")'><span class='sincloButton'>いいえ</span></p>"
@@ -2978,9 +2985,9 @@
           }
         }
 
-        if (cs === "sinclo_re") {
+        if (cs.indexOf("sinclo_re") !== -1) {
           cs += ' effect_left';
-        } else if (cs === "sinclo_se") {
+        } else if (cs.indexOf("sinclo_se") !== -1) {
           cs += ' effect_right';
         }
 
@@ -4914,7 +4921,7 @@
           // 4. マッチ設定が存在する
           console.log("matchAllSpeechContent ::: sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
           if (
-            (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
+            (!window.sincloInfo.contract.useCogmoAttendApi && !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
             && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() && this.speechContentRegEx.length > 0) {
             for (var index in this.speechContentRegEx) {
               console.log(this.speechContentRegEx[index].id);
