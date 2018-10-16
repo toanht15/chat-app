@@ -222,21 +222,34 @@ class MWidgetSettingsController extends AppController {
     }
     $maxFontSize = 20;
     $maxHeaderFontSize = 20;
-  switch ($inputData['MWidgetSetting']['widget_size_type']) {
-      //大きさによってフォントサイズのmaxを可変とする(最大のみ別設定)
+    $maxSendBtnFontSize = 26;
+    switch ($inputData['MWidgetSetting']['widget_size_type']) {
+      //大きさにより各種フォントサイズのmaxを可変とする(最大のみ別設定)
       case '1': //小
+        $maxFontSize = 20;
+        $maxHeaderFontSize = 20;
+        $maxSendBtnFontSize = 26;
+        break;
       case '2': //中
+        $maxFontSize = 20;
+        $maxHeaderFontSize = 20;
+        $maxSendBtnFontSize = 30;
+        break;
       case '3': //大
         $maxFontSize = 20;
         $maxHeaderFontSize = 20;
+        $maxSendBtnFontSize = 36;
         break;
       case '4': //最大
         $maxFontSize = 64;
         $maxHeaderFontSize = 42;
+        $maxSendBtnFontSize = 36;
         break;
     }
+
     $this->set('max_fontsize', $maxFontSize);
     $this->set('max_header_fontsize', $maxHeaderFontSize);
+    $this->set('max_send_btn_fontsize', $maxSendBtnFontSize);
     $this->set('titleLength_maxlength', $titleLength);
     $this->set('subTitleLength_maxlength', $subTitleLength);
     $this->set('descriptionLength_maxlength', $descriptionLength);

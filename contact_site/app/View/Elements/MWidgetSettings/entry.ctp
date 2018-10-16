@@ -216,7 +216,8 @@ $headerNo = 1;
                 'required' => false,
                 'maxlength' => $subTitleLength_maxlength,
                 'error' => false,
-                'ng-maxlength' => "false"
+                'ng-maxlength' => "false",
+                'ng-change' => "changeSubtitle()"
             ];
             if(($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) && !$coreSettings[C_COMPANY_USE_CHAT]) {
               $subTitleOpt['ng-disabled'] = 'subTitleToggle == "2"';
@@ -260,13 +261,14 @@ $headerNo = 1;
               'label' => false,
               'maxlength' => $descriptionLength_maxlength,
               'error' => false,
-              'ng-maxlength' => "false"
+              'ng-maxlength' => "false",
+              'ng-change' => "changeDescription()"
             ],
             [
               'entity' => 'MWidgetSetting.description'
             ]) ?>
             <div ng-init="descriptionToggle ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_description'))?>'">
-              <label class="pointer" for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?>
+              <label class="pointer" for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" ng-change="changeDescription()" >説明文を表示する</label><br><?=$description?>
                 <div ng-init="widget_title_explain_type ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'widget_title_explain_type'))?>'" style = "margin-top: 0px; margin-left: 20px;" id = "widgetTitleExplainType">
                   <?php
                   if($this->data['MWidgetSetting']['show_description'] == 1) {
@@ -280,7 +282,7 @@ $headerNo = 1;
                   <label class="pointer choose" for="widgetTitleExplainType2" id = "widgetTitleExplainTypeLabel2" style = "display:<?=$display?>"><input type="radio" name="data[MWidgetSetting][widget_title_explain_type]" ng-model="widget_title_explain_type" id="widgetTitleExplainType2" class="showHeader" value="2">中央寄せ<br></label>
                 </div>
               <br>
-              <label class="pointer" for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
+              <label class="pointer" for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" ng-change="changeDescription()" >説明文を表示しない</label>
             </div>
           </li>
           <?php if ($this->Form->isFieldError('description')) echo $this->Form->error('description', null, ['wrap' => 'li']); ?>
@@ -365,14 +367,13 @@ $headerNo = 1;
                 'class' => 'showNormal',
                 'min' => '12',
                 'max' => $max_header_fontsize,
-                'placeholder' => '',
                 'div' => false,
                 'label' => false,
                 'maxlength' => 7,
                 'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                 'error' => false,
                 'string-to-number' => true,
-                'ng-max' => false
+                'ng-max' => "false"
               ],
               [
                 'entity' => 'MWidgetSetting.header_text_size'
@@ -424,7 +425,8 @@ $headerNo = 1;
                     'maxlength' => 7,
                     'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                     'error' => false,
-                    'string-to-number' => true
+                    'string-to-number' => true,
+                    'ng-max' => "false"
                   ],
                     [
                       'entity' => 'MWidgetSetting.re_text_size'
@@ -492,7 +494,8 @@ $headerNo = 1;
                     'maxlength' => 7,
                     'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                     'error' => false,
-                    'string-to-number' => true
+                    'string-to-number' => true,
+                    'ng-max' => "false"
                   ],
                     [
                       'entity' => 'MWidgetSetting.se_text_size'
@@ -748,7 +751,7 @@ $headerNo = 1;
                       'type' => 'number',
                       'class' => 'showNormal',
                       'min' => '10',
-                      'max' => '38',
+                      'max' => '36',
                       'placeholder' => '',
                       'div' => false,
                       'label' => false,
@@ -841,14 +844,14 @@ $headerNo = 1;
                       'type' => 'number',
                       'class' => 'showNormal',
                       'min' => '10',
-                      'max' => '38',
-                      'placeholder' => '',
+                      'max' => $max_send_btn_fontsize,
                       'div' => false,
                       'label' => false,
                       'maxlength' => 7,
                       'style' => "width: 102px;margin-left: 25px",
                       'error' => false,
-                      'string-to-number' => true
+                      'string-to-number' => true,
+                      'ng-max' => "false"
                     ],
                     [
                       'entity' => 'MWidgetSetting.chat_send_btn_text_size'
