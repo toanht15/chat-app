@@ -135,13 +135,25 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
       visitors_id: visitorsId,
       m_users_id: null,
       message: msg,
-      message_type: 81, // CogmoAttendから返却されたメッセージ
+      message_type: this._getMessageType(), // CogmoAttendから返却されたメッセージ
       message_distinction: distinction, //FIXME
       message_request_flg: 0,
       achievement_flg: null
     };
 
     return this._processSave(insertData, stayLogsId, created);
+  }
+
+  _getMessageType () {
+    var isFeedback = this.isFeedbackMessage();
+    var isExitOnConversation = this.isFeedbackMessage();
+    if (isExitOnConversation) {
+      return 81;
+    } else if (isFeedback) {
+      return 82;
+    } else {
+      return 81;
+    }
   }
 
   _processSave (insertData, stayLogsId, created) {
