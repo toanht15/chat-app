@@ -301,6 +301,22 @@ $(function(){
       $isRecieveFile = false;
       $imgTag = false;
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 81) === 0 || strcmp($val['THistoryChatLog']['message_type'], 82) === 0 ) {
+      $className = "sinclo_auto";
+      $name = "自動応答";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $deleteMessage = str_replace('"', '', $deleteMessage);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      if(strpos($val['THistoryChatLog']['message'],'<img') !== false){
+        $imgTag = true;
+      }
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 998) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が入室しました -";
