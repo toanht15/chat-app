@@ -3228,7 +3228,8 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         else {
           obj.messageDistinction = results[0].conversation_count;
         }
-        if(functionManager.isEnabled(obj.siteKey, functionManager.keyList.useCogmoAttendApi)) {
+        if(functionManager.isEnabled(obj.siteKey, functionManager.keyList.useCogmoAttendApi)
+          && !sincloCore[obj.siteKey][obj.tabId].chat) {
           if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend)) {
             sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend = new CogmoAttendAPICaller();
           }
@@ -3246,16 +3247,20 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             .then((resultData) => {
               var sendData = {
                 tabId: obj.tabId,
+                sincloSessionId: obj.sincloSessionId,
                 chatId: resultData.insertId,
                 messageType: 1,
                 created: resultData.created,
+                sort: fullDateTime(resultData.created),
                 ret: true,
                 chatMessage: resultData.message,
+                message: resultData.message,
                 siteKey: obj.siteKey,
                 matchAutoSpeech: true,
                 isScenarioMessage: false
               };
               emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
+              emit.toCompany('sendChatResult', sendData, obj.siteKey);
               if(isFeedback && !isExitOnConversation) {
                 if(resultData.message.indexOf('はい') !== -1) {
                   return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendFeedbackYes();
@@ -3274,11 +3279,14 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                   sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId, obj.stayLogsId, companyList[obj.siteKey], obj.userId, text[i], obj.messageDistinction, obj.created).then((resultData) => {
                     var sendData = {
                       tabId: obj.tabId,
+                      sincloSessionId: obj.sincloSessionId,
                       chatId: resultData.insertId,
                       messageType: 81,
                       created: resultData.created,
+                      sort: fullDateTime(resultData.created),
                       ret: true,
                       chatMessage: resultData.message,
+                      message: resultData.message,
                       siteKey: obj.siteKey,
                       matchAutoSpeech: true,
                       isScenarioMessage: false,
@@ -3286,6 +3294,7 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                       isExitOnConversation: sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isExitOnConversation()
                     };
                     emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
+                    emit.toCompany('sendChatResult', sendData, obj.siteKey);
                   });
                 }
               }
@@ -3294,25 +3303,39 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
             });
             if(ack) ack();
           if(sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isSwitchingOperator()) {
-
+            //リクエストメッセージの場合
+            if(obj.messageRequestFlg == 1){
+              //消費者が初回メッセージを送る前にオペレータが入室した場合
+              pool.query('SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',[obj.userId,obj.historyId,obj.messageDistinction], function (err, result) {
+                if(Object.keys(results) && Object.keys(result).length !== 0) {
+                  obj.messageRequestFlg = 0;
+                }
+                chatApi.set(obj);
+              });
+            }
+            else {
+              chatApi.set(obj);
+            }
+            if(ack) ack();
           } else {
             return false;
           }
-        }
-        //リクエストメッセージの場合
-        if(obj.messageRequestFlg == 1){
-          //消費者が初回メッセージを送る前にオペレータが入室した場合
-          pool.query('SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',[obj.userId,obj.historyId,obj.messageDistinction], function (err, result) {
-            if(Object.keys(results) && Object.keys(result).length !== 0) {
-              obj.messageRequestFlg = 0;
-            }
+        } else {
+          //リクエストメッセージの場合
+          if(obj.messageRequestFlg == 1){
+            //消費者が初回メッセージを送る前にオペレータが入室した場合
+            pool.query('SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',[obj.userId,obj.historyId,obj.messageDistinction], function (err, result) {
+              if(Object.keys(results) && Object.keys(result).length !== 0) {
+                obj.messageRequestFlg = 0;
+              }
+              chatApi.set(obj);
+            });
+          }
+          else {
             chatApi.set(obj);
-          });
+          }
+          if(ack) ack();
         }
-        else {
-          chatApi.set(obj);
-        }
-        if(ack) ack();
       }
     });
   });
