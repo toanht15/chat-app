@@ -210,7 +210,7 @@
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
-      var strings = message.split(/\\n|<br>/);
+      var strings = message.split(/\n|<br>/g);
       var custom = "";
       var isSmartphone = false;
       var radioName = "sinclo-radio" + Object.keys(chat).length;

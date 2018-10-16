@@ -1474,7 +1474,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
-      var strings = message.split(/\\n|<br>/);
+      var strings = message.split(/\n|<br>/g);
       var isSmartphone = false;
       var custom = "";
       var radioName = "sinclo-radio" + Object.keys(chat).length;

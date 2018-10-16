@@ -2826,7 +2826,7 @@
         var li = document.createElement('li');
         div.appendChild(li);
         chatList.appendChild(div);
-        var strings = val.split(/(\\n|<br>)/);
+        var strings = val.split(/\n|<br>/g);
         var radioCnt = 1;
         var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
         var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
