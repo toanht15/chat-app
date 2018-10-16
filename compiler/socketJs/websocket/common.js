@@ -1004,7 +1004,6 @@ var socket, // socket.io
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { cursor:pointer; z-index: 2; position: absolute; }';
       html += '      #sincloBox span#mainImage img { background-color: ' + colorList['mainColor'] + ' }';
-      html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 80px; height: 70px; font-size: calc(43px * ((3 * ' + widget.headerTextSize + ' + 36) / 81)); border: 1px solid; }';
       html += '      #sincloBox span#mainImage i.normal { color: ' + colorList['stringColor'] + '; background-color: ' + colorList['mainColor'] + '; }';
       html += '      #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px; }';
       html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border: 1px solid ' + colorList['mainColor'] + '; border-bottom:none; background-color: ' + colorList['mainColor'] + ';text-align: center; margin: 0; color: ' + colorList['stringColor'] + ' ;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
@@ -1309,7 +1308,7 @@ var socket, // socket.io
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
           html += '#sincloBox section#navigation ul { width: ' + widgetWidth + 'px }';
           html += '#sincloBox span#mainImage { top: ' + (7 * ratio) + 'px; left: ' + (8 * ratio) + 'px; }';
-          html += '#sincloBox sinclo-div#widgetHeader:after { top: ' + (32 * ratio) + 'px }';
+          html += '#sincloBox sinclo-div#widgetHeader:after { top: ' + (35 * ratio) + 'px }';
           html += '#sincloBox p#widgetTitle { border-radius: ' + (widget.radiusRatio * ratio) + 'px ' + (widget.radiusRatio * ratio) + 'px 0 0; border: ' + (1 * ratio) + 'px solid ' + colorList['mainColor'] + '; font-size: ' + (14 * ratio) + 'px; padding: ' + (7 * ratio) + 'px ' + (30 * ratio) + 'px; height: ' + (32 * ratio) + 'px; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}';
@@ -1333,27 +1332,28 @@ var socket, // socket.io
 */
             html += '#sincloBox div#closeBtn { display: none; top: ' + (7 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; z-index: 2; }';
           }
-          html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: 15px; padding: '+ (7 * ratio) + 'px 0px '+ (7 * ratio) + 'px 0px; height: auto; line-height: ' + widget.headerTextSize + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
-          html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: calc((2.5em + 46px) * ' + ratio + ');}';
+          html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 80px; height: 70px; font-size: calc(43px * ((3 * 15 + 36) / 81)); border: 1px solid; }';
+          html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: ' + (14*ratio) + 'px; padding: '+ (7 * ratio) + 'px 0px '+ (7 * ratio) + 'px 0px; height: '+ (32 * ratio) +'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+          html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: ' + (70 * ratio) + 'px;}';
           html += '      #sincloBox p#widgetTitle.leftPosition.noImage { padding-left: ' +  (15 * ratio) + 'px;}';
-          html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: ' + (25 * ratio) + 'px; padding-left: calc((2.5em + 38px) * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: ' + (30 * ratio) + 'px; padding-left: calc(2.5em + 38px);}';
           html += '      #sincloBox p#widgetTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px; }';
 
           html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; border-color: '+ colorList['widgetBorderColor'] +'; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
-          html += '      #sincloBox p#widgetSubTitle.leftPosition { padding-left: calc((2.5em + 46px) * ' + ratio + ')}';
+          html += '      #sincloBox p#widgetSubTitle.leftPosition { padding-left: ' + (70 * ratio) + 'px;}';
           html += '      #sincloBox p#widgetSubTitle.leftPosition.noImage { padding-left: ' + (15 * ratio) + 'px;}';
-          html += '      #sincloBox p#widgetSubTitle.centerPosition { text-align: center; padding-right: ' + (25 * ratio) + 'px; padding-left: calc((2.5em + 38px) * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetSubTitle.centerPosition { text-align: center; padding-right: ' + (30 * ratio) + 'px; padding-left: calc(2.5em + 38px * ' + ratio + ');}';
           html += '      #sincloBox p#widgetSubTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
-          html += '      #sincloBox p#widgetSubTitle.oneContent { line-height: calc((1em + 9px)*2*' + ratio + '); border-bottom: 1px '+ colorList['widgetBorderColor'] +' solid;}';
+          html += '      #sincloBox p#widgetSubTitle.oneContent { line-height: calc((1em + 9px)*2); padding-bottom: ' + (3.5*ratio) + 'px; padding-top: ' + (4.5*ratio) + 'px; border-bottom: 1px '+ colorList['widgetBorderColor'] +' solid;}';
           if(colorList['widgetInsideBorderNone'] === 1){
             html += '      #sincloBox p#widgetSubTitle.oneContent{ border:none;}';
           }
 
-          html += '      #sincloBox p#widgetDescription.leftPosition { padding-left: calc((2.5em + 46px) * ' + ratio + ')}';
+          html += '      #sincloBox p#widgetDescription.leftPosition { padding-left: ' + (70 * ratio) + 'px;}';
           html += '      #sincloBox p#widgetDescription.leftPosition.noImage { padding-left: ' + (15 * ratio) + 'px;}';
-          html += '      #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-right: ' + (25 * ratio) + 'px; padding-left: calc((2.5em + 38px) * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-right: ' + (30 * ratio) + 'px; padding-left: calc(2.5em + 38px * ' + ratio + ');}';
           html += '      #sincloBox p#widgetDescription.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
-          html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2*' + ratio + '); padding-bottom: ' + (3.5*ratio) + 'px; padding-top: ' + (3.5*ratio) + 'px;}';
+          html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2); padding-bottom: ' + (3.5*ratio) + 'px; padding-top: ' + (4.5*ratio) + 'px;}';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetSubTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
@@ -1657,11 +1657,12 @@ var socket, // socket.io
         html += "      #sincloBox section { width: " + sizeList['boxWidth'] + "px }";
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 8px }';
+        html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 80px; height: 70px; font-size: calc(43px * ((3 * ' + widget.headerTextSize + ' + 36) / 81)); border: 1px solid; }';
 
         html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px; height: auto; line-height: ' + widget.headerTextSize + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
-        html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 46px);}';
+        html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 41px);}';
         html += '      #sincloBox p#widgetTitle.leftPosition.noImage { padding-left: 15px;}';
-        html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: 25px; padding-left: calc(2.5em + 38px);}';
+        html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: 25px; padding-left: calc(2.5em + 33px);}';
         html += '      #sincloBox p#widgetTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px; }';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
@@ -1680,7 +1681,7 @@ var socket, // socket.io
         html += '      #sincloBox p#widgetDescription.leftPosition.noImage { padding-left: 15px;}';
         html += '      #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-right: 25px; padding-left: calc(2.5em + 38px);}';
         html += '      #sincloBox p#widgetDescription.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
-        html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2)}';
+        html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2); padding-top: 3px; padding-bottom: 3px;}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetSubTitle { border:none; }';
         }
@@ -1829,10 +1830,18 @@ var socket, // socket.io
           ratio = ($(window).width() - 20) * (1/285);
         }
         html += '  <span id="mainImage" onclick="sinclo.operatorInfo.toggle()">';
-        if(widget.mainImage.match(/^fa/) !== null) {
-          html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important;" alt="チャット画像"></i>';
+        if ( check.smartphone() ) {
+          if(widget.mainImage.match(/^fa/) !== null) {
+            html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * 14 + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像"></i>';
+          } else {
+            html += '    <img src="' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * 14 + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像">';
+          }
         } else {
-          html += '    <img src="' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + Number(widget.headerTextSize) + ' + 36) / 81))!important;" alt="チャット画像">';
+          if(widget.mainImage.match(/^fa/) !== null) {
+            html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important;" alt="チャット画像"></i>';
+          } else {
+            html += '    <img src="' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important;" alt="チャット画像">';
+          }
         }
         html += '  </span>';
       }

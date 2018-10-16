@@ -10164,6 +10164,8 @@ div.balloon {
   }
   &.oneContents{
     line-height: calc((1em + 9px)*2);
+    padding-top : 3px;
+    padding-bottom : 3px;
   }
   &.noContents {
     text-indent: 100%;
@@ -10191,7 +10193,7 @@ div.balloon {
   &.centerPositionTitle{
     text-align: center;
     padding-right: 26px;
-    padding-left: calc(2.5em + 38px);
+    padding-left: calc(2.5em + 33px);
     &.NoImage{
       padding-left: 0px;
       padding-right: 0px;
@@ -10199,7 +10201,7 @@ div.balloon {
   }
   &.leftPositionTitle{
     text-align: left;
-    padding-left: calc(2.5em + 46px);
+    padding-left: calc(2.5em + 41px);
     &.NoImage{
       padding-left: 15px;
     }
