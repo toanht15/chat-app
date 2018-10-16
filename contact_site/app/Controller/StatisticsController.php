@@ -19,8 +19,8 @@ class StatisticsController extends AppController {
       'scenarioHearing' => 22,
       'scenarioSelection' => 23,
       'scenarioReceiveFile' => 27,
-      'enteringRoom' => 98,
-      'exit' => 99
+      'enteringRoom' => 998,
+      'exit' => 999
     ],
     'requestFlg' => [
       'invalid' => 0,

@@ -1359,8 +1359,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           changeTarget = ($('#chatTab').length > 0) ? $('#chatTalk') : $('#telContent'),
           delta = windowHeight - $scope.currentWindowHeight;
 
-      if(windowHeight * 0.85 < currentWidgetHeight && delta === 0) {
-        delta = (windowHeight * 0.85) - currentWidgetHeight;
+      if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
+        delta = (windowHeight * 0.7) - currentWidgetHeight;
       }
 
       // 変更後サイズ
@@ -1375,7 +1375,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         changed = true;
         changeTarget.height($scope._getMinChatTalkHeight());
         console.log('2-2 %s ', $('#sincloBox').height());
-      } else if((delta < 0 && windowHeight * 0.85 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.85 >= afterWidgetHeight)) {
+      } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
         console.log('3 %s', delta);
         changed = true;
         changeTarget.height(changeTarget.height() + delta);
