@@ -1121,234 +1121,236 @@ io.sockets.on('connection', function(socket) {
             insertData.message_distinction = d.messageDistinction;
           }
 
-          pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error, results, fields) {
-            if (!isset(error)) {
-              if (!isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
-              var sendData = {
-                tabId: d.tabId,
-                chatId: results.insertId,
-                messageType: d.messageType,
-                created: insertData.created,
-                ret: true,
-                chatMessage: d.chatMessage,
-                siteKey: d.siteKey,
-                matchAutoSpeech: !d.notifyToCompany,
-                isScenarioMessage: d.isScenarioMessage
-              };
-
-              // 担当者のいない消費者からのメッセージの場合
-              if (d.messageType === 1 && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat')) {
-                // 応対可能かチェック(対応できるのであれば trueが返る)
-                chatApi.sendCheck(d, function(err, ret) {
-                  sendData.opFlg = ret.opFlg;
-                  //チャット呼出中メッセージ利用するの場合
-                  //チャット呼出中メッセージの場合
-                  if (ret.message == null && ret.in_flg == chatApi.cnst.inFlg.flg
-                    && d.notifyToCompany && d.initialNotification == true) {
-                    sendData.notification = true;
-                    sendData.mUserId = d.mUserId;
-                    sendData.messageDistinction = d.messageDistinction;
-                    sendData.userId = d.userId;
-                  }
-                  // 書き込みが成功したら顧客側に結果を返す
-                  //emit.toUser('sendChatResult', sendData, sId);
-                  var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
-                  sendData.sincloSessionId = sincloSessionId;
-                  if (!noReturnSelfMessage) {
-                    emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
-                  }
-                  // 保持していたオートメッセージを空にする
-                  sincloCore[d.siteKey][sincloSessionId].autoMessages;
-                  if (d.sendMailFlg) {
-                    sendMail(d.autoMessageId, results.insertId, function() {
-                      console.log("send mail");
-                    });
-                  }
-                  if (Number(insertData.message_type) === 3) return false;
-                  // 書き込みが成功したら企業側に結果を返す
-                  var sendChatData = {
-                    tabId: d.tabId,
-                    sincloSessionId: sincloSessionId,
-                    opFlg: sendData.opFlg,
-                    chatId: results.insertId,
-                    sort: fullDateTime(insertData.created),
-                    created: insertData.created,
-                    userId: insertData.m_users_id,
-                    messageType: d.messageType,
-                    ret: true,
-                    message: d.chatMessage,
-                    siteKey: d.siteKey,
-                    notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
-                  };
-                  if (functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
-                    var sId = sincloCore[d.siteKey][d.tabId].sessionId;
-                    Object.keys(customerList[d.siteKey]).forEach(function(key) {
-                      if (key.indexOf(sId) >= 0) {
-                        sendChatData.customerInfo = customerList[d.siteKey][key];
-                        chatApi.getUnreadCnt(sendChatData.customerInfo, function(ret) {
-                          sendChatData.customerInfo['chatUnreadId'] = ret.chatUnreadId;
-                          sendChatData.customerInfo['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
-                          emit.toCompany('sendChatResult', sendChatData, d.siteKey);
-                        });
-                      }
-                    });
-                  } else {
-                    emit.toCompany('sendChatResult', sendChatData, d.siteKey);
-                  }
-
-                  if (d.messageType === 1 && insertData.message_read_flg != 1) {
-                    sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
-                  }
-
-                  //通知された場合
-                  if (ret.opFlg === true && d.notifyToCompany) {
-                    pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
-                      [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields) {
-                      }
-                    );
-                    return false;
-                  }
-
-                  // 応対不可だった場合、既読にする
-                  historyId = sincloCore[d.siteKey][d.tabId].historyId;
-                  pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",
-                    [historyId, results.insertId], function(err, ret, fields) {
-                      if (d.messageType === 1) {
-                        sincloCore[d.siteKey][d.tabId].chatUnreadCnt > 0 ? sincloCore[d.siteKey][d.tabId].chatUnreadCnt-- : 0;
-                      }
-                    }
-                  );
-
-                  // 自動応対メッセージではなく、Sorryメッセージがある場合は送る
-                  if (ret.message !== "" && (!d.hasOwnProperty('isAutoSpeech') || !d.isAutoSpeech)) {
-                    // Sorryメッセージを送る
-                    var obj = d;
-                    obj.chatMessage = ret.message;
-                    obj.messageType = chatApi.cnst.observeType.sorry;
-                    obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
-                    chatApi.set(obj);
-                  }
-                });
-              }
-              else {
-                // 書き込みが成功したら顧客側に結果を返す
-                var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
-                sendData.sincloSessionId = sincloSessionId;
-                if (!noReturnSelfMessage) {
-                  emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
-                }
-                if (d.sendMailFlg) {
-                  sendMail(d.autoMessageId, results.insertId, function() {
-                    console.log("send mail");
-                  });
-                }
-                if (Number(insertData.message_type) === 3) return false;
-
-                // 書き込みが成功したら企業側に結果を返す
-
-                var sendChatData = {
-                  tabId: d.tabId,
-                  sincloSessionId: sincloSessionId,
-                  chatId: results.insertId,
-                  sort: fullDateTime(insertData.created),
-                  created: insertData.created,
-                  userId: insertData.m_users_id,
-                  messageType: d.messageType,
-                  ret: true,
-                  message: d.chatMessage,
-                  siteKey: d.siteKey,
-                  notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
-                };
-
-                if (functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
-                  var sId = sincloCore[d.siteKey][d.tabId].sessionId;
-                  Object.keys(customerList[d.siteKey]).forEach(function(key) {
-                    if (key.indexOf(sId) >= 0) {
-                      sendChatData.customerInfo = customerList[d.siteKey][key];
-                    }
-                  });
-                }
-
-                emit.toCompany('sendChatResult', sendChatData, d.siteKey);
-                if (d.messageType === 1) {
-                  sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
-                }
-              }
-
-              //オペレータリクエスト件数
-              //リクエストチャットか確認
-              if (d.messageRequestFlg == 1) {
-                var companyId = companyList[d.siteKey];
-                var getUserInfo = "SELECT chat.sc_flg as sc_flg, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
-                pool.query(getUserInfo, [companyId], function(err, result) {
-                  //ウィジェットが常に表示する場合
-                  if (result[0].display_type == 1) {
-                    //対応数上限設定ある場合
-                    if (Number(result[0].sc_flg) == 1) {
-                      //オペレータがいる場合
-                      if (isset(scList[d.siteKey])
-                        && isset(scList[d.siteKey].user)
-                        && Object.keys(scList[d.siteKey].user)
-                        && Object.keys(scList[d.siteKey].user).length !== 0) {
-                        for (key in Object.keys(scList[d.siteKey].user)) {
-                          var userId = Object.keys(scList[d.siteKey].user)[key];
-                          //対応数がMAX人数か確認
-                          if (scList[d.siteKey].user[userId] > scList[d.siteKey].cnt[userId]) {
-                            addChatActiveUser(results.insertId, userId, d.siteKey);
-                          }
-                        }
-                      }
-                    }
-                    //対応数上限設定していない場合
-                    else {
-                      //オペレータがいる場合
-                      if (isset(company.info[d.siteKey])
-                        && Object.keys(company.info[d.siteKey])
-                        && Object.keys(company.info[d.siteKey]).length !== 0) {
-                        for (key in Object.keys(company.info[d.siteKey])) {
-                          var userId = Object.keys(company.info[d.siteKey])[key];
-                          addChatActiveUser(results.insertId, userId, d.siteKey);
-                        }
-                      }
-                    }
-                  }
-
-                  //オペレータが待機中のみ表示し、待機中オペレータがいる場合場合
-                  else if (result[0].display_type == 2 && Object.keys(activeOperator[d.siteKey]) && Object.keys(activeOperator[d.siteKey]).length !== 0) {
-                    //対応数上限設定ある場合
-                    if (Number(result[0].sc_flg) == 1) {
-                      for (key in Object.keys(activeOperator[d.siteKey])) {
-                        userId = Object.keys(activeOperator[d.siteKey])[key];
-                        //対応数がMAX人数か確認
-                        if (scList[d.siteKey].user[userId] > scList[d.siteKey].cnt[userId]) {
-                          addChatActiveUser(results.insertId, userId, d.siteKey);
-                        }
-                      }
-                    }
-                    //対応数上限を設定していない場合
-                    else {
-                      for (key in Object.keys(activeOperator[d.siteKey])) {
-                        userId = Object.keys(activeOperator[d.siteKey])[key];
-                        addChatActiveUser(results.insertId, userId, d.siteKey);
-                      }
-                    }
-                  }
-                });
-              }
-            }
-
-            else {
-              // 書き込みが失敗したらエラーを渡す
-              return emit.toUser('sendChatResult', {
-                tabId: d.tabId,
-                messageType: d.messageType,
-                ret: false,
-                siteKey: d.siteKey
-              }, d.siteKey);
-            }
+          pool.query('INSERT INTO t_history_chat_logs SET ?', insertData, function(error, results) {
+            chatApi._handleInsertData(error, results, d, noReturnSelfMessage, insertData);
           });
         }
       );
+    },
+    _handleInsertData: function(error, results, d, noReturnSelfMessage, insertData) {
+      if (!isset(error)) {
+        if (!isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
+        var sendData = {
+          tabId: d.tabId,
+          chatId: results.insertId,
+          messageType: d.messageType,
+          created: insertData.created,
+          ret: true,
+          chatMessage: d.chatMessage,
+          siteKey: d.siteKey,
+          matchAutoSpeech: !d.notifyToCompany,
+          isScenarioMessage: d.isScenarioMessage,
+          hideMessage: noReturnSelfMessage ? noReturnSelfMessage : false
+        };
+
+        // 担当者のいない消費者からのメッセージの場合
+        if (d.messageType === 1 && !getChatSessionIds(d.siteKey, d.sincloSessionId, 'chat')) {
+          // 応対可能かチェック(対応できるのであれば trueが返る)
+          chatApi.sendCheck(d, function(err, ret) {
+            sendData.opFlg = ret.opFlg;
+            //チャット呼出中メッセージ利用するの場合
+            //チャット呼出中メッセージの場合
+            if (ret.message == null && ret.in_flg == chatApi.cnst.inFlg.flg
+              && d.notifyToCompany && d.initialNotification == true) {
+              sendData.notification = true;
+              sendData.mUserId = d.mUserId;
+              sendData.messageDistinction = d.messageDistinction;
+              sendData.userId = d.userId;
+            }
+            // 書き込みが成功したら顧客側に結果を返す
+            //emit.toUser('sendChatResult', sendData, sId);
+            var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
+            sendData.sincloSessionId = sincloSessionId;
+            emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
+            // 保持していたオートメッセージを空にする
+            sincloCore[d.siteKey][sincloSessionId].autoMessages;
+            if (d.sendMailFlg) {
+              sendMail(d.autoMessageId, results.insertId, function() {
+                console.log("send mail");
+              });
+            }
+            if (Number(insertData.message_type) === 3) return false;
+            // 書き込みが成功したら企業側に結果を返す
+            var sendChatData = {
+              tabId: d.tabId,
+              sincloSessionId: sincloSessionId,
+              opFlg: sendData.opFlg,
+              chatId: results.insertId,
+              sort: fullDateTime(insertData.created),
+              created: insertData.created,
+              userId: insertData.m_users_id,
+              messageType: d.messageType,
+              ret: true,
+              message: d.chatMessage,
+              siteKey: d.siteKey,
+              notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
+            };
+            if (functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
+              var sId = sincloCore[d.siteKey][d.tabId].sessionId;
+              Object.keys(customerList[d.siteKey]).forEach(function(key) {
+                if (key.indexOf(sId) >= 0) {
+                  sendChatData.customerInfo = customerList[d.siteKey][key];
+                  chatApi.getUnreadCnt(sendChatData.customerInfo, function(ret) {
+                    sendChatData.customerInfo['chatUnreadId'] = ret.chatUnreadId;
+                    sendChatData.customerInfo['chatUnreadCnt'] = ret.chatUnreadCnt ? ret.chatUnreadCnt : 0;
+                    emit.toCompany('sendChatResult', sendChatData, d.siteKey);
+                  });
+                }
+              });
+            } else {
+              emit.toCompany('sendChatResult', sendChatData, d.siteKey);
+            }
+
+            if (d.messageType === 1 && insertData.message_read_flg != 1) {
+              sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
+            }
+
+            //通知された場合
+            if (ret.opFlg === true && d.notifyToCompany) {
+              pool.query("UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;",
+                [sincloCore[d.siteKey][d.tabId].historyId, results.insertId], function(err, ret, fields) {
+                }
+              );
+              return false;
+            }
+
+            // 応対不可だった場合、既読にする
+            historyId = sincloCore[d.siteKey][d.tabId].historyId;
+            pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;",
+              [historyId, results.insertId], function(err, ret, fields) {
+                if (d.messageType === 1) {
+                  sincloCore[d.siteKey][d.tabId].chatUnreadCnt > 0 ? sincloCore[d.siteKey][d.tabId].chatUnreadCnt-- : 0;
+                }
+              }
+            );
+
+            // 自動応対メッセージではなく、Sorryメッセージがある場合は送る
+            if (ret.message !== "" && (!d.hasOwnProperty('isAutoSpeech') || !d.isAutoSpeech)) {
+              // Sorryメッセージを送る
+              var obj = d;
+              obj.chatMessage = ret.message;
+              obj.messageType = chatApi.cnst.observeType.sorry;
+              obj.messageRequestFlg = chatApi.cnst.requestFlg.noFlg;
+              chatApi.set(obj);
+            }
+          });
+        }
+        else {
+          // 書き込みが成功したら顧客側に結果を返す
+          var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
+          sendData.sincloSessionId = sincloSessionId;
+          if (!noReturnSelfMessage) {
+            emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
+          }
+          if (d.sendMailFlg) {
+            sendMail(d.autoMessageId, results.insertId, function() {
+              console.log("send mail");
+            });
+          }
+          if (Number(insertData.message_type) === 3) return false;
+
+          // 書き込みが成功したら企業側に結果を返す
+
+          var sendChatData = {
+            tabId: d.tabId,
+            sincloSessionId: sincloSessionId,
+            chatId: results.insertId,
+            sort: fullDateTime(insertData.created),
+            created: insertData.created,
+            userId: insertData.m_users_id,
+            messageType: d.messageType,
+            ret: true,
+            message: d.chatMessage,
+            siteKey: d.siteKey,
+            notifyToCompany: d.isScenarioMessage ? !d.isScenarioMessage : d.notifyToCompany
+          };
+
+          if (functionManager.isEnabled(d.siteKey, functionManager.keyList.monitorPollingMode)) {
+            var sId = sincloCore[d.siteKey][d.tabId].sessionId;
+            Object.keys(customerList[d.siteKey]).forEach(function(key) {
+              if (key.indexOf(sId) >= 0) {
+                sendChatData.customerInfo = customerList[d.siteKey][key];
+              }
+            });
+          }
+
+          emit.toCompany('sendChatResult', sendChatData, d.siteKey);
+          if (d.messageType === 1) {
+            sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
+          }
+        }
+
+        //オペレータリクエスト件数
+        //リクエストチャットか確認
+        if (d.messageRequestFlg == 1) {
+          var companyId = companyList[d.siteKey];
+          var getUserInfo = "SELECT chat.sc_flg as sc_flg, widget.display_type FROM m_companies AS comp LEFT JOIN m_widget_settings AS widget ON ( comp.id = widget.m_companies_id ) LEFT JOIN m_chat_settings AS chat ON ( chat.m_companies_id = widget.m_companies_id ) WHERE comp.id = ?;";
+          pool.query(getUserInfo, [companyId], function(err, result) {
+            //ウィジェットが常に表示する場合
+            if (result[0].display_type == 1) {
+              //対応数上限設定ある場合
+              if (Number(result[0].sc_flg) == 1) {
+                //オペレータがいる場合
+                if (isset(scList[d.siteKey])
+                  && isset(scList[d.siteKey].user)
+                  && Object.keys(scList[d.siteKey].user)
+                  && Object.keys(scList[d.siteKey].user).length !== 0) {
+                  for (key in Object.keys(scList[d.siteKey].user)) {
+                    var userId = Object.keys(scList[d.siteKey].user)[key];
+                    //対応数がMAX人数か確認
+                    if (scList[d.siteKey].user[userId] > scList[d.siteKey].cnt[userId]) {
+                      addChatActiveUser(results.insertId, userId, d.siteKey);
+                    }
+                  }
+                }
+              }
+              //対応数上限設定していない場合
+              else {
+                //オペレータがいる場合
+                if (isset(company.info[d.siteKey])
+                  && Object.keys(company.info[d.siteKey])
+                  && Object.keys(company.info[d.siteKey]).length !== 0) {
+                  for (key in Object.keys(company.info[d.siteKey])) {
+                    var userId = Object.keys(company.info[d.siteKey])[key];
+                    addChatActiveUser(results.insertId, userId, d.siteKey);
+                  }
+                }
+              }
+            }
+
+            //オペレータが待機中のみ表示し、待機中オペレータがいる場合場合
+            else if (result[0].display_type == 2 && Object.keys(activeOperator[d.siteKey]) && Object.keys(activeOperator[d.siteKey]).length !== 0) {
+              //対応数上限設定ある場合
+              if (Number(result[0].sc_flg) == 1) {
+                for (key in Object.keys(activeOperator[d.siteKey])) {
+                  userId = Object.keys(activeOperator[d.siteKey])[key];
+                  //対応数がMAX人数か確認
+                  if (scList[d.siteKey].user[userId] > scList[d.siteKey].cnt[userId]) {
+                    addChatActiveUser(results.insertId, userId, d.siteKey);
+                  }
+                }
+              }
+              //対応数上限を設定していない場合
+              else {
+                for (key in Object.keys(activeOperator[d.siteKey])) {
+                  userId = Object.keys(activeOperator[d.siteKey])[key];
+                  addChatActiveUser(results.insertId, userId, d.siteKey);
+                }
+              }
+            }
+          });
+        }
+      }
+
+      else {
+        // 書き込みが失敗したらエラーを渡す
+        return emit.toUser('sendChatResult', {
+          tabId: d.tabId,
+          messageType: d.messageType,
+          ret: false,
+          siteKey: d.siteKey
+        }, d.siteKey);
+      }
     },
     notifyCommit: function(name, d) { // DBに書き込むとき
 
@@ -3306,6 +3308,7 @@ io.sockets.on('connection', function(socket) {
           let isFeedback = apiCaller.isFeedbackMessage();
           let isExitOnConversation = apiCaller.isExitOnConversation();
           let isMessageButton = obj.chatMessage.indexOf('button_') !== -1;
+          let customerSendData = {};
           apiCaller.saveCustomerMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
               obj.stayLogsId,
               companyList[obj.siteKey],
@@ -3314,7 +3317,7 @@ io.sockets.on('connection', function(socket) {
               obj.messageDistinction,
               obj.created)
             .then((resultData) => {
-              let sendData = {
+              customerSendData = {
                 tabId: obj.tabId,
                 sincloSessionId: obj.sincloSessionId,
                 chatId: resultData.insertId,
@@ -3328,8 +3331,8 @@ io.sockets.on('connection', function(socket) {
                 matchAutoSpeech: true,
                 isScenarioMessage: false
               };
-              emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
-              emit.toCompany('sendChatResult', sendData, obj.siteKey);
+              emit.toSameUser('sendChatResult', customerSendData, obj.siteKey, obj.sincloSessionId);
+              emit.toCompany('sendChatResult', customerSendData, obj.siteKey);
               if (isFeedback && !isExitOnConversation) {
                 if (resultData.message.indexOf('はい') !== -1) {
                   return apiCaller.sendTo(apiCaller.messageType.FEEDBACK_YES, null);
@@ -3337,9 +3340,9 @@ io.sockets.on('connection', function(socket) {
                   return apiCaller.sendTo(apiCaller.messageType.FEEDBACK_NO, null);
                 }
               } else if (isMessageButton) {
-                return apiCaller.sendTo(apiCaller.messageType.PUSH_BUTTON, sendData.chatMessage);
+                return apiCaller.sendTo(apiCaller.messageType.PUSH_BUTTON, customerSendData.chatMessage);
               } else {
-                return apiCaller.sendTo(apiCaller.messageType.TEXT, sendData.chatMessage);
+                return apiCaller.sendTo(apiCaller.messageType.TEXT, customerSendData.chatMessage);
               }
             })
             .then((text) => {
@@ -3353,7 +3356,7 @@ io.sockets.on('connection', function(socket) {
                     obj.messageDistinction,
                     obj.created)
                     .then((resultData) => {
-                      var sendData = {
+                      let sendData = {
                         tabId: obj.tabId,
                         sincloSessionId: obj.sincloSessionId,
                         chatId: resultData.insertId,
@@ -3375,6 +3378,10 @@ io.sockets.on('connection', function(socket) {
                 }
               }
               if (apiCaller.isSwitchingOperator()) {
+                obj.notifyToCompany = true;
+                obj.matchAutoSpeech = false;
+                obj.isScenarioMessage = false;
+                obj.initialNotification = true;
                 //リクエストメッセージの場合
                 if (obj.messageRequestFlg == 1) {
                   //消費者が初回メッセージを送る前にオペレータが入室した場合
@@ -3382,11 +3389,11 @@ io.sockets.on('connection', function(socket) {
                     if (Object.keys(results) && Object.keys(result).length !== 0) {
                       obj.messageRequestFlg = 0;
                     }
-                    chatApi.set(obj, true);
+                    chatApi._handleInsertData(null, results, obj, true, customerSendData);
                   });
                 }
                 else {
-                  chatApi.set(obj, true);
+                  chatApi._handleInsertData(null, results, obj, true, customerSendData);
                 }
                 if (ack) ack();
               } else {
