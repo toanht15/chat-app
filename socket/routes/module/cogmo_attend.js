@@ -8,7 +8,8 @@ var eventEmitter = new events.EventEmitter();
 eventEmitter.setMaxListeners(50);
 
 /**
- * 実装はEcmaScript 2015準拠
+ * Cogmo Attend API連携用クラス
+ * 実装はEcmaScript 6準拠
  * @type {module.CogmoAttendAPICaller}
  */
 module.exports = class CogmoAttendAPICaller extends APICaller {
@@ -31,6 +32,13 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     this._callApi();
   }
 
+  /**
+   * Cogmo Attend APIにメッセージを送信する
+   * @see this.messageType
+   * @param type Cogmo Attend APIのメッセージ種別
+   * @param text 送信するメッセージ
+   * @returns {Promise}
+   */
   sendTo(type, text) {
     switch (type) {
       case this.messageType.TEXT:
@@ -44,8 +52,18 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     }
   }
 
+  /**
+   * サイト訪問者が送信したメッセージを保存する
+   * @param historyId
+   * @param stayLogsId
+   * @param companiesId
+   * @param visitorsId
+   * @param msg
+   * @param distinction
+   * @param created
+   */
   saveCustomerMessage(historyId, stayLogsId, companiesId, visitorsId, msg, distinction, created) {
-    var insertData = {
+    let insertData = {
       t_histories_id: historyId,
       m_companies_id: companiesId,
       visitors_id: visitorsId,
@@ -60,9 +78,19 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return this.processSave(insertData, stayLogsId, created);
   }
 
+  /**
+   * CogmoAttend APIが返却したメッセージを保存する
+   * @param historyId
+   * @param stayLogsId
+   * @param companiesId
+   * @param visitorsId
+   * @param msg
+   * @param distinction
+   * @param created
+   */
   saveMessage(historyId, stayLogsId, companiesId, visitorsId, msg, distinction, created) {
     this.logger.info('SAVE message : %s(%s)', msg, this._getChatbotMessageType());
-    var insertData = {
+    let insertData = {
       t_histories_id: historyId,
       m_companies_id: companiesId,
       visitors_id: visitorsId,
@@ -77,6 +105,11 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return this.processSave(insertData, stayLogsId, created);
   }
 
+  /**
+   * メソッドを呼び出した地点の前のデータがfeedbackかどうか
+   * <code>this.sendTo</code>をコールした地点で状態が変わるため注意
+   * @returns {boolean}
+   */
   isFeedbackMessage() {
     if (this.beforeContext) {
       return this.beforeContext.feedback ? this.beforeContext.feedback : false;
@@ -84,6 +117,11 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return false;
   }
 
+  /**
+   * メソッドを呼び出した地点の前のデータが会話終了状態かどうか
+   * <code>this.sendTo</code>をコールした地点で状態が変わるため注意
+   * @returns {boolean}
+   */
   isExitOnConversation() {
     if (this.beforeContext && this.beforeContext.system) {
       return this.beforeContext.system.branch_exited ? this.beforeContext.system.branch_exited : false;
@@ -91,6 +129,10 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return false;
   }
 
+  /**
+   * オペレータに切り替えする状態かどうか
+   * @returns {boolean}
+   */
   isSwitchingOperator() {
     if (this.beforeContext) {
       return this.opInsert;
@@ -98,28 +140,55 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return false;
   }
 
+  /**
+   * テキストタイプのメッセージをCogmo Attend APIに送信する
+   * @param text 送信するテキストメッセージ
+   * @private
+   */
   _sendText(text) {
     super.body = this._createJSONdata(this.sessionId, text, this.messageType.TEXT, this.beforeContext);
     return this._callApi();
   }
 
+  /**
+   * ボタンタイプのメッセージをCogmo Attend APIに送信する
+   * @param text 送信するテキストメッセージ（ボタンのラベル）
+   * @private
+   */
   _sendPushButton(text) {
     super.body = this._createJSONdata(this.sessionId, 'button_' + text, this.messageType.PUSH_BUTTON, this.beforeContext);
     return this._callApi();
   }
 
+  /**
+   * フィードバック（はい）のメッセージをCogmo Attend APIに送信する
+   * @private
+   */
   _sendFeedbackYes() {
     this._deleteFeedbackKey();
     super.body = this._createJSONdata(this.sessionId, 'button_はい<END>', this.messageType.FEEDBACK_YES, this.beforeContext);
     return this._callApi();
   }
 
+  /**
+   * フィードバック（いいえ）のメッセージをCogmo Attend APIに送信する
+   * @private
+   */
   _sendFeedbackNo() {
     this._deleteFeedbackKey();
     super.body = this._createJSONdata(this.sessionId, 'button_いいえ<END>', this.messageType.FEEDBACK_NO, this.beforeContext);
     return this._callApi();
   }
 
+  /**
+   * Cogmo Attend APIに送信するためのJSONデータを生成する
+   * @param sid セッションID
+   * @param text 送信するメッセージ
+   * @param type 送信するメッセージタイプ
+   * @param context 1つ前の状態のcontext
+   * @returns {{input: {text: *}, context: *, alternate_intents: boolean, uuid: string, _ex: {sessionId: *, type: *, gaId: null}}}
+   * @private
+   */
   _createJSONdata(sid, text, type, context) {
     let defaultJSONdata = {
       input: {
@@ -137,6 +206,11 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return defaultJSONdata;
   };
 
+  /**
+   * Cogmo Attend APIを呼ぶ
+   * @returns {Promise<any>}
+   * @private
+   */
   _callApi() {
     return new Promise(((resolve, reject) => {
       super.call().then((response) => {
@@ -153,6 +227,11 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     }));
   }
 
+  /**
+   * sincloのmessageTypeを返却
+   * @returns {number}
+   * @private
+   */
   _getChatbotMessageType() {
     var isFeedback = this.isFeedbackMessage();
     //var isExitOnConversation = this.isExitOnConversation();
@@ -163,6 +242,10 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     }
   }
 
+  /**
+   * 1つ前のcontextからfeedbackのキーを削除する
+   * @private
+   */
   _deleteFeedbackKey() {
     if (this.beforeContext) {
       delete this.beforeContext.feedback;
