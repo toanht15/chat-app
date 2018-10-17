@@ -995,7 +995,7 @@ io.sockets.on('connection', function(socket) {
         flg: 1
       }
     },
-    set: function(d) { // メッセージが渡されてきたとき
+    set: function(d, noReturnSelfMessage) { // メッセージが渡されてきたとき
       if (!getSessionId(d.siteKey, d.tabId, 'sessionId')) {
         sincloReconnect(socket);
         return false;
@@ -1013,7 +1013,7 @@ io.sockets.on('connection', function(socket) {
       // チャットidがある
       else {
         // DBへ書き込む
-        this.commit(d);
+        this.commit(d, noReturnSelfMessage);
       }
     },
     get: function(obj) { // 最初にデータを取得するとき
@@ -1088,7 +1088,7 @@ io.sockets.on('connection', function(socket) {
         emit.toMine('chatMessageData', obj, socket);
       }
     },
-    commit: function(d) { // DBに書き込むとき
+    commit: function(d, noReturnSelfMessage) { // DBに書き込むとき
       var insertData = {
         t_histories_id: sincloCore[d.siteKey][d.tabId].historyId,
         m_companies_id: companyList[d.siteKey],
@@ -1154,7 +1154,9 @@ io.sockets.on('connection', function(socket) {
                   //emit.toUser('sendChatResult', sendData, sId);
                   var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
                   sendData.sincloSessionId = sincloSessionId;
-                  emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
+                  if (!noReturnSelfMessage) {
+                    emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
+                  }
                   // 保持していたオートメッセージを空にする
                   sincloCore[d.siteKey][sincloSessionId].autoMessages;
                   if (d.sendMailFlg) {
@@ -1232,7 +1234,9 @@ io.sockets.on('connection', function(socket) {
                 // 書き込みが成功したら顧客側に結果を返す
                 var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
                 sendData.sincloSessionId = sincloSessionId;
-                emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
+                if (!noReturnSelfMessage) {
+                  emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);
+                }
                 if (d.sendMailFlg) {
                   sendMail(d.autoMessageId, results.insertId, function() {
                     console.log("send mail");
@@ -3378,11 +3382,11 @@ io.sockets.on('connection', function(socket) {
                     if (Object.keys(results) && Object.keys(result).length !== 0) {
                       obj.messageRequestFlg = 0;
                     }
-                    chatApi.set(obj);
+                    chatApi.set(obj, true);
                   });
                 }
                 else {
-                  chatApi.set(obj);
+                  chatApi.set(obj, true);
                 }
                 if (ack) ack();
               } else {
