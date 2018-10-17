@@ -3293,16 +3293,16 @@ io.sockets.on('connection', function(socket) {
           obj.messageDistinction = results[0].conversation_count;
         }
         if (functionManager.isEnabled(obj.siteKey, functionManager.keyList.useCogmoAttendApi)
-          && !sincloCore[obj.siteKey][obj.tabId].chat) {
+          && !sincloCore[obj.siteKey][obj.tabId].chat
+          && (isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller) && sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isSwitchingOperator())) {
           if (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller)) {
             sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller();
           }
           let apiCaller = sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller;
           let isFeedback = apiCaller.isFeedbackMessage();
-          let isExitOnConversation = sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isExitOnConversation();
+          let isExitOnConversation = apiCaller.isExitOnConversation();
           let isMessageButton = obj.chatMessage.indexOf('button_') !== -1;
-          sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller
-            .saveCustomerMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
+          apiCaller.saveCustomerMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
               obj.stayLogsId,
               companyList[obj.siteKey],
               obj.userId,
@@ -3310,7 +3310,7 @@ io.sockets.on('connection', function(socket) {
               obj.messageDistinction,
               obj.created)
             .then((resultData) => {
-              var sendData = {
+              let sendData = {
                 tabId: obj.tabId,
                 sincloSessionId: obj.sincloSessionId,
                 chatId: resultData.insertId,
@@ -3338,7 +3338,7 @@ io.sockets.on('connection', function(socket) {
                 return apiCaller.sendTo(apiCaller.messageType.TEXT, sendData.chatMessage);
               }
             })
-            .then(function(text) {
+            .then((text) => {
               if (Array.isArray(text)) {
                 for (let i = 0; i < text.length; i++) {
                   apiCaller.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
@@ -3386,7 +3386,7 @@ io.sockets.on('connection', function(socket) {
                 }
                 if (ack) ack();
               } else {
-                return;
+                // 有人に切り替えないのであれば何もしない
               }
             }, function(err) {
               console.log('COGMO ATTEND CALLBACK REJECT : ' + err);

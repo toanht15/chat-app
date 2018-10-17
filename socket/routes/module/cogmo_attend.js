@@ -219,7 +219,7 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
           this.sessionId = response.sessionId;
         }
         this.beforeContext = response.context;
-        this.opInsert = response.context.op_insert ? response.context.op_insert : false;
+        this.opInsert = response.context.op_insert ? response.context.op_insert.toLowerCase() === "true" : false;
         resolve(response.output.text);
       }, (error) => {
         reject(error);
