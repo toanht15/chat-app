@@ -7,6 +7,10 @@ var events = require('events');
 var eventEmitter = new events.EventEmitter();
 eventEmitter.setMaxListeners(50);
 
+/**
+ * 実装はEcmaScript 2015準拠
+ * @type {module.CogmoAttendAPICaller}
+ */
 module.exports = class CogmoAttendAPICaller extends APICaller {
   constructor() {
     super();
@@ -27,23 +31,6 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     this._callApi();
   }
 
-  _createJSONdata(sid, text, type, context) {
-    let defaultJSONdata = {
-      input: {
-        text: text
-      },
-      context: context,
-      alternate_intents: true,
-      uuid: this.systemUUID,
-      _ex: {
-        sessionId: sid,
-        type: type,
-        gaId: null
-      }
-    };
-    return defaultJSONdata;
-  };
-
   sendTo(type, text) {
     switch (type) {
       case this.messageType.TEXT:
@@ -55,65 +42,6 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
       case this.messageType.FEEDBACK_NO:
         return this._sendFeedbackNo();
     }
-  }
-
-  _sendText(text) {
-    super.body = this._createJSONdata(this.sessionId, text, this.messageType.TEXT, this.beforeContext);
-    return this._callApi();
-  }
-
-  _sendPushButton(text) {
-    super.body = this._createJSONdata(this.sessionId, 'button_' + text, this.messageType.PUSH_BUTTON, this.beforeContext);
-    return this._callApi();
-  }
-
-  _sendFeedbackYes() {
-    this._deleteFeedbackKey();
-    super.body = this._createJSONdata(this.sessionId, 'button_はい<END>', this.messageType.FEEDBACK_YES, this.beforeContext);
-    return this._callApi();
-  }
-
-  _sendFeedbackNo() {
-    this._deleteFeedbackKey();
-    super.body = this._createJSONdata(this.sessionId, 'button_いいえ<END>', this.messageType.FEEDBACK_NO, this.beforeContext);
-    return this._callApi();
-  }
-
-  _callApi() {
-    return new Promise(((resolve, reject) => {
-      super.call().then((response) => {
-        this.logger.debug('RESPONSE DATA : %s', JSON.stringify(response));
-        if (response.sessionId) {
-          this.sessionId = response.sessionId;
-        }
-        this.beforeContext = response.context;
-        this.opInsert = response.context.op_insert ? response.context.op_insert : false;
-        resolve(response.output.text);
-      }, (error) => {
-        reject(error);
-      });
-    }));
-  }
-
-  isSwitchingOperator() {
-    if (this.beforeContext) {
-      return this.opInsert;
-    }
-    return false;
-  }
-
-  isFeedbackMessage() {
-    if (this.beforeContext) {
-      return this.beforeContext.feedback ? this.beforeContext.feedback : false;
-    }
-    return false;
-  }
-
-  isExitOnConversation() {
-    if (this.beforeContext && this.beforeContext.system) {
-      return this.beforeContext.system.branch_exited ? this.beforeContext.system.branch_exited : false;
-    }
-    return false;
   }
 
   saveCustomerMessage(historyId, stayLogsId, companiesId, visitorsId, msg, distinction, created) {
@@ -147,6 +75,82 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     };
 
     return this.processSave(insertData, stayLogsId, created);
+  }
+
+  isFeedbackMessage() {
+    if (this.beforeContext) {
+      return this.beforeContext.feedback ? this.beforeContext.feedback : false;
+    }
+    return false;
+  }
+
+  isExitOnConversation() {
+    if (this.beforeContext && this.beforeContext.system) {
+      return this.beforeContext.system.branch_exited ? this.beforeContext.system.branch_exited : false;
+    }
+    return false;
+  }
+
+  isSwitchingOperator() {
+    if (this.beforeContext) {
+      return this.opInsert;
+    }
+    return false;
+  }
+
+  _sendText(text) {
+    super.body = this._createJSONdata(this.sessionId, text, this.messageType.TEXT, this.beforeContext);
+    return this._callApi();
+  }
+
+  _sendPushButton(text) {
+    super.body = this._createJSONdata(this.sessionId, 'button_' + text, this.messageType.PUSH_BUTTON, this.beforeContext);
+    return this._callApi();
+  }
+
+  _sendFeedbackYes() {
+    this._deleteFeedbackKey();
+    super.body = this._createJSONdata(this.sessionId, 'button_はい<END>', this.messageType.FEEDBACK_YES, this.beforeContext);
+    return this._callApi();
+  }
+
+  _sendFeedbackNo() {
+    this._deleteFeedbackKey();
+    super.body = this._createJSONdata(this.sessionId, 'button_いいえ<END>', this.messageType.FEEDBACK_NO, this.beforeContext);
+    return this._callApi();
+  }
+
+  _createJSONdata(sid, text, type, context) {
+    let defaultJSONdata = {
+      input: {
+        text: text
+      },
+      context: context,
+      alternate_intents: true,
+      uuid: this.systemUUID,
+      _ex: {
+        sessionId: sid,
+        type: type,
+        gaId: null
+      }
+    };
+    return defaultJSONdata;
+  };
+
+  _callApi() {
+    return new Promise(((resolve, reject) => {
+      super.call().then((response) => {
+        this.logger.debug('RESPONSE DATA : %s', JSON.stringify(response));
+        if (response.sessionId) {
+          this.sessionId = response.sessionId;
+        }
+        this.beforeContext = response.context;
+        this.opInsert = response.context.op_insert ? response.context.op_insert : false;
+        resolve(response.output.text);
+      }, (error) => {
+        reject(error);
+      });
+    }));
   }
 
   _getChatbotMessageType() {
