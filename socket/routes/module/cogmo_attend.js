@@ -8,7 +8,7 @@ var eventEmitter = new events.EventEmitter();
 eventEmitter.setMaxListeners(50);
 
 module.exports = class CogmoAttendAPICaller extends APICaller {
-  constructor () {
+  constructor() {
     super();
     this.systemUUID = 'c0d70609-e31e-4ba0-ac59-d26701f3402c';
     super.url = 'https://attend.cogmo.jp/api/v2/conversation/' + this.systemUUID;
@@ -27,7 +27,7 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     this._callApi();
   }
 
-  _createJSONdata (sid, text, type, context) {
+  _createJSONdata(sid, text, type, context) {
     let defaultJSONdata = {
       input: {
         text: text
@@ -44,33 +44,46 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return defaultJSONdata;
   };
 
-  sendText (text) {
+  sendTo(type, text) {
+    switch (type) {
+      case this.messageType.TEXT:
+        return this._sendText(text);
+      case this.messageType.PUSH_BUTTON:
+        return this._sendPushButton(text);
+      case this.messageType.FEEDBACK_YES:
+        return this._sendFeedbackYes();
+      case this.messageType.FEEDBACK_NO:
+        return this._sendFeedbackNo();
+    }
+  }
+
+  _sendText(text) {
     super.body = this._createJSONdata(this.sessionId, text, this.messageType.TEXT, this.beforeContext);
     return this._callApi();
   }
 
-  sendPushButton (text) {
+  _sendPushButton(text) {
     super.body = this._createJSONdata(this.sessionId, 'button_' + text, this.messageType.PUSH_BUTTON, this.beforeContext);
     return this._callApi();
   }
 
-  sendFeedbackYes () {
+  _sendFeedbackYes() {
     this._deleteFeedbackKey();
     super.body = this._createJSONdata(this.sessionId, 'button_はい<END>', this.messageType.FEEDBACK_YES, this.beforeContext);
     return this._callApi();
   }
 
-  sendFeedbackNo () {
+  _sendFeedbackNo() {
     this._deleteFeedbackKey();
     super.body = this._createJSONdata(this.sessionId, 'button_いいえ<END>', this.messageType.FEEDBACK_NO, this.beforeContext);
     return this._callApi();
   }
 
-  _callApi () {
+  _callApi() {
     return new Promise(((resolve, reject) => {
       super.call().then((response) => {
         this.logger.debug('RESPONSE DATA : %s', JSON.stringify(response));
-        if(response.sessionId) {
+        if (response.sessionId) {
           this.sessionId = response.sessionId;
         }
         this.beforeContext = response.context;
@@ -82,28 +95,28 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     }));
   }
 
-  isSwitchingOperator () {
-    if(this.beforeContext) {
+  isSwitchingOperator() {
+    if (this.beforeContext) {
       return this.opInsert;
     }
     return false;
   }
 
-  isFeedbackMessage () {
-    if(this.beforeContext) {
+  isFeedbackMessage() {
+    if (this.beforeContext) {
       return this.beforeContext.feedback ? this.beforeContext.feedback : false;
     }
     return false;
   }
 
-  isExitOnConversation () {
-    if(this.beforeContext && this.beforeContext.system) {
+  isExitOnConversation() {
+    if (this.beforeContext && this.beforeContext.system) {
       return this.beforeContext.system.branch_exited ? this.beforeContext.system.branch_exited : false;
     }
     return false;
   }
 
-  saveCustomerMessage (historyId, stayLogsId, companiesId, visitorsId, msg, distinction, created) {
+  saveCustomerMessage(historyId, stayLogsId, companiesId, visitorsId, msg, distinction, created) {
     var insertData = {
       t_histories_id: historyId,
       m_companies_id: companiesId,
@@ -119,8 +132,8 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return this.processSave(insertData, stayLogsId, created);
   }
 
-  saveMessage (historyId, stayLogsId, companiesId, visitorsId, msg, distinction, created) {
-    this.logger.info('SAVE message : %s(%s)',msg,this._getChatbotMessageType());
+  saveMessage(historyId, stayLogsId, companiesId, visitorsId, msg, distinction, created) {
+    this.logger.info('SAVE message : %s(%s)', msg, this._getChatbotMessageType());
     var insertData = {
       t_histories_id: historyId,
       m_companies_id: companiesId,
@@ -136,17 +149,17 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
     return this.processSave(insertData, stayLogsId, created);
   }
 
-  _getChatbotMessageType () {
+  _getChatbotMessageType() {
     var isFeedback = this.isFeedbackMessage();
     //var isExitOnConversation = this.isExitOnConversation();
     if (isFeedback) {
       return 82;
-    }  else {
+    } else {
       return 81;
     }
   }
 
-  _deleteFeedbackKey () {
+  _deleteFeedbackKey() {
     if (this.beforeContext) {
       delete this.beforeContext.feedback;
     }
