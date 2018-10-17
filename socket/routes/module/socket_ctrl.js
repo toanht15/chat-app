@@ -3230,13 +3230,14 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
         }
         if(functionManager.isEnabled(obj.siteKey, functionManager.keyList.useCogmoAttendApi)
           && !sincloCore[obj.siteKey][obj.tabId].chat) {
-          if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend)) {
-            sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend = new CogmoAttendAPICaller();
+          if(!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller)) {
+            sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller();
           }
-          var isFeedback = sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isFeedbackMessage();
-          var isExitOnConversation = sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isExitOnConversation();
-          var isMessageButton = obj.chatMessage.indexOf('button_') !== -1;
-          sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend
+          let apiCaller = sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller;
+          let isFeedback = apiCaller.isFeedbackMessage();
+          let isExitOnConversation = sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isExitOnConversation();
+          let isMessageButton = obj.chatMessage.indexOf('button_') !== -1;
+          sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller
             .saveCustomerMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
               obj.stayLogsId,
               companyList[obj.siteKey],
@@ -3263,20 +3264,27 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
               emit.toCompany('sendChatResult', sendData, obj.siteKey);
               if(isFeedback && !isExitOnConversation) {
                 if(resultData.message.indexOf('はい') !== -1) {
-                  return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendFeedbackYes();
+                  return apiCaller.sendTo(apiCaller.messageType.FEEDBACK_YES, null);
                 } else if(resultData.message.indexOf('いいえ') !== -1) {
-                  return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendFeedbackNo();
+                  return apiCaller.sendTo(apiCaller.messageType.FEEDBACK_NO, null);
                 }
               } else if (isMessageButton) {
-                return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendPushButton(sendData.chatMessage);
+                return apiCaller.sendTo(apiCaller.messageType.PUSH_BUTTON, sendData.chatMessage);
               } else {
-                return sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.sendText(sendData.chatMessage);
+                return apiCaller.sendTo(apiCaller.messageType.TEXT, sendData.chatMessage);
               }
             })
             .then(function(text) {
               if(Array.isArray(text)) {
                 for(let i = 0; i < text.length; i++) {
-                  sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId, obj.stayLogsId, companyList[obj.siteKey], obj.userId, text[i], obj.messageDistinction, obj.created).then((resultData) => {
+                  apiCaller.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
+                    obj.stayLogsId,
+                    companyList[obj.siteKey],
+                    obj.userId,
+                    text[i],
+                    obj.messageDistinction,
+                    obj.created)
+                    .then((resultData) => {
                     var sendData = {
                       tabId: obj.tabId,
                       sincloSessionId: obj.sincloSessionId,
@@ -3290,36 +3298,35 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
                       siteKey: obj.siteKey,
                       matchAutoSpeech: true,
                       isScenarioMessage: false,
-                      isFeedbackMsg: sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isFeedbackMessage(),
-                      isExitOnConversation: sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isExitOnConversation()
+                      isFeedbackMsg: sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isFeedbackMessage(),
+                      isExitOnConversation: sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isExitOnConversation()
                     };
                     emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
                     emit.toCompany('sendChatResult', sendData, obj.siteKey);
                   });
                 }
               }
+              if(apiCaller.isSwitchingOperator()) {
+                //リクエストメッセージの場合
+                if(obj.messageRequestFlg == 1){
+                  //消費者が初回メッセージを送る前にオペレータが入室した場合
+                  pool.query('SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',[obj.userId,obj.historyId,obj.messageDistinction], function (err, result) {
+                    if(Object.keys(results) && Object.keys(result).length !== 0) {
+                      obj.messageRequestFlg = 0;
+                    }
+                    chatApi.set(obj);
+                  });
+                }
+                else {
+                  chatApi.set(obj);
+                }
+                if(ack) ack();
+              } else {
+                return;
+              }
             }, function(err){
               console.log('COGMO ATTEND CALLBACK REJECT : ' + err);
             });
-            if(ack) ack();
-          if(sincloCore[obj.siteKey][obj.sincloSessionId].cogmoAttend.isSwitchingOperator()) {
-            //リクエストメッセージの場合
-            if(obj.messageRequestFlg == 1){
-              //消費者が初回メッセージを送る前にオペレータが入室した場合
-              pool.query('SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',[obj.userId,obj.historyId,obj.messageDistinction], function (err, result) {
-                if(Object.keys(results) && Object.keys(result).length !== 0) {
-                  obj.messageRequestFlg = 0;
-                }
-                chatApi.set(obj);
-              });
-            }
-            else {
-              chatApi.set(obj);
-            }
-            if(ack) ack();
-          } else {
-            return false;
-          }
         } else {
           //リクエストメッセージの場合
           if(obj.messageRequestFlg == 1){
