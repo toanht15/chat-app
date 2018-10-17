@@ -1642,7 +1642,7 @@
                     chatId: obj.chatId,
                     mUserId: obj.mUserId,
                     userId: obj.userId,
-                  }
+                  };
                   emit("sendInitialNotificationChat", {messageList: sendData});
                 }
                 storage.s.set('callingMessageSeconds',data[times].seconds);
@@ -1653,7 +1653,7 @@
         if (obj.messageType == sinclo.chatApi.messageType.notification) {
           return false;
         }
-        if(obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
+        if(!obj.hideMessage && obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
