@@ -427,6 +427,7 @@
         </span>
       </section>
     <?php endif; ?>
+    <?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>
     <!-- chat_message_copy 0 stayt -->
     <p id="footer" ng-if="chat_message_copy == '1'" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}" style="user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
     <!-- chat_message_copy 0 end -->
@@ -434,5 +435,6 @@
     <!-- chat_message_copy 1 stayt -->
     <p id="footer" ng-if="chat_message_copy == '0'" ng-class="{ notNoneWidgetOutsideBorder:widget_outside_border_none === ''||widget_outside_border_none === false}" >Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
     <!-- chat_message_copy 1 end -->
+    <?php endif; ?>
   </div>
 </div>
