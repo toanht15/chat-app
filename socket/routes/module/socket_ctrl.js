@@ -3294,7 +3294,7 @@ io.sockets.on('connection', function(socket) {
         }
         if (functionManager.isEnabled(obj.siteKey, functionManager.keyList.useCogmoAttendApi)
           && !sincloCore[obj.siteKey][obj.tabId].chat
-          && (isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller) && sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isSwitchingOperator())) {
+          && (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller) || !sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isSwitchingOperator())) {
           if (!isset(sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller)) {
             sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller = new CogmoAttendAPICaller();
           }
