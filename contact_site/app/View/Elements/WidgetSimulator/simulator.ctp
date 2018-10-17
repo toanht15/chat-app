@@ -630,7 +630,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
           </span>
         </section>
       <?php endif; ?>
+        <?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>
         <p id="footer" ng-class="{ notNoneWidgetOutsideBorder:widget.widget_outside_border_none === ''||widget.widget_outside_border_none === false, disableCopy: widget.settings['chat_message_copy']== '1'}">Powered by <a target="sinclo" href="https://sinclo.medialink-ml.co.jp/lp/?utm_medium=web-widget&utm_campaign=widget-referral">sinclo</a></p>
+        <?php endif; ?>
       </div>
     </div>
 
