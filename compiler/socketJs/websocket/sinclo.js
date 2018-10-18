@@ -1471,6 +1471,11 @@
         } else if (obj.messageType === sinclo.chatApi.messageType.cogmo.message
           || obj.messageType === sinclo.chatApi.messageType.cogmo.feedback) {
           cn = "sinclo_re";
+          if (window.sincloInfo.widget.showAutomessageName === 2) {
+            userName = "";
+          } else {
+            userName = window.sincloInfo.widget.subTitle;
+          }
           elm.value = "";
         }
         if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
@@ -1631,7 +1636,13 @@
             (function (times) {
               setTimeout(function () {
                 if (storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
-                  sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
+                  var userName = "";
+                  if (window.sincloInfo.widget.showAutomessageName === 2) {
+                    userName = "";
+                  } else {
+                    userName = window.sincloInfo.widget.subTitle;
+                  }
+                  sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, userName);
                   sinclo.chatApi.scDown();
                   var sendData = {
                     siteKey: obj.siteKey,
