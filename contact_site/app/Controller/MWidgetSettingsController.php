@@ -19,7 +19,7 @@ class MWidgetSettingsController extends AppController {
       'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
       /* 隠しパラメータstart */
-      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
+      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_scroll_view_setting','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
       /* 隠しパラメータend */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
@@ -261,6 +261,8 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
     $this->set('spMiximizeSizeType', Configure::read('widgetSpMiximizeSizeType'));
+    $this->set('widgetSpPositionType', Configure::read('widgetSpPositionType'));
+    $this->set('widgetSpViewPattern' , Configure::read('widgetSpViewPattern'));
   }
 
   /* *
@@ -660,11 +662,6 @@ class MWidgetSettingsController extends AppController {
              * デフォルト値は機能が本格的に
              * 実装されるまで設定しない    */
 
-            //スマホ_小さなバナー表示位置
-            /*if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['sp_banner_position'] = C_SP_BANNER_POSITION; // デフォルト値
-            }*/
-
             //スマホ小さなバナー縦の上から割合
             if ( strcmp($v, 'sp_banner_vertical_position_from_top') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_banner_vertical_position_from_top'] = "50%"; // デフォルト値
@@ -676,23 +673,31 @@ class MWidgetSettingsController extends AppController {
             }*/
 
             //スマホ小さなバナー横の割合
-            /*if ( strcmp($v, 'sp_banner_horizontal_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if ( strcmp($v, 'sp_banner_horizontal_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['sp_banner_horizontal_position'] = "5px"; // デフォルト値
-            }*/
-
-            //スマホ_小さなバナーテキスト
-            /*if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['sp_banner_text'] = C_BANNER_TEXT; // デフォルト値
-            }*/
-
-            //スマホ_ウィジェット状態フラグ
-            /*if ( strcmp($v, 'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['sp_widget_view_pattern'] = C_SP_WIDGET_VIEW_PATTERN; // デフォルト値
-            }*/
-
-
+            }
 
             /* スマホ用隠しパラメータend */
+
+            //スマホ_スクロール中の表示制御
+            if ( strcmp($v, 'sp_scroll_view_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d[' sp_scroll_view_setting'] = C_SP_SCROLL_VIEW_SETTING; // デフォルト値
+            }
+
+            //スマホ_小さなバナー表示位置
+            if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_position'] = C_SP_BANNER_POSITION; // デフォルト値(PCの右下左下を取得したい)
+            }
+
+            //スマホ_小さなバナーテキスト
+            if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_text'] = C_BANNER_TEXT; // デフォルト値
+            }
+
+            //スマホ_ウィジェット状態フラグ
+            if ( strcmp($v, 'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_widget_view_pattern'] = C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER; // デフォルト値
+            }
 
             //閉じるボタン
             /* カラー設定styat */

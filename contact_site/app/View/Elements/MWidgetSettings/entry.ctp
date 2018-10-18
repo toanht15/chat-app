@@ -1031,18 +1031,6 @@ $headerNo = 1;
           </li>
           <!-- 閉じるボタン -->
           <?php /*スマホ隠しパラメータ*/ ?>
-          <?php if(isset($this->data['MWidgetSetting']['sp_banner_position'])){?>
-            <?= $this->ngForm->input('sp_banner_position', [
-              'type' => 'hidden',
-              'div' => false,
-              'label' => false,
-              'string-to-number' => true,
-              'default' => 1
-            ],
-            [
-              'entity' => 'MWidgetSetting.sp_banner_position'
-            ]) ?>
-          <?php }?>
           <?= $this->ngForm->input('sp_banner_vertical_position_from_top', [
             'type' => 'hidden',
             'div' => false,
@@ -1070,29 +1058,6 @@ $headerNo = 1;
           [
             'entity' => 'MWidgetSetting.sp_banner_horizontal_position'
           ]) ?>
-          <?php if(isset($this->data['MWidgetSetting']['sp_banner_text'])){?>
-          <?= $this->ngForm->input('sp_banner_text', [
-            'type' => 'hidden',
-            'div' => false,
-            'label' => false,
-            'default' => "チャットで相談"
-          ],
-          [
-            'entity' => 'MWidgetSetting.sp_banner_text'
-          ]) ?>
-          <?php }?>
-          <?php if(isset($this->data['MWidgetSetting']['sp_widget_view_pattern'])){?>
-          <?= $this->ngForm->input('sp_widget_view_pattern', [
-            'type' => 'hidden',
-            'div' => false,
-            'label' => false,
-            'string-to-number' => true,
-            'default' => 1
-          ],
-          [
-            'entity' => 'MWidgetSetting.sp_widget_view_pattern'
-          ]) ?>
-          <?php }?>
         </ul>
       </section>
 
@@ -1293,13 +1258,94 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('sp_show_flg') ) echo $this->Form->error('sp_show_flg', null, ['wrap' => 'li']); ?>
           <!-- ウィジェットの表示   -->
-
+          <!-- スクロール中の表示制御 -->
+           <li>
+            <span class="require"><label>ウィジェットの表示制御</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_scroll_view_setting', [
+                'type' => 'checkbox',
+                'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
+                'ng-checked' => 'sp_scroll_view_setting ==="1"',
+                'ng-change' => 'resetSpView()',
+                'legend' => false,
+                'separator' => '</label><br><label class="pointer">',
+                'div' => false,
+                'class' => 'showSp',
+                'label' => "スクロール中は非表示にする",
+                'error' => false
+              ],
+              [
+                'entity' => 'MWidgetSetting.sp_scroll_view_setting'
+              ]) ?></label></pre>
+          </li>
+          <!-- スクロール中の表示制御 -->
+          <!-- ウィジェットの状態 -->
+          <li>
+            <span class="require"><label>ウィジェットの状態</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_widget_view_pattern', [
+              'type' => 'radio',
+              'options' => $widgetSpViewPattern,
+              'ng-change' => 'resetSpView()',
+              'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'" || closeButtonModeTypeToggle == "2" || closeButtonSettingToggle == "1"',
+              'legend' => false,
+              'separator' => '</label><br><label class="pointer">',
+              'class' => 'showSp',
+              'div' => false,
+              'label' => false,
+              'string-to-number' => true,
+              'default' => 1
+            ],
+            [
+              'entity' => 'MWidgetSetting.sp_widget_view_pattern'
+            ]) ?></label></pre>
+          </li>
+          <!-- ウィジェットの状態 -->
+          <!-- 小さなバナーの表示位置 -->
+          <li>
+            <span class="require"><label>小さなバナー表示位置</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_banner_position', [
+              'type' => 'radio',
+              'options' => $widgetSpPositionType,
+              'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'" || closeButtonModeTypeToggle == "2" || closeButtonSettingToggle == "1"',
+              'legend' => false,
+              'ng-change' => 'forceSpCloseWidget()',
+              'separator' => '</label><br><label class="pointer">',
+              'class' => 'showSp',
+              'div' => false,
+              'label' => false,
+              'string-to-number' => true,
+              'default' => 1
+            ],
+            [
+              'entity' => 'MWidgetSetting.sp_banner_position'
+            ]) ?></label></pre>
+          </li>
+          <!-- 小さなバナーの表示位置 -->
+          <!-- 小さなバナーのタイトル -->
+          <li>
+            <span class="require"><label>小さなバナーのタイトル</label></span>
+            <pre><label><?= $this->ngForm->input('sp_banner_text', [
+              'type' => 'text',
+              'placeholder' => 'バナーテキスト',
+              'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'" || closeButtonModeTypeToggle == "2" || closeButtonSettingToggle == "1"',
+              'div' => false,
+              'label' => false,
+              'maxlength' => 15,
+              'error' => false,
+              'ng-focus' => 'switchWidget(3)',
+              'ng-maxlength' => "false"
+            ],
+            [
+              'entity' => 'MWidgetSetting.sp_banner_text'
+            ]) ?></label></pre>
+          </li>
+          <!-- 小さなバナーのタイトル -->
           <!-- シンプル表示 -->
           <li>
             <span class="require"><label>最大時のシンプル表示</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('sp_header_light_flg', [
                 'type' => 'radio',
                 'options' => $normalChoices,
+                'ng-change' => 'resetSpView()',
                 'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                 'legend' => false,
                 'separator' => '</label><br><label class="pointer">',
@@ -1344,6 +1390,7 @@ $headerNo = 1;
                   'options' => $spMiximizeSizeType,
                   'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                   'legend' => false,
+                  'ng-change' => 'resetSpView()',
                   'separator' => '</label><br><label class="pointer">',
                   'class' => 'showSp',
                   'div' => false,

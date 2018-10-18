@@ -53,7 +53,7 @@ class TAutoMessagesController extends AppController {
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
       'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
-      'btw_button_margin', 'line_button_margin'
+      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_scroll_view_setting','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
     'chat' => ['chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
@@ -1739,6 +1739,44 @@ class TAutoMessagesController extends AppController {
             if ( strcmp($v, 'widget_title_explain_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_title_explain_type'] = WIDGET_TITLE_EXPLAIN_TYPE_LEFT; // デフォルト値
             }
+
+            //スマホ小さなバナー縦の上から割合
+            if ( strcmp($v, 'sp_banner_vertical_position_from_top') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_vertical_position_from_top'] = "50%"; // デフォルト値
+            }
+
+            //スマホ小さなバナー縦の下から割合
+            /*if ( strcmp($v, 'sp_banner_vertical_position_from_bottom') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_vertical_position_from_bottom'] = "5px"; // デフォルト値
+            }*/
+
+            //スマホ小さなバナー横の割合
+            if ( strcmp($v, 'sp_banner_horizontal_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_horizontal_position'] = "5px"; // デフォルト値
+            }
+
+            /* スマホ用隠しパラメータend */
+
+            //スマホ_スクロール中の表示制御
+            if ( strcmp($v, 'sp_scroll_view_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d[' sp_scroll_view_setting'] = C_SP_SCROLL_VIEW_SETTING; // デフォルト値
+            }
+
+            //スマホ_小さなバナー表示位置
+            if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_position'] = C_SP_BANNER_POSITION; // デフォルト値(PCの右下左下を取得したい)
+            }
+
+            //スマホ_小さなバナーテキスト
+            if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_text'] = C_BANNER_TEXT; // デフォルト値
+            }
+
+            //スマホ_ウィジェット状態フラグ
+            if ( strcmp($v, 'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_widget_view_pattern'] = C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER; // デフォルト値
+            }
+
 
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];

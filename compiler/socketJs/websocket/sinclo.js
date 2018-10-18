@@ -276,6 +276,7 @@
         if ( check.android() && storage.s.get('closeAct') === 'true') {
           return false;
         }
+
         var openflg = sinclo.widget.condifiton.get();
 
         var height = document.getElementById('widgetTitle').clientHeight;
@@ -283,12 +284,24 @@
           height = 60;
         }
         var enableArea = browserInfo.scrollSize().y - height;
+
         if (enableArea < window.scrollY && String(openflg) === "false") {
           sincloBox.style.opacity = 0;
         }
         else {
-          sincloBox.style.opacity = 1;
+          if(typeof window.sincloInfo.widget.spScrollViewSetting !== "undefined" && Number(window.sincloInfo.widget.spScrollViewSetting) === 1){
+            //スクロール中はsincloBoxを隠す設定
+            console.info("<><><><>スクロール中非表示設定<><><><>");
+            sincloBox.style.opacity = 0;
+            setTimeout(function() {
+              sincloBox.style.opacity = 1;
+            },10);
+          }
+          else {
+            sincloBox.style.opacity = 1;
+          }
         }
+
         sinclo.operatorInfo.widgetHideTimer = setTimeout(function(){
           if ( Number(sincloBox.style.opacity) === 0 ) {
             sincloBox.style.display = "none";

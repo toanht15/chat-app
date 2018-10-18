@@ -29,6 +29,74 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     $scope.trimmingInfo = "{}";
 
+    $scope.viewSpWidget = true;
+
+    $scope.beforeSpbPosition = 0;
+
+    $scope.resetSpView = function(){
+      $scope.viewSpWidget = true;
+      $scope.openFlg = true;
+
+    }
+
+    $scope.forceSpCloseWidget = function(){
+       $scope.viewSpWidget = false;
+       $scope.openFlg = false;
+       console.log($scope.sp_banner_position);
+    }
+
+    $scope.closeAct = function(){
+      //閉じるボタンを押された時の挙動
+      console.log($scope.showWidgetType);
+      switch($scope.showWidgetType) {
+      case 1:
+        $scope.switchWidget(4);
+        break;
+      case 3:
+      //スマホ（縦）で押された場合
+      if(Number($scope.closeButtonModeTypeToggle) === 2){
+      //閉じるボタンで非表示になる場合は、非表示タブを表示する
+        $scope.switchWidget(4);
+      } else {
+      //閉じるボタンで小さなバナーになる場合は、スマートフォン（縦）で表示する
+        console.log('スマホ（縦）で小さなバナーを表示する');
+        $scope.spViewHandler(3);
+      }
+        break;
+      }
+    }
+
+    $scope.spViewHandler = function(type){
+      //typeはウィジェットの状態
+      //1:最大化／2:最小化／3:小さなバナー
+      if(type === 3){
+        $scope.viewSpWidget = false;
+      } else {
+        console.log('スマホ用小さなバナーがクリックされました');
+        $scope.viewSpWidget = true;
+        $scope.openFlg = true;
+      }
+    }
+
+    $scope.spBannerTypeHandler = function(){
+      var bannerClass = {};
+      switch(Number($scope.sp_banner_position)){
+      case 1:
+        bannerClass.rightbottom = true;
+        break;
+      case 2:
+        bannerClass.leftbottom = true;
+        break;
+      case 3:
+        bannerClass.rightcenter = true;
+        break;
+      case 4:
+        bannerClass.leftcenter = true;
+        break;
+      }
+      return bannerClass;
+    }
+
     $scope.switchWidget = function(num){
       $scope.showWidgetType = num;
       sincloChatMessagefocusFlg = true;
@@ -74,6 +142,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       else{
         var lastSwitchWidget = 1;
       }
+      if (lastSwitchWidget === 3) {
+      //スマホ縦は個別に値を保持している為、強制的に通常表示に遷移させる
+        lastSwitchWidget = 1;
+      }
+
       sincloBox.style.display = 'block';
       $scope.switchWidget(lastSwitchWidget);
       $scope.openFlg = true;
@@ -128,13 +201,27 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       //いったん文字数でのサイズ調整を行い、その後spanタグの長さで調整（span内で文字が折り返さないように）
       var bannerWidth = (oneByteCount * 8) + (towByteCount * 12.7) + 50;
       $('#sincloBanner').css("width", bannerWidth + "px");
-
       var targetSpan = $('#bannertext').get(0);
-
+      //スマホ縦であれば少し違う調整方法を行う
       if(targetSpan) {
         console.log(targetSpan.offsetWidth);
         bannerWidth = targetSpan.offsetWidth + 50;
         $('#sincloBanner').css("width", bannerWidth + "px");
+      }
+      if(Number($scope.showWidgetType) === 3){
+        $scope.ctrlSpBannerWidth();
+      }
+    }
+
+    $scope.ctrlSpBannerWidth = function() {
+      var targetSpan = $('#bannertext').get(0);
+      if(Number($scope.beforeSpbPosition) === 3 || Number($scope.beforeSpbPosition) === 4){
+        if(targetSpan) {
+          console.log('中央からの遷移');
+          console.log(targetSpan.offsetHeight);
+          var bannerWidth = targetSpan.offsetHeight + 44;
+          $('#sincloBanner').css("width", bannerWidth + "px");
+        }
       }
     }
 
@@ -1263,6 +1350,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           return;
         }
         console.log("changed");
+        $scope.beforeSpbPosition = $scope.sp_banner_position;
         //初期表示タイミングと自動最大化設定の齟齬を無くす
         var MaxShowTimeSite = $("#MWidgetSettingMaxShowTime"),
             MaxShowTimePage = $("#MWidgetSettingMaxShowTimePage");
@@ -1895,6 +1983,13 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     }
 
     angular.element(window).on("click", ".widgetOpener", function(){
+      if(Number($scope.closeButtonSettingToggle) === 2 && Number($scope.closeButtonModeTypeToggle) === 1){
+        //閉じるボタンが無効な場合や、非表示にする場合は2段階オプションの判定をさせない
+        if(Number($scope.showWidgetType) === 3 && Number($scope.sp_widget_view_pattern) === 3){
+          //2段階表示の時は即座にバナー状態にさせる
+          $scope.closeAct();
+        }
+      }
       var sincloBox = document.getElementById("sincloBox");
       var nextFlg = true;
       if ( $scope.openFlg ) {
