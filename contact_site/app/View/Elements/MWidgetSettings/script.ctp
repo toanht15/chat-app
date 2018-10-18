@@ -2013,10 +2013,14 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     }
 
     var setHeaderImageSetting = function(obj){
-      if (Number($scope.mainImageToggle) === 1){
-        obj["Image"] = true;
-      } else if (Number($scope.mainImageToggle) === 2){
+      if ( Number($scope.mainImageToggle) === 2
+         ||(Number($scope.sp_header_light_flg) === 1 && $scope.openFlg && $('#widgetTitle').hasClass("sp"))
+         ||((Number($scope.minimizedDesignToggle) === 2 || Number($scope.minimizedDesignToggle) === 3) && !$scope.openFlg && $('#widgetTitle').hasClass("sp"))
+         ||(Number($scope.minimizedDesignToggle) === 3 && !$scope.openFlg && !$('#widgetTitle').hasClass("sp"))
+         ){
         obj["NoImage"] = true;
+      } else if (Number($scope.mainImageToggle) === 1){
+        obj["Image"] = true;
       }
       return obj;
     }
