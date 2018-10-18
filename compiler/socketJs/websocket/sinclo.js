@@ -1596,6 +1596,12 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
+          cn = "sinclo_re";
+          if (window.sincloInfo.widget.showAutomessageName === 2) {
+            userName = "";
+          } else {
+            userName = window.sincloInfo.widget.subTitle;
+          }
           //Sorryメッセージが複数回呼ばれた場合は、タイマーが重複しないよう削除する
           if(sinclo.sorryMsgTimer){
             clearTimeout(sinclo.sorryMsgTimer);
@@ -1604,7 +1610,7 @@
           sinclo.sorryMsgTimer = setTimeout(function(){
             cn = "sinclo_re";
             sinclo.chatApi.call();
-            sinclo.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
+            sinclo.chatApi.createMessage(cn, obj.chatMessage, userName);
             if(sinclo.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
               sinclo.chatApi.notify(obj.chatMessage);
             } else {
