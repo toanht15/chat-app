@@ -1474,7 +1474,7 @@ var socket, // socket.io
           }
           html += '#sincloBox section#navigation ul li::before { margin-right: ' + (5 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; }';
           /* Cogmo */
-          html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { padding: ' + (10 * ratio) + 'px; border-radius: ' + (12 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0px; }';
+          html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { font-size: ' + (12 * ratio) + 'px; padding: ' + (10 * ratio) + 'px; border-radius: ' + (12 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0px; }';
           html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap:hover { opacity: 0.8 }';
           html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
