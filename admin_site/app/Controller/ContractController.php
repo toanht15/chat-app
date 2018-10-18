@@ -759,6 +759,7 @@ class ContractController extends AppController
     $this->MChatSetting->create();
     $this->MChatSetting->set(array(
       "m_companies_id" => $m_companies_id,
+      "sc_login_default_status" => $default['sc_login_default_status'],
       "sc_flg" => $default['sc_flg'],
       "in_flg" => $default['in_flg'],
       "sc_default_num" => $default['sc_default_num'],

@@ -210,7 +210,7 @@
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
-      var strings = message.split('\n');
+      var strings = message.split(/\n|<br>/g);
       var custom = "";
       var isSmartphone = false;
       var radioName = "sinclo-radio" + Object.keys(chat).length;
@@ -249,8 +249,8 @@
           sendFile: 6,
           notification: 7,
           linkClick: 8,
-          start: 98,
-          end: 99,
+          start: 998,
+          end: 999,
           scenario: {
             customer: {
               hearing: 12,
@@ -267,6 +267,10 @@
               receiveFile: 27,
               returnBulkHearing: 40
             }
+          },
+          cogmo: {
+            message: 81,
+            feedback: 82
           }
         }
       };
@@ -405,7 +409,7 @@
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
-      else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry) {
+      else if ( type === chatApi.messageType.auto || type === chatApi.messageType.sorry || type === chatApi.messageType.cogmo.message || type === chatApi.messageType.cogmo.feedback ) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");

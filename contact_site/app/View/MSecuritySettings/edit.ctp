@@ -12,7 +12,7 @@
     <section>
       <h3>ログイン時IP制御設定</h3>
       <div class="content">
-        <h2 id="contentExplain">指定した接続元IPアドレス以外からのsinclo管理画面の使用を制限します。</h2>
+        <h2 id="contentExplain">指定した接続元IPアドレス以外からの<?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>sinclo<?php endif; ?>管理画面の使用を制限します。</h2>
         <ul>
           <li>
             <div id='ip_filter_enable_select_area'>

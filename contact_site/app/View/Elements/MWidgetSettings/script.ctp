@@ -1012,27 +1012,10 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     };
 
     $scope.indicateSimpleNoImage = function(){
-      if($scope.widget_title_top_type == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
-      }
-      if($scope.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
-      }
     }
 
     $scope.indicateSimpleImage = function(){
-      if($scope.widget_title_top_type == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: calc(2.5em + 46px) !important;'});
-      }
-      if($scope.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important; padding-right:26px !important; padding-left:calc(2.5em + 38px) !important;'});
-      }
     }
-
-//     //旧・シンプル表示
-//     $scope.spHeaderLightToggle = function(){
-//      return ( $scope.showWidgetType === 3 && $scope.sp_header_light_flg === '<?=C_SELECT_CAN?>' );
-//     };
 
     $scope.showGallary = function(){
       $.ajax({
@@ -1128,18 +1111,40 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     }
 
     $scope.switchMaxTextSize = function(size){
+      //テキストサイズの最大値を変更します
       var settingHeaderText = document.getElementById('MWidgetSettingHeaderTextSize');
       var settingReText = document.getElementById('MWidgetSettingReTextSize');
       var settingSeText = document.getElementById('MWidgetSettingSeTextSize');
-      var headerTextSize = 20;
-      var textSize = 20;
-      if(Number(size) === 4){
-        headerTextSize = 42;
-        textSize = 64;
+      var settingSendBtnText = document.getElementById('MWidgetSettingChatSendBtnTextSize');
+      var headerTextSize = 0;
+      var textSize = 0;
+      var sendBtnTextSize = 0;
+      switch(size) {
+      case 1:
+        var headerTextSize = 20;
+        var textSize = 20;
+        var sendBtnTextSize = 26;
+        break;
+      case 2:
+        var headerTextSize = 20;
+        var textSize = 20;
+        var sendBtnTextSize = 30;
+        break;
+      case 3:
+        var headerTextSize = 20;
+        var textSize = 20;
+        var sendBtnTextSize = 36;
+        break;
+      case 4:
+        var headerTextSize = 64;
+        var textSize = 42;
+        var sendBtnTextSize = 36;
+        break;
       }
       settingHeaderText.max = headerTextSize;
       settingReText.max = textSize;
       settingSeText.max = textSize;
+      settingSendBtnText.max = sendBtnTextSize;
     }
 
     //ウィジェットサイズがクリックされた時の動作
@@ -1149,6 +1154,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $scope.revertStandardTextSize('header_text_size');
       $scope.revertStandardTextSize('re_text_size');
       $scope.revertStandardTextSize('se_text_size');
+      $scope.revertStandardTextSize('chat_send_btn_text_size');
+      $scope.revertStandardTextSize('message_box_text_size');
       if($('#chatTalk').length > 0) {
         $('#chatTalk').css('height', '');
       } else {
@@ -1352,8 +1359,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           changeTarget = ($('#chatTab').length > 0) ? $('#chatTalk') : $('#telContent'),
           delta = windowHeight - $scope.currentWindowHeight;
 
-      if(windowHeight * 0.85 < currentWidgetHeight && delta === 0) {
-        delta = (windowHeight * 0.85) - currentWidgetHeight;
+      if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
+        delta = (windowHeight * 0.7) - currentWidgetHeight;
       }
 
       // 変更後サイズ
@@ -1368,7 +1375,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         changed = true;
         changeTarget.height($scope._getMinChatTalkHeight());
         console.log('2-2 %s ', $('#sincloBox').height());
-      } else if((delta < 0 && windowHeight * 0.85 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.85 >= afterWidgetHeight)) {
+      } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
         console.log('3 %s', delta);
         changed = true;
         changeTarget.height(changeTarget.height() + delta);
@@ -1591,9 +1598,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if(e.currentTarget.id == 'showSubtitle1') {
         $('#widgetTitleNameTypeLabel1').css('display','block');
         $('#widgetTitleNameTypeLabel2').css('display','block');
-        if($('#MWidgetSettingSubTitle').val() == "") {
-          $('#widgetSubTitle').css('height','23px');
-        }
       }
       //企業名を表示しない場合
       if(e.currentTarget.id == 'showSubtitle2') {
@@ -1607,36 +1611,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if(e.currentTarget.id == 'showDescription1') {
         $('#widgetTitleExplainTypeLabel1').css('display','block');
         $('#widgetTitleExplainTypeLabel2').css('display','block');
-        if($('#MWidgetSettingDescription').val() == "") {
-          $('#widgetDescription').css('height','23px');
-        }
       }
       //説明文を表示しない場合
       if(e.currentTarget.id == 'showDescription2') {
         $('#widgetTitleExplainTypeLabel1').css('display','none');
         $('#widgetTitleExplainTypeLabel2').css('display','none');
-      }
-    });
-
-    angular.element('input[name="data[MWidgetSetting][widget_title_name_type]"]').on('change', function(e){
-      //企業名を左寄せにする場合
-      if(e.currentTarget.id == 'widgetTitleNameType1') {
-        $('#widgetSubTitle').css('text-align','left');
-      }
-      //企業名を中央寄せにする倍
-      if(e.currentTarget.id == 'widgetTitleNameType2') {
-        $('#widgetSubTitle').css('text-algin','center');
-      }
-    });
-
-    angular.element('input[name="data[MWidgetSetting][widget_title_explain_type]"]').on('change', function(e){
-      //説明文を左寄せにする場合
-      if(e.currentTarget.id == 'widgetTitleNameTypeLabel1') {
-        $('#widgetSubTitle').css('text-align','left');
-      }
-      //説明文を中央寄せにする場合
-      if(e.currentTarget.id == 'widgetTitleNameTypeLabel2') {
-        $('#widgetSubTitle').css('text-algin','center');
       }
     });
 
@@ -1696,6 +1675,24 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         targetMessageUI.css('visibility', 'visible');
       },600);
     });
+
+    $scope.changeSubtitle = function() {
+      if(String ($('#MWidgetSettingSubTitle').val()) === "" && Number($('input[name="data[MWidgetSetting][show_subtitle]"]:checked').val()) === 1) {
+        $('#widgetSubTitle').text("　");
+      } else {
+        $('#widgetSubTitle').text($scope.sub_title);
+      }
+    }
+
+    $scope.changeDescription = function() {
+      if(String ($('#MWidgetSettingDescription').val()) === "" && Number($('input[name="data[MWidgetSetting][show_description]"]:checked').val()) === 1){
+        $('#widgetDescription').text("　");
+      } else {
+        $('#widgetDescription').text($scope.description);
+      }
+    }
+
+
 
     $scope.$watch('chat_message_copy', function(){
       // 代入される値の型にバラつきがあるので文字列で統一させる
@@ -1929,6 +1926,180 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       // 元に戻すボタンが押されたらconfirmを出さない
       $scope.changeFlg = false;
       window.location.reload();
+    }
+
+    //param : String型 ng-classで付けたい情報を渡す
+    //TODO 受け取った情報をカンマで分割してfor文を回したほうがいい
+    $scope.viewWidgetSetting = function (param){
+      var widgetClasses = {};
+      if(typeof param !== 'undefined' && param.indexOf("size") !== -1){
+        widgetClasses = setWidgetSizeSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("sp") !== -1){
+        widgetClasses = setSmartPhoneSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("toptitle") !== -1){
+        widgetClasses = setTitlePositionSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("topname") !== -1){
+        widgetClasses = setHeaderNamePositionSetting(widgetClasses);;
+      }
+      if(typeof param !== 'undefined' && param.indexOf("desc") !== -1){
+        widgetClasses = setHeaderDescPositionSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("topimg") !== -1){
+        widgetClasses = setHeaderImageSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("outsideborder") !== -1){
+        widgetClasses = setOutSideBorderSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("insideborder") !== -1){
+        widgetClasses = setInSideBorderSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("headercontent") !== -1){
+        widgetClasses = setHeaderContentSetting(widgetClasses);
+      }
+      return widgetClasses;
+    }
+
+    /*ng-class用のオブジェクトを設定する関数群--開始--*/
+
+
+    var setWidgetSizeSetting = function (obj){
+      obj.middleSize = judgeSize("middle");
+      obj.largeSize = judgeSize("large");
+      return obj;
+    }
+
+    var setSmartPhoneSetting = function (obj){
+      obj.spText = isSmartPhonePortrait();
+      obj.sp = isSmartPhonePortrait();
+      return obj;
+    }
+
+    var setTitlePositionSetting = function(obj){
+      if (Number($scope.widget_title_top_type) === 1){
+        obj["leftPositionTitle"] = true;
+      } else if (Number($scope.widget_title_top_type) === 2){
+        obj["centerPositionTitle"] = true;
+      }
+      return obj;
+    }
+
+    var setHeaderNamePositionSetting = function(obj){
+      if (Number($scope.subTitleToggle) === 2){
+        obj["noCompany"] = true;
+      } else if (Number($scope.subTitleToggle) === 1){
+        if (Number($scope.widget_title_name_type) === 1){
+          obj["leftPosition"] = true;
+        } else if (Number($scope.widget_title_name_type) === 2) {
+          obj["centerPosition"] = true;
+        }
+      }
+      return obj;
+    }
+
+    var setHeaderDescPositionSetting = function(obj){
+      if (Number($scope.descriptionToggle) === 2){
+        obj["noExplain"] = true;
+      } else if (Number($scope.descriptionToggle) === 1){
+        if (Number($scope.widget_title_explain_type) === 1){
+          obj["leftPosition"] = true;
+        } else if (Number($scope.widget_title_explain_type) === 2) {
+          obj["centerPosition"] = true;
+        }
+      }
+      return obj;
+    }
+
+    var setHeaderImageSetting = function(obj){
+      if ( Number($scope.mainImageToggle) === 2
+         ||(Number($scope.sp_header_light_flg) === 1 && $scope.openFlg && $('#widgetTitle').hasClass("sp"))
+         ||((Number($scope.minimizedDesignToggle) === 2 || Number($scope.minimizedDesignToggle) === 3) && !$scope.openFlg && $('#widgetTitle').hasClass("sp"))
+         ||(Number($scope.minimizedDesignToggle) === 3 && !$scope.openFlg && !$('#widgetTitle').hasClass("sp"))
+         ){
+        obj["NoImage"] = true;
+      } else if (Number($scope.mainImageToggle) === 1){
+        obj["Image"] = true;
+      }
+      return obj;
+    }
+
+    var setOutSideBorderSetting = function(obj){
+      if (Number($scope.widget_outside_border_none === '' || $scope.widget_outside_border_none === false)){
+        obj["notNoneWidgetOutsideBorder"] = true;
+      } else {
+
+      }
+      return obj;
+    }
+
+    var setInSideBorderSetting = function(obj){
+      if (Number($scope.widget_inside_border_none === '' || $scope.widget_inside_border_none === false)){
+        obj["notNone"] = true;
+      } else {
+
+      }
+      return obj;
+    }
+
+    var setHeaderContentSetting = function(obj){
+      if(Number($scope.descriptionToggle) === 1 && Number($scope.subTitleToggle) === 1){
+        obj["twoContents"] = true;
+      } else if (Number($scope.descriptionToggle) === 1 || Number($scope.subTitleToggle) === 1){
+        obj["oneContents"] = true;
+      } else if (Number($scope.descriptionToggle) === 2 || Number($scope.subTitleToggle) === 2){
+        obj["noContents"] = true;
+      }
+      return obj;
+    }
+
+    /*ng-class用のオブジェクトを設定する関数群--終了--*/
+
+
+
+
+    //size : String型 small,middle,large のいずれか
+    //現状の設定が渡されたサイズかどうかを判別する
+    //return : boolean型
+    var judgeSize = function(size){
+
+       //通常表示でない場合は判定させない
+      if(Number($scope.showWidgetType !== 1)){
+        return false;
+      }
+
+      switch(size){
+      case "small":
+        //現状設定が無いため判別無し
+        return true;
+      break;
+      case "middle":
+        if(Number($scope.widgetSizeTypeToggle) === 2){
+          return true;
+        } else {
+          return false;
+        }
+      break;
+      case "large":
+        if(Number($scope.widgetSizeTypeToggle) === 3 || Number($scope.widgetSizeTypeToggle) === 4){
+          return true;
+        } else {
+          return false;
+        }
+      break;
+      default:
+        //デフォルトはfalseを返す
+        return false;
+      }
+    }
+
+    var isSmartPhonePortrait = function(){
+      if(Number($scope.showWidgetType) === 3){
+        return true;
+      } else {
+        return false;
+      }
     }
 
     angular.element(window).on("click", ".widgetOpener", function(){

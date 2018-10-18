@@ -920,7 +920,7 @@ ul.ulTab {
     }
     li:hover {
       background-color: #C3D69B;
-      /*color: #fff;*/
+      color: #fff;
       text-decoration: none;
       display: block;
       padding: 10px 10px 10px;
@@ -931,6 +931,10 @@ ul.ulTab {
         color:#fff !important;
       }
     }
+    a.link_up{
+      text-decoration: none;
+      display: block;
+    }
     li.t-link {
       padding: 0px 0px 0px;
       width: 100%;
@@ -938,6 +942,7 @@ ul.ulTab {
       cursor:pointer;
       text-align: center;
       display:flex;
+      align-items: center;
       padding-left: 3px;
       a{
         text-decoration: none;
@@ -954,6 +959,10 @@ ul.ulTab {
         padding: 6px 0px;
         color: #595959;
         margin-left:10px;
+      }
+      span {
+        display: block;
+        padding: 10px 10px 10px 7.5px;
       }
       .smallFal {
         font-size:17px;
@@ -3359,7 +3368,7 @@ ul.naviBtn {
   #customer_tab {
     position: fixed;
     bottom: 0;
-    left: 60px;
+    left: 83px;
     z-index: $sub-sidebar-z-index;
 
     ul {
@@ -4574,6 +4583,10 @@ ul.naviBtn {
                 display: block;
                 font-size: 13px;
                 color: #333333;
+                img.img-responsive {
+                  width:50%;
+                  height:auto;
+                }
               }
           }
           &.sinclo_se span.cName{
@@ -10144,80 +10157,84 @@ div.balloon {
   height:0;
 }
 
-.leftPositionImage {
-  text-align:left !important;
-  padding-left:calc(2.5em + 46px) !important;
+/*管理画面上のウィジェットプレビュー*/
+#sincloBox p#widgetSubTitle, #sincloBox p#widgetDescription{
+  &.centerPosition{
+    text-align: center;
+    padding-left: calc(2.5em + 38px);
+    padding-right: 26px;
+    &.NoImage{
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+  &.leftPosition{
+    text-align: left;
+    padding-left: calc(2.5em + 46px);
+    &.NoImage{
+      padding-left: 15px;
+    }
+  }
+  &.oneContents{
+    line-height: calc((1em + 9px)*2);
+    padding-top : 3px;
+    padding-bottom : 3px;
+    &.spText{
+      padding-top: 5px;
+      padding-bottom: 4px;
+    }
+  }
+  &.noContents {
+    text-indent: 100%;
+    height: calc(1em + 12px);
+    &.sp {
+      height: calc(1em + 13px);
+    }
+  }
 }
 
-.centerPositionImage {
-  text-align:center !important;
-  padding-right: 26px !important;
-  padding-left: calc(2.5em + 38px) !important;
+#sincloBox p#widgetSubTitle.noCompany:not(.noContents){
+  display: none;
 }
 
-.leftPositionNoImage {
-  text-align:left !important;
-  padding-left:15px !important;
+#sincloBox p#widgetDescription{
+  &.noExplain:not(.noContents){
+    display: none;
+  }
+  &.details:not(.notNone){
+    border-bottom: none;
+  }
 }
 
-.centerPositionNoImage {
-  text-align:center !important;
-  padding-left:0px !important;
-  padding-right:0px !important;
+#sincloBox p#widgetTitle{
+  &.centerPositionTitle{
+    text-align: center;
+    padding-right: 26px;
+    padding-left: calc(2.5em + 33px);
+    &.NoImage{
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+  }
+  &.leftPositionTitle{
+    text-align: left;
+    padding-left: calc(2.5em + 41px);
+    &.NoImage{
+      padding-left: 15px;
+    }
+  }
 }
 
-.leftPositionImageCompany {
-  text-align:left !important;
-  height:52px !important;
-  line-height:52px !important;
-  padding:0 0 0 78px !important;
+#sincloBox span#mainImage{
+  i.sp, img.sp{
+    width: 62px;
+    height: 70px;
+    font-size: 43px;
+  }
 }
 
-.centerPositionImageCompany {
-  text-align:center !important;
-  height:52px !important;
-  line-height:52px !important;
-  padding: 0 26px 0 70px !important;
-}
 
-.leftPositionNoImageCompany {
-  text-align:left !important;
-  height:52px !important;
-  line-height:52px !important;
-  padding:0 0 0 15px !important;
-}
 
-.centerPositionNoImageCompany {
-  text-align:center !important;
-  height:52px !important;
-  line-height:52px !important;
-  padding:0 0 0 0px !important;
-}
-
-.noCompanyImageExplain {
-  height:0px !important;
-  padding:0px !important;
-}
-
-.leftPositionImageTitle{
-  text-align: left !important;
-  padding:7px 0px 7px calc(2.5em + 46px) !important;
-}
-
-.centerPositionImageTitle {
-  text-align: center !important;
-  padding: 7px 26px 7px calc(2.5em + 38px) !important;
-}
-
-.leftPositionNoImageTitle {
-  text-align: left !important;
-  padding: 7px 0px 7px 15px !important;
-}
-
-.centerPositionNoImageTitle {
-  text-align: center !important;
-  padding: 7px 0px 7px 0px !important;
-}
 
 /*資料一覧*/
 #afs-popup {
