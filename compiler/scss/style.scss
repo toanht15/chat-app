@@ -10179,6 +10179,10 @@ div.balloon {
     line-height: calc((1em + 9px)*2);
     padding-top : 3px;
     padding-bottom : 3px;
+    &.spText{
+      padding-top: 5px;
+      padding-bottom: 4px;
+    }
   }
   &.noContents {
     text-indent: 100%;
