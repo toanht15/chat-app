@@ -2211,8 +2211,8 @@ var socket, // socket.io
                 sincloBox.setAttribute('data-screen', 'vertical'); // 縦向き
               }
 
-            // スクロールをした時に、ページ下部であれば透過する
-            window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
+            // スクロールをした時の処理群
+            window.addEventListener('scroll',sinclo.operatorInfo.widgetHide);
 
             // 画面を回転ときは、向きによってスタイルを変える
             window.addEventListener('orientationchange', function(){

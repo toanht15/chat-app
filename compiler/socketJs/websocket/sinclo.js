@@ -265,11 +265,25 @@
         }
       },
       widgetHideTimer: null,
+      nowScrollTimer: null,
+      firstCallwidgetHide: true,
       widgetHide: function(e) {
+
+        if(sinclo.operatorInfo.firstCallwidgetHide){
+          sinclo.operatorInfo.firstCallwidgetHide = false;
+          return;
+        }
+
         if(sinclo.operatorInfo.widgetHideTimer) {
           clearTimeout(sinclo.operatorInfo.widgetHideTimer);
           sinclo.operatorInfo.widgetHideTimer = null;
         }
+
+        if(sinclo.operatorInfo.nowScrollTimer) {
+          clearTimeout(sinclo.operatorInfo.nowScrollTimer);
+          sinclo.operatorInfo.nowScrollTimer = null;
+        }
+
         if(e) e.stopPropagation();
         var sincloBox = document.getElementById('sincloBox');
         if ( !sincloBox ) return false;
@@ -289,13 +303,15 @@
           sincloBox.style.opacity = 0;
         }
         else {
-          if(typeof window.sincloInfo.widget.spScrollViewSetting !== "undefined" && Number(window.sincloInfo.widget.spScrollViewSetting) === 1){
+          if(typeof window.sincloInfo.widget.spScrollViewSetting !== "undefined" &&
+             Number(window.sincloInfo.widget.spScrollViewSetting) === 1 &&
+             storage.l.get('widgetMaximized') === "false"){
             //スクロール中はsincloBoxを隠す設定
             console.info("<><><><>スクロール中非表示設定<><><><>");
             sincloBox.style.opacity = 0;
-            setTimeout(function() {
+            sinclo.operatorInfo.nowScrollTimer = setTimeout(function() {
               sincloBox.style.opacity = 1;
-            },10);
+            },400);
           }
           else {
             sincloBox.style.opacity = 1;
@@ -350,7 +366,7 @@
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
           sinclo.widget.condifiton.set(openFlg, true);
           common.widgetHandler.show(true);
-          sinclo.operatorInfo.widgetHide();
+          //sinclo.operatorInfo.widgetHide();
 
           sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
 
@@ -632,8 +648,6 @@
           var sincloBox = document.getElementById('sincloBox');
           common.reloadWidget();
           if ( window.sincloInfo.contract.chat && check.smartphone() ) {
-            common.widgetHandler.show();
-            sincloBox.style.opacity = 0;
             sinclo.operatorInfo.widgetHide();
           }
           else {
