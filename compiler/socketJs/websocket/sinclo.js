@@ -266,13 +266,8 @@
       },
       widgetHideTimer: null,
       nowScrollTimer: null,
-      firstCallwidgetHide: true,
       widgetHide: function(e) {
 
-        if(sinclo.operatorInfo.firstCallwidgetHide){
-          sinclo.operatorInfo.firstCallwidgetHide = false;
-          return;
-        }
 
         if(sinclo.operatorInfo.widgetHideTimer) {
           clearTimeout(sinclo.operatorInfo.widgetHideTimer);
