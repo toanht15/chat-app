@@ -2212,11 +2212,8 @@ var socket, // socket.io
               }
 
             // スクロールをした時に、ページ下部であれば透過する
-            if(check.isset(window.sincloInfo.widget.spBannerPosition) && (Number(window.sincloInfo.widget.spBannerPosition) === 3 || Number(window.sincloInfo.widget.spBannerPosition) === 4)) {
+            window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
 
-            } else {
-              window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
-            }
             // 画面を回転ときは、向きによってスタイルを変える
             window.addEventListener('orientationchange', function(){
               //バナー表示だった

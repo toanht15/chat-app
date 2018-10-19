@@ -20,7 +20,7 @@ $headerNo = 1;
             <span class="require"><label>初期表示時のスタイル</label></span>
             <div ng-init="widgetDisplayTypeToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'display_style_type'))?>'">
               <label class="pointer choose" for="displayStyleType1"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="showNormalMaximized()" id="displayStyleType1" class="showHeader" value="1" ><?= $widgetDisplayStyleType[1] ?></label><br>
-              <label class="pointer choose" for="displayStyleType2"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="showNormalMinimized()" id="displayStyleType2" class="showHeader" value="2" ><?= $widgetDisplayStyleType[2] ?></label><br>
+              <label class="pointer choose ignore-click-event" for="displayStyleType2"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="showNormalMinimized()" id="displayStyleType2" class="showHeader" value="2" ><?= $widgetDisplayStyleType[2] ?></label><br>
               <label class="pointer choose" for="displayStyleType3"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="switchWidget(4)" id="displayStyleType3" class="showHeader" value="3" ><?= $widgetDisplayStyleType[3] ?></label><br>
             </div>
           </li>
@@ -1012,6 +1012,7 @@ $headerNo = 1;
                   <label class="pointer choose" for="closeButtonModeType1" style="margin:10px 0 10px 20px;"><input type="radio" name="data[MWidgetSetting][close_button_mode_type]" ng-model="closeButtonModeTypeToggle" id="closeButtonModeType1" class="showHeader" value="1" ng-click="switchWidget(4)">小さなバナー表示</label><br>
                   <?= $this->ngForm->input('bannertext', [
                     'type' => 'text',
+                    'class' => 'ignore-click-event',
                     'placeholder' => 'バナーテキスト',
                     'ng-disabled' => 'closeButtonModeTypeToggle == "2"',
                     'style' => 'margin:10px 0 10px 40px;',
@@ -1326,12 +1327,13 @@ $headerNo = 1;
             <pre><label><?= $this->ngForm->input('sp_banner_text', [
               'type' => 'text',
               'placeholder' => 'バナーテキスト',
+              'class' => 'ignore-click-event',
               'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'" || closeButtonModeTypeToggle == "2" || closeButtonSettingToggle == "1"',
               'div' => false,
               'label' => false,
               'maxlength' => 15,
               'error' => false,
-              'ng-focus' => 'switchWidget(3)',
+              'ng-focus' => 'bannerEditClick(2)',
               'ng-maxlength' => "false"
             ],
             [

@@ -97,6 +97,16 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       return bannerClass;
     }
 
+    $scope.bannerEditClick = function(type){
+      if(type === 1){
+        console.log('特に無し');
+        $scope.switchWidget(4);
+      } else if(type === 2){
+        $scope.forceSpCloseWidget();
+        $scope.switchWidget(3);
+      }
+    }
+
     $scope.switchWidget = function(num){
       $scope.showWidgetType = num;
       sincloChatMessagefocusFlg = true;
@@ -1269,9 +1279,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $scope.openFlg = true;
     }
 
-    //通常モードにし最小化表示する
+    //最小化表示する
     $scope.showNormalMinimized = function(){
-      $scope.switchWidget(1);
       $scope.openFlg = false;
     }
 
