@@ -33,10 +33,14 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     $scope.beforeSpbPosition = 0;
 
+    $scope.hideWidget = function(){
+      $scope.resetSpView();
+      $scope.switchWidget(4);
+    }
+
     $scope.resetSpView = function(){
       $scope.viewSpWidget = true;
       $scope.openFlg = true;
-
     }
 
     $scope.forceSpCloseWidget = function(){
@@ -73,8 +77,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         $scope.viewSpWidget = false;
       } else {
         console.log('スマホ用小さなバナーがクリックされました');
-        $scope.viewSpWidget = true;
-        $scope.openFlg = true;
+        $scope.resetSpView();
       }
     }
 
@@ -1288,6 +1291,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     //最小化時のデザインがクリックされた時の動作
     $scope.clickMinimizedDesignToggle = function(tag){
+      //スマホバナー状態を解除する
+      $scope.viewSpWidget = true;
       if($scope.showWidgetType !== tag){
         $scope.switchWidget(tag);
       }

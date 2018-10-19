@@ -1025,7 +1025,7 @@ $headerNo = 1;
                   ],[
                     'entity' => 'MWidgetSetting.bannertext'
                   ]) ?><br>
-                  <label class="pointer choose" for="closeButtonModeType2" style="margin:10px 0 10px 20px;"><input type="radio" name="data[MWidgetSetting][close_button_mode_type]" ng-model="closeButtonModeTypeToggle" id="closeButtonModeType2" class="showHeader" value="2" ng-click="switchWidget(4)">非表示<br><s style="margin:0px 0px 0px 3.2em; display: inline-block;">※再アクセス時までウィジェットが表示されなくなります</s></label>
+                  <label class="pointer choose" for="closeButtonModeType2" style="margin:10px 0 10px 20px;"><input type="radio" name="data[MWidgetSetting][close_button_mode_type]" ng-model="closeButtonModeTypeToggle" id="closeButtonModeType2" class="showHeader" value="2" ng-click="hideWidget()">非表示<br><s style="margin:0px 0px 0px 3.2em; display: inline-block;">※再アクセス時までウィジェットが表示されなくなります</s></label>
                 </div>
               </div>
             </div>
@@ -1347,6 +1347,7 @@ $headerNo = 1;
             <pre><label class="pointer"><?= $this->ngForm->input('sp_header_light_flg', [
                 'type' => 'radio',
                 'options' => $normalChoices,
+                'class' => 'ignore-click-event',
                 'ng-change' => 'resetSpView()',
                 'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                 'legend' => false,
