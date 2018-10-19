@@ -68,17 +68,17 @@
             </div>
 
             <!-- 選択肢 -->
-            <div class="actionMenu">
-                <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_SELECT_OPTION ?>)"
-                   class="greenBtn btn-shadow commontooltip"
-                   data-text="チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。">選択肢</a>
-                <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_SELECT_OPTION ?>">
-                    <ul>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SELECT_OPTION ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SELECT_OPTION ?>)">一番下に追加する</li>
-                    </ul>
-                </div>
-            </div>
+<!--            <div class="actionMenu">-->
+<!--                <a ng-click="main.showOptionMenu(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)"-->
+<!--                   class="greenBtn btn-shadow commontooltip"-->
+<!--                   data-text="チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。">選択肢</a>-->
+<!--                <div class="actionMenuOption" id="actionMenu--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--">-->
+<!--                    <ul>-->
+<!--                        <li ng-click="main.addItem(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)">選択されたアクションの下に追加する</li>-->
+<!--                        <li ng-click="main.addItem(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)">一番下に追加する</li>-->
+<!--                    </ul>-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!-- 条件分岐 -->
             <div class="actionMenu">
@@ -186,10 +186,13 @@
     </div>
     <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">
       <!-- アクション設定一覧 -->
-      <li ng-repeat="(setActionId, setItem) in setActionList" ng-model="setItem" id="action{{setActionId}}_setting" class="set_action_item" validate-action>
+      <li ng-repeat="(setActionId, setItem) in setActionList" ng-model="setItem" id="action{{setActionId}}_setting" class="set_action_item" validate-action ng-focus="main.setFocusActionIndex(setActionId)">
         <h4 class="handle"><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}} <i class="error errorBtn" ng-if="!setItem.$valid"></i></a></h4>
         <?= $this->element('TChatbotScenario/templates'); ?>
-        <a ng-if="setItem.actionType !== '12'" class="btn-shadow redBtn closeBtn" ng-click="main.removeItem(setActionId)"><?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?></a>
+        <a ng-if="setItem.actionType !== '12'" class="btn-shadow redBtn closeBtn" ng-click="main.removeItem(setActionId)">
+          <?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?>
+        </a>
+<!--          <a class="btn-shadow redBtn closeBtn"></a>-->
       </li>
       <li class="error-message" ng-if="setActionList.length <= 0">アクションを上のリストから選択し、設定してください</li>
       <!-- Tooltip -->

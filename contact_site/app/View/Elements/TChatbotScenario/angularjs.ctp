@@ -10,9 +10,29 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.actionList = <?php echo json_encode($chatbotScenarioActionList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.changeFlg = false;
 
+  $scope.focusActionIndex = null;
+
   // current action
   $scope.previousAction = null;
   $scope.currentAction = null;
+
+  $scope.multiSelection = "";
+
+  // calendar japanese custom
+  $scope.japaneseCalendar = {
+      dateFormat: "Y/m/d",
+      locale: {
+          firstDayOfWeek: 0,
+          weekdays: {
+              shorthand: ["日", "月", "火", "水", "木", "金", "土"],
+              longhand: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
+          },
+          months: {
+              shorthand: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+              longhand: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+          },
+      },
+  };
 
   // アクション設定の取得・初期化
   $scope.setActionList = [];
@@ -125,6 +145,17 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
+    // 設定一覧の並び替えオプション
+    $scope.sortableOptionsHearing = {
+        axis: "y",
+        tolerance: "pointer",
+        containment: "parent",
+        handle: '.handleOption',
+        cursor: 'move',
+        helper: 'clone',
+        revert: 100
+    };
+
   // メッセージ間隔は同一の設定を各アクションに設定しているため、状態に応じて取得先を変更する
   $scope.messageIntervalTimeSec = "<?= !empty($this->data['TChatbotScenario']['messageIntervalTimeSec']) ? $this->data['TChatbotScenario']['messageIntervalTimeSec'] : '' ?>"
     || (typeof $scope.setActionList[0] !== 'undefined' ? $scope.setActionList[0].messageIntervalTimeSec : '')
@@ -136,6 +167,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var item = $scope.actionList[actionType];
       item.actionType = actionType.toString();
       $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
+      // $scope.setActionList.splice(1, 0, angular.copy(angular.merge(item, item.default)));
 
       // 表示位置調整
       $timeout(function() {
@@ -151,24 +183,31 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         }, time);
 
         // フォーカス移動
-        var target = $('#tchatbotscenario_form_action_body .set_action_item:last-of-type');
-        target.find('input, textarea, select')[0].focus();
+        var target = $('#tchatbotscenario_form_action_body .set_action_item:last-of-type').focus();
       }, 0);
     }
   };
 
-    this.showOptionMenu = function (actionType) {
-        $scope.previousAction = $scope.currentAction;
-        $scope.currentAction = actionType;
-        if ($scope.previousAction != $scope.currentAction) {
-            $("#actionMenu" + $scope.previousAction).fadeOut('fast');
-        }
-        if ($("#actionMenu" + actionType).is(":visible")) {
-            $("#actionMenu" + actionType).fadeOut('fast');
-        } else {
-            $("#actionMenu" + actionType).fadeIn('fast');
-        }
-    };
+  this.setFocusActionIndex = function (actionIndex) {
+    $scope.focusActionIndex = actionIndex;
+  };
+
+  this.showOptionMenu = function (actionType) {
+    // if (!$scope.focusActionIndex) {
+    //     this.addItem(actionType);
+    //     return;
+    // }
+    $scope.previousAction = $scope.currentAction;
+    $scope.currentAction = actionType;
+    if ($scope.previousAction != $scope.currentAction) {
+      $("#actionMenu" + $scope.previousAction).fadeOut('fast');
+    }
+    if ($("#actionMenu" + actionType).is(":visible")) {
+      $("#actionMenu" + actionType).fadeOut('fast');
+    } else {
+      $("#actionMenu" + actionType).fadeIn('fast');
+    }
+  };
 
   // アクションの削除
   this.removeItem = function(setActionId) {
@@ -191,6 +230,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }, 0);
   };
 
+  this.revertCalendarColor = function (actionIndex, hearingIndex, designIndex) {
+    var defaultColor = $scope.setActionList[actionIndex].default.hearings[0].customDesign[5][designIndex];
+    $scope.setActionList[actionIndex].hearings[hearingIndex].customDesign[5][designIndex] = defaultColor;
+    $('#action' + actionIndex + '_option' + hearingIndex + '_' + designIndex).css('background-color', defaultColor.value);
+    jscolor.installByClassName("jscolor");
+  };
+
+  this.revertPulldownColor = function (actionIndex, hearingIndex, designIndex) {
+    var defaultColor = $scope.setActionList[actionIndex].default.hearings[0].customDesign[4][designIndex];
+    $scope.setActionList[actionIndex].hearings[hearingIndex].customDesign[4][designIndex] = defaultColor;
+    $('#action' + actionIndex + '_pulldown' + hearingIndex + '_' + designIndex).css('background-color', defaultColor);
+    jscolor.installByClassName("jscolor");
+  };
+
   // アクションの追加・削除を検知する
   $scope.watchActionList = [];
   $scope.$watchCollection('setActionList', function(newObject, oldObject) {
@@ -211,12 +264,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.watchSetActionList = function(action, index) {
     // watchの破棄
     if (typeof $scope.watchActionList[index] !== 'undefined') {
-      $scope.watchActionList[index]();
+        $scope.watchActionList[index]();
     }
 
     $scope.watchActionList[index] = $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
       if (typeof newObject === 'undefined') return;
-
       // 編集されたことを検知する
       if (!$scope.changeFlg && newObject !== oldObject) {
         $scope.changeFlg = true;
@@ -244,6 +296,187 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (typeof newObject.errorMessage !== 'undefined' && newObject.errorMessage !== '') {
         document.getElementById('action' + index + '_error_message').innerHTML = $scope.widget.createMessage(newObject.errorMessage);
       }
+
+        // hearings calendar
+      if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
+        angular.forEach(newObject.hearings, function (hearing, hearingIndex) {
+          // pulldown customize
+          if (hearing.uiType === '4') {
+            $timeout(function () {
+              $scope.$apply();
+            }).then(function () {
+              if (hearing.options.pulldownCustomDesign) {
+                jscolor.installByClassName('jscolor');
+              }
+              var selectionTarget = $('#action' + index + '_selection' + hearingIndex);
+              selectionTarget.css('border-color', hearing.customDesign[4].borderColor);
+              selectionTarget.css('background-color', hearing.customDesign[4].backgroundColor);
+              selectionTarget.css('color', hearing.customDesign[4].textColor);
+              $('#action' + index + '_selection' + hearingIndex + '_option').css('color', hearing.customDesign[4].textColor);
+            });
+          }
+          // calendar
+          if (hearing.uiType === '5') {
+            var calendar_options = {
+              dateFormat: "Y/m/d",
+              minDate: 'today',
+              inline: 'true',
+              disable: [],
+              enable: [],
+              locale: {
+                firstDayOfWeek: 0
+              }
+            };
+            // set language for calendar
+            if (hearing.options[5].language == 1) {
+              // japanese
+              calendar_options.locale = $scope.japaneseCalendar.locale;
+            } else {
+              // english
+              calendar_options.locale = {
+                firstDayOfWeek: 0
+              }
+            }
+
+            // set min date
+            if (hearing.options[5].isEnableAfterDate) {
+              calendar_options.minDate = new Date().fp_incr(hearing.options[5].enableAfterDate);
+            } else {
+              calendar_options.minDate = hearing.options[5].disablePastDate ? 'today' : '';
+            }
+            // set disable date
+            if (hearing.options[5].isDisableDayOfWeek) {
+              var disableWeekDays = [];
+              angular.forEach(hearing.options[5].dayOfWeekSetting, function (item, key) {
+                if (item.value) {
+                  disableWeekDays.push(key);
+                }
+              });
+
+              calendar_options.disable = [
+                function (date) {
+                  return disableWeekDays.indexOf(date.getDay().toString()) !== -1;
+                },
+              ];
+            } else {
+              calendar_options.disable = [];
+            }
+
+            if (hearing.options[5].isSetSpecificDate) {
+              if (hearing.options[5].setSpecificDateType == 1) {
+                hearing.options[5].specificDateData[2] = [""]
+                var disableLength = calendar_options.disable.length;
+                angular.forEach(hearing.options[5].specificDateData[1], function (item, key) {
+                  calendar_options.disable[key + disableLength] = item;
+                });
+              }
+
+              if (hearing.options[5].setSpecificDateType == 2) {
+                hearing.options[5].specificDateData[1] = [""];
+                angular.forEach(hearing.options[5].specificDateData[2], function (item, key) {
+                  calendar_options.enable[key] = item;
+                });
+              }
+            } else {
+              hearing.options[5].specificDateData[1] = [""];
+              hearing.options[5].specificDateData[2] = [""];
+            }
+
+            $timeout(function () {
+              $scope.$apply();
+            }).then(function () {
+              // add first picker for first input
+              if (hearing.options[5].setSpecificDateType) {
+                var datepickerTarget = $('#action' + index + '_option' + hearingIndex + '_datepicker0');
+                if (!datepickerTarget.hasClass('flatpickr-input')) {
+                  datepickerTarget.flatpickr($scope.japaneseCalendar);
+                }
+              }
+
+              if (hearing.options[5].isCustomDesign) {
+                jscolor.installByClassName("jscolor");
+              }
+
+              var calendarTarget = $('#action' + index + '_calendar' + hearingIndex);
+              // add datepicker for preview
+              var datepickerId = 'action' + index + '_datepicker' + hearingIndex;
+              calendarTarget.html('<input id="' + datepickerId + '" type="hidden">');
+              $('#' + datepickerId).flatpickr(calendar_options);
+              $('#' + datepickerId).hide();
+              var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
+              firstDayOfWeek[0].innerText = hearing.options[5].language == 1 ? '月' : 'Mon';
+
+              // binding color to preview
+              // header background color
+              var headerMonthBgColor = calendarTarget.find('.flatpickr-months .flatpickr-month');
+              headerMonthBgColor.css('background', hearing.customDesign[5].headerBackgroundColor.value);
+              var headerWeekBgColor = calendarTarget.find('.flatpickr-weekdays');
+              headerWeekBgColor.css('background', hearing.customDesign[5].headerBackgroundColor.value);
+              // header text color
+              calendarTarget.find('.flatpickr-current-month input.cur-year').css('color', hearing.customDesign[5].headerTextColor.value);
+              calendarTarget.find('.flatpickr-months .flatpickr-month').css('color', hearing.customDesign[5].headerTextColor.value);
+              calendarTarget.find('span.flatpickr-weekday').css('color', hearing.customDesign[5].headerTextColor.value);
+              // border color
+              calendarTarget.find('.flatpickr-calendar').css('border', '1px solid');
+              calendarTarget.find('.flatpickr-calendar').css('border-color', hearing.customDesign[5].borderColor.value);
+              // calendar body color
+              calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', hearing.customDesign[5].calendarBackgroundColor.value);
+              calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', hearing.customDesign[5].calendarBackgroundColor.value);
+              // calendar text color
+
+              var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
+              calendarTextColorTarget.each(function () {
+                if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+                  $(this).css('color', hearing.customDesign[5].calendarTextColor.value);
+                }
+              });
+
+              // sunday color
+              calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+1)').css('color', hearing.customDesign[5].sundayColor.value);
+              var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+1)');
+              sundayTarget.each(function () {
+                if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+                  $(this).css('color', hearing.customDesign[5].sundayColor.value);
+                }
+              });
+              // saturday color
+              calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+7)').css('color', hearing.customDesign[5].saturdayColor.value);
+              var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
+              saturdayTarget.each(function () {
+                if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+                  $(this).css('color', hearing.customDesign[5].saturdayColor.value);
+                }
+              });
+
+              // change color when change month
+              calendarTarget.find('.flatpickr-calendar .flatpickr-months').on('click', function () {
+                var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
+                calendarTextColorTarget.each(function () {
+                  if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+                    $(this).css('color', hearing.customDesign[5].calendarTextColor.value);
+                  }
+                });
+
+                var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n + 1)');
+                sundayTarget.each(function () {
+                  if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+                    $(this).css('color', hearing.customDesign[5].sundayColor.value);
+                  }
+                });
+
+                var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
+                saturdayTarget.each(function () {
+                  if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+                    $(this).css('color', hearing.customDesign[5].saturdayColor.value);
+                  }
+                });
+              });
+
+            });
+          }
+        });
+      }
+
       // 確認メッセージ
       if (typeof newObject.confirmMessage !== 'undefined' && typeof newObject.success !== 'undefined' && typeof newObject.cancel !== 'undefined') {
         var confirmMessage = newObject.confirmMessage;
@@ -256,6 +489,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (message == '') return;
         document.getElementById('action' + index + '_confirm_message').innerHTML = $scope.widget.createMessage(message, 'preview' + index);
       }
+
       // 選択肢
       if (typeof newObject.message !== 'undefied' && typeof newObject.selection !== 'undefined') {
         var messageList = [newObject.message];
@@ -293,6 +527,81 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
     }, true);
   };
+
+    this.showBulkSelectionPopup = function (actionIndex, hearingIndex, uiType) {
+        if (uiType == 3 || uiType == 4) {
+            // ラジオボタン、プルダウン
+            var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType];
+            var title = '選択肢を一括登録する';
+            var description = '選択肢として登録する内容を改行して設定してください。 ';
+            var placeholder = '男性&#10;女性'
+        }
+
+        if (uiType == 5) {
+            //　カレンダー
+            var setSpecificDateType = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].setSpecificDateType;
+            var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType];
+            var title = '日付を一括登録する';
+            var placeholder = '2019/01/01&#10;2019/01/02';
+            if (setSpecificDateType == 1) {
+                var description = '選択できなくする日付を改行して設定してください。（yyyy/mm/dd形式）。 ';
+            } else {
+                var description = '選択できなくする日付を改行して設定してください。（yyyy/mm/dd形式）。';
+            }
+        }
+
+        var convertedOptions = "";
+        angular.forEach(options, function (option, optionKey) {
+            convertedOptions = convertedOptions + option + '\n';
+        });
+
+        var html = '<div class="select-option-one-time-popup">\n' +
+            '    <p style="margin-top: -10px; width: 350px;">' + description + '</p>\n' +
+            '\n' +
+            '    <textarea name="" id="bulk_selection" ng-model="multiSelection" cols="48" rows="3" placeholder="' + placeholder + '">' + convertedOptions + '</textarea>\n' +
+            '</div>';
+
+        modalOpen.call(window, html, 'p-hearing-settings', title, 'moment');
+        popupEvent.convert = function () {
+            var inputOptions = $('#bulk_selection').val();
+            var convertedInputOptions = inputOptions.split('\n');
+
+            if (uiType == 3 || uiType == 4) {
+                $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType] = [];
+                angular.forEach(convertedInputOptions, function (option, optionKey) {
+                    if (option) {
+                        $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType].push(option);
+                    }
+                });
+            }
+
+            if (uiType == 5) {
+                $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType] = [];
+                angular.forEach(convertedInputOptions, function (option, optionKey) {
+                    if (option) {
+                        $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType].push(option);
+                    }
+                });
+            }
+
+            popupEvent.close();
+            $timeout(function(){
+                $scope.$apply();
+                var targetElmList = $('.action' + actionIndex + '_option' + hearingIndex);
+                self.controllListView($scope.setActionList[actionIndex].actionType, targetElmList, targetElmList);
+                if (uiType == 5) {
+                    // add datepicker for new input
+                    angular.forEach(targetElmList, function(targetElm, index) {
+                        var el = $(targetElm).find('input');
+                        if (!el.hasClass('flatpickr-input')) {
+                            el.flatpickr($scope.japaneseCalendar);
+                        }
+                    });
+                }
+            });
+        }
+
+    };
 
   $scope.showExtendedConfigurationWarningPopup = function(obj) {
     modalOpen.call(window, "１．受信したファイルによるウィルス感染などのリスクはお客様の責任にて十分ご理解の上ご利用ください。<br>２．業務に必要なファイル形式のみを指定するようにしてください。<br>３．特に圧縮ファイルを許可する場合は、解凍時に意図しないファイルが含まれる恐れがありますので<br>　　十分に注意の上ご利用ください。", 'p-chatbot-use-extended-setting', '必ず確認してください');
@@ -440,6 +749,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var src = $scope.actionList[actionType].default.hearings[0];
       var target = $scope.setActionList[actionStep].hearings;
       src.inputType = src.inputType.toString();
+      src.uiType = src.uiType.toString();
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllHearingSettingView(actionStep);
 
@@ -491,6 +801,77 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       this.controllBulkHearings(actionStep);
     }
   };
+
+    this.addHearingOption = function($event, optionType, optionIndex, listIndex) {
+        var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+        var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+        var actionType = $scope.setActionList[actionStep].actionType;
+
+        if (optionType === '3' || optionType === '4') {
+            // ラジオボタン、プルダウン
+            var src = $scope.actionList[actionType].default.hearings[0].options[optionType];
+            var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
+        } else {
+            // カレンダー
+            if ($scope.setActionList[actionStep].hearings[listIndex].options[optionType].setSpecificDateType == 1) {
+                // can select date
+                var src = $scope.actionList[actionType].default.hearings[0].options[optionType].specificDateData[1];
+                var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[1];
+            } else {
+                // cannot select date
+                var src = $scope.actionList[actionType].default.hearings[0].options[optionType].specificDateData[2];
+                var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[2];
+            }
+        }
+
+        target.splice(optionIndex + 1, 0, angular.copy(src));
+
+        // 表示更新
+        $timeout(function() {
+            $scope.$apply();
+        }).then(function() {
+            var targetElmList = $('.action' + actionStep + '_option' + listIndex);
+            self.controllListView(actionType, targetElmList, target);
+            if (optionType == 5) {
+                // add datepicker for new input
+                angular.forEach(targetElmList, function(targetElm, index) {
+                    var el = $(targetElm).find('input');
+                    if (!el.hasClass('flatpickr-input')) {
+                        el.flatpickr($scope.japaneseCalendar);
+                    }
+                });
+            }
+        });
+    };
+
+    this.removeHearingOption = function($event, optionType, optionIndex, listIndex) {
+        var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+        var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+        var actionType = $scope.setActionList[actionStep].actionType;
+        // var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
+        if (optionType === '3' || optionType === '4') {
+            // ラジオボタン、プルダウン
+            var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
+        } else {
+            // カレンダー
+            if ($scope.setActionList[actionStep].hearings[listIndex].options[optionType].setSpecificDateType == 1) {
+                // can select date
+                var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[1];
+            } else {
+                // cannot select date
+                var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[2];
+            }
+        }
+        target.splice(optionIndex, 1);
+
+        // 表示更新
+        $timeout(function() {
+            $scope.$apply();
+        }).then(function() {
+            var targetElmList = $('.action' + actionStep + '_option' + listIndex);
+            self.controllListView(actionType, targetElmList, target);
+        });
+    };
 
   // ヒアリング、選択肢、メール送信のリスト削除
   this.removeActionItemList = function($event, listIndex) {
@@ -1683,46 +2064,40 @@ $(document).ready(function() {
     box.stop().animate({
       scrollTop: box.scrollTop() + targetY
     }, time);
-    target.find('input, textarea, select')[0].focus();
+    target.closest('.set_action_item ').focus();
   });
 
-  // フォーカスされたアクションに応じて、関連するプレビューを強調表示する
-  // $(document).on('focusin', '.set_action_item input, .set_action_item textarea', function() {
-  //   var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
-  //   $(this).parents('.set_action_item').css('border', '3px solid #C3D69B');
-  //   $('.actionTitle').removeClass('active');
-  //   $('#' + previewId + ' .actionTitle').addClass('active');
-  // }).on('focusout', '.set_action_item input, .set_action_item textarea', function() {
-  //   var previewId = $(this).parents('.set_action_item').attr('id').replace(/setting$/, 'preview');
-  //   $(this).parents('.set_action_item').css('border', '');
-  //   $('#' + previewId + ' .actionTitle').removeClass('active');
-  // });
+  //フォーカスされたアクションに応じて、関連するプレビューを強調表示する
+  $(document).on('focus', '.set_action_item', function () {
+    console.log('aa');
+    $('.set_action_item').blur();
+    var previewId = $(this).attr('id').replace(/setting$/, 'preview');
+    $(this).css('border', '1px solid #C3D69B');
+    $('.actionTitle').removeClass('active');
+    $('#' + previewId + ' .actionTitle').addClass('active');
+    $('.closeBtn').css('display', 'none');
+    $('.set_action_item h4').css('background-color', '#DADADA');
+    $(this).find('.closeBtn').css('display', 'block');
+    $(this).find('h4').css('background-color', '#C3D69B');
+  }).on('blur', '.set_action_item', function () {
+    console.log("bb");
+    var previewId = $(this).attr('id').replace(/setting$/, 'preview');
+    $('.set_action_item').css('border', '1px solid #a9aaa4');
+    $('.set_action_item h4').css('background-color', '#DADADA');
+    $('.closeBtn').show();
+    $('#' + previewId + ' .actionTitle').removeClass('active');
+  }).on('focusout', '.set_action_item', function () {
+    console.log("cc");
+    var previewId = $(this).attr('id').replace(/setting$/, 'preview');
+    $('.set_action_item').css('border', '1px solid #a9aaa4');
+    $('.set_action_item h4').css('background-color', '#DADADA');
+    $('.closeBtn').show();
+    $('#' + previewId + ' .actionTitle').removeClass('active');
+  });
 
-    $(document).on('focus', '.set_action_item', function() {
-        var previewId = $(this).attr('id').replace(/setting$/, 'preview');
-        $(this).css('border', '3px solid #C3D69B');
-        $('.actionTitle').removeClass('active');
-        $('#' + previewId + ' .actionTitle').addClass('active');
-        $('.closeBtn').css('display', 'none');
-        $('.set_action_item h4').css('background-color', '#DADADA');
-        $(this).find('.closeBtn').css('display', 'block');
-        $(this).find('h4').css('background-color', '#C3D69B');
-    }).on('blur', '.set_action_item', function() {
-        var previewId = $(this).attr('id').replace(/setting$/, 'preview');
-        // $(this).css('border', '');
-        $('.set_action_item').css('border', 'none');
-        console.log("test");
-        $('.set_action_item h4').css('background-color', '#C3D69B');
-        $('.closeBtn').show();
-        // $(this).find('.closeBtn').css('display', 'none');
-        $('#' + previewId + ' .actionTitle').removeClass('active');
-        // $(this).blur();
-        
-    });
-
-    // $(document).on('click', '.set_action_item', function () {
-    //     $(this).focus();
-    // });
+  $(document).on('click', '.set_action_item', function () {
+    $(this).focus();
+  });
 
   // 各アクションのキーイベントに応じて、プレビューのスクロール位置を調整する
   $(document).on('keydown, keyup', '.set_action_item input, .set_action_item textarea', function() {
@@ -2043,22 +2418,16 @@ function searchStr (str, regex) {
 
 // check when click on other area of action menu
 $(document).click(function (e) {
-    var previousAction = angular.element(".actionMenu").scope().previousAction;
+  // hide previous option menu when click new action
+  // hide dropdown when click on other area
+  if (!$(e.target).closest('.actionMenu a').length) {
+    $('.actionMenuOption').fadeOut('fast');
+  }
 
-    // hide previous option menu when click new action
-    // if (!$(e.target).closest('#actionMenu' + previousAction).length) {
-    //     $('#actionMenu' + previousAction).fadeOut('fast');
-    // }
-
-    // hide dropdown when click on other area
-    if (!$(e.target).closest('.actionMenu a').length) {
-        $('.actionMenuOption').fadeOut('fast');
-    }
-
-    if (!$(e.target).closest('.set_action_item').length) {
-        $('.set_action_item').blur();
-        $('.closeBtn').show();
-
-    }
+  if (!$(e.target).closest('.set_action_item').length && !$(e.target).closest('.actionMenu').length && !$(e.target).closest('#tchatbotscenario_form_preview_body > section').length) {
+    angular.element($('#tchatbotscenario_form_action_menulist')).scope().focusActionIndex = null
+    $('.set_action_item').blur();
+    $('.closeBtn').show();
+  }
 });
 </script>

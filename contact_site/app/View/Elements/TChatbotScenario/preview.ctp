@@ -60,6 +60,13 @@
 #tchatbotscenario_form_preview_body .chatTalk li .sendFileContent .sendFileMetaArea .data { margin-left: 1em; margin-bottom: 5px; display: block; }
 #tchatbotscenario_form_preview_body .chatTalk li .sendFileContent .sendFileMetaArea .data.sendFileSize { margin-bottom: 0px; }
 
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar { width: 210px; height: 221px}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdays { width: 210px}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdaycontainer { margin-top: 5px;}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer { max-width: 210px; min-width: 200px;}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day.disabled { color: rgba(57,57,57,0.1);}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day { max-width: 27px; height: 27px; line-height: 27px}
+
 </style>
 <section ng-repeat="(setActionId, setItem) in setActionList" id="action{{setActionId}}_preview">
   <h4 class="actionTitle">{{setActionId + 1}}．{{actionList[setItem.actionType].label}}</h4>
@@ -70,7 +77,13 @@
     </div>
     <!-- ヒアリング -->
     <div ng-repeat="(index, hearings) in setItem.hearings">
-      <li ng-if="hearings.message" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}}</span></li>
+
+      <li ng-show="hearings.message" ng-if="hearings.uiType === '1' || hearings.uiType === '2'" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}}</span></li>
+      <li ng-if="hearings.uiType === '5'" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}} <div id="action{{setActionId}}_calendar{{index}}"></div></span></li>
+        <li ng-show="hearings.message || hearings.options[hearings.uiType][0]" ng-if="hearings.uiType === '4'" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="sinclo-text-line">{{hearings.message}}</span><br><select style="border: 1px solid #909090; border-radius: 4px; padding: 3px 0 5px; margin-top: 10px; max-width: 200px" id="action{{setActionId}}_selection{{index}}"><option class="action{{setActionId}}_selection{{index}}_option" value="">選択してください</option><option class="action{{setActionId}}_selection{{index}}_option" ng-repeat="item in hearings.options[hearings.uiType] track by $index" value="{{item}}" ng-bind="item""></option></select>
+      </li>
+        <li ng-show="hearings.message || hearings.options[hearings.uiType][0]" ng-if="hearings.uiType === '3'" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="sinclo-text-line" ng-bind="hearings.message"></span><div style="margin-top: -28px">
+                <span ng-repeat="(optionIndex, option) in hearings.options[hearings.uiType] track by $index" class="sinclo-radio" style="display: block" ng-if="option"><input name="action{{setActionId}}_index{{index}}" id="{{optionIndex}}" type="radio" value="{{option}}"><label for="{{optionIndex}}" ng-bind="option"></label></span></div></li>
     </div>
     <!-- 確認メッセージ -->
     <div>
