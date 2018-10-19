@@ -1953,7 +1953,7 @@ var socket, // socket.io
       }else{
         bannertext = check.escape_html(widget.bannertext);
       }
-      html += '      <span class="' + (widget.bannertext.length !== 0 ? 'bannertext' : 'notext') + '">'+ bannertext +'</span>';
+      html += '      <span class="' + (bannertext.length !== 0 ? 'bannertext' : 'notext') + '">'+ bannertext +'</span>';
       html += '    </div>';
       html += '  </div>';
       return html;
@@ -2211,8 +2211,8 @@ var socket, // socket.io
                 sincloBox.setAttribute('data-screen', 'vertical'); // 縦向き
               }
 
-            // スクロールをした時に、ページ下部であれば透過する
-            window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
+            // スクロールをした時の処理群
+            window.addEventListener('scroll',sinclo.operatorInfo.widgetHide);
 
             // 画面を回転ときは、向きによってスタイルを変える
             window.addEventListener('orientationchange', function(){
