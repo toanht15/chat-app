@@ -1953,7 +1953,7 @@ var socket, // socket.io
       }else{
         bannertext = check.escape_html(widget.bannertext);
       }
-      html += '      <span class="' + (widget.bannertext.length !== 0 ? 'bannertext' : 'notext') + '">'+ bannertext +'</span>';
+      html += '      <span class="' + (bannertext.length !== 0 ? 'bannertext' : 'notext') + '">'+ bannertext +'</span>';
       html += '    </div>';
       html += '  </div>';
       return html;

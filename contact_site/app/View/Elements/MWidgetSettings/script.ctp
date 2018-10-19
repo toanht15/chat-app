@@ -187,10 +187,12 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     $scope.getBannerWidth = function(){
       $('#sincloBanner').css("width","40px");
       var text = $scope.bannertext;
+      var sptext = $scope.sp_banner_text;
       var oneByteCount = 0;
       var towByteCount = 0;
 
-      if(text.length === 0) {
+      if((text.length === 0 && $scope.showWidgetType === 4)
+        ||sptext.length === 0 && $scope.showWidgetType === 3) {
         $('#sincloBanner').css("width","44px");
         $('#bannertext').css("margin-right", "0px");
         return;
