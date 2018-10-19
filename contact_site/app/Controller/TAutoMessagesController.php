@@ -1764,12 +1764,12 @@ class TAutoMessagesController extends AppController {
 
             //スマホ_小さなバナー表示位置
             if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['sp_banner_position'] = C_SP_BANNER_POSITION; // デフォルト値(PCの右下左下を取得したい)
+              $d['sp_banner_position'] = $d['show_position']; // デフォルト値(PC版の右下・左下)
             }
 
             //スマホ_小さなバナーテキスト
-            if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['sp_banner_text'] = C_BANNER_TEXT; // デフォルト値
+            if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_string($json[$v]))) ) {
+              $d['sp_banner_text'] = $d['bannertext']; // デフォルト値(PC版のテキスト)
             }
 
             //スマホ_ウィジェット状態フラグ
