@@ -1263,9 +1263,6 @@
               this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           }
-          else if (Number(chat.messageType) === 7) {
-            return false;
-          }
           else if(Number(chat.messageType) === 8){
           }
           else if(Number(chat.messageType) === 19) {
