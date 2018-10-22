@@ -79,7 +79,11 @@
     }
 
     #sincloBox.sp-preview.fullSize #chatTalk {
+    <?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>
       height: 258px;
+    <?php else: ?>
+      height: 284px;
+    <?php endif;?>
       padding: 0px 5px 41.4px 5px;
     }
 
