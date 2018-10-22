@@ -21,7 +21,7 @@
 
 </div>
             <hr>
-            <ul ui-sortable="sortableOptionsHearing" class="input-one-row hearing-input-type sortable">
+            <ul ui-sortable="sortableOptionsHearing" class="input-one-row hearing-input-type sortable" ng-model="setItem.hearings">
                 <li class='grid-container-hearing grid-container-body itemListGroup'
                      ng-repeat="(listId, hearingItem) in setItem.hearings track by $index">
                     <div class="area-drag-symbol handleOption" style="cursor: move;">

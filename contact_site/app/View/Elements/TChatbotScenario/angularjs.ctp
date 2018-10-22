@@ -142,16 +142,27 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
-    // 設定一覧の並び替えオプション
-    $scope.sortableOptionsHearing = {
-        axis: "y",
-        tolerance: "pointer",
-        containment: "parent",
-        handle: '.handleOption',
-        cursor: 'move',
-        helper: 'clone',
-        revert: 100
-    };
+  // 設定一覧の並び替えオプション
+  $scope.sortableOptionsHearing = {
+    axis: "y",
+    tolerance: "pointer",
+    containment: "parent",
+    handle: '.handleOption',
+    cursor: 'move',
+    helper: 'clone',
+    revert: 100,
+    beforeStop: function (event, ui) {
+      // cloneした要素にチェック状態が奪われるため、再度設定し直す
+      $.each($(ui.helper).find('input:radio:checked'), function () {
+        var name = $(this).prop('name');
+        var value = $(this).prop('value');
+        $(ui.item).find('input:radio[name="' + name + '"][value="' + value + '"]').prop('checked', true);
+      });
+    },
+    stop: function(event, ui) {
+      $scope.$apply();
+    }
+  };
 
   // メッセージ間隔は同一の設定を各アクションに設定しているため、状態に応じて取得先を変更する
   $scope.messageIntervalTimeSec = "<?= !empty($this->data['TChatbotScenario']['messageIntervalTimeSec']) ? $this->data['TChatbotScenario']['messageIntervalTimeSec'] : '' ?>"
@@ -2436,7 +2447,7 @@ $(document).click(function (e) {
   }
 
   if (!$(e.target).closest('.set_action_item').length && !$(e.target).closest('.actionMenu').length && !$(e.target).closest('#tchatbotscenario_form_preview_body > section').length) {
-    angular.element($('#tchatbotscenario_form_action_menulist')).scope().focusActionIndex = null
+    angular.element($('#tchatbotscenario_form_action_menulist')).scope().focusActionIndex = null;
     $('.set_action_item').blur();
     $('.closeBtn').show();
   }
