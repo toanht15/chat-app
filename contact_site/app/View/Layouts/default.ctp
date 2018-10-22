@@ -50,7 +50,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       <title><?php echo $this->fetch('title'); ?></title>
     <?php }
     else { ?>
-      <title><?php echo $this->fetch('title'); ?></title>
+      <title><?php echo $this->fetch('title'); ?> | sinclo</title>
     <?php } ?>
   <?php
     echo $this->Html->meta('icon');
