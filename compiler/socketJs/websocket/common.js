@@ -2387,12 +2387,21 @@ var socket, // socket.io
           width: "400px"
         });
       },
+      _setFooterSize: function(){
+        if(check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.widget) && check.isset(window.sincloInfo.custom.widget.hideFotter) && window.sincloInfo.custom.widget.hideFotter){
+          return 0;
+        } else {
+          return 26;
+        }
+
+      },
       _maximumAnimation: function(){
         if(check.smartphone()){
           return;
         }
         console.log('「最大」設定時に最大化するアニメーションです');
-        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + 26;
+        var footerSize = this._setFooterSize();
+        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + footerSize;
         $('#chatTalk').css('height',$(window).height() - offset);
         $('#sincloWidgetBox').animate({
           width: $(window).width() + "px"
@@ -2401,7 +2410,8 @@ var socket, // socket.io
       _widgetFitForWindow: function(){
         console.log('<><><><><><><><><>最大設定!!!!<><><><><><><><><><>');
         //他のウィジェットサイズタイプとは大きく違うため、別の関数を用意しました。
-        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + 26;
+        var footerSize = this._setFooterSize();
+        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + footerSize;
         $('#chatTalk').css('height',$(window).height() - offset);
         if($('#minimizeBtn').is(':hidden')){
           //最大化時以外は横幅400px
