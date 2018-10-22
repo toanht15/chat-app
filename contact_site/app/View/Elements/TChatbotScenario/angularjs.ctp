@@ -325,7 +325,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               enable: [],
               locale: {
                 firstDayOfWeek: 0
-              }
+              },
             };
             // set language for calendar
             if (hearing.options[5].language == 1) {
@@ -404,7 +404,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               $('#' + datepickerId).flatpickr(calendar_options);
               $('#' + datepickerId).hide();
               var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
-              firstDayOfWeek[0].innerText = hearing.options[5].language == 1 ? '月' : 'Mon';
+              firstDayOfWeek[0].innerText = hearing.options[5].language == 1 ? '日' : 'Sun';
 
               // binding color to preview
               // header background color
@@ -421,9 +421,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               calendarTarget.find('.flatpickr-calendar').css('border-color', hearing.customDesign[5].borderColor.value);
               // calendar body color
               calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', hearing.customDesign[5].calendarBackgroundColor.value);
-              calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', hearing.customDesign[5].calendarBackgroundColor.value);
+              // calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', hearing.customDesign[5].calendarBackgroundColor.value);
               // calendar text color
-
               var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
               calendarTextColorTarget.each(function () {
                 if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
@@ -450,26 +449,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
               // change color when change month
               calendarTarget.find('.flatpickr-calendar .flatpickr-months').on('click', function () {
-                var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
-                calendarTextColorTarget.each(function () {
-                  if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
-                    $(this).css('color', hearing.customDesign[5].calendarTextColor.value);
-                  }
-                });
+                self.customCalendarTextColor(calendarTarget, hearing.customDesign[5]);
 
-                var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n + 1)');
-                sundayTarget.each(function () {
-                  if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
-                    $(this).css('color', hearing.customDesign[5].sundayColor.value);
-                  }
-                });
-
-                var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
-                saturdayTarget.each(function () {
-                  if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
-                    $(this).css('color', hearing.customDesign[5].saturdayColor.value);
-                  }
-                });
+              });
+              // keep color when click on date
+              $('#action' + index + '_datepicker' + hearingIndex).on('change', function () {
+                self.customCalendarTextColor(calendarTarget, hearing.customDesign[5]);
               });
 
             });
@@ -528,80 +513,105 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }, true);
   };
 
-    this.showBulkSelectionPopup = function (actionIndex, hearingIndex, uiType) {
-        if (uiType == 3 || uiType == 4) {
-            // ラジオボタン、プルダウン
-            var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType];
-            var title = '選択肢を一括登録する';
-            var description = '選択肢として登録する内容を改行して設定してください。 ';
-            var placeholder = '男性&#10;女性'
-        }
+  this.customCalendarTextColor = function (calendarTarget, design) {
+    var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
+    calendarTextColorTarget.each(function () {
+      if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+        $(this).css('color', design.calendarTextColor.value);
+      }
+    });
 
-        if (uiType == 5) {
-            //　カレンダー
-            var setSpecificDateType = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].setSpecificDateType;
-            var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType];
-            var title = '日付を一括登録する';
-            var placeholder = '2019/01/01&#10;2019/01/02';
-            if (setSpecificDateType == 1) {
-                var description = '選択できなくする日付を改行して設定してください。（yyyy/mm/dd形式）。 ';
-            } else {
-                var description = '選択できなくする日付を改行して設定してください。（yyyy/mm/dd形式）。';
-            }
-        }
+    var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n + 1)');
+    sundayTarget.each(function () {
+      if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+        $(this).css('color', design.sundayColor.value);
+      }
+    });
 
-        var convertedOptions = "";
-        angular.forEach(options, function (option, optionKey) {
-            convertedOptions = convertedOptions + option + '\n';
+    var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
+    saturdayTarget.each(function () {
+      if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+        $(this).css('color', design.saturdayColor.value);
+      }
+    });
+
+    calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', design.calendarBackgroundColor.value);
+  };
+
+  this.showBulkSelectionPopup = function (actionIndex, hearingIndex, uiType) {
+    if (uiType == 3 || uiType == 4) {
+      // ラジオボタン、プルダウン
+      var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType];
+      var title = '選択肢を一括登録する';
+      var description = '選択肢として登録する内容を改行して設定してください。 ';
+      var placeholder = '男性&#10;女性'
+    }
+
+    if (uiType == 5) {
+      //　カレンダー
+      var setSpecificDateType = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].setSpecificDateType;
+      var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType];
+      var title = '日付を一括登録する';
+      var placeholder = '2019/01/01&#10;2019/01/02';
+      if (setSpecificDateType == 1) {
+        var description = '選択できなくする日付を改行して設定してください。（yyyy/mm/dd形式）。 ';
+      } else {
+        var description = '選択できなくする日付を改行して設定してください。（yyyy/mm/dd形式）。';
+      }
+    }
+
+    var convertedOptions = "";
+    angular.forEach(options, function (option, optionKey) {
+      convertedOptions = convertedOptions + option + '\n';
+    });
+
+    var html = '<div class="select-option-one-time-popup">\n' +
+      '    <p style="margin-top: -10px; width: 350px;">' + description + '</p>\n' +
+      '\n' +
+      '    <textarea name="" style="overflow: hidden; resize: none;" id="bulk_selection" ng-model="multiSelection" cols="48" rows="3" placeholder="' + placeholder + '">' + convertedOptions + '</textarea>\n' +
+      '</div>';
+
+    modalOpen.call(window, html, 'p-hearing-settings', title, 'moment');
+    popupEvent.convert = function () {
+      var inputOptions = $('#bulk_selection').val();
+      var convertedInputOptions = inputOptions.split('\n');
+
+      if (uiType == 3 || uiType == 4) {
+        $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType] = [];
+        angular.forEach(convertedInputOptions, function (option, optionKey) {
+          if (option) {
+            $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType].push(option);
+          }
         });
+      }
 
-        var html = '<div class="select-option-one-time-popup">\n' +
-            '    <p style="margin-top: -10px; width: 350px;">' + description + '</p>\n' +
-            '\n' +
-            '    <textarea name="" id="bulk_selection" ng-model="multiSelection" cols="48" rows="3" placeholder="' + placeholder + '">' + convertedOptions + '</textarea>\n' +
-            '</div>';
+      if (uiType == 5) {
+        $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType] = [];
+        angular.forEach(convertedInputOptions, function (option, optionKey) {
+          if (option) {
+            $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType].push(option);
+          }
+        });
+      }
 
-        modalOpen.call(window, html, 'p-hearing-settings', title, 'moment');
-        popupEvent.convert = function () {
-            var inputOptions = $('#bulk_selection').val();
-            var convertedInputOptions = inputOptions.split('\n');
-
-            if (uiType == 3 || uiType == 4) {
-                $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType] = [];
-                angular.forEach(convertedInputOptions, function (option, optionKey) {
-                    if (option) {
-                        $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType].push(option);
-                    }
-                });
+      popupEvent.close();
+      $timeout(function () {
+        $scope.$apply();
+        var targetElmList = $('.action' + actionIndex + '_option' + hearingIndex);
+        self.controllListView($scope.setActionList[actionIndex].actionType, targetElmList, targetElmList);
+        if (uiType == 5) {
+          // add datepicker for new input
+          angular.forEach(targetElmList, function (targetElm, index) {
+            var el = $(targetElm).find('input');
+            if (!el.hasClass('flatpickr-input')) {
+              el.flatpickr($scope.japaneseCalendar);
             }
-
-            if (uiType == 5) {
-                $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType] = [];
-                angular.forEach(convertedInputOptions, function (option, optionKey) {
-                    if (option) {
-                        $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType].push(option);
-                    }
-                });
-            }
-
-            popupEvent.close();
-            $timeout(function(){
-                $scope.$apply();
-                var targetElmList = $('.action' + actionIndex + '_option' + hearingIndex);
-                self.controllListView($scope.setActionList[actionIndex].actionType, targetElmList, targetElmList);
-                if (uiType == 5) {
-                    // add datepicker for new input
-                    angular.forEach(targetElmList, function(targetElm, index) {
-                        var el = $(targetElm).find('input');
-                        if (!el.hasClass('flatpickr-input')) {
-                            el.flatpickr($scope.japaneseCalendar);
-                        }
-                    });
-                }
-            });
+          });
         }
+      });
+    }
 
-    };
+  };
 
   $scope.showExtendedConfigurationWarningPopup = function(obj) {
     modalOpen.call(window, "１．受信したファイルによるウィルス感染などのリスクはお客様の責任にて十分ご理解の上ご利用ください。<br>２．業務に必要なファイル形式のみを指定するようにしてください。<br>３．特に圧縮ファイルを許可する場合は、解凍時に意図しないファイルが含まれる恐れがありますので<br>　　十分に注意の上ご利用ください。", 'p-chatbot-use-extended-setting', '必ず確認してください');
