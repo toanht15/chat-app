@@ -11,6 +11,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.changeFlg = false;
 
   // アクション設定の取得・初期化
+  $scope.actionListOrigin = [];
   $scope.setActionList = [];
   $scope.targetDeleteFileIds = [];
   var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
@@ -351,6 +352,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーターの起動
   this.openSimulator = function() {
+    $scope.actionListOrigin = $scope.setActionList;
     $scope.$broadcast('openSimulator', this.createJsonData(true));
     // シミュレータ起動時、強制的に自由入力エリアを有効の状態で表示する
     $scope.$broadcast('switchSimulatorChatTextArea', true);
@@ -1091,6 +1093,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.actionClear = function() {
     $scope.actionStop();
     $scope.actionInit();
+    $scope.setActionList = $scope.actionListOrigin
   };
 
   /**
@@ -1253,8 +1256,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var targetScenarioId = condition.action.callScenarioId;
         console.log("targetScenarioId : %s",targetScenarioId);
         if(targetScenarioId === "self") {
-          $scope.actionStep = 0;
-          $scope.doAction();
+          var selfId = parseInt($scope.storageKey.replace(/[^0-9^\.]/g,""));
+          self.getScenarioDetail(selfId, condition.action.executeNextAction == 1);
         } else {
           self.getScenarioDetail(targetScenarioId, condition.action.executeNextAction == 1);
         }
