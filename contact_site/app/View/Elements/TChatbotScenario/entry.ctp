@@ -205,7 +205,7 @@
       </icon-annotation>
     </div>
   </section>
-  <section id="tchatbotscenario_form_preview" ng-class="{middleSize: widget.settings['widget_size_type'] == '2', largeSize: widget.settings['widget_size_type'] == '3'}">
+  <section id="tchatbotscenario_form_preview" ng-class="{middleSize: widget.settings['widget_size_type'] == '2', largeSize: widget.settings['widget_size_type'] == '3' || widget.settings['widget_size_type'] == '4'}">
       <div class="p10x">
         <div id="start_simulator_button">
           <span class="btn-shadow blueBtn" ng-click="main.openSimulator()">シミュレーターを起動</span>

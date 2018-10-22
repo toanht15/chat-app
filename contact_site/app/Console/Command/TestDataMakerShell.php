@@ -95,13 +95,13 @@ class TestDataMakerShell extends AppShell {
 
       $this->saveHistoryChatRecord($startHistoriesId, null, "automessage", 3, $distinction, 0, 1, null,$created,$visitors_id);
       $this->saveHistoryChatRecord($startHistoriesId, null, "syouhisyamessage", 1, $distinction, 1, 1, null,$created,$visitors_id);
-      /*$this->saveHistoryChatRecord($startHistoriesId, 1, "nyuusitu", 98, $distinction, 0, 1, null,$created,$visitors_id);
+      /*$this->saveHistoryChatRecord($startHistoriesId, 1, "nyuusitu", 998, $distinction, 0, 1, null,$created,$visitors_id);
       $this->saveHistoryChatRecord($startHistoriesId, 1, "konnichiwa", 2, $distinction, 0, 1, null,$created,$visitors_id);
       $this->saveHistoryChatRecord($startHistoriesId, null, "syouhisyamessage", 1, $distinction, 0, 1, null,$created,$visitors_id);
       $this->saveHistoryChatRecord($startHistoriesId, 1, "operetamessage", 2, $distinction, 0, 1, null,$created,$visitors_id);
       $this->saveHistoryChatRecord($startHistoriesId, null, "syouhisyamessage", 1, $distinction, 0, 1, null,$created,$visitors_id);
       $this->saveHistoryChatRecord($startHistoriesId, 1, "operetamessage", 2, $distinction, 0, 1, 2,$created,$visitors_id);
-      $this->saveHistoryChatRecord($startHistoriesId, 1, "taishitsu", 99, $distinction, 0, 1, null,$created,$visitors_id);
+      $this->saveHistoryChatRecord($startHistoriesId, 1, "taishitsu", 999, $distinction, 0, 1, null,$created,$visitors_id);
       $this->saveHistoryChatRecord($startHistoriesId, null, "denialmessage", 4, $distinction, 0, 1, null,$created,$visitors_id);*/
       $startHistoriesId++;
       $visitors_id = $visitors_id + 1;

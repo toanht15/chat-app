@@ -63,6 +63,7 @@ define('C_COMPANY_USE_CAMPAIGN', 'campaign');  // キャンペーン設定
 define('C_COMPANY_USE_CHATCALLMESSAGES', 'chatCallMessages');  // チャット呼出中メッセージ
 define('C_COMPANY_USE_CUSTOMVARIABLES', 'customVariables');  // カスタム変数
 define('C_COMPANY_USE_EDITCUSTOMERINFORMATIONS', 'editCustomerInformations');  // 訪問ユーザ情報
+  define('C_COMPANY_USE_COGMO_ATTEND_API', 'useCogmoAttendApi');  // CogmoAttend連携
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
@@ -318,6 +319,7 @@ define('C_WIDGET_DISPLAY_STYLE_TYPE_BANNER', 3); // 小さなバナー
 define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
 define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
+define('C_WIDGET_SIZE_TYPE_MAXIMUM', 4); //最大
 
 // ファイル送信設定タイプ
 define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);

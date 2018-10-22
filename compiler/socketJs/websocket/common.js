@@ -166,7 +166,7 @@ var socket, // socket.io
     },
     //サイズを返す関数
     getColorList: function(widget){
-//      var widget = window.sincloInfo.widget;
+      var widget = window.sincloInfo.widget;
       //通常設定か高度設定か判定 colorSettingType
       if(Number(widget.colorSettingType) === 0){
         //企業側吹き出し背景色は現在設定されているメインカラーから算出する
@@ -435,6 +435,31 @@ var socket, // socket.io
             d25font: 26
           };
           break;
+        case 4: //最大、だが幅以外の値はwidgethandlerで計算する（要素表示、現状設定の兼ね合い）
+          var sizeArray = {
+            boxHeight: 632,
+            boxWidth: $(window).width(),
+            widgetTitlePadding: 7,
+            widgetTitleHeight: 32,
+            widgetTitleTop: 6,
+            widgetSubTitleHeight: 24,
+            widgetDescriptionHeight: 15,
+            navigationHeight: 40,
+            chatTalkHeight:100,
+            classFlexBoxRowHeight: 75,
+            sincloAccessInfoHeight: 26.5,
+            fotterHeight: 26.5,
+            telContentHeight: 305,
+            paddingBottom: 60,
+            d11font: 12,
+            d12font: 13,
+            d13font: 14,
+            d14font: 15,
+            d18font: 19,
+            d20font: 21,
+            d25font: 26
+          };
+          break;
         default: //該当しないタイプが来たら小
           var sizeArray = {
             boxHeight: 447,
@@ -604,273 +629,74 @@ var socket, // socket.io
       }
       return res;
     },
-    indicateSimpleNoImage: function() {
-      if(sincloInfo.widget.widget_title_top_type == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
-      }
-      if(sincloInfo.widget.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
-      }
-
-      var display = "display:"+$('#widgetDescription').css('display')+";";
-      //スマホの場合
-      if(check.smartphone()) {
-        var widgetWidth;
-
-        // TODO 関数化
-        if(sincloInfo.widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width();
+    _headerContentsSettings: {
+      _processSettings: function(){
+        if(check.smartphone()) {
+          $("#widgetTitle").addClass("spview");
+          $("#widgetSubTitle").addClass("spview");
+          $("#widgetDescription").addClass("spview");
+        }
+        this._deciedPosition("#widgetTitle", Number(sincloInfo.widget.widget_title_top_type));
+        this._deciedPosition("#widgetSubTitle", Number(sincloInfo.widget.widget_title_name_type));
+        this._deciedPosition("#widgetDescription", Number(sincloInfo.widget.widget_title_explain_type));
+        this._setContentsView(Number(this._countContents()));
+      },
+      _deciedPosition: function(selector, position) {
+        if(position === 1){
+          $(selector).addClass("leftPosition");
+        } else if (position === 2){
+          $(selector).addClass("centerPosition");
+        }
+      },
+      _countContents: function() {
+        if(Number(sincloInfo.widget.showDescription) === 1 && Number(sincloInfo.widget.showSubtitle) === 1){
+          return 2;
+        } else if (Number(sincloInfo.widget.showDescription) === 1 || Number(sincloInfo.widget.showSubtitle) === 1){
+          $("#widgetSubTitle").addClass("oneContent");
+          $("#widgetDescription").addClass("oneContent");
+          return 1;
         } else {
-          widgetWidth = $(window).width() - 20 ;
+          $("#widgetSubTitle").addClass("noContent");
+          $("#widgetDescription").addClass("noContent");
+          return 0;
         }
-          var ratio = widgetWidth * (1/285);
-
-        //画像を表示しない場合
-        if($('#mainImage').css('display') === undefined) {
-          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'+display});
+      },
+      _setContentsView: function(contents) {
+      //サブタイトルまたは説明文のどちらかが存在する場合のみ
+        if(contents === 1){
+          if(Number(sincloInfo.widget.showDescription) === 2){
+            $("#widgetDescription").hide();
+            $("#widgetDescription").remove();
+          return;
           }
-          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'+display});
-          }
-          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'+display});
-          }
-          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'+display});
-          }
-          //企業名 企業名表示しない・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'+display});
-          }
-          //説明文 説明文表示しない・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
-            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
-          }
-        }
-      }
-      //PC
-      else {
-        //画像を表示しない場合
-        if($('#mainImage').css('display') === undefined) {
-          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'+display});
-          }
-          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'+display});
-          }
-          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:52px;line-height:52px;padding:0 0 0 15px;'+display});
-          }
-          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:52px;line-height:52px;padding:0 0 0 0px;'+display});
-          }
-          //企業名 企業名表示しない・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;'+display});
-          }
-          //説明文 説明文表示しない・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
-            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
+          if(Number(sincloInfo.widget.showSubtitle) === 2){
+            $("#widgetSubTitle").hide();
+            $("#widgetSubTitle").remove();
+          return;
           }
         }
       }
     },
+    indicateSimpleNoImage: function() {
+      //画像を表示しない場合
+      $("#widgetTitle").addClass("noImage");
+      $("#widgetSubTitle").addClass("noImage");
+      $("#widgetDescription").addClass("noImage");
+      common._headerContentsSettings._processSettings();
+    },
     indicateSimpleImage: function() {
-      var display = "display:"+$('#widgetDescription').css('display')+";";
-
-      //スマホの場合
-      if(check.smartphone()) {
-        var widgetWidth;
-
-        // TODO 関数化
-        if(sincloInfo.widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width();
-        } else {
-          widgetWidth = $(window).width() - 20 ;
-        }
-          var ratio = widgetWidth * (1/285);
-        //画像あり　タイトル左寄せの場合
-        if(sincloInfo.widget.widget_title_top_type == 1) {
-          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: ' + (78 * ratio) + 'px !important;'+display});
-        }
-        if(sincloInfo.widget.widget_title_top_type == 2) {
-          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: ' + (70 * ratio) + 'px !important;padding-right: ' + (26 * ratio) + 'px !important;'+display});
-        }
-
-        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
-        }
-        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;padding-top:0px;'+display});
-        }
-        //企業名 企業名表示しない・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-
-        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示しない・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
-          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-      }
-      //PC
-      else {
-        if(sincloInfo.widget.widget_title_top_type == 1) {
-          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'+display});
-        }
-        if(sincloInfo.widget.widget_title_top_type == 2) {
-          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 70px !important;padding-right: 26px !important;'+display});
-        }
-
-        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:78px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:70px;padding-right:26px;'+display});
-        }
-        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px;'+display});
-        }
-        //企業名 企業名表示しない・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-
-        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:78px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:70px;padding-right:26px;'+display});
-        }
-        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px;'+display});
-        }
-        //説明文 説明文表示しない・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
-          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-      }
+      //画像を表示する場合
+      common._headerContentsSettings._processSettings();
     },
     //ヘッダ表示（通常表示）
     abridgementTypeShow: function() {
       $("#mainImage").show();
       $("#widgetSubTitle").show();
       $("#widgetDescription").show();
-      var smartphone = check.smartphone();
-      if(smartphone){
+      $("#widgetTitle").removeClass("noImage");
+      $("#widgetSubTitle").removeClass("noImage");
+      $("#widgetDescription").removeClass("noImage");
+      if(check.smartphone()){
         if( common.isPortrait() ){
           if(!$('#sincloBox p#widgetTitle').hasClass("notSimple")){
             $('#sincloBox p#widgetTitle').addClass("notSimple");
@@ -896,8 +722,7 @@ var socket, // socket.io
       $("#widgetSubTitle").hide();
       $("#widgetDescription").hide();
       //false/true:通常（PC）/スマホ
-      var smartphone = check.smartphone();
-      if(smartphone){
+      if(check.smartphone()){
         //スマホ時
         //スマホだったら縦か横かを判定
         if(common.isPortrait()){
@@ -924,7 +749,6 @@ var socket, // socket.io
     //最大化時ボタン表示
     whenMaximizedBtnShow: function() {
       $("#minimizeBtn").show();
-      //$("#addBtn").hide();
       $("#closeBtn").hide();
     },
     //最小化時ボタン表示
@@ -933,13 +757,11 @@ var socket, // socket.io
       if ( Number(widget.closeButtonSetting) === 1 ) {
         //閉じるボタン無効
         $("#minimizeBtn").hide();
-        //$("#addBtn").show();
         $("#closeBtn").hide();
       }
       else{
         //閉じるボタン有効
         $("#minimizeBtn").hide();
-        //$("#addBtn").show();
         var smartphone = check.smartphone();
         if(smartphone){
           //スマホ時
@@ -1023,6 +845,9 @@ var socket, // socket.io
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
           };
+          if(Number(sincloInfo.widget.widgetSizeType) === 4 && !check.smartphone()){
+            showPosition = "bottom: 0; right: 0;"
+          }
           break;
         case 2: // 左下
           showPosition = "bottom: 0; left: 10px;";
@@ -1030,6 +855,9 @@ var socket, // socket.io
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
           };
+          if(Number(sincloInfo.widget.widgetSizeType) === 4 && !check.smartphone()){
+            showPosition = "bottom: 0; left: 0;"
+          }
           break;
       }
 
@@ -1043,7 +871,7 @@ var socket, // socket.io
             chatPosition.se = "margin-left: 45px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;";
           }
-          if(Number(widget.widgetSizeType) == 3) {
+          if(Number(widget.widgetSizeType) == 3 || Number(widget.widgetSizeType) == 4) {
             chatPosition.se = "margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;";
           }
@@ -1057,7 +885,7 @@ var socket, // socket.io
             chatPosition.se = "margin-left: 45px;";
             chatPosition.re = "margin-right: 21px;";
           }
-          if(Number(widget.widgetSizeType) == 3) {
+          if(Number(widget.widgetSizeType) == 3 || Number(widget.widgetSizeType) == 4) {
             chatPosition.se = "margin-left: 52.7px;";
             chatPosition.re = "margin-right: 24.6px;";
           }
@@ -1071,7 +899,7 @@ var socket, // socket.io
             chatPosition.se = "margin-left: 45px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;";
           }
-          if(Number(widget.widgetSizeType) == 3) {
+          if(Number(widget.widgetSizeType) == 3 || Number(widget.widgetSizeType) == 4) {
             chatPosition.se = "margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;";
           }
@@ -1180,10 +1008,9 @@ var socket, // socket.io
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { cursor:pointer; z-index: 2; position: absolute; }';
       html += '      #sincloBox span#mainImage img { background-color: ' + colorList['mainColor'] + ' }';
-      html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 62px; height: 70px; font-size: 43px; border: 1px solid; }';
       html += '      #sincloBox span#mainImage i.normal { color: ' + colorList['stringColor'] + '; background-color: ' + colorList['mainColor'] + '; }';
       html += '      #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px; }';
-      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border: 1px solid ' + colorList['mainColor'] + '; border-bottom:none; background-color: ' + colorList['mainColor'] + ';text-align: center; margin: 0; color: ' + colorList['stringColor'] + ' }';
+      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border: 1px solid ' + colorList['mainColor'] + '; border-bottom:none; background-color: ' + colorList['mainColor'] + ';text-align: center; margin: 0; color: ' + colorList['stringColor'] + ' ;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
       html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; }';
       html += '      #sincloBox div#minimizeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/minimize.png"); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
@@ -1274,11 +1101,10 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message { position: relative; color: #d5d5d5; border: none; text-align: center; }';
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + colorList['cNameTextColor'] + '; font-weight: bold; }';
-        html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
         html += '      #sincloBox ul#chatTalk li sinclo-radio { display: inline-block; margin-top: ' + widget.btwButtonMargin + 'px; } ';
         html += '      #sincloBox ul#chatTalk li span.sinclo-text-line + sinclo-radio { margin-top: ' + widget.lineButtonMargin + 'px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin 0; padding: 0 0 0 ' + (Number(widget.reTextSize) + 7) + 'px; color:' + colorList['reTextColor'] + '; min-height: 12px; font-size: ' + widget.reTextSize + 'px; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin: 0; padding: 0 0 0 ' + (Number(widget.reTextSize) + 7) + 'px; color:' + colorList['reTextColor'] + '; min-height: 12px; font-size: ' + widget.reTextSize + 'px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: ' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; left: 0px; margin-top: -' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; width: ' + (Number(widget.reTextSize)) + 'px; height: ' + (Number(widget.reTextSize)) + 'px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: ' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; left: ' + ((widget.reTextSize/2 - ((widget.reTextSize-6)/2))+1) + 'px; margin-top: -' + (Math.round(widget.reTextSize/2)-4) + 'px; width: ' + (Number(widget.reTextSize)-7) + 'px; height: ' + (Number(widget.reTextSize)-7) + 'px; background: ' + colorList['mainColor'] + '; border-radius: 50%; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver { cursor: pointer; display: none; position: absolute; left: 0; right: 0; width: 100%; height: 1.5em; background-color: rgba(0, 0, 0, 0.45); vertical-align: middle; word-wrap: break-word; z-index: 2; } ';
@@ -1373,20 +1199,26 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; grid-row: 1/2; -ms-grid-column: 2; -ms-grid-row: 1; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { grid-column: 3/4; grid-row: 1/2; -ms-grid-column: 3; -ms-grid-row: 1; }';
 
+        /* Cogmo */
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { cursor: pointer; background-color: ' + colorList['reTextColor'] + '; text-align: center; padding: 10px; border-radius: 12px; margin: 5px 0px;}';
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap:hover { opacity: 0.8 }';
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { color: ' + colorList['reBackgroundColor'] + '; font-size: ' + widget.reTextSize + 'px;}';
+        html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
+
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
         }
         if(widget.chatInitShowTextarea === 2) {
           html += '    #sincloBox section#chatTab sinclo-div#flexBoxWrap { display: none; }';
         }
-        html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + colorList['messageBoxTextColor'] + '!important; background-color: '+ colorList['messageBoxBackgroundColor'] +'; }';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + colorList['messageBoxTextColor'] + '!important; background-color: '+ colorList['messageBoxBackgroundColor'] +'; font-size: ' + widget.messageBoxTextSize + 'px;}';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:disabled, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:disabled { background-color: '+ colorList['messageBoxBackgroundColor'] +'; opacity: 1; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:focus { outline: none; border-color: ' + colorList['mainColor'] + '!important }';
         if(colorList['messageBoxBorderNone'] === 0){
           html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { border-right-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important; }';
           html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:focus { border-color: ' + colorList['mainColor'] + '!important }';
         }
-        html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { display: block; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: bold; font-size: 1.2em;}';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { display: flex;justify-content:center; align-items: center; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: bold;}';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn span, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn span {color: ' + colorList['chatSendBtnTextColor'] + '; }';
         if( (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document) || (check.isset(widget.showAccessId) && widget.showAccessId === 1)) ) {
           if(widget.chatMessageCopy === 1) {
@@ -1485,7 +1317,7 @@ var socket, // socket.io
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
           html += '#sincloBox section#navigation ul { width: ' + widgetWidth + 'px }';
           html += '#sincloBox span#mainImage { top: ' + (7 * ratio) + 'px; left: ' + (8 * ratio) + 'px; }';
-          html += '#sincloBox sinclo-div#widgetHeader:after { top: ' + (32 * ratio) + 'px }';
+          html += '#sincloBox sinclo-div#widgetHeader:after { top: ' + (35 * ratio) + 'px }';
           html += '#sincloBox p#widgetTitle { border-radius: ' + (widget.radiusRatio * ratio) + 'px ' + (widget.radiusRatio * ratio) + 'px 0 0; border: ' + (1 * ratio) + 'px solid ' + colorList['mainColor'] + '; font-size: ' + (14 * ratio) + 'px; padding: ' + (7 * ratio) + 'px ' + (30 * ratio) + 'px; height: ' + (32 * ratio) + 'px; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}';
@@ -1509,14 +1341,35 @@ var socket, // socket.io
 */
             html += '#sincloBox div#closeBtn { display: none; top: ' + (7 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; z-index: 2; }';
           }
-          html += '#sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; border-color: '+ colorList['widgetBorderColor'] +'; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; height: ' + (29 * ratio) + 'px; }';
+          html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 80px; height: 70px; font-size: calc(43px * ((3 * 15 + 36) / 81)); border: 1px solid; }';
+          html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: ' + (14*ratio) + 'px; padding: '+ (7 * ratio) + 'px 0px '+ (7 * ratio) + 'px 0px; height: '+ (32 * ratio) +'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+          html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: ' + (70 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetTitle.leftPosition.noImage { padding-left: ' +  (15 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: ' + (30 * ratio) + 'px; padding-left: calc(2.5em + 38px);}';
+          html += '      #sincloBox p#widgetTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px; }';
+
+          html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; border-color: '+ colorList['widgetBorderColor'] +'; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+          html += '      #sincloBox p#widgetSubTitle.leftPosition { padding-left: ' + (70 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetSubTitle.leftPosition.noImage { padding-left: ' + (15 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetSubTitle.centerPosition { text-align: center; padding-right: ' + (30 * ratio) + 'px; padding-left: calc(2.5em + 38px * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetSubTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+          html += '      #sincloBox p#widgetSubTitle.oneContent { line-height: calc((1em + 9px)*2); padding-bottom: ' + (3.5*ratio) + 'px; padding-top: ' + (4.5*ratio) + 'px; border-bottom: 1px '+ colorList['widgetBorderColor'] +' solid;}';
+          if(colorList['widgetInsideBorderNone'] === 1){
+            html += '      #sincloBox p#widgetSubTitle.oneContent{ border:none;}';
+          }
+
+          html += '      #sincloBox p#widgetDescription.leftPosition { padding-left: ' + (70 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetDescription.leftPosition.noImage { padding-left: ' + (15 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-right: ' + (30 * ratio) + 'px; padding-left: calc(2.5em + 38px * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetDescription.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+          html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2); padding-bottom: ' + (3.5*ratio) + 'px; padding-top: ' + (4.5*ratio) + 'px;}';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetSubTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
           if(colorList['widgetBorderNone'] === 1){
             html += '#sincloBox p#widgetSubTitle { border:none; }';
           }
-          html += '#sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: ' + (7 * ratio) + 'px; border-width: 0 ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; height: ' + (23 * ratio) + 'px; text-align: left; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
+          html += '#sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: ' + (7 * ratio) + 'px; border-width: 0 ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; text-align: left; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetDescription { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
@@ -1576,13 +1429,15 @@ var socket, // socket.io
           if(colorList['widgetInsideBorderNone'] === 0){
             html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: ' + (1 * ratio) + 'px solid '+ colorList['widgetInsideBorderColor'] +'; }';
           }
-          html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { font-size: 17px; padding: ' + (5 * ratio) + 'px;  }';
+          html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { font-size: 17px! important; padding: ' + (5 * ratio) + 'px;  }';
           if(colorList['messageBoxBorderNone'] === 0){
             html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border-radius: ' + (5 * ratio) +'px 0 0 ' + (5 * ratio) +'px!important; border: ' + (1 * ratio) + 'px solid '+ colorList['messageBoxBorderColor'] +'!important; }';
           }
           else{
             html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border: none!important; }';
           }
+
+          html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:14px); }';
 
           // 一括ヒアリング
           html += '#sincloBox #chatTalk li.sinclo_re.sinclo_form { padding: ' + (10 * ratio) + 'px ' + (15 * ratio) + 'px ' + (15 * ratio) + 'px ' + (15 * ratio) + 'px; }';
@@ -1605,6 +1460,7 @@ var socket, // socket.io
           html += '#sincloBox section#chatTab sinclo-div#miniFlexBoxHeight { height: ' + (48 * ratio) + 'px;  }';
           html += '#sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding:  ' + (16.5 * ratio) + 'px 0; border: ' + ratio + 'px solid ' + colorList['chatSendBtnBackgroundColor'] + '; }';
           html += '#sincloBox section#chatTab a#miniSincloChatSendBtn { padding: ' + (8 * ratio) + 'px 0;  }';
+          html += '#sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' + (13 * ratio) + 'px;}';
           html += '#sincloBox section#chatTab sinclo-chat-alert { left: 10%; right: 10%; bottom: 50%; border-radius: ' + (5 * ratio) + 'px; color: #FFF; padding: ' + (10 * ratio) + 'px 0; }';
           html += '#sincloBox section#navigation { border-width: 0 ' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul { margin: 0 0 0 -' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
@@ -1623,6 +1479,10 @@ var socket, // socket.io
             html += '#sincloBox #fotter { border:none; }';
           }
           html += '#sincloBox section#navigation ul li::before { margin-right: ' + (5 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; }';
+          /* Cogmo */
+          html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { padding: ' + (10 * ratio) + 'px; border-radius: ' + (12 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0px; }';
+          html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap:hover { opacity: 0.8 }';
+          html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { font-size: ' + (12 * ratio) + 'px;}';
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
             html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background: initial;}';
@@ -1703,6 +1563,7 @@ var socket, // socket.io
           html += '#sincloBox section { width: 100% }';
           html += '#sincloBox section#chatTab ul { height: ' + (chatAreaHeight - (6.5 * hRatio)) + 'px }';
           html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
+          html += '#sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' + (13 * ratio) + 'px;}';
           //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
           //閉じるボタン無効
           //＋ボタン無効に仕様変更
@@ -1727,6 +1588,8 @@ var socket, // socket.io
           if(colorList['reBorderNone'] === 0){
             html += '#sincloBox ul#chatTalk li.sinclo_re { border: ' + (1 * ratio) + 'px solid '+ colorList['reBorderColor'] +'; }';
           }
+          html += '#sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:14px); }';
+
           html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0 0 -1em 0.5em; display: inline-block; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"], #sincloBox ul#chatTalk li sinclo-radio label { webkit-transform: scale(1.3); transform: scale(1.3); moz-transform: scale(1.3); } ';
@@ -1813,17 +1676,36 @@ var socket, // socket.io
         html += "      #sincloBox section { width: " + sizeList['boxWidth'] + "px }";
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 8px }';
+        html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 80px; height: 70px; font-size: calc(43px * ((3 * ' + widget.headerTextSize + ' + 36) / 81)); border: 1px solid; }';
 
-        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px !important; height: auto; line-height: ' + widget.headerTextSize + 'px;}';
+        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px; height: auto; line-height: ' + widget.headerTextSize + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+        html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 41px);}';
+        html += '      #sincloBox p#widgetTitle.leftPosition.noImage { padding-left: 15px;}';
+        html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: 25px; padding-left: calc(2.5em + 33px);}';
+        html += '      #sincloBox p#widgetTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px; }';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
 
-        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;}';
+        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height:calc(1em + 9px); font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+        html += '      #sincloBox p#widgetSubTitle.leftPosition { padding-left: calc(2.5em + 46px)}';
+        html += '      #sincloBox p#widgetSubTitle.leftPosition.noImage { padding-left: 15px;}';
+        html += '      #sincloBox p#widgetSubTitle.centerPosition { text-align: center; padding-right: 25px; padding-left: calc(2.5em + 38px);}';
+        html += '      #sincloBox p#widgetSubTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+        html += '      #sincloBox p#widgetSubTitle.oneContent { line-height: calc((1em + 9px)*2); border-bottom: 1px '+ colorList['widgetBorderColor'] +' solid;}';
+        if(colorList['widgetInsideBorderNone'] === 1){
+          html += '      #sincloBox p#widgetSubTitle.oneContent{ border:none;}';
+        }
+
+        html += '      #sincloBox p#widgetDescription.leftPosition { padding-left: calc(2.5em + 46px)}';
+        html += '      #sincloBox p#widgetDescription.leftPosition.noImage { padding-left: 15px;}';
+        html += '      #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-right: 25px; padding-left: calc(2.5em + 38px);}';
+        html += '      #sincloBox p#widgetDescription.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+        html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2); padding-top: 3px; padding-bottom: 3px;}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetSubTitle { border:none; }';
         }
 
-        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; height: auto; line-height: ' + sizeList['widgetDescriptionHeight'] + 'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;}';
+        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; height: auto; line-height:calc(1em + 2px); color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;;}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetDescription { border-left:none; border-right:none;}';
         }
@@ -1835,10 +1717,10 @@ var socket, // socket.io
           html += '#sincloBox p#widgetDescription { border-bottom:none!important;}';
           html += '      #sincloBox section { border-bottom: none!important; }';
         }
-        // 画像がセットされている場合のスタイル
-        html += '      #sincloBox p#widgetTitle.notSimple { padding-left: 70px; }';
-        // 画像がセットされていない場合のスタイル
-        html += '      #sincloBox p#widgetTitle.noImage { padding-left: 30px; }';
+
+        html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:calc('+widget.reTextSize +'px*0.92); }';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' + widget.chatSendBtnTextSize + 'px;}';
+
         // チャットを使用する際
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
@@ -1971,10 +1853,18 @@ var socket, // socket.io
           ratio = ($(window).width() - 20) * (1/285);
         }
         html += '  <span id="mainImage" onclick="sinclo.operatorInfo.toggle()">';
-        if(widget.mainImage.match(/^fa/) !== null) {
-          html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:' + (ratio * 62) + 'px!important; height:' + (ratio * 70) + 'px!important;" alt="チャット画像"></i>';
+        if ( check.smartphone() ) {
+          if(widget.mainImage.match(/^fa/) !== null) {
+            html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * 14 + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像"></i>';
+          } else {
+            html += '    <img src="' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * 14 + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像">';
+          }
         } else {
-          html += '    <img src="' + widget.mainImage + '" width="' + (ratio * 62) + '" height="' + (ratio * 70) + '" style="width:' + (ratio * 62) + 'px!important; height:' + (ratio * 70) + 'px!important;" alt="チャット画像">';
+          if(widget.mainImage.match(/^fa/) !== null) {
+            html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important;" alt="チャット画像"></i>';
+          } else {
+            html += '    <img src="' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important;" alt="チャット画像">';
+          }
         }
         html += '  </span>';
       }
@@ -2314,6 +2204,7 @@ var socket, // socket.io
           common.widgetHandler.saveShownFlg();
           common.widgetHandler.stopToWatchResizeEvent();
           common.widgetHandler.beginToWatchResizeEvent();
+          common.widgetHandler.beginToWatchTabletResize();
           // テキストエリアの表示非表示
           if(!storage.l.get("textareaOpend") || storage.l.get("textareaOpend")  === "open") {
             sinclo.displayTextarea();
@@ -2463,6 +2354,19 @@ var socket, // socket.io
         console.log("_calcRemainingShowTimingSiteTimeMsec: " + (siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0));
         return siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0;
       },
+      beginToWatchTabletResize: function() {
+        if(check.smartphone()){
+          return;
+        }
+      //タブレットの拡大縮小を取得する（スマホは対象外）
+        $(window).on('touchstart', function(){
+          console.log('タブレット画面サイズ監視開始');
+        });
+
+        $(window).on('touchend', function(){
+          console.log('タブレット画面サイズ監視終了');
+        });
+      },
       beginToWatchResizeEvent: function() {
         if(!check.smartphone()) {
           console.log("widgetHandler::beginToWatchResizeEvent");
@@ -2477,10 +2381,57 @@ var socket, // socket.io
           $(window).off('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
         }
       },
+      _maximumReverseAnimation: function(){
+        if(check.smartphone()){
+          return;
+        }
+        console.log('「最大」設定時に最小化するアニメーションです');
+        $('#sincloWidgetBox').animate({
+          width: "400px"
+        });
+      },
+      _setFooterSize: function(){
+        if(check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.widget) && check.isset(window.sincloInfo.custom.widget.hideFotter) && window.sincloInfo.custom.widget.hideFotter){
+          return 0;
+        } else {
+          return 26;
+        }
+
+      },
+      _maximumAnimation: function(){
+        if(check.smartphone()){
+          return;
+        }
+        console.log('「最大」設定時に最大化するアニメーションです');
+        var footerSize = this._setFooterSize();
+        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + footerSize;
+        $('#chatTalk').css('height',$(window).height() - offset);
+        $('#sincloWidgetBox').animate({
+          width: $(window).width() + "px"
+        },400);
+      },
+      _widgetFitForWindow: function(){
+        console.log('<><><><><><><><><>最大設定!!!!<><><><><><><><><><>');
+        //他のウィジェットサイズタイプとは大きく違うため、別の関数を用意しました。
+        var footerSize = this._setFooterSize();
+        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + footerSize;
+        $('#chatTalk').css('height',$(window).height() - offset);
+        if($('#minimizeBtn').is(':hidden')){
+          //最大化時以外は横幅400px
+          $('#sincloWidgetBox').css('width',"400px");
+          return;
+        }
+        $('#sincloWidgetBox').css('width',$(window).width() + "px");
+        $('#chatTab').css('width',"100%");
+      },
       _handleResizeEvent: function() {
         console.log("<><><><><><><><><>widgetHandler::_handleResizeEvent");
         if(storage.s.get('widgetMaximized') === "true") {
           $('#sincloBox').css('height', 'auto');
+        }
+        if(Number(sincloInfo.widget.widgetSizeType) === 4 && !check.smartphone()){
+          common.widgetHandler._widgetFitForWindow();
+          return;
         }
         var windowHeight = $(window).innerHeight(),
           minCurrentWidgetHeight = common.widgetHandler._getMinWidgetHeight(),
@@ -3083,8 +3034,8 @@ var socket, // socket.io
             html += "  <div class='reload_only_dot_center'></div>";
             html += "  <div class='reload_only_dot_right'></div>";
           }else{
-            //スマホかウィジェットサイズが大の場合
-              if(check.smartphone() || widget.widgetSizeType === 3){
+            //スマホかウィジェットサイズが大以上の場合
+              if(check.smartphone() || widget.widgetSizeType === 3  || widget.widgetSizeType === 4){
                 html += "<li class='effect_left_wait botNowTypingLarge'>";
               //ウィジェットサイズが中の場合
               }else if(widget.widgetSizeType === 2){
@@ -3195,7 +3146,7 @@ var socket, // socket.io
         }
         var coverWidth = widgetWidth;
       }else{
-        var coverWidth = sizeList.boxWidth;
+        var coverWidth = parseInt(sizeList.boxWidth);
       }
       var coverHeight = $('#chatTalk').outerHeight() + $('#flexBoxHeight').outerHeight();
       var loadPadding = Number(widget.widgetSizeType) * 29 + 61;
