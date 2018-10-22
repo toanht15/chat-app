@@ -228,6 +228,13 @@ define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
 define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
 define('C_SCENARIO_INPUT_TYPE_TEL', 4);
 
+// シナリオ設定(ヒアリング)－UIタイプ種別コード
+define('C_SCENARIO_UI_TYPE_ONE_ROW_TEXT', 1);
+define('C_SCENARIO_UI_TYPE_MULTIPLE_ROW_TEXT', 2);
+define('C_SCENARIO_UI_TYPE_RADIO_BUTTON', 3);
+define('C_SCENARIO_UI_TYPE_PULLDOWN', 4);
+define('C_SCENARIO_UI_TYPE_CALENDAR', 5);
+
 /* シナリオ設定(ヒアリング) - 改行設定 */
 define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
 define('C_SCENARIO_INPUT_LF_TYPE_ALLOW', 2);
@@ -744,8 +751,98 @@ $config['chatbotScenarioActionList'] = [
       'hearings' => [[
         'variableName' => '',
         'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
+        'uiType' => 1,
         'message' => '',
-        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW
+        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW,
+        'required' => true,
+        'options' => [
+          C_SCENARIO_UI_TYPE_RADIO_BUTTON => [""],
+          C_SCENARIO_UI_TYPE_PULLDOWN => [""],
+          C_SCENARIO_UI_TYPE_CALENDAR => [
+            'disablePastDate' => true,
+            'isSetDisableDate' => false,
+            'isCustomDesign' => false,
+            'isDisableDayOfWeek' => false,
+            'isSetSpecificDate' => false,
+            'isEnableAfterDate' => false,
+            'enableAfterDate' => null,
+            'dayOfWeekSetting' => [
+              1 => [
+                'label' => '月',
+                'value' => false
+              ],
+              2 => [
+                'label' => '火',
+                'value' => false
+              ],
+              3 => [
+                'label' => '水',
+                'value' => false
+              ],
+              4 => [
+                'label' => '木',
+                'value' => false
+              ],
+              5 => [
+                'label' => '金',
+                'value' => false
+              ],
+              6 => [
+                'label' => '土',
+                'value' => false
+              ],
+              0 => [
+                'label' => '日',
+                'value' => false
+              ]
+            ],
+            'setSpecificDateType' => '',
+            'specificDateData' => [
+              1 => [""],
+              2 => [""],
+            ],
+             'language' => 1 // 1: japanese, 2: english
+          ],
+          'pulldownCustomDesign' => false,
+        ],
+        'customDesign' => [
+          C_SCENARIO_UI_TYPE_PULLDOWN => [
+            'borderColor' => '#00A0C1',
+            'backgroundColor' => '#FFFFFF',
+            'textColor' => '#918c87',
+            'markColor' => '#00A0C1'
+          ],
+          C_SCENARIO_UI_TYPE_CALENDAR => [
+            'headerBackgroundColor' => [
+              'label' => 'ヘッダー背景色',
+              'value' => '#00A0C1'
+            ],
+            'headerTextColor' => [
+              'label' => 'ヘッダー文字色',
+              'value' => '#FFFFFF'
+            ],
+            'borderColor' => [
+              'label' => '枠線色',
+              'value' => '#00A0C1'
+            ],
+            'calendarBackgroundColor' => [
+              'label' => 'カレンダ背景色',
+              'value' => '#FFFFFF'
+            ],
+            'calendarTextColor' => [
+              'label' => 'カレンダ文字色',
+              'value' => '#918c87'
+            ],
+            'saturdayColor' => [
+              'label' => '土曜日文字色',
+              'value' => '#4286f4'
+            ],
+            'sundayColor' => [
+              'label' => '日曜日文字色',
+              'value' => '#f20c0c'
+            ]
+          ]
+        ]
       ]],
       'errorMessage' => '',
       'isConfirm' => '2',
