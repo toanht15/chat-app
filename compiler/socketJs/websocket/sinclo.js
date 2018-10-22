@@ -6826,12 +6826,15 @@
           } else if (check.isset(window.dataLayer)) {
             window.dataLayer.push({'event': telNumberStr});
           }
-
+        } catch(gFuncError) {
+          console.log(gFuncError.message);
+        }
+        try {
           if(typeof(window.yahoo_report_conversion) === 'function') {
             window.yahoo_report_conversion(telNumberStr);
           }
-        } catch(funcError) {
-          console.log(funcError.message);
+        } catch(yFuncError) {
+          console.log(yFuncError.message);
         }
       }
     }
