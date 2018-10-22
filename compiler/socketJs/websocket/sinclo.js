@@ -93,6 +93,9 @@
             //チャットのテキストエリア非表示
             else {
               sinclo.displayTextarea();
+              if(Number(sincloInfo.widget.widgetSizeType) === 4){
+                common.widgetHandler._maximumAnimation();
+              }
             }
 
             sinclo.widget.condifiton.set(true, true);
@@ -148,6 +151,9 @@
               common.indicateSimpleImage();
             }
             height = this.header.offsetHeight;
+            if(Number(window.sincloInfo.widget.widgetSizeType) === 4){
+              common.widgetHandler._maximumReverseAnimation();
+            }
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
           }
@@ -250,10 +256,16 @@
           case 1: // 右下
             //right: 10px;
             $("#sincloBox").css("right","10px");
+            if( Number(window.sincloInfo.widget.widgetSizeType) === 4){
+              $("#sincloBox").css("right","0px");
+            }
             break;
           case 2: // 左下
             //left: 10px;
             $("#sincloBox").css("left","10px");
+            if( Number(window.sincloInfo.widget.widgetSizeType) === 4){
+              $("#sincloBox").css("left","0px");
+            }
             break;
           }
         }
@@ -1201,7 +1213,9 @@
             || Number(chat.messageType) === 21
             || Number(chat.messageType) === 22
             || Number(chat.messageType) === 23
-            || Number(chat.messageType) === 27) {
+            || Number(chat.messageType) === 27
+            || Number(chat.messageType) === 81
+            || Number(chat.messageType) === 82) {
             if (check.isset(window.sincloInfo.widget.showAutomessageName) && window.sincloInfo.widget.showAutomessageName === 2) {
               userName = "";
             } else {
@@ -1249,9 +1263,6 @@
               this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           }
-          else if (Number(chat.messageType) === 7) {
-            return false;
-          }
           else if(Number(chat.messageType) === 8){
           }
           else if(Number(chat.messageType) === 19) {
@@ -1270,6 +1281,10 @@
             }
           } else if (Number(chat.messageType) === 31 || Number(chat.messageType) === 32) {
             this.chatApi.createFormFromLog(JSON.parse(chat.message));
+          } else if (Number(chat.messageType) === 81) {
+            this.chatApi.createCogmoAttendBotMessage("sinclo_re", chat.message, userName, false);
+          } else if (Number(chat.messageType) === 82) {
+            this.chatApi.createCogmoAttendBotMessage("sinclo_re", chat.message, userName, true);
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
@@ -1450,6 +1465,15 @@
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.answerBulkHearing ) {
           cn = "sinclo_se";
           elm.value = "";
+        } else if (obj.messageType === sinclo.chatApi.messageType.cogmo.message
+          || obj.messageType === sinclo.chatApi.messageType.cogmo.feedback) {
+          cn = "sinclo_re";
+          if (window.sincloInfo.widget.showAutomessageName === 2) {
+            userName = "";
+          } else {
+            userName = window.sincloInfo.widget.subTitle;
+          }
+          elm.value = "";
         }
         if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
@@ -1464,18 +1488,18 @@
             storage.s.set('requestFlg',false);
           };
           if(obj.tabId === userInfo.tabId) {
-          //シナリオ中のみ発動
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ヒアリングの入力無効終了(ｽﾏﾎ)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
-          if(check.smartphone() && sinclo.scenarioApi.isProcessing()){
-            var miniTextarea = document.getElementById("miniSincloChatMessage"),
-                textarea = document.getElementById("sincloChatMessage");
-            if(textarea){
-              textarea.disabled = false;
+            //シナリオ中のみ発動
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ヒアリングの入力無効終了(ｽﾏﾎ)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+            if(check.smartphone() && sinclo.scenarioApi.isProcessing()){
+              var miniTextarea = document.getElementById("miniSincloChatMessage"),
+                  textarea = document.getElementById("sincloChatMessage");
+              if(textarea){
+                textarea.disabled = false;
+              }
+              if(miniTextarea){
+                miniTextarea.disabled = false;
+              }
             }
-            if(miniTextarea){
-              miniTextarea.disabled = false;
-            }
-          }
             common.chatBotTypingCall(obj);
             return false;
           } else if (obj.messageType === sinclo.chatApi.messageType.autoSpeech) {
@@ -1540,7 +1564,7 @@
           return false;
         }
 
-        if (obj.messageType === 40) {
+        if (obj.messageType === sinclo.chatApi.messageType.scenario.message.returnBulkHearing) {
           var data = JSON.parse(obj.chatMessage);
           common.chatBotTypingRemove();
           if(sinclo.scenarioApi.isProcessing()) {
@@ -1561,7 +1585,20 @@
           return false;
         }
 
+        if (obj.messageType === sinclo.chatApi.messageType.cogmo.message
+          || obj.messageType === sinclo.chatApi.messageType.cogmo.feedback) {
+          this.chatApi.createMessageUnread(cn, obj.message, userName, false, true, obj.isFeedbackMsg);
+          this.chatApi.scDown(obj);
+          return false;
+        }
+
         if (obj.messageType === sinclo.chatApi.messageType.sorry) {
+          cn = "sinclo_re";
+          if (window.sincloInfo.widget.showAutomessageName === 2) {
+            userName = "";
+          } else {
+            userName = window.sincloInfo.widget.subTitle;
+          }
           //Sorryメッセージが複数回呼ばれた場合は、タイマーが重複しないよう削除する
           if(sinclo.sorryMsgTimer){
             clearTimeout(sinclo.sorryMsgTimer);
@@ -1570,7 +1607,7 @@
           sinclo.sorryMsgTimer = setTimeout(function(){
             cn = "sinclo_re";
             sinclo.chatApi.call();
-            sinclo.chatApi.createMessage(cn, obj.chatMessage, sincloInfo.widget.subTitle);
+            sinclo.chatApi.createMessage(cn, obj.chatMessage, userName);
             if(sinclo.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
               sinclo.chatApi.notify(obj.chatMessage);
             } else {
@@ -1602,7 +1639,13 @@
             (function (times) {
               setTimeout(function () {
                 if (storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
-                  sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
+                  var userName = "";
+                  if (window.sincloInfo.widget.showAutomessageName === 2) {
+                    userName = "";
+                  } else {
+                    userName = window.sincloInfo.widget.subTitle;
+                  }
+                  sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, userName);
                   sinclo.chatApi.scDown();
                   var sendData = {
                     siteKey: obj.siteKey,
@@ -1613,7 +1656,7 @@
                     chatId: obj.chatId,
                     mUserId: obj.mUserId,
                     userId: obj.userId,
-                  }
+                  };
                   emit("sendInitialNotificationChat", {messageList: sendData});
                 }
                 storage.s.set('callingMessageSeconds',data[times].seconds);
@@ -1624,7 +1667,7 @@
         if (obj.messageType == sinclo.chatApi.messageType.notification) {
           return false;
         }
-        if(obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
+        if(!obj.hideMessage && obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
@@ -2110,8 +2153,8 @@
           sendFile: 6,
           notification: 7,
           linkClick: 8,
-          start: 98,
-          end: 99,
+          start: 998,
+          end: 999,
           scenario: {
             customer: {
               hearing: 12,
@@ -2128,6 +2171,10 @@
               receiveFile: 27,
               returnBulkHearing: 40
             }
+          },
+          cogmo: {
+            message: 81,
+            feedback: 82
           }
         },
         autoMessages: {
@@ -2691,13 +2738,16 @@
             .replace(/(&amp;)/g, '&');
 
                 if ( cs === "sinclo_re" ) {
-                    // ラジオボタン
-                    var radio = str.indexOf('[]');
-                    if ( radio > -1 ) {
-                        var name = str.slice(radio+2).trim();
-                        str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
-                        str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
-                    }
+                  // ラジオボタン
+                  var radio = str.indexOf('[]');
+                  if ( radio > -1 ) {
+                      var name = str.slice(radio+2).trim();
+                      str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
+                      str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
+                  }
+
+                  // ボタン（CogmoAttend）
+
                 }
                 // リンク
                 var link = str.match(linkReg);
@@ -2789,6 +2839,181 @@
         if (cs === "sinclo_re") {
           cs += ' effect_left';
         } else if (cs === "sinclo_se") {
+          cs += ' effect_right';
+        }
+
+        li.className = cs;
+        li.innerHTML = content;
+      },
+      createCogmoAttendBotMessage: function (cs, val, cName, isFeedbackMsg) {
+        common.chatBotTypingRemove();
+        var chatList = document.getElementsByTagName('sinclo-chat')[0];
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+        div.appendChild(li);
+        chatList.appendChild(div);
+        var strings = val.split(/\n|<br>/g);
+        var radioCnt = 1;
+        var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+        var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
+        var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+        var radioName = "sinclo-radio" + chatList.children.length;
+        var content = "";
+        var className;
+
+        if (sincloInfo.widget.widgetSizeType === 1 || check.smartphone()) {
+          className = 'smallSizeImg';
+        }
+        else if (sincloInfo.widget.widgetSizeType === 2) {
+          className = 'middleSizeImg';
+        }
+        else if (sincloInfo.widget.widgetSizeType === 3) {
+          className = 'largeSizeImg';
+        }
+
+        if (check.isset(cName) === false) {
+          cName = "";
+        }
+        check.escape_html(cName); // エスケープ
+
+        if (cs === "sinclo_re") {
+          div.style.textAlign = "left";
+          if (cName !== "") {
+            content = "<span class='cName'>" + cName + "</span>";
+          }
+        } else if (cs === "sinclo_se") {
+          div.style.textAlign = "right";
+        }
+        for (var i = 0; strings.length > i; i++) {
+          var str = check.escape_html(strings[i]);
+          var unEscapeStr = str
+            .replace(/(&lt;)/g, '<')
+            .replace(/(&gt;)/g, '>')
+            .replace(/(&quot;)/g, '"')
+            .replace(/(&#39;)/g, "'")
+            .replace(/(&amp;)/g, '&');
+
+          if ( cs === "sinclo_re" ) {
+            // ラジオボタン
+            var radio = str.indexOf('[]');
+            if ( radio > -1 ) {
+              var name = str.slice(radio+2).trim();
+              str = "<sinclo-radio><input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + name + "'>";
+              str += "<label for='" + radioName + "-" + i + "'>" + name + "</label></sinclo-radio>";
+            }
+            // ボタン（CogmoAttend）
+            if (str.match(/\[(.*)?]/g)) {
+              cs += ' withButton';
+              var buttons = str.match(/\[(.*?)]/g);
+              var buttonHtml = "";
+              for (var j=0; j < buttons.length; j++) {
+                str = str.replace(buttons[j], "");
+                var buttonStr = buttons[j]  .replace(/[\[\]]/g, '');
+                buttonHtml += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"button_" + buttonStr + "\")'><span class='sincloButton'>" + buttonStr + "</span></p>"
+              }
+              str = "<span class='sinclo-text-line'>" + str + "</span>";
+              str += buttonHtml;
+            }
+            // フィードバックボタン（CogmoAttend）
+            if (isFeedbackMsg) {
+              cs += ' withButton';
+              str = "<span class='sinclo-text-line'>" + str + "</span>";
+              str += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"button_はい\")'><span class='sincloButton'>はい</span></p>";
+              str += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"button_いいえ\")'><span class='sincloButton'>いいえ</span></p>"
+            }
+          }
+          // リンク
+          var link = str.match(linkReg);
+          var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+          var linkTab = unEscapeStr.match(linkTabReg);
+          if ( link !== null || linkTab !== null) {
+            if ( linkTab !== null) {
+              if(link !== null) {
+                var a = linkTab[0];
+                //imgタグ有効化
+                var img = unEscapeStr.match(imgTagReg);
+                if(img == null) {
+                  //ボタンのCSSを外す
+                  var linkButtonTabReg = RegExp(/<a ([\s\S]*?)style=([\s\S]*?)>([\s\S]*?)<\/a>/);
+                  var linkButtonTab = unEscapeStr.match(linkButtonTabReg);
+                  if(linkButtonTab !== null) {
+                    var processedLink = linkButtonTab[1].replace(/ /g, "\$nbsp;");
+                  }
+                  else {
+                    var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                  }
+                  a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
+                }
+                else {
+                  var processedLink = linkTab[1].replace(img[0], "");
+                  processedLink = processedLink.replace(/ /g, "\$nbsp;");
+                  imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+                  a = a.replace(img[0], imgTag);
+                  var urlTagReg = RegExp(/href="([\s\S]*?)"([\s\S]*?)/);
+                  var url = a.match(urlTagReg);
+                  a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+processedLink+"')");
+                }
+              }
+              else {
+                // ただの文字列にする
+                var a = "<span class='link'>"+ linkTab[2] + "</span>";
+              }
+              str = unEscapeStr.replace(linkTab[0], a);
+            }
+            //URLのみのリンクの場合
+            else {
+              var url = link[0];
+              //imgタグ有効化
+              var img = unEscapeStr.match(imgTagReg);
+              if(img == null) {
+                var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
+                var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
+                var linkTab = a.match(linkTabReg);
+                processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+                a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
+                str = str.replace(url, a);
+              }
+              else {
+                var imageBlock = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img class='"+className+"' "+img[1]+"></div>";
+
+                str = unEscapeStr.replace(img[0], imageBlock);
+
+              }
+            }
+          }
+          // 電話番号（スマホのみリンク化）
+          var tel = str.match(telnoTagReg);
+          if( tel !== null ) {
+            var telno = tel[1];
+            if(check.smartphone()) {
+              // リンクとして有効化
+              var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
+              str = str.replace(tel[0], a);
+            } else {
+              // ただの文字列にする
+              var span = "<span class='telno'>" + telno + "</span>";
+              str = str.replace(tel[0], span);
+            }
+          }
+          if ( cs === "sinclo_re" ) {
+            //imgタグ
+            var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
+            var img = unEscapeStr.match(imgTagReg);
+            if(img !== null && link == null && linkTab == null) {
+              imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+              str = unEscapeStr.replace(img[0], imgTag);
+            }
+          }
+          if(str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
+            content += "" + str + "\n";
+          } else {
+            content += "<span class='sinclo-text-line'>" + str.replace(/^[\n|\r\n|\r]$/g, "") + "</span>\n";
+          }
+        }
+
+        if (cs.indexOf("sinclo_re") !== -1) {
+          cs += ' effect_left';
+        } else if (cs.indexOf("sinclo_se") !== -1) {
           cs += ' effect_right';
         }
 
@@ -3095,12 +3320,16 @@
       hideForm: function() {
         $('li.sinclo_re.sinclo_form').remove();
       },
-      createMessageUnread: function (cs, val, name, isScenarioMessage) {
+      createMessageUnread: function (cs, val, name, isScenarioMessage, isCogmoAttendBotMessage, isFeedbackMsg) {
         if (cs && cs.indexOf("sinclo_re") >= 0) {
           sinclo.chatApi.unread++;
           sinclo.chatApi.showUnreadCnt();
         }
-        sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
+        if(isCogmoAttendBotMessage) {
+          sinclo.chatApi.createCogmoAttendBotMessage(cs, val, name, isFeedbackMsg);
+        } else {
+          sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
+        }
       },
       clearChatMessages: function () {
         var chatTalk = document.getElementsByTagName("sinclo-chat")[0];
@@ -4718,7 +4947,7 @@
           // 4. マッチ設定が存在する
           console.log("matchAllSpeechContent ::: sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
           if (
-            (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
+            (!window.sincloInfo.contract.useCogmoAttendApi && !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
             && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() && this.speechContentRegEx.length > 0) {
             for (var index in this.speechContentRegEx) {
               console.log(this.speechContentRegEx[index].id);
