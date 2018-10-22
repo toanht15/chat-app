@@ -6821,14 +6821,14 @@
       callTelCV: function(telNumber) {
         var telNumberStr = 'tel:' + telNumber;
         try {
-          if(typeof(gtag_report_conversion) === 'function') {
-            gtag_report_conversation(telNumberStr);
-          } else if(check.isset(dataLayer)) {
-            dataLayer.push({'event': telNumberStr});
+          if(typeof(window.gtag_report_conversion) === 'function') {
+            window.gtag_report_conversation(telNumberStr);
+          } else if (check.isset(window.dataLayer)) {
+            window.dataLayer.push({'event': telNumberStr});
           }
 
-          if(typeof(yahoo_report_conversion) === 'function') {
-            yahoo_report_conversion(telNumberStr);
+          if(typeof(window.yahoo_report_conversion) === 'function') {
+            window.yahoo_report_conversion(telNumberStr);
           }
         } catch(e) {
           console.log(e.message);
