@@ -7571,10 +7571,11 @@ ul.naviBtn {
                     }
 
                     .calendar-design-custom {
+                      margin-left: 16px;
                       .calendar-custom-items {
                         display: flex;
                         width: 32em;
-                        justify-content: space-between;
+                        padding: 2px 0;
 
                         input {
                           height: 26px;
@@ -7585,14 +7586,14 @@ ul.naviBtn {
                         }
 
                         label {
-                          flex-basis: 110px;
+                          flex-basis: 100px;
                           margin-top: 10px;
                         }
 
                         .revert-button {
                           position: relative;
-                          left: 15px;
-                          padding: 5px;
+                          left: 10px;
+                          padding: 4px;
                           bottom: 5px;
                         }
                       }
@@ -7614,8 +7615,8 @@ ul.naviBtn {
                   height: 100%;
                   display: -ms-grid;
                   display: grid;
-                  grid-template-columns: 20px 50px 145px 140px 1fr 48px;
-                  -ms-grid-columns: 20px 50px 145px 140px 1fr 48px;
+                  grid-template-columns: 20px 50px 115px 140px 1fr 48px;
+                  -ms-grid-columns: 20px 50px 115px 140px 1fr 48px;
                   &.short {
                     grid-template-columns: 170px 236px 60px 1fr;
                     -ms-grid-columns: 170px 236px 60px 1fr;
@@ -7731,12 +7732,12 @@ ul.naviBtn {
                       width: 32em;
 
                       span {
-                        margin-left: 40px;
-                        padding: 5px 0;
+                        margin-left: 15px;
+                        padding: 2px 0;
                         display: flex;
 
                         label {
-                          flex-basis: 110px;
+                          flex-basis: 100px;
                           margin-top: 10px;
                         }
 
@@ -7744,16 +7745,20 @@ ul.naviBtn {
                           border: none !important;
                           border-bottom: 1px solid #909090 !important;
                           border-radius: 0 !important;
-                          width: 150px;
-                          margin-left: 20px;
+                          width: 120px;
                           height: 26px;
                         }
                       }
 
                       .revert-button {
-                        padding-left: 12px;
+                        padding: 4px 0;
                         bottom: 5px;
+                        justify-content: center;
                       }
+                    }
+
+                    div.calendar-design-custom-area {
+
                     }
                   }
 
