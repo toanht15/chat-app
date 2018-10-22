@@ -2784,7 +2784,7 @@
                   var telno = tel[1];
                   if(check.smartphone()) {
                     // リンクとして有効化
-                    var a = "<a onclick=\"sinclo.api.callTelCV('" + telno + "')\" href='tel:" + telno + "'>" + telno + "</a>";
+                    var a = "<a class=\"sincloTelConversion\" onclick=\"sinclo.api.callTelCV('" + telno + "')\" href='tel:" + telno + "'>" + telno + "</a>";
                     str = str.replace(tel[0], a);
                   } else {
                     // ただの文字列にする
