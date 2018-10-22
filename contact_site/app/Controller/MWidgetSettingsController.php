@@ -662,7 +662,11 @@ class MWidgetSettingsController extends AppController {
 
             // デフォルト値（プレミアムプランのみ表示する）
             if ( strcmp($v, 'show_access_id') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['show_access_id'] = C_SELECT_CAN_NOT;
+              if($this->coreSettings[C_COMPANY_USE_CHAT] && $this->coreSettings[C_COMPANY_USE_SYNCLO]){
+                $d['show_access_id'] = C_SELECT_CAN;
+              } else {
+                $d['show_access_id'] = C_SELECT_CAN_NOT;
+              }
             }
             //ウィジットサイズタイプ
             if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
