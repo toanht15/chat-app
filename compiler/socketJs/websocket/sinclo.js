@@ -2784,7 +2784,7 @@
                   var telno = tel[1];
                   if(check.smartphone()) {
                     // リンクとして有効化
-                    var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
+                    var a = "<a onclick=\"sinclo.api.callTelCV('" + telno + "')\" href='tel:" + telno + "'>" + telno + "</a>";
                     str = str.replace(tel[0], a);
                   } else {
                     // ただの文字列にする
@@ -6816,6 +6816,22 @@
           }
         } catch (e) {
           console.log("api::callFunction Error => %s", e.message);
+        }
+      },
+      callTelCV: function(telNumber) {
+        var telNumberStr = 'tel:' + telNumber;
+        try {
+          if(typeof(gtag_report_conversion) === 'function') {
+            gtag_report_conversation(telNumberStr);
+          } else if(check.isset(dataLayer)) {
+            dataLayer.push({'event': telNumberStr});
+          }
+
+          if(typeof(yahoo_report_conversion) === 'function') {
+            yahoo_report_conversion(telNumberStr);
+          }
+        } catch(e) {
+          console.log(e.message);
         }
       }
     }
