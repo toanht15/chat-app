@@ -6830,8 +6830,8 @@
           if(typeof(window.yahoo_report_conversion) === 'function') {
             window.yahoo_report_conversion(telNumberStr);
           }
-        } catch(e) {
-          console.log(e.message);
+        } catch(funcError) {
+          console.log(funcError.message);
         }
       }
     }
