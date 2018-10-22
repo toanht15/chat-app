@@ -75,14 +75,14 @@ class ScriptSettingsController extends AppController {
     if($plan->chat == 1 && empty($plan->synclo)) {
       $plan = "chat";
       if($this->action == "testpage4") {
-        $this->set('title_for_layout', "sincloデモ｜お問い合わせ");
+        $this->set('title_for_layout', "お問い合わせ");
       }
     }
     //シェアリング、プレミアム
     else if(($plan->chat == 1 && $plan->synclo == 1) || (empty($plan->chat) && $plan->synclo == 1)) {
       $plan = "sharing";
       if($this->action == "testpage4") {
-        $this->set('title_for_layout', "sincloデモ｜フォーム用タグ");
+        $this->set('title_for_layout', "フォーム用タグ");
       }
     }
     $this->set("plan", $plan);
@@ -100,21 +100,21 @@ class ScriptSettingsController extends AppController {
 
   public function testpage(){
     Configure::write('debug', 0);
-    $this->set('title_for_layout', 'sincloデモ｜トップ');
+    $this->set('title_for_layout', 'トップ');
     $this->set('layoutNumber', 1);
   }
 
   public function testpage2(){
     Configure::write('debug', 0);
     $this->set('layoutNumber', 2);
-    $this->set('title_for_layout', "sincloデモ｜プラン・費用");
+    $this->set('title_for_layout', "プラン・費用");
     $this->render('testpage');
   }
 
   public function testpage3(){
     Configure::write('debug', 0);
     $this->set('layoutNumber', 3);
-    $this->set('title_for_layout', "sincloデモ｜制作の流れ");
+    $this->set('title_for_layout', "制作の流れ");
     $this->render('testpage');
   }
 
@@ -178,42 +178,42 @@ class ScriptSettingsController extends AppController {
   public function testpage5(){
     Configure::write('debug', 0);
     $this->set('layoutNumber', 5);
-    $this->set('title_for_layout', "sincloデモ｜会社概要");
+    $this->set('title_for_layout', "会社概要");
     $this->render('testpage');
   }
 
   public function testpage6(){
     Configure::write('debug', 0);
     $this->set('layoutNumber', 6);
-    $this->set('title_for_layout', "sincloデモ｜制作実績");
+    $this->set('title_for_layout', "制作実績");
     $this->render('testpage');
   }
 
   public function testpage7(){
     Configure::write('debug', 0);
     $this->set('layoutNumber', 7);
-    $this->set('title_for_layout', "sincloデモ｜スタッフ紹介");
+    $this->set('title_for_layout', "スタッフ紹介");
     $this->render('testpage');
   }
 
   public function testpage8(){
     Configure::write('debug', 0);
     $this->set('layoutNumber', 8);
-    $this->set('title_for_layout', "sincloデモ｜リンク集");
+    $this->set('title_for_layout', "リンク集");
     $this->render('testpage');
   }
 
   public function testpage9(){
     Configure::write('debug', 0);
     $this->set('layoutNumber', 9);
-    $this->set('title_for_layout', "sincloデモ｜よく頂く質問");
+    $this->set('title_for_layout', "よく頂く質問");
     $this->render('testpage');
   }
 
   public function testpage10(){
     Configure::write('debug', 0);
     $this->set('layoutNumber', 10);
-    $this->set('title_for_layout', "sincloデモ｜キャンペーン情報");
+    $this->set('title_for_layout', "キャンペーン情報");
     $this->render('testpage');
   }
 
@@ -224,7 +224,7 @@ class ScriptSettingsController extends AppController {
       $this->request->data['ScriptSettings'] = [];
     }
     $this->set('data', $this->request->data['ScriptSettings']);
-    $this->set('title_for_layout', "sincloデモ｜フォーム確認");
+    $this->set('title_for_layout', "フォーム確認");
     $this->render('testpage');
   }
 }
