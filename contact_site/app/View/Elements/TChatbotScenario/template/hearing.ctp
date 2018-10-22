@@ -36,7 +36,7 @@
                     </div>
                     <div class='area-name'><input type="text" ng-model="hearingItem.variableName"></div>
                     <div class='area-type'>
-                        <select name="hearing-input-option" ng-model="hearingItem.uiType" ng-init="hearingItem.uiType = '1'">
+                        <select name="hearing-input-option" ng-model="hearingItem.uiType" ng-init="hearingItem.uiType = '1'" ng-change="main.controllSelectionView(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
                             <option value="1">テキスト（１行）</option>
                             <option value="2">テキスト（複数行）</option>
                             <option value="3">ラジオボタン</option>

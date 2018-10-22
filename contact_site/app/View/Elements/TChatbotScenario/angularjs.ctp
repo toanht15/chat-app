@@ -1292,6 +1292,18 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
+  this.controllSelectionView = function (actionType, actionIndex, hearingIndex, uiType) {
+    // ラジオボタン、プルダウン
+    if (uiType === '3' || uiType == '4') {
+      $timeout(function () {
+        $scope.$apply();
+      }).then(function () {
+        var target = $('.action' + actionIndex + '_option' + hearingIndex);
+        self.controllListView(actionType, target, target);
+      }, 0);
+    }
+  };
+
   // 選択肢が、プレビュー表示可能かを返す
   this.visibleSelectOptionSetting = function(param) {
     var visible = false;
@@ -2069,7 +2081,6 @@ $(document).ready(function() {
 
   //フォーカスされたアクションに応じて、関連するプレビューを強調表示する
   $(document).on('focus', '.set_action_item', function () {
-    console.log('aa');
     $('.set_action_item').blur();
     var previewId = $(this).attr('id').replace(/setting$/, 'preview');
     $(this).css('border', '1px solid #C3D69B');
@@ -2080,14 +2091,12 @@ $(document).ready(function() {
     $(this).find('.closeBtn').css('display', 'block');
     $(this).find('h4').css('background-color', '#C3D69B');
   }).on('blur', '.set_action_item', function () {
-    console.log("bb");
     var previewId = $(this).attr('id').replace(/setting$/, 'preview');
     $('.set_action_item').css('border', '1px solid #a9aaa4');
     $('.set_action_item h4').css('background-color', '#DADADA');
     $('.closeBtn').show();
     $('#' + previewId + ' .actionTitle').removeClass('active');
   }).on('focusout', '.set_action_item', function () {
-    console.log("cc");
     var previewId = $(this).attr('id').replace(/setting$/, 'preview');
     $('.set_action_item').css('border', '1px solid #a9aaa4');
     $('.set_action_item h4').css('background-color', '#DADADA');
