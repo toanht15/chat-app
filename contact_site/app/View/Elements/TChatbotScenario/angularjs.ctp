@@ -570,7 +570,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var inputOptions = $('#bulk_selection').val();
       var convertedInputOptions = inputOptions.split('\n');
 
-      if (uiType === '3' || uiType === '5') {
+      if (uiType === '3' || uiType === '4') {
         $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType] = [];
         angular.forEach(convertedInputOptions, function (option, optionKey) {
           if (option) {
