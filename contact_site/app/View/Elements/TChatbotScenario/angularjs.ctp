@@ -11,12 +11,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.changeFlg = false;
 
   $scope.focusActionIndex = null;
-
   // current action
   $scope.previousAction = null;
   $scope.currentAction = null;
-
-  $scope.multiSelection = "";
 
   // calendar japanese custom
   $scope.japaneseCalendar = {
@@ -167,7 +164,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var item = $scope.actionList[actionType];
       item.actionType = actionType.toString();
       $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
-      // $scope.setActionList.splice(1, 0, angular.copy(angular.merge(item, item.default)));
 
       // 表示位置調整
       $timeout(function() {
@@ -264,7 +260,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.watchSetActionList = function(action, index) {
     // watchの破棄
     if (typeof $scope.watchActionList[index] !== 'undefined') {
-        $scope.watchActionList[index]();
+      $scope.watchActionList[index]();
     }
 
     $scope.watchActionList[index] = $scope.$watch('setActionList[' + index + ']', function(newObject, oldObject) {
@@ -297,7 +293,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         document.getElementById('action' + index + '_error_message').innerHTML = $scope.widget.createMessage(newObject.errorMessage);
       }
 
-        // hearings calendar
+        // hearings
       if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
         angular.forEach(newObject.hearings, function (hearing, hearingIndex) {
           // pulldown customize
@@ -364,7 +360,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
             if (hearing.options[5].isSetSpecificDate) {
               if (hearing.options[5].setSpecificDateType == 1) {
-                hearing.options[5].specificDateData[2] = [""]
+                hearing.options[5].specificDateData[2] = [""];
                 var disableLength = calendar_options.disable.length;
                 angular.forEach(hearing.options[5].specificDateData[1], function (item, key) {
                   calendar_options.disable[key + disableLength] = item;
@@ -421,7 +417,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               calendarTarget.find('.flatpickr-calendar').css('border-color', hearing.customDesign[5].borderColor.value);
               // calendar body color
               calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', hearing.customDesign[5].calendarBackgroundColor.value);
-              // calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', hearing.customDesign[5].calendarBackgroundColor.value);
               // calendar text color
               var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
               calendarTextColorTarget.each(function () {
@@ -474,7 +469,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (message == '') return;
         document.getElementById('action' + index + '_confirm_message').innerHTML = $scope.widget.createMessage(message, 'preview' + index);
       }
-
       // 選択肢
       if (typeof newObject.message !== 'undefied' && typeof newObject.selection !== 'undefined') {
         var messageList = [newObject.message];
@@ -539,7 +533,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   this.showBulkSelectionPopup = function (actionIndex, hearingIndex, uiType) {
-    if (uiType == 3 || uiType == 4) {
+    if (uiType === '3' || uiType === '4') {
       // ラジオボタン、プルダウン
       var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType];
       var title = '選択肢を一括登録する';
@@ -547,7 +541,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var placeholder = '男性&#10;女性'
     }
 
-    if (uiType == 5) {
+    if (uiType === '5') {
       //　カレンダー
       var setSpecificDateType = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].setSpecificDateType;
       var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType];
@@ -576,7 +570,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var inputOptions = $('#bulk_selection').val();
       var convertedInputOptions = inputOptions.split('\n');
 
-      if (uiType == 3 || uiType == 4) {
+      if (uiType === '3' || uiType === '5') {
         $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType] = [];
         angular.forEach(convertedInputOptions, function (option, optionKey) {
           if (option) {
@@ -585,7 +579,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         });
       }
 
-      if (uiType == 5) {
+      if (uiType === '5') {
         $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType] = [];
         angular.forEach(convertedInputOptions, function (option, optionKey) {
           if (option) {
@@ -599,7 +593,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $scope.$apply();
         var targetElmList = $('.action' + actionIndex + '_option' + hearingIndex);
         self.controllListView($scope.setActionList[actionIndex].actionType, targetElmList, targetElmList);
-        if (uiType == 5) {
+        if (uiType === '5') {
           // add datepicker for new input
           angular.forEach(targetElmList, function (targetElm, index) {
             var el = $(targetElm).find('input');
@@ -812,76 +806,74 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
-    this.addHearingOption = function($event, optionType, optionIndex, listIndex) {
-        var targetActionId = $($event.target).parents('.set_action_item')[0].id;
-        var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
-        var actionType = $scope.setActionList[actionStep].actionType;
+  this.addHearingOption = function ($event, optionType, optionIndex, listIndex) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+    var actionType = $scope.setActionList[actionStep].actionType;
 
-        if (optionType === '3' || optionType === '4') {
-            // ラジオボタン、プルダウン
-            var src = $scope.actionList[actionType].default.hearings[0].options[optionType];
-            var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
-        } else {
-            // カレンダー
-            if ($scope.setActionList[actionStep].hearings[listIndex].options[optionType].setSpecificDateType == 1) {
-                // can select date
-                var src = $scope.actionList[actionType].default.hearings[0].options[optionType].specificDateData[1];
-                var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[1];
-            } else {
-                // cannot select date
-                var src = $scope.actionList[actionType].default.hearings[0].options[optionType].specificDateData[2];
-                var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[2];
-            }
-        }
+    if (optionType === '3' || optionType === '4') {
+      // ラジオボタン、プルダウン
+      var src = $scope.actionList[actionType].default.hearings[0].options[optionType];
+      var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
+    } else {
+      // カレンダー
+      if ($scope.setActionList[actionStep].hearings[listIndex].options[optionType].setSpecificDateType == 1) {
+        // can select date
+        var src = $scope.actionList[actionType].default.hearings[0].options[optionType].specificDateData[1];
+        var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[1];
+      } else {
+        // cannot select date
+        var src = $scope.actionList[actionType].default.hearings[0].options[optionType].specificDateData[2];
+        var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[2];
+      }
+    }
 
-        target.splice(optionIndex + 1, 0, angular.copy(src));
-
-        // 表示更新
-        $timeout(function() {
-            $scope.$apply();
-        }).then(function() {
-            var targetElmList = $('.action' + actionStep + '_option' + listIndex);
-            self.controllListView(actionType, targetElmList, target);
-            if (optionType == 5) {
-                // add datepicker for new input
-                angular.forEach(targetElmList, function(targetElm, index) {
-                    var el = $(targetElm).find('input');
-                    if (!el.hasClass('flatpickr-input')) {
-                        el.flatpickr($scope.japaneseCalendar);
-                    }
-                });
-            }
+    target.splice(optionIndex + 1, 0, angular.copy(src));
+    // 表示更新
+    $timeout(function () {
+      $scope.$apply();
+    }).then(function () {
+      var targetElmList = $('.action' + actionStep + '_option' + listIndex);
+      self.controllListView(actionType, targetElmList, target);
+      if (optionType == 5) {
+        // add datepicker for new input
+        angular.forEach(targetElmList, function (targetElm, index) {
+          var el = $(targetElm).find('input');
+          if (!el.hasClass('flatpickr-input')) {
+            el.flatpickr($scope.japaneseCalendar);
+          }
         });
-    };
+      }
+    });
+  };
 
-    this.removeHearingOption = function($event, optionType, optionIndex, listIndex) {
-        var targetActionId = $($event.target).parents('.set_action_item')[0].id;
-        var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
-        var actionType = $scope.setActionList[actionStep].actionType;
-        // var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
-        if (optionType === '3' || optionType === '4') {
-            // ラジオボタン、プルダウン
-            var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
-        } else {
-            // カレンダー
-            if ($scope.setActionList[actionStep].hearings[listIndex].options[optionType].setSpecificDateType == 1) {
-                // can select date
-                var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[1];
-            } else {
-                // cannot select date
-                var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[2];
-            }
-        }
-        target.splice(optionIndex, 1);
-
-        // 表示更新
-        $timeout(function() {
-            $scope.$apply();
-        }).then(function() {
-            var targetElmList = $('.action' + actionStep + '_option' + listIndex);
-            self.controllListView(actionType, targetElmList, target);
-        });
-    };
+  this.removeHearingOption = function ($event, optionType, optionIndex, listIndex) {
+    var targetActionId = $($event.target).parents('.set_action_item')[0].id;
+    var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
+    var actionType = $scope.setActionList[actionStep].actionType;
+    // var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
+    if (optionType === '3' || optionType === '4') {
+      // ラジオボタン、プルダウン
+      var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
+    } else {
+      // カレンダー
+      if ($scope.setActionList[actionStep].hearings[listIndex].options[optionType].setSpecificDateType == 1) {
+        // can select date
+        var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[1];
+      } else {
+        // cannot select date
+        var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[2];
+      }
+    }
+    target.splice(optionIndex, 1);
+    // 表示更新
+    $timeout(function () {
+      $scope.$apply();
+    }).then(function () {
+      var targetElmList = $('.action' + actionStep + '_option' + listIndex);
+      self.controllListView(actionType, targetElmList, target);
+    });
+  };
 
   // ヒアリング、選択肢、メール送信のリスト削除
   this.removeActionItemList = function($event, listIndex) {
