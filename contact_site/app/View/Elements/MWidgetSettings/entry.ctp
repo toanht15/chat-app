@@ -157,6 +157,14 @@ $headerNo = 1;
                   ]) ?></label></pre>
           </li>
           <?php if ( $this->Form->isFieldError('show_access_id') ) echo $this->Form->error('show_access_id', null, ['wrap' => 'li']); ?>
+          <?php else :?>
+          <?= $this->ngForm->input('show_access_id', [
+              'type' => 'hidden',
+              'legend' => false,
+              'div' => false,
+              'label' => false,
+              'error' => false
+            ]) ?>
           <?php endif; ?>
           <!-- Web接客コード表示 -->
         </ul>
