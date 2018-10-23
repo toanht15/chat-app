@@ -1266,7 +1266,6 @@ $headerNo = 1;
                 'type' => 'checkbox',
                 'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                 'ng-checked' => 'sp_scroll_view_setting ==="1"',
-                'ng-change' => 'resetSpView()',
                 'legend' => false,
                 'separator' => '</label><br><label class="pointer">',
                 'div' => false,
@@ -1393,13 +1392,12 @@ $headerNo = 1;
                   'options' => $spMiximizeSizeType,
                   'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                   'legend' => false,
-                  'ng-change' => 'resetSpView()',
+                  'ng-change' => 'switchWidget(3); resetSpView(); ',
                   'separator' => '</label><br><label class="pointer">',
                   'class' => 'showSp',
                   'div' => false,
                   'label' => false,
-                  'error' => false,
-                  'ng-change' => 'switchWidget(3)'
+                  'error' => false
                 ],
                   [
                     'entity' => 'MWidgetSetting.sp_maximize_size_type'
