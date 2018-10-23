@@ -290,7 +290,7 @@
 
         var height = document.getElementById('widgetTitle').clientHeight;
         if (height === 0) {
-          height = 60;
+          height = 10;
         }
         var enableArea = browserInfo.scrollSize().y - height;
 
