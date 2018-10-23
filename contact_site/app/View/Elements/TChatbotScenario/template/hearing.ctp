@@ -33,7 +33,6 @@
               <input type="checkbox" ng-model="hearingItem.required">
               <span class="checkmark"></span>
             </label>
-
           </div>
           <div class='area-name'><input type="text" ng-model="hearingItem.variableName"></div>
           <div class='area-type'>
@@ -56,19 +55,19 @@
             </div>
           </div>
           <div class='area-detail'>
-            <span ng-if="hearingItem.uiType === '1'">
-                <label>テキストタイプ<span class="questionBalloon"><icon class="questionBtn"
-                                                                  data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ<br>email　　　：メールアドレス形式のみ<br>tel_number：0から始まる10桁以上の数字とハイフンのみ">?</icon></span></label>
-                <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="1"
-                                              ng-model="hearingItem.inputType">text</label>
-                <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="2"
-                                              ng-model="hearingItem.inputType">number</label>
-                <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="3"
-                                              ng-model="hearingItem.inputType">email</label>
-                <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="4"
-                                              ng-model="hearingItem.inputType">tel</label>
-            </span>
-            <span ng-if="hearingItem.uiType === '2'">
+                        <span ng-if="hearingItem.uiType === '1'" style="padding: 0;">
+                            <label>テキストタイプ<span class="questionBalloon"><icon class="questionBtn"
+                                                                              data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ<br>email　　　：メールアドレス形式のみ<br>tel_number：0から始まる10桁以上の数字とハイフンのみ">?</icon></span></label>
+                            <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="1"
+                                                          ng-model="hearingItem.inputType">text</label>
+                            <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="2"
+                                                          ng-model="hearingItem.inputType">number</label>
+                            <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="3"
+                                                          ng-model="hearingItem.inputType">email</label>
+                            <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="4"
+                                                          ng-model="hearingItem.inputType">tel</label>
+                        </span>
+            <span ng-if="hearingItem.uiType === '2'" style="padding: 0;">
                             <label>テキストタイプ<span class="questionBalloon"><icon class="questionBtn"
                                                                               data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ">?</icon></span></label>
                             <label class="pointer"><input type="radio" name="hearing-multiple-input-type-{{listId}}"
@@ -120,41 +119,40 @@
 
             <div class="dropdown-custom-design-area"
                  ng-if="hearingItem.uiType === '4' && hearingItem.options.pulldownCustomDesign">
-                           <span>
-                               <label for="">背景色</label>
-                               <input type="text" class="jscolor{hash:true} ignore-click-event"
-                                      id="action{{setActionId}}_pulldown{{listId}}_backgroundColor"
-                                      ng-model="hearingItem.customDesign[4].backgroundColor">
-                               <span class="greenBtn btn-shadow revert-button"
-                                     ng-click="main.revertPulldownColor(setActionId, listId, 'backgroundColor')">標準に戻す</span>
-                           </span>
+              <span>
+                <label for="">背景色</label>
+                <input type="text" class="jscolor{hash:true} ignore-click-event"
+                       id="action{{setActionId}}_pulldown{{listId}}_backgroundColor"
+                       ng-model="hearingItem.customDesign[4].backgroundColor">
+                <span class="greenBtn btn-shadow revert-button"
+                      ng-click="main.revertPulldownColor(setActionId, listId, 'backgroundColor')">標準に戻す</span>
+              </span>
+              <span>
+                <label for="">文字色</label>
+                <input type="text" class="jscolor{hash:true} ignore-click-event"
+                       id="action{{setActionId}}_pulldown{{listId}}_textColor"
+                       ng-model="hearingItem.customDesign[4].textColor" ng-bind="widget.settings.message_box_text_color">
+                <span class="greenBtn btn-shadow revert-button"
+                      ng-click="main.revertPulldownColor(setActionId, listId, 'textColor')">標準に戻す</span>
+              </span>
 
               <span>
-                               <label for="">文字色</label>
-                               <input type="text" class="jscolor{hash:true} ignore-click-event"
-                                      id="action{{setActionId}}_pulldown{{listId}}_textColor"
-                                      ng-model="hearingItem.customDesign[4].textColor">
-                               <span class="greenBtn btn-shadow revert-button"
-                                     ng-click="main.revertPulldownColor(setActionId, listId, 'textColor')">標準に戻す</span>
-                           </span>
+                <label for="">枠線色</label>
+                <input type="text" class="jscolor{hash:true} ignore-click-event"
+                       id="action{{setActionId}}_pulldown{{listId}}_borderColor"
+                       ng-model="hearingItem.customDesign[4].borderColor">
+                <span class="greenBtn btn-shadow revert-button"
+                      ng-click="main.revertPulldownColor(setActionId, listId, 'borderColor')">標準に戻す</span>
+              </span>
 
-              <span>
-                                <label for="">枠線色</label>
-                                <input type="text" class="jscolor{hash:true} ignore-click-event"
-                                       id="action{{setActionId}}_pulldown{{listId}}_borderColor"
-                                       ng-model="hearingItem.customDesign[4].borderColor">
-                                <span class="greenBtn btn-shadow revert-button"
-                                      ng-click="main.revertPulldownColor(setActionId, listId, 'borderColor')">標準に戻す</span>
-                              </span>
-
-              <span>
-                                <label for="">▼マーク色</label>
-                                <input type="text" class="jscolor{hash:true} ignore-click-event"
-                                       id="action{{setActionId}}_pulldown{{listId}}_markColor"
-                                       ng-model="hearingItem.customDesign[4].markColor">
-                                <span class="greenBtn btn-shadow revert-button"
-                                      ng-click="main.revertPulldownColor(setActionId, listId, 'markColor')">標準に戻す</span>
-                              </span>
+<!--              <span>-->
+<!--                <label for="">▼マーク色</label>-->
+<!--                <input type="text" class="jscolor{hash:true} ignore-click-event"-->
+<!--                       id="action{{setActionId}}_pulldown{{listId}}_markColor"-->
+<!--                       ng-model="hearingItem.customDesign[4].markColor">-->
+<!--                <span class="greenBtn btn-shadow revert-button"-->
+<!--                      ng-click="main.revertPulldownColor(setActionId, listId, 'markColor')">標準に戻す</span>-->
+<!--              </span>-->
             </div>
             <div ng-if="hearingItem.uiType === '5'" class="calendar-design-custom-area">
               <label class="pointer">
@@ -165,9 +163,9 @@
               <br>
               <label class="pointer">
                 <input type="checkbox" ng-model="hearingItem.options[hearingItem.uiType].isEnableAfterDate">当日から<input
-                        style="width: 6em"
-                        type="number" min="1" ng-disabled="!hearingItem.options[hearingItem.uiType].isEnableAfterDate"
-                        ng-model="hearingItem.options[hearingItem.uiType].enableAfterDate">日以降を選択できるようにする
+                    style="width: 6em"
+                    type="number" min="1" ng-disabled="!hearingItem.options[hearingItem.uiType].isEnableAfterDate"
+                    ng-model="hearingItem.options[hearingItem.uiType].enableAfterDate">日以降を選択できるようにする
                 <span class="questionBalloon"><icon class="questionBtn"
                                                     data-tooltip="サイト訪問日より過去の日付を選択できなくします。（過去の日付を選択できるようにする場合はチェックを外します）">?</icon></span>
               </label>
@@ -255,7 +253,8 @@
                                                   data-tooltip="カレンダーのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
               </label>
 
-              <div class="calendar-design-custom" ng-if="hearingItem.options[hearingItem.uiType].isCustomDesign">
+              <div class="calendar-design-custom"
+                   ng-if="hearingItem.options[hearingItem.uiType].isCustomDesign" style="margin-left: 20px">
                                     <span class="calendar-custom-items"
                                           ng-repeat="(optionIndex, option) in hearingItem.customDesign[hearingItem.uiType]">
                                         <label>{{hearingItem.customDesign[hearingItem.uiType][optionIndex].label}}</label>
@@ -270,7 +269,7 @@
                                     <label>言語</label>
                                     <label class="pointer"><input type="radio" name="language" value="1"
                                                                   ng-model="hearingItem.options[hearingItem.uiType].language"
-                                                                  style="margin-left: 90px;">日本語表記</label>
+                                                                  style="margin-left: 60px;">日本語表記</label>
                                     <label class="pointer m20l"><input type="radio" name="language" value="2"
                                                                        ng-model="hearingItem.options[hearingItem.uiType].language">英語表記</label>
                                   </span>

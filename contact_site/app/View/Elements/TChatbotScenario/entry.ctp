@@ -9,7 +9,6 @@
   <?=$this->Form->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
   <?=$this->Form->input('scenarioList', ['type' => 'hidden','value' => json_encode($this->data['scenarioList'])])?>
   <?=$this->Form->input('scenarioListForBranchOnCond', ['type' => 'hidden','value' => json_encode($this->data['scenarioListForBranchOnCond'])])?>
-
   <section id="tchatbotscenario_form_basic_settings" class="p10x">
     <h3 class="tchatbotscenario_form_subtitle">基本設定</h3>
     <ul>
@@ -50,7 +49,7 @@
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_TEXT ?>">
                     <ul>
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_TEXT ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_TEXT ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_TEXT ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
@@ -62,7 +61,7 @@
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_HEARING ?>">
                     <ul>
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
@@ -87,7 +86,7 @@
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>">
                     <ul>
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
@@ -100,7 +99,7 @@
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>">
                     <ul>
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_CALL_SCENARIO ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
@@ -113,7 +112,7 @@
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>">
                     <ul>
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
@@ -126,7 +125,7 @@
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_RECEIVE_FILE ?>">
                     <ul>
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_RECEIVE_FILE ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_RECEIVE_FILE ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_RECEIVE_FILE ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
@@ -137,8 +136,8 @@
                    class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルを設定できるアクションです。">ファイル送信</a>
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_SEND_FILE ?>">
                     <ul>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>, 'after')">選択されたアクションの下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>, 'last')">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
@@ -151,7 +150,7 @@
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_EXTERNAL_API ?>">
                     <ul>
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_EXTERNAL_API ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
@@ -165,7 +164,7 @@
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>)">
                             選択されたアクションの下に追加する
                         </li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
@@ -178,7 +177,7 @@
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_SEND_MAIL ?>">
                     <ul>
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_MAIL ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>
