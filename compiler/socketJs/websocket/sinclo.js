@@ -290,13 +290,13 @@
 
         var height = document.getElementById('widgetTitle').clientHeight;
         if (height === 0) {
-          height = 60;
+          height = 10;
         }
         var enableArea = browserInfo.scrollSize().y - height;
 
         if (enableArea < window.scrollY && String(openflg) === "false") {
           if(typeof window.sincloInfo.widget.spBannerPosition !== "undefined" &&
-            (Number(window.sincloInfo.widget.spBannerPosition) === 3 || Number(window.sincloInfo.widget.spBannerPosition)) === 4){
+            (Number(window.sincloInfo.widget.spBannerPosition) === 3 || Number(window.sincloInfo.widget.spBannerPosition) === 4)){
             //バナーの位置が中央だった場合は下部でもバナー非表示にしない
             sincloBox.style.opacity = 1;
           } else {
