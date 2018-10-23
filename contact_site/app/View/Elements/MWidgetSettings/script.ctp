@@ -105,8 +105,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         console.log('特に無し');
         $scope.switchWidget(4);
       } else if(type === 2){
-        $scope.forceSpCloseWidget();
         $scope.switchWidget(3);
+        $scope.forceSpCloseWidget();
       }
     }
 
@@ -1362,9 +1362,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
       // formのどこかを変更したらフラグを立てる
       $("form").change(function(e){
-        if(e.target.id === 'MWidgetSettingColorSettingType') {
-          return;
-        }
+
         console.log("changed");
         $scope.beforeSpbPosition = $scope.sp_banner_position;
         //初期表示タイミングと自動最大化設定の齟齬を無くす
@@ -1915,7 +1913,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     });
 
     angular.element(window).on("focus", ".showSp", function(e){
-        $scope.switchWidget(3);
+      //スクロール中非表示と自動で最大化しないの場合はswitchさせないようにする
+      if(e.currentTarget.id === "MWidgetSettingSpScrollViewSetting" || e.currentTarget.id === "MWidgetSettingSpAutoOpenFlg"){
+        return;
+      }
+      $scope.switchWidget(3);
     });
 
     angular.element(window).on("focus", ".showNormal", function(e){
