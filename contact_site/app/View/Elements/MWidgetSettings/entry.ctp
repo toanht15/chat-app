@@ -1266,7 +1266,6 @@ $headerNo = 1;
                 'type' => 'checkbox',
                 'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                 'ng-checked' => 'sp_scroll_view_setting ==="1"',
-                //'ng-change' => 'resetSpView()',
                 'legend' => false,
                 'separator' => '</label><br><label class="pointer">',
                 'div' => false,

@@ -1913,7 +1913,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     });
 
     angular.element(window).on("focus", ".showSp", function(e){
-      //スクロール中非表示と自動で最大化しないの場合はswitchさせないようにする
+      //スクロール中非表示と自動で最大化しないの設定値を変更した場合はswitchさせないようにする
       if(e.currentTarget.id === "MWidgetSettingSpScrollViewSetting" || e.currentTarget.id === "MWidgetSettingSpAutoOpenFlg"){
         return;
       }
