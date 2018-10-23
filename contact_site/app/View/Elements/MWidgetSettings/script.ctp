@@ -1371,7 +1371,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
         console.log("changed");
 
-        //この処理を、バナーポジションが
+        //この処理を、バナーポジションが見えていない間は行わない
         if($('#sincloBanner').is(':visible')){
           $scope.beforeSpbPosition = $scope.sp_banner_position;
         }
