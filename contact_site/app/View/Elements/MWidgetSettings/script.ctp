@@ -866,7 +866,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         r = String(code.substr(0,2));
         g = String(code.substr(2,2));
         b = String(code.substr(4));
-//       }
+      }
       var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
       var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
       var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
@@ -1297,7 +1297,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if($scope.showWidgetType !== tag){
         $scope.switchWidget(tag);
       }
-      //バナーが問題になっているのであれば
+      //2段階表示の場合であれば、最小化状態を表示させない
       if(tag === 3 && Number($scope.sp_widget_view_pattern) === 3){
         console.log($scope.openFlg);
         return;
