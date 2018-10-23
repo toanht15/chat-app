@@ -1076,6 +1076,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.actionStep = 0;
     $scope.hearingIndex = 0;
     $scope.sendFileIndex = 0;
+    $scope.firstActionFlg = true;
     $scope.actionTimer;
     $scope.hearingInputResult = true;
 
@@ -1093,7 +1094,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.actionClear = function() {
     $scope.actionStop();
     $scope.actionInit();
-    $scope.setActionList = $scope.actionListOrigin
+    $scope.setActionList = $scope.actionListOrigin;
   };
 
   /**
@@ -1101,6 +1102,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
    */
   $scope.receiveFileEventListener = null;
+  $scope.firstActionFlg = true;
   $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
       var actionDetail = $scope.setActionList[$scope.actionStep];
@@ -1129,8 +1131,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
 
       if(!branchOnConditon){
-        if (time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+        if (time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0 && $scope.firstActionFlg) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
           time = setTime || '0';
+          $scope.firstActionFlg = false;
         }else{
           chatBotTyping();
         }
