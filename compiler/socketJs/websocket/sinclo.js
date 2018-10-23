@@ -1475,6 +1475,7 @@
           }
           elm.value = "";
         }
+
         if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
@@ -1537,6 +1538,7 @@
             return false;
           }
         }
+
         if (obj.messageType === sinclo.chatApi.messageType.sendFile || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           sinclo.chatApi.call();
           this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
@@ -1573,7 +1575,8 @@
           return false;
         }
 
-        if (obj.messageType === 31 || obj.messageType === 32) {
+        if (obj.messageType === sinclo.chatApi.messageType.scenario.customer.noModBulkHearing
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.modifyBulkHearing) {
           this.chatApi.createFormFromLog(JSON.parse(obj.chatMessage));
           this.chatApi.scDown();
           setTimeout(function () {
@@ -1632,7 +1635,7 @@
           },3000);
         }
         //初回通知メッセージを利用している場合
-        if (obj.notification === true) {
+        if (obj.notification === true && obj.tabId === userInfo.tabId) {
           storage.s.set('notificationTime', obj.created);
           var data = sincloInfo.chat.settings.initial_notification_message ? JSON.parse(sincloInfo.chat.settings.initial_notification_message) : {};
           for (var i = 0; i < Object.keys(data).length; i++) {
