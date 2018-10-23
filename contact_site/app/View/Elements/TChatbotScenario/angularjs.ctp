@@ -1422,6 +1422,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var scenarios = {};
         var idx = 0;
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
+        //自分自身を呼び出すのであれば、現在編集しているシナリオをセットする
+        if(scenarioId === parseInt($scope.storageKey.replace(/[^0-9^\.]/g,""))){
+          activity.scenarios = $scope.actionListOrigin;
+        }
 
         // 取得したシナリオのアクション情報を、setActionList内に詰める
         angular.forEach($scope.setActionList, function(scenario, key) {
