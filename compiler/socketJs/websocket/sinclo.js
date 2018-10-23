@@ -295,7 +295,14 @@
         var enableArea = browserInfo.scrollSize().y - height;
 
         if (enableArea < window.scrollY && String(openflg) === "false") {
-          sincloBox.style.opacity = 0;
+          if(typeof window.sincloInfo.widget.spBannerPosition !== "undefined" &&
+            (Number(window.sincloInfo.widget.spBannerPosition) === 3 || Number(window.sincloInfo.widget.spBannerPosition)) === 4){
+            //バナーの位置が中央だった場合は下部でもバナー非表示にしない
+            sincloBox.style.opacity = 1;
+          } else {
+            //バナーの位置が右下、左下の場合のみ、ページ下部でバナー非表示にする
+            sincloBox.style.opacity = 0;
+          }
         }
         else {
           if(typeof window.sincloInfo.widget.spScrollViewSetting !== "undefined" &&
@@ -2784,7 +2791,7 @@
                   var telno = tel[1];
                   if(check.smartphone()) {
                     // リンクとして有効化
-                    var a = "<a onclick=\"sinclo.api.callTelCV('" + telno + "')\" href='tel:" + telno + "'>" + telno + "</a>";
+                    var a = "<a class=\"sincloTelConversion\" onclick=\"sinclo.api.callTelCV('" + telno + "')\" href='tel:" + telno + "'>" + telno + "</a>";
                     str = str.replace(tel[0], a);
                   } else {
                     // ただの文字列にする
