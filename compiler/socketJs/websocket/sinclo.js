@@ -6829,7 +6829,7 @@
         var telNumberStr = 'tel:' + telNumber;
         try {
           if(typeof(window.gtag_report_conversion) === 'function') {
-            window.gtag_report_conversation(telNumberStr);
+            window.gtag_report_conversion(telNumberStr);
           } else if (check.isset(window.dataLayer)) {
             window.dataLayer.push({'event': telNumberStr});
           }
