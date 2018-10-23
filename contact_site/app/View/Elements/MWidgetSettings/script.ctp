@@ -39,6 +39,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     }
 
     $scope.resetSpView = function(){
+      $scope.beforeSpbPosition = 0;
       $scope.viewSpWidget = true;
       $scope.openFlg = true;
     }
@@ -1296,6 +1297,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if($scope.showWidgetType !== tag){
         $scope.switchWidget(tag);
       }
+      //2段階表示の場合であれば、最小化状態を表示させない
+      if(tag === 3 && Number($scope.sp_widget_view_pattern) === 3){
+        console.log($scope.openFlg);
+        return;
+      }
       $timeout(function(){
         $scope.openFlg = false;
       },0);
@@ -1364,7 +1370,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $("form").change(function(e){
 
         console.log("changed");
-        $scope.beforeSpbPosition = $scope.sp_banner_position;
+
+        //この処理を、バナーポジションが見えていない間は行わない
+        if($('#sincloBanner').is(':visible')){
+          $scope.beforeSpbPosition = $scope.sp_banner_position;
+        }
         //初期表示タイミングと自動最大化設定の齟齬を無くす
         var MaxShowTimeSite = $("#MWidgetSettingMaxShowTime"),
             MaxShowTimePage = $("#MWidgetSettingMaxShowTimePage");
