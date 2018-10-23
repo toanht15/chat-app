@@ -6339,12 +6339,28 @@
           });
         },
         _callScript: function(externalScript){
+          var self = sinclo.scenarioApi._callExternalApi;
+          emit('traceScenarioInfo', {
+            type: "i",
+            message: "call external script. from scenarioID : " + self._parent.get(self._parent._lKey.scenarioId),
+            data: externalScript
+          });
           try {
             eval(externalScript);
           } catch (e) {
+            emit('traceScenarioInfo', {
+              type: "w",
+              message: "call external script error found. error: " + e.message,
+              data: externalScript
+            });
             console.log(e.message);
             return;
           }
+          emit('traceScenarioInfo', {
+            type: "i",
+            message: "result is OK.",
+            data: externalScript
+          });
         },
         _callApi: function (callback) {
           var self = sinclo.scenarioApi._callExternalApi;
