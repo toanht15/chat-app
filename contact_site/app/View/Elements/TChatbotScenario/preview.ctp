@@ -60,17 +60,19 @@
 #tchatbotscenario_form_preview_body .chatTalk li .sendFileContent .sendFileMetaArea .data { margin-left: 1em; margin-bottom: 5px; display: block; }
 #tchatbotscenario_form_preview_body .chatTalk li .sendFileContent .sendFileMetaArea .data.sendFileSize { margin-bottom: 0px; }
 
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar { width: 210px; height: 216px; border-radius: 0; box-shadow: none; -webkit-box-shadow: none;}
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-current-month { font-size: 14px }
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdays { width: 210px}
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdaycontainer { margin-top: 5px;}
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday { font-size: 12px; line-height: 10px}
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer { max-width: 210px; min-width: 200px;}
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day.disabled { color: rgba(57,57,57,0.1);}
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day { max-width: 27px; height: 27px; line-height: 27px}
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-months { height: 24px;}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar { width: 210px; height: 250px; border-radius: 0; box-shadow: none; -webkit-box-shadow: none;}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-current-month { font-size: 14px; padding-top: 8px }
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdays { width: 210px; height: 21px}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdaycontainer { padding-top: 8px;}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday { font-size: 11px; line-height: 11px}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer { max-width: 206px; min-width: 200px;}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-months { height: 32px;}
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-months .flatpickr-prev-month { height: 24px; padding: 7px}
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-months .flatpickr-next-month { height: 24px; padding: 7px}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-months .flatpickr-current-month .numInputWrapper { display: none}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-months .flatpickr-current-month input.cur-year { display: none}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day.disabled { color: rgba(57,57,57,0.1);}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day { height: 32px; line-height: 32px; border-radius: 0; font-weight: bolder;}
 
 #tchatbotscenario_form_preview_body .chatTalk li select { border: 1px solid #909090; border-radius: 0; padding: 5px; height: 30px; margin-top: 12px; margin-bottom: -2px; min-width: 210px; max-width: 220px}
 
@@ -84,6 +86,12 @@
     </div>
     <!-- ヒアリング -->
     <div ng-repeat="(index, hearings) in setItem.hearings">
+      <style ng-if="hearings.uiType === '5'">
+        #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: {{hearings.customDesign[5].headerTextColor.value}}}
+        #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer .flatpickr-day.selected { background-color: {{hearings.customDesign[5].headerBackgroundColor.value}}; border: 1px solid {{hearings.customDesign[5].headerBackgroundColor.value}} !important; color: {{calendarSelectedColor}} !important;}
+        #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer .flatpickr-day.today { border: 1px solid  {{hearings.customDesign[5].headerBackgroundColor.value}} !important;}
+        #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer .flatpickr-day { border: 0.5px solid  {{hearings.customDesign[5].headerWeekdayBackgroundColor.value}} !important;}
+      </style>
 
       <li ng-show="hearings.message" ng-if="hearings.uiType === '1' || hearings.uiType === '2'" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}}</span></li>
       <li ng-if="hearings.uiType === '5'" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}} <div id="action{{setActionId}}_calendar{{index}}" style="margin-top: 10px; margin-bottom: 6px"></div></span></li>

@@ -58,21 +58,23 @@
                         <span ng-if="hearingItem.uiType === '1'" style="padding: 0;">
                             <label>テキストタイプ<span class="questionBalloon"><icon class="questionBtn"
                                                                               data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ<br>email　　　：メールアドレス形式のみ<br>tel_number：0から始まる10桁以上の数字とハイフンのみ">?</icon></span></label>
-                            <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="1"
+                            <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-one-row-type" value="1"
                                                           ng-model="hearingItem.inputType">text</label>
-                            <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="2"
+                            <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-one-row-type" value="2"
                                                           ng-model="hearingItem.inputType">number</label>
-                            <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="3"
+                            <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-one-row-type" value="3"
                                                           ng-model="hearingItem.inputType">email</label>
-                            <label class="pointer"><input type="radio" name="hearing-one-row-type-{{listId}}" value="4"
+                            <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-one-row-type" value="4"
                                                           ng-model="hearingItem.inputType">tel</label>
                         </span>
-            <span ng-if="hearingItem.uiType === '2'" style="padding: 0;">
+                        <span ng-if="hearingItem.uiType === '2'" style="padding: 0;">
                             <label>テキストタイプ<span class="questionBalloon"><icon class="questionBtn"
                                                                               data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ">?</icon></span></label>
-                            <label class="pointer"><input type="radio" name="hearing-multiple-input-type-{{listId}}"
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-multiple-row-type"
                                                           value="1" ng-model="hearingItem.inputType">text</label>
-                            <label class="pointer"><input type="radio" name="hearing-multiple-input-type-{{listId}}"
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-multiple-row-type"
                                                           value="2" ng-model="hearingItem.inputType">number</label>
                         </span>
 
@@ -260,7 +262,7 @@
                                         <label>{{hearingItem.customDesign[hearingItem.uiType][optionIndex].label}}</label>
                                         <input type="text" id="action{{setActionId}}_option{{listId}}_{{optionIndex}}"
                                                class="jscolor{hash:true} ignore-click-event"
-                                               ng-model="hearingItem.customDesign[hearingItem.uiType][optionIndex].value">
+                                               ng-model="hearingItem.customDesign[hearingItem.uiType][optionIndex].value" ng-change="main.changeCalendarHeaderColor(setActionId, listId, optionIndex)">
                                         <span class="greenBtn btn-shadow revert-button"
                                               ng-click="main.revertCalendarColor(setActionId, listId, optionIndex)">標準に戻す</span>
                                     </span>
