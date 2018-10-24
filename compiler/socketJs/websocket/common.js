@@ -3005,7 +3005,9 @@ var socket, // socket.io
              ||obj.messageType === sinclo.chatApi.messageType.company
              ||obj.messageType === sinclo.chatApi.messageType.end
              ||obj.messageType === sinclo.chatApi.messageType.notification
-             ||obj.messageType === sinclo.chatApi.messageType.start){
+             ||obj.messageType === sinclo.chatApi.messageType.start
+             ||obj.messageType === sinclo.chatApi.messageType.cogmo.message
+             ||obj.messageType === sinclo.chatApi.messageType.cogmo.feedback){
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
              ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection){
