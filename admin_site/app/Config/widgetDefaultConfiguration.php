@@ -322,6 +322,11 @@ $config['default'] = [
       "spBannerPosition"=>"3",
 
       /**
+       * スマホ小さなバナー縦位置
+       */
+      "spBannerVerticalPositionFromTop"=>"50%",
+
+      /**
        * スマホ小さなバナータイトル
        */
       "spBannerText"=>"チャット受付中",
