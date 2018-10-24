@@ -5082,6 +5082,7 @@
         if(self.isProcessing()) {
           self._isReload = true;
         } else {
+          self._unsetUploadedFileData();
           self._setBaseObj({});
           self.set(self._lKey.beforeTextareaOpened, storage.l.get('textareaOpend'));
           self.set(self._lKey.scenarioId, id);
