@@ -1259,8 +1259,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var targetScenarioId = condition.action.callScenarioId;
         console.log("targetScenarioId : %s",targetScenarioId);
         if(targetScenarioId === "self") {
-          var selfId = parseInt($scope.storageKey.replace(/[^0-9^\.]/g,""));
-          self.getScenarioDetail(selfId, condition.action.executeNextAction == 1);
+          var activity = {};
+          activity.scenarios = $scope.actionListOrigin;
+          $scope.setActionList = $scope.setCalledScenario(activity, condition.action.executeNextAction == 1);
+          $scope.doAction();
         } else {
           self.getScenarioDetail(targetScenarioId, condition.action.executeNextAction == 1);
         }
@@ -1419,25 +1421,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).done(function(data) {
       console.info('successed get scenario detail.');
       try {
-        var scenarios = {};
-        var idx = 0;
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
-        //自分自身を呼び出すのであれば、現在編集しているシナリオをセットする
-        if(scenarioId === parseInt($scope.storageKey.replace(/[^0-9^\.]/g,""))){
-          activity.scenarios = $scope.actionListOrigin;
-        }
-
         // 取得したシナリオのアクション情報を、setActionList内に詰める
-        angular.forEach($scope.setActionList, function(scenario, key) {
-          if (key == $scope.actionStep) {
-            for (var exKey in activity.scenarios) {
-              scenarios[idx++] = activity.scenarios[exKey];
-            }
-          } else
-          if (isNext == 1 || key <= $scope.actionStep) {
-            scenarios[idx++] = $scope.setActionList[key];
-          }
-        });
+        var scenarios = $scope.setCalledScenario(activity, isNext);
         $scope.setActionList = scenarios;
       } catch(e) {
         $scope.actionStep++;
@@ -1452,6 +1438,22 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // アクションを実行する
       $scope.doAction();
     });
+  };
+
+  $scope.setCalledScenario = function(activity, isNext) {
+    var scenarios = {};
+    var idx = 0;
+    angular.forEach($scope.setActionList, function(scenario, key) {
+      if (key == $scope.actionStep) {
+        for (var exKey in activity.scenarios) {
+          scenarios[idx++] = activity.scenarios[exKey];
+        }
+      } else
+      if (isNext == 1 || key <= $scope.actionStep) {
+        scenarios[idx++] = $scope.setActionList[key];
+      }
+    });
+    return scenarios;
   };
 
   /**
