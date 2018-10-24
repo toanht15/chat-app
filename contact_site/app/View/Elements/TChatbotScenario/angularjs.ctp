@@ -437,9 +437,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               var calendarTarget = $('#action' + index + '_calendar' + hearingIndex);
               // add datepicker for preview
               var datepickerId = 'action' + index + '_datepicker' + hearingIndex;
-              calendarTarget.html('<input id="' + datepickerId + '" type="hidden">');
-              $('#' + datepickerId).flatpickr(calendar_options);
-              $('#' + datepickerId).hide();
+              if (calendarTarget.find('#' + datepickerId).length == 0) {
+                calendarTarget.html('<input id="' + datepickerId + '" type="hidden">');
+                $('#' + datepickerId).flatpickr(calendar_options);
+                $('#' + datepickerId).hide();
+              }
+
               var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
               firstDayOfWeek[0].innerText = hearing.options[5].language == 1 ? '日' : 'Sun';
 
@@ -485,9 +488,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               });
 
               // change color when change month
-              calendarTarget.find('.flatpickr-calendar .flatpickr-months').on('click', function () {
+              calendarTarget.find('.flatpickr-calendar .flatpickr-months').on('mousedown', function () {
                 self.customCalendarTextColor(calendarTarget, hearing.customDesign[5]);
-
               });
               // keep color when click on date
               $('#action' + index + '_datepicker' + hearingIndex).on('change', function () {
