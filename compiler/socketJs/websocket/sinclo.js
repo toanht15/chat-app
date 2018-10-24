@@ -1449,14 +1449,7 @@
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
-        if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
-          this.chatApi.notify(obj.chatMessage);
-        } else {
-          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
-            this.chatApi.scDown();
-            common.chatBotTypingCall(obj);
-          }
-        }
+
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
