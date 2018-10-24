@@ -34,7 +34,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   // アクション設定の取得・初期化
   $scope.setActionList = [];
   $scope.targetDeleteFileIds = [];
-  var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}" ?>;
+  var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}"; ?>;
   if (typeof setActivity  === "string") {
     var jsonData = JSON.parse(setActivity);
     var setActionListTmp = jsonData.scenarios;
@@ -170,29 +170,56 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     || $scope.actionList[1].default.messageIntervalTimeSec;
 
   // アクションの追加
-  this.addItem = function(actionType) {
+  this.addItem = function(actionType, isAppendAtLast = false) {
     if (actionType in $scope.actionList) {
       var item = $scope.actionList[actionType];
       item.actionType = actionType.toString();
-      $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
+      if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+        item.default.hearings[0] = this.setDefaultColorHearing(item.default.hearings[0]);
+      }
+      if (isAppendAtLast) {
+        $scope.setActionList.push(angular.copy(angular.merge(item, item.default)));
+      } else {
+        $scope.setActionList.splice($scope.focusActionIndex + 1, 0, angular.copy(angular.merge(item, item.default)));
+      }
 
       // 表示位置調整
       $timeout(function() {
-        var actionBox = $('#tchatbotscenario_form_preview_body');
-        var previewBox = $('#tchatbotscenario_form_action_body');
+        var previewBox = $('#tchatbotscenario_form_preview_body');
+        var actionBox = $('#tchatbotscenario_form_action_body');
 
-        var time = 500
-        actionBox.stop().animate({
-          scrollTop: actionBox.scrollTop() + actionBox[0].scrollHeight
-        }, time);
-        previewBox.stop().animate({
-          scrollTop: previewBox.scrollTop() + previewBox[0].scrollHeight
-        }, time);
-
-        // フォーカス移動
-        var target = $('#tchatbotscenario_form_action_body .set_action_item:last-of-type').focus();
+        var time = 500;
+        if (isAppendAtLast) {
+          actionBox.stop().animate({
+            scrollTop: actionBox.scrollTop() + actionBox[0].scrollHeight
+          }, time);
+          previewBox.stop().animate({
+            scrollTop: previewBox.scrollTop() + previewBox[0].scrollHeight
+          }, time);
+          // フォーカス移動
+          $('#tchatbotscenario_form_action_body .set_action_item:last-of-type').focus();
+        } else {
+          var index = $scope.focusActionIndex + 1;
+          var target = $('#action' + index + '_setting');
+          var targetY = target.position().top - actionBox.position().top;
+          actionBox.stop().animate({
+            scrollTop: actionBox.scrollTop() + targetY
+          }, time);
+          // フォーカス移動
+          $('#tchatbotscenario_form_action_body .set_action_item:eq(' + index + ')').focus();
+        }
       }, 0);
     }
+  };
+
+  this.setDefaultColorHearing = function (target) {
+    target.customDesign[4].textColor = $scope.widget.settings.description_text_color;
+    target.customDesign[4].borderColor = $scope.widget.settings.main_color;
+    target.customDesign[5].headerBackgroundColor.value = $scope.widget.settings.main_color;
+    target.customDesign[5].borderColor.value = $scope.widget.settings.main_color;
+    target.customDesign[5].calendarTextColor.value = $scope.widget.settings.description_text_color;
+
+    return target;
   };
 
   this.setFocusActionIndex = function (actionIndex) {
@@ -200,13 +227,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   this.showOptionMenu = function (actionType) {
-    // if (!$scope.focusActionIndex) {
-    //     this.addItem(actionType);
-    //     return;
-    // }
+    // if not focus or focusing at last item -> append after last item
+    if ($scope.focusActionIndex === null || ($scope.focusActionIndex + 1) === $scope.setActionList.length) {
+        this.addItem(actionType, true);
+        return;
+    }
+    // show option menu
+    $('#action' + $scope.focusActionIndex + '_setting').focus();
     $scope.previousAction = $scope.currentAction;
     $scope.currentAction = actionType;
-    if ($scope.previousAction != $scope.currentAction) {
+    if ($scope.previousAction !== $scope.currentAction) {
       $("#actionMenu" + $scope.previousAction).fadeOut('fast');
     }
     if ($("#actionMenu" + actionType).is(":visible")) {
@@ -422,6 +452,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               // header text color
               calendarTarget.find('.flatpickr-current-month input.cur-year').css('color', hearing.customDesign[5].headerTextColor.value);
               calendarTarget.find('.flatpickr-months .flatpickr-month').css('color', hearing.customDesign[5].headerTextColor.value);
+              calendarTarget.find('.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month').css('fill', hearing.customDesign[5].headerTextColor.value);
               calendarTarget.find('span.flatpickr-weekday').css('color', hearing.customDesign[5].headerTextColor.value);
               // border color
               calendarTarget.find('.flatpickr-calendar').css('border', '1px solid');
@@ -543,6 +574,37 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', design.calendarBackgroundColor.value);
   };
 
+  $scope.autoResizeTextArea = function () {
+    var maxRow = 4;                       // 表示可能な最大行数
+    var fontSize = 13;           // 行数計算のため、templateにて設定したフォントサイズを取得
+    var borderSize = 2; // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
+    var paddingSize = 5;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
+    var lineHeight = 1.5;       // 表示高さの計算のため、templateにて設定した行の高さを取得
+    var elm = $('#bulk_textarea');
+
+    // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
+    var areaWidth = elm[0].getBoundingClientRect().width - borderSize - paddingSize;
+
+    // フォントサイズとテキストエリアのサイズを基に、行数を計算する
+    var textRow = 1;
+    elm[0].value.split('\n').forEach(function (string) {
+      var stringWidth = string.length * fontSize;
+      textRow += Math.max(Math.ceil(stringWidth / areaWidth), 1);
+    });
+
+    // 表示する行数に応じて、テキストエリアの高さを調整する
+    if (textRow > maxRow) {
+      elm.height((maxRow * (fontSize * lineHeight)) + paddingSize);
+      elm.css('overflow', 'auto');
+      // elm[0].style.height = (maxRow * (fontSize*lineHeight)) + paddingSize + 'px';
+      // elm[0].style.overflow = 'auto';
+    }
+    else {
+      elm.height(textRow * (fontSize * lineHeight));
+      elm.css('overflow', 'hidden');
+    }
+  };
+
   this.showBulkSelectionPopup = function (actionIndex, hearingIndex, uiType) {
     if (uiType === '3' || uiType === '4') {
       // ラジオボタン、プルダウン
@@ -573,12 +635,22 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var html = '<div class="select-option-one-time-popup">\n' +
       '    <p style="margin-top: -10px; width: 350px;">' + description + '</p>\n' +
       '\n' +
-      '    <textarea name="" style="overflow: hidden; resize: none;" id="bulk_selection" ng-model="multiSelection" cols="48" rows="3" placeholder="' + placeholder + '">' + convertedOptions + '</textarea>\n' +
+      '    <textarea name=""  id="bulk_textarea" style="overflow: hidden; resize: none; font-size: 13px;" cols="48" rows="3" placeholder="' + placeholder + '">' + convertedOptions + '</textarea>\n' +
       '</div>';
 
     modalOpen.call(window, html, 'p-hearing-settings', title, 'moment');
+    $('#bulk_textarea').bind('input', function () {
+      $scope.autoResizeTextArea();
+      popupEvent.resize();
+    });
+    $(window).on('resize', function () {
+      $scope.autoResizeTextArea();
+      popupEvent.resize();
+    });
+
+
     popupEvent.convert = function () {
-      var inputOptions = $('#bulk_selection').val();
+      var inputOptions = $('#bulk_textarea').val();
       var convertedInputOptions = inputOptions.split('\n');
 
       if (uiType === '3' || uiType === '4') {
@@ -762,6 +834,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var src = $scope.actionList[actionType].default.hearings[0];
+      src = this.setDefaultColorHearing(src);
       var target = $scope.setActionList[actionStep].hearings;
       src.inputType = src.inputType.toString();
       src.uiType = src.uiType.toString();
@@ -2102,6 +2175,7 @@ $(document).ready(function() {
 
   //フォーカスされたアクションに応じて、関連するプレビューを強調表示する
   $(document).on('focus', '.set_action_item', function () {
+    // angular.element($('#tchatbotscenario_form_action_menulist')).scope().focusActionIndex = $(this).attr('id');
     $('.set_action_item').blur();
     var previewId = $(this).attr('id').replace(/setting$/, 'preview');
     $(this).css('border', '1px solid #C3D69B');
@@ -2447,7 +2521,7 @@ function searchStr (str, regex) {
 }
 
 // check when click on other area of action menu
-$(document).click(function (e) {
+$(document).mouseup(function (e) {
   // hide previous option menu when click new action
   // hide dropdown when click on other area
   if (!$(e.target).closest('.actionMenu a').length) {

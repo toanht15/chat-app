@@ -7458,6 +7458,7 @@ ul.naviBtn {
 
                 &.action_hearing {
                   hr {
+                    margin-top: 4px;
                     margin-bottom: 8px;
                     color: #C3D69B;
                     border-color: #C3D69B;
@@ -7575,13 +7576,17 @@ ul.naviBtn {
                     }
 
                     .calendar-design-custom {
+                      margin-left: 16px;
                       .calendar-custom-items {
+                        height: 35px;
                         display: flex;
                         width: 32em;
-                        justify-content: space-between;
+                        padding: 2px 0;
 
                         input {
                           height: 26px;
+                          font-size: 12px;
+                          padding-left: 4px;
                           position: relative;
                           border: none !important;
                           border-bottom: 1px solid #909090 !important;
@@ -7589,20 +7594,22 @@ ul.naviBtn {
                         }
 
                         label {
-                          flex-basis: 110px;
+                          flex-basis: 100px;
                           margin-top: 10px;
                         }
 
                         .revert-button {
                           position: relative;
-                          left: 15px;
-                          padding: 5px;
+                          left: 10px;
+                          padding: 4px;
                           bottom: 5px;
                         }
                       }
 
                       .language-setting {
-                        height: 40px;
+                        height: 35px;
+                        display: inline-block;
+                        margin-top: -12px;
                         input {
                           width: 20px !important;
                         }
@@ -7616,13 +7623,14 @@ ul.naviBtn {
                 .grid-container-hearing {
                   width: 100%;
                   height: 100%;
+                  padding-bottom: 0;
                   display: -ms-grid;
                   display: grid;
-                  grid-template-columns: 20px 50px 145px 140px 1fr 48px;
-                  -ms-grid-columns: 20px 50px 145px 140px 1fr 48px;
+                  grid-template-columns: 20px 50px 120px 140px 1fr 48px;
+                  -ms-grid-columns: 20px 50px 120px 140px 1fr 48px;
                   &.short {
-                    grid-template-columns: 170px 236px 60px 1fr;
-                    -ms-grid-columns: 170px 236px 60px 1fr;
+                    grid-template-columns: 20px 50px 125px 140px 1fr 48px;
+                    -ms-grid-columns: 20px 50px 125px 140px 1fr 48px;
                   }
                   grid-template-rows: auto 1fr;
                   -ms-grid-rows: auto 1fr;
@@ -7632,9 +7640,9 @@ ul.naviBtn {
                     text-align: center;
                   }
                   &.grid-container-body {
-                    margin-bottom: 1em;
+                    //margin-bottom: 1em;
                     hr.separator {
-                      margin-top: 12px;
+                      //margin-top: 12px;
                       padding-bottom: 0;
                       grid-column: 1/7;
                       -ms-grid-column: 1;
@@ -7728,19 +7736,20 @@ ul.naviBtn {
                     }
 
                     .select-option-input {
-                      margin-top: 10px;
+                      margin-top: 2px;
                     }
 
                     .dropdown-custom-design-area {
                       width: 32em;
 
                       span {
-                        margin-left: 40px;
-                        padding: 5px 0;
+                        margin-left: 15px;
+                        padding: 2px 0;
                         display: flex;
+                        height: 35px;
 
                         label {
-                          flex-basis: 110px;
+                          flex-basis: 100px;
                           margin-top: 10px;
                         }
 
@@ -7748,16 +7757,28 @@ ul.naviBtn {
                           border: none !important;
                           border-bottom: 1px solid #909090 !important;
                           border-radius: 0 !important;
-                          width: 150px;
-                          margin-left: 20px;
+                          width: 120px;
                           height: 26px;
                         }
                       }
 
                       .revert-button {
-                        padding-left: 12px;
+                        padding: 4px 0;
                         bottom: 5px;
+                        justify-content: center;
+                        height: 25px
                       }
+                      //width: 100px;
+                      //padding: 4px;
+                      //bottom: 5px;
+                      //height: 25px;
+                      //font-size: 0.9em;
+                      //position: relative;
+                      //text-align: center;
+                    }
+
+                    div.calendar-design-custom-area {
+
                     }
                   }
 
