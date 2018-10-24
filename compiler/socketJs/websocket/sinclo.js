@@ -5162,6 +5162,7 @@
         self._resetDefaultVal();
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
+        self._unsetUploadedFileData();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
       },
       isProcessing: function () {
@@ -5269,6 +5270,14 @@
       _unsetBaseObj: function () {
         var self = sinclo.scenarioApi;
         storage.l.unset(self._lKey.scenarioBase);
+      },
+      _unsetUploadedFileData: function () {
+        var self = sinclo.scenarioApi;
+        var data = self.get(self._lKey.variables);
+        if(check.isset(data) && check.isset(data[self._sendFile._downloadUrlKey])) {
+          delete data[self._sendFile._downloadUrlKey];
+          self.set(self._lKey.variables, data);
+        }
       },
       /**
        * 表示したシナリオメッセージをローカルに保存する
