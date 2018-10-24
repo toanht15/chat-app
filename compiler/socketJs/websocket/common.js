@@ -1000,7 +1000,6 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk li.sinclo_re .largeSizeImg { max-width: 265px; max-height: 285px; display:block;}';
       html += '      #sincloBox sinclo-div {display: block; }';
       html += '      #sincloBox label { display: inline; max-width: 100%; margin-bottom: 0; font-weight: normal;}';
-      html += '      #sincloBox a:hover { color: ' + colorList['mainColor'] + '; }';
       html += '      #sincloBox sinclo-div#widgetHeader { cursor:pointer; position: relative;}';
       html += '      #sincloBox #titleWrap { position: relative; }';
       html += '      #sincloBox input { text-align: left; }';
@@ -1669,6 +1668,8 @@ var socket, // socket.io
 //        html += "      #sincloBox { width: " + widgetWidth + "px }";
         html += "      #sincloBox div#sincloWidgetBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px " + widget.boxShadow + "px " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0; background-color: rgb(255, 255, 255);}";
         html += '      #sincloBox * { line-height: 1.4; font-size: '+ sizeList['d12font'] +'px; }';
+        html += '      #sincloBox a:hover { color: ' + colorList['mainColor'] + '; }';
+
         html += '      #sincloBox sinclo-div#widgetHeader:hover { opacity: 0.75; }';
         html += '      #sincloBox sinclo-div#widgetHeader:after { top: 32px }';
 //        html += "      #sincloBox section { width: " + widgetWidth + "px }";
