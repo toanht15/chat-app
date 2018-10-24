@@ -324,7 +324,7 @@ $config['default'] = [
       /**
        * スマホ小さなバナー縦位置
        */
-      "SpBannerVerticalPositionFromTop"=>"50%",
+      "spBannerVerticalPositionFromTop"=>"50%",
 
       /**
        * スマホ小さなバナータイトル
