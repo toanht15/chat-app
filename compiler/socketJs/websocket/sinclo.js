@@ -1449,6 +1449,7 @@
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
+
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1656,10 +1657,11 @@
         if(obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
+
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
         } else {
-          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
+          if(obj.tabId === userInfo.tabId && obj.messageType != sinclo.chatApi.messageType.linkClick) {
             this.chatApi.scDown();
             common.chatBotTypingCall(obj);
           }
@@ -2669,6 +2671,7 @@
         }
       },
       createMessage: function (cs, val, cName, isScenarioMsg) {
+        common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
@@ -5082,6 +5085,7 @@
         if(self.isProcessing()) {
           self._isReload = true;
         } else {
+          self._unsetUploadedFileData();
           self._setBaseObj({});
           self.set(self._lKey.beforeTextareaOpened, storage.l.get('textareaOpend'));
           self.set(self._lKey.scenarioId, id);
@@ -6851,6 +6855,11 @@
           }
         } catch(gFuncError) {
           console.log(gFuncError.message);
+          emit('traceScenarioInfo', {
+            type: "w",
+            message: "call google tel-cv function is failed. error : " + gFuncError.message,
+            data: telNumberStr
+          });
         }
         try {
           if(typeof(window.yahoo_report_conversion) === 'function') {
@@ -6858,6 +6867,11 @@
           }
         } catch(yFuncError) {
           console.log(yFuncError.message);
+          emit('traceScenarioInfo', {
+            type: "w",
+            message: "call yahoo tel-cv function is failed. error : " + yFuncError.message,
+            data: telNumberStr
+          });
         }
       }
     }
