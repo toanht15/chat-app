@@ -755,6 +755,7 @@ $config['chatbotScenarioActionList'] = [
         'message' => '',
         'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW,
         'required' => true,
+        'errorMessage' => '',
         'options' => [
           C_SCENARIO_UI_TYPE_RADIO_BUTTON => [""],
           C_SCENARIO_UI_TYPE_PULLDOWN => [""],
@@ -819,6 +820,10 @@ $config['chatbotScenarioActionList'] = [
             ],
             'headerTextColor' => [
               'label' => 'ヘッダー文字色',
+              'value' => '#FFFFFF'
+            ],
+            'headerWeekdayBackgroundColor' => [
+              'label' => '曜日背景色',
               'value' => '#FFFFFF'
             ],
             'borderColor' => [

@@ -31,6 +31,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       },
   };
 
+  // calendar selected text color
+  $scope.calendarSelectedColor = 'white';
+
   // アクション設定の取得・初期化
   $scope.setActionList = [];
   $scope.targetDeleteFileIds = [];
@@ -218,6 +221,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     target.customDesign[5].headerBackgroundColor.value = $scope.widget.settings.main_color;
     target.customDesign[5].borderColor.value = $scope.widget.settings.main_color;
     target.customDesign[5].calendarTextColor.value = $scope.widget.settings.description_text_color;
+    target.customDesign[5].sundayColor.value = $scope.widget.settings.description_text_color;
+    target.customDesign[5].saturdayColor.value = $scope.widget.settings.description_text_color;
+    target.customDesign[5].headerWeekdayBackgroundColor.value = this.getRawColor($scope.widget.settings.main_color);
 
     return target;
   };
@@ -254,6 +260,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       LocalStorageService.setItem($scope.storageKey, [{key: 'targetDeleteFileIds', value: $scope.targetDeleteFileIds}]);
     }
     $scope.setActionList.splice(setActionId, 1);
+    $scope.focusActionIndex = null;
 
     // 変更のあるアクション内に変数名を含む場合、アクションの変数チェックを行う
     $timeout(function() {
@@ -442,20 +449,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               $('#' + datepickerId).hide();
               var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
               firstDayOfWeek[0].innerText = hearing.options[5].language == 1 ? '日' : 'Sun';
+              self.setSelectedColorCalendar(hearing.customDesign[5].headerBackgroundColor.value);
 
               // binding color to preview
               // header background color
-              var headerMonthBgColor = calendarTarget.find('.flatpickr-months .flatpickr-month');
+              var headerMonthBgColor = calendarTarget.find('.flatpickr-months');
               headerMonthBgColor.css('background', hearing.customDesign[5].headerBackgroundColor.value);
               var headerWeekBgColor = calendarTarget.find('.flatpickr-weekdays');
-              headerWeekBgColor.css('background', hearing.customDesign[5].headerBackgroundColor.value);
+              headerWeekBgColor.css('background', hearing.customDesign[5].headerWeekdayBackgroundColor.value);
               // header text color
               calendarTarget.find('.flatpickr-current-month input.cur-year').css('color', hearing.customDesign[5].headerTextColor.value);
-              calendarTarget.find('.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month').css('fill', hearing.customDesign[5].headerTextColor.value);
               calendarTarget.find('.flatpickr-months .flatpickr-month').css('color', hearing.customDesign[5].headerTextColor.value);
-              calendarTarget.find('span.flatpickr-weekday').css('color', hearing.customDesign[5].headerTextColor.value);
+              calendarTarget.find('span.flatpickr-weekday').css('color', hearing.customDesign[5].calendarTextColor.value);
               // border color
-              calendarTarget.find('.flatpickr-calendar').css('border', '1px solid');
+              calendarTarget.find('.flatpickr-calendar').css('border', '2px solid');
               calendarTarget.find('.flatpickr-calendar').css('border-color', hearing.customDesign[5].borderColor.value);
               // calendar body color
               calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', hearing.customDesign[5].calendarBackgroundColor.value);
@@ -468,7 +475,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               });
 
               // sunday color
-              calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+1)').css('color', hearing.customDesign[5].sundayColor.value);
+              // calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+1)').css('color', hearing.customDesign[5].sundayColor.value);
               var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+1)');
               sundayTarget.each(function () {
                 if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
@@ -476,7 +483,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
                 }
               });
               // saturday color
-              calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+7)').css('color', hearing.customDesign[5].saturdayColor.value);
+              // calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+7)').css('color', hearing.customDesign[5].saturdayColor.value);
               var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
               saturdayTarget.each(function () {
                 if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
@@ -571,6 +578,60 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
 
     calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', design.calendarBackgroundColor.value);
+  };
+
+  this.hexToRgb = function(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  };
+
+  this.setSelectedColorCalendar = function (hex) {
+    var rgb = this.hexToRgb(hex);
+    var brightness;
+    brightness = (rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114);
+    brightness = brightness / 255000;
+    // values range from 0 to 1
+    // anything greater than 0.5 should be bright enough for dark text
+    if (brightness >= 0.5) {
+      $scope.calendarSelectedColor = 'black';
+    } else {
+      $scope.calendarSelectedColor = 'white';
+    }
+  };
+
+  // remove opacity from hex color
+  this.getRawColor = function (hex) {
+    var code = hex.substr(1), r,g,b;
+    if (code.length === 3) {
+      r = String(code.substr(0,1)) + String(code.substr(0,1));
+      g = String(code.substr(1,1)) + String(code.substr(1,1));
+      b = String(code.substr(2)) + String(code.substr(2));
+    }
+    else {
+      r = String(code.substr(0,2));
+      g = String(code.substr(2,2));
+      b = String(code.substr(4));
+    }
+
+    var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
+    var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
+    var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
+    var codeR = parseInt(balloonR).toString(16);
+    var codeG = parseInt(balloonG).toString(16);
+    var codeB = parseInt(balloonB).toString(16);
+
+    return ('#' + codeR + codeG + codeB).toUpperCase();
+  };
+
+  this.changeCalendarHeaderColor = function (actionIndex, hearingIndex, index) {
+    if (index === 'headerBackgroundColor') {
+      var color = this.getRawColor($scope.setActionList[actionIndex].hearings[hearingIndex].customDesign[5][index].value);
+      $scope.setActionList[actionIndex].hearings[hearingIndex].customDesign[5]["headerWeekdayBackgroundColor"].value = color;
+    }
   };
 
   $scope.autoResizeTextArea = function () {
@@ -1122,7 +1183,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    */
   this.trimDataHearing = function(action) {
     if (typeof action.hearings === 'undefined' || typeof action.hearings.length < 1 ||
-      typeof action.errorMessage === 'undefined' || action.errorMessage === '' ||
       (action.isConfirm && (typeof action.confirmMessage === 'undefined' || action.confirmMessage === '' || typeof action.success === 'undefined' || action.success === '' || typeof action.cancel === 'undefined' || action.cancel === ''))
     ) {
       return null;
@@ -2174,10 +2234,9 @@ $(document).ready(function() {
 
   //フォーカスされたアクションに応じて、関連するプレビューを強調表示する
   $(document).on('focus', '.set_action_item', function () {
-    // angular.element($('#tchatbotscenario_form_action_menulist')).scope().focusActionIndex = $(this).attr('id');
     $('.set_action_item').blur();
     var previewId = $(this).attr('id').replace(/setting$/, 'preview');
-    $(this).css('border', '1px solid #C3D69B');
+    $(this).css('border', '2px solid #C3D69B');
     $('.actionTitle').removeClass('active');
     $('#' + previewId + ' .actionTitle').addClass('active');
     $('.closeBtn').css('display', 'none');
@@ -2256,13 +2315,35 @@ function actionValidationCheck(element, setActionList, actionItem) {
       messageList.push('変数名と質問内容が未入力です');
     }
 
-    if (!actionItem.errorMessage) {
+    // angular.forEach(actionItem.hearings, function (item, itemKey) {
+    //   if ((item.uiType == 1 || item.uiType == 2) && item.inputType != 1) {
+    //     if (!item.errorMessage) {
+    //       messageList.push('入力エラー時の返信メッセージが未入力です');
+    //       return false;
+    //     }
+    //   }
+    // });
+    var validErrorMessage = actionItem.hearings.some(function(obj) {
+      if ((obj.uiType == 1 || obj.uiType == 2) && obj.inputType != 1) {
+         return obj.errorMessage ? true : false;
+      }
+
+      return true;
+    });
+
+    if (!validErrorMessage) {
       messageList.push('入力エラー時の返信メッセージが未入力です');
     }
 
-    if (actionItem.errorMessage && actionItem.errorMessage.length > 4000) {
-        messageList.push('入力エラー時の返信メッセージは4000文字以内で入力してください');
-    }
+
+
+    // if (!actionItem.errorMessage) {
+    //   messageList.push('入力エラー時の返信メッセージが未入力です');
+    // }
+
+    // if (actionItem.errorMessage && actionItem.errorMessage.length > 4000) {
+    //     messageList.push('入力エラー時の返信メッセージは4000文字以内で入力してください');
+    // }
 
     if (actionItem.isConfirm) {
       if (!actionItem.confirmMessage) {
@@ -2530,7 +2611,6 @@ $(document).mouseup(function (e) {
   if (!$(e.target).closest('.set_action_item').length && !$(e.target).closest('.actionMenu').length && !$(e.target).closest('#tchatbotscenario_form_preview_body > section').length) {
     angular.element($('#tchatbotscenario_form_action_menulist')).scope().focusActionIndex = null;
     $('.set_action_item').blur();
-    $('.closeBtn').show();
   }
 });
 </script>
