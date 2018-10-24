@@ -6862,6 +6862,11 @@
           }
         } catch(gFuncError) {
           console.log(gFuncError.message);
+          emit('traceScenarioInfo', {
+            type: "w",
+            message: "call google tel-cv function is failed. error : " + gFuncError.message,
+            data: telNumberStr
+          });
         }
         try {
           if(typeof(window.yahoo_report_conversion) === 'function') {
@@ -6869,6 +6874,11 @@
           }
         } catch(yFuncError) {
           console.log(yFuncError.message);
+          emit('traceScenarioInfo', {
+            type: "w",
+            message: "call yahoo tel-cv function is failed. error : " + yFuncError.message,
+            data: telNumberStr
+          });
         }
       }
     }
