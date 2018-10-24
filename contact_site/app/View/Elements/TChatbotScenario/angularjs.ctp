@@ -437,12 +437,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               var calendarTarget = $('#action' + index + '_calendar' + hearingIndex);
               // add datepicker for preview
               var datepickerId = 'action' + index + '_datepicker' + hearingIndex;
-              if (calendarTarget.find('#' + datepickerId).length == 0) {
-                calendarTarget.html('<input id="' + datepickerId + '" type="hidden">');
-                $('#' + datepickerId).flatpickr(calendar_options);
-                $('#' + datepickerId).hide();
-              }
-
+              calendarTarget.html('<input id="' + datepickerId + '" type="hidden">');
+              $('#' + datepickerId).flatpickr(calendar_options);
+              $('#' + datepickerId).hide();
               var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
               firstDayOfWeek[0].innerText = hearing.options[5].language == 1 ? '日' : 'Sun';
 
@@ -454,8 +451,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               headerWeekBgColor.css('background', hearing.customDesign[5].headerBackgroundColor.value);
               // header text color
               calendarTarget.find('.flatpickr-current-month input.cur-year').css('color', hearing.customDesign[5].headerTextColor.value);
-              calendarTarget.find('.flatpickr-months .flatpickr-month').css('color', hearing.customDesign[5].headerTextColor.value);
               calendarTarget.find('.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month').css('fill', hearing.customDesign[5].headerTextColor.value);
+              calendarTarget.find('.flatpickr-months .flatpickr-month').css('color', hearing.customDesign[5].headerTextColor.value);
               calendarTarget.find('span.flatpickr-weekday').css('color', hearing.customDesign[5].headerTextColor.value);
               // border color
               calendarTarget.find('.flatpickr-calendar').css('border', '1px solid');
