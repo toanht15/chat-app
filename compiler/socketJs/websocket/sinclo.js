@@ -1435,14 +1435,7 @@
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
-        if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
-          this.chatApi.notify(obj.chatMessage);
-        } else {
-          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
-            this.chatApi.scDown();
-            common.chatBotTypingCall(obj);
-          }
-        }
+
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -4947,7 +4940,7 @@
           // 4. マッチ設定が存在する
           console.log("matchAllSpeechContent ::: sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
           if (
-            (!window.sincloInfo.contract.useCogmoAttendApi && !check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
+            !window.sincloInfo.contract.useCogmoAttendApi && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")
             && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() && this.speechContentRegEx.length > 0) {
             for (var index in this.speechContentRegEx) {
               console.log(this.speechContentRegEx[index].id);
@@ -5358,6 +5351,7 @@
         self._resetDefaultVal();
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
+        self._unsetUploadedFileData();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
       },
       isProcessing: function () {
@@ -5465,6 +5459,14 @@
       _unsetBaseObj: function () {
         var self = sinclo.scenarioApi;
         storage.l.unset(self._lKey.scenarioBase);
+      },
+      _unsetUploadedFileData: function () {
+        var self = sinclo.scenarioApi;
+        var data = self.get(self._lKey.variables);
+        if(check.isset(data) && check.isset(data[self._sendFile._downloadUrlKey])) {
+          delete data[self._sendFile._downloadUrlKey];
+          self.set(self._lKey.variables, data);
+        }
       },
       /**
        * 表示したシナリオメッセージをローカルに保存する
