@@ -1435,6 +1435,14 @@
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
+        if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
+          this.chatApi.notify(obj.chatMessage);
+        } else {
+          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
+            this.chatApi.scDown();
+            common.chatBotTypingCall(obj);
+          }
+        }
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1669,14 +1677,6 @@
         }
         if(!obj.hideMessage && obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
-        }
-        if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
-          this.chatApi.notify(obj.chatMessage);
-        } else {
-          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
-            this.chatApi.scDown();
-            common.chatBotTypingCall(obj);
-          }
         }
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する

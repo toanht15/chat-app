@@ -1218,7 +1218,7 @@ var socket, // socket.io
           html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { border-right-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important; }';
           html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:focus { border-color: ' + colorList['mainColor'] + '!important }';
         }
-        html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { display: flex;justify-content:center; align-items: center; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: bold; font-size: ' + widget.chatSendBtnTextSize + 'px;}';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { display: flex;justify-content:center; align-items: center; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: bold;}';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn span, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn span {color: ' + colorList['chatSendBtnTextColor'] + '; }';
         if( (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document) || (check.isset(widget.showAccessId) && widget.showAccessId === 1)) ) {
           if(widget.chatMessageCopy === 1) {
@@ -1460,6 +1460,7 @@ var socket, // socket.io
           html += '#sincloBox section#chatTab sinclo-div#miniFlexBoxHeight { height: ' + (48 * ratio) + 'px;  }';
           html += '#sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding:  ' + (16.5 * ratio) + 'px 0; border: ' + ratio + 'px solid ' + colorList['chatSendBtnBackgroundColor'] + '; }';
           html += '#sincloBox section#chatTab a#miniSincloChatSendBtn { padding: ' + (8 * ratio) + 'px 0;  }';
+          html += '#sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' + (13 * ratio) + 'px;}';
           html += '#sincloBox section#chatTab sinclo-chat-alert { left: 10%; right: 10%; bottom: 50%; border-radius: ' + (5 * ratio) + 'px; color: #FFF; padding: ' + (10 * ratio) + 'px 0; }';
           html += '#sincloBox section#navigation { border-width: 0 ' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul { margin: 0 0 0 -' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
@@ -1562,6 +1563,7 @@ var socket, // socket.io
           html += '#sincloBox section { width: 100% }';
           html += '#sincloBox section#chatTab ul { height: ' + (chatAreaHeight - (6.5 * hRatio)) + 'px }';
           html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
+          html += '#sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' + (13 * ratio) + 'px;}';
           //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
           //閉じるボタン無効
           //＋ボタン無効に仕様変更
@@ -1717,6 +1719,7 @@ var socket, // socket.io
         }
 
         html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:calc('+widget.reTextSize +'px*0.92); }';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' + widget.chatSendBtnTextSize + 'px;}';
 
         // チャットを使用する際
         if ( window.sincloInfo.contract.chat ) {
