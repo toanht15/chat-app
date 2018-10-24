@@ -1671,6 +1671,15 @@
         if(!obj.hideMessage && obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
+
+        if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
+          this.chatApi.notify(obj.chatMessage);
+        } else {
+          if(obj.tabId === userInfo.tabId && obj.messageType != sinclo.chatApi.messageType.linkClick) {
+            this.chatApi.scDown();
+            common.chatBotTypingCall(obj);
+          }
+        }
         //sinclo.trigger.fireChatEnterEvent(obj.chatMessage);
         // オートメッセージの内容をDBに保存し、オブジェクトから削除する
         if (!sinclo.chatApi.saveFlg && obj.tabId === userInfo.tabId) {
@@ -2680,6 +2689,7 @@
         }
       },
       createMessage: function (cs, val, cName, isScenarioMsg) {
+        common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
