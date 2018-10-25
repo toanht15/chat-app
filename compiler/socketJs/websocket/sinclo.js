@@ -203,9 +203,11 @@
       //バナー表示時の位置を設定
       bannerBottomLeftRight: function() {
         if ( !check.smartphone() ) {
+          var bannerHorizontalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.bannerHorizontalPosition) ? window.sincloInfo.custom.widget.bannerHorizontalPosition : "20px";
+          var bannerVerticalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.bannerVerticalPosition) ? window.sincloInfo.custom.widget.bannerVerticalPosition : "20px";
           //pc
-          var bottom = "20px";
-          var leftRight = "20px";
+          var bottom = bannerVerticalPosition;
+          var leftRight = bannerHorizontalPosition;
 
           $("#sincloBox").css("bottom",bottom);
           switch ( Number(window.sincloInfo.widget.showPosition) ) {
@@ -248,15 +250,23 @@
           sinclo.adjustSpWidgetSize();
         }
         else{
+          var widgetHorizontalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.horizontalPosition) ? window.sincloInfo.custom.widget.horizontalPosition : "10px";
+          var widgetVerticalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.verticalPosition) ? window.sincloInfo.custom.widget.verticalPosition : "0px";
           common.widgetHandler._handleResizeEvent();
           switch ( Number(window.sincloInfo.widget.showPosition) ) {
           case 1: // 右下
             //right: 10px;
-            $("#sincloBox").css("right","10px");
+            $("#sincloBox").css({
+              "right": widgetHorizontalPosition,
+              "bottom": widgetVerticalPosition
+            });
             break;
           case 2: // 左下
             //left: 10px;
-            $("#sincloBox").css("left","10px");
+            $("#sincloBox").css({
+              "left": widgetHorizontalPosition,
+              "bottom": widgetVerticalPosition
+            });
             break;
           }
         }

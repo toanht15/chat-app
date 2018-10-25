@@ -1015,17 +1015,19 @@ var socket, // socket.io
       }
 
       // 表示位置
+      var widgetHorizontalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.horizontalPosition) ? window.sincloInfo.custom.widget.horizontalPosition : "10px";
+      var widgetVerticalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.verticalPosition) ? window.sincloInfo.custom.widget.verticalPosition : "0px";
       var showPosition = "", chatPosition = {se: "", re: ""};
       switch ( Number(widget.showPosition) ) {
         case 1: // 右下
-          showPosition = "bottom: 0; right: 10px;";
+          showPosition = "bottom: " + widgetVerticalPosition + "; right: " + widgetHorizontalPosition + ";";
           chatPosition = {
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
           };
           break;
         case 2: // 左下
-          showPosition = "bottom: 0; left: 10px;";
+          showPosition = "bottom: " + widgetVerticalPosition + "; left: " + widgetHorizontalPosition + ";";
           chatPosition = {
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
