@@ -1472,8 +1472,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
     $scope.createTextOfMessage = function(chat, message, opt) {
       console.log('メッセージを作成します。');
       var strings = message.split('\n');
-      //電話番号リンク化対応でfalse→true
-      var isSmartphone = true;
+      var isSmartphone = false;
       var custom = "";
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
@@ -1491,6 +1490,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           widgetSize = '5';
         }
         //リンク、電話番号,img
+        console.log(widgetSize);
         str = replaceVariable(str,isSmartphone,widgetSize);
         custom += str + "\n";
 

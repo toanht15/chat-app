@@ -162,6 +162,7 @@ function replaceVariable(str,isSmartphone,type){
   //チャット履歴からのimgタグの場合
   /*else if(type === '6') {
   }*/
+  console.log(className);
 
   // リンク
   var link = str.match(linkReg);
@@ -187,6 +188,8 @@ function replaceVariable(str,isSmartphone,type){
       }
       //URLのみのリンクの場合
       else {
+      //URLリンク以外は文字列にする
+      if(link !== null){
         var url = link[0];
         var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
         //imgタグ有効化
@@ -195,14 +198,17 @@ function replaceVariable(str,isSmartphone,type){
           imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
           a = a.replace(img[0], imgTag);
         }
-        str = str.replace(url, a);
+      } else {
+        var a = "<span class='link'>"+ url + "</span>";
       }
+      str = str.replace(url, a);
+    }
   }
   // 電話番号（スマホのみリンク化）
   var tel = str.match(telnoTagReg);
   if( tel !== null ) {
     var telno = tel[1];
-    if(isSmartphone) {
+    if(isSmartphone || type ==='4') {
       // リンクとして有効化
       var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
       str = str.replace(tel[0], a);

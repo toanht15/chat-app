@@ -5043,7 +5043,20 @@ function link(word,link,eventLabel) {
   */
   console.log("ga連携しまーす");
   console.log("押されたやつのテキストは" + word + "値は" + link + "イベントラベルは" + eventLabel + "です");
-
+  if(eventLabel === "clickMail"){
+    console.log('これはメールです。もし画像リンクなら文字列を修正します');
+    if(word.match(/mailto\s*:/)){
+      console.log('画像なので文字列を修正します');
+      word = word.replace(/mailto\s*:/g, "");
+    }
+  }
+  else if(eventLabel === "clickTelno"){
+    console.log('これは電話です。もし画像リンクなら文字列を修正します');
+    if(word.match(/tel/)){
+      console.log('画像なので文字列を修正します');
+      word = word.replace(/tel\s*:/g, "");
+    }
+  }
   link = "<a "+link.replace(/\$nbsp;/g, " ")+">"+word+"</a>";
   var data = sinclo.chatApi;
   data.link = link;

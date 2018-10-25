@@ -2679,7 +2679,7 @@
           telnoTagReg: RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/),
           urlTagReg: RegExp(/href="([\s\S]*?)"([\s\S]*?)/)
         },
-        _linkWithoutText: function(option,link,unEscapeStr,str){
+        _linkWithoutText: function(option,link,unEscapeStr,str,className){
           var url = link[0];
           var img = unEscapeStr.match(this._regList.imgTagReg);
           if(img == null) {
@@ -2695,9 +2695,11 @@
           }
           return str;
         },
-        _linkText: function(option,link,linkTab,unEscapeStr,str){
+        _linkText: function(option,link,linkTab,unEscapeStr,str,className){
           if(link !== null) {
             var a = linkTab[0];
+            console.log(linkTab[0]);
+            console.log(option);
             //imgタグ有効化
             var img = unEscapeStr.match(this._regList.imgTagReg);
             if(img == null) {
@@ -2710,9 +2712,13 @@
                 var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
               }
               if(option === "clickTelno"){
-                //電話番号の場合は、生の電話番号を取得
+                //電話番号の場合はスマホチェックをし、生の電話番号を取得
                 var telno = link[0].replace(/[^0-9^\.]/g,"");
-                a = a.replace(linkTab[1],linkTab[1]+"class='sincloTelConversion' onclick=link('"+linkTab[2]+"','"+processedLink+"','"+option+"');sinclo.api.callTelCV('" + telno + "')");
+                if(check.smartphone()){
+                  a = a.replace(linkTab[1],linkTab[1]+"class='sincloTelConversion' onclick=link('"+linkTab[2]+"','"+processedLink+"','"+option+"');sinclo.api.callTelCV('" + telno + "')");
+                } else {
+                  a = "<span class='link'>"+ linkTab[2] + "</span>";
+                }
               }
               else {
                 a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"','"+option+"')");
@@ -2725,9 +2731,15 @@
               a = a.replace(img[0], imgTag);
               var url = a.match(this._regList.urlTagReg);
               if(option === "clickTelno"){
+                console.log('画像じゃい');
                 //電話番号の場合は、生の電話番号を取得
                 var telno = link[0].replace(/[^0-9^\.]/g,"");
-                a = a.replace(linkTab[1],linkTab[1]+"class='sincloTelConversion' onclick=link('"+url[1]+"','"+processedLink+"','"+option+"');sinclo.api.callTelCV('" + telno + "')");
+                if(check.smartphone()){
+                  a = a.replace(linkTab[1],linkTab[1]+"class='sincloTelConversion' onclick=link('"+url[1]+"','"+processedLink+"','"+option+"');sinclo.api.callTelCV('" + telno + "')");
+                } else {
+                  console.log(a);
+                  a = a.replace(a,imgTag);
+                }
               }
               else {
                 a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+processedLink+"','"+option+"')");
@@ -2807,23 +2819,25 @@
                   //aタグが設定されているリンクの場合
                   if(link !== null){
                   //普通のページリンクの場合は初期値
-                  } else if(str.match(this.createAnchorTag._regList.mailLinkReg) !== null) {
+                  }
+                  if(str.match(this.createAnchorTag._regList.mailLinkReg) !== null) {
                   //メールリンクの場合
                     option = "clickMail";
                     link = str.match(this.createAnchorTag._regList.mailLinkReg);
-                  } else if(str.match(this.createAnchorTag._regList.telLinkReg) !== null && check.smartphone()){
+                  }
+                  if(str.match(this.createAnchorTag._regList.telLinkReg) !== null){
                   //電話リンクの場合
                     option = "clickTelno";
                     link = str.match(this.createAnchorTag._regList.telLinkReg);
                   }
-                  str = sinclo.chatApi.createAnchorTag._linkText(option,link,linkTab,unEscapeStr,str);
+                  str = sinclo.chatApi.createAnchorTag._linkText(option,link,linkTab,unEscapeStr,str,className);
                 }
                 else {
                   /*aタグが設定されていないリンクの場合
                    *この場合はURLのみしかない為、以下の条件式
                    */
                   if(link !== null){
-                    str = sinclo.chatApi.createAnchorTag._linkWithoutText(option,link,unEscapeStr,str);
+                    str = sinclo.chatApi.createAnchorTag._linkWithoutText(option,link,unEscapeStr,str,className);
                   }
                 }
                 // 電話番号（スマホのみリンク化）

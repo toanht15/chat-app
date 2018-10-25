@@ -153,8 +153,7 @@ class htmlExHelper extends AppHelper {
                   $str = $tmp;
                 }
                 else {
-                  $ret = preg_replace_callback('/(mailto:[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', [$this, 'addLinkNewTab'], $tmp);
-                  $str = preg_replace('/(mailto:[\w\-\.\/\?\=\,\#\:\%\!\(\)\<\>\"\x3000-\x30FE\x4E00-\x9FA0\xFF01-\xFFE3]+)/', $ret, $tmp);
+                  $str = $tmp;
                 }
             }
             //ハイパーリンクに該当する場合
@@ -173,8 +172,7 @@ class htmlExHelper extends AppHelper {
                   $str = $tmp;
                 }
                 else {
-                  $ret = preg_replace_callback('/(tel:[0-9]{9,})/', [$this, 'addLinkNewTab'], $tmp);
-                  $str = preg_replace('/(tel:[0-9]{9,})/', $ret, $tmp);
+                  $str = $tmp;
                 }
             }
             //telnoリンクに該当する場合
