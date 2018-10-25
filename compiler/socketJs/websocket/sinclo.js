@@ -2833,7 +2833,9 @@
                   if(check.smartphone()) {
                     // リンクとして有効化
                     // GA連携時に必要な情報を作成
-                    var a = "<a class=\"sincloTelConversion\" onclick=\"sinclo.api.callTelCV('" + telno + "');link('" + telno + "','" + telno + "','clickTelno')\" href='tel:" + telno + "'>" + telno + "</a>";
+                    var exceedLink = 'href="tel:' + telno + '"';
+                    console.log(exceedLink);
+                    var a = "<a class=\"sincloTelConversion\" onclick=sinclo.api.callTelCV('" + telno + "');link('" + telno + "','" + exceedLink+ "','clickTelno') href='tel:" + telno + "'>" + telno + "</a>";
                     str = str.replace(tel[0], a);
                   } else {
                     // ただの文字列にする

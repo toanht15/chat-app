@@ -131,6 +131,7 @@ function unEscapeHTML(str) {
 function replaceVariable(str,isSmartphone,type){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var mailLinkReg = RegExp(/(mailto:[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+  var telLinkReg = RegExp(/(tel:[0-9]{9,})/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
@@ -165,10 +166,11 @@ function replaceVariable(str,isSmartphone,type){
   // リンク
   var link = str.match(linkReg);
   var mail = str.match(mailLinkReg);
+  var telLink = str.match(telLinkReg);
   var linkTab = unEscapeStr.match(linkTabReg);
-  if ( link !== null || mail !== null || linkTab !== null) {
+  if ( link !== null || mail !== null || telLink !== null || linkTab !== null) {
       if ( linkTab !== null) {
-        if(link !== null || mail !== null) {
+        if(link !== null || mail !== null || telLink !== null) {
           var a = linkTab[0];
           //imgタグ有効化
           var img = unEscapeStr.match(imgTagReg);
