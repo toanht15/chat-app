@@ -216,20 +216,21 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   this.setDefaultColorHearing = function (target) {
-    target.customDesign[4].textColor = $scope.widget.settings.description_text_color;
-    target.customDesign[4].borderColor = $scope.widget.settings.main_color;
-    target.customDesign[5].headerBackgroundColor.value = $scope.widget.settings.main_color;
-    target.customDesign[5].borderColor.value = $scope.widget.settings.main_color;
-    target.customDesign[5].calendarTextColor.value = $scope.widget.settings.description_text_color;
-    target.customDesign[5].sundayColor.value = $scope.widget.settings.description_text_color;
-    target.customDesign[5].saturdayColor.value = $scope.widget.settings.description_text_color;
-    target.customDesign[5].headerWeekdayBackgroundColor.value = this.getRawColor($scope.widget.settings.main_color);
+    target.settings.customDesign.textColor = $scope.widget.settings.description_text_color;
+    target.settings.customDesign.borderColor = $scope.widget.settings.main_color;
+    target.settings.customDesign.headerBackgroundColor = $scope.widget.settings.main_color;
+    target.settings.customDesign.calendarTextColor = $scope.widget.settings.description_text_color;
+    target.settings.customDesign.sundayColor = $scope.widget.settings.description_text_color;
+    target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
+    target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
 
     return target;
   };
 
   this.setFocusActionIndex = function (actionIndex) {
     $scope.focusActionIndex = actionIndex;
+    // $('.set_action_item').blur();
+    // $('#action' + actionIndex + '_setting').css('border', '2px solid #C3D69B');
   };
 
   this.showOptionMenu = function (actionType) {
@@ -274,17 +275,53 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }, 0);
   };
 
-  this.revertCalendarColor = function (actionIndex, hearingIndex, designIndex) {
-    var defaultColor = $scope.setActionList[actionIndex].default.hearings[0].customDesign[5][designIndex];
-    $scope.setActionList[actionIndex].hearings[hearingIndex].customDesign[5][designIndex] = defaultColor;
-    $('#action' + actionIndex + '_option' + hearingIndex + '_' + designIndex).css('background-color', defaultColor.value);
+  this.revertCalendarColor = function (actionIndex, hearingIndex, customDesignIndex) {
+    switch (customDesignIndex) {
+      case 'headerBackgroundColor':
+        var defaultColor = $scope.widget.settings.main_color;
+        break;
+      case 'headerTextColor':
+        var defaultColor = '#FFFFFF';
+        break;
+      case 'headerWeekdayBackgroundColor':
+        var defaultColor = this.getRawColor($scope.widget.settings.main_color);
+        break;
+      case 'borderColor':
+        var defaultColor = $scope.widget.settings.main_color;
+        break;
+      case 'calendarBackgroundColor':
+        var defaultColor = '#FFFFFF';
+        break;
+      case 'calendarTextColor':
+        var defaultColor = $scope.widget.settings.message_box_text_color;;
+        break;
+      case 'saturdayColor':
+        var defaultColor = $scope.widget.settings.message_box_text_color;;
+        break;
+      case 'sundayColor':
+        var defaultColor = $scope.widget.settings.message_box_text_color;;
+        break;
+    }
+
+    $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+    $('#action' + actionIndex + '_option' + hearingIndex + '_' + customDesignIndex).css('background-color', defaultColor);
     jscolor.installByClassName("jscolor");
   };
 
-  this.revertPulldownColor = function (actionIndex, hearingIndex, designIndex) {
-    var defaultColor = $scope.setActionList[actionIndex].default.hearings[0].customDesign[4][designIndex];
-    $scope.setActionList[actionIndex].hearings[hearingIndex].customDesign[4][designIndex] = defaultColor;
-    $('#action' + actionIndex + '_pulldown' + hearingIndex + '_' + designIndex).css('background-color', defaultColor);
+  this.revertPulldownColor = function (actionIndex, hearingIndex, customDesignIndex) {
+    switch (customDesignIndex) {
+      case 'backgroundColor':
+        var defaultColor = '#FFFFFF';
+        break;
+      case 'textColor':
+        var defaultColor = $scope.widget.settings.message_box_text_color;
+        break;
+      case 'borderColor':
+        var defaultColor = $scope.widget.settings.main_color;
+        break;
+    }
+    $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+    $('#action' + actionIndex + '_pulldown' + hearingIndex + '_' + customDesignIndex).css('background-color', defaultColor);
     jscolor.installByClassName("jscolor");
   };
 
@@ -349,14 +386,14 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             $timeout(function () {
               $scope.$apply();
             }).then(function () {
-              if (hearing.options.pulldownCustomDesign) {
+              if (hearing.settings.pulldownCustomDesign) {
                 jscolor.installByClassName('jscolor');
               }
               var selectionTarget = $('#action' + index + '_selection' + hearingIndex);
-              selectionTarget.css('border-color', hearing.customDesign[4].borderColor);
-              selectionTarget.css('background-color', hearing.customDesign[4].backgroundColor);
-              selectionTarget.css('color', hearing.customDesign[4].textColor);
-              $('#action' + index + '_selection' + hearingIndex + '_option').css('color', hearing.customDesign[4].textColor);
+              selectionTarget.css('border-color', hearing.settings.customDesign.borderColor);
+              selectionTarget.css('background-color', hearing.settings.customDesign.backgroundColor);
+              selectionTarget.css('color', hearing.settings.customDesign.textColor);
+              $('#action' + index + '_selection' + hearingIndex + '_option').css('color', hearing.settings.customDesign.textColor);
             });
           }
           // calendar
@@ -372,7 +409,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               },
             };
             // set language for calendar
-            if (hearing.options[5].language == 1) {
+            if (hearing.settings.language == 1) {
               // japanese
               calendar_options.locale = $scope.japaneseCalendar.locale;
             } else {
@@ -383,61 +420,61 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             }
 
             // set min date
-            if (hearing.options[5].isEnableAfterDate) {
-              calendar_options.minDate = new Date().fp_incr(hearing.options[5].enableAfterDate);
+            if (hearing.settings.isEnableAfterDate) {
+              calendar_options.minDate = new Date().fp_incr(hearing.settings.enableAfterDate);
             } else {
-              calendar_options.minDate = hearing.options[5].disablePastDate ? 'today' : '';
+              calendar_options.minDate = hearing.settings.disablePastDate ? 'today' : '';
             }
             // set disable date
-            if (hearing.options[5].isDisableDayOfWeek) {
+            if (hearing.settings.isDisableDayOfWeek) {
               var disableWeekDays = [];
-              angular.forEach(hearing.options[5].dayOfWeekSetting, function (item, key) {
-                if (item.value) {
+              angular.forEach(hearing.settings.dayOfWeekSetting, function (item, key) {
+                if (item) {
                   disableWeekDays.push(key);
                 }
               });
 
               calendar_options.disable = [
                 function (date) {
-                  return disableWeekDays.indexOf(date.getDay().toString()) !== -1;
+                  return disableWeekDays.indexOf(date.getDay()) !== -1;
                 },
               ];
             } else {
               calendar_options.disable = [];
             }
 
-            if (hearing.options[5].isSetSpecificDate) {
-              if (hearing.options[5].setSpecificDateType == 1) {
-                hearing.options[5].specificDateData[2] = [""];
+            if (hearing.settings.isSetSpecificDate) {
+              if (hearing.settings.setSpecificDateType == 1) {
                 var disableLength = calendar_options.disable.length;
-                angular.forEach(hearing.options[5].specificDateData[1], function (item, key) {
+                angular.forEach(hearing.settings.specificDateData, function (item, key) {
                   calendar_options.disable[key + disableLength] = item;
                 });
               }
 
-              if (hearing.options[5].setSpecificDateType == 2) {
-                hearing.options[5].specificDateData[1] = [""];
-                angular.forEach(hearing.options[5].specificDateData[2], function (item, key) {
+              if (hearing.settings.setSpecificDateType == 2) {
+                angular.forEach(hearing.settings.specificDateData, function (item, key) {
                   calendar_options.enable[key] = item;
                 });
               }
             } else {
-              hearing.options[5].specificDateData[1] = [""];
-              hearing.options[5].specificDateData[2] = [""];
+              hearing.settings.specificDateData = [""];
             }
 
             $timeout(function () {
               $scope.$apply();
             }).then(function () {
               // add first picker for first input
-              if (hearing.options[5].setSpecificDateType) {
+              if (hearing.settings.setSpecificDateType) {
                 var datepickerTarget = $('#action' + index + '_option' + hearingIndex + '_datepicker0');
                 if (!datepickerTarget.hasClass('flatpickr-input')) {
                   datepickerTarget.flatpickr($scope.japaneseCalendar);
                 }
+
+                var targetElmList = $('.action' + index + '_option' + hearingIndex);
+                self.controllListView(<?= C_SCENARIO_ACTION_HEARING ?>, targetElmList, targetElmList);
               }
 
-              if (hearing.options[5].isCustomDesign) {
+              if (hearing.settings.isCustomDesign) {
                 jscolor.installByClassName("jscolor");
               }
 
@@ -448,56 +485,43 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               $('#' + datepickerId).flatpickr(calendar_options);
               $('#' + datepickerId).hide();
               var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
-              firstDayOfWeek[0].innerText = hearing.options[5].language == 1 ? '日' : 'Sun';
-              self.setSelectedColorCalendar(hearing.customDesign[5].headerBackgroundColor.value);
+              firstDayOfWeek[0].innerText = hearing.settings.language == 1 ? '日' : 'Sun';
+
+              hearing.selectedTextColor = self.getContrastColor(hearing.settings.customDesign.headerBackgroundColor);
+              hearing.weekdayTextColor = self.getContrastColor(hearing.settings.customDesign.headerWeekdayBackgroundColor);
 
               // binding color to preview
-              // header background color
-              var headerMonthBgColor = calendarTarget.find('.flatpickr-months');
-              headerMonthBgColor.css('background', hearing.customDesign[5].headerBackgroundColor.value);
-              var headerWeekBgColor = calendarTarget.find('.flatpickr-weekdays');
-              headerWeekBgColor.css('background', hearing.customDesign[5].headerWeekdayBackgroundColor.value);
-              // header text color
-              calendarTarget.find('.flatpickr-current-month input.cur-year').css('color', hearing.customDesign[5].headerTextColor.value);
-              calendarTarget.find('.flatpickr-months .flatpickr-month').css('color', hearing.customDesign[5].headerTextColor.value);
-              calendarTarget.find('span.flatpickr-weekday').css('color', hearing.customDesign[5].calendarTextColor.value);
-              // border color
-              calendarTarget.find('.flatpickr-calendar').css('border', '2px solid');
-              calendarTarget.find('.flatpickr-calendar').css('border-color', hearing.customDesign[5].borderColor.value);
-              // calendar body color
-              calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', hearing.customDesign[5].calendarBackgroundColor.value);
               // calendar text color
               var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
               calendarTextColorTarget.each(function () {
                 if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
-                  $(this).css('color', hearing.customDesign[5].calendarTextColor.value);
+                  $(this).css('color', hearing.settings.customDesign.calendarTextColor);
                 }
               });
-
               // sunday color
-              // calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+1)').css('color', hearing.customDesign[5].sundayColor.value);
+              // calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+1)').css('color', hearing.settings.customDesign.sundayColor);
               var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+1)');
               sundayTarget.each(function () {
                 if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
-                  $(this).css('color', hearing.customDesign[5].sundayColor.value);
+                  $(this).css('color', hearing.settings.customDesign.sundayColor);
                 }
               });
               // saturday color
-              // calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+7)').css('color', hearing.customDesign[5].saturdayColor.value);
+              // calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+7)').css('color', hearing.settings.customDesign.saturdayColor);
               var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
               saturdayTarget.each(function () {
                 if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
-                  $(this).css('color', hearing.customDesign[5].saturdayColor.value);
+                  $(this).css('color', hearing.settings.customDesign.saturdayColor);
                 }
               });
 
               // change color when change month
               calendarTarget.find('.flatpickr-calendar .flatpickr-months').on('mousedown', function () {
-                self.customCalendarTextColor(calendarTarget, hearing.customDesign[5]);
+                self.customCalendarTextColor(calendarTarget, hearing.settings.customDesign);
               });
               // keep color when click on date
               $('#action' + index + '_datepicker' + hearingIndex).on('change', function () {
-                self.customCalendarTextColor(calendarTarget, hearing.customDesign[5]);
+                self.customCalendarTextColor(calendarTarget, hearing.settings.customDesign);
               });
 
             });
@@ -559,25 +583,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
     calendarTextColorTarget.each(function () {
       if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
-        $(this).css('color', design.calendarTextColor.value);
+        $(this).css('color', design.calendarTextColor);
       }
     });
 
     var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n + 1)');
     sundayTarget.each(function () {
       if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
-        $(this).css('color', design.sundayColor.value);
+        $(this).css('color', design.sundayColor);
       }
     });
 
     var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
     saturdayTarget.each(function () {
       if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
-        $(this).css('color', design.saturdayColor.value);
+        $(this).css('color', design.saturdayColor);
       }
     });
 
-    calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', design.calendarBackgroundColor.value);
+    calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', design.calendarBackgroundColor);
   };
 
   this.hexToRgb = function(hex) {
@@ -589,18 +613,14 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     } : null;
   };
 
-  this.setSelectedColorCalendar = function (hex) {
+  this.getContrastColor = function (hex) {
     var rgb = this.hexToRgb(hex);
     var brightness;
     brightness = (rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114);
     brightness = brightness / 255000;
     // values range from 0 to 1
     // anything greater than 0.5 should be bright enough for dark text
-    if (brightness >= 0.5) {
-      $scope.calendarSelectedColor = 'black';
-    } else {
-      $scope.calendarSelectedColor = 'white';
-    }
+    return brightness >= 0.5 ? 'black' : 'white';
   };
 
   // remove opacity from hex color
@@ -629,8 +649,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   this.changeCalendarHeaderColor = function (actionIndex, hearingIndex, index) {
     if (index === 'headerBackgroundColor') {
-      var color = this.getRawColor($scope.setActionList[actionIndex].hearings[hearingIndex].customDesign[5][index].value);
-      $scope.setActionList[actionIndex].hearings[hearingIndex].customDesign[5]["headerWeekdayBackgroundColor"].value = color;
+      var color = this.getRawColor($scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[index]);
+      $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign["headerWeekdayBackgroundColor"] = color;
+      $('#action' + actionIndex + '_option' + hearingIndex + '_headerWeekdayBackgroundColor').css('background-color', color);
     }
   };
 
@@ -656,8 +677,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (textRow > maxRow) {
       elm.height((maxRow * (fontSize * lineHeight)) + paddingSize);
       elm.css('overflow', 'auto');
-      // elm[0].style.height = (maxRow * (fontSize*lineHeight)) + paddingSize + 'px';
-      // elm[0].style.overflow = 'auto';
     }
     else {
       elm.height(textRow * (fontSize * lineHeight));
@@ -668,7 +687,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   this.showBulkSelectionPopup = function (actionIndex, hearingIndex, uiType) {
     if (uiType === '3' || uiType === '4') {
       // ラジオボタン、プルダウン
-      var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType];
+      var options = $scope.setActionList[actionIndex].hearings[hearingIndex].settings.options;
       var title = '選択肢を一括登録する';
       var description = '選択肢として登録する内容を改行して設定してください。 ';
       var placeholder = '男性&#10;女性'
@@ -676,8 +695,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     if (uiType === '5') {
       //　カレンダー
-      var setSpecificDateType = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].setSpecificDateType;
-      var options = $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType];
+      var setSpecificDateType = $scope.setActionList[actionIndex].hearings[hearingIndex].settings.setSpecificDateType;
+      var options = $scope.setActionList[actionIndex].hearings[hearingIndex].settings.specificDateData;
       var title = '日付を一括登録する';
       var placeholder = '2019/01/01&#10;2019/01/02';
       if (setSpecificDateType == 1) {
@@ -714,19 +733,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var convertedInputOptions = inputOptions.split('\n');
 
       if (uiType === '3' || uiType === '4') {
-        $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType] = [];
+        $scope.setActionList[actionIndex].hearings[hearingIndex].settings.options = [];
         angular.forEach(convertedInputOptions, function (option, optionKey) {
           if (option) {
-            $scope.setActionList[actionIndex].hearings[hearingIndex].options[uiType].push(option);
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.options.push(option);
           }
         });
       }
 
       if (uiType === '5') {
-        $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType] = [];
+        $scope.setActionList[actionIndex].hearings[hearingIndex].settings.specificDateData = [];
         angular.forEach(convertedInputOptions, function (option, optionKey) {
           if (option) {
-            $scope.setActionList[actionIndex].hearings[hearingIndex].options[5].specificDateData[setSpecificDateType].push(option);
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.specificDateData.push(option);
           }
         });
       }
@@ -954,32 +973,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
     var actionType = $scope.setActionList[actionStep].actionType;
-
     if (optionType === '3' || optionType === '4') {
       // ラジオボタン、プルダウン
-      var src = $scope.actionList[actionType].default.hearings[0].options[optionType];
-      var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
+      var src = $scope.actionList[actionType].default.hearings[0].settings.options;
+      var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
     } else {
       // カレンダー
-      if ($scope.setActionList[actionStep].hearings[listIndex].options[optionType].setSpecificDateType == 1) {
-        // can select date
-        var src = $scope.actionList[actionType].default.hearings[0].options[optionType].specificDateData[1];
-        var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[1];
-      } else {
-        // cannot select date
-        var src = $scope.actionList[actionType].default.hearings[0].options[optionType].specificDateData[2];
-        var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[2];
-      }
+      var src = $scope.actionList[actionType].default.hearings[0].settings.specificDateData;
+      var target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
     }
 
     target.splice(optionIndex + 1, 0, angular.copy(src));
+    console.log(target);
     // 表示更新
     $timeout(function () {
       $scope.$apply();
     }).then(function () {
       var targetElmList = $('.action' + actionStep + '_option' + listIndex);
       self.controllListView(actionType, targetElmList, target);
-      if (optionType == 5) {
+      if (optionType === '5') {
         // add datepicker for new input
         angular.forEach(targetElmList, function (targetElm, index) {
           var el = $(targetElm).find('input');
@@ -995,19 +1007,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
     var actionType = $scope.setActionList[actionStep].actionType;
-    // var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
+    // var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
     if (optionType === '3' || optionType === '4') {
       // ラジオボタン、プルダウン
-      var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType];
+      var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
     } else {
       // カレンダー
-      if ($scope.setActionList[actionStep].hearings[listIndex].options[optionType].setSpecificDateType == 1) {
-        // can select date
-        var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[1];
-      } else {
-        // cannot select date
-        var target = $scope.setActionList[actionStep].hearings[listIndex].options[optionType].specificDateData[2];
-      }
+        var target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
     }
     target.splice(optionIndex, 1);
     // 表示更新
@@ -2236,22 +2242,22 @@ $(document).ready(function() {
   $(document).on('focus', '.set_action_item', function () {
     $('.set_action_item').blur();
     var previewId = $(this).attr('id').replace(/setting$/, 'preview');
-    $(this).css('border', '2px solid #C3D69B');
     $('.actionTitle').removeClass('active');
     $('#' + previewId + ' .actionTitle').addClass('active');
     $('.closeBtn').css('display', 'none');
     $('.set_action_item h4').css('background-color', '#DADADA');
     $(this).find('.closeBtn').css('display', 'block');
     $(this).find('h4').css('background-color', '#C3D69B');
+    $(this).css('border', '2px solid #C3D69B');
   }).on('blur', '.set_action_item', function () {
     var previewId = $(this).attr('id').replace(/setting$/, 'preview');
-    $('.set_action_item').css('border', '1px solid #a9aaa4');
+    $('.set_action_item').css('border', '2px solid #a9aaa4');
     $('.set_action_item h4').css('background-color', '#DADADA');
     $('.closeBtn').show();
     $('#' + previewId + ' .actionTitle').removeClass('active');
   }).on('focusout', '.set_action_item', function () {
     var previewId = $(this).attr('id').replace(/setting$/, 'preview');
-    $('.set_action_item').css('border', '1px solid #a9aaa4');
+    $('.set_action_item').css('border', '2px solid #a9aaa4');
     $('.set_action_item h4').css('background-color', '#DADADA');
     $('.closeBtn').show();
     $('#' + previewId + ' .actionTitle').removeClass('active');

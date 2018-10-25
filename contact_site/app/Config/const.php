@@ -753,103 +753,46 @@ $config['chatbotScenarioActionList'] = [
         'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
         'uiType' => 1,
         'message' => '',
-        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW,
         'required' => true,
         'errorMessage' => '',
-        'options' => [
-          C_SCENARIO_UI_TYPE_RADIO_BUTTON => [""],
-          C_SCENARIO_UI_TYPE_PULLDOWN => [""],
-          C_SCENARIO_UI_TYPE_CALENDAR => [
-            'disablePastDate' => true,
-            'isSetDisableDate' => false,
-            'isCustomDesign' => false,
-            'isDisableDayOfWeek' => false,
-            'isSetSpecificDate' => false,
-            'isEnableAfterDate' => false,
-            'enableAfterDate' => null,
-            'dayOfWeekSetting' => [
-              1 => [
-                'label' => '月',
-                'value' => false
-              ],
-              2 => [
-                'label' => '火',
-                'value' => false
-              ],
-              3 => [
-                'label' => '水',
-                'value' => false
-              ],
-              4 => [
-                'label' => '木',
-                'value' => false
-              ],
-              5 => [
-                'label' => '金',
-                'value' => false
-              ],
-              6 => [
-                'label' => '土',
-                'value' => false
-              ],
-              0 => [
-                'label' => '日',
-                'value' => false
-              ]
-            ],
-            'setSpecificDateType' => '',
-            'specificDateData' => [
-              1 => [""],
-              2 => [""],
-            ],
-             'language' => 1 // 1: japanese, 2: english
+        'settings' => [
+          'options' => [""], // options for radio or pulldown
+          'disablePastDate' => true,
+          'isSetDisableDate' => false,
+          'isDisableDayOfWeek' => false,
+          'isSetSpecificDate' => false,
+          'isEnableAfterDate' => false,
+          'enableAfterDate' => null,
+          'dayOfWeekSetting' => [
+            0 => false, // sun
+            1 => false, // mon
+            2 => false, // tue
+            3 => false, // wed
+            4 => false, // thur
+            5 => false, // fri
+            6 => false, // sat
           ],
+          'setSpecificDateType' => '',
+          'specificDateData' => [""],
+          'language' => 1, // 1: japanese, 2: english
           'pulldownCustomDesign' => false,
-        ],
-        'customDesign' => [
-          C_SCENARIO_UI_TYPE_PULLDOWN => [
-            'borderColor' => '#00A0C1',
+          'calendarCustomDesign' => false,
+          'customDesign' => [
+            'borderColor' => '',
             'backgroundColor' => '#FFFFFF',
-            'textColor' => '#918c87',
-            'markColor' => '#00A0C1'
-          ],
-          C_SCENARIO_UI_TYPE_CALENDAR => [
-            'headerBackgroundColor' => [
-              'label' => 'ヘッダー背景色',
-              'value' => '#00A0C1'
-            ],
-            'headerTextColor' => [
-              'label' => 'ヘッダー文字色',
-              'value' => '#FFFFFF'
-            ],
-            'headerWeekdayBackgroundColor' => [
-              'label' => '曜日背景色',
-              'value' => '#FFFFFF'
-            ],
-            'borderColor' => [
-              'label' => '枠線色',
-              'value' => '#00A0C1'
-            ],
-            'calendarBackgroundColor' => [
-              'label' => 'カレンダ背景色',
-              'value' => '#FFFFFF'
-            ],
-            'calendarTextColor' => [
-              'label' => 'カレンダ文字色',
-              'value' => '#918c87'
-            ],
-            'saturdayColor' => [
-              'label' => '土曜日文字色',
-              'value' => '#4286f4'
-            ],
-            'sundayColor' => [
-              'label' => '日曜日文字色',
-              'value' => '#f20c0c'
-            ]
+            'textColor' => '',
+            'headerBackgroundColor' => '',
+            'headerTextColor' => '#FFFFFF',
+            'headerWeekdayBackgroundColor' => '',
+            'calendarBackgroundColor' => '#FFFFFF',
+            'calendarTextColor' => '',
+            'saturdayColor' => '',
+            'sundayColor' => '',
           ]
         ]
-      ]],
-      'errorMessage' => '',
+      ]
+      ],
+      'restore' => true,
       'isConfirm' => '2',
       'confirmMessage' => '',
       'success' => '',
