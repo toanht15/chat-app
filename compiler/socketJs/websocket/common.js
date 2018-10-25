@@ -1015,8 +1015,12 @@ var socket, // socket.io
       }
 
       // 表示位置
-      var widgetHorizontalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.horizontalPosition) ? window.sincloInfo.custom.widget.horizontalPosition : "10px";
-      var widgetVerticalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.verticalPosition) ? window.sincloInfo.custom.widget.verticalPosition : "0px";
+      var widgetHorizontalPosition = "10px";
+      var widgetVerticalPosition = "0px";
+      if(!check.smartphone()) {
+        widgetHorizontalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.horizontalPosition) ? window.sincloInfo.custom.widget.horizontalPosition : "10px";
+        widgetVerticalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.verticalPosition) ? window.sincloInfo.custom.widget.verticalPosition : "0px";
+      }
       var showPosition = "", chatPosition = {se: "", re: ""};
       switch ( Number(widget.showPosition) ) {
         case 1: // 右下
