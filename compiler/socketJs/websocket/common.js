@@ -1157,7 +1157,7 @@ var socket, // socket.io
       html += '      #sincloBox blockquote:before, #sincloBox blockquote:after, #sincloBox q:before, #sincloBox q:after { content: \'\'; content: none; }';
       html += '      #sincloBox table { border-collapse: collapse; border-spacing: 0; }';
       //END OF reset-css
-      html += '      #sincloBox { display: none; position: fixed; ' + showPosition + ' z-index: 999998; background-color: rgba(0,0,0,0);}';
+      html += "      #sincloBox { display: none; position: fixed; " + showPosition + " z-index: 999998; background-color: rgba(0,0,0,0); overflow: hidden; }";
       html += '      #sincloBox * { color: #333333; line-height: 1.3; box-sizing: border-box; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana; letter-spacing: initial; }';
       html += '      #sincloBox *:before, #sincloBox *:after { box-sizing: content-box; }';
       html += '      #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }';
@@ -1195,6 +1195,7 @@ var socket, // socket.io
         html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/close.png"); background-position-y: -1.5px; position: absolute; top: calc(50% - 8px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       }
 
+      html += '      #sincloBox div#sincloWidgetBox { position: relative; top: 0px; }';
       html += '      #sincloBox div#sincloWidgetBox > section { background-color: #FFF; border-top: none; }';
       html += '      #sincloBox ul#chatTalk li a, #sincloBox #fotter a {  text-decoration: underline; }';
       html += '      #sincloBox section { display: none; padding: 0!important; top:0px!important; }';
@@ -2507,6 +2508,7 @@ var socket, // socket.io
           changeTarget.height(changeTarget.height() + delta);
         }
         common.widgetHandler._currentWindowHeight = windowHeight;
+        $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
       },
       _getMaxWidgetHeight: function() {
         var offset = common.widgetHandler._getMessageAreaOffset();
