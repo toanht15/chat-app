@@ -1163,7 +1163,7 @@ var socket, // socket.io
       html += '      #sincloBox blockquote:before, #sincloBox blockquote:after, #sincloBox q:before, #sincloBox q:after { content: \'\'; content: none; }';
       html += '      #sincloBox table { border-collapse: collapse; border-spacing: 0; }';
       //END OF reset-css
-      html += "      #sincloBox { display: none; position: fixed; " + showPosition + " z-index: 999998; background-color: rgba(0,0,0,0); overflow: hidden; }";
+      html += "      #sincloBox { display: none; position: fixed; " + showPosition + " z-index: 999998; background-color: rgba(0,0,0,0); }";
       html += '      #sincloBox * { color: #333333; line-height: 1.3; box-sizing: border-box; font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana; letter-spacing: initial; }';
       html += '      #sincloBox *:before, #sincloBox *:after { box-sizing: content-box; }';
       html += '      #sincloBox .notSelect { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }';
@@ -1810,6 +1810,7 @@ var socket, // socket.io
       /* PC版 */
       else {
 //        html += "      #sincloBox { width: " + widgetWidth + "px }";
+        html += "      #sincloBox { overflow: hidden; }";
         html += "      #sincloBox div#sincloWidgetBox { width: " + sizeList['boxWidth'] + "px; box-shadow: 0px 0px " + widget.boxShadow + "px " + widget.boxShadow + "px rgba(0,0,0,0.1); border-radius: " + widget.radiusRatio + "px " + widget.radiusRatio + "px 0 0; background-color: rgb(255, 255, 255);}";
         html += '      #sincloBox * { line-height: 1.4; font-size: '+ sizeList['d12font'] +'px; }';
         html += '      #sincloBox a:hover { color: ' + colorList['mainColor'] + '; }';
