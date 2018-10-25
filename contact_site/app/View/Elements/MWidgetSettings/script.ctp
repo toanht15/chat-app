@@ -1364,6 +1364,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     // 表示切り替え時のチラ付きを抑えるためにいったん非表示にする
     $scope.currentWindowHeight = $(window).height();
+    $('#m_widget_simulator').css('visibility', 'hidden');
     angular.element(window).on('load',function(e){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
       // formのどこかを変更したらフラグを立てる
@@ -1403,6 +1404,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         }
       });
       $scope.resizeWidgetHeightByWindowHeight();
+      $('#m_widget_simulator').css('visibility', 'visible');
 
       $(window).on('beforeunload', function(e) {
         if($scope.changeFlg) {
