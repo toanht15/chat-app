@@ -96,12 +96,12 @@
             </div>
 
             <div ng-if="hearingItem.uiType === '3' || hearingItem.uiType === '4'"
-                 ng-repeat="(optionIndex, option) in hearingItem.options[hearingItem.uiType]  track by $index"
+                 ng-repeat="(optionIndex, option) in hearingItem.settings.options  track by $index"
                  class="select-option-input action{{setActionId}}_option{{listId}}">
                             <span><label class="">選択肢 {{optionIndex + 1}}<span class="questionBalloon"><icon
                                           class="questionBtn"
                                           data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>選択肢２：女性">?</icon></span></label></span>
-              <input type="text" class="m20l" ng-model="hearingItem.options[hearingItem.uiType][optionIndex]"
+              <input type="text" class="m20l" ng-model="hearingItem.settings.options[optionIndex]"
                      style="width: 200px;">
               <div class="btnBlock">
                 <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, optionIndex, listId)')) ?></a>
@@ -114,18 +114,18 @@
 
             <label ng-if="hearingItem.uiType === '4'" class="pointer">
               <input type="checkbox" class="m15t" id="dropdown_custom_design"
-                     ng-model="hearingItem.options.pulldownCustomDesign">デザインをカスタマイズする
+                     ng-model="hearingItem.settings.pulldownCustomDesign">デザインをカスタマイズする
               <span class="questionBalloon"><icon class="questionBtn"
                                                   data-tooltip="プルダウンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
             </label>
 
             <div class="dropdown-custom-design-area"
-                 ng-if="hearingItem.uiType === '4' && hearingItem.options.pulldownCustomDesign">
+                 ng-if="hearingItem.uiType === '4' && hearingItem.settings.pulldownCustomDesign">
               <span>
                 <label for="">背景色</label>
                 <input type="text" class="jscolor{hash:true} ignore-click-event"
                        id="action{{setActionId}}_pulldown{{listId}}_backgroundColor"
-                       ng-model="hearingItem.customDesign[4].backgroundColor">
+                       ng-model="hearingItem.settings.customDesign.backgroundColor">
                 <span class="greenBtn btn-shadow revert-button"
                       ng-click="main.revertPulldownColor(setActionId, listId, 'backgroundColor')">標準に戻す</span>
               </span>
@@ -133,7 +133,7 @@
                 <label for="">文字色</label>
                 <input type="text" class="jscolor{hash:true} ignore-click-event"
                        id="action{{setActionId}}_pulldown{{listId}}_textColor"
-                       ng-model="hearingItem.customDesign[4].textColor" ng-bind="widget.settings.message_box_text_color">
+                       ng-model="hearingItem.settings.customDesign.textColor">
                 <span class="greenBtn btn-shadow revert-button"
                       ng-click="main.revertPulldownColor(setActionId, listId, 'textColor')">標準に戻す</span>
               </span>
@@ -142,32 +142,23 @@
                 <label for="">枠線色</label>
                 <input type="text" class="jscolor{hash:true} ignore-click-event"
                        id="action{{setActionId}}_pulldown{{listId}}_borderColor"
-                       ng-model="hearingItem.customDesign[4].borderColor">
+                       ng-model="hearingItem.settings.customDesign.borderColor">
                 <span class="greenBtn btn-shadow revert-button"
                       ng-click="main.revertPulldownColor(setActionId, listId, 'borderColor')">標準に戻す</span>
               </span>
-
-<!--              <span>-->
-<!--                <label for="">▼マーク色</label>-->
-<!--                <input type="text" class="jscolor{hash:true} ignore-click-event"-->
-<!--                       id="action{{setActionId}}_pulldown{{listId}}_markColor"-->
-<!--                       ng-model="hearingItem.customDesign[4].markColor">-->
-<!--                <span class="greenBtn btn-shadow revert-button"-->
-<!--                      ng-click="main.revertPulldownColor(setActionId, listId, 'markColor')">標準に戻す</span>-->
-<!--              </span>-->
             </div>
             <div ng-if="hearingItem.uiType === '5'" class="calendar-design-custom-area">
               <label class="pointer">
-                <input type="checkbox" ng-model="hearingItem.options[hearingItem.uiType].disablePastDate">過去日を選択できなくする
+                <input type="checkbox" ng-model="hearingItem.settings.disablePastDate">過去日を選択できなくする
                 <span class="questionBalloon"><icon class="questionBtn"
                                                     data-tooltip="サイト訪問日より過去の日付を選択できなくします。（過去の日付を選択できるようにする場合はチェックを外します）">?</icon></span>
               </label>
               <br>
               <label class="pointer">
-                <input type="checkbox" ng-model="hearingItem.options[hearingItem.uiType].isEnableAfterDate">当日から<input
+                <input type="checkbox" ng-model="hearingItem.settings.isEnableAfterDate">当日から<input
                     style="width: 6em"
-                    type="number" min="1" ng-disabled="!hearingItem.options[hearingItem.uiType].isEnableAfterDate"
-                    ng-model="hearingItem.options[hearingItem.uiType].enableAfterDate">日以降を選択できるようにする
+                    type="number" min="1" ng-disabled="!hearingItem.settings.isEnableAfterDate"
+                    ng-model="hearingItem.settings.enableAfterDate">日以降を選択できるようにする
                 <span class="questionBalloon"><icon class="questionBtn"
                                                     data-tooltip="サイト訪問日より過去の日付を選択できなくします。（過去の日付を選択できるようにする場合はチェックを外します）">?</icon></span>
               </label>
@@ -175,45 +166,65 @@
               <div class="cannot-select-date-setting-area">
                 <label class="pointer">
                   <input type="checkbox" id="set_cannot_select_date"
-                         ng-model="hearingItem.options[hearingItem.uiType].isSetDisableDate">選択できない日付を設定する（定休日など）
+                         ng-model="hearingItem.settings.isSetDisableDate">選択できない日付を設定する（定休日など）
                   <span class="questionBalloon"><icon class="questionBtn"
                                                       data-tooltip="選択できない曜日や日付（または選択できる日付）を設定することができます。">?</icon></span>
                 </label>
                 <br>
-                <div class="cannot-select-date" ng-if="hearingItem.options[hearingItem.uiType].isSetDisableDate">
+                <div class="cannot-select-date" ng-if="hearingItem.settings.isSetDisableDate">
                   <label class="pointer specific-day-of-week" style="margin-left: 20px;">
                     <input type="checkbox" id="cannot_select_day_of_week"
-                           ng-model="hearingItem.options[hearingItem.uiType].isDisableDayOfWeek">特定の曜日を選択できなくする
+                           ng-model="hearingItem.settings.isDisableDayOfWeek">特定の曜日を選択できなくする
                     <span class="questionBalloon"><icon class="questionBtn"
                                                         data-tooltip="チェックが付いた曜日は選択できなくなります。">?</icon></span>
                   </label>
                   <br>
-                  <div class="weekday-list m40l" ng-if="hearingItem.options[hearingItem.uiType].isDisableDayOfWeek">
-                    <label class="pointer specific-date"
-                           ng-repeat="(index, day) in hearingItem.options[hearingItem.uiType].dayOfWeekSetting"
-                           style="margin-left: 5px;">
+                  <div class="weekday-list m40l" ng-if="hearingItem.settings.isDisableDayOfWeek">
+                    <label class="pointer specific-date" style="margin-left: 5px;">
                       <input type="checkbox"
-                             ng-model="hearingItem.options[hearingItem.uiType].dayOfWeekSetting[index].value">{{day.label}}
+                             ng-model="hearingItem.settings.dayOfWeekSetting[0]">日
+                    </label>
+                    <label class="pointer specific-date" style="margin-left: 5px;">
+                      <input type="checkbox"
+                             ng-model="hearingItem.settings.dayOfWeekSetting[1]">月
+                    </label>
+                    <label class="pointer specific-date" style="margin-left: 5px;">
+                      <input type="checkbox"
+                             ng-model="hearingItem.settings.dayOfWeekSetting[2]">火
+                    </label>
+                    <label class="pointer specific-date" style="margin-left: 5px;">
+                      <input type="checkbox"
+                             ng-model="hearingItem.settings.dayOfWeekSetting[3]">水
+                    </label>
+                    <label class="pointer specific-date" style="margin-left: 5px;">
+                      <input type="checkbox"
+                             ng-model="hearingItem.settings.dayOfWeekSetting[4]">木
+                    </label>
+                    <label class="pointer specific-date" style="margin-left: 5px;">
+                      <input type="checkbox"
+                             ng-model="hearingItem.settings.dayOfWeekSetting[5]">金
+                    </label>
+                    <label class="pointer specific-date" style="margin-left: 5px;">
+                      <input type="checkbox"
+                             ng-model="hearingItem.settings.dayOfWeekSetting[6]">土
                     </label>
                   </div>
                   <div class="cannot-select-specific-date-area">
                     <label class="pointer specific-date m20l">
-                      <input type="checkbox" ng-model="hearingItem.options[hearingItem.uiType].isSetSpecificDate">特定の日付を選択できなくする
+                      <input type="checkbox" ng-model="hearingItem.settings.isSetSpecificDate">特定の日付を選択できなくする
                       <span class="questionBalloon"><icon class="questionBtn"
                                                           data-tooltip="下記いずれかの日付の設定が可能です。<br>・選択できない日付の設定<br>・選択できる日付の設定">?</icon></span>
                     </label>
                     <div class="cannot-select-specific-date"
-                         ng-if="hearingItem.options[hearingItem.uiType].isSetSpecificDate">
+                         ng-if="hearingItem.settings.isSetSpecificDate">
                       <label class="pointer m40l"><input type="radio" name="set-specific-date" value="1"
-                                                         ng-model="hearingItem.options[hearingItem.uiType].setSpecificDateType">選択できない日付を指定する</label>
+                                                         ng-model="hearingItem.settings.setSpecificDateType">選択できない日付を指定する</label>
                       <br>
                       <div class="select-option-input action{{setActionId}}_option{{listId}}"
                            style="margin-left: 60px;"
-                           ng-repeat="(dateIndex, date) in hearingItem.options[hearingItem.uiType].specificDateData[1] track by $index"
-                           ng-if="hearingItem.options[hearingItem.uiType].setSpecificDateType == 1">
-                        <input class="mock-calendar" type="text"
-                               ng-model="hearingItem.options[hearingItem.uiType].specificDateData[1][dateIndex]"
-                               id="action{{setActionId}}_option{{listId}}_datepicker{{dateIndex}}">
+                           ng-repeat="(dateIndex, date) in hearingItem.settings.specificDateData track by $index"
+                           ng-if="hearingItem.settings.setSpecificDateType == 1">
+                        <input type="text" ng-model="hearingItem.settings.specificDateData[dateIndex]" id="action{{setActionId}}_option{{listId}}_datepicker{{dateIndex}}">
                         <div class="btnBlock">
                           <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
                           <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px; display: none;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
@@ -226,15 +237,15 @@
                       <label class="pointer m40l">
                         <input type="radio"
                                name="set-specific-date"
-                               value="2" ng-model="hearingItem.options[hearingItem.uiType].setSpecificDateType">
+                               value="2" ng-model="hearingItem.settings.setSpecificDateType">
                         選択できる日付を指定する
                       </label>
                       <br>
                       <div class="select-option-input action{{setActionId}}_option{{listId}} m60l"
-                           ng-repeat="(dateIndex, date) in hearingItem.options[hearingItem.uiType].specificDateData[2] track by $index"
-                           ng-if="hearingItem.options[hearingItem.uiType].setSpecificDateType == 2">
+                           ng-repeat="(dateIndex, date) in hearingItem.settings.specificDateData track by $index"
+                           ng-if="hearingItem.settings.setSpecificDateType == 2">
                         <input class="mock-calendar"
-                               ng-model="hearingItem.options[hearingItem.uiType].specificDateData[2][dateIndex]"
+                               ng-model="hearingItem.settings.specificDateData[dateIndex]"
                                id="action{{setActionId}}_option{{listId}}_datepicker{{dateIndex}}" type="text">
                         <div class="btnBlock">
                           <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
@@ -250,31 +261,94 @@
               </div>
 
               <label class="pointer"">
-              <input type="checkbox" ng-model="hearingItem.options[hearingItem.uiType].isCustomDesign">デザインをカスタマイズする
+              <input type="checkbox" ng-model="hearingItem.settings.isCustomDesign">デザインをカスタマイズする
               <span class="questionBalloon"><icon class="questionBtn"
                                                   data-tooltip="カレンダーのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
               </label>
 
               <div class="calendar-design-custom"
-                   ng-if="hearingItem.options[hearingItem.uiType].isCustomDesign" style="margin-left: 20px">
-                                    <span class="calendar-custom-items"
-                                          ng-repeat="(optionIndex, option) in hearingItem.customDesign[hearingItem.uiType]">
-                                        <label>{{hearingItem.customDesign[hearingItem.uiType][optionIndex].label}}</label>
-                                        <input type="text" id="action{{setActionId}}_option{{listId}}_{{optionIndex}}"
-                                               class="jscolor{hash:true} ignore-click-event"
-                                               ng-model="hearingItem.customDesign[hearingItem.uiType][optionIndex].value" ng-change="main.changeCalendarHeaderColor(setActionId, listId, optionIndex)">
-                                        <span class="greenBtn btn-shadow revert-button"
-                                              ng-click="main.revertCalendarColor(setActionId, listId, optionIndex)">標準に戻す</span>
-                                    </span>
+                   ng-if="hearingItem.settings.isCustomDesign" style="margin-left: 20px">
+                <span class="calendar-custom-items">
+                  <label>ヘッダー背景色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_headerBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.headerBackgroundColor"
+                         ng-change="main.changeCalendarHeaderColor(setActionId, listId, 'headerBackgroundColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'headerBackgroundColor')">標準に戻す</span>
+                </span>
+                <span class="calendar-custom-items">
+                  <label>ヘッダー文字色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_headerTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.headerTextColor"
+                         ng-change="main.changeCalendarHeaderColor(setActionId, listId, 'headerTextColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'headerTextColor')">標準に戻す</span>
+                </span>
+                <span class="calendar-custom-items">
+                  <label>曜日背景色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_headerWeekdayBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.headerWeekdayBackgroundColor"
+                         ng-change="main.changeCalendarHeaderColor(setActionId, listId, 'headerWeekdayBackgroundColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'headerWeekdayBackgroundColor')">標準に戻す</span>
+                </span>
+                <span class="calendar-custom-items">
+                  <label>枠線色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_borderColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.borderColor"
+                         ng-change="main.changeCalendarHeaderColor(setActionId, listId, 'borderColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'borderColor')">標準に戻す</span>
+                </span>
+                <span class="calendar-custom-items">
+                  <label>カレンダ背景色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_calendarBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.calendarBackgroundColor"
+                         ng-change="main.changeCalendarHeaderColor(setActionId, listId, 'calendarBackgroundColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'calendarBackgroundColor')">標準に戻す</span>
+                </span>
+                <span class="calendar-custom-items">
+                  <label>カレンダ文字色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_calendarTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.calendarTextColor"
+                         ng-change="main.changeCalendarHeaderColor(setActionId, listId, 'calendarTextColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'calendarTextColor')">標準に戻す</span>
+                </span>
+                <span class="calendar-custom-items">
+                  <label>土曜日文字色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_saturdayColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.saturdayColor"
+                         ng-change="main.changeCalendarHeaderColor(setActionId, listId, 'saturdayColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'saturdayColor')">標準に戻す</span>
+                </span>
+                <span class="calendar-custom-items">
+                  <label>日曜日文字色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_sundayColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.sundayColor"
+                         ng-change="main.changeCalendarHeaderColor(setActionId, listId, 'sundayColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'sundayColor')">標準に戻す</span>
+                </span>
 
                 <span class="language-setting">
-                                    <label>言語</label>
-                                    <label class="pointer"><input type="radio" name="language" value="1"
-                                                                  ng-model="hearingItem.options[hearingItem.uiType].language"
-                                                                  style="margin-left: 60px;">日本語表記</label>
-                                    <label class="pointer m20l"><input type="radio" name="language" value="2"
-                                                                       ng-model="hearingItem.options[hearingItem.uiType].language">英語表記</label>
-                                  </span>
+                  <label>言語</label>
+                  <label class="pointer"><input type="radio" name="language" value="1"
+                                                ng-model="hearingItem.settings.language"
+                                                style="margin-left: 60px;">日本語表記</label>
+                  <label class="pointer m20l"><input type="radio" name="language" value="2"
+                                                     ng-model="hearingItem.settings.language">英語表記</label>
+                </span>
               </div>
             </div>
           </div>
