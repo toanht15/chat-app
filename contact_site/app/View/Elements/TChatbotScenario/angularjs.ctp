@@ -2263,7 +2263,7 @@ $(document).ready(function() {
     $('#' + previewId + ' .actionTitle').removeClass('active');
   });
 
-  $(document).on('mousedown', '.set_action_item', function () {
+  $(document).on('click', '.set_action_item', function () {
     $(this).focus();
   });
 
