@@ -1598,7 +1598,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var div = document.createElement('div');
       var li = document.createElement('li');
       var content = "";
-      console.log(chat.message);
 
       var type = Number(chat.messageType);
       var message = chat.message;
@@ -1750,7 +1749,6 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         li.className = cn;
         content = $scope.createTextOfMessage(chat, message);
-        console.log(content);
         var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
         var linkTab = content.match(linkTabReg);
         content = '（「'+linkTab[0]+'」をクリック）';
