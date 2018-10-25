@@ -1470,8 +1470,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
+      console.log('メッセージを作成します。');
       var strings = message.split('\n');
-      var isSmartphone = false;
+      //電話番号リンク化対応でfalse→true
+      var isSmartphone = true;
       var custom = "";
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
@@ -1598,7 +1600,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var div = document.createElement('div');
       var li = document.createElement('li');
       var content = "";
-      console.log(chat.message);
+      console.log(chat);
 
       var type = Number(chat.messageType);
       var message = chat.message;
@@ -1753,6 +1755,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         console.log(content);
         var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
         var linkTab = content.match(linkTabReg);
+        console.log(linkTab);
         content = '（「'+linkTab[0]+'」をクリック）';
       }
       else if ( Number(type) === chatApi.messageType.scenario.customer.answerBulkHearing ) {
