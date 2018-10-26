@@ -1364,6 +1364,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     // 表示切り替え時のチラ付きを抑えるためにいったん非表示にする
     $scope.currentWindowHeight = $(window).height();
+    $('#m_widget_simulator').css('visibility', 'hidden');
     angular.element(window).on('load',function(e){
       $('[name="data[MWidgetSetting][show_timing]"]:checked').trigger('change');
       // formのどこかを変更したらフラグを立てる
@@ -1403,6 +1404,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         }
       });
       $scope.resizeWidgetHeightByWindowHeight();
+      $('#m_widget_simulator').css('visibility', 'visible');
 
       $(window).on('beforeunload', function(e) {
         if($scope.changeFlg) {
@@ -1433,8 +1435,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           changeTarget = ($('#chatTab').length > 0) ? $('#chatTalk') : $('#telContent'),
           delta = windowHeight - $scope.currentWindowHeight;
 
-      if(windowHeight * 0.85 < currentWidgetHeight && delta === 0) {
-        delta = (windowHeight * 0.85) - currentWidgetHeight;
+      if(windowHeight * 0.7 < currentWidgetHeight && delta === 0) {
+        delta = (windowHeight * 0.7) - currentWidgetHeight;
       }
 
       // 変更後サイズ
@@ -1449,7 +1451,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         changed = true;
         changeTarget.height($scope._getMinChatTalkHeight());
         console.log('2-2 %s ', $('#sincloBox').height());
-      } else if((delta < 0 && windowHeight * 0.85 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.85 >= afterWidgetHeight)) {
+      } else if((delta < 0 && windowHeight * 0.7 < currentWidgetHeight) || (delta > 0 && windowHeight * 0.7 >= afterWidgetHeight)) {
         console.log('3 %s', delta);
         changed = true;
         changeTarget.height(changeTarget.height() + delta);

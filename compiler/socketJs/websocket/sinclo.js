@@ -158,7 +158,10 @@
           } else {
             elm.animate({
             height: height + "px"
-            }, 'first');
+            }, 'first', null, function(){
+              console.log('$(\'#sincloBox\').offset().top : %s, $(\'#sincloWidgetBox\').offset().top',$('#sincloBox').offset().top, $('#sincloWidgetBox').offset().top);
+              $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
+            });
           }
         }
         else if (closeAct !== "true") {
@@ -200,9 +203,11 @@
       //バナー表示時の位置を設定
       bannerBottomLeftRight: function() {
         if ( !check.smartphone() ) {
+          var bannerHorizontalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.bannerHorizontalPosition) ? window.sincloInfo.custom.widget.bannerHorizontalPosition : "20px";
+          var bannerVerticalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.bannerVerticalPosition) ? window.sincloInfo.custom.widget.bannerVerticalPosition : "20px";
           //pc
-          var bottom = "20px";
-          var leftRight = "20px";
+          var bottom = bannerVerticalPosition;
+          var leftRight = bannerHorizontalPosition;
 
           $("#sincloBox").css("bottom",bottom);
           switch ( Number(window.sincloInfo.widget.showPosition) ) {
@@ -245,15 +250,27 @@
           sinclo.adjustSpWidgetSize();
         }
         else{
+          var widgetHorizontalPosition = "10px";
+          var widgetVerticalPosition = "0px";
+          if(!check.smartphone()) {
+            widgetHorizontalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.horizontalPosition) ? window.sincloInfo.custom.widget.horizontalPosition : "10px";
+            widgetVerticalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.verticalPosition) ? window.sincloInfo.custom.widget.verticalPosition : "0px";
+          }
           common.widgetHandler._handleResizeEvent();
           switch ( Number(window.sincloInfo.widget.showPosition) ) {
           case 1: // 右下
             //right: 10px;
-            $("#sincloBox").css("right","10px");
+            $("#sincloBox").css({
+              "right": widgetHorizontalPosition,
+              "bottom": widgetVerticalPosition
+            });
             break;
           case 2: // 左下
             //left: 10px;
-            $("#sincloBox").css("left","10px");
+            $("#sincloBox").css({
+              "left": widgetHorizontalPosition,
+              "bottom": widgetVerticalPosition
+            });
             break;
           }
         }
@@ -1449,6 +1466,7 @@
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
+
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1656,10 +1674,11 @@
         if(obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
+
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
         } else {
-          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
+          if(obj.tabId === userInfo.tabId && obj.messageType != sinclo.chatApi.messageType.linkClick) {
             this.chatApi.scDown();
             common.chatBotTypingCall(obj);
           }
@@ -1929,6 +1948,7 @@
         } else {
           $('#sincloChatMessage').focus();
         }
+        $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
       }
       //スマホの場合
       if ( check.smartphone() ) {
@@ -2367,6 +2387,7 @@
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
               $('#miniSincloChatMessage').focus();
+              $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
             } else {
               sinclo.adjustSpWidgetSize();
             }
@@ -2388,6 +2409,7 @@
             common.widgetHandler._handleResizeEvent();
             var chatTalk = document.getElementById('chatTalk');
             $('#sincloChatMessage').focus();
+            $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
           } else {
             sinclo.adjustSpWidgetSize();
           }
@@ -2755,6 +2777,7 @@
         }
       },
       createMessage: function (cs, val, cName, isScenarioMsg) {
+        common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
@@ -5140,6 +5163,7 @@
         if(self.isProcessing()) {
           self._isReload = true;
         } else {
+          self._unsetUploadedFileData();
           self._setBaseObj({});
           self.set(self._lKey.beforeTextareaOpened, storage.l.get('textareaOpend'));
           self.set(self._lKey.scenarioId, id);
@@ -5216,6 +5240,7 @@
         self._resetDefaultVal();
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
+        self._unsetUploadedFileData();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
       },
       isProcessing: function () {
@@ -5323,6 +5348,14 @@
       _unsetBaseObj: function () {
         var self = sinclo.scenarioApi;
         storage.l.unset(self._lKey.scenarioBase);
+      },
+      _unsetUploadedFileData: function () {
+        var self = sinclo.scenarioApi;
+        var data = self.get(self._lKey.variables);
+        if(check.isset(data) && check.isset(data[self._sendFile._downloadUrlKey])) {
+          delete data[self._sendFile._downloadUrlKey];
+          self.set(self._lKey.variables, data);
+        }
       },
       /**
        * 表示したシナリオメッセージをローカルに保存する
@@ -6909,6 +6942,11 @@
           }
         } catch(gFuncError) {
           console.log(gFuncError.message);
+          emit('traceScenarioInfo', {
+            type: "w",
+            message: "call google tel-cv function is failed. error : " + gFuncError.message,
+            data: telNumberStr
+          });
         }
         try {
           if(typeof(window.yahoo_report_conversion) === 'function') {
@@ -6916,6 +6954,11 @@
           }
         } catch(yFuncError) {
           console.log(yFuncError.message);
+          emit('traceScenarioInfo', {
+            type: "w",
+            message: "call yahoo tel-cv function is failed. error : " + yFuncError.message,
+            data: telNumberStr
+          });
         }
       }
     }
