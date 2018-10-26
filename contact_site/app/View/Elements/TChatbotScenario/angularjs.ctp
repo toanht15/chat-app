@@ -35,6 +35,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.calendarSelectedColor = 'white';
 
   // アクション設定の取得・初期化
+  $scope.actionListOrigin = [];
   $scope.setActionList = [];
   $scope.targetDeleteFileIds = [];
   var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}"; ?>;
@@ -843,6 +844,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーターの起動
   this.openSimulator = function() {
+    $scope.actionListOrigin = $scope.setActionList;
     $scope.$broadcast('openSimulator', this.createJsonData(true));
     // シミュレータ起動時、強制的に自由入力エリアを有効の状態で表示する
     $scope.$broadcast('switchSimulatorChatTextArea', true);
@@ -1643,6 +1645,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.actionStep = 0;
     $scope.hearingIndex = 0;
     $scope.sendFileIndex = 0;
+    $scope.firstActionFlg = true;
     $scope.actionTimer;
     $scope.hearingInputResult = true;
 
@@ -1660,6 +1663,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.actionClear = function() {
     $scope.actionStop();
     $scope.actionInit();
+    $scope.setActionList = $scope.actionListOrigin;
   };
 
   /**
@@ -1667,6 +1671,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
    */
   $scope.receiveFileEventListener = null;
+  $scope.firstActionFlg = true;
   $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
       var actionDetail = $scope.setActionList[$scope.actionStep];
@@ -1695,8 +1700,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
 
       if(!branchOnConditon){
-        if (time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+        if (time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0 && $scope.firstActionFlg) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
           time = setTime || '0';
+          $scope.firstActionFlg = false;
         }else{
           chatBotTyping();
         }
@@ -1822,7 +1828,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var targetScenarioId = condition.action.callScenarioId;
         console.log("targetScenarioId : %s",targetScenarioId);
         if(targetScenarioId === "self") {
-          $scope.actionStep = 0;
+          var activity = {};
+          activity.scenarios = $scope.actionListOrigin;
+          $scope.setActionList = $scope.setCalledScenario(activity, condition.action.executeNextAction == 1);
           $scope.doAction();
         } else {
           self.getScenarioDetail(targetScenarioId, condition.action.executeNextAction == 1);
@@ -2007,21 +2015,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).done(function(data) {
       console.info('successed get scenario detail.');
       try {
-        var scenarios = {};
-        var idx = 0;
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
-
         // 取得したシナリオのアクション情報を、setActionList内に詰める
-        angular.forEach($scope.setActionList, function(scenario, key) {
-          if (key == $scope.actionStep) {
-            for (var exKey in activity.scenarios) {
-              scenarios[idx++] = activity.scenarios[exKey];
-            }
-          } else
-          if (isNext == 1 || key <= $scope.actionStep) {
-            scenarios[idx++] = $scope.setActionList[key];
-          }
-        });
+        var scenarios = $scope.setCalledScenario(activity, isNext);
         $scope.setActionList = scenarios;
       } catch(e) {
         $scope.actionStep++;
@@ -2036,6 +2032,22 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // アクションを実行する
       $scope.doAction();
     });
+  };
+
+  $scope.setCalledScenario = function(activity, isNext) {
+    var scenarios = {};
+    var idx = 0;
+    angular.forEach($scope.setActionList, function(scenario, key) {
+      if (key == $scope.actionStep) {
+        for (var exKey in activity.scenarios) {
+          scenarios[idx++] = activity.scenarios[exKey];
+        }
+      } else
+      if (isNext == 1 || key <= $scope.actionStep) {
+        scenarios[idx++] = $scope.setActionList[key];
+      }
+    });
+    return scenarios;
   };
 
   /**

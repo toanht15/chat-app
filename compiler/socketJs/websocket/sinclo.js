@@ -164,7 +164,10 @@
           } else {
             elm.animate({
             height: height + "px"
-            }, 'first');
+            }, 'first', null, function(){
+              console.log('$(\'#sincloBox\').offset().top : %s, $(\'#sincloWidgetBox\').offset().top',$('#sincloBox').offset().top, $('#sincloWidgetBox').offset().top);
+              $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
+            });
           }
         }
         else if (closeAct !== "true") {
@@ -206,9 +209,11 @@
       //バナー表示時の位置を設定
       bannerBottomLeftRight: function() {
         if ( !check.smartphone() ) {
+          var bannerHorizontalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.bannerHorizontalPosition) ? window.sincloInfo.custom.widget.bannerHorizontalPosition : "20px";
+          var bannerVerticalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.bannerVerticalPosition) ? window.sincloInfo.custom.widget.bannerVerticalPosition : "20px";
           //pc
-          var bottom = "20px";
-          var leftRight = "20px";
+          var bottom = bannerVerticalPosition;
+          var leftRight = bannerHorizontalPosition;
 
           $("#sincloBox").css("bottom",bottom);
           switch ( Number(window.sincloInfo.widget.showPosition) ) {
@@ -251,21 +256,27 @@
           sinclo.adjustSpWidgetSize();
         }
         else{
+          var widgetHorizontalPosition = "10px";
+          var widgetVerticalPosition = "0px";
+          if(!check.smartphone()) {
+            widgetHorizontalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.horizontalPosition) ? window.sincloInfo.custom.widget.horizontalPosition : "10px";
+            widgetVerticalPosition = (window.sincloInfo.custom && window.sincloInfo.custom.widget && window.sincloInfo.custom.widget.verticalPosition) ? window.sincloInfo.custom.widget.verticalPosition : "0px";
+          }
           common.widgetHandler._handleResizeEvent();
           switch ( Number(window.sincloInfo.widget.showPosition) ) {
           case 1: // 右下
             //right: 10px;
-            $("#sincloBox").css("right","10px");
-            if( Number(window.sincloInfo.widget.widgetSizeType) === 4){
-              $("#sincloBox").css("right","0px");
-            }
+            $("#sincloBox").css({
+              "right": widgetHorizontalPosition,
+              "bottom": widgetVerticalPosition
+            });
             break;
           case 2: // 左下
             //left: 10px;
-            $("#sincloBox").css("left","10px");
-            if( Number(window.sincloInfo.widget.widgetSizeType) === 4){
-              $("#sincloBox").css("left","0px");
-            }
+            $("#sincloBox").css({
+              "left": widgetHorizontalPosition,
+              "bottom": widgetVerticalPosition
+            });
             break;
           }
         }
@@ -277,30 +288,61 @@
         }
       },
       widgetHideTimer: null,
+      nowScrollTimer: null,
       widgetHide: function(e) {
+
+
         if(sinclo.operatorInfo.widgetHideTimer) {
           clearTimeout(sinclo.operatorInfo.widgetHideTimer);
           sinclo.operatorInfo.widgetHideTimer = null;
         }
+
+        if(sinclo.operatorInfo.nowScrollTimer) {
+          clearTimeout(sinclo.operatorInfo.nowScrollTimer);
+          sinclo.operatorInfo.nowScrollTimer = null;
+        }
+
         if(e) e.stopPropagation();
         var sincloBox = document.getElementById('sincloBox');
         if ( !sincloBox ) return false;
         if ( check.android() && storage.s.get('closeAct') === 'true') {
           return false;
         }
+
         var openflg = sinclo.widget.condifiton.get();
 
         var height = document.getElementById('widgetTitle').clientHeight;
         if (height === 0) {
-          height = 60;
+          height = 10;
         }
         var enableArea = browserInfo.scrollSize().y - height;
+
         if (enableArea < window.scrollY && String(openflg) === "false") {
-          sincloBox.style.opacity = 0;
+          if(typeof window.sincloInfo.widget.spBannerPosition !== "undefined" &&
+            (Number(window.sincloInfo.widget.spBannerPosition) === 3 || Number(window.sincloInfo.widget.spBannerPosition) === 4)){
+            //バナーの位置が中央だった場合は下部でもバナー非表示にしない
+            sincloBox.style.opacity = 1;
+          } else {
+            //バナーの位置が右下、左下の場合のみ、ページ下部でバナー非表示にする
+            sincloBox.style.opacity = 0;
+          }
         }
         else {
-          sincloBox.style.opacity = 1;
+          if(typeof window.sincloInfo.widget.spScrollViewSetting !== "undefined" &&
+             Number(window.sincloInfo.widget.spScrollViewSetting) === 1 &&
+             storage.l.get('widgetMaximized') === "false"){
+            //スクロール中はsincloBoxを隠す設定
+            console.info("<><><><>スクロール中非表示設定<><><><>");
+            sincloBox.style.opacity = 0;
+            sinclo.operatorInfo.nowScrollTimer = setTimeout(function() {
+              sincloBox.style.opacity = 1;
+            },400);
+          }
+          else {
+            sincloBox.style.opacity = 1;
+          }
         }
+
         sinclo.operatorInfo.widgetHideTimer = setTimeout(function(){
           if ( Number(sincloBox.style.opacity) === 0 ) {
             sincloBox.style.display = "none";
@@ -349,7 +391,7 @@
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
           sinclo.widget.condifiton.set(openFlg, true);
           common.widgetHandler.show(true);
-          sinclo.operatorInfo.widgetHide();
+          //sinclo.operatorInfo.widgetHide();
 
           sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
 
@@ -631,8 +673,6 @@
           var sincloBox = document.getElementById('sincloBox');
           common.reloadWidget();
           if ( window.sincloInfo.contract.chat && check.smartphone() ) {
-            common.widgetHandler.show();
-            sincloBox.style.opacity = 0;
             sinclo.operatorInfo.widgetHide();
           }
           else {
@@ -1435,6 +1475,7 @@
         if (sinclo.chatApi.sendErrCatchTimer !== null) {
           clearTimeout(sinclo.chatApi.sendErrCatchTimer);
         }
+
         if (obj.messageType === sinclo.chatApi.messageType.company) {
           cn = "sinclo_re";
           sinclo.chatApi.call();
@@ -1673,10 +1714,11 @@
         if(!obj.hideMessage && obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
         }
+
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
           this.chatApi.notify(obj.chatMessage);
         } else {
-          if(obj.messageType != sinclo.chatApi.messageType.linkClick) {
+          if(obj.tabId === userInfo.tabId && obj.messageType != sinclo.chatApi.messageType.linkClick) {
             this.chatApi.scDown();
             common.chatBotTypingCall(obj);
           }
@@ -1946,6 +1988,7 @@
         } else {
           $('#sincloChatMessage').focus();
         }
+        $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
       }
       //スマホの場合
       if ( check.smartphone() ) {
@@ -2388,6 +2431,7 @@
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
               $('#miniSincloChatMessage').focus();
+              $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
             } else {
               sinclo.adjustSpWidgetSize();
             }
@@ -2409,6 +2453,7 @@
             common.widgetHandler._handleResizeEvent();
             var chatTalk = document.getElementById('chatTalk');
             $('#sincloChatMessage').focus();
+            $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
           } else {
             sinclo.adjustSpWidgetSize();
           }
@@ -2689,7 +2734,94 @@
           }, 300);
         }
       },
+      createAnchorTag: {
+        _regList: {
+          imgTagReg: RegExp(/<img ([\s\S]*?)>/),
+          linkReg: RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/),
+          linkTabReg: RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/),
+          linkButtonTabReg: RegExp(/<a ([\s\S]*?)style=([\s\S]*?)>([\s\S]*?)<\/a>/),
+          mailLinkReg: RegExp(/(mailto:[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/),
+          telLinkReg: RegExp(/(tel:[0-9]{9,})/),
+          telnoTagReg: RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/),
+          urlTagReg: RegExp(/href="([\s\S]*?)"([\s\S]*?)/)
+        },
+        _linkWithoutText: function(option,link,unEscapeStr,str,className){
+          var url = link[0];
+          var img = unEscapeStr.match(this._regList.imgTagReg);
+          if(img == null) {
+            var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
+            var linkTab = a.match(this._regList.linkTabReg);
+            var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+            a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"','"+option+"')");
+            str = str.replace(url, a);
+          }
+          else {
+            var a = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+            str = a;
+          }
+          return str;
+        },
+        _linkText: function(option,link,linkTab,unEscapeStr,str,className){
+          if(link !== null) {
+            var a = linkTab[0];
+            console.log(linkTab[0]);
+            console.log(option);
+            //imgタグ有効化
+            var img = unEscapeStr.match(this._regList.imgTagReg);
+            if(img == null) {
+              //ボタンのCSSを外す
+              var linkButtonTab = unEscapeStr.match(this._regList.linkButtonTabReg);
+              if(linkButtonTab !== null) {
+                var processedLink = linkButtonTab[1].replace(/ /g, "\$nbsp;");
+              }
+              else {
+                var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+              }
+              if(option === "clickTelno"){
+                //電話番号の場合はスマホチェックをし、生の電話番号を取得
+                var telno = link[0].replace(/[^0-9^\.]/g,"");
+                if(check.smartphone()){
+                  a = a.replace(linkTab[1],linkTab[1]+"class='sincloTelConversion' onclick=link('"+linkTab[2]+"','"+processedLink+"','"+option+"');sinclo.api.callTelCV('" + telno + "')");
+                } else {
+                  a = "<span class='link'>"+ linkTab[2] + "</span>";
+                }
+              }
+              else {
+                a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"','"+option+"')");
+              }
+            }
+            else {
+              var processedLink = linkTab[1].replace(img[0], "");
+              processedLink = processedLink.replace(/ /g, "\$nbsp;");
+              imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+              a = a.replace(img[0], imgTag);
+              var url = a.match(this._regList.urlTagReg);
+              if(option === "clickTelno"){
+                console.log('画像じゃい');
+                //電話番号の場合は、生の電話番号を取得
+                var telno = link[0].replace(/[^0-9^\.]/g,"");
+                if(check.smartphone()){
+                  a = a.replace(linkTab[1],linkTab[1]+"class='sincloTelConversion' onclick=link('"+url[1]+"','"+processedLink+"','"+option+"');sinclo.api.callTelCV('" + telno + "')");
+                } else {
+                  console.log(a);
+                  a = a.replace(a,imgTag);
+                }
+              }
+              else {
+                a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+processedLink+"','"+option+"')");
+              }
+            }
+          }
+          else {
+            // ただの文字列にする
+            var a = "<span class='link'>"+ linkTab[2] + "</span>";
+          }
+        str = unEscapeStr.replace(linkTab[0], a);
+        return str;
+        }
+      },
       createMessage: function (cs, val, cName, isScenarioMsg) {
+        common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
@@ -2701,9 +2833,6 @@
         chatList.appendChild(div);
         var strings = val.split('\n');
         var radioCnt = 1;
-        var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
-        var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-        var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
         var radioName = "sinclo-radio" + chatList.children.length;
         var content = "";
         var className;
@@ -2753,69 +2882,44 @@
 
                 }
                 // リンク
-                var link = str.match(linkReg);
-                var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
-                var linkTab = unEscapeStr.match(linkTabReg);
-                if ( link !== null || linkTab !== null) {
-                    if ( linkTab !== null) {
-                      if(link !== null) {
-                        var a = linkTab[0];
-                        //imgタグ有効化
-                        var img = unEscapeStr.match(imgTagReg);
-                        if(img == null) {
-                          //ボタンのCSSを外す
-                          var linkButtonTabReg = RegExp(/<a ([\s\S]*?)style=([\s\S]*?)>([\s\S]*?)<\/a>/);
-                          var linkButtonTab = unEscapeStr.match(linkButtonTabReg);
-                          if(linkButtonTab !== null) {
-                            var processedLink = linkButtonTab[1].replace(/ /g, "\$nbsp;");
-                          }
-                          else {
-                            var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
-                          }
-                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
-                        }
-                        else {
-                          var processedLink = linkTab[1].replace(img[0], "");
-                          processedLink = processedLink.replace(/ /g, "\$nbsp;");
-                          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-                          a = a.replace(img[0], imgTag);
-                          var urlTagReg = RegExp(/href="([\s\S]*?)"([\s\S]*?)/);
-                          var url = a.match(urlTagReg);
-                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+processedLink+"')");
-                        }
-                      }
-                      else {
-                        // ただの文字列にする
-                        var a = "<span class='link'>"+ linkTab[2] + "</span>";
-                      }
-                      str = unEscapeStr.replace(linkTab[0], a);
-                    }
-                    //URLのみのリンクの場合
-                    else {
-                      var url = link[0];
-                      //imgタグ有効化
-                      var img = unEscapeStr.match(imgTagReg);
-                      if(img == null) {
-                        var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
-                        var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
-                        var linkTab = a.match(linkTabReg);
-                        processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
-                        a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
-                        str = str.replace(url, a);
-                      }
-                      else {
-                        var a = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-                        str = a;
-                      }
-                    }
+                var link = str.match(this.createAnchorTag._regList.linkReg);
+                var linkTab = unEscapeStr.match(this.createAnchorTag._regList.linkTabReg);
+                var option = "clickLink";
+                if ( linkTab !== null) {
+                  //aタグが設定されているリンクの場合
+                  if(link !== null){
+                  //普通のページリンクの場合は初期値
+                  }
+                  if(str.match(this.createAnchorTag._regList.mailLinkReg) !== null) {
+                  //メールリンクの場合
+                    option = "clickMail";
+                    link = str.match(this.createAnchorTag._regList.mailLinkReg);
+                  }
+                  if(str.match(this.createAnchorTag._regList.telLinkReg) !== null){
+                  //電話リンクの場合
+                    option = "clickTelno";
+                    link = str.match(this.createAnchorTag._regList.telLinkReg);
+                  }
+                  str = sinclo.chatApi.createAnchorTag._linkText(option,link,linkTab,unEscapeStr,str,className);
+                }
+                else {
+                  /*aタグが設定されていないリンクの場合
+                   *この場合はURLのみしかない為、以下の条件式
+                   */
+                  if(link !== null){
+                    str = sinclo.chatApi.createAnchorTag._linkWithoutText(option,link,unEscapeStr,str,className);
+                  }
                 }
                 // 電話番号（スマホのみリンク化）
-                var tel = str.match(telnoTagReg);
+                var tel = str.match(this.createAnchorTag._regList.telnoTagReg);
                 if( tel !== null ) {
                   var telno = tel[1];
                   if(check.smartphone()) {
                     // リンクとして有効化
-                    var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
+                    // GA連携時に必要な情報を作成
+                    var exceedLink = 'href="tel:' + telno + '"';
+                    console.log(exceedLink);
+                    var a = "<a class=\"sincloTelConversion\" onclick=sinclo.api.callTelCV('" + telno + "');link('" + telno + "','" + exceedLink+ "','clickTelno') href='tel:" + telno + "'>" + telno + "</a>";
                     str = str.replace(tel[0], a);
                   } else {
                     // ただの文字列にする
@@ -5161,7 +5265,7 @@
         "1": '.+',
         "2": '[0-9]+',
         "3": "^(([^<>()\\[\\]\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$",
-        "4": '^\\+?(\\d{10,}|[\\d-]{12,})'
+        "4": '^(0|\\+)(\\d{9,}|[\\d-]{11,})'
       },
       _validChars: {
         "1": '.+',
@@ -5285,6 +5389,7 @@
         if(self.isProcessing()) {
           self._isReload = true;
         } else {
+          self._unsetUploadedFileData();
           self._setBaseObj({});
           self.set(self._lKey.beforeTextareaOpened, storage.l.get('textareaOpend'));
           self.set(self._lKey.scenarioId, id);
@@ -5361,6 +5466,7 @@
         self._resetDefaultVal();
         self._enablePreviousRadioButton();
         self._unsetBaseObj();
+        self._unsetUploadedFileData();
         self.setPlaceholderMessage(self.getPlaceholderMessage());
       },
       isProcessing: function () {
@@ -5468,6 +5574,14 @@
       _unsetBaseObj: function () {
         var self = sinclo.scenarioApi;
         storage.l.unset(self._lKey.scenarioBase);
+      },
+      _unsetUploadedFileData: function () {
+        var self = sinclo.scenarioApi;
+        var data = self.get(self._lKey.variables);
+        if(check.isset(data) && check.isset(data[self._sendFile._downloadUrlKey])) {
+          delete data[self._sendFile._downloadUrlKey];
+          self.set(self._lKey.variables, data);
+        }
       },
       /**
        * 表示したシナリオメッセージをローカルに保存する
@@ -6542,12 +6656,28 @@
           });
         },
         _callScript: function(externalScript){
+          var self = sinclo.scenarioApi._callExternalApi;
+          emit('traceScenarioInfo', {
+            type: "i",
+            message: "call external script. from scenarioID : " + self._parent.get(self._parent._lKey.scenarioId),
+            data: externalScript
+          });
           try {
             eval(externalScript);
           } catch (e) {
+            emit('traceScenarioInfo', {
+              type: "w",
+              message: "call external script error found. error: " + e.message,
+              data: externalScript
+            });
             console.log(e.message);
             return;
           }
+          emit('traceScenarioInfo', {
+            type: "i",
+            message: "result is OK.",
+            data: externalScript
+          });
         },
         _callApi: function (callback) {
           var self = sinclo.scenarioApi._callExternalApi;
@@ -7026,6 +7156,35 @@
           }
         } catch (e) {
           console.log("api::callFunction Error => %s", e.message);
+        }
+      },
+      callTelCV: function(telNumber) {
+        var telNumberStr = 'tel:' + telNumber;
+        try {
+          if(typeof(window.gtag_report_conversion) === 'function') {
+            window.gtag_report_conversion(telNumberStr);
+          } else if (check.isset(window.dataLayer)) {
+            window.dataLayer.push({'event': telNumberStr});
+          }
+        } catch(gFuncError) {
+          console.log(gFuncError.message);
+          emit('traceScenarioInfo', {
+            type: "w",
+            message: "call google tel-cv function is failed. error : " + gFuncError.message,
+            data: telNumberStr
+          });
+        }
+        try {
+          if(typeof(window.yahoo_report_conversion) === 'function') {
+            window.yahoo_report_conversion(telNumberStr);
+          }
+        } catch(yFuncError) {
+          console.log(yFuncError.message);
+          emit('traceScenarioInfo', {
+            type: "w",
+            message: "call yahoo tel-cv function is failed. error : " + yFuncError.message,
+            data: telNumberStr
+          });
         }
       }
     }
