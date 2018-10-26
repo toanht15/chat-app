@@ -145,9 +145,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     if ( strcmp($this->name, 'ScriptSettings') === 0 && strcmp($this->action, 'index') !== 0) {
       echo $this->Html->script("openclose.js");
     }
-    if ( strcmp($this->name, 'TChatbotScenario') === 0 && strcmp($this->action, 'index') !== 0) {
-      echo $this->Html->css("https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css");
-    } ?>
+ ?>
 
 <script type="text/javascript">
   <?php echo $this->element('loadScreen'); ?>

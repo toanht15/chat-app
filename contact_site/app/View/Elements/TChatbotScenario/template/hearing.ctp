@@ -1,5 +1,4 @@
 <?php /* ヒアリング */ ?>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>" class="set_action_item_body action_hearing"
      ng-init="main.controllHearingSettingView(setActionId)">
   <ul>
