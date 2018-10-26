@@ -54,11 +54,11 @@ function addVariable(type,sendMessage,focusPosition){
             break;
         case 2:
           if (sendMessage.value.length == 0) {
-            sendMessage.value += "<telno></telno>";
+            sendMessage.value += '<a href="tel:ここに電話番号を記載">リンクテキスト</a>';
             addPosition = 7;
           }
           else {
-            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<telno></telno>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + '<a href="tel:ここに電話番号を記載">リンクテキスト</a>' + sendMessage.value.substr(focusPosition,sendMessage.value.length);
             addPosition = 8;
           }
           var beforeScrollTop = $(sendMessage).scrollTop();
