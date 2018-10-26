@@ -123,6 +123,26 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     self.autoScroll();
   };
 
+  $scope.addPulldown = function(type, message, prefix, appendClass) {
+    // ベースとなる要素をクローンし、メッセージを挿入する
+    if (type === 're') {
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+    } else {
+      var divElm = document.querySelector('#chatTalk div > li.sinclo_se.chat_right').parentNode.cloneNode(true);
+    }
+    // var formattedMessage = $scope.simulatorSettings.createMessage(message, prefix);
+    divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
+
+    if(appendClass) {
+      divElm.classList.add(appendClass);
+    }
+
+    // 要素を追加する
+    document.getElementById('chatTalk').appendChild(divElm);
+    $('#chatTalk > div:last-child').show();
+    self.autoScroll();
+  };
+
   /**
    * addFileMessage
    * シミュレーター上へのファイル送信メッセージ追加
