@@ -2690,6 +2690,92 @@
           }, 300);
         }
       },
+      createAnchorTag: {
+        _regList: {
+          imgTagReg: RegExp(/<img ([\s\S]*?)>/),
+          linkReg: RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/),
+          linkTabReg: RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/),
+          linkButtonTabReg: RegExp(/<a ([\s\S]*?)style=([\s\S]*?)>([\s\S]*?)<\/a>/),
+          mailLinkReg: RegExp(/(mailto:[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/),
+          telLinkReg: RegExp(/(tel:[0-9]{9,})/),
+          telnoTagReg: RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/),
+          urlTagReg: RegExp(/href="([\s\S]*?)"([\s\S]*?)/)
+        },
+        _linkWithoutText: function(option,link,unEscapeStr,str,className){
+          var url = link[0];
+          var img = unEscapeStr.match(this._regList.imgTagReg);
+          if(img == null) {
+            var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
+            var linkTab = a.match(this._regList.linkTabReg);
+            var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+            a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"','"+option+"')");
+            str = str.replace(url, a);
+          }
+          else {
+            var a = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+            str = a;
+          }
+          return str;
+        },
+        _linkText: function(option,link,linkTab,unEscapeStr,str,className){
+          if(link !== null) {
+            var a = linkTab[0];
+            console.log(linkTab[0]);
+            console.log(option);
+            //imgタグ有効化
+            var img = unEscapeStr.match(this._regList.imgTagReg);
+            if(img == null) {
+              //ボタンのCSSを外す
+              var linkButtonTab = unEscapeStr.match(this._regList.linkButtonTabReg);
+              if(linkButtonTab !== null) {
+                var processedLink = linkButtonTab[1].replace(/ /g, "\$nbsp;");
+              }
+              else {
+                var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
+              }
+              if(option === "clickTelno"){
+                //電話番号の場合はスマホチェックをし、生の電話番号を取得
+                var telno = link[0].replace(/[^0-9^\.]/g,"");
+                if(check.smartphone()){
+                  a = a.replace(linkTab[1],linkTab[1]+"class='sincloTelConversion' onclick=link('"+linkTab[2]+"','"+processedLink+"','"+option+"');sinclo.api.callTelCV('" + telno + "')");
+                } else {
+                  a = "<span class='link'>"+ linkTab[2] + "</span>";
+                }
+              }
+              else {
+                a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"','"+option+"')");
+              }
+            }
+            else {
+              var processedLink = linkTab[1].replace(img[0], "");
+              processedLink = processedLink.replace(/ /g, "\$nbsp;");
+              imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+              a = a.replace(img[0], imgTag);
+              var url = a.match(this._regList.urlTagReg);
+              if(option === "clickTelno"){
+                console.log('画像じゃい');
+                //電話番号の場合は、生の電話番号を取得
+                var telno = link[0].replace(/[^0-9^\.]/g,"");
+                if(check.smartphone()){
+                  a = a.replace(linkTab[1],linkTab[1]+"class='sincloTelConversion' onclick=link('"+url[1]+"','"+processedLink+"','"+option+"');sinclo.api.callTelCV('" + telno + "')");
+                } else {
+                  console.log(a);
+                  a = a.replace(a,imgTag);
+                }
+              }
+              else {
+                a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+processedLink+"','"+option+"')");
+              }
+            }
+          }
+          else {
+            // ただの文字列にする
+            var a = "<span class='link'>"+ linkTab[2] + "</span>";
+          }
+        str = unEscapeStr.replace(linkTab[0], a);
+        return str;
+        }
+      },
       createMessage: function (cs, val, cName, isScenarioMsg) {
         common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
@@ -2703,9 +2789,6 @@
         chatList.appendChild(div);
         var strings = val.split('\n');
         var radioCnt = 1;
-        var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
-        var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
-        var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
         var radioName = "sinclo-radio" + chatList.children.length;
         var content = "";
         var className;
@@ -2752,69 +2835,44 @@
                     }
                 }
                 // リンク
-                var link = str.match(linkReg);
-                var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
-                var linkTab = unEscapeStr.match(linkTabReg);
-                if ( link !== null || linkTab !== null) {
-                    if ( linkTab !== null) {
-                      if(link !== null) {
-                        var a = linkTab[0];
-                        //imgタグ有効化
-                        var img = unEscapeStr.match(imgTagReg);
-                        if(img == null) {
-                          //ボタンのCSSを外す
-                          var linkButtonTabReg = RegExp(/<a ([\s\S]*?)style=([\s\S]*?)>([\s\S]*?)<\/a>/);
-                          var linkButtonTab = unEscapeStr.match(linkButtonTabReg);
-                          if(linkButtonTab !== null) {
-                            var processedLink = linkButtonTab[1].replace(/ /g, "\$nbsp;");
-                          }
-                          else {
-                            var processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
-                          }
-                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
-                        }
-                        else {
-                          var processedLink = linkTab[1].replace(img[0], "");
-                          processedLink = processedLink.replace(/ /g, "\$nbsp;");
-                          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-                          a = a.replace(img[0], imgTag);
-                          var urlTagReg = RegExp(/href="([\s\S]*?)"([\s\S]*?)/);
-                          var url = a.match(urlTagReg);
-                          a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+url[1]+"','"+processedLink+"')");
-                        }
-                      }
-                      else {
-                        // ただの文字列にする
-                        var a = "<span class='link'>"+ linkTab[2] + "</span>";
-                      }
-                      str = unEscapeStr.replace(linkTab[0], a);
-                    }
-                    //URLのみのリンクの場合
-                    else {
-                      var url = link[0];
-                      //imgタグ有効化
-                      var img = unEscapeStr.match(imgTagReg);
-                      if(img == null) {
-                        var a = '<a href="' + url + '" target="_blank">' + url + '</a>';
-                        var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
-                        var linkTab = a.match(linkTabReg);
-                        processedLink = linkTab[1].replace(/ /g, "\$nbsp;");
-                        a = a.replace(linkTab[1],linkTab[1]+" onclick=link('"+linkTab[2]+"','"+processedLink+"')");
-                        str = str.replace(url, a);
-                      }
-                      else {
-                        var a = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
-                        str = a;
-                      }
-                    }
+                var link = str.match(this.createAnchorTag._regList.linkReg);
+                var linkTab = unEscapeStr.match(this.createAnchorTag._regList.linkTabReg);
+                var option = "clickLink";
+                if ( linkTab !== null) {
+                  //aタグが設定されているリンクの場合
+                  if(link !== null){
+                  //普通のページリンクの場合は初期値
+                  }
+                  if(str.match(this.createAnchorTag._regList.mailLinkReg) !== null) {
+                  //メールリンクの場合
+                    option = "clickMail";
+                    link = str.match(this.createAnchorTag._regList.mailLinkReg);
+                  }
+                  if(str.match(this.createAnchorTag._regList.telLinkReg) !== null){
+                  //電話リンクの場合
+                    option = "clickTelno";
+                    link = str.match(this.createAnchorTag._regList.telLinkReg);
+                  }
+                  str = sinclo.chatApi.createAnchorTag._linkText(option,link,linkTab,unEscapeStr,str,className);
+                }
+                else {
+                  /*aタグが設定されていないリンクの場合
+                   *この場合はURLのみしかない為、以下の条件式
+                   */
+                  if(link !== null){
+                    str = sinclo.chatApi.createAnchorTag._linkWithoutText(option,link,unEscapeStr,str,className);
+                  }
                 }
                 // 電話番号（スマホのみリンク化）
-                var tel = str.match(telnoTagReg);
+                var tel = str.match(this.createAnchorTag._regList.telnoTagReg);
                 if( tel !== null ) {
                   var telno = tel[1];
                   if(check.smartphone()) {
                     // リンクとして有効化
-                    var a = "<a class=\"sincloTelConversion\" onclick=\"sinclo.api.callTelCV('" + telno + "')\" href='tel:" + telno + "'>" + telno + "</a>";
+                    // GA連携時に必要な情報を作成
+                    var exceedLink = 'href="tel:' + telno + '"';
+                    console.log(exceedLink);
+                    var a = "<a class=\"sincloTelConversion\" onclick=sinclo.api.callTelCV('" + telno + "');link('" + telno + "','" + exceedLink+ "','clickTelno') href='tel:" + telno + "'>" + telno + "</a>";
                     str = str.replace(tel[0], a);
                   } else {
                     // ただの文字列にする

@@ -54,11 +54,11 @@ function addVariable(type,sendMessage,focusPosition){
             break;
         case 2:
           if (sendMessage.value.length == 0) {
-            sendMessage.value += "<telno></telno>";
+            sendMessage.value += '<a href="tel:ここに電話番号を記載">リンクテキスト</a>';
             addPosition = 7;
           }
           else {
-            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<telno></telno>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + '<a href="tel:ここに電話番号を記載">リンクテキスト</a>' + sendMessage.value.substr(focusPosition,sendMessage.value.length);
             addPosition = 8;
           }
           var beforeScrollTop = $(sendMessage).scrollTop();
@@ -130,6 +130,8 @@ function unEscapeHTML(str) {
 
 function replaceVariable(str,isSmartphone,type){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+  var mailLinkReg = RegExp(/(mailto:[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+  var telLinkReg = RegExp(/(tel:[0-9]{9,})/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
@@ -160,13 +162,16 @@ function replaceVariable(str,isSmartphone,type){
   //チャット履歴からのimgタグの場合
   /*else if(type === '6') {
   }*/
+  console.log(className);
 
   // リンク
   var link = str.match(linkReg);
+  var mail = str.match(mailLinkReg);
+  var telLink = str.match(telLinkReg);
   var linkTab = unEscapeStr.match(linkTabReg);
-  if ( link !== null || linkTab !== null) {
+  if ( link !== null || mail !== null || telLink !== null || linkTab !== null) {
       if ( linkTab !== null) {
-        if(link !== null) {
+        if(link !== null || mail !== null || telLink !== null) {
           var a = linkTab[0];
           //imgタグ有効化
           var img = unEscapeStr.match(imgTagReg);
@@ -183,6 +188,8 @@ function replaceVariable(str,isSmartphone,type){
       }
       //URLのみのリンクの場合
       else {
+      //URLリンク以外は文字列にする
+      if(link !== null){
         var url = link[0];
         var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
         //imgタグ有効化
@@ -191,14 +198,17 @@ function replaceVariable(str,isSmartphone,type){
           imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
           a = a.replace(img[0], imgTag);
         }
-        str = str.replace(url, a);
+      } else {
+        var a = "<span class='link'>"+ url + "</span>";
       }
+      str = str.replace(url, a);
+    }
   }
   // 電話番号（スマホのみリンク化）
   var tel = str.match(telnoTagReg);
   if( tel !== null ) {
     var telno = tel[1];
-    if(isSmartphone) {
+    if(isSmartphone || type ==='4') {
       // リンクとして有効化
       var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
       str = str.replace(tel[0], a);

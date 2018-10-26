@@ -5047,7 +5047,26 @@ function now(){
   return "【" + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds() + "】";
 }
 
-function link(word,link) {
+function link(word,link,eventLabel) {
+  /*リンクをクリックした場合は必ずこの関数を呼び出す
+  * ga連携のアクションがここで起きるため、リンク・電話番号・メールのどれであるかを引数として渡したい
+  */
+  console.log("ga連携しまーす");
+  console.log("押されたやつのテキストは" + word + "値は" + link + "イベントラベルは" + eventLabel + "です");
+  if(eventLabel === "clickMail"){
+    console.log('これはメールです。もし画像リンクなら文字列を修正します');
+    if(word.match(/mailto\s*:/)){
+      console.log('画像なので文字列を修正します');
+      word = word.replace(/mailto\s*:/g, "");
+    }
+  }
+  else if(eventLabel === "clickTelno"){
+    console.log('これは電話です。もし画像リンクなら文字列を修正します');
+    if(word.match(/tel/)){
+      console.log('画像なので文字列を修正します');
+      word = word.replace(/tel\s*:/g, "");
+    }
+  }
   link = "<a "+link.replace(/\$nbsp;/g, " ")+">"+word+"</a>";
   var data = sinclo.chatApi;
   data.link = link;
@@ -5062,7 +5081,7 @@ function link(word,link) {
     storage.s.set('requestFlg',true);
   }
   if(typeof ga == "function") {
-    ga('send', 'event', 'sinclo', 'clickLink', link, 1);
+    ga('send', 'event', 'sinclo', eventLabel, link, 1);
   }
   socket.emit('link', data);
 }
