@@ -3250,6 +3250,16 @@ var socket, // socket.io
     },
     waitDelayTimer: function(){
       return 20;
+    },
+    stringReplaceProcessForGA: function(link){
+      console.log('GA連携用に電話番号とメールアドレスの修正を行います');
+      /*href属性値のみ取得*/
+      var sliceStart = link.indexOf('"') + 1;
+      var sliceEnd = link.indexOf('"', sliceStart);
+      link = link.slice(sliceStart,sliceEnd);
+      link = link.replace("mailto:","");
+      link = link.replace("tel:","");
+      return link;
     }
   };
 
@@ -5051,7 +5061,7 @@ function link(word,link,eventLabel) {
   /*リンクをクリックした場合は必ずこの関数を呼び出す
   * ga連携のアクションがここで起きるため、リンク・電話番号・メールのどれであるかを引数として渡したい
   */
-  console.log("ga連携しまーす");
+  console.log("ga連携します");
   console.log("押されたやつのテキストは" + word + "値は" + link + "イベントラベルは" + eventLabel + "です");
   if(eventLabel === "clickMail"){
     console.log('これはメールです。もし画像リンクなら文字列を修正します');
@@ -5081,7 +5091,14 @@ function link(word,link,eventLabel) {
     storage.s.set('requestFlg',true);
   }
   if(typeof ga == "function") {
-    ga('send', 'event', 'sinclo', eventLabel, link, 1);
+    if(eventLabel === "clickLink"){
+      //リンククリック時に登録する値は今までと変わりないようにする
+      ga('send', 'event', 'sinclo', eventLabel, link, 1);
+    } else {
+      //メール及び電話の時は登録する文字列を修正して登録する
+      link = common.stringReplaceProcessForGA(link);
+      ga('send', 'event', 'sinclo', eventLabel, link, 1);
+    }
   }
   socket.emit('link', data);
 }
