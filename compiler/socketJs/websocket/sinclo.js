@@ -7094,6 +7094,9 @@
     },
     // 外部連携API
     api: {
+      openWidget: function () {
+        common.widgetHandler.openWidget();
+      },
       getAccessId: function () {
         var value = "";
         if (userInfo && userInfo.accessId) {

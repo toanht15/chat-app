@@ -2050,7 +2050,7 @@ var socket, // socket.io
       }
       // 同期対象とするが、ウィジェットは表示しない
       if (check.isset(window.sincloInfo.dataset) && (check.isset(window.sincloInfo.dataset.hide) && window.sincloInfo.dataset.hide === "1")) {
-        window.sincloInfo.widgetDisplay = false;
+        storage.s.set('closeAct', true);
       }
 
       // ウィジェット表示タイミング
@@ -2610,6 +2610,12 @@ var socket, // socket.io
           return 0 + invisibleUIOffset;
         }
       },
+      openWidget: function() {
+        storage.s.set('closeAct', false);
+        $('#sincloBox').show().css('height', 'auto');
+        $('#sincloWidgetBox').show();
+        common.widgetHandler._handleResizeEvent();
+      }
     },
     load: {
       id: "loadingImg",
