@@ -55,11 +55,11 @@ function addVariable(type,sendMessage,focusPosition){
         case 2:
           if (sendMessage.value.length == 0) {
             sendMessage.value += '<a href="tel:ここに電話番号を記載">リンクテキスト</a>';
-            addPosition = 7;
+            addPosition = 13;
           }
           else {
             sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + '<a href="tel:ここに電話番号を記載">リンクテキスト</a>' + sendMessage.value.substr(focusPosition,sendMessage.value.length);
-            addPosition = 8;
+            addPosition = 14;
           }
           var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();

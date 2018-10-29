@@ -23,7 +23,7 @@
             storage.s.set("widgetMaximized", flg);
           }
         }
-      },
+      }
     },
     sorryMsgTimer: null,
     syncTimeout: "",
@@ -34,10 +34,10 @@
 //        sincloBox.setAttribute('data-openflg', false);
         var flg = sinclo.widget.condifiton.get();
         //ウィジェットを開いた回数
-        if (String(flg) === "true" && typeof ga == "function") {
+        if (String(flg) === "true" && typeof ga === "function") {
           ga('send', 'event', 'sinclo', 'clickMaximize', location.href, 1);
         }
-        if (String(flg) === "false" && typeof ga == "function") {
+        if (String(flg) === "false" && typeof ga === "function") {
           ga('send', 'event', 'sinclo', 'clickMinimize', location.href, 1);
           //ウィジェットを最小化した回数追加
           var now = new Date();
@@ -2753,7 +2753,7 @@
               a = a.replace(img[0], imgTag);
               var url = a.match(this._regList.urlTagReg);
               if(option === "clickTelno"){
-                console.log('画像じゃい');
+                console.log('画像ですね');
                 //電話番号の場合は、生の電話番号を取得
                 var telno = link[0].replace(/[^0-9^\.]/g,"");
                 if(check.smartphone()){
