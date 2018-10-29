@@ -2614,6 +2614,7 @@ var socket, // socket.io
         storage.s.set('closeAct', false);
         $('#sincloBox').show().css('height', 'auto');
         $('#sincloWidgetBox').show();
+        common.whenMaximizedBtnShow();
         common.widgetHandler._handleResizeEvent();
       }
     },
