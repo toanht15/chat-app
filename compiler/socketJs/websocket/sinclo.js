@@ -2723,9 +2723,8 @@
         }
         check.escape_html(cName); // エスケープ
 
-        var isSendMessagePositionLeft = true;
         if (cs === "sinclo_re") {
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             div.style.textAlign = "right";
           } else {
             div.style.textAlign = "left";
@@ -2734,7 +2733,7 @@
             content = "<span class='cName'>" + cName + "</span>";
           }
         } else if (cs === "sinclo_se") {
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             div.style.textAlign = "left";
           } else {
             div.style.textAlign = "right";
@@ -2849,13 +2848,13 @@
             }
 
         if (cs === "sinclo_re") {
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             cs += ' effect_right';
           } else {
             cs += ' effect_left';
           }
         } else if (cs === "sinclo_se") {
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             cs += ' effect_left';
           } else {
             cs += ' effect_right';
@@ -2896,9 +2895,8 @@
         }
         check.escape_html(cName); // エスケープ
 
-        var isSendMessagePositionLeft = true;
         if (cs === "sinclo_re") {
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             div.style.textAlign = "right";
           } else {
             div.style.textAlign = "left";
@@ -2907,7 +2905,7 @@
             content = "<span class='cName'>" + cName + "</span>";
           }
         } else if (cs === "sinclo_se") {
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             div.style.textAlign = "left";
           } else {
             div.style.textAlign = "right";
@@ -3041,13 +3039,13 @@
         }
 
         if (cs.indexOf("sinclo_re") !== -1) {
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             cs += ' effect_right';
           } else {
             cs += ' effect_left';
           }
         } else if (cs.indexOf("sinclo_se") !== -1) {
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             cs += ' effect_left';
           } else {
             cs += ' effect_right';
@@ -3103,8 +3101,7 @@
         }
 
         li.className = 'sinclo_re';
-        var isSendMessagePositionLeft = true;
-        if(isSendMessagePositionLeft) {
+        if(window.sincloInfo.widget.isSendMessagePositionLeft) {
           li.className += ' effect_right';
         } else {
           li.className += ' effect_left';
@@ -3143,8 +3140,7 @@
 
         li.className = 'sinclo_re effect_left recv_file_left';
         li.className = 'sinclo_re recv_file_left';
-        var isSendMessagePositionLeft = true;
-        if(isSendMessagePositionLeft) {
+        if(window.sincloInfo.widget.isSendMessagePositionLeft) {
           li.className += ' effect_right';
         } else {
           li.className += ' effect_left';
@@ -3199,8 +3195,7 @@
           "      </div>" +
           "    </div>" +
           "  </li>";
-        var isSendMessagePositionLeft = true;
-        if(isSendMessagePositionLeft) {
+        if(window.sincloInfo.widget.isSendMessagePositionLeft) {
           divElm.className += ' effect_left';
         } else {
           divElm.className += ' effect_right';
@@ -3274,7 +3269,6 @@
         var isEmptyRequire = false;
 
         var content = "";
-        var isSendMessagePositionLeft = true;
         if(isConfirm) {
           hearingTarget.forEach(function(elm, idx, arr){
             if(elm.required && resultData[Number(elm.inputType)].length === 0) {
@@ -3295,7 +3289,7 @@
           content += "  </div>";
           content += "</div>";
           li.className = 'sinclo_re sinclo_form';
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             li.className += ' effect_right';
           } else {
             li.className += ' effect_left';
@@ -3319,7 +3313,7 @@
           content += "  </div>";
           content += "</div>";
           li.className = 'sinclo_se sinclo_form';
-          if(isSendMessagePositionLeft) {
+          if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             li.className += ' effect_left';
           } else {
             li.className += ' effect_right';
@@ -3382,8 +3376,7 @@
         content += "  </div>";
         content += "</div>";
         li.className = 'sinclo_se sinclo_form';
-        var isSendMessagePositionLeft = true;
-        if(isSendMessagePositionLeft) {
+        if(window.sincloInfo.widget.isSendMessagePositionLeft) {
           li.className += ' effect_left';
         } else {
           li.className += ' effect_right';
@@ -3983,8 +3976,7 @@
               "      <div class='loadingPopup hide'><i class='sinclo-fal fa-spinner load'></i><p class='progressMessage'>アップロード中です。<br>しばらくお待ち下さい。</p></div>" +
               "    </div>" +
               "  </li>";
-            var isSendMessagePositionLeft = true;
-            if(isSendMessagePositionLeft) {
+            if(window.sincloInfo.widget.isSendMessagePositionLeft) {
               divElm.style.textAlign = "left";
               divElm.className += ' effect_left';
             } else {
