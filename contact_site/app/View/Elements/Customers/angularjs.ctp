@@ -1065,6 +1065,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         if($scope.onlineOperatorList) {
           Object.keys($scope.onlineOperatorList).forEach(function(key){
+            if(!$scope.operatorList[key]) {
+              return;
+            }
             if($scope.activeOperatorList[key]) {
               $scope.operatorList[key].status = 1;
             } else {

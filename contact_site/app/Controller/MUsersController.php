@@ -167,8 +167,7 @@ class MUsersController extends AppController {
     }
 
     if (isset($chatSetting['MChatSetting']['sc_login_default_status'])) {
-	   $status = $tmpData['MUser']['permission_level'] == C_AUTHORITY_ADMIN ? C_SC_AWAY : $chatSetting['MChatSetting']['sc_login_default_status'];
-       $settings['login_default_status'] = $status;
+       $settings['login_default_status'] = $chatSetting['MChatSetting']['sc_login_default_status'];
     }
 
 	return $this->jsonEncode($settings);
