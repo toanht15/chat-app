@@ -1357,6 +1357,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       });
     };
 
+    $scope.getCustomerInfoFromApi = function(userId, callback) {
+      $.ajax({
+        type: "POST",
+        url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetCusInfo'])?>",
+        data: {
+          v:  userId
+        },
+        dataType: "json",
+        success: function(json){
+          var ret = {};
+          if ( typeof(json) !== "string" ) {
+            ret = json;
+          }
+          callback(ret);
+        }
+      });
+    };
+
     // 顧客の詳細情報を取得する
     $scope.getOldChat = function(historyId, oldFlg, event){
       if(event !== undefined) {
@@ -4405,7 +4423,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
           if ( angular.isDefined(scope.detailId) && scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
             scope.detail = angular.copy(scope.monitorList[scope.detailId]);
-            scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
+            scope.getCustomerInfoFromApi(scope.monitorList[scope.detailId].userId, function(ret){
               scope.customData = ret;
               scope.customPrevData = angular.copy(ret);
 
