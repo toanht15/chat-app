@@ -930,8 +930,7 @@ var socket, // socket.io
           break;
       }
 
-      var isSendMessagePositionLeft = true;
-      if(isSendMessagePositionLeft) {
+      if(window.sincloInfo.widget.isSendMessagePositionLeft) {
         var tmp = JSON.stringify(chatPosition.se);
         chatPosition.se = chatPosition.re;
         chatPosition.re = JSON.parse(tmp);
@@ -1103,7 +1102,7 @@ var socket, // socket.io
         if (widget.chatMessageDesignType === 2) {
           var leftMessageClass = 'sinclo_re';
           var rightMessageClass = 'sinclo_se';
-          if (isSendMessagePositionLeft) {
+          if (window.sincloInfo.widget.isSendMessagePositionLeft) {
             leftMessageClass = 'sinclo_se';
             rightMessageClass = 'sinclo_re';
           }
@@ -3072,7 +3071,6 @@ var socket, // socket.io
       var waitPadding = waitWidth * 0.172;
       var loadDotSize = fontSize * 0.8;
       var heightWeight = widget.widgetSizeType - 3;
-      var isSendMessagePositionLeft = true;
       var html  = "";
           html += "<div class='botNowDiv'>";
           //ウィジェットサイズが小で余白がない場合のみ、特殊なクラスを設ける
@@ -3128,14 +3126,14 @@ var socket, // socket.io
             css += "  animation:dotScale 1.0s ease-in-out 0s infinite both";
             css += "}";
             if(widget.chatMessageWithAnimation === 1){
-              if(isSendMessagePositionLeft) {
+              if(window.sincloInfo.widget.isSendMessagePositionLeft) {
                 css += "#sincloBox ul#chatTalk div.botNowDiv { text-align: right; }";
                 css += "#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:rightEffect; animation-name:rightEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0;}";
               } else {
                 css += "#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0;}";
               }
             }else{
-              if(isSendMessagePositionLeft) {
+              if(window.sincloInfo.widget.isSendMessagePositionLeft) {
                 css += '#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:noneRightEffect; animation-name:noneRightEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0;}';
               } else {
                 css += '#sincloBox ul#chatTalk li.effect_left_wait { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0;}';
