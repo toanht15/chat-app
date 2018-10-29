@@ -328,7 +328,7 @@ function checkValidate() {
                                       'options' => $scLoginStatusOpt,
                                       'value' => $sc_login_status,
                                       'legend' => false,
-                                      'label' => false,
+                                      'label' => true,
                                       'div' => false,
                                       'class' => 'pointer login-status'
                                   ];
