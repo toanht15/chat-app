@@ -159,6 +159,25 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
         }
       }, function(err) {
         console.log('COGMO ATTEND CALLBACK REJECT : ' + err);
+        let date = new Date();
+        let sendData = {
+          tabId: obj.tabId,
+          sincloSessionId: obj.sincloSessionId,
+          chatId: null,
+          messageType: 81,
+          created: fullDateTime(date),
+          sort: fullDateTime(date),
+          ret: true,
+          chatMessage: '回答にお時間を要しております。',
+          message: '回答にお時間を要しております。',
+          siteKey: obj.siteKey,
+          matchAutoSpeech: true,
+          isScenarioMessage: false,
+          isFeedbackMsg: false,
+          isExitOnConversation: false
+        };
+        emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
+        emit.toCompany('sendChatResult', sendData, obj.siteKey);
       });
   }
 

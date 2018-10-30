@@ -542,7 +542,7 @@ function getCompanyInfoFromApi(ip, callback) {
   var headers = {
     'Content-Type':'application/json'
   };
- 
+
   //オプションを定義
   var options = {
     host: process.env.GET_CD_API_HOST,
@@ -553,11 +553,11 @@ function getCompanyInfoFromApi(ip, callback) {
     json: true,
     agent: false
   };
- 
+
   if(process.env.DB_HOST === 'localhost') {
     options.rejectUnauthorized = false;
   }
- 
+
   //リクエスト送信
   var req = http.request(options, function (response) {
     if(response.statusCode === 200) {
@@ -570,13 +570,13 @@ function getCompanyInfoFromApi(ip, callback) {
       return;
     }
   });
- 
+
   req.on('error', function(error) {
     console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
     callback(false);
     return;
   });
- 
+
   req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "ipAddress":ip}));
   req.end();
 }
@@ -3419,6 +3419,25 @@ io.sockets.on('connection', function(socket) {
         }
       }, function(err) {
         console.log('COGMO ATTEND CALLBACK REJECT : ' + err);
+        let errorDatetime = new Date();
+        let sendData = {
+          tabId: obj.tabId,
+          sincloSessionId: obj.sincloSessionId,
+          chatId: null,
+          messageType: 81,
+          created: fullDateTime(errorDatetime),
+          sort: fullDateTime(errorDatetime),
+          ret: true,
+          chatMessage: '回答に際しお時間を頂いております。',
+          message: '回答に際しお時間を頂いております。',
+          siteKey: obj.siteKey,
+          matchAutoSpeech: true,
+          isScenarioMessage: false,
+          isFeedbackMsg: false,
+          isExitOnConversation: true
+        };
+        emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
+        emit.toCompany('sendChatResult', sendData, obj.siteKey);
       });
   }
 
