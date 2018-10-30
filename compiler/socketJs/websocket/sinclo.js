@@ -3095,10 +3095,16 @@
           });
           div.addEventListener('mouseenter', function () {
             var changeColor = common.toRGBAcolor(colorList['reBackgroundColor'], 0.9);
+            if(window.sincloInfo.widget.isSendMessagePositionLeft){
+              changeColor = common.toRGBAcolor(colorList['seBackgroundColor'], 0.9);
+            }
             li.style.backgroundColor = changeColor;
           });
           div.addEventListener('mouseleave', function () {
             var changeColor = colorList['reBackgroundColor'];
+            if(window.sincloInfo.widget.isSendMessagePositionLeft){
+              changeColor = colorList['seBackgroundColor'];
+            }
             li.style.backgroundColor = changeColor;
           });
         }
