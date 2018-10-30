@@ -3328,7 +3328,7 @@ io.sockets.on('connection', function(socket) {
       obj.stayLogsId,
       companyList[obj.siteKey],
       obj.userId,
-      obj.chatMessage.replace('button_', ''),
+      obj.chatMessage.replace('button_', '').replace('\n', ''),
       obj.messageDistinction,
       obj.created)
       .then((resultData) => {
@@ -3341,8 +3341,8 @@ io.sockets.on('connection', function(socket) {
           created: resultData.created,
           sort: fullDateTime(resultData.created),
           ret: true,
-          chatMessage: resultData.message,
-          message: resultData.message,
+          chatMessage: resultData.message.replace('button_', '').replace('\n', ''),
+          message: resultData.message.replace('button_', '').replace('\n', ''),
           siteKey: obj.siteKey,
           matchAutoSpeech: true,
           isScenarioMessage: false

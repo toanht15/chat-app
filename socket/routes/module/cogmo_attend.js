@@ -41,8 +41,8 @@ module.exports = class CogmoAttendAPICaller extends APICaller {
         created: created,
         sort: created,
         ret: true,
-        chatMessage: obj.chatMessage.replace('button_', ''),
-        message: obj.chatMessage.replace('button_', ''),
+        chatMessage: obj.chatMessage.replace('button_', '').replace('\n', ''),
+        message: obj.chatMessage.replace('button_', '').replace('\n', ''),
         siteKey: obj.siteKey,
         matchAutoSpeech: true,
         isScenarioMessage: false
