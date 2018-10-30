@@ -1149,44 +1149,51 @@ var socket, // socket.io
         html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: 1px solid '+ colorList['widgetInsideBorderColor'] +'; background-color: '+ colorList['chatMessageBackgroundColor'] +';}';
 
         /* ファイル受信  */
-        if(Number(widget.widgetSizeType) == 1) {
-          html += '#sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 10px!important; line-height: 0; }';
-          html += '#sincloBox #chatTalk li.sinclo_se.uploaded { padding: 10px!important; line-height: 0; }';
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 9px 0 6.5px; line-height: 20px; }';
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 9px; }';
-        } else if (check.smartphone() || Number(widget.widgetSizeType) == 2) {
-          html += '#sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 12px!important; line-height: 0; }';
-          html += '#sincloBox #chatTalk li.sinclo_se.uploaded { padding: 12px!important; line-height: 0; }';
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; line-height: 24px; }';
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 13px; }';
-        } else if(Number(widget.widgetSizeType) == 3) {
-          html += '#sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 14px!important; line-height: 0; }';
-          html += '#sincloBox #chatTalk li.sinclo_se.uploaded { padding: 14px!important; line-height: 0; }';
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; line-height: 24px; }';
-          html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 13px; }';
+        var previewFileClasses = '#sincloBox #chatTalk li.sinclo_re';
+        var uploadFileClasses = '#sincloBox #chatTalk li.sinclo_se';
+        if(window.sincloInfo.widget.isSendMessagePositionLeft) {
+          previewFileClasses = '#sincloBox #chatTalk li.sinclo_se';
+          uploadFileClasses = '#sincloBox #chatTalk li.sinclo_re';
         }
 
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent { position: relative; line-height: 0; border: 1px dashed ' + chatPosition.re.color + '; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea { line-height: 0; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p { margin: 6.5px 0; text-align: center; color:' + chatPosition.re.color + '; font-weight: bold; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button { display:inline-block; width:75%; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; text-align: center; background-color: ' + chatPosition.re.color + '!important; color: ' + chatPosition.re.backgroundColor + '; font-weight: normal; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent a.select-file-button:hover { opacity: .8; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea { margin-top: 5px; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.cancelReceiveFileArea a { font-size: ' + (chatPosition.re.textSize - 1) + 'px; cursor: pointer; text-decoration: underline; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.receiveFileContent div.selectFileArea p.drop-area-icon i { line-height: 1; font-size: 3em; color: ' + chatPosition.re.textSize + '; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent { position: relative; line-height: 0; background-color: #FFF; padding: 5px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea { line-height: 3px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview { text-align: center; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.small { max-width: 165px; max-height: 120px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.middle { max-width: 215px; max-height: 188px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.preview img.large { max-width: 265px; max-height: 285px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; width: 100%; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea { display: block; margin: 0 auto; border-radius: 0px; width: 97%; height: 40px; resize: none; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.selectFileArea p.commentarea textarea:focus { outline: none!important; border-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important;}'
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 97%; margin: 0 auto; font-size: 0px; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a:hover { opacity: .8; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.cancel-file-button { display: block; margin-right: 2px; width: 49%; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: normal; word-break: keep-all; }';
-        html += '#sincloBox #chatTalk li.sinclo_se div.receiveFileContent div.actionButtonWrap a.send-file-button { display: block; margin-left: 2px; width: 49%; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: normal; word-break: keep-all; }';
+        if(Number(widget.widgetSizeType) == 1) {
+          html += previewFileClasses + '.recv_file_left, ' + uploadFileClasses + '.recv_file_right { display: block; padding: 10px!important; line-height: 0; }';
+          html += previewFileClasses + '.uploaded { padding: 10px!important; line-height: 0; }';
+          html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 9px 0 6.5px; line-height: 20px; }';
+          html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 9px; }';
+        } else if (check.smartphone() || Number(widget.widgetSizeType) == 2) {
+          html += previewFileClasses + '.recv_file_left, ' + uploadFileClasses + '.recv_file_right { display: block; padding: 12px!important; line-height: 0; }';
+          html += previewFileClasses + '.uploaded { padding: 12px!important; line-height: 0; }';
+          html += uploadFileClasses + '  div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; line-height: 24px; }';
+          html += uploadFileClasses + '  div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 13px; }';
+        } else if(Number(widget.widgetSizeType) == 3) {
+          html += previewFileClasses + '.recv_file_left, ' + uploadFileClasses + '.recv_file_right { display: block; padding: 14px!important; line-height: 0; }';
+          html += previewFileClasses + '.uploaded { padding: 14px!important; line-height: 0; }';
+          html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; line-height: 24px; }';
+          html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 13px; }';
+        }
+
+        html += uploadFileClasses + ' div.receiveFileContent { position: relative; line-height: 0; border: 1px dashed ' + chatPosition.re.color + '; }';
+        html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea { line-height: 0; }';
+        html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p { margin: 6.5px 0; text-align: center; color:' + chatPosition.re.color + '; font-weight: bold; }';
+        html += uploadFileClasses + ' div.receiveFileContent a.select-file-button { display:inline-block; width:75%; padding: 5px 35px; border-radius: 0; text-decoration: none; cursor: pointer; text-align: center; background-color: ' + chatPosition.re.color + '!important; color: ' + chatPosition.re.backgroundColor + '; font-weight: normal; }';
+        html += uploadFileClasses + ' div.receiveFileContent a.select-file-button:hover { opacity: .8; }';
+        html += uploadFileClasses + ' div.cancelReceiveFileArea { margin-top: 5px; }';
+        html += uploadFileClasses + ' div.cancelReceiveFileArea a { font-size: ' + (chatPosition.re.textSize - 1) + 'px; cursor: pointer; text-decoration: underline; }';
+        html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p.drop-area-icon i { line-height: 1; font-size: 3em; color: ' + chatPosition.re.textSize + '; }';
+        html += previewFileClasses + ' div.receiveFileContent { position: relative; line-height: 0; background-color: #FFF; padding: 5px; }';
+        html += previewFileClasses + ' div.receiveFileContent div.selectFileArea { line-height: 3px; }';
+        html += previewFileClasses + ' div.receiveFileContent div.selectFileArea p.preview { text-align: center; }';
+        html += previewFileClasses + ' div.receiveFileContent div.selectFileArea p.preview img.small { max-width: 165px; max-height: 120px; }';
+        html += previewFileClasses + ' div.receiveFileContent div.selectFileArea p.preview img.middle { max-width: 215px; max-height: 188px; }';
+        html += previewFileClasses + ' div.receiveFileContent div.selectFileArea p.preview img.large { max-width: 265px; max-height: 285px; }';
+        html += previewFileClasses + ' div.receiveFileContent div.selectFileArea p.commentarea { text-align: center; width: 100%; }';
+        html += previewFileClasses + ' div.receiveFileContent div.selectFileArea p.commentarea textarea { display: block; margin: 0 auto; border-radius: 0px; width: 97%; height: 40px; resize: none; }';
+        html += previewFileClasses + ' div.receiveFileContent div.selectFileArea p.commentarea textarea:focus { outline: none!important; border-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important;}'
+        html += previewFileClasses + ' div.receiveFileContent div.actionButtonWrap { display: flex; justify-content: space-between; width: 97%; margin: 0 auto; font-size: 0px; }';
+        html += previewFileClasses + ' div.receiveFileContent div.actionButtonWrap a:hover { opacity: .8; }';
+        html += previewFileClasses + ' div.receiveFileContent div.actionButtonWrap a.cancel-file-button { display: block; margin-right: 2px; width: 49%; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: #7F7F7F!important; color: #FFF; font-weight: normal; word-break: keep-all; }';
+        html += previewFileClasses + ' div.receiveFileContent div.actionButtonWrap a.send-file-button { display: block; margin-left: 2px; width: 49%; height: auto; padding: 5px 10px; border-radius: 0; text-decoration: none; cursor: pointer; margin: 0 auto; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: normal; word-break: keep-all; }';
         html += '#sincloBox #chatTalk li div div.loadingPopup { display: flex; flex-flow: column nowrap; justify-content: center; align-items: center; text-align:center; vertical-align: middle; color: #FFF; background-color: rgba(0, 0, 0, 0.7); position: absolute; top:0; right: 0; bottom: 0; left: 0; }';
         html += '#sincloBox #chatTalk li div div.loadingPopup.hide { display: none; }';
         html += '#sincloBox #chatTalk li div div.loadingPopup i { font-size: 6em; text-align:center; color: #FFF; }';
@@ -3105,12 +3112,20 @@ var socket, // socket.io
             css += "}";
             //吹き出しがある場合はテキストカラーを採用
             css += "#sincloBox ul#chatTalk div[class^='reload_dot']{";
-            css += "  background-color:"+widget.reTextColor+";";
+            if(window.sincloInfo.widget.isSendMessagePositionLeft) {
+              css += "  background-color:"+widget.seTextColor+";";
+            } else {
+              css += "  background-color:"+widget.reTextColor+";";
+            }
             css += "}";
             //吹き出しがない場合はメインカラー、または吹き出し背景色を採用
             if(widget.mainColor == "#FFFFFF"){
               css += "#sincloBox ul#chatTalk div[class^='reload_only_dot']{";
-              css += "  background-color:"+widget.reBackgroundColor+";";
+              if(window.sincloInfo.widget.isSendMessagePositionLeft) {
+                css += "  background-color:"+widget.seBackgroundColor+";";
+              } else {
+                css += "  background-color:"+widget.reBackgroundColor+";";
+              }
               css += "}";
             }else{
               css += "#sincloBox ul#chatTalk div[class^='reload_only_dot']{";
@@ -3145,7 +3160,11 @@ var socket, // socket.io
             css += "#sincloBox ul#chatTalk li[class*='botNowTyping']{";
             css += "  display:inline-flex;justify-content:space-around;align-items:center;border-radius:12px!important;";
             css += "  width:"+waitWidth+"px;padding:0 "+waitPadding+"px;margin-left: 10px;";
-            css += "  background-color:"+widget.reBackgroundColor+";";
+            if(window.sincloInfo.widget.isSendMessagePositionLeft) {
+              css += "  background-color:"+widget.seBackgroundColor+";";
+            } else {
+              css += "  background-color:"+widget.reBackgroundColor+";";
+            }
             css += "}";
             //小(余白あり)の場合
             css += "#sincloBox ul#chatTalk li.botNowTypingSmall{";
@@ -3218,7 +3237,11 @@ var socket, // socket.io
           css += "#sincloBox .reloadCover div[class^='reload_dot']{";
           css += "  width:18px;height:18px;border-radius:100%;";
           if(widget.mainColor == widget.chatTalkBackgroundColor){
-            css += "  background-color:"+widget.reBackgroundColor+";";
+            if(window.sincloInfo.widget.isSendMessagePositionLeft) {
+              css += "  background-color:"+widget.seBackgroundColor+";";
+            } else {
+              css += "  background-color:"+widget.reBackgroundColor+";";
+            }
           }else{
             css += "  background-color:"+widget.mainColor+";";
           }
