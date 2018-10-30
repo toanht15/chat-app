@@ -3294,7 +3294,7 @@ io.sockets.on('connection', function(socket) {
       obj.stayLogsId,
       companyList[obj.siteKey],
       obj.userId,
-      obj.chatMessage.replace('button_', ''),
+      obj.chatMessage.replace('button_', '').replace('\n', ''),
       obj.messageDistinction,
       obj.created)
       .then((resultData) => {
@@ -3307,8 +3307,8 @@ io.sockets.on('connection', function(socket) {
           created: resultData.created,
           sort: fullDateTime(resultData.created),
           ret: true,
-          chatMessage: resultData.message,
-          message: resultData.message,
+          chatMessage: resultData.message.replace('button_', '').replace('\n', ''),
+          message: resultData.message.replace('button_', '').replace('\n', ''),
           siteKey: obj.siteKey,
           matchAutoSpeech: true,
           isScenarioMessage: false
@@ -3385,6 +3385,25 @@ io.sockets.on('connection', function(socket) {
         }
       }, function(err) {
         console.log('COGMO ATTEND CALLBACK REJECT : ' + err);
+        let errorDatetime = new Date();
+        let sendData = {
+          tabId: obj.tabId,
+          sincloSessionId: obj.sincloSessionId,
+          chatId: null,
+          messageType: 81,
+          created: fullDateTime(errorDatetime),
+          sort: fullDateTime(errorDatetime),
+          ret: true,
+          chatMessage: '回答に際しお時間を頂いております。',
+          message: '回答に際しお時間を頂いております。',
+          siteKey: obj.siteKey,
+          matchAutoSpeech: true,
+          isScenarioMessage: false,
+          isFeedbackMsg: false,
+          isExitOnConversation: true
+        };
+        emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
+        emit.toCompany('sendChatResult', sendData, obj.siteKey);
       });
   }
 
