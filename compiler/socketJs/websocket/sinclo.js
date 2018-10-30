@@ -6170,7 +6170,8 @@
             // initがコールされていないのでヒアリング開始していない
             return true;
           } else {
-            return String(self._getCurrentHearingProcess().inputLFType) === "1";
+            return String(self._getCurrentHearingProcess().inputLFType) === "1"
+              || String(self._getCurrentHearingProcess().uiType) === "1";
           }
         },
         getInputType: function () {
@@ -6344,9 +6345,7 @@
           }
           self._endInputProcess();
           self._parent._doing(intervalTimeSec, function () {
-            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
-            self._endInputProcess();
-            self._beginValidInputWatcher();
+            self._handleChatTextArea(self._getCurrentHearingProcess().uiType);
             self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
             var afterShowMessageProcess = function () {
               sinclo.chatApi.addKeyDownEventToSendChat();
@@ -6369,9 +6368,55 @@
             if(executeSilent) {
               afterShowMessageProcess();
             } else {
-              self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, message, self._getCurrentSeq(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, afterShowMessageProcess);
+              self._showMessage(self._getCurrentHearingProcess().uiType, message, self._getCurrentHearingProcess().required, self._getCurrentHearingProcess().settings, afterShowMessageProcess);
             }
           });
+        },
+        _showMessage: function (uiType, message, required, settings, callback) {
+          var self = sinclo.scenarioApi._hearing;
+          switch(uiType) {
+            case "1":
+              self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
+              break;
+            case "2":
+              self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
+              break;
+            case "3": // ラジオボタン
+              message += "\n";
+              settings.options.forEach(function(elm, index, arr) {
+                message += "[] " + elm + "\n";
+              });
+              self._parent._showMessage("2", message, self._getCurrentSeq(), "2", callback);
+              break;
+            case 4:
+              break;
+            case 5:
+              break;
+            default:
+              //TODO 旧IFを吸収する
+          }
+        },
+        _handleChatTextArea: function (type) {
+          var self = sinclo.scenarioApi._hearing;
+          switch (type) {
+            case "1":
+              self._endInputProcess();
+              sinclo.displayTextarea();
+              self._beginValidInputWatcher();
+              storage.l.set('textareaOpend', 'open');
+              break;
+            case "2":
+              self._endInputProcess();
+              sinclo.displayTextarea();
+              storage.l.set('textareaOpend', 'open');
+              break;
+            case "3":
+            case "4":
+            case "5":
+              sinclo.hideTextarea();
+              storage.l.set('textareaOpend', 'close');
+              break;
+          }
         },
         _endInputProcess: function () {
           var self = sinclo.scenarioApi._hearing;
