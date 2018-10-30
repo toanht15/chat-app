@@ -920,7 +920,7 @@ ul.ulTab {
     }
     li:hover {
       background-color: #C3D69B;
-      /*color: #fff;*/
+      color: #fff;
       text-decoration: none;
       display: block;
       padding: 10px 10px 10px;
@@ -931,6 +931,10 @@ ul.ulTab {
         color:#fff !important;
       }
     }
+    a.link_up{
+      text-decoration: none;
+      display: block;
+    }
     li.t-link {
       padding: 0px 0px 0px;
       width: 100%;
@@ -938,6 +942,7 @@ ul.ulTab {
       cursor:pointer;
       text-align: center;
       display:flex;
+      align-items: center;
       padding-left: 3px;
       a{
         text-decoration: none;
@@ -954,6 +959,10 @@ ul.ulTab {
         padding: 6px 0px;
         color: #595959;
         margin-left:10px;
+      }
+      span {
+        display: block;
+        padding: 10px 10px 10px 7.5px;
       }
       .smallFal {
         font-size:17px;
@@ -3359,7 +3368,7 @@ ul.naviBtn {
   #customer_tab {
     position: fixed;
     bottom: 0;
-    left: 60px;
+    left: 83px;
     z-index: $sub-sidebar-z-index;
 
     ul {
@@ -4574,6 +4583,10 @@ ul.naviBtn {
                 display: block;
                 font-size: 13px;
                 color: #333333;
+                img.img-responsive {
+                  width:50%;
+                  height:auto;
+                }
               }
           }
           &.sinclo_se span.cName{
@@ -10219,6 +10232,35 @@ div.balloon {
   padding: 7px 0px 7px 0px !important;
 }
 
+/*↓管理画面上のスマホ用小さなバナー↓*/
+#sincloBanner{
+  &.rightbottom{
+    top: 397px;
+    margin-right: 5px;
+  }
+  &.leftbottom{
+    top: 397px;
+    margin-left: 5px;
+  }
+  &.rightcenter #sincloBannerText, &.leftcenter #sincloBannerText{
+    flex-flow: column nowrap;
+    margin: 10px 5px;
+    padding: 5px;
+    svg{
+      width: 18px!important;
+      height: 18px!important;
+    }
+    #bannertext{
+      margin-left: 0;
+      margin-right: 0!important;
+      vertical-align: middle;
+      -webkit-writing-mode: vertical-rl;
+      -ms-writing-mode: tb-rl;
+      writing-mode: vertical-rl;
+      letter-spacing: 1px;
+    }
+  }
+}
 /*資料一覧*/
 #afs-popup {
   position: fixed;

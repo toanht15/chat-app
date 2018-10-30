@@ -94,6 +94,16 @@ define('C_WIDGET_AUTO_OPEN_TYPE_NONE', 5); // 初期表示のままにする
 define('C_WIDGET_POSITION_RIGHT_BOTTOM', 1); // 右下
 define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
 
+//スマホ用表示位置種別
+define('C_WIDGET_SP_POSITION_RIGHT_BOTTOM', 1); //右下
+define('C_WIDGET_SP_POSITION_LEFT_BOTTOM', 2); //左下
+define('C_WIDGET_SP_POSITION_RIGHT_CENTER', 3); //右中央
+define('C_WIDGET_SP_POSITION_LEFT_CENTER', 4); //左中央
+
+//スマホ用表示状態遷移種別
+define('C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER', 1); //3段階、小さなバナー
+define('C_WIDGET_SP_VIEW_TWO_PATTERN_BANNER', 3); //2段階、小さなバナー
+
 // 表示名種別
 define('C_WIDGET_SHOW_NAME', 1); // 表示名
 define('C_WIDGET_SHOW_COMP', 2); // 企業名
@@ -148,7 +158,7 @@ define('C_OPERATOR_PASSIVE', 0); // 退席
 define('C_OPERATOR_ACTIVE', 1); // 在籍
 
 // 正規表現
-define('C_MATCH_RULE_TEL', '/^(0|\+)(\d{9,}|[\d-]{11,})/'); // TEL
+define('C_MATCH_RULE_TEL', '/^\+?(\d{10,}|[\d-]{12,})/'); // TEL
 define('C_MATCH_RULE_TIME', '/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/'); // 時間 H:i
 define('C_MATCH_RULE_COLOR_CODE', '/^#([0-9|a-f|A-F]{3}|[0-9|a-f|A-F]{6})$/');
 define('C_MATCH_RULE_IMAGE_FILE', '/.(png|jpg|jpeg)$/i');
@@ -397,7 +407,8 @@ define('C_CLOSE_BUTTON_SETTING_ON', 2);//有効にする
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_BANNER', 1);//小さなバナー表示
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
 
-//スマホ用、小さなバナー隠しパラメータ
+//スマホ用
+define('C_SP_SCROLL_VIEW_SETTING', 0);//スクロール時ウィジェットの表示(1:表示 0:非表示)
 define('C_SP_BANNER_POSITION', 1);//バナー表示位置
 define('C_SP_WIDGET_VIEW_PATTERN', 1);//ウィジェット最大化最小化制御 (3,4は最小化に遷移しなくなる)
 
@@ -495,6 +506,20 @@ $config['WidgetDisplayStyleType'] = [
 $config['widgetPositionType'] = [
     C_WIDGET_POSITION_RIGHT_BOTTOM => "右下",
     C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
+];
+
+/* ウィジェット設定 － スマホ用表示位置種別 */
+$config['widgetSpPositionType'] = [
+    C_WIDGET_SP_POSITION_RIGHT_BOTTOM => "右下",
+    C_WIDGET_SP_POSITION_LEFT_BOTTOM => "左下",
+    C_WIDGET_SP_POSITION_RIGHT_CENTER=> "右中央",
+    C_WIDGET_SP_POSITION_LEFT_CENTER => "左中央"
+];
+
+/* ウィジェット設定 － スマホ用状態遷移種別 */
+$config['widgetSpViewPattern'] = [
+    C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER => "3段階：（最大化・最小化・小さなバナー）",
+    C_WIDGET_SP_VIEW_TWO_PATTERN_BANNER => "2段階：（最大化・小さなバナー）"
 ];
 
 /* ウィジェット設定 ー Web接客コード */

@@ -25,6 +25,7 @@ log4js.configure('./log4js_setting.json'); // 設定ファイル読み込み
 var reqlogger = log4js.getLogger('request'); // リクエスト用のロガー取得
 var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
 var deblogger = log4js.getLogger('debug'); // デバッグ用のロガー取得
+var scenarioLogger = log4js.getLogger('traceScenario');
 
 //サーバインスタンス作成
 var io = require('socket.io')(process.env.WS_PORT),
@@ -3780,6 +3781,38 @@ console.log("chatStart-6: [" + logToken + "] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
       chatApi.set(obj);
       ack(obj);
     });
+  });
+
+  socket.on('traceScenarioInfo', function(data) {
+    function joinMessage(message, data) {
+      if (typeof(data) === 'object') {
+        data = JSON.stringify(data);
+      }
+      return '[' + obj.siteKey + '][' + obj.sincloSessionId + '] message => ' + message + ' data => ' + data;
+    }
+    /*
+     * {
+     *   "type": "d" or "i" or "w" or "e"
+     *   "message":
+     *   "data":
+     */
+    var obj = JSON.parse(data);
+    switch(obj.type) {
+      case "d":
+        scenarioLogger.debug(joinMessage(obj.message, obj.data));
+        break;
+      case "i":
+        scenarioLogger.info(joinMessage(obj.message, obj.data));
+        break;
+      case "w":
+        scenarioLogger.warn(joinMessage(obj.message, obj.data));
+        break;
+      case "e":
+        scenarioLogger.error(joinMessage(obj.message, obj.data));
+        break;
+      default:
+        scenarioLogger.info(joinMessage(obj.message, obj.data));
+    }
   });
 
   // ============================================
