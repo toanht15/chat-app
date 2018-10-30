@@ -537,15 +537,48 @@ function getMessageTypeBySenarioActionType(type) {
 //requestをrequire
 var http = require('http');
 http.globalAgent.maxSockets = 1000;
-
-function getCompanyInfoFromApi(obj, ip, callback) {
-  if (functionManager.isEnabled(obj.siteKey, functionManager.keyList.refCompanyData)) {
-    var api = new LandscapeAPI('json', 'utf8');
-    api.getFrom(ip, callback);
-  } else {
-    deblogger.debug("refCompanyData is false. siteKey : " + obj.siteKey);
-    callback({});
+function getCompanyInfoFromApi(ip, callback) {
+  //ヘッダーを定義
+  var headers = {
+    'Content-Type':'application/json'
+  };
+ 
+  //オプションを定義
+  var options = {
+    host: process.env.GET_CD_API_HOST,
+    port: process.env.GET_CD_API_PORT,
+    path: process.env.GET_CD_API_PATH,
+    method: 'POST',
+    headers: headers,
+    json: true,
+    agent: false
+  };
+ 
+  if(process.env.DB_HOST === 'localhost') {
+    options.rejectUnauthorized = false;
   }
+ 
+  //リクエスト送信
+  var req = http.request(options, function (response) {
+    if(response.statusCode === 200) {
+      response.setEncoding('utf8');
+      response.on('data', callback);
+      return;
+    } else {
+      console.log('企業詳細情報取得時にエラーが返却されました。 errorCode : ' + response.statusCode);
+      callback(false);
+      return;
+    }
+  });
+ 
+  req.on('error', function(error) {
+    console.log('企業詳細情報取得時にHTTPレベルのエラーが発生しました。 message : ' + error.message);
+    callback(false);
+    return;
+  });
+ 
+  req.write(JSON.stringify({"accessToken":"x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK", "ipAddress":ip}));
+  req.end();
 }
 
 function parseSignature(src, ip, callback) {
@@ -2439,12 +2472,12 @@ io.sockets.on('connection', function(socket) {
         }
 
         //FIXME 企業別機能設定（企業情報連携）
-        getCompanyInfoFromApi(obj, obj.ipAddress, function(data) {
+        getCompanyInfoFromApi(obj.ipAddress, function(data){
           try {
             if (data) {
-              var response = data;
-              obj.orgName = response.orgName;
-              obj.lbcCode = response.lbcCode;
+              var response = JSON.parse(data);
+              obj.orgName = response.data.orgName;
+              obj.lbcCode = response.data.lbcCode;
               sincloCore[obj.siteKey][obj.tabId].orgName = obj.orgName;
               sincloCore[obj.siteKey][obj.tabId].lbcCode = obj.lbcCode;
               if (isset(customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id])) {
