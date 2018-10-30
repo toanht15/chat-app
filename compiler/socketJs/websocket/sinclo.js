@@ -6389,6 +6389,13 @@
               self._parent._showMessage("2", message, self._getCurrentSeq(), "2", callback);
               break;
             case 4:
+              message += "\n";
+              message += "<select class=\"sincloSelectBox\">";
+              message += "<option value=\"\">選択してください</option>\n";
+              settings.options.forEach(function(elm, index, arr) {
+                message += "<option value=\"" + elm + "\">" + elm + "</option>\n";
+              });
+              message += "</select>";
               break;
             case 5:
               break;
@@ -6415,6 +6422,13 @@
             case "5":
               sinclo.hideTextarea();
               storage.l.set('textareaOpend', 'close');
+              break;
+            default:
+              // text
+              self._endInputProcess();
+              sinclo.displayTextarea();
+              self._beginValidInputWatcher();
+              storage.l.set('textareaOpend', 'open');
               break;
           }
         },
