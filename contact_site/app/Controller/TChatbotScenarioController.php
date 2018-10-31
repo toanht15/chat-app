@@ -166,9 +166,9 @@ sinclo@medialink-ml.co.jp
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.notFoundId'));
         $this->redirect('/TChatbotScenario/index');
       }
-
+      // convert old data -> new json structure
+      $this->_convertOldDataToNewStructure($editData[0]['TChatbotScenario']['activity']);
       // アクションごとに必要な設定を追加する
-//      $this->_convertOldDataToNewStructure($editData[0]['TChatbotScenario']['activity']);
       $this->_setActivityDetailSettings($editData[0]['TChatbotScenario']['activity']);
 
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
@@ -565,6 +565,7 @@ sinclo@medialink-ml.co.jp
       ]);
 
       if (count($ret) === 1) {
+        $this->_convertOldDataToNewStructure($ret['TChatbotScenario']['activity']);
         $this->_setActivityDetailSettings($ret['TChatbotScenario']['activity']);
         return json_encode($ret);
       } else {
@@ -1706,7 +1707,6 @@ sinclo@medialink-ml.co.jp
     $activity = json_decode($json);
     $closestHearing = 0;
     foreach ($activity->scenarios as $key => &$action) {
-
       // add restore
       if (!isset($action->restore)) {
         $action->restore = true;
@@ -1715,36 +1715,74 @@ sinclo@medialink-ml.co.jp
       if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
         $closestHearing = $key;
         foreach ($action->hearings as $key => &$param) {
-          // add required
-          if (!isset($param->required)) {
-            $param->required = true;
-          }
-
           // convert break line to uiType
           if (!isset($param->uiType) && isset($param->inputLFType) && isset($param->inputType)) {
-            if ($param->inputLFType === '1') {
-              $param->uiType = '2';
-            }
-
-            if ($param->inputLFType === '2') {
-              $param->uiType = '1';
-            }
-
-            if ($param->inputType != 1) {
-              $param->errorMessage = $action->errorMessage;
-            }
-            // delete inputLFType
-            unset($param->inputLFType);
+            $param = $this->convertHearingTextType($param, $action->errorMessage);
           }
-          // covert error message
         }
       } else if ($action->actionType == C_SCENARIO_ACTION_SELECT_OPTION) {
-        $index = count($activity->scenarios->{$closestHearing}->hearings);
-//        $activity->scenarios->{$closestHearing}->hearings[$index]->variableName = $action->variableName;
+        if ($activity->scenarios->{$closestHearing}->actionType == C_SCENARIO_ACTION_HEARING) {
+          // append selection to closest hearing
+          $index = count($activity->scenarios->{$closestHearing}->hearings);
+          $activity->scenarios->{$closestHearing}->hearings[$index] = $this->convertHearingRadioButton($action);
+          unset($activity->scenarios->{$key});
+        } else {
+          // if have not hearing, create new hearing and append
+          $closestHearing = $key;
+          $action = (object)$this->convertSelectionToHearing($action);
+        }
       }
     }
 
     $json = json_encode($activity);
+  }
+
+  private function convertSelectionToHearing($data)
+  {
+    $action = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default'];
+    $action['actionType'] = '2';
+    $action['hearings'][0] = $this->convertHearingRadioButton($data);
+
+    return $action;
+  }
+
+  private function convertHearingRadioButton($data)
+  {
+    $radio = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default']['hearings'][0];
+    $radio['variableName'] = $data->selection->variableName;
+    $radio['message'] = $data->message;
+    $radio['uiType'] = '3'; // radio button type
+    $radio["settings"]["options"] = [];
+    foreach ($data->selection->options as $option) {
+      array_push($radio["settings"]["options"], $option);
+    }
+
+    return $radio;
+  }
+
+  private function convertHearingTextType($data, $errorMessage)
+  {
+    $hearing = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default']['hearings'][0];
+    $hearing['variableName'] = $data->variableName;
+    $hearing['message'] = $data->message;
+    // 改行可 -> テキスト複数行
+    if ($data->inputLFType === '1') {
+      $hearing['uiType'] = '2';
+      // old input type is email or tel-> convert to text
+      $hearing['inputType'] = $data->inputType = 2 ? '2' : '1';
+    }
+    // 改行不可 -> テキスト一行
+    if ($data->inputLFType === '2') {
+      $hearing['uiType'] = '1';
+      $hearing['inputType'] = $data->inputType;
+    }
+
+    // convert error message if inputType is not text
+    if ($hearing['inputType'] !== '1') {
+      $hearing['errorMessage'] = $errorMessage;
+    }
+
+    return $hearing;
   }
 
       /**
