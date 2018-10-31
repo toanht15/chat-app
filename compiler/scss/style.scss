@@ -9163,7 +9163,7 @@ ul.naviBtn {
       dl {
         overflow: hidden;
         transition: height 200ms linear;
-        max-height: 32em;
+        height: 32em;
 
         .default-setting-explain {
           margin-bottom: 0;
@@ -9179,7 +9179,7 @@ ul.naviBtn {
         }
 
         > div {
-          max-height: 15em;
+          height: 15em;
           overflow: auto;
           width: 32em;
           margin-bottom: 2em;
@@ -9249,7 +9249,7 @@ ul.naviBtn {
         overflow: hidden;
         transition: height 200ms linear;
         margin-top: 5px;
-        max-height: 32em;
+        height: 32em;
 
         .default-setting-explain {
            margin-bottom: 0;
@@ -9260,7 +9260,7 @@ ul.naviBtn {
         }
 
         > div {
-          max-height: 15em;
+          height: 15em;
           overflow: auto;
           width: 32em;
           margin-bottom: 2em;
