@@ -168,6 +168,7 @@ sinclo@medialink-ml.co.jp
       }
 
       // アクションごとに必要な設定を追加する
+//      $this->_convertOldDataToNewStructure($editData[0]['TChatbotScenario']['activity']);
       $this->_setActivityDetailSettings($editData[0]['TChatbotScenario']['activity']);
 
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
@@ -1739,7 +1740,53 @@ sinclo@medialink-ml.co.jp
     ]);
   }
 
-  /**
+  private function _convertOldDataToNewStructure(&$json)
+  {
+    $activity = json_decode($json);
+    $closestHearing = 0;
+    foreach ($activity->scenarios as $key => &$action) {
+
+      // add restore
+      if (!isset($action->restore)) {
+        $action->restore = true;
+      }
+
+      if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
+        $closestHearing = $key;
+        foreach ($action->hearings as $key => &$param) {
+          // add required
+          if (!isset($param->required)) {
+            $param->required = true;
+          }
+
+          // convert break line to uiType
+          if (!isset($param->uiType) && isset($param->inputLFType) && isset($param->inputType)) {
+            if ($param->inputLFType === '1') {
+              $param->uiType = '2';
+            }
+
+            if ($param->inputLFType === '2') {
+              $param->uiType = '1';
+            }
+
+            if ($param->inputType != 1) {
+              $param->errorMessage = $action->errorMessage;
+            }
+            // delete inputLFType
+            unset($param->inputLFType);
+          }
+          // covert error message
+        }
+      } else if ($action->actionType == C_SCENARIO_ACTION_SELECT_OPTION) {
+        $index = count($activity->scenarios->{$closestHearing}->hearings);
+//        $activity->scenarios->{$closestHearing}->hearings[$index]->variableName = $action->variableName;
+      }
+    }
+
+    $json = json_encode($activity);
+  }
+
+      /**
    * アクションごとに必要な設定を追加する
    * @param Object $json activity
    */

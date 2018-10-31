@@ -355,7 +355,7 @@
         </li>
         </li>
         <li>
-          <label class="pointer"><input type="checkbox" checked>
+          <label class="pointer"><input type="checkbox" ng-model="setItem.restore">
             入力内容の復元機能を有効にする
             <span class="questionBalloon">
                     <icon class="questionBtn" data-tooltip="再入力時や再訪問時に回答済みの内容を復元することができます。（復元させない場合はチェックを外します）">?</icon>
