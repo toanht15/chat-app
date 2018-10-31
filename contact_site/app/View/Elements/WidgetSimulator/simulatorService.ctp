@@ -94,6 +94,12 @@ sincloApp.factory('SimulatorService', function() {
     get isLargeSize() {
       return this._showWidgetType === 1 && this._settings['widget_size_type'] === '3';
     },
+    get isSpPortrait() {
+      return this._showWidgetType === 3;
+    },
+    get isSpLandscape() {
+      return this._showWidgetType === 2;
+    },
     // パラメータ取得(設定の有無)
     get widget_outside_border_none() {
       return this._settings['widget_border_color'] === 'なし';
