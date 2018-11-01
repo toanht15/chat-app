@@ -1805,13 +1805,13 @@ sinclo@medialink-ml.co.jp
     $hearing['variableName'] = $data->variableName;
     $hearing['message'] = $data->message;
     // 改行可 -> テキスト複数行
-    if ($data->inputLFType === '1') {
+    if ($data->inputLFType === '2') {
       $hearing['uiType'] = '2';
       // old input type is email or tel-> convert to text
-      $hearing['inputType'] = $data->inputType = 2 ? '2' : '1';
+      $hearing['inputType'] = $data->inputType == 2 ? '2' : '1';
     }
     // 改行不可 -> テキスト一行
-    if ($data->inputLFType === '2') {
+    if ($data->inputLFType === '1') {
       $hearing['uiType'] = '1';
       $hearing['inputType'] = $data->inputType;
     }
