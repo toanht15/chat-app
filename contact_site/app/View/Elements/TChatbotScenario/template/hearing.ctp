@@ -35,8 +35,8 @@
           </div>
           <div class='area-name'><input type="text" ng-model="hearingItem.variableName"></div>
           <div class='area-type'>
-            <select name="hearing-input-option" ng-model="hearingItem.uiType" ng-init="hearingItem.uiType = '1'"
-                    ng-change="main.controllSelectionView(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
+            <select name="hearing-input-option" ng-model="hearingItem.uiType"
+                    ng-change="main.handleChangeUitype(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
               <option value="1">テキスト（１行）</option>
               <option value="2">テキスト（複数行）</option>
               <option value="3">ラジオボタン</option>
@@ -355,7 +355,7 @@
         </li>
         </li>
         <li>
-          <label class="pointer"><input type="checkbox" checked>
+          <label class="pointer"><input type="checkbox" ng-model="setItem.restore">
             入力内容の復元機能を有効にする
             <span class="questionBalloon">
                     <icon class="questionBtn" data-tooltip="再入力時や再訪問時に回答済みの内容を復元することができます。（復元させない場合はチェックを外します）">?</icon>
