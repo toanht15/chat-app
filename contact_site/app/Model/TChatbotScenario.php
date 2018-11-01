@@ -66,9 +66,6 @@ class TChatbotScenario extends AppModel {
             return false;
           }
         }
-        if (empty($action['errorMessage'])) {
-          return false;
-        }
         if ($action['isConfirm'] == 1 && (empty($action['confirmMessage'] || empty($action['succes'] || empty($action['cancel']))))) {
           return false;
         }
