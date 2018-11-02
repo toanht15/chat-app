@@ -1368,21 +1368,28 @@
           // シナリオ実行中であればラジオボタンを非活性にする。
           if ((Number(chat.messageType) === 22 || Number(chat.messageType) === 23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
             prevMessageBlock = $('sinclo-chat').find('div:last-child');
-          } else if (prevMessageBlock !== null) {
-            var name = prevMessageBlock.find('[type="radio"]').attr('name');
-            console.log("DISABLE RADIO NAME : " + name);
-            var targetLabel = prevMessageBlock.find('label')
-            var targetId = "";
-            targetLabel.each(function (index, val) {
-              if (val.innerText.trim() === chat.message) {
-                targetId = $(val).attr('for');
+          } else if(Number(chat.messageType) === 41) {
+            prevMessageBlock = $('sinclo-chat').find('div:last-child');
+          } else {
+            if (prevMessageBlock !== null) {
+              if(prevMessageBlock.find('[type="radio"]').length > 0) {
+                var name = prevMessageBlock.find('[type="radio"], select option').attr('name');
+                console.log("DISABLE RADIO NAME : " + name);
+                var targetLabel = prevMessageBlock.find('label');
+                var targetId = "";
+                targetLabel.each(function (index, val) {
+                  if (val.innerText.trim() === chat.message) {
+                    targetId = $(val).attr('for');
+                  }
+                });
+                if (targetId !== "") {
+                  $('#' + targetId).prop('checked', true);
+                }
+              } else if(prevMessageBlock.find('select').length > 0) {
+                prevMessageBlock.find('select').val(chat.message);
               }
-            });
-            if (targetId !== "") {
-              $('#' + targetId).prop('checked', true);
+              prevMessageBlock = null;
             }
-            $('input[name=' + name + '][type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
-            prevMessageBlock = null;
           }
           this.chatApi.scDown();
         }
@@ -1524,6 +1531,7 @@
         if (obj.messageType === sinclo.chatApi.messageType.auto || obj.messageType === sinclo.chatApi.messageType.autoSpeech
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
+          || obj.messageType === sinclo.chatApi.messageType.scenario.message.pulldown
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           if (obj.messageType !== sinclo.chatApi.messageType.auto && storage.s.get('requestFlg') === 'true') {
@@ -2219,7 +2227,9 @@
               hearing: 22,
               selection: 23,
               receiveFile: 27,
-              returnBulkHearing: 40
+              returnBulkHearing: 40,
+              pulldown: 41,
+              calendar: 42
             }
           },
           cogmo: {
