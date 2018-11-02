@@ -3010,6 +3010,35 @@
         li.className = cs;
         li.innerHTML = messageHtml + pulldownHtml;
       },
+      addCalendar: function (cs, message, settings) {
+        common.chatBotTypingTimerClear();
+        common.chatBotTypingRemove();
+        var chatList = document.getElementsByTagName('sinclo-chat')[0];
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+        div.classList.add('sinclo-scenario-msg');
+        div.appendChild(li);
+        chatList.appendChild(div);
+
+        var messageHtml = sinclo.chatApi.createMessageHtml(message);
+        var calendarHtml = sinclo.chatApi.createCalendarHtml(settings, chatList.children.length);
+        // var pulldownHtml = sinclo.chatApi.createPullDownHtml(settings, chatList.children.length);
+        div.style.textAlign = "left";
+        cs += ' effect_left';
+
+        li.className = cs;
+        li.innerHTML = messageHtml + calendarHtml;
+        $('#sinclo-datapicker' + chatList.children.length).flatpickr({inline: 'true'});
+        // $('#sinclo-datapicker' + chatList.children.length).hide();
+      },
+      createCalendarHtml: function(settings, index) {
+        var html = "";
+        html += '<div style="margin-top: 10px" name="sinclo-calendar' + index + '">';
+        html += '<input type="text" id="sinclo-datepicker' + index + '">';
+        html += '</div>';
+
+        return html;
+      },
       createPullDownHtml: function (settings, index) {
         var style = sinclo.chatApi.createPulldownStyle(settings);
         var name = 'sinclo-pulldown' + index;
@@ -5914,7 +5943,7 @@
         }
       },
       _showPullDown: function(params, callback) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showPulldown:type'+params.type);
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW PULLDOWN <<<<<<<<<<<<<<<<<<<<<<<<<<<');
         var self = sinclo.scenarioApi;
         params.message = self._replaceVariable(params.message);
         if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), params.categoryNum)) {
@@ -5925,6 +5954,20 @@
           sinclo.chatApi.scDown();
           // ローカルに蓄積しておく
           self._putHearingPulldown(params, callback);
+        } else {
+          callback();
+        }
+      },
+      _showCalendar: function (params, callback) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW CALENDAR <<<<<<<<<<<<<<<<<<<<<<<<<<<');
+        var self = sinclo.scenarioApi;
+        params.message = self._replaceVariable(params.message);
+        if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), params.categoryNum)) {
+          sinclo.chatApi.addCalendar('sinclo_re', params.message, params.settings);
+          self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), params.categoryNum);
+          sinclo.chatApi.scDown();
+          // ローカルに蓄積しておく
+          // self._putHearingPulldown(params, callback);
         } else {
           callback();
         }
@@ -6530,7 +6573,15 @@
               };
               self._parent._showPullDown(params, callback);
               break;
-            case 5:
+            case "5":
+              var params = {
+                type: "2",
+                uiType: uiType,
+                message: message,
+                settings: settings,
+                categoryNum: self._getCurrentSeq()
+              };
+              self._parent._showCalendar(params, callback);
               break;
             default:
               //TODO 旧IFを吸収する
