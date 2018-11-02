@@ -2244,7 +2244,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // handle when click on skip button
   $(document).on('click', '.sincloChatSkipBtn', function () {
-    $('#action' + $scope.actionStep + '_hearing' + $scope.hearingIndex + '_question').remove();
+    // $('#action' + $scope.actionStep + '_hearing' + $scope.hearingIndex + '_question').remove();
     $scope.hearingIndex++;
     $scope.doAction();
   });

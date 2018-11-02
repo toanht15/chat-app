@@ -534,6 +534,30 @@ function getMessageTypeBySenarioActionType(type) {
   return result;
 }
 
+function getMessageTypeByUiType(type) {
+  var result = 22;
+  switch (Number(type)) {
+    case 1:
+      result = 22;
+      break;
+    case 2: 
+      result = 22;
+      break;
+    case 3:
+      result = 22;
+      break;
+    case 4:
+      result = 41;
+      break;
+    case 5:
+      result = 42;
+      break;
+    default:
+        result = 22;
+  }
+  return result;
+}
+
 // Landscapeの企業情報取得
 //requestをrequire
 var http = require('http');
@@ -3692,13 +3716,20 @@ io.sockets.on('connection', function(socket) {
             }
             sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum][elm.categoryNum] = elm;
           }
+          // get message type by hearing uitype
+          if (typeof elm.uiType !== 'undefined') {
+            var messageType = getMessageTypeByUiType(elm.uiType);
+          } else {
+            var messageType = getMessageTypeBySenarioActionType(elm.type);
+          }
+
           var ret = {
             siteKey: obj.siteKey,
             tabId: obj.tabId,
             userId: obj.userId,
             mUserId: null,
             chatMessage: elm.message,
-            messageType: getMessageTypeBySenarioActionType(elm.type),
+            messageType: messageType,
             created: elm.created,
             sort: elm.sort,
             messageDistinction: messageDistinction,
