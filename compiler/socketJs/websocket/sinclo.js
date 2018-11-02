@@ -1325,6 +1325,9 @@
             this.chatApi.createCogmoAttendBotMessage("sinclo_re", chat.message, userName, false);
           } else if (Number(chat.messageType) === 82) {
             this.chatApi.createCogmoAttendBotMessage("sinclo_re", chat.message, userName, true);
+          } else if (Number(chat.messageType) === 41) {
+            var pulldown = JSON.parse(chat.message);
+            this.chatApi.addPulldown("sinclo_re", pulldown.message, userName, pulldown.settings);
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
@@ -1359,6 +1362,7 @@
                 }
               }
             }
+            console.log(JSON.stringify(chat, null, 4));
             this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
           // シナリオ実行中であればラジオボタンを非活性にする。
@@ -2330,6 +2334,11 @@
 
         // 複数回イベントが登録されるケースがあるためいったんOFFにする
         $(document).off('click', "input[name^='sinclo-radio']");
+          $(document).on('change', "[name^='sinclo-pulldown']", function (e) {
+            if(e) e.stopPropagation();
+            console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
+            sinclo.chatApi.send(e.target.value.trim());
+          });
 
           $(document)
             .on('focus', "#sincloChatMessage,#miniSincloChatMessage",function(e){
@@ -2952,6 +2961,67 @@
         li.className = cs;
         li.innerHTML = content;
       },
+      createMessageHtml: function (message) {
+        var content = "";
+        var strings = message.split('\n');
+        for (var i = 0; strings.length > i; i++) {
+          var str = check.escape_html(strings[i]);
+          str = str
+            .replace(/(&lt;)/g, '<')
+            .replace(/(&gt;)/g, '>')
+            .replace(/(&quot;)/g, '"')
+            .replace(/(&#39;)/g, "'")
+            .replace(/(&amp;)/g, '&');
+
+          if(str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
+            content += "" + str + "\n";
+          } else {
+            content += "<span class='sinclo-text-line'>" + str.replace(/^[\n|\r\n|\r]$/g, "") + "</span>\n";
+          }
+        }
+
+        return content;
+      },
+      addPulldown: function(cs, message, name, settings){
+        common.chatBotTypingTimerClear();
+        common.chatBotTypingRemove();
+        var chatList = document.getElementsByTagName('sinclo-chat')[0];
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+        div.classList.add('sinclo-scenario-msg');
+        div.appendChild(li);
+        chatList.appendChild(div);
+
+        var messageHtml = sinclo.chatApi.createMessageHtml(message);
+        var pulldownHtml = sinclo.chatApi.createPullDownHtml(settings, chatList.children.length);
+        div.style.textAlign = "left";
+        cs += ' effect_left';
+
+        li.className = cs;
+        li.innerHTML = messageHtml + pulldownHtml;
+      },
+      createPullDownHtml: function (settings, index) {
+        var style = sinclo.chatApi.createPulldownStyle(settings);
+        var name = 'sinclo-pulldown' + index;
+        var html = "";
+        html += '<select name="' + name + '" id="' + name + '" style="' + style + '">';
+        html += '<option value="">選択してください</option>';
+        settings.options.forEach(function (option, index) {
+          html += '<option value="' + option + '">' + option + '</option>';
+        });
+        html += '</select>';
+
+        return html;
+      },
+      createPulldownStyle: function (settings) {
+        var style = '';
+        style += 'margin-top: 10px; height: 30px; ';
+        style += 'color: ' + settings.customDesign.textColor + ';';
+        style += 'background-color: ' + settings.customDesign.backgroundColor + ';';
+        style += 'border: 1px solid ' + settings.customDesign.borderColor + ';';
+
+        return style;
+      },
       createCogmoAttendBotMessage: function (cs, val, cName, isFeedbackMsg) {
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
@@ -3437,6 +3507,10 @@
         } else {
           sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
         }
+      },
+      createPullDown: function (cs, val, name, settings) {
+          // create pulldown
+        sinclo.chatApi.createPullDownHtml(cs, val, name, settings);
       },
       clearChatMessages: function () {
         var chatTalk = document.getElementsByTagName("sinclo-chat")[0];
@@ -5829,6 +5903,22 @@
           callback();
         }
       },
+      _showPullDown: function(params, callback) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showPulldown:type'+params.type);
+        var self = sinclo.scenarioApi;
+        params.message = self._replaceVariable(params.message);
+        if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), params.categoryNum)) {
+          var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
+
+          sinclo.chatApi.addPulldown('sinclo_re', params.message, name, params.settings);
+          self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), params.categoryNum);
+          sinclo.chatApi.scDown();
+          // ローカルに蓄積しておく
+          self._putHearingPulldown(params, callback);
+        } else {
+          callback();
+        }
+      },
       _showFileTypeMessage: function (type, resultDataSet, categoryNum, showTextArea, callback) {
         var self = sinclo.scenarioApi;
         resultDataSet.message = self._replaceVariable(resultDataSet.message);
@@ -5905,6 +5995,38 @@
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function (data) {
             self._saveMessage(data.data);
+            callback();
+          });
+        } else {
+          self._storeMessageToDB([storeObj], callback);
+        }
+      },
+      _putHearingPulldown: function (data, callback) {
+        var pulldownData = {
+          message: data.message,
+          settings: {
+            options: data.settings.options,
+            customDesign: data.settings.customDesign
+          }
+        };
+        var myData = JSON.stringify(pulldownData);
+        console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT' + myData);
+        var self = sinclo.scenarioApi,
+          storeObj = {
+            scenarioId: self.get(self._lKey.scenarioId),
+            type: data.type,
+            uiType: data.uiType,
+            messageType: self.get(self._lKey.scenarioMessageType),
+            sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
+            requireCv: self._bulkHearing.isInMode() || (data.type === self._actionType.hearing && self._hearing._cvIsEnable()),
+            categoryNum: data.categoryNum,
+            showTextarea: data.showTextArea,
+            // message: data.message
+            message: myData
+          };
+        if (self._disallowSaveing()) {
+          self._pushScenarioMessage(storeObj, function (item) {
+            self._saveMessage(item.data);
             callback();
           });
         } else {
@@ -6388,14 +6510,15 @@
               });
               self._parent._showMessage("2", message, self._getCurrentSeq(), "2", callback);
               break;
-            case 4:
-              message += "\n";
-              message += "<select class=\"sincloSelectBox\">";
-              message += "<option value=\"\">選択してください</option>\n";
-              settings.options.forEach(function(elm, index, arr) {
-                message += "<option value=\"" + elm + "\">" + elm + "</option>\n";
-              });
-              message += "</select>";
+            case "4":
+              var params = {
+                type: "2",
+                uiType: uiType,
+                message: message,
+                settings: settings,
+                categoryNum: self._getCurrentSeq()
+              };
+              self._parent._showPullDown(params, callback);
               break;
             case 5:
               break;

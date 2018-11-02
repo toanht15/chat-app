@@ -37,7 +37,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.setActionList = [];
   $scope.targetDeleteFileIds = [];
   var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}"; ?>;
-  console.log(setActivity);
   if (typeof setActivity  === "string") {
     var jsonData = JSON.parse(setActivity);
     var setActionListTmp = jsonData.scenarios;
@@ -862,7 +861,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     LocalStorageService.remove($scope.storageKey);
 
     $scope.changeFlg = false;
-    console.log(this.createJsonData(true));
     $('#TChatbotScenarioActivity').val(this.createJsonData(true));
     submitAct();
   };
@@ -986,7 +984,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
 
     target.splice(optionIndex + 1, 0, angular.copy(src));
-    console.log(target);
     // 表示更新
     $timeout(function () {
       $scope.$apply();
@@ -1445,8 +1442,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  this.controllSelectionView = function (actionType, actionIndex, hearingIndex, uiType) {
-    // ラジオボタン、プルダウン
+  this.handleChangeUitype = function (actionType, actionIndex, hearingIndex, uiType) {
+    // set defautl color from widget setting
+    if (uiType === '5' || uiType === '4') {
+      $scope.setActionList[actionIndex].hearings[hearingIndex] = this.setDefaultColorHearing($scope.setActionList[actionIndex].hearings[hearingIndex]);
+    }
+
+    // controll selection view of radio and pulldown
     if (uiType === '3' || uiType == '4') {
       $timeout(function () {
         $scope.$apply();
@@ -1638,15 +1640,29 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var actionDetail = $scope.setActionList[$scope.actionStep];
 
     if ($scope.hearingIndex < actionDetail.hearings.length) {
-      // 入力された文字列を改行ごとに分割し、適切な入力かチェックする
-      var inputType = actionDetail.hearings[$scope.hearingIndex].inputType;
-      var regex = new RegExp($scope.inputTypeList[inputType].rule.replace(/^\/(.+)\/$/, "$1"));
-      var isMatched = message.split(/\r\n|\n/).every(function(string) {
-        return string.length >= 1 ? regex.test(string) : true;
-      });
-      if (isMatched) {
-        // 変数の格納
-        var storageParam = [];
+      var uiType = actionDetail.hearings[$scope.hearingIndex].uiType;
+
+      if (uiType === '1' || uiType === '2') {
+        // 入力された文字列を改行ごとに分割し、適切な入力かチェックする
+        var inputType = actionDetail.hearings[$scope.hearingIndex].inputType;
+        var regex = new RegExp($scope.inputTypeList[inputType].rule.replace(/^\/(.+)\/$/, "$1"));
+        var isMatched = message.split(/\r\n|\n/).every(function(string) {
+          return string.length >= 1 ? regex.test(string) : true;
+        });
+        if (isMatched) {
+          LocalStorageService.setItem('chatbotVariables', [{key: actionDetail.hearings[$scope.hearingIndex].variableName, value: message}]);
+          // 次のアクション
+          $scope.hearingIndex++;
+          if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
+            !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
+            $scope.hearingIndex = 0;
+            $scope.actionStep++;
+          }
+        } else {
+          // 入力エラー
+          $scope.hearingInputResult = false;
+        }
+      } else {
         LocalStorageService.setItem('chatbotVariables', [{key: actionDetail.hearings[$scope.hearingIndex].variableName, value: message}]);
         // 次のアクション
         $scope.hearingIndex++;
@@ -1655,9 +1671,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           $scope.hearingIndex = 0;
           $scope.actionStep++;
         }
-      } else {
-        // 入力エラー
-        $scope.hearingInputResult = false;
       }
     } else
     if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length) && $scope.replaceVariable(actionDetail.cancel) === message) {
@@ -1679,14 +1692,33 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.hearingIndex = hearingIndex;
     $scope.actionStep = actionStep;
     var actionDetail = $scope.setActionList[actionStep];
-
-    // 入力された文字列を改行ごとに分割し、適切な入力かチェックする
-    var inputType = actionDetail.hearings[hearingIndex].inputType;
-    var regex = new RegExp($scope.inputTypeList[inputType].rule.replace(/^\/(.+)\/$/, "$1"));
-    var isMatched = message.split(/\r\n|\n/).every(function (string) {
-      return string.length >= 1 ? regex.test(string) : true;
-    });
-    if (isMatched) {
+    var uiType = actionDetail.hearings[hearingIndex].uiType;
+    // テキストタイプ
+    if (uiType === '1' || uiType === '2') {
+      // 入力された文字列を改行ごとに分割し、適切な入力かチェックする
+      var inputType = actionDetail.hearings[hearingIndex].inputType;
+      var regex = new RegExp($scope.inputTypeList[inputType].rule.replace(/^\/(.+)\/$/, "$1"));
+      var isMatched = message.split(/\r\n|\n/).every(function (string) {
+        return string.length >= 1 ? regex.test(string) : true;
+      });
+      if (isMatched) {
+        // 変数の格納
+        LocalStorageService.setItem('chatbotVariables', [{
+          key: actionDetail.hearings[hearingIndex].variableName,
+          value: message
+        }]);
+        // 次のアクション
+        $scope.hearingIndex++;
+        if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
+          !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
+          $scope.hearingIndex = 0;
+          $scope.actionStep++;
+        }
+      } else {
+        // 入力エラー
+        $scope.hearingInputResult = false;
+      }
+    } else {
       // 変数の格納
       LocalStorageService.setItem('chatbotVariables', [{
         key: actionDetail.hearings[hearingIndex].variableName,
@@ -1699,10 +1731,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $scope.hearingIndex = 0;
         $scope.actionStep++;
       }
-    } else {
-      // 入力エラー
-      $scope.hearingInputResult = false;
     }
+
 
     $scope.doAction();
   };
@@ -2214,7 +2244,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // handle when click on skip button
   $(document).on('click', '.sincloChatSkipBtn', function () {
-    $('#action' + $scope.actionStep + '_hearing' + $scope.hearingIndex + '_question').remove();
+    // $('#action' + $scope.actionStep + '_hearing' + $scope.hearingIndex + '_question').remove();
     $scope.hearingIndex++;
     $scope.doAction();
   });
@@ -2309,8 +2339,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
   });
 
+  // re-input text type
   $(document).on('click', '#chatTalk .underlineText', function () {
-    var prefix = $(this).parents('.liBoxRight').attr('id');
+    var prefix = $(this).parents('.liBoxRight, .liRight').attr('id');
     var numbers = prefix.match(/\d+/g).map(Number);
     var actionStep = numbers[0];
     var hearingIndex = numbers[1];
