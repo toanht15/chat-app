@@ -3747,6 +3747,7 @@ var socket, // socket.io
              ||obj.messageType === sinclo.chatApi.messageType.start){
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.pulldown
              ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection){
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text
