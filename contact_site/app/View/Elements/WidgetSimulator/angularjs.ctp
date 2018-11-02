@@ -1,11 +1,10 @@
 <script type="text/javascript">
 'use strict';
 
-sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorService', 'LocalStorageService',  function($scope, $timeout, SimulatorService, LocalStorageService) {
+sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorService',  function($scope, $timeout, SimulatorService) {
   //thisを変数にいれておく
   var self = this;
   $scope.simulatorSettings = SimulatorService;
-  $scope.localStorageService = LocalStorageService;
 
   $scope.isTabDisplay = document.querySelector('[id$="IsTabDisplay"]').value == true;
   $scope.canVisitorSendMessage = document.querySelector('[id$="CanVisitorSendMessage"]').value == true;
