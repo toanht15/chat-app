@@ -104,8 +104,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("clockpicker.js");
     }
     echo $this->Html->script("common.js");
-    echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js");
-    echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-sanitize.js");
+    echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular.min.js");
+    echo $this->Html->script("//ajax.googleapis.com/ajax/libs/angularjs/1.7.5/angular-sanitize.js");
     echo $this->Html->script("angular.validate.js");
     echo $this->Html->script("cidr2regex.js");
     echo $this->element("common-js");

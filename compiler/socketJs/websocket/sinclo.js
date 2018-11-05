@@ -1206,7 +1206,18 @@
         if (!obj.chat.messages.hasOwnProperty(key)) return false;
         var chat = obj.chat.messages[key], userName;
         if (Number(chat.messageType) < 90) {
-          var cn = (Number(chat.messageType) === 1 || Number(chat.messageType) === 12 || Number(chat.messageType) === 13 || Number(chat.messageType) === 30) ? "sinclo_se" : "sinclo_re";
+          var cn = "sinclo_re";
+          switch(Number(chat.messageType)) {
+            case 1:
+            case 13:
+            case 30:
+              cn = "sinclo_se";
+              break;
+            case 12:
+              cn = "cancelable sinclo_se";
+              break;
+          }
+
           if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
             this.chatApi.unread++;
           }
@@ -1300,7 +1311,13 @@
             }
             // ファイル送信チャットが削除されている場合
             else if (chat.deleteFlg === 1) {
-              this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+              var sendData = {
+                message: chat.message,
+                name: userName,
+                chatId: chat.chatId,
+                cn: cn,
+              };
+              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           }
           else if(Number(chat.messageType) === 8){
@@ -1310,7 +1327,13 @@
               var result = JSON.parse(chat.message);
               this.chatApi.createSentFileMessage(result.comment, result.downloadUrl, result.extension);
             } else {
-              this.chatApi.createMessage("sinclo_se", chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+              var sendData = {
+                message: chat.message,
+                name: userName,
+                chatId: chat.chatId,
+                cn: "sinclo_se",
+              };
+              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
             }
           } else if (Number(chat.messageType) === 40) {
             if(sinclo.scenarioApi.isProcessing() && Object.keys(obj.chat.messages).indexOf(key) === Object.keys(obj.chat.messages).length - 1) {
@@ -1342,7 +1365,13 @@
                     setTimeout(function() {
                       //オペレータが入室していなかった場合
                       if(storage.s.get('operatorEntered') !== 'true' && data[times].message !== "") {
-                        sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, sincloInfo.widget.subTitle);
+                        var sendData = {
+                          message: data[times].message,
+                          name: sincloInfo.widget.subTitle,
+                          chatId: 0,
+                          cn: "sinclo_re",
+                        };
+                        sinclo.chatApi.createMessageUnread(sendData);
                         sinclo.chatApi.scDown();
                         var sendData = {
                           siteKey: obj.siteKey,
@@ -1363,7 +1392,7 @@
               }
             }
             console.log(JSON.stringify(chat, null, 4));
-            this.chatApi.createMessage(cn, chat.message, userName, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+            this.chatApi.createMessage({cn: cn, message: chat.message, name: userName, chatId: chat.chatId}, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
           // シナリオ実行中であればラジオボタンを非活性にする。
           if ((Number(chat.messageType) === 22 || Number(chat.messageType) === 23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
@@ -1510,9 +1539,10 @@
               break;
           }
           console.log("sendChatResult :: userName : %s", userName);
-        }
-        else if (obj.messageType === sinclo.chatApi.messageType.customer
-          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing
+        } else if(obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing) {
+          cn = "cancelable sinclo_se";
+          elm.value = "";
+        } else if (obj.messageType === sinclo.chatApi.messageType.customer
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.answerBulkHearing ) {
           cn = "sinclo_se";
@@ -1579,7 +1609,7 @@
               sinclo.scenarioApi._hearing._endInputProcess();
               sinclo.scenarioApi._hearing._showConfirmMessage();
             }
-            sinclo.chatApi.createMessage(cn, obj.chatMessage, userName, true);
+            sinclo.chatApi.createMessage({cn: cn, message: obj.chatMessage, name: userName, chatId: obj.chatId}, true);
             sinclo.chatApi.scDown();
             return false;
           } else if (obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
@@ -1613,7 +1643,7 @@
             }
           } else {
             cn = "sinclo_se";
-            this.chatApi.createMessage(cn, obj.chatMessage, "");
+            this.chatApi.createMessage({cn: cn, message: obj.chatMessage, name: "", chatId: obj.chatId});
           }
           this.chatApi.scDown();
           return false;
@@ -1643,7 +1673,13 @@
 
         if (obj.messageType === sinclo.chatApi.messageType.cogmo.message
           || obj.messageType === sinclo.chatApi.messageType.cogmo.feedback) {
-          this.chatApi.createMessageUnread(cn, obj.message, userName, false, true, obj.isFeedbackMsg);
+          var createMessageData = {
+            cn: cn,
+            message: obj.message,
+            name: userName,
+            chatId: obj.chatId
+          };
+          this.chatApi.createMessageUnread(createMessageData, false, true, obj.isFeedbackMsg);
           this.chatApi.scDown(obj);
           return false;
         }
@@ -1663,7 +1699,7 @@
           sinclo.sorryMsgTimer = setTimeout(function(){
             cn = "sinclo_re";
             sinclo.chatApi.call();
-            sinclo.chatApi.createMessage(cn, obj.chatMessage, userName);
+            sinclo.chatApi.createMessage({cn: cn, message: obj.chatMessage, name: userName, chatId: obj.chatId});
             if(sinclo.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
               sinclo.chatApi.notify(obj.chatMessage);
             } else {
@@ -1701,7 +1737,7 @@
                   } else {
                     userName = window.sincloInfo.widget.subTitle;
                   }
-                  sinclo.chatApi.createMessageUnread("sinclo_re", data[times].message, userName);
+                  sinclo.chatApi.createMessageUnread({cn: "sinclo_re", message: data[times].message, name: userName, chatId: obj.chatId});
                   sinclo.chatApi.scDown();
                   var sendData = {
                     siteKey: obj.siteKey,
@@ -1724,7 +1760,7 @@
           return false;
         }
         if(!obj.hideMessage && obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
-          this.chatApi.createMessageUnread(cn, obj.chatMessage, userName);
+          this.chatApi.createMessageUnread({cn: cn, message: obj.chatMessage, name: userName, chatId: obj.chatId});
         }
 
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
@@ -1782,7 +1818,13 @@
       console.log("resAutoChatMessage : " + JSON.stringify(d));
       var obj = JSON.parse(d);
       if (!sinclo.chatApi.autoMessages.exists(obj.chatId)) {
-        sinclo.chatApi.createMessage("sinclo_re", obj.message, sincloInfo.widget.subTitle);
+        var sendData = {
+          cn: "sinclo_re",
+          message: obj.message,
+          name: sincloInfo.widget.subTitle,
+          chatId: obj.chatId
+        };
+        sinclo.chatApi.createMessage(sendData);
       }
       sinclo.chatApi.autoMessages.push(obj.chatId, obj);
     },
@@ -1813,7 +1855,7 @@
         return false;
       }
 
-      this.chatApi.createMessageUnread(cn, obj.message, sincloInfo.widget.subTitle);
+      this.chatApi.createMessageUnread({cn: cn, message: obj.message, name: sincloInfo.widget.subTitle, chatId: obj.chatId});
       if (this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
         this.chatApi.notify(obj.chatMessage);
       } else {
@@ -2839,18 +2881,31 @@
         return str;
         }
       },
-      createMessage: function (cs, val, cName, isScenarioMsg) {
+      /**
+       * <code>
+       *   obj = {
+       *     cn: <class name>,
+       *     message: <chat message>,
+       *     name: <send use name>,
+       *     chatId: <stored message id>
+       *   }
+       * </code>
+       * @param obj
+       * @param isScenarioMsg
+       */
+      createMessage: function (obj, isScenarioMsg) {
         common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        li.dataset.chatId = obj.chatId;
         if (isScenarioMsg) {
           div.classList.add('sinclo-scenario-msg');
         }
         div.appendChild(li);
         chatList.appendChild(div);
-        var strings = val.split('\n');
+        var strings = obj.message.split('\n');
         var radioCnt = 1;
         var radioName = "sinclo-radio" + chatList.children.length;
         var content = "";
@@ -2866,17 +2921,17 @@
           className = 'largeSizeImg';
         }
 
-        if (check.isset(cName) === false) {
-          cName = "";
+        if (check.isset(obj.name) === false) {
+          obj.name = "";
         }
-        check.escape_html(cName); // エスケープ
+        check.escape_html(obj.name); // エスケープ
 
-        if (cs === "sinclo_re") {
+        if (obj.cn.indexOf("sinclo_re") !== -1) {
           div.style.textAlign = "left";
-          if (cName !== "") {
-            content = "<span class='cName'>" + cName + "</span>";
+          if (obj.name !== "") {
+            content = "<span class='cName'>" + obj.name + "</span>";
           }
-        } else if (cs === "sinclo_se") {
+        } else if (obj.cn.indexOf("sinclo_se") !== -1) {
           div.style.textAlign = "right";
         }
         for (var i = 0; strings.length > i; i++) {
@@ -2888,7 +2943,7 @@
             .replace(/(&#39;)/g, "'")
             .replace(/(&amp;)/g, '&');
 
-                if ( cs === "sinclo_re" ) {
+                if ( obj.cn.indexOf("sinclo_re") !== -1 ) {
                   // ラジオボタン
                   var radio = str.indexOf('[]');
                   if ( radio > -1 ) {
@@ -2946,7 +3001,7 @@
                     str = str.replace(tel[0], span);
                   }
                 }
-                if ( cs === "sinclo_re" ) {
+                if ( obj.cn.indexOf("sinclo_re") !== 1 ) {
                   //imgタグ
                   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
                   var img = unEscapeStr.match(imgTagReg);
@@ -2962,13 +3017,13 @@
                 }
             }
 
-        if (cs === "sinclo_re") {
-          cs += ' effect_left';
-        } else if (cs === "sinclo_se") {
-          cs += ' effect_right';
+        if (obj.cn.indexOf("sinclo_re") !== -1) {
+          obj.cn += ' effect_left';
+        } else if (obj.cn.indexOf("sinclo_se") !== -1) {
+          obj.cn += ' effect_right';
         }
 
-        li.className = cs;
+        li.className = obj.cn;
         li.innerHTML = content;
       },
       createMessageHtml: function (message) {
@@ -3028,7 +3083,7 @@
 
         li.className = cs;
         li.innerHTML = messageHtml + calendarHtml;
-        $('#sinclo-datapicker' + chatList.children.length).flatpickr({inline: 'true'});
+        $('#sinclo-datepicker' + chatList.children.length).flatpickr({inline: 'true'});
         // $('#sinclo-datapicker' + chatList.children.length).hide();
       },
       createCalendarHtml: function(settings, index) {
@@ -3536,15 +3591,15 @@
       hideForm: function() {
         $('li.sinclo_re.sinclo_form').remove();
       },
-      createMessageUnread: function (cs, val, name, isScenarioMessage, isCogmoAttendBotMessage, isFeedbackMsg) {
-        if (cs && cs.indexOf("sinclo_re") >= 0) {
+      createMessageUnread: function (data, isScenarioMessage, isCogmoAttendBotMessage, isFeedbackMsg) {
+        if (data.cn && data.cn.indexOf("sinclo_re") >= 0) {
           sinclo.chatApi.unread++;
           sinclo.chatApi.showUnreadCnt();
         }
         if(isCogmoAttendBotMessage) {
-          sinclo.chatApi.createCogmoAttendBotMessage(cs, val, name, isFeedbackMsg);
+          sinclo.chatApi.createCogmoAttendBotMessage(data.cn, data.message, data.name, isFeedbackMsg);
         } else {
-          sinclo.chatApi.createMessage(cs, val, name, isScenarioMessage);
+          sinclo.chatApi.createMessage(data, isScenarioMessage);
         }
       },
       createPullDown: function (cs, val, name, settings) {
@@ -4746,7 +4801,13 @@
           if (window.sincloInfo.widget.showAutomessageName === 2) {
             userName = "";
           }
-          sinclo.chatApi.createMessageUnread("sinclo_re", cond.message, userName);
+          var createMessageData = {
+            cn: "sinclo_re",
+            message: cond.message,
+            name: userName,
+            chatId: id
+          };
+          sinclo.chatApi.createMessageUnread(createMessageData);
           sinclo.chatApi.scDown();
           var prev = sinclo.chatApi.autoMessages.getByArray();
 
@@ -5921,7 +5982,7 @@
         }
       },
       _showMessage: function(type, message, categoryNum, showTextArea, callback) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showMessage:type'+type);
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showMessage:type ' + type);
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
@@ -5930,9 +5991,9 @@
             common.chatBotTypingCall({forceWaitAnimation:true});
           }
           if(String(categoryNum).indexOf("delete_") >= 0) {
-            sinclo.chatApi.createMessageUnread('sinclo_re ' + categoryNum, message, name, true);
+            sinclo.chatApi.createMessageUnread({cn: 'sinclo_re' + categoryNum, message: message, name: name, chatId: 0}, true);
           } else {
-            sinclo.chatApi.createMessageUnread('sinclo_re', message, name, true);
+            sinclo.chatApi.createMessageUnread({cn: 'sinclo_re', message: message, name: name, chatId: 0}, true);
           }
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
@@ -6440,6 +6501,16 @@
           var obj = json ? json : 0;
           return Number(obj);
         },
+        _getValidChars: function (input) {
+          var self = sinclo.scenarioApi._hearing;
+          var validCharIndex = self.isLFModeDisabled() ? String(self._getCurrentHearingProcess().inputType) : String(self._getCurrentHearingProcess().inputType) + '_lf';
+          var match = input.match(self._parent._validChars[validCharIndex]);
+          if (match) {
+            return match[0];
+          } else {
+            return "";
+          }
+        },
         _beginValidInputWatcher: function () {
           var self = sinclo.scenarioApi._hearing;
           if (sinclo.scenarioApi.isScenarioLFDisabled()) {
@@ -6458,16 +6529,6 @@
                 }
               }
             }, 100);
-          }
-        },
-        _getValidChars: function (input) {
-          var self = sinclo.scenarioApi._hearing;
-          var validCharIndex = self.isLFModeDisabled() ? String(self._getCurrentHearingProcess().inputType) : String(self._getCurrentHearingProcess().inputType) + '_lf';
-          var match = input.match(self._parent._validChars[validCharIndex]);
-          if (match) {
-            return match[0];
-          } else {
-            return "";
           }
         },
         _endValidInputWatcher: function () {
@@ -6493,6 +6554,30 @@
             self._watcher = null;
           }
         },
+        _beginCancelHandler: function() {
+          var self = sinclo.scenarioApi._hearing;
+          $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').on('click', self._handleCancel);
+        },
+        _handleCancel: function(e) {
+          var self = sinclo.scenarioApi._hearing;
+          var target = $(this);
+          var targetChatId = target.data('chatId');
+          var text = target.text();
+          console.log('cancelable click %s %s', targetChatId, text);
+          var deleteTargetIds = [];
+          deleteTargetIds.push(targetChatId);
+          target.parents('div').nextAll().each(function(index, value){
+            deleteTargetIds.push($(this).find('li').data('chatId'));
+            $(this).remove();
+          });
+          target.remove();
+          self._hideMessage(deleteTargetIds);
+        },
+        _hideMessage: function(messageIds) {
+          emit('hideScenarioMessages', {
+            hideMessages: messageIds
+          });
+        },
         _process: function (forceFirst) {
           var self = sinclo.scenarioApi._hearing;
           if (forceFirst) {
@@ -6500,7 +6585,7 @@
             self._setCurrentSeq(0);
             self._parent.unsetSequenceList(self._parent.get(self._parent._lKey.currentScenarioSeqNum))
           }
-
+          self._beginCancelHandler();
           var doHearing = self._getCurrentHearingProcess();
           if (self._isTheEnd()) {
             self._executeConfirm();
@@ -6602,9 +6687,9 @@
               self._beginValidInputWatcher();
               storage.l.set('textareaOpend', 'open');
               break;
-            case "3":
-            case "4":
-            case "5":
+            case "3": // ラジオボタン
+            case "4": // プルダウン
+            case "5": // カレンダー
               sinclo.hideTextarea();
               storage.l.set('textareaOpend', 'close');
               break;
