@@ -3029,20 +3029,20 @@
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
+        var index = chatList.children.length;
 
         var messageHtml = sinclo.chatApi.createMessageHtml(message);
-        var calendarHtml = sinclo.chatApi.createCalendarHtml(settings, chatList.children.length);
+        var calendarHtml = sinclo.chatApi.createCalendarHtml(settings, index);
         div.style.textAlign = "left";
         cs += ' effect_left';
 
         li.className = cs;
         li.innerHTML = messageHtml + calendarHtml;
-        var index = chatList.children.length;
 
         options = sinclo.chatApi.createCalendarOption(settings);
         $('#sinclo-datepicker' + index).flatpickr(options);
         $('#sinclo-datepicker' + index).hide();
-        sinclo.chatApi.customDesignCalendar(settings, index);
+        sinclo.chatApi.handleCalendarEvent(settings, index);
       },
       createCalendarHtml: function(settings, index) {
         var html = "";
@@ -3105,7 +3105,7 @@
         } else {
           options.minDate = settings.disablePastDate ? 'today' : '';
         }
-
+        // set disable date
         if (settings.isDisableDayOfWeek) {
           var disableWeekDays = [];
           angular.forEach(settings.dayOfWeekSetting, function (item, key) {
@@ -3142,10 +3142,43 @@
 
         return options;
       },
-      customDesignCalendar: function (settings, index) {
+      handleCalendarEvent: function (settings, index) {
         var calendarTarget = $('#sinclo-calendar' + index);
         var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
-        firstDayOfWeek[0].innerText = settings.language == 1 ? '日' : 'Sun';
+        firstDayOfWeek[0].innerText = settings.language === 1 ? '日' : 'Sun';
+        sinclo.chatApi.customCalendarTextColor(calendarTarget, settings.customDesign);
+        // change color when change month
+        calendarTarget.find('.flatpickr-calendar .flatpickr-months').on('mousedown', function () {
+          sinclo.chatApi.customCalendarTextColor(calendarTarget, settings.customDesign);
+        });
+        // keep color when click on date
+        $('#sinclo-datepicker' + index).on('change', function () {
+          sinclo.chatApi.customCalendarTextColor(calendarTarget, settings.customDesign);
+        });
+      },
+      customCalendarTextColor: function (calendarTarget, design) {
+        var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
+        calendarTextColorTarget.each(function () {
+          if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+            $(this).css('color', design.calendarTextColor);
+          }
+        });
+
+        var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n + 1)');
+        sundayTarget.each(function () {
+          if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+            $(this).css('color', design.sundayColor);
+          }
+        });
+
+        var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
+        saturdayTarget.each(function () {
+          if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+            $(this).css('color', design.saturdayColor);
+          }
+        });
+
+        calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', design.calendarBackgroundColor);
       },
       getContrastColor: function (hex) {
         var rgb = this.hexToRgb(hex);
@@ -6187,7 +6220,6 @@
             customDesign: data.settings.customDesign
           }
         };
-        var myData = JSON.stringify(pulldownData);
         var self = sinclo.scenarioApi,
           storeObj = {
             scenarioId: self.get(self._lKey.scenarioId),
@@ -6198,7 +6230,7 @@
             requireCv: self._bulkHearing.isInMode() || (data.type === self._actionType.hearing && self._hearing._cvIsEnable()),
             categoryNum: data.categoryNum,
             showTextarea: data.showTextArea,
-            message: myData
+            message: JSON.stringify(pulldownData)
           };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function (item) {
@@ -6214,7 +6246,6 @@
           message: data.message,
           settings: data.settings
         };
-        var myData = JSON.stringify(calendarData);
         var self = sinclo.scenarioApi,
           storeObj = {
             scenarioId: self.get(self._lKey.scenarioId),
@@ -6225,7 +6256,7 @@
             requireCv: self._bulkHearing.isInMode() || (data.type === self._actionType.hearing && self._hearing._cvIsEnable()),
             categoryNum: data.categoryNum,
             showTextarea: data.showTextArea,
-            message: myData
+            message: JSON.stringify(calendarData)
           };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function (item) {
