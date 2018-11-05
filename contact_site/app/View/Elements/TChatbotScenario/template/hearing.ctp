@@ -50,7 +50,7 @@
           </div>
           <div class='area-btn'>
             <div class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn hearingBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn hearingBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
             </div>
           </div>
           <div class='area-detail'>
@@ -159,7 +159,7 @@
                     type="number" min="1" ng-disabled="!hearingItem.settings.isEnableAfterDate"
                     ng-model="hearingItem.settings.enableAfterDate">日以降を選択できるようにする
                 <span class="questionBalloon"><icon class="questionBtn"
-                                                    data-tooltip="サイト訪問日より過去の日付を選択できなくします。（過去の日付を選択できるようにする場合はチェックを外します）">?</icon></span>
+                                                    data-tooltip="サイト訪問日から設定した日数以降を選択できるようにします。例えば、当日は選択できなくし翌日以降から選択可能とする場合は「1」と設定します。">?</icon></span>
               </label>
               <br>
               <div class="cannot-select-date-setting-area">
@@ -342,10 +342,10 @@
 
                 <span class="language-setting">
                   <label>言語</label>
-                  <label class="pointer"><input type="radio" name="language" value="1"
+                  <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-language" value="1"
                                                 ng-model="hearingItem.settings.language"
                                                 style="margin-left: 60px;">日本語表記</label>
-                  <label class="pointer m20l"><input type="radio" name="language" value="2"
+                  <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-language" value="2"
                                                      ng-model="hearingItem.settings.language">英語表記</label>
                 </span>
               </div>
