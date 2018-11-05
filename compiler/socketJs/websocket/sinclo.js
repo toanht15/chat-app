@@ -3039,8 +3039,7 @@
         li.innerHTML = messageHtml + calendarHtml;
         var index = chatList.children.length;
 
-        options = sinclo.chatApi.createCalendarOption(settings, index);
-        console.log(JSON.stringify(options));
+        options = sinclo.chatApi.createCalendarOption(settings);
         $('#sinclo-datepicker' + index).flatpickr(options);
         $('#sinclo-datepicker' + index).hide();
         sinclo.chatApi.customDesignCalendar(settings, index);
@@ -3065,7 +3064,7 @@
         style += target + ' .flatpickr-calendar .dayContainer { background-color: ' + settings.customDesign.calendarBackgroundColor + '}';
         style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.selected { background-color: ' + settings.customDesign.headerBackgroundColor + '; color: ' + sinclo.chatApi.getContrastColor(settings.customDesign.headerBackgroundColor) + ' !important;}';
         style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none }';
-        // style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { background-color: ' + settings.customDesign.calendarBackgroundColor + '};';
+        style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;  border: 1px solid ' + settings.customDesign.headerBackgroundColor + '; outline: 1px solid ' +   settings.customDesign.headerWeekdayBackgroundColor + ';}';
         style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid' + settings.customDesign.headerWeekdayBackgroundColor +  '; border-right: 1px solid ' + settings.customDesign.headerWeekdayBackgroundColor + ';}';
         style += target + ' .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none }';
         style += target + ' .flatpickr-calendar span.flatpickr-weekday { color: ' + sinclo.chatApi.getContrastColor(settings.customDesign.headerWeekdayBackgroundColor) +  ' !important; };';
@@ -3073,7 +3072,7 @@
 
         return style;
       },
-      createCalendarOption: function (settings, index) {
+      createCalendarOption: function (settings) {
         var japaneseCalendar = {
           dateFormat: "Y/m/d",
           locale: {
