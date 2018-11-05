@@ -6599,6 +6599,7 @@
             case "2":
               self._endInputProcess();
               sinclo.displayTextarea();
+              self._beginValidInputWatcher();
               storage.l.set('textareaOpend', 'open');
               break;
             case "3":
