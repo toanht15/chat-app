@@ -1351,6 +1351,9 @@
           } else if (Number(chat.messageType) === 41) {
             var pulldown = JSON.parse(chat.message);
             this.chatApi.addPulldown("sinclo_re", pulldown.message, userName, pulldown.settings);
+          } else if (Number(chat.messageType) === 42) {
+            var calendar = JSON.parse(chat.message);
+            this.chatApi.addCalendar("sinclo_re", calendar.message, calendar.settings);
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
@@ -1562,6 +1565,7 @@
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.text
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.pulldown
+          || obj.messageType === sinclo.chatApi.messageType.scenario.message.calendar
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
           if (obj.messageType !== sinclo.chatApi.messageType.auto && storage.s.get('requestFlg') === 'true') {
@@ -2392,6 +2396,12 @@
             sinclo.chatApi.send(e.target.value.trim());
           });
 
+          $(document).on('change', "[name^='sinclo-datepicker']", function (e) {
+            if(e) e.stopPropagation();
+            console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
+            sinclo.chatApi.send(e.target.value.trim());
+          });
+
           $(document)
             .on('focus', "#sincloChatMessage,#miniSincloChatMessage",function(e){
               if(e) e.stopPropagation();
@@ -3077,22 +3087,139 @@
 
         var messageHtml = sinclo.chatApi.createMessageHtml(message);
         var calendarHtml = sinclo.chatApi.createCalendarHtml(settings, chatList.children.length);
-        // var pulldownHtml = sinclo.chatApi.createPullDownHtml(settings, chatList.children.length);
         div.style.textAlign = "left";
         cs += ' effect_left';
 
         li.className = cs;
         li.innerHTML = messageHtml + calendarHtml;
-        $('#sinclo-datepicker' + chatList.children.length).flatpickr({inline: 'true'});
-        // $('#sinclo-datapicker' + chatList.children.length).hide();
+        var index = chatList.children.length;
+
+        options = sinclo.chatApi.createCalendarOption(settings, index);
+        console.log(JSON.stringify(options));
+        $('#sinclo-datepicker' + index).flatpickr(options);
+        $('#sinclo-datepicker' + index).hide();
+        sinclo.chatApi.customDesignCalendar(settings, index);
       },
       createCalendarHtml: function(settings, index) {
         var html = "";
-        html += '<div style="margin-top: 10px" name="sinclo-calendar' + index + '">';
-        html += '<input type="text" id="sinclo-datepicker' + index + '">';
+        html += sinclo.chatApi.createCalendarStyle(settings, index);
+        html += '<div style="margin-top: 10px" id="sinclo-calendar' + index + '" name="sinclo-calendar' + index + '">';
+        html += '<input type="text" name="sinclo-datepicker' + index + '" id="sinclo-datepicker' + index + '">';
         html += '</div>';
 
         return html;
+      },
+      createCalendarStyle: function (settings, index) {
+        var style = '<style>';
+        var target = '#sincloBox ul#chatTalk li.sinclo_re #sinclo-calendar' + index;
+        style += target + ' .flatpickr-calendar { border: 2px solid ' + settings.customDesign.borderColor + '}';
+        style += target + ' .flatpickr-calendar .flatpickr-months { background: ' + settings.customDesign.headerBackgroundColor + '} ';
+        style += target + ' .flatpickr-calendar .flatpickr-months .flatpickr-month { color: ' + settings.customDesign.headerTextColor + '}';
+        style += target + ' .flatpickr-calendar .flatpickr-weekdays { background: ' + settings.customDesign.headerWeekdayBackgroundColor + '}';
+        style += target + ' .flatpickr-calendar .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: ' + settings.customDesign.headerTextColor + '}';
+        style += target + ' .flatpickr-calendar .dayContainer { background-color: ' + settings.customDesign.calendarBackgroundColor + '}';
+        style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.selected { background-color: ' + settings.customDesign.headerBackgroundColor + '; color: ' + sinclo.chatApi.getContrastColor(settings.customDesign.headerBackgroundColor) + ' !important;}';
+        style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none }';
+        // style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { background-color: ' + settings.customDesign.calendarBackgroundColor + '};';
+        style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid' + settings.customDesign.headerWeekdayBackgroundColor +  '; border-right: 1px solid ' + settings.customDesign.headerWeekdayBackgroundColor + ';}';
+        style += target + ' .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none }';
+        style += target + ' .flatpickr-calendar span.flatpickr-weekday { color: ' + sinclo.chatApi.getContrastColor(settings.customDesign.headerWeekdayBackgroundColor) +  ' !important; };';
+        style += '</style>';
+
+        return style;
+      },
+      createCalendarOption: function (settings, index) {
+        var japaneseCalendar = {
+          dateFormat: "Y/m/d",
+          locale: {
+            firstDayOfWeek: 0,
+            weekdays: {
+              shorthand: ["日", "月", "火", "水", "木", "金", "土"],
+              longhand: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
+            },
+            months: {
+              shorthand: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+              longhand: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+            },
+          },
+        };
+        var options = {
+          dateFormat: "Y/m/d",
+          minDate: 'today',
+          inline: 'true',
+          disable: [],
+          enable: [],
+          locale: {
+            firstDayOfWeek: 0
+          },
+        };
+        // set language
+        options.locale = settings.language == 1 ? japaneseCalendar.locale : {firstDayOfWeek: 0};
+        // set minDate
+        if (settings.isEnableAfterDate) {
+          options.minDate = new Date().fp_incr(settings.enableAfterDate);
+        } else {
+          options.minDate = settings.disablePastDate ? 'today' : '';
+        }
+
+        if (settings.isDisableDayOfWeek) {
+          var disableWeekDays = [];
+          angular.forEach(settings.dayOfWeekSetting, function (item, key) {
+            if (item) {
+              disableWeekDays.push(key);
+            }
+          });
+
+          options.disable = [
+            function (date) {
+              return disableWeekDays.indexOf(date.getDay()) !== -1;
+            },
+          ];
+        } else {
+          options.disable = [];
+        }
+
+        if (settings.isSetSpecificDate) {
+          if (settings.setSpecificDateType == 1) {
+            var disableLength = options.disable.length;
+            angular.forEach(settings.specificDateData, function (item, key) {
+              options.disable[key + disableLength] = item;
+            });
+          }
+
+          if (settings.setSpecificDateType == 2) {
+            angular.forEach(settings.specificDateData, function (item, key) {
+              options.enable[key] = item;
+            });
+          }
+        } else {
+          settings.specificDateData = [""];
+        }
+
+        return options;
+      },
+      customDesignCalendar: function (settings, index) {
+        var calendarTarget = $('#sinclo-calendar' + index);
+        var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
+        firstDayOfWeek[0].innerText = settings.language == 1 ? '日' : 'Sun';
+      },
+      getContrastColor: function (hex) {
+        var rgb = this.hexToRgb(hex);
+        var brightness;
+        brightness = (rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114);
+        brightness = brightness / 255000;
+        // values range from 0 to 1
+        // anything greater than 0.5 should be bright enough for dark text
+        return brightness >= 0.5 ? 'black' : 'white';
+      },
+
+      hexToRgb: function (hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null;
       },
       createPullDownHtml: function (settings, index) {
         var style = sinclo.chatApi.createPulldownStyle(settings);
@@ -6027,8 +6154,7 @@
           sinclo.chatApi.addCalendar('sinclo_re', params.message, params.settings);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), params.categoryNum);
           sinclo.chatApi.scDown();
-          // ローカルに蓄積しておく
-          // self._putHearingPulldown(params, callback);
+          self._putHearingCalendar(params, callback);
         } else {
           callback();
         }
@@ -6124,7 +6250,6 @@
           }
         };
         var myData = JSON.stringify(pulldownData);
-        console.log('TTTTTTTTTTTTTTTTTTTTTTTTTTTTT' + myData);
         var self = sinclo.scenarioApi,
           storeObj = {
             scenarioId: self.get(self._lKey.scenarioId),
@@ -6135,7 +6260,33 @@
             requireCv: self._bulkHearing.isInMode() || (data.type === self._actionType.hearing && self._hearing._cvIsEnable()),
             categoryNum: data.categoryNum,
             showTextarea: data.showTextArea,
-            // message: data.message
+            message: myData
+          };
+        if (self._disallowSaveing()) {
+          self._pushScenarioMessage(storeObj, function (item) {
+            self._saveMessage(item.data);
+            callback();
+          });
+        } else {
+          self._storeMessageToDB([storeObj], callback);
+        }
+      },
+      _putHearingCalendar: function (data, callback) {
+        var calendarData = {
+          message: data.message,
+          settings: data.settings
+        };
+        var myData = JSON.stringify(calendarData);
+        var self = sinclo.scenarioApi,
+          storeObj = {
+            scenarioId: self.get(self._lKey.scenarioId),
+            type: data.type,
+            uiType: data.uiType,
+            messageType: self.get(self._lKey.scenarioMessageType),
+            sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
+            requireCv: self._bulkHearing.isInMode() || (data.type === self._actionType.hearing && self._hearing._cvIsEnable()),
+            categoryNum: data.categoryNum,
+            showTextarea: data.showTextArea,
             message: myData
           };
         if (self._disallowSaveing()) {
