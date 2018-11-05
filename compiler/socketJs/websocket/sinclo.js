@@ -2066,8 +2066,8 @@
           }
         });
         if(disabled) {
-          $('#sincloChatMessage').prop('disabled', true);
-          $('#miniSincloChatMessage').prop('disabled', true);
+          $('#sincloChatMessage').prop('disabled', true).css('background-color', '#DDD');
+          $('#miniSincloChatMessage').prop('disabled', true).css('background-color', '#DDD');
         }
         $('#miniSincloChatMessage').on('input', function(){
           if($(this).val().length > 0) {
@@ -2079,8 +2079,8 @@
       } else {
         $('#sincloChatSendBtn').text('送信');
         $('#miniSincloChatSendBtn').text('送信');
-        $('#sincloChatMessage').prop('disabled', false);
-        $('#miniSincloChatMessage').prop('disabled', false);
+        $('#sincloChatMessage').prop('disabled', false).css('background-color', sincloInfo.widget.messageBoxBackgroundColor);
+        $('#miniSincloChatMessage').prop('disabled', false).css('background-color', sincloInfo.widget.messageBoxBackgroundColor);
       }
       var delayTime = sinclo.textareaTimerController();
       sinclo.displayTextareaDelayTimer = setTimeout(function(){
