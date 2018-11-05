@@ -2046,7 +2046,7 @@
       }
       return delayTime;
     },
-    displayTextarea: function(){
+    displayTextarea: function(skippable, disabled){
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaCalled<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
       if(!document.getElementById("flexBoxWrap")) return;
       if((check.isset(window.sincloInfo.custom)
@@ -2054,6 +2054,33 @@
         && window.sincloInfo.custom.widget.forceHideMessageArea)) {
         sinclo.hideTextarea();
         return;
+      }
+      if(skippable) {
+        $('#sincloChatSendBtn').text('スキップ');
+        $('#miniSincloChatSendBtn').text('スキップ');
+        $('#sincloChatMessage').on('input', function(){
+          if($(this).val().length > 0) {
+            $('#sincloChatSendBtn').text('送信');
+          } else {
+            $('#sincloChatSendBtn').text('スキップ');
+          }
+        });
+        if(disabled) {
+          $('#sincloChatMessage').prop('disabled', true);
+          $('#miniSincloChatMessage').prop('disabled', true);
+        }
+        $('#miniSincloChatMessage').on('input', function(){
+          if($(this).val().length > 0) {
+            $('#miniSincloChatSendBtn').text('送信');
+          } else {
+            $('#miniSincloChatSendBtn').text('スキップ');
+          }
+        });
+      } else {
+        $('#sincloChatSendBtn').text('送信');
+        $('#miniSincloChatSendBtn').text('送信');
+        $('#sincloChatMessage').prop('disabled', false);
+        $('#miniSincloChatMessage').prop('disabled', false);
       }
       var delayTime = sinclo.textareaTimerController();
       sinclo.displayTextareaDelayTimer = setTimeout(function(){
@@ -3899,6 +3926,11 @@
         if (check.isset(elm.value) && !req.test(elm.value)) {
           this.send(elm.value);
           elm.value = "";
+        } else if(!check.isset(elm.value) && $(elm).next().text() === "スキップ") {
+          common.chatBotTyping({forceWaitAnimation: true});
+          if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput() && sinclo.scenarioApi._hearing.isHearingMode()) {
+            sinclo.scenarioApi.triggerInputWaitComplete("");
+          }
         }
         this.pushFlg = false;
       },
@@ -6436,7 +6468,7 @@
       _valid: function (typeStr, val) {
         var self = sinclo.scenarioApi;
         var regex = new RegExp(self._validation[Number(typeStr)]);
-        return regex.test(val);
+        return val === "" || regex.test(val);
       },
       _speakText: function () {
         // クロージャー用
@@ -6807,7 +6839,7 @@
           }
 
           self._parent._doing(intervalTimeSec, function () {
-            self._handleChatTextArea(self._getCurrentHearingProcess().uiType);
+            self._handleChatTextArea(self._getCurrentHearingProcess().uiType, self._getCurrentHearingProcess().required);
             self._parent.setPlaceholderMessage(self._parent.getPlaceholderMessage());
             var afterShowMessageProcess = function () {
               sinclo.chatApi.addKeyDownEventToSendChat();
@@ -6874,25 +6906,30 @@
               //TODO 旧IFを吸収する
           }
         },
-        _handleChatTextArea: function (type) {
+        _handleChatTextArea: function (type, required) {
           var self = sinclo.scenarioApi._hearing;
           switch (type) {
             case "1":
               self._endInputProcess();
-              sinclo.displayTextarea();
+              sinclo.displayTextarea(!required, false);
               self._beginValidInputWatcher();
               storage.l.set('textareaOpend', 'open');
               break;
             case "2":
               self._endInputProcess();
-              sinclo.displayTextarea();
+              sinclo.displayTextarea(!required, false);
               self._beginValidInputWatcher();
               storage.l.set('textareaOpend', 'open');
               break;
             case "3": // ラジオボタン
             case "4": // プルダウン
             case "5": // カレンダー
-              sinclo.hideTextarea();
+              if(!required) {
+                sinclo.chatApi.showMiniMessageArea();
+                sinclo.displayTextarea(true, true);
+              } else {
+                sinclo.hideTextarea();
+              }
               storage.l.set('textareaOpend', 'close');
               break;
             default:
