@@ -3796,6 +3796,7 @@ var socket, // socket.io
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
              ||obj.messageType === sinclo.chatApi.messageType.scenario.message.pulldown
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.calendar
              ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection){
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text
@@ -5725,7 +5726,8 @@ function emit(evName, data, callback){
     data.title = common.title();
   }
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat" ||
-  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue" || evName === "beginBulkHearing" || evName === "sendParseSignature") {
+  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue" || evName === "beginBulkHearing" || evName === "sendParseSignature"
+  || evName === "hideScenarioMessages") {
     data.userId = userInfo.userId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||

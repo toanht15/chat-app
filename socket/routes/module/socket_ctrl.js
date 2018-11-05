@@ -3785,15 +3785,17 @@ io.sockets.on('connection', function(socket) {
     ack({data: scenario});
   });
 
-  socket.on("hideScenarioMessages", function(data, ack){
+  socket.on("hideScenarioMessages", function(data, ack) {
     var obj = JSON.parse(data);
-    var q = "";
-    for(var i=0; i<obj.hideMessages.length; i++) {
-      q += obj.hideMessages[i] + ","
+    var minChatId = Number.MAX_VALUE;
+    for (var i = 0; i < obj.hideMessages.length; i++) {
+      var targetChatId = Number(obj.hideMessages[i]);
+      if (targetChatId !== 0 && minChatId > targetChatId) {
+        minChatId = targetChatId;
+      }
     }
-    q = q.slice(0,-1);
-    pool.query('update t_history_chat_logs set hide_flg=1 where id in (?) and m_companies_id = ?;', [q, companyList[obj.siteKey]],
-      function(err, result){
+    pool.query('update t_history_chat_logs set hide_flg=1 where id >= ? and m_companies_id = ? and visitors_id = ?;', [minChatId, companyList[obj.siteKey], obj.userId],
+      function (err, result) {
 
       });
   });
