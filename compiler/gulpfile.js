@@ -91,6 +91,7 @@ gulp.task('minify-js-dev', function(){
     .pipe(sourcemaps.init())
     .pipe(gulp.dest(path.minjs))
     .pipe(uglify(uglifyOpt))
+    .on('error', function(e){console.log(e);})
     .pipe(rename({
       extname: '.min.js'
     }))
