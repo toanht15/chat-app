@@ -94,6 +94,7 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioBranchOnConditionMatchValueType = Configure::read('chatbotScenarioBranchOnConditionMatchValueType');
     $this->chatbotScenarioBranchOnConditionActionType = Configure::read('chatbotScenarioBranchOnConditionActionType');
     $this->chatbotScenarioBranchOnConditionElseActionType = Configure::read('chatbotScenarioBranchOnConditionElseActionType');
+    $this->chatbotScenarioLeadTypeList = Configure::read('chatbotScenarioLeadTypeList');
 
     // FileAppController
     $this->fileTransferPrefix = "fileScenarioTransfer/";
@@ -1037,6 +1038,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioBranchOnConditionActionType', $this->chatbotScenarioBranchOnConditionActionType);
     // 条件分岐アクション種別（上記を満たさない場合）
     $this->set('chatbotScenarioBranchOnConditionElseActionType', $this->chatbotScenarioBranchOnConditionElseActionType);
+    // リード登録リードリスト名種別
+    $this->set('chatbotScenarioLeadTypeList', $this->chatbotScenarioLeadTypeList);
     // ファイル受信用にcompany_keyをsetしておく
     $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
     // 最後に表示していたページ番号
