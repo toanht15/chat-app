@@ -371,7 +371,7 @@ $(function(){
       if($('.recieveFileContent')[number]) {
         $('.recieveFileContent')[number].style.cursor = "pointer";
         $('.recieveFileContent')[number].addEventListener("click", function (event) {
-          window.open("<?=$downloadUrl?>")
+
         });
       }
     }

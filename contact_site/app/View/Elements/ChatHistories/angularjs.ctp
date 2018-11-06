@@ -212,7 +212,8 @@
     $scope.createTextOfMessage = function(chat, message, opt) {
       var strings = message.split(/\n|<br>/g);
       var custom = "";
-      var isSmartphone = false;
+      //電話番号リンク化対応でfalse→true
+      var isSmartphone = true;
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
       for (var i = 0; strings.length > i; i++) {
