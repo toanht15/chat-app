@@ -928,10 +928,10 @@ var db = {
     if (isset(obj.customVariables)) {
       var customVariables = obj.customVariables;
       var found = false;
-
+      var customerInfo = (isset(sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo)) ? sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo : {};
       if (Object.keys(customVariables).length !== 0) {
-        Object.keys(customVariables).forEach(function(elm, index, arr) {
-          if (isset(customVariables[elm])) {
+        Object.keys(customVariables).forEach(function (elm, index, arr) {
+          if (isset(customVariables[elm]) && customVariables[elm] !== customerInfo[elm]) {
             found = true;
           }
         });
@@ -951,15 +951,17 @@ var db = {
                 currentData[key] = customVariables[key];
               }
             });
-            pool.query('UPDATE m_customers set informations = ? where id = ? ', [JSON.stringify(currentData), row[0].id], function(err, result) {
-              if (callback) callback({
+            pool.query('UPDATE m_customers set informations = ? where id = ? ', [JSON.stringify(currentData), row[0].id], function (err, result) {
+              sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = currentData;
+              if(callback) callback({
                 userId: obj.userId,
                 data: JSON.stringify(currentData)
               });
             });
           } else {
-            pool.query('INSERT INTO m_customers VALUES (NULL, ?, ?, ?, now(), 0, NULL, NULL, NULL, NULL)', [companyList[obj.siteKey], obj.userId, JSON.stringify(customVariables)], function(err, result) {
-              if (callback) callback({
+            pool.query('INSERT INTO m_customers VALUES (NULL, ?, ?, ?, now(), 0, NULL, NULL, NULL, NULL)', [companyList[obj.siteKey], obj.userId, JSON.stringify(customVariables)], function (err, result) {
+              sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = customVariables;
+              if(callback) callback({
                 userId: obj.userId,
                 data: JSON.stringify(customVariables)
               });
@@ -2186,8 +2188,8 @@ io.sockets.on('connection', function(socket) {
         if (val.time) {
           val.term = timeCalculator(val);
         }
-        customerApi.getInformations(val.userId, val.siteKey, function(information) {
-          val.customerInfo = information;
+
+        var afterGetCustomerInformations = function() {
           if (functionManager.isEnabled(siteKey, functionManager.keyList.chat)) {
             chatApi.getUnreadCnt(val, function(ret) {
               val['chatUnreadId'] = ret.chatUnreadId;
@@ -2237,7 +2239,22 @@ io.sockets.on('connection', function(socket) {
             }
             totalCounter++;
           }
-        });
+        };
+
+        var sincloSessionId = getSessionId(val.siteKey, val.tabId, 'sincloSessionId');
+        if(isset(sincloCore[val.siteKey][sincloSessionId]) && isset(sincloCore[val.siteKey][sincloSessionId].customerInfo)) {
+          val.customerInfo = sincloCore[val.siteKey][sincloSessionId].customerInfo;
+          afterGetCustomerInformations();
+        } else {
+          customerApi.getInformations(val.userId, val.siteKey, function (information) {
+            try {
+              sincloCore[val.siteKey][sincloSessionId].customerInfo = information;
+            } catch(e) {
+            }
+            val.customerInfo = information;
+            afterGetCustomerInformations()
+          });
+        }
       });
     }
     if (isset(customerList[siteKey]) && Object.keys(customerList[siteKey]).length === 0) {
@@ -2294,6 +2311,8 @@ io.sockets.on('connection', function(socket) {
       customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' + socket.id] = obj;
       if ((('contract' in obj) && ('chat' in obj.contract) && obj.contract.chat === false) || functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) return false;
       chatApi.sendUnreadCnt("sendChatInfo", obj, false);
+
+      sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = obj.customerInfo;
     };
 
     if (isset(company.info[obj.siteKey]) && Object.keys(company.info[obj.siteKey]).length > 0) {
