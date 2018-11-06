@@ -2874,12 +2874,13 @@ function actionValidationCheck(element, setActionList, actionItem) {
         messageList.push('リードリスト名”お客様情報②”は既に使用されています');
       }
 
-      actionItem.leadRegister.some(function(elm) {
-        if (!elm.leadLabelName || elm.leadLabelName === "") {
-          console.log(elm);
-          messageList.push('リードリスト項目を設定してください');
-        }
+      var invalidLabelName = actionItem.leadRegister.some(function(elm) {
+        return !elm.leadLabelName || elm.leadLabelName === "";;
       });
+
+      if(invalidLabelName) {
+        messageList.push('リードリスト項目を設定してください');
+      }
     }
 
     /*リード選択時
