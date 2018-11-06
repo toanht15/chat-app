@@ -3091,7 +3091,7 @@
             }
 
             if (radioSelectedStr !== "") {
-              contenct += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>OK</span></p>"
+              content += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>OK</span></p>"
             }
 
         if (obj.cn.indexOf("sinclo_re") !== -1) {
@@ -6906,13 +6906,13 @@
             case "2":
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
-                $('#sincloChatMessage').val(self._parent._getStoredVariable(self._getCurrentHearingProcess().variableName));
+                $('#sincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
               }
               break;
             case "3": // ラジオボタン
               message += "\n";
               settings.options.forEach(function(elm, index, arr) {
-                if(self._parent._getCurrentScenario().restore && self._parent._getStoredVariable(self._getCurrentHearingProcess().variableName) === elm) {
+                if(self._parent._getCurrentScenario().restore && self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName) === elm) {
                   message += "[*] " + elm + "\n";
                 } else {
                   message += "[] " + elm + "\n";
@@ -6929,7 +6929,7 @@
                 categoryNum: self._getCurrentSeq(),
               };
               if(self._parent._getCurrentScenario().restore) {
-                params.storedValue = self._parent._getStoredVariable(self._getCurrentHearingProcess().variableName);
+                params.storedValue = self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName);
               }
               self._parent._showPullDown(params, callback);
               break;
