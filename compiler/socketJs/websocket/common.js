@@ -1209,9 +1209,9 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { grid-column: 3/4; grid-row: 1/2; -ms-grid-column: 3; -ms-grid-row: 1; }';
 
         /* Cogmo */
-        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { cursor: pointer; background-color: ' + colorList['reTextColor'] + '; text-align: center; padding: 10px; border-radius: 12px; margin: 5px 0px;}';
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { cursor: pointer; background-color: ' + colorList['reTextColor'] + '; text-align: center; padding: 10px; margin: 5px 0px;}';
         html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap:hover { opacity: 0.8 }';
-        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { color: ' + colorList['reBackgroundColor'] + '; font-size: ' + widget.reTextSize + 'px;}';
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { margin: 0 30px; color: ' + colorList['reBackgroundColor'] + '; font-size: ' + widget.reTextSize + 'px;}';
         html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
 
         if(colorList['widgetInsideBorderNone'] === 1){

@@ -3142,7 +3142,7 @@
         li.className = cs;
         li.innerHTML = messageHtml + pulldownHtml;
       },
-      addCalendar: function (cs, message, settings) {
+      addCalendar: function (cs, message, settings, storedValue) {
         common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
@@ -3153,7 +3153,7 @@
         chatList.appendChild(div);
 
         var messageHtml = sinclo.chatApi.createMessageHtml(message);
-        var calendarHtml = sinclo.chatApi.createCalendarHtml(settings, chatList.children.length);
+        var calendarHtml = sinclo.chatApi.createCalendarHtml(settings, chatList.children.length, storedValue);
         div.style.textAlign = "left";
         cs += ' effect_left';
 
@@ -3167,13 +3167,21 @@
         $('#sinclo-datepicker' + index).hide();
         sinclo.chatApi.customDesignCalendar(settings, index);
       },
-      createCalendarHtml: function(settings, index) {
+      createCalendarHtml: function(settings, index, storedValue) {
         var html = "";
+        var storedValueIsFound = false;
         html += sinclo.chatApi.createCalendarStyle(settings, index);
         html += '<div style="margin-top: 10px" id="sinclo-calendar' + index + '" name="sinclo-calendar' + index + '">';
-        html += '<input type="text" name="sinclo-datepicker' + index + '" id="sinclo-datepicker' + index + '">';
+        if(storedValue) {
+          storedValueIsFound = true;
+          html += '<input type="text" name="sinclo-datepicker' + index + '" id="sinclo-datepicker' + index + '" value="' + storedValue + '">';
+        } else {
+          html += '<input type="text" name="sinclo-datepicker' + index + '" id="sinclo-datepicker' + index + '">';
+        }
         html += '</div>';
-
+        if (storedValueIsFound) {
+          html += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + storedValue + "\")'><span class='sincloButton'>OK</span></p>"
+        }
         return html;
       },
       createCalendarStyle: function (settings, index) {
@@ -3305,7 +3313,7 @@
         });
         html += '</select>';
 
-        if (storedValueIsFound !== "") {
+        if (storedValueIsFound) {
           html += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + storedValue + "\")'><span class='sincloButton'>OK</span></p>"
         }
 
@@ -6237,7 +6245,7 @@
         var self = sinclo.scenarioApi;
         params.message = self._replaceVariable(params.message);
         if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), params.categoryNum)) {
-          sinclo.chatApi.addCalendar('sinclo_re', params.message, params.settings);
+          sinclo.chatApi.addCalendar('sinclo_re', params.message, params.settings, params.storedValue);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), params.categoryNum);
           sinclo.chatApi.scDown();
           self._putHearingCalendar(params, callback);
@@ -6941,6 +6949,9 @@
                 settings: settings,
                 categoryNum: self._getCurrentSeq()
               };
+              if(self._parent._getCurrentScenario().restore) {
+                params.storedValue = self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName);
+              }
               self._parent._showCalendar(params, callback);
               break;
             default:
