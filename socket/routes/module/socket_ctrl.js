@@ -26,6 +26,7 @@ log4js.configure('./log4js_setting.json'); // 設定ファイル読み込み
 var reqlogger = log4js.getLogger('request'); // リクエスト用のロガー取得
 var errlogger = log4js.getLogger('error'); // エラー用のロガー取得
 var deblogger = log4js.getLogger('debug'); // デバッグ用のロガー取得
+var scenarioLogger = log4js.getLogger('traceScenario');
 
 //サーバインスタンス作成
 var io = require('socket.io')(process.env.WS_PORT),
@@ -533,6 +534,30 @@ function getMessageTypeBySenarioActionType(type) {
   return result;
 }
 
+function getMessageTypeByUiType(type) {
+  var result = 22;
+  switch (Number(type)) {
+    case 1:
+      result = 22;
+      break;
+    case 2:
+      result = 22;
+      break;
+    case 3:
+      result = 22;
+      break;
+    case 4:
+      result = 41;
+      break;
+    case 5:
+      result = 42;
+      break;
+    default:
+        result = 22;
+  }
+  return result;
+}
+
 // Landscapeの企業情報取得
 //requestをrequire
 var http = require('http');
@@ -1022,10 +1047,10 @@ io.sockets.on('connection', function(socket) {
         chatData.historyId = historyId;
 
         var sql = "SELECT";
-        sql += " chat.id, chat.message, chat.message_type as messageType, chat.message_distinction as messageDistinction,chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.visitors_id as visitorsId,chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg,chat.notice_flg as noticeFlg, chat.created ";
+        sql += " chat.id, chat.id as chatId, chat.message, chat.message_type as messageType, chat.message_distinction as messageDistinction,chat.achievement_flg as achievementFlg,chat.delete_flg as deleteFlg, chat.visitors_id as visitorsId,chat.m_users_id as userId, mu.display_name as userName, chat.message_read_flg as messageReadFlg,chat.notice_flg as noticeFlg, chat.hide_flg, chat.created ";
         sql += "FROM t_history_chat_logs AS chat ";
         sql += "LEFT JOIN m_users AS mu ON ( mu.id = chat.m_users_id ) ";
-        sql += "WHERE t_histories_id = ? ORDER BY created";
+        sql += "WHERE t_histories_id = ? AND chat.hide_flg = 0 ORDER BY created";
 
         pool.query(sql, [chatData.historyId], function(err, rows) {
           if (err !== null && err !== '') return false; // DB接続断対応
@@ -3709,13 +3734,20 @@ io.sockets.on('connection', function(socket) {
             }
             sincloCore[obj.siteKey][obj.sincloSessionId].scenario[elm.scenarioId][elm.sequenceNum][elm.categoryNum] = elm;
           }
+          // get message type by hearing uitype
+          if (typeof elm.uiType !== 'undefined') {
+            var messageType = getMessageTypeByUiType(elm.uiType);
+          } else {
+            var messageType = getMessageTypeBySenarioActionType(elm.type);
+          }
+
           var ret = {
             siteKey: obj.siteKey,
             tabId: obj.tabId,
             userId: obj.userId,
             mUserId: null,
             chatMessage: elm.message,
-            messageType: getMessageTypeBySenarioActionType(elm.type),
+            messageType: messageType,
             created: elm.created,
             sort: elm.sort,
             messageDistinction: messageDistinction,
@@ -3769,6 +3801,21 @@ io.sockets.on('connection', function(socket) {
     }
     emit.toSameUser('resScenarioMessage', scenario, scenario.siteKey, scenario.sincloSessionId);
     ack({data: scenario});
+  });
+
+  socket.on("hideScenarioMessages", function(data, ack) {
+    var obj = JSON.parse(data);
+    var minChatId = Number.MAX_VALUE;
+    for (var i = 0; i < obj.hideMessages.length; i++) {
+      var targetChatId = Number(obj.hideMessages[i]);
+      if (targetChatId !== 0 && minChatId > targetChatId) {
+        minChatId = targetChatId;
+      }
+    }
+    pool.query('update t_history_chat_logs set hide_flg=1 where id >= ? and m_companies_id = ? and visitors_id = ?;', [minChatId, companyList[obj.siteKey], obj.userId],
+      function (err, result) {
+
+      });
   });
 
   socket.on("callExternalApi", function(data, ack) {
@@ -3954,6 +4001,38 @@ io.sockets.on('connection', function(socket) {
       chatApi.set(obj);
       ack(obj);
     });
+  });
+
+  socket.on('traceScenarioInfo', function(data) {
+    function joinMessage(message, data) {
+      if (typeof(data) === 'object') {
+        data = JSON.stringify(data);
+      }
+      return '[' + obj.siteKey + '][' + obj.sincloSessionId + '] message => ' + message + ' data => ' + data;
+    }
+    /*
+     * {
+     *   "type": "d" or "i" or "w" or "e"
+     *   "message":
+     *   "data":
+     */
+    var obj = JSON.parse(data);
+    switch(obj.type) {
+      case "d":
+        scenarioLogger.debug(joinMessage(obj.message, obj.data));
+        break;
+      case "i":
+        scenarioLogger.info(joinMessage(obj.message, obj.data));
+        break;
+      case "w":
+        scenarioLogger.warn(joinMessage(obj.message, obj.data));
+        break;
+      case "e":
+        scenarioLogger.error(joinMessage(obj.message, obj.data));
+        break;
+      default:
+        scenarioLogger.info(joinMessage(obj.message, obj.data));
+    }
   });
 
   // ============================================

@@ -10610,6 +10610,35 @@ div.balloon {
 
 
 
+/*↓管理画面上のスマホ用小さなバナー↓*/
+#sincloBanner{
+  &.rightbottom{
+    top: 397px;
+    margin-right: 5px;
+  }
+  &.leftbottom{
+    top: 397px;
+    margin-left: 5px;
+  }
+  &.rightcenter #sincloBannerText, &.leftcenter #sincloBannerText{
+    flex-flow: column nowrap;
+    margin: 10px 5px;
+    padding: 5px;
+    svg{
+      width: 18px!important;
+      height: 18px!important;
+    }
+    #bannertext{
+      margin-left: 0;
+      margin-right: 0!important;
+      vertical-align: middle;
+      -webkit-writing-mode: vertical-rl;
+      -ms-writing-mode: tb-rl;
+      writing-mode: vertical-rl;
+      letter-spacing: 1px;
+    }
+  }
+}
 /*資料一覧*/
 #afs-popup {
   position: fixed;

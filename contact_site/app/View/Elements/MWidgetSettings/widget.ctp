@@ -1,4 +1,4 @@
-<div id="sincloBox" <?= !empty($isSpPreview) ? 'class="sp-preview" ng-class=\'{noTextarea: chat_init_show_textarea === "2", fullSize:sp_maximize_size_type==="2", simpleHeader:sp_header_light_flg==="1"}\' ng-if="showWidgetType === 3"' : "ng-if=\"showWidgetType !== 2 && showWidgetType !== 3\"" ?>  ng-hide="showWidgetType === 4" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4')}">
+<div id="sincloBox" <?= !empty($isSpPreview) ? 'class="sp-preview" ng-class=\'{noTextarea: chat_init_show_textarea === "2", fullSize:sp_maximize_size_type==="2", simpleHeader:sp_header_light_flg==="1"}\' ng-show="showWidgetType === 3 && viewSpWidget"' : "ng-if=\"showWidgetType !== 2 && showWidgetType !== 3\"" ?>  ng-hide="showWidgetType === 4 || (showWidgetType === 3 && !viewSpWidget)" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4')}">
   <style>
     /* http://meyerweb.com/eric/tools/css/reset/
        v2.0 | 20110126
@@ -350,7 +350,7 @@
       <p id="widgetTitle" class="widgetOpener notSelect" ng-class="viewWidgetSetting('size,sp,toptitle,topimg')">{{title}}</p>
       <!-- タイトル -->
       <div id="minimizeBtn" class="widgetOpener" ng-class="" style="display: block;"></div>
-      <div id="closeBtn" ng-click="switchWidget(4)" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
+      <div id="closeBtn" ng-click="closeAct()" ng-class="{closeButtonSetting: closeButtonSettingToggle === '2'}"></div>
     </div>
     <div id='descriptionSet' class="widgetOpener notSelect" ng-hide=" spHeaderLightToggle() || (mainImageToggle == '2' && subTitleToggle == '2' && descriptionToggle == '2')">
       <!-- サブタイトル -->
