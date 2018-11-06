@@ -193,6 +193,7 @@ router.get("/", function (req, res, next) {
           break;
         case 2:
         case 3:
+        case 4:
           headerTextSize = 15;
           seTextSize = 13;
           reTextSize = 13;
@@ -219,6 +220,16 @@ router.get("/", function (req, res, next) {
       var btwButtonMargin = 4;
       if ('btwButtonMargin' in settings) {
         btwButtonMargin = settings.btwButtonMargin;
+      }
+
+      var chatSendBtnTextSize = 13;
+      if ('chatSendBtnTextSize' in settings) {
+        chatSendBtnTextSize = settings.chatSendBtnTextSize;
+      }
+
+      var messageBoxTextSize = 13;
+      if ('messageBoxTextSize' in settings) {
+        messageBoxTextSize = settings.messageBoxTextSize;
       }
 
 
@@ -355,6 +366,9 @@ router.get("/", function (req, res, next) {
 
         lineButtonMargin: isNumeric(lineButtonMargin),
         btwButtonMargin: isNumeric(btwButtonMargin),
+
+        chatSendBtnTextSize: isNumeric(chatSendBtnTextSize),
+        messageBoxTextSize: isNumeric(messageBoxTextSize),
 
         /* スマホ隠しパラメータstart */
         spScrollViewSetting: isNumeric(spScrollViewSetting),

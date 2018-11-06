@@ -567,7 +567,7 @@ $( function() {
     }
   });
 
-  //ページ全体を監視して何らかのクリックがあった時
+  // ページ全体を監視して何らかのクリックがあった時
   $(document).on('click touchend', function(event) {
     var index = document.getElementById("select_tab_index").value;
     //メニューオープン以外の動きだったら

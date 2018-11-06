@@ -30,6 +30,8 @@ sincloApp.factory('SimulatorService', function() {
     _openFlg: true,
     _showTab: 'chat',
     _isTextAreaOpen: true,
+    _currentActionStep: 0,
+    _currentHearingIndex: 0,
     set settings(obj) {
       this._settings = obj;
     },
@@ -94,6 +96,9 @@ sincloApp.factory('SimulatorService', function() {
     get isLargeSize() {
       return this._showWidgetType === 1 && this._settings['widget_size_type'] === '3';
     },
+    get isMaximumSize(){
+      return this._showWidgetType === 1 && this._settings['widget_size_type'] === '4';
+    },
     // パラメータ取得(設定の有無)
     get widget_outside_border_none() {
       return this._settings['widget_border_color'] === 'なし';
@@ -132,14 +137,23 @@ sincloApp.factory('SimulatorService', function() {
     get showTab() {
       return this._showTab;
     },
+    setCurrentActionStep: function(val) {
+      this._currentActionStep = val;
+    },
+    setCurrentHearingIndex: function(val) {
+      this._currentHearingIndex = val;
+    },
+    getCurrentActionStep: function() {
+      return this._currentActionStep;
+    },
+    getCurrentHearingIndex: function() {
+      return this._currentHearingIndex;
+    },
     // 関数
     getSeBackgroundColor: function(){
       var defColor = "#FFFFFF";
       //仕様変更、常に高度な設定が当たっている状態とする
       defColor = this._settings.se_background_color;
-//       if($scope.color_setting_type === '1'){
-//         defColor = $scope.se_background_color;
-//       }
       return defColor;
     },
     getTalkBorderColor: function(chk) {
@@ -151,17 +165,6 @@ sincloApp.factory('SimulatorService', function() {
       else{
         defColor = this._settings.se_border_color;
       }
-//       if(self.widgetSettings..color_setting_type === '1'){
-//         if(chk === 're'){
-//           defColor = self.widgetSettings..re_border_color;
-//         }
-//         else{
-//           defColor = self.widgetSettings..se_border_color;
-//         }
-//       }
-//       else{
-//         defColor = self.widgetSettings.chat_talk_border_color;
-//       }
       return defColor;
     },
     /**
@@ -374,6 +377,176 @@ sincloApp.factory('SimulatorService', function() {
     isPictureImage: function() {
       return this.settings['main_image'].match(/^http/) !== null;
     },
+    //param : String型 ng-classで付けたい情報を渡す
+    //TODO 受け取った情報をカンマで分割してfor文を回したほうがいい
+    viewWidgetSetting: function (param){
+      var widgetClasses = {};
+      if(typeof param !== 'undefined' && param.indexOf("size") !== -1){
+        widgetClasses = this.setWidgetSizeSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("sp") !== -1){
+        widgetClasses = this.setSmartPhoneSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("toptitle") !== -1){
+        widgetClasses = this.setTitlePositionSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("topname") !== -1){
+        widgetClasses = this.setHeaderNamePositionSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("desc") !== -1){
+        widgetClasses = this.setHeaderDescPositionSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("topimg") !== -1){
+        widgetClasses = this.setHeaderImageSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("outsideborder") !== -1){
+        widgetClasses = this.setOutSideBorderSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("insideborder") !== -1){
+        widgetClasses = this.setInSideBorderSetting(widgetClasses);
+      }
+      if(typeof param !== 'undefined' && param.indexOf("headercontent") !== -1){
+        widgetClasses = this.setHeaderContentSetting(widgetClasses);
+      }
+      return widgetClasses;
+    },
+
+    /*ng-class用のオブジェクトを設定する関数群--開始--*/
+
+
+    setWidgetSizeSetting : function (obj){
+      obj.middleSize = this.judgeSize("middle");
+      obj.largeSize = this.judgeSize("large");
+      return obj;
+    },
+
+    setSmartPhoneSetting : function (obj){
+      obj.spText = this.isSmartPhonePortrait();
+      obj.sp = this.isSmartPhonePortrait();
+      return obj;
+    },
+
+    setTitlePositionSetting : function(obj){
+      if (Number(this._settings.widget_title_top_type) === 1){
+        obj["leftPositionTitle"] = true;
+      } else if (Number(this._settings.widget_title_top_type) === 2){
+        obj["centerPositionTitle"] = true;
+      }
+      return obj;
+    },
+
+    setHeaderNamePositionSetting : function(obj){
+      if (Number(this.subTitleToggle) === 2){
+        obj["noCompany"] = true;
+      } else if (Number(this.subTitleToggle) === 1){
+        if (Number(this._settings.widget_title_name_type) === 1){
+          obj["leftPosition"] = true;
+        } else if (Number(this._settings.widget_title_name_type) === 2) {
+          obj["centerPosition"] = true;
+        }
+      }
+      return obj;
+    },
+
+    setHeaderDescPositionSetting : function(obj){
+      if (Number(this.descriptionToggle) === 2){
+        obj["noExplain"] = true;
+      } else if (Number(this.descriptionToggle) === 1){
+        if (Number(this._settings.widget_title_explain_type) === 1){
+          obj["leftPosition"] = true;
+        } else if (Number(this._settings.widget_title_explain_type) === 2) {
+          obj["centerPosition"] = true;
+        }
+      }
+      return obj;
+    },
+
+    setHeaderImageSetting : function(obj){
+      if (Number(this.mainImageToggle) === 1){
+        obj["Image"] = true;
+      } else if (Number(this.mainImageToggle) === 2){
+        obj["NoImage"] = true;
+      }
+      return obj;
+    },
+
+    setOutSideBorderSetting : function(obj){
+      if (Number(this.widget_outside_border_none === '' || this.widget_outside_border_none === false)){
+        obj["notNoneWidgetOutsideBorder"] = true;
+      } else {
+
+      }
+      return obj;
+    },
+
+    setInSideBorderSetting : function(obj){
+      if (Number(this.widget_inside_border_none === '' || this.widget_inside_border_none === false)){
+        obj["notNone"] = true;
+      } else {
+
+      }
+      return obj;
+    },
+
+    setHeaderContentSetting : function(obj){
+      if(Number(this.descriptionToggle) === 1 && Number(this.subTitleToggle) === 1){
+        obj["twoContents"] = true;
+      } else if (Number(this.descriptionToggle) === 1 || Number(this.subTitleToggle) === 1){
+        obj["oneContents"] = true;
+      } else if (Number(this.descriptionToggle) === 2 || Number(this.subTitleToggle) === 2){
+        obj["noContents"] = true;
+      }
+      return obj;
+    },
+
+    /*ng-class用のオブジェクトを設定する関数群--終了--*/
+
+
+
+
+    //size : String型 small,middle,large のいずれか
+    //現状の設定が渡されたサイズかどうかを判別する
+    //return : boolean型
+    judgeSize : function(size){
+
+       //通常表示でない場合は判定させない
+      if(Number(this.showWidgetType !== 1)){
+        return false;
+      }
+
+      switch(size){
+      case "small":
+        //現状設定が無いため判別無し
+        return true;
+      break;
+      case "middle":
+        if(Number(this.showWidgetType) === 2){
+          return true;
+        } else {
+          return false;
+        }
+      break;
+      case "large":
+        if(Number(this.showWidgetType) === 3 || Number(this.widgetSizeTypeToggle) === 4){
+          return true;
+        } else {
+          return false;
+        }
+      break;
+      default:
+        //デフォルトはfalseを返す
+        return false;
+      }
+    },
+
+    isSmartPhonePortrait : function(){
+      if(Number(this.showWidgetType) === 3){
+        return true;
+      } else {
+        return false;
+      }
+    },
+
 
     /**
      * 表示用HTMLへの変換
@@ -388,9 +561,10 @@ sincloApp.factory('SimulatorService', function() {
       var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
       var strings = val.split('\n');
       var radioCnt = 1;
-      var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g)
+      var htmlTagReg = RegExp(/<\/?("[^"]*"|'[^']*'|[^'">])*>/g);
       var radioName = prefix + "sinclo-radio" + messageIndex;
       var content = "";
+      var isAddUnderline = prefix.indexOf('underline') !== -1 ? true : false;
 
       for (var i = 0; strings.length > i; i++) {
         var str = escape_html(strings[i]);
@@ -408,12 +582,124 @@ sincloApp.factory('SimulatorService', function() {
         if(str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
           content += "" + str + "\n";
         } else {
-          content += "<span class='sinclo-text-line'>" + str + "</span>\n";
+          if (isAddUnderline) {
+            content += "<span class='sinclo-text-line underlineText'>" + str + "</span>\n";
+          } else {
+            content += "<span class='sinclo-text-line'>" + str + "</span>\n";
+          }
         }
       }
 
       return content;
     },
+
+    createRadioButton: function(data) {
+      var messageHtml = this.createMessage(data.message, data.prefix);
+      var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
+      var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+      var radioName = prefix + 'sinclo-radio-' + index;
+      // style
+      var html = '';
+      angular.forEach(data.options, function (option, key) {
+        if (!option || option == "") return false;
+        if (data.isRestore && option === data.oldValue) {
+          html += "<span class='sinclo-radio'><input type='radio' checked='checked' name='" + radioName + "' id='" + radioName + "-" + key + "' class='sinclo-chat-radio' value='" + option + "'>";
+          html += "<label for='" + radioName + "-" + key + "'>" + option + "</label></span><br>";
+        } else {
+          html += "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + key + "' class='sinclo-chat-radio' value='" + option + "'>";
+          html += "<label for='" + radioName + "-" + key + "'>" + option + "</label></span><br>";
+        }
+      });
+      html += '</select>';
+      if (data.isRestore) {
+        html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' + data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
+      }
+
+      return messageHtml + html;
+    },
+
+    createPulldown: function(data) {
+      var messageHtml = this.createMessage(data.message, data.prefix);
+      var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
+      var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+      var pulldownName = prefix + 'sinclo-pulldown-' + index;
+      // style
+      var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; min-width: 210px;';
+      style += 'background-color: ' + data.design.backgroundColor + ';';
+      style += 'color: ' + data.design.textColor + ';';
+      style += 'border-color: ' + data.design.borderColor + ';"';
+
+      var html = '<select id="' + pulldownName + '" ' + style + '>';
+      html += '<option>選択してください</option>';
+      angular.forEach(data.options, function (option, key) {
+        if (!option || option == "") return false;
+        if (data.isRestore && option === data.oldValue) {
+          html += '<option selected="selected" value="' + option + '">' + option + '</option>';
+        } else {
+          html += '<option value="' + option + '">' + option + '</option>';
+        }
+      });
+      html += '</select>';
+      if (data.isRestore) {
+        html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' + data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
+      }
+
+      return messageHtml + html;
+    },
+
+    createCalendarInput: function (data) {
+      var result = { html: '', selector: ''};
+      var messageHtml = this.createMessage(data.message, data.prefix);
+      var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
+      var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+      var calendarId = prefix + 'sinclo-calendar' + index;
+      var inputId = prefix + 'sinclo-datepicker' + index;
+      var html = '<div id="' + calendarId + '">';
+      html += '<style>';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar { border: 2px solid' + data.design.borderColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months { background: ' + data.design.headerBackgroundColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-month { color: ' + data.design.headerTextColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-weekdays { background: ' + data.design.headerWeekdayBackgroundColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday { color: ' + this.getContrastColor(data.design.headerWeekdayBackgroundColor) + ' !important;}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: ' + data.design.headerTextColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer { background-color: ' + data.design.calendarBackgroundColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;  border: 1px solid ' + data.design.headerBackgroundColor +   '; outline: 1px solid ' + data.design.headerWeekdayBackgroundColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid  ' + data.design.headerWeekdayBackgroundColor +  '; border-right: 1px solid  ' + data.design.headerWeekdayBackgroundColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .dayContainer .flatpickr-day.selected { background-color: ' + data.design.headerBackgroundColor + '; color: ' + this.getContrastColor(data.design.headerBackgroundColor) + ' !important;}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none;};';
+      html +=  '</style>';
+      if (data.isRestore) {
+        html += '<input type="hidden" id="' + inputId + '" value="' + data.oldValue + '"></div>';
+        html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' + data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
+      } else {
+        html += '<input type="hidden" id="' + inputId + '"></div>';
+      }
+
+      result.html = messageHtml + html;
+      result.selector = '#' + calendarId;
+
+      return result;
+    },
+
+    getContrastColor: function (hex) {
+      var rgb = this.hexToRgb(hex);
+      var brightness;
+      brightness = (rgb.r * 299) + (rgb.g * 587) + (rgb.b * 114);
+      brightness = brightness / 255000;
+      // values range from 0 to 1
+      // anything greater than 0.5 should be bright enough for dark text
+      return brightness >= 0.5 ? 'black' : 'white';
+    },
+
+    hexToRgb: function (hex) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    },
+
     /**
      * ファイル拡張子から、画像か判別する
      * @param String extension ファイル拡張子

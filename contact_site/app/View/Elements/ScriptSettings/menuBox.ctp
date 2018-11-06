@@ -8,7 +8,7 @@
     $name = "フォーム用タグ";
   }
 ?>
-<h1 id="logo"><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>"><?= $this->Html->image('logo.png', array('alt' => "Sample Company")) ?></a></h1>
+<h1 id="logo"><a href="<?=$this->Html->url(array('controller' => 'ScriptSettings', 'action' => 'testpage',$company_key))?>"><?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?><?= $this->Html->image('logo.png', array('alt' => "Sample Company")) ?><?php endif; ?></a></h1>
 <p id="tel">TEL:0120-000-000<span>AM9:00〜PM6:00　水曜定休</span></p>
 </div>
 <!--/inner-->

@@ -66,8 +66,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         sendFile: 6,
         notification: 7,
         linkClick: 8,
-        start: 98,
-        end: 99,
+        start: 998,
+        end: 999,
         scenario: {
           customer: {
             hearing: 12,
@@ -84,6 +84,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             receiveFile: 27,
             returnBulkHearing: 40
           }
+        },
+        cogmo: {
+          message: 81,
+          feedback: 82
         }
       },
       init: function(sendPattern){
@@ -1491,8 +1495,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
-      console.log('メッセージを作成します。');
-      var strings = message.split('\n');
+      var strings = message.split(/\n|<br>/g);
       var isSmartphone = false;
       var custom = "";
       var radioName = "sinclo-radio" + Object.keys(chat).length;
@@ -1806,6 +1809,22 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>シナリオメッセージ(一括ヒアリング解析結果)</span>";
         content += $scope.createBulkHearingAnalyseData(chat, message);
+      }
+      else if ( Number(type) === chatApi.messageType.cogmo.message ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>自動応答</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( Number(type) === chatApi.messageType.cogmo.feedback ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>自動応答</span>";
+        content += $scope.createTextOfMessage(chat, message);
       }
       else  {
         cn = "sinclo_etc";

@@ -33,6 +33,12 @@
             "maxLogSize": 10240000,
             "backups": 3
         },
+        "cogmo": {
+            "type": "file",
+            "filename": "./logs/cogmoApiLog.log",
+            "maxLogSize": 10240000,
+            "backups": 3
+        },
         "traceScenario": {
             "type": "file",
             "filename": "./logs/traceScenario.log",
@@ -47,6 +53,7 @@
         "debug": {"appenders":["debug"], "level": "info"},
         "system": {"appenders":["system"], "level":"info"},
         "lbc": {"appenders":["lbc"], "level":"debug"},
+        "cogmo": {"appenders":["cogmo"], "level":"debug"},
         "traceScenario": {"appenders":["traceScenario"], "level":"debug"}
     }
 }
