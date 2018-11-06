@@ -78,6 +78,22 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   }
 
+  // 登録済みリードリスト（モック用なので後で修正）
+  this.leadList = [];
+  this.leadList.push({'id': "1", 'name': "お客様情報①"});
+  this.leadList.push({'id': "2", 'name': "お客様情報②"});
+
+  this.leadInfo1 = [];
+  this.leadInfo1.push({'var': "会社名", 'info': "会社名"});
+  this.leadInfo1.push({'var': "氏名", 'info': "名前"});
+  this.leadInfo1.push({'var': "住所", 'info': "所在地"});
+
+  this.leadInfo2 = [];
+  this.leadInfo2.push({'var': "お名前", 'info': "名前"});
+  this.leadInfo2.push({'var': "TEL", 'info': "電話番号"});
+  this.leadInfo2.push({'var': "その他", 'info': "問い合わせ内容"});
+  // 登録済みリードリスト（モック用なので後で修正）
+
   // 登録済みシナリオ一覧（条件分岐用）
   var scenarioJsonListForBranchOnCond = JSON.parse(document.getElementById('TChatbotScenarioScenarioListForBranchOnCond').value);
   this.scenarioListForBranchOnCond = [];
@@ -97,6 +113,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.matchValueTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionMatchValueType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.processActionTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionActionType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.processElseActionTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionElseActionType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.makeLeadTypeList = <?php echo json_encode($chatbotScenarioLeadTypeList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
@@ -172,6 +189,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの追加
   this.addItem = function(actionType, isAppendAtLast = false) {
+    console.log(actionType);
     if (actionType in $scope.actionList) {
       var item = $scope.actionList[actionType];
       item.actionType = actionType.toString();
@@ -956,14 +974,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     } else if (actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
       var src = $scope.actionList[actionType].default.addCustomerInformations[0];
       var target = $scope.setActionList[actionStep].addCustomerInformations;
+      console.log(target);
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllAddCustomerInformationView(actionStep);
-
     } else if (actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
       var src = $scope.actionList[actionType].default.multipleHearings[0];
       var target = $scope.setActionList[actionStep].multipleHearings;
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllBulkHearings(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
+      var src = $scope.actionList[actionType].default.leadRegister[0];
+      var target = $scope.setActionList[actionStep].leadRegister;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllLeadRegister(actionStep);
     }
   };
 
@@ -1059,6 +1082,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       selector = '#action' + actionStep + '_setting .itemListGroup';
     } else if (actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
       targetObjList = $scope.setActionList[actionStep].addCustomerInformations;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if (actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
+      targetObjList = $scope.setActionList[actionStep].leadRegister;
       selector = '#action' + actionStep + '_setting .itemListGroup';
     }
 
@@ -1403,6 +1429,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
+  this.controllLeadRegister = function(actionStep) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
+      var targetObjList = $scope.setActionList[actionStep].leadRegister;
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
+    });
+  };
+
   /**
    * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
    * @param String  actionType      アクション種別
@@ -1415,6 +1451,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       limitNum = 0;
     }
 
+    console.log(targetObjList);
+
     var elmNum = targetElmList.length;
     var objNum = targetObjList.length;
 
@@ -1424,8 +1462,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
         $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').hide();
       } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>
-        || actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
-        // リストが複数件ある場合、ヒアリング・選択肢・属性値アクションは、追加・削除ボタンを表示する
+        || actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
+        // リストが複数件ある場合、ヒアリング・選択肢・属性値・リード登録アクションは、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
         $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       } else if (index == elmNum -1 && index != limitNum-1) {
@@ -2821,6 +2859,43 @@ function actionValidationCheck(element, setActionList, actionItem) {
         return true;
       }
     });
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
+    /*リード新規作成時
+    **リスト名のチェック
+    **項目名のチェック
+ 　  */
+    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>) {
+      if (!actionItem.subject) {
+        messageList.push('リードリスト名が未入力です');
+      } else if (actionItem.subject === "お客様情報①") {
+        messageList.push('リードリスト名”お客様情報①”は既に使用されています');
+      } else if (actionItem.subject === "お客様情報②") {
+        messageList.push('リードリスト名”お客様情報②”は既に使用されています');
+      }
+
+      actionItem.leadRegister.some(function(elm) {
+        if (!elm.leadLabelName || elm.leadLabelName === "") {
+          console.log(elm);
+          messageList.push('リードリスト項目を設定してください');
+        }
+      });
+    }
+
+    /*リード選択時
+    **リード選択のチェック
+     */
+    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>) {
+      if(!actionItem.leadId || actionItem.leadId === "") {
+        messageList.push("リードリストを選択してください");
+      }
+    }
+
+    /*共通
+    **変数のチェック
+     */
+
+    messageList.push("保存機能は未実装です");
   }
 
   // 使用されている変数名を抽出する
