@@ -2126,8 +2126,6 @@ class StatisticsController extends AppController {
     $effectivenessNumberData = array_merge($baseData,$effectivenessNumberData);
 
     //チャットCV件数
-    $this->log($cvNumberData,LOG_DEBUG);
-    $this->log($baseData,LOG_DEBUG);
     $cvNumberData = array_merge($baseData,$cvNumberData);
 
     //チャット拒否件数
