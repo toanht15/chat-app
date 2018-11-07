@@ -1118,6 +1118,9 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { overflow: hidden; font-size: 10px; height: 100%; line-height: 2em; padding-left: 2em; color: #FFF; }';
         html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: 1px solid '+ colorList['widgetInsideBorderColor'] +'; background-color: '+ colorList['chatMessageBackgroundColor'] +';}';
 
+        /* ヒアリング */
+        html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
+
         /* ファイル受信  */
         if(Number(widget.widgetSizeType) == 1) {
           html += '#sincloBox #chatTalk li.sinclo_re.recv_file_left, #sincloBox #chatTalk li.sinclo_se.recv_file_right { display: block; padding: 10px!important; line-height: 0; }';
@@ -1206,9 +1209,9 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { grid-column: 3/4; grid-row: 1/2; -ms-grid-column: 3; -ms-grid-row: 1; }';
 
         /* Cogmo */
-        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { cursor: pointer; background-color: ' + colorList['reTextColor'] + '; text-align: center; padding: 10px; border-radius: 12px; margin: 5px 0px;}';
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { cursor: pointer; background-color: ' + colorList['reTextColor'] + '; text-align: center; padding: 10px; margin: 5px 0px;}';
         html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap:hover { opacity: 0.8 }';
-        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { color: ' + colorList['reBackgroundColor'] + '; font-size: ' + widget.reTextSize + 'px;}';
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { margin: 0 30px; color: ' + colorList['reBackgroundColor'] + '; font-size: ' + widget.reTextSize + 'px;}';
         html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
 
         if(colorList['widgetInsideBorderNone'] === 1){
@@ -3793,6 +3796,7 @@ var socket, // socket.io
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
              ||obj.messageType === sinclo.chatApi.messageType.scenario.message.pulldown
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.calendar
              ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection){
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text
@@ -5722,7 +5726,8 @@ function emit(evName, data, callback){
     data.title = common.title();
   }
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat" ||
-  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue" || evName === "beginBulkHearing" || evName === "sendParseSignature") {
+  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue" || evName === "beginBulkHearing" || evName === "sendParseSignature"
+  || evName === "hideScenarioMessages") {
     data.userId = userInfo.userId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||
