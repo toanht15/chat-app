@@ -1,3 +1,20 @@
+<script>
+  $(function() {
+    $('#lead_select').change(function () {
+      var val = $(this).val();
+      var target = $('#outputCSV');
+      if(val === "none"){
+        target.removeClass("skyBlueBtn");
+        target.addClass("grayBtn");
+        target.addClass("disabled");
+      } else {
+        target.addClass("skyBlueBtn");
+        target.removeClass("grayBtn");
+        target.removeClass("disabled");
+      }
+    });
+  });
+</script>
 <div style="overflow: hidden; margin-left: 30px">
   <div style="display: flex; margin-top: 30px">
     <span style="display: flex; width: 150px; align-items:center;">検索期間：</span>
@@ -7,8 +24,9 @@
   </div>
   <div style="display: flex; margin-top: 30px">
     <span style="display: flex; width: 150px; align-items:center;">リードリスト名：</span>
-    <select>
-      <option selected>リードリストを選択してください</option>
+    <select id="lead_select">
+      <option value="none" selected>リードリストを選択してください</option>
+      <option>（すべてのリスト）</option>
       <option>お客様情報①</option>
       <option>お客様情報②</option>
     </select>
@@ -18,10 +36,10 @@
       'ＣＳＶ出力',
       'javascript:void(0)',
       array('escape' => false,
-        'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? " skyBlueBtn commontooltip" : " grayBtn commontooltip disabled"),
+        'class'=>'btn-shadow grayBtn commontooltip disabled',
         'id' => 'outputCSV',
         'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
-        'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "検索条件に該当するチャット履歴一覧をCSV出力します。" : "こちらの機能はスタンダードプランからご利用いただけます。",
+        'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "検索条件に該当するリードリストをCSV出力します。" : "こちらの機能はスタンダードプランからご利用いただけます。",
         'style' => [
           'display: flex;',
           'justify-content: center;',

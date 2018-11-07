@@ -878,6 +878,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     $scope.changeFlg = false;
     $('#TChatbotScenarioActivity').val(this.createJsonData(true));
+    console.log(this.createJsonData(true));
     submitAct();
   };
 
@@ -1450,8 +1451,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if (typeof limitNum === 'undefined') {
       limitNum = 0;
     }
-
-    console.log(targetObjList);
 
     var elmNum = targetElmList.length;
     var objNum = targetObjList.length;
@@ -2866,11 +2865,11 @@ function actionValidationCheck(element, setActionList, actionItem) {
     **項目名のチェック
  　  */
     if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>) {
-      if (!actionItem.subject) {
+      if (!actionItem.leadTitleLabel) {
         messageList.push('リードリスト名が未入力です');
-      } else if (actionItem.subject === "お客様情報①") {
+      } else if (actionItem.leadTitleLabel === "お客様情報①") {
         messageList.push('リードリスト名”お客様情報①”は既に使用されています');
-      } else if (actionItem.subject === "お客様情報②") {
+      } else if (actionItem.leadTitleLabel === "お客様情報②") {
         messageList.push('リードリスト名”お客様情報②”は既に使用されています');
       }
 
@@ -2891,12 +2890,6 @@ function actionValidationCheck(element, setActionList, actionItem) {
         messageList.push("リードリストを選択してください");
       }
     }
-
-    /*共通
-    **変数のチェック
-     */
-
-    messageList.push("保存機能は未実装です");
   }
 
   // 使用されている変数名を抽出する

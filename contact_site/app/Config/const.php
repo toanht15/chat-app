@@ -956,7 +956,7 @@ $config['chatbotScenarioActionList'] = [
       'leadRegister' => [
         [
           'leadLabelName' => '',
-          'variableName' => ''
+          'leadVariableName' => ''
         ]
       ]
     ]

@@ -821,6 +821,15 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
+   * リードリスト保存機能（ここでt_lead_list_settingsテーブルに情報が保存され、そのidだけアクション詳細に返却する
+   * @param Object $saveData アクション詳細
+   * @return Object          t_chatbot_scenarioに保存するアクション詳細
+   * */
+  private function _entryProcessForLeadRegister($saveData){
+
+  }
+
+  /**
    * メール送信設定の保存機能（トランザクションはこのメソッドの先祖で管理している）
    * @param Object $saveData アクション詳細
    * @return Object          t_chatbot_scenarioに保存するアクション詳細

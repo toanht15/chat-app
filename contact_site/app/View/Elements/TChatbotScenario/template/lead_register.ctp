@@ -11,7 +11,7 @@
     <li class="styleFlexbox">
       <div class="fb15em"><label class="require">リードリスト名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="リードリスト名を設定します。">?</icon></span></div>
       <div ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>">
-        <input type="text" ng-model="setItem.subject">
+        <input type="text" ng-model="setItem.leadTitleLabel">
       </div>
       <select ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>" style="padding: 0px; flex-grow: 0;" ng-model="setItem.leadId" ng-options="item.id as item.name for item in main.leadList">
         <option value="">リストを選択してください</option>
@@ -27,7 +27,7 @@
         </div>
         <div class="grid-container-body itemListGroup" ng-repeat="(listId, var) in setItem.leadRegister track by $index">
           <div class='area-name'><input type="text" class="make-box" ng-model="var.leadLabelName"></div>
-          <div class='area-name'><input type="text" class="make-box" ng-model="var.leadVariable"></div>
+          <div class='area-name'><input type="text" class="make-box" ng-model="var.leadVariableName"></div>
           <div class='area-btn short'>
             <div class="btnBlock">
               <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
