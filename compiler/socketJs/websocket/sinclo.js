@@ -6943,7 +6943,7 @@
                     self._executeConfirm();
                   }
                 } else {
-                  self._showError();
+                  self._showError(self._getCurrentHearingProcess().uiType);
                 }
               });
             };
@@ -7116,9 +7116,9 @@
           }
           return result;
         },
-        _showError: function () {
+        _showError: function (uiType) {
           var self = sinclo.scenarioApi._hearing;
-          var errorMessage = self._parent.get(self._parent._lKey.currentScenario).errorMessage;
+          var errorMessage = uiType ? self._parent._getCurrentScenario().errorMessage : self._parent.get(self._parent._lKey.currentScenario).errorMessage;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._parent.get(self._state.currentSeq) + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {

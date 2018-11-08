@@ -1214,7 +1214,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { margin: 0 30px; color: ' + colorList['reBackgroundColor'] + '; font-size: ' + widget.reTextSize + 'px;}';
         html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
 
-        /* flatpickr */
+        /* flatpickr カスタム値の方が強いため基本important指定 */
         html += '#sincloBox #chatTalk li.sinclo_re div.flatpickr-calendar.disable { pointer-events: none!important; opacity: 0.5!important; }';
 
         if(colorList['widgetInsideBorderNone'] === 1){
