@@ -1219,6 +1219,12 @@
               cn = "cancelable sinclo_se";
               isHearingAnswer = true;
               break;
+            case 33:
+            case 34:
+            case 35:
+              cn = "sinclo_se";
+              isHearingAnswer = true;
+              break;
           }
 
           if (Number(chat.messageReadFlg) === 0 && chat.messageType === sinclo.chatApi.messageType.company) {
@@ -1565,6 +1571,11 @@
           console.log("sendChatResult :: userName : %s", userName);
         } else if(obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing) {
           cn = "cancelable sinclo_se";
+          elm.value = "";
+        } else if(obj.messageType === sinclo.chatApi.messageType.scenario.customer.radio
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.pulldown
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.calendar) {
+          cn = "sinclo_se";
           elm.value = "";
         } else if (obj.messageType === sinclo.chatApi.messageType.customer
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection
@@ -2324,7 +2335,10 @@
               sendFile: 19,
               answerBulkHearing: 30,
               noModBulkHearing: 31,
-              modifyBulkHearing: 32
+              modifyBulkHearing: 32,
+              radio: 33,
+              pulldown: 34,
+              calendar: 35
             },
             message: {
               text: 21,
@@ -3098,7 +3112,7 @@
             }
 
             if (radioSelectedStr !== "") {
-              content += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>OK</span></p>"
+              content += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>次へ</span></p>"
             }
 
         if (obj.cn.indexOf("sinclo_re") !== -1) {
@@ -6069,8 +6083,6 @@
           case self._actionType.hearing:
             self._hearing._init(self, self.get(self._lKey.currentScenario));
             self._hearing._process(forceFirst);
-            self.set(self._lKey.sendCustomerMessageType, 12);
-            self.set(self._lKey.scenarioMessageType, 22);
             break;
           case self._actionType.selection:
             self._selection._init(self, self.get(self._lKey.currentScenario));
@@ -6946,18 +6958,24 @@
           var self = sinclo.scenarioApi._hearing;
           switch(uiType) {
             case "1":
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 12);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 22);
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
                 $('#miniSincloChatMessage').val(self._parent._getStoredVariable(self._getCurrentHearingProcess().variableName));
               }
               break;
             case "2":
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 12);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 22);
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
                 $('#sincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
               }
               break;
             case "3": // ラジオボタン
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 12);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 33);
               message += "\n";
               settings.options.forEach(function(elm, index, arr) {
                 if(self._parent._getCurrentScenario().restore && self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName) === elm) {
@@ -6969,6 +6987,8 @@
               self._parent._showMessage("2", message, self._getCurrentSeq(), "2", callback);
               break;
             case "4":
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 34);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 41);
               var params = {
                 type: "2",
                 uiType: uiType,
@@ -6982,6 +7002,8 @@
               self._parent._showPullDown(params, callback);
               break;
             case "5":
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 35);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 42);
               var params = {
                 type: "2",
                 uiType: uiType,
