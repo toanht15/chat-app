@@ -7156,6 +7156,7 @@
             // プルダウン
             $(this).find('select[name^="sinclo-pulldown"]').prop('disabled', true).css('opacity', 0.5);
             // カレンダー
+            $(this).find('.flatpickr-calendar').addClass('disable');
           });
           $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').each(function(index, elm) {
             // 再回答用リンク
