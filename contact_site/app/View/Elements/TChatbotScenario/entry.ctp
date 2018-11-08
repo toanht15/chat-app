@@ -136,8 +136,8 @@
                    class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルを設定できるアクションです。">ファイル送信</a>
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_SEND_FILE ?>">
                     <ul>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>, 'after')">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>, 'last')">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)">選択されたアクションの下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>

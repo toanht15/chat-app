@@ -289,7 +289,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox .flatpickr-calendar { width: 210px; height: 252px; border-radius: 0; box-shadow: none;}
         #sincloBox .flatpickr-calendar .flatpickr-current-month { font-size: 14px; padding-top: 8px }
         #sincloBox .flatpickr-calendar .flatpickr-weekdays { width: 206px; height: 24px}
-        #sincloBox .flatpickr-calendar .flatpickr-weekdaycontainer { padding-top: 8px; padding-right: 2px}
+        #sincloBox .flatpickr-calendar .flatpickr-weekdaycontainer { height: 21px; padding-top: 4px; padding-right: 2px; white-space: normal}
         #sincloBox .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday { font-size: 11px; line-height: 10px}
         #sincloBox .flatpickr-calendar .dayContainer { max-width: 206px; min-width: 200px;}
         #sincloBox .flatpickr-calendar .flatpickr-months { height: 32px;}
@@ -298,7 +298,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox .flatpickr-calendar .flatpickr-months .flatpickr-current-month .numInputWrapper { display: none}
         #sincloBox .flatpickr-calendar .flatpickr-months .flatpickr-current-month input.cur-year { display: none}
         #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day.disabled { color: rgba(57,57,57,0.18);}
-        #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day { height: 32px; line-height: 32px; border-radius: 0; font-weight: bolder;}
+        #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 29.42px; height: 32px; line-height: 32px; border-radius: 0; font-weight: bolder;}
+        @media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {
+          #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 28px;}
+        }
         #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none;}
         #sincloBox .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none;}
 
@@ -393,7 +396,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label:before { content: ""; vertical-align: middle; position: absolute; top: {{widget.radioButtonBeforeTop}}px; left: 0px; margin-top: -{{widget.radioButtonBeforeTop}}px; width: {{widget.re_text_size}}px; height: {{widget.re_text_size}}px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: {{widget.radioButtonAfterTop}}px; left: {{widget.radioButtonAfterLeft}}px;; margin-top: -{{widget.radioButtonAfterMarginTop}}px; width: {{widget.re_text_size-7}}px; height: {{widget.re_text_size-7}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:disabled + label { opacity: 0.5;}
-        #sincloBox ul#chatTalk li span.sinclo-radio select:disabled { opacity: 0.5;}
+        #sincloBox ul#chatTalk li.sinclo_re select:disabled { opacity: 0.5;}
+        #sincloBox ul#chatTalk li.sinclo_re .disabledArea {pointer-events: none; opacity: 0.5;}
 
         /* ファイル送信 */
         #sincloBox ul#chatTalk li .sendFileContent { display: table; table-layout: fixed; width: 100%; height: 64px; white-space: pre-line; margin-bottom: 0; }

@@ -2534,8 +2534,10 @@ var socket, // socket.io
         "}\n" +
         "\n" +
         "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdaycontainer {\n" +
-        "  padding-top: 8px;\n" +
+        "  padding-top: 4px;\n" +
         "  padding-right: 2px;\n" +
+        "  height: 21px;\n" +
+        "  white-space: normal;\n" +
         "}\n" +
         "\n" +
         "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday {\n" +
@@ -2579,6 +2581,7 @@ var socket, // socket.io
         "  line-height: 32px;\n" +
         "  border-radius: 0;\n" +
         "  font-weight: bolder;\n" +
+        "  flex-basis: 29.42px;\n" +
         "}\n" +
         "\n" +
         "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day.today {\n" +
@@ -2587,6 +2590,8 @@ var socket, // socket.io
         "\n" +
         "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer span:nth-child(7n+7) {\n" +
         "  border-right: none;\n" +
+        "}" + "@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {\n" +
+        "  #sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 28px;}\n" +
         "}";
     },
     //バナーを生成する関数
