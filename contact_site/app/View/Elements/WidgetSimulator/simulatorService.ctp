@@ -96,6 +96,12 @@ sincloApp.factory('SimulatorService', function() {
     get isLargeSize() {
       return this._showWidgetType === 1 && this._settings['widget_size_type'] === '3';
     },
+    get isSpPortrait() {
+      return this._showWidgetType === 3;
+    },
+    get isSpLandscape() {
+      return this._showWidgetType === 2;
+    },
     get isMaximumSize(){
       return this._showWidgetType === 1 && this._settings['widget_size_type'] === '4';
     },

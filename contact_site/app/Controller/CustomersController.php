@@ -695,7 +695,8 @@ class CustomersController extends AppController {
     // 一般ユーザーはリストを返さない
     $result = [];
     if(strcmp($this->userInfo['permission_level'], C_AUTHORITY_NORMAL) === 0) {
-      return json_encode($result);
+      $this->set('userList', $result);
+      return;
     }
     $list = $this->MUser->find('all', [
       'conditions' => [

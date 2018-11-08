@@ -909,11 +909,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         }
         main.style.height = height + "px";
 
+        console.log($scope.simulatorSettings.showWidgetType);
+
         var msgBox = document.getElementById('flexBoxWrap');
-        if (!$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
+        if (msgBox != null && !$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
           $scope.setTextAreaOpenToggle();
         } else
-        if ($scope.isTextAreaOpen && msgBox.style.display === 'none') {
+        if (msgBox != null && $scope.isTextAreaOpen && msgBox.style.display === 'none') {
           $scope.setTextAreaOpenToggle();
         }
       });

@@ -1509,7 +1509,7 @@ class ChatHistoriesController extends AppController
         $value = 'MIN';
       }
 
-      if (!$hasCustomDataCondition && ($data['History']['chat_type']) && empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
+      if (!$hasCustomDataCondition && empty($data['History']['chat_type']) && empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
         && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) && empty($data['THistoryChatLog']['message'])) {
         $chatStateList = $dbo2->buildStatement(
           [

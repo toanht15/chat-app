@@ -1074,6 +1074,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         if($scope.onlineOperatorList) {
           Object.keys($scope.onlineOperatorList).forEach(function(key){
+            if(!$scope.operatorList[key]) {
+              return;
+            }
             if($scope.activeOperatorList[key]) {
               $scope.operatorList[key].status = 1;
             } else {
@@ -1362,6 +1365,24 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           callback($scope.customerList[userId]);
         } else {
           callback({});
+        }
+      });
+    };
+
+    $scope.getCustomerInfoFromApi = function(userId, callback) {
+      $.ajax({
+        type: "POST",
+        url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetCusInfo'])?>",
+        data: {
+          v:  userId
+        },
+        dataType: "json",
+        success: function(json){
+          var ret = {};
+          if ( typeof(json) !== "string" ) {
+            ret = json;
+          }
+          callback(ret);
         }
       });
     };
@@ -4438,7 +4459,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
           if ( angular.isDefined(scope.detailId) && scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
             scope.detail = angular.copy(scope.monitorList[scope.detailId]);
-            scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
+            scope.getCustomerInfoFromApi(scope.monitorList[scope.detailId].userId, function(ret){
               scope.customData = ret;
               scope.customPrevData = angular.copy(ret);
 

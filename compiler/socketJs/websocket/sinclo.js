@@ -23,7 +23,7 @@
             storage.s.set("widgetMaximized", flg);
           }
         }
-      },
+      }
     },
     sorryMsgTimer: null,
     syncTimeout: "",
@@ -34,10 +34,10 @@
 //        sincloBox.setAttribute('data-openflg', false);
         var flg = sinclo.widget.condifiton.get();
         //ウィジェットを開いた回数
-        if (String(flg) === "true" && typeof ga == "function") {
+        if (String(flg) === "true" && typeof ga === "function") {
           ga('send', 'event', 'sinclo', 'clickMaximize', location.href, 1);
         }
-        if (String(flg) === "false" && typeof ga == "function") {
+        if (String(flg) === "false" && typeof ga === "function") {
           ga('send', 'event', 'sinclo', 'clickMinimize', location.href, 1);
           //ウィジェットを最小化した回数追加
           var now = new Date();
@@ -1216,7 +1216,13 @@
               cn = "sinclo_se";
               break;
             case 12:
-              cn = "cancelable sinclo_se";
+              cn = "sinclo_se";
+              isHearingAnswer = true;
+              break;
+            case 33:
+            case 34:
+            case 35:
+              cn = "sinclo_se";
               isHearingAnswer = true;
               break;
           }
@@ -1268,12 +1274,19 @@
             || Number(chat.messageType) === 22
             || Number(chat.messageType) === 23
             || Number(chat.messageType) === 27
+            || Number(chat.messageType) === 41
+            || Number(chat.messageType) === 42
             || Number(chat.messageType) === 81
             || Number(chat.messageType) === 82) {
             if (check.isset(window.sincloInfo.widget.showAutomessageName) && window.sincloInfo.widget.showAutomessageName === 2) {
               userName = "";
             } else {
               userName = window.sincloInfo.widget.subTitle;
+            }
+            if(Number(chat.messageType) === 22
+            || Number(chat.messageType) === 41
+            || Number(chat.messageType) === 42) {
+              cn = "hearing_msg " + cn;
             }
           }
           else if (Number(chat.messageType) === sinclo.chatApi.messageType.company) {
@@ -1357,10 +1370,22 @@
             this.chatApi.createCogmoAttendBotMessage("sinclo_re", chat.message, userName, true);
           } else if (Number(chat.messageType) === 41) {
             var pulldown = JSON.parse(chat.message);
-            this.chatApi.addPulldown("sinclo_re", pulldown.message, userName, pulldown.settings);
+            this.chatApi.addPulldown("hearing_msg sinclo_re", pulldown.message, userName, pulldown.settings);
+            // ①シナリオ実行中でない
+            // ②実行中だが該当IDが存在しない場合
+            // disabledをつける
+            if(!sinclo.scenarioApi.isProcessing()){
+              sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
+            } else {
+              var currentScenarioChatId = sinclo.scenarioApi.get("s_targetChatId");
+            }
+            console.log('◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆');
+            console.log(chat.chatId);
+            console.log('◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆');
           } else if (Number(chat.messageType) === 42) {
             var calendar = JSON.parse(chat.message);
-            this.chatApi.addCalendar("sinclo_re", calendar.message, calendar.settings);
+            this.chatApi.addCalendar("hearing_msg sinclo_re", calendar.message, calendar.settings);
+            // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
@@ -1514,6 +1539,17 @@
     sendChatResult: function (d) {
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>sendChatResult>>>");
       var obj = JSON.parse(d);
+      // シナリオ中は、メッセージIDをs_currentdataに保存する
+      if(sinclo.scenarioApi.isProcessing()){
+        var currentScenarioChatId = sinclo.scenarioApi.get("s_targetChatId");
+        if(typeof currentScenarioChatId === "undefined"){
+          currentScenarioChatId = [];
+        }
+        console.log(obj.chatId);
+
+        currentScenarioChatId.push(obj.chatId);
+        sinclo.scenarioApi.set('s_targetChatId',currentScenarioChatId);
+      }
       common.chatBotTypingRemove();
       if (obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !== userInfo.tabId) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = "";
@@ -1557,7 +1593,18 @@
           }
           console.log("sendChatResult :: userName : %s", userName);
         } else if(obj.messageType === sinclo.chatApi.messageType.scenario.customer.hearing) {
-          cn = "cancelable sinclo_se";
+          // キャンセル付与ラベルを見る
+          if(sinclo.scenarioApi._hearing._disableGrantCancelAbleFlg) {
+            cn = "sinclo_se";
+            sinclo.scenarioApi._hearing._disableGrantCancelAbleFlg = false;
+          } else {
+            cn = "cancelable sinclo_se";
+            elm.value = "";
+          }
+        } else if(obj.messageType === sinclo.chatApi.messageType.scenario.customer.radio
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.pulldown
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.calendar) {
+          cn = "sinclo_se";
           elm.value = "";
         } else if (obj.messageType === sinclo.chatApi.messageType.customer
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.selection
@@ -2046,6 +2093,14 @@
       }
       return delayTime;
     },
+    _skipLabelHandler: function(target) {
+      if (target.val().length > 0) {
+        target.text('送信');
+      } else {
+        target.text('スキップ')
+      }
+
+    },
     displayTextarea: function(skippable, disabled){
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaCalled<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
       if(!document.getElementById("flexBoxWrap")) return;
@@ -2058,13 +2113,7 @@
       if(skippable) {
         $('#sincloChatSendBtn').text('スキップ');
         $('#miniSincloChatSendBtn').text('スキップ');
-        $('#sincloChatMessage').on('input', function(){
-          if($(this).val().length > 0) {
-            $('#sincloChatSendBtn').text('送信');
-          } else {
-            $('#sincloChatSendBtn').text('スキップ');
-          }
-        });
+        $('#sincloChatMessage').on('input', sinclo._skipLabelHandler($('#sincloChatMessage')));
         if(disabled) {
           $('#sincloChatMessage').prop('disabled', true).css('background-color', '#DDD');
           $('#miniSincloChatMessage').prop('disabled', true).css('background-color', '#DDD');
@@ -2072,13 +2121,7 @@
           $('#sincloChatMessage').prop('disabled', false).css('background-color', sincloInfo.widget.messageBoxBackgroundColor);
           $('#miniSincloChatMessage').prop('disabled', false).css('background-color', sincloInfo.widget.messageBoxBackgroundColor);
         }
-        $('#miniSincloChatMessage').on('input', function(){
-          if($(this).val().length > 0) {
-            $('#miniSincloChatSendBtn').text('送信');
-          } else {
-            $('#miniSincloChatSendBtn').text('スキップ');
-          }
-        });
+        $('#miniSincloChatMessage').on('input', sinclo._skipLabelHandler($('#miniSincloChatMessage')));
       } else {
         $('#sincloChatSendBtn').text('送信');
         $('#miniSincloChatSendBtn').text('送信');
@@ -2317,7 +2360,10 @@
               sendFile: 19,
               answerBulkHearing: 30,
               noModBulkHearing: 31,
-              modifyBulkHearing: 32
+              modifyBulkHearing: 32,
+              radio: 33,
+              pulldown: 34,
+              calendar: 35
             },
             message: {
               text: 21,
@@ -2476,6 +2522,8 @@
                 && sinclo.scenarioApi.isProcessing()
                 && sinclo.scenarioApi.isWaitingInput()
                 && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+                console.log('◆◆ラジオボタンに関連するキャンセル動作が行われました◆◆');
+                sinclo.scenarioApi._hearing._forceRadioTypeFlg = true;
                 sinclo.scenarioApi._hearing._handleCancel(e);
               }
               sinclo.chatApi.clickRadioMessages[$(this).attr('name')] = e.target.value.trim();
@@ -2921,7 +2969,7 @@
               a = a.replace(img[0], imgTag);
               var url = a.match(this._regList.urlTagReg);
               if(option === "clickTelno"){
-                console.log('画像じゃい');
+                console.log('画像ですね');
                 //電話番号の場合は、生の電話番号を取得
                 var telno = link[0].replace(/[^0-9^\.]/g,"");
                 if(check.smartphone()){
@@ -3091,7 +3139,7 @@
             }
 
             if (radioSelectedStr !== "") {
-              content += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>OK</span></p>"
+              content += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>次へ</span></p>"
             }
 
         if (obj.cn.indexOf("sinclo_re") !== -1) {
@@ -3138,6 +3186,7 @@
         var pulldownHtml = sinclo.chatApi.createPullDownHtml(settings, chatList.children.length, storedValue);
         div.style.textAlign = "left";
         cs += ' effect_left';
+        cs += ' hearing_msg';
 
         li.className = cs;
         li.innerHTML = messageHtml + pulldownHtml;
@@ -4039,6 +4088,11 @@
             && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
             sinclo.scenarioApi.triggerInputWaitComplete(value);
             messageType = sinclo.scenarioApi.getCustomerMessageType();
+            // もしヒアリングの入力確認メッセージだった場合はmessageType を選択肢回答の33にする。
+            if(sinclo.scenarioApi._hearing._forceRadioTypeFlg){
+              messageType = sinclo.chatApi.messageType.scenario.customer.radio;
+              sinclo.scenarioApi._hearing._forceRadioTypeFlg = false;
+            }
             // シナリオ中の返答はオペレータへの通知をしない
             isScenarioMessage = true;
           }
@@ -5885,6 +5939,11 @@
         sinclo.chatApi.initEvent();
         var type = (beforeTextareaOpened === "close") ? "2" : "1";
         self._handleChatTextArea(type);
+        // 復元機能の状態を削除する
+        $('#sincloChatMessage').off('input', sinclo._skipLabelHandler($('#sincloChatMessage')));
+        $('#miniSincloChatMessage').off('input', sinclo._skipLabelHandler($('#miniSincloChatMessage')));
+        self._hearing._disableAllHearingMessageInput();
+
 
         self._resetDefaultVal();
         self._enablePreviousRadioButton();
@@ -5899,7 +5958,6 @@
         if (value !== null && (value === "true" || value === true)) {
           result = true;
         }
-        console.log("scenarioApi::isProcessing => " + result);
         return result;
       },
       isWaitingInput: function () {
@@ -6063,8 +6121,6 @@
           case self._actionType.hearing:
             self._hearing._init(self, self.get(self._lKey.currentScenario));
             self._hearing._process(forceFirst);
-            self.set(self._lKey.sendCustomerMessageType, 12);
-            self.set(self._lKey.scenarioMessageType, 22);
             break;
           case self._actionType.selection:
             self._selection._init(self, self.get(self._lKey.currentScenario));
@@ -6240,13 +6296,17 @@
         message = self._replaceVariable(message);
         if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum)) {
           var name = (sincloInfo.widget.showAutomessageName === 2 ? "" : sincloInfo.widget.subTitle);
+          var cn = 'sinclo_re';
+          if(type == self._actionType.hearing) {
+            cn = 'hearing_msg ' + cn;
+          }
           if(type != self._actionType.hearing && type != self._actionType.selection && type != self._actionType.sendFile){
             common.chatBotTypingCall({forceWaitAnimation:true});
           }
           if(String(categoryNum).indexOf("delete_") >= 0) {
-            sinclo.chatApi.createMessageUnread({cn: 'sinclo_re' + categoryNum, message: message, name: name, chatId: 0}, true);
+            sinclo.chatApi.createMessageUnread({cn: cn + categoryNum, message: message, name: name, chatId: 0}, true);
           } else {
-            sinclo.chatApi.createMessageUnread({cn: 'sinclo_re', message: message, name: name, chatId: 0}, true);
+            sinclo.chatApi.createMessageUnread({cn: cn, message: message, name: name, chatId: 0}, true);
           }
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum), categoryNum);
           sinclo.chatApi.scDown();
@@ -6834,6 +6894,7 @@
           $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').on('click', self._handleCancel);
         },
         _handleCancel: function(e) {
+          console.log('こっちから入力したテキストのキャンセルを行います');
           var self = sinclo.scenarioApi._hearing;
           var target = $(e.target).closest('div').find('li').data('chatId') ? $(e.target).closest('div').find('li') : $(e.target).closest('div').next('div').find('li');
           var targetChatId = target.data('chatId');
@@ -6885,7 +6946,10 @@
             self._setCurrentSeq(0);
             self._parent.unsetSequenceList(self._parent.get(self._parent._lKey.currentScenarioSeqNum))
           }
-          self._beginCancelHandler();
+          // 即時にキャンセルイベント付与だと、吹き出しが表示されるよりも前に付与しようとし、できないため余裕を持たせる
+          setTimeout(function() {
+            self._beginCancelHandler();
+          }, 2000);
           var doHearing = self._getCurrentHearingProcess();
           if (self._isTheEnd()) {
             self._executeConfirm();
@@ -6921,7 +6985,7 @@
                     self._executeConfirm();
                   }
                 } else {
-                  self._showError();
+                  self._showError(self._getCurrentHearingProcess().uiType);
                 }
               });
             };
@@ -6935,19 +6999,25 @@
         _showMessage: function (uiType, message, required, settings, callback) {
           var self = sinclo.scenarioApi._hearing;
           switch(uiType) {
-            case "1":
+            case "1": //テキスト1行
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 12);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 22);
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
-                $('#miniSincloChatMessage').val(self._parent._getStoredVariable(self._getCurrentHearingProcess().variableName));
+                $('#miniSincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
               }
               break;
-            case "2":
+            case "2": //テキスト複数行
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 12);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 22);
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
                 $('#sincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
               }
               break;
             case "3": // ラジオボタン
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 33);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 23);
               message += "\n";
               settings.options.forEach(function(elm, index, arr) {
                 if(self._parent._getCurrentScenario().restore && self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName) === elm) {
@@ -6958,7 +7028,9 @@
               });
               self._parent._showMessage("2", message, self._getCurrentSeq(), "2", callback);
               break;
-            case "4":
+            case "4": //プルダウン
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 34);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 41);
               var params = {
                 type: "2",
                 uiType: uiType,
@@ -6972,6 +7044,8 @@
               self._parent._showPullDown(params, callback);
               break;
             case "5":
+              this._parent.set(this._parent._lKey.sendCustomerMessageType, 35);
+              this._parent.set(this._parent._lKey.scenarioMessageType, 42);
               var params = {
                 type: "2",
                 uiType: uiType,
@@ -7011,7 +7085,7 @@
                 sinclo.displayTextarea(true, true);
               } else {
                 sinclo.hideTextarea();
-              }
+          }
               storage.l.set('textareaOpend', 'close');
               break;
             default:
@@ -7029,6 +7103,7 @@
           self._parent._unWaitingInput();
           self._endValidInputWatcher();
         },
+        _disableGrantCancelAbleFlg: false,
         _executeConfirm: function (executeSilent) {
           var self = sinclo.scenarioApi._hearing;
           //ヒアリングが終わるときはチャットエリアのreadOnlyを解除しておく
@@ -7053,6 +7128,10 @@
                 emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
               }, 1000);
             }
+            // 終了したヒアリングまでの復元イベントを全て除去する
+            // 最後の回答にはイベントを付与しない
+            self._disableGrantCancelAbleFlg = true;
+            self._disableAllHearingMessageInput();
             if (self._parent._goToNextScenario()) {
               self._setCurrentSeq(0);
               self._parent._process();
@@ -7084,9 +7163,9 @@
           }
           return result;
         },
-        _showError: function () {
+        _showError: function (uiType) {
           var self = sinclo.scenarioApi._hearing;
-          var errorMessage = self._parent.get(self._parent._lKey.currentScenario).errorMessage;
+          var errorMessage = uiType ? self._parent._getCurrentScenario().errorMessage : self._parent.get(self._parent._lKey.currentScenario).errorMessage;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._parent.get(self._state.currentSeq) + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
@@ -7098,22 +7177,33 @@
         _goToNext: function () {
           var self = sinclo.scenarioApi._hearing;
           if (self._isTheEnd()) {
-            return false;
             // 終了であればチャット送信エリアを元に戻す
             sinclo.chatApi.hideMiniMessageArea();
-          }
-          self._setCurrentSeq(self._getCurrentSeq() + 1);
-          if (self._isTheEnd()) {
+            self._disableAllHearingMessageInput();
             return false;
-            // 終了であればチャット送信エリアを元に戻す
-            sinclo.chatApi.hideMiniMessageArea();
           } else {
+            self._setCurrentSeq(self._getCurrentSeq() + 1);
             return true;
           }
         },
         _isTheEnd: function () {
           var self = sinclo.scenarioApi._hearing;
           return self._getCurrentSeq() === self._getLength();
+        },
+        _disableAllHearingMessageInput: function() {
+          $('#sincloBox ul#chatTalk li.sinclo_re.hearing_msg').each(function(index, elm) {
+            // ラジオボタン
+            $(this).find('input[type="radio"]').prop('disabled', true).parent().css('opacity', 0.5);
+            // プルダウン
+            $(this).find('select[name^="sinclo-pulldown"]').prop('disabled', true).css('opacity', 0.5);
+            // カレンダー
+            $(this).find('.flatpickr-calendar').addClass('disable');
+          });
+          $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').each(function(index, elm) {
+            // 再回答用リンク
+            $(this).removeClass('cancelable');
+            $(this).off('click', self._handleCancel);
+          });
         },
         _isTheFirst: function () {
           var self = sinclo.scenarioApi._hearing;
@@ -7136,6 +7226,8 @@
           var self = sinclo.scenarioApi._hearing;
           return self._parent.get(self._parent._lKey.currentScenario).hearingTargetCondition === self._easyApi.targetCondition.validAll;
         },
+        // 入力確認時に建立されるフラグ
+        _forceRadioTypeFlg: false,
         _showConfirmMessage: function (executeSilent) {
           var self = sinclo.scenarioApi._hearing;
           var messageBlock = self._parent._createSelectionMessage(self._parent.get(self._parent._lKey.currentScenario).confirmMessage, [self._parent.get(self._parent._lKey.currentScenario).success, self._parent.get(self._parent._lKey.currentScenario).cancel]);
@@ -7147,6 +7239,7 @@
               self._saveConfirmFlg(false);
               if (inputVal === self._parent.get(self._parent._lKey.currentScenario).success) {
                 self._clearRetryFlg();
+                self._forceRadioTypeFlg = true;
                 if (self._cvIsEnable()) {
                   // OKを押したタイミングでCVを付ける
                   setTimeout(function () {
@@ -7154,6 +7247,8 @@
                   }, 1000);
                 }
                 self._setCurrentSeq(0);
+                // OKを押したタイミングで、現時点で復元可能対象を全て除去する
+                self._disableAllHearingMessageInput();
                 if (self._parent._goToNextScenario()) {
                   self._parent._process();
                 }
