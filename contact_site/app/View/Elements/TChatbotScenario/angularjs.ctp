@@ -2770,17 +2770,20 @@ function actionValidationCheck(element, setActionList, actionItem) {
       }
       // check all option is blank
       if (item.uiType === '3' || item.uiType === '4') {
-        if (item.settings.options.every(option => option === "")) {
-          hasBlankOption = true;
-        }
+        hasBlankOption = item.settings.options.every(function (option) {
+          return option === "";
+        })
       }
       // check calendar input
       if (item.uiType === '5') {
         if (item.settings.isEnableAfterDate && !item.settingsenableAfterDate) {
           invalidCalendarInput = true;
         }
-        if (item.settings.setSpecificDateType && item.settings.specificDateData.every(option => option === "")) {
-          invalidCalendarInput = true;
+
+        if (item.settings.setSpecificDateType) {
+          item.settings.specificDateData.every(function (option) {
+            return option === "";
+          })
         }
       }
     });

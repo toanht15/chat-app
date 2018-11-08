@@ -660,7 +660,7 @@ sincloApp.factory('SimulatorService', function() {
       var inputId = prefix + 'sinclo-datepicker' + index;
       var html = '<div id="' + calendarId + '">';
       html += '<style>';
-      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar { border: 2px solid' + data.design.borderColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar { border: 2px solid ' + data.design.borderColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months { background: ' + data.design.headerBackgroundColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-month { color: ' + data.design.headerTextColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-weekdays { background: ' + data.design.headerWeekdayBackgroundColor + ';}';

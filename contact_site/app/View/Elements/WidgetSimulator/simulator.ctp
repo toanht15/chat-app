@@ -289,7 +289,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox .flatpickr-calendar { width: 210px; height: 252px; border-radius: 0; box-shadow: none;}
         #sincloBox .flatpickr-calendar .flatpickr-current-month { font-size: 14px; padding-top: 8px }
         #sincloBox .flatpickr-calendar .flatpickr-weekdays { width: 206px; height: 24px}
-        #sincloBox .flatpickr-calendar .flatpickr-weekdaycontainer { padding-top: 8px; padding-right: 2px}
+        #sincloBox .flatpickr-calendar .flatpickr-weekdaycontainer { height: 21px; padding-top: 4px; padding-right: 2px; white-space: normal}
         #sincloBox .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday { font-size: 11px; line-height: 10px}
         #sincloBox .flatpickr-calendar .dayContainer { max-width: 206px; min-width: 200px;}
         #sincloBox .flatpickr-calendar .flatpickr-months { height: 32px;}
@@ -298,7 +298,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox .flatpickr-calendar .flatpickr-months .flatpickr-current-month .numInputWrapper { display: none}
         #sincloBox .flatpickr-calendar .flatpickr-months .flatpickr-current-month input.cur-year { display: none}
         #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day.disabled { color: rgba(57,57,57,0.18);}
-        #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day { height: 32px; line-height: 32px; border-radius: 0; font-weight: bolder;}
+        #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 29.42px; height: 32px; line-height: 32px; border-radius: 0; font-weight: bolder;}
+        @media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {
+          #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 28px;}
+        }
         #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none;}
         #sincloBox .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none;}
 
