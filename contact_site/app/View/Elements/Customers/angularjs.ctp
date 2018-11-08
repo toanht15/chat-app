@@ -75,14 +75,19 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             sendFile: 19,
             answerBulkHearing: 30,
             noModBulkHearing: 31,
-            modifyBulkHearing: 32
+            modifyBulkHearing: 32,
+            radio: 33,
+            pulldown: 34,
+            calendar: 35
           },
           message: {
             text: 21,
             hearing: 22,
             selection: 23,
             receiveFile: 27,
-            returnBulkHearing: 40
+            returnBulkHearing: 40,
+            pulldown: 41,
+            calendar: 42
           }
         },
         cogmo: {
@@ -1664,7 +1669,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           li.addEventListener("click", function(event){window.open(message.downloadUrl)});
         }
       }// 消費者からのメッセージの場合
-      else if ( type === chatApi.messageType.scenario.customer.hearing) {
+      else if ( type === chatApi.messageType.scenario.customer.hearing || type === chatApi.messageType.scenario.customer.radio || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar) {
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
@@ -1695,6 +1700,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
         content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.scenario.message.pulldown || type === chatApi.messageType.scenario.message.calendar) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
+        var json = JSON.parse(message);
+        content += $scope.createTextOfMessage(chat, json.message);
       }
       else if ( type === chatApi.messageType.scenario.message.selection ) {
         cn = "sinclo_auto";

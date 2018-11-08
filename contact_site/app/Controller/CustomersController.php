@@ -447,7 +447,8 @@ class CustomersController extends AppController {
           'THistoryChatLog.created'
         ],
         'conditions' => [
-          'THistoryChatLog.t_histories_id' => $this->params->query['historyId']
+          'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
+          'THistoryChatLog.hide_flg' => 0
         ],
         'order' => 'created',
         'recursive' => -1
