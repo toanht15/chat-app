@@ -1224,11 +1224,13 @@
               }
               isHearingAnswer = true;
               break;
-            case sinclo.chatApi.messageType.scenario.customer.radio:
-            case sinclo.chatApi.messageType.scenario.customer.pulldown:
-            case sinclo.chatApi.messageType.scenario.customer.calendar:
-            case sinclo.chatApi.messageType.scenario.customer.rePulldown:
-            case sinclo.chatApi.messageType.scenario.customer.reCalendar:
+            case 33:
+            case 34:
+            case 35:
+            case 36:
+            case 37:
+            case 38:
+            case 39:
               cn = "sinclo_se";
               isHearingAnswer = true;
               break;
@@ -1342,7 +1344,7 @@
                 isHearingAnswer: isHearingAnswer,
                 answerCount: answerCount
               };
-              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29)) || (Number(chat.messageType) > 40 && (Number(chat.messageType) < 49))));
             }
           }
           else if(Number(chat.messageType) === 8){
@@ -1360,7 +1362,7 @@
                 isHearingAnswer: isHearingAnswer,
                 answerCount: answerCount
               };
-              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29)) || (Number(chat.messageType) > 40 && (Number(chat.messageType) < 49))));
             }
           } else if (Number(chat.messageType) === 40) {
             if(sinclo.scenarioApi.isProcessing() && Object.keys(obj.chat.messages).indexOf(key) === Object.keys(obj.chat.messages).length - 1) {
@@ -1607,8 +1609,10 @@
         } else if(obj.messageType === sinclo.chatApi.messageType.scenario.customer.radio
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.pulldown
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.calendar
-          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.rePulldown
-          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reCalendar) {
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputText
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputRadio
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputPulldown
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputCalendar) {
           cn = "sinclo_se";
           elm.value = "";
         } else if (obj.messageType === sinclo.chatApi.messageType.customer
@@ -2369,8 +2373,10 @@
               radio: 33,
               pulldown: 34,
               calendar: 35,
-              rePulldown: 38,
-              reCalendar: 39
+              reInputText: 36,
+              reInputRadio: 37,
+              reInputPulldown: 38,
+              reInputCalendar: 39
             },
             message: {
               text: 21,
@@ -2554,6 +2560,7 @@
                 && sinclo.scenarioApi.isWaitingInput()
                 && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 console.log('◆◆ラジオボタンに関連するキャンセル動作が行われました◆◆');
+                self._parent.set(self._parent._lKey.sendCustomerMessageType, 37);
                 sinclo.scenarioApi._hearing._forceRadioTypeFlg = true;
                 sinclo.scenarioApi._hearing._handleCancel(e);
               }
@@ -4121,7 +4128,6 @@
           console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
           if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
             && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
-            sinclo.scenarioApi.triggerInputWaitComplete(value);
             messageType = sinclo.scenarioApi.getCustomerMessageType();
             // もしヒアリングの入力確認メッセージだった場合はmessageType を選択肢回答の33にする。
             if(sinclo.scenarioApi._hearing._forceRadioTypeFlg){
@@ -6617,9 +6623,9 @@
         var self = sinclo.scenarioApi;
         return Number(self.get(self._lKey.currentScenario).messageIntervalTimeSec);
       },
-      _doing: function (intervalSec, callFunction) {
+      _doing: function (intervalSec, callFunction, forceWait) {
         var self = sinclo.scenarioApi;
-        if(self._isTheFiestScenaroAndSequence() || intervalSec === 0) {
+        if(!forceWait || self._isTheFiestScenaroAndSequence() || intervalSec === 0) {
           // 一番最初のシナリオ開始は即時実行
           callFunction();
         } else {
@@ -6794,8 +6800,10 @@
                 ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.radio
                 ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.pulldown
                 ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.calendar
-                ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.rePulldown
-                ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.reCalendar)
+                ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputText
+                ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputRadio
+                ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputPulldown
+                ||obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputCalendar)
         },
         isLFModeDisabled: function () {
           var self = sinclo.scenarioApi._hearing;
@@ -6919,7 +6927,7 @@
         _handleTextCancel: function(e) {
           var self = sinclo.scenarioApi._hearing;
           self._handleCancel(e);
-          self._parent.set(self._parent._lKey.sendCustomerMessageType, 12);
+          self._parent.set(self._parent._lKey.sendCustomerMessageType, 36);
         },
         _handleCancel: function(e) {
           var self = sinclo.scenarioApi._hearing;
@@ -7020,7 +7028,7 @@
                     self._executeConfirm();
                   }
                 } else {
-                  self._showError(self._getCurrentHearingProcess().uiType);
+                  self._showError(hearing);
                 }
               });
             };
@@ -7201,16 +7209,16 @@
           }
           return result;
         },
-        _showError: function (uiType) {
+        _showError: function (hearingObj) {
           var self = sinclo.scenarioApi._hearing;
-          var errorMessage = uiType ? self._parent._getCurrentScenario().errorMessage : self._parent.get(self._parent._lKey.currentScenario).errorMessage;
+          var errorMessage = hearingObj.uiType ? hearingObj.errorMessage : self._parent._getCurrentScenario().errorMessage;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._parent.get(self._state.currentSeq) + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._parent.get(self._state.currentSeq));
               self._process();
             });
-          });
+          }, true);
         },
         _goToNext: function () {
           var self = sinclo.scenarioApi._hearing;
