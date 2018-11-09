@@ -369,6 +369,7 @@ class ChatHistoriesController extends AppController
           'THistoryChatLog.delete_flg',
           'THistoryChatLog.deleted_user_id',
           'THistoryChatLog.deleted',
+          'THistoryChatLog.hide_flg',
           'THistoryChatLog.created',
           'DeleteMUser.display_name',
         ],
@@ -386,7 +387,8 @@ class ChatHistoriesController extends AppController
         ],
         'conditions' => [
           'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
-          'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id']
+          'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+//          'THistoryChatLog.hide_flg' => 0,
         ],
         'order' => 'created',
         'recursive' => -1
@@ -817,7 +819,7 @@ class ChatHistoriesController extends AppController
             $row['transmissionPerson'] = '';
             $val['THistoryChatLog']['message'] = "（「" . $val['THistoryChatLog']['message'] . "」をクリック）";
           }
-          if ($val['THistoryChatLog']['message_type'] == 12) {
+          if ($val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 33 || $val['THistoryChatLog']['message_type'] == 34 || $val['THistoryChatLog']['message_type'] == 35) {
             $row['transmissionKind'] = '訪問者（ヒアリング回答）';
             $row['transmissionPerson'] = '';
           }
@@ -832,6 +834,12 @@ class ChatHistoriesController extends AppController
           if ($val['THistoryChatLog']['message_type'] == 22) {
             $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+          }
+          if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42) {
+            $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+            $json = json_decode($val['THistoryChatLog']['message']);
+            $val['THistoryChatLog']['message'] = $json->message;
           }
           if ($val['THistoryChatLog']['message_type'] == 23) {
             $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';

@@ -7477,10 +7477,10 @@ ul.naviBtn {
                   }
 
                   .bulk-button {
+                    display: inline-flex;
                     height: 26px;
                     padding: 5px;
                     align-items: center;
-                    position: absolute;
                   }
                   /* The container */
                   .require-checkbox {
@@ -7646,14 +7646,14 @@ ul.naviBtn {
                       padding-bottom: 0;
                       grid-column: 1/7;
                       -ms-grid-column: 1;
-                      -ms-grid-column-span: 5;
-                      -ms-grid-row: 2;
+                      -ms-grid-column-span: 7;
+                      -ms-grid-row: 3;
                       width: 101%;
                       &.short {
                         grid-column: 1/4;
                         -ms-grid-column: 1;
                         -ms-grid-column-span: 4;
-                        -ms-grid-row: 2;
+                        -ms-grid-row: 3;
                       }
                     }
                   }
@@ -7667,20 +7667,20 @@ ul.naviBtn {
 
                   .area-name {
                     grid-area: g3;
-                    -ms-grid-column: 1;
+                    -ms-grid-column: 3;
                     -ms-grid-row: 1;
                     margin-left: -17px;
                   }
 
                   .area-type {
                     grid-area: g4;
-                    -ms-grid-column: 2;
+                    -ms-grid-column: 4;
                     -ms-grid-row: 1;
                   }
 
                   .area-message {
                     grid-area: g5;
-                    -ms-grid-column: 3;
+                    -ms-grid-column: 5;
                     -ms-grid-row: 1;
                     -ms-grid-row-span: 2;
                     .textarea-message {
@@ -7700,7 +7700,7 @@ ul.naviBtn {
 
                   .area-btn {
                     grid-area: g6;
-                    -ms-grid-column: 4;
+                    -ms-grid-column: 6;
                     -ms-grid-row: 1;
                     -ms-grid-row-span: 2;
                     padding-left: 0;
@@ -7721,8 +7721,8 @@ ul.naviBtn {
 
                   .area-detail {
                     grid-area: g2;
-                    -ms-grid-column: 1;
-                    -ms-grid-column-span: 2;
+                    -ms-grid-column: 2;
+                    -ms-grid-column-span: 4;
                     -ms-grid-row: 2;
 
                     span {
@@ -7730,6 +7730,8 @@ ul.naviBtn {
                     }
 
                     .revert-button {
+                      -webkit-box-align: center;
+                      -ms-flex-align: center;
                       align-items: center;
                       position: relative;
                       padding: 5px;
@@ -7745,10 +7747,13 @@ ul.naviBtn {
                       span {
                         margin-left: 15px;
                         padding: 2px 0;
+                        display: -webkit-box;
+                        display: -ms-flexbox;
                         display: flex;
                         height: 35px;
 
                         label {
+                          -ms-flex-preferred-size: 100px;
                           flex-basis: 100px;
                           margin-top: 10px;
                         }
@@ -7765,29 +7770,24 @@ ul.naviBtn {
                       .revert-button {
                         padding: 4px 0;
                         bottom: 5px;
+                        -webkit-box-pack: center;
+                        -ms-flex-pack: center;
                         justify-content: center;
                         height: 25px
                       }
-                      //width: 100px;
-                      //padding: 4px;
-                      //bottom: 5px;
-                      //height: 25px;
-                      //font-size: 0.9em;
-                      //position: relative;
-                      //text-align: center;
-                    }
-
-                    div.calendar-design-custom-area {
-
                     }
                   }
 
                   .area-require {
                     grid-area: g1;
+                    -ms-grid-column: 2;
+                    -ms-grid-row: 1;
                   }
 
                   .area-drag-symbol {
                     grid-area: g0;
+                    -ms-grid-column: 1;
+                    -ms-grid-row: 1;
                   }
                 }
 

@@ -77,7 +77,7 @@
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar { width: 210px; height: 249px; border-radius: 0; box-shadow: none; -webkit-box-shadow: none;}
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-current-month { font-size: 14px; padding-top: 8px }
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdays { width: 206px; height: 21px}
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdaycontainer { padding-top: 8px; padding-right: 2px}
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdaycontainer { height: 21px; padding-top: 4px; padding-right: 2px; white-space: normal}
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday { font-size: 11px; line-height: 10px}
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer { max-width: 206px; min-width: 200px;}
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-months { height: 32px;}
@@ -86,8 +86,10 @@
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-months .flatpickr-current-month .numInputWrapper { display: none}
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .flatpickr-months .flatpickr-current-month input.cur-year { display: none}
 #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day.disabled { color: rgba(57,57,57,0.18);}
-#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day { height: 32px; line-height: 32px; border-radius: 0; font-weight: bolder;}
-
+#tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 29.42px; height: 32px; line-height: 32px; border-radius: 0; font-weight: bolder;}
+@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {
+  #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 28px;}
+}
 #tchatbotscenario_form_preview_body .chatTalk li select { border: 1px solid #909090; border-radius: 0; padding: 5px; height: 30px; margin-top: 9px; margin-bottom: -2px; min-width: 210px; max-width: 220px}
 
 </style>
@@ -109,8 +111,8 @@
         #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer { background-color: {{hearings.settings.customDesign.calendarBackgroundColor}}; }
         #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer .flatpickr-day.selected { background-color: {{hearings.settings.customDesign.headerBackgroundColor}}; color: {{hearings.selectedTextColor}} !important;}
         #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none;}
-        #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;  border: 1px solid {{hearings.settings.customDesign.headerBackgroundColor}};  outline: 1px solid {{hearings.settings.customDesign.headerWeekdayBackgroundColor}}}
-        #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid  {{hearings.settings.customDesign.headerWeekdayBackgroundColor}}; border-right: 1px solid  {{hearings.settings.customDesign.headerWeekdayBackgroundColor}};}
+        #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: 26px;height: 29px;display: inline-block;  border: 1px solid {{hearings.settings.customDesign.headerBackgroundColor}};  outline: 1px solid {{hearings.settings.customDesign.headerWeekdayBackgroundColor}}}
+        #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer .flatpickr-day {border-top: none;  border-left:none; border-bottom: 1px solid  {{hearings.settings.customDesign.headerWeekdayBackgroundColor}}; border-right: 1px solid  {{hearings.settings.customDesign.headerWeekdayBackgroundColor}};}
         #action{{setActionId}}_calendar{{index}} .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none;}
         #action{{setActionId}}_calendar{{index}} .flatpickr-calendar span.flatpickr-weekday { color: {{hearings.weekdayTextColor}} !important;}
       </style>
