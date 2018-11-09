@@ -1216,7 +1216,12 @@
               cn = "sinclo_se";
               break;
             case 12:
-              cn = "sinclo_se";
+              // 復元対象でない場合はcnにcancelableを付与しない
+              if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
+                cn = "sinclo_se"
+              } else {
+                cn = "cancelable sinclo_se";
+              }
               isHearingAnswer = true;
               break;
             case 33:
@@ -1375,21 +1380,17 @@
           } else if (Number(chat.messageType) === 41) {
             var pulldown = JSON.parse(chat.message);
             this.chatApi.addPulldown("hearing_msg sinclo_re", pulldown.message, userName, pulldown.settings);
-            // ①シナリオ実行中でない
-            // ②実行中だが該当IDが存在しない場合
-            // disabledをつける
-            if(!sinclo.scenarioApi.isProcessing()){
+            //シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
+            if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
-            } else {
-              var currentScenarioChatId = sinclo.scenarioApi.get("s_targetChatId");
             }
-            console.log('◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆');
-            console.log(chat.chatId);
-            console.log('◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆◆');
           } else if (Number(chat.messageType) === 42) {
             var calendar = JSON.parse(chat.message);
             this.chatApi.addCalendar("hearing_msg sinclo_re", calendar.message, calendar.settings);
             // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
+            if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
+              sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
+            }
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true && sincloInfo.chat.settings.in_flg == 1) {
@@ -6739,6 +6740,25 @@
           "4": "tel"
         },
         _watcher: null,
+        disableRestoreMessage: function (chatId) {
+          console.log('◆◆◆◆◆◆◆◆◆◆');
+          console.log('復元チェック対象です');
+          console.log('◆◆◆◆◆◆◆◆◆◆');
+          var disableRestoreFlg = true;
+          if(!sinclo.scenarioApi.isProcessing()){
+            // シナリオ中でないなら復元機能を除去する
+            return disableRestoreFlg;
+          } else {
+            var currentScenarioChatId = sinclo.scenarioApi.get("s_targetChatId");
+            console.log(currentScenarioChatId);
+            for(var i = 0; i < currentScenarioChatId.length; i++){
+              if(currentScenarioChatId[i] === chatId){
+                disableRestoreFlg = false;
+              }
+            }
+            return disableRestoreFlg;
+          }
+        },
         isHearingMode: function () {
           var self = sinclo.scenarioApi._hearing;
           if (!self._parent) {
