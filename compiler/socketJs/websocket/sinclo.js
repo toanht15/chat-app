@@ -1224,9 +1224,11 @@
               }
               isHearingAnswer = true;
               break;
-            case 33:
-            case 34:
-            case 35:
+            case sinclo.chatApi.messageType.scenario.customer.radio:
+            case sinclo.chatApi.messageType.scenario.customer.pulldown:
+            case sinclo.chatApi.messageType.scenario.customer.calendar:
+            case sinclo.chatApi.messageType.scenario.customer.rePulldown:
+            case sinclo.chatApi.messageType.scenario.customer.reCalendar:
               cn = "sinclo_se";
               isHearingAnswer = true;
               break;
@@ -1604,7 +1606,9 @@
           }
         } else if(obj.messageType === sinclo.chatApi.messageType.scenario.customer.radio
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.pulldown
-          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.calendar) {
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.calendar
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.rePulldown
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reCalendar) {
           cn = "sinclo_se";
           elm.value = "";
         } else if (obj.messageType === sinclo.chatApi.messageType.customer
@@ -2364,7 +2368,9 @@
               modifyBulkHearing: 32,
               radio: 33,
               pulldown: 34,
-              calendar: 35
+              calendar: 35,
+              rePulldown: 38,
+              reCalendar: 39
             },
             message: {
               text: 21,
@@ -2489,23 +2495,41 @@
 
         // 複数回イベントが登録されるケースがあるためいったんOFFにする
         $(document).off('click', "input[name^='sinclo-radio']");
+        $(document).off('change', "[name^='sinclo-pulldown']");
+        $(document).off('change', "[name^='sinclo-datepicker']");
+        // イベントOFF処理終了
           $(document).on('change', "[name^='sinclo-pulldown']", function (e) {
             if(e) e.stopPropagation();
             console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
-            sinclo.chatApi.send(e.target.value.trim());
+            console.log('☆★☆★☆★☆★☆★☆★☆');
+            console.log('プルダウンが入力されました');
+            console.log('☆★☆★☆★☆★☆★☆★☆');
+            // 変更された要素が再入力の対象であれば再入力させる
+            if(sinclo.scenarioApi._hearing._needCancel(e.target, $("[name^='sinclo-pulldown']"))) {
+              sinclo.scenarioApi._hearing._handleCancel(e);
+              sinclo.scenarioApi.set(sinclo.scenarioApi._lKey.sendCustomerMessageType, 38);
+            }
+              sinclo.chatApi.send(e.target.value.trim());
           });
 
           $(document).on('change', "[name^='sinclo-datepicker']", function (e) {
             if(e) e.stopPropagation();
             console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
-            sinclo.chatApi.send(e.target.value.trim());
+            console.log('☆★☆★☆★☆★☆★☆★☆');
+            console.log('カレンダーが入力されました');
+            console.log('☆★☆★☆★☆★☆★☆★☆');
+            // 変更された要素が再入力の対象であれば再入力させる
+            if(sinclo.scenarioApi._hearing._needCancel(e.target, $("[name^='sinclo-datepicker']"))) {
+              sinclo.scenarioApi._hearing._handleCancel(e);
+              sinclo.scenarioApi.set(sinclo.scenarioApi._lKey.sendCustomerMessageType, 39);
+            }
+              sinclo.chatApi.send(e.target.value.trim());
           });
 
           $(document)
             .on('focus', "#sincloChatMessage,#miniSincloChatMessage",function(e){
               if(e) e.stopPropagation();
               sinclo.chatApi.clearPlaceholderMessage();
-              console.log('サバ');
               if(check.smartphone()) {
                 $(document).one('touchstart', function(e){
                   $(document).trigger('blur');
@@ -6898,6 +6922,13 @@
           self._resetShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._getCurrentSeq());
           var hearingProcess = self._getCurrentHearingProcess();
           self._execute(hearingProcess, true);
+        },
+        _needCancel: function(element, selector) {
+          var lastElement;
+          for(var i = 0; typeof selector[i] !== "undefined"; i++){
+            lastElement = selector[i];
+          }
+          return lastElement !== element;
         },
         _resetShownMessage: function(seqNum, categoryNum) {
           var self = sinclo.scenarioApi._hearing;
