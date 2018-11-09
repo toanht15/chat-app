@@ -3220,6 +3220,7 @@
         var calendarHtml = sinclo.chatApi.createCalendarHtml(settings, index, storedValue);
         div.style.textAlign = "left";
         cs += ' effect_left';
+        cs += ' hearing_msg';
 
         li.className = cs;
         li.innerHTML = messageHtml + calendarHtml;
@@ -4100,7 +4101,6 @@
           console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
           if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
             && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
-            sinclo.scenarioApi.triggerInputWaitComplete(value);
             messageType = sinclo.scenarioApi.getCustomerMessageType();
             // もしヒアリングの入力確認メッセージだった場合はmessageType を選択肢回答の33にする。
             if(sinclo.scenarioApi._hearing._forceRadioTypeFlg){
@@ -6596,9 +6596,9 @@
         var self = sinclo.scenarioApi;
         return Number(self.get(self._lKey.currentScenario).messageIntervalTimeSec);
       },
-      _doing: function (intervalSec, callFunction) {
+      _doing: function (intervalSec, callFunction, forceWait) {
         var self = sinclo.scenarioApi;
-        if(self._isTheFiestScenaroAndSequence() || intervalSec === 0) {
+        if(!forceWait || self._isTheFiestScenaroAndSequence() || intervalSec === 0) {
           // 一番最初のシナリオ開始は即時実行
           callFunction();
         } else {
@@ -7172,7 +7172,7 @@
               self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._parent.get(self._state.currentSeq));
               self._process();
             });
-          });
+          }, true);
         },
         _goToNext: function () {
           var self = sinclo.scenarioApi._hearing;
