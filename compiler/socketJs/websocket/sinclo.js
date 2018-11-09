@@ -1222,6 +1222,10 @@
             case 33:
             case 34:
             case 35:
+            case 36:
+            case 37:
+            case 38:
+            case 39:
               cn = "sinclo_se";
               isHearingAnswer = true;
               break;
@@ -1335,7 +1339,7 @@
                 isHearingAnswer: isHearingAnswer,
                 answerCount: answerCount
               };
-              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29)) || (Number(chat.messageType) > 40 && (Number(chat.messageType) < 49))));
             }
           }
           else if(Number(chat.messageType) === 8){
@@ -1353,7 +1357,7 @@
                 isHearingAnswer: isHearingAnswer,
                 answerCount: answerCount
               };
-              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+              this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29)) || (Number(chat.messageType) > 40 && (Number(chat.messageType) < 49))));
             }
           } else if (Number(chat.messageType) === 40) {
             if(sinclo.scenarioApi.isProcessing() && Object.keys(obj.chat.messages).indexOf(key) === Object.keys(obj.chat.messages).length - 1) {
@@ -1431,7 +1435,7 @@
             console.log(JSON.stringify(chat, null, 4));
             this.chatApi.createMessage({cn: cn, message: chat.message, name: userName, chatId: chat.chatId,
               isHearingAnswer: chat.messageType === sinclo.chatApi.messageType.scenario.customer.hearing,
-              answerCount: (chat.messageType === sinclo.chatApi.messageType.scenario.customer.hearing) ? answerCount : 0}, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
+              answerCount: (chat.messageType === sinclo.chatApi.messageType.scenario.customer.hearing) ? answerCount : 0}, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29)) || (Number(chat.messageType) > 40 && (Number(chat.messageType) < 49))));
           }
           // シナリオ実行中であればラジオボタンを非活性にする。
           if ((Number(chat.messageType) === 22 || Number(chat.messageType) === 23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
@@ -1603,7 +1607,11 @@
           }
         } else if(obj.messageType === sinclo.chatApi.messageType.scenario.customer.radio
           || obj.messageType === sinclo.chatApi.messageType.scenario.customer.pulldown
-          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.calendar) {
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.calendar
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputText
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputRadio
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputPulldown
+          || obj.messageType === sinclo.chatApi.messageType.scenario.customer.reInputCalendar) {
           cn = "sinclo_se";
           elm.value = "";
         } else if (obj.messageType === sinclo.chatApi.messageType.customer
@@ -2363,7 +2371,11 @@
               modifyBulkHearing: 32,
               radio: 33,
               pulldown: 34,
-              calendar: 35
+              calendar: 35,
+              reInputText: 36,
+              reInputRadio: 37,
+              reInputPulldown: 38,
+              reInputCalendar: 39
             },
             message: {
               text: 21,
@@ -2523,6 +2535,7 @@
                 && sinclo.scenarioApi.isWaitingInput()
                 && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 console.log('◆◆ラジオボタンに関連するキャンセル動作が行われました◆◆');
+                self._parent.set(self._parent._lKey.sendCustomerMessageType, 37);
                 sinclo.scenarioApi._hearing._forceRadioTypeFlg = true;
                 sinclo.scenarioApi._hearing._handleCancel(e);
               }
@@ -6852,7 +6865,10 @@
         },
         _beginCancelHandler: function() {
           var self = sinclo.scenarioApi._hearing;
-          $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').on('click', self._handleCancel);
+          $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').on('click', function(e){
+            self._parent.set(self._parent._lKey.sendCustomerMessageType, 36);
+            self._handleCancel(e);
+          });
         },
         _handleCancel: function(e) {
           console.log('こっちから入力したテキストのキャンセルを行います');
@@ -6946,7 +6962,7 @@
                     self._executeConfirm();
                   }
                 } else {
-                  self._showError(self._getCurrentHearingProcess().uiType);
+                  self._showError(hearing);
                 }
               });
             };
@@ -7127,9 +7143,9 @@
           }
           return result;
         },
-        _showError: function (uiType) {
+        _showError: function (hearingObj) {
           var self = sinclo.scenarioApi._hearing;
-          var errorMessage = uiType ? self._parent._getCurrentScenario().errorMessage : self._parent.get(self._parent._lKey.currentScenario).errorMessage;
+          var errorMessage = hearingObj.uiType ? hearingObj.errorMessage : self._parent._getCurrentScenario().errorMessage;
           self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._parent.get(self._state.currentSeq) + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
