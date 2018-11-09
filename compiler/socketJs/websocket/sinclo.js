@@ -3170,7 +3170,10 @@
             }
 
             if (radioSelectedStr !== "") {
-              content += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>次へ</span></p>"
+              // TODO シナリオ起動中かつ、chatIdが一番新しい場合のみ次へボタンを付ける
+              if(sinclo.scenarioApi.isProcessing()) {
+                content += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>次へ</span></p>"
+              }
             }
 
         if (obj.cn.indexOf("sinclo_re") !== -1) {
@@ -3260,7 +3263,7 @@
         }
         html += '</div>';
         if (storedValueIsFound) {
-          html += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + storedValue + "\")'><span class='sincloButton'>OK</span></p>"
+          html += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + storedValue + "\")'><span class='sincloButton'>次へ</span></p>"
         }
         return html;
       },
@@ -3427,7 +3430,7 @@
         html += '</select>';
 
         if (storedValueIsFound) {
-          html += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + storedValue + "\")'><span class='sincloButton'>OK</span></p>"
+          html += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + storedValue + "\")'><span class='sincloButton'>次へ</span></p>"
         }
 
         return html;
@@ -6113,7 +6116,7 @@
       },
       _disablePreviousRadioButton: function () {
         var self = sinclo.scenarioApi;
-        var chatMessageBlock = $('sinclo-chat').find('div');
+        var chatMessageBlock = $('sinclo-chat').find('div > li[class*="sinclo"]');
         var length = self.get(self._lKey.previousChatMessageLength);
         if (!self.isProcessing()) {
           // 初期状態
