@@ -2500,7 +2500,7 @@
         // イベントOFF処理終了
           $(document).on('change', "[name^='sinclo-pulldown']", function (e) {
             if(e) e.stopPropagation();
-            // 選択してくださいを選択された場合はreturnすることで何も起こさせない
+            // 選択してくださいを選択された場合はreturnすることで何もさせない
             if (e.target.value === "") return;
             console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
             console.log('☆★☆★☆★☆★☆★☆★☆');
@@ -3233,6 +3233,7 @@
         var calendarHtml = sinclo.chatApi.createCalendarHtml(settings, index, storedValue);
         div.style.textAlign = "left";
         cs += ' effect_left';
+        cs += ' hearing_msg';
 
         li.className = cs;
         li.innerHTML = messageHtml + calendarHtml;
