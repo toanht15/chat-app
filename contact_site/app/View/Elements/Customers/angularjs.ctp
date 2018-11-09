@@ -78,7 +78,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             modifyBulkHearing: 32,
             radio: 33,
             pulldown: 34,
-            calendar: 35
+            calendar: 35,
+            reInputText: 36,
+            reInputRadio: 37,
+            reInputPulldown: 38,
+            reInputCalendar: 39
           },
           message: {
             text: 21,
@@ -1510,8 +1514,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var str = escape_html(strings[i]);
         // ラジオボタン
         var radio = str.indexOf('[]');
-        if ( option.radio && radio > -1 ) {
-          var val = str.slice(radio+2);
+        var selectedRadio = str.indexOf('[*]');
+        if ( option.radio && (radio > -1 || selectedRadio > -1) ) {
+          var val = '';
+          if (radio > -1) {
+            val = str.slice(radio + 2);
+          }
+          if (selectedRadio > -1) {
+            val = str.slice(selectedRadio + 3);
+          }
           str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
           str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
         }
@@ -1690,7 +1701,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           li.addEventListener("click", function(event){window.open(message.downloadUrl)});
         }
       }// 消費者からのメッセージの場合
-      else if ( type === chatApi.messageType.scenario.customer.hearing || type === chatApi.messageType.scenario.customer.radio || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar) {
+      else if ( type === chatApi.messageType.scenario.customer.hearing || type === chatApi.messageType.scenario.customer.radio
+        || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar
+        || type === chatApi.messageType.scenario.customer.reInputText || type === chatApi.messageType.scenario.customer.reInputRadio
+        || type === chatApi.messageType.scenario.customer.reInputPulldown || type === chatApi.messageType.scenario.customer.reInputCalendar) {
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
