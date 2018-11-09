@@ -6753,45 +6753,6 @@
           }
           return self._inputType[inputTypeStr];
         },
-        _easyApi: {
-          labelMap: {
-            "lbc_office_id": "",
-            "lbc_head_office_id": "",
-            "pref_code": "都道府県コード",
-            "city_code": "市区町村コード",
-            "addr": "住所",
-            "cname": "企業名",
-            "oname": "事業所名",
-            "pname": "姓名",
-            "pname_kana": "姓名カナ",
-            "pname_kana2": "姓名かな",
-            "busho": "部署名",
-            "yakushoku": "役職名",
-            "zip": "郵便番号",
-            "tel": "電話番号",
-            "fax": "FAX番号",
-            "ktai": "携帯番号",
-            "chokutsu": "直通番号",
-            "daihyo": "代表番号",
-            "mail": "メールアドレス",
-            "url": "URL",
-            "extra": "その他",
-            "unknown": "その他",
-            "org_addr": "住所",
-            "org_zip": "郵便番号",
-            "exist_cname": "企業名マスタ存在",
-            "exist_addr": "住所マスタ存在",
-            "exist_zip": "郵便番号マスタ存在",
-            "match_pref_add": "都道府県・住所一致",
-            "match_pref_zip": "都道府県・郵便番号一致",
-            "match_pref_tel": "都道府県・電話番号一致"
-          },
-          targetCondition: {
-            validOnce: "1",
-            validAll: "2"
-          },
-        },
-
         _init: function (parent, currentScenario) {
           this._parent = parent;
           this._setCurrentSeq(this._getCurrentSeq());
@@ -7000,24 +6961,24 @@
           var self = sinclo.scenarioApi._hearing;
           switch(uiType) {
             case "1": //テキスト1行
-              this._parent.set(this._parent._lKey.sendCustomerMessageType, 12);
-              this._parent.set(this._parent._lKey.scenarioMessageType, 22);
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 12);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 22);
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
                 $('#miniSincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
               }
               break;
             case "2": //テキスト複数行
-              this._parent.set(this._parent._lKey.sendCustomerMessageType, 12);
-              this._parent.set(this._parent._lKey.scenarioMessageType, 22);
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 12);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 22);
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
                 $('#sincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
               }
               break;
             case "3": // ラジオボタン
-              this._parent.set(this._parent._lKey.sendCustomerMessageType, 33);
-              this._parent.set(this._parent._lKey.scenarioMessageType, 23);
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 33);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 23);
               message += "\n";
               settings.options.forEach(function(elm, index, arr) {
                 if(self._parent._getCurrentScenario().restore && self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName) === elm) {
@@ -7029,8 +6990,8 @@
               self._parent._showMessage("2", message, self._getCurrentSeq(), "2", callback);
               break;
             case "4": //プルダウン
-              this._parent.set(this._parent._lKey.sendCustomerMessageType, 34);
-              this._parent.set(this._parent._lKey.scenarioMessageType, 41);
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 34);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 41);
               var params = {
                 type: "2",
                 uiType: uiType,
@@ -7044,8 +7005,8 @@
               self._parent._showPullDown(params, callback);
               break;
             case "5":
-              this._parent.set(this._parent._lKey.sendCustomerMessageType, 35);
-              this._parent.set(this._parent._lKey.scenarioMessageType, 42);
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 35);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 42);
               var params = {
                 type: "2",
                 uiType: uiType,
@@ -7059,7 +7020,10 @@
               self._parent._showCalendar(params, callback);
               break;
             default:
-              //TODO 旧IFを吸収する
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 12);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 22);
+              self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
+              break;
           }
         },
         _handleChatTextArea: function (type, required) {
@@ -7222,10 +7186,6 @@
           var self = sinclo.scenarioApi._hearing;
           return self._parent.get(self._parent._lKey.currentScenario).parseSignatureMode;
         },
-        _easyApiRequireAll: function () {
-          var self = sinclo.scenarioApi._hearing;
-          return self._parent.get(self._parent._lKey.currentScenario).hearingTargetCondition === self._easyApi.targetCondition.validAll;
-        },
         // 入力確認時に建立されるフラグ
         _forceRadioTypeFlg: false,
         _showConfirmMessage: function (executeSilent) {
@@ -7269,24 +7229,6 @@
             }
           });
         },
-        _createSignatureMessage: function (obj) {
-          var self = sinclo.scenarioApi._hearing;
-          var message = "";
-          Object.keys(obj).forEach(function (elm, index, arr) {
-            if (obj[elm] !== "") {
-              if (typeof (obj[elm]) === "string") {
-                message += self._easyApi.labelMap[elm] + "：" + obj[elm] + "\n";
-              } else if (typeof(obj[elm]) === "object") {
-                var concatStr = self._easyApi.labelMap[elm] + "：";
-                for (var i = 0; i < obj[elm].length; i++) {
-                  concatStr += obj[elm][i] + " ";
-                }
-                message += concatStr + "\n";
-              }
-            }
-          });
-          return message;
-        }
       },
       _selection: {
         _parent: null,
