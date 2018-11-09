@@ -2500,6 +2500,8 @@
         // イベントOFF処理終了
           $(document).on('change', "[name^='sinclo-pulldown']", function (e) {
             if(e) e.stopPropagation();
+            // 選択してくださいを選択された場合はreturnすることで何も起こさせない
+            if (e.target.value === "") return;
             console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
             console.log('☆★☆★☆★☆★☆★☆★☆');
             console.log('プルダウンが入力されました');
@@ -6896,7 +6898,12 @@
         },
         _beginCancelHandler: function() {
           var self = sinclo.scenarioApi._hearing;
-          $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').on('click', self._handleCancel);
+          $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').on('click', self._handleTextCancel);
+        },
+        _handleTextCancel: function(e) {
+          var self = sinclo.scenarioApi._hearing;
+          self._handleCancel(e);
+          self._parent.set(self._parent._lKey.sendCustomerMessageType, 12);
         },
         _handleCancel: function(e) {
           console.log('こっちから入力したテキストのキャンセルを行います');
