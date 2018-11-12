@@ -99,7 +99,7 @@
                  class="select-option-input action{{setActionId}}_option{{listId}}" ng-init="main.controllHearingOptionView(setActionId, listId)">
                             <span><label class="">選択肢 {{optionIndex + 1}}<span class="questionBalloon"><icon
                                           class="questionBtn"
-                                          data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>選択肢２：女性">?</icon></span></label></span>
+                                          data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
               <input type="text" class="m20l" ng-model="hearingItem.settings.options[optionIndex]"
                      style="width: 200px;">
               <div class="btnBlock">
