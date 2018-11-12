@@ -107,7 +107,7 @@
                 <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, optionIndex, listId)')) ?></a>
               </div>
               <a ng-if="!optionIndex" href="" class="greenBtn btn-shadow bulk-button"
-                 style="display: inline-flex; margin-top: 5px"
+                 style="display: inline; margin-top: 5px"
                  ng-click="main.showBulkSelectionPopup(setActionId, listId, hearingItem.uiType);"> 選択肢を一括登録</a>
             </div>
 
@@ -216,8 +216,10 @@
                     </label>
                     <div class="cannot-select-specific-date"
                          ng-if="hearingItem.settings.isSetSpecificDate">
-                      <label class="pointer m40l"><input type="radio" name="set-specific-date" value="1"
-                                                         ng-model="hearingItem.settings.setSpecificDateType">選択できない日付を指定する</label>
+                      <label class="pointer m40l">
+                        <input type="radio" name="set-specific-date" value="1"
+                               ng-model="hearingItem.settings.setSpecificDateType">選択できない日付を指定する
+                      </label>
                       <br>
                       <div class="select-option-input action{{setActionId}}_option{{listId}}"
                            style="margin-left: 60px;"
@@ -234,10 +236,8 @@
                       </div>
 
                       <label class="pointer m40l">
-                        <input type="radio"
-                               name="set-specific-date"
-                               value="2" ng-model="hearingItem.settings.setSpecificDateType">
-                        選択できる日付を指定する
+                        <input type="radio" name="set-specific-date" value="2"
+                               ng-model="hearingItem.settings.setSpecificDateType">選択できる日付を指定する
                       </label>
                       <br>
                       <div class="select-option-input action{{setActionId}}_option{{listId}} m60l"

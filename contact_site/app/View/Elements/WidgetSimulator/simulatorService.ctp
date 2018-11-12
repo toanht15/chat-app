@@ -671,7 +671,8 @@ sincloApp.factory('SimulatorService', function() {
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-month { color: ' + data.design.headerTextColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-weekdays { background: ' + data.design.headerWeekdayBackgroundColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday { color: ' + this.getContrastColor(data.design.headerWeekdayBackgroundColor) + ' !important;}';
-      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: ' + data.design.headerTextColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-prev-month { fill: ' + data.design.headerTextColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-next-month { fill: ' + data.design.headerTextColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer { background-color: ' + data.design.calendarBackgroundColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;  border: 1px solid ' + data.design.headerBackgroundColor +   '; outline: 1px solid ' + data.design.headerWeekdayBackgroundColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid  ' + data.design.headerWeekdayBackgroundColor +  '; border-right: 1px solid  ' + data.design.headerWeekdayBackgroundColor + ';}';

@@ -3281,12 +3281,13 @@
         style += target + ' .flatpickr-calendar .flatpickr-months { background: ' + settings.customDesign.headerBackgroundColor + '} ';
         style += target + ' .flatpickr-calendar .flatpickr-months .flatpickr-month { color: ' + settings.customDesign.headerTextColor + '}';
         style += target + ' .flatpickr-calendar .flatpickr-weekdays { background: ' + settings.customDesign.headerWeekdayBackgroundColor + '}';
-        style += target + ' .flatpickr-calendar .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: ' + settings.customDesign.headerTextColor + '}';
+        style += target + ' .flatpickr-calendar .flatpickr-months .flatpickr-prev-month { fill: ' + settings.customDesign.headerTextColor + '}';
+        style += target + ' .flatpickr-calendar .flatpickr-months .flatpickr-next-month { fill: ' + settings.customDesign.headerTextColor + '}';
         style += target + ' .flatpickr-calendar .dayContainer { background-color: ' + settings.customDesign.calendarBackgroundColor + '}';
         style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.selected { background-color: ' + settings.customDesign.headerBackgroundColor + '; color: ' + sinclo.chatApi.getContrastColor(settings.customDesign.headerBackgroundColor) + ' !important;}';
-        style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none }';
-        style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;  border: 1px solid ' + settings.customDesign.headerBackgroundColor + '; outline: 1px solid ' +   settings.customDesign.headerWeekdayBackgroundColor + ';}';
-        style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid' + settings.customDesign.headerWeekdayBackgroundColor +  '; border-right: 1px solid ' + settings.customDesign.headerWeekdayBackgroundColor + ';}';
+        // style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none }';
+        style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { border: 1px solid ' + settings.customDesign.headerBackgroundColor + '; outline: 1px solid ' +   settings.customDesign.headerWeekdayBackgroundColor + ';}';
+        style += target + ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid ' + settings.customDesign.headerWeekdayBackgroundColor +  '; border-right: 1px solid ' + settings.customDesign.headerWeekdayBackgroundColor + ';}';
         style += target + ' .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none }';
         style += target + ' .flatpickr-calendar span.flatpickr-weekday { color: ' + sinclo.chatApi.getContrastColor(settings.customDesign.headerWeekdayBackgroundColor) +  ' !important; };';
         style += '</style>';
@@ -3444,7 +3445,7 @@
       },
       createPulldownStyle: function (settings) {
         var style = '';
-        style += 'margin-top: 10px; height: 30px; ';
+        style += 'margin-top: 10px; height: 30px; min-width: 210px; ';
         style += 'color: ' + settings.customDesign.textColor + ';';
         style += 'background-color: ' + settings.customDesign.backgroundColor + ';';
         style += 'border: 1px solid ' + settings.customDesign.borderColor + ';';

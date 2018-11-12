@@ -442,6 +442,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
             // set min date
             if (hearing.settings.isEnableAfterDate) {
+              if (!hearing.settings.enableAfterDate) {
+                hearing.settings.enableAfterDate = 1;
+              }
               calendar_options.minDate = new Date().fp_incr(hearing.settings.enableAfterDate);
             } else {
               calendar_options.minDate = hearing.settings.disablePastDate ? 'today' : '';
@@ -1649,8 +1652,15 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   });
 
-  $scope.$on('nextHearingAction', function (event) {
+  $scope.$on('nextHearingAction', function () {
     $scope.hearingIndex++;
+    var actionDetail = $scope.setActionList[$scope.actionStep];
+    if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
+      !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
+      $scope.hearingIndex = 0;
+      self.disableHearingInput($scope.actionStep);
+      $scope.actionStep++;
+    }
     $scope.doAction();
   });
 
@@ -2372,6 +2382,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $('#sincloBox select[id*="action' + actionIndex + '"]').prop('disabled', true);
     $('#sincloBox [id^="action' + actionIndex + '"][id*="underline"]').find('.sinclo-text-line').removeClass('underlineText');
     $('#sincloBox [id^="action' + actionIndex + '"][id*="calendar"]').addClass('disabledArea');
+    $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
   };
 
 
@@ -2391,6 +2402,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $('input[name=' + name + '][type="radio"]').prop('disabled', true);
       // ラジオボタンを非活性にする
       self.disableHearingInput($scope.actionStep);
+      $('#action' + actionStep + '_hearing0_question').nextAll('div').removeAttr('id');
+      $('#action' + actionStep + '_hearing0_question').removeAttr('id');
     } else {
       // radio type
       var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
@@ -2424,6 +2437,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (!item) {
         // first time input
         $scope.addVisitorHearingMessage(message);
+        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
       } else if (item && item !== message) {
         $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
         $scope.reSelectionHearing(message, numbers[0], numbers[1]);
@@ -2756,10 +2770,11 @@ function actionValidationCheck(element, setActionList, actionItem) {
     var hasBlankErrMess = false;
     var hasBlankOption = false;
     var hasInvalidLengthErrMess = false;
-    var invalidCalendarInput = false;
+    var hasBlankCanSelectDate = false;
+    var hasBlankCannotSelectDate = false;
     angular.forEach(actionItem.hearings, function (item, itemKey) {
       // valid date error mesage
-      if ((item.uiType === '1'   || item.uiType == '2') && item.inputType != 1) {
+      if ((item.uiType === '1'   || item.uiType === '2') && item.inputType != 1) {
         if (!item.errorMessage) {
           hasBlankErrMess = true;
         }
@@ -2770,20 +2785,22 @@ function actionValidationCheck(element, setActionList, actionItem) {
       }
       // check all option is blank
       if (item.uiType === '3' || item.uiType === '4') {
-        hasBlankOption = item.settings.options.every(function (option) {
-          return option === "";
-        })
+        if (item.settings.options.some(function (option) {return option === "";})) {
+          hasBlankOption = true;
+        }
       }
       // check calendar input
-      if (item.uiType === '5') {
-        if (item.settings.isEnableAfterDate && !item.settingsenableAfterDate) {
-          invalidCalendarInput = true;
+      if (item.uiType === '5' && item.settings.isSetSpecificDate && item.settings.setSpecificDateType) {
+        if (item.settings.setSpecificDateType === '1') {
+          if (item.settings.specificDateData.some(function (option) {return option === "";})) {
+            hasBlankCannotSelectDate = true;
+          }
         }
 
-        if (item.settings.setSpecificDateType) {
-          item.settings.specificDateData.every(function (option) {
-            return option === "";
-          })
+        if (item.settings.setSpecificDateType === '2') {
+          if (item.settings.specificDateData.some(function (option) {return option === "";})) {
+            hasBlankCanSelectDate = true;
+          }
         }
       }
     });
@@ -2799,17 +2816,13 @@ function actionValidationCheck(element, setActionList, actionItem) {
       messageList.push('選択肢が未入力です');
     }
 
-    if (invalidCalendarInput) {
-      messageList.push('カレンダーのインプットが未入力です');
+    if (hasBlankCannotSelectDate) {
+      messageList.push('選択できない日付を指定するが未入力です');
     }
 
-    // if (!actionItem.errorMessage) {
-    //   messageList.push('入力エラー時の返信メッセージが未入力です');
-    // }
-
-    // if (actionItem.errorMessage && actionItem.errorMessage.length > 4000) {
-    //     messageList.push('入力エラー時の返信メッセージは4000文字以内で入力してください');
-    // }
+    if (hasBlankCanSelectDate) {
+      messageList.push('選択できる日付を指定するが未入力です');
+    }
 
     if (actionItem.isConfirm) {
       if (!actionItem.confirmMessage) {

@@ -138,7 +138,9 @@ $(function(){
       $val['THistoryChatLog']['message'] = '（「'.$val['THistoryChatLog']['message'].'」をクリック）';
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 12) === 0 || strcmp($val['THistoryChatLog']['message_type'], 33) === 0
-    || strcmp($val['THistoryChatLog']['message_type'], 34) === 0 || strcmp($val['THistoryChatLog']['message_type'], 35) === 0) {
+      || strcmp($val['THistoryChatLog']['message_type'], 34) === 0 || strcmp($val['THistoryChatLog']['message_type'], 35) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 36) === 0 || strcmp($val['THistoryChatLog']['message_type'], 37) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 38) === 0 || strcmp($val['THistoryChatLog']['message_type'], 39) === 0) {
       $className = "sinclo_re";
       $id = $val['THistoryChatLog']['id'];
       $historyId = $val['THistoryChatLog']['t_histories_id'];
