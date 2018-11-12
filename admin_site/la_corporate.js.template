@@ -19,6 +19,7 @@ var sincloInfo;
             sincloInfo.site.files + '/websocket/assist.min.js',
             sincloInfo.site.files + '/websocket/assist-iframe.min.js',
             sincloInfo.site.files + '/websocket/liveassist.min.js',
+            sincloInfo.site.files + '/websocket/flatpickr.min.js',
             sincloInfo.site.files + '/websocket/common.min.js',
             sincloInfo.site.files + '/websocket/sinclo.min.js'
         ],
