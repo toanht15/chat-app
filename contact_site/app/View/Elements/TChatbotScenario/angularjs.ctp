@@ -2386,7 +2386,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
 
-  $(document).on('click', '#chatTalk input[type="radio"]', function() {
+  $(document).on('change', '#chatTalk input[type="radio"]', function() {
     var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
     var message = $(this).val().replace(/^\s/, '');
     var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
@@ -2407,16 +2407,30 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     } else {
       // radio type
       var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
+      var isRestore = $scope.setActionList[numbers[0]].restore;
       var item = LocalStorageService.getItem('chatbotVariables', variable);
-      $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-      if (!item) {
-        // first time input
-        $scope.addVisitorHearingMessage(message);
-        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-      } else if (item && item !== message) {
-        $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-        $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+      if (isRestore) {
+        if (!item) {
+          // first time input
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+          $scope.addVisitorHearingMessage(message);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        } else if (item && item !== message) {
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+          $scope.reSelectionHearing(message, numbers[0], numbers[1]);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        }
+      } else {
+        if (!item) {
+          // first time input
+          $scope.addVisitorHearingMessage(message);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        } else {
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+          $scope.reSelectionHearing(message, numbers[0], numbers[1]);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        }
       }
     }
   });
@@ -2432,16 +2446,29 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     if (message !== '選択してください') {
       var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
+      var isRestore = $scope.setActionList[numbers[0]].restore;
       var item = LocalStorageService.getItem('chatbotVariables', variable);
-      $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-      if (!item) {
-        // first time input
-        $scope.addVisitorHearingMessage(message);
-        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-      } else if (item && item !== message) {
-        $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-        $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+      if (isRestore) {
+        $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+        if (!item) {
+          // first time input
+          $scope.addVisitorHearingMessage(message);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        } else if (item && item !== message) {
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+          $scope.reSelectionHearing(message, numbers[0], numbers[1]);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        }
+      } else {
+        if (!item) {
+          // first time input
+          $scope.addVisitorHearingMessage(message);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        } else {
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+          $scope.reSelectionHearing(message, numbers[0], numbers[1]);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        }
       }
     } else {
       $(this).parents('.sinclo_re').find('.nextBtn').hide();
@@ -2458,18 +2485,34 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var hearingIndex = numbers[1];
 
     var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
+    var isRestore = $scope.setActionList[numbers[0]].restore;
     var item = LocalStorageService.getItem('chatbotVariables', variable);
-    $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-    if (!item) {
-      // first input
-      $scope.addVisitorHearingMessage(message);
-      $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-    } else if (item && item !== message) {
-      // 再選択
-      $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-      $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-      $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+    if (isRestore) {
+      if (!item) {
+        // first input
+        $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+        $scope.addVisitorHearingMessage(message);
+        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+      } else if (item && item !== message) {
+        // 再選択
+        $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+        $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+        $scope.reSelectionHearing(message, numbers[0], numbers[1]);
+        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+      }
+    } else {
+      if (!item) {
+        // first input
+        $scope.addVisitorHearingMessage(message);
+        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+      } else {
+        // 再選択
+        $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+        $scope.reSelectionHearing(message, numbers[0], numbers[1]);
+        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+      }
     }
+
   });
 
   // re-input text type
