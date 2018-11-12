@@ -15,6 +15,7 @@ var sincloInfo;
         l = [
             sincloInfo.site.files + '/websocket/jquery-2.2.0.min.js',
             sincloInfo.site.socket + '/socket.io/socket.io.js',
+            sincloInfo.site.files + '/websocket/flatpickr.min.js',
             sincloInfo.site.files + '/websocket/common.min.js',
             sincloInfo.site.files + '/websocket/sinclo.min.js'
         ],
