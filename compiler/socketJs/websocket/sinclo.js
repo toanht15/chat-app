@@ -807,16 +807,6 @@
           "width=" + screen.availWidth * (2 / 3) + ",height=" + screen.availHeight * (2 / 3) +
           ",dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no"
         );
-
-        // emit('sendWindowInfo', {
-        //   userId: userInfo.userId,
-        //   tabId: userInfo.tabId,
-        //   connectToken: userInfo.connectToken,
-        //   // 解像度
-        //   screen: browserInfo.windowScreen(),
-        //   // ブラウザのサイズ
-        //   windowSize: browserInfo.windowSize()
-        // });
         this.remove();
       };
       popup.set(title, content);
@@ -2101,13 +2091,25 @@
       }
       return delayTime;
     },
-    _skipLabelHandler: function(target) {
-      if (target.val().length > 0) {
-        target.next().text('送信');
-      } else {
-        target.next().text('スキップ')
-      }
+    _skipLabelHandler: function(e) {
+      if(typeof e === "undefined") {
+        // イベント無しの場合
+        // 各々テキストエリアが空でない場合は送信ボタンに変えておく
+        if ($('#sincloChatMessage').val() !== ""){
+          $('#sincloChatSendBtn').text('送信');
+        }
+        if ($('#miniSincloChatMessage').val() !== ""){
+          $('#miniSincloChatSendBtn').text('送信');
+        }
 
+      } else {
+        // イベントありの場合
+        if (e.target.value.length > 0) {
+          e.target.nextElementSibling.text = '送信';
+        } else {
+          e.target.nextElementSibling.text = 'スキップ';
+        }
+      }
     },
     displayTextarea: function(skippable, disabled){
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaCalled<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -2118,11 +2120,11 @@
         sinclo.hideTextarea();
         return;
       }
-      if(skippable) {
+      if(skippable && sinclo.scenarioApi.isProcessing()) {
         $('#sincloChatSendBtn').text('スキップ');
         $('#miniSincloChatSendBtn').text('スキップ');
-        $('#sincloChatMessage').on('input', sinclo._skipLabelHandler($('#sincloChatMessage')));
-        $('#miniSincloChatMessage').on('input', sinclo._skipLabelHandler($('#miniSincloChatMessage')));
+        $('#sincloChatMessage').on('input', sinclo._skipLabelHandler);
+        $('#miniSincloChatMessage').on('input', sinclo._skipLabelHandler);
         if(disabled) {
           $('#sincloChatMessage').prop('disabled', true).css('background-color', '#DDD');
           $('#miniSincloChatMessage').prop('disabled', true).css('background-color', '#DDD');
@@ -2164,6 +2166,7 @@
         }
       }
       sinclo.firstCallDisplayTextarea = false;
+      sinclo._skipLabelHandler();
     },
     hideTextarea: function(){
       console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>hideTextareaCalled<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
@@ -2363,6 +2366,7 @@
           end: 999,
           scenario: {
             customer: {
+              skipHearing: 11,
               hearing: 12,
               selection: 13,
               sendFile: 19,
@@ -2562,7 +2566,7 @@
                 && sinclo.scenarioApi.isWaitingInput()
                 && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
                 console.log('◆◆ラジオボタンに関連するキャンセル動作が行われました◆◆');
-                self._parent.set(self._parent._lKey.sendCustomerMessageType, 37);
+                self._parent.set(self._parent._lKey.sendCustomerMessageType, sinclo.chatApi.messageType.scenario.customer.reInputRadio);
                 sinclo.scenarioApi._hearing._forceRadioTypeFlg = true;
                 sinclo.scenarioApi._hearing._handleCancel(e);
               } else if(sinclo.chatApi.clickRadioMessages[$(this).attr('name')] && e.target.value.trim()) {
@@ -2661,6 +2665,7 @@
           return;
         }
         // ①シナリオのヒアリングモード中
+        // ②強制フラグが立っている場合
         if ((sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi._hearing.isHearingMode()) || this.forceHideMiniMessageArea) {
           $('#flexBoxHeight').removeClass('sinclo-hide');
           $('#miniFlexBoxHeight').addClass('sinclo-hide');
@@ -4093,6 +4098,8 @@
         } else if(!check.isset(elm.value) && $(elm).next().text() === "スキップ") {
           common.chatBotTyping({forceWaitAnimation: true});
           if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput() && sinclo.scenarioApi._hearing.isHearingMode()) {
+            // ヒアリング中に押された場合は次のヒアリングに進む
+            sinclo.scenarioApi.set(sinclo.scenarioApi._lKey.sendCustomerMessageType, sinclo.chatApi.messageType.scenario.customer.skipHearing);
             sinclo.scenarioApi.triggerInputWaitComplete("");
           }
         }
@@ -5991,8 +5998,8 @@
         var type = (beforeTextareaOpened === "close") ? "2" : "1";
         self._handleChatTextArea(type);
         // スキップ機能を取り除く
-        $('#sincloChatMessage').off('input', sinclo._skipLabelHandler($('#sincloChatMessage')));
-        $('#miniSincloChatMessage').off('input', sinclo._skipLabelHandler($('#miniSincloChatMessage')));
+        $('#sincloChatMessage').off('input', sinclo._skipLabelHandler);
+        $('#miniSincloChatMessage').off('input', sinclo._skipLabelHandler);
         $('#sincloChatSendBtn').text('送信');
         $('#miniSincloChatSendBtn').text('送信');
         // 復元機能の状態を削除する
