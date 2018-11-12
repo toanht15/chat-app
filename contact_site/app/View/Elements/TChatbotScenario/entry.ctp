@@ -66,19 +66,6 @@
                 </div>
             </div>
 
-            <!-- 選択肢 -->
-<!--            <div class="actionMenu">-->
-<!--                <a ng-click="main.showOptionMenu(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)"-->
-<!--                   class="greenBtn btn-shadow commontooltip"-->
-<!--                   data-text="チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。">選択肢</a>-->
-<!--                <div class="actionMenuOption" id="actionMenu--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--">-->
-<!--                    <ul>-->
-<!--                        <li ng-click="main.addItem(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)">選択されたアクションの下に追加する</li>-->
-<!--                        <li ng-click="main.addItem(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)">一番下に追加する</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
-
             <!-- 条件分岐 -->
             <div class="actionMenu">
                 <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>)"
