@@ -82,7 +82,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             reInputText: 36,
             reInputRadio: 37,
             reInputPulldown: 38,
-            reInputCalendar: 39
+            reInputCalendar: 39,
+            cancel: 90
           },
           message: {
             text: 21,
@@ -1837,6 +1838,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>シナリオメッセージ(一括ヒアリング解析結果)</span>";
         content += $scope.createBulkHearingAnalyseData(chat, message);
+      }
+      else if ( Number(type) === chatApi.messageType.scenario.customer.cancel ) {
+        // 何もしない
+        return;
       }
       else if ( Number(type) === chatApi.messageType.cogmo.message ) {
         cn = "sinclo_auto";

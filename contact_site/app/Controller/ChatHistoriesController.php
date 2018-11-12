@@ -899,6 +899,10 @@ class ChatHistoriesController extends AppController
             $row['transmissionKind'] = 'チャットボットメッセージ';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
           }
+          if ($val['THistoryChatLog']['message_type'] == 90) {
+            // 何も表示しない
+            continue;
+          }
           if ($val['THistoryChatLog']['message_type'] == 998 || $val['THistoryChatLog']['message_type'] == 999) {
             $row['transmissionKind'] = '通知メッセージ';
             $row['transmissionPerson'] = "";

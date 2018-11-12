@@ -334,6 +334,10 @@ $(function(){
         $imgTag = true;
       }
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 90) === 0 ) {
+      // 何も表示しない
+      continue;
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 998) === 0 ) {
       $className = "sinclo_etc";
       $message = "- ". $val['MUser']['display_name'] . "が入室しました -";
