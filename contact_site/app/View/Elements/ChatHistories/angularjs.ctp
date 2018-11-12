@@ -273,7 +273,8 @@
               reInputText: 36,
               reInputRadio: 37,
               reInputPulldown: 38,
-              reInputCalendar: 39
+              reInputCalendar: 39,
+              cancel: 90
             },
             message: {
               text: 21,
@@ -937,6 +938,9 @@
           }
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, messageObj.message)+"</span>";
         }
+      } else if (type === chatApi.messageType.scenario.customer.cancel) {
+        // 何も表示しない
+        return;
       } else {
         cn = "sinclo_etc";
         div.style.borderBottom = '1px solid #bfbfbf';
