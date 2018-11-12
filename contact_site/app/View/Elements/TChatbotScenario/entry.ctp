@@ -53,31 +53,31 @@
                     </ul>
                 </div>
             </div>
-            <!-- ヒアリング -->
-            <div class="actionMenu">
-                <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_HEARING ?>)"
-                   class="greenBtn btn-shadow commontooltip"
-                   data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">ヒアリング</a>
-                <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_HEARING ?>">
-                    <ul>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>, true)">一番下に追加する</li>
-                    </ul>
-                </div>
+          <!-- ヒアリング -->
+          <div class="actionMenu">
+            <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_HEARING ?>)"
+               class="greenBtn btn-shadow commontooltip"
+               data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">ヒアリング</a>
+            <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_HEARING ?>">
+              <ul>
+                <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)">選択されたアクションの下に追加する</li>
+                <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>, true)">一番下に追加する</li>
+              </ul>
             </div>
+          </div>
 
-            <!-- 選択肢 -->
-<!--            <div class="actionMenu">-->
-<!--                <a ng-click="main.showOptionMenu(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)"-->
-<!--                   class="greenBtn btn-shadow commontooltip"-->
-<!--                   data-text="チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。">選択肢</a>-->
-<!--                <div class="actionMenuOption" id="actionMenu--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--">-->
-<!--                    <ul>-->
-<!--                        <li ng-click="main.addItem(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)">選択されたアクションの下に追加する</li>-->
-<!--                        <li ng-click="main.addItem(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)">一番下に追加する</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
+          <!-- 一括ヒアリング -->
+          <div class="actionMenu">
+            <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_BULK_HEARING ?>)"
+               class="greenBtn btn-shadow commontooltip"
+               data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">一括ヒアリング</a>
+            <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_BULK_HEARING ?>">
+              <ul>
+                <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_BULK_HEARING ?>)">選択されたアクションの下に追加する</li>
+                <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_BULK_HEARING ?>, true)">一番下に追加する</li>
+              </ul>
+            </div>
+          </div>
 
             <!-- 条件分岐 -->
             <div class="actionMenu">
