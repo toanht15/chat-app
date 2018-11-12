@@ -7507,6 +7507,7 @@ ul.naviBtn {
 
                   /* Create a custom checkbox */
                   .checkmark {
+                    cursor: pointer;
                     position: absolute;
                     top: 0;
                     left: 0;
@@ -7739,6 +7740,7 @@ ul.naviBtn {
 
                     .select-option-input {
                       margin-top: 2px;
+                      width: 500px;
                     }
 
                     .dropdown-custom-design-area {
