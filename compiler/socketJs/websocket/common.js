@@ -1120,6 +1120,7 @@ var socket, // socket.io
 
         /* ヒアリング */
         html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
+        html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
 
         /* ファイル受信  */
         if(Number(widget.widgetSizeType) == 1) {
