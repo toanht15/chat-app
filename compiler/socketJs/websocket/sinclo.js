@@ -3068,8 +3068,10 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
-        console.log(obj.chatId);
-        li.dataset.chatId = obj.chatId;
+        console.log(obj);
+        if(obj.cn.indexOf("hearing_msg") === -1) {
+          li.dataset.chatId = obj.chatId;
+        }
         if (isScenarioMsg) {
           div.classList.add('sinclo-scenario-msg');
         }
