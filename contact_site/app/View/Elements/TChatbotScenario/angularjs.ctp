@@ -469,6 +469,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               }
 
               if (hearing.settings.isSetSpecificDate) {
+                addTooltipEvent();
                 if (hearing.settings.setSpecificDateType == 1) {
                   var disableLength = calendar_options.disable.length;
                   angular.forEach(hearing.settings.specificDateData, function (item, key) {
@@ -1517,6 +1518,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
     // controll selection view of radio and pulldown
     if (uiType === '3' || uiType === '4') {
+      addTooltipEvent();
       $timeout(function () {
         $scope.$apply();
       }).then(function () {
