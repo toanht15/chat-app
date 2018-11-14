@@ -241,6 +241,11 @@ router.get("/", function (req, res, next) {
         spWidgetViewPattern = settings.spWidgetViewPattern;
       }
 
+      var spScrollViewSetting = 0;
+      if ('spScrollViewSetting' in settings) {
+        spScrollViewSetting = settings.spScrollViewSetting;
+      }
+
       var spBannerPosition = settings.showPosition;
       if ('spBannerPosition' in settings) {
         spBannerPosition = settings.spBannerPosition;
@@ -366,6 +371,7 @@ router.get("/", function (req, res, next) {
         messageBoxTextSize: isNumeric(messageBoxTextSize),
 
         /* スマホ隠しパラメータstart */
+        spScrollViewSetting: isNumeric(spScrollViewSetting),
         spWidgetViewPattern: isNumeric(spWidgetViewPattern),
         spBannerPosition: isNumeric(spBannerPosition),
         spBannerVerticalPositionFromTop: settings.spBannerVerticalPositionFromTop,

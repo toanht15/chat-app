@@ -103,14 +103,15 @@ class MWidgetSetting extends AppModel {
       //最小化時デザイン対応
       'minimize_design_type' => "minimizeDesignType",
       //最小化時デザイン対応
-      //スマホ隠しパラメータ
+      //スマホ用設定
       'sp_banner_position' => "spBannerPosition",
       'sp_banner_text' => "spBannerText",
+      'sp_scroll_view_setting' => "spScrollViewSetting",
       'sp_widget_view_pattern' => "spWidgetViewPattern",
       'sp_banner_vertical_position_from_top' => "spBannerVerticalPositionFromTop",
       'sp_banner_vertical_position_from_bottom' => "spBannerVerticalPositionFromBottom",
       'sp_banner_horizontal_position' => "spBannerHorizontalPosition",
-      //スマホ小さなバナー隠しパラメータ
+      //スマホ用設定
       //閉じるボタン対応
       'close_button_setting' => "closeButtonSetting",
       'close_button_mode_type' => "closeButtonModeType",

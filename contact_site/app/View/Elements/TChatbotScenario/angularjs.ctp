@@ -33,6 +33,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
 
   // アクション設定の取得・初期化
+  $scope.actionListOrigin = [];
   $scope.setActionList = [];
   $scope.targetDeleteFileIds = [];
   var setActivity = <?= !empty($this->data['TChatbotScenario']['activity']) ? json_encode($this->data['TChatbotScenario']['activity'], JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) : "{}"; ?>;
@@ -232,12 +233,12 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   this.setDefaultColorHearing = function (target) {
-    target.settings.customDesign.textColor = $scope.widget.settings.description_text_color;
-    target.settings.customDesign.borderColor = $scope.widget.settings.main_color;
-    target.settings.customDesign.headerBackgroundColor = $scope.widget.settings.main_color;
-    target.settings.customDesign.calendarTextColor = $scope.widget.settings.description_text_color;
-    target.settings.customDesign.sundayColor = $scope.widget.settings.description_text_color;
-    target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
+    target.settings.customDesign.textColor                    = $scope.widget.settings.description_text_color;
+    target.settings.customDesign.borderColor                  = $scope.widget.settings.main_color;
+    target.settings.customDesign.headerBackgroundColor        = $scope.widget.settings.main_color;
+    target.settings.customDesign.calendarTextColor            = $scope.widget.settings.description_text_color;
+    target.settings.customDesign.sundayColor                  = $scope.widget.settings.description_text_color;
+    target.settings.customDesign.saturdayColor                = $scope.widget.settings.description_text_color;
     target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
 
     return target;
@@ -252,13 +253,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   this.showOptionMenu = function (actionType) {
     // if not focus or focusing at last item -> append after last item
     if ($scope.focusActionIndex === null || ($scope.focusActionIndex + 1) === $scope.setActionList.length) {
-        this.addItem(actionType, true);
-        return;
+      this.addItem(actionType, true);
+      return;
     }
     // show option menu
     $('#action' + $scope.focusActionIndex + '_setting').focus();
     $scope.previousAction = $scope.currentAction;
-    $scope.currentAction = actionType;
+    $scope.currentAction  = actionType;
     if ($scope.previousAction !== $scope.currentAction) {
       $("#actionMenu" + $scope.previousAction).fadeOut('fast');
     }
@@ -416,11 +417,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           if (hearing.uiType === '5') {
             var calendar_options = {
               dateFormat: "Y/m/d",
-              minDate: 'today',
-              inline: 'true',
-              disable: [],
-              enable: [],
-              locale: {
+              minDate   : 'today',
+              inline    : 'true',
+              disable   : [],
+              enable    : [],
+              locale    : {
                 firstDayOfWeek: 0
               },
             };
@@ -515,7 +516,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
                 }
               });
               // sunday color
-              // calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+1)').css('color', hearing.settings.customDesign.sundayColor);
               var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+1)');
               sundayTarget.each(function () {
                 if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
@@ -523,7 +523,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
                 }
               });
               // saturday color
-              // calendarTarget.find('.flatpickr-weekdaycontainer span:nth-child(7n+7)').css('color', hearing.settings.customDesign.saturdayColor);
               var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
               saturdayTarget.each(function () {
                 if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
@@ -672,23 +671,20 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
 
   $scope.autoResizeTextArea = function () {
-    var maxRow = 4;                       // 表示可能な最大行数
-    var fontSize = 13;           // 行数計算のため、templateにて設定したフォントサイズを取得
-    var borderSize = 2; // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
-    var paddingSize = 5;     // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
-    var lineHeight = 1.5;       // 表示高さの計算のため、templateにて設定した行の高さを取得
-    var elm = $('#bulk_textarea');
-
+    var maxRow      = 4;   // 表示可能な最大行数
+    var fontSize    = 13;  // 行数計算のため、templateにて設定したフォントサイズを取得
+    var borderSize  = 2;   // 行数計算のため、templateにて設定したボーダーサイズを取得(上下/左右)
+    var paddingSize = 5;   // 表示高さの計算のため、templateにて設定したテキストエリア内の余白を取得(上下/左右)
+    var lineHeight  = 1.5; // 表示高さの計算のため、templateにて設定した行の高さを取得
+    var elm         = $('#bulk_textarea');
     // テキストエリアの要素のサイズから、borderとpaddingを引いて文字入力可能なサイズを取得する
     var areaWidth = elm[0].getBoundingClientRect().width - borderSize - paddingSize;
-
     // フォントサイズとテキストエリアのサイズを基に、行数を計算する
     var textRow = 1;
     elm[0].value.split('\n').forEach(function (string) {
       var stringWidth = string.length * fontSize;
       textRow += Math.max(Math.ceil(stringWidth / areaWidth), 1);
     });
-
     // 表示する行数に応じて、テキストエリアの高さを調整する
     if (textRow > maxRow) {
       elm.height((maxRow * (fontSize * lineHeight)) + paddingSize);
@@ -699,7 +695,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       elm.css('overflow', 'hidden');
     }
   };
-
+  // 一括登録のモダールを表示
   this.showBulkSelectionPopup = function (actionIndex, hearingIndex, uiType) {
     if (uiType === '3' || uiType === '4') {
       // ラジオボタン、プルダウン
@@ -734,6 +730,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       '</div>';
 
     modalOpen.call(window, html, 'p-hearing-settings', title, 'moment');
+    $scope.autoResizeTextArea();
+    popupEvent.resize();
     $('#bulk_textarea').bind('input', function () {
       $scope.autoResizeTextArea();
       popupEvent.resize();
@@ -859,6 +857,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーターの起動
   this.openSimulator = function() {
+    $scope.actionListOrigin = $scope.setActionList;
     $scope.$broadcast('openSimulator', this.createJsonData(true));
     // シミュレータ起動時、強制的に自由入力エリアを有効の状態で表示する
     $scope.$broadcast('switchSimulatorChatTextArea', true);
@@ -1005,7 +1004,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
     }
 
-    target.splice(optionIndex + 1, 0, angular.copy(src));
+    target.splice(optionIndex + 1, 0, "");
+    // target.splice(optionIndex + 1, 0, angular.copy(src));
     // 表示更新
     $timeout(function () {
       $scope.$apply();
@@ -1096,7 +1096,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $timeout(function() {
         $scope.$apply();
       }).then(function() {
-        self.controllListView(actionType, $(selector), targetObjList, limitNum)
+        if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+          self.controllHearingListView($(selector));
+        } else {
+          self.controllListView(actionType, $(selector), targetObjList, limitNum);
+        }
       });
     }
   };
@@ -1344,15 +1348,14 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       return null;
     }
     return action;
-  }
+  };
 
   this.controllHearingSettingView = function(actionStep) {
     $timeout(function() {
       $scope.$apply();
     }).then(function() {
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
-      var targetObjList = $scope.setActionList[actionStep].hearings;
-      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
+      self.controllHearingListView(targetElmList)
     });
   };
 
@@ -1476,15 +1479,28 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
     });
   };
-
+  // controll hearing add & delete button view
+  this.controllHearingListView = function (targetList) {
+    var elmNum = targetList.length;
+    angular.forEach(targetList, function (targetElm, index) {
+      if (elmNum == 1 && index == 0) {
+        // リストが一件のみの場合、追加ボタンのみ表示する
+        $(targetElm).find('.btnBlock .disOffgreenBtn.hearingBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn.hearingBtn').hide();
+      } else {
+        $(targetElm).find('.btnBlock .disOffgreenBtn.hearingBtn').show();
+        $(targetElm).find('.btnBlock .deleteBtn.hearingBtn').show();
+      }
+    });
+  };
+  // controll data and view when change uiType
   this.handleChangeUitype = function (actionType, actionIndex, hearingIndex, uiType) {
     // set defautl color from widget setting
     if (uiType === '5' || uiType === '4') {
       $scope.setActionList[actionIndex].hearings[hearingIndex] = this.setDefaultColorHearing($scope.setActionList[actionIndex].hearings[hearingIndex]);
     }
-
     // controll selection view of radio and pulldown
-    if (uiType === '3' || uiType == '4') {
+    if (uiType === '3' || uiType === '4') {
       $timeout(function () {
         $scope.$apply();
       }).then(function () {
@@ -1637,6 +1653,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
           if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
             !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
               $scope.hearingIndex = 0;
+              self.disableHearingInput($scope.actionStep);
               $scope.actionStep++;
           }
         } else {
@@ -1653,6 +1670,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
           !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
             $scope.hearingIndex = 0;
+            self.disableHearingInput($scope.actionStep);
             $scope.actionStep++;
           }
       }
@@ -1704,6 +1722,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
           !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
           $scope.hearingIndex = 0;
+          self.disableHearingInput($scope.actionStep);
           $scope.actionStep++;
         }
       }
@@ -1717,6 +1736,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
         !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
         $scope.hearingIndex = 0;
+        self.disableHearingInput($scope.actionStep);
         $scope.actionStep++;
       }
     }
@@ -1747,6 +1767,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
           !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
           $scope.hearingIndex = 0;
+          self.disableHearingInput($scope.actionStep);
           $scope.actionStep++;
         }
       } else {
@@ -1764,10 +1785,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       if (typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
         !(actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length))) {
         $scope.hearingIndex = 0;
+        self.disableHearingInput($scope.actionStep);
         $scope.actionStep++;
       }
     }
-
 
     $scope.doAction();
   };
@@ -1783,6 +1804,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.actionStep = 0;
     $scope.hearingIndex = 0;
     $scope.sendFileIndex = 0;
+    $scope.firstActionFlg = true;
     $scope.actionTimer;
     $scope.hearingInputResult = true;
 
@@ -1808,6 +1830,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.actionClear = function() {
     $scope.actionStop();
     $scope.actionInit();
+    $scope.setActionList = $scope.actionListOrigin;
   };
 
   /**
@@ -1815,6 +1838,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
    * @param String setTime 基本設定のメッセージ間隔に関わらず、メッセージ間隔を指定
    */
   $scope.receiveFileEventListener = null;
+  $scope.firstActionFlg = true;
   $scope.doAction = function(setTime) {
     if (typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined') {
       var actionDetail = $scope.setActionList[$scope.actionStep];
@@ -1843,8 +1867,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
 
       if(!branchOnConditon){
-        if (time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+        if (time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0 && $scope.firstActionFlg) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
           time = setTime || '0';
+          $scope.firstActionFlg = false;
         }else{
           chatBotTyping();
         }
@@ -1970,7 +1995,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         var targetScenarioId = condition.action.callScenarioId;
         console.log("targetScenarioId : %s",targetScenarioId);
         if(targetScenarioId === "self") {
-          $scope.actionStep = 0;
+          var activity = {};
+          activity.scenarios = $scope.actionListOrigin;
+          $scope.setActionList = $scope.setCalledScenario(activity, condition.action.executeNextAction == 1);
           $scope.doAction();
         } else {
           self.getScenarioDetail(targetScenarioId, condition.action.executeNextAction == 1);
@@ -2153,6 +2180,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // 設定したOK/NG以外が入力されないよう、自由入力エリアを非表示とする
       $scope.$broadcast('switchSimulatorChatTextArea', false);
     } else {
+      // disable radio, pulldown, underline text
+      $('input[name*="action' + $scope.actionStep + '"]').prop('disabled', true);
+      $('select[id*="action' + $scope.actionStep + '"]').prop('disabled', true);
+      $('[id^="action' + $scope.actionStep + '"][id*="underline"]').find('.sinclo-text-line').removeClass('underlineText');
       // 次のアクションへ移行する
       $scope.hearingIndex = 0;
       $scope.actionStep++;
@@ -2191,21 +2222,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).done(function(data) {
       console.info('successed get scenario detail.');
       try {
-        var scenarios = {};
-        var idx = 0;
         var activity = JSON.parse(data['TChatbotScenario']['activity']);
-
         // 取得したシナリオのアクション情報を、setActionList内に詰める
-        angular.forEach($scope.setActionList, function(scenario, key) {
-          if (key == $scope.actionStep) {
-            for (var exKey in activity.scenarios) {
-              scenarios[idx++] = activity.scenarios[exKey];
-            }
-          } else
-          if (isNext == 1 || key <= $scope.actionStep) {
-            scenarios[idx++] = $scope.setActionList[key];
-          }
-        });
+        var scenarios = $scope.setCalledScenario(activity, isNext);
         $scope.setActionList = scenarios;
       } catch(e) {
         $scope.actionStep++;
@@ -2220,6 +2239,22 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       // アクションを実行する
       $scope.doAction();
     });
+  };
+
+  $scope.setCalledScenario = function(activity, isNext) {
+    var scenarios = {};
+    var idx = 0;
+    angular.forEach($scope.setActionList, function(scenario, key) {
+      if (key == $scope.actionStep) {
+        for (var exKey in activity.scenarios) {
+          scenarios[idx++] = activity.scenarios[exKey];
+        }
+      } else
+      if (isNext == 1 || key <= $scope.actionStep) {
+        scenarios[idx++] = $scope.setActionList[key];
+      }
+    });
+    return scenarios;
   };
 
   /**
@@ -2269,7 +2304,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // handle when click on skip button
   $(document).on('click', '.sincloChatSkipBtn', function () {
-    $('#action' + $scope.actionStep + '_hearing' + $scope.hearingIndex + '_question').remove();
+    // $('#action' + $scope.actionStep + '_hearing' + $scope.hearingIndex + '_question').remove();
     $scope.hearingIndex++;
     $scope.doAction();
   });
@@ -2289,6 +2324,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.doAction();
   });
 
+  this.disableHearingInput = function (actionIndex) {
+    $('input[name*="action' + actionIndex + '"]').prop('disabled', true);
+    $('select[id*="action' + actionIndex + '"]').prop('disabled', true);
+    $('[id^="action' + actionIndex + '"][id*="underline"]').find('.sinclo-text-line').removeClass('underlineText');
+  };
+
+
   $(document).on('click', '#chatTalk input[type="radio"]', function() {
     var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
     var message = $(this).val().replace(/^\s/, '');
@@ -2298,25 +2340,29 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     var numbers = prefix.match(/\d+/g).map(Number);
     var actionStep = numbers[0];
     var hearingIndex = numbers[1];
-
     if (isConfirm) {
       // confirm message
       $scope.addVisitorHearingMessage(message);
       $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing_confirm');
       // ラジオボタンを非活性にする
       $('input[name=' + name + '][type="radio"]').prop('disabled', true);
+      $('input[name*="action' + actionStep + '"]').prop('disabled', true);
+      $('select[id*="action' + actionStep + '"]').prop('disabled', true);
+      $('[id^="action' + actionStep + '"][id*="underline"]').find('.sinclo-text-line').removeClass('underlineText');
     } else {
       // radio type
       var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
       var item = LocalStorageService.getItem('chatbotVariables', variable);
       $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-      if (item && item != message) {
+      if (!item) {
+        // first time input
+        $scope.addVisitorHearingMessage(message);
+        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+      } else if (item && item !== message) {
         $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
         $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-      } else {
-        $scope.addVisitorHearingMessage(message);
+        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
       }
-      $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
     }
   });
 
@@ -2333,13 +2379,14 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
       var item = LocalStorageService.getItem('chatbotVariables', variable);
       $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-      if (item && item != message) {
+      if (!item) {
+        // first time input
+        $scope.addVisitorHearingMessage(message);
+      } else if (item && item !== message) {
         $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
         $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-      } else {
-        $scope.addVisitorHearingMessage(message);
+        $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
       }
-      $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
     }
   });
 
