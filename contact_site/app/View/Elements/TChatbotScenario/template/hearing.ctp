@@ -99,15 +99,15 @@
                  class="select-option-input action{{setActionId}}_option{{listId}}" ng-init="main.controllHearingOptionView(setActionId, listId)">
                             <span><label class="">選択肢 {{optionIndex + 1}}<span class="questionBalloon"><icon
                                           class="questionBtn"
-                                          data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>選択肢２：女性">?</icon></span></label></span>
+                                          data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
               <input type="text" class="m20l" ng-model="hearingItem.settings.options[optionIndex]"
                      style="width: 200px;">
               <div class="btnBlock">
                 <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, optionIndex, listId)')) ?></a>
                 <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, optionIndex, listId)')) ?></a>
               </div>
-              <a ng-if="!optionIndex" href="" class="greenBtn btn-shadow bulk-button"
-                 style="display: inline; margin-top: 5px"
+              <a ng-if="!optionIndex" href="" class="greenBtn btn-shadow bulk-button commontooltip"
+                 style="display: inline; margin-top: 5px" data-text="選択肢として登録する内容をテキストエリア内で改行して一括で登録することができます。"
                  ng-click="main.showBulkSelectionPopup(setActionId, listId, hearingItem.uiType);"> 選択肢を一括登録</a>
             </div>
 
@@ -230,7 +230,7 @@
                           <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
                           <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px; display: none;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
                         </div>
-                        <a href="" class="greenBtn btn-shadow bulk-button"
+                        <a href="" class="greenBtn btn-shadow bulk-button commontooltip" data-text="設定する日付をテキストエリア内で改行して一括で登録することができます。"
                            ng-click="main.showBulkSelectionPopup(setActionId, listId, hearingItem.uiType);"
                            ng-if="!dateIndex">日付を一括登録</a>
                       </div>
@@ -250,7 +250,7 @@
                           <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
                           <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px; display: none;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
                         </div>
-                        <a href="" class="greenBtn btn-shadow bulk-button"
+                        <a href="" class="greenBtn btn-shadow bulk-button commontooltip" data-text="設定する日付をテキストエリア内で改行して一括で登録することができます。"
                            ng-click="main.showBulkSelectionPopup(setActionId, listId, hearingItem.uiType);"
                            ng-if="!dateIndex">日付を一括登録</a>
                       </div>
