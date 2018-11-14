@@ -1430,10 +1430,7 @@
             console.log(JSON.stringify(chat, null, 4));
             this.chatApi.createMessage({cn: cn, message: chat.message, name: userName, chatId: chat.chatId,
               isHearingAnswer: sinclo.scenarioApi._hearing.isHearingAnswer(chat),
-              answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(chat)) ? answerCount : 0}, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))))
-              /*  //メッセージを作り終わったら、ヒアリング中で無ければhearing_msg持ちのラジオボタンを全て無効化する
-              var targetRadio = $("input[name^='sinclo-radio']").parents("li");
-              console.log(targetRadio);*/
+              answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(chat)) ? answerCount : 0}, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29))));
           }
           // シナリオ実行中であればラジオボタンを非活性にする。
           if ((Number(chat.messageType) === 22 || Number(chat.messageType) === 23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
