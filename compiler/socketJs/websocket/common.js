@@ -1883,7 +1883,6 @@ var socket, // socket.io
         "  position: absolute;\n" +
         "  display: block;\n" +
         "  pointer-events: none;\n" +
-        "  border: solid transparent;\n" +
         "  content: \"\";\n" +
         "  height: 0;\n" +
         "  width: 0;\n" +
