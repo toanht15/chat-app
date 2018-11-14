@@ -137,7 +137,10 @@ $(function(){
       $imgTag = false;
       $val['THistoryChatLog']['message'] = '（「'.$val['THistoryChatLog']['message'].'」をクリック）';
     }
-    else if ( strcmp($val['THistoryChatLog']['message_type'], 12) === 0 ) {
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 12) === 0 || strcmp($val['THistoryChatLog']['message_type'], 33) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 34) === 0 || strcmp($val['THistoryChatLog']['message_type'], 35) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 36) === 0 || strcmp($val['THistoryChatLog']['message_type'], 37) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 38) === 0 || strcmp($val['THistoryChatLog']['message_type'], 39) === 0) {
       $className = "sinclo_re";
       $id = $val['THistoryChatLog']['id'];
       $historyId = $val['THistoryChatLog']['t_histories_id'];
@@ -301,6 +304,20 @@ $(function(){
       $isRecieveFile = false;
       $imgTag = false;
     }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 41) === 0 || strcmp($val['THistoryChatLog']['message_type'], 42) === 0) {
+      // pulldown and calendar
+      $className = "sinclo_auto";
+      $name = "シナリオメッセージ（ヒアリング）";
+      $id = $val['THistoryChatLog']['id'];
+      $historyId = $val['THistoryChatLog']['t_histories_id'];
+      $deleteMessage = str_replace(PHP_EOL, '', $val['THistoryChatLog']['message']);
+      $created = $val['THistoryChatLog']['created'];
+      $deleted = $val['THistoryChatLog']['deleted'];
+      $deletedUserDisplayName = $val['DeleteMUser']['display_name'];
+      $isSendFile = false;
+      $isRecieveFile = false;
+      $imgTag = false;
+    }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 81) === 0 || strcmp($val['THistoryChatLog']['message_type'], 82) === 0 ) {
       $className = "sinclo_auto";
       $name = "自動応答";
@@ -316,6 +333,10 @@ $(function(){
       if(strpos($val['THistoryChatLog']['message'],'<img') !== false){
         $imgTag = true;
       }
+    }
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 90) === 0 ) {
+      // 何も表示しない
+      continue;
     }
     else if ( strcmp($val['THistoryChatLog']['message_type'], 998) === 0 ) {
       $className = "sinclo_etc";
@@ -334,7 +355,7 @@ $(function(){
     else if(strcmp($permissionLevel,1) === 0 && strcmp($val['THistoryChatLog']['delete_flg'], 0) === 0) { ?>
       <li class="<?=$className?>"><span><?= $this->Time->format($val['THistoryChatLog']['created'], "%Y/%m/%d %H:%M:%S")?></span><?= $this->Html->image('close_b.png', array('class' => ($coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "commontooltip"),'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",'data-balloon-position' => '43.5','alt' => '履歴一覧','width' => 17,'height' => 17,'style' => 'margin-top: -24px; float:right; margin-right:1px; opacity:0.7; cursor:pointer','onclick' => !$coreSettings[C_COMPANY_USE_HISTORY_DELETE] ? "" : 'openDeleteDialog('.$id.','.$historyId.',"'.(intval($val['THistoryChatLog']['message_type']) === 6 ? json_decode($deleteMessage, TRUE)["fileName"] : $deleteMessage).'","'.$created.'")')) ?>
       <span><?=h($name)?></span><?php
-        if(intval($val['THistoryChatLog']['message_type']) === 31 || intval($val['THistoryChatLog']['message_type']) === 32 || intval($val['THistoryChatLog']['message_type']) === 40) {
+        if(intval($val['THistoryChatLog']['message_type']) === 31 || intval($val['THistoryChatLog']['message_type']) === 32 || intval($val['THistoryChatLog']['message_type']) === 40 || intval($val['THistoryChatLog']['message_type']) === 41) {
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
           switch(intval($val['THistoryChatLog']['message_type'])) {
             case 32:
@@ -351,8 +372,16 @@ $(function(){
               }
               echo $message;
               break;
+            case 41:
+              echo $json['message'];
+              break;
           }
-        } else {
+        } else if(intval($val['THistoryChatLog']['message_type']) === 41 || intval($val['THistoryChatLog']['message_type']) === 42) {
+          // pulldown and calendar
+          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          echo $this->htmlEx->makeChatView($json['message'], $isSendFile, $isRecieveFile, $imgTag);
+        }
+        else {
           echo $this->htmlEx->makeChatView($val['THistoryChatLog']['message'], $isSendFile, $isRecieveFile, $imgTag);
         }
       ?></li>
@@ -371,7 +400,7 @@ $(function(){
       if($('.recieveFileContent')[number]) {
         $('.recieveFileContent')[number].style.cursor = "pointer";
         $('.recieveFileContent')[number].addEventListener("click", function (event) {
-
+          window.open("<?=$downloadUrl?>")
         });
       }
     }

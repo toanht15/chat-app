@@ -751,7 +751,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * シミュレーションの自由入力エリアの表示状態を切り替える
    * @param Boolean status 自由入力エリアの表示状態(true: 表示, false: 非表示）
    */
-  $scope.$on('switchSimulatorChatTextArea', function(event, status, uiType = null, isRequired = true) {
+  $scope.$on('switchSimulatorChatTextArea', function(event, status, uiType, isRequired) {
+    var uiType = uiType || false;
+    var isRequired = typeof isRequired !== 'undefined' ? isRequired : true;
     $scope.isRequired = isRequired;
     $scope.isTextAreaOpen = status;
     if ($scope.isTextAreaOpen) {
@@ -907,11 +909,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         }
         main.style.height = height + "px";
 
+        console.log($scope.simulatorSettings.showWidgetType);
+
         var msgBox = document.getElementById('flexBoxWrap');
-        if (!$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
+        if (msgBox != null && !$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
           $scope.setTextAreaOpenToggle();
         } else
-        if ($scope.isTextAreaOpen && msgBox.style.display === 'none') {
+        if (msgBox != null && $scope.isTextAreaOpen && msgBox.style.display === 'none') {
           $scope.setTextAreaOpenToggle();
         }
       });
@@ -1215,6 +1219,12 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor(0.9);
   }).on('mouseleave', '#chatTalk .file_left', function(e){
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor();
+  });
+
+  $(document).on('click', '.sincloChatSkipBtn', function (e) {
+    $scope.isShowSkipBtn = false;
+    $scope.$apply();
+    $scope.$emit('nextHearingAction');
   });
 }]);
 

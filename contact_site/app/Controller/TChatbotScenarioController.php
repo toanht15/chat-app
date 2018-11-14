@@ -1756,7 +1756,7 @@ sinclo@medialink-ml.co.jp
   private function _convertOldDataToNewStructure(&$json)
   {
     $activity = json_decode($json);
-    $closestHearing = 0;
+    $closestHearingIndex = 0;
     foreach ($activity->scenarios as $key => &$action) {
       // add restore
       if (!isset($action->restore)) {
@@ -1764,7 +1764,7 @@ sinclo@medialink-ml.co.jp
       }
 
       if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
-        $closestHearing = $key;
+        $closestHearingIndex = $key;
         foreach ($action->hearings as $key => &$param) {
           // convert break line to uiType
           if (!isset($param->uiType) && isset($param->inputLFType) && isset($param->inputType)) {
@@ -1772,14 +1772,23 @@ sinclo@medialink-ml.co.jp
           }
         }
       } else if ($action->actionType == C_SCENARIO_ACTION_SELECT_OPTION) {
-        if ($activity->scenarios->{$closestHearing}->actionType == C_SCENARIO_ACTION_HEARING) {
+        if (gettype($activity->scenarios) === 'array') {
+          $closestHearing = $activity->scenarios[$closestHearingIndex];
+        } else {
+          $closestHearing = $activity->scenarios->{$closestHearingIndex};
+        }
+        if ($closestHearing->actionType == C_SCENARIO_ACTION_HEARING) {
           // append selection to closest hearing
-          $index = count($activity->scenarios->{$closestHearing}->hearings);
-          $activity->scenarios->{$closestHearing}->hearings[$index] = $this->convertHearingRadioButton($action);
-          unset($activity->scenarios->{$key});
+          $index = count($closestHearing->hearings);
+          $closestHearing->hearings[$index] = $this->convertHearingRadioButton($action);
+          if (gettype($activity->scenarios) === 'array') {
+            unset($activity->scenarios[$key]);
+          } else {
+            unset($activity->scenarios->{$key});
+          }
         } else {
           // if have not hearing, create new hearing and append
-          $closestHearing = $key;
+          $closestHearingIndex = $key;
           $action = (object)$this->convertSelectionToHearing($action);
         }
       }

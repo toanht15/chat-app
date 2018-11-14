@@ -369,6 +369,7 @@ class ChatHistoriesController extends AppController
           'THistoryChatLog.delete_flg',
           'THistoryChatLog.deleted_user_id',
           'THistoryChatLog.deleted',
+          'THistoryChatLog.hide_flg',
           'THistoryChatLog.created',
           'DeleteMUser.display_name',
         ],
@@ -386,7 +387,8 @@ class ChatHistoriesController extends AppController
         ],
         'conditions' => [
           'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
-          'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id']
+          'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+//          'THistoryChatLog.hide_flg' => 0,
         ],
         'order' => 'created',
         'recursive' => -1
@@ -817,7 +819,7 @@ class ChatHistoriesController extends AppController
             $row['transmissionPerson'] = '';
             $val['THistoryChatLog']['message'] = "（「" . $val['THistoryChatLog']['message'] . "」をクリック）";
           }
-          if ($val['THistoryChatLog']['message_type'] == 12) {
+          if ($val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 33 || $val['THistoryChatLog']['message_type'] == 34 || $val['THistoryChatLog']['message_type'] == 35) {
             $row['transmissionKind'] = '訪問者（ヒアリング回答）';
             $row['transmissionPerson'] = '';
           }
@@ -832,6 +834,8 @@ class ChatHistoriesController extends AppController
           if ($val['THistoryChatLog']['message_type'] == 22) {
             $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+            // replace [*] by [] radio selected
+            $val['THistoryChatLog']['message'] = str_replace('[*]', '[]', $val['THistoryChatLog']['message']);
           }
           if ($val['THistoryChatLog']['message_type'] == 23) {
             $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
@@ -868,6 +872,10 @@ class ChatHistoriesController extends AppController
               $val['THistoryChatLog']['message'] .= $object['label'] . '：' . ($object['value']) . "\n";
             }
           }
+          if ($val['THistoryChatLog']['message_type'] == 36 || $val['THistoryChatLog']['message_type'] == 37 || $val['THistoryChatLog']['message_type'] == 38 || $val['THistoryChatLog']['message_type'] == 39) {
+            $row['transmissionKind'] = '訪問者（ヒアリング再回答）';
+            $row['transmissionPerson'] = '';
+          }
           if ($val['THistoryChatLog']['message_type'] == 40) {
             $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング解析結果）';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
@@ -877,6 +885,12 @@ class ChatHistoriesController extends AppController
               $val['THistoryChatLog']['message'] .= $object['label'] . '：' . ((!empty($json['message'][$object['inputType']])) ? $json['message'][$object['inputType']] : "（なし）") . "\n";
             }
           }
+          if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42) {
+            $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+            $json = json_decode($val['THistoryChatLog']['message']);
+            $val['THistoryChatLog']['message'] = $json->message;
+          }
           if ($val['THistoryChatLog']['message_type'] == 81) {
             $row['transmissionKind'] = 'チャットボットメッセージ';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
@@ -884,6 +898,10 @@ class ChatHistoriesController extends AppController
           if ($val['THistoryChatLog']['message_type'] == 82) {
             $row['transmissionKind'] = 'チャットボットメッセージ';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+          }
+          if ($val['THistoryChatLog']['message_type'] == 90) {
+            // 何も表示しない
+            continue;
           }
           if ($val['THistoryChatLog']['message_type'] == 998 || $val['THistoryChatLog']['message_type'] == 999) {
             $row['transmissionKind'] = '通知メッセージ';
@@ -1501,7 +1519,7 @@ class ChatHistoriesController extends AppController
         $value = 'MIN';
       }
 
-      if (!$hasCustomDataCondition && ($data['History']['chat_type']) && empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
+      if (!$hasCustomDataCondition && empty($data['History']['chat_type']) && empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
         && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) && empty($data['THistoryChatLog']['message'])) {
         $chatStateList = $dbo2->buildStatement(
           [
