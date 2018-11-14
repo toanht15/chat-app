@@ -1945,7 +1945,7 @@ io.sockets.on('connection', function(socket) {
 
   // 接続時
   socket.on('connected', function(r) {
-    var res = JSON.parse(r),
+    var res = r,
       send = {},
       type = "",
       siteKey = "",
@@ -2128,7 +2128,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('getCustomerList', function(data, ack) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (isset(obj.siteKey)) {
       emit.toMine('beginOfCustomerList', {}, socket);
       processReceiveAccessInfo(obj.siteKey, socket);
@@ -2240,7 +2240,7 @@ io.sockets.on('connection', function(socket) {
     // ページ表示開始時間
     var d = new Date();
     // 待機オペレーター人数
-    var obj = JSON.parse(data);
+    var obj = data;
     var actOpCnt = getOperatorCnt(obj.siteKey);
 
     chatApi.widgetCheck(obj, function(err, ret) {
@@ -2261,7 +2261,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on("customerInfo", function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     obj.term = timeCalculator(obj);
     if (getSessionId(obj.siteKey, obj.tabId, 'chat')) {
       obj.chat = getSessionId(obj.siteKey, obj.tabId, 'chat');
@@ -2295,12 +2295,12 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on("getCustomerInfo", function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     emit.toClient('confirmCustomerInfo', obj, obj.siteKey);
   });
 
   socket.on("searchCustomer", function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     var term = obj.term;
     var result = [];
     if ('siteKey' in obj) {
@@ -2330,7 +2330,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on("connectSuccessForClient", function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     // sincloCore[obj.siteKey][obj.tabId].sessionId = socket.id;
   });
 
@@ -2358,7 +2358,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on("connectSuccess", function(data, ack) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (!isset(sincloCore[obj.siteKey])) {
       sincloCore[obj.siteKey] = {};
     }
@@ -2492,14 +2492,14 @@ io.sockets.on('connection', function(socket) {
   });
   // ウィジェットが生成されたことを企業側に通知する
   socket.on("syncReady", function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
       emit.toCompany('syncNewInfo', obj, obj.siteKey);
     }
   });
   // アクティブ状態を送る
   socket.on("sendTabInfo", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     if (!functionManager.isEnabled(obj.siteKey, functionManager.keyList.monitorPollingMode)) {
       emit.toCompany('retTabInfo', d, obj.siteKey);
     }
@@ -2518,7 +2518,7 @@ io.sockets.on('connection', function(socket) {
 
   //閉じるボタンクリック数追加
   socket.on("addClickCloseCounts", function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     pool.query('SELECT widget_close_count from t_history_widget_close_counts where m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?', [companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour], function(err, results) {
       if (results.length == 0) {
         pool.query('INSERT INTO t_history_widget_close_counts (m_companies_id,year,month,day,hour,widget_close_count) VALUES(?,?,?,?,?,?)', [companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour, 1], function(error, res) {
@@ -2543,7 +2543,7 @@ io.sockets.on('connection', function(socket) {
 
   //ウィジェットを最小化した回数追加
   socket.on("addClickMinimizeCounts", function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     pool.query('SELECT widget_minimize_count from t_history_widget_minimize_counts where m_companies_id = ? AND year = ? AND month = ? AND day = ? AND hour = ?', [companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour], function(err, results) {
       if (results.length == 0) {
         pool.query('INSERT INTO t_history_widget_minimize_counts (m_companies_id,year,month,day,hour,widget_minimize_count) VALUES(?,?,?,?,?,?)', [companyList[obj.siteKey], obj.year, obj.month, obj.day, obj.hour, 1], function(error, res) {
@@ -2569,7 +2569,7 @@ io.sockets.on('connection', function(socket) {
   //ウィジェットを開いた事を通知する
   //現在はウィジェット表示ログを書き込むのみで、クライアント側はretTabInfoにwidgetの情報を付与してハンドリングしている
   socket.on("sendWidgetShown", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     //ウィジェット件数登録処理
     if (obj.widget === true) {
       pool.query('SELECT * FROM t_history_widget_displays WHERE tab_id = ?', [obj.sincloSessionId || obj.tabId], function(err, results) {
@@ -2595,7 +2595,7 @@ io.sockets.on('connection', function(socket) {
   //  モニタリング通信接続前
   // -----------------------------------------------------------------------
   socket.on("sendAccessInfo", function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (('contract' in obj) && ('hideRealtimeMonitor' in obj.contract) && obj.contract.hideRealtimeMonitor === true) return false;
     obj.term = timeCalculator(obj);
 
@@ -2624,7 +2624,7 @@ io.sockets.on('connection', function(socket) {
   // -----------------------------------------------------------------------
   // [管理]モニタリング開始
   socket.on('requestWindowSync', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     // 外部接続可能
     if (Number(obj.type) === 2) {
       // 同形ウィンドウを作成するための情報取得依頼
@@ -2648,14 +2648,14 @@ io.sockets.on('connection', function(socket) {
 
   // 同形ウィンドウを作成するための情報受け取り
   socket.on('sendWindowInfo', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     // 同形ウィンドウを作成するための情報渡し
     emit.toUser('windowSyncInfo', obj, getSessionId(obj.siteKey, obj.tabId, 'syncHostSessionId'));
   });
 
   // 同形ウィンドウを作成するための情報受け取り(資料共有)
   socket.on('docShare', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     // 同形ウィンドウを作成するための情報渡し
     emit.toCompany('docShare', obj, obj.siteKey);
   });
@@ -2663,7 +2663,7 @@ io.sockets.on('connection', function(socket) {
 
   // iframe用（接続直後と企業側リロード時）
   socket.on('connectFrame', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (obj.siteKey) {
       // 外部接続フレームの場合
       var parentTabId = getSessionId(obj.siteKey, obj.tabId, 'parentTabId');
@@ -2701,7 +2701,7 @@ io.sockets.on('connection', function(socket) {
 // FIX ME !!!!!!!
   // 継続接続(両用)
   socket.on('connectContinue', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
 
     // 企業キーが取得できなければスルー
     if (obj.siteKey) {
@@ -2724,7 +2724,7 @@ io.sockets.on('connection', function(socket) {
   // -----------------------------------------------------------------------
   // iframe作成通知(admin -> target)
   socket.on('requestSyncStart', function(data) {
-    var obj = JSON.parse(data), tabId;
+    var obj = data, tabId;
     // 企業キーが取得できなければスルー
     if (obj.siteKey) {
       // 外部接続フレームの場合
@@ -2754,13 +2754,13 @@ io.sockets.on('connection', function(socket) {
 
   // 初期同期依頼
   socket.on('getSyncInfo', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     emit.toUser('syncElement', data, getSessionId(obj.siteKey, obj.tabId, 'syncSessionId'));
   });
 
   // 初期同期処理完了
   socket.on('syncCompleate', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     emit.toUser('syncEvStart', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
     emit.toUser('syncEvStart', data, getSessionId(obj.siteKey, obj.to, 'syncSessionId'));
   });
@@ -2769,7 +2769,7 @@ io.sockets.on('connection', function(socket) {
    * サブミットを使った、画面同期停止
    * */
   socket.on('requestSyncStopForSubmit', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (isset(obj.connectToken)) {
       emit.toUser('syncStop', obj, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
       emit.toUser('syncStopForSubmit', obj, getSessionId(obj.siteKey, obj.tabId, 'shareWindowId'));
@@ -2782,7 +2782,7 @@ io.sockets.on('connection', function(socket) {
    * 企業フレーム:1, 消費者フレーム:2,企業インライン:3, 消費者インライン:4
    * */
   socket.on('requestSyncStop', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (isset(obj.connectToken)) {
       var parentId = false;
       obj.message = "切断を検知しました。";
@@ -2838,7 +2838,7 @@ io.sockets.on('connection', function(socket) {
 
   /* ウィンドウリサイズとマウス位置 */
   socket.on('syncBrowserInfoFrame', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
 
     if (isset(obj.windowSize)) {
       emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
@@ -2863,12 +2863,12 @@ io.sockets.on('connection', function(socket) {
 
   /* スクロール位置 */
   socket.on('syncScrollInfo', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
   });
 
   socket.on('syncBrowserInfo', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (isset(obj.windowSize)) {
       emit.toUser('syncResponce', data, getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     }
@@ -2878,12 +2878,12 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('syncChangeEv', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     emit.toUser('syncResponceEv', data, getSessionId(obj.siteKey, obj.to, 'sessionId'));
   });
 
   socket.on('syncReconnectConfirm', function(data) {
-    var obj = JSON.parse(data), timer, i = 1;
+    var obj = data, timer, i = 1;
     timer = setInterval(function() {
       var sessionId = getSessionId(obj.siteKey, obj.to, 'sessionId');
       if (sessionId && connectList[sessionId]) {
@@ -2902,12 +2902,12 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('reqSyncBrowserCtrl', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     emit.toUser('syncBrowserCtrl', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
   });
 
   socket.on('sendOperatorStatus', function(data) {
-    var obj = JSON.parse(data),
+    var obj = data,
       sendData = {
         siteKey: obj.siteKey,
         userId: obj.userId,
@@ -2952,14 +2952,14 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('sendOtherTabURL', function(d) {
-    var obj = JSON.parse(d), tabId;
+    var obj = d, tabId;
 
     // インラインフレームに送る
     emit.toUser('receiveOtherTabURL', obj, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
   });
 
   socket.on('reqUrlChecker', function(d) {
-    var obj = JSON.parse(d), shareWindowId, toTabId;
+    var obj = d, shareWindowId, toTabId;
     emit.toUser('resUrlChecker', d, getSessionId(obj.siteKey, obj.to, 'sessionId'));
     // 外部接続中であれば、ページ遷移履歴として遷移先をフレームに送る(再接続の場合を除く)
     shareWindowId = getSessionId(obj.siteKey, obj.to, 'shareWindowId');
@@ -2974,7 +2974,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('syncLocationOfFrame', function(d) {
-    var obj = JSON.parse(d), shareWindowId, companyFrameId;
+    var obj = d, shareWindowId, companyFrameId;
     // 外部接続中であれば、ページ遷移履歴として遷移先をフレームに送る
     shareWindowId = getSessionId(obj.siteKey, obj.tabId, 'shareWindowId');
     if (shareWindowId) {
@@ -2993,13 +2993,13 @@ io.sockets.on('connection', function(socket) {
 
   // 一括：チャットデータ取得
   socket.on("getChatMessage", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     chatApi.get(obj);
   });
 
   // 都度：チャットデータ取得(オートメッセージのみ)
   socket.on("sendAutoChatMessage", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     var chat = JSON.parse(JSON.stringify(obj));
     chat.messageType = obj.isAutoSpeech ? chatApi.cnst.observeType.autoSpeech : chatApi.cnst.observeType.auto;
     chat.created = new Date();
@@ -3020,7 +3020,7 @@ io.sockets.on('connection', function(socket) {
 
   // 一括：チャットデータ取得(オートメッセージのみ)
   socket.on("getAutoChatMessages", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     var sId = getSessionId(obj.siteKey, obj.tabId, 'sessionId');
     obj.messageType = chatApi.cnst.observeType.auto;
@@ -3036,7 +3036,7 @@ io.sockets.on('connection', function(socket) {
 
   // 一括：チャットデータ取得(オートメッセージのみ)
   socket.on("sendAutoChatMessages", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
 
     var setList = {};
     for (var i = 0; i < obj.messages.length; i++) {
@@ -3062,7 +3062,7 @@ io.sockets.on('connection', function(socket) {
 
   // チャット開始
   socket.on("chatStart", function(d) {
-    var obj = JSON.parse(d), date = new Date(), now = fullDateTime(date), type = chatApi.cnst.observeType.start;
+    var obj = d, date = new Date(), now = fullDateTime(date), type = chatApi.cnst.observeType.start;
     var logToken = makeToken();
     console.log("chatStart-0: [" + logToken + "] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
     console.log("chatStart-1: [" + logToken + "] " + d);
@@ -3210,7 +3210,7 @@ io.sockets.on('connection', function(socket) {
 
   // チャット終了
   socket.on("chatEnd", function(d) {
-    var obj = JSON.parse(d), date = new Date(), now = fullDateTime(), type = chatApi.cnst.observeType.end;
+    var obj = d, date = new Date(), now = fullDateTime(), type = chatApi.cnst.observeType.end;
 
     var keys = [];
     var userName = "";
@@ -3415,7 +3415,7 @@ io.sockets.on('connection', function(socket) {
 
   //新着チャット
   socket.on("sendChat", function(d, ack) {
-    var obj = JSON.parse(d);
+    var obj = d;
     //応対件数検索、登録
     getConversationCountUser(obj.userId, function(results) {
       if (results !== null) {
@@ -3460,7 +3460,7 @@ io.sockets.on('connection', function(socket) {
 
   //新着チャット
   socket.on("sendFile", function(d, ack) {
-    var obj = JSON.parse(d);
+    var obj = d;
     //応対件数検索、登録
     getConversationCountUser(obj.userId, function(results) {
       if (results !== null) {
@@ -3492,7 +3492,7 @@ io.sockets.on('connection', function(socket) {
 
   // オートチャット
   socket.on("sendAutoChat", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     //応対数検索、登録
     getConversationCountUser(obj.userId, function(results) {
       var messageDistinction;
@@ -3560,7 +3560,7 @@ io.sockets.on('connection', function(socket) {
 
   // チャット呼出中メッセージ
   socket.on("sendInitialNotificationChat", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     var ret = {
       siteKey: obj.messageList.siteKey,
       tabId: obj.messageList.tabId,
@@ -3576,7 +3576,7 @@ io.sockets.on('connection', function(socket) {
 
   // 既読操作
   socket.on("isReadChatMessage", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     // TODO 履歴IDチェック
     if (isset(sincloCore[obj.siteKey][obj.tabId].historyId)) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
@@ -3598,7 +3598,7 @@ io.sockets.on('connection', function(socket) {
 
   // 既読操作（消費者）
   socket.on("isReadFromCustomer", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     if (getSessionId(obj.siteKey, obj.tabId, 'historyId')) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query("UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type != 1;",
@@ -3614,7 +3614,7 @@ io.sockets.on('connection', function(socket) {
 
   // 入力ステータスを送信
   socket.on("sendTypeCond", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     // 存在チェック
     if (!((obj.siteKey in sincloCore) && (obj.tabId in sincloCore[obj.siteKey]))) {
       return false;
@@ -3639,7 +3639,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on("retTypingMessage", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     // 送り先がセットされている
     if (('to' in obj) && (obj.siteKey in company.info) && (obj.to in company.info[obj.siteKey])) {
       var toKeys = Object.keys(company.info[obj.siteKey][obj.to]).length;
@@ -3655,7 +3655,7 @@ io.sockets.on('connection', function(socket) {
   //  シナリオイベントハンドラ
   // ============================================
   socket.on('getScenario', function(data, ack) {
-    var obj = JSON.parse(data);
+    var obj = data;
     var result = {};
     pool.query('select activity from t_chatbot_scenarios where m_companies_id = ? and id = ?;', [companyList[obj.siteKey], obj.scenarioId],
       function(err, row) {
@@ -3679,14 +3679,14 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('processSendMail', function(data, ack) {
-    var obj = JSON.parse(data);
+    var obj = data;
     sendSenarioMail(obj, function(result) {
       ack(result);
     });
   });
 
   socket.on('storeScenarioMessage', function(data, ack) {
-    var obj = JSON.parse(data);
+    var obj = data;
     //応対数検索、登録
     getConversationCountUser(obj.userId, function(results) {
       var messageDistinction;
@@ -3742,7 +3742,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on("addLastMessageToCV", function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     pool.query('select * from t_history_chat_logs where m_companies_id = ? and t_histories_id = ? and ((message_type = 12) OR (message_type = 22) OR (30 <= message_type and message_type <= 32) OR (message_type = 40)) order by created desc limit 0,1;', [companyList[obj.siteKey], obj.historyId],
       function(err, row) {
         if (err !== null && err !== '') {
@@ -3759,7 +3759,7 @@ io.sockets.on('connection', function(socket) {
 
   // 都度：チャットデータ取得(オートメッセージのみ)
   socket.on("sendScenarioMessage", function(d, ack) {
-    var obj = JSON.parse(d);
+    var obj = d;
     var scenario = JSON.parse(JSON.stringify(obj));
     scenario.created = formatDateParse();
     scenario.sort = fullDateTime(new Date(scenario.created));
@@ -3785,7 +3785,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on("hideScenarioMessages", function(data, ack) {
-    var obj = JSON.parse(data);
+    var obj = data;
     var minChatId = Number.MAX_VALUE;
     for (var i = 0; i < obj.hideMessages.length; i++) {
       var targetChatId = Number(obj.hideMessages[i]);
@@ -3800,7 +3800,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on("callExternalApi", function(data, ack) {
-    var obj = JSON.parse(data);
+    var obj = data;
     pool.query('select * from t_external_api_connections where m_companies_id = ? and id = ? limit 0,1;', [companyList[obj.siteKey], obj.externalApiConnectionId],
       function(err, row) {
         if (err !== null && err !== '') {
@@ -3867,7 +3867,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('getScenarioDownloadInfo', function(data, ack) {
-    var obj = JSON.parse(data);
+    var obj = data;
     pool.query('select * from t_chatbot_scenario_send_files where m_companies_id = ? and id = ? limit 0,1;', [companyList[obj.siteKey], obj.sendFileId],
       function(err, row) {
         if (err !== null && err !== '') {
@@ -3905,7 +3905,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('saveCustomerInfoValue', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     var targetValues = obj.targetValues ? obj.targetValues : [];
     var ids = [];
     var objForMerge = {};
@@ -3943,7 +3943,7 @@ io.sockets.on('connection', function(socket) {
   };
 
   socket.on('beginBulkHearing', function(data) {
-    var obj = JSON.parse(data),
+    var obj = data,
       historyId = isset(getSessionId(obj.siteKey, obj.tabId, "historyId")) ? getSessionId(obj.siteKey, obj.tabId, "historyId") : obj.historyId;
     getConversationCountUser(obj.userId, function(results) {
       var messageDistinction;
@@ -3969,7 +3969,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('sendParseSignature', function(data, ack) {
-    var obj = JSON.parse(data);
+    var obj = data;
     parseSignature(obj.targetText, obj.ip, function(result) {
       var resultObj = JSON.parse(result);
       var storeData = {
@@ -3987,7 +3987,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('traceScenarioInfo', function(data) {
     function joinMessage(message, data) {
       if (typeof(data) === 'object') {
-        data = JSON.stringify(data);
+
       }
       return '[' + obj.siteKey + '][' + obj.sincloSessionId + '] message => ' + message + ' data => ' + data;
     }
@@ -3997,7 +3997,7 @@ io.sockets.on('connection', function(socket) {
      *   "message":
      *   "data":
      */
-    var obj = JSON.parse(data);
+    var obj = data;
     switch(obj.type) {
       case "d":
         scenarioLogger.debug(joinMessage(obj.message, obj.data));
@@ -4025,7 +4025,7 @@ io.sockets.on('connection', function(socket) {
    */
   socket.on('requestCoBrowseOpen', function(data) {
     console.log("requestCoBrowseOpen >>> " + data);
-    var obj = JSON.parse(data);
+    var obj = data;
     if (!getSessionId(obj.siteKey, obj.tabId, 'sessionId')) return false;
     if (laSessionCounter.isLimit(obj.siteKey)) {
       emit.toMine('coBrowseSessionLimit', data, socket);
@@ -4052,7 +4052,7 @@ io.sockets.on('connection', function(socket) {
    */
   socket.on('beginToCoBrowse', function(data) {
     console.log("beginToCoBrowse >>> " + data);
-    var obj = JSON.parse(data);
+    var obj = data;
     emit.toCompany('beginToCoBrowse', data, obj.siteKey);
   });
 
@@ -4061,7 +4061,7 @@ io.sockets.on('connection', function(socket) {
    */
   socket.on('readyToCoBrowse', function(data) {
     console.log("readyToCoBrowse >>> " + data);
-    var obj = JSON.parse(data);
+    var obj = data;
     sincloCore[obj.siteKey][obj.tabId].laShortCode = obj.shortcode;
     sincloCore[obj.siteKey][obj.tabId].coBrowseConnectToken = obj.coBrowseConnectToken;
     emit.toUser('readyToCoBrowse', data, getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
@@ -4074,7 +4074,7 @@ io.sockets.on('connection', function(socket) {
    */
   socket.on('coBrowseFailed', function(data) {
     console.log("coBrowseFailed >>> " + data);
-    var obj = JSON.parse(data);
+    var obj = data;
     emit.toUser('coBrowseFailed', data, getSessionId(obj.siteKey, obj.tabId, 'coBrowseParentSessionId'));
   });
 
@@ -4083,7 +4083,7 @@ io.sockets.on('connection', function(socket) {
    */
   socket.on('assistAgentIsReady', function(data) {
     console.log("assistAgentIsReady >>> " + data);
-    var obj = JSON.parse(data);
+    var obj = data;
     if (obj.to in sincloCore[obj.siteKey]) {
       console.log("OBJ : " + JSON.stringify(data));
       sincloCore[obj.siteKey][obj.to]['responderId'] = obj.responderId; // 対応ユーザーID
@@ -4097,19 +4097,19 @@ io.sockets.on('connection', function(socket) {
 
   //画面共有許可しない
   socket.on('sharingRejection', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     var targetId = obj.tabId.replace("_frame", "");
     emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
   });
 
   //画面共有キャンセル
   socket.on('cancelSharing', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     emit.toUser('cancelSharingApplication', d, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
   });
 
   socket.on('coBrowseReconnectConfirm', function(data) {
-    var obj = JSON.parse(data), timer, i = 1;
+    var obj = data, timer, i = 1;
     timer = setInterval(function() {
       var sessionId = getSessionId(obj.siteKey, obj.to, 'sessionId');
       if (sessionId && connectList[sessionId]) {
@@ -4132,7 +4132,7 @@ io.sockets.on('connection', function(socket) {
    */
   socket.on('requestStopCoBrowse', function(data) {
     console.log("requestStopCoBrowse >>> " + data);
-    var obj = JSON.parse(data);
+    var obj = data;
     if (isset(obj.coBrowseConnectToken)) {
       var parentId = false;
       obj.message = "切断を検知しました。";
@@ -4191,7 +4191,7 @@ io.sockets.on('connection', function(socket) {
   // ビデオチャットで利用している各値はプレフィックス（vc_）をつけている。
   // -----------------------------------------------------------------------
   /*  socket.on('confirmVideochatStart', function (data) {
-      var obj = JSON.parse(data);
+      var obj = data;
       // 同形ウィンドウを作成するための情報取得依頼
       if ( !getSessionId(obj.siteKey, obj.toTabId, 'sessionId') ) return false;
       sincloCore[obj.siteKey][obj.toTabId].vc_connectToken = obj.connectToken;
@@ -4201,14 +4201,14 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('videochatConfirmOK', function (data) {
-      var obj = JSON.parse(data);
+      var obj = data;
       //obj.connectToken = sincloCore[obj.siteKey][obj.tabId].vc_connectToken;
       emit.toUser('videochatConfirmOK', JSON.stringify(obj), getSessionId(obj.siteKey, obj.tabId, 'vc_syncHostSessionId'));
     });
 
     socket.on('videoChatConnected', function (data) {
       console.log('VIDEOCHAT CONNECTED : ' + data);
-      var obj = JSON.parse(data);
+      var obj = data;
       vc_connectList[obj.tabId] = socket.id;
       if(vc_connectList[obj.to]) {
         console.log('VIDEOCHAT TO FOUND!');
@@ -4218,27 +4218,27 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('askMakeOffer', function (data) {
       console.log('askMakeOffer : ' + data);
-      var obj = JSON.parse(data);
+      var obj = data;
       if(vc_connectList[obj.to]) {
         emit.toUser('askMakeOffer', data, vc_connectList[obj.to]);
       }
     });
   */
   socket.on('sendMessage', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     var host = (obj.host !== "true") ? "host" : "guest";
     emit.toUser('receiveMessage', d, vc_connectList[obj.fromto.to]);
   });
 
   socket.on('userOut', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (!isset(obj.connectToken)) {
       emit.toCompany('unsetUser', data, obj.siteKey);
     }
   });
 
   socket.on('settingReload', function(data, ack) {
-    var obj = JSON.parse(data), targetKey;
+    var obj = data, targetKey;
     if (isset(obj.type) && String(obj.siteKey) === "master") {
       switch (obj.type) {
         case 1: // get new company ( sample: socket.emit('settingReload', JSON.stringify({type:1, siteKey: "master"})); )
@@ -4384,7 +4384,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('resCheckExists', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if (isset(obj['returnTo'])) {
       emit.toUser('resCheckExists', obj, obj['returnTo']);
     } else {
@@ -4394,7 +4394,7 @@ io.sockets.on('connection', function(socket) {
 
   // [消費者：外部接続フレーム] 外部接続フレームからの初期message
   socket.on('connectFromSyncInit', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     socket.join(obj.siteKey + emit.roomKey.frame);
     sincloCore[obj.siteKey][obj.parentId].shareWindowId = socket.id;
     if (getSessionId(obj.siteKey, obj.tabId, "sessionId")) {
@@ -4414,7 +4414,7 @@ io.sockets.on('connection', function(socket) {
 
   // [消費者：外部接続フレーム] 同形ウィンドウを作成するための情報受け取り
   socket.on('sendWindowInfoFromFrame', function(data) {
-    var obj = JSON.parse(data);
+    var obj = data;
     if ('connectToken' in obj) {
       sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
     }
@@ -4424,7 +4424,7 @@ io.sockets.on('connection', function(socket) {
 
   // iFrame内からの初期message
   socket.on('startSyncToFrame', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     socket.join(obj.siteKey + emit.roomKey.frame);
     if (!getSessionId(obj.siteKey, obj.tabId, 'shareWindowId') && obj.tabId.match(/\_frame$/)) {
       sincloCore[obj.siteKey][obj.tabId] = {
@@ -4448,7 +4448,7 @@ io.sockets.on('connection', function(socket) {
 
   // 資料共有開始(企業から)
   socket.on('docShareConnect', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     if (!getSessionId(obj.siteKey, obj.tabId, "sessionId")) {
       // TODO 接続失敗
       return false;
@@ -4480,7 +4480,7 @@ io.sockets.on('connection', function(socket) {
 
   // 資料共有のキャンセル
   socket.on('docShareCancel', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     var targetId = obj.tabId.replace("_frame", "");
     emit.toCompany('sharingApplicationRejection', obj, obj.siteKey);
     emit.toUser('docDisconnect', obj, doc_connectList[targetId]["company"]);
@@ -4488,7 +4488,7 @@ io.sockets.on('connection', function(socket) {
 
   // 資料共有再接続
   socket.on('docShareReConnect', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     if (!getSessionId(obj.siteKey, obj.tabId, "sessionId")) {
       // TODO 再接続失敗
       return false;
@@ -4502,18 +4502,18 @@ io.sockets.on('connection', function(socket) {
 
   // 共有する資料を変更
   socket.on('changeDocument', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     emit.toUser('changeDocument', d, doc_connectList[obj.tabId].customer);
   });
 
   // 共有する資料を変更
   socket.on('compReadFile', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     emit.toUser('compReadFile', d, doc_connectList[obj.tabId].company);
   });
 
   socket.on('docShareConnectToCustomer', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     if (!getSessionId(obj.siteKey, obj.tabId, "sessionId")) {
       // TODO 接続失敗
       return false;
@@ -4528,7 +4528,7 @@ io.sockets.on('connection', function(socket) {
   });
 
   socket.on('docSendAction', function(d) {
-    var obj = JSON.parse(d);
+    var obj = d;
     if ((obj.tabId in doc_connectList) && (obj.to in doc_connectList[obj.tabId])) {
       emit.toUser('docSendAction', d, doc_connectList[obj.tabId][obj.to]);
     }

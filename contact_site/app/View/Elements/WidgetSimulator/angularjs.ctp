@@ -54,6 +54,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.addMessage('re', message, prefix, 'deleteme');
   });
 
+  $scope.$on('addReForm', function(event, data) {
+    $scope.addForm(data);
+  });
+
   $scope.$on('addReRadio', function(event, data) {
     $scope.addRadioButton(data);
   });
@@ -154,6 +158,60 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     if(appendClass) {
       divElm.classList.add(appendClass);
     }
+    // 要素を追加する
+    document.getElementById('chatTalk').appendChild(divElm);
+    $('#chatTalk > div:last-child').show();
+    self.autoScroll();
+  };
+
+  $scope.addForm = function(data) {
+    var divElm = null;
+    if(data.isConfirm) {
+      divElm = document.querySelector('#chatTalk div > li.sinclo_re.sinclo_form').parentNode.cloneNode(true);
+      divElm.id = data.prefix + '_question';
+    } else {
+      divElm = document.querySelector('#chatTalk div > li.sinclo_se.sinclo_form').parentNode.cloneNode(true);
+      divElm.id = data.prefix + '_answer';
+    }
+
+    var html = ""
+    if(data.isConfirm) {
+      html = $scope.simulatorSettings.createForm(data.isConfirm, data.bulkHearings, data.resultData.data);
+      divElm.querySelector('li.sinclo_re.sinclo_form').innerHTML = html;
+    } else {
+      html = $scope.simulatorSettings.createFormFromLog(data.resultData.data);
+      divElm.querySelector('li.sinclo_se.sinclo_form').innerHTML = html;
+    }
+    // if(isEmptyRequire) {
+    //   $(divElm).find('li.sinclo_form span.formOKButton').addClass('disabled');
+    // }
+    $(divElm).find('li.sinclo_form span.formOKButton').on('click', function(e){
+      if($(this).hasClass('disabled')) return;
+      var returnValue = {};
+      var targetArray = $(divElm).find('li.sinclo_form .formInput');
+      targetArray.each(function(index, element) {
+        console.log("CHANGED : %s vs %s", $(element).val(), data.resultData.data[$(element).data('input-type')]);
+        returnValue[$(element).attr('name')] = {
+          label: $(element).data('label-text'),
+          value: $(element).val(),
+          required: $(element).data('required'),
+          changed: $(element).val() !== data.resultData.data[Number($(element).data('input-type'))]
+        }
+      });
+      console.log("return Value : %s",JSON.stringify(returnValue));
+      $scope.$emit('pressFormOK', returnValue);
+    });
+    $(divElm).find('li.sinclo_form input.formInput').on('input', function(){
+      $(divElm).find('li.sinclo_form input.formInput').each(function(idx, elem){
+        if(data.hearingTarget[idx].required && $(this).val().length === 0) {
+          $(divElm).find('li.sinclo_form span.formOKButton').addClass('disabled');
+          return false;
+        } else if (hearingTarget.length - 1 === idx){
+          $(divElm).find('li.sinclo_form span.formOKButton').removeClass('disabled');
+        }
+      });
+    });
+
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
     $('#chatTalk > div:last-child').show();
@@ -979,7 +1037,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $timeout(function(){
       document.getElementById('sincloChatMessage').value = textareaMessage;
       // タブ切替の通知
-      $scope.$emit('switchWidget', type)
+      $scope.$emit('switchWidget', type);
       //画像がない場合
       if($('#mainImage').css('display') == 'none'　|| $('#mainImage').css('display') == undefined) {
         if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
@@ -1213,7 +1271,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       targetElm.val(changed);
     }
   });
-  
+
   // ダウンロード可能な吹き出しの背景色切替
   $(document).on('mouseenter', '#chatTalk .file_left', function(e){
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor(0.9);

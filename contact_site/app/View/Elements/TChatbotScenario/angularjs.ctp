@@ -1724,7 +1724,36 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
       $scope.actionStep++;
       $scope.doAction();
+    } else
+    if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+      chatBotTyping();
+      $.post("<?=$this->Html->url(['controller'=>'CompanyData', 'action' => 'parseSignature'])?>", JSON.stringify({
+        'accessToken': 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK', //FIXME 隠蔽必須
+        'targetText': message
+      }), null, 'json').done(function(result){
+        $scope.$broadcast('addReForm', {
+          prefix: 'action' + $scope.actionStep + '_bulk-hearing',
+          isConfirm: true,
+          bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
+          resultData: result
+        });
+        $scope.$broadcast('switchSimulatorChatTextArea', false);
+        chatBotTypingRemove();
+      });
     }
+  });
+
+  $scope.$on('pressFormOK', function (event, message) {
+    $('#chatTalk > div:last-child').fadeOut('fast').promise().then(function(){
+      $scope.$broadcast('addReForm', {
+        prefix: 'action' + $scope.actionStep + '_bulk-hearing',
+        isConfirm: false,
+        bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
+        resultData: {data:message}
+      });
+      $scope.actionStep++;
+      $scope.doAction();
+    });
   });
 
   $scope.addVisitorHearingMessage = function (message) {
@@ -2001,7 +2030,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             $scope.actionStep++;
             $scope.doAction();
           }
-        }
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+          chatBotTypingRemove();
+          $scope.doBulkHearingAction(actionDetail);
+        } else
         chatBotTypingRemove();
       }, parseInt(time, 10) * 1000);
     } else {
@@ -2231,6 +2264,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $scope.hearingIndex = 0;
       $scope.actionStep++;
       $scope.doAction();
+    }
+  };
+
+  $scope.doBulkHearingAction = function(actionDetail) {
+    if(actionDetail.multipleHearings) {
+      $scope.$broadcast('allowInputLF', true, "1");
+      $scope.$broadcast('switchSimulatorChatTextArea', true);
     }
   };
 
