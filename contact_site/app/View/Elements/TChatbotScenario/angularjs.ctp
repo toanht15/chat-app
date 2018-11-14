@@ -1025,8 +1025,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllBulkHearings(actionStep);
     } else if (actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
-      var src = $scope.actionList[actionType].default.leadRegister[0];
-      var target = $scope.setActionList[actionStep].leadRegister;
+      var src = $scope.actionList[actionType].default.leadInformations[0];
+      var target = $scope.setActionList[actionStep].leadInformations;
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllLeadRegister(actionStep);
     }
@@ -1127,7 +1127,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       targetObjList = $scope.setActionList[actionStep].addCustomerInformations;
       selector = '#action' + actionStep + '_setting .itemListGroup';
     } else if (actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
-      targetObjList = $scope.setActionList[actionStep].leadRegister;
+      targetObjList = $scope.setActionList[actionStep].leadInformations;
       selector = '#action' + actionStep + '_setting .itemListGroup';
     }
 
@@ -1480,7 +1480,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $scope.$apply();
     }).then(function() {
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
-      var targetObjList = $scope.setActionList[actionStep].leadRegister;
+      var targetObjList = $scope.setActionList[actionStep].leadInformations;
       self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
     });
   };
@@ -3086,7 +3086,7 @@ function actionValidationCheck(element, setActionList, actionItem) {
         messageList.push('リードリスト名”お客様情報②”は既に使用されています');
       }
 
-      var invalidLabelName = actionItem.leadRegister.some(function(elm) {
+      var invalidLabelName = actionItem.leadInformations.some(function(elm) {
         return !elm.leadLabelName || elm.leadLabelName === "";;
       });
 

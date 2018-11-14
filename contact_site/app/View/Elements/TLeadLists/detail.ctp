@@ -19,16 +19,16 @@
   <div style="display: flex; margin-top: 30px">
     <span style="display: flex; width: 150px; align-items:center;">検索期間：</span>
     <select>
-      <option selected>過去一週間：2018/10/31-2018/11/06</option>
+      <option selected>過去一週間：2018/10/25-2018/10/31</option>
     </select>
   </div>
   <div style="display: flex; margin-top: 30px">
     <span style="display: flex; width: 150px; align-items:center;">リードリスト名：</span>
     <select id="lead_select">
       <option value="none" selected>リードリストを選択してください</option>
-      <option>（すべてのリスト）</option>
       <option>お客様情報①</option>
       <option>お客様情報②</option>
+      <option>（すべてのリスト）</option>
     </select>
   </div>
   <div>
@@ -39,7 +39,7 @@
         'class'=>'btn-shadow grayBtn commontooltip disabled',
         'id' => 'outputCSV',
         'disabled' => !$coreSettings[C_COMPANY_USE_HISTORY_EXPORTING],
-        'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "検索条件に該当するリードリストをCSV出力します。" : "こちらの機能はスタンダードプランからご利用いただけます。",
+        'data-text' => $coreSettings[C_COMPANY_USE_HISTORY_EXPORTING] ? "選択したリードリストをCSV出力します。（すべてのリスト）を選択した場合、各リードリストのCSVファイルをまとめzip形式で出力します。" : "こちらの機能はスタンダードプランからご利用いただけます。",
         'style' => [
           'display: flex;',
           'justify-content: center;',

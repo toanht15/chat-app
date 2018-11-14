@@ -19,7 +19,7 @@ class TChatbotScenarioController extends FileAppController {
 
   const CALL_SELF_SCENARIO_NAME = "（このシナリオ）";
 
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting', 'TLeadListSetting'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -759,6 +759,7 @@ sinclo@medialink-ml.co.jp
     if ( !empty($saveData['TChatbotScenario']) ) {
       $activity = json_decode($saveData['TChatbotScenario']['activity']);
       foreach($activity->scenarios as &$action) {
+        $this->log($action,LOG_DEBUG);
         if ($action->actionType == C_SCENARIO_ACTION_SEND_MAIL) {
           // メール送信設定の保存と、IDの取得
           $action = $this->_entryProcessForSendMail($action);
@@ -775,6 +776,10 @@ sinclo@medialink-ml.co.jp
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
           // ファイル送信
           unset($action->file);
+        } else
+        if($action->actionType == C_SCENARIO_ACTION_LEAD_REGISTER) {
+          // リード登録
+          $action = $this->_entryProcessForLeadRegister($action);
         }
       }
 
@@ -826,6 +831,17 @@ sinclo@medialink-ml.co.jp
    * @return Object          t_chatbot_scenarioに保存するアクション詳細
    * */
   private function _entryProcessForLeadRegister($saveData){
+    if (empty($saveData->tLeadListSettingId)) {
+      $this->TLeadListSetting->create();
+    } else {
+      $this->TLeadListSetting->read(null, $saveData->tLeadListSettingId);
+    }
+    $this->TLeadListSetting->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'list_name' => $saveData->leadTitleLabel,
+      'list_parameter' => json_encode($saveData->leadInformations)
+    ]);
+    return $saveData;
 
   }
 

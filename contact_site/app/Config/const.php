@@ -978,7 +978,7 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'leadRegister' => [
+      'leadInformations' => [
         [
           'leadLabelName' => '',
           'leadVariableName' => ''

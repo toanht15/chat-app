@@ -25,7 +25,7 @@
           <div class='area-name' style="text-align: center;"><label class="require">リードリストの項目</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名で指定された変数の値が、ここで指定されたリードリストの項目に自動で登録されます。">?</icon></span></div>
           <div class='area-name' style="text-align: center;"><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="リード情報として自動登録したい変数名を設定します。<br>（変数名を{{showExpression('変数名')}}と{で括る必要はありません）">?</icon></span></div>
         </div>
-        <div class="grid-container-body itemListGroup" ng-repeat="(listId, var) in setItem.leadRegister track by $index">
+        <div class="grid-container-body itemListGroup" ng-repeat="(listId, var) in setItem.leadInformations track by $index">
           <div class='area-name'><input type="text" class="make-box" ng-model="var.leadLabelName"></div>
           <div class='area-name'><input type="text" class="make-box" ng-model="var.leadVariableName"></div>
           <div class='area-btn short'>
