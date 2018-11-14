@@ -629,7 +629,7 @@ class HistoriesController extends AppController {
           }
         }
         if ($val['THistoryChatLog']['message_type'] == 36 || $val['THistoryChatLog']['message_type'] == 37 || $val['THistoryChatLog']['message_type'] == 38 || $val['THistoryChatLog']['message_type'] == 39) {
-          $row['transmissionKind'] = '訪問者（ヒアリング再回答）';
+          $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング再回答）';
           $row['transmissionPerson'] = '';
         }
         if($val['THistoryChatLog']['message_type'] == 40) {
@@ -805,7 +805,7 @@ class HistoriesController extends AppController {
         case 37: // 訪問者（シナリオ：ヒアリング再回答）radio
         case 38: // 訪問者（シナリオ：ヒアリング再回答）pulldown
         case 39: // 訪問者（シナリオ：ヒアリング再回答）calendar
-          $row = $this->_setData($date, "訪問者（ヒアリング再回答）", "", $message);
+          $row = $this->_setData($date, "シナリオメッセージ（ヒアリング再回答）", "", $message);
           break;
         case 41: // シナリオメッセージ（ヒアリング）pulldown
         case 42: // シナリオメッセージ（ヒアリング）calendar

@@ -2141,6 +2141,8 @@
       } else {
         $('#sincloChatSendBtn').text('送信');
         $('#miniSincloChatSendBtn').text('送信');
+        $('#sincloChatMessage').off('input', sinclo._skipLabelHandler);
+        $('#miniSincloChatMessage').off('input', sinclo._skipLabelHandler);
         $('#sincloChatMessage').prop('disabled', false).css('background-color', sincloInfo.widget.messageBoxBackgroundColor);
         $('#miniSincloChatMessage').prop('disabled', false).css('background-color', sincloInfo.widget.messageBoxBackgroundColor);
       }
@@ -2564,6 +2566,10 @@
             .on("click", "input[name^='sinclo-radio']", function(e){
               var self = sinclo.scenarioApi._hearing;
               if(e) e.stopPropagation();
+              // シナリオ中の入力待ち状態なら、絶対にsend()でmessageType.customerにさせない
+              if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()){
+                sinclo.scenarioApi._hearing._forceRadioTypeFlg = true;
+              }
               console.log(sinclo.chatApi.clickRadioMessages[$(this).attr('name')]);
               console.log(e.target.value.trim());
               console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
@@ -2571,14 +2577,14 @@
               if(((sinclo.chatApi.clickRadioMessages[$(this).attr('name')] && sinclo.chatApi.clickRadioMessages[$(this).attr('name')] !== e.target.value.trim())
                 && sinclo.scenarioApi.isProcessing()
                 && sinclo.scenarioApi.isWaitingInput()
-                && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false"))
-              ||(sinclo.scenarioApi._hearing.isHearingMode() && sinclo.scenarioApi._hearing._needCancel(e.target.parentNode))) {
+                && sinclo.scenarioApi._hearing._needCancel(e.target.parentNode)
+                && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false"))){
                 console.log('◆◆ラジオボタンに関連するキャンセル動作が行われました◆◆');
                 self._parent.set(self._parent._lKey.sendCustomerMessageType, sinclo.chatApi.messageType.scenario.customer.reInputRadio);
                 sinclo.scenarioApi._hearing._forceRadioTypeFlg = true;
                 sinclo.scenarioApi._hearing._handleCancel(e);
-              } else if(sinclo.chatApi.clickRadioMessages[$(this).attr('name')] === e.target.value.trim()) {
-                // ラジオボタンがクリックされて、なおかつそこの値が変更されていない場合はreturnさせる
+              } else if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput() && sinclo.chatApi.clickRadioMessages[$(this).attr('name')] === e.target.value.trim()) {
+                // シナリオ中にラジオボタンがクリックされて、なおかつそこの値が変更されていない場合はreturnさせる
                 return ;
               }
               sinclo.chatApi.clickRadioMessages[$(this).attr('name')] = e.target.value.trim();
@@ -3069,6 +3075,9 @@
         var div = document.createElement('div');
         var li = document.createElement('li');
         console.log(obj);
+        // 送った直後はchatIdが0
+        // 再読み込み時はchatIdが付与される
+        // 再読み込み時はhearing_msgにchatIdを付与しない
         if(obj.cn.indexOf("hearing_msg") === -1) {
           li.dataset.chatId = obj.chatId;
         }
@@ -3127,6 +3136,7 @@
 
                 if ( obj.cn.indexOf("sinclo_re") !== -1 ) {
                   // ラジオボタン
+                  // TODO ラジオボタンがヒアリング中の場合はdisabledする必要がある。（別の箇所にその処理があるかも）
                   var radio = str.indexOf('[]');
                   var selectedRadio = str.indexOf('[*]');
                   if ( radio > -1 ) {
@@ -3207,8 +3217,16 @@
 
             if (radioSelectedStr !== "") {
               // TODO シナリオ起動中かつ、chatIdが一番新しい場合のみ次へボタンを付ける
+              // 現在作成されたメッセージはchatIdが0の状態で来るため、そこらへんの条件分岐を明確にしておく
               if(sinclo.scenarioApi.isProcessing()) {
-                content += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>次へ</span></p>"
+                // 取得したchatIdがシナリオの最新かどうかを判別する
+                var addNextBtnFlg = false;
+                if(typeof sinclo.scenarioApi.get("s_targetChatId") !== "undefined") {
+                  addNextBtnFlg = obj.chatId === sinclo.scenarioApi.get("s_targetChatId")[sinclo.scenarioApi.get("s_targetChatId").length - 1];
+                }
+                if(obj.chatId === 0 || addNextBtnFlg) {
+                  content += "<p class='sincloButtonWrap' onclick='sinclo.chatApi.send(\"" + radioSelectedStr + "\")'><span class='sincloButton'>次へ</span></p>"
+                }
               }
             }
 
@@ -4112,9 +4130,13 @@
           this.send(elm.value);
           elm.value = "";
         } else if(!check.isset(elm.value) && $(elm).next().text() === "スキップ") {
-          common.chatBotTyping({forceWaitAnimation: true});
           if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput() && sinclo.scenarioApi._hearing.isHearingMode()) {
             // ヒアリング中に押された場合は次のヒアリングに進む
+            // スキップが押された場合はその時一番最後に表示されている次へボタンは消す
+            if($('#sincloBox sinclo-chat div:last-child .sincloButtonWrap').length > 0){
+              $('#sincloBox sinclo-chat div:last-child .sincloButtonWrap').remove();
+            }
+
             // 進む前に現状のシナリオシーケンスナンバーを保存しておく（非同期処理により順序がずれるため）
             sinclo.scenarioApi._hearing.tmpSeqStorage = sinclo.scenarioApi._hearing._getCurrentSeq();
             emit('sendChat', {
@@ -4693,19 +4715,6 @@
             dataType: "json",
             xhr: function () {
               var XHR = $.ajaxSettings.xhr();
-              /*
-              if(XHR.upload){
-                XHR.upload.addEventListener('progress',function(e){
-                  sinclo.chatApi.uploadProgress = parseInt(e.loaded/e.total*10000)/100;
-                  console.log(sinclo.chatApi.uploadProgress);
-                  if(sinclo.chatApi.uploadProgress === 100) {
-                    $('#uploadMessage').css('display', 'none');
-                    $('#processingMessage').css('display', 'block');
-                  }
-                  sinclo.chatApi.$apply();
-                }, false);
-              }
-              */
               return XHR;
             }
           })
@@ -6019,6 +6028,8 @@
         var beforeTextareaOpened = self.get(self._lKey.beforeTextareaOpened);
         // 元のメッセージ入力欄に戻す
         sinclo.chatApi.forceHideMiniMessageArea = true;
+        sinclo.scenarioApi._hearing._disableGrantCancelAbleFlg = false;
+        sinclo.scenarioApi._hearing._forceRadioTypeFlg = false;
         sinclo.chatApi.hideMiniMessageArea();
         self._saveProcessingState(false);
         sinclo.chatApi.removeAllEvent();
@@ -6682,6 +6693,7 @@
       },
       _valid: function (typeStr, val) {
         var self = sinclo.scenarioApi;
+        if(self._hearing._getCurrentHearingProcess().uiType > 2) return true;
         var regex = new RegExp(self._validation[Number(typeStr)]);
         return val === "" || regex.test(val);
       },
@@ -7099,6 +7111,8 @@
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
                 $('#miniSincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
+                // 変数を復元したときは送信ボタンの文言を必ず送信にしておく
+                $('#miniSincloChatSendBtn').text('送信');
               }
               break;
             case "2": //テキスト複数行
@@ -7107,6 +7121,8 @@
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
                 $('#sincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
+                // 変数を復元したときは送信ボタンの文言を必ず送信にしておく
+                $('#sincloChatSendBtn').text('送信');
               }
               break;
             case "3": // ラジオボタン
@@ -7204,6 +7220,7 @@
         _executeConfirm: function (executeSilent) {
           var self = sinclo.scenarioApi._hearing;
           //ヒアリングが終わるときはチャットエリアのreadOnlyを解除しておく
+          //あと、ヒアリング中に立てたフラグ類も解除する
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ヒアリングの入力無効終了(ｽﾏﾎ)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
           if(check.smartphone()){
             var miniTextarea = document.getElementById("miniSincloChatMessage"),
@@ -7263,7 +7280,7 @@
         _showError: function (hearingObj) {
           var self = sinclo.scenarioApi._hearing;
           var errorMessage = hearingObj.uiType ? hearingObj.errorMessage : self._parent._getCurrentScenario().errorMessage;
-          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+          self._parent._doing(self._parent._getIntervalTimeSec() * 1000, function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._parent.get(self._state.currentSeq) + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._parent.get(self._state.currentSeq));
@@ -7372,7 +7389,7 @@
         _process: function () {
           var self = sinclo.scenarioApi._selection;
           var messageBlock = self._parent._createSelectionMessage(self._parent.get(self._parent._lKey.currentScenario).message, self._parent.get(self._parent._lKey.currentScenario).selection.options);
-          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+          self._parent._doing(self._parent._getIntervalTimeSec() * 1000, function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, messageBlock, 0, self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               self._parent._waitingInput(function (inputVal) {

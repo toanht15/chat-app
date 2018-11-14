@@ -873,7 +873,7 @@ class ChatHistoriesController extends AppController
             }
           }
           if ($val['THistoryChatLog']['message_type'] == 36 || $val['THistoryChatLog']['message_type'] == 37 || $val['THistoryChatLog']['message_type'] == 38 || $val['THistoryChatLog']['message_type'] == 39) {
-            $row['transmissionKind'] = '訪問者（ヒアリング再回答）';
+            $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング再回答）';
             $row['transmissionPerson'] = '';
           }
           if ($val['THistoryChatLog']['message_type'] == 40) {
