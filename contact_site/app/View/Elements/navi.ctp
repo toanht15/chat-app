@@ -228,6 +228,9 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
           <?= $this->htmlEx->naviFaIconLink('チャット統計レポート', '', ['href' => ['controller' => 'Statistics', 'action' => 'forChat'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
         <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('選択式メッセージランキング', '', ['href' => ['controller' => 'Statistics', 'action' => 'forMessageRanking'], 'onclick' => 'window.loading.load.start()'], true) ?>
+        </div>
+        <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('オペレータ統計レポート', '', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
       </div>
