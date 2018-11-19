@@ -4199,6 +4199,7 @@
           console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
           if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
             && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+            sinclo.scenarioApi.triggerInputWaitComplete(value);
             messageType = sinclo.scenarioApi.getCustomerMessageType();
             if(sinclo.scenarioApi._hearing._forceRadioTypeFlg){
               messageType = sinclo.chatApi.messageType.scenario.customer.reInputRadio;
@@ -4237,13 +4238,6 @@
                 isAutoSpeech: result,
                 notifyToCompany: !result,
                 isScenarioMessage: isScenarioMessage
-              }, function(){
-                if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
-                  && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
-                  setTimeout(function(){
-                    sinclo.scenarioApi.triggerInputWaitComplete(value);
-                  },100);
-                }
               });
             }, 100);
           });
