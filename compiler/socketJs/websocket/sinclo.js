@@ -1192,7 +1192,7 @@
       var keys = (typeof(obj.chat.messages) === 'object') ? Object.keys(obj.chat.messages) : [];
       var prevMessageBlock = null;
       var firstCheck = true;
-      var answerCount = 0;
+      var answerCount = 1;
       for (var key in obj.chat.messages) {
         if (!obj.chat.messages.hasOwnProperty(key)) return false;
         var chat = obj.chat.messages[key], userName;
@@ -1221,11 +1221,16 @@
             case 37:
             case 38:
             case 39:
-              cn = "sinclo_se";
+              // 復元対象でない場合はcnにcancelableを付与しない
+              if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
+                cn = "sinclo_se"
+              } else {
+                cn = "cancelable sinclo_se";
+              }
               isHearingAnswer = true;
               break;
             case 90:
-              cn = "sinclo_se skip_input"
+              cn = "sinclo_se skip_input";
               isHearingAnswer = true;
               break;
           }
