@@ -1299,6 +1299,7 @@
             return false;
           }
           else if(Number(chat.messageType) === 8){
+            continue;
           }
           else if(Number(chat.messageType) === 19) {
             if(check.isJSON(chat.message)) {
