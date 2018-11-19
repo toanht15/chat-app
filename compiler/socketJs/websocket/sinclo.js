@@ -1943,11 +1943,6 @@
       $('#flexBoxWrap').css('display', 'block');
       if(!check.smartphone()){
         common.widgetHandler._handleResizeEvent();
-        if(sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isScenarioLFDisabled()) {
-          $('#miniSincloChatMessage').focus();
-        } else {
-          $('#sincloChatMessage').focus();
-        }
         $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
       }
       //スマホの場合
@@ -2386,7 +2381,9 @@
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
               var chatTalk = document.getElementById('chatTalk');
-              $('#miniSincloChatMessage').focus();
+              if($('#miniSincloChatMessage, #sincloChatMessage').is(':focus')) {
+                $('#miniSincloChatMessage').focus();
+              }
               $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
             } else {
               sinclo.adjustSpWidgetSize();
@@ -2408,7 +2405,9 @@
           if (!check.smartphone()) {
             common.widgetHandler._handleResizeEvent();
             var chatTalk = document.getElementById('chatTalk');
-            $('#sincloChatMessage').focus();
+            if($('#miniSincloChatMessage, #sincloChatMessage').is(':focus')) {
+              $('#sincloChatMessage').focus();
+            }
             $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
           } else {
             sinclo.adjustSpWidgetSize();
