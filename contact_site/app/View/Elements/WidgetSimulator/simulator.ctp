@@ -461,7 +461,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_re div.formElement label.formLabel span.require { color: #7F0000 }
         #sincloBox #chatTalk li.sinclo_re div.formElement input.formInput { padding: 5px; border: 1px solid {{widget.settings['re_background_color']}}; }
         #sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea { margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;  }
-        #sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton { width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: {{widget.settings['chat_send_btn_text_color']}}; color: {{widget.settings['chat_send_btn_text_color']}};  }
+        #sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton { width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: {{widget.settings['chat_send_btn_background_color']}}; color: {{widget.settings['chat_send_btn_text_color']}};  }
         #sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton:hover { opacity: 0.8; }
         #sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton.disabled { opacity: 0.38; cursor: auto; }
 
