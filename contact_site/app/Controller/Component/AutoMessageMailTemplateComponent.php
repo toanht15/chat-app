@@ -25,6 +25,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   const SEND_NAME_SCENARIO_ANSWER_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング回答）';
   const SEND_NAME_SCENARIO_RETURN_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング解析結果）';
   const SEND_NAME_SCENARIO_MODIFY_BULK_HEARING = 'シナリオメッセージ（一括ヒアリング内容修正）';
+  const SEND_NAME_SCENARIO_HEARING_REINPUT = 'シナリオメッセージ(ヒアリング再回答)';
 
   const REPLACE_TARGET_AUTO_MESSAGE_BLOCK_DELIMITER = '##AUTO_MESSAGE_BLOCK##';
 
@@ -176,13 +177,48 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 32:
         $message = $this->generateScenarioModifyBulkHearingBlockStr($chatLog['created'],$chatLog['message']);
         break;
+      case 33:
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 34:
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 35:
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 36:
+        $message = $this->generateScenarioReInputHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 37:
+        $message = $this->generateScenarioReInputHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 38:
+        $message = $this->generateScenarioReInputHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 39:
+        $message = $this->generateScenarioReInputHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 40:
         $message = $this->generateScenarioReturnBulkHearingBlockStr($chatLog['created'],$chatLog['message']);
         break;
-      case 98:
+      case 41:
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']['message']);
+        break;
+      case 42:
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']['message']);
+        break;
+      case 81:
+        $message = $this->generateAutoMessageBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 82:
+        $message = $this->generateAutoMessageBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 90:
+        break;
+      case 998:
         $message = $this->generateOperatorEnteredBlockStr($chatLog['created'],$user['display_name']);
         break;
-      case 99:
+      case 999:
         $message = $this->generateOperatorLeavedBlockStr($chatLog['created'],$user['display_name']);
         break;
       default:
@@ -278,6 +314,13 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected function generateScenarioHearingBlockStr($date, $content) {
     $message = self::MESSAGE_SEPARATOR."\n";
     $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING);
+    $message .= $this->createMessageContent($content);
+    return $message;
+  }
+
+  protected function generateScenarioReInputHearingBlockStr($date, $content) {
+    $message = self::MESSAGE_SEPARATOR."\n";
+    $message .= $this->createMessageBlockHeader($date, self::SEND_NAME_SCENARIO_HEARING_REINPUT);
     $message .= $this->createMessageContent($content);
     return $message;
   }

@@ -86,6 +86,10 @@ class MWidgetSetting extends AppModel {
       //23.ウィジット内枠線色
       'widget_inside_border_color' => "widgetInsideBorderColor",
       /* カラー設定end */
+      //メッセージBOX文字サイズ
+      'message_box_text_size' => "messageBoxTextSize",
+      //送信ボタン文字サイズ
+      'chat_send_btn_text_size' => "chatSendBtnTextSize",
 
       'btw_button_margin' => "btwButtonMargin",
       'line_button_margin' => "lineButtonMargin",

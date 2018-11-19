@@ -50,7 +50,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       <title><?php echo $this->fetch('title'); ?></title>
     <?php }
     else { ?>
-      <title><?php echo $this->fetch('title'); ?> | sinclo</title>
+      <title><?php echo $this->fetch('title'); ?><?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?> | sinclo<?php endif; ?></title>
     <?php } ?>
   <?php
     echo $this->Html->meta('icon');
@@ -144,7 +144,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     }
     if ( strcmp($this->name, 'ScriptSettings') === 0 && strcmp($this->action, 'index') !== 0) {
       echo $this->Html->script("openclose.js");
-    } ?>
+    }
+ ?>
 
 <script type="text/javascript">
   <?php echo $this->element('loadScreen'); ?>

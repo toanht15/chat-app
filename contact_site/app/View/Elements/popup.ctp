@@ -413,6 +413,16 @@
             return popupEvent.closePopup();
           };
           break;
+          case 'p-hearing-settings':
+              var settingsBtn = _button("設定");
+              settingsBtn.onclick = function () {
+                  return popupEvent.convert();
+              };
+              var closeBtn = _button("閉じる");
+              closeBtn.onclick = function () {
+                  return popupEvent.close();
+              };
+              break;
         default:
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {

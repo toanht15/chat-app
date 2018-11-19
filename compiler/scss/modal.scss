@@ -1296,6 +1296,35 @@
         }
       }
 
+      &.p-hearing-settings {
+        width: 400px;
+        height: 150px;
+        #popup-main {
+          text-align: center;
+          input, select {
+            height: 26px;
+            font-size: 12px;
+            margin: 2px 5px;
+            width: 270px;
+            padding-left: 4px;
+          }
+        }
+        #popup-main {
+          .form01 div {
+            margin: 5px 0;
+          }
+          img {
+            float: left;
+          }
+        }
+        #popup-button a {
+          width: 100px;
+          float: left;
+          margin: 0 50px;
+        }
+      }
+
+
       &.p-chatbot-use-extended-setting {
         width: 750px;
         #popup-main {

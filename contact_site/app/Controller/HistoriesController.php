@@ -565,7 +565,7 @@ class HistoriesController extends AppController {
           $row['transmissionPerson'] = '';
           $val['THistoryChatLog']['message'] = "（「".$val['THistoryChatLog']['message']."」をクリック）";
         }
-        if($val['THistoryChatLog']['message_type'] == 12) {
+        if($val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 33 || $val['THistoryChatLog']['message_type'] == 34 || $val['THistoryChatLog']['message_type'] == 35) {
           $row['transmissionKind'] = '訪問者（ヒアリング回答）';
           $row['transmissionPerson'] = '';
         }
@@ -590,6 +590,8 @@ class HistoriesController extends AppController {
         if($val['THistoryChatLog']['message_type'] == 22) {
           $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+          // replace [*] by [] radio selected
+          $val['THistoryChatLog']['message'] = str_replace('[*]', '[]', $val['THistoryChatLog']['message']);
         }
         if($val['THistoryChatLog']['message_type'] == 23) {
           $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
@@ -626,6 +628,10 @@ class HistoriesController extends AppController {
             $val['THistoryChatLog']['message'] .= $object['label'].'：'.($object['value'])."\n";
           }
         }
+        if ($val['THistoryChatLog']['message_type'] == 36 || $val['THistoryChatLog']['message_type'] == 37 || $val['THistoryChatLog']['message_type'] == 38 || $val['THistoryChatLog']['message_type'] == 39) {
+          $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング再回答）';
+          $row['transmissionPerson'] = '';
+        }
         if($val['THistoryChatLog']['message_type'] == 40) {
           $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング解析結果）';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
@@ -635,7 +641,25 @@ class HistoriesController extends AppController {
             $val['THistoryChatLog']['message'] .= $object['label'].'：'.((!empty($json['message'][$object['inputType']])) ? $json['message'][$object['inputType']] : "（なし）")."\n";
           }
         }
-        if($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
+        if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42) {
+          $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+          $json = json_decode($val['THistoryChatLog']['message']);
+          $val['THistoryChatLog']['message'] = $json->message;
+        }
+        if($val['THistoryChatLog']['message_type'] == 81) {
+          $row['transmissionKind'] = 'チャットボットメッセージ';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if($val['THistoryChatLog']['message_type'] == 82) {
+          $row['transmissionKind'] = 'チャットボットメッセージ';
+          $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+        }
+        if ($val['THistoryChatLog']['message_type'] == 90) {
+          // 何も表示しない
+          continue;
+        }
+        if($val['THistoryChatLog']['message_type'] == 998 || $val['THistoryChatLog']['message_type'] == 999) {
           $row['transmissionKind'] = '通知メッセージ';
           $row['transmissionPerson'] = "";
           $val['THistoryChatLog']['message'] = '-'.$val['MUser']['display_name'].'が'.$val['THistoryChatLog']['message'].'しました-';
@@ -726,6 +750,9 @@ class HistoriesController extends AppController {
       if($val['THistoryChatLog']['delete_flg'] == 1) {
         $message = "(このメッセージは ".$val['THistoryChatLog']['deleted']." に ".$val['DeleteMUser']['display_name']." さんによって削除されました。)";
       }
+      else if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42) {
+        $message = json_decode($val['THistoryChatLog']['message'], true)['message'];
+      }
       else {
         $message = $val['THistoryChatLog']['message'];
       }
@@ -756,6 +783,9 @@ class HistoriesController extends AppController {
             $row = $this->_setData($date, "訪問者","","（「".$message."」をクリック）");
           break;
         case 12: // 訪問者（シナリオ：ヒアリング回答）
+        case 33: // 訪問者（シナリオ：ヒアリング回答）radio
+        case 34: // 訪問者（シナリオ：ヒアリング回答）pulldown
+        case 35: // 訪問者（シナリオ：ヒアリング回答）calendar
           $row = $this->_setData($date, "訪問者（ヒアリング回答）", "", $message);
           break;
         case 13: // 訪問者（シナリオ：選択肢回答）
@@ -765,13 +795,24 @@ class HistoriesController extends AppController {
           $row = $this->_setData($date, "シナリオメッセージ（テキスト発言）", $this->userInfo['MCompany']['company_name'], $message);
           break;
         case 22: // シナリオメッセージ（ヒアリング）
+          $message = str_replace('[*]', '[]', $message);
           $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'], $message);
           break;
         case 23: // シナリオメッセージ（選択肢）
           $row = $this->_setData($date, "シナリオメッセージ（選択肢）", $this->userInfo['MCompany']['company_name'], $message);
           break;
-        case 98: // 入室メッセージ
-        case 99: // 退室メッセージ
+        case 36: // 訪問者（シナリオ：ヒアリング再回答）text
+        case 37: // 訪問者（シナリオ：ヒアリング再回答）radio
+        case 38: // 訪問者（シナリオ：ヒアリング再回答）pulldown
+        case 39: // 訪問者（シナリオ：ヒアリング再回答）calendar
+          $row = $this->_setData($date, "シナリオメッセージ（ヒアリング再回答）", "", $message);
+          break;
+        case 41: // シナリオメッセージ（ヒアリング）pulldown
+        case 42: // シナリオメッセージ（ヒアリング）calendar
+          $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'], $message);
+          break;
+        case 998: // 入室メッセージ
+        case 999: // 退室メッセージ
           $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");
           break;
       }
@@ -1185,7 +1226,7 @@ class HistoriesController extends AppController {
           'fields' => [
             't_histories_id, COUNT(*) AS count',
             'MAX(achievement_flg) AS achievementFlg',
-            'SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp',
+            'SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp',
             'SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry',
             'SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus'
           ],
@@ -1199,7 +1240,7 @@ class HistoriesController extends AppController {
 
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -1884,7 +1925,7 @@ class HistoriesController extends AppController {
           'fields' => [
             't_histories_id, COUNT(*) AS count',
             'MAX(achievement_flg) AS achievementFlg',
-            'SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp',
+            'SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp',
             'SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry',
             'SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus'
           ],
@@ -1904,7 +1945,7 @@ class HistoriesController extends AppController {
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ."  GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ."  GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -1964,7 +2005,7 @@ class HistoriesController extends AppController {
       ],
       'conditions' => [
         'OR' => [
-          array('THistoryChatLog.message_type' => 98),
+          array('THistoryChatLog.message_type' => 998),
           array('THistoryChatLog.message_type' => 5)
         ],
         'AND' => [

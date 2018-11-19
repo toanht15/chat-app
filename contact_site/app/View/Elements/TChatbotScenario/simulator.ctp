@@ -7,6 +7,7 @@
       </div>
     </div>
     <div id="simulator_popup_body">
+      <p id="maximum_description" ng-if="widget.settings['widget_size_type'] == 4" style="margin-top:0px;color:#F57E7E">表示されているウィジェットのサイズは実際のサイズ（最大）ではありません。実際のサイズは ＜<?= $this->Html->link('デモサイト', array('controller' => 'ScriptSettings', 'action' => 'testpage',$companyKey), array('target' => '_demo', 'class' => 'underL' ,'style' => 'color:#F57E7E')) ?>＞ から確認してください。</p>
       <?= $this->element('WidgetSimulator/simulator', ['isTabDisplay' => false, 'canVisitorSendMessage' => true]); ?>
     </div>
     <div id="simulator_popup_footer">

@@ -63,6 +63,7 @@ define('C_COMPANY_USE_CAMPAIGN', 'campaign');  // キャンペーン設定
 define('C_COMPANY_USE_CHATCALLMESSAGES', 'chatCallMessages');  // チャット呼出中メッセージ
 define('C_COMPANY_USE_CUSTOMVARIABLES', 'customVariables');  // カスタム変数
 define('C_COMPANY_USE_EDITCUSTOMERINFORMATIONS', 'editCustomerInformations');  // 訪問ユーザ情報
+  define('C_COMPANY_USE_COGMO_ATTEND_API', 'useCogmoAttendApi');  // CogmoAttend連携
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
@@ -237,6 +238,13 @@ define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
 define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
 define('C_SCENARIO_INPUT_TYPE_TEL', 4);
 
+// シナリオ設定(ヒアリング)－UIタイプ種別コード
+define('C_SCENARIO_UI_TYPE_ONE_ROW_TEXT', 1);
+define('C_SCENARIO_UI_TYPE_MULTIPLE_ROW_TEXT', 2);
+define('C_SCENARIO_UI_TYPE_RADIO_BUTTON', 3);
+define('C_SCENARIO_UI_TYPE_PULLDOWN', 4);
+define('C_SCENARIO_UI_TYPE_CALENDAR', 5);
+
 /* シナリオ設定(ヒアリング) - 改行設定 */
 define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
 define('C_SCENARIO_INPUT_LF_TYPE_ALLOW', 2);
@@ -321,6 +329,7 @@ define('C_WIDGET_DISPLAY_STYLE_TYPE_BANNER', 3); // 小さなバナー
 define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
 define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
+define('C_WIDGET_SIZE_TYPE_MAXIMUM', 4); //最大
 
 // ファイル送信設定タイプ
 define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);
@@ -767,10 +776,48 @@ $config['chatbotScenarioActionList'] = [
       'hearings' => [[
         'variableName' => '',
         'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
+        'uiType' => '1',
         'message' => '',
-        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW
-      ]],
-      'errorMessage' => '',
+        'required' => true,
+        'errorMessage' => '',
+        'settings' => [
+          'options' => [""], // options for radio or pulldown
+          'disablePastDate' => true,
+          'isSetDisableDate' => false,
+          'isDisableDayOfWeek' => false,
+          'isSetSpecificDate' => false,
+          'isEnableAfterDate' => false,
+          'enableAfterDate' => null,
+          'dayOfWeekSetting' => [
+            0 => false, // sun
+            1 => false, // mon
+            2 => false, // tue
+            3 => false, // wed
+            4 => false, // thur
+            5 => false, // fri
+            6 => false, // sat
+          ],
+          'setSpecificDateType' => '',
+          'specificDateData' => [""],
+          'language' => 1, // 1: japanese, 2: english
+          'pulldownCustomDesign' => false,
+          'calendarCustomDesign' => false,
+          'customDesign' => [
+            'borderColor' => '',
+            'backgroundColor' => '#FFFFFF',
+            'textColor' => '',
+            'headerBackgroundColor' => '',
+            'headerTextColor' => '#FFFFFF',
+            'headerWeekdayBackgroundColor' => '',
+            'calendarBackgroundColor' => '#FFFFFF',
+            'calendarTextColor' => '',
+            'saturdayColor' => '',
+            'sundayColor' => '',
+          ]
+        ]
+      ]
+      ],
+      'restore' => true,
       'isConfirm' => '2',
       'confirmMessage' => '',
       'success' => '',
