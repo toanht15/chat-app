@@ -7011,7 +7011,7 @@
             $(this).remove();
           });
           self._hideMessage(deleteTargetIds);
-          self._setCurrentSeq(Number(targetSeqNum));
+          self._setCurrentSeq(Number(targetSeqNum) - 1);
           self._resetShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._getCurrentSeq());
           var hearingProcess = self._getCurrentHearingProcess();
           if (isCancelTargetText) {
