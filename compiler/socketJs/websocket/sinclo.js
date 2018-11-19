@@ -5371,7 +5371,7 @@
       },
       _disablePreviousRadioButton: function () {
         var self = sinclo.scenarioApi;
-        var chatMessageBlock = $('sinclo-chat').find('div');
+        var chatMessageBlock = $('sinclo-chat').find('li.sinclo_re, li.sinclo_se');
         var length = self.get(self._lKey.previousChatMessageLength);
         if (!self.isProcessing()) {
           // 初期状態
