@@ -182,7 +182,9 @@ $headerNo = 1;
               <label class="pointer choose" for="widgetSizeType1"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(1)" id="widgetSizeType1" class="showHeader" value="1" >小</label><br>
               <label class="pointer choose" for="widgetSizeType2"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(2)" id="widgetSizeType2" class="showHeader" value="2" >中</label><br>
               <label class="pointer choose" for="widgetSizeType3"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(3)" id="widgetSizeType3" class="showHeader" value="3" >大</label><br>
+              <?php if($coreSettings[C_COMPANY_USE_CHAT]): ?>
               <label class="pointer choose" for="widgetSizeType4"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(4)" id="widgetSizeType4" class="showHeader" value="4" >最大</label><br>
+              <?php endif; ?>
 
             </div>
           </li>
