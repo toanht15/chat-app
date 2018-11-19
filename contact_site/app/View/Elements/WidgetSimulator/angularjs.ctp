@@ -203,10 +203,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     });
     $(divElm).find('li.sinclo_form input.formInput').on('input', function(){
       $(divElm).find('li.sinclo_form input.formInput').each(function(idx, elem){
-        if(data.hearingTarget[idx].required && $(this).val().length === 0) {
+        if(data.bulkHearings[idx].required && $(this).val().length === 0) {
           $(divElm).find('li.sinclo_form span.formOKButton').addClass('disabled');
           return false;
-        } else if (hearingTarget.length - 1 === idx){
+        } else if (data.  bulkHearings.length - 1 === idx){
           $(divElm).find('li.sinclo_form span.formOKButton').removeClass('disabled');
         }
       });
@@ -227,6 +227,49 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
 
     $('#chatTalk > div:last-child').show();
     self.autoScroll();
+  };
+
+  $scope.getInputType = function(bulkHearingInputType) {
+    var type = '';
+    switch(Number(bulkHearingInputType)) {
+      case 1:
+        type = 'text';
+        break;
+      case 2:
+        type = 'text';
+        break;
+      case 3:
+        type = 'tel';
+        break;
+      case 4:
+        type = 'text';
+        break;
+      case 5:
+        type = 'text';
+        break;
+      case 6:
+        type = 'text';
+        break;
+      case 7:
+        type = 'tel';
+        break;
+      case 8:
+        type = 'tel';
+        break;
+      case 9:
+        type = 'tel';
+        break;
+      case 10:
+        type ='email';
+        break;
+      case 11:
+        type = 'text';
+        break;
+      default:
+        type = 'text';
+        break;
+    }
+    return type;
   };
 
   $scope.addPulldown = function(data) {

@@ -600,6 +600,7 @@ sincloApp.factory('SimulatorService', function() {
     },
 
     createForm: function (isConfirm, hearingTarget, resultData, callback) {
+      var self = this;
       var formElements = "";
       var isEmptyRequire = false;
 
@@ -611,7 +612,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
           formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'></span>" : "") + "</label>";
-          formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-input-type='" + elm.inputType + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
+          formElements += "      <input type='" + self.getInputType(elm.inputType) + "' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-input-type='" + elm.inputType + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
           formElements += "    </div>";
         });
 
@@ -630,7 +631,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
           formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'></span>" : "") + "</label>";
-          formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.variableName + "' value='" + resultData[elm.variableName].value + "' readonly/>";
+          formElements += "      <input type='" + self.getInputType(elm.inputType) + "' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.variableName + "' value='" + resultData[elm.variableName].value + "' readonly/>";
           formElements += "    </div>";
         });
 
@@ -664,6 +665,49 @@ sincloApp.factory('SimulatorService', function() {
       content += "</div>";
 
       return content;
+    },
+
+    getInputType: function(bulkHearingInputType) {
+      var type = '';
+      switch(Number(bulkHearingInputType)) {
+        case 1:
+          type = 'text';
+          break;
+        case 2:
+          type = 'text';
+          break;
+        case 3:
+          type = 'tel';
+          break;
+        case 4:
+          type = 'text';
+          break;
+        case 5:
+          type = 'text';
+          break;
+        case 6:
+          type = 'text';
+          break;
+        case 7:
+          type = 'tel';
+          break;
+        case 8:
+          type = 'tel';
+          break;
+        case 9:
+          type = 'tel';
+          break;
+        case 10:
+          type ='email';
+          break;
+        case 11:
+          type = 'text';
+          break;
+        default:
+          type = 'text';
+          break;
+      }
+      return type;
     },
 
     createRadioButton: function(data) {

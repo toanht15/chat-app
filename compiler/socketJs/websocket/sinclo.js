@@ -1341,7 +1341,8 @@
               this.chatApi.createMessage(sendData, ((Number(chat.messageType) > 20 && (Number(chat.messageType) < 29)) || (Number(chat.messageType) > 40 && (Number(chat.messageType) < 49))));
             }
           }
-          else if(Number(chat.messageType) === 8){
+          else if(Number(chat.messageType) === 8) {
+
           }
           else if(Number(chat.messageType) === 19) {
             if(check.isJSON(chat.message)) {
@@ -3861,7 +3862,7 @@
             }
             formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
             formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'>*</span>" : "") + "</label>";
-            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-input-type='" + elm.inputType + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
+            formElements += "      <input type='" + $scope.getInputType(elm.inputType) + "' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-input-type='" + elm.inputType + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
             formElements += "    </div>";
           });
 
@@ -3881,7 +3882,7 @@
             }
             formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
             formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'>*</span>" : "") + "</label>";
-            formElements += "      <input type='text' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.variableName + "' value='" + resultData[elm.variableName].value + "' readonly/>";
+            formElements += "      <input type='" + $scope.getInputType(elm.inputType) + "' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.variableName + "' value='" + resultData[elm.variableName].value + "' readonly/>";
             formElements += "    </div>";
           });
 
@@ -3925,6 +3926,48 @@
           });
         });
         this.scDown();
+      },
+      getInputType: function(bulkHearingInputType) {
+        var type = '';
+        switch(Number(bulkHearingInputType)) {
+          case 1:
+            type = 'text';
+            break;
+          case 2:
+            type = 'text';
+            break;
+          case 3:
+            type = 'tel';
+            break;
+          case 4:
+            type = 'text';
+            break;
+          case 5:
+            type = 'text';
+            break;
+          case 6:
+            type = 'text';
+            break;
+          case 7:
+            type = 'tel';
+            break;
+          case 8:
+            type = 'tel';
+            break;
+          case 9:
+            type = 'tel';
+            break;
+          case 10:
+            type ='email';
+            break;
+          case 11:
+            type = 'text';
+            break;
+          default:
+            type = 'text';
+            break;
+        }
+        return type;
       },
       createFormFromLog: function (data) {
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
