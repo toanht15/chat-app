@@ -6999,7 +6999,8 @@
         _handleCancel: function(e) {
           var self = sinclo.scenarioApi._hearing;
           // テキストの場合はクリックしたテキスト自身、それ以外の場合は変更したターゲットの次にあるdivからchatIdを取得する
-          var target = $(e.target).closest('div').find('li').data('chatId') ? $(e.target).closest('div').find('li') : $(e.target).closest('div').next('div').find('li');
+          var isCancelTargetText = $(e.target).closest('div').find('li').data('chatId');
+          var target = isCancelTargetText ? $(e.target).closest('div').find('li') : $(e.target).closest('div').next('div').find('li');
           var targetChatId = target.data('chatId');
           var text = target.text();
           var targetSeqNum = target.data('hearingSeqNum');
@@ -7019,6 +7020,9 @@
           self._setCurrentSeq(Number(targetSeqNum));
           self._resetShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._getCurrentSeq());
           var hearingProcess = self._getCurrentHearingProcess();
+          if (isCancelTargetText) {
+            $('#sincloChatMessage, #miniSincloChatMessage').val(text);
+          }
           self._execute(hearingProcess, true);
         },
         /*  操作されたメッセージと現状表示しているメッセージが一致しているか確認する
@@ -7288,10 +7292,9 @@
         _showError: function (hearingObj) {
           var self = sinclo.scenarioApi._hearing;
           var errorMessage = hearingObj.uiType ? hearingObj.errorMessage : self._parent._getCurrentScenario().errorMessage;
-          self._parent._doing(self._parent._getIntervalTimeSec() * 1000, function () {
-            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
-            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._parent.get(self._state.currentSeq) + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
-              self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._parent.get(self._state.currentSeq));
+          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
+            self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, errorMessage, self._getCurrentSeq() + "e" + common.fullDateTime(), self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
+              self._parent._deleteShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._getCurrentSeq());
               self._process();
             });
           }, true);
@@ -7398,7 +7401,7 @@
         _process: function () {
           var self = sinclo.scenarioApi._selection;
           var messageBlock = self._parent._createSelectionMessage(self._parent.get(self._parent._lKey.currentScenario).message, self._parent.get(self._parent._lKey.currentScenario).selection.options);
-          self._parent._doing(self._parent._getIntervalTimeSec() * 1000, function () {
+          self._parent._doing(self._parent._getIntervalTimeSec(), function () {
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             self._parent._showMessage(self._parent.get(self._parent._lKey.currentScenario).actionType, messageBlock, 0, self._parent.get(self._parent._lKey.currentScenario).chatTextArea, function () {
               self._parent._waitingInput(function (inputVal) {
