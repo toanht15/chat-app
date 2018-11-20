@@ -4187,7 +4187,7 @@
               notifyToCompany: false,
               isScenarioMessage: true
             });
-            sinclo.scenarioApi.triggerInputWaitComplete("");
+            sinclo.scenarioApi.triggerInputWaitComplete(" ");
           }
         }
         this.pushFlg = false;
