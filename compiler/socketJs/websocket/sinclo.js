@@ -3338,6 +3338,8 @@
         options = sinclo.chatApi.createCalendarOption(settings);
         $('#sinclo-datepicker' + index).flatpickr(options);
         $('#sinclo-datepicker' + index).hide();
+        var firstDayOfWeek = $('#sinclo-datepicker' + index).find('.flatpickr-weekday');
+        firstDayOfWeek[0].innerText = settings.language == 1 ? '日' : 'Sun';
         sinclo.chatApi.handleCalendarEvent(settings, index);
       },
       createCalendarHtml: function(settings, index, storedValue) {
