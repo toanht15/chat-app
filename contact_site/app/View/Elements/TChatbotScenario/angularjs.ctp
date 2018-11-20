@@ -144,7 +144,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
-  // 設定一覧の並び替えオプション
+  // ヒアリング一覧の並び替えオプション
   $scope.sortableOptionsHearing = {
     axis: "y",
     tolerance: "pointer",
@@ -240,10 +240,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     return target;
   };
 
+  // set focus action index
   this.setFocusActionIndex = function (actionIndex) {
     $scope.focusActionIndex = actionIndex;
-    // $('.set_action_item').blur();
-    // $('#action' + actionIndex + '_setting').css('border', '2px solid #C3D69B');
   };
 
   this.showOptionMenu = function (actionType) {
@@ -679,6 +678,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     return ('#' + codeR + codeG + codeB).toUpperCase();
   };
 
+  // change calendar header color
   this.changeCalendarHeaderColor = function (actionIndex, hearingIndex, index) {
     if (index === 'headerBackgroundColor') {
       var color = this.getRawColor($scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[index]);
@@ -1010,6 +1010,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
+  // add option (radio, pulldown, calendar) in hearing
   this.addHearingOption = function ($event, optionType, optionIndex, listIndex) {
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
@@ -1043,6 +1044,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
+  // remove options (radio, pulldown, calendar) in hearing
   this.removeHearingOption = function ($event, optionType, optionIndex, listIndex) {
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
@@ -1253,6 +1255,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     return action;
   };
 
+  // delete no need data before save
   this.deleteNoNeedHearingData = function (action) {
     var hearings = [];
     angular.forEach(action.hearings, function (item, index) {
@@ -1682,6 +1685,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   });
 
+  // next hearing action
   $scope.$on('nextHearingAction', function () {
     $scope.hearingIndex++;
     var actionDetail = $scope.setActionList[$scope.actionStep];
@@ -2376,7 +2380,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  // handle when click on next button
+  // handle next button click
   $(document).on('click', '.nextBtn', function () {
     var numbers      = $(this).attr('id').match(/\d+/g).map(Number);
     var actionStep   = numbers[0];
@@ -2399,6 +2403,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.doAction();
   });
 
+  // disable input after hearing finish
   this.disableHearingInput = function (actionIndex) {
     $scope.$broadcast('switchSimulatorChatTextArea', false);
     $('#sincloBox input[name*="action' + actionIndex + '"]').prop('disabled', true);
@@ -2408,7 +2413,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
   };
 
-
+  // hanlde radio button click
   $(document).on('change', '#chatTalk input[type="radio"]', function() {
     var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
     var message = $(this).val().replace(/^\s/, '');
@@ -3145,14 +3150,13 @@ function searchStr (str, regex) {
   return result;
 }
 
-// check when click on other area of action menu
 $(document).mouseup(function (e) {
-  // hide previous option menu when click new action
   // hide dropdown when click on other area
   if (!$(e.target).closest('.actionMenu a').length) {
     $('.actionMenuOption').fadeOut('fast');
   }
 
+  // handle focus when click on other area action
   if (!$(e.target).closest('.set_action_item').length && !$(e.target).closest('.actionMenu').length && !$(e.target).closest('#tchatbotscenario_form_preview_body > section').length) {
     angular.element($('#tchatbotscenario_form_action_menulist')).scope().focusActionIndex = null;
     $('.set_action_item').blur();
