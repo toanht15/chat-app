@@ -1184,6 +1184,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             break;
           case <?= C_SCENARIO_ACTION_HEARING ?>:
             action = self.trimDataHearing(action);
+            action = self.deleteNoNeedHearingData(action);
             break;
           case <?= C_SCENARIO_ACTION_SELECT_OPTION ?>:
             action = self.trimDataSelectOption(action);
@@ -1249,6 +1250,24 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     action.isConfirm = action.isConfirm ? '1' : '2';
     action.cv = action.cv ? '1' : '2';
+    return action;
+  };
+
+  this.deleteNoNeedHearingData = function (action) {
+    var hearings = [];
+    angular.forEach(action.hearings, function (item, index) {
+      if (item.uiType !== '1' && item.uiType !== '2') {
+        // delete inputType if uiType is not text
+        delete  item.inputType;
+      } else {
+        // delete settings if uiType is text
+        delete item.settings;
+      }
+
+      hearings.push(item);
+    });
+
+    action.hearings = hearings;
     return action;
   };
 
@@ -1500,11 +1519,21 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
   // controll data and view when change uiType
   this.handleChangeUitype = function (actionType, actionIndex, hearingIndex, uiType) {
+    // can not restore after change uiType
     var variableName = $scope.setActionList[actionIndex].hearings[hearingIndex].variableName;
     var item = LocalStorageService.getItem('chatbotVariables', variableName);
     if (item) {
       $scope.setActionList[actionIndex].hearings[hearingIndex].canRestore = false;
     }
+    // set default inputType = text when have not inputType
+    if (!$scope.setActionList[actionIndex].hearings[hearingIndex].inputType) {
+      $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = '1';
+    }
+    // set defaut settings
+    if (!$scope.setActionList[actionIndex].hearings[hearingIndex].settings) {
+      $scope.setActionList[actionIndex].hearings[hearingIndex].settings = $scope.actionList[2].default.hearings[0].settings;
+    }
+
     // set default input type for text multiple line
     var inputType = $scope.setActionList[actionIndex].hearings[hearingIndex].inputType;
     if (uiType === '2' && (inputType === '3' || inputType === '4')) {
@@ -2371,6 +2400,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   });
 
   this.disableHearingInput = function (actionIndex) {
+    $scope.$broadcast('switchSimulatorChatTextArea', false);
     $('#sincloBox input[name*="action' + actionIndex + '"]').prop('disabled', true);
     $('#sincloBox select[id*="action' + actionIndex + '"]').prop('disabled', true);
     $('#sincloBox [id^="action' + actionIndex + '"][id*="underline"]').find('.sinclo-text-line').removeClass('underlineText');
