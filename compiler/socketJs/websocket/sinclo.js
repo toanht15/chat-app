@@ -6045,7 +6045,6 @@
         };
       },
       begin: function () {
-        this.addStorageUpdateEvent();
         this._disablePreviousRadioButton();
         this._saveProcessingState(true);
         this._process();
@@ -6336,6 +6335,7 @@
           ) {
             console.log("<><><><><><><><><><> sequence moved %s => %s <><><><><><><><><><>", oldObj[self._lKey.currentScenarioSeqNum], newObj[self._lKey.currentScenarioSeqNum]);
             setTimeout(function(){
+              self = sinclo.scenarioApi; // もう一度読み込む
               var action = self.get(self._lKey.currentScenario);
               if(String(action.actionType) === self._actionType.hearing
                 || String(action.actionType) === self._actionType.selection
@@ -6347,7 +6347,7 @@
                 console.log("<><><><><><><><><><> NOT process %s <><><><><><><><><><>", String(action.actionType));
                 self._handleChatTextArea(self.get(self._lKey.currentScenario).chatTextArea);
               }
-            }, 100);
+            }, 2000);
           } else if(self.isProcessing() && (String(self.get(self._lKey.currentScenario).actionType) === self._actionType.hearing) ) {
             setTimeout(function(){
               console.log('ヒアリング中');
@@ -7324,7 +7324,9 @@
                 emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
               }, 1000);
             }
-            self._disableAllHearingMessageInput();
+            setTimeout(function(){
+              self._disableAllHearingMessageInput();
+            }, 1000);
             if (self._parent._goToNextScenario()) {
               self._setCurrentSeq(0);
               self._parent._process();
