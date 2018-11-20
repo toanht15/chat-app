@@ -160,6 +160,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     self.autoScroll();
   };
 
+  /**
+   * add radio button in simulator
+   * @param object data: radio options data
+   */
   $scope.addRadioButton = function(data) {
     var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
     divElm.id = data.prefix + '_question';
@@ -171,6 +175,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     self.autoScroll();
   };
 
+  /**
+   * add pulldown button in simulator
+   * @param object data: pulldown options data
+   */
   $scope.addPulldown = function(data) {
     var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
     divElm.id = data.prefix + '_question';
@@ -182,6 +190,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     self.autoScroll();
   };
 
+  /**
+   * add calendar button in simulator
+   * @param object data: calendar options data
+   */
   $scope.addCalendar = function(data) {
     var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
     divElm.id = data.prefix + '_question';
@@ -195,7 +207,12 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     self.autoScroll();
   };
 
-  // add date picker for calendar in semulator
+  /**
+   * add datepicker for calendar
+   * @param selector: calendar selector
+   * @param settings: calendar setting
+   * @param design: calendar design
+   */
   $scope.addDatePicker = function (selector, settings, design) {
     var options = $scope.getCalendarOptions(settings);
     $(selector.replace('calendar', 'datepicker')).flatpickr(options);
@@ -235,6 +252,11 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     });
   };
 
+  /**
+   * custom calendar text color
+   * @param calendarTarget: calendar selector
+   * @param design: calendar design
+   */
   $scope.customCalendarTextColor = function (calendarTarget, design) {
     var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
     calendarTextColorTarget.each(function () {
@@ -260,6 +282,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', design.calendarBackgroundColor);
   };
 
+  /**
+   * create flatpickr options from calendar settings
+   * @param settings: calendar settings
+   */
   $scope.getCalendarOptions = function(settings) {
     var options = {
       dateFormat: "Y/m/d",
@@ -1221,8 +1247,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor();
   });
 
+  // handle skip button click
   $(document).on('click', '.sincloChatSkipBtn', function (e) {
     $scope.isShowSkipBtn = false;
+    $('.nextBtn').hide();
     $scope.$apply();
     $scope.$emit('nextHearingAction');
   });
