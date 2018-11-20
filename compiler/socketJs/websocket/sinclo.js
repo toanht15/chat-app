@@ -7439,10 +7439,10 @@
                     emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
                   }, 1000);
                 }
-                self._setCurrentSeq(0);
                 // OKを押したタイミングで、現時点で復元可能対象を全て除去する
                 self._disableAllHearingMessageInput();
                 if (self._parent._goToNextScenario()) {
+                  self._setCurrentSeq(0);
                   self._parent._process();
                 }
               } else if (inputVal === self._parent.get(self._parent._lKey.currentScenario).cancel) {
