@@ -2688,7 +2688,7 @@
             $('#flexBoxHeight').addClass('sinclo-hide');
             $('#miniFlexBoxHeight').removeClass('sinclo-hide');
             // プレースホルダーを変える
-            sinclo.scenarioApi.setPlaceholderMessage("メッセージを入力して下さい");
+            sinclo.scenarioApi.setPlaceholderMessage("メッセージを入力してください");
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
@@ -6133,7 +6133,7 @@
           if(currentSeq.inputLFType){
             type = currentSeq.inputLFType;
           } else if(currentSeq.uiType) {
-            type = currentSeq.uiType;
+            type = String(currentSeq.uiType);
           }
           switch (type) {
             case "1": // 改行不可
