@@ -1192,7 +1192,7 @@
       var keys = (typeof(obj.chat.messages) === 'object') ? Object.keys(obj.chat.messages) : [];
       var prevMessageBlock = null;
       var firstCheck = true;
-      var answerCount = 1;
+      var answerCount = 0;
       for (var key in obj.chat.messages) {
         if (!obj.chat.messages.hasOwnProperty(key)) return false;
         var chat = obj.chat.messages[key], userName;
@@ -1295,6 +1295,8 @@
             || Number(chat.messageType) === 41
             || Number(chat.messageType) === 42) {
               cn = "hearing_msg " + cn;
+            } else {
+              answerCount = 0;
             }
           }
           else if (Number(chat.messageType) === sinclo.chatApi.messageType.company) {
@@ -1552,7 +1554,7 @@
       // シナリオ中は、メッセージIDをs_currentdataに保存する
       if(sinclo.scenarioApi.isProcessing()){
         var currentScenarioChatId = sinclo.scenarioApi.get("s_targetChatId");
-        if(typeof currentScenarioChatId === "undefined"){
+        if(typeof currentScenarioChatId === "undefined") {
           currentScenarioChatId = [];
         }
         console.log(obj.chatId);
@@ -1874,7 +1876,7 @@
         if(!obj.hideMessage && obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread({cn: cn, message: obj.chatMessage, name: userName, chatId: obj.chatId,
             isHearingAnswer: sinclo.scenarioApi._hearing.isHearingAnswer(obj),
-            answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(obj)) ? sinclo.scenarioApi._hearing._getCurrentSeq() : 0});
+            answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(obj)) ? sinclo.scenarioApi._hearing._getPrevSeqNum() : 0});
         }
 
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
@@ -4230,6 +4232,7 @@
           console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput())
           if (sinclo.scenarioApi.isProcessing() && sinclo.scenarioApi.isWaitingInput()
             && (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === "false")) {
+            sinclo.scenarioApi._hearing._setPrevSeqNum();
             sinclo.scenarioApi.triggerInputWaitComplete(value);
             messageType = sinclo.scenarioApi.getCustomerMessageType();
             if(sinclo.scenarioApi._hearing._forceRadioTypeFlg){
@@ -6862,7 +6865,8 @@
           currentSeq: "sh_currentSeq",
           retry: "sh_retry",
           length: "sh_length",
-          confirming: "sh_comfirming"
+          confirming: "sh_comfirming",
+          prevSeq: "sh_prevSeq",
         },
         _cvType: {
           validOnce: "1",
@@ -7101,6 +7105,14 @@
           emit('hideScenarioMessages', {
             hideMessages: messageIds
           });
+        },
+        _setPrevSeqNum: function() {
+          var self = sinclo.scenarioApi._hearing;
+          self._parent.set(self._state.prevSeq, self._getCurrentSeq());
+        },
+        _getPrevSeqNum: function() {
+          var self = sinclo.scenarioApi._hearing;
+          return self._parent.get(self._state.prevSeq);
         },
         _process: function (forceFirst) {
           var self = sinclo.scenarioApi._hearing;
