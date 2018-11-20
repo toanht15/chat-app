@@ -6951,10 +6951,10 @@
         tmpSeqStorage: null,
         _getCurrentSeq: function () {
           var self = sinclo.scenarioApi._hearing;
-          var json = self._parent.get(self._state.currentSeq);
-          var obj = json ? json : 0;
+          var sequenceNum = self._parent.get(self._state.currentSeq);
+          sequenceNum = sequenceNum ? sequenceNum : 0;
           //console.log(obj);
-          return obj;
+          return sequenceNum;
         },
         _setRetryFlg: function () {
           var self = sinclo.scenarioApi._hearing;
@@ -7115,7 +7115,8 @@
           debugger;
           var self = sinclo.scenarioApi._hearing;
           if(self._parent) {
-            return self._parent.get(self._state.prevSeq);
+            var prevSeq = self._parent.get(self._state.prevSeq);
+            return prevSeq ? prevSeq : 0;
           } else {
             return 0;
           }
