@@ -1693,6 +1693,32 @@
             sinclo.chatApi.createMessage({cn: cn, message: obj.chatMessage, name: userName, chatId: obj.chatId}, true);
             sinclo.chatApi.scDown();
             return false;
+          } else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.pulldown) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = "sinclo_re";
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = "";
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            var pulldown = JSON.parse(obj.chatMessage);
+            this.chatApi.addPulldown("hearing_msg sinclo_re", pulldown.message, userName, pulldown.settings);
+            sinclo.chatApi.scDown();
+            return false;
+          } else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.calendar) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = "sinclo_re";
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = "";
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            var calendar = JSON.parse(obj.chatMessage);
+            this.chatApi.addCalendar("hearing_msg sinclo_re", calendar.message, calendar.settings);
+            sinclo.chatApi.scDown();
+            return false;
           } else if (obj.messageType === sinclo.chatApi.messageType.scenario.message.receiveFile) {
             this.chatApi.createSendFileMessage(JSON.parse(obj.chatMessage), sincloInfo.widget.subTitle);
             this.chatApi.scDown();
