@@ -139,11 +139,16 @@ class htmlExHelper extends AppHelper {
         }
         $content = null;
 
-        foreach(explode("\n", $value) as $key => $tmp){
+        foreach($this->double_explode("\n", "<br>", $value) as $key => $tmp){
             $str = h($tmp);
-            if ( preg_match("/^\[\]/", $tmp) ) {
+            if ( preg_match("/^\[\]/", $tmp)) {
                 $str = "<input type='radio' id='radio".$key."' disabled=''>";
                 $str .= "<label class='pointer' for='radio".$key."'>".trim(preg_replace("/^\[\]/", "", $tmp))."</label>";
+            }
+
+            if ( preg_match("/^\[\*\]/", $tmp)) {
+              $str = "<input type='radio' id='radio".$key."' disabled=''>";
+              $str .= "<label class='pointer' for='radio".$key."'>".trim(preg_replace("/^\[\*\]/", "", $tmp))."</label>";
             }
             $linkData = [];
 
@@ -438,6 +443,19 @@ class htmlExHelper extends AppHelper {
       $bytes = '0 bytes';
     }
     return $bytes;
+  }
+
+  private function double_explode($word1, $word2, $str) {
+    $return = array();
+
+    //分割文字その1で文字列を分割
+    $array = explode($word1, $str);
+
+    //各配列を分割文字その2で分割して結合していく
+    foreach ($array as $value) {
+        $return = array_merge($return, explode($word2, $value));
+    }
+    return $return;
   }
 }
 

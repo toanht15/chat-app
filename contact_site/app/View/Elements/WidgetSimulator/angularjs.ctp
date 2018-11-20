@@ -1,7 +1,7 @@
 <script type="text/javascript">
 'use strict';
 
-sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorService', function($scope, $timeout, SimulatorService) {
+sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorService',  function($scope, $timeout, SimulatorService) {
   //thisを変数にいれておく
   var self = this;
   $scope.simulatorSettings = SimulatorService;
@@ -17,6 +17,28 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $scope.allowSendMessageByShiftEnter = false;
   // 入力制御
   $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
+  // can skip hearing action
+  $scope.isRequired = true;
+  $scope.isShowSkipBtn = false;
+  // 自由入力エリアのdisabled状態
+  $scope.isTextAreaDisabled = false;
+
+  // calendar japanese custom
+  $scope.japaneseCalendar = {
+    dateFormat: "Y/m/d",
+    locale: {
+      firstDayOfWeek: 0,
+      weekdays: {
+        shorthand: ["日", "月", "火", "水", "木", "金", "土"],
+        longhand: ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
+      },
+      months: {
+        shorthand: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+        longhand: ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"],
+      },
+    },
+  };
+
 
   /**
    * addReMessage
@@ -32,13 +54,26 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.addMessage('re', message, prefix, 'deleteme');
   });
 
+  $scope.$on('addReRadio', function(event, data) {
+    $scope.addRadioButton(data);
+  });
+
+  $scope.$on('addRePulldown', function(event, data) {
+    $scope.addPulldown(data);
+  });
+
+  $scope.$on('addReCalendar', function(event, message, settings, design, prefix) {
+    $scope.addCalendar(message, settings, design, prefix);
+  });
+
   /**
    * addSeMessage
    * サイト訪問者側メッセージの追加 TODO: 現在使用されていないため、仮実装状態
    * @param String message 追加するメッセージ
    */
-  $scope.$on('addSeMessage', function(event, message) {
+  $scope.$on('addSeMessage', function(event, message, prefix) {
     console.log("=== SimulatorController::addSeMessage ===");
+    $scope.addMessage('se', message, prefix);
   });
 
   /**
@@ -90,7 +125,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.allowSendMessageByShiftEnter = false;
     $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
 
-    $scope.addMessage('se', message);
+    var prefix = 'action' + $scope.simulatorSettings.getCurrentActionStep() + '_hearing' + $scope.simulatorSettings.getCurrentHearingIndex() + '_underline';
+    console.log(message);
+    $scope.addMessage('se', message, prefix);
     $('#sincloChatMessage').val('');
     $('#miniSincloChatMessage').val('');
     $scope.$emit('receiveVistorMessage', message)
@@ -107,20 +144,202 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     // ベースとなる要素をクローンし、メッセージを挿入する
     if (type === 're') {
       var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+      divElm.id = prefix + '_question';
     } else {
       var divElm = document.querySelector('#chatTalk div > li.sinclo_se.chat_right').parentNode.cloneNode(true);
+      divElm.id = prefix + '_answer';
     }
     var formattedMessage = $scope.simulatorSettings.createMessage(message, prefix);
     divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
-
     if(appendClass) {
       divElm.classList.add(appendClass);
     }
-
     // 要素を追加する
     document.getElementById('chatTalk').appendChild(divElm);
     $('#chatTalk > div:last-child').show();
     self.autoScroll();
+  };
+
+  /**
+   * add radio button in simulator
+   * @param object data: radio options data
+   */
+  $scope.addRadioButton = function(data) {
+    var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+    divElm.id = data.prefix + '_question';
+    var html = $scope.simulatorSettings.createRadioButton(data);
+    divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+    document.getElementById('chatTalk').appendChild(divElm);
+
+    $('#chatTalk > div:last-child').show();
+    self.autoScroll();
+  };
+
+  /**
+   * add pulldown button in simulator
+   * @param object data: pulldown options data
+   */
+  $scope.addPulldown = function(data) {
+    var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+    divElm.id = data.prefix + '_question';
+    var html = $scope.simulatorSettings.createPulldown(data);
+    divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+    document.getElementById('chatTalk').appendChild(divElm);
+
+    $('#chatTalk > div:last-child').show();
+    self.autoScroll();
+  };
+
+  /**
+   * add calendar button in simulator
+   * @param object data: calendar options data
+   */
+  $scope.addCalendar = function(data) {
+    var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+    divElm.id = data.prefix + '_question';
+    var calendar = $scope.simulatorSettings.createCalendarInput(data);
+    divElm.querySelector('li .details:not(.cName)').innerHTML = calendar.html;
+    // 要素を追加する
+    document.getElementById('chatTalk').appendChild(divElm);
+    $scope.addDatePicker(calendar.selector, data.settings, data.design);
+
+    $('#chatTalk > div:last-child').show();
+    self.autoScroll();
+  };
+
+  /**
+   * add datepicker for calendar
+   * @param selector: calendar selector
+   * @param settings: calendar setting
+   * @param design: calendar design
+   */
+  $scope.addDatePicker = function (selector, settings, design) {
+    var options = $scope.getCalendarOptions(settings);
+    $(selector.replace('calendar', 'datepicker')).flatpickr(options);
+    $(selector.replace('calendar', 'datepicker')).hide();
+
+    var firstDayOfWeek = $(selector).find('.flatpickr-weekday');
+    firstDayOfWeek[0].innerText = settings.language == 1 ? '日' : 'Sun';
+
+    var calendarTextColorTarget = $(selector).find('.flatpickr-calendar .flatpickr-day');
+    calendarTextColorTarget.each(function () {
+      if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+        $(this).css('color', design.calendarTextColor);
+      }
+    });
+
+    var sundayTarget = $(selector).find('.dayContainer span:nth-child(7n+1)');
+    sundayTarget.each(function () {
+      if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+        $(this).css('color', design.sundayColor);
+      }
+    });
+
+    var saturdayTarget = $(selector).find('.dayContainer span:nth-child(7n+7)');
+    saturdayTarget.each(function () {
+      if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+        $(this).css('color', design.saturdayColor);
+      }
+    });
+
+    // change color when change month
+    $(selector).find('.flatpickr-calendar .flatpickr-months').on('mousedown', function () {
+      $scope.customCalendarTextColor($(selector), design);
+    });
+    // keep color when click on date
+    $(selector.replace('calendar', 'datepicker')).on('change', function () {
+      $scope.customCalendarTextColor($(selector), design);
+    });
+  };
+
+  /**
+   * custom calendar text color
+   * @param calendarTarget: calendar selector
+   * @param design: calendar design
+   */
+  $scope.customCalendarTextColor = function (calendarTarget, design) {
+    var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
+    calendarTextColorTarget.each(function () {
+      if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+        $(this).css('color', design.calendarTextColor);
+      }
+    });
+
+    var sundayTarget = calendarTarget.find('.dayContainer span:nth-child(7n + 1)');
+    sundayTarget.each(function () {
+      if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+        $(this).css('color', design.sundayColor);
+      }
+    });
+
+    var saturdayTarget = calendarTarget.find('.dayContainer span:nth-child(7n+7)');
+    saturdayTarget.each(function () {
+      if (!$(this).hasClass('disabled') && !$(this).hasClass('nextMonthDay') && !$(this).hasClass('prevMonthDay')) {
+        $(this).css('color', design.saturdayColor);
+      }
+    });
+
+    calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', design.calendarBackgroundColor);
+  };
+
+  /**
+   * create flatpickr options from calendar settings
+   * @param settings: calendar settings
+   */
+  $scope.getCalendarOptions = function(settings) {
+    var options = {
+      dateFormat: "Y/m/d",
+      minDate: 'today',
+      inline: 'true',
+      disable: [],
+      enable: [],
+      locale: {
+        firstDayOfWeek: 0
+      },
+    };
+    // language
+    options.locale = settings.language == 1 ? $scope.japaneseCalendar.locale : {firstDayOfWeek: 0};
+    // set min date
+    if (settings.isEnableAfterDate) {
+      options.minDate = new Date().fp_incr(settings.enableAfterDate);
+    } else {
+      options.minDate = settings.disablePastDate ? 'today' : '';
+    }
+    // disable day of week
+    if (settings.isDisableDayOfWeek) {
+      var disableWeekDays = [];
+      angular.forEach(settings.dayOfWeekSetting, function (item, key) {
+        if (item) {
+          disableWeekDays.push(key);
+        }
+      });
+
+      options.disable = [
+        function (date) {
+          return disableWeekDays.indexOf(date.getDay()) !== -1;
+        },
+      ];
+    } else {
+      options.disable = [];
+    }
+
+    // set specific date
+    if (settings.isSetSpecificDate) {
+      if (settings.setSpecificDateType == 1) {
+        var disableLength = options.disable.length;
+        angular.forEach(settings.specificDateData, function (item, key) {
+          options.disable[key + disableLength] = item;
+        });
+      }
+
+      if (settings.setSpecificDateType == 2) {
+        angular.forEach(settings.specificDateData, function (item, key) {
+          options.enable[key] = item;
+        });
+      }
+    }
+
+    return options;
   };
 
   /**
@@ -558,8 +777,16 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * シミュレーションの自由入力エリアの表示状態を切り替える
    * @param Boolean status 自由入力エリアの表示状態(true: 表示, false: 非表示）
    */
-  $scope.$on('switchSimulatorChatTextArea', function(event, status) {
+  $scope.$on('switchSimulatorChatTextArea', function(event, status, uiType, isRequired) {
+    var uiType = uiType || false;
+    var isRequired = typeof isRequired !== 'undefined' ? isRequired : true;
+    $scope.isRequired = isRequired;
     $scope.isTextAreaOpen = status;
+    if ($scope.isTextAreaOpen) {
+      $scope.isShowSkipBtn = !$scope.isRequired && !$('#miniSincloChatMessage').val() && !$('#sincloChatMessage').val();
+    }
+    $scope.isTextAreaDisabled = !isRequired && (uiType !== '1' && uiType !== '2') ? true : false;
+
     $timeout(function(){
       $scope.$apply();
     },0);
@@ -708,11 +935,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         }
         main.style.height = height + "px";
 
+        console.log($scope.simulatorSettings.showWidgetType);
+
         var msgBox = document.getElementById('flexBoxWrap');
-        if (!$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
+        if (msgBox != null && !$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
           $scope.setTextAreaOpenToggle();
         } else
-        if ($scope.isTextAreaOpen && msgBox.style.display === 'none') {
+        if (msgBox != null && $scope.isTextAreaOpen && msgBox.style.display === 'none') {
           $scope.setTextAreaOpenToggle();
         }
       });
@@ -789,10 +1018,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       //画像がある場合
       else if($('#mainImage').css('display') == 'block') {
         if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
-          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'});
+          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: calc(2.5em + 43px)!important;'});
         }
         if($scope.simulatorSettings._settings.widget_title_top_type == 2) {
-          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 70px !important;padding-right: 26px !important;'});
+          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: calc(2.5em + 35px) !important;padding-right: 26px !important;'});
         }
       }
     },0);
@@ -989,6 +1218,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $(document).on('input paste', '#sincloChatMessage,#miniSincloChatMessage', function(e) {
     var targetElm = $(this);
     var inputText = targetElm.val();
+    // show skip button
+    $scope.isShowSkipBtn = !(targetElm.val().length > 0);
+    $scope.$apply();
 
     var regex = new RegExp($scope.inputRule);
     var changed = '';
@@ -1007,36 +1239,20 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       targetElm.val(changed);
     }
   });
-
-  // ラジオボタンの選択
-  $(document).on('click', '#chatTalk input[type="radio"]', function() {
-    // メッセージ送信が有効な場合
-    if ($scope.canVisitorSendMessage) {
-      var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
-      var message = $(this).val().replace(/^\s/, '');
-      var name = $(this).attr('name');
-
-      // ウィジェット設定とテキストエリアの表示状態により、選択された文字列の処理を変更する
-      if ($scope.simulatorSettings.settings['chat_radio_behavior'] == <?= C_WIDGET_RADIO_CLICK_SEND ?> || !$scope.isTextAreaOpen) {
-        // 即時送信
-        $scope.addMessage('se', message)
-        $scope.$emit('receiveVistorMessage', message, prefix)
-      } else {
-        // テキストエリアへの入力
-        document.querySelector('#sincloChatMessage').value = message;
-        document.querySelector('#miniSincloChatMessage').value = message;
-      }
-
-      // ラジオボタンを非活性にする
-      $('input[name=' + name + '][type="radio"]').prop('disabled', true);
-    }
-  });
-
+  
   // ダウンロード可能な吹き出しの背景色切替
   $(document).on('mouseenter', '#chatTalk .file_left', function(e){
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor(0.9);
   }).on('mouseleave', '#chatTalk .file_left', function(e){
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor();
+  });
+
+  // handle skip button click
+  $(document).on('click', '.sincloChatSkipBtn', function (e) {
+    $scope.isShowSkipBtn = false;
+    $('.nextBtn').hide();
+    $scope.$apply();
+    $scope.$emit('nextHearingAction');
   });
 }]);
 
@@ -1065,7 +1281,7 @@ function chatBotTyping(){
         }
       }else{
         //ウィジェットサイズが大の場合
-        if(widgetSizeType == 3){
+        if(widgetSizeType == 3 || widgetSizeType == 4){
           html += "botNowTypingLarge'>";
           //ウィジェットサイズが中の場合
         }else if(widgetSizeType == 2){

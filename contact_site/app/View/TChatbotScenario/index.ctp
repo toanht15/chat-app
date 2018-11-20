@@ -90,8 +90,8 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
       <tr>
         <th width=" 5%"><input type="checkbox" name="allCheck" id="allCheck"><label for="allCheck"></label></th>
         <th width=" 5%">No</th>
-        <th width="45%">名称</th>
-        <th width="45%">呼び出し元<div class="questionBalloon"><icon class="questionBtn commontooltip" data-text="オートメッセージ設定やシナリオ設定のアクションから、呼び出し設定を利用できます">?</icon></div></th>
+        <th width="25%">名称</th>
+        <th width="75%">呼び出し元<div class="questionBalloon"><icon class="questionBtn commontooltip" data-text="オートメッセージ設定やシナリオ設定のアクションから、呼び出し設定を利用できます">?</icon></div></th>
       </tr>
       </thead>
 <!--
@@ -119,8 +119,8 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             <label for="selectTab<?=h($id)?>"></label>
           </td>
           <td class="tCenter" width=" 5%"><?=$no?></td>
-          <td class="tCenter scenarioTitle" width="45%"><?= $val['TChatbotScenario']['name']; ?></td>
-          <td class="p10x" width="45%">
+          <td class="p10x scenarioTitle" width="25%"><?= $val['TChatbotScenario']['name']; ?></td>
+          <td class="p10x" width="75%">
             <?php if ($callerAutoMessage === '' && $callerScenario === ''): ?>
               <p>（未設定）</p>
             <?php else: ?>

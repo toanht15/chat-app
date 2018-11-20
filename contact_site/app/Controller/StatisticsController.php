@@ -19,8 +19,8 @@ class StatisticsController extends AppController {
       'scenarioHearing' => 22,
       'scenarioSelection' => 23,
       'scenarioReceiveFile' => 27,
-      'enteringRoom' => 98,
-      'exit' => 99
+      'enteringRoom' => 998,
+      'exit' => 999
     ],
     'requestFlg' => [
       'invalid' => 0,
@@ -2072,7 +2072,7 @@ class StatisticsController extends AppController {
     //チャット有効件数
     $effectiveness = "SELECT date_format(th.access_date, ?) as date,SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness, SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) cv
     FROM (select t_histories_id, m_companies_id,achievement_flg from t_history_chat_logs
-     force index(idx_t_history_chat_logs_achievement_flg_companies_id) where achievement_flg in (?, ?) and m_companies_id = ?) as thcl,
+     force index(idx_t_history_chat_logs_achievement_flg_companies_id) where achievement_flg in (?, ?) and m_companies_id = ? group by t_histories_id) as thcl,
      t_histories as th
     WHERE
       thcl.t_histories_id = th.id

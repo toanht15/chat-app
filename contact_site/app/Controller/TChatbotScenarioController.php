@@ -42,7 +42,7 @@ class TChatbotScenarioController extends FileAppController {
       /* カラー設定styat */
       'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
-      'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
+      'message_box_text_color','message_box_text_size','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_text_size','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
       'btw_button_margin', 'line_button_margin','sp_banner_position','sp_scroll_view_setting','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
     ],
@@ -166,7 +166,8 @@ sinclo@medialink-ml.co.jp
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.notFoundId'));
         $this->redirect('/TChatbotScenario/index');
       }
-
+      // convert old data -> new json structure
+      $this->_convertOldDataToNewStructure($editData[0]['TChatbotScenario']['activity']);
       // アクションごとに必要な設定を追加する
       $this->_setActivityDetailSettings($editData[0]['TChatbotScenario']['activity']);
 
@@ -564,6 +565,7 @@ sinclo@medialink-ml.co.jp
       ]);
 
       if (count($ret) === 1) {
+        $this->_convertOldDataToNewStructure($ret['TChatbotScenario']['activity']);
         $this->_setActivityDetailSettings($ret['TChatbotScenario']['activity']);
         return json_encode($ret);
       } else {
@@ -1740,6 +1742,99 @@ sinclo@medialink-ml.co.jp
   }
 
   /**
+   * convert old data (inputType, selection action type) to new hearing structure
+   * @param $json
+   */
+  private function _convertOldDataToNewStructure(&$json)
+  {
+    $activity = json_decode($json);
+    foreach ($activity->scenarios as $key => &$action) {
+      // add restore
+      if (!isset($action->restore)) {
+        $action->restore = false;
+      }
+
+      if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
+        foreach ($action->hearings as $key => &$param) {
+          // convert break line to uiType
+          if (!isset($param->uiType) && isset($param->inputLFType) && isset($param->inputType)) {
+            $param = $this->convertHearingTextType($param, $action->errorMessage);
+          }
+        }
+      } else if ($action->actionType == C_SCENARIO_ACTION_SELECT_OPTION) {
+        $action = (object)$this->convertSelectionToHearing($action);
+      }
+    }
+
+    $json = json_encode($activity);
+  }
+
+  /**
+   * convert selection to hearing
+   * @param $data
+   * @return mixed
+   */
+  private function convertSelectionToHearing($data)
+  {
+    $action = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default'];
+    $action['actionType'] = '2';
+    $action['restore'] = false;
+    $action['hearings'][0] = $this->convertHearingRadioButton($data);
+
+    return $action;
+  }
+
+  /**
+   * convert selection data to hearing radio button type data
+   * @param $data
+   * @return mixed
+   */
+  private function convertHearingRadioButton($data)
+  {
+    $radio = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default']['hearings'][0];
+    $radio['variableName'] = $data->selection->variableName;
+    $radio['message'] = $data->message;
+    $radio['uiType'] = '3'; // radio button type
+    $radio["settings"]["options"] = [];
+    foreach ($data->selection->options as $option) {
+      array_push($radio["settings"]["options"], $option);
+    }
+
+    return $radio;
+  }
+
+  /**
+   * convert inputType to uiType
+   * @param $data
+   * @param $errorMessage
+   * @return mixed
+   */
+  private function convertHearingTextType($data, $errorMessage)
+  {
+    $hearing = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default']['hearings'][0];
+    $hearing['variableName'] = $data->variableName;
+    $hearing['message'] = $data->message;
+    // 改行可 -> テキスト複数行
+    if ($data->inputLFType === '2') {
+      $hearing['uiType'] = '2';
+      // old input type is email or tel-> convert to text
+      $hearing['inputType'] = $data->inputType == 2 ? '2' : '1';
+    }
+    // 改行不可 -> テキスト一行
+    if ($data->inputLFType === '1') {
+      $hearing['uiType'] = '1';
+      $hearing['inputType'] = $data->inputType;
+    }
+
+    // convert error message if inputType is not text
+    if ($hearing['inputType'] !== '1') {
+      $hearing['errorMessage'] = $errorMessage;
+    }
+
+    return $hearing;
+  }
+
+      /**
    * アクションごとに必要な設定を追加する
    * @param Object $json activity
    */
