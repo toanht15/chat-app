@@ -3342,7 +3342,9 @@
         $('#sinclo-datepicker' + index).flatpickr(options);
         $('#sinclo-datepicker' + index).hide();
         var firstDayOfWeek = $('#sinclo-datepicker' + index).find('.flatpickr-weekday');
-        firstDayOfWeek[0].innerText = settings.language == 1 ? '日' : 'Sun';
+        if(firstDayOfWeek[0]) {
+          firstDayOfWeek[0].innerText = settings.language == 1 ? '日' : 'Sun';
+        }
         sinclo.chatApi.handleCalendarEvent(settings, index);
       },
       createCalendarHtml: function(settings, index, storedValue) {
@@ -3455,7 +3457,9 @@
       handleCalendarEvent: function (settings, index) {
         var calendarTarget = $('#sinclo-calendar' + index);
         var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
-        firstDayOfWeek[0].innerText = settings.language === 1 ? '日' : 'Sun';
+        if(firstDayOfWeek[0]) {
+          firstDayOfWeek[0].innerText = settings.language === 1 ? '日' : 'Sun';
+        }
         sinclo.chatApi.customCalendarTextColor(calendarTarget, settings.customDesign);
         // change color when change month
         calendarTarget.find('.flatpickr-calendar .flatpickr-months').on('mousedown', function () {
