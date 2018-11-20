@@ -6130,10 +6130,10 @@
         if (self._hearing.isHearingMode()) {
           var currentSeq = self._hearing._getCurrentHearingProcess();
           var type = "2";
-          if(currentSeq.inputLFType){
+          if(currentSeq.uiType){
+            type = String(currentSeq.uiType);
+          } else if(currentSeq.inputLFType) {
             type = currentSeq.inputLFType;
-          } else if(currentSeq.uiType) {
-            type = currentSeq.uiType;
           }
           switch (type) {
             case "1": // 改行不可
