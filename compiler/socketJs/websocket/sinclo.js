@@ -7142,11 +7142,15 @@
               message += "\n";
               settings.options.forEach(function(elm, index, arr) {
                 if(self._parent._getCurrentScenario().restore && self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName) === elm) {
-                  message += "[*] " + elm + "\n";
+                  message += "[*] " + elm;
                 } else {
-                  message += "[] " + elm + "\n";
+                  message += "[] " + elm;
+                }
+                if( index !== arr.length-1 ) {
+                  message += "\n";
                 }
               });
+
               self._parent._showMessage("2", message, self._getCurrentSeq(), "2", callback);
               break;
             case "4": //プルダウン
