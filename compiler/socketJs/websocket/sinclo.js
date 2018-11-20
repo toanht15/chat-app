@@ -6355,6 +6355,26 @@
                 var hearingProcess = self._hearing._getCurrentHearingProcess();
                 if(self._hearing._isTheEnd()) {
                   self._hearing._executeConfirm(true);
+                } else if(Number(oldObj['sh_currentSeq']) > Number(newObj['sh_currentSeq'])) {
+                  console.log('再入力');
+                  var targetSeqNum = Number(newObj['sh_currentSeq']) + 1;
+                  var target = $('#sincloBox #chatTalk').find('li[data-hearing-seq-num="' + targetSeqNum + '"]');
+                  var targetChatId = target.data('chatId');
+                  var text = target.text();
+                  console.log('cancelable click %s %s => %s', targetChatId, text, targetSeqNum);
+                  var deleteTargetIds = [];
+                  deleteTargetIds.push(targetChatId);
+                  target.closest('div').nextAll().each(function(index, value){
+                    deleteTargetIds.push($(this).find('li').data('chatId'));
+                    $(this).fadeOut('fast').promise().then(function(){
+                      $(this).remove();
+                    });
+                  });
+                  target.closest('div').fadeOut('fast').promise().then(function(){
+                    $(this).remove();
+                  });
+                  hearingProcess = self._hearing._getCurrentHearingProcess();
+                  self._hearing._execute(hearingProcess, true);
                 } else {
                   self._hearing._execute(hearingProcess, true);
                 }
@@ -6931,7 +6951,7 @@
           var self = sinclo.scenarioApi._hearing;
           var json = self._parent.get(self._state.currentSeq);
           var obj = json ? json : 0;
-          console.log(obj);
+          //console.log(obj);
           return obj;
         },
         _setRetryFlg: function () {
