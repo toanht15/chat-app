@@ -1880,7 +1880,7 @@
         if(!obj.hideMessage && obj.messageType != sinclo.chatApi.messageType.sorry && obj.messageType != sinclo.chatApi.messageType.linkClick){
           this.chatApi.createMessageUnread({cn: cn, message: obj.chatMessage, name: userName, chatId: obj.chatId,
             isHearingAnswer: sinclo.scenarioApi._hearing.isHearingAnswer(obj),
-            answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(obj)) ? sinclo.scenarioApi._hearing._getPrevSeqNum() + Number(sinclo.scenarioApi._hearing.errorCountFlg) : 0});
+            answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(obj)) ? sinclo.scenarioApi._hearing._getPrevSeqNum() : 0});
         }
 
         if(this.chatApi.isShowChatReceiver() && Number(obj.messageType) === sinclo.chatApi.messageType.company) {
@@ -2688,7 +2688,7 @@
             $('#flexBoxHeight').addClass('sinclo-hide');
             $('#miniFlexBoxHeight').removeClass('sinclo-hide');
             // プレースホルダーを変える
-            sinclo.scenarioApi.setPlaceholderMessage("メッセージを入力してください");
+            sinclo.scenarioApi.setPlaceholderMessage("メッセージを入力して下さい");
             $('#miniSincloChatMessage').attr('type', sinclo.scenarioApi.getInputType());
             if(!check.smartphone()) {
               common.widgetHandler._handleResizeEvent();
@@ -6130,10 +6130,10 @@
         if (self._hearing.isHearingMode()) {
           var currentSeq = self._hearing._getCurrentHearingProcess();
           var type = "2";
-          if(currentSeq.inputLFType){
-            type = currentSeq.inputLFType;
-          } else if(currentSeq.uiType) {
+          if(currentSeq.uiType){
             type = String(currentSeq.uiType);
+          } else if(currentSeq.inputLFType) {
+            type = currentSeq.inputLFType;
           }
           switch (type) {
             case "1": // 改行不可
