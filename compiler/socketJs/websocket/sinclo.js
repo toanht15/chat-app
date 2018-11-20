@@ -7324,9 +7324,6 @@
                 emit('addLastMessageToCV', {historyId: sinclo.chatApi.historyId});
               }, 1000);
             }
-            // 終了したヒアリングまでの復元イベントを全て除去する
-            // 最後の回答にはイベントを付与しない
-            self._disableGrantCancelAbleFlg = true;
             self._disableAllHearingMessageInput();
             if (self._parent._goToNextScenario()) {
               self._setCurrentSeq(0);
@@ -7428,7 +7425,12 @@
           var self = sinclo.scenarioApi._hearing;
           var messageBlock = self._parent._createSelectionMessage(self._parent.get(self._parent._lKey.currentScenario).confirmMessage, [self._parent.get(self._parent._lKey.currentScenario).success, self._parent.get(self._parent._lKey.currentScenario).cancel]);
           var handleConfirmMessageFunc = function () {
+            // 最後の回答にはイベントを付与しない
+            self._disableGrantCancelAbleFlg = true;
             self._parent._waitingInput(function (inputVal) {
+              setTimeout(function(){
+                self._disableGrantCancelAbleFlg = false;
+              }, 1000);
               self._parent._unWaitingInput();
               self._parent._handleStoredMessage();
               console.log("inputVal : " + inputVal + " self._parent._lKey.currentScenario.success : " + self._parent.get(self._parent._lKey.currentScenario).success + " self._parent._lKey.currentScenario.cancel : " + self._parent.get(self._parent._lKey.currentScenario).cancel);
