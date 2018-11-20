@@ -6129,7 +6129,13 @@
         var msg = "";
         if (self._hearing.isHearingMode()) {
           var currentSeq = self._hearing._getCurrentHearingProcess();
-          switch (currentSeq.inputLFType) {
+          var type = "2";
+          if(currentSeq.inputLFType){
+            type = currentSeq.inputLFType;
+          } else if(currentSeq.uiType) {
+            type = currentSeq.uiType;
+          }
+          switch (type) {
             case "1": // 改行不可
               msg = "メッセージを入力してください";
               break;
