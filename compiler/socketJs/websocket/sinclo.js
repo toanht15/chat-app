@@ -3342,7 +3342,9 @@
         $('#sinclo-datepicker' + index).flatpickr(options);
         $('#sinclo-datepicker' + index).hide();
         var firstDayOfWeek = $('#sinclo-datepicker' + index).find('.flatpickr-weekday');
-        firstDayOfWeek[0].innerText = settings.language == 1 ? '日' : 'Sun';
+        if(firstDayOfWeek[0]) {
+          firstDayOfWeek[0].innerText = settings.language == 1 ? '日' : 'Sun';
+        }
         sinclo.chatApi.handleCalendarEvent(settings, index);
       },
       createCalendarHtml: function(settings, index, storedValue) {
@@ -3455,7 +3457,9 @@
       handleCalendarEvent: function (settings, index) {
         var calendarTarget = $('#sinclo-calendar' + index);
         var firstDayOfWeek = calendarTarget.find('.flatpickr-weekday');
-        firstDayOfWeek[0].innerText = settings.language === 1 ? '日' : 'Sun';
+        if(firstDayOfWeek[0]) {
+          firstDayOfWeek[0].innerText = settings.language === 1 ? '日' : 'Sun';
+        }
         sinclo.chatApi.customCalendarTextColor(calendarTarget, settings.customDesign);
         // change color when change month
         calendarTarget.find('.flatpickr-calendar .flatpickr-months').on('mousedown', function () {
@@ -7189,6 +7193,10 @@
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
                 $('#miniSincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
+                // スキップされた場合は半角空白が保存されているので、その場合は空にする
+                if(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName).match(/\s/)){
+                  $('#miniSincloChatMessage').val("");
+                }
                 // 変数を復元したときは再度ボタン文言ハンドラを起動する
                 sinclo._skipLabelHandler();
               }
@@ -7199,6 +7207,10 @@
               self._parent._showMessage("2", message, self._getCurrentSeq(), "1", callback);
               if(self._parent._getCurrentScenario().restore) {
                 $('#sincloChatMessage').val(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName));
+                // スキップされた場合は半角空白が保存されているので、その場合は空にする
+                if(self._parent._getSavedVariable(self._getCurrentHearingProcess().variableName).match(/\s/)){
+                  $('#sincloChatMessage').val("");
+                }
                 // 変数を復元したときは再度ボタン文言ハンドラを起動する
                 sinclo._skipLabelHandler();
               }
