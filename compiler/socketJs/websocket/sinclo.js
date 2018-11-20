@@ -6953,10 +6953,10 @@
         tmpSeqStorage: null,
         _getCurrentSeq: function () {
           var self = sinclo.scenarioApi._hearing;
-          var sequenceNum = self._parent.get(self._state.currentSeq);
-          sequenceNum = sequenceNum ? sequenceNum : 0;
+          var json = self._parent.get(self._state.currentSeq);
+          var obj = json ? json : 0;
           //console.log(obj);
-          return sequenceNum;
+          return obj;
         },
         _setRetryFlg: function () {
           var self = sinclo.scenarioApi._hearing;
@@ -7066,7 +7066,7 @@
             $(this).remove();
           });
           self._hideMessage(deleteTargetIds);
-          self._setCurrentSeq(Number(targetSeqNum) - 1);
+          self._setCurrentSeq(Number(targetSeqNum));
           self._resetShownMessage(self._parent.get(self._parent._lKey.currentScenarioSeqNum), self._getCurrentSeq());
           var hearingProcess = self._getCurrentHearingProcess();
           if (isCancelTargetText) {
