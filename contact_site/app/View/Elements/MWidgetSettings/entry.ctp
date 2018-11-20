@@ -157,6 +157,14 @@ $headerNo = 1;
                   ]) ?></label></pre>
           </li>
           <?php if ( $this->Form->isFieldError('show_access_id') ) echo $this->Form->error('show_access_id', null, ['wrap' => 'li']); ?>
+          <?php else :?>
+          <?= $this->ngForm->input('show_access_id', [
+              'type' => 'hidden',
+              'legend' => false,
+              'div' => false,
+              'label' => false,
+              'error' => false
+            ]) ?>
           <?php endif; ?>
           <!-- Web接客コード表示 -->
         </ul>
@@ -174,6 +182,10 @@ $headerNo = 1;
               <label class="pointer choose" for="widgetSizeType1"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(1)" id="widgetSizeType1" class="showHeader" value="1" >小</label><br>
               <label class="pointer choose" for="widgetSizeType2"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(2)" id="widgetSizeType2" class="showHeader" value="2" >中</label><br>
               <label class="pointer choose" for="widgetSizeType3"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(3)" id="widgetSizeType3" class="showHeader" value="3" >大</label><br>
+              <?php if($coreSettings[C_COMPANY_USE_CHAT]): ?>
+              <label class="pointer choose" for="widgetSizeType4"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(4)" id="widgetSizeType4" class="showHeader" value="4" >最大</label><br>
+              <?php endif; ?>
+
             </div>
           </li>
           <!-- ウィジットサイズ -->
@@ -214,7 +226,8 @@ $headerNo = 1;
                 'required' => false,
                 'maxlength' => $subTitleLength_maxlength,
                 'error' => false,
-                'ng-maxlength' => "false"
+                'ng-maxlength' => "false",
+                'ng-change' => "changeSubtitle()"
             ];
             if(($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) && !$coreSettings[C_COMPANY_USE_CHAT]) {
               $subTitleOpt['ng-disabled'] = 'subTitleToggle == "2"';
@@ -258,13 +271,14 @@ $headerNo = 1;
               'label' => false,
               'maxlength' => $descriptionLength_maxlength,
               'error' => false,
-              'ng-maxlength' => "false"
+              'ng-maxlength' => "false",
+              'ng-change' => "changeDescription()"
             ],
             [
               'entity' => 'MWidgetSetting.description'
             ]) ?>
             <div ng-init="descriptionToggle ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_description'))?>'">
-              <label class="pointer" for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?>
+              <label class="pointer" for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" ng-change="changeDescription()" >説明文を表示する</label><br><?=$description?>
                 <div ng-init="widget_title_explain_type ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'widget_title_explain_type'))?>'" style = "margin-top: 0px; margin-left: 20px;" id = "widgetTitleExplainType">
                   <?php
                   if($this->data['MWidgetSetting']['show_description'] == 1) {
@@ -278,7 +292,7 @@ $headerNo = 1;
                   <label class="pointer choose" for="widgetTitleExplainType2" id = "widgetTitleExplainTypeLabel2" style = "display:<?=$display?>"><input type="radio" name="data[MWidgetSetting][widget_title_explain_type]" ng-model="widget_title_explain_type" id="widgetTitleExplainType2" class="showHeader" value="2">中央寄せ<br></label>
                 </div>
               <br>
-              <label class="pointer" for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
+              <label class="pointer" for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" ng-change="changeDescription()" >説明文を表示しない</label>
             </div>
           </li>
           <?php if ($this->Form->isFieldError('description')) echo $this->Form->error('description', null, ['wrap' => 'li']); ?>
@@ -362,14 +376,14 @@ $headerNo = 1;
                 'type' => 'number',
                 'class' => 'showNormal',
                 'min' => '12',
-                'max' => '20',
-                'placeholder' => '',
+                'max' => $max_header_fontsize,
                 'div' => false,
                 'label' => false,
                 'maxlength' => 7,
                 'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                 'error' => false,
-                  'string-to-number' => true
+                'string-to-number' => true,
+                'ng-max' => "false"
               ],
               [
                 'entity' => 'MWidgetSetting.header_text_size'
@@ -414,14 +428,15 @@ $headerNo = 1;
                     'type' => 'number',
                     'class' => 'showNormal',
                     'min' => '10',
-                    'max' => '20',
+                    'max' => $max_fontsize,
                     'placeholder' => '',
                     'div' => false,
                     'label' => false,
                     'maxlength' => 7,
                     'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                     'error' => false,
-                    'string-to-number' => true
+                    'string-to-number' => true,
+                    'ng-max' => "false"
                   ],
                     [
                       'entity' => 'MWidgetSetting.re_text_size'
@@ -482,14 +497,15 @@ $headerNo = 1;
                     'type' => 'number',
                     'class' => 'showNormal',
                     'min' => '10',
-                    'max' => '20',
+                    'max' => $max_fontsize,
                     'placeholder' => '',
                     'div' => false,
                     'label' => false,
                     'maxlength' => 7,
                     'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                     'error' => false,
-                    'string-to-number' => true
+                    'string-to-number' => true,
+                    'ng-max' => "false"
                   ],
                     [
                       'entity' => 'MWidgetSetting.se_text_size'
@@ -738,6 +754,25 @@ $headerNo = 1;
                   [
                     'entity' => 'MWidgetSetting.message_box_text_color'
                   ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('message_box_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
+                  <!-- .メッセージBOX文字サイズ -->
+                  <span style="display: flex; height: 20px; width: 32em; justify-content: flex-start; align-items: center; margin-bottom: 15px;">
+                    <label>メッセージBOX文字サイズ</label>
+                    <?= $this->ngForm->input('message_box_text_size', [
+                      'type' => 'number',
+                      'class' => 'showNormal',
+                      'min' => '10',
+                      'max' => '36',
+                      'placeholder' => '',
+                      'div' => false,
+                      'label' => false,
+                      'maxlength' => 7,
+                      'style' => "width: 102px;",
+                      'error' => false,
+                      'string-to-number' => true
+                    ],
+                    [
+                      'entity' => 'MWidgetSetting.message_box_text_size'
+                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start; margin-left: 5px">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('message_box_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px; margin-left: 9px;" >標準に戻す</span></span>
                   <!-- 22.メッセージBOX枠線色 -->
                   <span style="height: 35px;"><label>メッセージBOX枠線色</label>
                   <?php if($message_box_border_color_flg){?>
@@ -812,6 +847,25 @@ $headerNo = 1;
                   [
                     'entity' => 'MWidgetSetting.chat_send_btn_text_color'
                   ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_send_btn_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
+                  <!-- .送信ボタン文字サイズ -->
+                  <span style="display: flex; height: 20px; width: 32em; justify-content: flex-start; align-items: center; margin-bottom: 15px;">
+                    <label>送信ボタン文字サイズ</label>
+                    <?= $this->ngForm->input('chat_send_btn_text_size', [
+                      'type' => 'number',
+                      'class' => 'showNormal',
+                      'min' => '10',
+                      'max' => $max_send_btn_fontsize,
+                      'div' => false,
+                      'label' => false,
+                      'maxlength' => 7,
+                      'style' => "width: 102px;margin-left: 25px",
+                      'error' => false,
+                      'string-to-number' => true,
+                      'ng-max' => "false"
+                    ],
+                    [
+                      'entity' => 'MWidgetSetting.chat_send_btn_text_size'
+                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;margin-left:5px;">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('chat_send_btn_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px; margin-left: 10px;" >標準に戻す</span></span>
                   </div>
                   <!-- メッセージエリア部end -->
                 </div>

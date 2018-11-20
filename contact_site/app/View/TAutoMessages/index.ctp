@@ -229,7 +229,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="tCenter" width=" 5%"><?=$no?></td>
           <td class="tCenter" width="20%"><?= $val['TAutoMessage']['name']; ?></td>
-          <td class="targetBalloon" width="29%">
+          <td class="p10x targetBalloon" width="29%">
             <span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
             <span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=h($conditions)?></span>
           </td>

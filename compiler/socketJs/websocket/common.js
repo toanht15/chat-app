@@ -166,7 +166,7 @@ var socket, // socket.io
     },
     //サイズを返す関数
     getColorList: function(widget){
-//      var widget = window.sincloInfo.widget;
+      var widget = window.sincloInfo.widget;
       //通常設定か高度設定か判定 colorSettingType
       if(Number(widget.colorSettingType) === 0){
         //企業側吹き出し背景色は現在設定されているメインカラーから算出する
@@ -435,6 +435,31 @@ var socket, // socket.io
             d25font: 26
           };
           break;
+        case 4: //最大、だが幅以外の値はwidgethandlerで計算する（要素表示、現状設定の兼ね合い）
+          var sizeArray = {
+            boxHeight: 632,
+            boxWidth: $(window).width(),
+            widgetTitlePadding: 7,
+            widgetTitleHeight: 32,
+            widgetTitleTop: 6,
+            widgetSubTitleHeight: 24,
+            widgetDescriptionHeight: 15,
+            navigationHeight: 40,
+            chatTalkHeight:100,
+            classFlexBoxRowHeight: 75,
+            sincloAccessInfoHeight: 26.5,
+            fotterHeight: 26.5,
+            telContentHeight: 305,
+            paddingBottom: 60,
+            d11font: 12,
+            d12font: 13,
+            d13font: 14,
+            d14font: 15,
+            d18font: 19,
+            d20font: 21,
+            d25font: 26
+          };
+          break;
         default: //該当しないタイプが来たら小
           var sizeArray = {
             boxHeight: 447,
@@ -604,273 +629,74 @@ var socket, // socket.io
       }
       return res;
     },
-    indicateSimpleNoImage: function() {
-      if(sincloInfo.widget.widget_title_top_type == 1) {
-        $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 15px !important;'});
-      }
-      if(sincloInfo.widget.widget_title_top_type == 2) {
-        $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 0px !important;padding-right: 0px !important;'});
-      }
-
-      var display = "display:"+$('#widgetDescription').css('display')+";";
-      //スマホの場合
-      if(check.smartphone()) {
-        var widgetWidth;
-
-        // TODO 関数化
-        if(sincloInfo.widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width();
+    _headerContentsSettings: {
+      _processSettings: function(){
+        if(check.smartphone()) {
+          $("#widgetTitle").addClass("spview");
+          $("#widgetSubTitle").addClass("spview");
+          $("#widgetDescription").addClass("spview");
+        }
+        this._deciedPosition("#widgetTitle", Number(sincloInfo.widget.widget_title_top_type));
+        this._deciedPosition("#widgetSubTitle", Number(sincloInfo.widget.widget_title_name_type));
+        this._deciedPosition("#widgetDescription", Number(sincloInfo.widget.widget_title_explain_type));
+        this._setContentsView(Number(this._countContents()));
+      },
+      _deciedPosition: function(selector, position) {
+        if(position === 1){
+          $(selector).addClass("leftPosition");
+        } else if (position === 2){
+          $(selector).addClass("centerPosition");
+        }
+      },
+      _countContents: function() {
+        if(Number(sincloInfo.widget.showDescription) === 1 && Number(sincloInfo.widget.showSubtitle) === 1){
+          return 2;
+        } else if (Number(sincloInfo.widget.showDescription) === 1 || Number(sincloInfo.widget.showSubtitle) === 1){
+          $("#widgetSubTitle").addClass("oneContent");
+          $("#widgetDescription").addClass("oneContent");
+          return 1;
         } else {
-          widgetWidth = $(window).width() - 20 ;
+          $("#widgetSubTitle").addClass("noContent");
+          $("#widgetDescription").addClass("noContent");
+          return 0;
         }
-          var ratio = widgetWidth * (1/285);
-
-        //画像を表示しない場合
-        if($('#mainImage').css('display') === undefined) {
-          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'+display});
+      },
+      _setContentsView: function(contents) {
+      //サブタイトルまたは説明文のどちらかが存在する場合のみ
+        if(contents === 1){
+          if(Number(sincloInfo.widget.showDescription) === 2){
+            $("#widgetDescription").hide();
+            $("#widgetDescription").remove();
+          return;
           }
-          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'+display});
-          }
-          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'+display});
-          }
-          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'+display});
-          }
-          //企業名 企業名表示しない・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 0px;'+display});
-          }
-          //説明文 説明文表示しない・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
-            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
-          }
-        }
-      }
-      //PC
-      else {
-        //画像を表示しない場合
-        if($('#mainImage').css('display') === undefined) {
-          //企業名 企業名表示する・左寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left;padding-left: 15px;'+display});
-          }
-          //企業名 企業名表示する・中央寄せ・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center;padding-left: 0px;'+display});
-          }
-          //企業名 企業名表示する・左寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: left !important;height:52px;line-height:52px;padding:0 0 0 15px;'+display});
-          }
-          //企業名 企業名表示する・中央寄せ・説明文表示しない・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-            sincloInfo.widget.showDescription == 2) {
-            $('#widgetSubTitle').css({'cssText': 'text-align: center !important;height:52px;line-height:52px;padding:0 0 0 0px;'+display});
-          }
-          //企業名 企業名表示しない・説明文表示する・画像なしの場合
-          if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-            $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 1) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:0px;'+display});
-          }
-          //説明文 説明文表示する・左寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 15px;'+display});
-          }
-          //説明文 説明文表示する・中央寄せ・企業名表示しない・画像なしの場合
-          if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-            sincloInfo.widget.showSubtitle == 2) {
-            $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding:0 0 0 0px;'+display});
-          }
-          //説明文 説明文表示しない・企業名表示する・画像なしの場合
-          if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 2) {
-            $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
+          if(Number(sincloInfo.widget.showSubtitle) === 2){
+            $("#widgetSubTitle").hide();
+            $("#widgetSubTitle").remove();
+          return;
           }
         }
       }
     },
+    indicateSimpleNoImage: function() {
+      //画像を表示しない場合
+      $("#widgetTitle").addClass("noImage");
+      $("#widgetSubTitle").addClass("noImage");
+      $("#widgetDescription").addClass("noImage");
+      common._headerContentsSettings._processSettings();
+    },
     indicateSimpleImage: function() {
-      var display = "display:"+$('#widgetDescription').css('display')+";";
-
-      //スマホの場合
-      if(check.smartphone()) {
-        var widgetWidth;
-
-        // TODO 関数化
-        if(sincloInfo.widget.spMaximizeSizeType === 2) {
-          widgetWidth = $(window).width();
-        } else {
-          widgetWidth = $(window).width() - 20 ;
-        }
-          var ratio = widgetWidth * (1/285);
-        //画像あり　タイトル左寄せの場合
-        if(sincloInfo.widget.widget_title_top_type == 1) {
-          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: ' + (78 * ratio) + 'px !important;'+display});
-        }
-        if(sincloInfo.widget.widget_title_top_type == 2) {
-          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: ' + (70 * ratio) + 'px !important;padding-right: ' + (26 * ratio) + 'px !important;'+display});
-        }
-
-        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
-        }
-        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;padding-top:0px;'+display});
-        }
-        //企業名 企業名表示しない・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-
-        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:' + (78 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding:0 0 0 ' + (78 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;height:' + (52 * ratio) + 'px;line-height:' + (52 * ratio) + 'px;padding-left:' + (70 * ratio) + 'px;padding-right:' + (26 * ratio) + 'px;'+display});
-        }
-        //説明文 説明文表示しない・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
-          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-      }
-      //PC
-      else {
-        if(sincloInfo.widget.widget_title_top_type == 1) {
-          $('#widgetTitle').css({'cssText': 'text-align: left !important;padding-left: 78px !important;'+display});
-        }
-        if(sincloInfo.widget.widget_title_top_type == 2) {
-          $('#widgetTitle').css({'cssText': 'text-align: center !important;padding-left: 70px !important;padding-right: 26px !important;'+display});
-        }
-
-        //企業名 企業名表示する・左寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;padding-left:78px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;padding-left:70px;padding-right:26px;'+display});
-        }
-        //企業名 企業名表示する・左寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 1 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;'+display});
-        }
-        //企業名 企業名表示する・中央寄せ・説明文表示しない・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.widget_title_name_type == 2 &&
-          sincloInfo.widget.showDescription == 2) {
-          $('#widgetSubTitle').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px;'+display});
-        }
-        //企業名 企業名表示しない・説明文表示する・画像ありの場合
-        if(sincloInfo.widget.showSubtitle == 2 && sincloInfo.widget.showDescription == 1) {
-          $('#widgetSubTitle').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-
-        //説明文 説明文表示する・左寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;padding-left:78px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 1) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;padding-left:70px;padding-right:26px;'+display});
-        }
-        //説明文 説明文表示する・左寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 1 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:left;height:52px;line-height:52px;padding:0 0 0 78px;'+display});
-        }
-        //説明文 説明文表示する・中央寄せ・企業名表示しない・画像ありの場合
-        if(sincloInfo.widget.showDescription == 1 && sincloInfo.widget.widget_title_explain_type == 2 &&
-          sincloInfo.widget.showSubtitle == 2) {
-          $('#widgetDescription').css({'cssText': 'text-align:center;height:52px;line-height:52px;padding-left:70px;padding-right:26px;'+display});
-        }
-        //説明文 説明文表示しない・企業名表示する・画像ありの場合
-        if(sincloInfo.widget.showDescription == 2 && sincloInfo.widget.showSubtitle == 1 && sincloInfo.widget.showMainImage == 1) {
-          $('#widgetDescription').css({'cssText': 'height:0px;padding:0px;'+display});
-        }
-      }
+      //画像を表示する場合
+      common._headerContentsSettings._processSettings();
     },
     //ヘッダ表示（通常表示）
     abridgementTypeShow: function() {
       $("#mainImage").show();
       $("#widgetSubTitle").show();
       $("#widgetDescription").show();
-      var smartphone = check.smartphone();
-      if(smartphone){
+      $("#widgetTitle").removeClass("noImage");
+      $("#widgetSubTitle").removeClass("noImage");
+      $("#widgetDescription").removeClass("noImage");
+      if(check.smartphone()){
         if( common.isPortrait() ){
           if(!$('#sincloBox p#widgetTitle').hasClass("notSimple")){
             $('#sincloBox p#widgetTitle').addClass("notSimple");
@@ -896,8 +722,7 @@ var socket, // socket.io
       $("#widgetSubTitle").hide();
       $("#widgetDescription").hide();
       //false/true:通常（PC）/スマホ
-      var smartphone = check.smartphone();
-      if(smartphone){
+      if(check.smartphone()){
         //スマホ時
         //スマホだったら縦か横かを判定
         if(common.isPortrait()){
@@ -924,7 +749,6 @@ var socket, // socket.io
     //最大化時ボタン表示
     whenMaximizedBtnShow: function() {
       $("#minimizeBtn").show();
-      //$("#addBtn").hide();
       $("#closeBtn").hide();
     },
     //最小化時ボタン表示
@@ -933,13 +757,11 @@ var socket, // socket.io
       if ( Number(widget.closeButtonSetting) === 1 ) {
         //閉じるボタン無効
         $("#minimizeBtn").hide();
-        //$("#addBtn").show();
         $("#closeBtn").hide();
       }
       else{
         //閉じるボタン有効
         $("#minimizeBtn").hide();
-        //$("#addBtn").show();
         var smartphone = check.smartphone();
         if(smartphone){
           //スマホ時
@@ -1029,6 +851,9 @@ var socket, // socket.io
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
           };
+          if(Number(sincloInfo.widget.widgetSizeType) === 4 && !check.smartphone()){
+            showPosition = "bottom: 0; right: 0;"
+          }
           break;
         case 2: // 左下
           showPosition = "bottom: " + widgetVerticalPosition + "; left: " + widgetHorizontalPosition + ";";
@@ -1036,6 +861,9 @@ var socket, // socket.io
             se: "margin-left: 10px;",
             re: "margin-right: 10px;"
           };
+          if(Number(sincloInfo.widget.widgetSizeType) === 4 && !check.smartphone()){
+            showPosition = "bottom: 0; left: 0;"
+          }
           break;
       }
 
@@ -1049,7 +877,7 @@ var socket, // socket.io
             chatPosition.se = "margin-left: 45px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;";
           }
-          if(Number(widget.widgetSizeType) == 3) {
+          if(Number(widget.widgetSizeType) == 3 || Number(widget.widgetSizeType) == 4) {
             chatPosition.se = "margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;";
           }
@@ -1063,7 +891,7 @@ var socket, // socket.io
             chatPosition.se = "margin-left: 45px;";
             chatPosition.re = "margin-right: 21px;";
           }
-          if(Number(widget.widgetSizeType) == 3) {
+          if(Number(widget.widgetSizeType) == 3 || Number(widget.widgetSizeType) == 4) {
             chatPosition.se = "margin-left: 52.7px;";
             chatPosition.re = "margin-right: 24.6px;";
           }
@@ -1077,7 +905,7 @@ var socket, // socket.io
             chatPosition.se = "margin-left: 45px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;";
           }
-          if(Number(widget.widgetSizeType) == 3) {
+          if(Number(widget.widgetSizeType) == 3 || Number(widget.widgetSizeType) == 4) {
             chatPosition.se = "margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;";
             chatPosition.re = "margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;";
           }
@@ -1185,10 +1013,9 @@ var socket, // socket.io
       html += '      #sincloBox span, #sincloBox pre { font-family: "ヒラギノ角ゴ ProN W3","HiraKakuProN-W3","ヒラギノ角ゴ Pro W3","HiraKakuPro-W3","メイリオ","Meiryo","ＭＳ Ｐゴシック","MS Pgothic",sans-serif,Helvetica, Helvetica Neue, Arial, Verdana!important }';
       html += '      #sincloBox span#mainImage { cursor:pointer; z-index: 2; position: absolute; }';
       html += '      #sincloBox span#mainImage img { background-color: ' + colorList['mainColor'] + ' }';
-      html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 62px; height: 70px; font-size: 43px; border: 1px solid; }';
       html += '      #sincloBox span#mainImage i.normal { color: ' + colorList['stringColor'] + '; background-color: ' + colorList['mainColor'] + '; }';
       html += '      #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px; }';
-      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border: 1px solid ' + colorList['mainColor'] + '; border-bottom:none; background-color: ' + colorList['mainColor'] + ';text-align: center; margin: 0; color: ' + colorList['stringColor'] + ' }';
+      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border: 1px solid ' + colorList['mainColor'] + '; border-bottom:none; background-color: ' + colorList['mainColor'] + ';text-align: center; margin: 0; color: ' + colorList['stringColor'] + ' ;white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
       html += '      #sincloBox p#widgetTitle #sincloChatUnread { position: absolute; top: 0; left: 0; color: #FFF; font-style: normal; text-align: center; font-weight: bold; background-color: #FF5C5C; }';
       html += '      #sincloBox div#minimizeBtn { display: none; cursor: pointer; background-image: url("' + window.sincloInfo.site.files + '/img/widget/minimize.png"); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
       //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
@@ -1280,17 +1107,20 @@ var socket, // socket.io
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message { position: relative; color: #d5d5d5; border: none; text-align: center; }';
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
         html += '      #sincloBox ul#chatTalk li span.cName { display: block; color: ' + colorList['cNameTextColor'] + '; font-weight: bold; }';
-        html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold }';
         html += '      #sincloBox ul#chatTalk li sinclo-radio { display: inline-block; margin-top: ' + widget.btwButtonMargin + 'px; } ';
         html += '      #sincloBox ul#chatTalk li span.sinclo-text-line + sinclo-radio { margin-top: ' + widget.lineButtonMargin + 'px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] { display: none; -webkit-appearance: radio!important; -moz-appearance: radio!important; appearance: radio!important; } ';
-        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin 0; padding: 0 0 0 ' + (Number(widget.reTextSize) + 7) + 'px; color:' + colorList['reTextColor'] + '; min-height: 12px; font-size: ' + widget.reTextSize + 'px; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { position: relative; display: inline-block; width: 100%; cursor: pointer; margin: 0; padding: 0 0 0 ' + (Number(widget.reTextSize) + 7) + 'px; color:' + colorList['reTextColor'] + '; min-height: 12px; font-size: ' + widget.reTextSize + 'px; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: ' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; left: 0px; margin-top: -' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; width: ' + (Number(widget.reTextSize)) + 'px; height: ' + (Number(widget.reTextSize)) + 'px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: ' + Math.ceil((Number(widget.reTextSize)/2)) + 'px; left: ' + ((widget.reTextSize/2 - ((widget.reTextSize-6)/2))+1) + 'px; margin-top: -' + (Math.round(widget.reTextSize/2)-4) + 'px; width: ' + (Number(widget.reTextSize)-7) + 'px; height: ' + (Number(widget.reTextSize)-7) + 'px; background: ' + colorList['mainColor'] + '; border-radius: 50%; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver { cursor: pointer; display: none; position: absolute; left: 0; right: 0; width: 100%; height: 1.5em; background-color: rgba(0, 0, 0, 0.45); vertical-align: middle; word-wrap: break-word; z-index: 2; } ';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver:before {content: ""; display: inline-block; border: 6px solid transparent; position: absolute; top: 50%; margin-top: -3px; left: 5px; height: 8px; border-top: 8px solid white; border-bottom: 0; }';
         html += '      #sincloBox ul#chatTalk sinclo-chat-receiver #receiveMessage { overflow: hidden; font-size: 10px; height: 100%; line-height: 2em; padding-left: 2em; color: #FFF; }';
         html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: 1px solid '+ colorList['widgetInsideBorderColor'] +'; background-color: '+ colorList['chatMessageBackgroundColor'] +';}';
+
+        /* ヒアリング */
+        html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
+        html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
 
         /* ファイル受信  */
         if(Number(widget.widgetSizeType) == 1) {
@@ -1379,20 +1209,30 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; grid-row: 1/2; -ms-grid-column: 2; -ms-grid-row: 1; }';
         html += '#sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { grid-column: 3/4; grid-row: 1/2; -ms-grid-column: 3; -ms-grid-row: 1; }';
 
+        /* Cogmo */
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { cursor: pointer; background-color: ' + colorList['reTextColor'] + '; text-align: center; padding: 10px; margin: 5px 0px;}';
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap:hover { opacity: 0.8 }';
+        html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { margin: 0 30px; color: ' + colorList['reBackgroundColor'] + '; font-size: ' + widget.reTextSize + 'px;}';
+        html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
+
+        html += '#sincloBox #chatTalk li.sinclo_re select {cursor: pointer;}';
+        /* flatpickr カスタム値の方が強いため基本important指定 */
+        html += '#sincloBox #chatTalk li.sinclo_re div.flatpickr-calendar.disable { pointer-events: none!important; opacity: 0.5!important; }';
+
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
         }
         if(widget.chatInitShowTextarea === 2) {
           html += '    #sincloBox section#chatTab sinclo-div#flexBoxWrap { display: none; }';
         }
-        html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + colorList['messageBoxTextColor'] + '!important; background-color: '+ colorList['messageBoxBackgroundColor'] +'; }';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { display: block; height: 100%; min-height: 100%!important; margin: 0; width: 80%; resize: none; color: ' + colorList['messageBoxTextColor'] + '!important; background-color: '+ colorList['messageBoxBackgroundColor'] +'; font-size: ' + widget.messageBoxTextSize + 'px;}';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:disabled, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:disabled { background-color: '+ colorList['messageBoxBackgroundColor'] +'; opacity: 1; }';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:focus { outline: none; border-color: ' + colorList['mainColor'] + '!important }';
         if(colorList['messageBoxBorderNone'] === 0){
           html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage { border-right-color: ' + colorList['chatSendBtnBackgroundColor'] + '!important; }';
           html += '      #sincloBox section#chatTab sinclo-div #sincloChatMessage:focus, #sincloBox section#chatTab sinclo-div #miniSincloChatMessage:focus { border-color: ' + colorList['mainColor'] + '!important }';
         }
-        html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { display: block; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: bold; font-size: 1.2em;}';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { display: flex;justify-content:center; align-items: center; height: 100%; width: 20%; text-decoration: none; border-radius: 0 5px 5px 0; cursor: pointer; margin: 0; text-align: center; background-color: ' + colorList['chatSendBtnBackgroundColor'] + '; color: ' + colorList['chatSendBtnTextColor'] + '; font-weight: bold;}';
         html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn span, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn span {color: ' + colorList['chatSendBtnTextColor'] + '; }';
         if( (window.sincloInfo.contract.synclo || (window.sincloInfo.contract.hasOwnProperty('document') && window.sincloInfo.contract.document) || (check.isset(widget.showAccessId) && widget.showAccessId === 1)) ) {
           if(widget.chatMessageCopy === 1) {
@@ -1441,20 +1281,9 @@ var socket, // socket.io
         html += '      #sincloBox div#sincloBannerBox #sincloBanner #bannerIcon { width: 24px; height: 24px; opacity: 1; margin: 0px 5px; }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .bannertext{ color: '+ colorList['stringColor'] +'; font-size: 12.5px; cursor: pointer; vertical-align: middle; margin-right: 5px; }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner .notext{ cursor: pointer; }';
-        //スマホだったらpxの書き換え
-//        if ( check.smartphone() ) {
-//          widgetWidth = $(window).width() - 20;
-//          ratio = widgetWidth * (1/285);
-//          html += '      #sincloBannerBox{ bottom:0px; right:0px; }';
-//          html += '      #sincloBanner.sincloBanner { height: '+ (60 * ratio) +'px; box-shadow: 0px 0px ' + widget.boxShadow + 'px ' + widget.boxShadow + 'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px; }';
-//          html += '      #sincloBanner.sincloBannerText{ line-height: '+ (60 * ratio) +'px; padding:0; }';
-//          html += '      #sincloBanner.sincloBanner .sinclo-comment{ font-size: '+ (25 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 '+ (15 * ratio) +'px; }';
-//          html += '      #sincloBanner.sincloBanner .bannertext{ font-size: '+ (18 * ratio) +'px; padding: 0 '+ (15 * ratio) +'px 0 0; }';
-//        }
       }
 
-// html += '    #sincloBox ul { clear: both; display: flex; flex-direction: column } ';
-// html += '    #sincloBox sinclo-chat, #sincloBox sinclo-typing { display: block; border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; } ';
+      html += common.injectCalendarCSS();
 
       /* iPhone/iPod/Androidの場合 */
       if ( check.smartphone() ) {
@@ -1491,7 +1320,7 @@ var socket, // socket.io
           html += '#sincloBox section { width: ' + widgetWidth + 'px }';
           html += '#sincloBox section#navigation ul { width: ' + widgetWidth + 'px }';
           html += '#sincloBox span#mainImage { top: ' + (7 * ratio) + 'px; left: ' + (8 * ratio) + 'px; }';
-          html += '#sincloBox sinclo-div#widgetHeader:after { top: ' + (32 * ratio) + 'px }';
+          html += '#sincloBox sinclo-div#widgetHeader:after { top: ' + (35 * ratio) + 'px }';
           html += '#sincloBox p#widgetTitle { border-radius: ' + (widget.radiusRatio * ratio) + 'px ' + (widget.radiusRatio * ratio) + 'px 0 0; border: ' + (1 * ratio) + 'px solid ' + colorList['mainColor'] + '; font-size: ' + (14 * ratio) + 'px; padding: ' + (7 * ratio) + 'px ' + (30 * ratio) + 'px; height: ' + (32 * ratio) + 'px; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap;}';
@@ -1515,14 +1344,35 @@ var socket, // socket.io
 */
             html += '#sincloBox div#closeBtn { display: none; top: ' + (7 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; z-index: 2; }';
           }
-          html += '#sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; border-color: '+ colorList['widgetBorderColor'] +'; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; height: ' + (29 * ratio) + 'px; }';
+          html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 80px; height: 70px; font-size: calc(43px * ((3 * 15 + 36) / 81)); border: 1px solid; }';
+          html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: ' + (14*ratio) + 'px; padding: '+ (7 * ratio) + 'px 0px '+ (7 * ratio) + 'px 0px; height: '+ (32 * ratio) +'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+          html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: ' + (70 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetTitle.leftPosition.noImage { padding-left: ' +  (15 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: ' + (30 * ratio) + 'px; padding-left: calc(2.5em + 38px);}';
+          html += '      #sincloBox p#widgetTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px; }';
+
+          html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; border-color: '+ colorList['widgetBorderColor'] +'; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; border-style: solid; text-align: left; margin: 0; padding: ' + (7 * ratio) + 'px 0; border-width: 0 ' + (1 * ratio) + 'px 0 ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+          html += '      #sincloBox p#widgetSubTitle.leftPosition { padding-left: ' + (70 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetSubTitle.leftPosition.noImage { padding-left: ' + (15 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetSubTitle.centerPosition { text-align: center; padding-right: ' + (30 * ratio) + 'px; padding-left: calc(2.5em + 38px * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetSubTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+          html += '      #sincloBox p#widgetSubTitle.oneContent { line-height: calc((1em + 9px)*2); padding-bottom: ' + (3.5*ratio) + 'px; padding-top: ' + (4.5*ratio) + 'px; border-bottom: 1px '+ colorList['widgetBorderColor'] +' solid;}';
+          if(colorList['widgetInsideBorderNone'] === 1){
+            html += '      #sincloBox p#widgetSubTitle.oneContent{ border:none;}';
+          }
+
+          html += '      #sincloBox p#widgetDescription.leftPosition { padding-left: ' + (70 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetDescription.leftPosition.noImage { padding-left: ' + (15 * ratio) + 'px;}';
+          html += '      #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-right: ' + (30 * ratio) + 'px; padding-left: calc(2.5em + 38px * ' + ratio + ');}';
+          html += '      #sincloBox p#widgetDescription.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+          html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2); padding-bottom: ' + (3.5*ratio) + 'px; padding-top: ' + (4.5*ratio) + 'px;}';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetSubTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
           if(colorList['widgetBorderNone'] === 1){
             html += '#sincloBox p#widgetSubTitle { border:none; }';
           }
-          html += '#sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: ' + (7 * ratio) + 'px; border-width: 0 ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; height: ' + (23 * ratio) + 'px; text-align: left; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
+          html += '#sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: ' + (7 * ratio) + 'px; border-width: 0 ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px ' + (1 * ratio) + 'px; padding-left: ' + (74 * ratio) + 'px; text-align: left; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; }';
           if(widget.widgetSizeType !== 1){
             html += '#sincloBox p#widgetDescription { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
           }
@@ -1582,13 +1432,15 @@ var socket, // socket.io
           if(colorList['widgetInsideBorderNone'] === 0){
             html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: ' + (1 * ratio) + 'px solid '+ colorList['widgetInsideBorderColor'] +'; }';
           }
-          html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { font-size: 17px; padding: ' + (5 * ratio) + 'px;  }';
+          html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { font-size: 17px! important; padding: ' + (5 * ratio) + 'px;  }';
           if(colorList['messageBoxBorderNone'] === 0){
             html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border-radius: ' + (5 * ratio) +'px 0 0 ' + (5 * ratio) +'px!important; border: ' + (1 * ratio) + 'px solid '+ colorList['messageBoxBorderColor'] +'!important; }';
           }
           else{
             html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border: none!important; }';
           }
+
+          html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:14px); }';
 
           // 一括ヒアリング
           html += '#sincloBox #chatTalk li.sinclo_re.sinclo_form { padding: ' + (10 * ratio) + 'px ' + (15 * ratio) + 'px ' + (15 * ratio) + 'px ' + (15 * ratio) + 'px; }';
@@ -1611,6 +1463,7 @@ var socket, // socket.io
           html += '#sincloBox section#chatTab sinclo-div#miniFlexBoxHeight { height: ' + (48 * ratio) + 'px;  }';
           html += '#sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding:  ' + (16.5 * ratio) + 'px 0; border: ' + ratio + 'px solid ' + colorList['chatSendBtnBackgroundColor'] + '; }';
           html += '#sincloBox section#chatTab a#miniSincloChatSendBtn { padding: ' + (8 * ratio) + 'px 0;  }';
+          html += '#sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' + (13 * ratio) + 'px;}';
           html += '#sincloBox section#chatTab sinclo-chat-alert { left: 10%; right: 10%; bottom: 50%; border-radius: ' + (5 * ratio) + 'px; color: #FFF; padding: ' + (10 * ratio) + 'px 0; }';
           html += '#sincloBox section#navigation { border-width: 0 ' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
           html += '#sincloBox section#navigation ul { margin: 0 0 0 -' + (1 * ratio) + 'px; height: ' + (40 * ratio) + 'px; }';
@@ -1629,6 +1482,10 @@ var socket, // socket.io
             html += '#sincloBox #fotter { border:none; }';
           }
           html += '#sincloBox section#navigation ul li::before { margin-right: ' + (5 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' + (18 * ratio) + 'px; }';
+          /* Cogmo */
+          html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap { padding: ' + (10 * ratio) + 'px; border-radius: ' + (12 * ratio) + 'px; margin: ' + (5 * ratio) + 'px 0px; }';
+          html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap:hover { opacity: 0.8 }';
+          html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { font-size: ' + (12 * ratio) + 'px;}';
           //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
           if(Number(widget.closeButtonSetting) === 2 && Number(widget.closeButtonModeType) === 1){
             html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background: initial;}';
@@ -1709,6 +1566,7 @@ var socket, // socket.io
           html += '#sincloBox section { width: 100% }';
           html += '#sincloBox section#chatTab ul { height: ' + (chatAreaHeight - (6.5 * hRatio)) + 'px }';
           html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
+          html += '#sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' + (13 * ratio) + 'px;}';
           //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
           //閉じるボタン無効
           //＋ボタン無効に仕様変更
@@ -1733,6 +1591,8 @@ var socket, // socket.io
           if(colorList['reBorderNone'] === 0){
             html += '#sincloBox ul#chatTalk li.sinclo_re { border: ' + (1 * ratio) + 'px solid '+ colorList['reBorderColor'] +'; }';
           }
+          html += '#sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:14px); }';
+
           html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0 0 -1em 0.5em; display: inline-block; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"], #sincloBox ul#chatTalk li sinclo-radio label { webkit-transform: scale(1.3); transform: scale(1.3); moz-transform: scale(1.3); } ';
@@ -1822,17 +1682,36 @@ var socket, // socket.io
         html += "      #sincloBox section { width: " + sizeList['boxWidth'] + "px }";
         html += "      #sincloBox section#navigation ul { width: " + sizeList['boxWidth'] + "px }";
         html += '      #sincloBox span#mainImage { top: 7px; left: 8px }';
+        html += '      #sincloBox span#mainImage i {display: flex; justify-content: center; align-items: center; width: 80px; height: 70px; font-size: calc(43px * ((3 * ' + widget.headerTextSize + ' + 36) / 81)); border: 1px solid; }';
 
-        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px !important; height: auto; line-height: ' + widget.headerTextSize + 'px;}';
+        html += '      #sincloBox p#widgetTitle { border-radius: ' + widget.radiusRatio + 'px ' + widget.radiusRatio + 'px 0 0; font-size: '+ widget.headerTextSize +'px; padding: 7px 0px 7px 0px; height: auto; line-height: ' + widget.headerTextSize + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+        html += '      #sincloBox p#widgetTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 41px);}';
+        html += '      #sincloBox p#widgetTitle.leftPosition.noImage { padding-left: 15px;}';
+        html += '      #sincloBox p#widgetTitle.centerPosition { padding-right: 25px; padding-left: calc(2.5em + 33px);}';
+        html += '      #sincloBox p#widgetTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px; }';
         html += '      #sincloBox p#widgetTitle #sincloChatUnread { width: 25px; height: 25px; font-size: '+ (widget.headerTextSize - 1) +'px; border-radius: 15px; margin: 2.5px 6px; padding: 3px; }';
         html += '      #sincloBox p#widgetTitle:after { background-position-y: 3px; top: '+ sizeList['widgetTitleTop'] +'px; right: 10px; bottom: 6px; width: 20px; height: 20px; }';
 
-        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height: ' + sizeList['widgetSubTitleHeight'] + 'px; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;}';
+        html += '      #sincloBox p#widgetSubTitle { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; text-align: left; border-width: 0 1px 0 1px; padding-top: 3px; padding-bottom: 3px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; font-weight: bold; color: ' + colorList['subTitleTextColor'] + '; height: auto; line-height:calc(1em + 9px); font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;}';
+        html += '      #sincloBox p#widgetSubTitle.leftPosition { padding-left: calc(2.5em + 46px)}';
+        html += '      #sincloBox p#widgetSubTitle.leftPosition.noImage { padding-left: 15px;}';
+        html += '      #sincloBox p#widgetSubTitle.centerPosition { text-align: center; padding-right: 25px; padding-left: calc(2.5em + 38px);}';
+        html += '      #sincloBox p#widgetSubTitle.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+        html += '      #sincloBox p#widgetSubTitle.oneContent { line-height: calc((1em + 9px)*2); border-bottom: 1px '+ colorList['widgetBorderColor'] +' solid;}';
+        if(colorList['widgetInsideBorderNone'] === 1){
+          html += '      #sincloBox p#widgetSubTitle.oneContent{ border:none;}';
+        }
+
+        html += '      #sincloBox p#widgetDescription.leftPosition { padding-left: calc(2.5em + 46px)}';
+        html += '      #sincloBox p#widgetDescription.leftPosition.noImage { padding-left: 15px;}';
+        html += '      #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-right: 25px; padding-left: calc(2.5em + 38px);}';
+        html += '      #sincloBox p#widgetDescription.centerPosition.noImage { padding-left: 0px; padding-right: 0px;}';
+        html += '      #sincloBox p#widgetDescription.oneContent { line-height: calc((1em + 9px)*2); padding-top: 3px; padding-bottom: 3px;}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetSubTitle { border:none; }';
         }
 
-        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; height: auto; line-height: ' + sizeList['widgetDescriptionHeight'] + 'px; color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px;}';
+        html += '      #sincloBox p#widgetDescription { background-color: '+ colorList['headerBackgroundColor'] +'; margin: 0; padding-bottom: 7px; text-align: left; border-width: 0 1px 1px 1px; border-color: '+ colorList['widgetBorderColor'] +'; border-style: solid; height: auto; line-height:calc(1em + 2px); color: ' + colorList['descriptionTextColor'] + '; border-bottom-color:'+ colorList['widgetInsideBorderColor'] +'; font-size: ' + (Number(widget.headerTextSize) - 2) + 'px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;;}';
         if(colorList['widgetBorderNone'] === 1){
           html += '#sincloBox p#widgetDescription { border-left:none; border-right:none;}';
         }
@@ -1844,10 +1723,10 @@ var socket, // socket.io
           html += '#sincloBox p#widgetDescription { border-bottom:none!important;}';
           html += '      #sincloBox section { border-bottom: none!important; }';
         }
-        // 画像がセットされている場合のスタイル
-        html += '      #sincloBox p#widgetTitle.notSimple { padding-left: 70px; }';
-        // 画像がセットされていない場合のスタイル
-        html += '      #sincloBox p#widgetTitle.noImage { padding-left: 30px; }';
+
+        html += '      #sincloBox ul#chatTalk li.sinclo_etc { border: none; text-align: center!important; margin: 0 auto; font-weight: bold; font-size:calc('+widget.reTextSize +'px*0.92); }';
+        html += '      #sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' + widget.chatSendBtnTextSize + 'px;}';
+
         // チャットを使用する際
         if ( window.sincloInfo.contract.chat ) {
           html += '      #sincloBox #mainImage em { top: -10px; right: -10px; width: 25px; height: 20px; font-size: '+ sizeList['d11font'] +'px; padding: 1px; }';
@@ -1924,6 +1803,800 @@ var socket, // socket.io
 
       return html;
     },
+    injectCalendarCSS: function() {
+      return "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar {\n" +
+        "  background: transparent;\n" +
+        "  opacity: 0;\n" +
+        "  display: none;\n" +
+        "  text-align: center;\n" +
+        "  visibility: hidden;\n" +
+        "  padding: 0;\n" +
+        "  -webkit-animation: none;\n" +
+        "  animation: none;\n" +
+        "  direction: ltr;\n" +
+        "  border: 0;\n" +
+        "  font-size: 14px;\n" +
+        "  line-height: 24px;\n" +
+        "  border-radius: 5px;\n" +
+        "  position: absolute;\n" +
+        "  width: 307.875px;\n" +
+        "  -webkit-box-sizing: border-box;\n" +
+        "  box-sizing: border-box;\n" +
+        "  -ms-touch-action: manipulation;\n" +
+        "  touch-action: manipulation;\n" +
+        "  background: #fff;\n" +
+        "  -webkit-box-shadow: 1px 0 0 #e6e6e6, -1px 0 0 #e6e6e6, 0 1px 0 #e6e6e6, 0 -1px 0 #e6e6e6, 0 3px 13px rgba(0, 0, 0, 0.08);\n" +
+        "  box-shadow: 1px 0 0 #e6e6e6, -1px 0 0 #e6e6e6, 0 1px 0 #e6e6e6, 0 -1px 0 #e6e6e6, 0 3px 13px rgba(0, 0, 0, 0.08);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.open,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.inline {\n" +
+        "  opacity: 1;\n" +
+        "  max-height: 640px;\n" +
+        "  visibility: visible;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.open {\n" +
+        "  display: inline-block;\n" +
+        "  z-index: 99999;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.animate.open {\n" +
+        "  -webkit-animation: fpFadeInDown 300ms cubic-bezier(0.23, 1, 0.32, 1);\n" +
+        "  animation: fpFadeInDown 300ms cubic-bezier(0.23, 1, 0.32, 1);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.inline {\n" +
+        "  display: block;\n" +
+        "  position: relative;\n" +
+        "  top: 2px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.static {\n" +
+        "  position: absolute;\n" +
+        "  top: calc(100% + 2px);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.static.open {\n" +
+        "  z-index: 999;\n" +
+        "  display: block;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n+1) .flatpickr-day.inRange:nth-child(7n+7) {\n" +
+        "  -webkit-box-shadow: none !important;\n" +
+        "  box-shadow: none !important;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.multiMonth .flatpickr-days .dayContainer:nth-child(n+2) .flatpickr-day.inRange:nth-child(7n+1) {\n" +
+        "  -webkit-box-shadow: -2px 0 0 #e6e6e6, 5px 0 0 #e6e6e6;\n" +
+        "  box-shadow: -2px 0 0 #e6e6e6, 5px 0 0 #e6e6e6;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .hasWeeks .dayContainer,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .hasTime .dayContainer {\n" +
+        "  border-bottom: 0;\n" +
+        "  border-bottom-right-radius: 0;\n" +
+        "  border-bottom-left-radius: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .hasWeeks .dayContainer {\n" +
+        "  border-left: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.showTimeInput.hasTime .flatpickr-time {\n" +
+        "  height: 40px;\n" +
+        "  border-top: 1px solid #e6e6e6;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.noCalendar.hasTime .flatpickr-time {\n" +
+        "  height: auto;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar:before,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar:after {\n" +
+        "  position: absolute;\n" +
+        "  display: block;\n" +
+        "  pointer-events: none;\n" +
+        "  content: \"\";\n" +
+        "  height: 0;\n" +
+        "  width: 0;\n" +
+        "  left: 22px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.rightMost:before,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.rightMost:after {\n" +
+        "  left: auto;\n" +
+        "  right: 22px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar:before {\n" +
+        "  border-width: 5px;\n" +
+        "  margin: 0 -5px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar:after {\n" +
+        "  border-width: 4px;\n" +
+        "  margin: 0 -4px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.arrowTop:before,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.arrowTop:after {\n" +
+        "  bottom: 100%;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.arrowTop:before {\n" +
+        "  border-bottom-color: #e6e6e6;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.arrowTop:after {\n" +
+        "  border-bottom-color: #fff;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.arrowBottom:before,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.arrowBottom:after {\n" +
+        "  top: 100%;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.arrowBottom:before {\n" +
+        "  border-top-color: #e6e6e6;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar.arrowBottom:after {\n" +
+        "  border-top-color: #fff;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar:focus {\n" +
+        "  outline: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-wrapper {\n" +
+        "  position: relative;\n" +
+        "  display: inline-block;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months {\n" +
+        "  display: -webkit-box;\n" +
+        "  display: -webkit-flex;\n" +
+        "  display: -ms-flexbox;\n" +
+        "  display: flex;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-month {\n" +
+        "  background: transparent;\n" +
+        "  color: rgba(0, 0, 0, 0.9);\n" +
+        "  fill: rgba(0, 0, 0, 0.9);\n" +
+        "  height: 28px;\n" +
+        "  line-height: 1;\n" +
+        "  text-align: center;\n" +
+        "  position: relative;\n" +
+        "  -webkit-user-select: none;\n" +
+        "  -moz-user-select: none;\n" +
+        "  -ms-user-select: none;\n" +
+        "  user-select: none;\n" +
+        "  overflow: hidden;\n" +
+        "  -webkit-box-flex: 1;\n" +
+        "  -webkit-flex: 1;\n" +
+        "  -ms-flex: 1;\n" +
+        "  flex: 1;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month {\n" +
+        "  text-decoration: none;\n" +
+        "  cursor: pointer;\n" +
+        "  position: absolute;\n" +
+        "  top: 0;\n" +
+        "  line-height: 16px;\n" +
+        "  height: 28px;\n" +
+        "  padding: 10px;\n" +
+        "  z-index: 3;\n" +
+        "  color: rgba(0, 0, 0, 0.9);\n" +
+        "  fill: rgba(0, 0, 0, 0.9);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month.disabled,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month.disabled {\n" +
+        "  display: none;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month i,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month i {\n" +
+        "  position: relative;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month.flatpickr-prev-month,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month.flatpickr-prev-month {\n" +
+        "  left: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month.flatpickr-next-month,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month.flatpickr-next-month {\n" +
+        "  right: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month:hover {\n" +
+        "  color: #959ea9;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month:hover svg,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month:hover svg {\n" +
+        "  fill: #f64747;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month svg,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month svg {\n" +
+        "  width: 14px;\n" +
+        "  height: 14px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-prev-month svg path,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-months .flatpickr-next-month svg path {\n" +
+        "  -webkit-transition: fill 0.1s;\n" +
+        "  transition: fill 0.1s;\n" +
+        "  fill: inherit;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper {\n" +
+        "  position: relative;\n" +
+        "  height: auto;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper input,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span {\n" +
+        "  display: inline-block;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper input {\n" +
+        "  width: 100%;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper input::-ms-clear {\n" +
+        "  display: none;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span {\n" +
+        "  position: absolute;\n" +
+        "  right: 0;\n" +
+        "  width: 14px;\n" +
+        "  padding: 0 4px 0 2px;\n" +
+        "  height: 50%;\n" +
+        "  line-height: 50%;\n" +
+        "  opacity: 0;\n" +
+        "  cursor: pointer;\n" +
+        "  border: 1px solid rgba(57, 57, 57, 0.15);\n" +
+        "  -webkit-box-sizing: border-box;\n" +
+        "  box-sizing: border-box;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span:hover {\n" +
+        "  background: rgba(0, 0, 0, 0.1);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span:active {\n" +
+        "  background: rgba(0, 0, 0, 0.2);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span:after {\n" +
+        "  display: block;\n" +
+        "  content: \"\";\n" +
+        "  position: absolute;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span.arrowUp {\n" +
+        "  top: 0;\n" +
+        "  border-bottom: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span.arrowUp:after {\n" +
+        "  border-left: 4px solid transparent;\n" +
+        "  border-right: 4px solid transparent;\n" +
+        "  border-bottom: 4px solid rgba(57, 57, 57, 0.6);\n" +
+        "  top: 26%;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span.arrowDown {\n" +
+        "  top: 50%;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span.arrowDown:after {\n" +
+        "  border-left: 4px solid transparent;\n" +
+        "  border-right: 4px solid transparent;\n" +
+        "  border-top: 4px solid rgba(57, 57, 57, 0.6);\n" +
+        "  top: 40%;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span svg {\n" +
+        "  width: inherit;\n" +
+        "  height: auto;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper span svg path {\n" +
+        "  fill: rgba(0, 0, 0, 0.5);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper:hover {\n" +
+        "  background: rgba(0, 0, 0, 0.05);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .numInputWrapper:hover span {\n" +
+        "  opacity: 1;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month {\n" +
+        "  font-size: 135%;\n" +
+        "  line-height: inherit;\n" +
+        "  font-weight: 300;\n" +
+        "  color: inherit;\n" +
+        "  position: absolute;\n" +
+        "  width: 75%;\n" +
+        "  left: 12.5%;\n" +
+        "  padding: 6.16px 0 0 0;\n" +
+        "  line-height: 1;\n" +
+        "  height: 28px;\n" +
+        "  display: inline-block;\n" +
+        "  text-align: center;\n" +
+        "  -webkit-transform: translate3d(0, 0, 0);\n" +
+        "  transform: translate3d(0, 0, 0);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month span.cur-month {\n" +
+        "  font-family: inherit;\n" +
+        "  font-weight: 700;\n" +
+        "  color: inherit;\n" +
+        "  display: inline-block;\n" +
+        "  margin-left: 0.5ch;\n" +
+        "  padding: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month span.cur-month:hover {\n" +
+        "  background: rgba(0, 0, 0, 0.05);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month .numInputWrapper {\n" +
+        "  width: 6ch;\n" +
+        "  width: 7ch\\0;\n" +
+        "  display: inline-block;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month .numInputWrapper span.arrowUp:after {\n" +
+        "  border-bottom-color: rgba(0, 0, 0, 0.9);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month .numInputWrapper span.arrowDown:after {\n" +
+        "  border-top-color: rgba(0, 0, 0, 0.9);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month input.cur-year {\n" +
+        "  background: transparent;\n" +
+        "  -webkit-box-sizing: border-box;\n" +
+        "  box-sizing: border-box;\n" +
+        "  color: inherit;\n" +
+        "  cursor: text;\n" +
+        "  padding: 0 0 0 0.5ch;\n" +
+        "  margin: 0;\n" +
+        "  display: inline-block;\n" +
+        "  font-size: inherit;\n" +
+        "  font-family: inherit;\n" +
+        "  font-weight: 300;\n" +
+        "  line-height: inherit;\n" +
+        "  height: auto;\n" +
+        "  border: 0;\n" +
+        "  border-radius: 0;\n" +
+        "  vertical-align: initial;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month input.cur-year:focus {\n" +
+        "  outline: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month input.cur-year[disabled],\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-current-month input.cur-year[disabled]:hover {\n" +
+        "  font-size: 100%;\n" +
+        "  color: rgba(0, 0, 0, 0.5);\n" +
+        "  background: transparent;\n" +
+        "  pointer-events: none;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekdays {\n" +
+        "  background: transparent;\n" +
+        "  text-align: center;\n" +
+        "  overflow: hidden;\n" +
+        "  width: 100%;\n" +
+        "  display: -webkit-box;\n" +
+        "  display: -webkit-flex;\n" +
+        "  display: -ms-flexbox;\n" +
+        "  display: flex;\n" +
+        "  -webkit-box-align: center;\n" +
+        "  -webkit-align-items: center;\n" +
+        "  -ms-flex-align: center;\n" +
+        "  align-items: center;\n" +
+        "  height: 28px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekdays .flatpickr-weekdaycontainer {\n" +
+        "  display: -webkit-box;\n" +
+        "  display: -webkit-flex;\n" +
+        "  display: -ms-flexbox;\n" +
+        "  display: flex;\n" +
+        "  -webkit-box-flex: 1;\n" +
+        "  -webkit-flex: 1;\n" +
+        "  -ms-flex: 1;\n" +
+        "  flex: 1;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re span.flatpickr-weekday {\n" +
+        "  cursor: default;\n" +
+        "  font-size: 90%;\n" +
+        "  background: transparent;\n" +
+        "  color: rgba(0, 0, 0, 0.54);\n" +
+        "  line-height: 1;\n" +
+        "  margin: 0;\n" +
+        "  text-align: center;\n" +
+        "  display: block;\n" +
+        "  -webkit-box-flex: 1;\n" +
+        "  -webkit-flex: 1;\n" +
+        "  -ms-flex: 1;\n" +
+        "  flex: 1;\n" +
+        "  font-weight: bolder;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .dayContainer,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weeks {\n" +
+        "  padding: 1px 0 0 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-days {\n" +
+        "  position: relative;\n" +
+        "  overflow: hidden;\n" +
+        "  display: -webkit-box;\n" +
+        "  display: -webkit-flex;\n" +
+        "  display: -ms-flexbox;\n" +
+        "  display: flex;\n" +
+        "  -webkit-box-align: start;\n" +
+        "  -webkit-align-items: flex-start;\n" +
+        "  -ms-flex-align: start;\n" +
+        "  align-items: flex-start;\n" +
+        "  width: 307.875px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-days:focus {\n" +
+        "  outline: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .dayContainer {\n" +
+        "  padding: 0;\n" +
+        "  outline: 0;\n" +
+        "  text-align: left;\n" +
+        "  width: 307.875px;\n" +
+        "  min-width: 307.875px;\n" +
+        "  max-width: 307.875px;\n" +
+        "  -webkit-box-sizing: border-box;\n" +
+        "  box-sizing: border-box;\n" +
+        "  display: inline-block;\n" +
+        "  display: -ms-flexbox;\n" +
+        "  display: -webkit-box;\n" +
+        "  display: -webkit-flex;\n" +
+        "  display: flex;\n" +
+        "  -webkit-flex-wrap: wrap;\n" +
+        "  flex-wrap: wrap;\n" +
+        "  -ms-flex-wrap: wrap;\n" +
+        "  -ms-flex-pack: justify;\n" +
+        "  -webkit-justify-content: space-around;\n" +
+        "  justify-content: space-around;\n" +
+        "  -webkit-transform: translate3d(0, 0, 0);\n" +
+        "  transform: translate3d(0, 0, 0);\n" +
+        "  opacity: 1;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .dayContainer + .dayContainer {\n" +
+        "  -webkit-box-shadow: -1px 0 0 #e6e6e6;\n" +
+        "  box-shadow: -1px 0 0 #e6e6e6;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day {\n" +
+        "  background: none;\n" +
+        "  border: 1px solid transparent;\n" +
+        "  border-radius: 150px;\n" +
+        "  -webkit-box-sizing: border-box;\n" +
+        "  box-sizing: border-box;\n" +
+        "  color: #393939;\n" +
+        "  cursor: pointer;\n" +
+        "  font-weight: 400;\n" +
+        "  width: 14.2857143%;\n" +
+        "  -webkit-flex-basis: 14.2857143%;\n" +
+        "  -ms-flex-preferred-size: 14.2857143%;\n" +
+        "  flex-basis: 14.2857143%;\n" +
+        "  max-width: 39px;\n" +
+        "  height: 39px;\n" +
+        "  line-height: 39px;\n" +
+        "  margin: 0;\n" +
+        "  display: inline-block;\n" +
+        "  position: relative;\n" +
+        "  -webkit-box-pack: center;\n" +
+        "  -webkit-justify-content: center;\n" +
+        "  -ms-flex-pack: center;\n" +
+        "  justify-content: center;\n" +
+        "  text-align: center;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.inRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.prevMonthDay.inRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.nextMonthDay.inRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.today.inRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.prevMonthDay.today.inRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.nextMonthDay.today.inRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.prevMonthDay:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.nextMonthDay:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day:focus,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.prevMonthDay:focus,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.nextMonthDay:focus {\n" +
+        "  cursor: pointer;\n" +
+        "  outline: 0;\n" +
+        "  background: #e6e6e6;\n" +
+        "  border-color: #e6e6e6;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.today {\n" +
+        "  border-color: #959ea9;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.today:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.today:focus {\n" +
+        "  border-color: #959ea9;\n" +
+        "  background: #959ea9;\n" +
+        "  color: #fff;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.inRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.inRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.inRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected:focus,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange:focus,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange:focus,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.prevMonthDay,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.prevMonthDay,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.prevMonthDay,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.nextMonthDay,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.nextMonthDay,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.nextMonthDay {\n" +
+        "  -webkit-box-shadow: none;\n" +
+        "  box-shadow: none;\n" +
+        "  color: #fff;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.startRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.startRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.startRange {\n" +
+        "  border-radius: 50px 0 0 50px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.endRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.endRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.endRange {\n" +
+        "  border-radius: 0 50px 50px 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.startRange + .endRange:not(:nth-child(7n+1)),\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.startRange + .endRange:not(:nth-child(7n+1)),\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.startRange + .endRange:not(:nth-child(7n+1)) {\n" +
+        "  -webkit-box-shadow: -10px 0 0 #569ff7;\n" +
+        "  box-shadow: -10px 0 0 #569ff7;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.selected.startRange.endRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.startRange.startRange.endRange,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.endRange.startRange.endRange {\n" +
+        "  border-radius: 50px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.inRange {\n" +
+        "  border-radius: 0;\n" +
+        "  -webkit-box-shadow: -5px 0 0 #e6e6e6, 5px 0 0 #e6e6e6;\n" +
+        "  box-shadow: -5px 0 0 #e6e6e6, 5px 0 0 #e6e6e6;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.disabled,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.disabled:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.prevMonthDay,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.nextMonthDay,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.notAllowed,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.notAllowed.prevMonthDay,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.notAllowed.nextMonthDay {\n" +
+        "  color: rgba(57, 57, 57, 0.3);\n" +
+        "  background: transparent;\n" +
+        "  border-color: transparent;\n" +
+        "  cursor: default;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.disabled,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.disabled:hover {\n" +
+        "  cursor: not-allowed;\n" +
+        "  color: rgba(57, 57, 57, 0.1);\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.week.selected {\n" +
+        "  border-radius: 0;\n" +
+        "  -webkit-box-shadow: -5px 0 0 #569ff7, 5px 0 0 #569ff7;\n" +
+        "  box-shadow: -5px 0 0 #569ff7, 5px 0 0 #569ff7;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-day.hidden {\n" +
+        "  visibility: hidden;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .rangeMode .flatpickr-day {\n" +
+        "  margin-top: 1px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekwrapper {\n" +
+        "  display: inline-block;\n" +
+        "  float: left;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekwrapper .flatpickr-weeks {\n" +
+        "  padding: 0 12px;\n" +
+        "  -webkit-box-shadow: 1px 0 0 #e6e6e6;\n" +
+        "  box-shadow: 1px 0 0 #e6e6e6;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekwrapper .flatpickr-weekday {\n" +
+        "  float: none;\n" +
+        "  width: 100%;\n" +
+        "  line-height: 28px;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekwrapper span.flatpickr-day,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-weekwrapper span.flatpickr-day:hover {\n" +
+        "  display: block;\n" +
+        "  width: 100%;\n" +
+        "  max-width: none;\n" +
+        "  color: rgba(57, 57, 57, 0.3);\n" +
+        "  background: transparent;\n" +
+        "  cursor: default;\n" +
+        "  border: none;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-innerContainer {\n" +
+        "  display: block;\n" +
+        "  display: -webkit-box;\n" +
+        "  display: -webkit-flex;\n" +
+        "  display: -ms-flexbox;\n" +
+        "  display: flex;\n" +
+        "  -webkit-box-sizing: border-box;\n" +
+        "  box-sizing: border-box;\n" +
+        "  overflow: hidden;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-rContainer {\n" +
+        "  display: inline-block;\n" +
+        "  padding: 0;\n" +
+        "  -webkit-box-sizing: border-box;\n" +
+        "  box-sizing: border-box;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time {\n" +
+        "  text-align: center;\n" +
+        "  outline: 0;\n" +
+        "  display: block;\n" +
+        "  height: 0;\n" +
+        "  line-height: 40px;\n" +
+        "  max-height: 40px;\n" +
+        "  -webkit-box-sizing: border-box;\n" +
+        "  box-sizing: border-box;\n" +
+        "  overflow: hidden;\n" +
+        "  display: -webkit-box;\n" +
+        "  display: -webkit-flex;\n" +
+        "  display: -ms-flexbox;\n" +
+        "  display: flex;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time:after {\n" +
+        "  content: \"\";\n" +
+        "  display: table;\n" +
+        "  clear: both;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .numInputWrapper {\n" +
+        "  -webkit-box-flex: 1;\n" +
+        "  -webkit-flex: 1;\n" +
+        "  -ms-flex: 1;\n" +
+        "  flex: 1;\n" +
+        "  width: 40%;\n" +
+        "  height: 40px;\n" +
+        "  float: left;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .numInputWrapper span.arrowUp:after {\n" +
+        "  border-bottom-color: #393939;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .numInputWrapper span.arrowDown:after {\n" +
+        "  border-top-color: #393939;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time.hasSeconds .numInputWrapper {\n" +
+        "  width: 26%;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time.time24hr .numInputWrapper {\n" +
+        "  width: 49%;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input {\n" +
+        "  background: transparent;\n" +
+        "  -webkit-box-shadow: none;\n" +
+        "  box-shadow: none;\n" +
+        "  border: 0;\n" +
+        "  border-radius: 0;\n" +
+        "  text-align: center;\n" +
+        "  margin: 0;\n" +
+        "  padding: 0;\n" +
+        "  height: inherit;\n" +
+        "  line-height: inherit;\n" +
+        "  color: #393939;\n" +
+        "  font-size: 14px;\n" +
+        "  position: relative;\n" +
+        "  -webkit-box-sizing: border-box;\n" +
+        "  box-sizing: border-box;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input.flatpickr-hour {\n" +
+        "  font-weight: bold;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input.flatpickr-minute,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input.flatpickr-second {\n" +
+        "  font-weight: 400;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input:focus {\n" +
+        "  outline: 0;\n" +
+        "  border: 0;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .flatpickr-time-separator,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .flatpickr-am-pm {\n" +
+        "  height: inherit;\n" +
+        "  display: inline-block;\n" +
+        "  float: left;\n" +
+        "  line-height: inherit;\n" +
+        "  color: #393939;\n" +
+        "  font-weight: bold;\n" +
+        "  width: 2%;\n" +
+        "  -webkit-user-select: none;\n" +
+        "  -moz-user-select: none;\n" +
+        "  -ms-user-select: none;\n" +
+        "  user-select: none;\n" +
+        "  -webkit-align-self: center;\n" +
+        "  -ms-flex-item-align: center;\n" +
+        "  align-self: center;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .flatpickr-am-pm {\n" +
+        "  outline: 0;\n" +
+        "  width: 18%;\n" +
+        "  cursor: pointer;\n" +
+        "  text-align: center;\n" +
+        "  font-weight: 400;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .flatpickr-am-pm:hover,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time input:focus,\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-time .flatpickr-am-pm:focus {\n" +
+        "  background: #f3f3f3;\n" +
+        "}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-input[readonly] {\n" +
+        "  cursor: pointer;\n" +
+        "}\n" +
+        "@-webkit-keyframes fpFadeInDown {\n" +
+        "  from {\n" +
+        "    opacity: 0;\n" +
+        "    -webkit-transform: translate3d(0, -20px, 0);\n" +
+        "    transform: translate3d(0, -20px, 0);\n" +
+        "  }\n" +
+        "  to {\n" +
+        "    opacity: 1;\n" +
+        "    -webkit-transform: translate3d(0, 0, 0);\n" +
+        "    transform: translate3d(0, 0, 0);\n" +
+        "  }\n" +
+        "}\n" +
+        "@keyframes fpFadeInDown {\n" +
+        "  from {\n" +
+        "    opacity: 0;\n" +
+        "    -webkit-transform: translate3d(0, -20px, 0);\n" +
+        "    transform: translate3d(0, -20px, 0);\n" +
+        "  }\n" +
+        "  to {\n" +
+        "    opacity: 1;\n" +
+        "    -webkit-transform: translate3d(0, 0, 0);\n" +
+        "    transform: translate3d(0, 0, 0);\n" +
+        "  }\n" +
+        "}" + "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar {\n" +
+        "  width: 210px;\n" +
+        "  height: 252px;\n" +
+        "  border-radius: 0;\n" +
+        "  box-shadow: none;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-current-month {\n" +
+        "  font-size: 14px;\n" +
+        "  padding-top: 8px;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdays {\n" +
+        "  width: 206px;\n" +
+        "  height: 24px;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdaycontainer {\n" +
+        "  padding-top: 4px;\n" +
+        "  padding-right: 2px;\n" +
+        "  height: 21px;\n" +
+        "  white-space: normal;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday {\n" +
+        "  font-size: 11px;\n" +
+        "  line-height: 10px;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer {\n" +
+        "  max-width: 206px;\n" +
+        "  min-width: 200px;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-months {\n" +
+        "  height: 32px;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-months .flatpickr-prev-month {\n" +
+        "  height: 24px;\n" +
+        "  padding: 7px;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-months .flatpickr-next-month {\n" +
+        "  height: 24px;\n" +
+        "  padding: 7px;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-months .flatpickr-current-month .numInputWrapper {\n" +
+        "  display: none;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-months .flatpickr-current-month input.cur-year {\n" +
+        "  display: none;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day.disabled {\n" +
+        "  color: rgba(57, 57, 57, 0.18);\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day {\n" +
+        "  height: 32px;\n" +
+        "  line-height: 32px;\n" +
+        "  border-radius: 0;\n" +
+        "  font-weight: bolder;\n" +
+        "  flex-basis: 29.42px;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day.today {\n" +
+        "  border: none;\n" +
+        "}\n" +
+        "\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer span:nth-child(7n+7) {\n" +
+        "  border-right: none;}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: \"\";position: absolute;top: 0px;left: 0px;width: 26px;height: 29px;display: inline-block;}\n" +
+        "@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {\n" +
+        "  #sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 28.42px;}\n" +
+        "  #sincloBox ul#chatTalk li.sinclo_re  .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: \"\";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;}\n" +
+        "}";
+    },
     //バナーを生成する関数
     sincloBannerTemplate: function(widget){
       var widgetWidth = $(window).width() - 20;
@@ -1980,10 +2653,18 @@ var socket, // socket.io
           ratio = ($(window).width() - 20) * (1/285);
         }
         html += '  <span id="mainImage" onclick="sinclo.operatorInfo.toggle()">';
-        if(widget.mainImage.match(/^fa/) !== null) {
-          html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:' + (ratio * 62) + 'px!important; height:' + (ratio * 70) + 'px!important;" alt="チャット画像"></i>';
+        if ( check.smartphone() ) {
+          if(widget.mainImage.match(/^fa/) !== null) {
+            html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * 14 + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像"></i>';
+          } else {
+            html += '    <img src="' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * 14 + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像">';
+          }
         } else {
-          html += '    <img src="' + widget.mainImage + '" width="' + (ratio * 62) + '" height="' + (ratio * 70) + '" style="width:' + (ratio * 62) + 'px!important; height:' + (ratio * 70) + 'px!important;" alt="チャット画像">';
+          if(widget.mainImage.match(/^fa/) !== null) {
+            html += '    <i class="sinclo-fal ' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important;" alt="チャット画像"></i>';
+          } else {
+            html += '    <img src="' + widget.mainImage + '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important; height:calc(' + (70 * ratio) + 'px* ((3 * ' + widget.headerTextSize +' + 36) / 81))!important;" alt="チャット画像">';
+          }
         }
         html += '  </span>';
       }
@@ -2320,6 +3001,7 @@ var socket, // socket.io
           common.widgetHandler.saveShownFlg();
           common.widgetHandler.stopToWatchResizeEvent();
           common.widgetHandler.beginToWatchResizeEvent();
+          common.widgetHandler.beginToWatchTabletResize();
           // テキストエリアの表示非表示
           if(!storage.l.get("textareaOpend") || storage.l.get("textareaOpend")  === "open") {
             sinclo.displayTextarea();
@@ -2469,6 +3151,19 @@ var socket, // socket.io
         console.log("_calcRemainingShowTimingSiteTimeMsec: " + (siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0));
         return siteAccessTimeMsec <= showIntervalMsec ? showIntervalMsec - siteAccessTimeMsec : 0;
       },
+      beginToWatchTabletResize: function() {
+        if(check.smartphone()){
+          return;
+        }
+      //タブレットの拡大縮小を取得する（スマホは対象外）
+        $(window).on('touchstart', function(){
+          console.log('タブレット画面サイズ監視開始');
+        });
+
+        $(window).on('touchend', function(){
+          console.log('タブレット画面サイズ監視終了');
+        });
+      },
       beginToWatchResizeEvent: function() {
         if(!check.smartphone()) {
           console.log("widgetHandler::beginToWatchResizeEvent");
@@ -2483,10 +3178,57 @@ var socket, // socket.io
           $(window).off('resize.change_widget_size', common.widgetHandler._handleResizeEvent);
         }
       },
+      _maximumReverseAnimation: function(){
+        if(check.smartphone()){
+          return;
+        }
+        console.log('「最大」設定時に最小化するアニメーションです');
+        $('#sincloWidgetBox').animate({
+          width: "400px"
+        });
+      },
+      _setFooterSize: function(){
+        if(check.isset(window.sincloInfo.custom) && check.isset(window.sincloInfo.custom.widget) && check.isset(window.sincloInfo.custom.widget.hideFotter) && window.sincloInfo.custom.widget.hideFotter){
+          return 0;
+        } else {
+          return 26;
+        }
+
+      },
+      _maximumAnimation: function(){
+        if(check.smartphone()){
+          return;
+        }
+        console.log('「最大」設定時に最大化するアニメーションです');
+        var footerSize = this._setFooterSize();
+        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + footerSize;
+        $('#chatTalk').css('height',$(window).height() - offset);
+        $('#sincloWidgetBox').animate({
+          width: $(window).width() + "px"
+        },400);
+      },
+      _widgetFitForWindow: function(){
+        console.log('<><><><><><><><><>最大設定!!!!<><><><><><><><><><>');
+        //他のウィジェットサイズタイプとは大きく違うため、別の関数を用意しました。
+        var footerSize = this._setFooterSize();
+        var offset = $('#widgetHeader').outerHeight() + $('#flexBoxWrap').outerHeight() + $('#sincloAccessInfo').outerHeight() + footerSize;
+        $('#chatTalk').css('height',$(window).height() - offset);
+        if($('#minimizeBtn').is(':hidden')){
+          //最大化時以外は横幅400px
+          $('#sincloWidgetBox').css('width',"400px");
+          return;
+        }
+        $('#sincloWidgetBox').css('width',$(window).width() + "px");
+        $('#chatTab').css('width',"100%");
+      },
       _handleResizeEvent: function() {
         console.log("<><><><><><><><><>widgetHandler::_handleResizeEvent");
         if(storage.s.get('widgetMaximized') === "true") {
           $('#sincloBox').css('height', 'auto');
+        }
+        if(Number(sincloInfo.widget.widgetSizeType) === 4 && !check.smartphone()){
+          common.widgetHandler._widgetFitForWindow();
+          return;
         }
         var windowHeight = $(window).innerHeight(),
           minCurrentWidgetHeight = common.widgetHandler._getMinWidgetHeight(),
@@ -3064,6 +3806,8 @@ var socket, // socket.io
              ||obj.messageType === sinclo.chatApi.messageType.start){
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.hearing
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.pulldown
+             ||obj.messageType === sinclo.chatApi.messageType.scenario.message.calendar
              ||obj.messageType === sinclo.chatApi.messageType.scenario.message.selection){
         return;
       }else if(obj.messageType === sinclo.chatApi.messageType.scenario.message.text
@@ -3090,8 +3834,8 @@ var socket, // socket.io
             html += "  <div class='reload_only_dot_center'></div>";
             html += "  <div class='reload_only_dot_right'></div>";
           }else{
-            //スマホかウィジェットサイズが大の場合
-              if(check.smartphone() || widget.widgetSizeType === 3){
+            //スマホかウィジェットサイズが大以上の場合
+              if(check.smartphone() || widget.widgetSizeType === 3  || widget.widgetSizeType === 4){
                 html += "<li class='effect_left_wait botNowTypingLarge'>";
               //ウィジェットサイズが中の場合
               }else if(widget.widgetSizeType === 2){
@@ -3202,7 +3946,7 @@ var socket, // socket.io
         }
         var coverWidth = widgetWidth;
       }else{
-        var coverWidth = sizeList.boxWidth;
+        var coverWidth = parseInt(sizeList.boxWidth);
       }
       var coverHeight = $('#chatTalk').outerHeight() + $('#flexBoxHeight').outerHeight();
       var loadPadding = Number(widget.widgetSizeType) * 29 + 61;
@@ -5003,7 +5747,8 @@ function emit(evName, data, callback){
     data.title = common.title();
   }
   if (evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChat" || evName === "sendChat" ||
-  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue" || evName === "beginBulkHearing" || evName === "sendParseSignature") {
+  evName === "storeScenarioMessage" || evName === "saveCustomerInfoValue" || evName === "beginBulkHearing" || evName === "sendParseSignature"
+  || evName === "hideScenarioMessages") {
     data.userId = userInfo.userId;
   }
   if (   evName === "connectSuccess" || evName === "sendWindowInfo" || evName === "sendAutoChatMessages" ||

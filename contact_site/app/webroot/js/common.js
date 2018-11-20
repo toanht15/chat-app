@@ -176,7 +176,7 @@ function replaceVariable(str,isSmartphone,type){
           //imgタグ有効化
           var img = unEscapeStr.match(imgTagReg);
           if(img !== null) {
-            imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+            imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img class = "+className+" "+img[1]+"></div>";
             a = a.replace(img[0], imgTag);
           }
         }
@@ -195,7 +195,7 @@ function replaceVariable(str,isSmartphone,type){
         //imgタグ有効化
         var img = unEscapeStr.match(imgTagReg);
         if(img !== null) {
-          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img class = "+className+" "+img[1]+"></div>";
           a = a.replace(img[0], imgTag);
         }
       } else {
@@ -223,11 +223,11 @@ function replaceVariable(str,isSmartphone,type){
   var choiseImg = unEscapeStr.match(choiseImgTagReg);
   //選択肢に画像を入れる場合
   if(img !== null && choiseImg !== null && type !== '6') {
-    imgTag = "<label "+choiseImg[1]+"><div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div></label>";
+    imgTag = "<label "+choiseImg[1]+"><div style='display:inline-block;width:100%;vertical-align:bottom;'><img class = "+className+" "+img[1]+"></div></label>";
     str = unEscapeStr.replace(choiseImg[0], imgTag);
   }
   else if(img !== null && choiseImg === null && type !== '6') {
-    imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+    imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img class = "+className+" "+img[1]+"></div>";
     str = unEscapeStr.replace(img[0], imgTag);
   }
   //チャット履歴の場合
