@@ -1207,7 +1207,7 @@
               break;
             case 12:
               // 復元対象でない場合はcnにcancelableを付与しない
-              if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.id)) {
+              if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
                 cn = "sinclo_se"
               } else {
                 cn = "cancelable sinclo_se";
@@ -1222,7 +1222,7 @@
             case 38:
             case 39:
               // 復元対象でない場合はcnにcancelableを付与しない
-              if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.id)) {
+              if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
                 cn = "sinclo_se"
               } else {
                 cn = "cancelable sinclo_se";
@@ -1467,7 +1467,7 @@
           // データから作成しているメッセージが現在起動しているシナリオの回答なら加算
           if(isHearingAnswer && typeof sinclo.scenarioApi.get("s_targetChatId") !== "undefined") {
             for(var i = 0; i < sinclo.scenarioApi.get("s_targetChatId").length; i++){
-              if(chat.id === sinclo.scenarioApi.get("s_targetChatId")[i]){
+              if(chat.chatId === sinclo.scenarioApi.get("s_targetChatId")[i]){
                 answerCount++;
               }
             }
