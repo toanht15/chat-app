@@ -229,7 +229,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="tCenter" width=" 5%"><?=$no?></td>
           <td class="tCenter" width="20%"><?= $val['TAutoMessage']['name']; ?></td>
-          <td class="targetBalloon" width="29%">
+          <td class="p10x targetBalloon" width="29%">
             <span class="conditionTypeLabel m10b">条件</span><span class="m10b actionValue"><?=h($conditionType)?></span>
             <span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=h($conditions)?></span>
           </td>
@@ -239,7 +239,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 1em; font-weight: bold;" width=" 5%">
             <?php
-              if(isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2) {
+              if(strcmp($val['TAutoMessage']['action_type'], 2) === 0 || (isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2)) {
                 echo '<span class="m10b">－</span>';
               } else {
                 echo '<span class="m10b">ON</span>';
@@ -248,7 +248,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 2em;" width=" 4%">
             <?php
-            if(isset($activity['cv']) && $activity['cv'] === 1) {
+            if(strcmp($val['TAutoMessage']['action_type'], 2) !== 0 && (isset($activity['cv']) && $activity['cv'] === 1)) {
               echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;"></i></span>';
             } else {
               echo '<span class="m10b"></span>';
@@ -257,7 +257,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 2em;" width=" 4%">
             <?php
-            if(isset($val['TAutoMessage']['send_mail_flg']) && $val['TAutoMessage']['send_mail_flg']) {
+            if(strcmp($val['TAutoMessage']['action_type'], 2) !== 0 && (isset($val['TAutoMessage']['send_mail_flg']) && $val['TAutoMessage']['send_mail_flg'])) {
               echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;"></i></span>';
             } else {
               echo '<span class="m10b"></span>';

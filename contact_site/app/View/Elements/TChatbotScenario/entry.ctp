@@ -57,7 +57,7 @@
             <div class="actionMenu">
                 <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_HEARING ?>)"
                    class="greenBtn btn-shadow commontooltip"
-                   data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">ヒアリング</a>
+                   data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力やラジオボタンまたはプルダウンによる選択、カレンダによる日付選択を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">ヒアリング</a>
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_HEARING ?>">
                     <ul>
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)">選択されたアクションの下に追加する</li>
@@ -65,19 +65,6 @@
                     </ul>
                 </div>
             </div>
-
-            <!-- 選択肢 -->
-<!--            <div class="actionMenu">-->
-<!--                <a ng-click="main.showOptionMenu(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)"-->
-<!--                   class="greenBtn btn-shadow commontooltip"-->
-<!--                   data-text="チャットボットに発言させたい選択式（択一式）メッセージを設定できるアクションです。">選択肢</a>-->
-<!--                <div class="actionMenuOption" id="actionMenu--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--">-->
-<!--                    <ul>-->
-<!--                        <li ng-click="main.addItem(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)">選択されたアクションの下に追加する</li>-->
-<!--                        <li ng-click="main.addItem(--><?//= C_SCENARIO_ACTION_SELECT_OPTION ?><!--)">一番下に追加する</li>-->
-<!--                    </ul>-->
-<!--                </div>-->
-<!--            </div>-->
 
             <!-- 条件分岐 -->
             <div class="actionMenu">
@@ -136,8 +123,8 @@
                    class="greenBtn btn-shadow commontooltip" data-text="送信したいファイルを設定できるアクションです。">ファイル送信</a>
                 <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_SEND_FILE ?>">
                     <ul>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>, 'after')">選択されたアクションの下に追加する</li>
-                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>, 'last')">一番下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>)">選択されたアクションの下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_SEND_FILE ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
             </div>

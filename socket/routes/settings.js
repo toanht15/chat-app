@@ -698,8 +698,10 @@ router.get("/", function (req, res, next) {
           "scenario_id": isNumeric(common.autoMessageSettings[siteKey][i].t_chatbot_scenario_id)
         });
       }
-      sendData.chat.settings['in_flg'] = common.chatSettings[siteKey].in_flg;
-      sendData.chat.settings['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
+      if(common.chatSettings[siteKey]) {
+        sendData.chat.settings['in_flg'] = common.chatSettings[siteKey].in_flg;
+        sendData.chat.settings['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
+      }
       sendData.customVariable = common.customerInfoSettings[siteKey];
       res.send(sendData);
     }

@@ -156,7 +156,7 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
     );
     foreach($selectVariablePriority as $key => $priority) {
       foreach($priority as $index => $attribute) {
-        if(array_key_exists($attribute, $data)) {
+        if(array_key_exists($attribute, $data) && !empty($data[$attribute])) {
           $value[$key] = $this->convertData($key, $data[$attribute]);
           break;
         }
@@ -170,6 +170,7 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
     $separatorStr = "";
     switch($key) {
       case self::INPUT_TYPE_TEL_ID:
+      case self::INPUT_TYPE_MOBILE_ID:
       case self::INPUT_TYPE_FAX_ID:
       case self::INPUT_TYPE_ZIP_ID:
         $separatorStr = '-';

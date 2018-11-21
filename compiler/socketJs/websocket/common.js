@@ -1120,6 +1120,7 @@ var socket, // socket.io
 
         /* ヒアリング */
         html += '#sincloBox ul#chatTalk li.sinclo_se.cancelable span.sinclo-text-line { text-decoration: underline; cursor: pointer; }';
+        html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
 
         /* ファイル受信  */
         if(Number(widget.widgetSizeType) == 1) {
@@ -1213,6 +1214,10 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap:hover { opacity: 0.8 }';
         html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { margin: 0 30px; color: ' + colorList['reBackgroundColor'] + '; font-size: ' + widget.reTextSize + 'px;}';
         html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
+
+        html += '#sincloBox #chatTalk li.sinclo_re select {cursor: pointer;}';
+        /* flatpickr カスタム値の方が強いため基本important指定 */
+        html += '#sincloBox #chatTalk li.sinclo_re div.flatpickr-calendar.disable { pointer-events: none!important; opacity: 0.5!important; }';
 
         if(colorList['widgetInsideBorderNone'] === 1){
           html += '      #sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { border-top: none!important;}';
@@ -1879,7 +1884,6 @@ var socket, // socket.io
         "  position: absolute;\n" +
         "  display: block;\n" +
         "  pointer-events: none;\n" +
-        "  border: solid transparent;\n" +
         "  content: \"\";\n" +
         "  height: 0;\n" +
         "  width: 0;\n" +
@@ -2531,8 +2535,10 @@ var socket, // socket.io
         "}\n" +
         "\n" +
         "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdaycontainer {\n" +
-        "  padding-top: 8px;\n" +
+        "  padding-top: 4px;\n" +
         "  padding-right: 2px;\n" +
+        "  height: 21px;\n" +
+        "  white-space: normal;\n" +
         "}\n" +
         "\n" +
         "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday {\n" +
@@ -2576,6 +2582,7 @@ var socket, // socket.io
         "  line-height: 32px;\n" +
         "  border-radius: 0;\n" +
         "  font-weight: bolder;\n" +
+        "  flex-basis: 29.42px;\n" +
         "}\n" +
         "\n" +
         "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day.today {\n" +
@@ -2583,7 +2590,11 @@ var socket, // socket.io
         "}\n" +
         "\n" +
         "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer span:nth-child(7n+7) {\n" +
-        "  border-right: none;\n" +
+        "  border-right: none;}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: \"\";position: absolute;top: 0px;left: 0px;width: 26px;height: 29px;display: inline-block;}\n" +
+        "@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {\n" +
+        "  #sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 28.42px;}\n" +
+        "  #sincloBox ul#chatTalk li.sinclo_re  .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: \"\";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;}\n" +
         "}";
     },
     //バナーを生成する関数
@@ -3983,6 +3994,16 @@ var socket, // socket.io
     },
     waitDelayTimer: function(){
       return 20;
+    },
+    stringReplaceProcessForGA: function(link){
+      console.log('GA連携用に電話番号とメールアドレスの修正を行います');
+      /*href属性値のみ取得*/
+      var sliceStart = link.indexOf('"') + 1;
+      var sliceEnd = link.indexOf('"', sliceStart);
+      link = link.slice(sliceStart,sliceEnd);
+      link = link.replace("mailto:","");
+      link = link.replace("tel:","");
+      return link;
     }
   };
 
@@ -5785,7 +5806,7 @@ function link(word,link,eventLabel) {
   /*リンクをクリックした場合は必ずこの関数を呼び出す
   * ga連携のアクションがここで起きるため、リンク・電話番号・メールのどれであるかを引数として渡したい
   */
-  console.log("ga連携しまーす");
+  console.log("ga連携します");
   console.log("押されたやつのテキストは" + word + "値は" + link + "イベントラベルは" + eventLabel + "です");
   if(eventLabel === "clickMail"){
     console.log('これはメールです。もし画像リンクなら文字列を修正します');
@@ -5815,7 +5836,14 @@ function link(word,link,eventLabel) {
     storage.s.set('requestFlg',true);
   }
   if(typeof ga == "function") {
-    ga('send', 'event', 'sinclo', eventLabel, link, 1);
+    if(eventLabel === "clickLink"){
+      //リンククリック時に登録する値は今までと変わりないようにする
+      ga('send', 'event', 'sinclo', eventLabel, link, 1);
+    } else {
+      //メール及び電話の時は登録する文字列を修正して登録する
+      link = common.stringReplaceProcessForGA(link);
+      ga('send', 'event', 'sinclo', eventLabel, link, 1);
+    }
   }
   socket.emit('link', data);
 }

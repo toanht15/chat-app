@@ -956,7 +956,9 @@ class ContractController extends AppController
           "del_flg" => $scenario['del_flg'],
           "sort" => $scenario['sort']
         ));
-        $this->TChatbotScenario->save();
+				if(!$this->TChatbotScenario->save()) {
+					throw new Exception($this->TChatbotScenario->validationError);
+				}
         if(array_key_exists('relation_auto_message_index', $scenario)) {
           $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
         }
@@ -1019,7 +1021,9 @@ class ContractController extends AppController
           "del_flg" => $scenario['del_flg'],
           "sort" => $sortNum
         ));
-        $this->TChatbotScenario->save();
+        if(!$this->TChatbotScenario->save()) {
+        	throw new Exception($this->TChatbotScenario->validationError);
+				}
         if(array_key_exists('relation_auto_message_index', $scenario)) {
           $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
         }
