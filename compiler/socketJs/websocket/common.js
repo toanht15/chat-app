@@ -1215,6 +1215,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re p.sincloButtonWrap span.sincloButton { margin: 0 30px; color: ' + colorList['reBackgroundColor'] + '; font-size: ' + widget.reTextSize + 'px;}';
         html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
 
+        html += '#sincloBox #chatTalk li.sinclo_re select {cursor: pointer;}';
         /* flatpickr カスタム値の方が強いため基本important指定 */
         html += '#sincloBox #chatTalk li.sinclo_re div.flatpickr-calendar.disable { pointer-events: none!important; opacity: 0.5!important; }';
 
@@ -1883,7 +1884,6 @@ var socket, // socket.io
         "  position: absolute;\n" +
         "  display: block;\n" +
         "  pointer-events: none;\n" +
-        "  border: solid transparent;\n" +
         "  content: \"\";\n" +
         "  height: 0;\n" +
         "  width: 0;\n" +
@@ -2590,11 +2590,11 @@ var socket, // socket.io
         "}\n" +
         "\n" +
         "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer span:nth-child(7n+7) {\n" +
-        "  border-right: none;\n" +
-        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: \"\";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;}\n" +
-        "}" + "@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {\n" +
+        "  border-right: none;}\n" +
+        "#sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: \"\";position: absolute;top: 0px;left: 0px;width: 26px;height: 29px;display: inline-block;}\n" +
+        "@media screen and (-ms-high-contrast: active), screen and (-ms-high-contrast: none) {\n" +
         "  #sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 28.42px;}\n" +
-        "  #sincloBox ul#chatTalk li.sinclo_re  .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: \"\";position: absolute;top: 0px;left: 0px;width: 26px;height: 29px;display: inline-block;}\n" +
+        "  #sincloBox ul#chatTalk li.sinclo_re  .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: \"\";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;}\n" +
         "}";
     },
     //バナーを生成する関数

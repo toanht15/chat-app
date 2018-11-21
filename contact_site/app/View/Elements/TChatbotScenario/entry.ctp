@@ -53,18 +53,18 @@
                     </ul>
                 </div>
             </div>
-          <!-- ヒアリング -->
-          <div class="actionMenu">
-            <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_HEARING ?>)"
-               class="greenBtn btn-shadow commontooltip"
-               data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">ヒアリング</a>
-            <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_HEARING ?>">
-              <ul>
-                <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)">選択されたアクションの下に追加する</li>
-                <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>, true)">一番下に追加する</li>
-              </ul>
+            <!-- ヒアリング -->
+            <div class="actionMenu">
+                <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_HEARING ?>)"
+                   class="greenBtn btn-shadow commontooltip"
+                   data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力やラジオボタンまたはプルダウンによる選択、カレンダによる日付選択を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">ヒアリング</a>
+                <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_HEARING ?>">
+                    <ul>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>)">選択されたアクションの下に追加する</li>
+                        <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_HEARING ?>, true)">一番下に追加する</li>
+                    </ul>
+                </div>
             </div>
-          </div>
 
           <!-- 一括ヒアリング -->
           <div class="actionMenu">
@@ -167,6 +167,19 @@
                         <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>, true)">一番下に追加する</li>
                     </ul>
                 </div>
+            </div>
+
+          <!-- リード登録 -->
+            <div class="actionMenu">
+              <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>)"
+                 class="greenBtn btn-shadow commontooltip"
+                 data-text="シナリオ内で取得した変数をリードリストとして登録できます。登録したリストは、CSVで出力することが可能です。">リード登録</a>
+              <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>">
+                <ul>
+                  <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>)">選択されたアクションの下に追加する</li>
+                  <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>, true)">一番下に追加する</li>
+                </ul>
+              </div>
             </div>
 
             <!-- メール送信 -->
