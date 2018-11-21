@@ -183,7 +183,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの追加
   this.addItem = function(actionType, isAppendAtLast) {
-    var isAppendAtLast = isAppendAtLast || false;
+    isAppendAtLast = isAppendAtLast || false;
     if (actionType in $scope.actionList) {
       var item = $scope.actionList[actionType];
       item.actionType = actionType.toString();
@@ -353,6 +353,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       angular.forEach($scope.setActionList, $scope.watchSetActionList);
     });
   });
+
+  $scope.bulkHearingInputMap = {
+    1: "会社名",
+    2: "名前",
+    3: "郵便番号",
+    4: "住所 ",
+    5: "部署名",
+    6: "役職",
+    7: "電話番号",
+    8: "FAX番号",
+    9: "携帯番号",
+   10: "メールアドレス",
+  };
 
   // 各アクション内の変更を検知し、プレビューのメッセージを表示更新する
   $scope.watchSetActionList = function(action, index) {
@@ -606,6 +619,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (newObject.elseEnabled && newObject.elseAction.actionType == '1' && newObject.elseAction.action.message) {
           document.getElementById('action' + index + '_else-message').innerHTML = $scope.widget.createMessage(newObject.elseAction.action.message);
         }
+      }
+
+      // 一括ヒアリング
+      if ( newObject.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?> && newObject.multipleHearings.length > 0) {
+        var oldHearings = oldObject.multipleHearings;
+        var newHearings = newObject.multipleHearings;
+        newHearings.forEach(function(elm, idx, arr){
+          if(oldHearings && oldHearings[idx] && oldHearings[idx].inputType !== elm.inputType) {
+            var text = $scope.bulkHearingInputMap[Number(newHearings[idx].inputType)];
+            newHearings[idx].label = text;
+            newHearings[idx].variableName = text;
+          }
+        });
       }
     }, true);
   };
@@ -1103,6 +1129,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     } else if (actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
       targetObjList = $scope.setActionList[actionStep].addCustomerInformations;
       selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if (actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+      targetObjList = $scope.setActionList[actionStep].multipleHearings;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+      limitNum = 10;
     }
 
     if (targetObjList !== "" && selector !== "") {
@@ -1445,7 +1475,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).then(function() {
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
       var targetObjList = $scope.setActionList[actionStep].multipleHearings;
-      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 10)
     });
   };
 

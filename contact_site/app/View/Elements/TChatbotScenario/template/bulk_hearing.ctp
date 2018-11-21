@@ -3,17 +3,17 @@
   <ul>
     <div class='grid-container-bulk-hearing grid-container-header'>
       <div class='area-require'>必須<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="必須項目とする場合はチェックを付けます。（スキップ可能とする場合はチェックを外します）">?</icon></span>
+                                                                      data-tooltip="必須項目とする場合はチェックを付けます。">?</icon></span>
       </div>
       <div class='area-name'>属性<span class="questionBalloon"><icon class="questionBtn"
-                                                                    data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の回答内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。<br><br>例）変数名：名前　⇒　{{showExpression('名前')}}様からのお問い合わせを受付いたしました。">?</icon></span>
+                                                                    data-tooltip="取得対象とする値の種別を設定します。">?</icon></span>
       </div>
       <div class='area-type'>ラベル名<span class="questionBalloon"><icon class="questionBtn"
-                                                                    data-tooltip="ヒアリングの回答を入力する形式を指定します。<br>＜タイプ＞<br>テキスト(1行)　 　 ：フリーテキスト入力（改行不可）<br>テキスト(複数行)　 ：フリーテキスト入力（改行可）<br>ラジオボタン　　　：ラジオボタン形式の択一選択<br>プルダウン　　　　：プルダウン形式の択一選択<br>カレンダー　　　　：カレンダーから日付を選択"
+                                                                    data-tooltip="取得後に表示するフォームのラベル名を指定します。"
                                                                     data-tooltip-width="30em">?</icon></span>
       </div>
       <div class='area-variable'>変数名<span class="questionBalloon"><icon class="questionBtn"
-                                                                        data-tooltip="チャットボットが自動送信する質問内容を設定します。<br><br>例）お名前を入力して下さい。">?</icon></span>
+                                                                        data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の回答内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。<br><br>例）変数名：名前　⇒　{{showExpression('名前')}}様からのお問い合わせを受付いたしました。">?</icon></span>
       </div>
 
     </div>

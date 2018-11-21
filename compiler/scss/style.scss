@@ -7705,8 +7705,8 @@ ul.naviBtn {
                     padding-bottom: 0;
                     display: -ms-grid;
                     display: grid;
-                    grid-template-columns: 50px 175px 175px 1fr 48px;
-                    -ms-grid-columns: 50px 175px 175px 1fr 48px;
+                    grid-template-columns: 50px 150px 230px 1fr 48px;
+                    -ms-grid-columns: 50px 150px 230px 1fr 48px;
                     grid-template-rows: auto 1fr;
                     -ms-grid-rows: auto 1fr;
                     grid-template-areas: 'g1 g2 g3 g4 g5' 'g1 g2 g3 g4 g5';
@@ -7745,7 +7745,7 @@ ul.naviBtn {
                         -ms-grid-column: 2;
                         -ms-grid-row: 1;
                         select {
-                          width: 170px;
+                          width: 145px;
                         }
                       }
 
@@ -7755,7 +7755,7 @@ ul.naviBtn {
                         -ms-grid-column: 3;
                         -ms-grid-row: 1;
                         input {
-                          width: 170px;
+                          width: 225px;
                         }
                       }
 

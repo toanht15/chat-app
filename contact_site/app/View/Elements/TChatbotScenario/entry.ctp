@@ -70,7 +70,7 @@
           <div class="actionMenu">
             <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_BULK_HEARING ?>)"
                class="greenBtn btn-shadow commontooltip"
-               data-text="チャットボットから投げかけたい質問（ヒアリング項目）を設定し、サイト訪問者からのテキスト入力を受け付けるアクションです。ヒアリング項目は複数設定することが可能です。">一括ヒアリング</a>
+               data-text="サイト訪問者からのテキスト入力内容から指定した属性に該当する内容を抽出し、フォーム形式で入力内容を確認するアクションです。フォームで表示された抽出内容は修正が可能です。">一括ヒアリング</a>
             <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_BULK_HEARING ?>">
               <ul>
                 <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_BULK_HEARING ?>)">選択されたアクションの下に追加する</li>
@@ -185,10 +185,10 @@
     </div>
     <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">
       <!-- アクション設定一覧 -->
-      <li ng-repeat="(setActionId, setItem) in setActionList" ng-model="setItem" id="action{{setActionId}}_setting" class="set_action_item" validate-action ng-focus="main.setFocusActionIndex(setActionId)">
+      <li ng-repeat="(setActionId, setItem) in setActionList" ng-model="setItem" id="action{{setActionId}}_setting" class="set_action_item" validate-action>
         <h4 class="handle"><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}} <i class="error errorBtn" ng-if="!setItem.$valid"></i></a></h4>
         <?= $this->element('TChatbotScenario/templates'); ?>
-        <a ng-if="setItem.actionType !== '12'" class="btn-shadow redBtn closeBtn" ng-click="main.removeItem(setActionId)">
+        <a ng-click="main.removeItem(setActionId)" class="btn-shadow redBtn closeBtn">
           <?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?>
         </a>
 <!--          <a class="btn-shadow redBtn closeBtn"></a>-->
