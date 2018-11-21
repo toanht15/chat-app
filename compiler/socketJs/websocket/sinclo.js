@@ -1206,6 +1206,7 @@
               cn = "sinclo_se";
               break;
             case 12:
+            case 36:
               // 復元対象でない場合はcnにcancelableを付与しない
               if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
                 cn = "sinclo_se"
@@ -1217,16 +1218,10 @@
             case 33:
             case 34:
             case 35:
-            case 36:
             case 37:
             case 38:
             case 39:
-              // 復元対象でない場合はcnにcancelableを付与しない
-              if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
-                cn = "sinclo_se"
-              } else {
-                cn = "cancelable sinclo_se";
-              }
+              cn = "sinclo_se"
               isHearingAnswer = true;
               break;
             case 90:
