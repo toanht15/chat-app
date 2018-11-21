@@ -6,7 +6,7 @@
   <?php endif; ?>
   <div id='statistic_title'>
     <div class="fLeft"><i class="fal fa-chart-line fa-2x"></i></div>
-    <h1>選択式メッセージランキング</h1>
+    <h1>メッセージランキング</h1>
   </div>
 
   <?php echo $this->element('Statistics/baseForMessageRanking'); ?>

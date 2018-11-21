@@ -23,21 +23,6 @@
         <?= $this->Form->input('dateForm', array('type'=>'text','name' => 'datefilter','id' => 'hourlyForm',
           'div'=>false, 'label'=>false,'style' => 'width:11em;cursor:pointer;display:none','value' => substr($type,0,10),'placeholder' => date("Y/m/d "),'autocomplete'=>'off')); ?>
         <b id = 'triangle'></b>
-        <span id="autoMessagefilter" style="margin-left: 30px">フィルター：</span>
-
-        <?= $this->Form->input('filterForm', array('type'=>'select','name' => 'autoMessagefilter','onChange' => '',
-          'div'=>false, 'style' => 'vertical-align:middle; margin-left: 10px;','label'=>false,'options'=>array(
-              'すべて'=>'すべて',
-            '初回訪問3秒後'=>'初回訪問3秒後',
-            '時別'=>'時別',
-            '2回目以降訪問3秒後' => '2回目以降訪問3秒後',
-            'ページ滞在10秒後' => 'ページ滞在10秒後',
-            '発言内容（資料請求）' => '発言内容（資料請求）',
-            '【sinclo】初回訪問／ページ5秒' => '【sinclo】初回訪問／ページ5秒',
-            '時間外Sorry' => '時間外Sorry',
-            '上限超過Sorry' => '上限超過Sorry',
-            '離席Sorry' => '離席Sorry'),
-          'selected' => 'すべて')); ?>
         <?= $this->Form->end(); ?>
 
       </left-parts>
@@ -163,8 +148,7 @@
         $start = 1;
         $end = 12; ?>
         <tr>
-          <th class="thMinWidth">オートメッセージ名称</th>
-          <th class="thMinWidth">選択肢</th>
+          <th class="thMinWidth">メッセージ</th>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <th class="thMinWidthDayly"><?= $i.'月' ?></th>
           <?php } ?>
@@ -175,8 +159,7 @@
         $start = 1;
         $end = $daylyEndDate; ?>
         <tr>
-          <th class="thMinWidth">オートメッセージ名称</th>
-          <th class="thMinWidth">選択肢</th>
+          <th class="thMinWidth">メッセージ</th>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <th class="thMinWidthDayly"><?= $i.'日' ?></th>
           <?php } ?>
@@ -187,8 +170,7 @@
         $start = 0;
         $end = 23; ?>
         <tr>
-          <th class="thMinWidth">オートメッセージ名称</th>
-          <th class="thMinWidth">選択肢</th>
+          <th class="thMinWidth">メッセージ</th>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <th class = "thMinWidthTimely"><?= sprintf("%02d",$i).'-'.sprintf("%02d",$i+1) ?></th>
           <?php } ?>
@@ -199,8 +181,7 @@
       <tbody>
       <?php if($date == '日別' or $date == '月別') { ?>
         <tr>
-          <td class = 'tooltip'>初回訪問3秒後</td>
-          <td class = 'tooltip'>主な特徴（他社との違い）</td>
+          <td class = 'autoMessage tooltip'>主な特徴（他社との違い）</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]);?></td>
@@ -212,8 +193,7 @@
           <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
         </tr>
         <tr>
-          <td class = 'tooltip'>初回訪問3秒後</td>
-          <td class = 'tooltip'>機能について</td>
+          <td class = 'autoMessage tooltip'>機能について</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['widgetDatas']['widgetNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -225,8 +205,7 @@
           <td><?php echo number_format($data['widgetDatas']['allWidgetNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'tooltip' >チャットリクエスト件数</td>
-          <td id="chatRequestLabel" class = 'tooltip' >チャットリクエスト件数</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >当サイトに対してご意見、ご要望などがございましたらご自由にご記入ください。</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -238,8 +217,7 @@
           <td><?php echo number_format($data['requestDatas']['allRequestNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'tooltip' >2回目以降訪問3秒後</td>
-          <td id="chatRequestLabel" class = 'tooltip' >導入事例が知りたい</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >お客様のお住いのエリアをお選びください。</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -251,8 +229,7 @@
           <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'tooltip' >ページ滞在10秒後</td>
-          <td id="chatRequestLabel" class = 'tooltip' >無料トライアルに申し込む</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >料金について</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -264,8 +241,7 @@
           <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'tooltip' >【sinclo】初回訪問／ページ5秒</td>
-          <td id="chatRequestLabel" class = 'tooltip' >資料請求</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >資料請求</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php
             if($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)] !== "" && $data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)] !== ""
@@ -275,8 +251,7 @@
           <td><?php echo number_format($data['responseDatas']['allResponseNumberData']+$data['abandonRequestDatas']['allAbandonRequestNumberData']+$data['coherentDatas']['allDenialNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'tooltip' >【sinclo】初回訪問／ページ5秒</td>
-          <td id="chatRequestLabel" class = 'tooltip' >料金について</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >このようにチャット形式でアンケートを自由に作成することが可能です。料金について</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['responseDatas']['responseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -288,8 +263,7 @@
           <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'tooltip' >【sinclo】初回訪問／ページ5秒</td>
-          <td id="chatRequestLabel" class = 'tooltip' >無料トライアルに申し込む</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >無料トライアルに申し込む</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -301,21 +275,7 @@
           <td><?php echo number_format($data['abandonRequestDatas']['allAbandonRequestNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'tooltip' >【sinclo】初回訪問／ページ5秒</td>
-          <td id="chatRequestLabel" class = 'tooltip' >機能について</td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <?php if(is_int($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
-              <td><?php echo number_format($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
-            <?php }
-            else { ?>
-              <td><?php echo ($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
-            <?php } ?>
-          <?php } ?>
-          <td><?php echo number_format($data['coherentDatas']['allDenialNumberData']) ?></td>
-        </tr>
-        <tr>
-          <td id="chatRequestLabel" class = 'tooltip' >合計</td>
-          <td id="chatRequestLabel" class = 'tooltip' ></td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >合計</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['coherentDatas']['denialNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -330,31 +290,21 @@
 
       else if($date == '時別') { ?>
         <tr>
-          <td class = 'tooltip'>合計アクセス件数</td>
-          <td class = 'tooltip'>合計アクセス件数</td>
+          <td class = 'autoMessage tooltip'>資料請求</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo number_format($data['accessDatas']['accessNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
           <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
         </tr>
         <tr>
-          <td class = 'tooltip'>ウィジェット表示件数</td>
-          <td class = 'tooltip'>ウィジェット表示件数</td>
+          <td class = 'autoMessage tooltip'>導入事例が知りたい</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo number_format($data['widgetDatas']['widgetNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
           <td><?php echo number_format($data['widgetDatas']['allWidgetNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'tooltip'>チャットリクエスト件数
-            <div class="questionBalloon questionBalloonPosition11">
-              <icon class="questionBtn">？</icon>
-            </div>
-          </td>
-          <td id="chatRequestLabel" class = 'tooltip'>チャットリクエスト件数
-            <div class="questionBalloon questionBalloonPosition11">
-              <icon class="questionBtn">？</icon>
-            </div>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip'>料金について
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo number_format($data['requestDatas']['requestNumberData'][sprintf("%02d",$i).':00']) ?></td>
@@ -362,15 +312,7 @@
           <td><?php echo number_format($data['requestDatas']['allRequestNumberData']) ?></td>
         </tr>
         <tr>
-          <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>自動返信応対件数
-            <div class="questionBalloon questionBalloonPosition8">
-              <icon class="questionBtn">？</icon>
-            </div>
-          </td>
-          <td id = 'chatAutomaticResponseLabel' class = 'tooltip'>自動返信応対件数
-            <div class="questionBalloon questionBalloonPosition8">
-              <icon class="questionBtn">？</icon>
-            </div>
+          <td id = 'chatAutomaticResponseLabel' class = 'autoMessage tooltip'>無料トライアルに申し込む
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo number_format($data['automaticResponseData']['automaticResponseNumberData'][sprintf("%02d",$i).':00']) ?></td>
@@ -378,16 +320,15 @@
           <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
         </tr>
         <tr>
-          <td id = 'chatLinkClickTooltip' class = 'tooltip'>リンククリック件数
-            <div class="questionBalloon questionBalloonPosition8s">
-              <icon class="questionBtn">？</icon>
-            </div>
+          <td id = 'chatLinkClickTooltip' class = 'autoMessage tooltip'>機能について
           </td>
-          <td id = 'chatLinkClickTooltip' class = 'tooltip'>リンククリック件数
-            <div class="questionBalloon questionBalloonPosition8s">
-              <icon class="questionBtn">？</icon>
-            </div>
-          </td>
+          <?php for ($i = $start; $i <= $end; $i++) { ?>
+            <td><?php echo number_format($data['linkDatas']['linkNumberData'][sprintf("%02d",$i).':00']) ?></td>
+          <?php } ?>
+          <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
+        </tr>
+        <tr>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >合計</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo number_format($data['linkDatas']['linkNumberData'][sprintf("%02d",$i).':00']) ?></td>
           <?php } ?>
@@ -397,7 +338,7 @@
       <?php } ?>
       </tbody>
     </table>
-    <?=$this->Form->create('statistics', ['action' => 'forChat']);?>
+    <?=$this->Form->create('statistics', ['action' => 'forMessageRanking']);?>
     <?=$this->Form->hidden('outputData')?>
     <?=$this->Form->end();?>
   </div>

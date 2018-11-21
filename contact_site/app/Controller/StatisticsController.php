@@ -199,17 +199,17 @@ class StatisticsController extends AppController {
 
     //各企業の日付けの範囲
     $rangeData = $this->determineRange();
-    $this->set('companyRangeDate',$rangeData['companyRangeDate']);
-    $this->set('companyRangeYear',$rangeData['companyRangeYear']);
-    $this->set('date',$date);
-    $this->set('daylyEndDate',date("d",strtotime('last day of' .$type)));
-    $this->set('type',$type);
-    $this->set('data',$data);
-    if($date == '時別') {
-      $this->set('datePeriod',$this->request->data['datefilter']);
+    $this->set('companyRangeDate', $rangeData['companyRangeDate']);
+    $this->set('companyRangeYear', $rangeData['companyRangeYear']);
+    $this->set('date', $date);
+    $this->set('daylyEndDate', date("d", strtotime('last day of' . $type)));
+    $this->set('type', $type);
+    $this->set('data', $data);
+    if ($date == '時別') {
+      $this->set('datePeriod', $this->request->data['datefilter']);
     }
-    if($date == '日別' || $date == '月別') {
-      $this->set('datePeriod',date("Y-m-d"));
+    if ($date == '日別' || $date == '月別') {
+      $this->set('datePeriod', date("Y-m-d"));
     }
   }
 

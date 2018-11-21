@@ -262,6 +262,11 @@ $(window).load(function(){
             document.getElementById('StatisticsForOperatorForm').submit();
           },0);
         }
+        else if(document.getElementById("StatisticsForMessageRankingForm") != null) {
+          setTimeout(function(){
+            document.getElementById('StatisticsForMessageRankingForm').submit();
+          },0);
+        }
       }
     }
   });
@@ -284,6 +289,11 @@ $(window).load(function(){
         else if(document.getElementById("StatisticsForOperatorForm") != null) {
           setTimeout(function(){
             document.getElementById('StatisticsForOperatorForm').submit();
+          },0);
+        }
+        else if(document.getElementById("StatisticsForMessageRankingForm") != null) {
+          setTimeout(function(){
+            document.getElementById('StatisticsForMessageRankingForm').submit();
           },0);
         }
       }
@@ -338,6 +348,11 @@ $(window).load(function(){
           document.getElementById('StatisticsForOperatorForm').submit();
         },0);
       }
+      else if(document.getElementById("StatisticsForMessageRankingForm") != null) {
+        setTimeout(function(){
+          document.getElementById('StatisticsForMessageRankingForm').submit();
+        },0);
+      }
     }
   });
 
@@ -356,6 +371,15 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
+  });
+
+  $(".autoMessage").text(function(index, currentText) {
+    var maxLength = 29;
+    if(currentText.length >= maxLength) {
+      return currentText.substr(0, maxLength) + "...";
+    } else {
+      return currentText
+    }
   });
 
   // DataTablesの検索時にツールチップを非表示にする
