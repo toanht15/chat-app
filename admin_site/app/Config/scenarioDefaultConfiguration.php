@@ -202,7 +202,13 @@ sinclo@medialink-ml.co.jp
             "actionType" => "1",
             "messageIntervalTimeSec" => "2",
             "message" => "この度は、お問い合わせ頂き誠にありがとうございました。"
-        )
+        	),
+					"7" => array(
+						"actionType" => "1",
+						"messageIntervalTimeSec" => "2",
+						"chatTextArea" => "2",
+						"message" => "[] メニューに戻る"
+					)
       	)
   	  ),
       'del_flg' => 0,
@@ -304,7 +310,13 @@ sinclo@medialink-ml.co.jp
             "actionType" => "1",
             "messageIntervalTimeSec" => "2",
             "message" => "この度は、お問い合わせ頂き誠にありがとうございました。"
-          )
+          ),
+					"6" => array(
+						"actionType" => "1",
+						"messageIntervalTimeSec" => "2",
+						"chatTextArea" => "2",
+						"message" => "[] メニューに戻る"
+					)
         )
       ),
       'del_flg' => 0,
