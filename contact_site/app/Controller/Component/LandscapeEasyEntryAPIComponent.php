@@ -178,6 +178,9 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
       case self::INPUT_TYPE_PERSONAL_NAME_ID:
         $separatorStr = '　';
         break;
+      case self::INPUT_TYPE_ADDRESS_ID:
+        $separatorStr = ' ';
+        break;
     }
     if(!empty($separatorStr)) {
       return join($separatorStr, $value);
