@@ -200,7 +200,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // アクションの追加
   this.addItem = function(actionType, isAppendAtLast) {
-    var isAppendAtLast = isAppendAtLast || false;
+    isAppendAtLast = isAppendAtLast || false;
     if (actionType in $scope.actionList) {
       var item = $scope.actionList[actionType];
       item.actionType = actionType.toString();
@@ -370,6 +370,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   });
 
+  $scope.bulkHearingInputMap = {
+    1: "会社名",
+    2: "名前",
+    3: "郵便番号",
+    4: "住所 ",
+    5: "部署名",
+    6: "役職",
+    7: "電話番号",
+    8: "FAX番号",
+    9: "携帯番号",
+   10: "メールアドレス",
+  };
+
   // 各アクション内の変更を検知し、プレビューのメッセージを表示更新する
   $scope.watchSetActionList = function(action, index) {
     // watchの破棄
@@ -404,7 +417,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
       // エラーメッセージ
       if (typeof newObject.errorMessage !== 'undefined' && newObject.errorMessage !== '') {
-        document.getElementById('action' + index + '_error_message').innerHTML = $scope.widget.createMessage(newObject.errorMessage);
+        if(document.getElementById('action' + index + '_error_message')) {
+          document.getElementById('action' + index + '_error_message').innerHTML = $scope.widget.createMessage(newObject.errorMessage);
+        }
       }
 
         // hearings
@@ -623,6 +638,19 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         if (newObject.elseEnabled && newObject.elseAction.actionType == '1' && newObject.elseAction.action.message) {
           document.getElementById('action' + index + '_else-message').innerHTML = $scope.widget.createMessage(newObject.elseAction.action.message);
         }
+      }
+
+      // 一括ヒアリング
+      if ( newObject.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?> && newObject.multipleHearings.length > 0) {
+        var oldHearings = oldObject.multipleHearings;
+        var newHearings = newObject.multipleHearings;
+        newHearings.forEach(function(elm, idx, arr){
+          if(oldHearings && oldHearings[idx] && oldHearings[idx].inputType !== elm.inputType) {
+            var text = $scope.bulkHearingInputMap[Number(newHearings[idx].inputType)];
+            newHearings[idx].label = text;
+            newHearings[idx].variableName = text;
+          }
+        });
       }
     }, true);
   };
@@ -1129,6 +1157,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     } else if (actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
       targetObjList = $scope.setActionList[actionStep].leadRegister;
       selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if (actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+      targetObjList = $scope.setActionList[actionStep].multipleHearings;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+      limitNum = 10;
     }
 
     if (targetObjList !== "" && selector !== "") {
@@ -1491,7 +1523,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }).then(function() {
       var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
       var targetObjList = $scope.setActionList[actionStep].multipleHearings;
-      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList, 10)
     });
   };
 
@@ -1795,7 +1827,36 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
       $scope.actionStep++;
       $scope.doAction();
+    } else
+    if ($scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+      chatBotTyping();
+      $.post("<?=$this->Html->url(['controller'=>'CompanyData', 'action' => 'parseSignature'])?>", JSON.stringify({
+        'accessToken': 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK', //FIXME 隠蔽必須
+        'targetText': message
+      }), null, 'json').done(function(result){
+        $scope.$broadcast('addReForm', {
+          prefix: 'action' + $scope.actionStep + '_bulk-hearing',
+          isConfirm: true,
+          bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
+          resultData: result
+        });
+        $scope.$broadcast('switchSimulatorChatTextArea', false);
+        chatBotTypingRemove();
+      });
     }
+  });
+
+  $scope.$on('pressFormOK', function (event, message) {
+    $('#chatTalk > div:last-child').fadeOut('fast').promise().then(function(){
+      $scope.$broadcast('addReForm', {
+        prefix: 'action' + $scope.actionStep + '_bulk-hearing',
+        isConfirm: false,
+        bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
+        resultData: {data:message}
+      });
+      $scope.actionStep++;
+      $scope.doAction();
+    });
   });
 
   $scope.addVisitorHearingMessage = function (message) {
@@ -2073,7 +2134,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             $scope.actionStep++;
             $scope.doAction();
           }
-        }
+        } else
+        if (actionDetail.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+          chatBotTypingRemove();
+          $scope.doBulkHearingAction(actionDetail);
+        } else
         chatBotTypingRemove();
       }, parseInt(time, 10) * 1000);
     } else {
@@ -2303,6 +2368,13 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       $scope.hearingIndex = 0;
       $scope.actionStep++;
       $scope.doAction();
+    }
+  };
+
+  $scope.doBulkHearingAction = function(actionDetail) {
+    if(actionDetail.multipleHearings) {
+      $scope.$broadcast('allowInputLF', true, "1");
+      $scope.$broadcast('switchSimulatorChatTextArea', true);
     }
   };
 

@@ -963,7 +963,7 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'multipleHearing' => [
+      'multipleHearings' => [
         [
           'variableName' => '',
           'inputType' => "1",
