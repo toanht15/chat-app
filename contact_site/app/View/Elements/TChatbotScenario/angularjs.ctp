@@ -401,7 +401,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       }
       // エラーメッセージ
       if (typeof newObject.errorMessage !== 'undefined' && newObject.errorMessage !== '') {
-        document.getElementById('action' + index + '_error_message').innerHTML = $scope.widget.createMessage(newObject.errorMessage);
+        if(document.getElementById('action' + index + '_error_message')) {
+          document.getElementById('action' + index + '_error_message').innerHTML = $scope.widget.createMessage(newObject.errorMessage);
+        }
       }
 
         // hearings

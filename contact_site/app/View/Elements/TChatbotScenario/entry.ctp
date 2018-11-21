@@ -185,10 +185,10 @@
     </div>
     <ul ui-sortable="sortableOptions" ng-model="setActionList" id="tchatbotscenario_form_action_body" class="sortable">
       <!-- アクション設定一覧 -->
-      <li ng-repeat="(setActionId, setItem) in setActionList" ng-model="setItem" id="action{{setActionId}}_setting" class="set_action_item" validate-action>
+      <li ng-repeat="(setActionId, setItem) in setActionList" ng-model="setItem" id="action{{setActionId}}_setting" class="set_action_item" validate-action ng-focus="main.setFocusActionIndex(setActionId)">
         <h4 class="handle"><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}} <i class="error errorBtn" ng-if="!setItem.$valid"></i></a></h4>
         <?= $this->element('TChatbotScenario/templates'); ?>
-        <a ng-click="main.removeItem(setActionId)" class="btn-shadow redBtn closeBtn">
+        <a ng-if="setItem.actionType !== '13'" ng-click="main.removeItem(setActionId)" class="btn-shadow redBtn closeBtn">
           <?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?>
         </a>
 <!--          <a class="btn-shadow redBtn closeBtn"></a>-->
