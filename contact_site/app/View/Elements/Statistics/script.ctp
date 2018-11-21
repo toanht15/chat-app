@@ -33,6 +33,40 @@ function timeChange()　{
   }
 }
 
+function timeChangeForMessageRanking()　{
+  var chosenDateFormat = document.forms.StatisticsForMessageRankingForm.dateFormat;
+
+  //  selectで月別を選択した場合
+  if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "月別")
+  {
+    document.getElementById("monthlyForm").style.display="";
+    document.getElementById("daylyForm").style.display="none";
+    document.getElementById("hourlyForm").style.display="none";
+    document.getElementById("monthlyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
+  }
+  //selectで日別を選択した場合
+  else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "日別")
+  {
+    document.getElementById("monthlyForm").style.display="none";
+    document.getElementById("daylyForm").style.display="";
+    document.getElementById("hourlyForm").style.display="none";
+    document.getElementById("hourlyForm").value = "";
+    document.getElementById("triangle").style.borderTop = "0px";
+  }
+  //selectで時別を選択した場合
+  else if (chosenDateFormat.options[chosenDateFormat.selectedIndex].value == "時別")
+  {
+    var value = new Date().getFullYear() + "/" + ("0" + (new Date().getMonth() + 1)).slice(-2) + "/01";
+    document.getElementById("monthlyForm").style.display="none";
+    document.getElementById("daylyForm").style.display="none";
+    document.getElementById("hourlyForm").style.display="";
+    document.getElementById("hourlyForm").value = '選択してください';
+    document.getElementById("hourlyForm").options = value;
+    document.getElementById("triangle").style.borderTop = "6px solid";
+  }
+}
+
 function timeChangeForOperator()　{
   var chosenDateFormat = document.forms.StatisticsForOperatorForm.dateFormat;
 
@@ -228,6 +262,11 @@ $(window).load(function(){
             document.getElementById('StatisticsForOperatorForm').submit();
           },0);
         }
+        else if(document.getElementById("StatisticsForMessageRankingForm") != null) {
+          setTimeout(function(){
+            document.getElementById('StatisticsForMessageRankingForm').submit();
+          },0);
+        }
       }
     }
   });
@@ -250,6 +289,11 @@ $(window).load(function(){
         else if(document.getElementById("StatisticsForOperatorForm") != null) {
           setTimeout(function(){
             document.getElementById('StatisticsForOperatorForm').submit();
+          },0);
+        }
+        else if(document.getElementById("StatisticsForMessageRankingForm") != null) {
+          setTimeout(function(){
+            document.getElementById('StatisticsForMessageRankingForm').submit();
           },0);
         }
       }
@@ -304,6 +348,11 @@ $(window).load(function(){
           document.getElementById('StatisticsForOperatorForm').submit();
         },0);
       }
+      else if(document.getElementById("StatisticsForMessageRankingForm") != null) {
+        setTimeout(function(){
+          document.getElementById('StatisticsForMessageRankingForm').submit();
+        },0);
+      }
     }
   });
 
@@ -322,6 +371,15 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
+  });
+
+  $(".autoMessage").text(function(index, currentText) {
+    var maxLength = 29;
+    if(currentText.length >= maxLength) {
+      return currentText.substr(0, maxLength) + "...";
+    } else {
+      return currentText
+    }
   });
 
   // DataTablesの検索時にツールチップを非表示にする
