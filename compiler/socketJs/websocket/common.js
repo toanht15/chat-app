@@ -5792,7 +5792,7 @@ function emit(evName, data, callback){
       data.tabId = userInfo.tabId; // タブの識別ID
       data.sincloSessionId = userInfo.sincloSessionId;
       console.log("EMIT : " + evName + " data : " + JSON.stringify(data));
-      socket.emit(evName, data, callback);
+      socket.emit(evName, JSON.stringify(data), callback);
     }
   }, 100);
 }
