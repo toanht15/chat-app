@@ -182,7 +182,7 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
         $separatorStr = '';
         break;
     }
-    if(!empty($separatorStr)) {
+    if($separatorStr !== "") {
       return join($separatorStr, $value);
     } else {
       return $value;
