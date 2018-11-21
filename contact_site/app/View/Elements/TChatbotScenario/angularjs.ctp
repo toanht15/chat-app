@@ -79,6 +79,22 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   }
 
+  // 登録済みリードリスト（モック用なので後で修正）
+  this.leadList = [];
+  this.leadList.push({'id': "1", 'name': "お客様情報①"});
+  this.leadList.push({'id': "2", 'name': "お客様情報②"});
+
+  this.leadInfo1 = [];
+  this.leadInfo1.push({'var': "会社名", 'info': "会社名"});
+  this.leadInfo1.push({'var': "氏名", 'info': "名前"});
+  this.leadInfo1.push({'var': "住所", 'info': "所在地"});
+
+  this.leadInfo2 = [];
+  this.leadInfo2.push({'var': "お名前", 'info': "名前"});
+  this.leadInfo2.push({'var': "TEL", 'info': "電話番号"});
+  this.leadInfo2.push({'var': "その他", 'info': "問い合わせ内容"});
+  // 登録済みリードリスト（モック用なので後で修正）
+
   // 登録済みシナリオ一覧（条件分岐用）
   var scenarioJsonListForBranchOnCond = JSON.parse(document.getElementById('TChatbotScenarioScenarioListForBranchOnCond').value);
   this.scenarioListForBranchOnCond = [];
@@ -98,6 +114,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   $scope.matchValueTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionMatchValueType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.processActionTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionActionType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.processElseActionTypeList = <?php echo json_encode($chatbotScenarioBranchOnConditionElseActionType, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
+  $scope.makeLeadTypeList = <?php echo json_encode($chatbotScenarioLeadTypeList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
   $scope.widget = SimulatorService;
   $scope.widget.settings = getWidgetSettings();
 
@@ -144,7 +161,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
-  // 設定一覧の並び替えオプション
+  // ヒアリング一覧の並び替えオプション
   $scope.sortableOptionsHearing = {
     axis: "y",
     tolerance: "pointer",
@@ -240,10 +257,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     return target;
   };
 
+  // set focus action index
   this.setFocusActionIndex = function (actionIndex) {
     $scope.focusActionIndex = actionIndex;
-    // $('.set_action_item').blur();
-    // $('#action' + actionIndex + '_setting').css('border', '2px solid #C3D69B');
   };
 
   this.showOptionMenu = function (actionType) {
@@ -679,6 +695,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     return ('#' + codeR + codeG + codeB).toUpperCase();
   };
 
+  // change calendar header color
   this.changeCalendarHeaderColor = function (actionIndex, hearingIndex, index) {
     if (index === 'headerBackgroundColor') {
       var color = this.getRawColor($scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[index]);
@@ -999,17 +1016,23 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     } else if (actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
       var src = $scope.actionList[actionType].default.addCustomerInformations[0];
       var target = $scope.setActionList[actionStep].addCustomerInformations;
+      console.log(target);
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllAddCustomerInformationView(actionStep);
-
     } else if (actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
       var src = $scope.actionList[actionType].default.multipleHearings[0];
       var target = $scope.setActionList[actionStep].multipleHearings;
       target.splice(listIndex+1, 0, angular.copy(src));
       this.controllBulkHearings(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
+      var src = $scope.actionList[actionType].default.leadRegister[0];
+      var target = $scope.setActionList[actionStep].leadRegister;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllLeadRegister(actionStep);
     }
   };
 
+  // add option (radio, pulldown, calendar) in hearing
   this.addHearingOption = function ($event, optionType, optionIndex, listIndex) {
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
@@ -1043,6 +1066,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
+  // remove options (radio, pulldown, calendar) in hearing
   this.removeHearingOption = function ($event, optionType, optionIndex, listIndex) {
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
@@ -1101,6 +1125,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       selector = '#action' + actionStep + '_setting .itemListGroup';
     } else if (actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
       targetObjList = $scope.setActionList[actionStep].addCustomerInformations;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if (actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
+      targetObjList = $scope.setActionList[actionStep].leadRegister;
       selector = '#action' + actionStep + '_setting .itemListGroup';
     }
 
@@ -1184,6 +1211,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             break;
           case <?= C_SCENARIO_ACTION_HEARING ?>:
             action = self.trimDataHearing(action);
+            action = self.deleteNoNeedHearingData(action);
             break;
           case <?= C_SCENARIO_ACTION_SELECT_OPTION ?>:
             action = self.trimDataSelectOption(action);
@@ -1249,6 +1277,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     action.isConfirm = action.isConfirm ? '1' : '2';
     action.cv = action.cv ? '1' : '2';
+    return action;
+  };
+
+  // delete no need data before save
+  this.deleteNoNeedHearingData = function (action) {
+    var hearings = [];
+    angular.forEach(action.hearings, function (item, index) {
+      if (item.uiType !== '1' && item.uiType !== '2') {
+        // delete inputType if uiType is not text
+        delete  item.inputType;
+      } else {
+        // delete settings if uiType is text
+        delete item.settings;
+      }
+
+      hearings.push(item);
+    });
+
+    action.hearings = hearings;
     return action;
   };
 
@@ -1448,6 +1495,16 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
+  this.controllLeadRegister = function(actionStep) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
+      var targetObjList = $scope.setActionList[actionStep].leadRegister;
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
+    });
+  };
+
   /**
    * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
    * @param String  actionType      アクション種別
@@ -1460,6 +1517,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
       limitNum = 0;
     }
 
+    console.log(targetObjList);
+
     var elmNum = targetElmList.length;
     var objNum = targetObjList.length;
 
@@ -1469,8 +1528,8 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
         $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').hide();
       } else if (actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>
-        || actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
-        // リストが複数件ある場合、ヒアリング・選択肢・属性値アクションは、追加・削除ボタンを表示する
+        || actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
+        // リストが複数件ある場合、ヒアリング・選択肢・属性値・リード登録アクションは、追加・削除ボタンを表示する
         $(targetElm).find('.btnBlock .disOffgreenBtn').show();
         $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
       } else if (index == elmNum -1 && index != limitNum-1) {
@@ -1500,11 +1559,21 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
   // controll data and view when change uiType
   this.handleChangeUitype = function (actionType, actionIndex, hearingIndex, uiType) {
+    // can not restore after change uiType
     var variableName = $scope.setActionList[actionIndex].hearings[hearingIndex].variableName;
     var item = LocalStorageService.getItem('chatbotVariables', variableName);
     if (item) {
       $scope.setActionList[actionIndex].hearings[hearingIndex].canRestore = false;
     }
+    // set default inputType = text when have not inputType
+    if (!$scope.setActionList[actionIndex].hearings[hearingIndex].inputType) {
+      $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = '1';
+    }
+    // set defaut settings
+    if (!$scope.setActionList[actionIndex].hearings[hearingIndex].settings) {
+      $scope.setActionList[actionIndex].hearings[hearingIndex].settings = $scope.actionList[2].default.hearings[0].settings;
+    }
+
     // set default input type for text multiple line
     var inputType = $scope.setActionList[actionIndex].hearings[hearingIndex].inputType;
     if (uiType === '2' && (inputType === '3' || inputType === '4')) {
@@ -1653,6 +1722,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   });
 
+  // next hearing action
   $scope.$on('nextHearingAction', function () {
     $scope.hearingIndex++;
     var actionDetail = $scope.setActionList[$scope.actionStep];
@@ -2347,7 +2417,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  // handle when click on next button
+  // handle next button click
   $(document).on('click', '.nextBtn', function () {
     var numbers      = $(this).attr('id').match(/\d+/g).map(Number);
     var actionStep   = numbers[0];
@@ -2370,7 +2440,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.doAction();
   });
 
+  // disable input after hearing finish
   this.disableHearingInput = function (actionIndex) {
+    $scope.$broadcast('switchSimulatorChatTextArea', false);
     $('#sincloBox input[name*="action' + actionIndex + '"]').prop('disabled', true);
     $('#sincloBox select[id*="action' + actionIndex + '"]').prop('disabled', true);
     $('#sincloBox [id^="action' + actionIndex + '"][id*="underline"]').find('.sinclo-text-line').removeClass('underlineText');
@@ -2378,7 +2450,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
   };
 
-
+  // hanlde radio button click
   $(document).on('change', '#chatTalk input[type="radio"]', function() {
     var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
     var message = $(this).val().replace(/^\s/, '');
@@ -3028,6 +3100,44 @@ function actionValidationCheck(element, setActionList, actionItem) {
         return true;
       }
     });
+  } else
+  if (actionItem.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
+    /*リード新規作成時
+    **リスト名のチェック
+    **項目名のチェック
+ 　  */
+    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>) {
+      if (!actionItem.subject) {
+        messageList.push('リードリスト名が未入力です');
+      } else if (actionItem.subject === "お客様情報①") {
+        messageList.push('リードリスト名”お客様情報①”は既に使用されています');
+      } else if (actionItem.subject === "お客様情報②") {
+        messageList.push('リードリスト名”お客様情報②”は既に使用されています');
+      }
+
+      var invalidLabelName = actionItem.leadRegister.some(function(elm) {
+        return !elm.leadLabelName || elm.leadLabelName === "";;
+      });
+
+      if(invalidLabelName) {
+        messageList.push('リードリスト項目を設定してください');
+      }
+    }
+
+    /*リード選択時
+    **リード選択のチェック
+     */
+    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>) {
+      if(!actionItem.leadId || actionItem.leadId === "") {
+        messageList.push("リードリストを選択してください");
+      }
+    }
+
+    /*共通
+    **変数のチェック
+     */
+
+    messageList.push("保存機能は未実装です");
   }
 
   // 使用されている変数名を抽出する
@@ -3115,14 +3225,13 @@ function searchStr (str, regex) {
   return result;
 }
 
-// check when click on other area of action menu
 $(document).mouseup(function (e) {
-  // hide previous option menu when click new action
   // hide dropdown when click on other area
   if (!$(e.target).closest('.actionMenu a').length) {
     $('.actionMenuOption').fadeOut('fast');
   }
 
+  // handle focus when click on other area action
   if (!$(e.target).closest('.set_action_item').length && !$(e.target).closest('.actionMenu').length && !$(e.target).closest('#tchatbotscenario_form_preview_body > section').length) {
     angular.element($('#tchatbotscenario_form_action_menulist')).scope().focusActionIndex = null;
     $('.set_action_item').blur();

@@ -156,6 +156,19 @@
                 </div>
             </div>
 
+          <!-- リード登録 -->
+            <div class="actionMenu">
+              <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>)"
+                 class="greenBtn btn-shadow commontooltip"
+                 data-text="シナリオ内で取得した変数をリードリストとして登録できます。登録したリストは、CSVで出力することが可能です。">リード登録</a>
+              <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>">
+                <ul>
+                  <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>)">選択されたアクションの下に追加する</li>
+                  <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>, true)">一番下に追加する</li>
+                </ul>
+              </div>
+            </div>
+
             <!-- メール送信 -->
             <div class="actionMenu">
                 <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)"

@@ -233,6 +233,12 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
         <div class="icon">
           <?= $this->htmlEx->naviFaIconLink('オペレータ統計レポート', '', ['href' => ['controller' => 'Statistics', 'action' => 'forOperator'], 'onclick' => 'window.loading.load.start()'], true) ?>
         </div>
+        <div class="splitter">
+          <i class='fal fa-folder'></i><span class="splitter-label">リストダウンロード</span>
+        </div>
+        <div class="icon">
+          <?= $this->htmlEx->naviFaIconLink('リードリスト出力', '', ['href' => ['controller' => 'TLeadLists', 'action' => 'index']], true) ?>
+        </div>
       </div>
     <?php endif; ?>
     <!-- /*  履歴・統計 */ -->
