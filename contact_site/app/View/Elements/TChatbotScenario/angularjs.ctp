@@ -162,7 +162,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
-  // 設定一覧の並び替えオプション
+  // ヒアリング一覧の並び替えオプション
   $scope.sortableOptionsHearing = {
     axis: "y",
     tolerance: "pointer",
@@ -258,10 +258,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     return target;
   };
 
+  // set focus action index
   this.setFocusActionIndex = function (actionIndex) {
     $scope.focusActionIndex = actionIndex;
-    // $('.set_action_item').blur();
-    // $('#action' + actionIndex + '_setting').css('border', '2px solid #C3D69B');
   };
 
   this.showOptionMenu = function (actionType) {
@@ -487,6 +486,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
               }
 
               if (hearing.settings.isSetSpecificDate) {
+                addTooltipEvent();
                 if (hearing.settings.setSpecificDateType == 1) {
                   var disableLength = calendar_options.disable.length;
                   angular.forEach(hearing.settings.specificDateData, function (item, key) {
@@ -696,6 +696,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     return ('#' + codeR + codeG + codeB).toUpperCase();
   };
 
+  // change calendar header color
   this.changeCalendarHeaderColor = function (actionIndex, hearingIndex, index) {
     if (index === 'headerBackgroundColor') {
       var color = this.getRawColor($scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[index]);
@@ -900,7 +901,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
   // シミュレーターの起動
   this.openSimulator = function() {
-    $scope.actionListOrigin = $scope.setActionList;
+    $scope.actionListOrigin = JSON.parse(this.createJsonData(true)).scenarios;
     $scope.$broadcast('openSimulator', this.createJsonData(true));
     // シミュレータ起動時、強制的に自由入力エリアを有効の状態で表示する
     $scope.$broadcast('switchSimulatorChatTextArea', true);
@@ -1033,6 +1034,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
+  // add option (radio, pulldown, calendar) in hearing
   this.addHearingOption = function ($event, optionType, optionIndex, listIndex) {
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
@@ -1048,7 +1050,6 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
 
     target.splice(optionIndex + 1, 0, "");
-    // target.splice(optionIndex + 1, 0, angular.copy(src));
     // 表示更新
     $timeout(function () {
       $scope.$apply();
@@ -1067,11 +1068,11 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
+  // remove options (radio, pulldown, calendar) in hearing
   this.removeHearingOption = function ($event, optionType, optionIndex, listIndex) {
     var targetActionId = $($event.target).parents('.set_action_item')[0].id;
     var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
     var actionType = $scope.setActionList[actionStep].actionType;
-    // var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
     if (optionType === '3' || optionType === '4') {
       // ラジオボタン、プルダウン
       var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
@@ -1212,6 +1213,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             break;
           case <?= C_SCENARIO_ACTION_HEARING ?>:
             action = self.trimDataHearing(action);
+            action = self.deleteNoNeedHearingData(action);
             break;
           case <?= C_SCENARIO_ACTION_SELECT_OPTION ?>:
             action = self.trimDataSelectOption(action);
@@ -1277,6 +1279,25 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
 
     action.isConfirm = action.isConfirm ? '1' : '2';
     action.cv = action.cv ? '1' : '2';
+    return action;
+  };
+
+  // delete no need data before save
+  this.deleteNoNeedHearingData = function (action) {
+    var hearings = [];
+    angular.forEach(action.hearings, function (item, index) {
+      if (item.uiType !== '1' && item.uiType !== '2') {
+        // delete inputType if uiType is not text
+        delete  item.inputType;
+      } else {
+        // delete settings if uiType is text
+        delete item.settings;
+      }
+
+      hearings.push(item);
+    });
+
+    action.hearings = hearings;
     return action;
   };
 
@@ -1554,22 +1575,33 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
   };
   // controll data and view when change uiType
   this.handleChangeUitype = function (actionType, actionIndex, hearingIndex, uiType) {
+    // can not restore after change uiType
     var variableName = $scope.setActionList[actionIndex].hearings[hearingIndex].variableName;
     var item = LocalStorageService.getItem('chatbotVariables', variableName);
     if (item) {
       $scope.setActionList[actionIndex].hearings[hearingIndex].canRestore = false;
     }
-    // set default input tyep  for text multiple line
+    // set default inputType = text when have not inputType
+    if (!$scope.setActionList[actionIndex].hearings[hearingIndex].inputType) {
+      $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = '1';
+    }
+    // set defaut settings
+    if (!$scope.setActionList[actionIndex].hearings[hearingIndex].settings) {
+      $scope.setActionList[actionIndex].hearings[hearingIndex].settings = $scope.actionList[2].default.hearings[0].settings;
+    }
+
+    // set default input type for text multiple line
     var inputType = $scope.setActionList[actionIndex].hearings[hearingIndex].inputType;
     if (uiType === '2' && (inputType === '3' || inputType === '4')) {
       $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = 1;
     }
-    // set defautl color from widget setting
+    // set default design for pulldown or calendar
     if (uiType === '5' || uiType === '4') {
       $scope.setActionList[actionIndex].hearings[hearingIndex] = this.setDefaultColorHearing($scope.setActionList[actionIndex].hearings[hearingIndex]);
     }
     // controll selection view of radio and pulldown
     if (uiType === '3' || uiType === '4') {
+      addTooltipEvent();
       $timeout(function () {
         $scope.$apply();
       }).then(function () {
@@ -1579,6 +1611,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     }
   };
 
+  // controll hearing option view when page load
   this.controllHearingOptionView = function (actionIndex, hearingIndex) {
     $timeout(function() {
       $scope.$apply();
@@ -1705,6 +1738,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   });
 
+  // next hearing action
   $scope.$on('nextHearingAction', function () {
     $scope.hearingIndex++;
     var actionDetail = $scope.setActionList[$scope.actionStep];
@@ -1834,6 +1868,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.doAction();
   };
 
+  // handle hearing re-select
   $scope.reSelectionHearing = function (message, actionStep, hearingIndex) {
     $scope.hearingIndex = hearingIndex;
     $scope.actionStep = actionStep;
@@ -1902,7 +1937,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     // シミュレーション上のメッセージをクリアする
     $scope.$broadcast('removeMessage');
     $scope.doAction();
-  }
+  };
 
   $scope.$watch('actionStep', function () {
     $scope.widget.setCurrentActionStep($scope.actionStep);
@@ -2398,16 +2433,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     });
   };
 
-  // handle when click on skip button
-  // $(document).on('click', '.sincloChatSkipBtn', function (e) {
-  //   e.stopImmediatePropagation();
-  //   $(this).css('pointer-events', 'none');
-  //   // $('#action' + $scope.actionStep + '_hearing' + $scope.hearingIndex + '_question').remove();
-  //   $scope.hearingIndex++;
-  //   $scope.doAction();
-  // });
-
-  // handle when click on next button
+  // handle next button click
   $(document).on('click', '.nextBtn', function () {
     var numbers      = $(this).attr('id').match(/\d+/g).map(Number);
     var actionStep   = numbers[0];
@@ -2430,7 +2456,9 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $scope.doAction();
   });
 
+  // disable input after hearing finish
   this.disableHearingInput = function (actionIndex) {
+    $scope.$broadcast('switchSimulatorChatTextArea', false);
     $('#sincloBox input[name*="action' + actionIndex + '"]').prop('disabled', true);
     $('#sincloBox select[id*="action' + actionIndex + '"]').prop('disabled', true);
     $('#sincloBox [id^="action' + actionIndex + '"][id*="underline"]').find('.sinclo-text-line').removeClass('underlineText');
@@ -2438,7 +2466,7 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
     $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
   };
 
-
+  // hanlde radio button click
   $(document).on('change', '#chatTalk input[type="radio"]', function() {
     var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
     var message = $(this).val().replace(/^\s/, '');
@@ -3222,14 +3250,13 @@ function searchStr (str, regex) {
   return result;
 }
 
-// check when click on other area of action menu
 $(document).mouseup(function (e) {
-  // hide previous option menu when click new action
   // hide dropdown when click on other area
   if (!$(e.target).closest('.actionMenu a').length) {
     $('.actionMenuOption').fadeOut('fast');
   }
 
+  // handle focus when click on other area action
   if (!$(e.target).closest('.set_action_item').length && !$(e.target).closest('.actionMenu').length && !$(e.target).closest('#tchatbotscenario_form_preview_body > section').length) {
     angular.element($('#tchatbotscenario_form_action_menulist')).scope().focusActionIndex = null;
     $('.set_action_item').blur();

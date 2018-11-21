@@ -1812,18 +1812,20 @@ sinclo@medialink-ml.co.jp
     ]);
   }
 
+  /**
+   * convert old data (inputType, selection action type) to new hearing structure
+   * @param $json
+   */
   private function _convertOldDataToNewStructure(&$json)
   {
     $activity = json_decode($json);
-    $closestHearingIndex = 0;
     foreach ($activity->scenarios as $key => &$action) {
       // add restore
       if (!isset($action->restore)) {
-        $action->restore = true;
+        $action->restore = false;
       }
 
       if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
-        $closestHearingIndex = $key;
         foreach ($action->hearings as $key => &$param) {
           // convert break line to uiType
           if (!isset($param->uiType) && isset($param->inputLFType) && isset($param->inputType)) {
@@ -1831,40 +1833,33 @@ sinclo@medialink-ml.co.jp
           }
         }
       } else if ($action->actionType == C_SCENARIO_ACTION_SELECT_OPTION) {
-        if (gettype($activity->scenarios) === 'array') {
-          $closestHearing = $activity->scenarios[$closestHearingIndex];
-        } else {
-          $closestHearing = $activity->scenarios->{$closestHearingIndex};
-        }
-        if ($closestHearing->actionType == C_SCENARIO_ACTION_HEARING) {
-          // append selection to closest hearing
-          $index = count($closestHearing->hearings);
-          $closestHearing->hearings[$index] = $this->convertHearingRadioButton($action);
-          if (gettype($activity->scenarios) === 'array') {
-            unset($activity->scenarios[$key]);
-          } else {
-            unset($activity->scenarios->{$key});
-          }
-        } else {
-          // if have not hearing, create new hearing and append
-          $closestHearingIndex = $key;
-          $action = (object)$this->convertSelectionToHearing($action);
-        }
+        $action = (object)$this->convertSelectionToHearing($action);
       }
     }
 
     $json = json_encode($activity);
   }
 
+  /**
+   * convert selection to hearing
+   * @param $data
+   * @return mixed
+   */
   private function convertSelectionToHearing($data)
   {
     $action = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default'];
     $action['actionType'] = '2';
+    $action['restore'] = false;
     $action['hearings'][0] = $this->convertHearingRadioButton($data);
 
     return $action;
   }
 
+  /**
+   * convert selection data to hearing radio button type data
+   * @param $data
+   * @return mixed
+   */
   private function convertHearingRadioButton($data)
   {
     $radio = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default']['hearings'][0];
@@ -1879,6 +1874,12 @@ sinclo@medialink-ml.co.jp
     return $radio;
   }
 
+  /**
+   * convert inputType to uiType
+   * @param $data
+   * @param $errorMessage
+   * @return mixed
+   */
   private function convertHearingTextType($data, $errorMessage)
   {
     $hearing = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default']['hearings'][0];

@@ -566,12 +566,12 @@
         li.className = cn;
         if(chat.delete_flg == 1) {
           var deleteUser = userList[Number(chat.deleted_user_id)];
-          content = "<span class='cName' style = 'color:#bdbdbd !important;font-size:"+fontSize+"'>ゲスト(ヒアリング再回答)(" + Number($('#visitorsId').text()) + ")</span>";
+          content = "<span class='cName' style = 'color:#bdbdbd !important;font-size:"+fontSize+"'>シナリオメッセージ(ヒアリング再回答)(" + Number($('#visitorsId').text()) + ")</span>";
           content += "<span class='cTime' style = 'color:#bdbdbd !important; font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           content +=  "<span class='cChat' style = 'color:#bdbdbd; font-size:"+fontSize+"'>(このメッセージは"+chat.deleted+"に"+deleteUser+"さんによって削除されました。)</span>";
         }
         else {
-          content = "<span class='cName' style = 'color:#333333 !important; font-size:"+fontSize+"'>ゲスト(ヒアリング再回答)(" + Number($('#visitorsId').text()) + ")</span>";
+          content = "<span class='cName' style = 'color:#333333 !important; font-size:"+fontSize+"'>シナリオメッセージ(ヒアリング再回答)(" + Number($('#visitorsId').text()) + ")</span>";
           content += "<span class='cTime' style = 'font-size:"+timeFontSize+"'>"+chat.created+"</span>";
           if(chat.permissionLevel == 1 && coreSettings == 1) {
             content += '<img src= /img/close_b.png alt=履歴削除 onclick = openChatDeleteDialog('+chat.id+','+chat.t_histories_id+',"'+forDeletionMessage+'","'+created+'") width=21 height=21 style="cursor:pointer; float:right; color: #fff !important; padding:2px !important; margin-right: auto;">'
