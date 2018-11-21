@@ -649,6 +649,10 @@ sincloApp.controller('MainController', ['$scope', '$timeout', 'SimulatorService'
             var text = $scope.bulkHearingInputMap[Number(newHearings[idx].inputType)];
             newHearings[idx].label = text;
             newHearings[idx].variableName = text;
+          } else if (!oldHearings || !oldHearings[idx]) {
+            var text = $scope.bulkHearingInputMap[Number(newHearings[idx].inputType)];
+            newHearings[idx].label = text;
+            newHearings[idx].variableName = text;
           }
         });
       }

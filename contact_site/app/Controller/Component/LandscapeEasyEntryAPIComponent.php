@@ -167,6 +167,7 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
 
   private function convertData($key, $value)
   {
+    if(is_string($value)) return $value;
     $separatorStr = "";
     switch($key) {
       case self::INPUT_TYPE_TEL_ID:
@@ -183,6 +184,14 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
         break;
     }
 
-    return implode($separatorStr, $value);
+    $joinedValue = "";
+
+    foreach($value as $k => $v) {
+      $joinedValue .= $v;
+      if($k !== count($value) && !empty($value[$k+1])) {
+        $joinedValue .= $separatorStr;
+      }
+    }
+    return $joinedValue;
   }
 }
