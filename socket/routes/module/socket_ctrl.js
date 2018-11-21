@@ -3968,6 +3968,31 @@ io.sockets.on('connection', function(socket) {
     });
   });
 
+  // リード登録
+  socket.on('saveLeadList', function(data){
+    var obj = JSON.parse(data);
+    console.log(obj);
+    // TODO データを渡した際に何をするか（22日実装)
+    // リードリストのidを見る
+    // idを基にリード設定テーブルから設定を取得（リスト名、変数設定）
+    // ↑DBから設定を取得する↑
+    // 取得した設定の変数名を埋める
+    // もしなかった場合（変数名が無い、変数の中身が無い）は空文字列をセットする
+    // スキップにより半角スペース1文字のみ設定されてる場合も同様
+    // ↑何か別の関数を用意して取得した変数を埋める↑
+    // 変数⇔ラベルの値設定が完了したら情報を整理
+    // ↑objに入ってる他データをセットする↑
+    // 整理した情報をリードリスト保存テーブルに格納する
+    // ↑DBに値を保存する↑
+    // ↓例外↓
+    // エラーが起きたらちゃんとハンドリングすること
+    // ★★★★★★★★★★★清水さん質問メモ★★★★★★★★★★★
+    // console.logの出力はどこへ行くのか？
+    // そもそもログをどうやって出すのか？
+    // use strict error がログに出てる
+    // ★★★★★★★★★★★清水さん質問メモ★★★★★★★★★★★
+  });
+
   socket.on('sendParseSignature', function(data, ack) {
     var obj = JSON.parse(data);
     parseSignature(obj.targetText, obj.ip, function(result) {

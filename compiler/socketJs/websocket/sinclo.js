@@ -1206,9 +1206,10 @@
               cn = "sinclo_se";
               break;
             case 12:
+            case 36:
               // 復元対象でない場合はcnにcancelableを付与しない
               if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
-                cn = "sinclo_se"
+                cn = "sinclo_se";
               } else {
                 cn = "cancelable sinclo_se";
               }
@@ -1217,16 +1218,11 @@
             case 33:
             case 34:
             case 35:
-            case 36:
             case 37:
             case 38:
             case 39:
-              // 復元対象でない場合はcnにcancelableを付与しない
-              if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
-                cn = "sinclo_se"
-              } else {
-                cn = "cancelable sinclo_se";
-              }
+              // ラジオボタン、プルダウン、カレンダーの回答・再回答に対してはcancelableは付与しない
+              cn = "sinclo_se";
               isHearingAnswer = true;
               break;
             case 90:
@@ -5943,7 +5939,8 @@
         sendFile: "9",
         branchOnCond: "10",
         addCustomerInformation: "11",
-        bulkHearing: "12"
+        bulkHearing: "12",
+        addLeadInformation: "13"
       },
       set: function (key, data) {
         var self = sinclo.scenarioApi;
@@ -6311,6 +6308,13 @@
             self._bulkHearing._init(self);
             self._bulkHearing._process();
             self.set(self._lKey.sendCustomerMessageType, 30);
+            break;
+          case self._actionType.addLeadInformation:
+            console.log('★★★★★★');
+            console.log('リード登録');
+            console.log('★★★★★★');
+            self._addLeadInformation._init(self);
+            self._addLeadInformation._process();
             break;
         }
       },
@@ -7121,14 +7125,12 @@
           });
         },
         _setPrevSeqNum: function() {
-          debugger;
           var self = sinclo.scenarioApi._hearing;
           if(self._parent) {
             self._parent.set(self._state.prevSeq, self._getCurrentSeq());
           }
         },
         _getPrevSeqNum: function() {
-          debugger;
           var self = sinclo.scenarioApi._hearing;
           if(self._parent) {
             var prevSeq = self._parent.get(self._state.prevSeq);
@@ -8091,6 +8093,33 @@
           var self = sinclo.scenarioApi._bulkHearing;
           var state = self._parent.get(self._state.confirm);
           return state && ((typeof(state) === "boolean" && state) || (typeof(state) === "string" && state === "true"));
+        }
+      },
+      _addLeadInformation: {
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._addLeadInformation;
+          self._parent._doing(0, function () { // 即時実行
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            var LeadSettingId = self._parent.get(self._parent._lKey.currentScenario).tLeadListSettingId;
+            var targetVariables = self._parent._getAllTargetVariables();
+            var sendData = {
+              scenarioId: sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.scenarioId),
+              leadSettingsId: LeadSettingId,
+              variables: targetVariables,
+              userAgent: window.navigator.userAgent,
+              executeUrl: location.href,
+              landingUrl: userInfo.prev[0].url
+            };
+            emit('saveLeadList', sendData);
+            // データを渡し次の処理を行う
+            if (self._parent._goToNextScenario()) {
+              self._parent._process();
+            }
+          });
         }
       }
     },
