@@ -96,6 +96,12 @@ sincloApp.factory('SimulatorService', function() {
     get isLargeSize() {
       return this._showWidgetType === 1 && this._settings['widget_size_type'] === '3';
     },
+    get isSpPortrait() {
+      return this._showWidgetType === 3;
+    },
+    get isSpLandscape() {
+      return this._showWidgetType === 2;
+    },
     get isMaximumSize(){
       return this._showWidgetType === 1 && this._settings['widget_size_type'] === '4';
     },
@@ -593,11 +599,123 @@ sincloApp.factory('SimulatorService', function() {
       return content;
     },
 
+    createForm: function (isConfirm, hearingTarget, resultData, callback) {
+      var self = this;
+      var formElements = "";
+      var isEmptyRequire = false;
+
+      var content = "";
+      if(isConfirm) {
+        hearingTarget.forEach(function(elm, idx, arr){
+          if(elm.required && resultData[Number(elm.inputType)].length === 0) {
+            isEmptyRequire = true;
+          }
+          formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
+          formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'></span>" : "") + "</label>";
+          formElements += "      <input type='" + self.getInputType(elm.inputType) + "' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-input-type='" + elm.inputType + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
+          formElements += "    </div>";
+        });
+
+        //content +=  (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
+        content += "<div class='formContentArea'>";
+        content += "  <p class='formMessage'>" + ((isEmptyRequire) ? "必須項目の入力が認識できませんでした。\n*印の項目を入力してください。" : "こちらの内容でよろしいでしょうか？")  + "</p>";
+        content += "  <div class='formArea'>";
+        content += formElements;
+        content += "    <p class='formOKButtonArea'><span class='formOKButton'>OK</span></p>";
+        content += "  </div>";
+        content += "</div>";
+      } else {
+        hearingTarget.forEach(function(elm, idx, arr){
+          if(elm.required && resultData[elm.variableName].value.length === 0) {
+            isEmptyRequire = true;
+          }
+          formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
+          formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'></span>" : "") + "</label>";
+          formElements += "      <input type='" + self.getInputType(elm.inputType) + "' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-label-text='" + elm.label + "' name='" + elm.variableName + "' value='" + resultData[elm.variableName].value + "' readonly/>";
+          formElements += "    </div>";
+        });
+
+        //content += (Number(window.sincloInfo.widget.showAutomessageName) !== 2) ? "<span class='cName'>" + sincloInfo.widget.subTitle + "</span>" : "";
+        content += "<div class='formContentArea'>";
+        content += "  <div class='formArea'>";
+        content += formElements;
+        content += "    <p class='formOKButtonArea'><span class='formOKButton disabled'>OK</span></p>";
+        content += "  </div>";
+        content += "</div>";
+      }
+      return content;
+    },
+
+    createFormFromLog: function (data) {
+      var formElements = "";
+      var content = "";
+      var objKeys = Object.keys(data);
+      objKeys.forEach(function(variableName, index, array){
+        formElements += (array.length - 1 === index) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
+        formElements += "      <span class='formLabel'>" + data[variableName].label + (data[variableName].required ? "<span class='require'></span>" : "") + "</span>";
+        formElements += "      <span class='formLabelSeparator'>：</span>";
+        formElements += "      <span class='formValue'>" + (data[variableName].value ? data[variableName].value : "（なし）") + "</span>";
+        formElements += "    </div>";
+      });
+
+      content += "<div class='formContentArea'>";
+      content += "  <div class='formSubmitArea'>";
+      content += formElements;
+      content += "  </div>";
+      content += "</div>";
+
+      return content;
+    },
+
+    getInputType: function(bulkHearingInputType) {
+      var type = '';
+      switch(Number(bulkHearingInputType)) {
+        case 1:
+          type = 'text';
+          break;
+        case 2:
+          type = 'text';
+          break;
+        case 3:
+          type = 'tel';
+          break;
+        case 4:
+          type = 'text';
+          break;
+        case 5:
+          type = 'text';
+          break;
+        case 6:
+          type = 'text';
+          break;
+        case 7:
+          type = 'tel';
+          break;
+        case 8:
+          type = 'tel';
+          break;
+        case 9:
+          type = 'tel';
+          break;
+        case 10:
+          type ='email';
+          break;
+        case 11:
+          type = 'text';
+          break;
+        default:
+          type = 'text';
+          break;
+      }
+      return type;
+    },
+
     createRadioButton: function(data) {
       var messageHtml = this.createMessage(data.message, data.prefix);
       var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
       var index = $('#chatTalk > div:not([style*="display: none;"])').length;
       var radioName = prefix + 'sinclo-radio-' + index;
+      var hasOldOptionValue = false;
       // style
       var html = '';
       angular.forEach(data.options, function (option, key) {
@@ -605,13 +723,14 @@ sincloApp.factory('SimulatorService', function() {
         if (data.isRestore && option === data.oldValue) {
           html += "<span class='sinclo-radio'><input type='radio' checked='checked' name='" + radioName + "' id='" + radioName + "-" + key + "' class='sinclo-chat-radio' value='" + option + "'>";
           html += "<label for='" + radioName + "-" + key + "'>" + option + "</label></span><br>";
+          hasOldOptionValue = true;
         } else {
           html += "<span class='sinclo-radio'><input type='radio' name='" + radioName + "' id='" + radioName + "-" + key + "' class='sinclo-chat-radio' value='" + option + "'>";
           html += "<label for='" + radioName + "-" + key + "'>" + option + "</label></span><br>";
         }
       });
       html += '</select>';
-      if (data.isRestore) {
+      if (data.isRestore && hasOldOptionValue) {
         html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' + data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
       }
 
@@ -623,6 +742,7 @@ sincloApp.factory('SimulatorService', function() {
       var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
       var index = $('#chatTalk > div:not([style*="display: none;"])').length;
       var pulldownName = prefix + 'sinclo-pulldown-' + index;
+      var hasOldOptionValue = false;
       // style
       var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; min-width: 210px;';
       style += 'background-color: ' + data.design.backgroundColor + ';';
@@ -635,12 +755,13 @@ sincloApp.factory('SimulatorService', function() {
         if (!option || option == "") return false;
         if (data.isRestore && option === data.oldValue) {
           html += '<option selected="selected" value="' + option + '">' + option + '</option>';
+          hasOldOptionValue = true;
         } else {
           html += '<option value="' + option + '">' + option + '</option>';
         }
       });
       html += '</select>';
-      if (data.isRestore) {
+      if (data.isRestore && hasOldOptionValue) {
         html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' + data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
       }
 
@@ -656,19 +777,20 @@ sincloApp.factory('SimulatorService', function() {
       var inputId = prefix + 'sinclo-datepicker' + index;
       var html = '<div id="' + calendarId + '">';
       html += '<style>';
-      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar { border: 2px solid' + data.design.borderColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar { border: 2px solid ' + data.design.borderColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months { background: ' + data.design.headerBackgroundColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-month { color: ' + data.design.headerTextColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-weekdays { background: ' + data.design.headerWeekdayBackgroundColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-weekdaycontainer .flatpickr-weekday { color: ' + this.getContrastColor(data.design.headerWeekdayBackgroundColor) + ' !important;}';
-      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: ' + data.design.headerTextColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-prev-month { fill: ' + data.design.headerTextColor + ';}';
+      html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .flatpickr-months .flatpickr-next-month { fill: ' + data.design.headerTextColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer { background-color: ' + data.design.calendarBackgroundColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;  border: 1px solid ' + data.design.headerBackgroundColor +   '; outline: 1px solid ' + data.design.headerWeekdayBackgroundColor + ';}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer .flatpickr-day { border-top: none;  border-left:none; border-bottom: 1px solid  ' + data.design.headerWeekdayBackgroundColor +  '; border-right: 1px solid  ' + data.design.headerWeekdayBackgroundColor + ';}';
       html += '#sincloBox #' + calendarId + ' .dayContainer .flatpickr-day.selected { background-color: ' + data.design.headerBackgroundColor + '; color: ' + this.getContrastColor(data.design.headerBackgroundColor) + ' !important;}';
       html += '#sincloBox #' + calendarId + ' .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none;};';
       html +=  '</style>';
-      if (data.isRestore) {
+      if (data.isRestore && Date.parse(data.oldValue)) {
         html += '<input type="hidden" id="' + inputId + '" value="' + data.oldValue + '"></div>';
         html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' + data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
       } else {

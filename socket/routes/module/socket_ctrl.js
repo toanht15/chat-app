@@ -1182,7 +1182,6 @@ io.sockets.on('connection', function(socket) {
               sendData.userId = d.userId;
             }
             // 書き込みが成功したら顧客側に結果を返す
-            //emit.toUser('sendChatResult', sendData, sId);
             var sincloSessionId = sincloCore[d.siteKey][d.tabId].sincloSessionId;
             sendData.sincloSessionId = sincloSessionId;
             emit.toSameUser('sendChatResult', sendData, d.siteKey, sincloSessionId);

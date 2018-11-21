@@ -152,7 +152,7 @@
               <span>
                 <label class="require">メッセージ</label>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(1)">選択肢を追加する</span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここに電話番号を記載」の個所に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(3)">リンク(ページ遷移)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(4)">リンク(新規ページ)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
               </span>

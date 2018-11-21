@@ -54,6 +54,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.addMessage('re', message, prefix, 'deleteme');
   });
 
+  $scope.$on('addReForm', function(event, data) {
+    $scope.addForm(data);
+  });
+
   $scope.$on('addReRadio', function(event, data) {
     $scope.addRadioButton(data);
   });
@@ -160,6 +164,64 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     self.autoScroll();
   };
 
+  $scope.addForm = function(data) {
+    var divElm = null;
+    if(data.isConfirm) {
+      divElm = document.querySelector('#chatTalk div > li.sinclo_re.sinclo_form').parentNode.cloneNode(true);
+      divElm.id = data.prefix + '_question';
+    } else {
+      divElm = document.querySelector('#chatTalk div > li.sinclo_se.sinclo_form').parentNode.cloneNode(true);
+      divElm.id = data.prefix + '_answer';
+    }
+
+    var html = ""
+    if(data.isConfirm) {
+      html = $scope.simulatorSettings.createForm(data.isConfirm, data.bulkHearings, data.resultData.data);
+      divElm.querySelector('li.sinclo_re.sinclo_form').innerHTML = html;
+    } else {
+      html = $scope.simulatorSettings.createFormFromLog(data.resultData.data);
+      divElm.querySelector('li.sinclo_se.sinclo_form').innerHTML = html;
+    }
+    // if(isEmptyRequire) {
+    //   $(divElm).find('li.sinclo_form span.formOKButton').addClass('disabled');
+    // }
+    $(divElm).find('li.sinclo_form span.formOKButton').on('click', function(e){
+      if($(this).hasClass('disabled')) return;
+      var returnValue = {};
+      var targetArray = $(divElm).find('li.sinclo_form .formInput');
+      targetArray.each(function(index, element) {
+        console.log("CHANGED : %s vs %s", $(element).val(), data.resultData.data[$(element).data('input-type')]);
+        returnValue[$(element).attr('name')] = {
+          label: $(element).data('label-text'),
+          value: $(element).val(),
+          required: $(element).data('required'),
+          changed: $(element).val() !== data.resultData.data[Number($(element).data('input-type'))]
+        }
+      });
+      console.log("return Value : %s",JSON.stringify(returnValue));
+      $scope.$emit('pressFormOK', returnValue);
+    });
+    $(divElm).find('li.sinclo_form input.formInput').on('input', function(){
+      $(divElm).find('li.sinclo_form input.formInput').each(function(idx, elem){
+        if(data.bulkHearings[idx].required && $(this).val().length === 0) {
+          $(divElm).find('li.sinclo_form span.formOKButton').addClass('disabled');
+          return false;
+        } else if (data.  bulkHearings.length - 1 === idx){
+          $(divElm).find('li.sinclo_form span.formOKButton').removeClass('disabled');
+        }
+      });
+    });
+
+    // 要素を追加する
+    document.getElementById('chatTalk').appendChild(divElm);
+    $('#chatTalk > div:last-child').show();
+    self.autoScroll();
+  };
+
+  /**
+   * add radio button in simulator
+   * @param object data: radio options data
+   */
   $scope.addRadioButton = function(data) {
     var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
     divElm.id = data.prefix + '_question';
@@ -171,6 +233,53 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     self.autoScroll();
   };
 
+  $scope.getInputType = function(bulkHearingInputType) {
+    var type = '';
+    switch(Number(bulkHearingInputType)) {
+      case 1:
+        type = 'text';
+        break;
+      case 2:
+        type = 'text';
+        break;
+      case 3:
+        type = 'tel';
+        break;
+      case 4:
+        type = 'text';
+        break;
+      case 5:
+        type = 'text';
+        break;
+      case 6:
+        type = 'text';
+        break;
+      case 7:
+        type = 'tel';
+        break;
+      case 8:
+        type = 'tel';
+        break;
+      case 9:
+        type = 'tel';
+        break;
+      case 10:
+        type ='email';
+        break;
+      case 11:
+        type = 'text';
+        break;
+      default:
+        type = 'text';
+        break;
+    }
+    return type;
+  };
+
+  /**
+   * add pulldown button in simulator
+   * @param object data: pulldown options data
+   */
   $scope.addPulldown = function(data) {
     var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
     divElm.id = data.prefix + '_question';
@@ -182,6 +291,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     self.autoScroll();
   };
 
+  /**
+   * add calendar button in simulator
+   * @param object data: calendar options data
+   */
   $scope.addCalendar = function(data) {
     var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
     divElm.id = data.prefix + '_question';
@@ -195,7 +308,12 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     self.autoScroll();
   };
 
-  // add date picker for calendar in semulator
+  /**
+   * add datepicker for calendar
+   * @param selector: calendar selector
+   * @param settings: calendar setting
+   * @param design: calendar design
+   */
   $scope.addDatePicker = function (selector, settings, design) {
     var options = $scope.getCalendarOptions(settings);
     $(selector.replace('calendar', 'datepicker')).flatpickr(options);
@@ -235,6 +353,11 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     });
   };
 
+  /**
+   * custom calendar text color
+   * @param calendarTarget: calendar selector
+   * @param design: calendar design
+   */
   $scope.customCalendarTextColor = function (calendarTarget, design) {
     var calendarTextColorTarget = calendarTarget.find('.flatpickr-calendar .flatpickr-day');
     calendarTextColorTarget.each(function () {
@@ -260,6 +383,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     calendarTarget.find('.flatpickr-calendar .dayContainer').css('background-color', design.calendarBackgroundColor);
   };
 
+  /**
+   * create flatpickr options from calendar settings
+   * @param settings: calendar settings
+   */
   $scope.getCalendarOptions = function(settings) {
     var options = {
       dateFormat: "Y/m/d",
@@ -751,7 +878,9 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * シミュレーションの自由入力エリアの表示状態を切り替える
    * @param Boolean status 自由入力エリアの表示状態(true: 表示, false: 非表示）
    */
-  $scope.$on('switchSimulatorChatTextArea', function(event, status, uiType = null, isRequired = true) {
+  $scope.$on('switchSimulatorChatTextArea', function(event, status, uiType, isRequired) {
+    var uiType = uiType || false;
+    var isRequired = typeof isRequired !== 'undefined' ? isRequired : true;
     $scope.isRequired = isRequired;
     $scope.isTextAreaOpen = status;
     if ($scope.isTextAreaOpen) {
@@ -907,11 +1036,13 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
         }
         main.style.height = height + "px";
 
+        console.log($scope.simulatorSettings.showWidgetType);
+
         var msgBox = document.getElementById('flexBoxWrap');
-        if (!$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
+        if (msgBox != null && !$scope.isTextAreaOpen && msgBox.style.display !== 'none') {
           $scope.setTextAreaOpenToggle();
         } else
-        if ($scope.isTextAreaOpen && msgBox.style.display === 'none') {
+        if (msgBox != null && $scope.isTextAreaOpen && msgBox.style.display === 'none') {
           $scope.setTextAreaOpenToggle();
         }
       });
@@ -975,7 +1106,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $timeout(function(){
       document.getElementById('sincloChatMessage').value = textareaMessage;
       // タブ切替の通知
-      $scope.$emit('switchWidget', type)
+      $scope.$emit('switchWidget', type);
       //画像がない場合
       if($('#mainImage').css('display') == 'none'　|| $('#mainImage').css('display') == undefined) {
         if($scope.simulatorSettings._settings.widget_title_top_type == 1) {
@@ -1209,12 +1340,20 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
       targetElm.val(changed);
     }
   });
-  
+
   // ダウンロード可能な吹き出しの背景色切替
   $(document).on('mouseenter', '#chatTalk .file_left', function(e){
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor(0.9);
   }).on('mouseleave', '#chatTalk .file_left', function(e){
     e.target.style.backgroundColor = $scope.simulatorSettings.makeFaintColor();
+  });
+
+  // handle skip button click
+  $(document).on('click', '.sincloChatSkipBtn', function (e) {
+    $scope.isShowSkipBtn = false;
+    $('.nextBtn').hide();
+    $scope.$apply();
+    $scope.$emit('nextHearingAction');
   });
 }]);
 

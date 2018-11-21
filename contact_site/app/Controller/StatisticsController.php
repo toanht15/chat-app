@@ -168,6 +168,51 @@ class StatisticsController extends AppController {
     }
   }
 
+  public function forMessageRanking() {
+    if($this->request->is('post')) {
+      if ($this->THistory->validates() ) {
+        $date = $this->request->data['dateFormat'];
+        //月別の場合
+        if($date == '月別'){
+          $type = $this->request->data['monthlyName'];
+          $data = $this->calculateMonthlyData($type);
+        }
+        //日別の場合
+        else if($date == '日別'){
+          $type = $this->request->data['daylyName'];
+          $data = $this->calculateDailyData($type);
+        }
+        //時別の場合
+        else if($date == '時別') {
+          $type = $this->request->data['datefilter'].' 00:00:00';
+          $data = $this->calculateHourlyData($type);
+        }
+      }
+    }
+    //デフォルト画面
+    else {
+      $date = '月別';
+      $type = date("Y");
+//      $this->request->data['datefilter'] = date("Y");
+      $data = $this->calculateMonthlyData($type);
+    }
+
+    //各企業の日付けの範囲
+    $rangeData = $this->determineRange();
+    $this->set('companyRangeDate', $rangeData['companyRangeDate']);
+    $this->set('companyRangeYear', $rangeData['companyRangeYear']);
+    $this->set('date', $date);
+    $this->set('daylyEndDate', date("d", strtotime('last day of' . $type)));
+    $this->set('type', $type);
+    $this->set('data', $data);
+    if ($date == '時別') {
+      $this->set('datePeriod', $this->request->data['datefilter']);
+    }
+    if ($date == '日別' || $date == '月別') {
+      $this->set('datePeriod', date("Y-m-d"));
+    }
+  }
+
   /* *
    * オペレーター統計別ウィンドウ画面
    * @return void
@@ -2072,7 +2117,7 @@ class StatisticsController extends AppController {
     //チャット有効件数
     $effectiveness = "SELECT date_format(th.access_date, ?) as date,SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) effectiveness, SUM(case when thcl.achievement_flg = ? THEN 1 ELSE 0 END) cv
     FROM (select t_histories_id, m_companies_id,achievement_flg from t_history_chat_logs
-     force index(idx_t_history_chat_logs_achievement_flg_companies_id) where achievement_flg in (?, ?) and m_companies_id = ?) as thcl,
+     force index(idx_t_history_chat_logs_achievement_flg_companies_id) where achievement_flg in (?, ?) and m_companies_id = ? group by t_histories_id) as thcl,
      t_histories as th
     WHERE
       thcl.t_histories_id = th.id

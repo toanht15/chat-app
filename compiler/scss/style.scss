@@ -7078,10 +7078,10 @@ ul.naviBtn {
 
         .callerTypeLabel {
           display: inline-block;
-          padding: 4px 2%;
+          padding: 4px 2px;
           margin-right: 8px;
           border-radius: 5px;
-          width: 11em;
+          width: 10em;
           color: white;
           font-weight: bold;
           text-align: center;
@@ -7477,10 +7477,10 @@ ul.naviBtn {
                   }
 
                   .bulk-button {
+                    display: inline-flex;
                     height: 26px;
                     padding: 5px;
                     align-items: center;
-                    position: absolute;
                   }
                   /* The container */
                   .require-checkbox {
@@ -7507,6 +7507,7 @@ ul.naviBtn {
 
                   /* Create a custom checkbox */
                   .checkmark {
+                    cursor: pointer;
                     position: absolute;
                     top: 0;
                     left: 0;
@@ -7620,6 +7621,173 @@ ul.naviBtn {
 
                 }
 
+                &.action_bulk_hearing {
+                  .bulk-button {
+                    display: inline-flex;
+                    height: 26px;
+                    padding: 5px;
+                    align-items: center;
+                  }
+                  /* The container */
+                  .require-checkbox {
+                    display: block;
+                    position: relative;
+                    padding-left: 35px;
+                    margin-bottom: 12px;
+                    //cursor: pointer;
+                    font-size: 22px;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                  }
+
+                  /* Hide the browser's default checkbox */
+                  .require-checkbox input {
+                    position: absolute;
+                    opacity: 0;
+                    cursor: pointer;
+                    height: 0;
+                    width: 0;
+                  }
+
+                  /* Create a custom checkbox */
+                  .checkmark {
+                    cursor: pointer;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 27px;
+                    width: 27px;
+                    background-color: white;
+                    border: 1px solid #909090;
+                    border-radius: 4px;
+                  }
+
+                  /* On mouse-over, add a grey background color */
+                  .require-checkbox:hover input ~ .checkmark {
+                    background-color: white;
+                  }
+
+                  /* When the checkbox is checked, add a blue background */
+                  .require-checkbox input:checked ~ .checkmark {
+                    //background-color: #2196F3;
+                  }
+
+                  /* Create the checkmark/indicator (hidden when not checked) */
+                  .checkmark:after {
+                    content: "";
+                    position: absolute;
+                    display: none;
+                  }
+
+                  /* Show the checkmark when checked */
+                  .require-checkbox input:checked ~ .checkmark:after {
+                    display: block;
+                  }
+
+                  /* Style the checkmark/indicator */
+                  .require-checkbox .checkmark:after {
+                    left: 9px;
+                    top: 5px;
+                    width: 5px;
+                    height: 10px;
+                    border: solid #C3D69B;
+                    border-width: 0 3px 3px 0;
+                    -webkit-transform: rotate(45deg);
+                    -ms-transform: rotate(45deg);
+                    transform: rotate(45deg);
+                  }
+
+                  .grid-container-bulk-hearing {
+                    width: 100%;
+                    height: 100%;
+                    padding-bottom: 0;
+                    display: -ms-grid;
+                    display: grid;
+                    grid-template-columns: 50px 150px 230px 1fr 48px;
+                    -ms-grid-columns: 50px 150px 230px 1fr 48px;
+                    grid-template-rows: auto 1fr;
+                    -ms-grid-rows: auto 1fr;
+                    grid-template-areas: 'g1 g2 g3 g4 g5' 'g1 g2 g3 g4 g5';
+
+                    &.grid-container-header {
+                      text-align: center;
+                    }
+                    &.grid-container-body {
+                      hr.separator {
+                        //margin-top: 12px;
+                        padding-bottom: 8px;
+                        margin-top: 8px;
+                        grid-column: 1/7;
+                        -ms-grid-column: 1;
+                        -ms-grid-column-span: 7;
+                        -ms-grid-row: 3;
+                        width: 101%;
+                      }
+
+                      input[type="text"], select, textarea {
+                        border-radius: 4px !important;
+                        border: 1px solid #909090 !important;
+                      }
+
+                      .area-require {
+                        display: inline-block;
+                        margin: 0 auto;
+                        grid-area: g1;
+                        -ms-grid-column: 1;
+                        -ms-grid-row: 1;
+                      }
+
+                      .area-type {
+                        display: inline-block;
+                        grid-area: g2;
+                        -ms-grid-column: 2;
+                        -ms-grid-row: 1;
+                        select {
+                          width: 145px;
+                        }
+                      }
+
+                      .area-name {
+                        display: inline-block;
+                        grid-area: g3;
+                        -ms-grid-column: 3;
+                        -ms-grid-row: 1;
+                        input {
+                          width: 225px;
+                        }
+                      }
+
+                      .area-variable {
+                        display: inline-block;
+                        grid-area: g4;
+                        -ms-grid-column: 4;
+                        -ms-grid-row: 1;
+                        -ms-grid-row-span: 2;
+                        input {
+                          width: 98%;
+                        }
+                      }
+
+                      .area-btn {
+                        display: inline-block;
+                        grid-area: g5;
+                        -ms-grid-column: 5;
+                        -ms-grid-row: 1;
+                        -ms-grid-row-span: 2;
+                        padding-left: 0;
+                        vertical-align: top;
+
+                        .btnBlock {
+                          padding-left: 0;
+                          width: 4em;
+                        }
+                      }
+                    }
+                  }
+                }
+
                 .grid-container-hearing {
                   width: 100%;
                   height: 100%;
@@ -7646,14 +7814,14 @@ ul.naviBtn {
                       padding-bottom: 0;
                       grid-column: 1/7;
                       -ms-grid-column: 1;
-                      -ms-grid-column-span: 5;
-                      -ms-grid-row: 2;
+                      -ms-grid-column-span: 7;
+                      -ms-grid-row: 3;
                       width: 101%;
                       &.short {
                         grid-column: 1/4;
                         -ms-grid-column: 1;
                         -ms-grid-column-span: 4;
-                        -ms-grid-row: 2;
+                        -ms-grid-row: 3;
                       }
                     }
                   }
@@ -7667,20 +7835,20 @@ ul.naviBtn {
 
                   .area-name {
                     grid-area: g3;
-                    -ms-grid-column: 1;
+                    -ms-grid-column: 3;
                     -ms-grid-row: 1;
                     margin-left: -17px;
                   }
 
                   .area-type {
                     grid-area: g4;
-                    -ms-grid-column: 2;
+                    -ms-grid-column: 4;
                     -ms-grid-row: 1;
                   }
 
                   .area-message {
                     grid-area: g5;
-                    -ms-grid-column: 3;
+                    -ms-grid-column: 5;
                     -ms-grid-row: 1;
                     -ms-grid-row-span: 2;
                     .textarea-message {
@@ -7700,7 +7868,7 @@ ul.naviBtn {
 
                   .area-btn {
                     grid-area: g6;
-                    -ms-grid-column: 4;
+                    -ms-grid-column: 6;
                     -ms-grid-row: 1;
                     -ms-grid-row-span: 2;
                     padding-left: 0;
@@ -7721,8 +7889,8 @@ ul.naviBtn {
 
                   .area-detail {
                     grid-area: g2;
-                    -ms-grid-column: 1;
-                    -ms-grid-column-span: 2;
+                    -ms-grid-column: 2;
+                    -ms-grid-column-span: 4;
                     -ms-grid-row: 2;
 
                     span {
@@ -7730,6 +7898,8 @@ ul.naviBtn {
                     }
 
                     .revert-button {
+                      -webkit-box-align: center;
+                      -ms-flex-align: center;
                       align-items: center;
                       position: relative;
                       padding: 5px;
@@ -7737,6 +7907,7 @@ ul.naviBtn {
 
                     .select-option-input {
                       margin-top: 2px;
+                      width: 500px;
                     }
 
                     .dropdown-custom-design-area {
@@ -7745,10 +7916,13 @@ ul.naviBtn {
                       span {
                         margin-left: 15px;
                         padding: 2px 0;
+                        display: -webkit-box;
+                        display: -ms-flexbox;
                         display: flex;
                         height: 35px;
 
                         label {
+                          -ms-flex-preferred-size: 100px;
                           flex-basis: 100px;
                           margin-top: 10px;
                         }
@@ -7765,29 +7939,24 @@ ul.naviBtn {
                       .revert-button {
                         padding: 4px 0;
                         bottom: 5px;
+                        -webkit-box-pack: center;
+                        -ms-flex-pack: center;
                         justify-content: center;
                         height: 25px
                       }
-                      //width: 100px;
-                      //padding: 4px;
-                      //bottom: 5px;
-                      //height: 25px;
-                      //font-size: 0.9em;
-                      //position: relative;
-                      //text-align: center;
-                    }
-
-                    div.calendar-design-custom-area {
-
                     }
                   }
 
                   .area-require {
                     grid-area: g1;
+                    -ms-grid-column: 2;
+                    -ms-grid-row: 1;
                   }
 
                   .area-drag-symbol {
                     grid-area: g0;
+                    -ms-grid-column: 1;
+                    -ms-grid-row: 1;
                   }
                 }
 
@@ -9568,7 +9737,7 @@ ul.naviBtn {
       dl {
         overflow: hidden;
         transition: height 200ms linear;
-        height: 32em;
+        max-height: 32em;
 
         .default-setting-explain {
           margin-bottom: 0;
@@ -9584,7 +9753,7 @@ ul.naviBtn {
         }
 
         > div {
-          height: 15em;
+          max-height: 15em;
           overflow: auto;
           width: 32em;
           margin-bottom: 2em;
@@ -9654,7 +9823,7 @@ ul.naviBtn {
         overflow: hidden;
         transition: height 200ms linear;
         margin-top: 5px;
-        height: 32em;
+        max-height: 32em;
 
         .default-setting-explain {
            margin-bottom: 0;
@@ -9665,7 +9834,7 @@ ul.naviBtn {
         }
 
         > div {
-          height: 15em;
+          max-height: 15em;
           overflow: auto;
           width: 32em;
           margin-bottom: 2em;
