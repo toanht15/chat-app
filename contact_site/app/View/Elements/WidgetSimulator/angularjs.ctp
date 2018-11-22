@@ -9,6 +9,8 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
   $scope.isTabDisplay = document.querySelector('[id$="IsTabDisplay"]').value == true;
   $scope.canVisitorSendMessage = document.querySelector('[id$="CanVisitorSendMessage"]').value == true;
 
+  // ヒアリングの入力かどうか
+  $scope.isHearingInput = false;
   // 自由入力エリアの表示状態
   $scope.isTextAreaOpen = true;
   // 自由入力エリアの、改行入力の許可状態
@@ -70,6 +72,10 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.addCalendar(message, settings, design, prefix);
   });
 
+  $scope.$on('disableHearingInputFlg', function(event) {
+    $scope.isHearingInput = false;
+  });
+
   /**
    * addSeMessage
    * サイト訪問者側メッセージの追加 TODO: 現在使用されていないため、仮実装状態
@@ -118,7 +124,7 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
    * visitorSendMessage
    * サイト訪問者のメッセージ受信と、呼び出し元アクションへの通知
    */
-  $scope.visitorSendMessage = function() {
+  $scope.visitorSendMessage = function(isHearingMessage) {
     var message = $('#sincloChatMessage').val() ? $('#sincloChatMessage').val() : $('#miniSincloChatMessage').val();
     if (typeof message === 'undefined' || message.trim() === '') {
       return;
@@ -129,12 +135,16 @@ sincloApp.controller('SimulatorController', ['$scope', '$timeout', 'SimulatorSer
     $scope.allowSendMessageByShiftEnter = false;
     $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
 
-    var prefix = 'action' + $scope.simulatorSettings.getCurrentActionStep() + '_hearing' + $scope.simulatorSettings.getCurrentHearingIndex() + '_underline';
+    var prefix = 'action' + $scope.simulatorSettings.getCurrentActionStep() + '_hearing' + ($scope.isHearingInput ? $scope.simulatorSettings.getCurrentHearingIndex() + '_underline' : "");
     console.log(message);
     $scope.addMessage('se', message, prefix);
     $('#sincloChatMessage').val('');
     $('#miniSincloChatMessage').val('');
     $scope.$emit('receiveVistorMessage', message)
+    if(!$scope.isHearingInput) {
+      // もとに戻す
+      $scope.isHearingInput = true;
+    }
   };
 
   /**
