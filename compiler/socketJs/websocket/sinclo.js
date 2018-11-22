@@ -3144,7 +3144,7 @@
         }
         check.escape_html(obj.name); // エスケープ
 
-        if (cs === "sinclo_re") {
+        if (obj.cn === "sinclo_re") {
           if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             div.style.textAlign = "right";
           } else {
@@ -3153,7 +3153,7 @@
           if (obj.name !== "") {
             content = "<span class='cName'>" + obj.name + "</span>";
           }
-        } else if (cs === "sinclo_se") {
+        } else if (obj.cn === "sinclo_se") {
           if(window.sincloInfo.widget.isSendMessagePositionLeft) {
             div.style.textAlign = "left";
           } else {
@@ -3264,15 +3264,15 @@
             }
         if (obj.cn.indexOf("sinclo_re") !== -1) {
           if(window.sincloInfo.widget.isSendMessagePositionLeft) {
-            cs += ' effect_right';
+            obj.cn += ' effect_right';
           } else {
-            cs += ' effect_left';
+            obj.cn += ' effect_left';
           }
         } else if (obj.cn.indexOf("sinclo_se") !== -1) {
           if(window.sincloInfo.widget.isSendMessagePositionLeft) {
-            cs += ' effect_left';
+            obj.cn += ' effect_left';
           } else {
-            cs += ' effect_right';
+            obj.cn += ' effect_right';
           }
         }
 
