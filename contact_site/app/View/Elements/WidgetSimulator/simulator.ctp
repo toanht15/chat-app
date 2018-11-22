@@ -227,7 +227,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox blockquote:before, #sincloBox blockquote:after, #sincloBox q:before, #sincloBox q:after { content: ''; content: none; }
         #sincloBox table { border-collapse: collapse; border-spacing: 0; }
         /* END OF reset-css */
-        #sincloBox * { font-size: 12px; }
+        #sincloBox * { font-size: 12px; line-height: 1.4; }
         #sincloBox.middleSize  * { font-size: 13px; }
         #sincloBox.largeSize * { font-size: 13px; }
         #sincloBox .sinclo-hide { display:none!important; }
@@ -450,6 +450,42 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         @-o-keyframes spin { 0% {-o-transform: rotate(0deg);} 100% {-o-transform: rotate(360deg);} }
         @keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }
 
+        #sincloBox #chatTalk li.sinclo_re.sinclo_form { color: {{widget.settings['re_text_color']}}; font-size: {{widget.re_text_size}}px; display: block; padding: 10px 15px 15px 15px; line-height: 0; }
+        #sincloBox #chatTalk li.sinclo_re div.formContentArea { margin: 0; line-height: 0; }
+        #sincloBox #chatTalk li.sinclo_re div.formContentArea p.formMessage { color: {{widget.settings['re_text_color']}}; }
+        #sincloBox #chatTalk li.sinclo_re div.formArea { background-color: #FFF; line-height: 0; padding: 10px 10px 0 10px; margin-top: 10px; }
+        #sincloBox #chatTalk li.sinclo_re div.formElement { line-height: 0; color: #333; display: flex; justify-content: stretch; flex-flow: column nowrap; }
+        #sincloBox #chatTalk li.sinclo_re div.formElement.withMB { margin-bottom: 8px; }
+        #sincloBox #chatTalk li.sinclo_re div.formElement label.formLabel { margin-bottom: 3px; }
+        #sincloBox #chatTalk li.sinclo_re div.formElement label.formLabel span.require { color: #7F0000 }
+        #sincloBox #chatTalk li.sinclo_re div.formElement input.formInput { padding: 5px; border: 1px solid {{widget.settings['re_background_color']}}; }
+        #sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea { margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;  }
+        #sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton { width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: {{widget.settings['chat_send_btn_background_color']}}; color: {{widget.settings['chat_send_btn_text_color']}};  }
+        #sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton:hover { opacity: 0.8; }
+        #sincloBox #chatTalk li.sinclo_re div.formArea p.formOKButtonArea span.formOKButton.disabled { opacity: 0.38; cursor: auto; }
+
+        #sincloBox #chatTalk li.sinclo_se.sinclo_form { color: {{widget.settings['se_text_color']}}; font-size: {{widget.settings['se_text_size']}}px; display: block; padding: 15px; line-height: 0; }
+        #sincloBox #chatTalk li.sinclo_se div.formContentArea { margin: 0; line-height: 0; }
+        #sincloBox #chatTalk li.sinclo_se div.formArea { background-color: #FFF; line-height: 0; padding: 10px 10px 0 10px; }
+        #sincloBox #chatTalk li.sinclo_se div.formElement { color: #333; display: flex; justify-content: stretch; flex-flow: column nowrap; }
+        #sincloBox #chatTalk li.sinclo_se div.formElement.withMB { margin-bottom: 8px; }
+        #sincloBox #chatTalk li.sinclo_se div.formElement label.formLabel { margin-bottom: 3px; }
+        #sincloBox #chatTalk li.sinclo_se div.formElement label.formLabel span.require { color: #7F0000 }
+        #sincloBox #chatTalk li.sinclo_se div.formElement input.formInput { padding: 5px; border: 1px solid {{widget.settings['se_background_color']}}; }
+        #sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea { margin-top: 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center;  }
+        #sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton { width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: {{widget.settings['send_chat_btn_text_color']}}; color: {{widget.settings['send_chat_btn_text_color']}}; opacity:0.38;  }
+        #sincloBox #chatTalk li.sinclo_se div.formArea p.formOKButtonArea span.formOKButton.disabled { opacity: 0.38; cursor: auto; }
+
+        #sincloBox #chatTalk li.sinclo_se.sinclo_form { display: block; padding: 10px 15px; line-height: 0; }
+        #sincloBox #chatTalk li.sinclo_se div.formSubmitArea { background-color: transparent; line-height: 0; }
+        #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement { display: grid; display: -ms-grid; grid-template-columns: 36% max-content 1fr; -ms-grid-columns: 36% max-content 1fr; color: #333; line-height: 0; }
+        #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement.withMB { margin-bottom: 7px; }
+        #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span { display: inline-block; }
+        #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel { grid-column: 1/2; grid-row: 1/2; -ms-grid-column: 1; -ms-grid-row: 1; }
+        #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabel span.require { color: #7F0000 }
+        #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; grid-row: 1/2; -ms-grid-column: 2; -ms-grid-row: 1; }
+        #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { grid-column: 3/4; grid-row: 1/2; -ms-grid-column: 3; -ms-grid-row: 1; }
+
         #sincloBox section#chatTab #flexBoxWrap div#messageBox { height: 75px!important; padding: 5px; }
         #sincloBox section#chatTab #flexBoxWrap div#miniFlexBoxHeight { height: 48px!important; padding: 5px; }
         #sincloBox section#chatTab textarea#sincloChatMessage, #sincloBox section#chatTab input#miniSincloChatMessage { width: 80%; height: 100%; color: {{widget.settings['other_text_color']}}; margin: 0; resize: none; padding: 5px; }
@@ -611,6 +647,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
             <div style="height: auto!important; padding:0; display: none; text-align: right;">
               <li class="sinclo_se chat_right recv_file_right details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1', middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><div class="receiveFileContent"><div class="selectFileArea"><p class="preview"></p><p class="commentLabel">コメント</p><p class="commentarea"><textarea style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea></p><div class="actionButtonWrap"><a class="cancel-file-button">選択し直す</a><a class="send-file-button">送信する</a></div></div><div class='loadingPopup hide'><i class='sinclo-fal fa-spinner load'></i><p class='progressMessage'>読み込み中です。<br>しばらくお待ち下さい。</p></div></div></li>
             </div>
+            <div style="height: auto!important; padding:0; display: none;">
+              <li class="sinclo_re chat_left sinclo_form details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"></li>
+            </div>
+            <div style="height: auto!important; padding:0; display: none;">
+              <li class="sinclo_se chat_right sinclo_form details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"></li>
+            </div>
           </ul>
   <!-- chat_message_copy 0 end -->
 
@@ -730,7 +772,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li.sinclo_re.balloonType.notNone:after { border-right: 5px solid {{widget.getTalkBorderColor('re')}}; border-bottom: 5px solid {{widget.getTalkBorderColor('re')}}; }
         #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; -moz-animation-fill-mode:both; -o-animation-fill-mode:both; -ms-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }
         #sincloBox ul#chatTalk li.boxType.chat_right { border-radius: 12px 12px 0 12px; margin-left: 37.5px; margin-right:10px; }
-        #sincloBox ul#chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-left: 10px; margin-right: 17.5px; }
+        #sincloBox ul#chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-right: 10px; margin-right: 17.5px; }
         #sincloBox ul#chatTalk li.boxType.chat_right.middleSize { border-radius: 12px 12px 0 12px; margin-left: 45px; margin-right:10px; }
         #sincloBox ul#chatTalk li.boxType.chat_left.middleSize { border-radius: 12px 12px 12px 0; margin-right: 21px; margin-left:10px; }
         #sincloBox ul#chatTalk li.boxType.chat_right.largeSize { border-radius: 12px 12px 0 12px; margin-left: 52.7px; margin-right:10px; }
