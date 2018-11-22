@@ -113,7 +113,6 @@ $(window).load(function(){
     responsive:true,
     scrollX: true,
     scrollY: '64vh',
-    responsive: true,
     scrollCollapse: true,
     paging: false,
     info: false,
@@ -374,7 +373,7 @@ $(window).load(function(){
   });
 
   $(".autoMessage").text(function(index, currentText) {
-    var maxLength = 29;
+    var maxLength = 108;
     if(currentText.length >= maxLength) {
       return currentText.substr(0, maxLength) + "...";
     } else {
