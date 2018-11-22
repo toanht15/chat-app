@@ -7705,11 +7705,12 @@ ul.naviBtn {
                     padding-bottom: 0;
                     display: -ms-grid;
                     display: grid;
-                    grid-template-columns: 50px 150px 230px 1fr 48px;
-                    -ms-grid-columns: 50px 150px 230px 1fr 48px;
+                    grid-template-columns: 12px 50px 150px 230px 1fr 48px;
+                    -ms-grid-columns: 12px 50px 150px 230px 1fr 48px;
                     grid-template-rows: auto 1fr;
                     -ms-grid-rows: auto 1fr;
-                    grid-template-areas: 'g1 g2 g3 g4 g5' 'g1 g2 g3 g4 g5';
+                    grid-template-areas: 'g0 g1 g2 g3 g4 g5' 'g0 g1 g2 g3 g4 g5';
+
 
                     &.grid-container-header {
                       text-align: center;
@@ -7729,6 +7730,14 @@ ul.naviBtn {
                       input[type="text"], select, textarea {
                         border-radius: 4px !important;
                         border: 1px solid #909090 !important;
+                      }
+
+                      .area-drag-symbol {
+                        display: inline-block;
+                        margin: 0 auto;
+                        grid-area: g0;
+                        -ms-grid-column: 1;
+                        -ms-grid-row: 1;
                       }
 
                       .area-require {

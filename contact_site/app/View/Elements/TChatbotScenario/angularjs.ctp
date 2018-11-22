@@ -199,6 +199,42 @@
       }
     };
 
+    // ヒアリング一覧の並び替えオプション
+    $scope.sortableOptionsBulkHearing = {
+      axis: "y",
+      tolerance: "pointer",
+      containment: "parent",
+      handle: '.handleOption',
+      cursor: 'move',
+      helper: 'clone',
+      // revert: 100,
+      start: function (event, ui) {
+        var text = ui.item.find('select option:selected').text();
+        var uiType = ui.item.find('select option:selected').val();
+        $('.ui-sortable-placeholder').css('height', '100px');
+        ui.helper.find('select option:selected').text(text);
+      },
+      beforeStop: function (event, ui) {
+        // cloneした要素にチェック状態が奪われるため、再度設定し直す
+        $.each($(ui.helper).find('input:radio:checked'), function () {
+          var name = $(this).prop('name');
+          var value = $(this).prop('value');
+          $(ui.item).find('input:radio[name="' + name + '"][value="' + value + '"]').prop('checked', true);
+        });
+      },
+      stop: function (event, ui) {
+        $timeout(function () {
+          $scope.$apply();
+        });
+
+        // 並び替え後、変数のチェックを行う
+        var elms = document.querySelectorAll('li.set_action_item');
+        $scope.setActionList.forEach(function (actionItem, index) {
+          actionValidationCheck(elms[index], $scope.setActionList, actionItem);
+        });
+      }
+    };
+
     // メッセージ間隔は同一の設定を各アクションに設定しているため、状態に応じて取得先を変更する
     $scope.messageIntervalTimeSec = "<?= !empty($this->data['TChatbotScenario']['messageIntervalTimeSec']) ? $this->data['TChatbotScenario']['messageIntervalTimeSec'] : '' ?>"
       || (typeof $scope.setActionList[0] !== 'undefined' ? $scope.setActionList[0].messageIntervalTimeSec : '')
@@ -658,7 +694,7 @@
               var text = $scope.bulkHearingInputMap[Number(newHearings[idx].inputType)];
               newHearings[idx].label = text;
               newHearings[idx].variableName = text;
-            } else if ( !oldHearings || !oldHearings[idx] ) {
+            } else if ( oldObject.actionType === 12 && (!oldHearings || !oldHearings[idx]) ) {
               var text = $scope.bulkHearingInputMap[Number(newHearings[idx].inputType)];
               newHearings[idx].label = text;
               newHearings[idx].variableName = text;
@@ -1577,7 +1613,7 @@
           $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').hide();
         } else if ( actionType == <?= C_SCENARIO_ACTION_HEARING ?> || actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>
           || actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>
-          || ( actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?> && targetElmList.length !== limitNum ) ) {
+          || (actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?> && targetElmList.length !== limitNum) ) {
           // リストが複数件ある場合、ヒアリング・選択肢・属性値・リード登録アクション・一括ヒアリングアクションは、追加・削除ボタンを表示する
           $(targetElm).find('.btnBlock .disOffgreenBtn').show();
           $(targetElm).find('.btnBlock .deleteBtn,span.removeArea .deleteBtn').show();
@@ -3221,8 +3257,16 @@
      */
 
       messageList.push("保存機能は未実装です");
+    } else if ( actionItem.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+      angular.forEach(actionItem.multipleHearings, function (item, itemKey) {
+        if ( !item.label ) {
+          messageList.push('ラベルが未入力です');
+        }
+        if ( !item.variableName ) {
+          messageList.push('変数名が未入力です');
+        }
+      });
     }
-
     // 使用されている変数名を抽出する
     var setMessages = searchObj(actionItem, /^(?!\$).+$|^variableName$/i);
     var usedVariableList = setMessages.map(function (string) {
