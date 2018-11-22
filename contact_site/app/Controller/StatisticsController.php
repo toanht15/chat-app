@@ -84,10 +84,9 @@ class StatisticsController extends AppController {
     }
     //デフォルト画面
     else {
-      $date = '時別';
-      $type = date("Y-m-d");
-      $this->request->data['datefilter'] = date("Y-m-d");
-      $data = $this->calculateHourlyData($type);
+      $date = '月別';
+      $type = date("Y");
+      $data = $this->calculateMonthlyData($type);
     }
 
     //各企業の日付けの範囲
@@ -142,10 +141,12 @@ class StatisticsController extends AppController {
     }
     //デフォルト画面
     else {
-      $date = '時別';
-      $type = date("Y-m-d");
-      $timeData = $this->calculateOperatorHourlyData($type);
-      $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['anotherWindowDateFormat'],$timeData['correctStartDate'],$timeData['correctEndDate']);
+      $date = '月別';
+      $type = date("Y");
+      $timeData = $this->calculateOperatorMonthlyData($type,'list');
+      //オペレータレポートデータ取得
+      $users =$this->summaryOperatorSql($timeData['date_format'],$timeData['anotherWindowDateFormat'],
+        $timeData['correctStartDate'],$timeData['correctEndDate']);
     }
 
     //各企業の日付けの範囲

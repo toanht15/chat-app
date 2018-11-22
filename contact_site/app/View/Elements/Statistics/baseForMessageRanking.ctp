@@ -142,46 +142,46 @@
 
     <!-- /* テーブル表示エリア */ -->
 
-    <table id="statistics_table" class="display" cellspacing="0" width = "100%">
+    <table id="statistics_table" class="display" cellspacing="0" width="100%">
       <thead>
       <?php if($date == '月別') {
         $start = 1;
         $end = 12; ?>
         <tr>
-          <th class="thMinWidth">メッセージ</th>
+          <th class="thMinWidthMessageRanking">メッセージ</th>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <th class="thMinWidthDayly"><?= $i.'月' ?></th>
+            <th class="thMinWidthDaylyMessageRanking" style="padding-left: 13px; padding-right: 13px"><?= $i.'月' ?></th>
           <?php } ?>
-          <th class="thMinWidthDayly">合計</th>
+          <th class="thMinWidthDaylyMessageRanking" style="padding-left: 16px; padding-right: 16px">合計</th>
         </tr>
       <?php } ?>
       <?php if($date == '日別') {
         $start = 1;
         $end = $daylyEndDate; ?>
         <tr>
-          <th class="thMinWidth">メッセージ</th>
+          <th class="thMinWidthMessageRanking">メッセージ</th>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <th class="thMinWidthDayly"><?= $i.'日' ?></th>
+            <th class="thMinWidthDaylyMessageRanking" style="padding-left: 5px; padding-right: 5px"><?= $i.'日' ?></th>
           <?php } ?>
-          <th class="thMinWidthDayly">合計</th>
+          <th class="thMinWidthDaylyMessageRanking">合計</th>
         </tr>
       <?php } ?>
       <?php if($date == '時別') {
         $start = 0;
         $end = 23; ?>
         <tr>
-          <th class="thMinWidth">メッセージ</th>
+          <th class="thMinWidthMessageRanking">メッセージ</th>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <th class = "thMinWidthTimely"><?= sprintf("%02d",$i).'-'.sprintf("%02d",$i+1) ?></th>
+            <th class = "thMinWidthDaylyMessageRanking" style="padding-left: 5px; padding-right: 5px"><?= sprintf("%02d",$i).'-'.sprintf("%02d",$i+1) ?></th>
           <?php } ?>
-          <th class="thMinWidthDayly">合計</th>
+          <th class="thMinWidthDaylyMessageRanking">合計</th>
         </tr>
       <?php } ?>
       </thead>
       <tbody>
       <?php if($date == '日別' or $date == '月別') { ?>
         <tr>
-          <td class = 'autoMessage tooltip'>主な特徴（他社との違い）</td>
+          <td class = 'autoMessage tooltip'>sincloを利用することで、このようなチャットボットを簡単に自社サイトに導入することができます。</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['accessDatas']['accessNumberData'][$type.'-'.sprintf("%02d",$i)]);?></td>
@@ -205,7 +205,7 @@
           <td><?php echo number_format($data['widgetDatas']['allWidgetNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'autoMessage tooltip' >当サイトに対してご意見、ご要望などがございましたらご自由にご記入ください。</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >当サイトに対してご意見、ご要望などがございましたらご自由にご記入ください。アンケートは以上です。ご協力ありがとうございました。</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['requestDatas']['requestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -217,7 +217,7 @@
           <td><?php echo number_format($data['requestDatas']['allRequestNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'autoMessage tooltip' >お客様のお住いのエリアをお選びください。</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >sinclo（シンクロ）はコンタクトセンターシステムメーカーであるメディアリンクが長年培った技術力とノウハウを活かした100%自社開発（国産）のチャットボットツール（特許取得済み）です。</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['automaticResponseData']['automaticResponseNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -229,7 +229,8 @@
           <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'autoMessage tooltip' >料金について</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >おかえりなさいませ。
+            sinclo（シンクロ）に興味を持っていただきありがとうございます。</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['linkDatas']['linkNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -263,7 +264,7 @@
           <td><?php echo number_format($data['responseDatas']['allResponseNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'autoMessage tooltip' >無料トライアルに申し込む</td>
+          <td id="chatRequestLabel" class = 'autoMessage tooltip' >「売上にインパクトを与えるコミュニケーションのあり方」を熟知している当社だからこそ、本当に効果のあるチャットボットツールを自信をもってご提供いたします。</td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <?php if(is_int($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]) == 'true') { ?>
               <td><?php echo number_format($data['abandonRequestDatas']['abandonRequestNumberData'][$type.'-'.sprintf("%02d",$i)]) ?></td>
@@ -304,7 +305,7 @@
           <td><?php echo number_format($data['widgetDatas']['allWidgetNumberData']) ?></td>
         </tr>
         <tr>
-          <td id="chatRequestLabel" class = 'autoMessage tooltip'>料金について
+          <td id="chatRequestLabel" class = 'autoMessage tooltip'>sinclo（シンクロ）はコンタクトセンターシステムメーカーであるメディアリンクが長年培った技術力とノウハウを活かした100%自社開発（国産）のチャットボットツール（特許取得済み）です。
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo number_format($data['requestDatas']['requestNumberData'][sprintf("%02d",$i).':00']) ?></td>
@@ -320,7 +321,7 @@
           <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
         </tr>
         <tr>
-          <td id = 'chatLinkClickTooltip' class = 'autoMessage tooltip'>機能について
+          <td id = 'chatLinkClickTooltip' class = 'autoMessage tooltip'>sinclo（シンクロ）はコンタクトセンターシステムメーカーであるメディアリンクが長年培った技術力とノウハウを活かした100%自社開発（国産）のチャットボットツール（特許取得済み）です。
           </td>
           <?php for ($i = $start; $i <= $end; $i++) { ?>
             <td><?php echo number_format($data['linkDatas']['linkNumberData'][sprintf("%02d",$i).':00']) ?></td>
