@@ -965,9 +965,9 @@ $config['chatbotScenarioActionList'] = [
       'chatTextArea' => '2',
       'multipleHearings' => [
         [
-          'variableName' => '',
-          'inputType' => "1",
-          'label' => "",
+          'variableName' => '会社名',
+          'inputType' => "1", // 会社名
+          'label' => "会社名",
           'required' => true
         ]
       ]
