@@ -1889,17 +1889,19 @@
       } else if ( $scope.setActionList[$scope.actionStep].actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
         chatBotTyping();
         $.post("<?=$this->Html->url(['controller' => 'CompanyData', 'action' => 'parseSignature'])?>", JSON.stringify({
-          'accessToken': 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK', //FIXME 隠蔽必須
+          'accessToken': 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK',
           'targetText': message
         }), null, 'json').done(function (result) {
-          $scope.$broadcast('addReForm', {
-            prefix: 'action' + $scope.actionStep + '_bulk-hearing',
-            isConfirm: true,
-            bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
-            resultData: result
-          });
-          $scope.$broadcast('switchSimulatorChatTextArea', false);
-          chatBotTypingRemove();
+          setTimeout(function(){
+            $scope.$broadcast('addReForm', {
+              prefix: 'action' + $scope.actionStep + '_bulk-hearing',
+              isConfirm: true,
+              bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
+              resultData: result
+            });
+            $scope.$broadcast('switchSimulatorChatTextArea', false);
+            chatBotTypingRemove();
+          }, parseInt($scope.setActionList[$scope.actionStep].messageIntervalTimeSec, 10) * 1000);
         });
       }
     });
@@ -2077,7 +2079,7 @@
       if ( typeof $scope.setActionList[$scope.actionStep] !== 'undefined' && typeof $scope.setActionList[$scope.actionStep].actionType !== 'undefined' ) {
         var actionDetail = $scope.setActionList[$scope.actionStep];
         // メッセージ間隔
-        var time = actionDetail.messageIntervalTimeSec;
+        var time = parseInt(actionDetail.messageIntervalTimeSec, 10) * 1000;
         var branchOnConditon = false;
 
         //条件分岐の場合は複雑な時間指定が必要になるので括りだしておく
@@ -2107,6 +2109,11 @@
           } else {
             chatBotTyping();
           }
+        }
+
+        if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?> ) {
+          chatBotTypingRemove();
+          time = 850;
         }
 
         $timeout.cancel($scope.actionTimer);
@@ -2192,7 +2199,7 @@
             $scope.doBulkHearingAction(actionDetail);
           } else
             chatBotTypingRemove();
-        }, parseInt(time, 10) * 1000);
+        }, time);
       } else {
         setTimeout(chatBotTypingRemove, 801);
         $scope.actionStop();
@@ -2429,6 +2436,7 @@
       if ( actionDetail.multipleHearings ) {
         $scope.$broadcast('allowInputLF', true, "1");
         $scope.$broadcast('switchSimulatorChatTextArea', true);
+        $scope.$broadcast('disableHearingInputFlg');
       }
     };
 
