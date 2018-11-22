@@ -7544,6 +7544,7 @@
             variables: targetVariables
           };
 
+
           // 外部連携実装後に外す
           sinclo.api.callFunction('sc', self._parent.get(self._parent._lKey.scenarioId));
           // 外部連携実装後に外す

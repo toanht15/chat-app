@@ -973,6 +973,19 @@ var db = {
     } else {
       callback(false);
     }
+  },
+
+  /*  リード情報を登録する
+   *  TODO 適切なエラーハンドリング
+   */
+
+  addLeadInformation: function (obj){
+    pool.query('INSERT INTO t_lead_lists VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, now())', [companyList[obj.siteKey], Number(obj.leadSettingsId), Number(obj.scenarioId), JSON.stringify(obj.saveLeadData), obj.executeUrl, obj.landingUrl, obj.userAgent],
+    function(err, result){
+      if(isset(err)){
+        console.log("ERROR DETECTED!!!" + err);
+      }
+    });
   }
 };
 
@@ -3968,30 +3981,44 @@ io.sockets.on('connection', function(socket) {
     });
   });
 
-  // リード登録
+  // leadRegister
+  // TODO エラーが起きたらちゃんとハンドリングすること
   socket.on('saveLeadList', function(data){
     var obj = JSON.parse(data);
-    console.log(obj);
-    // TODO データを渡した際に何をするか（22日実装)
-    // リードリストのidを見る
-    // idを基にリード設定テーブルから設定を取得（リスト名、変数設定）
-    // ↑DBから設定を取得する↑
-    // 取得した設定の変数名を埋める
-    // もしなかった場合（変数名が無い、変数の中身が無い）は空文字列をセットする
-    // スキップにより半角スペース1文字のみ設定されてる場合も同様
-    // ↑何か別の関数を用意して取得した変数を埋める↑
-    // 変数⇔ラベルの値設定が完了したら情報を整理
-    // ↑objに入ってる他データをセットする↑
-    // 整理した情報をリードリスト保存テーブルに格納する
-    // ↑DBに値を保存する↑
-    // ↓例外↓
-    // エラーが起きたらちゃんとハンドリングすること
-    // ★★★★★★★★★★★清水さん質問メモ★★★★★★★★★★★
-    // console.logの出力はどこへ行くのか？
-    // そもそもログをどうやって出すのか？
-    // use strict error がログに出てる
-    // ★★★★★★★★★★★清水さん質問メモ★★★★★★★★★★★
+    var targetId = Number(obj.leadSettingsId);
+    var variableIndex = obj.variables;
+    var leadData = [];
+    pool.query('SELECT list_parameter FROM t_lead_list_settings WHERE id = ? AND m_companies_id = ?', [targetId, companyList[obj.siteKey]] , function(err, result){
+      if(isset(err)) {
+        console.log("ERROR DETECTED!!");
+        return;
+      }
+      else {
+        var leadInfo = JSON.parse(result[0].list_parameter);
+        for(let i=0; i<leadInfo.length; i++){
+          leadData.push({
+            "leadLabelName": leadInfo[i].leadLabelName,
+            "leadVariable": isOkVariableForLeadList(variableIndex[leadInfo[i].leadVariableName]) ? variableIndex[leadInfo[i].leadVariableName] : ""
+          });
+        }
+        obj.saveLeadData = leadData;
+        db.addLeadInformation(obj);
+      }
+    });
   });
+
+  /*  Check variable (empty or space only)
+   *  @param variableIndex (Variables)
+   *  @return boolean (check result)
+   */
+  var isOkVariableForLeadList = function(target){
+    if(isset(target)) {
+      if(!target.match(/\s/)){
+        return true;
+      }
+    }
+    return false;
+  };
 
   socket.on('sendParseSignature', function(data, ack) {
     var obj = JSON.parse(data);
@@ -4061,15 +4088,6 @@ io.sockets.on('connection', function(socket) {
     emit.toUser('startCoBrowseOpen', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     emit.toMine('requestCoBrowseAllowed', data, socket);
     // 今まで通り
-    // else {
-    //     // 同形ウィンドウを作成するための情報取得依頼
-    //     if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
-    //     sincloCore[obj.siteKey][obj.tabId].shareWindowFlg = false;
-    //     sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
-    //     sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
-    //     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
-    //     emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-    // }
   });
 
   /**
@@ -4215,40 +4233,6 @@ io.sockets.on('connection', function(socket) {
   // ビデオチャット関連
   // ビデオチャットで利用している各値はプレフィックス（vc_）をつけている。
   // -----------------------------------------------------------------------
-  /*  socket.on('confirmVideochatStart', function (data) {
-      var obj = JSON.parse(data);
-      // 同形ウィンドウを作成するための情報取得依頼
-      if ( !getSessionId(obj.siteKey, obj.toTabId, 'sessionId') ) return false;
-      sincloCore[obj.siteKey][obj.toTabId].vc_connectToken = obj.connectToken;
-      sincloCore[obj.siteKey][obj.toTabId].vc_syncSessionId = null;
-      sincloCore[obj.siteKey][obj.toTabId].vc_syncHostSessionId = socket.id; // 企業画面側のセッションID
-      emit.toUser('confirmVideochatStart', data, getSessionId(obj.siteKey, obj.toTabId, 'sessionId'));
-    });
-
-    socket.on('videochatConfirmOK', function (data) {
-      var obj = JSON.parse(data);
-      //obj.connectToken = sincloCore[obj.siteKey][obj.tabId].vc_connectToken;
-      emit.toUser('videochatConfirmOK', JSON.stringify(obj), getSessionId(obj.siteKey, obj.tabId, 'vc_syncHostSessionId'));
-    });
-
-    socket.on('videoChatConnected', function (data) {
-      console.log('VIDEOCHAT CONNECTED : ' + data);
-      var obj = JSON.parse(data);
-      vc_connectList[obj.tabId] = socket.id;
-      if(vc_connectList[obj.to]) {
-        console.log('VIDEOCHAT TO FOUND!');
-        emit.toUser('videoChatConnected', data, vc_connectList[obj.to]);
-      }
-    });
-
-    socket.on('askMakeOffer', function (data) {
-      console.log('askMakeOffer : ' + data);
-      var obj = JSON.parse(data);
-      if(vc_connectList[obj.to]) {
-        emit.toUser('askMakeOffer', data, vc_connectList[obj.to]);
-      }
-    });
-  */
   socket.on('sendMessage', function(d) {
     var obj = JSON.parse(d);
     var host = (obj.host !== "true") ? "host" : "guest";
