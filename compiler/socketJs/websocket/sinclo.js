@@ -1664,7 +1664,9 @@
                 miniTextarea.disabled = false;
               }
             }
-            common.chatBotTypingCall(obj);
+            if(!sinclo.scenarioApi._bulkHearing.isInMode()) {
+              common.chatBotTypingCall(obj);
+            }
             return false;
           } else if ( obj.messageType === sinclo.chatApi.messageType.autoSpeech ) {
             // 別タブで送信された自動返信は表示する
@@ -4042,7 +4044,15 @@
           if ( $(this).hasClass('disabled') ) return;
           var returnValue = {};
           var targetArray = $(li).find('.formInput');
+          var invalid = false;
           targetArray.each(function (index, element) {
+            var matchResult = sinclo.scenarioApi._bulkHearing._isValidValue($(element).data('inputType'), $(element).val());
+            if ( matchResult === null || matchResult[0] !== matchResult.input ) {
+              invalid = true;
+              $(element).css('border', '1px solid #F00');
+            } else {
+              $(element).css('border', '');
+            }
             console.log("CHANGED : %s vs %s", $(element).val(), resultData[$(element).data('input-type')]);
             returnValue[$(element).attr('name')] = {
               label: $(element).data('label-text'),
@@ -4051,8 +4061,10 @@
               changed: $(element).val() !== resultData[Number($(element).data('input-type'))]
             }
           });
-          console.log("return Value : %s", JSON.stringify(returnValue));
-          callback(returnValue);
+          if(!invalid) {
+            console.log("return Value : %s", JSON.stringify(returnValue));
+            callback(returnValue);
+          }
         });
         $(li).find('input.formInput').on('input', function () {
           $(li).find('input.formInput').each(function (idx, elem) {
@@ -8131,6 +8143,7 @@
         handleFormOK: function (resultValue) {
           var self = sinclo.scenarioApi._bulkHearing;
           if ( resultValue && Object.keys(resultValue).length > 0 ) {
+            self.endInput();
             var changed = false;
             var keys = Object.keys(resultValue);
             keys.forEach(function (e, i, a) {
@@ -8172,36 +8185,78 @@
         },
         beginInput: function() {
           var self = sinclo.scenarioApi._bulkHearing;
-          $('#sincloBox #chatTalk li.sinclo_re div.formElement input.formInput').on('input', self._handleInput);
+          $(document).on('input paste', '#sincloBox #chatTalk li.sinclo_re div.formElement input.formInput', self._handleInput);
         },
         endInput: function() {
           var self = sinclo.scenarioApi._bulkHearing;
-          $('#sincloBox #chatTalk li.sinclo_re div.formElement input.formInput').off('input', self._handleInput);
+          $(document).off('input paste', '#sincloBox #chatTalk li.sinclo_re div.formElement input.formInput', self._handleInput);
         },
         _handleInput: function(event) {
           var self = sinclo.scenarioApi._bulkHearing;
             targetObj = $(event.target),
             inputTypeNumberMap = {'text' : '1', 'number': '2', 'email' : '3', 'tel' : '4'},
             inputType = targetObj.attr('type'),
-            text = targetObj.val();
+            inputText = targetObj.val(),
+            text = targetObj.val(),
+            regex = new RegExp(self._parent._validChars[inputTypeNumberMap[inputType]]);
 
-          if(!text.self._parent._validChars[inputTypeNumberMap[inputType]]) {
-            text = text.slice( 0 , -1 );
-            targetObj.val(text);
+          var changed = '';
+          // 入力された文字列を改行ごとに分割し、設定された正規表現のルールに則っているかチェックする
+          var isMatched = inputText.split(/\r\n|\n/).every(function (string) {
+            var matchResult = string.match(regex);
+            // 入力文字列が適切ではない場合、先頭から適切な文字列のみを取り出して処理を終了する
+            if ( matchResult === null || matchResult[0] !== matchResult.input ) {
+              changed += (matchResult === null || matchResult.index !== 0) ? '' : matchResult[0];
+              return false;
+            }
+            changed += string + '\n';
+            return true;
+          });
+          if ( !isMatched ) {
+            targetObj.val(changed);
           }
+        },
+        _isValidValue: function (bulkHearingInputType, text) {
+          var type = '';
+          switch ( Number(bulkHearingInputType) ) {
+            case 1:
+            case 2:
+            case 4:
+            case 5:
+            case 6:
+            case 11:
+              type = new RegExp('.+');
+              break;
+            case 3:
+              type = new RegExp(/^\d{3}[-]\d{4}$|^\d{3}[-]\d{2}$|^\d{3}$|^\d{5}$|^\d{7}$/);
+              break;
+            case 7:
+            case 8:
+            case 9:
+              type = new RegExp(/^(0|\+)(\d{9,}|[\d-]{11,})/);
+              break;
+            case 10:
+              type = new RegExp("^(([^<>()\\[\\]\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$");
+              break;
+            default:
+              type = new RegExp(/.+/);
+              break;
+          }
+          return text.match(type);
         },
         _process: function () {
           var self = sinclo.scenarioApi._bulkHearing;
+          self.beginInput();
           if ( !self._isStatusConfirming() ) {
             self._parent._doing(0, function () { // 即時実行
               self._parent._handleChatTextArea("1"); // 必ず表示する
               sinclo.chatApi.hideMiniMessageArea(); // 改行可のメッセージエリアにする
-              common.chatBotTypingTimerClear();
-              common.chatBotTypingRemove();
               setTimeout(function () {
                 self._notifyBeginBulkHearing();
               }, 200);
               self._saveWaitingInputState();
+              common.chatBotTypingTimerClear();
+              common.chatBotTypingRemove();
               self._parent._waitingInput(function (inputVal) {
                 self._parent._doing(self._parent._getIntervalTimeSec(), function(){
                   self._analyseInput(inputVal, function (result) {
