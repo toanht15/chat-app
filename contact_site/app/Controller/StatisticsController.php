@@ -6,7 +6,7 @@
 class StatisticsController extends AppController {
 
   public $uses = ['THistory','MCompany','THistoryChatActiveUsers','THistoryWidgetDisplays','TLogin','MUser',
-  'THistoryAccessCount','THistoryWidgetCount '];
+  'THistoryAccessCount','THistoryWidgetCount ', 'THistoryChatLog'];
 
   private $chatMessageType = [
     'messageType' => [
@@ -169,6 +169,9 @@ class StatisticsController extends AppController {
     }
   }
 
+  /**
+   * メッセージランキング
+   */
   public function forMessageRanking() {
     if($this->request->is('post')) {
       if ($this->THistory->validates() ) {
@@ -176,17 +179,19 @@ class StatisticsController extends AppController {
         //月別の場合
         if($date == '月別'){
           $type = $this->request->data['monthlyName'];
-          $data = $this->calculateMonthlyData($type);
+          $messageData = $this->calculateMessageMonthlyData($type);
+
         }
         //日別の場合
         else if($date == '日別'){
           $type = $this->request->data['daylyName'];
-          $data = $this->calculateDailyData($type);
+          $time = explode('-', $type);
+          $messageData = $this->calculateMessageDailyData($time[0], $time[1]);
         }
         //時別の場合
         else if($date == '時別') {
-          $type = $this->request->data['datefilter'].' 00:00:00';
-          $data = $this->calculateHourlyData($type);
+          $type = $this->request->data['datefilter'];
+          $messageData = $this->calculateMessageHourlyData($type);
         }
       }
     }
@@ -194,8 +199,7 @@ class StatisticsController extends AppController {
     else {
       $date = '月別';
       $type = date("Y");
-//      $this->request->data['datefilter'] = date("Y");
-      $data = $this->calculateMonthlyData($type);
+      $messageData = $this->calculateMessageMonthlyData($type);
     }
 
     //各企業の日付けの範囲
@@ -205,7 +209,7 @@ class StatisticsController extends AppController {
     $this->set('date', $date);
     $this->set('daylyEndDate', date("d", strtotime('last day of' . $type)));
     $this->set('type', $type);
-    $this->set('data', $data);
+    $this->set('messageData', $messageData);
     if ($date == '時別') {
       $this->set('datePeriod', $this->request->data['datefilter']);
     }
@@ -2878,7 +2882,7 @@ class StatisticsController extends AppController {
     return $userInfo;
   }
 
-  private function outputCSVStatistics($csv = []) {
+  private function outputCSVStatistics($csv = [], $name = 'sinclo_statistics') {
     $this->layout = null;
     //メモリ上に領域確保
     $fp = fopen('php://temp/maxmemory:'.(5*1024*1024),'a');
@@ -2889,9 +2893,6 @@ class StatisticsController extends AppController {
 
     //ビューを使わない
     $this->autoRender = false;
-
-    $name =  'sinclo_statistics';
-
     $filename = date("YmdHis")."_".$name;
 
     //download()内ではheader("Content-Disposition: attachment; filename=hoge.csv")を行っている
@@ -2952,4 +2953,186 @@ class StatisticsController extends AppController {
 
     return $date < $borderDate;
   }
+
+  /**
+   * @param $year
+   * @return mixed
+   */
+  private function calculateMessageMonthlyData($year)
+  {
+    $access = "select MONTH(created) as month, message, count(id) as messageCount 
+      from t_history_chat_logs 
+      where m_companies_id = ? and message_type = 1 and YEAR(created) = ? 
+      group by message, MONTH(created);";
+    $messageData = $this->THistoryChatLog->query($access, [$this->userInfo['MCompany']['id'], $year]);
+
+    return $this->calculateMessageData($messageData, 'month');
+  }
+
+  /**
+   * @param $year
+   * @param $month
+   * @return array
+   */
+  private function calculateMessageDailyData($year, $month)
+  {
+    $access = "select MONTH(created) as month, DAY(created) as day, message, count(id) as messageCount 
+      from t_history_chat_logs 
+      where m_companies_id = ? and message_type = 1 and YEAR(created) = ? and MONTH(created) = ? 
+      group by message, MONTH(created), DAY(created);";
+    $messageData = $this->THistoryChatLog->query($access, [$this->userInfo['MCompany']['id'], $year, $month]);
+
+    return $this->calculateMessageData($messageData, 'day');
+  }
+
+  /**
+   * @param $date
+   * @return array
+   */
+  private function calculateMessageHourlyData($date)
+  {
+    $access = "select HOUR(created) as hour, message, count(id) as messageCount 
+      from t_history_chat_logs 
+      where m_companies_id = ? and message_type = 1 and DATE(created) = ? 
+      group by message, HOUR(created);";
+    $messageData = $this->THistoryChatLog->query($access, [$this->userInfo['MCompany']['id'], $date]);
+
+    return $this->calculateMessageData($messageData, 'hour');
+  }
+
+  /**
+   * @param $messageData
+   * @param $type
+   * @return array
+   */
+  private function calculateMessageData($messageData, $type)
+  {
+    $data = [];
+    foreach ($messageData as $key => $value) {
+      if (!array_key_exists($value['t_history_chat_logs']['message'], $data)) {
+        $data[$value['t_history_chat_logs']['message']] = [];
+      }
+
+      $data[$value['t_history_chat_logs']['message']][$value[0][$type]] = $value[0]['messageCount'];
+      // calculate sum of row
+      if (!array_key_exists('sum', $data[$value['t_history_chat_logs']['message']])) {
+        $data[$value['t_history_chat_logs']['message']]['sum'] = 0;
+      }
+
+      $data[$value['t_history_chat_logs']['message']]['sum'] += $value[0]['messageCount'];
+    };
+
+    // sort message count by sum
+    uasort($data, function ($a, $b) {
+      return $a['sum'] < $b['sum'] ? 1 : -1;
+    });
+    // calculate sum of column
+    $sum = [];
+    foreach ($data as $message => $content) {
+      foreach ($content as $index => $count) {
+        if (!isset($sum[$index])) {
+          $sum[$index] = 0;
+        }
+
+        $sum[$index] += $count;
+      }
+    }
+
+    return ['data' => $data, 'sum' => $sum];
+  }
+
+  /**
+   * export message ranking csv
+   */
+  public function outputMessageRankingCSV() {
+    $this->autoRender = false;
+    //json_decode
+    $requestData = (array)json_decode($this->request->data['statistics']['outputData']);
+    if($requestData['dateFormat'] == '月別') {
+      $start  = $requestData['date'] . '-01';
+      $end    = $requestData['date'] . '-12';
+      $begin  = 1;
+      $finish = 12;
+
+      $startDate  = strtotime('first day of' . $start);
+      $endDate    = strtotime('last day of' . $end);
+      $yearData   = [];
+      $yearData[] = 'メッセージ';
+      while ($startDate <= $endDate) {
+        $yearData[] = date('Y-m', $startDate);
+        $yearData[] = date('Y-m', $startDate);
+        $startDate  = strtotime("+1 month", $startDate);
+      }
+      $yearData[] = '合計';
+      $yearData[] = '合計';
+      $csv[]      = $yearData;
+      $csvData    = $this->calculateMessageMonthlyData($requestData['date']);
+    }
+    else if($requestData['dateFormat'] == '日別') {
+      $firstDate = strtotime('first day of ' . $requestData['date']);
+      $lastDate  = strtotime('last day of ' . $requestData['date']);
+      $begin     = 1;
+      $finish    = date("d", $lastDate);
+
+      $monthData   = [];
+      $monthData[] = 'メッセージ';
+      while ($firstDate <= $lastDate) {
+        $monthData[] = date('Y-m-d', $firstDate);
+        $monthData[] = date('Y-m-d', $firstDate);
+        $firstDate   = strtotime("+1 day", $firstDate);
+      }
+      $monthData[] = '合計';
+      $monthData[] = '合計';
+      $csv[]       = $monthData;
+      $time        = explode('-', $requestData['date']);
+      $csvData     = $this->calculateMessageDailyData($time[0], $time[1]);
+    }
+    else if($requestData['dateFormat'] == '時別') {
+      $startTime = strtotime($requestData['date']);
+      $endTime   = strtotime("+1 day", $startTime);
+      $begin     = 0;
+      $finish    = 23;
+      $dayData   = [];
+      $dayData[] = 'メッセージ';
+      while ($startTime < $endTime) {
+        $dayData[] = date('H:i', $startTime) . '-' . date('H:i', strtotime("+1 hour", $startTime));
+        $dayData[] = date('H:i', $startTime) . '-' . date('H:i', strtotime("+1 hour", $startTime));
+        $startTime = strtotime("+1 hour", $startTime);
+      }
+      $dayData[] = '合計';
+      $dayData[] = '合計';
+      $csv[]     = $dayData;
+      $csvData = $this->calculateMessageHourlyData($requestData['date']);
+    }
+
+    $csv = $this->insertMessageRankingCSVData($csvData, $csv, $begin, $finish);
+
+    $this->outputCSVStatistics($csv, 'sinclo-message-ranking');
+  }
+
+  /**
+   * @param $messageData
+   * @param $csv
+   * @param $start
+   * @param $end
+   * @return mixed
+   */
+  private function insertMessageRankingCSVData($messageData, $csv, $start, $end)
+  {
+    foreach ($messageData['data'] as $message => $data) {
+      $csv[$message] = [];
+      $csv[$message]['message'] = $message;
+      for ($i = $start; $i <= $end; $i++) {
+        $csv[$message][2 * $i] = isset($data[$i]) ? $data[$i] : 0;
+        // ratio
+        $csv[$message][2 * $i + 1] = isset($data[$i]) ? $data[$i] / $messageData['sum'][$i] * 100 . '%' : 0;
+      }
+
+      $csv[$message]['sum'] = isset($data['sum']) ? $data['sum'] : 0;
+      $csv[$message]['sumRatio'] = isset($data['sum']) ? $data['sum'] / $messageData['sum']['sum'] * 100 . '%' : 0;
+    }
+
+    return $csv;
+  }
+    
 }
