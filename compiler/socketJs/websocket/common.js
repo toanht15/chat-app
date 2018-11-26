@@ -174,7 +174,6 @@ var socket, // socket.io
     //サイズを返す関数
     getColorList: function (widget) {
       var widget = window.sincloInfo.widget;
-      window.sincloInfo.widget.isSendMessagePositionLeft = true;
       //通常設定か高度設定か判定 colorSettingType
       if ( Number(widget.colorSettingType) === 0 ) {
         //企業側吹き出し背景色は現在設定されているメインカラーから算出する
