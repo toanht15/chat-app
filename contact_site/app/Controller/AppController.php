@@ -90,7 +90,7 @@ class AppController extends Controller {
     C_COMPANY_USE_COGMO_ATTEND_API => false // CogmoAttend連携
   ];
 
-  private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
+  protected $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
 
   // メディアリンクの企業情報を閲覧可能なcompany_keyのリスト
   private $viewableMLCompanyInfoList = ['medialink','59f6e3aa713de'];
@@ -462,6 +462,7 @@ class AppController extends Controller {
     $data = file_get_contents('php://input');
     $this->log('リクエストデータ: '. $data, 'mail-request');
     $jsonObj = json_decode($data, TRUE);
+
     return $jsonObj;
   }
 
