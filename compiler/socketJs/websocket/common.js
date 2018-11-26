@@ -5970,3 +5970,4 @@ if ( myTag.getAttribute('data-show-always') ) {
   // オペレータ存在条件や営業時間設定に依存せずtrueであれば表示
   sincloInfo.dataset.showAlways = myTag.getAttribute('data-show-always');
 }
+
