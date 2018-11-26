@@ -4046,8 +4046,23 @@
           var targetArray = $(li).find('.formInput');
           var invalid = false;
           targetArray.each(function (index, element) {
+            var required = $(element).data('required');
+            if (!required && $(element).val() === "") {
+              returnValue[$(element).attr('name')] = {
+                label: $(element).data('label-text'),
+                value: $(element).val(),
+                required: $(element).data('required'),
+                changed: $(element).val() !== resultData[Number($(element).data('input-type'))]
+              };
+              return;
+            } else if (required && $(element).val() === "") {
+              invalid = true;
+            } else {
+              invalid = false;
+            }
+
             var matchResult = sinclo.scenarioApi._bulkHearing._isValidValue($(element).data('inputType'), $(element).val());
-            if ( matchResult === null || matchResult[0] !== matchResult.input ) {
+            if ( invalid || matchResult === null || matchResult[0] !== matchResult.input ) {
               invalid = true;
               $(element).css('border', '1px solid #F00');
             } else {
@@ -4135,7 +4150,7 @@
           formElements += (array.length - 1 === index) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
           formElements += "      <span class='formLabel'>" + data[variableName].label + (data[variableName].required ? "<span class='require'>*</span>" : "") + "</span>";
           formElements += "      <span class='formLabelSeparator'>：</span>";
-          formElements += "      <span class='formValue'>" + (data[variableName].value ? data[variableName].value : "（なし）") + "</span>";
+          formElements += "      <span class='formValue'>" + (data[variableName].value ? data[variableName].value : "") + "</span>";
           formElements += "    </div>";
         });
 
@@ -8192,13 +8207,17 @@
           $(document).off('input paste', '#sincloBox #chatTalk li.sinclo_re div.formElement input.formInput', self._handleInput);
         },
         _handleInput: function(event) {
-          var self = sinclo.scenarioApi._bulkHearing;
+          var self = sinclo.scenarioApi._bulkHearing,
             targetObj = $(event.target),
             inputTypeNumberMap = {'text' : '1', 'number': '2', 'email' : '3', 'tel' : '4'},
             inputType = targetObj.attr('type'),
             inputText = targetObj.val(),
-            text = targetObj.val(),
+            required = targetElm.data('required'),
             regex = new RegExp(self._parent._validChars[inputTypeNumberMap[inputType]]);
+
+          if (inputText === "" && required.toLowerCase() === "false") {
+            return true;
+          }
 
           var changed = '';
           // 入力された文字列を改行ごとに分割し、設定された正規表現のルールに則っているかチェックする
