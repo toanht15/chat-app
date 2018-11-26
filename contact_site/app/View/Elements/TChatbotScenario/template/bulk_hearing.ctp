@@ -23,7 +23,7 @@
         <div class="area-drag-symbol handleOption" style="cursor: move;">
           <i class="fas fa-arrows-alt-v fa-2x"></i>
         </div>
-        <div class="area-require">
+        <div class="area-require checkbox">
           <label class="require-checkbox">
             <input type="checkbox" ng-model="condition.required">
             <span class="checkmark"></span>
