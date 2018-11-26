@@ -187,14 +187,14 @@
       var html = ""
       if ( data.isConfirm ) {
         html = $scope.simulatorSettings.createForm(data.isConfirm, data.bulkHearings, data.resultData.data);
-        divElm.querySelector('li.sinclo_re.sinclo_form').innerHTML = html;
+        divElm.querySelector('li.sinclo_re.sinclo_form').innerHTML = html.content;
       } else {
         html = $scope.simulatorSettings.createFormFromLog(data.resultData.data);
         divElm.querySelector('li.sinclo_se.sinclo_form').innerHTML = html;
       }
-      // if(isEmptyRequire) {
-      //   $(divElm).find('li.sinclo_form span.formOKButton').addClass('disabled');
-      // }
+      if(html.isEmptyRequire) {
+        $(divElm).find('li.sinclo_form span.formOKButton').addClass('disabled');
+      }
       $(divElm).find('li.sinclo_form span.formOKButton').on('click', function (e) {
         if ( $(this).hasClass('disabled') ) return;
         $scope.removeInputEvent();
@@ -1387,7 +1387,7 @@
       $timeout(function () {
         var target = $('#chatTalk');
         var paddingBottom = parseFloat($('#chatTalk').css('padding-bottom'));
-        var lastMessageHeight = $("#chatTab ul").find("div:last").height();
+        var lastMessageHeight = $("#chatTab ul").children("div:last").height();
         var chatTalk = document.getElementById('chatTalk');
         var time = 500;
         //ウィジェットサイズに合わせた余白で計算
