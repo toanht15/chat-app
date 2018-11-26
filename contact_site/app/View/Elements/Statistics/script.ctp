@@ -218,6 +218,27 @@ $(window).load(function(){
     });
   }
 
+  else if(document.getElementById('outputMessageRankingCSV') != null) {
+    var outputMessageRankingCSVBtn = document.getElementById('outputMessageRankingCSV');
+    outputMessageRankingCSVBtn.addEventListener('click', function(){
+      var dateFormat = $("select[name=dateFormat]").val();
+      if(dateFormat == '月別') {
+        var date = $("#monthlyForm").val();
+      }
+      if(dateFormat == '日別') {
+        date = $("#daylyForm").val();
+      }
+      if(dateFormat == '時別') {
+        date = $("#hourlyForm").val();
+      }
+      document.getElementById('statisticsOutputData').value = JSON.stringify({dateFormat:dateFormat,date:date});
+      console.log(document.getElementById('statisticsOutputData').value.date);
+      document.getElementById('statisticsForMessageRankingForm').action = '<?=$this->Html->url(["controller"=>"Statistics", "action" => "outputMessageRankingCSV",])?>';
+      console.log(document.getElementById('statisticsForMessageRankingForm').action);
+      document.getElementById('statisticsForMessageRankingForm').submit();
+    });
+  }
+
   var timeType = {
     monthly: '月別',
     dayly: '日別',
