@@ -1,35 +1,23 @@
-<script>
-  $(function() {
-    $('#lead_select').change(function () {
-      var val = $(this).val();
-      var target = $('#outputCSV');
-      if(val === "none"){
-        target.removeClass("skyBlueBtn");
-        target.addClass("grayBtn");
-        target.addClass("disabled");
-      } else {
-        target.addClass("skyBlueBtn");
-        target.removeClass("grayBtn");
-        target.removeClass("disabled");
-      }
-    });
-  });
-</script>
 <div style="overflow: hidden; margin-left: 30px">
   <div style="display: flex; margin-top: 30px">
     <span style="display: flex; width: 150px; align-items:center;">検索期間：</span>
-    <select>
-      <option selected>過去一週間：2018/10/25-2018/10/31</option>
-    </select>
+    <form>
+      <input type="hidden" id ='mainDatePeriod' name = 'datefilter'>過去一週間 : 2018/11/20-2018/11/26</input>
+    </form>
   </div>
   <div style="display: flex; margin-top: 30px">
     <span style="display: flex; width: 150px; align-items:center;">リードリスト名：</span>
-    <select id="lead_select">
-      <option value="none" selected>リードリストを選択してください</option>
-      <option>お客様情報①</option>
-      <option>お客様情報②</option>
-      <option>（すべてのリスト）</option>
-    </select>
+    <form id="listForm" method="post">
+      <?php
+      echo $this->Form->input('selectList', [
+        'default' => 'none',
+        'type' => 'select',
+        'options' => $leadList,
+        'div' => false,
+        'label' => false
+      ]);
+      ?>
+    </form>
   </div>
   <div>
     <?= $this->Html->link(
