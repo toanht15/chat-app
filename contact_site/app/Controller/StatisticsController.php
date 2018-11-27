@@ -180,7 +180,6 @@ class StatisticsController extends AppController {
         if($date == '月別'){
           $type = $this->request->data['monthlyName'];
           $messageData = $this->calculateMessageMonthlyData($type);
-
         }
         //日別の場合
         else if($date == '日別'){
@@ -201,7 +200,6 @@ class StatisticsController extends AppController {
       $type = date("Y");
       $messageData = $this->calculateMessageMonthlyData($type);
     }
-
     //各企業の日付けの範囲
     $rangeData = $this->determineRange();
     $this->set('companyRangeDate', $rangeData['companyRangeDate']);
@@ -210,12 +208,8 @@ class StatisticsController extends AppController {
     $this->set('daylyEndDate', date("d", strtotime('last day of' . $type)));
     $this->set('type', $type);
     $this->set('messageData', $messageData);
-    if ($date == '時別') {
-      $this->set('datePeriod', $this->request->data['datefilter']);
-    }
-    if ($date == '日別' || $date == '月別') {
-      $this->set('datePeriod', date("Y-m-d"));
-    }
+    $datePeriod = $date == '時別' ? $this->request->data['datefilter'] : date("Y-m-d");
+    $this->set('datePeriod', $datePeriod);
   }
 
   /* *
@@ -3049,13 +3043,11 @@ class StatisticsController extends AppController {
     //json_decode
     $requestData = (array)json_decode($this->request->data['statistics']['outputData']);
     if($requestData['dateFormat'] == '月別') {
-      $start  = $requestData['date'] . '-01';
-      $end    = $requestData['date'] . '-12';
       $begin  = 1;
       $finish = 12;
 
-      $startDate  = strtotime('first day of' . $start);
-      $endDate    = strtotime('last day of' . $end);
+      $startDate  = strtotime('first day of' . $requestData['date'] . '-01');
+      $endDate    = strtotime('last day of' . $requestData['date'] . '-12');
       $yearData   = [];
       $yearData[] = 'メッセージ';
       while ($startDate <= $endDate) {
