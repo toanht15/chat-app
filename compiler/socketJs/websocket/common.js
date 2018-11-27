@@ -3825,7 +3825,7 @@ var socket, // socket.io
     firstTimeChatBotTyping: true,
     chatBotTypingCall: function (obj) {
       console.log("sinclo.scenarioApi._bulkHearing.isInMode() %s", sinclo.scenarioApi._bulkHearing.isInMode());
-      if ( !common.chatBotTypingDelayTimer && obj.messageType !== sinclo.chatApi.messageType.sorry ) {
+      if ( !common.chatBotTypingDelayTimer || obj.messageType === sinclo.chatApi.messageType.sorry ) {
         common.chatBotTypingDelayTimer = setTimeout(function () {
           common.chatBotTyping(obj);
           common.chatBotTypingDelayTimer = null;
