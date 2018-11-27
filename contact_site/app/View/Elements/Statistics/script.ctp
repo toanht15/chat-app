@@ -394,7 +394,7 @@ $(window).load(function(){
   });
 
   $(".autoMessage").text(function(index, currentText) {
-    var maxLength = 108;
+    var maxLength = 100;
     if(currentText.length >= maxLength) {
       return currentText.substr(0, maxLength) + "...";
     } else {
