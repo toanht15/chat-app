@@ -2414,6 +2414,7 @@
       unread: 0,
       opUser: "",
       opUserName: "",
+      continueClickThresholdMSec: 3000,
       messageType: {
         customer: 1,
         company: 2,
@@ -2708,7 +2709,7 @@
       },
       disableAllButtonsSlightly: function() {
         sinclo.chatApi._disableAllSelectableUI();
-        setTimeout(sinclo.chatApi._handleAllDisableSelectableUI, 3000);
+        setTimeout(sinclo.chatApi._handleAllDisableSelectableUI, sinclo.chatApi.continueClickThresholdMSec);
       },
       isDisabledSlightly: function(target) {
         var addClassName = 'onetime-disabled';
