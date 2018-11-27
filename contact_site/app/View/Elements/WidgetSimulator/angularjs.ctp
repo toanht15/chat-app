@@ -202,8 +202,23 @@
         var targetArray = $(divElm).find('li.sinclo_form .formInput');
         var invalid = false;
         targetArray.each(function (index, element) {
+          var required = $(element).data('required');
+          if (!required && $(element).val() === "") {
+            returnValue[$(element).attr('name')] = {
+              label: $(element).data('label-text'),
+              value: $(element).val(),
+              required: $(element).data('required'),
+              changed: $(element).val() !== data.resultData.data[Number($(element).data('input-type'))]
+            };
+            return;
+          } else if (required && $(element).val() === "") {
+            invalid = true;
+          } else {
+            invalid = false;
+          }
+
           var matchResult = $scope.isValid($(element).data('inputType'), $(element).val());
-          if ( matchResult === null || matchResult[0] !== matchResult.input ) {
+          if ( invalid || matchResult === null || matchResult[0] !== matchResult.input ) {
             invalid = true;
             $(element).css('border', '1px solid #F00');
           } else {
@@ -253,6 +268,7 @@
       var targetElm = $(this);
       var inputType = targetElm.data('inputType');
       var inputText = targetElm.val();
+
       // show skip button
       $scope.isShowSkipBtn = !(targetElm.val().length > 0);
       $scope.$apply();
