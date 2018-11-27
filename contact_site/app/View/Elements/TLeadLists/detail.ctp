@@ -1,9 +1,7 @@
 <div style="overflow: hidden; margin-left: 30px">
   <div style="display: flex; margin-top: 30px">
     <span style="display: flex; width: 150px; align-items:center;">検索期間：</span>
-    <form>
-      <input type="hidden" id ='mainDatePeriod' name = 'datefilter'>過去一週間 : 2018/11/20-2018/11/26</input>
-    </form>
+    <span id ='mainDatePeriod' name = 'datefilter'><?= h($data['History']['period']) ?> : <?= h($data['History']['start_day']) ?>-<?= h($data['History']['finish_day']) ?></span>
   </div>
   <div style="display: flex; margin-top: 30px">
     <span style="display: flex; width: 150px; align-items:center;">リードリスト名：</span>
@@ -17,6 +15,8 @@
         'label' => false
       ]);
       ?>
+      <input type="hidden" id="startDateForm" name="data[startDate]" value="">
+      <input type="hidden" id="endDateForm" name="data[endDate]" value="">
     </form>
   </div>
   <div>

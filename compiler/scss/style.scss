@@ -5477,12 +5477,12 @@ ul.naviBtn {
       padding-left: 10px;
       border-bottom: 1px solid #909090;
       cursor: pointer;
-      width: 230px;
+      width: 245px;
       &:after {
         content: "";
-        position: relative;
-        left: 15px;
-        top: 10px;
+        position: absolute;
+        left: 425px;
+        top: 98px;
         border-left: 3px solid transparent;
         border-top: 6px solid black;
         border-right: 3px solid transparent;

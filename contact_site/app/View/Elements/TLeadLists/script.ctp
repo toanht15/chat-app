@@ -17,6 +17,13 @@
 
   var historySearchConditions = <?php echo json_encode($data);?>;
 
+  var dataTrim = function(){
+    var data = $('#mainDatePeriod')[0].innerText;
+    dataArray = data.split(":")[1].split("-");
+    document.getElementById("startDateForm").value = dataArray[0];
+    document.getElementById("endDateForm").value = dataArray[1];
+  };
+
 
 
   $(function() {
@@ -34,10 +41,6 @@
       }
     });
 
-    $('#mainDatePeriod').on('click', function() {
-      console.log('クリックされたイベント');
-    });
-
     $('#mainDatePeriod').daterangepicker({
       "ranges": {
         '今日': [moment(), moment()],
@@ -51,7 +54,7 @@
       "locale": {
         "format": "YYYY/MM/DD",
         "separator": " - ",
-        "applyLabel": "検索",
+        "applyLabel": "適用",
         "cancelLabel": "キャンセル",
         "fromLabel": "From",
         "toLabel": "To",
@@ -91,20 +94,15 @@
     var CSVbutton = $('#outputCSV');
     CSVbutton.on('click', function(e){
       if(CSVbutton.hasClass("grayBtn")) return;
-      var data = [];
-      data.push($("#listForm").serialize());
-      console.log(data);
       window.loading.load.start();
+      dataTrim();
       $.ajax({
         type: "POST",
         url: "<?=$this->Html->url([
           'controller' => 'TLeadLists',
           'action' => 'index'
         ])?>",
-        data: {
-          listInfo: $("#listForm").serialize(),
-          dataInfo: $("#dataForm").serialize()
-        },
+        data: $("#listForm").serialize(),
         dataType: "binary",
         responseType: "blob"
       })

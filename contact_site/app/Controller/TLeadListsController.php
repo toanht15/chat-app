@@ -5,7 +5,7 @@
  */
 
 class TLeadListsController extends AppController{
-  public $uses = ['TLeadList','TLeadListSetting','TChatbotScenario','TCampaign'];
+  public $uses = ['TLeadList','TLeadListSetting','TChatbotScenario','TCampaign','THistory'];
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -161,7 +161,13 @@ class TLeadListsController extends AppController{
         'recursive' => -1,
         'conditions' => [
           "m_companies_id" => $this->userInfo['MCompany']['id'],
-          "t_lead_list_settings_id" => $id
+          "t_lead_list_settings_id" => $id,
+          [
+            'created BETWEEN ? AND ?' => [
+              $this->request->data['startDate'],
+              $this->request->data['endDate']
+            ]
+          ]
         ],
         'order' => [
           'created' => 'desc'
@@ -273,9 +279,11 @@ class TLeadListsController extends AppController{
 
   private function addLeadHeader($head, $element){
     // ヘッダー情報は同一リードリスト名では同じなため、最初の1つだけ見る
-    $leadHeaders = json_decode($element[0]['TLeadList']['lead_informations']);
-    foreach($leadHeaders as $leadHeader){
-      array_push($head, $leadHeader->leadLabelName);
+    if(isset($element[0])) {
+      $leadHeaders = json_decode($element[0]['TLeadList']['lead_informations']);
+      foreach ($leadHeaders as $leadHeader) {
+        array_push($head, $leadHeader->leadLabelName);
+      }
     }
     return $head;
   }
