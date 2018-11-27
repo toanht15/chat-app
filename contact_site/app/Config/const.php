@@ -978,11 +978,12 @@ $config['chatbotScenarioActionList'] = [
     'label' => 'リード登録',
     'default' => [
       'messageIntervalTimeSec' => '2',
+      'makeLeadTypeList' => '1',
       'chatTextArea' => '2',
-      'leadRegister' => [
+      'leadInformations' => [
         [
           'leadLabelName' => '',
-          'variableName' => ''
+          'leadVariableName' => ''
         ]
       ]
     ]

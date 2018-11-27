@@ -1208,8 +1208,8 @@
             case 12:
             case 36:
               // 復元対象でない場合はcnにcancelableを付与しない
-              if ( sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId) ) {
-                cn = "sinclo_se"
+              if (sinclo.scenarioApi._hearing.disableRestoreMessage(chat.chatId)) {
+                cn = "sinclo_se";
               } else {
                 cn = "cancelable sinclo_se";
               }
@@ -1221,7 +1221,8 @@
             case 37:
             case 38:
             case 39:
-              cn = "sinclo_se"
+              // ラジオボタン、プルダウン、カレンダーの回答・再回答に対してはcancelableは付与しない
+              cn = "sinclo_se";
               isHearingAnswer = true;
               break;
             case 90:
@@ -4046,8 +4047,23 @@
           var targetArray = $(li).find('.formInput');
           var invalid = false;
           targetArray.each(function (index, element) {
+            var required = $(element).data('required');
+            if (!required && $(element).val() === "") {
+              returnValue[$(element).attr('name')] = {
+                label: $(element).data('label-text'),
+                value: $(element).val(),
+                required: $(element).data('required'),
+                changed: $(element).val() !== resultData[Number($(element).data('input-type'))]
+              };
+              return;
+            } else if (required && $(element).val() === "") {
+              invalid = true;
+            } else {
+              invalid = false;
+            }
+
             var matchResult = sinclo.scenarioApi._bulkHearing._isValidValue($(element).data('inputType'), $(element).val());
-            if ( matchResult === null || matchResult[0] !== matchResult.input ) {
+            if ( invalid || matchResult === null || matchResult[0] !== matchResult.input ) {
               invalid = true;
               $(element).css('border', '1px solid #F00');
             } else {
@@ -4135,7 +4151,7 @@
           formElements += (array.length - 1 === index) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
           formElements += "      <span class='formLabel'>" + data[variableName].label + (data[variableName].required ? "<span class='require'>*</span>" : "") + "</span>";
           formElements += "      <span class='formLabelSeparator'>：</span>";
-          formElements += "      <span class='formValue'>" + (data[variableName].value ? data[variableName].value : "（なし）") + "</span>";
+          formElements += "      <span class='formValue'>" + (data[variableName].value ? data[variableName].value : "") + "</span>";
           formElements += "    </div>";
         });
 
@@ -6089,7 +6105,8 @@
         sendFile: "9",
         branchOnCond: "10",
         addCustomerInformation: "11",
-        bulkHearing: "12"
+        bulkHearing: "12",
+        addLeadInformation: "13"
       },
       set: function (key, data) {
         var self = sinclo.scenarioApi;
@@ -6457,6 +6474,13 @@
             self._bulkHearing._init(self);
             self._bulkHearing._process();
             self.set(self._lKey.sendCustomerMessageType, 30);
+            break;
+          case self._actionType.addLeadInformation:
+            console.log('★★★★★★');
+            console.log('リード登録');
+            console.log('★★★★★★');
+            self._addLeadInformation._init(self);
+            self._addLeadInformation._process();
             break;
         }
       },
@@ -7266,15 +7290,13 @@
             hideMessages: messageIds
           });
         },
-        _setPrevSeqNum: function () {
-          debugger;
+        _setPrevSeqNum: function() {
           var self = sinclo.scenarioApi._hearing;
           if ( self._parent ) {
             self._parent.set(self._state.prevSeq, self._getCurrentSeq());
           }
         },
-        _getPrevSeqNum: function () {
-          debugger;
+        _getPrevSeqNum: function() {
           var self = sinclo.scenarioApi._hearing;
           if ( self._parent ) {
             var prevSeq = self._parent.get(self._state.prevSeq);
@@ -7687,6 +7709,7 @@
             withDownloadURL: self._isNeedToAddDownloadURL(),
             variables: targetVariables
           };
+
 
           // 外部連携実装後に外す
           sinclo.api.callFunction('sc', self._parent.get(self._parent._lKey.scenarioId));
@@ -8192,13 +8215,17 @@
           $(document).off('input paste', '#sincloBox #chatTalk li.sinclo_re div.formElement input.formInput', self._handleInput);
         },
         _handleInput: function(event) {
-          var self = sinclo.scenarioApi._bulkHearing;
+          var self = sinclo.scenarioApi._bulkHearing,
             targetObj = $(event.target),
             inputTypeNumberMap = {'text' : '1', 'number': '2', 'email' : '3', 'tel' : '4'},
             inputType = targetObj.attr('type'),
             inputText = targetObj.val(),
-            text = targetObj.val(),
+            required = targetElm.data('required'),
             regex = new RegExp(self._parent._validChars[inputTypeNumberMap[inputType]]);
+
+          if (inputText === "" && required.toLowerCase() === "false") {
+            return true;
+          }
 
           var changed = '';
           // 入力された文字列を改行ごとに分割し、設定された正規表現のルールに則っているかチェックする
@@ -8301,6 +8328,33 @@
           var self = sinclo.scenarioApi._bulkHearing;
           var state = self._parent.get(self._state.confirm);
           return state && ((typeof(state) === "boolean" && state) || (typeof(state) === "string" && state === "true"));
+        }
+      },
+      _addLeadInformation: {
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._addLeadInformation;
+          self._parent._doing(0, function () { // 即時実行
+            self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
+            var LeadSettingId = self._parent.get(self._parent._lKey.currentScenario).tLeadListSettingId;
+            var targetVariables = self._parent._getAllTargetVariables();
+            var sendData = {
+              scenarioId: sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.scenarioId),
+              leadSettingsId: LeadSettingId,
+              variables: targetVariables,
+              userAgent: window.navigator.userAgent,
+              executeUrl: location.href,
+              landingUrl: userInfo.prev[0].url
+            };
+            emit('saveLeadList', sendData);
+            // データを渡し次の処理を行う
+            if (self._parent._goToNextScenario()) {
+              self._parent._process();
+            }
+          });
         }
       }
     },

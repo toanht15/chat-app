@@ -658,7 +658,7 @@ sincloApp.factory('SimulatorService', function() {
         formElements += (array.length - 1 === index) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
         formElements += "      <span class='formLabel'>" + data[variableName].label + (data[variableName].required ? "<span class='require'></span>" : "") + "</span>";
         formElements += "      <span class='formLabelSeparator'>：</span>";
-        formElements += "      <span class='formValue'>" + (data[variableName].value ? data[variableName].value : "（なし）") + "</span>";
+        formElements += "      <span class='formValue'>" + (data[variableName].value ? data[variableName].value : "") + "</span>";
         formElements += "    </div>";
       });
 
