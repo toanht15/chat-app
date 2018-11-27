@@ -33,7 +33,7 @@
     <!-- /* 対象期間選択エリア */ -->
   </div><!-- #statistic_menu -->
 
-  <div id='statistics_content' class="p20x" style="visibility:hidden;">
+  <div id='statistics_content' class="p20x with-paging" style="visibility:hidden;">
     <!-- /* テーブル表示エリア */ -->
 
     <table id="statistics_table" class="display" cellspacing="0" width="100%">

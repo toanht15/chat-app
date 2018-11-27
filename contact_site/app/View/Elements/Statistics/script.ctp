@@ -101,6 +101,8 @@ function timeChangeForOperator()　{
   }
 }
 
+loading.load.start();
+
 $(window).load(function(){
 
   $.extend( $.fn.dataTable.defaults, {
@@ -114,7 +116,13 @@ $(window).load(function(){
     scrollX: true,
     scrollY: '64vh',
     scrollCollapse: true,
+    <?php if(!empty($isJsPaging)): ?>
+    paging: true,
+    pageLength: 100,
+    lengthChange: false,
+    <?php else: ?>
     paging: false,
+    <?php endif; ?>
     info: false,
     ordering: false,
     columnDefs: [
@@ -127,9 +135,11 @@ $(window).load(function(){
 
   //リサイズ処理
   var resizeDataTable = function() {
-    $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 80 + 'px');
-  }
-  loading.load.start();
+    var hasPaging = $('#statistics_content').hasClass('with-paging');
+    var offset = hasPaging ? 105 : 80;
+    $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - offset + 'px');
+  };
+
   // ページ読み込み時にもリサイズ処理を実行
   tableObj.on( 'draw', function () {
     resizeDataTable();
