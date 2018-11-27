@@ -2954,7 +2954,7 @@ class StatisticsController extends AppController {
    */
   private function calculateMessageMonthlyData($year)
   {
-    $access = "select MONTH(created) as month, message, count(id) as messageCount 
+    $access = "select MONTH(created) as month, message, count(id) as messageCount, MAX(created) as latest
       from t_history_chat_logs 
       where m_companies_id = ? and message_type = 1 and YEAR(created) = ? 
       group by message, MONTH(created);";
@@ -2970,7 +2970,7 @@ class StatisticsController extends AppController {
    */
   private function calculateMessageDailyData($year, $month)
   {
-    $access = "select MONTH(created) as month, DAY(created) as day, message, count(id) as messageCount 
+    $access = "select MONTH(created) as month, DAY(created) as day, message, count(id) as messageCount, MAX(created) as latest 
       from t_history_chat_logs 
       where m_companies_id = ? and message_type = 1 and YEAR(created) = ? and MONTH(created) = ? 
       group by message, MONTH(created), DAY(created);";
@@ -2985,7 +2985,7 @@ class StatisticsController extends AppController {
    */
   private function calculateMessageHourlyData($date)
   {
-    $access = "select HOUR(created) as hour, message, count(id) as messageCount 
+    $access = "select HOUR(created) as hour, message, count(id) as messageCount, MAX(created) as latest 
       from t_history_chat_logs 
       where m_companies_id = ? and message_type = 1 and DATE(created) = ? 
       group by message, HOUR(created);";
@@ -3008,6 +3008,7 @@ class StatisticsController extends AppController {
       }
 
       $data[$value['t_history_chat_logs']['message']][$value[0][$type]] = $value[0]['messageCount'];
+      $data[$value['t_history_chat_logs']['message']]['latest'] = $value[0]['latest'];
       // calculate sum of row
       if (!array_key_exists('sum', $data[$value['t_history_chat_logs']['message']])) {
         $data[$value['t_history_chat_logs']['message']]['sum'] = 0;
@@ -3018,7 +3019,12 @@ class StatisticsController extends AppController {
 
     // sort message count by sum
     uasort($data, function ($a, $b) {
-      return $a['sum'] < $b['sum'] ? 1 : -1;
+      $tmp = $b['sum'] - $a['sum'];
+      if ($tmp == 0) {
+        return strtotime($a['latest']) < strtotime($b['latest']);
+      }
+
+      return $tmp;
     });
     // calculate sum of column
     $sum = [];
