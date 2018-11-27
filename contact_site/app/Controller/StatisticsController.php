@@ -3125,11 +3125,11 @@ class StatisticsController extends AppController {
       for ($i = $start; $i <= $end; $i++) {
         $csv[$message][2 * $i] = isset($data[$i]) ? $data[$i] : 0;
         // ratio
-        $csv[$message][2 * $i + 1] = isset($data[$i]) ? $data[$i] / $messageData['sum'][$i] * 100 . '%' : 0;
+        $csv[$message][2 * $i + 1] = isset($data[$i]) ? $data[$i] / $messageData['sum'][$i] * 100 . '%' : '0%';
       }
 
       $csv[$message]['sum'] = isset($data['sum']) ? $data['sum'] : 0;
-      $csv[$message]['sumRatio'] = isset($data['sum']) ? $data['sum'] / $messageData['sum']['sum'] * 100 . '%' : 0;
+      $csv[$message]['sumRatio'] = isset($data['sum']) ? $data['sum'] / $messageData['sum']['sum'] * 100 . '%' : '0%';
     }
 
     return $csv;

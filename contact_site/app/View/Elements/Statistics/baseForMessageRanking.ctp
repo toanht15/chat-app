@@ -73,82 +73,31 @@
       <?php } ?>
       </thead>
       <tbody>
-      <?php if($date == '日別' or $date == '月別' or $date == '時別') { ?>
         <?php foreach ($messageData['data'] as $message => $data): ?>
           <tr>
             <td id="chatRequestLabel" class="autoMessage tooltip"><?php echo $message ?></td>
             <?php for ($i = $start; $i <= $end; $i++): ?>
               <?php if (isset($data[$i])): ?>
-                <td><?php echo $data[$i] ?></td>
+                <td><?php echo number_format($data[$i]) ?></td>
               <?php else: ?>
                 <td>0</td>
             <?php endif; ?>
             <?php endfor; ?>
-            <td><?php echo isset($data['sum']) ? $data['sum'] : '0'; ?></td>
+            <td><?php echo isset($data['sum']) ? number_format($data['sum']) : '0'; ?></td>
           </tr>
         <?php endforeach; ?>
         <tr>
           <td id="chatRequestLabel" class="autoMessage tooltip">合計</td>
           <?php for ($i = $start; $i <= $end; $i++): ?>
             <?php if (isset($messageData['sum'][$i])): ?>
-              <td><?php echo $messageData['sum'][$i] ?></td>
+              <td><?php echo number_format($messageData['sum'][$i]) ?></td>
             <?php else: ?>
               <td>0</td>
             <?php endif; ?>
           <?php endfor; ?>
-          <td><?php echo isset($messageData['sum']['sum']) ? $messageData['sum']['sum'] : '0'; ?></td>
-        </tr>
-      <?php }
-
-
-      else if($date == '時別dd') { ?>
-        <tr>
-          <td class = 'autoMessage tooltip'>資料請求</td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo number_format($data['accessDatas']['accessNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
-          <td><?php echo number_format($data['accessDatas']['allAccessNumberData']) ?></td>
-        </tr>
-        <tr>
-          <td class = 'autoMessage tooltip'>導入事例が知りたい</td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo number_format($data['widgetDatas']['widgetNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
-          <td><?php echo number_format($data['widgetDatas']['allWidgetNumberData']) ?></td>
-        </tr>
-        <tr>
-          <td id="chatRequestLabel" class = 'autoMessage tooltip'>sinclo（シンクロ）はコンタクトセンターシステムメーカーであるメディアリンクが長年培った技術力とノウハウを活かした100%自社開発（国産）のチャットボットツール（特許取得済み）です。
-          </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo number_format($data['requestDatas']['requestNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
-          <td><?php echo number_format($data['requestDatas']['allRequestNumberData']) ?></td>
-        </tr>
-        <tr>
-          <td id = 'chatAutomaticResponseLabel' class = 'autoMessage tooltip'>無料トライアルに申し込む
-          </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo number_format($data['automaticResponseData']['automaticResponseNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
-          <td><?php echo number_format($data['automaticResponseData']['allAutomaticResponseNumberData']) ?></td>
-        </tr>
-        <tr>
-          <td id = 'chatLinkClickTooltip' class = 'autoMessage tooltip'>sinclo（シンクロ）はコンタクトセンターシステムメーカーであるメディアリンクが長年培った技術力とノウハウを活かした100%自社開発（国産）のチャットボットツール（特許取得済み）です。
-          </td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo number_format($data['linkDatas']['linkNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
-          <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
-        </tr>
-        <tr>
-          <td id="chatRequestLabel" class = 'autoMessage tooltip' >合計</td>
-          <?php for ($i = $start; $i <= $end; $i++) { ?>
-            <td><?php echo number_format($data['linkDatas']['linkNumberData'][sprintf("%02d",$i).':00']) ?></td>
-          <?php } ?>
-          <td><?php echo number_format($data['linkDatas']['allLinkNumberData']) ?></td>
+          <td><?php echo isset($messageData['sum']['sum']) ? number_format($messageData['sum']['sum']) : '0'; ?></td>
         </tr>
 
-      <?php } ?>
       </tbody>
     </table>
     <?=$this->Form->create('statistics', ['action' => 'forMessageRanking']);?>
