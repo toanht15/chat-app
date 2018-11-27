@@ -10472,6 +10472,10 @@ ul.naviBtn {
         height:559px;
       }
 
+      div.dataTables_paginate {
+        padding-top: 0.75em;
+      }
+
       input[type='search']:focus {
         outline: none !important;
         border: 2px solid #C3D69B;

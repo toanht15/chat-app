@@ -7,10 +7,10 @@
                                                                       data-tooltip="必須項目とする場合はチェックを付けます。">?</icon></span>
       </div>
       <div class='area-type'>属性<span class="questionBalloon"><icon class="questionBtn"
-                                                                    data-tooltip="取得対象とする値の種別を設定します。">?</icon></span>
+                                                                    data-tooltip="抽出対象とする属性を選択します。">?</icon></span>
       </div>
       <div class='area-name'>ラベル名<span class="questionBalloon"><icon class="questionBtn"
-                                                                    data-tooltip="取得後に表示するフォームのラベル名を指定します。"
+                                                                    data-tooltip="フォームのラベル名を設定します。"
                                                                     data-tooltip-width="30em">?</icon></span>
       </div>
       <div class='area-variable'>変数名<span class="questionBalloon"><icon class="questionBtn"
