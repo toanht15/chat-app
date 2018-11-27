@@ -180,7 +180,6 @@ class StatisticsController extends AppController {
         if($date == '月別'){
           $type = $this->request->data['monthlyName'];
           $messageData = $this->calculateMessageMonthlyData($type);
-
         }
         //日別の場合
         else if($date == '日別'){
@@ -201,7 +200,6 @@ class StatisticsController extends AppController {
       $type = date("Y");
       $messageData = $this->calculateMessageMonthlyData($type);
     }
-
     //各企業の日付けの範囲
     $rangeData = $this->determineRange();
     $this->set('companyRangeDate', $rangeData['companyRangeDate']);
@@ -210,12 +208,8 @@ class StatisticsController extends AppController {
     $this->set('daylyEndDate', date("d", strtotime('last day of' . $type)));
     $this->set('type', $type);
     $this->set('messageData', $messageData);
-    if ($date == '時別') {
-      $this->set('datePeriod', $this->request->data['datefilter']);
-    }
-    if ($date == '日別' || $date == '月別') {
-      $this->set('datePeriod', date("Y-m-d"));
-    }
+    $datePeriod = $date == '時別' ? $this->request->data['datefilter'] : date("Y-m-d");
+    $this->set('datePeriod', $datePeriod);
   }
 
   /* *
@@ -2960,7 +2954,7 @@ class StatisticsController extends AppController {
    */
   private function calculateMessageMonthlyData($year)
   {
-    $access = "select MONTH(created) as month, message, count(id) as messageCount 
+    $access = "select MONTH(created) as month, message, count(id) as messageCount, MAX(created) as latest
       from t_history_chat_logs 
       where m_companies_id = ? and message_type = 1 and YEAR(created) = ? 
       group by message, MONTH(created);";
@@ -2976,7 +2970,7 @@ class StatisticsController extends AppController {
    */
   private function calculateMessageDailyData($year, $month)
   {
-    $access = "select MONTH(created) as month, DAY(created) as day, message, count(id) as messageCount 
+    $access = "select MONTH(created) as month, DAY(created) as day, message, count(id) as messageCount, MAX(created) as latest 
       from t_history_chat_logs 
       where m_companies_id = ? and message_type = 1 and YEAR(created) = ? and MONTH(created) = ? 
       group by message, MONTH(created), DAY(created);";
@@ -2991,7 +2985,7 @@ class StatisticsController extends AppController {
    */
   private function calculateMessageHourlyData($date)
   {
-    $access = "select HOUR(created) as hour, message, count(id) as messageCount 
+    $access = "select HOUR(created) as hour, message, count(id) as messageCount, MAX(created) as latest 
       from t_history_chat_logs 
       where m_companies_id = ? and message_type = 1 and DATE(created) = ? 
       group by message, HOUR(created);";
@@ -3014,6 +3008,7 @@ class StatisticsController extends AppController {
       }
 
       $data[$value['t_history_chat_logs']['message']][$value[0][$type]] = $value[0]['messageCount'];
+      $data[$value['t_history_chat_logs']['message']]['latest'] = $value[0]['latest'];
       // calculate sum of row
       if (!array_key_exists('sum', $data[$value['t_history_chat_logs']['message']])) {
         $data[$value['t_history_chat_logs']['message']]['sum'] = 0;
@@ -3024,7 +3019,12 @@ class StatisticsController extends AppController {
 
     // sort message count by sum
     uasort($data, function ($a, $b) {
-      return $a['sum'] < $b['sum'] ? 1 : -1;
+      $tmp = $b['sum'] - $a['sum'];
+      if ($tmp == 0) {
+        return strtotime($a['latest']) < strtotime($b['latest']);
+      }
+
+      return $tmp;
     });
     // calculate sum of column
     $sum = [];
@@ -3049,13 +3049,11 @@ class StatisticsController extends AppController {
     //json_decode
     $requestData = (array)json_decode($this->request->data['statistics']['outputData']);
     if($requestData['dateFormat'] == '月別') {
-      $start  = $requestData['date'] . '-01';
-      $end    = $requestData['date'] . '-12';
       $begin  = 1;
       $finish = 12;
 
-      $startDate  = strtotime('first day of' . $start);
-      $endDate    = strtotime('last day of' . $end);
+      $startDate  = strtotime('first day of' . $requestData['date'] . '-01');
+      $endDate    = strtotime('last day of' . $requestData['date'] . '-12');
       $yearData   = [];
       $yearData[] = 'メッセージ';
       while ($startDate <= $endDate) {
