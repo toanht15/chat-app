@@ -210,6 +210,7 @@ class StatisticsController extends AppController {
     $this->set('messageData', $messageData);
     $datePeriod = $date == '時別' ? $this->request->data['datefilter'] : date("Y-m-d");
     $this->set('datePeriod', $datePeriod);
+    $this->set('isJsPaging', true);
   }
 
   /* *
@@ -3132,5 +3133,5 @@ class StatisticsController extends AppController {
 
     return $csv;
   }
-    
+
 }
