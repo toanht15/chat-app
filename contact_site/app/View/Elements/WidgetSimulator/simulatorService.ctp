@@ -599,7 +599,7 @@ sincloApp.factory('SimulatorService', function() {
       return content;
     },
 
-    createForm: function (isConfirm, hearingTarget, resultData, callback) {
+    createForm: function (isConfirm, hearingTarget, resultData) {
       var self = this;
       var formElements = "";
       var isEmptyRequire = false;
@@ -612,7 +612,7 @@ sincloApp.factory('SimulatorService', function() {
           }
           formElements += (arr.length - 1 === idx) ? "    <div class='formElement'>" : "    <div class='formElement withMB'>";
           formElements += "      <label class='formLabel'>" + elm.label + (elm.required ? "<span class='require'></span>" : "") + "</label>";
-          formElements += "      <input type='" + self.getInputType(elm.inputType) + "' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-input-type='" + elm.inputType + "' data-label-text='" + elm.label + "' name='" + elm.label + "' value='" + resultData[Number(elm.inputType)] + "'/>";
+          formElements += "      <input type='" + self.getInputType(elm.inputType) + "' class='formInput' placeholder='" + elm.label + "を入力してください' data-required='" + elm.required + "' data-input-type='" + elm.inputType + "' data-label-text='" + elm.label + "' name='" + elm.variableName + "' value='" + resultData[Number(elm.inputType)] + "'/>";
           formElements += "    </div>";
         });
 
