@@ -319,7 +319,7 @@ $(window).load(function(){
       }
     }
   });
-  //datepicke
+  //datepicker
   $('input[name="datefilter"]').daterangepicker({
     "locale": {
       "format": "YYYY/MM/DD",

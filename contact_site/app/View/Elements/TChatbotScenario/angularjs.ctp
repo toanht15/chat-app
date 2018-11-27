@@ -82,21 +82,22 @@
       }
     }
 
-    // 登録済みリードリスト（モック用なので後で修正）
-    this.leadList = [];
-    this.leadList.push({'id': "1", 'name': "お客様情報①"});
-    this.leadList.push({'id': "2", 'name': "お客様情報②"});
-
-    this.leadInfo1 = [];
-    this.leadInfo1.push({'var': "会社名", 'info': "会社名"});
-    this.leadInfo1.push({'var': "氏名", 'info': "名前"});
-    this.leadInfo1.push({'var': "住所", 'info': "所在地"});
-
-    this.leadInfo2 = [];
-    this.leadInfo2.push({'var': "お名前", 'info': "名前"});
-    this.leadInfo2.push({'var': "TEL", 'info': "電話番号"});
-    this.leadInfo2.push({'var': "その他", 'info': "問い合わせ内容"});
-    // 登録済みリードリスト（モック用なので後で修正）
+  // 登録済みリードリスト
+  var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
+  this.leadList = [];
+  this.leadInformations = [];
+  for (var key in leadJsonList) {
+    this.leadInformations[leadJsonList[key].TLeadListSetting.id] = [];
+    if (leadJsonList.hasOwnProperty(key)) {
+      this.leadList.push({'id': leadJsonList[key].TLeadListSetting.id, 'name': leadJsonList[key].TLeadListSetting.list_name});
+      var leadJsonParameter = JSON.parse(leadJsonList[key].TLeadListSetting.list_parameter);
+      for (var index in leadJsonParameter) {
+        this.leadInformations[leadJsonList[key].TLeadListSetting.id].push({'leadLabelName': leadJsonParameter[index].leadLabelName, 'leadVariableName': leadJsonParameter[index].leadVariableName});
+      }
+    }
+  }
+  console.log(this.leadList);
+  console.log(this.leadInformations);
 
     // 登録済みシナリオ一覧（条件分岐用）
     var scenarioJsonListForBranchOnCond = JSON.parse(document.getElementById('TChatbotScenarioScenarioListForBranchOnCond').value);
@@ -1078,39 +1079,39 @@
         target.splice(listIndex + 1, 0, angular.copy(src));
         this.controllAttributeSettingView(actionStep);
 
-      } else if ( actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
-        if ( /externalApiRequestHeader/.test(targetClassName) ) {
-          var src = $scope.actionList[actionType].default.requestHeaders[0];
-          var target = $scope.setActionList[actionStep].requestHeaders;
-        } else {
-          var src = $scope.actionList[actionType].default.responseBodyMaps[0];
-          var target = $scope.setActionList[actionStep].responseBodyMaps;
-        }
-        target.push(angular.copy(src));
-        this.controllExternalApiSetting(actionStep);
-      } else if ( actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
-        var src = $scope.actionList[actionType].default.conditionList[0];
-        var target = $scope.setActionList[actionStep].conditionList;
-        target.splice(listIndex + 1, 0, angular.copy(src));
-        this.controllBranchOnConditionSettingView(actionStep);
-      } else if ( actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
-        var src = $scope.actionList[actionType].default.addCustomerInformations[0];
-        var target = $scope.setActionList[actionStep].addCustomerInformations;
-        console.log(target);
-        target.splice(listIndex + 1, 0, angular.copy(src));
-        this.controllAddCustomerInformationView(actionStep);
-      } else if ( actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
-        var src = $scope.actionList[actionType].default.multipleHearings[0];
-        var target = $scope.setActionList[actionStep].multipleHearings;
-        target.splice(listIndex + 1, 0, angular.copy(src));
-        this.controllBulkHearings(actionStep);
-      } else if ( actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
-        var src = $scope.actionList[actionType].default.leadRegister[0];
-        var target = $scope.setActionList[actionStep].leadRegister;
-        target.splice(listIndex + 1, 0, angular.copy(src));
-        this.controllLeadRegister(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
+      if (/externalApiRequestHeader/.test(targetClassName)) {
+        var src = $scope.actionList[actionType].default.requestHeaders[0];
+        var target = $scope.setActionList[actionStep].requestHeaders;
+      } else {
+        var src = $scope.actionList[actionType].default.responseBodyMaps[0];
+        var target = $scope.setActionList[actionStep].responseBodyMaps;
       }
-    };
+      target.push(angular.copy(src));
+      this.controllExternalApiSetting(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+      var src = $scope.actionList[actionType].default.conditionList[0];
+      var target = $scope.setActionList[actionStep].conditionList;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllBranchOnConditionSettingView(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+      var src = $scope.actionList[actionType].default.addCustomerInformations[0];
+      var target = $scope.setActionList[actionStep].addCustomerInformations;
+      console.log(target);
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllAddCustomerInformationView(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+      var src = $scope.actionList[actionType].default.multipleHearings[0];
+      var target = $scope.setActionList[actionStep].multipleHearings;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllBulkHearings(actionStep);
+    } else if (actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
+      var src = $scope.actionList[actionType].default.leadInformations[0];
+      var target = $scope.setActionList[actionStep].leadInformations;
+      target.splice(listIndex+1, 0, angular.copy(src));
+      this.controllLeadRegister(actionStep);
+    }
+  };
 
     // add option (radio, pulldown, calendar) in hearing
     this.addHearingOption = function ($event, optionType, optionIndex, listIndex) {
@@ -1179,41 +1180,41 @@
       var selector = "";
       var limitNum = 0;
 
-      if ( actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
-        targetObjList = $scope.setActionList[actionStep].hearings;
-        selector = '#action' + actionStep + '_setting .itemListGroup';
-      } else if ( actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
-        targetObjList = $scope.setActionList[actionStep].selection.options;
-        selector = '#action' + actionStep + '_setting .itemListGroup li';
-      } else if ( actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
-        targetObjList = $scope.setActionList[actionStep].toAddress;
-        selector = '#action' + actionStep + '_setting .itemListGroup li';
-        limitNum = 5;
-      } else if ( actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
-        targetObjList = $scope.setActionList[actionStep].getAttributes;
-        selector = '#action' + actionStep + '_setting .itemListGroup';
-      } else if ( actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
-        if ( /externalApiRequestHeader/.test(targetClassName) ) {
-          targetObjList = $scope.setActionList[actionStep].requestHeaders;
-          selector = '#action' + actionStep + '_setting .itemListGroup.externalApiRequestHeader tr';
-        } else {
-          targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
-          selector = '#action' + actionStep + '_setting .itemListGroup.externalApiResponseBody tr';
-        }
-      } else if ( actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
-        targetObjList = $scope.setActionList[actionStep].conditionList;
-        selector = '#action' + actionStep + '_setting .itemListGroup';
-      } else if ( actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
-        targetObjList = $scope.setActionList[actionStep].addCustomerInformations;
-        selector = '#action' + actionStep + '_setting .itemListGroup';
-      } else if ( actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
-        targetObjList = $scope.setActionList[actionStep].leadRegister;
-        selector = '#action' + actionStep + '_setting .itemListGroup';
-      } else if ( actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
-        targetObjList = $scope.setActionList[actionStep].multipleHearings;
-        selector = '#action' + actionStep + '_setting .itemListGroup';
-        limitNum = 10;
+    if (actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
+      targetObjList = $scope.setActionList[actionStep].hearings;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if (actionType == <?= C_SCENARIO_ACTION_SELECT_OPTION ?>) {
+      targetObjList = $scope.setActionList[actionStep].selection.options;
+      selector = '#action' + actionStep + '_setting .itemListGroup li';
+    } else if (actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?>) {
+      targetObjList = $scope.setActionList[actionStep].toAddress;
+      selector = '#action' + actionStep + '_setting .itemListGroup li';
+      limitNum = 5;
+    } else if (actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+      targetObjList = $scope.setActionList[actionStep].getAttributes;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if (actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?>) {
+      if (/externalApiRequestHeader/.test(targetClassName)) {
+        targetObjList = $scope.setActionList[actionStep].requestHeaders;
+        selector = '#action' + actionStep + '_setting .itemListGroup.externalApiRequestHeader tr';
+      } else {
+        targetObjList = $scope.setActionList[actionStep].responseBodyMaps;
+        selector = '#action' + actionStep + '_setting .itemListGroup.externalApiResponseBody tr';
       }
+    } else if (actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
+      targetObjList = $scope.setActionList[actionStep].conditionList;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if (actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+      targetObjList = $scope.setActionList[actionStep].addCustomerInformations;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if (actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
+      targetObjList = $scope.setActionList[actionStep].leadInformations;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+    } else if ( actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
+      targetObjList = $scope.setActionList[actionStep].multipleHearings;
+      selector = '#action' + actionStep + '_setting .itemListGroup';
+      limitNum = 10;
+    }
 
       if ( targetObjList !== "" && selector !== "" ) {
         targetObjList.splice(listIndex, 1);
@@ -1579,32 +1580,46 @@
       });
     };
 
-    this.controllLeadRegister = function (actionStep) {
-      $timeout(function () {
-        $scope.$apply();
-      }).then(function () {
-        var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
-        var targetObjList = $scope.setActionList[actionStep].leadRegister;
-        self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
-      });
-    };
+  this.controllLeadRegister = function(actionStep) {
+    $timeout(function() {
+      $scope.$apply();
+    }).then(function() {
+      var targetElmList = $('#action' + actionStep + '_setting').find('.itemListGroup');
+      var targetObjList = $scope.setActionList[actionStep].leadInformations;
+      self.controllListView($scope.setActionList[actionStep].actionType, targetElmList, targetObjList)
+    });
+  };
 
-    /**
-     * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
-     * @param String  actionType      アクション種別
-     * @param Object  targetElmList   対象のリスト要素(jQueryオブジェクト)
-     * @param Object  targetObjList   対象のリストオブジェクト
-     * @param Integer limitNum        リストの表示制限がある場合に、制限数を設定する(ない場合、リストの表示数は無制限となる)
-     */
-    this.controllListView = function (actionType, targetElmList, targetObjList, limitNum) {
-      if ( typeof limitNum === 'undefined' ) {
-        limitNum = 0;
+  /**
+   * リードリストをプルダウンで選択時に、保存するモデルを更新する
+   * @param String targetId       対象となるid
+   * @param String setActionId
+   */
+  this.handleLeadInfo = function(targetId, setActionId){
+    var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value);
+    leadSettings.some(function(setting) {
+      if(Number(setting.TLeadListSetting.id) === Number(targetId)){
+        $scope.setActionList[setActionId].leadInformations = JSON.parse(setting.TLeadListSetting.list_parameter);
+        $scope.setActionList[setActionId].leadTitleLabel = setting.TLeadListSetting.list_name;
+        return true;
       }
+    })
+  };
 
-      console.log(targetObjList);
+  /**
+   * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
+   * @param String  actionType      アクション種別
+   * @param Object  targetElmList   対象のリスト要素(jQueryオブジェクト)
+   * @param Object  targetObjList   対象のリストオブジェクト
+   * @param Integer limitNum        リストの表示制限がある場合に、制限数を設定する(ない場合、リストの表示数は無制限となる)
+   */
+  this.controllListView = function(actionType, targetElmList, targetObjList, limitNum) {
+    if (typeof limitNum === 'undefined') {
+      limitNum = 0;
+    }
 
-      var elmNum = targetElmList.length;
-      var objNum = targetObjList.length;
+    var elmNum = targetElmList.length;
+    var objNum = targetObjList.length;
 
       angular.forEach(targetElmList, function (targetElm, index) {
         if ( elmNum == 1 && index == 0 ) {
@@ -3232,19 +3247,17 @@
     **リスト名のチェック
     **項目名のチェック
  　  */
-      if ( actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>) {
-        if ( !actionItem.subject ) {
-          messageList.push('リードリスト名が未入力です');
-        } else if ( actionItem.subject === "お客様情報①" ) {
-          messageList.push('リードリスト名”お客様情報①”は既に使用されています');
-        } else if ( actionItem.subject === "お客様情報②" ) {
-          messageList.push('リードリスト名”お客様情報②”は既に使用されています');
-        }
+    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>) {
+      if (!actionItem.leadTitleLabel) {
+        messageList.push('リードリスト名が未入力です');
+        //既に名前は使われているかを判定する関数を作る
+      } else if (searchListLabel(actionItem.leadTitleLabel)) {
+        messageList.push('リードリスト名”'+ actionItem.leadTitleLabel +'”は既に使用されています');
+      }
 
-        var invalidLabelName = actionItem.leadRegister.some(function (elm) {
-          return !elm.leadLabelName || elm.leadLabelName === "";
-          ;
-        });
+      var invalidLabelName = actionItem.leadInformations.some(function(elm) {
+        return !elm.leadLabelName || elm.leadLabelName === "";
+      });
 
         if ( invalidLabelName ) {
           messageList.push('リードリスト項目を設定してください');
@@ -3254,32 +3267,18 @@
       /*リード選択時
     **リード選択のチェック
      */
-      if ( actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>) {
-        if ( !actionItem.leadId || actionItem.leadId === "" ) {
-          messageList.push("リードリストを選択してください");
-        }
+    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>) {
+      if(!actionItem.tLeadListSettingId || actionItem.tLeadListSettingId === "") {
+        messageList.push("リードリストを選択してください");
       }
-
-      /*共通
-    **変数のチェック
-     */
-
-      messageList.push("保存機能は未実装です");
-    } else if ( actionItem.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
-      angular.forEach(actionItem.multipleHearings, function (item, itemKey) {
-        if ( !item.label ) {
-          messageList.push('ラベルが未入力です');
-        }
-        if ( !item.variableName ) {
-          messageList.push('変数名が未入力です');
-        }
-      });
     }
-    // 使用されている変数名を抽出する
-    var setMessages = searchObj(actionItem, /^(?!\$).+$|^variableName$/i);
-    var usedVariableList = setMessages.map(function (string) {
-      return string.replace(/\n/mg, ' ');
-    }).join(' ').match(/{{[^}]+}}/g);
+  }
+
+  // 使用されている変数名を抽出する
+  var setMessages = searchObj(actionItem, /^(?!\$).+$|^variableName$/i);
+  var usedVariableList = setMessages.map(function(string) {
+    return string.replace(/\n/mg, ' ');
+  }).join(' ').match(/{{[^}]+}}/g);
 
     if ( usedVariableList !== null && usedVariableList.length >= 1 ) {
 
@@ -3325,19 +3324,35 @@
     }
   }
 
-  /**
-   * オブジェクト内のプロパティを検索
-   * （オブジェクトのキーが正規表現にマッチした、すべての値を返す）
-   * @param  Object obj   検索対象のオブジェクト
-   * @param  RegExp regex 正規表現
-   * @return Array        検索結果
-   */
-  function searchObj(obj, regex) {
-    var resultList = [];
-    for ( var key in obj ) {
-      if ( typeof obj[key] === 'object' ) {
-        resultList = resultList.concat(searchObj(obj[key], regex));
-      }
+/**
+ * リードリスト名が既に使われているか検索
+ * @param  String label  検索対象のラベル名
+ * @return boolean      検索結果
+ */
+function searchListLabel (label) {
+  var existLabelName = false;
+  var leadList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
+  for(var i=0; i<leadList.length; i++){
+    if(leadList[i].TLeadListSetting.list_name === label){
+      existLabelName = true;
+    }
+  }
+  return existLabelName;
+}
+
+/**
+ * オブジェクト内のプロパティを検索
+ * （オブジェクトのキーが正規表現にマッチした、すべての値を返す）
+ * @param  Object obj   検索対象のオブジェクト
+ * @param  RegExp regex 正規表現
+ * @return Array        検索結果
+ */
+function searchObj (obj, regex) {
+  var resultList = [];
+  for (var key in obj) {
+    if (typeof obj[key] === 'object') {
+      resultList = resultList.concat(searchObj(obj[key], regex));
+    }
 
       if ( typeof obj[key] === 'string' && obj[key].length >= 1 && regex.test(key) ) {
         resultList.push(obj[key]);
