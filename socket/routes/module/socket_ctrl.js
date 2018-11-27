@@ -3369,13 +3369,14 @@ io.sockets.on('connection', function(socket) {
       .then((text) => {
         if (Array.isArray(text)) {
           for (let i = 0; i < text.length; i++) {
-            apiCaller.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
-              obj.stayLogsId,
-              companyList[obj.siteKey],
-              obj.userId,
-              text[i],
-              obj.messageDistinction,
-              obj.created)
+            setTimeout(() => {
+              apiCaller.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
+                obj.stayLogsId,
+                companyList[obj.siteKey],
+                obj.userId,
+                text[i],
+                obj.messageDistinction,
+                obj.created)
               .then((resultData) => {
                 let sendData = {
                   tabId: obj.tabId,
@@ -3396,6 +3397,7 @@ io.sockets.on('connection', function(socket) {
                 emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
                 emit.toCompany('sendChatResult', sendData, obj.siteKey);
               });
+            }, i * 100);
           }
         }
         if (apiCaller.isSwitchingOperator()) {
