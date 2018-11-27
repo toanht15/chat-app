@@ -643,7 +643,11 @@ sincloApp.factory('SimulatorService', function() {
         content += "  </div>";
         content += "</div>";
       }
-      return content;
+
+      return {
+        content: content,
+        isEmptyRequire: isEmptyRequire
+      };
     },
 
     createFormFromLog: function (data) {

@@ -25,7 +25,7 @@ module.exports = class APICaller {
   }
 
   get timeout () {
-    return 10000;
+    return 5000;
   }
 
   get options () {
@@ -43,7 +43,8 @@ module.exports = class APICaller {
       this.logger.info('REQUEST BODY : %s', JSON.stringify(this.body));
       request(this.options, (error, response, body) => {
         if(error || body.error) {
-          reject(error);
+          this.logger.info('【%s】CALL API ERROR FOUND : error => %s, error.body => %s', response.statusCode, error, body.error);
+          reject(error ? error : body.error);
         } else {
           resolve(body);
         }
