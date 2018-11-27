@@ -3390,7 +3390,7 @@ io.sockets.on('connection', function(socket) {
                   siteKey: obj.siteKey,
                   matchAutoSpeech: true,
                   isScenarioMessage: false,
-                  isFeedbackMsg: sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isFeedbackMessage(),
+                  isFeedbackMsg: (sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isFeedbackMessage() && i === text.length-1),
                   isExitOnConversation: sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isExitOnConversation()
                 };
                 emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
