@@ -231,6 +231,7 @@ define('C_SCENARIO_ACTION_RECEIVE_FILE', 9); // ファイル受信
 define('C_SCENARIO_ACTION_BRANCH_ON_CONDITION', 10); // 条件分岐
 define('C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION', 11); // 訪問ユーザ登録
 define('C_SCENARIO_ACTION_BULK_HEARING', 12); // 一括ヒアリング
+define('C_SCENARIO_ACTION_LEAD_REGISTER', 13); // リード登録
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -257,6 +258,7 @@ define('C_SCENARIO_SEND_MESSAGE_BY_BUTTON', 2);
 define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
 define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
 define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
+
 /* シナリオ設定(外部連携) - 連携タイプ */
 define('C_SCENARIO_EXTERNAL_TYPE_API', 1);
 define('C_SCENARIO_EXTERNAL_TYPE_SCRIPT', 2);
@@ -283,6 +285,10 @@ define('C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT', 1);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO', 2);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE', 3);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_NONE', 4);
+
+// シナリオ設定（リード登録）-新規作成か流用か
+define('C_SCENARIO_LEAD_REGIST', 1);
+define('C_SCENARIO_LEAD_USE', 2);
 
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
@@ -957,12 +963,26 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'multipleHearing' => [
+      'multipleHearings' => [
         [
-          'variableName' => '',
-          'inputType' => "1",
-          'label' => "",
+          'variableName' => '会社名',
+          'inputType' => "1", // 会社名
+          'label' => "会社名",
           'required' => true
+        ]
+      ]
+    ]
+  ],  // リード登録
+  C_SCENARIO_ACTION_LEAD_REGISTER => [
+    'label' => 'リード登録',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'makeLeadTypeList' => '1',
+      'chatTextArea' => '2',
+      'leadInformations' => [
+        [
+          'leadLabelName' => '',
+          'leadVariableName' => ''
         ]
       ]
     ]
@@ -1097,6 +1117,10 @@ $config['chatbotScenarioBranchOnConditionActionType'] = [
     'label' => 'シナリオを終了'
   ]
 ];
+  $config['chatbotScenarioLeadTypeList'] = [
+    C_SCENARIO_LEAD_REGIST => '新規作成',
+    C_SCENARIO_LEAD_USE => '既存リストを使用'
+  ];
 
 /* 成果種別 */
 $config['achievementType'] = [

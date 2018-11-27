@@ -562,9 +562,8 @@ function getMessageTypeByUiType(type) {
 //requestをrequire
 var http = require('http');
 http.globalAgent.maxSockets = 1000;
-
 function getCompanyInfoFromApi(obj, ip, callback) {
-  if (functionManager.isEnabled(obj.siteKey, functionManager.keyList.refCompanyData)) {
+  if(functionManager.isEnabled(obj.siteKey, functionManager.keyList.refCompanyData)) {
     var api = new LandscapeAPI('json', 'utf8');
     api.getFrom(ip, callback);
   } else {
@@ -973,6 +972,19 @@ var db = {
     } else {
       callback(false);
     }
+  },
+
+  /*  リード情報を登録する
+   *  TODO 適切なエラーハンドリング
+   */
+
+  addLeadInformation: function (obj){
+    pool.query('INSERT INTO t_lead_lists VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, now())', [companyList[obj.siteKey], Number(obj.leadSettingsId), Number(obj.scenarioId), JSON.stringify(obj.saveLeadData), obj.executeUrl, obj.landingUrl, obj.userAgent],
+    function(err, result){
+      if(isset(err)){
+        console.log("ERROR DETECTED!!!" + err);
+      }
+    });
   }
 };
 
@@ -2463,7 +2475,7 @@ io.sockets.on('connection', function(socket) {
         }
 
         //FIXME 企業別機能設定（企業情報連携）
-        getCompanyInfoFromApi(obj, obj.ipAddress, function(data) {
+        getCompanyInfoFromApi(obj, obj.ipAddress, function(data){
           try {
             if (data) {
               var response = data;
@@ -3319,7 +3331,7 @@ io.sockets.on('connection', function(socket) {
       obj.stayLogsId,
       companyList[obj.siteKey],
       obj.userId,
-      obj.chatMessage.replace('button_', ''),
+      obj.chatMessage.replace('button_', '').replace('\n', ''),
       obj.messageDistinction,
       obj.created)
       .then((resultData) => {
@@ -3332,8 +3344,8 @@ io.sockets.on('connection', function(socket) {
           created: resultData.created,
           sort: fullDateTime(resultData.created),
           ret: true,
-          chatMessage: resultData.message,
-          message: resultData.message,
+          chatMessage: resultData.message.replace('button_', '').replace('\n', ''),
+          message: resultData.message.replace('button_', '').replace('\n', ''),
           siteKey: obj.siteKey,
           matchAutoSpeech: true,
           isScenarioMessage: false
@@ -3357,13 +3369,14 @@ io.sockets.on('connection', function(socket) {
       .then((text) => {
         if (Array.isArray(text)) {
           for (let i = 0; i < text.length; i++) {
-            apiCaller.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
-              obj.stayLogsId,
-              companyList[obj.siteKey],
-              obj.userId,
-              text[i],
-              obj.messageDistinction,
-              obj.created)
+            setTimeout(() => {
+              apiCaller.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
+                obj.stayLogsId,
+                companyList[obj.siteKey],
+                obj.userId,
+                text[i],
+                obj.messageDistinction,
+                obj.created)
               .then((resultData) => {
                 let sendData = {
                   tabId: obj.tabId,
@@ -3378,12 +3391,13 @@ io.sockets.on('connection', function(socket) {
                   siteKey: obj.siteKey,
                   matchAutoSpeech: true,
                   isScenarioMessage: false,
-                  isFeedbackMsg: sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isFeedbackMessage(),
+                  isFeedbackMsg: (sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isFeedbackMessage() && i === text.length-1),
                   isExitOnConversation: sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isExitOnConversation()
                 };
                 emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
                 emit.toCompany('sendChatResult', sendData, obj.siteKey);
               });
+            }, i * 100);
           }
         }
         if (apiCaller.isSwitchingOperator()) {
@@ -3410,6 +3424,25 @@ io.sockets.on('connection', function(socket) {
         }
       }, function(err) {
         console.log('COGMO ATTEND CALLBACK REJECT : ' + err);
+        let errorDatetime = new Date();
+        let sendData = {
+          tabId: obj.tabId,
+          sincloSessionId: obj.sincloSessionId,
+          chatId: null,
+          messageType: 81,
+          created: fullDateTime(errorDatetime),
+          sort: fullDateTime(errorDatetime),
+          ret: true,
+          chatMessage: 'システムエラーです。もう一度、メッセージを入力してください。',
+          message: 'システムエラーです。もう一度、メッセージを入力してください。',
+          siteKey: obj.siteKey,
+          matchAutoSpeech: true,
+          isScenarioMessage: false,
+          isFeedbackMsg: false,
+          isExitOnConversation: true
+        };
+        emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
+        emit.toCompany('sendChatResult', sendData, obj.siteKey);
       });
   }
 
@@ -3968,6 +4001,45 @@ io.sockets.on('connection', function(socket) {
     });
   });
 
+  // leadRegister
+  // TODO エラーが起きたらちゃんとハンドリングすること
+  socket.on('saveLeadList', function(data){
+    var obj = JSON.parse(data);
+    var targetId = Number(obj.leadSettingsId);
+    var variableIndex = obj.variables;
+    var leadData = [];
+    pool.query('SELECT list_parameter FROM t_lead_list_settings WHERE id = ? AND m_companies_id = ?', [targetId, companyList[obj.siteKey]] , function(err, result){
+      if(isset(err)) {
+        console.log("ERROR DETECTED!!");
+        return;
+      }
+      else {
+        var leadInfo = JSON.parse(result[0].list_parameter);
+        for(let i=0; i<leadInfo.length; i++){
+          leadData.push({
+            "leadLabelName": leadInfo[i].leadLabelName,
+            "leadVariable": isOkVariableForLeadList(variableIndex[leadInfo[i].leadVariableName]) ? variableIndex[leadInfo[i].leadVariableName] : ""
+          });
+        }
+        obj.saveLeadData = leadData;
+        db.addLeadInformation(obj);
+      }
+    });
+  });
+
+  /*  Check variable (empty or space only)
+   *  @param variableIndex (Variables)
+   *  @return boolean (check result)
+   */
+  var isOkVariableForLeadList = function(target){
+    if(isset(target)) {
+      if(!target.match(/\s/)){
+        return true;
+      }
+    }
+    return false;
+  };
+
   socket.on('sendParseSignature', function(data, ack) {
     var obj = JSON.parse(data);
     parseSignature(obj.targetText, obj.ip, function(result) {
@@ -4036,15 +4108,6 @@ io.sockets.on('connection', function(socket) {
     emit.toUser('startCoBrowseOpen', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
     emit.toMine('requestCoBrowseAllowed', data, socket);
     // 今まで通り
-    // else {
-    //     // 同形ウィンドウを作成するための情報取得依頼
-    //     if ( !getSessionId(obj.siteKey, obj.tabId, 'sessionId') ) return false;
-    //     sincloCore[obj.siteKey][obj.tabId].shareWindowFlg = false;
-    //     sincloCore[obj.siteKey][obj.tabId].connectToken = obj.connectToken;
-    //     sincloCore[obj.siteKey][obj.tabId].syncSessionId = null;
-    //     sincloCore[obj.siteKey][obj.tabId].syncHostSessionId = socket.id; // 企業画面側のセッションID
-    //     emit.toUser('getWindowInfo', data, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-    // }
   });
 
   /**
@@ -4190,40 +4253,6 @@ io.sockets.on('connection', function(socket) {
   // ビデオチャット関連
   // ビデオチャットで利用している各値はプレフィックス（vc_）をつけている。
   // -----------------------------------------------------------------------
-  /*  socket.on('confirmVideochatStart', function (data) {
-      var obj = JSON.parse(data);
-      // 同形ウィンドウを作成するための情報取得依頼
-      if ( !getSessionId(obj.siteKey, obj.toTabId, 'sessionId') ) return false;
-      sincloCore[obj.siteKey][obj.toTabId].vc_connectToken = obj.connectToken;
-      sincloCore[obj.siteKey][obj.toTabId].vc_syncSessionId = null;
-      sincloCore[obj.siteKey][obj.toTabId].vc_syncHostSessionId = socket.id; // 企業画面側のセッションID
-      emit.toUser('confirmVideochatStart', data, getSessionId(obj.siteKey, obj.toTabId, 'sessionId'));
-    });
-
-    socket.on('videochatConfirmOK', function (data) {
-      var obj = JSON.parse(data);
-      //obj.connectToken = sincloCore[obj.siteKey][obj.tabId].vc_connectToken;
-      emit.toUser('videochatConfirmOK', JSON.stringify(obj), getSessionId(obj.siteKey, obj.tabId, 'vc_syncHostSessionId'));
-    });
-
-    socket.on('videoChatConnected', function (data) {
-      console.log('VIDEOCHAT CONNECTED : ' + data);
-      var obj = JSON.parse(data);
-      vc_connectList[obj.tabId] = socket.id;
-      if(vc_connectList[obj.to]) {
-        console.log('VIDEOCHAT TO FOUND!');
-        emit.toUser('videoChatConnected', data, vc_connectList[obj.to]);
-      }
-    });
-
-    socket.on('askMakeOffer', function (data) {
-      console.log('askMakeOffer : ' + data);
-      var obj = JSON.parse(data);
-      if(vc_connectList[obj.to]) {
-        emit.toUser('askMakeOffer', data, vc_connectList[obj.to]);
-      }
-    });
-  */
   socket.on('sendMessage', function(d) {
     var obj = JSON.parse(d);
     var host = (obj.host !== "true") ? "host" : "guest";

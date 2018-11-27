@@ -19,7 +19,7 @@ class TChatbotScenarioController extends FileAppController {
 
   const CALL_SELF_SCENARIO_NAME = "（このシナリオ）";
 
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting', 'TLeadListSetting'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -94,6 +94,7 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioBranchOnConditionMatchValueType = Configure::read('chatbotScenarioBranchOnConditionMatchValueType');
     $this->chatbotScenarioBranchOnConditionActionType = Configure::read('chatbotScenarioBranchOnConditionActionType');
     $this->chatbotScenarioBranchOnConditionElseActionType = Configure::read('chatbotScenarioBranchOnConditionElseActionType');
+    $this->chatbotScenarioLeadTypeList = Configure::read('chatbotScenarioLeadTypeList');
 
     // FileAppController
     $this->fileTransferPrefix = "fileScenarioTransfer/";
@@ -139,6 +140,7 @@ sinclo@medialink-ml.co.jp
     ),$this->request->data['scenarioList']);
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
+    $this->request->data['leadList'] = $this->_getLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
   }
@@ -169,8 +171,8 @@ sinclo@medialink-ml.co.jp
       // convert old data -> new json structure
       $this->_convertOldDataToNewStructure($editData[0]['TChatbotScenario']['activity']);
       // アクションごとに必要な設定を追加する
+      $this->log($editData[0]['TChatbotScenario']['activity'],LOG_DEBUG);
       $this->_setActivityDetailSettings($editData[0]['TChatbotScenario']['activity']);
-
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
     }
 
@@ -188,6 +190,7 @@ sinclo@medialink-ml.co.jp
         )
       )
     ),$this->request->data['scenarioList']);
+    $this->request->data['leadList'] = $this->_getLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList($id));
     $this->_viewElement();
   }
@@ -473,7 +476,6 @@ sinclo@medialink-ml.co.jp
       $list = $this->params->data['list'];
       $sortNoList = $this->params->data['sortNolist'];
       sort($sortNoList);
-      $this->log($list,LOG_DEBUG);
       /* 現在の並び順を取得 */
       $params = $this->paginate['TChatbotScenario'];
       $params['fields'] = [
@@ -774,6 +776,10 @@ sinclo@medialink-ml.co.jp
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
           // ファイル送信
           unset($action->file);
+        } else
+        if($action->actionType == C_SCENARIO_ACTION_LEAD_REGISTER) {
+          // リード登録
+          $action = $this->_entryProcessForLeadRegister($action);
         }
       }
 
@@ -817,6 +823,60 @@ sinclo@medialink-ml.co.jp
 
     $page = floor((intval($count[0]['count']) + 99) / 100);
     return $page >= 1 ? $page : 1;
+  }
+  /**
+   * リードリスト保存時に対象のIDが存在していて、かつ内容物が保存しようとしているものと同じか
+   *
+   *
+   * */
+  private function _isSameLeadList($saveData){
+    $this->result = $this->TLeadListSetting->find('first', [
+      'fields' => 'list_parameter',
+      'conditions' => [
+        'id' => $saveData->tLeadListSettingId
+      ],
+      'recursive' => '-1'
+    ]);
+    return json_encode($saveData->leadInformations) == $this->result['TLeadListSetting']['list_parameter'];
+  }
+
+  /**
+   * リードリスト保存機能（ここでt_lead_list_settingsテーブルに情報が保存され、そのidだけアクション詳細に返却する
+   * @param Object $saveData アクション詳細
+   * @return Object          t_chatbot_scenarioに保存するアクション詳細
+   * */
+  private function _entryProcessForLeadRegister($saveData){
+    if (!empty($saveData->tLeadListSettingId) && $this->_isSameLeadList($saveData)) {
+      $this->TLeadListSetting->read(null, $saveData->tLeadListSettingId);
+    } else {
+      $this->TLeadListSetting->create();
+    }
+    $this->TLeadListSetting->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'list_name' => $saveData->leadTitleLabel,
+      'list_parameter' => json_encode($saveData->leadInformations)
+    ]);
+    //FIXME メール設定ではない
+    $errors = $this->MMailTransmissionSetting->validationErrors;
+    if(empty($errors)) {
+      $this->TLeadListSetting->save();
+      //IDが無い、或いは被りチェックで引っ掛かっている場合
+      if(empty($saveData->tLeadListSettingId) || !$this->_isSameLeadList($saveData)) {
+        $saveData->tLeadListSettingId = $this->TLeadListSetting->getLastInsertId();
+      }
+    } else {
+      $exception = new ChatbotScenarioException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
+
+    // リード登録設定DBに保存した情報をオブジェクトから削除する
+    unset($saveData->leadTitleLabel);
+    unset($saveData->leadInformations);
+    unset($saveData->makeLeadTypeList);
+    return $saveData;
+
   }
 
   /**
@@ -1037,6 +1097,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioBranchOnConditionActionType', $this->chatbotScenarioBranchOnConditionActionType);
     // 条件分岐アクション種別（上記を満たさない場合）
     $this->set('chatbotScenarioBranchOnConditionElseActionType', $this->chatbotScenarioBranchOnConditionElseActionType);
+    // リード登録リードリスト名種別
+    $this->set('chatbotScenarioLeadTypeList', $this->chatbotScenarioLeadTypeList);
     // ファイル受信用にcompany_keyをsetしておく
     $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
     // 最後に表示していたページ番号
@@ -1741,6 +1803,15 @@ sinclo@medialink-ml.co.jp
     ]);
   }
 
+  private function _getLeadList() {
+    return $this->TLeadListSetting->find('all', [
+      'fields' => ['TLeadListSetting.id', 'TLeadListSetting.list_name', 'TLeadListSetting.list_parameter'],
+      'order' => [
+        'TLeadListSetting.id' => 'asc'
+      ]
+    ]);
+  }
+
   /**
    * convert old data (inputType, selection action type) to new hearing structure
    * @param $json
@@ -1898,6 +1969,17 @@ sinclo@medialink-ml.co.jp
             'file_size' => $this->prettyByte2Str($fileData['TChatbotScenarioSendFile']['file_size']),
             'extension' => $this->getExtension($fileData['TChatbotScenarioSendFile']['file_name'])
           ];
+        }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_LEAD_REGISTER) {
+        if (!empty($action->tLeadListSettingId)) {
+          $action->makeLeadTypeList = C_SCENARIO_LEAD_USE;
+          if(!isset($action->makeLeadTypeList)){
+            $action->makeLeadTypeList = C_SCENARIO_LEAD_REGIST;
+          }
+          $leadData = $this->TLeadListSetting->findById($action->tLeadListSettingId);
+          $action->leadTitleLabel = $leadData['TLeadListSetting']['list_name'];
+          $action->leadInformations = json_decode($leadData['TLeadListSetting']['list_parameter']);
         }
       }
     }
