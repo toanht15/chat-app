@@ -129,10 +129,12 @@ $(window).load(function(){
   var resizeDataTable = function() {
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - 80 + 'px');
   }
+  loading.load.start();
   // ページ読み込み時にもリサイズ処理を実行
   tableObj.on( 'draw', function () {
     resizeDataTable();
     $('#statistics_content').css('visibility','visible');
+    loading.load.finish();
   } );
 
   $(window).on('resize', function(event){
