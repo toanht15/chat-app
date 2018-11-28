@@ -27,7 +27,7 @@
 
       </left-parts>
       <right-parts>
-        <a href="#" id="outputMessageRankingCSV" class="btn-shadow blueBtn">CSV出力</a>
+        <a href="#" id="outputMessageRankingCSV" class="btn-shadow blueBtn">ＣＳＶ出力</a>
       </right-parts>
     </condition-bar>
     <!-- /* 対象期間選択エリア */ -->
@@ -97,8 +97,7 @@
           <?php endfor; ?>
           <td><?php echo isset($messageData['sum']['sum']) ? number_format($messageData['sum']['sum']) : '0'; ?></td>
         </tr>
-
-      </tbody>
+      </tfoot>
     </table>
     <?=$this->Form->create('statistics', ['action' => 'forMessageRanking']);?>
     <?=$this->Form->hidden('outputData')?>

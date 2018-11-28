@@ -10473,7 +10473,19 @@ ul.naviBtn {
       }
 
       div.dataTables_paginate {
-        padding-top: 0.75em;
+        padding-top: 0.6em;
+      }
+
+      div.dataTables_paginate.paging_simple {
+        width: 105px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        span.paginationButton {
+          width: 33px;
+          height: 33px;
+          padding: 3px 4px 0px 0px;
+        }
       }
 
       input[type='search']:focus {

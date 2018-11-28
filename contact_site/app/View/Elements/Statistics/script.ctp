@@ -120,6 +120,7 @@ $(window).load(function(){
     paging: true,
     pageLength: 100,
     lengthChange: false,
+    pagingType: "simple",
     <?php else: ?>
     paging: false,
     <?php endif; ?>
