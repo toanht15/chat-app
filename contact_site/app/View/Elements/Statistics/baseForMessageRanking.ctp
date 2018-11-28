@@ -74,20 +74,20 @@
       </thead>
       <tbody>
         <?php foreach ($messageData['data'] as $message => $data): ?>
-          <tr>
-            <td id="chatRequestLabel" class="autoMessage tooltip"><?php echo $message ?></td>
-            <?php for ($i = $start; $i <= $end; $i++): ?>
-              <?php if (isset($data[$i])): ?>
-                <td><?php echo number_format($data[$i]) ?></td>
-              <?php else: ?>
-                <td>0</td>
-            <?php endif; ?>
-            <?php endfor; ?>
-            <td><?php echo isset($data['sum']) ? number_format($data['sum']) : '0'; ?></td>
-          </tr>
+            <tr>
+              <td id="chatRequestLabel" class="autoMessage tooltip" data-org-msg="<?= h($message) ?>"><?php echo $message ?></td>
+              <?php for ($i = $start; $i <= $end; $i++): ?>
+                <?php if (isset($data[$i])): ?>
+                  <td><?php echo number_format($data[$i]) ?></td>
+                <?php else: ?>
+                  <td>0</td>
+                <?php endif; ?>
+              <?php endfor; ?>
+              <td><?php echo isset($data['sum']) ? number_format($data['sum']) : '0'; ?></td>
+            </tr>
         <?php endforeach; ?>
         <tr>
-          <td id="chatRequestLabel" class="autoMessage tooltip">合計</td>
+          <td id="chatRequestLabel" class="autoMessage tooltip" data-org-msg="合計">合計</td>
           <?php for ($i = $start; $i <= $end; $i++): ?>
             <?php if (isset($messageData['sum'][$i])): ?>
               <td><?php echo number_format($messageData['sum'][$i]) ?></td>
@@ -97,7 +97,6 @@
           <?php endfor; ?>
           <td><?php echo isset($messageData['sum']['sum']) ? number_format($messageData['sum']['sum']) : '0'; ?></td>
         </tr>
-
       </tbody>
     </table>
     <?=$this->Form->create('statistics', ['action' => 'forMessageRanking']);?>
