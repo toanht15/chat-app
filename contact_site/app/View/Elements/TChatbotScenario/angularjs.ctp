@@ -425,7 +425,7 @@
       1: "会社名",
       2: "名前",
       3: "郵便番号",
-      4: "住所 ",
+      4: "住所",
       5: "部署名",
       6: "役職",
       7: "電話番号",
@@ -1614,7 +1614,7 @@
        }
      })
    };
-   
+
    this.resetListView = function(type, setActionId){
      console.log($scope.setActionList[setActionId]);
      if(Number(type) === 2){
