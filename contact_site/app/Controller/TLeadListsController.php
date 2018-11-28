@@ -291,12 +291,26 @@ class TLeadListsController extends AppController{
 
   private function addLeadHeader($head, $element){
     // ヘッダー情報は同一リードリスト名では同じなため、最初の1つだけ見る
+    // リード情報がない場合は取得したidからヘッダー名を取得する
     if(isset($element[0])) {
       $leadHeaders = json_decode($element[0]['TLeadList']['lead_informations']);
-      foreach ($leadHeaders as $leadHeader) {
-        array_push($head, $leadHeader->leadLabelName);
-      }
+    } else {
+      $target = $this->TLeadListSetting->find('first',[
+        'recursive' => -1,
+        'field' => [
+          'list_parameter'
+        ],
+        'conditions' => [
+          "m_companies_id" => $this->userInfo['MCompany']['id'],
+          "id" => intval($this->request->data['selectList'])
+        ]
+      ]);
+      $leadHeaders = json_decode($target['TLeadListSetting']['list_parameter']);
     }
+    foreach ($leadHeaders as $leadHeader) {
+      array_push($head, $leadHeader->leadLabelName);
+    }
+
     return $head;
   }
 
