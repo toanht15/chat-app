@@ -123,7 +123,7 @@ $(window).load(function(){
       var maxLength = (currentWidth / 12) * 2;
       $(".autoMessage").html(function(index, currentText) {
         try {
-          var orgMessage = $(this).data('orgMsg');
+          var orgMessage = String($(this).data('orgMsg'));
           if (orgMessage.length >= maxLength) {
             return escapeHTML(orgMessage.substr(0, maxLength)) + "...";
           } else {
