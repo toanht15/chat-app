@@ -10379,6 +10379,28 @@ ul.naviBtn {
     }
   }
 
+  #statistic_title {
+    h1 {
+      display: inline-block;
+    }
+    .blueBtn {
+      background-color: #4bacc6;
+      border-color: #4bacc6;
+
+      &:hover {
+        border-color: #4c9db3;
+        background-color: #4c9db3;
+      }
+    }
+    .fRight {
+      margin-right: 0;
+
+      #outputMessageRankingCSV {
+        padding: 0.5em 1.4em;
+      }
+    }
+  }
+
   #statistics_content {
     display: flex;
     flex-direction: column;
@@ -10473,10 +10495,11 @@ ul.naviBtn {
       }
 
       div.dataTables_paginate {
-        padding-top: 0.6em;
+        padding-top: 0.75em;
       }
 
       div.dataTables_paginate.paging_simple {
+        margin-top: -60px;
         width: 105px;
         display: flex;
         justify-content: space-between;

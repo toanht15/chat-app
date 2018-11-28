@@ -7,6 +7,9 @@
   <div id='statistic_title'>
     <div class="fLeft"><i class="fal fa-chart-line fa-2x"></i></div>
     <h1>メッセージランキング</h1>
+    <div class="fRight">
+        <a href="#" id="outputMessageRankingCSV" class="btn-shadow blueBtn">ＣＳＶ出力</a>
+    </div>
   </div>
 
   <?php echo $this->element('Statistics/baseForMessageRanking'); ?>

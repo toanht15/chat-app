@@ -24,11 +24,7 @@
           'div'=>false, 'label'=>false,'style' => 'width:11em;cursor:pointer;display:none','value' => substr($type,0,10),'placeholder' => date("Y/m/d "),'autocomplete'=>'off')); ?>
         <b id = 'triangle'></b>
         <?= $this->Form->end(); ?>
-
       </left-parts>
-      <right-parts>
-        <a href="#" id="outputMessageRankingCSV" class="btn-shadow blueBtn">ＣＳＶ出力</a>
-      </right-parts>
     </condition-bar>
     <!-- /* 対象期間選択エリア */ -->
   </div><!-- #statistic_menu -->

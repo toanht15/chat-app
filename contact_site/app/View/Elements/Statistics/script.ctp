@@ -118,6 +118,7 @@ $(window).load(function(){
     scrollCollapse: true,
     <?php if(!empty($isJsPaging)): ?>
     paging: true,
+    dom: 'pt',
     pageLength: 100,
     lengthChange: false,
     pagingType: "simple",
@@ -137,7 +138,7 @@ $(window).load(function(){
   //リサイズ処理
   var resizeDataTable = function() {
     var hasPaging = $('#statistics_content').hasClass('with-paging');
-    var offset = hasPaging ? 105 : 80;
+    var offset = hasPaging ? 80 : 80;
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - offset + 'px');
   };
 
