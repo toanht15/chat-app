@@ -128,7 +128,11 @@ $(window).load(function(){
     info: false,
     ordering: false,
     columnDefs: [
+      <?php if(!empty($isJsPaging)): ?>
+      { width: 600, targets: 0 }
+      <?php else: ?>
       { width: 120, targets: 0 }
+      <?php endif; ?>
     ],
     fixedColumns: {
       leftColumns: 1
@@ -152,6 +156,22 @@ $(window).load(function(){
   $(window).on('resize', function(event){
     console.log("resize");
     resizeDataTable();
+    var currentWidth = $(".autoMessage").get(0).clientWidth - 30;
+    $(".autoMessage").text(function(index, currentText) {
+      try {
+        var orgMessage = $(this).data('orgMsg');
+        // var currentWidth = $(this).get(0).clientWidth - 30;
+        console.log(currentWidth);
+        var maxLength = (currentWidth / 12) * 2;
+        if (orgMessage.length >= maxLength) {
+          return orgMessage.substr(0, maxLength) + "...";
+        } else {
+          return orgMessage
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    });
   });
 
   //CSV処理(チャット統計)
@@ -408,11 +428,17 @@ $(window).load(function(){
   });
 
   $(".autoMessage").text(function(index, currentText) {
-    var maxLength = 100;
-    if(currentText.length >= maxLength) {
-      return currentText.substr(0, maxLength) + "...";
-    } else {
-      return currentText
+    try {
+      var orgMessage = $(this).data('orgMsg');
+      var currentWidth = $(this).get(0).clientWidth - 60;
+      var maxLength = (currentWidth / 12) * 2;
+      if (orgMessage.length >= maxLength) {
+        return orgMessage.substr(0, maxLength) + "...";
+      } else {
+        return orgMessage
+      }
+    } catch (e) {
+      console.log(e);
     }
   });
 
