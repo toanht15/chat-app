@@ -108,7 +108,6 @@
       })
       .done(function(response, textStatus, jqXHR){
         let responseHeader = jqXHR.getResponseHeader('Content-Type');
-        alert(responseHeader);
         let extension;
         if(responseHeader.match(/csv/)){
           extension = "csv";

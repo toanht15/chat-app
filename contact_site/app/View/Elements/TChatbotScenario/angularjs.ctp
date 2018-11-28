@@ -82,22 +82,30 @@
       }
     }
 
-  // 登録済みリードリスト
-  var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
-  this.leadList = [];
-  this.leadInformations = [];
-  for (var key in leadJsonList) {
-    this.leadInformations[leadJsonList[key].TLeadListSetting.id] = [];
-    if (leadJsonList.hasOwnProperty(key)) {
-      this.leadList.push({'id': leadJsonList[key].TLeadListSetting.id, 'name': leadJsonList[key].TLeadListSetting.list_name});
-      var leadJsonParameter = JSON.parse(leadJsonList[key].TLeadListSetting.list_parameter);
-      for (var index in leadJsonParameter) {
-        this.leadInformations[leadJsonList[key].TLeadListSetting.id].push({'leadLabelName': leadJsonParameter[index].leadLabelName, 'leadVariableName': leadJsonParameter[index].leadVariableName});
+    // 登録済みリードリスト
+    var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
+    console.log(leadJsonList);
+    this.leadList = [];
+    this.leadInformations = [];
+    console.log(leadJsonList);
+    for(var key in leadJsonList) {
+      console.log(leadJsonList[key]);
+      this.leadInformations[leadJsonList[key].TLeadListSetting.id] = [];
+      if (leadJsonList.hasOwnProperty(key)) {
+        this.leadList.push({
+          'id': leadJsonList[key].TLeadListSetting.id,
+          'name': leadJsonList[key].TLeadListSetting.list_name
+        });
+        var leadJsonParameter = JSON.parse(leadJsonList[key].TLeadListSetting.list_parameter);
+        for (var index in leadJsonParameter) {
+          this.leadInformations[leadJsonList[key].TLeadListSetting.id].push({
+            'leadLabelName': leadJsonParameter[index].leadLabelName,
+            'leadVariableName': leadJsonParameter[index].leadVariableName
+          });
+        }
       }
     }
-  }
-  console.log(this.leadList);
-  console.log(this.leadInformations);
+    console.log(this.leadList);
 
     // 登録済みシナリオ一覧（条件分岐用）
     var scenarioJsonListForBranchOnCond = JSON.parse(document.getElementById('TChatbotScenarioScenarioListForBranchOnCond').value);
@@ -703,6 +711,11 @@
           });
         }
       }, true);
+    };
+
+
+    this.getLeadListSettingId = function(list, selectedId) {
+
     };
 
     this.customCalendarTextColor = function (calendarTarget, design) {
@@ -1595,16 +1608,16 @@
    * @param String targetId       対象となるid
    * @param String setActionId
    */
-  this.handleLeadInfo = function(targetId, setActionId){
-    var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value);
-    leadSettings.some(function(setting) {
-      if(Number(setting.TLeadListSetting.id) === Number(targetId)){
-        $scope.setActionList[setActionId].leadInformations = JSON.parse(setting.TLeadListSetting.list_parameter);
-        $scope.setActionList[setActionId].leadTitleLabel = setting.TLeadListSetting.list_name;
-        return true;
-      }
-    })
-  };
+   this.handleLeadInfo = function(targetId, setActionId){
+     var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value);
+     leadSettings.some(function(setting) {
+       if(Number(setting.TLeadListSetting.id) === Number(targetId)){
+         $scope.setActionList[setActionId].leadInformations = JSON.parse(setting.TLeadListSetting.list_parameter);
+         $scope.setActionList[setActionId].leadTitleLabel = setting.TLeadListSetting.list_name;
+         return true;
+       }
+     })
+   };
 
   /**
    * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
@@ -2814,7 +2827,39 @@
         }, true);
       }
     };
-  });
+  })
+  /*.filter('handleListInfo', function () {
+    return function(list, selectedId) {
+      // 対象IDの要素だけ取り出す
+
+      var resultArray = [];
+      for(var i in list){
+        if(selectedId === list[i]['id']){
+          resultArray.push({"id":list[i]['id'], "name":list[i]['name']});
+          break;
+        }
+      }
+      for(var j in list){
+        var pushFlg = true;
+        for(var k in resultArray){
+          if(resultArray[k]['name'] === list[j]['name']){
+            pushFlg = false;
+          }
+        }
+        if(pushFlg) {
+          resultArray.push({"id": list[j]['id'], "name": list[j]['name']});
+        }
+      }
+
+      console.log(resultArray);
+
+      list.splice(0, list.length);
+      resultArray.forEach(function(elm, idx, arr){
+        list.push(elm);
+      });
+      return list;
+    }
+  });*/
 
   function getWidgetSettings() {
     var json = JSON.parse(document.getElementById('TChatbotScenarioWidgetSettings').value);

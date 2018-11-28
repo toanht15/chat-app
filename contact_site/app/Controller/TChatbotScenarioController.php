@@ -171,7 +171,6 @@ sinclo@medialink-ml.co.jp
       // convert old data -> new json structure
       $this->_convertOldDataToNewStructure($editData[0]['TChatbotScenario']['activity']);
       // アクションごとに必要な設定を追加する
-      $this->log($editData[0]['TChatbotScenario']['activity'],LOG_DEBUG);
       $this->_setActivityDetailSettings($editData[0]['TChatbotScenario']['activity']);
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
     }
@@ -825,19 +824,25 @@ sinclo@medialink-ml.co.jp
     return $page >= 1 ? $page : 1;
   }
   /**
-   * リードリスト保存時に対象のIDが存在していて、かつ内容物が保存しようとしているものと同じか
+   * リードリスト保存時に同名の同じ内容が存在するか？
    *
    *
    * */
-  private function _isSameLeadList($saveData){
-    $this->result = $this->TLeadListSetting->find('first', [
+  private function _sameLeadList($saveData){
+    $resultArray = $this->TLeadListSetting->find('list', [
       'fields' => 'list_parameter',
       'conditions' => [
-        'id' => $saveData->tLeadListSettingId
+        'list_name' => $saveData->leadTitleLabel
       ],
       'recursive' => '-1'
     ]);
-    return json_encode($saveData->leadInformations) == $this->result['TLeadListSetting']['list_parameter'];
+    forEach($resultArray as $key => $result) {
+      if (json_encode($saveData->leadInformations) == $result) {
+        return $key;
+        break;
+      }
+    }
+    return false;
   }
 
   /**
@@ -846,8 +851,9 @@ sinclo@medialink-ml.co.jp
    * @return Object          t_chatbot_scenarioに保存するアクション詳細
    * */
   private function _entryProcessForLeadRegister($saveData){
-    if (!empty($saveData->tLeadListSettingId) && $this->_isSameLeadList($saveData)) {
-      $this->TLeadListSetting->read(null, $saveData->tLeadListSettingId);
+    $leadListId = $this->_sameLeadList($saveData);
+    if (!empty($saveData->tLeadListSettingId) && $leadListId) {
+      $this->TLeadListSetting->read(null, $leadListId);
     } else {
       $this->TLeadListSetting->create();
     }
@@ -856,12 +862,11 @@ sinclo@medialink-ml.co.jp
       'list_name' => $saveData->leadTitleLabel,
       'list_parameter' => json_encode($saveData->leadInformations)
     ]);
-    //FIXME メール設定ではない
-    $errors = $this->MMailTransmissionSetting->validationErrors;
+    $errors = $this->TLeadListSetting->validationErrors;
     if(empty($errors)) {
       $this->TLeadListSetting->save();
       //IDが無い、或いは被りチェックで引っ掛かっている場合
-      if(empty($saveData->tLeadListSettingId) || !$this->_isSameLeadList($saveData)) {
+      if(empty($saveData->tLeadListSettingId) || !$leadListId) {
         $saveData->tLeadListSettingId = $this->TLeadListSetting->getLastInsertId();
       }
     } else {
@@ -1808,6 +1813,9 @@ sinclo@medialink-ml.co.jp
       'fields' => ['TLeadListSetting.id', 'TLeadListSetting.list_name', 'TLeadListSetting.list_parameter'],
       'order' => [
         'TLeadListSetting.id' => 'asc'
+      ],
+      'conditions' => [
+        'TLeadListSetting.m_companies_id' => $this->userInfo['MCompany']['id']
       ]
     ]);
   }
@@ -1980,10 +1988,48 @@ sinclo@medialink-ml.co.jp
           $leadData = $this->TLeadListSetting->findById($action->tLeadListSettingId);
           $action->leadTitleLabel = $leadData['TLeadListSetting']['list_name'];
           $action->leadInformations = json_decode($leadData['TLeadListSetting']['list_parameter']);
+          $this->request->data['leadList'][$key] = $this->leadInfoSet($key,$action->tLeadListSettingId);
         }
       }
     }
     $json = json_encode($activity);
+  }
+
+  private function leadInfoSet($scenarioSeq,$targetId){
+    $target = $this->TLeadListSetting->find('first',[
+      'recursive' => -1,
+      'fields' => [
+        "id",
+        "list_name",
+        "list_parameter"
+      ],
+      'conditions' => [
+        "m_companies_id" => $this->userInfo['MCompany']['id'],
+        "id" => $targetId
+      ]
+    ]);
+
+    $targetArray[] = $target['TLeadListSetting'];
+    $targetName = $target['TLeadListSetting']['list_name'];
+
+    $targetList = $this->TLeadListSetting->find('all',[
+      'recursive' => -1,
+      'fields' => [
+        "id",
+        "list_name",
+        "list_parameter"
+      ],
+      'conditions' => [
+        "m_companies_id" => $this->userInfo['MCompany']['id'],
+        "list_name !=" => $targetName
+      ],
+      'group' => "list_name"
+    ]);
+    forEach($targetList as $value) {
+      $targetArray[] = $value['TLeadListSetting'];
+    }
+
+    return $targetArray;
   }
 
   /**
