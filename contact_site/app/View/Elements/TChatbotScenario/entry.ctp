@@ -9,6 +9,7 @@
   <?=$this->Form->input('widgetSettings', ['type' => 'hidden','value' => json_encode($this->data['widgetSettings'])])?>
   <?=$this->Form->input('scenarioList', ['type' => 'hidden','value' => json_encode($this->data['scenarioList'])])?>
   <?=$this->Form->input('scenarioListForBranchOnCond', ['type' => 'hidden','value' => json_encode($this->data['scenarioListForBranchOnCond'])])?>
+  <?=$this->Form->input('leadList', ['type' => 'hidden','value' => json_encode($this->data['leadList'])])?>
   <section id="tchatbotscenario_form_basic_settings" class="p10x">
     <h3 class="tchatbotscenario_form_subtitle">基本設定</h3>
     <ul>
@@ -65,6 +66,19 @@
                     </ul>
                 </div>
             </div>
+
+          <!-- 一括ヒアリング -->
+          <div class="actionMenu">
+            <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_BULK_HEARING ?>)"
+               class="greenBtn btn-shadow commontooltip"
+               data-text="サイト訪問者からのテキスト入力内容から指定した属性に該当する内容を抽出し、フォーム形式で入力内容を確認するアクションです。フォームで表示された抽出内容は修正が可能です。">一括ヒアリング</a>
+            <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_BULK_HEARING ?>">
+              <ul>
+                <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_BULK_HEARING ?>)">選択されたアクションの下に追加する</li>
+                <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_BULK_HEARING ?>, true)">一番下に追加する</li>
+              </ul>
+            </div>
+          </div>
 
             <!-- 条件分岐 -->
             <div class="actionMenu">
@@ -156,6 +170,19 @@
                 </div>
             </div>
 
+          <!-- リード登録 -->
+            <div class="actionMenu">
+              <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>)"
+                 class="greenBtn btn-shadow commontooltip"
+                 data-text="シナリオ内で取得した変数をリードリストとして登録できます。登録したリストは、CSVで出力することが可能です。">リード登録</a>
+              <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>">
+                <ul>
+                  <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>)">選択されたアクションの下に追加する</li>
+                  <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_LEAD_REGISTER ?>, true)">一番下に追加する</li>
+                </ul>
+              </div>
+            </div>
+
             <!-- メール送信 -->
             <div class="actionMenu">
                 <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_SEND_MAIL ?>)"
@@ -175,7 +202,7 @@
       <li ng-repeat="(setActionId, setItem) in setActionList" ng-model="setItem" id="action{{setActionId}}_setting" class="set_action_item" validate-action ng-focus="main.setFocusActionIndex(setActionId)">
         <h4 class="handle"><a href="#action{{setActionId}}_preview">{{setActionId + 1}}．{{actionList[setItem.actionType].label}} <i class="error errorBtn" ng-if="!setItem.$valid"></i></a></h4>
         <?= $this->element('TChatbotScenario/templates'); ?>
-        <a ng-if="setItem.actionType !== '12'" class="btn-shadow redBtn closeBtn" ng-click="main.removeItem(setActionId)">
+        <a ng-if="setItem.actionType !== '99'" ng-click="main.removeItem(setActionId)" class="btn-shadow redBtn closeBtn">
           <?= $this->Html->image('close.png', array('alt' => '削除する', 'width' => 20, 'height' => 20, 'style' => 'margin: 0 auto')) ?>
         </a>
 <!--          <a class="btn-shadow redBtn closeBtn"></a>-->

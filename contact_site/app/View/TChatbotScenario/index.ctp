@@ -119,7 +119,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             <label for="selectTab<?=h($id)?>"></label>
           </td>
           <td class="tCenter" width=" 5%"><?=$no?></td>
-          <td class="p10x scenarioTitle" width="25%"><?= $val['TChatbotScenario']['name']; ?></td>
+          <td class="tCenter scenarioTitle" width="25%"><?= $val['TChatbotScenario']['name']; ?></td>
           <td class="p10x" width="75%">
             <?php if ($callerAutoMessage === '' && $callerScenario === ''): ?>
               <p>（未設定）</p>
