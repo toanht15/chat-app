@@ -118,6 +118,22 @@ $(window).load(function(){
     scrollCollapse: true,
     <?php if(!empty($isJsPaging)): ?>
     paging: true,
+    drawCallback: function( settings ) {
+      var currentWidth = $(".autoMessage").get(0).clientWidth - 30;
+      var maxLength = (currentWidth / 12) * 2;
+      $(".autoMessage").text(function(index, currentText) {
+        try {
+          var orgMessage = $(this).data('orgMsg');
+          if (orgMessage.length >= maxLength) {
+            return orgMessage.substr(0, maxLength) + "...";
+          } else {
+            return orgMessage
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      });
+    },
     dom: 'pt',
     pageLength: 100,
     lengthChange: false,
@@ -156,22 +172,7 @@ $(window).load(function(){
   $(window).on('resize', function(event){
     console.log("resize");
     resizeDataTable();
-    var currentWidth = $(".autoMessage").get(0).clientWidth - 30;
-    $(".autoMessage").text(function(index, currentText) {
-      try {
-        var orgMessage = $(this).data('orgMsg');
-        // var currentWidth = $(this).get(0).clientWidth - 30;
-        console.log(currentWidth);
-        var maxLength = (currentWidth / 12) * 2;
-        if (orgMessage.length >= maxLength) {
-          return orgMessage.substr(0, maxLength) + "...";
-        } else {
-          return orgMessage
-        }
-      } catch (e) {
-        console.log(e);
-      }
-    });
+    tableObj.draw();
   });
 
   //CSV処理(チャット統計)
@@ -425,21 +426,6 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
-  });
-
-  $(".autoMessage").text(function(index, currentText) {
-    try {
-      var orgMessage = $(this).data('orgMsg');
-      var currentWidth = $(this).get(0).clientWidth - 60;
-      var maxLength = (currentWidth / 12) * 2;
-      if (orgMessage.length >= maxLength) {
-        return orgMessage.substr(0, maxLength) + "...";
-      } else {
-        return orgMessage
-      }
-    } catch (e) {
-      console.log(e);
-    }
   });
 
   // DataTablesの検索時にツールチップを非表示にする
