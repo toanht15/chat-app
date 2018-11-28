@@ -118,15 +118,37 @@ $(window).load(function(){
     scrollCollapse: true,
     <?php if(!empty($isJsPaging)): ?>
     paging: true,
+    drawCallback: function( settings ) {
+      var currentWidth = $(".autoMessage").get(0).clientWidth - 30;
+      var maxLength = (currentWidth / 12) * 2;
+      $(".autoMessage").html(function(index, currentText) {
+        try {
+          var orgMessage = String($(this).data('orgMsg'));
+          if (orgMessage.length >= maxLength) {
+            return escapeHTML(orgMessage.substr(0, maxLength)) + "...";
+          } else {
+            return escapeHTML(orgMessage)
+          }
+        } catch (e) {
+          console.log(e);
+        }
+      });
+    },
+    dom: 'pt',
     pageLength: 100,
     lengthChange: false,
+    pagingType: "simple",
     <?php else: ?>
     paging: false,
     <?php endif; ?>
     info: false,
     ordering: false,
     columnDefs: [
+      <?php if(!empty($isJsPaging)): ?>
+      { width: 600, targets: 0 }
+      <?php else: ?>
       { width: 120, targets: 0 }
+      <?php endif; ?>
     ],
     fixedColumns: {
       leftColumns: 1
@@ -136,7 +158,7 @@ $(window).load(function(){
   //リサイズ処理
   var resizeDataTable = function() {
     var hasPaging = $('#statistics_content').hasClass('with-paging');
-    var offset = hasPaging ? 105 : 80;
+    var offset = hasPaging ? 80 : 80;
     $('.dataTables_scrollBody').css('max-height',$('#statistics_content').outerHeight() - offset + 'px');
   };
 
@@ -150,6 +172,7 @@ $(window).load(function(){
   $(window).on('resize', function(event){
     console.log("resize");
     resizeDataTable();
+    tableObj.draw();
   });
 
   //CSV処理(チャット統計)
@@ -403,15 +426,6 @@ $(window).load(function(){
     var parentTdId = $(this).parent().parent().attr('id');
     var targetObj = $("#" + parentTdId.replace(/Label/, "Tooltip"));
     targetObj.find('icon-annotation').css('display','none');
-  });
-
-  $(".autoMessage").text(function(index, currentText) {
-    var maxLength = 100;
-    if(currentText.length >= maxLength) {
-      return currentText.substr(0, maxLength) + "...";
-    } else {
-      return currentText
-    }
   });
 
   // DataTablesの検索時にツールチップを非表示にする

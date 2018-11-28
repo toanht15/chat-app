@@ -7,7 +7,7 @@
     {
       document.getElementById("monthlyForm").style.display="";
       document.getElementById("daylyForm").style.display="none";
-      document.getElementById("hourlyForm").style.display="none";
+      document.getElementById("hourlyForm").style.dispzlay="none";
       document.getElementById("monthlyForm").value = "";
       document.getElementById("triangle").style.borderTop = "0px";
     }

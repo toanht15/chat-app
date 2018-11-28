@@ -979,7 +979,7 @@ var db = {
    */
 
   addLeadInformation: function (obj){
-    pool.query('INSERT INTO t_lead_lists VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, now())', [companyList[obj.siteKey], Number(obj.leadSettingsId), Number(obj.scenarioId), JSON.stringify(obj.saveLeadData), obj.executeUrl, obj.landingUrl, obj.userAgent],
+    pool.query('INSERT INTO t_lead_lists VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, now())', [companyList[obj.siteKey], Number(obj.leadSettingsId), Number(obj.scenarioId), JSON.stringify(obj.saveLeadData), obj.landingUrl, obj.executeUrl, obj.userAgent],
     function(err, result){
       if(isset(err)){
         console.log("ERROR DETECTED!!!" + err);
@@ -4002,7 +4002,6 @@ io.sockets.on('connection', function(socket) {
   });
 
   // leadRegister
-  // TODO エラーが起きたらちゃんとハンドリングすること
   socket.on('saveLeadList', function(data){
     var obj = JSON.parse(data);
     var targetId = Number(obj.leadSettingsId);

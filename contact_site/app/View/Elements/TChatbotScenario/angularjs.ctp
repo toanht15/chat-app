@@ -81,23 +81,28 @@
         });
       }
     }
+    // 登録済み全リードリスト
 
-  // 登録済みリードリスト
-  var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
-  this.leadList = [];
-  this.leadInformations = [];
-  for (var key in leadJsonList) {
-    this.leadInformations[leadJsonList[key].TLeadListSetting.id] = [];
-    if (leadJsonList.hasOwnProperty(key)) {
-      this.leadList.push({'id': leadJsonList[key].TLeadListSetting.id, 'name': leadJsonList[key].TLeadListSetting.list_name});
-      var leadJsonParameter = JSON.parse(leadJsonList[key].TLeadListSetting.list_parameter);
-      for (var index in leadJsonParameter) {
-        this.leadInformations[leadJsonList[key].TLeadListSetting.id].push({'leadLabelName': leadJsonParameter[index].leadLabelName, 'leadVariableName': leadJsonParameter[index].leadVariableName});
+    // 登録済みリードリスト（編集時に使用）
+    var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
+    console.log(leadJsonList);
+    this.leadList = [];
+    // アクション番号(idx)毎のプルダウンリストを作成する
+    for(var idx in leadJsonList){
+      var tmpList = [];
+      for(var key in leadJsonList[idx]){
+        console.log(key);
+        if(leadJsonList[idx].hasOwnProperty(key)){
+          tmpList.push({
+            'id': leadJsonList[idx][key].id,
+            'name': leadJsonList[idx][key].list_name
+          });
+        }
+        this.leadList[idx] = tmpList;
       }
     }
-  }
-  console.log(this.leadList);
-  console.log(this.leadInformations);
+
+
 
     // 登録済みシナリオ一覧（条件分岐用）
     var scenarioJsonListForBranchOnCond = JSON.parse(document.getElementById('TChatbotScenarioScenarioListForBranchOnCond').value);
@@ -1593,18 +1598,40 @@
   /**
    * リードリストをプルダウンで選択時に、保存するモデルを更新する
    * @param String targetId       対象となるid
-   * @param String setActionId
+   * @param String setActionId    変更したアクションのID
    */
-  this.handleLeadInfo = function(targetId, setActionId){
-    var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value);
-    leadSettings.some(function(setting) {
-      if(Number(setting.TLeadListSetting.id) === Number(targetId)){
-        $scope.setActionList[setActionId].leadInformations = JSON.parse(setting.TLeadListSetting.list_parameter);
-        $scope.setActionList[setActionId].leadTitleLabel = setting.TLeadListSetting.list_name;
-        return true;
-      }
-    })
-  };
+   this.handleLeadInfo = function(targetId, setActionId){
+     var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[setActionId];
+     if(!leadSettings){
+       leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[99];
+     }
+     leadSettings.some(function(setting) {
+       console.log(setting);
+       if(Number(setting.id) === Number(targetId)){
+         $scope.setActionList[setActionId].leadInformations = JSON.parse(setting.list_parameter);
+         $scope.setActionList[setActionId].leadTitleLabel = setting.list_name;
+         return true;
+       }
+     })
+   };
+   
+   this.resetListView = function(type, setActionId){
+     console.log($scope.setActionList[setActionId]);
+     if(Number(type) === 2){
+       $scope.setActionList[setActionId].leadInformations = [{leadLabelName: "", leadVariableName: ""}];
+       $scope.setActionList[setActionId].tLeadListSettingId = null;
+     }
+     console.log($scope.setActionList[setActionId]);
+   };
+
+   this.searchList = function(targetId){
+     if(this.leadList[targetId]) {
+       return this.leadList[targetId];
+     } else {
+       return this.leadList[99];
+     }
+   };
+
 
   /**
    * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
@@ -3339,9 +3366,9 @@
  */
 function searchListLabel (label) {
   var existLabelName = false;
-  var leadList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
-  for(var i=0; i<leadList.length; i++){
-    if(leadList[i].TLeadListSetting.list_name === label){
+  var leadList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value)[99];
+  for(var leadInfo in leadList){
+    if(leadList[leadInfo].list_name === label){
       existLabelName = true;
     }
   }

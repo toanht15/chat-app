@@ -24,11 +24,7 @@
           'div'=>false, 'label'=>false,'style' => 'width:11em;cursor:pointer;display:none','value' => substr($type,0,10),'placeholder' => date("Y/m/d "),'autocomplete'=>'off')); ?>
         <b id = 'triangle'></b>
         <?= $this->Form->end(); ?>
-
       </left-parts>
-      <right-parts>
-        <a href="#" id="outputMessageRankingCSV" class="btn-shadow blueBtn">CSV出力</a>
-      </right-parts>
     </condition-bar>
     <!-- /* 対象期間選択エリア */ -->
   </div><!-- #statistic_menu -->
@@ -74,20 +70,20 @@
       </thead>
       <tbody>
         <?php foreach ($messageData['data'] as $message => $data): ?>
-          <tr>
-            <td id="chatRequestLabel" class="autoMessage tooltip"><?php echo $message ?></td>
-            <?php for ($i = $start; $i <= $end; $i++): ?>
-              <?php if (isset($data[$i])): ?>
-                <td><?php echo number_format($data[$i]) ?></td>
-              <?php else: ?>
-                <td>0</td>
-            <?php endif; ?>
-            <?php endfor; ?>
-            <td><?php echo isset($data['sum']) ? number_format($data['sum']) : '0'; ?></td>
-          </tr>
+            <tr>
+              <td id="chatRequestLabel" class="autoMessage tooltip" data-org-msg="<?= h($message) ?>"><?php echo $message ?></td>
+              <?php for ($i = $start; $i <= $end; $i++): ?>
+                <?php if (isset($data[$i])): ?>
+                  <td><?php echo number_format($data[$i]) ?></td>
+                <?php else: ?>
+                  <td>0</td>
+                <?php endif; ?>
+              <?php endfor; ?>
+              <td><?php echo isset($data['sum']) ? number_format($data['sum']) : '0'; ?></td>
+            </tr>
         <?php endforeach; ?>
         <tr>
-          <td id="chatRequestLabel" class="autoMessage tooltip">合計</td>
+          <td id="chatRequestLabel" class="autoMessage tooltip" data-org-msg="合計">合計</td>
           <?php for ($i = $start; $i <= $end; $i++): ?>
             <?php if (isset($messageData['sum'][$i])): ?>
               <td><?php echo number_format($messageData['sum'][$i]) ?></td>
@@ -97,7 +93,6 @@
           <?php endfor; ?>
           <td><?php echo isset($messageData['sum']['sum']) ? number_format($messageData['sum']['sum']) : '0'; ?></td>
         </tr>
-
       </tbody>
     </table>
     <?=$this->Form->create('statistics', ['action' => 'forMessageRanking']);?>
