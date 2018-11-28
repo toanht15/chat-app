@@ -6889,12 +6889,13 @@
         return flg == null || flg === "false" || flg === false;
       },
       _saveVariable: function (valKey, value) {
+        valKey = valKey.trim();
         var self = sinclo.scenarioApi;
         // FIXME JSONで突っ込む
         var json = self.get(self._lKey.variables);
         var obj = json;
         obj[valKey] = {};
-        obj[valKey].value = value;
+        obj[valKey].value = value ? value.trim() : "";
         obj[valKey].created = (new Date()).getTime();
         obj[valKey].scId = self.get(self._lKey.scenarioId);
         self.set(self._lKey.variables, obj);
@@ -8214,7 +8215,7 @@
             var keys = Object.keys(resultValue);
             keys.forEach(function (e, i, a) {
               // 保存時は変数名を利用
-              self._parent._saveVariable(keys[i], resultValue[keys[i]].value);
+              self._parent._saveVariable(keys[i], resultValue[keys[i]].value.trim());
               if ( !changed ) {
                 changed = resultValue[keys[i]].changed;
               }
@@ -8263,7 +8264,7 @@
             inputTypeNumberMap = {'text' : '1', 'number': '2', 'email' : '3', 'tel' : '4'},
             inputType = targetObj.attr('type'),
             inputText = targetObj.val(),
-            required = targetElm.data('required'),
+            required = targetObj.data('required'),
             regex = new RegExp(self._parent._validChars[inputTypeNumberMap[inputType]]);
 
           if (inputText === "" && required.toLowerCase() === "false") {
