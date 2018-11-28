@@ -81,14 +81,17 @@
         });
       }
     }
+    // 登録済み全リードリスト
 
-    // 登録済みリードリスト
+    // 登録済みリードリスト（編集時に使用）
     var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
+    console.log(leadJsonList);
     this.leadList = [];
     // アクション番号(idx)毎のプルダウンリストを作成する
     for(var idx in leadJsonList){
       var tmpList = [];
       for(var key in leadJsonList[idx]){
+        console.log(key);
         if(leadJsonList[idx].hasOwnProperty(key)){
           tmpList.push({
             'id': leadJsonList[idx][key].id,
@@ -1598,8 +1601,10 @@
    * @param String setActionId    変更したアクションのID
    */
    this.handleLeadInfo = function(targetId, setActionId){
-     console.log(targetId);
      var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[setActionId];
+     if(!leadSettings){
+       leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[0];
+     }
      leadSettings.some(function(setting) {
        console.log(setting);
        if(Number(setting.id) === Number(targetId)){
@@ -1608,6 +1613,14 @@
          return true;
        }
      })
+   };
+
+   this.searchList = function(targetId){
+     if(this.leadList[targetId]) {
+       return this.leadList[targetId];
+     } else {
+       return this.leadList[0];
+     }
    };
 
 

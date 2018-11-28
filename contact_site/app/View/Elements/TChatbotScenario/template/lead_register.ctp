@@ -14,7 +14,7 @@
       <div ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>">
         <input type="text" ng-model="setItem.leadTitleLabel">
       </div>
-      <select ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>" style="padding: 0px; flex-grow: 0;" ng-model="setItem.tLeadListSettingId" ng-init="setItem.tLeadListSettingId" ng-options="item.id as item.name for item in main.leadList[setActionId]" ng-change="main.handleLeadInfo(setItem.tLeadListSettingId, setActionId)">
+      <select ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>" style="padding: 0px; flex-grow: 0;" ng-model="setItem.tLeadListSettingId" ng-init="setItem.tLeadListSettingId" ng-options="item.id as item.name for item in main.searchList(setActionId)" ng-change="main.handleLeadInfo(setItem.tLeadListSettingId, setActionId)">
         <option value="">リストを選択してください</option>
       </select>
     </li>
