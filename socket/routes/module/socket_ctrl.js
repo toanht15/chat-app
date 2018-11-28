@@ -4032,7 +4032,7 @@ io.sockets.on('connection', function(socket) {
    */
   var isOkVariableForLeadList = function(target){
     if(isset(target)) {
-      if(!target.match(/\s/)){
+      if(!target.match(/^\s$/)){
         return true;
       }
     }
