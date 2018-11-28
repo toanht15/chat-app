@@ -189,7 +189,7 @@ sinclo@medialink-ml.co.jp
         )
       )
     ),$this->request->data['scenarioList']);
-    $this->request->data['leadList'] = $this->_getLeadList();
+    // $this->request->data['leadList'] = $this->_getLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList($id));
     $this->_viewElement();
   }
@@ -854,6 +854,7 @@ sinclo@medialink-ml.co.jp
     $leadListId = $this->_sameLeadList($saveData);
     if (!empty($saveData->tLeadListSettingId) && $leadListId) {
       $this->TLeadListSetting->read(null, $leadListId);
+      $saveData->tLeadListSettingId = strval($leadListId);
     } else {
       $this->TLeadListSetting->create();
     }
@@ -865,7 +866,7 @@ sinclo@medialink-ml.co.jp
     $errors = $this->TLeadListSetting->validationErrors;
     if(empty($errors)) {
       $this->TLeadListSetting->save();
-      //IDが無い、或いは被りチェックで引っ掛かっている場合
+      //IDが無い、或いは被りチェックで引っ掛かっていない場合
       if(empty($saveData->tLeadListSettingId) || !$leadListId) {
         $saveData->tLeadListSettingId = $this->TLeadListSetting->getLastInsertId();
       }
