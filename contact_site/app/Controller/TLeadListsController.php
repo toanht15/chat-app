@@ -30,10 +30,22 @@ class TLeadListsController extends AppController{
     }
     $leadList = ['none'=>"リストを選択してください"] + $leadList;
     $this->set("leadList", $leadList);
-    $data = $this->Session->read('Thistory');
+    $data = $this->dateTimeSet();
     $data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
     $data['History']['finish_day'] = htmlspecialchars($data['History']['finish_day']);
     $this->set('data',$data);
+  }
+
+  private function dateTimeSet(){
+    $historyConditions = [
+      'History' => [
+        'company_start_day' => date("Y/m/d", strtotime($this->userInfo['MCompany']['created'])),
+        'start_day' => date("Y/m/d", strtotime("-6 day")),
+        'finish_day' => date("Y/m/d"),
+        'period' => '過去一週間'
+      ]
+    ];
+    return $historyConditions;
   }
 
   private function allCSVoutput(){
@@ -164,8 +176,8 @@ class TLeadListsController extends AppController{
           "t_lead_list_settings_id" => $id,
           [
             'created BETWEEN ? AND ?' => [
-              $this->request->data['startDate'],
-              $this->request->data['endDate']
+              $this->request->data['startDate']." 00:00:00",
+              $this->request->data['endDate']." 23:59:59"
             ]
           ]
         ],
@@ -279,12 +291,26 @@ class TLeadListsController extends AppController{
 
   private function addLeadHeader($head, $element){
     // ヘッダー情報は同一リードリスト名では同じなため、最初の1つだけ見る
+    // リード情報がない場合は取得したidからヘッダー名を取得する
     if(isset($element[0])) {
       $leadHeaders = json_decode($element[0]['TLeadList']['lead_informations']);
-      foreach ($leadHeaders as $leadHeader) {
-        array_push($head, $leadHeader->leadLabelName);
-      }
+    } else {
+      $target = $this->TLeadListSetting->find('first',[
+        'recursive' => -1,
+        'field' => [
+          'list_parameter'
+        ],
+        'conditions' => [
+          "m_companies_id" => $this->userInfo['MCompany']['id'],
+          "id" => intval($this->request->data['selectList'])
+        ]
+      ]);
+      $leadHeaders = json_decode($target['TLeadListSetting']['list_parameter']);
     }
+    foreach ($leadHeaders as $leadHeader) {
+      array_push($head, $leadHeader->leadLabelName);
+    }
+
     return $head;
   }
 
