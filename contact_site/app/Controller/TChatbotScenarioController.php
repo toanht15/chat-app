@@ -140,7 +140,7 @@ sinclo@medialink-ml.co.jp
     ),$this->request->data['scenarioList']);
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
-    $this->request->data['leadList'] = $this->_getLeadList();
+    $this->request->data['leadList'][0] = $this->_getLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
   }
@@ -189,7 +189,6 @@ sinclo@medialink-ml.co.jp
         )
       )
     ),$this->request->data['scenarioList']);
-    $this->request->data['leadList'] = $this->_getLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList($id));
     $this->_viewElement();
   }
@@ -854,6 +853,7 @@ sinclo@medialink-ml.co.jp
     $leadListId = $this->_sameLeadList($saveData);
     if (!empty($saveData->tLeadListSettingId) && $leadListId) {
       $this->TLeadListSetting->read(null, $leadListId);
+      $saveData->tLeadListSettingId = strval($leadListId);
     } else {
       $this->TLeadListSetting->create();
     }
@@ -865,7 +865,7 @@ sinclo@medialink-ml.co.jp
     $errors = $this->TLeadListSetting->validationErrors;
     if(empty($errors)) {
       $this->TLeadListSetting->save();
-      //IDが無い、或いは被りチェックで引っ掛かっている場合
+      //IDが無い、或いは被りチェックで引っ掛かっていない場合
       if(empty($saveData->tLeadListSettingId) || !$leadListId) {
         $saveData->tLeadListSettingId = $this->TLeadListSetting->getLastInsertId();
       }
@@ -1809,15 +1809,21 @@ sinclo@medialink-ml.co.jp
   }
 
   private function _getLeadList() {
-    return $this->TLeadListSetting->find('all', [
+    $dataSet = $this->TLeadListSetting->find('all', [
       'fields' => ['TLeadListSetting.id', 'TLeadListSetting.list_name', 'TLeadListSetting.list_parameter'],
       'order' => [
         'TLeadListSetting.id' => 'asc'
       ],
       'conditions' => [
         'TLeadListSetting.m_companies_id' => $this->userInfo['MCompany']['id']
-      ]
+      ],
+      'group' => 'list_name'
     ]);
+    $result = [];
+    forEach($dataSet as $data){
+      array_push($result, $data['TLeadListSetting']);
+    }
+    return $result;
   }
 
   /**
