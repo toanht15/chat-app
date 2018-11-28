@@ -140,7 +140,7 @@ sinclo@medialink-ml.co.jp
     ),$this->request->data['scenarioList']);
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
-    $this->request->data['leadList'][0] = $this->_getLeadList();
+    $this->request->data['leadList'][99] = $this->_getLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
   }
@@ -190,6 +190,7 @@ sinclo@medialink-ml.co.jp
       )
     ),$this->request->data['scenarioList']);
     $this->set('storedVariableList', $this->getStoredAllVariableList($id));
+    $this->request->data['leadList'][99] = $this->_getLeadList();
     $this->_viewElement();
   }
 

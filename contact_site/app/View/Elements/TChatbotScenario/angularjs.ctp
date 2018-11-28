@@ -1603,7 +1603,7 @@
    this.handleLeadInfo = function(targetId, setActionId){
      var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[setActionId];
      if(!leadSettings){
-       leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[0];
+       leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[99];
      }
      leadSettings.some(function(setting) {
        console.log(setting);
@@ -1614,12 +1614,21 @@
        }
      })
    };
+   
+   this.resetListView = function(type, setActionId){
+     console.log($scope.setActionList[setActionId]);
+     if(Number(type) === 2){
+       $scope.setActionList[setActionId].leadInformations = [{leadLabelName: "", leadVariableName: ""}];
+       $scope.setActionList[setActionId].tLeadListSettingId = null;
+     }
+     console.log($scope.setActionList[setActionId]);
+   };
 
    this.searchList = function(targetId){
      if(this.leadList[targetId]) {
        return this.leadList[targetId];
      } else {
-       return this.leadList[0];
+       return this.leadList[99];
      }
    };
 
@@ -3357,9 +3366,9 @@
  */
 function searchListLabel (label) {
   var existLabelName = false;
-  var leadList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
-  for(var i=0; i<leadList.length; i++){
-    if(leadList[i].TLeadListSetting.list_name === label){
+  var leadList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value)[99];
+  for(var leadInfo in leadList){
+    if(leadList[leadInfo].list_name === label){
       existLabelName = true;
     }
   }

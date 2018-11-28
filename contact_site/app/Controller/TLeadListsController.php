@@ -56,7 +56,7 @@ class TLeadListsController extends AppController{
     $zip->open($zipDir.$filename, ZIPARCHIVE::CREATE | ZIPARCHIVE::OVERWRITE);
     forEach($targetNames as $targetName) {
       $targetInfo = $this->searchListInfo($this->getTargetIdList($targetName));
-      $targetInfo = $this->convertDataForCSV($targetInfo);
+      $targetInfo = $this->convertDataForCSV($targetInfo,$targetName);
       $targetName = mb_convert_encoding($targetName, 'SJIS-win', 'utf8');
       $zip->addFromString($targetName.".csv",$this->_outputCSV($targetInfo));
     }
@@ -97,7 +97,7 @@ class TLeadListsController extends AppController{
   private function CSVoutput(){
     $targetName = $this->getTargetName(intval($this->request->data['selectList']));
     $targetInfo = $this->searchListInfo($this->getTargetIdList($targetName));
-    $targetInfo = $this->convertDataForCSV($targetInfo);
+    $targetInfo = $this->convertDataForCSV($targetInfo, $targetName);
     $this->response->type('csv');
     $this->response->body($this->_outputCSV($targetInfo));
   }
@@ -192,13 +192,13 @@ class TLeadListsController extends AppController{
     return $resultArray;
   }
 
-  private function convertDataForCSV($allData){
+  private function convertDataForCSV($allData, $targetName){
     // CSVのヘッダーを作成する
     $head = [
       "登録日時"
     ];
     // リードリスト情報に合わせて可変なヘッダーを追加する
-    $head = $this->addLeadHeader($head, $allData);
+    $head = $this->addLeadHeader($head, $allData, $targetName);
     array_push($head,
       "ブラウザ",
         "キャンペーン",
@@ -289,7 +289,7 @@ class TLeadListsController extends AppController{
     return $row;
   }
 
-  private function addLeadHeader($head, $element){
+  private function addLeadHeader($head, $element, $targetName){
     // ヘッダー情報は同一リードリスト名では同じなため、最初の1つだけ見る
     // リード情報がない場合は取得したidからヘッダー名を取得する
     if(isset($element[0])) {
@@ -302,7 +302,7 @@ class TLeadListsController extends AppController{
         ],
         'conditions' => [
           "m_companies_id" => $this->userInfo['MCompany']['id'],
-          "id" => intval($this->request->data['selectList'])
+          "list_name" => $targetName
         ]
       ]);
       $leadHeaders = json_decode($target['TLeadListSetting']['list_parameter']);
