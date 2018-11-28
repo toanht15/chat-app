@@ -134,7 +134,7 @@ function escapeHTML(str) {
   .replace(/(')/g, "&#39;")
   .replace(/(")/g, '&quot;')
   .replace(/(>)/g, '&gt;')
-  .replace(/(<)/g, '&lt;')
+  .replace(/(<)/g, '&lt;');
 };
 
 function replaceVariable(str,isSmartphone,type){
