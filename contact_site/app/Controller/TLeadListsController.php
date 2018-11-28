@@ -30,10 +30,22 @@ class TLeadListsController extends AppController{
     }
     $leadList = ['none'=>"リストを選択してください"] + $leadList;
     $this->set("leadList", $leadList);
-    $data = $this->Session->read('Thistory');
+    $data = $this->dateTimeSet();
     $data['History']['start_day'] = htmlspecialchars($data['History']['start_day']);
     $data['History']['finish_day'] = htmlspecialchars($data['History']['finish_day']);
     $this->set('data',$data);
+  }
+
+  private function dateTimeSet(){
+    $historyConditions = [
+      'History' => [
+        'company_start_day' => date("Y/m/d", strtotime($this->userInfo['MCompany']['created'])),
+        'start_day' => date("Y/m/d", strtotime("-6 day")),
+        'finish_day' => date("Y/m/d"),
+        'period' => '過去一週間'
+      ]
+    ];
+    return $historyConditions;
   }
 
   private function allCSVoutput(){
@@ -164,8 +176,8 @@ class TLeadListsController extends AppController{
           "t_lead_list_settings_id" => $id,
           [
             'created BETWEEN ? AND ?' => [
-              $this->request->data['startDate'],
-              $this->request->data['endDate']
+              $this->request->data['startDate']." 00:00:00",
+              $this->request->data['endDate']." 23:59:59"
             ]
           ]
         ],
