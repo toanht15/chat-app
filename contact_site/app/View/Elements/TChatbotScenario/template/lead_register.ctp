@@ -5,7 +5,7 @@
       <div class="fb15em"><label class="require">種別</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="新規でリードリストを作成するか、既に作成済みのリードリストから選択するかを選ぶことできます。">?</icon></span></div>
       <div class="conditionTypeSelect" style="flex-grow: 0; margin-right: 3px;">
       <span>
-        <label ng-repeat="(key, item) in makeLeadTypeList" class="pointer"><input type="radio" style="outline:0 ;" ng-value="key" ng-model="setItem.makeLeadTypeList" ng-value="key" ng-change="main.controllLeadRegister(setActionId)">{{item}}</label>
+        <label ng-repeat="(key, item) in makeLeadTypeList" class="pointer"><input type="radio" style="outline:0 ;" ng-value="key" ng-model="setItem.makeLeadTypeList" ng-value="key" ng-change="main.controllLeadRegister(setActionId); main.resetListView(key, setActionId) ">{{item}}</label>
       </span>
       </div>
     </li>
