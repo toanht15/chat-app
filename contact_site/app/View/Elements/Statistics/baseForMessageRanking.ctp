@@ -24,11 +24,7 @@
           'div'=>false, 'label'=>false,'style' => 'width:11em;cursor:pointer;display:none','value' => substr($type,0,10),'placeholder' => date("Y/m/d "),'autocomplete'=>'off')); ?>
         <b id = 'triangle'></b>
         <?= $this->Form->end(); ?>
-
       </left-parts>
-      <right-parts>
-        <a href="#" id="outputMessageRankingCSV" class="btn-shadow blueBtn">CSV出力</a>
-      </right-parts>
     </condition-bar>
     <!-- /* 対象期間選択エリア */ -->
   </div><!-- #statistic_menu -->
@@ -97,8 +93,7 @@
           <?php endfor; ?>
           <td><?php echo isset($messageData['sum']['sum']) ? number_format($messageData['sum']['sum']) : '0'; ?></td>
         </tr>
-
-      </tbody>
+      </tfoot>
     </table>
     <?=$this->Form->create('statistics', ['action' => 'forMessageRanking']);?>
     <?=$this->Form->hidden('outputData')?>
