@@ -2373,6 +2373,7 @@
      * @param Object actionDetail アクションの詳細
      */
     $scope.doHearingAction = function (actionDetail) {
+      chatBotTypingRemove();
       if ( !$scope.hearingInputResult ) {
         // エラーメッセージ
         // var message = actionDetail.errorMessage;
