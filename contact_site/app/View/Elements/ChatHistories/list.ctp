@@ -71,7 +71,7 @@
         </span>
         </li>
       </ul>
-  </div>
+    </div>
   <?php
     //検索条件表示：非表示
     $noseach_menu = '';

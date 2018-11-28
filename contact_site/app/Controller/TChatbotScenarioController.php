@@ -19,7 +19,7 @@ class TChatbotScenarioController extends FileAppController {
 
   const CALL_SELF_SCENARIO_NAME = "（このシナリオ）";
 
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting', 'TLeadListSetting'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -94,6 +94,7 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioBranchOnConditionMatchValueType = Configure::read('chatbotScenarioBranchOnConditionMatchValueType');
     $this->chatbotScenarioBranchOnConditionActionType = Configure::read('chatbotScenarioBranchOnConditionActionType');
     $this->chatbotScenarioBranchOnConditionElseActionType = Configure::read('chatbotScenarioBranchOnConditionElseActionType');
+    $this->chatbotScenarioLeadTypeList = Configure::read('chatbotScenarioLeadTypeList');
 
     // FileAppController
     $this->fileTransferPrefix = "fileScenarioTransfer/";
@@ -139,6 +140,7 @@ sinclo@medialink-ml.co.jp
     ),$this->request->data['scenarioList']);
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
+    $this->request->data['leadList'][99] = $this->_getLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
   }
@@ -170,7 +172,6 @@ sinclo@medialink-ml.co.jp
       $this->_convertOldDataToNewStructure($editData[0]['TChatbotScenario']['activity']);
       // アクションごとに必要な設定を追加する
       $this->_setActivityDetailSettings($editData[0]['TChatbotScenario']['activity']);
-
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
     }
 
@@ -189,6 +190,7 @@ sinclo@medialink-ml.co.jp
       )
     ),$this->request->data['scenarioList']);
     $this->set('storedVariableList', $this->getStoredAllVariableList($id));
+    $this->request->data['leadList'][99] = $this->_getLeadList();
     $this->_viewElement();
   }
 
@@ -473,7 +475,6 @@ sinclo@medialink-ml.co.jp
       $list = $this->params->data['list'];
       $sortNoList = $this->params->data['sortNolist'];
       sort($sortNoList);
-      $this->log($list,LOG_DEBUG);
       /* 現在の並び順を取得 */
       $params = $this->paginate['TChatbotScenario'];
       $params['fields'] = [
@@ -774,6 +775,10 @@ sinclo@medialink-ml.co.jp
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
           // ファイル送信
           unset($action->file);
+        } else
+        if($action->actionType == C_SCENARIO_ACTION_LEAD_REGISTER) {
+          // リード登録
+          $action = $this->_entryProcessForLeadRegister($action);
         }
       }
 
@@ -817,6 +822,67 @@ sinclo@medialink-ml.co.jp
 
     $page = floor((intval($count[0]['count']) + 99) / 100);
     return $page >= 1 ? $page : 1;
+  }
+  /**
+   * リードリスト保存時に同名の同じ内容が存在するか？
+   *
+   *
+   * */
+  private function _sameLeadList($saveData){
+    $resultArray = $this->TLeadListSetting->find('list', [
+      'fields' => 'list_parameter',
+      'conditions' => [
+        'list_name' => $saveData->leadTitleLabel
+      ],
+      'recursive' => '-1'
+    ]);
+    forEach($resultArray as $key => $result) {
+      if (json_encode($saveData->leadInformations) == $result) {
+        return $key;
+        break;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * リードリスト保存機能（ここでt_lead_list_settingsテーブルに情報が保存され、そのidだけアクション詳細に返却する
+   * @param Object $saveData アクション詳細
+   * @return Object          t_chatbot_scenarioに保存するアクション詳細
+   * */
+  private function _entryProcessForLeadRegister($saveData){
+    $leadListId = $this->_sameLeadList($saveData);
+    if (!empty($saveData->tLeadListSettingId) && $leadListId) {
+      $this->TLeadListSetting->read(null, $leadListId);
+      $saveData->tLeadListSettingId = strval($leadListId);
+    } else {
+      $this->TLeadListSetting->create();
+    }
+    $this->TLeadListSetting->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'list_name' => $saveData->leadTitleLabel,
+      'list_parameter' => json_encode($saveData->leadInformations)
+    ]);
+    $errors = $this->TLeadListSetting->validationErrors;
+    if(empty($errors)) {
+      $this->TLeadListSetting->save();
+      //IDが無い、或いは被りチェックで引っ掛かっていない場合
+      if(empty($saveData->tLeadListSettingId) || !$leadListId) {
+        $saveData->tLeadListSettingId = $this->TLeadListSetting->getLastInsertId();
+      }
+    } else {
+      $exception = new ChatbotScenarioException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
+
+    // リード登録設定DBに保存した情報をオブジェクトから削除する
+    unset($saveData->leadTitleLabel);
+    unset($saveData->leadInformations);
+    unset($saveData->makeLeadTypeList);
+    return $saveData;
+
   }
 
   /**
@@ -1037,6 +1103,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioBranchOnConditionActionType', $this->chatbotScenarioBranchOnConditionActionType);
     // 条件分岐アクション種別（上記を満たさない場合）
     $this->set('chatbotScenarioBranchOnConditionElseActionType', $this->chatbotScenarioBranchOnConditionElseActionType);
+    // リード登録リードリスト名種別
+    $this->set('chatbotScenarioLeadTypeList', $this->chatbotScenarioLeadTypeList);
     // ファイル受信用にcompany_keyをsetしておく
     $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
     // 最後に表示していたページ番号
@@ -1741,6 +1809,24 @@ sinclo@medialink-ml.co.jp
     ]);
   }
 
+  private function _getLeadList() {
+    $dataSet = $this->TLeadListSetting->find('all', [
+      'fields' => ['TLeadListSetting.id', 'TLeadListSetting.list_name', 'TLeadListSetting.list_parameter'],
+      'order' => [
+        'TLeadListSetting.id' => 'asc'
+      ],
+      'conditions' => [
+        'TLeadListSetting.m_companies_id' => $this->userInfo['MCompany']['id']
+      ],
+      'group' => 'list_name'
+    ]);
+    $result = [];
+    forEach($dataSet as $data){
+      array_push($result, $data['TLeadListSetting']);
+    }
+    return $result;
+  }
+
   /**
    * convert old data (inputType, selection action type) to new hearing structure
    * @param $json
@@ -1899,9 +1985,58 @@ sinclo@medialink-ml.co.jp
             'extension' => $this->getExtension($fileData['TChatbotScenarioSendFile']['file_name'])
           ];
         }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_LEAD_REGISTER) {
+        if (!empty($action->tLeadListSettingId)) {
+          $action->makeLeadTypeList = C_SCENARIO_LEAD_USE;
+          if(!isset($action->makeLeadTypeList)){
+            $action->makeLeadTypeList = C_SCENARIO_LEAD_REGIST;
+          }
+          $leadData = $this->TLeadListSetting->findById($action->tLeadListSettingId);
+          $action->leadTitleLabel = $leadData['TLeadListSetting']['list_name'];
+          $action->leadInformations = json_decode($leadData['TLeadListSetting']['list_parameter']);
+          $this->request->data['leadList'][$key] = $this->leadInfoSet($key,$action->tLeadListSettingId);
+        }
       }
     }
     $json = json_encode($activity);
+  }
+
+  private function leadInfoSet($scenarioSeq,$targetId){
+    $target = $this->TLeadListSetting->find('first',[
+      'recursive' => -1,
+      'fields' => [
+        "id",
+        "list_name",
+        "list_parameter"
+      ],
+      'conditions' => [
+        "m_companies_id" => $this->userInfo['MCompany']['id'],
+        "id" => $targetId
+      ]
+    ]);
+
+    $targetArray[] = $target['TLeadListSetting'];
+    $targetName = $target['TLeadListSetting']['list_name'];
+
+    $targetList = $this->TLeadListSetting->find('all',[
+      'recursive' => -1,
+      'fields' => [
+        "id",
+        "list_name",
+        "list_parameter"
+      ],
+      'conditions' => [
+        "m_companies_id" => $this->userInfo['MCompany']['id'],
+        "list_name !=" => $targetName
+      ],
+      'group' => "list_name"
+    ]);
+    forEach($targetList as $value) {
+      $targetArray[] = $value['TLeadListSetting'];
+    }
+
+    return $targetArray;
   }
 
   /**

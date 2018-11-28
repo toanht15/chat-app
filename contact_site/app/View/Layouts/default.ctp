@@ -76,7 +76,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->css("style.css");
     }
     echo $this->Html->css("modal.css");
-    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
+    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0 || strcmp($this->name, 'TLeadLists') === 0) {
       echo $this->Html->css("daterangepicker.css");
     }
     if ( strcmp($this->name, 'Statistics') === 0 || strcmp($this->name, 'ChatHistories') === 0 ) {
@@ -119,8 +119,11 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js");
       echo $this->Html->script("//cdnjs.cloudflare.com/ajax/libs/cropper/1.0.0/cropper.min.js");
     }
-    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
+    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0 || strcmp($this->name, 'TLeadLists') === 0) {
       echo $this->Html->script("daterangepicker.js");
+    }
+    if ( strcmp($this->name, 'TLeadLists') === 0 ) {
+      echo $this->Html->script('jquery.binarytransport.js');
     }
     if ( strcmp($this->name, 'TDocuments') === 0 ) {
       echo $this->Html->script("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js");

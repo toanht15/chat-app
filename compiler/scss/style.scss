@@ -5470,6 +5470,29 @@ ul.naviBtn {
   }
 }
 
+/* リードリスト出力 */
+#lead_list_idx {
+  #lead_list_body {
+    #mainDatePeriod {
+      padding-left: 10px;
+      border-bottom: 1px solid #909090;
+      cursor: pointer;
+      width: 245px;
+      &:after {
+        content: "";
+        position: absolute;
+        left: 425px;
+        top: 98px;
+        border-left: 3px solid transparent;
+        border-top: 6px solid black;
+        border-right: 3px solid transparent;
+        width: 0;
+        height: 0;
+      }
+    }
+  }
+}
+
 /* 個人設定 */
 
 #personal_idx {
@@ -7621,6 +7644,187 @@ ul.naviBtn {
 
                 }
 
+                &.action_bulk_hearing {
+                  .bulk-button {
+                    display: inline-flex;
+                    height: 26px;
+                    padding: 5px;
+                    align-items: center;
+                  }
+                  /* The container */
+                  .require-checkbox {
+                    display: inline-block;
+                    position: relative;
+                    padding-left: 35px;
+                    margin-bottom: 12px;
+                    //cursor: pointer;
+                    font-size: 22px;
+                    width: 29px;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                  }
+
+                  /* Hide the browser's default checkbox */
+                  .require-checkbox input {
+                    position: absolute;
+                    opacity: 0;
+                    cursor: pointer;
+                    height: 0;
+                    width: 0;
+                  }
+
+                  /* Create a custom checkbox */
+                  .checkmark {
+                    cursor: pointer;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    height: 27px;
+                    width: 27px;
+                    background-color: white;
+                    border: 1px solid #909090;
+                    border-radius: 4px;
+                  }
+
+                  /* On mouse-over, add a grey background color */
+                  .require-checkbox:hover input ~ .checkmark {
+                    background-color: white;
+                  }
+
+                  /* When the checkbox is checked, add a blue background */
+                  .require-checkbox input:checked ~ .checkmark {
+                    //background-color: #2196F3;
+                  }
+
+                  /* Create the checkmark/indicator (hidden when not checked) */
+                  .checkmark:after {
+                    content: "";
+                    position: absolute;
+                    display: none;
+                  }
+
+                  /* Show the checkmark when checked */
+                  .require-checkbox input:checked ~ .checkmark:after {
+                    display: block;
+                  }
+
+                  /* Style the checkmark/indicator */
+                  .require-checkbox .checkmark:after {
+                    left: 9px;
+                    top: 5px;
+                    width: 5px;
+                    height: 10px;
+                    border: solid #C3D69B;
+                    border-width: 0 3px 3px 0;
+                    -webkit-transform: rotate(45deg);
+                    -ms-transform: rotate(45deg);
+                    transform: rotate(45deg);
+                  }
+
+                  .grid-container-bulk-hearing {
+                    width: 100%;
+                    height: 100%;
+                    padding-bottom: 0;
+                    display: -ms-grid;
+                    display: grid;
+                    grid-template-columns: 20px 50px 150px 230px 1fr 48px;
+                    -ms-grid-columns: 20px 50px 135px 230px 1fr 48px;
+                    grid-template-rows: auto 1fr;
+                    -ms-grid-rows: auto 1fr;
+                    grid-template-areas: 'g0 g1 g2 g3 g4 g5' 'g0 g1 g2 g3 g4 g5';
+
+                    .area-drag-symbol {
+                      display: inline-block;
+                      margin: 0 auto;
+                      grid-area: g0;
+                      -ms-grid-column: 1;
+                      -ms-grid-row: 1;
+                      -ms-grid-column-span: 1;
+                    }
+
+                    .area-require {
+                      display: block;
+                      margin: 0 auto;
+                      grid-area: g1;
+                      -ms-grid-column: 2;
+                      -ms-grid-row: 1;
+                      &.checkbox {
+                        display: flex;
+                        justify-content: center;
+                        align-items: flex-start;
+                      }
+                    }
+
+                    .area-type {
+                      display: inline-block;
+                      grid-area: g2;
+                      -ms-grid-column: 3;
+                      -ms-grid-row: 1;
+                      select {
+                        width: 95%;
+                      }
+                    }
+
+                    .area-name {
+                      display: inline-block;
+                      grid-area: g3;
+                      -ms-grid-column: 4;
+                      -ms-grid-row: 1;
+                      input {
+                        width: 225px;
+                      }
+                    }
+
+                    .area-variable {
+                      display: inline-block;
+                      grid-area: g4;
+                      -ms-grid-column: 5;
+                      -ms-grid-row: 1;
+                      min-width: 65px;
+                      input {
+                        width: 98%;
+                      }
+                    }
+
+                    .area-btn {
+                      display: inline-block;
+                      grid-area: g5;
+                      -ms-grid-column: 6;
+                      -ms-grid-row: 1;
+                      padding-left: 0;
+                      vertical-align: top;
+
+                      .btnBlock {
+                        padding-left: 0;
+                        width: 4em;
+                      }
+                    }
+
+                    &.grid-container-header {
+                      text-align: center;
+                    }
+                    &.grid-container-body {
+                      hr.separator {
+                        //margin-top: 12px;
+                        padding-bottom: 8px;
+                        margin-top: 8px;
+                        grid-column: 1/7;
+                        -ms-grid-column: 1;
+                        -ms-grid-column-span: 7;
+                        -ms-grid-row: 3;
+                        width: 101%;
+                      }
+
+                      input[type="text"], select, textarea {
+                        border-radius: 4px !important;
+                        border: 1px solid #909090 !important;
+                      }
+                    }
+                  }
+                }
+
                 .grid-container-hearing {
                   width: 100%;
                   height: 100%;
@@ -8125,6 +8329,37 @@ ul.naviBtn {
                   &:not(:first-child) {
                     padding-top: 1em;
                   }
+                }
+              }
+            }
+            /*リードリスト登録アクション*/
+            .action_lead_register {
+              [class*="grid-container"]{
+                display: grid;
+                grid-template-columns: 200px 200px 60px 1fr;
+                grid-template-rows: 31px 1fr;
+                :first-child{
+                  grid-column: 1;
+                }
+                :nth-child(2){
+                  grid-column: 2;
+                }
+                :nth-child(3){
+                  grid-column: 3;
+                }
+                input[type="text"].make-box{
+                  border-radius: 4px;
+                  border: 1px solid #909090;
+                  width: auto;
+                }
+              }
+              .grid-container-body {
+                margin-bottom: 8px;
+                .separator{
+                  margin-top: 12px;
+                  margin-bottom: 8px;
+                  padding-bottom: 0px;
+                  grid-column: 1/4;
                 }
               }
             }
@@ -10138,6 +10373,31 @@ ul.naviBtn {
       #outputOperatorCSV {
         padding: 0.5em 1.4em;
       }
+      #outputMessageRankingCSV {
+        padding: 0.5em 1.4em;
+      }
+    }
+  }
+
+  #statistic_title {
+    h1 {
+      display: inline-block;
+    }
+    .blueBtn {
+      background-color: #4bacc6;
+      border-color: #4bacc6;
+
+      &:hover {
+        border-color: #4c9db3;
+        background-color: #4c9db3;
+      }
+    }
+    .fRight {
+      margin-right: 0;
+
+      #outputMessageRankingCSV {
+        padding: 0.5em 1.4em;
+      }
     }
   }
 
@@ -10168,6 +10428,10 @@ ul.naviBtn {
 
     .thMinWidth {
       min-width: 170px;
+    }
+
+    .thMinWidthMessageRanking {
+      min-width: 200px;
     }
 
     .thMinWidthOp {
@@ -10202,6 +10466,10 @@ ul.naviBtn {
       min-width: 60px;
     }
 
+    .thMinWidthDaylyMessageRanking {
+      min-width: 56px;
+    }
+
     .thMinWidthTimely {
       min-width: 50px;
     }
@@ -10224,6 +10492,23 @@ ul.naviBtn {
       div.DTFC_LeftBodyWrapper {
         border-right: solid 1px #8B8B8B;
         height:559px;
+      }
+
+      div.dataTables_paginate {
+        padding-top: 0.75em;
+      }
+
+      div.dataTables_paginate.paging_simple {
+        margin-top: -60px;
+        width: 105px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        span.paginationButton {
+          width: 33px;
+          height: 33px;
+          padding: 3px 4px 0px 0px;
+        }
       }
 
       input[type='search']:focus {
