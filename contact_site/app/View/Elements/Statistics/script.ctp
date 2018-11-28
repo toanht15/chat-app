@@ -125,9 +125,9 @@ $(window).load(function(){
         try {
           var orgMessage = String($(this).data('orgMsg'));
           if (orgMessage.length >= maxLength) {
-            return escapeHTML(orgMessage.substr(0, maxLength)) + "...";
+            return orgMessage.substr(0, maxLength) + "...";
           } else {
-            return escapeHTML(orgMessage)
+            return orgMessage;
           }
         } catch (e) {
           console.log(e);
@@ -172,7 +172,7 @@ $(window).load(function(){
   $(window).on('resize', function(event){
     console.log("resize");
     resizeDataTable();
-    tableObj.draw();
+    tableObj.draw(false);
   });
 
   //CSV処理(チャット統計)
