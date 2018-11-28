@@ -3369,13 +3369,14 @@ io.sockets.on('connection', function(socket) {
       .then((text) => {
         if (Array.isArray(text)) {
           for (let i = 0; i < text.length; i++) {
-            apiCaller.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
-              obj.stayLogsId,
-              companyList[obj.siteKey],
-              obj.userId,
-              text[i],
-              obj.messageDistinction,
-              obj.created)
+            setTimeout(() => {
+              apiCaller.saveMessage(sincloCore[obj.siteKey][obj.tabId].historyId,
+                obj.stayLogsId,
+                companyList[obj.siteKey],
+                obj.userId,
+                text[i],
+                obj.messageDistinction,
+                obj.created)
               .then((resultData) => {
                 let sendData = {
                   tabId: obj.tabId,
@@ -3390,12 +3391,13 @@ io.sockets.on('connection', function(socket) {
                   siteKey: obj.siteKey,
                   matchAutoSpeech: true,
                   isScenarioMessage: false,
-                  isFeedbackMsg: sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isFeedbackMessage(),
+                  isFeedbackMsg: (sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isFeedbackMessage() && i === text.length-1),
                   isExitOnConversation: sincloCore[obj.siteKey][obj.sincloSessionId].apiCaller.isExitOnConversation()
                 };
                 emit.toSameUser('sendChatResult', sendData, obj.siteKey, obj.sincloSessionId);
                 emit.toCompany('sendChatResult', sendData, obj.siteKey);
               });
+            }, i * 100);
           }
         }
         if (apiCaller.isSwitchingOperator()) {
@@ -3431,8 +3433,8 @@ io.sockets.on('connection', function(socket) {
           created: fullDateTime(errorDatetime),
           sort: fullDateTime(errorDatetime),
           ret: true,
-          chatMessage: '回答に際しお時間を頂いております。',
-          message: '回答に際しお時間を頂いております。',
+          chatMessage: 'システムエラーです。もう一度、メッセージを入力してください。',
+          message: 'システムエラーです。もう一度、メッセージを入力してください。',
           siteKey: obj.siteKey,
           matchAutoSpeech: true,
           isScenarioMessage: false,

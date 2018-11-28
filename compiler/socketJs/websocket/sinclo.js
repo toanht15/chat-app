@@ -2414,6 +2414,7 @@
       unread: 0,
       opUser: "",
       opUserName: "",
+      continueClickThresholdMSec: 3000,
       messageType: {
         customer: 1,
         company: 2,
@@ -2569,6 +2570,10 @@
         $(document).off('change', "[name^='sinclo-datepicker']");
         // イベントOFF処理終了
         $(document).on('change', "[name^='sinclo-pulldown']", function (e) {
+          if (sinclo.chatApi.isDisabledSlightly(this)) {
+            return false;
+          }
+          sinclo.chatApi.disableAllButtonsSlightly();
           if ( e ) e.stopPropagation();
           // 選択してくださいを選択された場合はreturnすることで何もさせない
           if ( e.target.value === "" ) return;
@@ -2585,6 +2590,10 @@
         });
 
         $(document).on('change', "[name^='sinclo-datepicker']", function (e) {
+          if (sinclo.chatApi.isDisabledSlightly(this)) {
+            return false;
+          }
+          sinclo.chatApi.disableAllButtonsSlightly();
           if ( e ) e.stopPropagation();
           console.log("sinclo.scenarioApi.isProcessing() : " + sinclo.scenarioApi.isProcessing() + " sinclo.scenarioApi.isWaitingInput() : " + sinclo.scenarioApi.isWaitingInput());
           console.log('☆★☆★☆★☆★☆★☆★☆');
@@ -2617,6 +2626,10 @@
           sinclo.chatApi.setPlaceholderMessage(sinclo.chatApi.getPlaceholderMessage());
         })
         .on("click", "input[name^='sinclo-radio']", function (e) {
+          if (sinclo.chatApi.isDisabledSlightly(this)) {
+            return false;
+          }
+          sinclo.chatApi.disableAllButtonsSlightly();
           var self = sinclo.scenarioApi._hearing;
           if ( e ) e.stopPropagation();
           console.log(sinclo.chatApi.clickRadioMessages[$(this).attr('name')]);
@@ -2693,6 +2706,36 @@
         .off('blur', "#sincloChatMessage,#miniSincloChatMessage")
         .off("click", "input[name^='sinclo-radio']");
         $("input[name^='sinclo-radio']").prop('disabled', true);
+      },
+      disableAllButtonsSlightly: function() {
+        sinclo.chatApi._disableAllSelectableUI();
+        setTimeout(sinclo.chatApi._handleAllDisableSelectableUI, sinclo.chatApi.continueClickThresholdMSec);
+      },
+      isDisabledSlightly: function(target) {
+        var addClassName = 'onetime-disabled';
+        return $(target).hasClass(addClassName);
+      },
+      _disableAllSelectableUI: function () {
+        var addClassName = 'onetime-disabled';
+        // ラジオボタン全般
+        $("input[name^='sinclo-radio']").addClass(addClassName);
+        // 送信ボタン全般
+        $("#sincloChatMessage,#miniSincloChatMessage").addClass(addClassName);
+        // ヒアリング：プルダウン
+        $("[name^='sinclo-pulldown']").addClass(addClassName);
+        // ヒアリング：カレンダー
+        $("[name^='sinclo-datepicker']").addClass(addClassName);
+      },
+      _handleAllDisableSelectableUI: function () {
+        var addClassName = 'onetime-disabled';
+        // ラジオボタン全般
+        $("input[name^='sinclo-radio']").removeClass(addClassName);
+        // 送信ボタン全般
+        $("#sincloChatMessage,#miniSincloChatMessage").removeClass(addClassName);
+        // ヒアリング：プルダウン
+        $("[name^='sinclo-pulldown']").removeClass(addClassName);
+        // ヒアリング：カレンダー
+        $("[name^='sinclo-datepicker']").removeClass(addClassName);
       },
       showMiniMessageArea: function () {
         console.log(">>>>>>>>>>>>>>>>>>>>>showMiniMessageArea");

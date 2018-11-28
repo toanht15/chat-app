@@ -1936,12 +1936,20 @@
 
     $scope.$on('pressFormOK', function (event, message) {
       $('#chatTalk > div:last-child').fadeOut('fast').promise().then(function () {
+        var saveValue = [];
+        Object.keys(message).forEach(function(elm) {
+          saveValue.push({
+            key: elm,
+            value: message[elm].value
+          });
+        });
         $scope.$broadcast('addReForm', {
           prefix: 'action' + $scope.actionStep + '_bulk-hearing',
           isConfirm: false,
           bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
           resultData: {data: message}
         });
+        LocalStorageService.setItem('chatbotVariables', saveValue);
         $scope.actionStep++;
         $scope.doAction();
       });
