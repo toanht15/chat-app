@@ -128,6 +128,15 @@ function unEscapeHTML(str) {
     .replace(/(&amp;)/g, '&');
 };
 
+function escapeHTML(str) {
+  return str
+  .replace(/(&)/g, '&amp;')
+  .replace(/(')/g, "&#39;")
+  .replace(/(")/g, '&quot;')
+  .replace(/(>)/g, '&gt;')
+  .replace(/(<)/g, '&lt;')
+};
+
 function replaceVariable(str,isSmartphone,type){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
   var mailLinkReg = RegExp(/(mailto:[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);

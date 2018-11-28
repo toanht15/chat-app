@@ -121,13 +121,13 @@ $(window).load(function(){
     drawCallback: function( settings ) {
       var currentWidth = $(".autoMessage").get(0).clientWidth - 30;
       var maxLength = (currentWidth / 12) * 2;
-      $(".autoMessage").text(function(index, currentText) {
+      $(".autoMessage").html(function(index, currentText) {
         try {
           var orgMessage = $(this).data('orgMsg');
           if (orgMessage.length >= maxLength) {
-            return orgMessage.substr(0, maxLength) + "...";
+            return escapeHTML(orgMessage.substr(0, maxLength)) + "...";
           } else {
-            return orgMessage
+            return escapeHTML(orgMessage)
           }
         } catch (e) {
           console.log(e);
