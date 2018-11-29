@@ -15,7 +15,7 @@ $config['default'] = array(
 				"scenarios" => array(
 					"0" => array(
 						"chatTextArea" => "1",
-						"actionType" => "2",
+						"actionType" => "1",
 						"messageIntervalTimeSec" => "2",
 						"message" => "お客様情報（会社名、お名前、電話番号、メールアドレス）を入力して下さい。
 
@@ -319,7 +319,7 @@ sinclo@medialink-ml.co.jp
 						"actionType" => "13",
 						"messageIntervalTimeSec" => "2",
 						"settings" => array(
-							"makeLeadTypeList" => "1", // 新規作成
+							"makeLeadTypeList" => "2", // 既存利用
 							"leadTitleLabel" => "リードリスト（資料請求）",
 							"leadInformations" => array(
 								0 => array(
