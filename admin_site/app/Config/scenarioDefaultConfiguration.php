@@ -1420,7 +1420,7 @@ sinclo@medialink-ml.co.jp
 						"messageIntervalTimeSec" => "2",
 						"settings" => array(
 							"makeLeadTypeList" => "1", // 新規作成
-							"leadTitleLabel" => "リードリスト（資料請求）",
+							"leadTitleLabel" => "リードリスト（アンケート）",
 							"leadInformations" => array(
 								0 => array(
 									'leadLabelName' => '性別',

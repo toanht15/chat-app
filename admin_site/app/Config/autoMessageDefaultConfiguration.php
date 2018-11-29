@@ -244,7 +244,7 @@ $config['default'] = [
 						]
 					]
 				],
-				"widgetOpen" => 2,
+				"widgetOpen" => 1,
 				"message" => "",
 				"chatTextarea" => 1,
 				"cv" => 2
@@ -272,7 +272,7 @@ $config['default'] = [
 						]
 					]
 				],
-				"widgetOpen" => 2,
+				"widgetOpen" => 1,
 				"message" => "",
 				"chatTextarea" => 1,
 				"cv" => 2
