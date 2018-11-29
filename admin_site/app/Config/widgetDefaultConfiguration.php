@@ -146,12 +146,12 @@ $config['default'] = [
       /**
        * 10.企業名担当者名文字色
        */
-      "cNameTextColor" => "#ABCD05",
+      "cNameTextColor" => "#FFFFFF",
 
       /**
        * 11.企業側吹き出し文字色
        */
-      "reTextColor" => "#333333",
+      "reTextColor" => "#FFFFFF",
 
       /**
        * 企業側吹き出し文字サイズ
@@ -161,7 +161,7 @@ $config['default'] = [
       /**
        * 12.企業側吹き出し背景色
        */
-      "reBackgroundColor" => "#F6FAE6",
+      "reBackgroundColor" => "#ABCD05",
 
       /**
        * 13.企業側吹き出し枠線色
