@@ -3004,7 +3004,7 @@ class StatisticsController extends AppController {
   {
     $data = [];
     foreach ($messageData as $key => $value) {
-      $message = $this->convertHmtlTag($value['t_history_chat_logs']['message']);
+      $message = $this->convertHtmlTag($value['t_history_chat_logs']['message']);
       if (!array_key_exists($message, $data)) {
         $data[$message] = [];
       }
@@ -3140,7 +3140,7 @@ class StatisticsController extends AppController {
    * @param $text
    * @return mixed
    */
-  private function convertHmtlTag($text)
+  private function convertHtmlTag($text)
   {
     $text = str_replace('<', '&lt;', $text);
     $text = str_replace('>', '&gt;', $text);
