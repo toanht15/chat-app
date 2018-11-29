@@ -1,5 +1,4 @@
 <div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>" class="set_action_item_body action_lead_register" ng-init="main.controllLeadRegister(setActionId)">
-  <?=$this->Form->input('leadList', ['type' => 'hidden','value' => json_encode($this->data['leadList1'])])?>
   <ul>
     <li class="styleFlexbox">
       <div class="fb15em"><label class="require">種別</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="新規でリードリストを作成するか、既に作成済みのリードリストから選択するかを選ぶことできます。">?</icon></span></div>

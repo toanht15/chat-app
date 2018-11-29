@@ -8,7 +8,236 @@
 
 $config['default'] = array(
   'scenario' => array(
-    1 => array(
+		1 => array(
+			'name' => '【サンプル】資料請求（一括ヒアリング）',
+			'activity' => array(
+				"chatbotType" => "1",
+				"scenarios" => array(
+					"0" => array(
+						"chatTextArea" => "1",
+						"actionType" => "1",
+						"messageIntervalTimeSec" => "2",
+						"message" => "お客様情報（会社名、お名前、電話番号、メールアドレス）を入力して下さい。
+
+※普段お使いのメール署名をそのままコピー＆ペーストして頂く形でもご利用頂けます。"
+					),
+					"1" => array(
+						"chatTextArea" => "1",
+						"actionType" => "12",
+						"messageIntervalTimeSec" => "2",
+						"multipleHearings" => array (
+							0 => array (
+								'required' => true,
+								'inputType' => '1',
+								'label' => '会社名',
+								'variableName' => '会社名'
+							),
+							1 => array (
+								'required' => true,
+								'inputType' => '2',
+								'label' => '名前',
+								'variableName' => '名前'
+							),
+							2 => array (
+								'required' => true,
+								'inputType' => '7',
+								'label' => '電話番号',
+								'variableName' => '電話番号'
+							),
+							3 => array (
+								'required' => true,
+								'inputType' => '10',
+								'label' => 'メールアドレス',
+								'variableName' => 'メールアドレス'
+							)
+						),
+						"isConfirm" => "0",
+						"cv" => "1",
+						"cvCondition" => 1,
+						'restore' => false
+					),
+					"2" => array(
+						"chatTextArea" => "1",
+						"actionType" => "2",
+						"messageIntervalTimeSec" => "2",
+						"hearings" => array(
+							array(
+								"variableName" => "その他",
+								"inputType" => "1",
+								"uiType" => "2",
+								"message" => "その他ご要望などがあれば記載ください。（特にない場合は「スキップ」ボタンを押してください）",
+								"required" => false,
+								"errorMessage" => "",
+								"inputLFType" => 2,
+								"restore" => true
+							)
+						),
+						"errorMessage" => "",
+						"isConfirm" => "0",
+						"confirmMessage" => "",
+						"cv" => "1",
+						"cvCondition" => 1,
+						"restore" => false
+					),
+					"3" => array(
+						"chatTextArea" => "2",
+						"actionType" => "13",
+						"messageIntervalTimeSec" => "2",
+						"settings" => array(
+							"makeLeadTypeList" => "1", // 新規作成
+							"leadTitleLabel" => "リードリスト（資料請求）",
+							"leadInformations" => array(
+								0 => array(
+									'leadLabelName' => '会社名',
+									'leadVariableName' => '会社名'
+								),
+								1 => array(
+									'leadLabelName' => '名前',
+									'leadVariableName' => '名前'
+								),
+								2 => array(
+									'leadLabelName' => '電話番号',
+									'leadVariableName' => '電話番号'
+								),
+								3 => array(
+									'leadLabelName' => 'メールアドレス',
+									'leadVariableName' => 'メールアドレス'
+								),
+								4 => array(
+									'leadLabelName' => 'その他',
+									'leadVariableName' => 'その他'
+								)
+							)
+						)
+					),
+					"4" => array(
+						"chatTextArea" => "2",
+						"actionType" => "11",
+						"messageIntervalTimeSec" => "2",
+						"addCustomerInformations" => array(
+							array(
+								"variableName" => "会社名",
+								"targetItemName" => "会社名"
+							),
+							array(
+								"variableName" => "名前",
+								"targetItemName" => "名前"
+							),
+							array(
+								"variableName" => "電話番号",
+								"targetItemName" => "電話番号"
+							),
+							array(
+								"variableName" => "メールアドレス",
+								"targetItemName" => "メールアドレス"
+							)
+						)
+					),
+					"5" => array(
+						"chatTextArea" => "2",
+						"actionType" => "4",
+						"messageIntervalTimeSec" => "2",
+						"mailType" => "3",
+						"mailTransmission" => array(
+							'from_address' => '',
+							'from_name' => '★★★自由に編集してください★★★',
+							'to_address' => '{{メールアドレス}}',
+							'subject' => '資料請求ありがとうございます'
+						), // FIXME
+						"mailTemplate" => array(
+							'mail_type_cd' => 'CS001',
+							'template' => '--------------------------------------------------------------------------------------------------------
+このメールは、資料請求の受け付け完了をお知らせする自動返信メールです。
+本メールへの返信は受け付けておりませんのでご了承ください。
+--------------------------------------------------------------------------------------------------------
+{{会社名}}
+{{名前}}様
+
+この度は、資料請求ありがとうございます。
+
+後ほど担当の者から資料をお送りさせて頂きますので少々お待ちください。
+
+
+──以下お問い合わせいただきました内容です──
+
+■会社名
+{{会社名}}
+
+■お名前
+{{名前}}
+
+■電話番号
+{{電話番号}}
+
+■メールアドレス
+{{メールアドレス}}
+
+──────────ここまで─────────
+
+※本メールは自動返信にてお届けしています。
+
+──────────────────────────────
+
+★★★署名を自由に編集してください★★★
+
+──────────────────────────────'
+						)
+					),
+					"6" => array(
+						"chatTextArea" => "2",
+						"actionType" => "4",
+						"messageIntervalTimeSec" => "2",
+						"mailType" => "1",
+						"mailTransmission" => array(
+							'from_address' => '',
+							'from_name' => 'sinclo（シンクロ）',
+							'to_address' => '★★★貴社アドレスを設定して下さい★★★',
+							'subject' => '資料請求の申し込みがありました'
+						), // FIXME
+						"mailTemplate" => array (
+							'mail_type_cd' => 'CS001',
+							'template' => '※このメールはお客様の設定によりsincloから自動送信されました。
+
+ご担当者様
+
+sincloのシナリオ設定によりメールを送信致しました。
+以下のメッセージ内容をご確認下さい。
+
+##SCENARIO_ALL_MESSAGE_BLOCK##
+
+------------------------------------------------------------------
+このメールにお心当たりのない方は、誠に恐れ入りますが
+下記連絡先までご連絡ください。
+sinclo@medialink-ml.co.jp
+------------------------------------------------------------------'
+						)
+					),
+					"7" => array(
+						"chatTextArea" => "2",
+						"actionType" => "1",
+						"messageIntervalTimeSec" => "2",
+						"message" => "{{名前}}様からの資料請求を受付いたしました。
+{{メールアドレス}}宛てに資料をお送りさせて頂きます。"
+					),
+					"8" => array(
+						"chatTextArea" => "2",
+						"actionType" => "1",
+						"messageIntervalTimeSec" => "2",
+						"message" => "この度は、お問い合わせ頂き誠にありがとうございました。"
+					),
+					"9" => array(
+						"actionType" => "1",
+						"messageIntervalTimeSec" => "2",
+						"chatTextArea" => "2",
+						"message" => "[] メニューに戻る"
+					)
+				)
+			),
+			'del_flg' => 0,
+			'sort' => 1,
+			'relation_auto_message_index' => 7
+		),
+    2 => array(
       'name' => '【サンプル】資料請求（個別ヒアリング）',
       'activity' => array(
         "chatbotType" => "1",
@@ -85,7 +314,38 @@ $config['default'] = array(
 						"cvCondition" => 1,
 						"restore" => true
 					),
-          "2" => array(
+					"2" => array(
+						"chatTextArea" => "2",
+						"actionType" => "13",
+						"messageIntervalTimeSec" => "2",
+						"settings" => array(
+							"makeLeadTypeList" => "2", // 既存利用
+							"leadTitleLabel" => "リードリスト（資料請求）",
+							"leadInformations" => array(
+								0 => array(
+									'leadLabelName' => '会社名',
+									'leadVariableName' => '会社名'
+								),
+								1 => array(
+									'leadLabelName' => '名前',
+									'leadVariableName' => '名前'
+								),
+								2 => array(
+									'leadLabelName' => '電話番号',
+									'leadVariableName' => '電話番号'
+								),
+								3 => array(
+									'leadLabelName' => 'メールアドレス',
+									'leadVariableName' => 'メールアドレス'
+								),
+								4 => array(
+									'leadLabelName' => 'その他',
+									'leadVariableName' => 'その他'
+								)
+							)
+						)
+					),
+          "3" => array(
             "chatTextArea" => "2",
             "actionType" => "11",
             "messageIntervalTimeSec" => "2",
@@ -109,7 +369,7 @@ $config['default'] = array(
             ),
 						"restore" => false
           ),
-          "3" => array(
+          "4" => array(
             "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
@@ -162,7 +422,7 @@ $config['default'] = array(
 ──────────────────────────────'
             )
           ),
-          "4" => array(
+          "5" => array(
             "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "2",
@@ -191,19 +451,19 @@ sinclo@medialink-ml.co.jp
 ------------------------------------------------------------------'
             )
           ),
-          "5" => array(
+          "6" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "2",
             "message" => "{{名前}}様からの資料請求を受付いたしました。\n{{メールアドレス}}宛てに資料をお送りさせて頂きます。"
           ),
-          "6" => array(
+          "7" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "2",
             "message" => "この度は、お問い合わせ頂き誠にありがとうございました。"
         	),
-					"7" => array(
+					"8" => array(
 						"actionType" => "1",
 						"messageIntervalTimeSec" => "2",
 						"chatTextArea" => "2",
@@ -212,115 +472,8 @@ sinclo@medialink-ml.co.jp
       	)
   	  ),
       'del_flg' => 0,
-      'sort' => 1,
-      'relation_auto_message_index' => 5
-    ),
-    2 => array(
-      'name' => '【サンプル】資料請求（一括ヒアリング）',
-      'activity' => array(
-        "chatbotType" => "1",
-        "scenarios" => array(
-          "0" => array(
-            "chatTextArea" => "2",
-            "actionType" => "1",
-            "messageIntervalTimeSec" => "2",
-            "message" => "資料請求ですね。"
-          ),
-          "1" => array(
-            "chatTextArea" => "1",
-            "actionType" => "2",
-            "messageIntervalTimeSec" => "2",
-            "hearings" => array(
-							0 => array (
-								'variableName' => '顧客情報',
-								'inputType' => '1',
-								'uiType' => '2',
-								'message' => 'お客様の会社名、お名前、電話番号、メールアドレスを入力して下さい。（メール署名をコピー＆ペーストで可）',
-								'required' => true,
-								'errorMessage' => '',
-								'inputLFType' => 2,
-							),
-							1 => array (
-								'variableName' => 'その他要望など',
-								'inputType' => '1',
-								'uiType' => '2',
-								'message' => 'その他ご要望などございましたらこちらにご記入ください。（特にない方は「スキップ」ボタンを押してください。）',
-								'required' => false,
-								'errorMessage' => '',
-								'inputLFType' => 2,
-							)
-            ),
-            "errorMessage" => "入力が正しく確認できませんでした。",
-            "isConfirm" => "1",
-            "confirmMessage" => "お客様の会社名、お名前、電話番号、メールアドレスはすべて入力頂けましたか？",
-            "success" => "はい、すべて入力しました",
-            "cancel" => "いいえ、入力していません",
-            "cv" => "1",
-            "cvCondition" => 1,
-						'restore' => true
-          ),
-          "2" => array(
-            "chatTextArea" => "2",
-            "actionType" => "11",
-            "messageIntervalTimeSec" => "2",
-            "addCustomerInformations" => array(
-              0 => array(
-                "variableName" => "顧客情報",
-                "targetItemName" => "メモ"
-              )
-            )
-          ),
-          "3" => array(
-            "chatTextArea" => "2",
-            "actionType" => "4",
-            "messageIntervalTimeSec" => "2",
-            "mailType" => "1",
-            "mailTransmission" => array(
-              'from_address' => '',
-              'from_name' => 'sinclo（シンクロ）',
-              'to_address' => '★★★貴社アドレスを設定して下さい★★★',
-              'subject' => '資料請求の申し込みがありました'
-            ), // FIXME
-            "mailTemplate" => array (
-              'mail_type_cd' => 'CS001',
-              'template' => '※このメールはお客様の設定によりsincloから自動送信されました。
-
-ご担当者様
-
-sincloのシナリオ設定によりメールを送信致しました。
-以下のメッセージ内容をご確認下さい。
-
-##SCENARIO_ALL_MESSAGE_BLOCK##
-
-------------------------------------------------------------------
-このメールにお心当たりのない方は、誠に恐れ入りますが
-下記連絡先までご連絡ください。
-sinclo@medialink-ml.co.jp
-------------------------------------------------------------------'
-            )
-          ),
-          "4" => array(
-            "chatTextArea" => "2",
-            "actionType" => "1",
-            "messageIntervalTimeSec" => "2",
-            "message" => "資料請求を受付いたしました。\nご入力いただきましたメールアドレス宛てに資料をお送りさせて頂きます。"
-          ),
-          "5" => array(
-            "chatTextArea" => "2",
-            "actionType" => "1",
-            "messageIntervalTimeSec" => "2",
-            "message" => "この度は、お問い合わせ頂き誠にありがとうございました。"
-          ),
-					"6" => array(
-						"actionType" => "1",
-						"messageIntervalTimeSec" => "2",
-						"chatTextArea" => "2",
-						"message" => "[] メニューに戻る"
-					)
-        )
-      ),
-      'del_flg' => 0,
-      'sort' => 2
+      'sort' => 2,
+      'relation_auto_message_index' => 8
     ),
     3 => array(
       'name' => '【サンプル】来店予約 ',
@@ -595,7 +748,7 @@ sinclo@medialink-ml.co.jp
 			),
 			'del_flg' => 0,
 			'sort' => 3,
-			'relation_auto_message_index' => 11
+			'relation_auto_message_index' => 9
 		),
 		4 => array(
 			'name' => '【サンプル】会員登録・入会',
@@ -774,7 +927,46 @@ sinclo@medialink-ml.co.jp
 						'cvCondition' => 1,
 						'restore' => true,
 					),
-					"5" => array(
+					"5" => array (
+						"chatTextArea" => "2",
+						"actionType" => "13",
+						"messageIntervalTimeSec" => "2",
+						"settings" => array(
+							"makeLeadTypeList" => "1", // 新規作成
+							"leadTitleLabel" => "リードリスト（会員登録・入会）",
+							"leadInformations" => array(
+								0 => array(
+									'leadLabelName' => '会員コース',
+									'leadVariableName' => '会員コース'
+								),
+								1 => array(
+									'leadLabelName' => '名前',
+									'leadVariableName' => '名前'
+								),
+								2 => array(
+									'leadLabelName' => 'カナ',
+									'leadVariableName' => 'カナ'
+								),
+								3 => array(
+									'leadLabelName' => '生年月日',
+									'leadVariableName' => '生年月日'
+								),
+								4 => array(
+									'leadLabelName' => '住所',
+									'leadVariableName' => '住所'
+								),
+								5 => array(
+									'leadLabelName' => '電話番号',
+									'leadVariableName' => '電話番号'
+								),
+								6 => array(
+									'leadLabelName' => 'メールアドレス',
+									'leadVariableName' => 'メールアドレス'
+								)
+							)
+						)
+					),
+					"6" => array (
 						"chatTextArea" => "2",
 						"actionType" => "11",
 						"messageIntervalTimeSec" => "2",
@@ -793,7 +985,7 @@ sinclo@medialink-ml.co.jp
 							)
 						)
 					),
-					"6" => array(
+					"7" => array (
 						"chatTextArea" => "2",
 						"actionType" => "4",
 						"messageIntervalTimeSec" => "2",
@@ -822,13 +1014,13 @@ sinclo@medialink-ml.co.jp
 ------------------------------------------------------------------'
 						)
 					),
-					"7" => array(
+					"8" => array(
 						"chatTextArea" => "2",
 						"actionType" => "1",
 						"messageIntervalTimeSec" => "2",
 						"message" => "{{名前}}様からの会員登録（入会）を受付いたしました。\n\nこの度はご入会いただきありがとうございました。"
 					),
-					"8" => array (
+					"9" => array (
 						'actionType' => '1',
 						'messageIntervalTimeSec' => '2',
 						'chatTextArea' => '2',
@@ -838,7 +1030,7 @@ sinclo@medialink-ml.co.jp
 			),
 			'del_flg' => 0,
 			'sort' => 4,
-			'relation_auto_message_index' => 8
+			'relation_auto_message_index' => 10
 		),
     5 => array(
       'name' => '【サンプル】アンケート',
@@ -1222,14 +1414,53 @@ sinclo@medialink-ml.co.jp
 						'cv' => '2',
 						'actionType' => '2',
 					),
-          "1" => array (
+					"1" => array(
+						"chatTextArea" => "2",
+						"actionType" => "13",
+						"messageIntervalTimeSec" => "2",
+						"settings" => array(
+							"makeLeadTypeList" => "1", // 新規作成
+							"leadTitleLabel" => "リードリスト（資料請求）",
+							"leadInformations" => array(
+								0 => array(
+									'leadLabelName' => '性別',
+									'leadVariableName' => '性別'
+								),
+								1 => array(
+									'leadLabelName' => '年代',
+									'leadVariableName' => '年代'
+								),
+								2 => array(
+									'leadLabelName' => '地域',
+									'leadVariableName' => '地域'
+								),
+								3 => array(
+									'leadLabelName' => 'きっかけ',
+									'leadVariableName' => 'きっかけ'
+								),
+								4 => array(
+									'leadLabelName' => '頻度',
+									'leadVariableName' => '頻度'
+								),
+								5 => array(
+									'leadLabelName' => '満足度',
+									'leadVariableName' => '満足度'
+								),
+								6 => array(
+									'leadLabelName' => 'フリー入力',
+									'leadVariableName' => 'フリー入力'
+								)
+							)
+						)
+					),
+          "2" => array (
 						'chatTextArea' => '2',
 						'actionType' => '1',
 						'messageIntervalTimeSec' => '2',
 						'message' => 'アンケートは以上です。ご協力ありがとうございました。',
 						'restore' => false,
 					),
-					"2" => array (
+					"3" => array (
 						'actionType' => '1',
 						'messageIntervalTimeSec' => '2',
 						'chatTextArea' => '2',
@@ -1240,7 +1471,7 @@ sinclo@medialink-ml.co.jp
       ),
       'del_flg' => 0,
       'sort' => 5,
-			'relation_auto_message_index' => 9
+			'relation_auto_message_index' => 11
     ),
     6 => array(
       'name' => '【サンプル】問い合わせフォーム',
@@ -1326,7 +1557,38 @@ sinclo@medialink-ml.co.jp
 						'cvCondition' => 1,
 						'restore' => true,
 					),
-          "2" => array(
+					"2" => array(
+						"chatTextArea" => "2",
+						"actionType" => "13",
+						"messageIntervalTimeSec" => "2",
+						"settings" => array(
+							"makeLeadTypeList" => "1", // 新規作成
+							"leadTitleLabel" => "リードリスト（問い合わせ）",
+							"leadInformations" => array(
+								0 => array(
+									'leadLabelName' => '会社名',
+									'leadVariableName' => '会社名'
+								),
+								1 => array(
+									'leadLabelName' => '名前',
+									'leadVariableName' => '名前'
+								),
+								2 => array(
+									'leadLabelName' => '電話番号',
+									'leadVariableName' => '電話番号'
+								),
+								3 => array(
+									'leadLabelName' => 'メールアドレス',
+									'leadVariableName' => 'メールアドレス'
+								),
+								4 => array(
+									'leadLabelName' => '問い合わせ内容',
+									'leadVariableName' => '問い合わせ内容'
+								)
+							)
+						)
+					),
+          "3" => array(
             "chatTextArea" => "2",
             "actionType" => "11",
             "messageIntervalTimeSec" => "1",
@@ -1349,7 +1611,7 @@ sinclo@medialink-ml.co.jp
               )
             )
           ),
-          "3" => array(
+          "4" => array(
             "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "1",
@@ -1397,7 +1659,7 @@ sinclo@medialink-ml.co.jp
 ────────────────────────────'
             )
           ),
-          "4" => array(
+          "5" => array(
             "chatTextArea" => "2",
             "actionType" => "4",
             "messageIntervalTimeSec" => "1",
@@ -1426,29 +1688,29 @@ sinclo@medialink-ml.co.jp
 ------------------------------------------------------------------'
             )
           ),
-          "5" => array(
+          "6" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "1",
             "message" => "{{名前}}様からのお問い合わせを受付いたしました。"
           ),
-          "6" => array(
+          "7" => array(
             "chatTextArea" => "2",
             "actionType" => "1",
             "messageIntervalTimeSec" => "1",
             "message" => "この度は、お問い合わせ頂き誠にありがとうございました。"
           ),
-					"7" => array (
+					"8" => array (
 						'actionType' => '1',
 						'messageIntervalTimeSec' => '1',
 						'chatTextArea' => '2',
 						'message' => '[] メニューに戻る',
-					),
+					)
         )
       ),
       'del_flg' => 0,
       'sort' => 6,
-      'relation_auto_message_index' => 6
+      'relation_auto_message_index' => 12
     )
   )
 );
