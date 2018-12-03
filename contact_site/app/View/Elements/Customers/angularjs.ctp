@@ -66,8 +66,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         sendFile: 6,
         notification: 7,
         linkClick: 8,
-        start: 98,
-        end: 99,
+        start: 998,
+        end: 999,
         scenario: {
           customer: {
             hearing: 12,
@@ -75,15 +75,29 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             sendFile: 19,
             answerBulkHearing: 30,
             noModBulkHearing: 31,
-            modifyBulkHearing: 32
+            modifyBulkHearing: 32,
+            radio: 33,
+            pulldown: 34,
+            calendar: 35,
+            reInputText: 36,
+            reInputRadio: 37,
+            reInputPulldown: 38,
+            reInputCalendar: 39,
+            cancel: 90
           },
           message: {
             text: 21,
             hearing: 22,
             selection: 23,
             receiveFile: 27,
-            returnBulkHearing: 40
+            returnBulkHearing: 40,
+            pulldown: 41,
+            calendar: 42
           }
+        },
+        cogmo: {
+          message: 81,
+          feedback: 82
         }
       },
       init: function(sendPattern){
@@ -1065,6 +1079,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
         if($scope.onlineOperatorList) {
           Object.keys($scope.onlineOperatorList).forEach(function(key){
+            if(!$scope.operatorList[key]) {
+              return;
+            }
             if($scope.activeOperatorList[key]) {
               $scope.operatorList[key].status = 1;
             } else {
@@ -1235,8 +1252,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
         chatApi.tabId = "";
         chatApi.sincloSessionId = "";
+        // ポップアップを開く
       }
-      // ポップアップを開く
       else {
         setPositionOfPopup(); // ポップアップの位置調整
         $scope.customerMainClass = "showDetail";
@@ -1348,6 +1365,16 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 顧客の詳細情報を取得する
     $scope.getCustomerInfo = function(userId, callback){
+      $timeout(function(){
+        if($scope.customerList[userId]){
+          callback($scope.customerList[userId]);
+        } else {
+          callback({});
+        }
+      });
+    };
+
+    $scope.getCustomerInfoFromApi = function(userId, callback) {
       $.ajax({
         type: "POST",
         url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteGetCusInfo'])?>",
@@ -1478,7 +1505,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
 
     // 【チャット】テキストの構築
     $scope.createTextOfMessage = function(chat, message, opt) {
-      var strings = message.split('\n');
+      var strings = message.split(/\n|<br>/g);
       var isSmartphone = false;
       var custom = "";
       var radioName = "sinclo-radio" + Object.keys(chat).length;
@@ -1488,8 +1515,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         var str = escape_html(strings[i]);
         // ラジオボタン
         var radio = str.indexOf('[]');
-        if ( option.radio && radio > -1 ) {
-          var val = str.slice(radio+2);
+        var selectedRadio = str.indexOf('[*]');
+        if ( option.radio && (radio > -1 || selectedRadio > -1) ) {
+          var val = '';
+          if (radio > -1) {
+            val = str.slice(radio + 2);
+          }
+          if (selectedRadio > -1) {
+            val = str.slice(selectedRadio + 3);
+          }
           str = "<input type='radio' name='" + radioName + "' id='" + radioName + "-" + i + "' class='sinclo-chat-radio' value='" + val + "' disabled=''>";
           str += "<label class='pointer' for='" + radioName + "-" + i + "'>" + val + "</label>";
         }
@@ -1497,6 +1531,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           widgetSize = '5';
         }
         //リンク、電話番号,img
+        console.log(widgetSize);
         str = replaceVariable(str,isSmartphone,widgetSize);
         custom += str + "\n";
 
@@ -1606,6 +1641,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var div = document.createElement('div');
       var li = document.createElement('li');
       var content = "";
+      console.log(chat);
 
       var type = Number(chat.messageType);
       var message = chat.message;
@@ -1666,7 +1702,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           li.addEventListener("click", function(event){window.open(message.downloadUrl)});
         }
       }// 消費者からのメッセージの場合
-      else if ( type === chatApi.messageType.scenario.customer.hearing) {
+      else if ( type === chatApi.messageType.scenario.customer.hearing || type === chatApi.messageType.scenario.customer.radio
+        || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar
+        || type === chatApi.messageType.scenario.customer.reInputText || type === chatApi.messageType.scenario.customer.reInputRadio
+        || type === chatApi.messageType.scenario.customer.reInputPulldown || type === chatApi.messageType.scenario.customer.reInputCalendar) {
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
@@ -1697,6 +1736,15 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
         content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( type === chatApi.messageType.scenario.message.pulldown || type === chatApi.messageType.scenario.message.calendar) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
+        var json = JSON.parse(message);
+        content += $scope.createTextOfMessage(chat, json.message);
       }
       else if ( type === chatApi.messageType.scenario.message.selection ) {
         cn = "sinclo_auto";
@@ -1757,8 +1805,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         li.className = cn;
         content = $scope.createTextOfMessage(chat, message);
+        console.log(content);
         var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
         var linkTab = content.match(linkTabReg);
+        console.log(linkTab);
         content = '（「'+linkTab[0]+'」をクリック）';
       }
       else if ( Number(type) === chatApi.messageType.scenario.customer.answerBulkHearing ) {
@@ -1788,6 +1838,26 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>シナリオメッセージ(一括ヒアリング解析結果)</span>";
         content += $scope.createBulkHearingAnalyseData(chat, message);
+      }
+      else if ( Number(type) === chatApi.messageType.scenario.customer.cancel ) {
+        // 何もしない
+        return;
+      }
+      else if ( Number(type) === chatApi.messageType.cogmo.message ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>自動応答</span>";
+        content += $scope.createTextOfMessage(chat, message);
+      }
+      else if ( Number(type) === chatApi.messageType.cogmo.feedback ) {
+        cn = "sinclo_auto";
+        div.style.textAlign = 'right';
+        div.style.height = 'auto';
+        div.style.padding = '0';
+        content = "<span class='cName'>自動応答</span>";
+        content += $scope.createTextOfMessage(chat, message);
       }
       else  {
         cn = "sinclo_etc";
@@ -2275,11 +2345,11 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         if (!$scope.checkToIP(obj.ipAddress)) return false;
       }
 
-      $scope.monitorList[obj.tabId] = obj;
-
       if(obj.customerInfo) {
         $scope.getCustomerInfoFromMonitor(obj);
       }
+
+      $scope.monitorList[obj.tabId] = obj;
 
       if ( 'referrer' in obj && 'referrer' in obj) {
         var url = $scope.trimToURL(obj.referrer);
@@ -2582,6 +2652,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
           if (($scope.isViewable() || !$scope.isML(obj)) && 'lbcCode' in obj) {
             $scope.monitorList[tabId].lbcCode = obj.lbcCode;
+          }
+          if('customerInfo' in obj) {
+            $scope.customerList[obj.userId] = obj.customerInfo;
+            $scope.$apply();
           }
         }
     });
@@ -4343,13 +4417,13 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
               url: "<?=$this->Html->url(['controller'=>'Customers', 'action' => 'remoteSaveCusInfo'])?>",
               data: data,
               dataType: "json",
-              success: function(json){
+              success: function(json) {
                 if ( json ) {
                   scope.customPrevData = angular.copy(value);
                   scope.customerList[scope.detail.userId] = angular.copy(value);
                   $timeout(function () {
                     scope.$apply();
-                  },100);
+                  }, 100);
                 }
               }
             });
@@ -4404,7 +4478,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
           }
           if ( angular.isDefined(scope.detailId) && scope.detailId !== "" && (scope.detailId in scope.monitorList) ) {
             scope.detail = angular.copy(scope.monitorList[scope.detailId]);
-            scope.getCustomerInfo(scope.monitorList[scope.detailId].userId, function(ret){
+            scope.getCustomerInfoFromApi(scope.monitorList[scope.detailId].userId, function(ret){
               scope.customData = ret;
               scope.customPrevData = angular.copy(ret);
 

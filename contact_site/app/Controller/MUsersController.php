@@ -160,13 +160,17 @@ class MUsersController extends AppController {
    * @return string(json) JSONデータ(settings)に格納される
    * */
   private function _setChatSetting($tmpData = []){
+    $settings = [];
     $chatSetting = $this->MChatSetting->coFind('first', [], false);
     if ( isset($chatSetting['MChatSetting']['sc_flg']) && strcmp($chatSetting['MChatSetting']['sc_flg'], C_SC_ENABLED) === 0 ) {
-      return $this->jsonEncode([
-        'sc_num' => $chatSetting['MChatSetting']['sc_default_num']
-      ]);
+	  $settings['sc_num'] = $chatSetting['MChatSetting']['sc_default_num'];
     }
-    return "";
+
+    if (isset($chatSetting['MChatSetting']['sc_login_default_status'])) {
+       $settings['login_default_status'] = $chatSetting['MChatSetting']['sc_login_default_status'];
+    }
+
+	return $this->jsonEncode($settings);
   }
 
 

@@ -86,10 +86,12 @@ class AppController extends Controller {
     C_COMPANY_USE_CAMPAIGN => false, // キャンペーン設定
     C_COMPANY_USE_CHATCALLMESSAGES => false, // チャット呼出中メッセージ
     C_COMPANY_USE_CUSTOMVARIABLES => false, //カスタム変数
-    C_COMPANY_USE_EDITCUSTOMERINFORMATIONS => false //訪問ユーザ情報
+    C_COMPANY_USE_EDITCUSTOMERINFORMATIONS => false, //訪問ユーザ情報
+    C_COMPANY_USE_COGMO_ATTEND_API => false, // CogmoAttend連携
+    C_COMPANY_USE_MESSAGE_RANKING => false //メッセージランキング機能
   ];
 
-  private $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
+  protected $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
 
   // メディアリンクの企業情報を閲覧可能なcompany_keyのリスト
   private $viewableMLCompanyInfoList = ['medialink','59f6e3aa713de'];
@@ -192,7 +194,9 @@ class AppController extends Controller {
         $opStatus = $this->Session->read('widget.operator.status');
       }
       else {
-        $this->Session->write('widget.operator.status', C_OPERATOR_PASSIVE);
+        $setting = json_decode($newInfo['MUser']['settings']);
+        $opStatus = isset($setting->login_default_status) ? $setting->login_default_status : C_OPERATOR_PASSIVE;
+        $this->Session->write('widget.operator.status', $opStatus);
       }
 
       $this->set('widgetCheck', C_OPERATOR_ACTIVE); // オペレーターの在籍/退席を使用するか
@@ -459,6 +463,7 @@ class AppController extends Controller {
     $data = file_get_contents('php://input');
     $this->log('リクエストデータ: '. $data, 'mail-request');
     $jsonObj = json_decode($data, TRUE);
+
     return $jsonObj;
   }
 

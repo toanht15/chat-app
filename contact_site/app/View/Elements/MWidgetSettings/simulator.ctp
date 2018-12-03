@@ -23,13 +23,14 @@
     }
 </style>
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ){?>
+<p ng-if="widgetSizeTypeToggle==='4' && showWidgetType === 1" style="width:400px; color:#F57E7E">表示されているウィジェットのサイズは実際のサイズ（最大）ではありません。実際のサイズは ＜<?= $this->Html->link('デモサイト', array('controller' => 'ScriptSettings', 'action' => 'testpage',$companyKey), array('target' => '_demo', 'class' => 'underL', 'style' => 'color:#F57E7E')) ?>＞ から確認してください。</p>
 <section id="switch_widget" ng-cloak ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
   <ul class="ulTab" data-col=3 ng-hide="closeButtonSettingToggle === '2'">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     <li ng-class="{choose: showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
     <li ng-class="{choose: showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
   </ul>
-  <ul class="ulTab showType4" data-col=3 ng-hide="closeButtonSettingToggle !== '2'" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+  <ul class="ulTab showType4" data-col=3 ng-hide="closeButtonSettingToggle !== '2'" ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4')}">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     <li ng-class="{choose: showWidgetType === 3}" ng-click="switchWidget(3)">ｽﾏｰﾄﾌｫﾝ(縦)</li>
     <li ng-class="{choose: showWidgetType === 2}" ng-click="switchWidget(2)">ｽﾏｰﾄﾌｫﾝ(横)</li>
@@ -39,7 +40,7 @@
 </section>
 <?php } else { ?>
 <section id="switch_widget" ng-cloak ng-hide="closeButtonSettingToggle !== '2'" ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
-  <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && widgetSizeTypeToggle === '3'}">
+  <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4')}">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     <li ng-class="{choose: showWidgetType === 4}" ng-click="switchWidget(4)">非表示</li>
   </ul>
@@ -78,7 +79,11 @@
     }
 
     #sincloBox.sp-preview.fullSize #chatTalk {
+    <?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>
       height: 258px;
+    <?php else: ?>
+      height: 284px;
+    <?php endif;?>
       padding: 0px 5px 41.4px 5px;
     }
 
@@ -208,6 +213,21 @@
   </style>
   <div id="device" class="portrait" ng-if="showWidgetType === 3">
     <div id="wrapper">
+    <!-- スマホ用バナー -->
+      <div id = "sincloBanner"  class="spBanner" ng-class="spBannerTypeHandler()" ng-if = "showWidgetType === 3 && !viewSpWidget">
+        <div id="sincloBannerText" ng-click="spViewHandler(1)">
+          <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="width: 24px; height: 24px; opacity: 1; margin: 0px 5px; flex-basis: 24px;" xml:space="preserve">
+            <style type="text/css">
+              .st0{fill:{{string_color}};}
+            </style>
+            <g>
+              <path class="st0" d="M257.135,19.179C103.967,19.179,0,97.273,0,218.763c0,74.744,31.075,134.641,91.108,173.176 c4.004,2.572,8.728,2.962,6.955,10.365c-7.16,29.935-19.608,83.276-19.608,83.276c-0.527,2.26,0.321,4.618,2.162,6.03 c1.84,1.402,4.334,1.607,6.38,0.507c0,0,87.864-52.066,99.583-58.573c27.333-15.625,50.878-18.654,68.558-18.654 C376.619,414.89,512,366.282,512,217.458C512,102.036,418.974,19.179,257.135,19.179z" style="fill:{{string_color}}"></path>
+            </g>
+          </svg>
+        <span id="bannertext">{{sp_banner_text}}</span>
+        </div>
+      </div>
+    <!-- スマホ用バナー -->
       <?= $this->element('MWidgetSettings/widget', ['isSpPreview' => true]); ?>
     </div>
     <div id="button"></div>
@@ -238,6 +258,25 @@
       top: -30px;
       cursor: pointer;
     }
+
+    #sincloBanner.rightcenter{
+      border-radius: {{radius_ratio}}px 0 0 {{radius_ratio}}px;
+      margin-right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: auto;
+      width: 30px!important;
+    }
+
+    #sincloBanner.leftcenter{
+      border-radius: 0 {{radius_ratio}}px {{radius_ratio}}px 0;
+      margin-left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: auto;
+      width: 30px!important;
+    }
+
     #sincloBannerText{
       display: flex;
       justify-content: center;
@@ -261,6 +300,7 @@
       cursor: pointer;
       vertical-align: middle;
       margin-right: 5px;
+      white-space: nowrap;
     }
   </style>
   <div id = "sincloBannerBox">

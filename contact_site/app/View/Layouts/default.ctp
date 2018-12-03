@@ -50,7 +50,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       <title><?php echo $this->fetch('title'); ?></title>
     <?php }
     else { ?>
-      <title><?php echo $this->fetch('title'); ?> | sinclo</title>
+      <title><?php echo $this->fetch('title'); ?><?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?> | sinclo<?php endif; ?></title>
     <?php } ?>
   <?php
     echo $this->Html->meta('icon');
@@ -64,8 +64,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("bootstrap.css");
     echo $this->Html->css("multi-select.css");
     echo $this->Html->css("standalone.css");
-    echo $this->Html->css("fa-light.min");
-    echo $this->Html->css("fa-solid.min");
+    echo $this->Html->css("light.min");
+    echo $this->Html->css("solid.min");
     echo $this->Html->css('fontawesome.min');
   ?>
   <?php
@@ -76,7 +76,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->css("style.css");
     }
     echo $this->Html->css("modal.css");
-    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
+    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0 || strcmp($this->name, 'TLeadLists') === 0) {
       echo $this->Html->css("daterangepicker.css");
     }
     if ( strcmp($this->name, 'Statistics') === 0 || strcmp($this->name, 'ChatHistories') === 0 ) {
@@ -119,8 +119,11 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js");
       echo $this->Html->script("//cdnjs.cloudflare.com/ajax/libs/cropper/1.0.0/cropper.min.js");
     }
-    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0) {
+    if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0 || strcmp($this->name, 'TLeadLists') === 0) {
       echo $this->Html->script("daterangepicker.js");
+    }
+    if ( strcmp($this->name, 'TLeadLists') === 0 ) {
+      echo $this->Html->script('jquery.binarytransport.js');
     }
     if ( strcmp($this->name, 'TDocuments') === 0 ) {
       echo $this->Html->script("//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js");
@@ -144,7 +147,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     }
     if ( strcmp($this->name, 'ScriptSettings') === 0 && strcmp($this->action, 'index') !== 0) {
       echo $this->Html->script("openclose.js");
-    } ?>
+    }
+ ?>
 
 <script type="text/javascript">
   <?php echo $this->element('loadScreen'); ?>

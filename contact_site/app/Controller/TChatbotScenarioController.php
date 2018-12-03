@@ -19,7 +19,7 @@ class TChatbotScenarioController extends FileAppController {
 
   const CALL_SELF_SCENARIO_NAME = "（このシナリオ）";
 
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting', 'TLeadListSetting'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -42,9 +42,9 @@ class TChatbotScenarioController extends FileAppController {
       /* カラー設定styat */
       'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
-      'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
+      'message_box_text_color','message_box_text_size','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_text_size','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
-      'btw_button_margin', 'line_button_margin'
+      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_scroll_view_setting','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
     'chat' => ['chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
@@ -88,11 +88,13 @@ sinclo@medialink-ml.co.jp
     $this->chatbotScenarioAttributeType = Configure::read('chatbotScenarioAttributeType');
     $this->chatbotScenarioSendMailType = Configure::read('chatbotScenarioSendMailType');
     $this->chatbotScenarioApiMethodType = Configure::read('chatbotScenarioApiMethodType');
+    $this->chatbotScenarioExternalType = Configure::read('chatbotScenarioExternalType');
     $this->chatbotScenarioApiResponseType = Configure::read('chatbotScenarioApiResponseType');
     $this->chatbotScenarioReceiveFileTypeList = Configure::read('chatbotScenarioReceiveFileTypeList');
     $this->chatbotScenarioBranchOnConditionMatchValueType = Configure::read('chatbotScenarioBranchOnConditionMatchValueType');
     $this->chatbotScenarioBranchOnConditionActionType = Configure::read('chatbotScenarioBranchOnConditionActionType');
     $this->chatbotScenarioBranchOnConditionElseActionType = Configure::read('chatbotScenarioBranchOnConditionElseActionType');
+    $this->chatbotScenarioLeadTypeList = Configure::read('chatbotScenarioLeadTypeList');
 
     // FileAppController
     $this->fileTransferPrefix = "fileScenarioTransfer/";
@@ -138,6 +140,8 @@ sinclo@medialink-ml.co.jp
     ),$this->request->data['scenarioList']);
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
+    $this->request->data['leadList'][99] = $this->_getLeadList();
+    $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
   }
 
@@ -164,10 +168,10 @@ sinclo@medialink-ml.co.jp
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.notFoundId'));
         $this->redirect('/TChatbotScenario/index');
       }
-
+      // convert old data -> new json structure
+      $this->_convertOldDataToNewStructure($editData[0]['TChatbotScenario']['activity']);
       // アクションごとに必要な設定を追加する
       $this->_setActivityDetailSettings($editData[0]['TChatbotScenario']['activity']);
-
       $this->request->data['TChatbotScenario'] = $editData[0]['TChatbotScenario'];
     }
 
@@ -185,6 +189,8 @@ sinclo@medialink-ml.co.jp
         )
       )
     ),$this->request->data['scenarioList']);
+    $this->set('storedVariableList', $this->getStoredAllVariableList($id));
+    $this->request->data['leadList'][99] = $this->_getLeadList();
     $this->_viewElement();
   }
 
@@ -469,7 +475,6 @@ sinclo@medialink-ml.co.jp
       $list = $this->params->data['list'];
       $sortNoList = $this->params->data['sortNolist'];
       sort($sortNoList);
-      $this->log($list,LOG_DEBUG);
       /* 現在の並び順を取得 */
       $params = $this->paginate['TChatbotScenario'];
       $params['fields'] = [
@@ -561,6 +566,7 @@ sinclo@medialink-ml.co.jp
       ]);
 
       if (count($ret) === 1) {
+        $this->_convertOldDataToNewStructure($ret['TChatbotScenario']['activity']);
         $this->_setActivityDetailSettings($ret['TChatbotScenario']['activity']);
         return json_encode($ret);
       } else {
@@ -763,12 +769,16 @@ sinclo@medialink-ml.co.jp
           unset($action->scenarioId);
         } else
         if ($action->actionType == C_SCENARIO_ACTION_EXTERNAL_API) {
-          // 外部システム連携
+          // 外部連携
           $action = $this->_entryProcessForExternalApi($action);
         } else
         if ($action->actionType == C_SCENARIO_ACTION_SEND_FILE) {
           // ファイル送信
           unset($action->file);
+        } else
+        if($action->actionType == C_SCENARIO_ACTION_LEAD_REGISTER) {
+          // リード登録
+          $action = $this->_entryProcessForLeadRegister($action);
         }
       }
 
@@ -794,7 +804,6 @@ sinclo@medialink-ml.co.jp
 
     $validate = $this->TChatbotScenario->validates();
     $errors = $this->TChatbotScenario->validationErrors;
-
     if ($validate) {
       if( $this->TChatbotScenario->save($saveData,false) ) {
       }
@@ -813,6 +822,67 @@ sinclo@medialink-ml.co.jp
 
     $page = floor((intval($count[0]['count']) + 99) / 100);
     return $page >= 1 ? $page : 1;
+  }
+  /**
+   * リードリスト保存時に同名の同じ内容が存在するか？
+   *
+   *
+   * */
+  private function _sameLeadList($saveData){
+    $resultArray = $this->TLeadListSetting->find('list', [
+      'fields' => 'list_parameter',
+      'conditions' => [
+        'list_name' => $saveData->leadTitleLabel
+      ],
+      'recursive' => '-1'
+    ]);
+    forEach($resultArray as $key => $result) {
+      if (json_encode($saveData->leadInformations) == $result) {
+        return $key;
+        break;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * リードリスト保存機能（ここでt_lead_list_settingsテーブルに情報が保存され、そのidだけアクション詳細に返却する
+   * @param Object $saveData アクション詳細
+   * @return Object          t_chatbot_scenarioに保存するアクション詳細
+   * */
+  private function _entryProcessForLeadRegister($saveData){
+    $leadListId = $this->_sameLeadList($saveData);
+    if (!empty($saveData->tLeadListSettingId) && $leadListId) {
+      $this->TLeadListSetting->read(null, $leadListId);
+      $saveData->tLeadListSettingId = strval($leadListId);
+    } else {
+      $this->TLeadListSetting->create();
+    }
+    $this->TLeadListSetting->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'list_name' => $saveData->leadTitleLabel,
+      'list_parameter' => json_encode($saveData->leadInformations)
+    ]);
+    $errors = $this->TLeadListSetting->validationErrors;
+    if(empty($errors)) {
+      $this->TLeadListSetting->save();
+      //IDが無い、或いは被りチェックで引っ掛かっていない場合
+      if(empty($saveData->tLeadListSettingId) || !$leadListId) {
+        $saveData->tLeadListSettingId = $this->TLeadListSetting->getLastInsertId();
+      }
+    } else {
+      $exception = new ChatbotScenarioException('バリデーションエラー');
+      $exception->setErrors($errors);
+      $exception->setLastPage($nextPage);
+      throw $exception;
+    }
+
+    // リード登録設定DBに保存した情報をオブジェクトから削除する
+    unset($saveData->leadTitleLabel);
+    unset($saveData->leadInformations);
+    unset($saveData->makeLeadTypeList);
+    return $saveData;
+
   }
 
   /**
@@ -914,36 +984,51 @@ sinclo@medialink-ml.co.jp
    * @return Object           t_chatbot_scenarioに保存するアクション詳細
    */
   private function _entryProcessForExternalApi($saveData) {
-    if (empty($saveData->tExternalApiConnectionId)) {
-      $this->TExternalApiConnection->create();
-    } else {
-      $this->TExternalApiConnection->read(null, $saveData->tExternalApiConnectionId);
-    }
-    $this->TExternalApiConnection->set([
-      'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'url' => $saveData->url,
-      'method_type' => $saveData->methodType,
-      'request_headers' => json_encode($saveData->requestHeaders),
-      'request_body' => $saveData->requestBody,
-      'responseType' => $saveData->responseType,
-      'response_body_maps' => json_encode($saveData->responseBodyMaps)
-    ]);
-
-    $validate = $this->TExternalApiConnection->validates();
-    $errors = $this->TExternalApiConnection->validationErrors;
-    if(empty($errors)){
-      $this->TExternalApiConnection->save();
-      if(empty($saveData->tExternalApiConnectionId)) {
-        $saveData->tExternalApiConnectionId = $this->TExternalApiConnection->getLastInsertId();
+    if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_API){
+      //連携タイプがAPI連携の場合
+      if (empty($saveData->tExternalApiConnectionId)) {
+        $this->TExternalApiConnection->create();
+      } else {
+        $this->TExternalApiConnection->read(null, $saveData->tExternalApiConnectionId);
       }
-    } else {
-      $exception = new ChatbotScenarioException('バリデーションエラー');
-      $exception->setErrors($errors);
-      $exception->setLastPage($nextPage);
-      throw $exception;
-    }
+      $this->TExternalApiConnection->set([
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'url' => $saveData->url,
+        'method_type' => $saveData->methodType,
+        'request_headers' => json_encode($saveData->requestHeaders),
+        'request_body' => $saveData->requestBody,
+        'responseType' => $saveData->responseType,
+        'response_body_maps' => json_encode($saveData->responseBodyMaps)
+      ]);
 
-    // 保存済みの設定をオブジェクトから削除する
+      $validate = $this->TExternalApiConnection->validates();
+      $errors = $this->TExternalApiConnection->validationErrors;
+      if(empty($errors)){
+        $this->TExternalApiConnection->save();
+        if(empty($saveData->tExternalApiConnectionId)) {
+          $saveData->tExternalApiConnectionId = $this->TExternalApiConnection->getLastInsertId();
+        }
+      } else {
+        $exception = new ChatbotScenarioException('バリデーションエラー');
+        $exception->setErrors($errors);
+        $exception->setLastPage($nextPage);
+        throw $exception;
+      }
+    //スクリプト連携に関する設定をオブジェクトから削除する
+    unset($saveData->externalScript);
+    } else
+    if($saveData->externalType == C_SCENARIO_EXTERNAL_TYPE_SCRIPT){
+    //連携タイプがスクリプトの場合
+      $scriptPattern = '/<(.*script.*)>/';
+      if(preg_match($scriptPattern,$saveData->externalScript)){
+        $exception = new ChatbotScenarioException('バリデーションエラー');
+        $exception->setErrors($errors);
+        $exception->setLastPage($nextPage);
+        throw $exception;
+      }
+    }
+    // API連携に関する設定をオブジェクトから削除する(共通)
+    // スクリプト連携の場合は不要、かつAPI連携の場合も別テーブルに保存される領域の為
     unset($saveData->url);
     unset($saveData->methodType);
     unset($saveData->requestHeaders);
@@ -1004,6 +1089,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioAttributeType', $this->chatbotScenarioAttributeType);
     // メール送信タイプ種別
     $this->set('chatbotScenarioSendMailType', $this->chatbotScenarioSendMailType);
+    // 外部連携種別
+    $this->set('chatbotScenarioExternalType', $this->chatbotScenarioExternalType);
     // API通信メソッド種別
     $this->set('chatbotScenarioApiMethodType', $this->chatbotScenarioApiMethodType);
     // API通信レスポンス種別
@@ -1016,6 +1103,8 @@ sinclo@medialink-ml.co.jp
     $this->set('chatbotScenarioBranchOnConditionActionType', $this->chatbotScenarioBranchOnConditionActionType);
     // 条件分岐アクション種別（上記を満たさない場合）
     $this->set('chatbotScenarioBranchOnConditionElseActionType', $this->chatbotScenarioBranchOnConditionElseActionType);
+    // リード登録リードリスト名種別
+    $this->set('chatbotScenarioLeadTypeList', $this->chatbotScenarioLeadTypeList);
     // ファイル受信用にcompany_keyをsetしておく
     $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
     // 最後に表示していたページ番号
@@ -1222,9 +1311,6 @@ sinclo@medialink-ml.co.jp
         switch ($key) {
           case 'chat':
             if ( !$this->coreSettings[C_COMPANY_USE_CHAT] ) { continue; }
-            if ( strcmp($v, 'chat_init_show_textarea') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['chat_init_show_textarea'] = C_AUTO_WIDGET_TEXTAREA_OPEN; // デフォルト値
-            }
             if ( strcmp($v, 'chat_radio_behavior') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['chat_radio_behavior'] = C_WIDGET_RADIO_CLICK_SEND; // デフォルト値
             }
@@ -1582,6 +1668,45 @@ sinclo@medialink-ml.co.jp
             if ( strcmp($v, 'widget_title_explain_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_title_explain_type'] = WIDGET_TITLE_EXPLAIN_TYPE_LEFT; // デフォルト値
             }
+
+            //スマホ小さなバナー縦の上から割合
+            if ( strcmp($v, 'sp_banner_vertical_position_from_top') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_vertical_position_from_top'] = "50%"; // デフォルト値
+            }
+
+            //スマホ小さなバナー縦の下から割合
+            /*if ( strcmp($v, 'sp_banner_vertical_position_from_bottom') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_vertical_position_from_bottom'] = "5px"; // デフォルト値
+            }*/
+
+            //スマホ小さなバナー横の割合
+            if ( strcmp($v, 'sp_banner_horizontal_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_horizontal_position'] = "5px"; // デフォルト値
+            }
+
+            /* スマホ用隠しパラメータend */
+
+            //スマホ_スクロール中の表示制御
+            if ( strcmp($v, 'sp_scroll_view_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d[' sp_scroll_view_setting'] = C_SP_SCROLL_VIEW_SETTING; // デフォルト値
+            }
+
+            //スマホ_小さなバナー表示位置
+            if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_position'] = $d['show_position']; // デフォルト値(PC版の右下・左下)
+            }
+
+            //スマホ_小さなバナーテキスト
+            if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_string($json[$v]))) ) {
+              $d['sp_banner_text'] = $d['bannertext']; // デフォルト値(PC版のテキスト)
+            }
+
+            //スマホ_ウィジェット状態フラグ
+            if ( strcmp($v, 'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_widget_view_pattern'] = C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER; // デフォルト値
+            }
+
+
             if ( isset($json[$v]) ) {
               $d[$v] = $json[$v];
             }
@@ -1684,7 +1809,118 @@ sinclo@medialink-ml.co.jp
     ]);
   }
 
+  private function _getLeadList() {
+    $dataSet = $this->TLeadListSetting->find('all', [
+      'fields' => ['TLeadListSetting.id', 'TLeadListSetting.list_name', 'TLeadListSetting.list_parameter'],
+      'order' => [
+        'TLeadListSetting.id' => 'asc'
+      ],
+      'conditions' => [
+        'TLeadListSetting.m_companies_id' => $this->userInfo['MCompany']['id']
+      ],
+      'group' => 'list_name'
+    ]);
+    $result = [];
+    forEach($dataSet as $data){
+      array_push($result, $data['TLeadListSetting']);
+    }
+    return $result;
+  }
+
   /**
+   * convert old data (inputType, selection action type) to new hearing structure
+   * @param $json
+   */
+  private function _convertOldDataToNewStructure(&$json)
+  {
+    $activity = json_decode($json);
+    foreach ($activity->scenarios as $key => &$action) {
+      // add restore
+      if (!isset($action->restore)) {
+        $action->restore = false;
+      }
+
+      if ($action->actionType == C_SCENARIO_ACTION_HEARING) {
+        foreach ($action->hearings as $key => &$param) {
+          // convert break line to uiType
+          if (!isset($param->uiType) && isset($param->inputLFType) && isset($param->inputType)) {
+            $param = $this->convertHearingTextType($param, $action->errorMessage);
+          }
+        }
+      } else if ($action->actionType == C_SCENARIO_ACTION_SELECT_OPTION) {
+        $action = (object)$this->convertSelectionToHearing($action);
+      }
+    }
+
+    $json = json_encode($activity);
+  }
+
+  /**
+   * convert selection to hearing
+   * @param $data
+   * @return mixed
+   */
+  private function convertSelectionToHearing($data)
+  {
+    $action = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default'];
+    $action['actionType'] = '2';
+    $action['restore'] = false;
+    $action['hearings'][0] = $this->convertHearingRadioButton($data);
+
+    return $action;
+  }
+
+  /**
+   * convert selection data to hearing radio button type data
+   * @param $data
+   * @return mixed
+   */
+  private function convertHearingRadioButton($data)
+  {
+    $radio = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default']['hearings'][0];
+    $radio['variableName'] = $data->selection->variableName;
+    $radio['message'] = $data->message;
+    $radio['uiType'] = '3'; // radio button type
+    $radio["settings"]["options"] = [];
+    foreach ($data->selection->options as $option) {
+      array_push($radio["settings"]["options"], $option);
+    }
+
+    return $radio;
+  }
+
+  /**
+   * convert inputType to uiType
+   * @param $data
+   * @param $errorMessage
+   * @return mixed
+   */
+  private function convertHearingTextType($data, $errorMessage)
+  {
+    $hearing = $this->chatbotScenarioActionList[C_SCENARIO_ACTION_HEARING]['default']['hearings'][0];
+    $hearing['variableName'] = $data->variableName;
+    $hearing['message'] = $data->message;
+    // 改行可 -> テキスト複数行
+    if ($data->inputLFType === '2') {
+      $hearing['uiType'] = '2';
+      // old input type is email or tel-> convert to text
+      $hearing['inputType'] = $data->inputType == 2 ? '2' : '1';
+    }
+    // 改行不可 -> テキスト一行
+    if ($data->inputLFType === '1') {
+      $hearing['uiType'] = '1';
+      $hearing['inputType'] = $data->inputType;
+    }
+
+    // convert error message if inputType is not text
+    if ($hearing['inputType'] !== '1') {
+      $hearing['errorMessage'] = $errorMessage;
+    }
+
+    return $hearing;
+  }
+
+      /**
    * アクションごとに必要な設定を追加する
    * @param Object $json activity
    */
@@ -1727,6 +1963,9 @@ sinclo@medialink-ml.co.jp
         // 外部システム連携設定
         if (!empty($action->tExternalApiConnectionId)) {
           $externalApiData = $this->TExternalApiConnection->findById($action->tExternalApiConnectionId);
+          if(!isset($action->externalType)){
+            $action->externalType = C_SCENARIO_EXTERNAL_TYPE_API;  //デフォルト値
+          }
           $action->url = $externalApiData['TExternalApiConnection']['url'];
           $action->methodType = $externalApiData['TExternalApiConnection']['method_type'];
           $action->requestHeaders = json_decode($externalApiData['TExternalApiConnection']['request_headers']);
@@ -1746,9 +1985,58 @@ sinclo@medialink-ml.co.jp
             'extension' => $this->getExtension($fileData['TChatbotScenarioSendFile']['file_name'])
           ];
         }
+      } else
+      if ($action->actionType == C_SCENARIO_ACTION_LEAD_REGISTER) {
+        if (!empty($action->tLeadListSettingId)) {
+          $action->makeLeadTypeList = C_SCENARIO_LEAD_USE;
+          if(!isset($action->makeLeadTypeList)){
+            $action->makeLeadTypeList = C_SCENARIO_LEAD_REGIST;
+          }
+          $leadData = $this->TLeadListSetting->findById($action->tLeadListSettingId);
+          $action->leadTitleLabel = $leadData['TLeadListSetting']['list_name'];
+          $action->leadInformations = json_decode($leadData['TLeadListSetting']['list_parameter']);
+          $this->request->data['leadList'][$key] = $this->leadInfoSet($key,$action->tLeadListSettingId);
+        }
       }
     }
     $json = json_encode($activity);
+  }
+
+  private function leadInfoSet($scenarioSeq,$targetId){
+    $target = $this->TLeadListSetting->find('first',[
+      'recursive' => -1,
+      'fields' => [
+        "id",
+        "list_name",
+        "list_parameter"
+      ],
+      'conditions' => [
+        "m_companies_id" => $this->userInfo['MCompany']['id'],
+        "id" => $targetId
+      ]
+    ]);
+
+    $targetArray[] = $target['TLeadListSetting'];
+    $targetName = $target['TLeadListSetting']['list_name'];
+
+    $targetList = $this->TLeadListSetting->find('all',[
+      'recursive' => -1,
+      'fields' => [
+        "id",
+        "list_name",
+        "list_parameter"
+      ],
+      'conditions' => [
+        "m_companies_id" => $this->userInfo['MCompany']['id'],
+        "list_name !=" => $targetName
+      ],
+      'group' => "list_name"
+    ]);
+    forEach($targetList as $value) {
+      $targetArray[] = $value['TLeadListSetting'];
+    }
+
+    return $targetArray;
   }
 
   /**
@@ -1805,5 +2093,68 @@ sinclo@medialink-ml.co.jp
 
   private function isDeletableScenario($scenarioCallerInfo) {
     return empty($scenarioCallerInfo) || (count($scenarioCallerInfo) === 1 && strcmp($scenarioCallerInfo[0], self::CALL_SELF_SCENARIO_NAME) === 0);
+  }
+
+  private function getStoredAllVariableList($ignoreId = 0) {
+    $variableList = array();
+    $scenarioList = $this->TChatbotScenario->find('all',array(
+      'conditions' => array(
+        'AND' => array(
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
+          'del_flg' => 0
+        ),
+        'NOT' => array(
+          'id' => $ignoreId
+        )
+      ),
+      'order' => array(
+        'sort' => 'asc'
+      )
+    ));
+    foreach($scenarioList as $key => $scenario) {
+      $activity = json_decode($scenario['TChatbotScenario']['activity'], TRUE);
+      foreach($activity['scenarios'] as $scequenceNum => $action) {
+        if($this->hasVariableInAction($action)) {
+          $variableList = array_merge($variableList, $this->getVariableListInAction($action));
+          $variableList = array_unique($variableList);
+          $variableList = array_diff($variableList, array(''));
+          $variableList = array_values($variableList);
+        }
+      }
+    }
+    return $variableList;
+  }
+
+  private function hasVariableInAction($action) {
+    return strcmp($action['actionType'], C_SCENARIO_ACTION_HEARING) === 0
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_SELECT_OPTION) === 0
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_EXTERNAL_API) === 0
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_GET_ATTRIBUTE) === 0
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_BULK_HEARING) === 0;
+  }
+
+  private function getVariableListInAction($action) {
+    $arr = array();
+    switch($action['actionType']) {
+      case C_SCENARIO_ACTION_HEARING:
+        foreach($action['hearings'] as $index => $hearing) {
+          array_push($arr, $hearing['variableName']);
+        }
+        break;
+      case C_SCENARIO_ACTION_SELECT_OPTION:
+        array_push($arr, $action['selection']['variableName']);
+        break;
+      case C_SCENARIO_ACTION_GET_ATTRIBUTE:
+        foreach($action['getAttributes'] as $index => $getAttribute) {
+          array_push($arr, $getAttribute['variableName']);
+        }
+        break;
+      case C_SCENARIO_ACTION_BULK_HEARING:
+        foreach($action['multipleHearings'] as $index => $multipleHearing) {
+          array_push($arr, $multipleHearing['variableName']);
+        }
+        break;
+    }
+    return $arr;
   }
 }

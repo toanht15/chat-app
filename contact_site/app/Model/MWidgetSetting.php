@@ -86,6 +86,10 @@ class MWidgetSetting extends AppModel {
       //23.ウィジット内枠線色
       'widget_inside_border_color' => "widgetInsideBorderColor",
       /* カラー設定end */
+      //メッセージBOX文字サイズ
+      'message_box_text_size' => "messageBoxTextSize",
+      //送信ボタン文字サイズ
+      'chat_send_btn_text_size' => "chatSendBtnTextSize",
 
       'btw_button_margin' => "btwButtonMargin",
       'line_button_margin' => "lineButtonMargin",
@@ -99,6 +103,15 @@ class MWidgetSetting extends AppModel {
       //最小化時デザイン対応
       'minimize_design_type' => "minimizeDesignType",
       //最小化時デザイン対応
+      //スマホ用設定
+      'sp_banner_position' => "spBannerPosition",
+      'sp_banner_text' => "spBannerText",
+      'sp_scroll_view_setting' => "spScrollViewSetting",
+      'sp_widget_view_pattern' => "spWidgetViewPattern",
+      'sp_banner_vertical_position_from_top' => "spBannerVerticalPositionFromTop",
+      'sp_banner_vertical_position_from_bottom' => "spBannerVerticalPositionFromBottom",
+      'sp_banner_horizontal_position' => "spBannerHorizontalPosition",
+      //スマホ用設定
       //閉じるボタン対応
       'close_button_setting' => "closeButtonSetting",
       'close_button_mode_type' => "closeButtonModeType",

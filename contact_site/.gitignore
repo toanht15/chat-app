@@ -3,6 +3,7 @@
 /app/Config/database.php
 /app/Config/myConst.php
 /app/tmp
+/app/Vendor/vendor/
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins
 /app/Plugin
@@ -12,6 +13,7 @@
 /tags
 *.mo
 /app/webroot/css/style.css
+/app/webroot/css/*.gz
 /app/webroot/css/modal.css
 /app/webroot/files/*
 !/app/webroot/files/tmp

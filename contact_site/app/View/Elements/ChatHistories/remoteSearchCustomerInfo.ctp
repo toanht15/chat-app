@@ -54,6 +54,11 @@ popupEvent.closePopup = function(){
       </li>
       <li>
         <p><span>成果</span></p>
+        <?php
+          if(!$coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) {
+            unset($achievementType[C_ACHIEVEMENT_TERMINATE_SCENARIO]);
+          }
+        ?>
         <span><label><?= $this->Form->input('THistoryChatLog.achievement_flg',['type' => 'select', 'empty' => ' ', 'options' => $achievementType, 'legend' => false, 'separator' => '</label><br><label>', 'label'=>false,'div' => false]) ?></label></span>
       </li>
       <li>

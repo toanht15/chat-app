@@ -13,12 +13,14 @@ class MWidgetSettingsController extends AppController {
       'display_style_type', 'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
-      /* カラー設定styat */
+      /* カラー設定start */
       'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
-      'message_box_text_color','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
+      'message_box_text_color','message_box_text_size','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_text_size','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
-      'btw_button_margin', 'line_button_margin'
+      /* 隠しパラメータstart */
+      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_scroll_view_setting','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
+      /* 隠しパラメータend */
     ],
     'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
     'chat' => ['chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
@@ -28,6 +30,7 @@ class MWidgetSettingsController extends AppController {
 
   public function beforeRender(){
     $this->set('title_for_layout', 'ウィジェット設定');
+    $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
   }
 
   /* *
@@ -211,11 +214,42 @@ class MWidgetSettingsController extends AppController {
         $descriptionLength = 20;
         break;
       case '3': //大
+      case '4': //最大
         $titleLength = 19;
         $subTitleLength = 24;
         $descriptionLength = 24;
         break;
     }
+    $maxFontSize = 20;
+    $maxHeaderFontSize = 20;
+    $maxSendBtnFontSize = 26;
+    switch ($inputData['MWidgetSetting']['widget_size_type']) {
+      //大きさにより各種フォントサイズのmaxを可変とする(最大のみ別設定)
+      case '1': //小
+        $maxFontSize = 20;
+        $maxHeaderFontSize = 20;
+        $maxSendBtnFontSize = 26;
+        break;
+      case '2': //中
+        $maxFontSize = 20;
+        $maxHeaderFontSize = 20;
+        $maxSendBtnFontSize = 30;
+        break;
+      case '3': //大
+        $maxFontSize = 20;
+        $maxHeaderFontSize = 20;
+        $maxSendBtnFontSize = 36;
+        break;
+      case '4': //最大
+        $maxFontSize = 64;
+        $maxHeaderFontSize = 42;
+        $maxSendBtnFontSize = 36;
+        break;
+    }
+
+    $this->set('max_fontsize', $maxFontSize);
+    $this->set('max_header_fontsize', $maxHeaderFontSize);
+    $this->set('max_send_btn_fontsize', $maxSendBtnFontSize);
     $this->set('titleLength_maxlength', $titleLength);
     $this->set('subTitleLength_maxlength', $subTitleLength);
     $this->set('descriptionLength_maxlength', $descriptionLength);
@@ -259,6 +293,8 @@ class MWidgetSettingsController extends AppController {
     $this->set('widgetRadioBtnBehaviorType', Configure::read('widgetRadioBtnBehaviorType'));
     $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
     $this->set('spMiximizeSizeType', Configure::read('widgetSpMiximizeSizeType'));
+    $this->set('widgetSpPositionType', Configure::read('widgetSpPositionType'));
+    $this->set('widgetSpViewPattern' , Configure::read('widgetSpViewPattern'));
   }
 
   /* *
@@ -327,6 +363,7 @@ class MWidgetSettingsController extends AppController {
           $description_message = '２０文字以内で設定してください';
           break;
         case '3': //大
+        case '4': //最大
           $titleLength = 19;
           $subTitleLength = 24;
           $descriptionLength = 24;
@@ -627,7 +664,11 @@ class MWidgetSettingsController extends AppController {
 
             // デフォルト値（プレミアムプランのみ表示する）
             if ( strcmp($v, 'show_access_id') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['show_access_id'] = C_SELECT_CAN_NOT;
+              if($this->coreSettings[C_COMPANY_USE_CHAT] && $this->coreSettings[C_COMPANY_USE_SYNCLO]){
+                $d['show_access_id'] = C_SELECT_CAN;
+              } else {
+                $d['show_access_id'] = C_SELECT_CAN_NOT;
+              }
             }
             //ウィジットサイズタイプ
             if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
@@ -654,6 +695,47 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'bannertext') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['bannertext'] = C_BANNER_TEXT; // デフォルト値
             }
+            /* スマホ用隠しパラメータstart *
+             * デフォルト値は機能が本格的に
+             * 実装されるまで設定しない    */
+
+            //スマホ小さなバナー縦の上から割合
+            if ( strcmp($v, 'sp_banner_vertical_position_from_top') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_vertical_position_from_top'] = "50%"; // デフォルト値
+            }
+
+            //スマホ小さなバナー縦の下から割合
+            /*if ( strcmp($v, 'sp_banner_vertical_position_from_bottom') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_vertical_position_from_bottom'] = "5px"; // デフォルト値
+            }*/
+
+            //スマホ小さなバナー横の割合
+            if ( strcmp($v, 'sp_banner_horizontal_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_horizontal_position'] = "5px"; // デフォルト値
+            }
+
+            /* スマホ用隠しパラメータend */
+
+            //スマホ_スクロール中の表示制御
+            if ( strcmp($v, 'sp_scroll_view_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d[' sp_scroll_view_setting'] = C_SP_SCROLL_VIEW_SETTING; // デフォルト値
+            }
+
+            //スマホ_小さなバナー表示位置
+            if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_banner_position'] = $d['show_position']; // デフォルト値(PC版の右下・左下)
+            }
+
+            //スマホ_小さなバナーテキスト
+            if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_string($json[$v]))) ) {
+              $d['sp_banner_text'] = $d['bannertext']; // デフォルト値(PC版のテキスト)
+            }
+
+            //スマホ_ウィジェット状態フラグ
+            if ( strcmp($v, 'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['sp_widget_view_pattern'] = C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER; // デフォルト値
+            }
+
             //閉じるボタン
             /* カラー設定styat */
             //0.通常設定・高度設定
@@ -684,6 +766,7 @@ class MWidgetSettingsController extends AppController {
                   break;
                 case 2:
                 case 3:
+                case 4:
                   $d['header_text_size'] = "15";
                   break;
                 default:
@@ -743,6 +826,7 @@ class MWidgetSettingsController extends AppController {
                   break;
                 case 2:
                 case 3:
+                case 4:
                   $d['re_text_size'] = "13";
                   break;
                 default:
@@ -804,6 +888,7 @@ class MWidgetSettingsController extends AppController {
                   break;
                 case 2:
                 case 3:
+                case 4:
                   $d['se_text_size'] = "13";
                   break;
                 default:
@@ -837,6 +922,24 @@ class MWidgetSettingsController extends AppController {
             if ( strcmp($v, 'message_box_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['message_box_background_color'] = MESSAGE_BOX_BACKGROUND_COLOR; // デフォルト値
             }
+            //メッセージBOX文字サイズ
+            if ( strcmp($v, 'message_box_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['message_box_text_size'] = "12";
+                  break;
+                case 2:
+                case 3:
+                case 4:
+                  $d['message_box_text_size'] = "13";
+                  break;
+                default:
+                  $d['message_box_text_size'] = "13"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
+            }
             //22.メッセージBOX枠線色
             if ( strcmp($v, 'message_box_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['message_box_border_color'] = MESSAGE_BOX_BORDER_COLOR; // デフォルト値
@@ -862,6 +965,24 @@ class MWidgetSettingsController extends AppController {
               else{
                 $d['chat_send_btn_background_color'] = CHAT_SEND_BTN_BACKGROUND_COLOR; // デフォルト値
               }
+            }
+            //送信ボタン文字サイズ
+            if ( strcmp($v, 'chat_send_btn_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              switch(intval($d['widget_size_type'])) {
+                case 1:
+                  $d['chat_send_btn_text_size'] = "12";
+                  break;
+                case 2:
+                case 3:
+                case 4:
+                  $d['chat_send_btn_text_size'] = "13";
+                  break;
+                default:
+                  $d['chat_send_btn_text_size'] = "13"; // 中
+                  break;
+              }
+              // 空文字列が設定されていると後続の処理で上書きされるためここでbreakする
+              break;
             }
             //26.ウィジット内枠線色
             if ( strcmp($v, 'widget_inside_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {

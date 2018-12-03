@@ -20,7 +20,7 @@ $headerNo = 1;
             <span class="require"><label>初期表示時のスタイル</label></span>
             <div ng-init="widgetDisplayTypeToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'display_style_type'))?>'">
               <label class="pointer choose" for="displayStyleType1"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="showNormalMaximized()" id="displayStyleType1" class="showHeader" value="1" ><?= $widgetDisplayStyleType[1] ?></label><br>
-              <label class="pointer choose" for="displayStyleType2"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="showNormalMinimized()" id="displayStyleType2" class="showHeader" value="2" ><?= $widgetDisplayStyleType[2] ?></label><br>
+              <label class="pointer choose ignore-click-event" for="displayStyleType2"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="showNormalMinimized()" id="displayStyleType2" class="showHeader" value="2" ><?= $widgetDisplayStyleType[2] ?></label><br>
               <label class="pointer choose" for="displayStyleType3"><input type="radio" name="data[MWidgetSetting][display_style_type]" ng-model="widgetDisplayTypeToggle" ng-click="switchWidget(4)" id="displayStyleType3" class="showHeader" value="3" ><?= $widgetDisplayStyleType[3] ?></label><br>
             </div>
           </li>
@@ -157,6 +157,14 @@ $headerNo = 1;
                   ]) ?></label></pre>
           </li>
           <?php if ( $this->Form->isFieldError('show_access_id') ) echo $this->Form->error('show_access_id', null, ['wrap' => 'li']); ?>
+          <?php else :?>
+          <?= $this->ngForm->input('show_access_id', [
+              'type' => 'hidden',
+              'legend' => false,
+              'div' => false,
+              'label' => false,
+              'error' => false
+            ]) ?>
           <?php endif; ?>
           <!-- Web接客コード表示 -->
         </ul>
@@ -174,6 +182,10 @@ $headerNo = 1;
               <label class="pointer choose" for="widgetSizeType1"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(1)" id="widgetSizeType1" class="showHeader" value="1" >小</label><br>
               <label class="pointer choose" for="widgetSizeType2"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(2)" id="widgetSizeType2" class="showHeader" value="2" >中</label><br>
               <label class="pointer choose" for="widgetSizeType3"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(3)" id="widgetSizeType3" class="showHeader" value="3" >大</label><br>
+              <?php if($coreSettings[C_COMPANY_USE_CHAT]): ?>
+              <label class="pointer choose" for="widgetSizeType4"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(4)" id="widgetSizeType4" class="showHeader" value="4" >最大</label><br>
+              <?php endif; ?>
+
             </div>
           </li>
           <!-- ウィジットサイズ -->
@@ -214,7 +226,8 @@ $headerNo = 1;
                 'required' => false,
                 'maxlength' => $subTitleLength_maxlength,
                 'error' => false,
-                'ng-maxlength' => "false"
+                'ng-maxlength' => "false",
+                'ng-change' => "changeSubtitle()"
             ];
             if(($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) && !$coreSettings[C_COMPANY_USE_CHAT]) {
               $subTitleOpt['ng-disabled'] = 'subTitleToggle == "2"';
@@ -258,13 +271,14 @@ $headerNo = 1;
               'label' => false,
               'maxlength' => $descriptionLength_maxlength,
               'error' => false,
-              'ng-maxlength' => "false"
+              'ng-maxlength' => "false",
+              'ng-change' => "changeDescription()"
             ],
             [
               'entity' => 'MWidgetSetting.description'
             ]) ?>
             <div ng-init="descriptionToggle ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_description'))?>'">
-              <label class="pointer" for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" >説明文を表示する</label><br><?=$description?>
+              <label class="pointer" for="showDescription1"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription1" value="1" ng-change="changeDescription()" >説明文を表示する</label><br><?=$description?>
                 <div ng-init="widget_title_explain_type ='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'widget_title_explain_type'))?>'" style = "margin-top: 0px; margin-left: 20px;" id = "widgetTitleExplainType">
                   <?php
                   if($this->data['MWidgetSetting']['show_description'] == 1) {
@@ -278,7 +292,7 @@ $headerNo = 1;
                   <label class="pointer choose" for="widgetTitleExplainType2" id = "widgetTitleExplainTypeLabel2" style = "display:<?=$display?>"><input type="radio" name="data[MWidgetSetting][widget_title_explain_type]" ng-model="widget_title_explain_type" id="widgetTitleExplainType2" class="showHeader" value="2">中央寄せ<br></label>
                 </div>
               <br>
-              <label class="pointer" for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" >説明文を表示しない</label>
+              <label class="pointer" for="showDescription2"><input type="radio" class="showHeader" name="data[MWidgetSetting][show_description]" ng-model="descriptionToggle" id="showDescription2" value="2" ng-change="changeDescription()" >説明文を表示しない</label>
             </div>
           </li>
           <?php if ($this->Form->isFieldError('description')) echo $this->Form->error('description', null, ['wrap' => 'li']); ?>
@@ -362,14 +376,14 @@ $headerNo = 1;
                 'type' => 'number',
                 'class' => 'showNormal',
                 'min' => '12',
-                'max' => '20',
-                'placeholder' => '',
+                'max' => $max_header_fontsize,
                 'div' => false,
                 'label' => false,
                 'maxlength' => 7,
                 'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                 'error' => false,
-                  'string-to-number' => true
+                'string-to-number' => true,
+                'ng-max' => "false"
               ],
               [
                 'entity' => 'MWidgetSetting.header_text_size'
@@ -414,14 +428,15 @@ $headerNo = 1;
                     'type' => 'number',
                     'class' => 'showNormal',
                     'min' => '10',
-                    'max' => '20',
+                    'max' => $max_fontsize,
                     'placeholder' => '',
                     'div' => false,
                     'label' => false,
                     'maxlength' => 7,
                     'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                     'error' => false,
-                    'string-to-number' => true
+                    'string-to-number' => true,
+                    'ng-max' => "false"
                   ],
                     [
                       'entity' => 'MWidgetSetting.re_text_size'
@@ -482,14 +497,15 @@ $headerNo = 1;
                     'type' => 'number',
                     'class' => 'showNormal',
                     'min' => '10',
-                    'max' => '20',
+                    'max' => $max_fontsize,
                     'placeholder' => '',
                     'div' => false,
                     'label' => false,
                     'maxlength' => 7,
                     'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                     'error' => false,
-                    'string-to-number' => true
+                    'string-to-number' => true,
+                    'ng-max' => "false"
                   ],
                     [
                       'entity' => 'MWidgetSetting.se_text_size'
@@ -738,6 +754,25 @@ $headerNo = 1;
                   [
                     'entity' => 'MWidgetSetting.message_box_text_color'
                   ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('message_box_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
+                  <!-- .メッセージBOX文字サイズ -->
+                  <span style="display: flex; height: 20px; width: 32em; justify-content: flex-start; align-items: center; margin-bottom: 15px;">
+                    <label>メッセージBOX文字サイズ</label>
+                    <?= $this->ngForm->input('message_box_text_size', [
+                      'type' => 'number',
+                      'class' => 'showNormal',
+                      'min' => '10',
+                      'max' => '36',
+                      'placeholder' => '',
+                      'div' => false,
+                      'label' => false,
+                      'maxlength' => 7,
+                      'style' => "width: 102px;",
+                      'error' => false,
+                      'string-to-number' => true
+                    ],
+                    [
+                      'entity' => 'MWidgetSetting.message_box_text_size'
+                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start; margin-left: 5px">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('message_box_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px; margin-left: 9px;" >標準に戻す</span></span>
                   <!-- 22.メッセージBOX枠線色 -->
                   <span style="height: 35px;"><label>メッセージBOX枠線色</label>
                   <?php if($message_box_border_color_flg){?>
@@ -812,6 +847,25 @@ $headerNo = 1;
                   [
                     'entity' => 'MWidgetSetting.chat_send_btn_text_color'
                   ]) ?><span class="greenBtn btn-shadow" ng-click="returnStandardColor('chat_send_btn_text_color')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; top: -50px; left: 285px;" >標準に戻す</span></span>
+                  <!-- .送信ボタン文字サイズ -->
+                  <span style="display: flex; height: 20px; width: 32em; justify-content: flex-start; align-items: center; margin-bottom: 15px;">
+                    <label>送信ボタン文字サイズ</label>
+                    <?= $this->ngForm->input('chat_send_btn_text_size', [
+                      'type' => 'number',
+                      'class' => 'showNormal',
+                      'min' => '10',
+                      'max' => $max_send_btn_fontsize,
+                      'div' => false,
+                      'label' => false,
+                      'maxlength' => 7,
+                      'style' => "width: 102px;margin-left: 25px",
+                      'error' => false,
+                      'string-to-number' => true,
+                      'ng-max' => "false"
+                    ],
+                    [
+                      'entity' => 'MWidgetSetting.chat_send_btn_text_size'
+                    ]) ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;margin-left:5px;">px</span><span class="greenBtn btn-shadow" ng-click="revertStandardTextSize('chat_send_btn_text_size')" style="width: 100px; text-align: center; padding: 4px; height: 25px; font-size: 0.9em; position: relative; left: 11px; margin-left: 10px;" >標準に戻す</span></span>
                   </div>
                   <!-- メッセージエリア部end -->
                 </div>
@@ -1012,6 +1066,7 @@ $headerNo = 1;
                   <label class="pointer choose" for="closeButtonModeType1" style="margin:10px 0 10px 20px;"><input type="radio" name="data[MWidgetSetting][close_button_mode_type]" ng-model="closeButtonModeTypeToggle" id="closeButtonModeType1" class="showHeader" value="1" ng-click="switchWidget(4)">小さなバナー表示</label><br>
                   <?= $this->ngForm->input('bannertext', [
                     'type' => 'text',
+                    'class' => 'ignore-click-event',
                     'placeholder' => 'バナーテキスト',
                     'ng-disabled' => 'closeButtonModeTypeToggle == "2"',
                     'style' => 'margin:10px 0 10px 40px;',
@@ -1024,12 +1079,40 @@ $headerNo = 1;
                   ],[
                     'entity' => 'MWidgetSetting.bannertext'
                   ]) ?><br>
-                  <label class="pointer choose" for="closeButtonModeType2" style="margin:10px 0 10px 20px;"><input type="radio" name="data[MWidgetSetting][close_button_mode_type]" ng-model="closeButtonModeTypeToggle" id="closeButtonModeType2" class="showHeader" value="2" ng-click="switchWidget(4)">非表示<br><s style="margin:0px 0px 0px 3.2em; display: inline-block;">※再アクセス時までウィジェットが表示されなくなります</s></label>
+                  <label class="pointer choose" for="closeButtonModeType2" style="margin:10px 0 10px 20px;"><input type="radio" name="data[MWidgetSetting][close_button_mode_type]" ng-model="closeButtonModeTypeToggle" id="closeButtonModeType2" class="showHeader" value="2" ng-click="hideWidget()">非表示<br><s style="margin:0px 0px 0px 3.2em; display: inline-block;">※再アクセス時までウィジェットが表示されなくなります</s></label>
                 </div>
               </div>
             </div>
           </li>
           <!-- 閉じるボタン -->
+          <?php /*スマホ隠しパラメータ*/ ?>
+          <?= $this->ngForm->input('sp_banner_vertical_position_from_top', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'default' => "50%"
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_banner_vertical_position_from_top'
+          ]) ?>
+          <?= $this->ngForm->input('sp_banner_vertical_position_from_bottom', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'default' => "5px"
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_banner_vertical_position_from_bottom'
+          ]) ?>
+          <?= $this->ngForm->input('sp_banner_horizontal_position', [
+            'type' => 'hidden',
+            'div' => false,
+            'label' => false,
+            'default' => "5px"
+          ],
+          [
+            'entity' => 'MWidgetSetting.sp_banner_horizontal_position'
+          ]) ?>
         </ul>
       </section>
 
@@ -1041,7 +1124,7 @@ $headerNo = 1;
           <li>
             <span class="require"><label>初期表示時の自由入力エリア</label></span>
             <?php if($coreSettings[C_COMPANY_USE_FREE_INPUT]): ?>
-              <div ng-init="chat_init_show_textarea='1'">
+              <div ng-init="chat_init_show_textarea='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'chat_init_show_textarea'))?>'">
                 <label class="pointer choose" for="MWidgetSettingChatInitShowTextarea1"><input type="radio" name="data[MWidgetSetting][chat_init_show_textarea]" ng-model="chat_init_show_textarea" id="MWidgetSettingChatInitShowTextarea1" class="showHeader" value="1" >表示する</label><br>
                 <label class="pointer choose" for="MWidgetSettingChatInitShowTextarea2"><input type="radio" name="data[MWidgetSetting][chat_init_show_textarea]" ng-model="chat_init_show_textarea" id="MWidgetSettingChatInitShowTextarea2" class="showHeader" value="2" >表示しない</label><br>
               </div>
@@ -1230,13 +1313,95 @@ $headerNo = 1;
           </li>
           <?php if ( $this->Form->isFieldError('sp_show_flg') ) echo $this->Form->error('sp_show_flg', null, ['wrap' => 'li']); ?>
           <!-- ウィジェットの表示   -->
-
+          <!-- スクロール中の表示制御 -->
+           <li>
+            <span class="require"><label>ウィジェットの表示制御</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_scroll_view_setting', [
+                'type' => 'checkbox',
+                'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
+                'ng-checked' => 'sp_scroll_view_setting ==="1"',
+                'legend' => false,
+                'separator' => '</label><br><label class="pointer">',
+                'div' => false,
+                'class' => 'showSp',
+                'label' => "スクロール中は非表示にする",
+                'error' => false
+              ],
+              [
+                'entity' => 'MWidgetSetting.sp_scroll_view_setting'
+              ]) ?></label></pre>
+          </li>
+          <!-- スクロール中の表示制御 -->
+          <!-- ウィジェットの状態 -->
+          <li>
+            <span class="require"><label>ウィジェットの状態</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_widget_view_pattern', [
+              'type' => 'radio',
+              'options' => $widgetSpViewPattern,
+              'ng-change' => 'resetSpView()',
+              'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'" || closeButtonModeTypeToggle == "2" || closeButtonSettingToggle == "1"',
+              'legend' => false,
+              'separator' => '</label><br><label class="pointer">',
+              'class' => 'showSp',
+              'div' => false,
+              'label' => false,
+              'string-to-number' => true,
+              'default' => 1
+            ],
+            [
+              'entity' => 'MWidgetSetting.sp_widget_view_pattern'
+            ]) ?></label></pre>
+          </li>
+          <!-- ウィジェットの状態 -->
+          <!-- 小さなバナーの表示位置 -->
+          <li>
+            <span class="require"><label>小さなバナー表示位置</label></span>
+            <pre><label class="pointer"><?= $this->ngForm->input('sp_banner_position', [
+              'type' => 'radio',
+              'options' => $widgetSpPositionType,
+              'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'" || closeButtonModeTypeToggle == "2" || closeButtonSettingToggle == "1"',
+              'legend' => false,
+              'ng-change' => 'forceSpCloseWidget()',
+              'separator' => '</label><br><label class="pointer">',
+              'class' => 'showSp',
+              'div' => false,
+              'label' => false,
+              'string-to-number' => true,
+              'default' => 1
+            ],
+            [
+              'entity' => 'MWidgetSetting.sp_banner_position'
+            ]) ?></label></pre>
+          </li>
+          <!-- 小さなバナーの表示位置 -->
+          <!-- 小さなバナーのタイトル -->
+          <li>
+            <span class="require"><label>小さなバナーのタイトル</label></span>
+            <pre><label><?= $this->ngForm->input('sp_banner_text', [
+              'type' => 'text',
+              'placeholder' => 'バナーテキスト',
+              'class' => 'ignore-click-event',
+              'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'" || closeButtonModeTypeToggle == "2" || closeButtonSettingToggle == "1"',
+              'div' => false,
+              'label' => false,
+              'maxlength' => 15,
+              'error' => false,
+              'ng-focus' => 'bannerEditClick(2)',
+              'ng-maxlength' => "false"
+            ],
+            [
+              'entity' => 'MWidgetSetting.sp_banner_text'
+            ]) ?></label></pre>
+          </li>
+          <!-- 小さなバナーのタイトル -->
           <!-- シンプル表示 -->
           <li>
             <span class="require"><label>最大時のシンプル表示</label></span>
             <pre><label class="pointer"><?= $this->ngForm->input('sp_header_light_flg', [
                 'type' => 'radio',
                 'options' => $normalChoices,
+                'class' => 'ignore-click-event',
+                'ng-change' => 'resetSpView()',
                 'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                 'legend' => false,
                 'separator' => '</label><br><label class="pointer">',
@@ -1281,12 +1446,12 @@ $headerNo = 1;
                   'options' => $spMiximizeSizeType,
                   'ng-disabled' => 'sp_show_flg !== "'.C_SELECT_CAN.'"',
                   'legend' => false,
+                  'ng-change' => 'switchWidget(3); resetSpView(); ',
                   'separator' => '</label><br><label class="pointer">',
                   'class' => 'showSp',
                   'div' => false,
                   'label' => false,
-                  'error' => false,
-                  'ng-change' => 'switchWidget(3)'
+                  'error' => false
                 ],
                   [
                     'entity' => 'MWidgetSetting.sp_maximize_size_type'

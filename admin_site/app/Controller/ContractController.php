@@ -7,15 +7,17 @@
  * @property TChatbotScenario $TChatbotScenario
  * @property MMailTransmissionSetting $MMailTransmissionSetting
  * @property MMailTemplate $MMailTemplate
+ * @property TLeadListSetting $TLeadListSetting
  */
 
 App::uses('AppController', 'Controller');
 App::uses('Folder', 'Utility');
 App::uses('File', 'Utility');
+
 class ContractController extends AppController
 {
-	const ML_MAIL_ADDRESS= "cloud-service@medialink-ml.co.jp";
-	const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS = "cloud-service@medialink-ml.co.jp";
+  const ML_MAIL_ADDRESS_AND_ALEX = "cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp";
   const API_CALL_TIMEOUT = 5;
   const COMPANY_NAME = "##COMPANY_NAME##";
   const PASSWORD = "##PASSWORD##";
@@ -58,7 +60,8 @@ class ContractController extends AppController
     'MSystemMailTemplate',
     'TSendSystemMailSchedule',
     'MJobMailTemplate',
-    'TChatbotScenario'
+    'TChatbotScenario',
+    'TLeadListSetting'
   );
 
   public $paginate = [
@@ -93,7 +96,7 @@ class ContractController extends AppController
         ],
       ],
       'conditions' => [
-          'MCompany.del_flg != ' => 1,
+        'MCompany.del_flg != ' => 1,
       ],
       'group' => [
         'MCompany.id'
@@ -101,10 +104,11 @@ class ContractController extends AppController
     ]
   ];
 
-  public function beforeFilter(){
+  public function beforeFilter()
+  {
     parent::beforeFilter();
     $this->set('title_for_layout', 'サイトキー管理');
-    $this->Auth->allow(['add','remoteSaveForm']);
+    $this->Auth->allow(['add', 'remoteSaveForm']);
     header('Access-Control-Allow-Origin: *');
   }
 
@@ -112,21 +116,23 @@ class ContractController extends AppController
    * 初期画面
    * @return void
    */
-  public function index() {
+  public function index()
+  {
     $this->set('title_for_layout', 'サイトキー管理');
     $this->set('companyList', $this->paginate('MCompany'));
   }
 
-  public function add() {
+  public function add()
+  {
     Configure::write('debug', 0);
-    if($this->isOverAllUserCountLimit()) {
+    if ($this->isOverAllUserCountLimit()) {
       $this->set('overLimitMessage', 'アカウントの登録上限数を超過しているため、新規に企業キーを登録できません。');
       return;
     }
 
     $this->set('title_for_layout', 'サイトキー登録');
 
-    if( $this->request->is('post') ) {
+    if ($this->request->is('post')) {
       $this->autoRender = false;
       $this->layout = "ajax";
       $data = $this->getParams();
@@ -141,23 +147,22 @@ class ContractController extends AppController
 
         $mailType = "false";
         //無料トライアルの場合
-        if($data['MCompany']['trial_flg'] == 1) {
-          foreach($mailTemplateData as $key => $mailTemplate) {
-            if($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_FREE_APPLICATION_TO_CUSTOMER) {
+        if ($data['MCompany']['trial_flg'] == 1) {
+          foreach ($mailTemplateData as $key => $mailTemplate) {
+            if ($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_FREE_APPLICATION_TO_CUSTOMER) {
               $mailType = $key;
             }
           }
-        }
-        //いきなり本契約の場合
+        } //いきなり本契約の場合
         else {
-          foreach($mailTemplateData as $key => $mailTemplate) {
-            if($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_APPLICATION_TO_CUSTOMER) {
+          foreach ($mailTemplateData as $key => $mailTemplate) {
+            if ($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_APPLICATION_TO_CUSTOMER) {
               $mailType = $key;
             }
           }
         }
 
-        if($mailType !== "false") {
+        if ($mailType !== "false") {
           $mailBodyData = $this->replaceAllMailConstString($data, $mailTemplateData[$mailType]['MSystemMailTemplate']['mail_body']);
           // 送信前にログを生成
           $this->TMailTransmissionLog->create();
@@ -195,30 +200,29 @@ class ContractController extends AppController
 
         $mailType = "false";
         //無料トライアルの場合
-        if($data['MCompany']['trial_flg'] == 1) {
-          foreach($mailTemplateData as $key => $mailTemplate) {
-            if($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_FREE_APPLICATION_TO_COMPANY) {
+        if ($data['MCompany']['trial_flg'] == 1) {
+          foreach ($mailTemplateData as $key => $mailTemplate) {
+            if ($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_FREE_APPLICATION_TO_COMPANY) {
               $mailType = $key;
             }
           }
-        }
-        else {
+        } else {
           //いきなり本契約の場合
-          foreach($mailTemplateData as $key => $mailTemplate) {
-            if($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_APPLICATION_TO_COMPANY) {
+          foreach ($mailTemplateData as $key => $mailTemplate) {
+            if ($mailTemplate['MSystemMailTemplate']['id'] == C_AFTER_APPLICATION_TO_COMPANY) {
               $mailType = $key;
             }
           }
         }
 
-        if($mailType !== 'false') {
+        if ($mailType !== 'false') {
           //会社向け
           $sender = new MailSenderComponent();
           $sender->setFrom($data['MAgreements']['application_mail_address']);
-          if(empty($data['MAgreements']['application_name'])) {
+          if (empty($data['MAgreements']['application_name'])) {
             $data['MAgreements']['application_name'] = '';
           }
-          $sender->setFromName($data['MCompany']['company_name'].'　'.$data['MAgreements']['application_name']);
+          $sender->setFromName($data['MCompany']['company_name'] . '　' . $data['MAgreements']['application_name']);
           $sender->setTo($this->getMailAddressAndAlex());
           $sender->setSubject($mailTemplateData[$mailType]['MSystemMailTemplate']['subject']);
 
@@ -232,35 +236,35 @@ class ContractController extends AppController
             'newCompanyId' => $addedCompanyInfo['id']
           ));
         }
-      } catch(Exception $e) {
-        $this->log("Exception Occured : ".$e->getMessage(), LOG_WARNING);
-        $this->log($e->getTraceAsString(),LOG_WARNING);
+      } catch (Exception $e) {
+        $this->log("Exception Occured : " . $e->getMessage(), LOG_WARNING);
+        $this->log($e->getTraceAsString(), LOG_WARNING);
         $this->response->statusCode(409);
         return json_encode([
           'success' => false,
           'message' => $e->getMessage()
         ], JSON_UNESCAPED_UNICODE);
       }
-    }
-    else {
+    } else {
       $businessModel = Configure::read('businessModelType');
-      $this->set('businessModel',$businessModel);
+      $this->set('businessModel', $businessModel);
     }
   }
 
-  private function replaceAllMailConstString($data, $mailTemplateData) {
-    if(!empty($data['MAgreements']['business_model'])) {
-      if($data['MAgreements']['business_model'] == 1) {
+  private function replaceAllMailConstString($data, $mailTemplateData)
+  {
+    if (!empty($data['MAgreements']['business_model'])) {
+      if ($data['MAgreements']['business_model'] == 1) {
         $data['MAgreements']['business_model'] = 'BtoB';
       }
-      if($data['MAgreements']['business_model'] == 2) {
+      if ($data['MAgreements']['business_model'] == 2) {
         $data['MAgreements']['business_model'] = 'BtoC';
       }
-      if($data['MAgreements']['business_model'] == 3) {
+      if ($data['MAgreements']['business_model'] == 3) {
         $data['MAgreements']['business_model'] = 'どちらも';
       }
     }
-    $mailBodyData = $this->replaceConstToString($data['MCompany']['company_name'],self::COMPANY_NAME, $mailTemplateData);
+    $mailBodyData = $this->replaceConstToString($data['MCompany']['company_name'], self::COMPANY_NAME, $mailTemplateData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['business_model'], self::BUSINESS_MODEL, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['application_department'], self::DEPARTMENT, $mailBodyData);
     $mailBodyData = $this->replaceConstToString($data['MAgreements']['application_position'], self::POSITION, $mailBodyData);
@@ -285,18 +289,19 @@ class ContractController extends AppController
     return $mailBodyData;
   }
 
-  private function replaceConstToString($string, $const, $body) {
-    if(!empty($string)) {
+  private function replaceConstToString($string, $const, $body)
+  {
+    if (!empty($string)) {
       return str_replace($const, $string, $body);
-    }
-    else {
+    } else {
       return str_replace($const, "", $body);
     }
   }
 
-  private function getPlanNameStr($data) {
+  private function getPlanNameStr($data)
+  {
     $planId = $data['MCompany']['m_contact_types_id'];
-    switch(intval($planId)) {
+    switch (intval($planId)) {
       case 1:
         return 'プレミアムプラン';
       case 2:
@@ -310,41 +315,46 @@ class ContractController extends AppController
     }
   }
 
-  private function getBeginDate($data) {
-    if(intval($data['MCompany']['trial_flg']) === 1) {
+  private function getBeginDate($data)
+  {
+    if (intval($data['MCompany']['trial_flg']) === 1) {
       return $data['MAgreements']['trial_start_day'];
     } else {
       return $data['MAgreements']['agreement_start_day'];
     }
   }
 
-  private function getEndDate($data) {
-    if(intval($data['MCompany']['trial_flg']) === 1) {
+  private function getEndDate($data)
+  {
+    if (intval($data['MCompany']['trial_flg']) === 1) {
       return $data['MAgreements']['trial_end_day'];
     } else {
       return $data['MAgreements']['agreement_end_day'];
     }
   }
 
-  private function getOptionCompanyInfoEnabled($data) {
-    if(!empty($data['MCompany']['options']['refCompanyData'])) {
+  private function getOptionCompanyInfoEnabled($data)
+  {
+    if (!empty($data['MCompany']['options']['refCompanyData'])) {
       return '企業情報付与オプション：あり';
     } else {
       return '企業情報付与オプション：なし';
     }
   }
 
-  private function getOptionChatbotScenario($data) {
-    if(!empty($data['MCompany']['options']['chatbotScenario'])) {
+  private function getOptionChatbotScenario($data)
+  {
+    if (!empty($data['MCompany']['options']['chatbotScenario'])) {
       return 'チャットボットシナリオオプション：あり';
     } else {
       return 'チャットボットシナリオオプション：なし';
     }
   }
 
-  private function getOptionLaCoBrowse($data) {
-    if(!empty($data['MCompany']['options']['laCoBrowse'])) {
-      return '画面キャプチャオプション：あり（最大同時セッション数：'.$data['MCompany']['la_limit_users'].'）';
+  private function getOptionLaCoBrowse($data)
+  {
+    if (!empty($data['MCompany']['options']['laCoBrowse'])) {
+      return '画面キャプチャオプション：あり（最大同時セッション数：' . $data['MCompany']['la_limit_users'] . '）';
     } else {
       return '画面キャプチャオプション：なし';
     }
@@ -357,11 +367,11 @@ class ContractController extends AppController
    * */
   public function edit($id)
   {
-      $this->MCompany->id = $id;
+    $this->MCompany->id = $id;
 
     if ($this->request->is('post') || $this->request->is('put')) {
       $companyEditData = $this->MCompany->read(null, $id);
-      $agreementEditData = $this->MAgreements->find('first',[
+      $agreementEditData = $this->MAgreements->find('first', [
           'conditions' => array(
             'm_companies_id' => $companyEditData['MCompany']['id']
           )]
@@ -376,16 +386,16 @@ class ContractController extends AppController
       $saveData['MCompany']['options']['hideRealtimeMonitor'] = !empty($coreSetting['hideRealtimeMonitor']) ? $coreSetting['hideRealtimeMonitor'] : false;
       $saveData['MCompany']['options']['monitorPollingMode'] = !empty($coreSetting['monitorPollingMode']) ? $coreSetting['monitorPollingMode'] : false;
       $companySaveData['MCompany']['core_settings'] = $this->getCoreSettingsFromContactTypesId($saveData['MCompany']['m_contact_types_id'], $saveData['MCompany']['options']);
-      $this->MCompany->save($companySaveData,false);
+      $this->MCompany->save($companySaveData, false);
       // 有効・無効でJSファイルの中身が変わるので書き換える
-      if(!$saveData['MCompany']['options']['laCoBrowse']) {
+      if (!$saveData['MCompany']['options']['laCoBrowse']) {
         $companySaveData['la_limit_users'] = 0;
       }
-      if($coreSetting['laCoBrowse'] !== boolval($saveData['MCompany']['options']['laCoBrowse'])) {
+      if ($coreSetting['laCoBrowse'] !== boolval($saveData['MCompany']['options']['laCoBrowse'])) {
         $this->addCompanyJSFile($companyEditData['MCompany']['company_key'], $saveData['MCompany']['options']['laCoBrowse']);
       }
 
-      if(empty($agreementEditData)) {
+      if (empty($agreementEditData)) {
         $this->MAgreements->create();
         $this->MAgreements->set([
           'm_companies_id' => $companyEditData['MCompany']['id'],
@@ -417,21 +427,21 @@ class ContractController extends AppController
     } else {
       $editData = $this->MCompany->read(null, $id);
       // オプションを別領域に設定
-      $editData['MCompany']['options']['refCompanyData'] = json_decode($editData['MCompany']['core_settings'],TRUE)['refCompanyData'];
-      $editData['MCompany']['options']['chatbotScenario'] = json_decode($editData['MCompany']['core_settings'],TRUE)['chatbotScenario'];
-      $editData['MCompany']['options']['laCoBrowse'] = json_decode($editData['MCompany']['core_settings'],TRUE)['laCoBrowse'];
+      $editData['MCompany']['options']['refCompanyData'] = json_decode($editData['MCompany']['core_settings'], TRUE)['refCompanyData'];
+      $editData['MCompany']['options']['chatbotScenario'] = json_decode($editData['MCompany']['core_settings'], TRUE)['chatbotScenario'];
+      $editData['MCompany']['options']['laCoBrowse'] = json_decode($editData['MCompany']['core_settings'], TRUE)['laCoBrowse'];
 
       // ここまで
-      $agreementData = $this->MAgreements->find('first',[
-        'conditions' => array(
-          'm_companies_id' => $editData['MCompany']['id']
-        )]
+      $agreementData = $this->MAgreements->find('first', [
+          'conditions' => array(
+            'm_companies_id' => $editData['MCompany']['id']
+          )]
       );
 
       $editData = array_merge($editData, $agreementData);
 
       $businessModel = Configure::read('businessModelType');
-      $this->set('businessModel',$businessModel);
+      $this->set('businessModel', $businessModel);
       $this->set('companyId', $editData['MCompany']['id']);//削除に必要なもの
       $this->set('companyKey', $editData['MCompany']['company_key']);//削除に必要なもの
 
@@ -439,8 +449,9 @@ class ContractController extends AppController
     }
   }
 
-  public function deleteCompany() {
-    if($this->request->is('post')) {
+  public function deleteCompany()
+  {
+    if ($this->request->is('post')) {
       $deleteTarget = $this->getParams();
 
       $transaction = $this->TransactionManager->begin();
@@ -449,7 +460,7 @@ class ContractController extends AppController
         // ユーザーの削除（論理削除）
         $data = array(
           'MUser.del_flg' => '1',
-          'MUser.deleted' => '"'.date('Y-m-d H:i:s').'"'
+          'MUser.deleted' => '"' . date('Y-m-d H:i:s') . '"'
         );
         $conditions = array(
           'MUser.m_companies_id' => $deleteTarget['id'],
@@ -465,9 +476,9 @@ class ContractController extends AppController
         $deleteCompanyFields = array('del_flg', 'deleted');
         $this->MCompany->save($deleteCompanyData, false, $deleteCompanyFields);
 
-      } catch(Exception $e) {
+      } catch (Exception $e) {
         $this->TransactionManager->rollback($transaction);
-        $this->log("Delete Exception Occured : ".$e->getMessage(), LOG_WARNING);
+        $this->log("Delete Exception Occured : " . $e->getMessage(), LOG_WARNING);
       }
       $this->TransactionManager->commit($transaction);
     }
@@ -475,11 +486,13 @@ class ContractController extends AppController
   }
 
 
-  private function getParams() {
+  private function getParams()
+  {
     return $this->request->data;
   }
 
-  private function validateParams($action) {
+  private function validateParams($action)
+  {
 
   }
 
@@ -491,11 +504,12 @@ class ContractController extends AppController
    * @return 一番最後に追加した
    * @throws Exception
    */
-  public function processTransaction($companyInfo, $userInfo, $agreementInfo) {
+  public function processTransaction($companyInfo, $userInfo, $agreementInfo)
+  {
     try {
       $transaction = $this->TransactionManager->begin();
       $addedCompanyInfo = $this->createCompany($companyInfo);
-      $this->createAgreementInfo($addedCompanyInfo, $companyInfo,$userInfo,$agreementInfo);
+      $this->createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo);
       $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo, $agreementInfo);
       $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
       $this->addDefaultCustomerInformationSettings($addedCompanyInfo['id'], $companyInfo);
@@ -513,8 +527,9 @@ class ContractController extends AppController
     return $addedCompanyInfo;
   }
 
-  private function upgradeProcess($beforeContactTypeId, $afterContactTypeId, $targetCompanyId, $companyInfo) {
-    if(strcmp($beforeContactTypeId, $afterContactTypeId) === 0) {
+  private function upgradeProcess($beforeContactTypeId, $afterContactTypeId, $targetCompanyId, $companyInfo)
+  {
+    if (strcmp($beforeContactTypeId, $afterContactTypeId) === 0) {
       // プラン変更なし
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
@@ -580,7 +595,8 @@ class ContractController extends AppController
   /**
    * @return 一番最後に追加した
    */
-  private function createCompany($companyInfo) {
+  private function createCompany($companyInfo)
+  {
     try {
       $companyKey = $this->generateCompanyKey();
       $insertData = [
@@ -599,72 +615,73 @@ class ContractController extends AppController
       $this->MCompany->create();
       $this->MCompany->set($insertData);
       $this->MCompany->save();
-    } catch(Exception $e) {
+    } catch (Exception $e) {
       throw $e;
     }
     return [
-        'id' => $this->MCompany->getLastInsertID(),
-        'companyKey' => $companyKey,
-        'core_settings' => json_decode($this->getCoreSettingsFromContactTypesId($companyInfo['m_contact_types_id'], $companyInfo['options']), TRUE)
+      'id' => $this->MCompany->getLastInsertID(),
+      'companyKey' => $companyKey,
+      'core_settings' => json_decode($this->getCoreSettingsFromContactTypesId($companyInfo['m_contact_types_id'], $companyInfo['options']), TRUE)
     ];
   }
 
-  private function createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo) {
+  private function createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo)
+  {
     $password = $this->generateRandomPassword(8);
 
     $this->MAgreements->create();
-    if(empty($agreementInfo['application_name'])) {
+    if (empty($agreementInfo['application_name'])) {
       $agreementInfo['application_name'] = "";
     }
-    if(empty($agreementInfo['application_department'])) {
+    if (empty($agreementInfo['application_department'])) {
       $agreementInfo['application_department'] = "";
     }
-    if(empty($agreementInfo['application_position'])) {
+    if (empty($agreementInfo['application_position'])) {
       $agreementInfo['application_position'] = "";
     }
-    if(empty($agreementInfo['installation_url'])) {
+    if (empty($agreementInfo['installation_url'])) {
       $agreementInfo['installation_url'] = "";
     }
-    if(empty($agreementInfo['telephone_number'])) {
+    if (empty($agreementInfo['telephone_number'])) {
       $agreementInfo['telephone_number'] = "";
     }
-    if(empty($agreementInfo['business_model'])) {
+    if (empty($agreementInfo['business_model'])) {
       $agreementInfo['business_model'] = "";
     }
-    if(empty($agreementInfo['note'])) {
+    if (empty($agreementInfo['note'])) {
       $agreementInfo['note'] = "";
     }
-    if(empty($agreementInfo['agreement_start_day'])) {
+    if (empty($agreementInfo['agreement_start_day'])) {
       $agreementInfo['agreement_start_day'] = "";
     }
-    if(empty($agreementInfo['agreement_end_day'])) {
+    if (empty($agreementInfo['agreement_end_day'])) {
       $agreementInfo['agreement_end_day'] = "";
     }
-    if(empty($agreementInfo['trial_start_day'])) {
+    if (empty($agreementInfo['trial_start_day'])) {
       $agreementInfo['trial_start_day'] = "";
     }
-    if(empty($agreementInfo['trial_end_day'])) {
+    if (empty($agreementInfo['trial_end_day'])) {
       $agreementInfo['trial_end_day'] = "";
     }
-    if(empty($agreementInfo['memo'])) {
+    if (empty($agreementInfo['memo'])) {
       $agreementInfo['memo'] = "";
     }
 
     $applicationMailAddress = '';
-    if(!empty($agreementInfo['application_mail_address'])) {
+    if (!empty($agreementInfo['application_mail_address'])) {
       $applicationMailAddress = $agreementInfo['application_mail_address'];
-    } else if(!empty($userInfo["user_mail_address"])) {
+    } else if (!empty($userInfo["user_mail_address"])) {
       $applicationMailAddress = $userInfo["user_mail_address"];
     }
 
     $administratorMailAddress = '';
-    if(!empty($agreementInfo['administrator_mail_address'])) {
+    if (!empty($agreementInfo['administrator_mail_address'])) {
       $administratorMailAddress = $agreementInfo['administrator_mail_address'];
-    } else if(!empty($userInfo["user_mail_address"])) {
+    } else if (!empty($userInfo["user_mail_address"])) {
       $administratorMailAddress = $userInfo["user_mail_address"];
     }
 
-      $this->MAgreements->set([
+    $this->MAgreements->set([
       'm_companies_id' => $addedCompanyInfo['id'],
       'company_name' => $companyInfo['company_name'],
       'business_model' => $agreementInfo['business_model'],
@@ -692,73 +709,76 @@ class ContractController extends AppController
       "m_companies_id" => $addedCompanyInfo['id'],
       "user_name" => 'MLAdmin',
       "display_name" => 'MLAdmin',
-      "mail_address" => $addedCompanyInfo['companyKey'].C_MAGREEMENT_MAIL_ADDRESS,
+      "mail_address" => $addedCompanyInfo['companyKey'] . C_MAGREEMENT_MAIL_ADDRESS,
       "permission_level" => C_AUTHORITY_SUPER,
       "new_password" => $password
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
-    if(!$this->MUser->validates()) {
+    if (!$this->MUser->validates()) {
       throw new Exception("MUser validation error");
     }
     $this->MAgreements->save();
     $this->MUser->save();
   }
 
-  private function createFirstAdministratorUser($m_companies_id, $userInfo, $agreementInfo) {
+  private function createFirstAdministratorUser($m_companies_id, $userInfo, $agreementInfo)
+  {
     $userInfo["user_name"] = 'テストユーザー';
     $userInfo["user_display_name"] = 'テストユーザー';
     $mailAddress = '';
-    if(!empty($agreementInfo['administrator_mail_address'])) {
+    if (!empty($agreementInfo['administrator_mail_address'])) {
       $mailAddress = $agreementInfo['administrator_mail_address'];
     }
 
     $errors = [];
     $tmpData = [
-        "m_companies_id" => $m_companies_id,
-        "user_name" => $userInfo["user_name"],
-        "display_name" => $userInfo["user_display_name"],
-        "mail_address" => $mailAddress,
-        "change_password_flg" => !empty($userInfo['no_change_password_flg']) ? $userInfo['no_change_password_flg'] : C_NO_CHANGE_PASSWORD_FLG,
-        "permission_level" => C_AUTHORITY_ADMIN,
-        "new_password" => $userInfo["user_password"]
+      "m_companies_id" => $m_companies_id,
+      "user_name" => $userInfo["user_name"],
+      "display_name" => $userInfo["user_display_name"],
+      "mail_address" => $mailAddress,
+      "change_password_flg" => !empty($userInfo['no_change_password_flg']) ? $userInfo['no_change_password_flg'] : C_NO_CHANGE_PASSWORD_FLG,
+      "permission_level" => C_AUTHORITY_ADMIN,
+      "new_password" => $userInfo["user_password"]
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
-    if(!$this->MUser->validates()) {
+    if (!$this->MUser->validates()) {
       $this->MAgreements->rollback();
       $this->MUser->rollback();
       throw new Exception(json_encode($this->MUser->validationErrors, JSON_UNESCAPED_UNICODE));
-    }
-    else {
+    } else {
       $this->MUser->save();
     }
   }
 
-  private function createSuperAdministratorUser($addedCompanyInfo, $userInfo) {
+  private function createSuperAdministratorUser($addedCompanyInfo, $userInfo)
+  {
     $password = $this->generateRandomPassword(8);
     $tmpData = [
       "m_companies_id" => $addedCompanyInfo['id'],
       "user_name" => 'MLAdmin',
       "display_name" => 'MLAdmin',
-      "mail_address" => $addedCompanyInfo['companyKey'].C_MAGREEMENT_MAIL_ADDRESS,
+      "mail_address" => $addedCompanyInfo['companyKey'] . C_MAGREEMENT_MAIL_ADDRESS,
       "permission_level" => C_AUTHORITY_SUPER,
       "new_password" => $password
     ];
     $this->MUser->create();
     $this->MUser->set($tmpData);
-    if(!$this->MUser->validates()) {
+    if (!$this->MUser->validates()) {
       throw new Exception(json_encode($this->MUser->validationErrors, JSON_UNESCAPED_UNICODE));
     }
     $this->MUser->save();
   }
 
-  private function addDefaultChatPersonalSettings($m_companies_id, $companyInfo) {
-    if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+  private function addDefaultChatPersonalSettings($m_companies_id, $companyInfo)
+  {
+    if (!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
     $default = $this->getDefaultChatBasicConfigurations($companyInfo['options']['chatbotScenario']);
     $this->MChatSetting->create();
     $this->MChatSetting->set(array(
       "m_companies_id" => $m_companies_id,
+      "sc_login_default_status" => $default['sc_login_default_status'],
       "sc_flg" => $default['sc_flg'],
       "in_flg" => $default['in_flg'],
       "sc_default_num" => $default['sc_default_num'],
@@ -771,9 +791,10 @@ class ContractController extends AppController
     $this->MChatSetting->save();
   }
 
-  private function addDefaultCustomerInformationSettings($m_companies_id, $companyInfo) {
+  private function addDefaultCustomerInformationSettings($m_companies_id, $companyInfo)
+  {
     $default = $this->getDefaultCustomerInformationSettings();
-    foreach($default as $index => $data) {
+    foreach ($default as $index => $data) {
       $this->TCustomerInformationSetting->create();
       $this->TCustomerInformationSetting->set(array(
         "m_companies_id" => $m_companies_id,
@@ -789,30 +810,32 @@ class ContractController extends AppController
     }
   }
 
-  private function addDefaultWidgetSettings($m_companies_id, $companyInfo) {
+  private function addDefaultWidgetSettings($m_companies_id, $companyInfo)
+  {
     $default = $this->getWidgetSettingsFromContactTypesId($companyInfo['m_contact_types_id']);
     $styleSettings = $default;
     // 設定保持の構造上display_typeを持ってしまっているがstyle_settingsにはいらないため省く
     unset($styleSettings['display_type']);
     $this->MWidgetSetting->create();
     $this->MWidgetSetting->set([
-        "m_companies_id" => $m_companies_id,
-        "display_type" => $default['display_type'],
-        "style_settings" => json_encode($styleSettings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
+      "m_companies_id" => $m_companies_id,
+      "display_type" => $default['display_type'],
+      "style_settings" => json_encode($styleSettings, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT)
     ]);
     $this->MWidgetSetting->save();
   }
 
-  private function addDefaultAutoMessages($m_companies_id, $companyInfo, $addedRelationScenarioIds) {
-    if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
-    $autoMessages = $this->TAutoMessages->find('all',[
-      'conditions' => array(
-        'm_companies_id' => $m_companies_id
-      )]
+  private function addDefaultAutoMessages($m_companies_id, $companyInfo, $addedRelationScenarioIds)
+  {
+    if (!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $autoMessages = $this->TAutoMessages->find('all', [
+        'conditions' => array(
+          'm_companies_id' => $m_companies_id
+        )]
     );
-    if(empty($autoMessages)) {
+    if (empty($autoMessages)) {
       $default = $this->getDefaultAutomessageConfigurations($companyInfo['options']['chatbotScenario']);
-      foreach($default as $index => $item) {
+      foreach ($default as $index => $item) {
         $this->TAutoMessages->create();
         $data = [
           "m_companies_id" => $m_companies_id,
@@ -823,7 +846,7 @@ class ContractController extends AppController
           "sort" => $item['sort'],
           "active_flg" => $item['active_type']
         ];
-        if(array_key_exists($index, $addedRelationScenarioIds) && array_key_exists('t_chatbot_scenario_id', $item)) {
+        if (array_key_exists($index, $addedRelationScenarioIds) && array_key_exists('t_chatbot_scenario_id', $item)) {
           $data['t_chatbot_scenario_id'] = $addedRelationScenarioIds[$index];
         }
         $this->TAutoMessages->set($data);
@@ -832,14 +855,15 @@ class ContractController extends AppController
     }
   }
 
-  private function addDefaultDictionaries($m_companies_id, $companyInfo) {
-    if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
-    $dictionaries = $this->TDictionaries->find('all',[
+  private function addDefaultDictionaries($m_companies_id, $companyInfo)
+  {
+    if (!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $dictionaries = $this->TDictionaries->find('all', [
         'conditions' => array(
           'm_companies_id' => $m_companies_id
         )]
     );
-    if(empty($dictionaries)) {
+    if (empty($dictionaries)) {
       // まずカテゴリ[定型文]を入れる
       $this->TDictionaryCategory->create();
       $this->TDictionaryCategory->set([
@@ -852,11 +876,11 @@ class ContractController extends AppController
 
       //カテゴリに紐づく定型文を入れる
       $default = $this->getDefaultDictionaryConfigurations();
-      foreach($default as $item) {
+      foreach ($default as $item) {
         $this->TDictionaries->create();
         $this->TDictionaries->set([
           "m_companies_id" => $m_companies_id,
-          "m_user_id" =>  0, // 共有設定なので0固定
+          "m_user_id" => 0, // 共有設定なので0固定
           "m_category_id" => $categoryId,
           "word" => $item['word'],
           "type" => $item['type'],
@@ -867,15 +891,16 @@ class ContractController extends AppController
     }
   }
 
-  private function addDefaultMailTemplate($m_companies_id, $companyInfo) {
-    if(!$this->isAdvancedChatEnable($companyInfo['m_contact_types_id'])) return;
+  private function addDefaultMailTemplate($m_companies_id, $companyInfo)
+  {
+    if (!$this->isAdvancedChatEnable($companyInfo['m_contact_types_id'])) return;
     $default = $this->getDefaultMailTemplateConfigurations();
-    foreach($default as $key => $item) {
+    foreach ($default as $key => $item) {
       $this->MMailTemplate->create();
       $this->MMailTemplate->set([
-         'm_companies_id' => $m_companies_id,
-         'mail_type_cd' => $key,
-         'template' => $item
+        'm_companies_id' => $m_companies_id,
+        'mail_type_cd' => $key,
+        'template' => $item
       ]);
       $this->MMailTemplate->save();
     }
@@ -889,20 +914,22 @@ class ContractController extends AppController
    * @param bool $forceInsert
    * @throws Exception
    */
-  public function addDefaultScenarioMessage($m_companies_id, $companyInfo, $forceInsert = false) {
+  public function addDefaultScenarioMessage($m_companies_id, $companyInfo, $forceInsert = false)
+  {
     $autoMessageRelationAssoc = array();
-    if(!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
-    $scenarios = $this->TChatbotScenario->find('all',array(
-        'conditions' => array(
-          'm_companies_id' => $m_companies_id
-        )
+    if (!$this->isChatEnable($companyInfo['m_contact_types_id'])) return;
+    $scenarios = $this->TChatbotScenario->find('all', array(
+      'conditions' => array(
+        'm_companies_id' => $m_companies_id
+      )
     ));
-    if(empty($scenarios)) {
+    if (empty($scenarios)) {
       $default = $this->getDefaultScenarioConfigurations();
-      foreach($default as &$scenario) {
+      $savedLeadList = array();
+      foreach ($default as &$scenario) {
         $actions = &$scenario['activity']['scenarios'];
-        foreach($actions as &$action) {
-          if(strcmp($action['actionType'], 4) === 0) {
+        foreach ($actions as &$action) {
+          if (strcmp($action['actionType'], 4) === 0) {
             // メール転送設定とテンプレート設定を追加
             $mailTransmissionSetting = $action['mailTransmission'];
             $mailTemplateSetting = $action['mailTemplate'];
@@ -914,7 +941,7 @@ class ContractController extends AppController
               'to_address' => $mailTransmissionSetting['to_address'],
               'subject' => $mailTransmissionSetting['subject']
             ));
-            if(!$this->MMailTransmissionSetting->save()) {
+            if (!$this->MMailTransmissionSetting->save()) {
               throw new Exception('シナリオのメール送信設定登録に失敗しました');
             }
             unset($action['mailTransmission']);
@@ -926,15 +953,14 @@ class ContractController extends AppController
               'mail_type_cd' => $mailTemplateSetting['mail_type_cd'],
               'template' => $mailTemplateSetting['template']
             ));
-            if(!$this->MMailTemplate->save()) {
+            if (!$this->MMailTemplate->save()) {
               throw new Exception('シナリオのメールテンプレート設定登録に失敗しました');
             }
             unset($action['mailTemplate']);
             $action['mMailTemplateId'] = $this->MMailTemplate->getLastInsertId();
-          }
-          else if(strcmp($action['actionType'], 11) === 0) { // 訪問ユーザ登録
+          } else if (strcmp($action['actionType'], 11) === 0) { // 訪問ユーザ登録
             $addCustomerInformations = &$action['addCustomerInformations'];
-            foreach($addCustomerInformations as $index => &$addCustomerInformation) {
+            foreach ($addCustomerInformations as $index => &$addCustomerInformation) {
               $customerInfoSetting = $this->TCustomerInformationSetting->find('first', array(
                 'conditions' => array(
                   'm_companies_id' => $m_companies_id,
@@ -945,6 +971,24 @@ class ContractController extends AppController
               unset($addCustomerInformation['targetItemName']);
               $addCustomerInformation['targetId'] = $customerInfoSetting['TCustomerInformationSetting']['id'];
             }
+          } else if (strcmp($action['actionType'], 13) === 0) { // リードリスト登録
+            $leadListSettings = $action['settings'];
+            if (empty($savedLeadList) || !array_key_exists($leadListSettings['leadTitleLabel'], $savedLeadList)) {
+              $this->TLeadListSetting->create();
+              $this->TLeadListSetting->set(array(
+                'm_companies_id' => $m_companies_id,
+                'list_name' => $leadListSettings['leadTitleLabel'],
+                'list_parameter' => json_encode($leadListSettings['leadInformations'])
+              ));
+              if (!$this->TLeadListSetting->save()) {
+                throw new Exception('シナリオのリードリスト設定登録に失敗しました');
+              }
+              $action['tLeadListSettingId'] = $this->TLeadListSetting->getLastInsertId();
+              $savedLeadList[$leadListSettings['leadTitleLabel']] = $action['tLeadListSettingId'];
+            } else {
+              $action['tLeadListSettingId'] = $savedLeadList[$leadListSettings['leadTitleLabel']];
+            }
+            unset($action['settings']);
           }
         }
         $this->TChatbotScenario->create();
@@ -955,12 +999,14 @@ class ContractController extends AppController
           "del_flg" => $scenario['del_flg'],
           "sort" => $scenario['sort']
         ));
-        $this->TChatbotScenario->save();
-        if(array_key_exists('relation_auto_message_index', $scenario)) {
+        if (!$this->TChatbotScenario->save()) {
+          throw new Exception($this->TChatbotScenario->validationError);
+        }
+        if (array_key_exists('relation_auto_message_index', $scenario)) {
           $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
         }
       }
-    } else if($forceInsert) {
+    } else if ($forceInsert) {
       // 既存設定があることを考慮して今のソート番号を取得
       $lastScenario = $this->TChatbotScenario->find('first', array(
         'conditions' => array(
@@ -971,14 +1017,14 @@ class ContractController extends AppController
         )
       ));
       $sortNum = 0;
-      if(!empty($lastScenario)) {
+      if (!empty($lastScenario)) {
         $sortNum = (int)$lastScenario['TChatbotScenario']['sort'];
       }
       $default = $this->getDefaultScenarioConfigurations();
-      foreach($default as &$scenario) {
+      foreach ($default as &$scenario) {
         $actions = &$scenario['activity']['scenarios'];
-        foreach($actions as &$action) {
-          if(strcmp($action['actionType'], 4) === 0) {
+        foreach ($actions as &$action) {
+          if (strcmp($action['actionType'], 4) === 0) {
             // メール転送設定とテンプレート設定を追加
             $mailTransmissionSetting = $action['mailTransmission'];
             $mailTemplateSetting = $action['mailTemplate'];
@@ -990,7 +1036,7 @@ class ContractController extends AppController
               'to_address' => $mailTransmissionSetting['to_address'],
               'subject' => $mailTransmissionSetting['subject']
             ));
-            if(!$this->MMailTransmissionSetting->save()) {
+            if (!$this->MMailTransmissionSetting->save()) {
               throw new Exception('シナリオのメール送信設定登録に失敗しました');
             }
             unset($action['mailTransmission']);
@@ -1002,7 +1048,7 @@ class ContractController extends AppController
               'mail_type_cd' => $mailTemplateSetting['mail_type_cd'],
               'template' => $mailTemplateSetting['template']
             ));
-            if(!$this->MMailTemplate->save()) {
+            if (!$this->MMailTemplate->save()) {
               throw new Exception('シナリオのメールテンプレート設定登録に失敗しました');
             }
             unset($action['mailTransmission']);
@@ -1018,8 +1064,10 @@ class ContractController extends AppController
           "del_flg" => $scenario['del_flg'],
           "sort" => $sortNum
         ));
-        $this->TChatbotScenario->save();
-        if(array_key_exists('relation_auto_message_index', $scenario)) {
+        if (!$this->TChatbotScenario->save()) {
+          throw new Exception($this->TChatbotScenario->validationError);
+        }
+        if (array_key_exists('relation_auto_message_index', $scenario)) {
           $autoMessageRelationAssoc[$scenario['relation_auto_message_index']] = $this->TChatbotScenario->getLastInsertId();
         }
       }
@@ -1027,36 +1075,40 @@ class ContractController extends AppController
     return $autoMessageRelationAssoc;
   }
 
-  private function addCompanyJSFile($companyKey, $isLaCoBrowseEnabled) {
+  private function addCompanyJSFile($companyKey, $isLaCoBrowseEnabled)
+  {
     $path = C_COMPANY_JS_TEMPLATE_FILE;
-    if($isLaCoBrowseEnabled) {
+    if ($isLaCoBrowseEnabled) {
       $path = C_COMPANY_LA_JS_TEMPLATE_FILE;
     }
     $templateData = new File($path);
     $contents = $templateData->read();
     $companyKeyReplaced = str_replace('##COMPANY_KEY##', $companyKey, $contents);
-    $nodeServerReplaced = str_replace('##NODE_SERVER_URL##',C_NODE_SERVER_ADDR.C_NODE_SERVER_WS_PORT, $companyKeyReplaced);
-    $replacedContents = str_replace('##LA_SERVER_URL##',C_LA_SERVER_ADDR, $nodeServerReplaced);
+    $nodeServerReplaced = str_replace('##NODE_SERVER_URL##', C_NODE_SERVER_ADDR . C_NODE_SERVER_WS_PORT, $companyKeyReplaced);
+    $replacedContents = str_replace('##LA_SERVER_URL##', C_LA_SERVER_ADDR, $nodeServerReplaced);
     // 書き換えた内容を<companyKey>.jsで保存
-    $saveFile = new File(C_COMPANY_JS_FILE_DIR.'/'.$companyKey.'.js', true, 0644);
+    $saveFile = new File(C_COMPANY_JS_FILE_DIR . '/' . $companyKey . '.js', true, 0644);
     $saveFile->open('w');
     $saveFile->write($replacedContents);
     $saveFile->close();
   }
 
-  private function backupCompanyJSFile($companyKey) {
-    if(!rename(C_COMPANY_JS_FILE_DIR.'/'.$companyKey.'.js', C_COMPANY_JS_FILE_DIR.'/'.$companyKey.'.js_'.date('Ymd').'bk')) {
+  private function backupCompanyJSFile($companyKey)
+  {
+    if (!rename(C_COMPANY_JS_FILE_DIR . '/' . $companyKey . '.js', C_COMPANY_JS_FILE_DIR . '/' . $companyKey . '.js_' . date('Ymd') . 'bk')) {
       throw Exception('企業用JavaScriptファイルのバックアップに失敗しました。');
     };
   }
 
-  private function generateCompanyKey() {
+  private function generateCompanyKey()
+  {
     return uniqid();
   }
 
-  private function getCoreSettingsFromContactTypesId($m_contact_types_id, $options) {
+  private function getCoreSettingsFromContactTypesId($m_contact_types_id, $options)
+  {
     $plan = "";
-    switch($m_contact_types_id) {
+    switch ($m_contact_types_id) {
       case C_CONTRACT_FULL_PLAN_ID:
         $plan = C_CONTRACT_FULL_PLAN;
         break;
@@ -1070,19 +1122,20 @@ class ContractController extends AppController
         $plan = C_CONTRACT_CHAT_BASIC_PLAN;
         break;
       default:
-        throw Exception("不明なプランID: ".$m_contact_types_id);
+        throw Exception("不明なプランID: " . $m_contact_types_id);
     }
     $planObj = json_decode($plan, TRUE);
-    foreach($options as $key => $enabled) {
+    foreach ($options as $key => $enabled) {
       $planObj[$key] = strcmp($enabled, "1") === 0;
     }
     return json_encode($planObj);
   }
 
-  private function getWidgetSettingsFromContactTypesId($m_contact_types_id) {
+  private function getWidgetSettingsFromContactTypesId($m_contact_types_id)
+  {
     $widgetConfiguration = Configure::read('default.widget');
     $val = [];
-    switch($m_contact_types_id) {
+    switch ($m_contact_types_id) {
       case C_CONTRACT_FULL_PLAN_ID:
         $val = array_merge($val, $widgetConfiguration['common'], $widgetConfiguration['chat'], $widgetConfiguration['sharing']);
         break;
@@ -1105,34 +1158,36 @@ class ContractController extends AppController
         $val['showAccessId'] = 1; // デフォルト：keyなし
         break;
       default:
-        throw Exception("不明なプランID: ".$m_contact_types_id);
+        throw Exception("不明なプランID: " . $m_contact_types_id);
     }
     return $val;
   }
 
-  private function upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId) {
-    $currentWidgetSettings = $this->MWidgetSetting->find('first',[
+  private function upgradeWidgetSettings($beforeContactTypeId, $afterContactTypeId, $targetCompanyId)
+  {
+    $currentWidgetSettings = $this->MWidgetSetting->find('first', [
         'conditions' => array(
           'm_companies_id' => intval($targetCompanyId)
         )]
     );
-    if(!empty($currentWidgetSettings)) {
+    if (!empty($currentWidgetSettings)) {
       $saveData = json_decode($currentWidgetSettings['MWidgetSetting']['style_settings'], TRUE);
       $currentWidgetSettings['MWidgetSetting']['style_settings'] = json_encode($this->getUpgradedWidgetSettings($saveData, $beforeContactTypeId, $afterContactTypeId), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);
       $this->MWidgetSetting->save($currentWidgetSettings['MWidgetSetting'], false, array('style_settings'));
     } else {
-      throw new Exception('ウィジェット設定の取得に失敗しました。 id: '.$targetCompanyId);
+      throw new Exception('ウィジェット設定の取得に失敗しました。 id: ' . $targetCompanyId);
     }
   }
 
-  private function getUpgradedWidgetSettings($currentSettings, $beforeContactTypeId, $afterContactTypeId) {
+  private function getUpgradedWidgetSettings($currentSettings, $beforeContactTypeId, $afterContactTypeId)
+  {
     $widgetConfiguration = Configure::read('default.widget');
     $val = [];
-    if(strcmp($beforeContactTypeId, $afterContactTypeId) === 0) {
+    if (strcmp($beforeContactTypeId, $afterContactTypeId) === 0) {
       // プラン変更なし
       $val = $currentSettings;
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
-            && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
+      && strcmp($afterContactTypeId, C_CONTRACT_CHAT_PLAN_ID) === 0) {
       // ベーシック => スタンダード
     } else if (strcmp($beforeContactTypeId, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0
       && strcmp($afterContactTypeId, C_CONTRACT_SCREEN_SHARING_ID) === 0) {
@@ -1178,54 +1233,64 @@ class ContractController extends AppController
     return $val;
   }
 
-  private function getDefaultChatBasicConfigurations($withScenarioOptions) {
-    if($withScenarioOptions) {
+  private function getDefaultChatBasicConfigurations($withScenarioOptions)
+  {
+    if ($withScenarioOptions) {
       return Configure::read('default.chat.basic_with_scenario');
     } else {
       return Configure::read('default.chat.basic_without_scenario');
     }
   }
 
-  private function getDefaultCustomerInformationSettings() {
+  private function getDefaultCustomerInformationSettings()
+  {
     return Configure::read('default.customerInformation');
   }
 
-  private function getDefaultDictionaryConfigurations() {
+  private function getDefaultDictionaryConfigurations()
+  {
     return Configure::read('default.dictionary');
   }
 
-  private function getDefaultAutomessageConfigurations($withScenarioOptions) {
-    if($withScenarioOptions) {
+  private function getDefaultAutomessageConfigurations($withScenarioOptions)
+  {
+    if ($withScenarioOptions) {
       return Configure::read('default.autoMessages_with_scenario');
     } else {
       return Configure::read('default.autoMessages_without_scenario');
     }
   }
 
-  private function getDefaultMailTemplateConfigurations() {
+  private function getDefaultMailTemplateConfigurations()
+  {
     return Configure::read('default.mail.templates');
   }
 
-  private function getDefaultScenarioConfigurations() {
+  private function getDefaultScenarioConfigurations()
+  {
     return Configure::read('default.scenario');
   }
 
-  private function isChatEnable($m_contact_types_id) {
+  private function isChatEnable($m_contact_types_id)
+  {
     return strcmp($m_contact_types_id, C_CONTRACT_FULL_PLAN_ID) === 0
-        || strcmp($m_contact_types_id, C_CONTRACT_CHAT_PLAN_ID) === 0
-        || strcmp($m_contact_types_id, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0;
+      || strcmp($m_contact_types_id, C_CONTRACT_CHAT_PLAN_ID) === 0
+      || strcmp($m_contact_types_id, C_CONTRACT_CHAT_BASIC_PLAN_ID) === 0;
   }
 
-  private function isAdvancedChatEnable($m_contact_types_id) {
+  private function isAdvancedChatEnable($m_contact_types_id)
+  {
     return strcmp($m_contact_types_id, C_CONTRACT_FULL_PLAN_ID) === 0
-        || strcmp($m_contact_types_id, C_CONTRACT_CHAT_PLAN_ID) === 0;
+      || strcmp($m_contact_types_id, C_CONTRACT_CHAT_PLAN_ID) === 0;
   }
 
-  private function convertActivityToJSON($activity) {
+  private function convertActivityToJSON($activity)
+  {
     return json_encode($activity, JSON_UNESCAPED_UNICODE);
   }
 
-  private function generateRandomPassword($length) {
+  private function generateRandomPassword($length)
+  {
     $str = array_merge(range('a', 'z'), range('0', '9'), range('A', 'Z'));
     $r_str = null;
     for ($i = 0; $i < $length; $i++) {
@@ -1234,31 +1299,35 @@ class ContractController extends AppController
     return $r_str;
   }
 
-  private function isOverAllUserCountLimit() {
+  private function isOverAllUserCountLimit()
+  {
     $maxCreateUserCount = Configure::read('limitation.createUserCount');
     return $maxCreateUserCount <= $this->getAllUserCount();
   }
 
-  private function getAllUserCount() {
+  private function getAllUserCount()
+  {
     $addUserCount = $this->MCompany->find('first', array(
       'fields' => array('SUM(MCompany.limit_users) as allUsers')
     ));
     return intval($addUserCount[0]['allUsers']);
   }
 
-	private function getMailAddress() {
-		if (env('DEV_ENV') === 'dev') { // 開発環境
-			return 'masashi.shimizu@medialink-ml.co.jp';
-		} else {
-			return 'cloud-service@medialink-ml.co.jp';
-		}
-	}
+  private function getMailAddress()
+  {
+    if (env('DEV_ENV') === 'dev') { // 開発環境
+      return 'masashi.shimizu@medialink-ml.co.jp';
+    } else {
+      return 'cloud-service@medialink-ml.co.jp';
+    }
+  }
 
-	private function getMailAddressAndAlex() {
-		if (env('DEV_ENV') === 'dev') { // 開発環境
-			return 'masashi.shimizu@medialink-ml.co.jp';
-		} else {
-			return 'cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp';
-		}
-	}
+  private function getMailAddressAndAlex()
+  {
+    if (env('DEV_ENV') === 'dev') { // 開発環境
+      return 'masashi.shimizu@medialink-ml.co.jp';
+    } else {
+      return 'cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp';
+    }
+  }
 }

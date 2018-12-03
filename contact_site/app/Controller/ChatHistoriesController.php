@@ -63,7 +63,7 @@ class ChatHistoriesController extends AppController
     $isChat = $this->Session->read('authenticity');
     $this->_searchProcessing(3);
     // 成果の名称リスト
-    $this->set('achievementType', Configure::read('achievementType'));
+    $this->set('achievementType', Configure::read('achievementTypeForSearch'));
     if (!$this->request->is('ajax')) {
       $this->_setList($isChat);
     }
@@ -369,6 +369,7 @@ class ChatHistoriesController extends AppController
           'THistoryChatLog.delete_flg',
           'THistoryChatLog.deleted_user_id',
           'THistoryChatLog.deleted',
+          'THistoryChatLog.hide_flg',
           'THistoryChatLog.created',
           'DeleteMUser.display_name',
         ],
@@ -386,7 +387,8 @@ class ChatHistoriesController extends AppController
         ],
         'conditions' => [
           'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
-          'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id']
+          'THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'],
+//          'THistoryChatLog.hide_flg' => 0,
         ],
         'order' => 'created',
         'recursive' => -1
@@ -817,7 +819,7 @@ class ChatHistoriesController extends AppController
             $row['transmissionPerson'] = '';
             $val['THistoryChatLog']['message'] = "（「" . $val['THistoryChatLog']['message'] . "」をクリック）";
           }
-          if ($val['THistoryChatLog']['message_type'] == 12) {
+          if ($val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 33 || $val['THistoryChatLog']['message_type'] == 34 || $val['THistoryChatLog']['message_type'] == 35) {
             $row['transmissionKind'] = '訪問者（ヒアリング回答）';
             $row['transmissionPerson'] = '';
           }
@@ -832,6 +834,8 @@ class ChatHistoriesController extends AppController
           if ($val['THistoryChatLog']['message_type'] == 22) {
             $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+            // replace [*] by [] radio selected
+            $val['THistoryChatLog']['message'] = str_replace('[*]', '[]', $val['THistoryChatLog']['message']);
           }
           if ($val['THistoryChatLog']['message_type'] == 23) {
             $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
@@ -868,6 +872,10 @@ class ChatHistoriesController extends AppController
               $val['THistoryChatLog']['message'] .= $object['label'] . '：' . ($object['value']) . "\n";
             }
           }
+          if ($val['THistoryChatLog']['message_type'] == 36 || $val['THistoryChatLog']['message_type'] == 37 || $val['THistoryChatLog']['message_type'] == 38 || $val['THistoryChatLog']['message_type'] == 39) {
+            $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング再回答）';
+            $row['transmissionPerson'] = '';
+          }
           if ($val['THistoryChatLog']['message_type'] == 40) {
             $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング解析結果）';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
@@ -877,7 +885,25 @@ class ChatHistoriesController extends AppController
               $val['THistoryChatLog']['message'] .= $object['label'] . '：' . ((!empty($json['message'][$object['inputType']])) ? $json['message'][$object['inputType']] : "（なし）") . "\n";
             }
           }
-          if ($val['THistoryChatLog']['message_type'] == 98 || $val['THistoryChatLog']['message_type'] == 99) {
+          if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42) {
+            $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+            $json = json_decode($val['THistoryChatLog']['message']);
+            $val['THistoryChatLog']['message'] = $json->message;
+          }
+          if ($val['THistoryChatLog']['message_type'] == 81) {
+            $row['transmissionKind'] = 'チャットボットメッセージ';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+          }
+          if ($val['THistoryChatLog']['message_type'] == 82) {
+            $row['transmissionKind'] = 'チャットボットメッセージ';
+            $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
+          }
+          if ($val['THistoryChatLog']['message_type'] == 90) {
+            // 何も表示しない
+            continue;
+          }
+          if ($val['THistoryChatLog']['message_type'] == 998 || $val['THistoryChatLog']['message_type'] == 999) {
             $row['transmissionKind'] = '通知メッセージ';
             $row['transmissionPerson'] = "";
             $val['THistoryChatLog']['message'] = '-' . $val['MUser']['display_name'] . 'が' . $val['THistoryChatLog']['message'] . 'しました-';
@@ -1016,8 +1042,12 @@ class ChatHistoriesController extends AppController
               case 23: // シナリオメッセージ（選択肢）
                 $row = $this->_setData($date, "シナリオメッセージ（選択肢）", $this->userInfo['MCompany']['company_name'], $message);
                 break;
-              case 98: // 入室メッセージ
-              case 99: // 退室メッセージ
+              case 81: // CogmoAttend チャットボットメッセージ
+              case 82: // CogmoAttend チャットボットメッセージ（フィードバック）
+                $row = $this->_setData($date, "自動返信", $this->userInfo['MCompany']['company_name'], $message);
+                break;
+              case 998: // 入室メッセージ
+              case 999: // 退室メッセージ
                 $row = $this->_setData($date, "通知メッセージ", "", " - " . $val['MUser']['display_name'] . "が" . $message . "しました - ");
                 break;
             }
@@ -1219,19 +1249,19 @@ class ChatHistoriesController extends AppController
     $chatCond = [];
     $chatLogCond = [];
     //履歴検索機能
+    $hasCustomDataCondition = false;
     if ($this->Session->check('Thistory')) {
       $data = $this->Session->read('Thistory');
       /* ○ 検索処理 */
       /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-      $check = false;
       if (!empty($data['CustomData'])) {
         foreach ($data['CustomData'] as $key => $value) {
           if (!empty($value)) {
-            $check = true;
+            $hasCustomDataCondition = true;
           }
         }
       }
-      if ($check === true) {
+      if ($hasCustomDataCondition === true) {
         //会社名が入っている場合
         if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
           //会社名がランドスケープテーブルに登録されている場合
@@ -1330,11 +1360,11 @@ class ChatHistoriesController extends AppController
       }
       //開始日
       if (!empty($data['History']['start_day'])) {
-        //$this->paginate['THistory']['conditions']['THistory.access_date >='] = $data['History']['start_day'].' 00:00:00';
+        $this->paginate['THistory']['conditions']['THistory.access_date >='] = str_replace('/', '-', $data['History']['start_day']).' 00:00:00';
       }
       //終了日
       if (!empty($data['History']['finish_day'])) {
-        //$this->paginate['THistory']['conditions']['THistory.access_date <='] = $data['History']['finish_day'].' 23:59:59';
+        $this->paginate['THistory']['conditions']['THistory.access_date <='] = $data['History']['finish_day'].' 23:59:59';
       }
 
       // 担当者に関する検索条件
@@ -1361,6 +1391,9 @@ class ChatHistoriesController extends AppController
             break;
           case '2':
             $chatLogCond['chat.eff != '] = 0;
+            break;
+          case '3':
+            $chatLogCond['chat.cv = 0 AND chat.terminate != '] = 0;
             break;
         }
       } else if (!empty($type) && $type == 'false') {
@@ -1468,7 +1501,7 @@ class ChatHistoriesController extends AppController
           'fields' => [
             't_histories_id, COUNT(*) AS count',
             'MAX(achievement_flg) AS achievementFlg',
-            'SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp',
+            'SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp',
             'SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry',
             'SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus'
           ],
@@ -1486,13 +1519,11 @@ class ChatHistoriesController extends AppController
         $value = 'MIN';
       }
 
-      if (empty($data['History']['chat_type']) && empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
-        && empty($data['History']['company_name']) && empty($data['History']['customer_name']) && empty($data['History']['telephone_number'])
-        && empty($data['History']['mail_address']) && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) &&
-        empty($data['THistoryChatLog']['message'])) {
+      if (!$hasCustomDataCondition && empty($data['History']['chat_type']) && empty($data['History']['ip_address']) && empty($data['THistoryChatLog']['responsible_name'])
+        && empty($data['History']['campaign']) && empty($data['THistoryChatLog']['send_chat_page']) && empty($data['THistoryChatLog']['message'])) {
         $chatStateList = $dbo2->buildStatement(
           [
-            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND `THistoryChatLog`.created between '" . $data['History']['start_day'] . " 00:00:00' AND '" . $data['History']['finish_day'] . " 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND `THistoryChatLog`.created between '" . $data['History']['start_day'] . " 00:00:00' AND '" . $data['History']['finish_day'] . " 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id desc)",
             'alias' => 'chat',
             'fields' => [
               'chat.*',
@@ -1506,7 +1537,7 @@ class ChatHistoriesController extends AppController
       } else {
         $chatStateList = $dbo2->buildStatement(
           [
-            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND `THistoryChatLog`.created between '" . $data['History']['start_day'] . " 00:00:00' AND '" . $data['History']['finish_day'] . " 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+            'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND `THistoryChatLog`.created between '" . $data['History']['start_day'] . " 00:00:00' AND '" . $data['History']['finish_day'] . " 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id desc)",
             'alias' => 'chat',
             'fields' => [
               'chat.*',
@@ -1530,7 +1561,7 @@ class ChatHistoriesController extends AppController
       //初回チャット受信日時、最終発言後離脱時間
       $joinToSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id = ' . $this->userInfo['MCompany']['id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id)',
+        'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE (message_type = 1 OR message_type = 8) AND m_companies_id = ' . $this->userInfo['MCompany']['id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id)',
         'alias' => 'SpeechTime',
         'field' => 'created as SpeechTime',
         'conditions' => [
@@ -1588,13 +1619,13 @@ class ChatHistoriesController extends AppController
                 'stayLogs.*'
               ],
               'conditions' => [
-                't_histories_id' => $idList,
-                'url LIKE' => '%?%' . $campaignParam[0] . '%'
+                't_histories_id' => $idList
               ],
-              'group' => 't_histories_id'
+              'group' => 't_histories_id HAVING url LIKE "%?%' . $campaignParam[0] . '%"'
             ],
             $this->THistoryStayLog
           );
+
         } else {
           $campaignData = $stayLogs->buildStatement(
             [
@@ -1639,8 +1670,13 @@ class ChatHistoriesController extends AppController
             'message_type'
           ],
           'conditions' => [
-            'm_companies_id' => $this->userInfo['MCompany']['id'],
-            'message_type' => 1
+            'AND' => [
+              'm_companies_id' => $this->userInfo['MCompany']['id']
+            ],
+            'OR' => [
+              ['message_type' => 1],
+              ['message_type' => 8]
+            ]
           ],
           'group' => 't_histories_id'
         ]);
@@ -1663,6 +1699,7 @@ class ChatHistoriesController extends AppController
           ],
           $this->THistoryStayLog
         );
+        $this->log("検索時に動作するSQLです",LOG_DEBUG);
         $joinToFirstSpeechSendPage = [
           'type' => "INNER",
           'table' => "({$chatSendingPage})",
@@ -1763,7 +1800,6 @@ class ChatHistoriesController extends AppController
       'group' => 't_histories_id'
     ]);
     $this->log("END tHistoryStayLogList : " . $this->getDateWithMilliSec(), LOG_DEBUG);
-
     $this->log("BEGIN chatSendingPageList : " . $this->getDateWithMilliSec(), LOG_DEBUG);
     $chatSendingPageList = $this->THistoryStayLog->find('all', [
       'fields' => [
@@ -2236,7 +2272,7 @@ class ChatHistoriesController extends AppController
     $this->set('campaign', $campaignData);
     // 成果種別リスト スタンダードプラン以上
     if (isset($this->coreSettings[C_COMPANY_USE_CV]) && $this->coreSettings[C_COMPANY_USE_CV]) {
-      $this->set('achievementType', Configure::read('achievementType'));
+      $this->set('achievementType', Configure::read('achievementTypeForSearch'));
     } // 成果種別リスト スタンダードプラン以下
     else {
       $achievementType = Configure::read('achievementType');
@@ -2439,8 +2475,8 @@ class ChatHistoriesController extends AppController
       ];
     }
 
-    $joinType = 'INNER';
     // 担当者に関する検索条件
+    $joinType = 'LEFT';
     if (isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "") {
       //「%」が含まれていた場合
       if (strpos($data['THistoryChatLog']['responsible_name'], '%') !== false) {
@@ -2461,6 +2497,9 @@ class ChatHistoriesController extends AppController
           break;
         case '2':
           $chatLogCond['chat.eff != '] = 0;
+          break;
+        case '3': // 途中離脱
+          $chatLogCond['chat.cv = 0 AND chat.terminate != '] = 0;
           break;
       }
     } else if (!empty($type) && $type == 'false') {
@@ -2558,7 +2597,7 @@ class ChatHistoriesController extends AppController
           'fields' => [
             't_histories_id, COUNT(*) AS count',
             'MAX(achievement_flg) AS achievementFlg',
-            'SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp',
+            'SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp',
             'SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry',
             'SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus'
           ],
@@ -2578,7 +2617,7 @@ class ChatHistoriesController extends AppController
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 98 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND `t_histories_id` = `THistoryChatLog`.t_histories_id GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND `t_histories_id` = `THistoryChatLog`.t_histories_id GROUP BY t_histories_id ORDER BY t_histories_id desc)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -2603,7 +2642,7 @@ class ChatHistoriesController extends AppController
 
       $joinToSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 GROUP BY t_histories_id)',
+        'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs WHERE (message_type = 1 OR message_type = 8) GROUP BY t_histories_id)',
         'alias' => 'SpeechTime',
         'field' => 'created as SpeechTime',
         'conditions' => [
@@ -2662,9 +2701,9 @@ class ChatHistoriesController extends AppController
                 'stayLogs.*'
               ],
               'conditions' => [
-                't_histories_id' => $idList,
-                'url LIKE' => '%?%' . $campaignParam[0] . '%'
+                't_histories_id' => $idList
               ],
+              'group' => 't_histories_id HAVING url LIKE "%?%' . $campaignParam[0] . '%"'
             ],
             $this->THistoryStayLog
           );
@@ -2711,8 +2750,13 @@ class ChatHistoriesController extends AppController
             'message_type'
           ],
           'conditions' => [
-            'm_companies_id' => $this->userInfo['MCompany']['id'],
-            'message_type' => 1
+            'AND' => [
+              'm_companies_id' => $this->userInfo['MCompany']['id']
+            ],
+            'OR' => [
+              ['message_type' => 1],
+              ['message_type' => 8]
+            ]
           ],
           'group' => 't_histories_id'
         ]);
@@ -3130,8 +3174,8 @@ class ChatHistoriesController extends AppController
           't_histories_id' => $historyIdList
         ),
         'OR' => array(
-          'message_type' => 1,
-          'message_type' => 8
+          ['message_type' => 1],
+          ['message_type' => 8]
         )
       ],
       'group' => ['THistoryChatLog.t_histories_id']

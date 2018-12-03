@@ -77,20 +77,16 @@ if ( isset($history['THistory']['visitors_id']) ) {
             }
             ?></td>
             <td class="tCenter"><?php
-              if($history['THistoryChatLog']['eff'] == 0 || $history['THistoryChatLog']['cv'] == 0 ) {
-                if (isset($history['THistoryChatLog']['achievementFlg'])){
-                  if(intval($history['THistoryChatLog']['achievementFlg']) >= 0) {
-                    echo $achievementType[h($history['THistoryChatLog']['achievementFlg'])];
-                  } else {
-                    echo '途中離脱';
-                  }
+                if(!empty($history['THistoryChatLog']['eff']) && $history['THistoryChatLog']['eff'] != 0) {
+                  echo $achievementType[2];
+                } else if(!empty($history['THistoryChatLog']['deny']) && $history['THistoryChatLog']['deny'] != 0) {
+                  echo $achievementType[1];
                 }
-              }
-              else if ($history['THistoryChatLog']['eff'] != 0 && $history['THistoryChatLog']['cv'] != 0) {
-                if (isset($history['THistoryChatLog']['achievementFlg'])){
-                  echo $achievementType[2].nl2br("\n").$achievementType[0];
+                if(isset($history['THistoryChatLog']['terminate']) && $history['THistoryChatLog']['terminate'] != 0 && $history['THistoryChatLog']['cv'] == 0) {
+                  echo $achievementType[3];
+                } else if($history['THistoryChatLog']['cv'] != 0) {
+                  echo $achievementType[0];
                 }
-              }
             ?></td>
             <td class="tCenter">
               <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>

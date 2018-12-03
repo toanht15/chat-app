@@ -280,6 +280,7 @@ class CustomersController extends AppController {
       $historyData = $this->THistory->find('first', [
         'fields' => 'id',
         'conditions' => [
+          'm_companies_id' => $this->userInfo['MCompany']['id'],
           'tab_id' => $this->params->query['tabId']
         ],
         'recursive' => -1
@@ -446,7 +447,8 @@ class CustomersController extends AppController {
           'THistoryChatLog.created'
         ],
         'conditions' => [
-          'THistoryChatLog.t_histories_id' => $this->params->query['historyId']
+          'THistoryChatLog.t_histories_id' => $this->params->query['historyId'],
+          'THistoryChatLog.hide_flg' => 0
         ],
         'order' => 'created',
         'recursive' => -1
@@ -693,7 +695,8 @@ class CustomersController extends AppController {
     // 一般ユーザーはリストを返さない
     $result = [];
     if(strcmp($this->userInfo['permission_level'], C_AUTHORITY_NORMAL) === 0) {
-      return json_encode($result);
+      $this->set('userList', $result);
+      return;
     }
     $list = $this->MUser->find('all', [
       'conditions' => [
@@ -724,6 +727,6 @@ class CustomersController extends AppController {
       'mail' => 'メールアドレス',
       'memo' => 'メモ'
     );
-    return $keyMap[$key] ? $keyMap[$key] : $key;
+    return array_key_exists($key, $keyMap) ? $keyMap[$key] : $key;
   }
 }

@@ -54,12 +54,12 @@ function addVariable(type,sendMessage,focusPosition){
             break;
         case 2:
           if (sendMessage.value.length == 0) {
-            sendMessage.value += "<telno></telno>";
-            addPosition = 7;
+            sendMessage.value += '<a href="tel:ここに電話番号を記載">リンクテキスト</a>';
+            addPosition = 13;
           }
           else {
-            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + "<telno></telno>" + sendMessage.value.substr(focusPosition,sendMessage.value.length);
-            addPosition = 8;
+            sendMessage.value = sendMessage.value.substr(0, focusPosition) + "\n" + '<a href="tel:ここに電話番号を記載">リンクテキスト</a>' + sendMessage.value.substr(focusPosition,sendMessage.value.length);
+            addPosition = 14;
           }
           var beforeScrollTop = $(sendMessage).scrollTop();
           sendMessage.focus();
@@ -128,8 +128,19 @@ function unEscapeHTML(str) {
     .replace(/(&amp;)/g, '&');
 };
 
+function escapeHTML(str) {
+  return str
+  .replace(/(&)/g, '&amp;')
+  .replace(/(')/g, "&#39;")
+  .replace(/(")/g, '&quot;')
+  .replace(/(>)/g, '&gt;')
+  .replace(/(<)/g, '&lt;');
+};
+
 function replaceVariable(str,isSmartphone,type){
   var linkReg = RegExp(/(http(s)?:\/\/[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+  var mailLinkReg = RegExp(/(mailto:[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/);
+  var telLinkReg = RegExp(/(tel:[0-9]{9,})/);
   var telnoTagReg = RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/);
   var linkTabReg = RegExp(/<a ([\s\S]*?)>([\s\S]*?)<\/a>/);
   var imgTagReg = RegExp(/<img ([\s\S]*?)>/);
@@ -160,18 +171,21 @@ function replaceVariable(str,isSmartphone,type){
   //チャット履歴からのimgタグの場合
   /*else if(type === '6') {
   }*/
+  console.log(className);
 
   // リンク
   var link = str.match(linkReg);
+  var mail = str.match(mailLinkReg);
+  var telLink = str.match(telLinkReg);
   var linkTab = unEscapeStr.match(linkTabReg);
-  if ( link !== null || linkTab !== null) {
+  if ( link !== null || mail !== null || telLink !== null || linkTab !== null) {
       if ( linkTab !== null) {
-        if(link !== null) {
+        if(link !== null || mail !== null || telLink !== null) {
           var a = linkTab[0];
           //imgタグ有効化
           var img = unEscapeStr.match(imgTagReg);
           if(img !== null) {
-            imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+            imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img class = "+className+" "+img[1]+"></div>";
             a = a.replace(img[0], imgTag);
           }
         }
@@ -183,22 +197,27 @@ function replaceVariable(str,isSmartphone,type){
       }
       //URLのみのリンクの場合
       else {
+      //URLリンク以外は文字列にする
+      if(link !== null){
         var url = link[0];
         var a = "<a href='" + url + "' target=\"_blank\">" + url + "</a>";
         //imgタグ有効化
         var img = unEscapeStr.match(imgTagReg);
         if(img !== null) {
-          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+          imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img class = "+className+" "+img[1]+"></div>";
           a = a.replace(img[0], imgTag);
         }
-        str = str.replace(url, a);
+      } else {
+        var a = "<span class='link'>"+ url + "</span>";
       }
+      str = str.replace(url, a);
+    }
   }
   // 電話番号（スマホのみリンク化）
   var tel = str.match(telnoTagReg);
   if( tel !== null ) {
     var telno = tel[1];
-    if(isSmartphone) {
+    if(isSmartphone || type ==='4') {
       // リンクとして有効化
       var a = "<a href='tel:" + telno + "'>" + telno + "</a>";
       str = str.replace(tel[0], a);
@@ -213,11 +232,11 @@ function replaceVariable(str,isSmartphone,type){
   var choiseImg = unEscapeStr.match(choiseImgTagReg);
   //選択肢に画像を入れる場合
   if(img !== null && choiseImg !== null && type !== '6') {
-    imgTag = "<label "+choiseImg[1]+"><div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div></label>";
+    imgTag = "<label "+choiseImg[1]+"><div style='display:inline-block;width:100%;vertical-align:bottom;'><img class = "+className+" "+img[1]+"></div></label>";
     str = unEscapeStr.replace(choiseImg[0], imgTag);
   }
   else if(img !== null && choiseImg === null && type !== '6') {
-    imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img "+img[1]+" class = "+className+"></div>";
+    imgTag = "<div style='display:inline-block;width:100%;vertical-align:bottom;'><img class = "+className+" "+img[1]+"></div>";
     str = unEscapeStr.replace(img[0], imgTag);
   }
   //チャット履歴の場合

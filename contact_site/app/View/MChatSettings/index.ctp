@@ -105,6 +105,34 @@ $(document).ready(function(){
   //バリデーションチェック
   checkValidate();
 
+  //一括設定
+    $('input[type=radio][name=LoginStatusCollectiveSetting]').change(function() {
+        if (this.value == '0') {
+            $('.login-status').each(function () {
+                if (this.value == 0) {
+                    $(this).prop('checked', true);
+                }
+            });
+            $('.away').prop('checked', true);
+        } else {
+            $('.login-status').each(function () {
+                if (this.value == 1) {
+                    $(this).prop('checked', true);
+                }
+            });
+            $('.waiting').prop('checked', true);
+        }
+    });
+
+    var default_num = $('#sc_num_collective_setting').val();
+    $('#sc_num_collective_setting').on('keyup change click', function () {
+        if (this.value != default_num) {
+            $('.sc_num_limit').val(this.value);
+            default_num = this.value;
+        }
+    });
+
+
 });
 
 //初回メッセージ項目削除
@@ -181,7 +209,7 @@ function addItem(number) {
         content    += "     <textarea name='data[MChatSetting][initial_notification_message"+number+"]' class = 'notificationTextarea' id='MChatSettingInitialNotificationMessage"+number+"'></textarea>";
         content    += "    <span id = 'summarized"+number+"' style = 'margin-left:10px;'>";
         content    += "    <span class='greenBtn btn-shadow actBtn choiseButton' onclick=\"addOption(1,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'choice'>選択肢を追加する</span>";
-        content    += "    <span class='greenBtn btn-shadow actBtn phoneButton' onclick=\"addOption(2,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'lastSpeechLabel'>電話番号を追加する<div class = 'questionBalloon commontooltip' data-text='このボタンを押すと挿入される&lt;  telno  &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります'><icon class = 'questionBtn'>?</icon></div></span>";
+        content    += "    <span class='greenBtn btn-shadow actBtn phoneButton' onclick=\"addOption(2,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'lastSpeechLabel'>電話番号を追加する<div class = 'questionBalloon commontooltip' data-text='このボタンを押すと挿入される&lt; a href &gt;タグの「ここに電話番号を記載」の個所に電話番号を記入すると、スマホの場合にタップで発信できるようになります'><icon class = 'questionBtn'>?</icon></div></span>";
         content    += "    <span class='greenBtn btn-shadow actBtn linkMovingButton' onclick=\"addOption(3,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'thirdSpeechLabel'>リンク（ページ遷移）<div class = 'questionBalloon commontooltip' data-text='このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます'><icon class = 'questionBtn'>?</icon></div></span>";
         content    += "    <span class='greenBtn btn-shadow actBtn linkNewTabButton' onclick=\"addOption(4,'MChatSettingInitialNotificationMessage"+number+"')\" id = 'secondSpeechLabel'>リンク（新規ページ）<div class = 'questionBalloon commontooltip' data-text='このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します'><icon class = 'questionBtn'>?</icon></div></span>";
         content    += "  </span>";
@@ -262,18 +290,95 @@ function checkValidate() {
   <div id='m_chat_settings_form' class="p20x">
     <?= $this->Form->create('MChatSetting', ['type' => 'post', 'url' => ['controller' => 'MChatSettings', 'action' => 'index', '']]); ?>
       <section>
-        <h3>１．同時対応数上限</h3>
+          <h3>１．ログイン後の初期ステータス</h3>
+          <div class="content">
+              <span class="pre">オペレータのログイン直後の初期ステータス（離席中／待機中）を設定することができます。</span>
+
+              <div>
+                  <div id="sc_login_default_status">
+                      <dl>
+                          <dt>ユーザー個別設定</dt>
+                          <p>各ユーザー（オペレータ）毎の設定を行います。</p>
+
+                          <dd class="collective-setting">
+                              <span>一括設定
+                                  <div class="p-tcustomvariables-entry">
+                                  <div class="questionBallon">
+                                      <icon class="questionBtn commontooltip" data-text="全ユーザを一括で設定することができます。">?</icon>
+                                  </div>
+                              </div>
+                              </span>
+
+                              <label id="collective_setting_input">
+                                  <input style="margin-top: 0;" type="radio" name="LoginStatusCollectiveSetting" value="0"
+                                         class="pointer">離席中
+                              </label>
+                              <label><input type="radio" name="LoginStatusCollectiveSetting" value="1"
+                                            class="pointer">待機中
+                              </label>
+                          </dd>
+
+                          <div>
+                              <?php foreach( $mUserList as $val ){ ?>
+                                  <?php
+                                  $settings = json_decode($val['MUser']['settings']);
+                                  $sc_login_status = ( !empty($settings->login_default_status) ) ? $settings->login_default_status : 0;
+                                  $settings = [
+                                      'type' => 'radio',
+                                      'options' => $scLoginStatusOpt,
+                                      'value' => $sc_login_status,
+                                      'legend' => false,
+                                      'label' => true,
+                                      'div' => false,
+                                      'class' => 'pointer login-status'
+                                  ];
+                                  ?>
+                                  <dd>
+                                      <span><?=h($val['MUser']['display_name'])?></span>
+                                      <label>
+                                      <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_login_status', $settings);?>
+                                      </label>
+                                  </dd>
+                                  <?php if ( $this->Form->isFieldError('MUser.'.$val['MUser']['id'].'.sc_login_status') ) echo $this->Form->error('MUser.'.$val['MUser']['id'].'.sc_num', null, ['wrap' => 'p']); ?>
+                              <?php } ?>
+                          </div>
+                          <dt>デフォルト設定</dt>
+                          <p class="default-setting-explain">新規ユーザー作成時のデフォルト値の設定を行います。</p>
+                          <dd id="login_status_default_setting">
+                              <label style="margin-left: 0">
+                                  <?php
+                                  $settings = [
+                                      'type' => 'radio',
+                                      'options' => $scLoginStatusOpt,
+                                      'legend' => false,
+                                      'separator' => '</label><br><label style="margin: auto; margin-left: 30px;">',
+                                      'label' => false,
+                                      'div' => false,
+                                      'class' => 'pointer',
+                                      'style' => 'margin-left: -5px;'
+                                  ];
+                                  ?>
+                                  <?=$this->Form->input('sc_login_default_status', $settings)?>
+                              </label>
+                          </dd>
+                      </dl>
+                  </div>
+              </div>
+          </div>
+      </section>
+      <section>
+        <h3>２．同時対応数上限</h3>
         <div class ="content">
           <span class = "pre">オペレータが同時にチャット対応できる上限数を設定することができます。&#10;ここで設定した同時対応数に達したオペレータには新着チャットのデスクトップ通知が表示されなくなります。&#10;また、すべてのオペレータが同時対応数の上限に達している際に新着チャットが送信された場合には、&#10;チャット送信者（サイト訪問者）に対してSorryメッセージを自動返信します。（Sorryメッセージは当画面下段にて設定可能）</span>
           <div>
-            <label style="display:inline-block;" <?php echo $coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : 'style="color: #CCCCCC;" '?>>
+            <label <?php echo $coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : 'style="color: #CCCCCC;" '?>>
               <?php
                 $settings = [
                   'type' => 'radio',
                   'options' => $scFlgOpt,
                   'default' => C_SC_DISABLED,
                   'legend' => false,
-                  'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
+                  'separator' => '</label><br><label '.($coreSettings[C_COMPANY_USE_CHAT_LIMITER] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
                   'label' => false,
                   'div' => false,
                   'disabled' => !$coreSettings[C_COMPANY_USE_CHAT_LIMITER],
@@ -291,13 +396,19 @@ function checkValidate() {
           </div>
           <div id="sc_content">
             <dl class="<?=$scHiddenClass?>">
-              <dt>基本<dt-detail>（※ ユーザー作成時に自動で割り振られる上限数です。）</dt-detail></dt>
-                <dd>
-                  <span>同時対応上限数</span>
-                  <?=$this->Form->input('sc_default_num', ['type' => 'number', 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
-                </dd>
-                <?php if ( $this->Form->isFieldError('sc_default_num') ) echo $this->Form->error('sc_default_num', null, ['wrap' => 'p']); ?>
               <dt>個別</dt>
+                <p>各ユーザー（オペレータ）毎の設定を行います。</p>
+                <dd class="collective-setting">
+                    <span>一括設定
+                     <div class="p-tcustomvariables-entry">
+                        <div class="questionBallon">
+                            <icon class="questionBtn commontooltip" data-text="全ユーザを一括で設定することができます。">?</icon>
+                        </div>
+                    </div>
+                    </span>
+
+                    <input name="ScNumCollectiveSetting" id="sc_num_collective_setting" min="0" max="99" type="number" required="required">
+                </dd>
               <div>
                 <?php foreach( $mUserList as $val ){ ?>
                   <?php
@@ -309,27 +420,35 @@ function checkValidate() {
                   ?>
                   <dd>
                     <span><?=h($val['MUser']['display_name'])?></span>
-                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
+                    <?=$this->Form->input('MUser.'.$val['MUser']['id'].'.sc_num', ['type' => 'number', 'default' => $sc_num, 'class' => 'sc_num_limit', 'style' => 'width: 105px',  'min' => 0, 'max' => 99, 'label' => false, 'div' => false, 'error' => false])?>
                   </dd>
                   <?php if ( $this->Form->isFieldError('MUser.'.$val['MUser']['id'].'.sc_num') ) echo $this->Form->error('MUser.'.$val['MUser']['id'].'.sc_num', null, ['wrap' => 'p']); ?>
                 <?php } ?>
               </div>
+
+                <dt>デフォルト設定<dt-detail></dt-detail></dt>
+                <p class="default-setting-explain">新規ユーザー作成時のデフォルト値の設定を行います。</p>
+                <dd id="sc_num_default_setting">
+                    <span>同時対応上限数</span>
+                    <?=$this->Form->input('sc_default_num', ['type' => 'number', 'id' => 'sc_default_num', 'min' => 0, 'max' => 99, 'style' => 'margin-top: -8px; width: 105px;', 'label' => false, 'div' => false, 'error' => false])?>
+                </dd>
+                <?php if ( $this->Form->isFieldError('sc_default_num') ) echo $this->Form->error('sc_default_num', null, ['wrap' => 'p']); ?>
             </dl>
           </div>
         </div>
       </section>
       <section>
-        <h3>２．チャット呼出中メッセージ</h3>
+        <h3>３．チャット呼出中メッセージ</h3>
         <div class="content">
           <span class = "pre">有人チャットを受信後、オペレータが入室するまでの間に任意のメッセージを自動送信することができます。&#10;最初の有人チャットを受信してからオペレータが入室するまでの経過時間により、自動送信するメッセージを複数設定することが可能です。</span>
-          <label style="display:inline-block;">
+          <label>
               <?php
                 $settings = [
                   'type' => 'radio',
                   'options' => $scFlgOpt,
                   'default' => C_IN_DISABLED,
                   'legend' => false,
-                  'separator' => '</label><br><label style="display:inline-block;"'.($coreSettings[C_COMPANY_USE_CHATCALLMESSAGES] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
+                  'separator' => '</label><br><label '.($coreSettings[C_COMPANY_USE_CHATCALLMESSAGES] ? '' : ' style="color: #CCCCCC;" class="commontooltip" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。" data-balloon-position="34.5"').'>',
                   'label' => false,
                   'div' => false,
                   'disabled' => !$coreSettings[C_COMPANY_USE_CHATCALLMESSAGES],
@@ -344,16 +463,16 @@ function checkValidate() {
         </div>
       </section>
       <section>
-        <h3 class="require">3．Sorryメッセージ</h3>
-        <div class="content">
-          <pre style = "padding: 0 0 15px 0;">このメッセージは下記の場合に自動送信されます</pre>
+        <h3 class="require">４．Sorryメッセージ</h3>
+        <div class="content" style="margin-bottom: 2em">
+          <pre style = "padding: 0 0 15px 0; line-height: 2em;">このメッセージは下記の場合に自動送信されます</pre>
           <li style = "padding: 0 0 15px 0;">
             <pre id = "outside_hours">(1)営業時間外にチャットが受信された場合</pre>
               <span style = "display:flex;">
                 <?=$this->Form->textarea('outside_hours_sorry_message',['maxlength'=>4000])?>
                 <span class = "summarized">
                   <span class="greenBtn btn-shadow actBtn choiseButton settingOutsideHoursChoise" onclick="addOption(1,'MChatSettingOutsideHoursSorryMessage')">選択肢を追加する</span>
-                  <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  telno  &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
+                  <span class="greenBtn btn-shadow actBtn phoneButton settingOutsideHoursPhone" onclick="addOption(2,'MChatSettingOutsideHoursSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; a href &gt;タグの「ここに電話番号を記載」の個所に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
                   <span class="greenBtn btn-shadow actBtn linkMovingButton settingOutsideHoursPhone" onclick="addOption(3,'MChatSettingOutsideHoursSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
                   <span class="greenBtn btn-shadow actBtn linkNewTabButton settingOutsideHoursPhone" onclick="addOption(4,'MChatSettingOutsideHoursSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt;  a href  &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
                 </span>
@@ -366,20 +485,20 @@ function checkValidate() {
               <?=$this->Form->textarea('wating_call_sorry_message',['maxlength'=>4000])?>
               <span class = "summarized">
                 <span class="greenBtn btn-shadow actBtn choiseButton settingWatingCallChoice" onclick="addOption(1,'MChatSettingWatingCallSorryMessage')">選択肢を追加する</span>
-                <span class="greenBtn btn-shadow actBtn phoneButton settingWatingCallPhone" onclick="addOption(2,'MChatSettingWatingCallSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される &gt;telno&lt; タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn phoneButton settingWatingCallPhone" onclick="addOption(2,'MChatSettingWatingCallSorryMessage')" id = "lastSpeechLabel">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; a href &gt;タグの「ここに電話番号を記載」の個所に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
                 <span class="greenBtn btn-shadow actBtn linkMovingButton settingWatingCallPhone" onclick="addOption(3,'MChatSettingWatingCallSorryMessage')" id = "thirdSpeechLabel">リンク（ページ遷移）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される &gt;a href&lt; タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
                 <span class="greenBtn btn-shadow actBtn linkNewTabButton settingWatingCallPhone" onclick="addOption(4,'MChatSettingWatingCallSorryMessage')" id = "secondSpeechLabel">リンク（新規ページ）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される &gt;a href&lt; タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
               </span>
             </span>
             <?php if ( $this->Form->isFieldError('wating_call_sorry_message') ) echo $this->Form->error('wating_call_sorry_message', null, ['wrap' => 'p', 'style' => 'margin-top: 15px;']); ?>
           </li>
-          <li style = "padding: 0 0 40px 0;">
+          <li>
             <pre id = "no_standby">(3)在席オペレーターが居ない場合にチャットが受信された場合</pre>
             <span style = "display:flex;">
               <?=$this->Form->textarea('no_standby_sorry_message',['maxlength'=>4000])?>
               <span class = "summarized">
                 <span class="greenBtn btn-shadow actBtn choiseButton" onclick="addOption(1,'MChatSettingNoStandbySorryMessage')">選択肢を追加する</span>
-                <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingNoStandbySorryMessage')">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; telno &gt;タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn phoneButton" onclick="addOption(2,'MChatSettingNoStandbySorryMessage')">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; a href &gt;タグの「ここに電話番号を記載」の個所に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
                 <span class="greenBtn btn-shadow actBtn linkMovingButton" onclick="addOption(3,'MChatSettingNoStandbySorryMessage')">リンク（ページ遷移）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; a href &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
                 <span class="greenBtn btn-shadow actBtn linkNewTabButton" onclick="addOption(4,'MChatSettingNoStandbySorryMessage')">リンク（新規ページ）<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される&lt; a href &gt;タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
               </span>

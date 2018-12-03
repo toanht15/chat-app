@@ -66,9 +66,6 @@ class TChatbotScenario extends AppModel {
             return false;
           }
         }
-        if (empty($action['errorMessage'])) {
-          return false;
-        }
         if ($action['isConfirm'] == 1 && (empty($action['confirmMessage'] || empty($action['succes'] || empty($action['cancel']))))) {
           return false;
         }
@@ -95,7 +92,10 @@ class TChatbotScenario extends AppModel {
       } else
       if ($action['actionType'] == C_SCENARIO_ACTION_EXTERNAL_API) {
         // 外部システム連携
-        if (empty($action['tExternalApiConnectionId'])) {
+        if ($action['externalType'] == C_SCENARIO_EXTERNAL_TYPE_API && empty($action['tExternalApiConnectionId'])) {
+          return false;
+        } else
+        if ($action['externalType'] == C_SCENARIO_EXTERNAL_TYPE_SCRIPT && empty($action['externalScript'])) {
           return false;
         }
       }

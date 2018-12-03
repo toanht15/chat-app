@@ -152,7 +152,7 @@
               <span>
                 <label class="require">メッセージ</label>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(1)">選択肢を追加する</span>
-                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜telno＞タグの間に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
+                <span class="greenBtn btn-shadow actBtn" ng-click="addOption(2)">電話番号を追加する<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここに電話番号を記載」の個所に電話番号を記入すると、スマホの場合にタップで発信できるようになります"><icon class = "questionBtn">?</icon></div></span>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(3)">リンク(ページ遷移)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際にページ遷移します"><icon class = "questionBtn">?</icon></div></span>
                 <span class="greenBtn btn-shadow actBtn" ng-click="addOption(4)">リンク(新規ページ)<div class = "questionBalloon commontooltip" data-text="このボタンを押すと挿入される＜a href＞タグの「ここにURLを記載」の個所にURLを記入すると、リンクをクリックした際に新規ページで開きます"><icon class = "questionBtn">?</icon></div></span>
               </span>
@@ -163,6 +163,20 @@
           <!-- メッセージ -->
 
           <!-- 自由入力エリア -->
+          <?php
+            if(!empty($this->data['TAutoMessage']['chat_textarea'])){
+              //オートメッセージの自由入力エリアが設定されている
+              $chat_textarea = $this->data['TAutoMessage']['chat_textarea'];
+            } else {
+              if(!empty($this->data['widgetSettings']['chat_init_show_textarea'])){
+                //初期表示時の自由入力エリアが設定されている
+                $chat_textarea = $this->data['widgetSettings']['chat_init_show_textarea'];
+              } else {
+                //設定値が何もない場合
+                $chat_textarea = C_AUTO_WIDGET_TEXTAREA_OPEN;
+              }
+            }
+          ?>
           <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SENDMESSAGE ?>" class="bt0">
             <span class="require"><label>自由入力エリア</label></span>
             <label class="pointer"><?= $this->ngForm->input('main.chat_textarea', array(
@@ -173,8 +187,8 @@
               'disabled' => !$coreSettings[C_COMPANY_USE_FREE_INPUT],
               ), array(
               'entity' => 'chat_textarea',
-              'default' => (!empty($this->data['TAutoMessage']['chat_textarea'])) ? $this->data['TAutoMessage']['chat_textarea'] : (!empty($this->data['widgetSettings']['chat_init_show_textarea'])) ? $this->data['widgetSettings']['chat_init_show_textarea'] : C_AUTO_WIDGET_TEXTAREA_OPEN,
-              )); ?></label>
+              'default' => $chat_textarea,
+            )); ?></label>
           </li>
           <!-- 自由入力エリア -->
 

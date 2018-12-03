@@ -63,6 +63,8 @@ define('C_COMPANY_USE_CAMPAIGN', 'campaign');  // キャンペーン設定
 define('C_COMPANY_USE_CHATCALLMESSAGES', 'chatCallMessages');  // チャット呼出中メッセージ
 define('C_COMPANY_USE_CUSTOMVARIABLES', 'customVariables');  // カスタム変数
 define('C_COMPANY_USE_EDITCUSTOMERINFORMATIONS', 'editCustomerInformations');  // 訪問ユーザ情報
+define('C_COMPANY_USE_COGMO_ATTEND_API', 'useCogmoAttendApi');  // CogmoAttend連携
+define('C_COMPANY_USE_MESSAGE_RANKING', 'useMessageRanking');  // メッセージランキング機能
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
@@ -94,6 +96,16 @@ define('C_WIDGET_AUTO_OPEN_TYPE_NONE', 5); // 初期表示のままにする
 define('C_WIDGET_POSITION_RIGHT_BOTTOM', 1); // 右下
 define('C_WIDGET_POSITION_LEFT_BOTTOM', 2); // 左下
 
+//スマホ用表示位置種別
+define('C_WIDGET_SP_POSITION_RIGHT_BOTTOM', 1); //右下
+define('C_WIDGET_SP_POSITION_LEFT_BOTTOM', 2); //左下
+define('C_WIDGET_SP_POSITION_RIGHT_CENTER', 3); //右中央
+define('C_WIDGET_SP_POSITION_LEFT_CENTER', 4); //左中央
+
+//スマホ用表示状態遷移種別
+define('C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER', 1); //3段階、小さなバナー
+define('C_WIDGET_SP_VIEW_TWO_PATTERN_BANNER', 3); //2段階、小さなバナー
+
 // 表示名種別
 define('C_WIDGET_SHOW_NAME', 1); // 表示名
 define('C_WIDGET_SHOW_COMP', 2); // 企業名
@@ -123,6 +135,10 @@ define('C_WIDGET_SEND_ACT_PUSH_BTN', 2); // ボタンのみ
 define('C_SC_ENABLED', 1); // 利用する
 define('C_SC_DISABLED', 2); // 利用しない
 
+// 初期ステータス
+define('C_SC_AWAY', 0); // 離席中
+define('C_SC_WAITING', 1); // 待機中
+
 // チャット呼出中メッセージ
 define('C_IN_ENABLED', 1); // 利用する
 define('C_IN_DISABLED', 2); // 利用しない
@@ -144,7 +160,7 @@ define('C_OPERATOR_PASSIVE', 0); // 退席
 define('C_OPERATOR_ACTIVE', 1); // 在籍
 
 // 正規表現
-define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
+define('C_MATCH_RULE_TEL', '/^\+?(\d{10,}|[\d-]{12,})/'); // TEL
 define('C_MATCH_RULE_TIME', '/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/'); // 時間 H:i
 define('C_MATCH_RULE_COLOR_CODE', '/^#([0-9|a-f|A-F]{3}|[0-9|a-f|A-F]{6})$/');
 define('C_MATCH_RULE_IMAGE_FILE', '/.(png|jpg|jpeg)$/i');
@@ -158,7 +174,7 @@ define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]
 define('C_MATCH_INPUT_RULE_ALL', '/.*/');  // 入力制限なし
 define('C_MATCH_INPUT_RULE_NUMBER', '/[\d]*/');  // 数字入力
 define('C_MATCH_INPUT_RULE_EMAIL', '/[\w<>()[\]\\\.\-,;:@"]*/'); // メールアドレス入力(半角英数記号入力)
-define('C_MATCH_INPUT_RULE_TEL', '/^0[\d+-]*/'); // 電話番号入力（半角英数と一部記号入力）
+define('C_MATCH_INPUT_RULE_TEL', '/^\+?(\d|-)*/'); // 電話番号入力（半角英数と一部記号入力）
 
 // メッセージ種別
 define('C_MESSAGE_TYPE_SUCCESS', 1); // 処理成功
@@ -216,12 +232,20 @@ define('C_SCENARIO_ACTION_RECEIVE_FILE', 9); // ファイル受信
 define('C_SCENARIO_ACTION_BRANCH_ON_CONDITION', 10); // 条件分岐
 define('C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION', 11); // 訪問ユーザ登録
 define('C_SCENARIO_ACTION_BULK_HEARING', 12); // 一括ヒアリング
+define('C_SCENARIO_ACTION_LEAD_REGISTER', 13); // リード登録
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
 define('C_SCENARIO_INPUT_TYPE_NUMBER', 2);
 define('C_SCENARIO_INPUT_TYPE_EMAIL', 3);
 define('C_SCENARIO_INPUT_TYPE_TEL', 4);
+
+// シナリオ設定(ヒアリング)－UIタイプ種別コード
+define('C_SCENARIO_UI_TYPE_ONE_ROW_TEXT', 1);
+define('C_SCENARIO_UI_TYPE_MULTIPLE_ROW_TEXT', 2);
+define('C_SCENARIO_UI_TYPE_RADIO_BUTTON', 3);
+define('C_SCENARIO_UI_TYPE_PULLDOWN', 4);
+define('C_SCENARIO_UI_TYPE_CALENDAR', 5);
 
 /* シナリオ設定(ヒアリング) - 改行設定 */
 define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
@@ -236,7 +260,11 @@ define('C_SCENARIO_MAIL_TYPE_ALL_MESSAGE', 1);
 define('C_SCENARIO_MAIL_TYPE_VARIABLES', 2);
 define('C_SCENARIO_MAIL_TYPE_CUSTOMIZE', 3);
 
-/* シナリオ設定(外部システム連携) - メソッド種別 */
+/* シナリオ設定(外部連携) - 連携タイプ */
+define('C_SCENARIO_EXTERNAL_TYPE_API', 1);
+define('C_SCENARIO_EXTERNAL_TYPE_SCRIPT', 2);
+
+/* シナリオ設定(外部連携) - メソッド種別 */
 define('C_SCENARIO_METHOD_TYPE_GET', 1);
 define('C_SCENARIO_METHOD_TYPE_POST', 2);
 
@@ -259,6 +287,10 @@ define('C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO', 2);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE', 3);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_NONE', 4);
 
+// シナリオ設定（リード登録）-新規作成か流用か
+define('C_SCENARIO_LEAD_REGIST', 1);
+define('C_SCENARIO_LEAD_USE', 2);
+
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
 define('C_SELECT_CAN_NOT', 2); // しない
@@ -280,10 +312,10 @@ define('C_STATUS_AVAILABLE', 0); // 有効
 define('C_STATUS_UNAVAILABLE', 1); // 無効
 
 // 成果
-//define('C_ACHIEVEMENT_TERMINATE_SCENARIO', -1); // 途中離脱
 define('C_ACHIEVEMENT_CV', 0); // CV
 define('C_ACHIEVEMENT_UNAVAILABLE', 1); // なし
 define('C_ACHIEVEMENT_AVAILABLE', 2); // あり
+define('C_ACHIEVEMENT_TERMINATE_SCENARIO', 3); // 途中離脱
 
 // 種別
 define('C_CHAT_AUTO', 1); // 自動応答
@@ -304,6 +336,7 @@ define('C_WIDGET_DISPLAY_STYLE_TYPE_BANNER', 3); // 小さなバナー
 define('C_WIDGET_SIZE_TYPE_SMALL', 1); // 小
 define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
+define('C_WIDGET_SIZE_TYPE_MAXIMUM', 4); //最大
 
 // ファイル送信設定タイプ
 define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);
@@ -389,6 +422,11 @@ define('C_CLOSE_BUTTON_SETTING_ON', 2);//有効にする
 //小さなバナー表示
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_BANNER', 1);//小さなバナー表示
 define('C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN', 2);//非表示
+
+//スマホ用
+define('C_SP_SCROLL_VIEW_SETTING', 0);//スクロール時ウィジェットの表示(1:表示 0:非表示)
+define('C_SP_BANNER_POSITION', 1);//バナー表示位置
+define('C_SP_WIDGET_VIEW_PATTERN', 1);//ウィジェット最大化最小化制御 (3,4は最小化に遷移しなくなる)
 
 //バナーテキスト初期値
 define('C_BANNER_TEXT', "チャットで相談");//バナー文言
@@ -484,6 +522,20 @@ $config['WidgetDisplayStyleType'] = [
 $config['widgetPositionType'] = [
     C_WIDGET_POSITION_RIGHT_BOTTOM => "右下",
     C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
+];
+
+/* ウィジェット設定 － スマホ用表示位置種別 */
+$config['widgetSpPositionType'] = [
+    C_WIDGET_SP_POSITION_RIGHT_BOTTOM => "右下",
+    C_WIDGET_SP_POSITION_LEFT_BOTTOM => "左下",
+    C_WIDGET_SP_POSITION_RIGHT_CENTER=> "右中央",
+    C_WIDGET_SP_POSITION_LEFT_CENTER => "左中央"
+];
+
+/* ウィジェット設定 － スマホ用状態遷移種別 */
+$config['widgetSpViewPattern'] = [
+    C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER => "3段階：（最大化・最小化・小さなバナー）",
+    C_WIDGET_SP_VIEW_TWO_PATTERN_BANNER => "2段階：（最大化・小さなバナー）"
 ];
 
 /* ウィジェット設定 ー Web接客コード */
@@ -731,10 +783,48 @@ $config['chatbotScenarioActionList'] = [
       'hearings' => [[
         'variableName' => '',
         'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
+        'uiType' => '1',
         'message' => '',
-        'inputLFType' => C_SCENARIO_INPUT_LF_TYPE_DISALLOW
-      ]],
-      'errorMessage' => '',
+        'required' => true,
+        'errorMessage' => '',
+        'settings' => [
+          'options' => [""], // options for radio or pulldown
+          'disablePastDate' => true,
+          'isSetDisableDate' => false,
+          'isDisableDayOfWeek' => false,
+          'isSetSpecificDate' => false,
+          'isEnableAfterDate' => false,
+          'enableAfterDate' => null,
+          'dayOfWeekSetting' => [
+            0 => false, // sun
+            1 => false, // mon
+            2 => false, // tue
+            3 => false, // wed
+            4 => false, // thur
+            5 => false, // fri
+            6 => false, // sat
+          ],
+          'setSpecificDateType' => '',
+          'specificDateData' => [""],
+          'language' => 1, // 1: japanese, 2: english
+          'pulldownCustomDesign' => false,
+          'calendarCustomDesign' => false,
+          'customDesign' => [
+            'borderColor' => '',
+            'backgroundColor' => '#FFFFFF',
+            'textColor' => '',
+            'headerBackgroundColor' => '',
+            'headerTextColor' => '#FFFFFF',
+            'headerWeekdayBackgroundColor' => '',
+            'calendarBackgroundColor' => '#FFFFFF',
+            'calendarTextColor' => '',
+            'saturdayColor' => '',
+            'sundayColor' => '',
+          ]
+        ]
+      ]
+      ],
+      'restore' => true,
       'isConfirm' => '2',
       'confirmMessage' => '',
       'success' => '',
@@ -792,6 +882,7 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
+      'externalType' => '1',
       'methodType' => '1',
       'requestHeaders' => [[
         'name' => '',
@@ -873,12 +964,26 @@ $config['chatbotScenarioActionList'] = [
     'default' => [
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'multipleHearing' => [
+      'multipleHearings' => [
         [
-          'variableName' => '',
-          'inputType' => "1",
-          'label' => "",
+          'variableName' => '会社名',
+          'inputType' => "1", // 会社名
+          'label' => "会社名",
           'required' => true
+        ]
+      ]
+    ]
+  ],  // リード登録
+  C_SCENARIO_ACTION_LEAD_REGISTER => [
+    'label' => 'リード登録',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'makeLeadTypeList' => '1',
+      'chatTextArea' => '2',
+      'leadInformations' => [
+        [
+          'leadLabelName' => '',
+          'leadVariableName' => ''
         ]
       ]
     ]
@@ -958,7 +1063,13 @@ $config['chatbotScenarioReceiveFileTypeList'] = [
   ]
 ];
 
-/* シナリオ設定 - 外部システム連携のメソッド種別 */
+/* シナリオ設定 - 外部連携のタイプ */
+$config['chatbotScenarioExternalType'] = [
+  C_SCENARIO_EXTERNAL_TYPE_API => 'API連携',
+  C_SCENARIO_EXTERNAL_TYPE_SCRIPT => 'スクリプト'
+];
+
+/* シナリオ設定 - 外部連携のメソッド種別 */
 $config['chatbotScenarioApiMethodType'] = [
   C_SCENARIO_METHOD_TYPE_GET => 'GET',
   C_SCENARIO_METHOD_TYPE_POST => 'POST'
@@ -1007,13 +1118,24 @@ $config['chatbotScenarioBranchOnConditionActionType'] = [
     'label' => 'シナリオを終了'
   ]
 ];
+  $config['chatbotScenarioLeadTypeList'] = [
+    C_SCENARIO_LEAD_REGIST => '新規作成',
+    C_SCENARIO_LEAD_USE => '既存リストを使用'
+  ];
 
 /* 成果種別 */
 $config['achievementType'] = [
-//  C_ACHIEVEMENT_TERMINATE_SCENARIO => "途中離脱",
   C_ACHIEVEMENT_CV => "CV",
+  C_ACHIEVEMENT_AVAILABLE => "有効",
   C_ACHIEVEMENT_UNAVAILABLE => "無効",
-  C_ACHIEVEMENT_AVAILABLE => "有効"
+];
+
+/* 成果種別（検索用） */
+$config['achievementTypeForSearch'] = [
+  C_ACHIEVEMENT_CV => "CV",
+  C_ACHIEVEMENT_TERMINATE_SCENARIO => "途中離脱",
+  C_ACHIEVEMENT_AVAILABLE => "有効",
+  C_ACHIEVEMENT_UNAVAILABLE => "無効",
 ];
 
 /* 種別 */

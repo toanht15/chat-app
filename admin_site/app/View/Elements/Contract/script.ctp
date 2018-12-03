@@ -9,7 +9,7 @@
         popWinObj.close();
       }
       popWinObj = window.open("about:blank","sincloViewWindow");
-      var html = '<form method="post" action="https://contact.sinclo.local/Login/login" id="postjump" target="sincloViewWindow" style="display: none;">';
+      var html = '<form method="post" action="http://contact.sinclo/Login/login" id="postjump" target="sincloViewWindow" style="display: none;">';
       html += '<input type="hidden" name="data[MUser][mail_address]" value="' + mailAddress + '" id="MUserMailAddress">';
       html += '<input type="hidden" name="data[MUser][password]" value="' + pass + '" id="MUserPassword">';
       html += '</form>';

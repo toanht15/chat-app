@@ -156,7 +156,7 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
     );
     foreach($selectVariablePriority as $key => $priority) {
       foreach($priority as $index => $attribute) {
-        if(array_key_exists($attribute, $data)) {
+        if(array_key_exists($attribute, $data) && !empty($data[$attribute])) {
           $value[$key] = $this->convertData($key, $data[$attribute]);
           break;
         }
@@ -167,9 +167,11 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
 
   private function convertData($key, $value)
   {
+    if(is_string($value)) return $value;
     $separatorStr = "";
     switch($key) {
       case self::INPUT_TYPE_TEL_ID:
+      case self::INPUT_TYPE_MOBILE_ID:
       case self::INPUT_TYPE_FAX_ID:
       case self::INPUT_TYPE_ZIP_ID:
         $separatorStr = '-';
@@ -177,11 +179,19 @@ class LandscapeEasyEntryAPIComponent extends LandscapeAPIComponent
       case self::INPUT_TYPE_PERSONAL_NAME_ID:
         $separatorStr = '　';
         break;
+      case self::INPUT_TYPE_ADDRESS_ID:
+        $separatorStr = '';
+        break;
     }
-    if(!empty($separatorStr)) {
-      return join($separatorStr, $value);
-    } else {
-      return $value;
+
+    $joinedValue = "";
+
+    foreach($value as $k => $v) {
+      $joinedValue .= $v;
+      if($k !== count($value) && !empty($value[$k+1])) {
+        $joinedValue .= $separatorStr;
+      }
     }
+    return $joinedValue;
   }
 }

@@ -65,6 +65,34 @@ class TestDataMakerShell extends AppShell {
         $this->saveHistoryChatRecord($tHistoriesId, $id, 1, "taishitsu", 99, $distinction, 0, 1, null, $created, $this->baseUserId);
         $this->saveHistoryChatRecord($tHistoriesId, $id, null, "denialmessage", 4, $distinction, 0, 1, null, $created, $this->baseUserId);
       }
+    $baseBeginDate2->modify("+1 second");
+    $baseBeginDate3 = $baseBeginDate3 + 1;
+    }
+  }
+
+  public function makeChatLog() {
+    //return false;
+    $this->beginDate = new DateTime("2017-01-02 00:00:00");
+    $visitors_id = '2017032810183667';
+    $startHistoriesId = "311482";
+    for ($i = 0; $i < 50000; $i++) {
+      echo 'create ' . $i . PHP_EOL;
+      $createdObj = $this->THistory->findById($startHistoriesId);
+      $created = new DateTime($createdObj['THistory']['access_date']);
+
+      $this->saveHistoryChatRecord($startHistoriesId, null, "automessage", 3, $distinction, 0, 1, null,$created,$visitors_id);
+      $this->saveHistoryChatRecord($startHistoriesId, null, "syouhisyamessage", 1, $distinction, 1, 1, null,$created,$visitors_id);
+      /*$this->saveHistoryChatRecord($startHistoriesId, 1, "nyuusitu", 998, $distinction, 0, 1, null,$created,$visitors_id);
+      $this->saveHistoryChatRecord($startHistoriesId, 1, "konnichiwa", 2, $distinction, 0, 1, null,$created,$visitors_id);
+      $this->saveHistoryChatRecord($startHistoriesId, null, "syouhisyamessage", 1, $distinction, 0, 1, null,$created,$visitors_id);
+      $this->saveHistoryChatRecord($startHistoriesId, 1, "operetamessage", 2, $distinction, 0, 1, null,$created,$visitors_id);
+      $this->saveHistoryChatRecord($startHistoriesId, null, "syouhisyamessage", 1, $distinction, 0, 1, null,$created,$visitors_id);
+      $this->saveHistoryChatRecord($startHistoriesId, 1, "operetamessage", 2, $distinction, 0, 1, 2,$created,$visitors_id);
+      $this->saveHistoryChatRecord($startHistoriesId, 1, "taishitsu", 999, $distinction, 0, 1, null,$created,$visitors_id);
+      $this->saveHistoryChatRecord($startHistoriesId, null, "denialmessage", 4, $distinction, 0, 1, null,$created,$visitors_id);*/
+      $startHistoriesId++;
+      $visitors_id = $visitors_id + 1;
+      $startHistoriesId = $startHistoriesId + 5;
     }
   }
 

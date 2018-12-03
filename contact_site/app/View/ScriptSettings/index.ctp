@@ -36,7 +36,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
   <h2><?= mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．コード設置</h2>
   <section>
     <pre>下記いずれか１つのコードをWEBページの&lt;body&gt;タグの最後（&lt;/body&gt;の直前）に埋め込んでください。
-※１つのWEBページにsincloのタグ（下記いずれかのタグ）は1つだけ埋め込んでください。</pre>
+※１つのWEBページに<?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>sincloの<?php endif; ?>タグ（下記いずれかのタグ）は1つだけ埋め込んでください。</pre>
     <dl>
       <dt>（１）ウィジェット表示タグ</dt>
       <dd>
@@ -81,7 +81,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
             <span class="copyArea"><?=$this->Form->input('formHideTag', array('type' => 'text', 'value' => $scriptName, 'label' => false, 'div' => false ))?></span>
           </p>
         </dd>
-        <pre style="color:red">注意：フォーム系ページの次のページ（submitボタンをクリックした後に遷移する「確認ページ」や「サンクスページ」）にはsincloタグは
+        <pre style="color:red">注意：フォーム系ページの次のページ（submitボタンをクリックした後に遷移する「確認ページ」や「サンクスページ」）には<?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>sinclo<?php endif; ?>タグは
 　　　埋め込まないでください。
         </pre>
       </div>
@@ -91,7 +91,7 @@ $mainTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイ
   <?php endif; ?>
   <h2><?= mb_convert_kana($headerNo, "N", "utf-8"); $headerNo++ ?>．デモサイト</h2>
   <section>
-    <pre>下記サイトにてウィジェットの確認やsincloの動作確認、事前トレーニングを行うことができます。</pre>
+    <pre>下記サイトにてウィジェットの確認や<?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>sincloの<?php endif; ?>動作確認、事前トレーニングを行うことができます。</pre>
     【 <?= $this->Html->link('デモサイトへ', array('controller' => 'ScriptSettings', 'action' => 'testpage',$companyKey), array('target' => '_demo', 'class' => 'underL')) ?> 】
   </section>
 </div>

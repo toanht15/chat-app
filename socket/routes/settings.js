@@ -193,6 +193,7 @@ router.get("/", function (req, res, next) {
           break;
         case 2:
         case 3:
+        case 4:
           headerTextSize = 15;
           seTextSize = 13;
           reTextSize = 13;
@@ -220,6 +221,52 @@ router.get("/", function (req, res, next) {
       if ('btwButtonMargin' in settings) {
         btwButtonMargin = settings.btwButtonMargin;
       }
+
+      var chatSendBtnTextSize = 13;
+      if ('chatSendBtnTextSize' in settings) {
+        chatSendBtnTextSize = settings.chatSendBtnTextSize;
+      }
+
+      var messageBoxTextSize = 13;
+      if ('messageBoxTextSize' in settings) {
+        messageBoxTextSize = settings.messageBoxTextSize;
+      }
+
+
+      /* スマホ隠しパラメータ*/
+
+
+      var spWidgetViewPattern = 1;
+      if ('spWidgetViewPattern' in settings) {
+        spWidgetViewPattern = settings.spWidgetViewPattern;
+      }
+
+      var spScrollViewSetting = 0;
+      if ('spScrollViewSetting' in settings) {
+        spScrollViewSetting = settings.spScrollViewSetting;
+      }
+
+      var spBannerPosition = settings.showPosition;
+      if ('spBannerPosition' in settings) {
+        spBannerPosition = settings.spBannerPosition;
+      }
+
+      var spBannerVerticalPositionFromTop = "50%";
+      if ('spBannerVerticalPositionFromTop' in settings){
+        spBannerVerticalPositionFromTop = settings.spBannerVerticalPositionFromTop;
+      }
+
+      var spBannerVerticalPositionFromBottom = "7px";
+      if ('spBannerVerticalPositionFromBottom' in settings){
+        spBannerVerticalPositionFromBottom = settings.spBannerVerticalPositionFromBottom;
+      }
+
+      var spBannerHorizontalPosition = "7px";
+      if ('spBannerHorizontalPosition' in settings){
+        spBannerHorizontalPosition = settings.spBannerHorizontalPosition;
+      }
+
+      /*  スマホ隠しパラメータ */
 
       // 自動メッセージの見出し設定が存在しない場合は「表示する」
       var showAutomessageName = 1;
@@ -319,6 +366,19 @@ router.get("/", function (req, res, next) {
 
         lineButtonMargin: isNumeric(lineButtonMargin),
         btwButtonMargin: isNumeric(btwButtonMargin),
+
+        chatSendBtnTextSize: isNumeric(chatSendBtnTextSize),
+        messageBoxTextSize: isNumeric(messageBoxTextSize),
+
+        /* スマホ隠しパラメータstart */
+        spScrollViewSetting: isNumeric(spScrollViewSetting),
+        spWidgetViewPattern: isNumeric(spWidgetViewPattern),
+        spBannerPosition: isNumeric(spBannerPosition),
+        spBannerVerticalPositionFromTop: settings.spBannerVerticalPositionFromTop,
+        spBannerVerticalPositionFromBottom: settings.spBannerVerticalPositionFromBottom,
+        spBannerHorizontalPosition: settings.spBannerHorizontalPosition,
+        spBannerText: settings.spBannerText,
+        /* スマホ隠しパラメータend */
 
         showMainImage: settings.showMainImage,
         mainImage: settings.mainImage,
@@ -638,8 +698,10 @@ router.get("/", function (req, res, next) {
           "scenario_id": isNumeric(common.autoMessageSettings[siteKey][i].t_chatbot_scenario_id)
         });
       }
-      sendData.chat.settings['in_flg'] = common.chatSettings[siteKey].in_flg;
-      sendData.chat.settings['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
+      if(common.chatSettings[siteKey]) {
+        sendData.chat.settings['in_flg'] = common.chatSettings[siteKey].in_flg;
+        sendData.chat.settings['initial_notification_message'] = common.chatSettings[siteKey].initial_notification_message;
+      }
       sendData.customVariable = common.customerInfoSettings[siteKey];
       res.send(sendData);
     }
