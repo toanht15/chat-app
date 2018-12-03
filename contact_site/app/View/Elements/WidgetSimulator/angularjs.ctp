@@ -590,7 +590,6 @@
       } else {
         // 訪問者側からのファイル受信UIは未対応です
       }
-
       // パラメーターを表示用に設定する
       var tmbImage = divElm.querySelector('li .sendFileThumbnailArea img.sendFileThumbnail');
       var tmbIcon = divElm.querySelector('li .sendFileThumbnailArea i.sendFileThumbnail');
@@ -1498,7 +1497,11 @@
     });
   }]);
 
+  var waitAnimationAddFlg = true;
+
   function chatBotTyping() {
+    if(!waitAnimationAddFlg) return;
+    waitAnimationAddFlg = false;
     var widgetSizeType = getWidgetSettings().widget_size_type;
     var html = "";
     html += "<div class='botNowDiv'>";
@@ -1545,6 +1548,7 @@
   }
 
   function chatBotTypingRemove() {
+    waitAnimationAddFlg = true;
     $('div.botNowDiv').remove();
   }
 
