@@ -2130,6 +2130,7 @@
         var actionDetail = $scope.setActionList[$scope.actionStep];
         // メッセージ間隔
         var time = parseInt(actionDetail.messageIntervalTimeSec, 10) * 1000;
+        console.log($scope.actionStep);
         var branchOnConditon = false;
 
         //条件分岐の場合は複雑な時間指定が必要になるので括りだしておく
@@ -2139,12 +2140,20 @@
           for ( var i = 0; i < actionDetail.conditionList.length; i++ ) {
             if ( $scope.isMatch(value, actionDetail.conditionList[i]) ) {
               if ( actionDetail.conditionList[i].actionType == '1' ) {
-                chatBotTyping();
+                if($scope.actionStep !== 0) {
+                  chatBotTyping();
+                } else {
+                  time = 0;
+                }
                 break;
               }
             } else if ( actionDetail.elseEnabled ) {
               if ( actionDetail.elseAction.actionType == '1' ) {
-                chatBotTyping();
+                if($scope.actionStep !== 0) {
+                  chatBotTyping();
+                } else {
+                  time = 0;
+                }
                 break;
               }
             }
@@ -2153,7 +2162,7 @@
         }
 
         if ( !branchOnConditon ) {
-          if ( time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0 && $scope.firstActionFlg) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+          if ( time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0 && $scope.firstActionFlg) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
             time = setTime || '0';
             $scope.firstActionFlg = false;
           } else {
@@ -2165,11 +2174,13 @@
           chatBotTypingRemove();
           time = 850;
         }
+        
 
         $timeout.cancel($scope.actionTimer);
         $scope.actionTimer = $timeout(function () {
           if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
             // テキスト発言
+            chatBotTypingRemove();
             $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message), 'action' + $scope.actionStep);
             $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
             $scope.actionStep++;
@@ -2196,6 +2207,7 @@
             self.callExternalApi(actionDetail);
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
             // ファイル送信
+            chatBotTypingRemove();
             if ( $scope.sendFileIndex == 0 && !!actionDetail.message ) {
               $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message), 'action' + $scope.actionStep);
               $scope.sendFileIndex++;
@@ -2207,12 +2219,16 @@
               $scope.doAction();
             }
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+            // 属性値取得
             $scope.actionStep++;
             $scope.doAction();
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+            // 訪問ユーザ登録
             $scope.actionStep++;
             $scope.doAction();
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
+            // ファイル受信
+            chatBotTypingRemove();
             if ( actionDetail.dropAreaMessage ) {
               $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled, actionDetail.cancelLabel, actionDetail.receiveFileType, actionDetail.extendedReceiveFileExtensions);
               $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
@@ -2225,8 +2241,9 @@
               });
             }
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
-            // 指定の変数を取得
+            // 条件分岐
             chatBotTypingRemove();
+            $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
             var value = LocalStorageService.getItem('chatbotVariables', actionDetail.referenceVariable);
             for ( var i = 0; i < actionDetail.conditionList.length; i++ ) {
               if ( $scope.isMatch(value, actionDetail.conditionList[i]) ) {
@@ -2247,8 +2264,12 @@
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
             chatBotTypingRemove();
             $scope.doBulkHearingAction(actionDetail);
-          } else
-            chatBotTypingRemove();
+          } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
+            $scope.actionStep++;
+            $scope.doAction();
+          } else {
+
+          }
         }, time);
       } else {
         setTimeout(chatBotTypingRemove, 801);
