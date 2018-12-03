@@ -3007,18 +3007,19 @@ class StatisticsController extends AppController {
   {
     $data = [];
     foreach ($messageData as $key => $value) {
-      if (!array_key_exists($value['t_history_chat_logs']['message'], $data)) {
-        $data[$value['t_history_chat_logs']['message']] = [];
+      $message = $this->convertHtmlTag($value['t_history_chat_logs']['message']);
+      if (!array_key_exists($message, $data)) {
+        $data[$message] = [];
       }
 
-      $data[$value['t_history_chat_logs']['message']][$value[0][$type]] = $value[0]['messageCount'];
-      $data[$value['t_history_chat_logs']['message']]['latest'] = $value[0]['latest'];
+      $data[$message][$value[0][$type]] = $value[0]['messageCount'];
+      $data[$message]['latest'] = $value[0]['latest'];
       // calculate sum of row
-      if (!array_key_exists('sum', $data[$value['t_history_chat_logs']['message']])) {
-        $data[$value['t_history_chat_logs']['message']]['sum'] = 0;
+      if (!array_key_exists('sum', $data[$message])) {
+        $data[$message]['sum'] = 0;
       }
 
-      $data[$value['t_history_chat_logs']['message']]['sum'] += $value[0]['messageCount'];
+      $data[$message]['sum'] += $value[0]['messageCount'];
     };
 
     // sort message count by sum
@@ -3137,4 +3138,16 @@ class StatisticsController extends AppController {
     return $csv;
   }
 
+  /**
+   * convert html tag to character entities
+   * @param $text
+   * @return mixed
+   */
+  private function convertHtmlTag($text)
+  {
+    $text = str_replace('<', '&lt;', $text);
+    $text = str_replace('>', '&gt;', $text);
+
+    return $text;
+  }
 }

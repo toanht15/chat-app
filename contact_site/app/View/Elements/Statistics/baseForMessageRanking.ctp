@@ -71,7 +71,7 @@
       <tbody>
         <?php foreach ($messageData['data'] as $message => $data): ?>
             <tr>
-              <td id="chatRequestLabel" class="autoMessage tooltip" data-org-msg="<?= preg_replace('/\<|\>/', '＞', $message) ?>"><?= preg_replace('/\<|\>/', '＞', $message) ?></td>
+              <td id="chatRequestLabel" class="autoMessage tooltip" data-org-msg="<?=  h($message); ?>"></td>
               <?php for ($i = $start; $i <= $end; $i++): ?>
                 <?php if (isset($data[$i])): ?>
                   <td><?php echo number_format($data[$i]) ?></td>
