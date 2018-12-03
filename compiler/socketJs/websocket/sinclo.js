@@ -2217,13 +2217,13 @@
         if ( check.smartphone() ) {
           sinclo.adjustSpWidgetSize();
         }
-        $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+        sinclo.chatApi.scDownImmediate();
       }, delayTime);
       if ( sinclo.firstCallDisplayTextarea ) {
         if ( check.smartphone() ) {
           $('#flexBoxWrap').css('display', 'block');
           sinclo.adjustSpWidgetSize();
-          $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+          sinclo.chatApi.scDownImmediate();
         }
       }
       sinclo.firstCallDisplayTextarea = false;
