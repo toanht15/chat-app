@@ -62,6 +62,7 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function forChat() {
+    ini_set("max_execution_time", 1200);
     if($this->request->is('post')) {
       if ($this->THistory->validates() ) {
         $date = $this->request->data['dateFormat'];
@@ -84,8 +85,8 @@ class StatisticsController extends AppController {
     }
     //デフォルト画面
     else {
-      $date = '月別';
-      $type = date("Y");
+      $date = '日別';
+      $type = date("Y-m");
       $data = $this->calculateMonthlyData($type);
     }
 
@@ -1500,6 +1501,7 @@ class StatisticsController extends AppController {
 
   //時別の場合
   private function calculateHourlyData($data){
+    ini_set("max_execution_time", 1200);
     $startDate = strtotime($data); // 2016-11-02 00:00:00
     $endDate = strtotime("+23 hour",$startDate); // 2016-11-02 23:00:00
     $correctStartDate = date("Y-m-d H:00:00",$startDate);
@@ -2878,6 +2880,7 @@ class StatisticsController extends AppController {
   }
 
   private function outputCSVStatistics($csv = [], $name = 'sinclo_statistics') {
+    ini_set("max_execution_time", 1200);
     $this->layout = null;
     //メモリ上に領域確保
     $fp = fopen('php://temp/maxmemory:'.(5*1024*1024),'a');
@@ -2957,7 +2960,7 @@ class StatisticsController extends AppController {
   {
     $access = "select MONTH(created) as month, message, count(id) as messageCount, MAX(created) as latest
       from t_history_chat_logs
-      where m_companies_id = ? and message_type = 1 and YEAR(created) = ? and not exists (select thcl2.id from t_history_chat_logs as thcl2 where thcl2.m_companies_id = ? and thcl2.t_histories_id = t_history_chat_logs.t_histories_id and thcl2.message_type = 998 and thcl2.message_distinction = t_history_chat_logs.message_distinction and thcl2.created < t_history_chat_logs.created)
+      where m_companies_id = ? and message_type = 1 and del_flg = 0 and YEAR(created) = ? and not exists (select thcl2.id from t_history_chat_logs as thcl2 where thcl2.m_companies_id = ? and thcl2.t_histories_id = t_history_chat_logs.t_histories_id and thcl2.message_type = 998 and thcl2.message_distinction = t_history_chat_logs.message_distinction and thcl2.created < t_history_chat_logs.created)
       group by message, MONTH(created);";
     $messageData = $this->THistoryChatLog->query($access, [$this->userInfo['MCompany']['id'], $year, $this->userInfo['MCompany']['id']]);
 
@@ -2973,7 +2976,7 @@ class StatisticsController extends AppController {
   {
     $access = "select MONTH(created) as month, DAY(created) as day, message, count(id) as messageCount, MAX(created) as latest 
       from t_history_chat_logs 
-      where m_companies_id = ? and message_type = 1 and YEAR(created) = ? and MONTH(created) = ? and not exists (select thcl2.id from t_history_chat_logs as thcl2 where thcl2.m_companies_id = ? and thcl2.t_histories_id = t_history_chat_logs.t_histories_id and thcl2.message_type = 998 and thcl2.message_distinction = t_history_chat_logs.message_distinction and thcl2.created < t_history_chat_logs.created)
+      where m_companies_id = ? and message_type = 1 and del_flg = 0 and YEAR(created) = ? and MONTH(created) = ? and not exists (select thcl2.id from t_history_chat_logs as thcl2 where thcl2.m_companies_id = ? and thcl2.t_histories_id = t_history_chat_logs.t_histories_id and thcl2.message_type = 998 and thcl2.message_distinction = t_history_chat_logs.message_distinction and thcl2.created < t_history_chat_logs.created)
       group by message, MONTH(created), DAY(created);";
     $messageData = $this->THistoryChatLog->query($access, [$this->userInfo['MCompany']['id'], $year, $month, $this->userInfo['MCompany']['id']]);
 
@@ -2988,7 +2991,7 @@ class StatisticsController extends AppController {
   {
     $access = "select HOUR(created) as hour, message, count(id) as messageCount, MAX(created) as latest 
       from t_history_chat_logs 
-      where m_companies_id = ? and message_type = 1 and DATE(created) = ? and not exists (select thcl2.id from t_history_chat_logs as thcl2 where thcl2.m_companies_id = ? and thcl2.t_histories_id = t_history_chat_logs.t_histories_id and thcl2.message_type = 998 and thcl2.message_distinction = t_history_chat_logs.message_distinction and thcl2.created < t_history_chat_logs.created)
+      where m_companies_id = ? and message_type = 1 and del_flg = 0 and DATE(created) = ? and not exists (select thcl2.id from t_history_chat_logs as thcl2 where thcl2.m_companies_id = ? and thcl2.t_histories_id = t_history_chat_logs.t_histories_id and thcl2.message_type = 998 and thcl2.message_distinction = t_history_chat_logs.message_distinction and thcl2.created < t_history_chat_logs.created)
       group by message, HOUR(created);";
     $messageData = $this->THistoryChatLog->query($access, [$this->userInfo['MCompany']['id'], $date, $this->userInfo['MCompany']['id']]);
 

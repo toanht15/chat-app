@@ -264,7 +264,7 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
-    ini_set("max_execution_time", 180);
+    ini_set("max_execution_time", 3600);
     ini_set('memory_limit', '-1'); // 無制限
     $name = "sinclo-history";
 
@@ -428,7 +428,7 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
-    ini_set("max_execution_time", 180);
+    ini_set("max_execution_time", 3600);
     ini_set('memory_limit', '-1'); // 無制限
 
     if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
@@ -1303,6 +1303,7 @@ class HistoriesController extends AppController {
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
     }
+
     $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
       'fields' => [
         't_histories_id',
@@ -2064,6 +2065,7 @@ class HistoriesController extends AppController {
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
     }
+    
     $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
       'fields' => [
         't_histories_id',
@@ -2087,6 +2089,7 @@ class HistoriesController extends AppController {
         ]
       ];
     }
+    
     return $stayList;
   }
 
