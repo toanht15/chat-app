@@ -2426,6 +2426,7 @@
           $scope.$broadcast('allowInputLF', false, hearingDetail.inputType);
           var strInputRule = $scope.inputTypeList[hearingDetail.inputType].inputRule;
           $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
+          $scope.$broadcast('enableHearingInputFlg');
         }
 
         if ( hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_MULTIPLE_ROW_TEXT ?>) {
@@ -2437,6 +2438,7 @@
           $scope.$broadcast('allowSendMessageByShiftEnter', true, hearingDetail.inputType);
           var strInputRule = $scope.inputTypeList[hearingDetail.inputType].inputRule;
           $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
+          $scope.$broadcast('enableHearingInputFlg');
         }
 
         if ( hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_RADIO_BUTTON ?>) {
@@ -2654,6 +2656,7 @@
       $('#sincloBox [id^="action' + actionIndex + '"][id*="underline"]').find('.sinclo-text-line').removeClass('underlineText');
       $('#sincloBox [id^="action' + actionIndex + '"][id*="calendar"]').addClass('disabledArea');
       $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
+      $scope.$broadcast('disableHearingInputFlg');
     };
 
     this.handleReselectionInput = function (message, actionStep, hearingIndex) {
@@ -2753,19 +2756,19 @@
       $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
 
       if ( hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_ONE_ROW_TEXT ?>) {
+        $('#miniSincloChatMessage').val(value);
         $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1', hearingDetail.uiType, hearingDetail.required);
         $scope.$broadcast('allowInputLF', false, hearingDetail.inputType);
         var strInputRule = $scope.inputTypeList[hearingDetail.inputType].inputRule;
         $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
-        $('#miniSincloChatMessage').val(value);
       }
 
       if ( hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_MULTIPLE_ROW_TEXT ?>) {
+        $('#sincloChatMessage').val(value);
         $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1', hearingDetail.uiType, hearingDetail.required);
         $scope.$broadcast('allowSendMessageByShiftEnter', true, hearingDetail.inputType);
         var strInputRule = $scope.inputTypeList[hearingDetail.inputType].inputRule;
         $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
-        $('#sincloChatMessage').val(value);
       }
     });
   }])
