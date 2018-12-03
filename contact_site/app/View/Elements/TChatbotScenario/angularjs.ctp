@@ -1854,6 +1854,7 @@
 
     // next hearing action
     $scope.$on('nextHearingAction', function () {
+      $scope.setActionList[$scope.actionStep].hearings[$scope.hearingIndex].skipped = true;
       $scope.hearingIndex++;
       var actionDetail = $scope.setActionList[$scope.actionStep];
       if ( typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
@@ -2634,15 +2635,45 @@
       $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
     };
 
-    // hanlde radio button click
-    $(document).on('change', '#chatTalk input[type="radio"]', function () {
-      var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
-      var message = $(this).val().replace(/^\s/, '');
-      var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
-      var name = $(this).attr('name');
+    this.handleReselectionInput = function (message, actionStep, hearingIndex) {
+      var variable  = $scope.setActionList[actionStep].hearings[hearingIndex].variableName;
+      var isRestore = $scope.setActionList[actionStep].restore;
+      var item      = LocalStorageService.getItem('chatbotVariables', variable);
+      var skipped   = $scope.setActionList[actionStep].hearings[hearingIndex].skipped;
+      if (isRestore) {
+        if (!item && !skipped) {
+          // first time input
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+          $scope.addVisitorHearingMessage(message);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        } else if ((!item && skipped) || (item && item !== message)) {
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+          $scope.reSelectionHearing(message, actionStep, hearingIndex);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        }
+      } else {
+        if (!item && !skipped) {
+          // first time input
+          $scope.addVisitorHearingMessage(message);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        } else {
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+          $scope.reSelectionHearing(message, actionStep, hearingIndex);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        }
+      }
+    };
 
-      var numbers = prefix.match(/\d+/g).map(Number);
-      var actionStep = numbers[0];
+    // handle radio button click
+    $(document).on('change', '#chatTalk input[type="radio"]', function () {
+      var prefix    = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
+      var message   = $(this).val().replace(/^\s/, '');
+      var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
+      var name      = $(this).attr('name');
+
+      var numbers      = prefix.match(/\d+/g).map(Number);
+      var actionStep   = numbers[0];
       var hearingIndex = numbers[1];
       if ( isConfirm ) {
         // confirm message
@@ -2654,71 +2685,21 @@
         $('#action' + actionStep + '_hearing0_question').nextAll('div').removeAttr('id');
         $('#action' + actionStep + '_hearing0_question').removeAttr('id');
       } else {
-        // radio type
-        var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
-        var isRestore = $scope.setActionList[numbers[0]].restore;
-        var item = LocalStorageService.getItem('chatbotVariables', variable);
-        if ( isRestore ) {
-          if ( !item ) {
-            // first time input
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-            $scope.addVisitorHearingMessage(message);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else if ( item && item !== message ) {
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-            $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          }
-        } else {
-          if ( !item ) {
-            // first time input
-            $scope.addVisitorHearingMessage(message);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else {
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-            $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          }
-        }
+        self.handleReselectionInput(message, actionStep, hearingIndex);
       }
     });
 
     // プルダウンの選択
     $(document).on('change', '#chatTalk select', function () {
-      var prefix = $(this).attr('id').replace(/-sinclo-pulldown[0-9a-z-]+$/i, '');
+      var prefix  = $(this).attr('id').replace(/-sinclo-pulldown[0-9a-z-]+$/i, '');
       var message = $(this).val().replace(/^\s/, '');
 
-      var numbers = prefix.match(/\d+/g).map(Number);
-      var actionStep = numbers[0];
+      var numbers      = prefix.match(/\d+/g).map(Number);
+      var actionStep   = numbers[0];
       var hearingIndex = numbers[1];
 
-      if ( message !== '選択してください' ) {
-        var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
-        var isRestore = $scope.setActionList[numbers[0]].restore;
-        var item = LocalStorageService.getItem('chatbotVariables', variable);
-        if ( isRestore ) {
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-          if ( !item ) {
-            // first time input
-            $scope.addVisitorHearingMessage(message);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else if ( item && item !== message ) {
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-            $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          }
-        } else {
-          if ( !item ) {
-            // first time input
-            $scope.addVisitorHearingMessage(message);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else {
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-            $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          }
-        }
+      if (message !== '選択してください') {
+        self.handleReselectionInput(message, actionStep, hearingIndex);
       } else {
         $(this).parents('.sinclo_re').find('.nextBtn').hide();
       }
@@ -2726,42 +2707,13 @@
 
     // カレンダーの選択
     $(document).on('change', '#chatTalk .flatpickr-input', function () {
-      var prefix = $(this).attr('id').replace(/-sinclo-datepicker[0-9a-z-]+$/i, '');
+      var prefix  = $(this).attr('id').replace(/-sinclo-datepicker[0-9a-z-]+$/i, '');
       var message = $(this).val().replace(/^\s/, '');
 
-      var numbers = prefix.match(/\d+/g).map(Number);
-      var actionStep = numbers[0];
+      var numbers      = prefix.match(/\d+/g).map(Number);
+      var actionStep   = numbers[0];
       var hearingIndex = numbers[1];
-
-      var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
-      var isRestore = $scope.setActionList[numbers[0]].restore;
-      var item = LocalStorageService.getItem('chatbotVariables', variable);
-      if ( isRestore ) {
-        if ( !item ) {
-          // first input
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-          $scope.addVisitorHearingMessage(message);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-        } else if ( item && item !== message ) {
-          // 再選択
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-          $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-        }
-      } else {
-        if ( !item ) {
-          // first input
-          $scope.addVisitorHearingMessage(message);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-        } else {
-          // 再選択
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-          $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-        }
-      }
-
+      self.handleReselectionInput(message, actionStep, hearingIndex);
     });
 
     // re-input text type
