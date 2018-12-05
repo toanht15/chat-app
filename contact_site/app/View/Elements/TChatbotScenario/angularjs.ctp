@@ -69,6 +69,8 @@
         $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
       }
     }
+    
+    console.log($scope.setActionList);
 
     // 登録済みシナリオ一覧
     var scenarioJsonList = JSON.parse(document.getElementById('TChatbotScenarioScenarioList').value);
@@ -1005,7 +1007,7 @@
       LocalStorageService.remove($scope.storageKey);
 
       $scope.changeFlg = false;
-      $('#TChatbotScenarioActivity').val(this.createJsonData(true));
+      console.log($('#TChatbotScenarioActivity').val(this.createJsonData(true)));
       submitAct();
     };
 
