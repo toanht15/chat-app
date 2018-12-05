@@ -1819,19 +1819,12 @@ class StatisticsController extends AppController {
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg,message_distinction from
       t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
-      where m_companies_id = ? and notice_flg = ? group by t_histories_id,
+      where m_companies_id = ? and message_type = 1 and notice_flg = ? group by t_histories_id,
        message_distinction)
-      as thcl
-      LEFT JOIN (select t_histories_id, message_type,
-      message_distinction from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id_users_id)
-       where message_type = ? and m_companies_id = ?) as thcl2
-      ON
-      thcl.t_histories_id = thcl2.t_histories_id
-      AND
-      thcl.message_distinction = thcl2.message_distinction,
+      as thcl,
       t_histories as th
       WHERE
-        thcl2.t_histories_id IS NULL
+        NOT EXISTS(select id from t_history_chat_logs where message_type = ? and t_histories_id = thcl.t_histories_id and message_distinction = thcl.message_distinction and m_companies_id = ?)
       AND
         th.access_date between ? and ?
       AND
@@ -1869,7 +1862,7 @@ class StatisticsController extends AppController {
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg from
       t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-      where message_request_flg = ? and m_companies_id = ?)
+      where message_type = 1 and message_request_flg = ? and m_companies_id = ?)
       as thcl,t_histories as th
       WHERE
         thcl.t_histories_id = th.id
@@ -2030,10 +2023,10 @@ class StatisticsController extends AppController {
     count(distinct thcl.message_distinction,thcl.t_histories_id) as automaticResponse_count
     FROM
       (select id,t_histories_id,message_distinction,message_type,message_request_flg from t_history_chat_logs
-       force index(idx_t_history_chat_logs_message_type_companies_id) where (message_type = ? or message_type = ? or message_type = ? or message_type = ? or message_type = ?)  and m_companies_id = ?) as thcl
-    LEFT JOIN
+       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = 5 and m_companies_id = ? and created between ? and ?) as thcl
+    INNER JOIN
       (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs
-       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where message_request_flg = ? and m_companies_id = ?) as thcl3
+       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where message_request_flg = 1 and m_companies_id = ? and message_type = 1 and created between ? and ?) as thcl3
     ON
       thcl.t_histories_id = thcl3.t_histories_id
     AND
@@ -2047,12 +2040,7 @@ class StatisticsController extends AppController {
       th.access_date between ? and ?
     group by date";
 
-    $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format,
-    $this->chatMessageType['messageType']['automatic'],$this->chatMessageType['messageType']['scenarioText'],
-    $this->chatMessageType['messageType']['scenarioHearing'],$this->chatMessageType['messageType']['scenarioSelection'],
-    $this->chatMessageType['messageType']['scenarioReceiveFile'],$this->userInfo['MCompany']['id'],
-    $this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
-    $correctStartDate,$correctEndDate));
+    $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format, $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate,  $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate, $correctStartDate, $correctEndDate));
 
     foreach($automaticResponseNumber as $k => $v) {
       $automaticResponseNumberData =  $automaticResponseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['automaticResponse_count']));
