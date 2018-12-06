@@ -13,29 +13,34 @@
       <div ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>">
         <input type="text" ng-model="setItem.leadTitleLabel">
       </div>
-      <select ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>" style="padding: 0px; flex-grow: 0;" ng-model="setItem.tLeadListSettingId" ng-init="setItem.tLeadListSettingId" ng-options="item.id as item.name for item in main.searchList(setActionId)" ng-change="main.handleLeadInfo(setItem.tLeadListSettingId, setActionId)">
+      <select ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>" style="padding: 0px; flex-grow: 0;" ng-model="setItem.tLeadListSettingId" ng-init="setItem.tLeadListSettingId" ng-options="item.id as item.name for item in main.leadList" ng-change="main.handleLeadInfo(setItem.tLeadListSettingId, setActionId); main.controllLeadRegister(setActionId)">
         <option value="">リストを選択してください</option>
       </select>
     </li>
-    <!--新規作成の場合-->
     <li class="styleFlexbox">
       <div class="fb15em" style="white-space: nowrap; padding-top: 5px;"><label class="require">登録内容</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="リードリストに登録する項目に対して、それぞれ変数を設定できます">?</icon></span></div>
-      <div>
+      <ul>
         <div class="grid-container-header">
+          <div></div>
           <div class='area-name' style="text-align: center;"><label class="require">リードリストの項目</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数名で指定された変数の値が、ここで指定されたリードリストの項目に自動で登録されます。">?</icon></span></div>
           <div class='area-name' style="text-align: center;"><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="リード情報として自動登録したい変数名を設定します。<br>（変数名を{{showExpression('変数名')}}と{で括る必要はありません）">?</icon></span></div>
         </div>
-        <div class="grid-container-body itemListGroup" ng-repeat="(listId, item) in setItem.leadInformations track by $index">
-          <div class='area-name'><input type="text" class="make-box" ng-model="item.leadLabelName"></div>
-          <div class='area-name'><input type="text" class="make-box" ng-model="item.leadVariableName"></div>
-          <div class='area-btn short'>
-            <div class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+        <ul  ui-sortable="sortableOptionsLeadRegister" ng-model="setItem.leadInformations" ng-if="setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?> || (setItem.tLeadListSettingId && setItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>)">
+          <li class="grid-container-body itemListGroup" ng-repeat="(listId, item) in setItem.leadInformations track by $index">
+            <div class="area-drag-symbol handleOption" style="cursor: move;">
+              <i class="fas fa-arrows-alt-v fa-2x"></i>
             </div>
-          </div>
-          <input type="hidden" ng-value="item.leadUniqueHash">
-        </div>
-      </div>
+            <div class='area-name'><input type="text" class="make-box" ng-model="item.leadLabelName"></div>
+            <div class='area-name'><input type="text" class="make-box" ng-model="item.leadVariableName"></div>
+            <div class='area-btn short'>
+              <div class="btnBlock">
+                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+              </div>
+            </div>
+            <input type="hidden" ng-value="item.leadUniqueHash">
+          </li>
+        </ul>
+      </ul>
     </li>
   </ul>
 </div>

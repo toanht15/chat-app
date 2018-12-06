@@ -87,20 +87,13 @@
 
     // 登録済みリードリスト（編集時に使用）
     var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
-    console.log(leadJsonList);
     this.leadList = [];
-    // アクション番号(idx)毎のプルダウンリストを作成する
-    for(var idx in leadJsonList){
-      var tmpList = [];
-      for(var key in leadJsonList[idx]){
-        console.log(key);
-        if(leadJsonList[idx].hasOwnProperty(key)){
-          tmpList.push({
-            'id': leadJsonList[idx][key].id,
-            'name': leadJsonList[idx][key].list_name
-          });
-        }
-        this.leadList[idx] = tmpList;
+    for(var key in leadJsonList){
+      if( leadJsonList.hasOwnProperty(key) ) {
+        this.leadList.push({
+          'id': leadJsonList[key]["TLeadListSetting"]["id"],
+          'name': leadJsonList[key]["TLeadListSetting"]["list_name"]
+        });
       }
     }
 
@@ -230,6 +223,27 @@
           $(ui.item).find('input:radio[name="' + name + '"][value="' + value + '"]').prop('checked', true);
         });
       },
+      stop: function (event, ui) {
+        $timeout(function () {
+          $scope.$apply();
+        });
+
+        // 並び替え後、変数のチェックを行う
+        var elms = document.querySelectorAll('li.set_action_item');
+        $scope.setActionList.forEach(function (actionItem, index) {
+          actionValidationCheck(elms[index], $scope.setActionList, actionItem);
+        });
+      }
+    };
+
+    // リードリスト一覧の並び替えオプション
+    $scope.sortableOptionsLeadRegister = {
+      axis: "y",
+      tolerance: "pointer",
+      containment: "parent",
+      handle: '.handleOption',
+      cursor: 'move',
+      helper: 'clone',
       stop: function (event, ui) {
         $timeout(function () {
           $scope.$apply();
@@ -1047,7 +1061,7 @@
 
     /**
      * ヒアリング、選択肢、メール送信のリスト追加
-     * （選択肢・メール送信ではリストの末尾に、ヒアリングではリストの任意の箇所に追加する）
+     * （選択肢・メール送信ではリストの末尾に、ヒアリングとリードリスト登録ではリストの任意の箇所に追加する）
      * @param String  actionStep  アクション番号
      * @param Integer listIndex   ボタン押下されたリスト番号
      */
@@ -1603,15 +1617,16 @@
    * @param String setActionId    変更したアクションのID
    */
    this.handleLeadInfo = function(targetId, setActionId){
-     var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[setActionId];
-     if(!leadSettings){
-       leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[99];
-     }
+     var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value);
      leadSettings.some(function(setting) {
-       console.log(setting);
-       if(Number(setting.id) === Number(targetId)){
-         $scope.setActionList[setActionId].leadInformations = JSON.parse(setting.list_parameter);
-         $scope.setActionList[setActionId].leadTitleLabel = setting.list_name;
+       if(Number(setting["TLeadListSetting"]["id"]) === Number(targetId)){
+         // 変数名に項目名を入れる
+         var information = JSON.parse(setting["TLeadListSetting"]["list_parameter"]);
+         for(var idx in information){
+           information[idx]["leadVariableName"] = information[idx]["leadLabelName"];
+         }
+         $scope.setActionList[setActionId].leadInformations = information;
+         $scope.setActionList[setActionId].leadTitleLabel = setting["TLeadListSetting"]["list_name"];
          return true;
        }
      })
@@ -3257,36 +3272,42 @@
         }
       });
     } else if ( actionItem.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
-      /*リード新規作成時
-    **リスト名のチェック
-    **項目名のチェック
- 　  */
-    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>) {
-      if (!actionItem.leadTitleLabel) {
-        messageList.push('リードリスト名が未入力です');
-        //既に名前は使われているかを判定する関数を作る
-      } else if (searchListLabel(actionItem.leadTitleLabel)) {
-        messageList.push('リードリスト名”'+ actionItem.leadTitleLabel +'”は既に使用されています');
-      }
 
       var invalidLabelName = actionItem.leadInformations.some(function(elm) {
         return !elm.leadLabelName || elm.leadLabelName === "";
       });
 
+      /*リード新規作成時
+      **リスト名のチェック
+      **項目名のチェック
+    　*/
+      if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>) {
+        if (!actionItem.leadTitleLabel) {
+          messageList.push('リードリスト名が未入力です');
+          //既に名前は使われているかを判定する関数を作る
+        } else if (searchListLabel(actionItem.leadTitleLabel)) {
+          messageList.push('リードリスト名”'+ actionItem.leadTitleLabel +'”は既に使用されています');
+        }
+
         if ( invalidLabelName ) {
           messageList.push('リードリスト項目を設定してください');
         }
+
       }
 
       /*リード選択時
-    **リード選択のチェック
-     */
-    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>) {
-      if(!actionItem.tLeadListSettingId || actionItem.tLeadListSettingId === "") {
-        messageList.push("リードリストを選択してください");
+      **リード選択のチェック
+       */
+      if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>) {
+        if(!actionItem.tLeadListSettingId || actionItem.tLeadListSettingId === "") {
+          messageList.push("リードリストを選択してください");
+        }
+
+        if ( invalidLabelName && actionItem.tLeadListSettingId !== "" ) {
+          messageList.push('リードリスト項目を設定してください');
+        }
       }
     }
-  }
 
   // 使用されている変数名を抽出する
   var setMessages = searchObj(actionItem, /^(?!\$).+$|^variableName$/i);
@@ -3345,9 +3366,9 @@
  */
 function searchListLabel (label) {
   var existLabelName = false;
-  var leadList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value)[99];
-  for(var leadInfo in leadList){
-    if(leadList[leadInfo].list_name === label){
+  var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
+  for(var leadData in leadJsonList){
+    if(leadJsonList[leadData]["TLeadListSetting"]["list_name"] === label){
       existLabelName = true;
     }
   }
