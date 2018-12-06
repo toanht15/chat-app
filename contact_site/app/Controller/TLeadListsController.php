@@ -88,16 +88,15 @@ class TLeadListsController extends AppController{
       ],
       'conditions' => [
         "m_companies_id" => $this->userInfo['MCompany']['id']
-      ],
-      'group' => 'list_name'
+      ]
     ]);
     return $result;
   }
 
   private function CSVoutput(){
-    $targetName = $this->getTargetName(intval($this->request->data['selectList']));
-    $targetInfo = $this->searchListInfo($this->getTargetIdList($targetName));
-    $targetInfo = $this->convertDataForCSV($targetInfo, $targetName);
+    $targetId = intval($this->request->data['selectList']);
+    $targetInfo = $this->searchListInfo($targetId);
+    $targetInfo = $this->convertDataForCSV($targetInfo, $targetId);
     $this->response->type('csv');
     $this->response->body($this->_outputCSV($targetInfo));
   }
@@ -166,39 +165,37 @@ class TLeadListsController extends AppController{
     return $result;
   }
 
-  private function searchListInfo($idList){
+  private function searchListInfo($id){
     $resultArray = [];
-    foreach($idList as $id) {
-      $result = $this->TLeadList->find('all', [
-        'recursive' => -1,
-        'conditions' => [
-          "m_companies_id" => $this->userInfo['MCompany']['id'],
-          "t_lead_list_settings_id" => $id,
-          [
-            'created BETWEEN ? AND ?' => [
-              $this->request->data['startDate']." 00:00:00",
-              $this->request->data['endDate']." 23:59:59"
-            ]
+    $result = $this->TLeadList->find('all', [
+      'recursive' => -1,
+      'conditions' => [
+        "m_companies_id" => $this->userInfo['MCompany']['id'],
+        "t_lead_list_settings_id" => $id,
+        [
+          'created BETWEEN ? AND ?' => [
+            $this->request->data['startDate']." 00:00:00",
+            $this->request->data['endDate']." 23:59:59"
           ]
-        ],
-        'order' => [
-          'created' => 'desc'
         ]
-      ]);
-      forEach($result as $data){
-        $resultArray[] = $data;
-      }
+      ],
+      'order' => [
+        'created' => 'desc'
+      ]
+    ]);
+    forEach($result as $data){
+      $resultArray[] = $data;
     }
     return $resultArray;
   }
 
-  private function convertDataForCSV($allData, $targetName){
+  private function convertDataForCSV($allData, $targetId){
     // CSVのヘッダーを作成する
     $head = [
       "登録日時"
     ];
     // リードリスト情報に合わせて可変なヘッダーを追加する
-    $head = $this->addLeadHeader($head, $allData, $targetName);
+    $head = $this->addLeadHeader($head, $allData, $targetId);
     array_push($head,
       "ブラウザ",
         "キャンペーン",
@@ -294,28 +291,47 @@ class TLeadListsController extends AppController{
     return $row;
   }
 
-  private function addLeadHeader($head, $element, $targetName){
-    // ヘッダー情報は同一リードリスト名では同じなため、最初の1つだけ見る
-    // リード情報がない場合は取得したidからヘッダー名を取得する
-    if(isset($element[0])) {
-      $leadHeaders = json_decode($element[0]['TLeadList']['lead_informations']);
-    } else {
-      $target = $this->TLeadListSetting->find('first',[
-        'recursive' => -1,
-        'field' => [
-          'list_parameter'
-        ],
-        'conditions' => [
-          "m_companies_id" => $this->userInfo['MCompany']['id'],
-          "list_name" => $targetName
-        ]
-      ]);
-      $leadHeaders = json_decode($target['TLeadListSetting']['list_parameter']);
-    }
-    foreach ($leadHeaders as $leadHeader) {
-      array_push($head, $leadHeader->leadLabelName);
-    }
+  private function addLeadHeader($head, $element, $targetId){
+    // ヘッダー情報を取得する
+    $leadHeader = $this->_getHeaderSetting($targetId);
+    $head += $this->_makeCorrectHeader($leadHeader, $element);
 
+    return $head;
+  }
+
+  private function _getHeaderSetting($id){
+    $targetData = $this->TLeadListSetting->find('first',[
+      'recursive' => -1,
+      'field' => [
+        'list_parameter'
+      ],
+      'conditions' => [
+        "m_companies_id" => $this->userInfo['MCompany']['id'],
+        "id" => $id
+      ]
+    ]);
+    return json_decode($targetData['TLeadListSetting']['list_parameter']);
+  }
+
+  private function _makeCorrectHeader($settings, $dataSet){
+    $head = [];
+    foreach( $settings as $setting ){
+      if($setting->deleted == 0){
+        array_push($head, $setting->leadLabelName);
+      } else {
+        // 削除されてるなら、データセット内に存在するか確認する
+        foreach( $dataSet as $data ){
+          $searchTargets = json_decode($data['TLeadList']['lead_informations']);
+          foreach( $searchTargets as $target){
+            if( strcmp($setting->leadUniqueHash,$target->leadUniqueHash) == 0 ){
+              // 削除されているがデータセット内に有効な値がある場合は
+
+            }
+          }
+        }
+        // 削除されてるなら、データセット内に存在するか確認する
+      }
+    }
     return $head;
   }
 

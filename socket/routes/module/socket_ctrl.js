@@ -979,7 +979,7 @@ var db = {
    */
 
   addLeadInformation: function (obj){
-    pool.query('INSERT INTO t_lead_lists VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, now())', [companyList[obj.siteKey], Number(obj.leadSettingsId), Number(obj.scenarioId), JSON.stringify(obj.saveLeadData), obj.landingUrl, obj.executeUrl, obj.userAgent],
+    pool.query('INSERT INTO t_lead_lists VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, now())', [companyList[obj.siteKey], Number(obj.leadSettingsId), Number(obj.scenarioId), JSON.stringify(obj.dataSet), obj.landingUrl, obj.executeUrl, obj.userAgent],
     function(err, result){
       if(isset(err)){
         console.log("ERROR DETECTED!!!" + err);
@@ -4005,25 +4005,11 @@ io.sockets.on('connection', function(socket) {
   socket.on('saveLeadList', function(data){
     var obj = JSON.parse(data);
     var targetId = Number(obj.leadSettingsId);
-    var variableIndex = obj.variables;
-    var leadData = [];
-    pool.query('SELECT list_parameter FROM t_lead_list_settings WHERE id = ? AND m_companies_id = ?', [targetId, companyList[obj.siteKey]] , function(err, result){
-      if(isset(err)) {
-        console.log("ERROR DETECTED!!");
-        return;
-      }
-      else {
-        var leadInfo = JSON.parse(result[0].list_parameter);
-        for(let i=0; i<leadInfo.length; i++){
-          leadData.push({
-            "leadLabelName": leadInfo[i].leadLabelName,
-            "leadVariable": isOkVariableForLeadList(variableIndex[leadInfo[i].leadVariableName]) ? variableIndex[leadInfo[i].leadVariableName] : ""
-          });
-        }
-        obj.saveLeadData = leadData;
-        db.addLeadInformation(obj);
-      }
-    });
+    // 要修正！
+    console.log("下下下");
+    console.log(obj);
+    console.log("上上上");
+    db.addLeadInformation(obj);
   });
 
   /*  Check variable (empty or space only)

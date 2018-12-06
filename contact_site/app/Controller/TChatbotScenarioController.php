@@ -2055,8 +2055,12 @@ sinclo@medialink-ml.co.jp
     foreach($targetList as $currentId => $target){
       $labelList = json_decode($target['TLeadListSetting']['list_parameter']);
       foreach($labelList as $key => $labelData){
-        if($labelData->deleted == 1){
-          array_splice($labelList, $key, 1);
+        if(property_exists($labelData, "deleted")) {
+          if ($labelData->deleted == 1) {
+            array_splice($labelList, $key, 1);
+          }
+        } else {
+          $labelData->deleted = 0;
         }
       }
       $targetList[$currentId]['TLeadListSetting']['list_parameter'] = json_encode($labelList);

@@ -8384,11 +8384,11 @@
           self._parent._doing(0, function () { // 即時実行
             self._parent._handleChatTextArea(self._parent.get(self._parent._lKey.currentScenario).chatTextArea);
             var LeadSettingId = self._parent.get(self._parent._lKey.currentScenario).tLeadListSettingId;
-            var targetVariables = self._parent._getAllTargetVariables();
+            var dataSet = self._setVariables(self._parent._getAllTargetVariables());
             var sendData = {
               scenarioId: sinclo.scenarioApi.get(sinclo.scenarioApi._lKey.scenarioId),
               leadSettingsId: LeadSettingId,
-              variables: targetVariables,
+              dataSet: dataSet,
               userAgent: window.navigator.userAgent,
               executeUrl: location.href,
               landingUrl: userInfo.prev[0].url
@@ -8399,6 +8399,25 @@
               self._parent._process();
             }
           });
+        },
+        _setVariables: function(valueArray) {
+          var self = sinclo.scenarioApi._addLeadInformation;
+          var dataSet = self._parent.get(self._parent._lKey.currentScenario).leadInformations;
+          dataSet.forEach(function(data){
+            var existValueFlg = false;
+            Object.keys(valueArray).forEach(function(key){
+              if(data['leadVariableName'] === key){
+                // リードリストの登録変数に該当する変数がシナリオで得られていた場合
+                data['leadVariable'] = valueArray[key];
+                existValueFlg = true;
+              }
+            });
+            if(!existValueFlg){
+              data['leadVariable'] = "";
+            }
+            delete data['leadVariableName'];
+          });
+          return dataSet;
         }
       }
     },
