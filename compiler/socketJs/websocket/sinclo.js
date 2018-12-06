@@ -1260,7 +1260,7 @@
                   break;
                 }
               }
-              if ( !found ) {
+              if ( !found && chat.id !== chat.chatId ) {
                 // オートメッセージ設定で無効 or 削除された
                 console.log("delete " + chat.chatId);
                 window.sinclo.chatApi.autoMessages.delete(chat.chatId);
@@ -3901,9 +3901,9 @@
           content += "</div>";
         }
 
-        li.className = 'sinclo_se effect_left recv_file_left';
+        li.className = 'sinclo_re effect_left recv_file_left';
         if(window.sincloInfo.widget.isSendMessagePositionLeft) {
-          li.className = 'sinclo_re effect_right recv_file_right';
+          li.className = 'sinclo_se effect_right recv_file_right';
         }
         li.innerHTML = content;
 
