@@ -37,7 +37,7 @@ class MailSenderComponent extends Component
 
   /**
    * To を設定
-   * @param $csv 複数のメールアドレスをカンマを区切り文字とした文字列
+   * @param {string} $csv 複数のメールアドレスをカンマを区切り文字とした文字列
    */
   public function setTo($csv) {
     $this->to = explode(',',$csv);

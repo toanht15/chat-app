@@ -162,6 +162,36 @@ $config['default'] = [
 			'sort' => 5
 		],
 		[
+			'name' => '【サンプル】（発言内容）無料トライアルに申し込む',
+			'trigger_type' => 0,
+			'activity' => [
+				'conditionType' => 1,
+				'conditions' => [
+					"7" => [
+						[
+							"keyword_contains" => "無料トライアルに申し込む",
+							"keyword_contains_type" => "1",
+							"keyword_exclusions" => "",
+							"keyword_exclusions_type" => "1",
+							"speechContentCond" => "1",
+							"triggerTimeSec" => 2,
+							"speechTriggerCond" => "2"
+						]
+					]
+				],
+				"widgetOpen" => 2,
+				"message" => "無料トライアルをご希望ですね。
+下記ページからお申し込みください。
+
+<a href=\"https://sinclo.medialink-ml.co.jp/lp/trial.php\" target=\"_blank\"style=\"display: inline-block;width:290px;text-align:center;font-weight: bold;text-decoration: none;background: #ABCD05;color:#FFFFFF;padding:10px;border-radius: 5px;\">無料トライアル申し込み</a>",
+				"chatTextarea" => 2,
+				"cv" => 2
+			],
+			'action_type' => 1,
+			'active_type' => 0,
+			'sort' => 6
+		],
+		[
 			'name' => '【サンプル】（発言内容）資料請求',
 			'trigger_type' => 0,
 			'activity' => [
@@ -180,6 +210,41 @@ $config['default'] = [
 					]
 				],
 				"widgetOpen" => 1,
+				"message" => "資料請求ですね。
+
+それでは、こちらにお客様のご連絡先（会社名やお名前、メールアドレスなど）を入力していただきます。
+
+まずは入力方法を下記からお選びください。
+※普段お使いのメール署名をそのままコピー＆ペーストする場合は【一括入力】をお選びください。
+[] 連絡先をまとめて入力する（一括入力）
+[] 連絡先を１つずつ入力する（個別入力）",
+				"chatTextarea" => 1,
+				"cv" => 2
+			],
+			'action_type' => 1,
+			'message' => '',
+			'active_type' => 0,
+			'sort' => 7
+		],
+		[
+			'name' => '【サンプル】（発言内容）連絡先をまとめて入力する（一括入力）',
+			'trigger_type' => 0,
+			'activity' => [
+				'conditionType' => 1,
+				'conditions' => [
+					"7" => [
+						[
+							"keyword_contains" => "連絡先をまとめて入力する（一括入力）",
+							"keyword_contains_type" => "1",
+							"keyword_exclusions" => "",
+							"keyword_exclusions_type" => "1",
+							"speechContentCond" => "1",
+							"triggerTimeSec" => 2,
+							"speechTriggerCond" => "2"
+						]
+					]
+				],
+				"widgetOpen" => 1,
 				"message" => "",
 				"chatTextarea" => 1,
 				"cv" => 2
@@ -187,7 +252,119 @@ $config['default'] = [
 			'action_type' => 2,
 			't_chatbot_scenario_id' => 0,
 			'active_type' => 0,
-			'sort' => 7
+			'sort' => 8
+		],
+		[
+			'name' => '【サンプル】（発言内容）連絡先を１つずつ入力する（個別入力）',
+			'trigger_type' => 0,
+			'activity' => [
+				'conditionType' => 1,
+				'conditions' => [
+					"7" => [
+						[
+							"keyword_contains" => "連絡先を１つずつ入力する（個別入力）",
+							"keyword_contains_type" => "1",
+							"keyword_exclusions" => "",
+							"keyword_exclusions_type" => "1",
+							"speechContentCond" => "1",
+							"triggerTimeSec" => 2,
+							"speechTriggerCond" => "2"
+						]
+					]
+				],
+				"widgetOpen" => 1,
+				"message" => "",
+				"chatTextarea" => 1,
+				"cv" => 2
+			],
+			'action_type' => 2,
+			't_chatbot_scenario_id' => 0,
+			'active_type' => 0,
+			'sort' => 9
+		],
+		[
+			'name' => '【サンプル】（発言内容）来店予約',
+			'trigger_type' => 0,
+			'activity' => [
+				'conditionType' => 1,
+				'conditions' => [
+					"7" => [
+						[
+							"keyword_contains" => "来店予約",
+							"keyword_contains_type" => "1",
+							"keyword_exclusions" => "",
+							"keyword_exclusions_type" => "1",
+							"speechContentCond" => "1",
+							"triggerTimeSec" => 2,
+							"speechTriggerCond" => "2"
+						]
+					]
+				],
+				"widgetOpen" => 2,
+				"message" => "",
+				"chatTextarea" => 1,
+				"cv" => 2
+			],
+			'action_type' => 2,
+			't_chatbot_scenario_id' => 0,
+			'active_type' => 0,
+			'sort' => 10
+		],
+		[
+			'name' => '【サンプル】（発言内容）会員登録・入会',
+			'trigger_type' => 0,
+			'activity' => [
+				'conditionType' => 1,
+				'conditions' => [
+					"7" => [
+						[
+							"keyword_contains" => "会員登録・入会",
+							"keyword_contains_type" => "1",
+							"keyword_exclusions" => "",
+							"keyword_exclusions_type" => "1",
+							"speechContentCond" => "1",
+							"triggerTimeSec" => 2,
+							"speechTriggerCond" => "2"
+						]
+					]
+				],
+				"widgetOpen" => 2,
+				"message" => "",
+				"chatTextarea" => 1,
+				"cv" => 2
+			],
+			'action_type' => 2,
+			't_chatbot_scenario_id' => 0,
+			'active_type' => 0,
+			'sort' => 11
+		],
+		[
+				'name' => '【サンプル】（発言内容）アンケートに答える',
+				'trigger_type' => 0,
+				'activity' => [
+					'conditionType' => 1,
+					'conditions' => [
+						"7" => [
+							[
+								"keyword_contains" => "アンケートに答える",
+								"keyword_contains_type" => "1",
+								"keyword_exclusions" => "",
+								"keyword_exclusions_type" => "1",
+								"speechContentCond" => "1",
+								"triggerTimeSec" => 2,
+								"speechTriggerCond" => "2"
+							]
+						]
+					],
+					"widgetOpen" => 2,
+					"message" => "",
+					"chatTextarea" => 1,
+					"cv" => 2
+				],
+				'action_type' => 2,
+				't_chatbot_scenario_id' => 0,
+				'active_type' => 0,
+				'sort' => 12
 		],
 		[
 			'name' => '【サンプル】（発言内容）その他',
@@ -215,7 +392,7 @@ $config['default'] = [
 			'action_type' => 2,
 			't_chatbot_scenario_id' => 0,
 			'active_type' => 0,
-			'sort' => 11
+			'sort' => 13
 		],
 		[
 			'name' => '【サンプル】（発言内容）メニューに戻る',
@@ -250,121 +427,7 @@ $config['default'] = [
 			],
 			'action_type' => 1,
 			'active_type' => 0,
-			'sort' => 12
-		],
-		[
-			'name' => '【サンプル】（発言内容）会員登録・入会',
-			'trigger_type' => 0,
-			'activity' => [
-				'conditionType' => 1,
-				'conditions' => [
-					"7" => [
-						[
-							"keyword_contains" => "会員登録・入会",
-							"keyword_contains_type" => "1",
-							"keyword_exclusions" => "",
-							"keyword_exclusions_type" => "1",
-							"speechContentCond" => "1",
-							"triggerTimeSec" => 2,
-							"speechTriggerCond" => "2"
-						]
-					]
-				],
-				"widgetOpen" => 2,
-				"message" => "",
-				"chatTextarea" => 1,
-				"cv" => 2
-			],
-			'action_type' => 2,
-			't_chatbot_scenario_id' => 0,
-			'active_type' => 0,
-			'sort' => 9
-		],
-		[
-			'name' => '【サンプル】（発言内容）アンケートに答える',
-			'trigger_type' => 0,
-			'activity' => [
-				'conditionType' => 1,
-				'conditions' => [
-					"7" => [
-						[
-							"keyword_contains" => "アンケートに答える",
-							"keyword_contains_type" => "1",
-							"keyword_exclusions" => "",
-							"keyword_exclusions_type" => "1",
-							"speechContentCond" => "1",
-							"triggerTimeSec" => 2,
-							"speechTriggerCond" => "2"
-						]
-					]
-				],
-				"widgetOpen" => 2,
-				"message" => "",
-				"chatTextarea" => 1,
-				"cv" => 2
-			],
-			'action_type' => 2,
-			't_chatbot_scenario_id' => 0,
-			'active_type' => 0,
-			'sort' => 10
-		],
-		[
-			'name' => '【サンプル】（発言内容）無料トライアルに申し込む',
-			'trigger_type' => 0,
-			'activity' => [
-				'conditionType' => 1,
-				'conditions' => [
-					"7" => [
-						[
-							"keyword_contains" => "無料トライアルに申し込む",
-							"keyword_contains_type" => "1",
-							"keyword_exclusions" => "",
-							"keyword_exclusions_type" => "1",
-							"speechContentCond" => "1",
-							"triggerTimeSec" => 2,
-							"speechTriggerCond" => "2"
-						]
-					]
-				],
-				"widgetOpen" => 2,
-				"message" => "無料トライアルをご希望ですね。
-下記ページからお申し込みください。
-
-<a href=\"https://sinclo.medialink-ml.co.jp/lp/trial.php\" target=\"_blank\"style=\"display: inline-block;width:290px;text-align:center;font-weight: bold;text-decoration: none;background: #ABCD05;color:#FFFFFF;padding:10px;border-radius: 5px;\">無料トライアル申し込み</a>",
-				"chatTextarea" => 2,
-				"cv" => 2
-			],
-			'action_type' => 1,
-			'active_type' => 0,
-			'sort' => 6
-		],
-		[
-			'name' => '【サンプル】（発言内容）来店予約',
-			'trigger_type' => 0,
-			'activity' => [
-				'conditionType' => 1,
-				'conditions' => [
-					"7" => [
-						[
-							"keyword_contains" => "来店予約",
-							"keyword_contains_type" => "1",
-							"keyword_exclusions" => "",
-							"keyword_exclusions_type" => "1",
-							"speechContentCond" => "1",
-							"triggerTimeSec" => 2,
-							"speechTriggerCond" => "2"
-						]
-					]
-				],
-				"widgetOpen" => 2,
-				"message" => "",
-				"chatTextarea" => 1,
-				"cv" => 2
-			],
-			'action_type' => 2,
-			't_chatbot_scenario_id' => 0,
-			'active_type' => 0,
-			'sort' => 8
+			'sort' => 14
 		]
 	],
 	'autoMessages_without_scenario' => [

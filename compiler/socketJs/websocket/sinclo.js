@@ -2217,13 +2217,13 @@
         if ( check.smartphone() ) {
           sinclo.adjustSpWidgetSize();
         }
-        $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+        sinclo.chatApi.scDownImmediate();
       }, delayTime);
       if ( sinclo.firstCallDisplayTextarea ) {
         if ( check.smartphone() ) {
           $('#flexBoxWrap').css('display', 'block');
           sinclo.adjustSpWidgetSize();
-          $('#sincloBox #chatTalk').scrollTop(chatTalk.scrollHeight - chatTalk.clientHeight - 2);
+          sinclo.chatApi.scDownImmediate();
         }
       }
       sinclo.firstCallDisplayTextarea = false;
@@ -3901,9 +3901,9 @@
           content += "</div>";
         }
 
-        li.className = 'sinclo_se effect_left recv_file_left';
+        li.className = 'sinclo_re effect_left recv_file_left';
         if(window.sincloInfo.widget.isSendMessagePositionLeft) {
-          li.className = 'sinclo_re effect_right recv_file_right';
+          li.className = 'sinclo_se effect_right recv_file_right';
         }
         li.innerHTML = content;
 

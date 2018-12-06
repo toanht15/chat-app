@@ -8336,7 +8336,7 @@ ul.naviBtn {
             .action_lead_register {
               [class*="grid-container"]{
                 display: grid;
-                grid-template-columns: 200px 200px 60px 1fr;
+                grid-template-columns: 20px 200px 200px 60px 1fr;
                 grid-template-rows: 31px 1fr;
                 :first-child{
                   grid-column: 1;

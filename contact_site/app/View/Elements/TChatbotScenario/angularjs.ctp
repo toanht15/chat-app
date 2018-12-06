@@ -69,6 +69,8 @@
         $scope.targetDeleteFileIds = jsonData.targetDeleteFileIds;
       }
     }
+    
+    console.log($scope.setActionList);
 
     // 登録済みシナリオ一覧
     var scenarioJsonList = JSON.parse(document.getElementById('TChatbotScenarioScenarioList').value);
@@ -85,20 +87,13 @@
 
     // 登録済みリードリスト（編集時に使用）
     var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
-    console.log(leadJsonList);
     this.leadList = [];
-    // アクション番号(idx)毎のプルダウンリストを作成する
-    for(var idx in leadJsonList){
-      var tmpList = [];
-      for(var key in leadJsonList[idx]){
-        console.log(key);
-        if(leadJsonList[idx].hasOwnProperty(key)){
-          tmpList.push({
-            'id': leadJsonList[idx][key].id,
-            'name': leadJsonList[idx][key].list_name
-          });
-        }
-        this.leadList[idx] = tmpList;
+    for(var key in leadJsonList){
+      if( leadJsonList.hasOwnProperty(key) ) {
+        this.leadList.push({
+          'id': leadJsonList[key]["TLeadListSetting"]["id"],
+          'name': leadJsonList[key]["TLeadListSetting"]["list_name"]
+        });
       }
     }
 
@@ -228,6 +223,27 @@
           $(ui.item).find('input:radio[name="' + name + '"][value="' + value + '"]').prop('checked', true);
         });
       },
+      stop: function (event, ui) {
+        $timeout(function () {
+          $scope.$apply();
+        });
+
+        // 並び替え後、変数のチェックを行う
+        var elms = document.querySelectorAll('li.set_action_item');
+        $scope.setActionList.forEach(function (actionItem, index) {
+          actionValidationCheck(elms[index], $scope.setActionList, actionItem);
+        });
+      }
+    };
+
+    // リードリスト一覧の並び替えオプション
+    $scope.sortableOptionsLeadRegister = {
+      axis: "y",
+      tolerance: "pointer",
+      containment: "parent",
+      handle: '.handleOption',
+      cursor: 'move',
+      helper: 'clone',
       stop: function (event, ui) {
         $timeout(function () {
           $scope.$apply();
@@ -1005,7 +1021,7 @@
       LocalStorageService.remove($scope.storageKey);
 
       $scope.changeFlg = false;
-      $('#TChatbotScenarioActivity').val(this.createJsonData(true));
+      console.log($('#TChatbotScenarioActivity').val(this.createJsonData(true)));
       submitAct();
     };
 
@@ -1045,7 +1061,7 @@
 
     /**
      * ヒアリング、選択肢、メール送信のリスト追加
-     * （選択肢・メール送信ではリストの末尾に、ヒアリングではリストの任意の箇所に追加する）
+     * （選択肢・メール送信ではリストの末尾に、ヒアリングとリードリスト登録ではリストの任意の箇所に追加する）
      * @param String  actionStep  アクション番号
      * @param Integer listIndex   ボタン押下されたリスト番号
      */
@@ -1601,15 +1617,16 @@
    * @param String setActionId    変更したアクションのID
    */
    this.handleLeadInfo = function(targetId, setActionId){
-     var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[setActionId];
-     if(!leadSettings){
-       leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value)[99];
-     }
+     var leadSettings = JSON.parse(document.getElementsByName("data[TChatbotScenario][leadList]")[0].value);
      leadSettings.some(function(setting) {
-       console.log(setting);
-       if(Number(setting.id) === Number(targetId)){
-         $scope.setActionList[setActionId].leadInformations = JSON.parse(setting.list_parameter);
-         $scope.setActionList[setActionId].leadTitleLabel = setting.list_name;
+       if(Number(setting["TLeadListSetting"]["id"]) === Number(targetId)){
+         // 変数名に項目名を入れる
+         var information = JSON.parse(setting["TLeadListSetting"]["list_parameter"]);
+         for(var idx in information){
+           information[idx]["leadVariableName"] = information[idx]["leadLabelName"];
+         }
+         $scope.setActionList[setActionId].leadInformations = information;
+         $scope.setActionList[setActionId].leadTitleLabel = setting["TLeadListSetting"]["list_name"];
          return true;
        }
      })
@@ -1854,6 +1871,7 @@
 
     // next hearing action
     $scope.$on('nextHearingAction', function () {
+      $scope.setActionList[$scope.actionStep].hearings[$scope.hearingIndex].skipped = true;
       $scope.hearingIndex++;
       var actionDetail = $scope.setActionList[$scope.actionStep];
       if ( typeof actionDetail.hearings[$scope.hearingIndex] === 'undefined' &&
@@ -2130,6 +2148,7 @@
         var actionDetail = $scope.setActionList[$scope.actionStep];
         // メッセージ間隔
         var time = parseInt(actionDetail.messageIntervalTimeSec, 10) * 1000;
+        console.log($scope.actionStep);
         var branchOnConditon = false;
 
         //条件分岐の場合は複雑な時間指定が必要になるので括りだしておく
@@ -2139,12 +2158,20 @@
           for ( var i = 0; i < actionDetail.conditionList.length; i++ ) {
             if ( $scope.isMatch(value, actionDetail.conditionList[i]) ) {
               if ( actionDetail.conditionList[i].actionType == '1' ) {
-                chatBotTyping();
+                if($scope.actionStep !== 0) {
+                  chatBotTyping();
+                } else {
+                  time = 0;
+                }
                 break;
               }
             } else if ( actionDetail.elseEnabled ) {
               if ( actionDetail.elseAction.actionType == '1' ) {
-                chatBotTyping();
+                if($scope.actionStep !== 0) {
+                  chatBotTyping();
+                } else {
+                  time = 0;
+                }
                 break;
               }
             }
@@ -2153,7 +2180,7 @@
         }
 
         if ( !branchOnConditon ) {
-          if ( time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0 && $scope.firstActionFlg) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+          if ( time == 0 || !!setTime || ($scope.actionStep === 0 && $scope.hearingIndex === 0 && $scope.firstActionFlg) || actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_MAIL ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_CALL_SCENARIO ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_EXTERNAL_API ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?> || actionDetail.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
             time = setTime || '0';
             $scope.firstActionFlg = false;
           } else {
@@ -2165,11 +2192,13 @@
           chatBotTypingRemove();
           time = 850;
         }
+        
 
         $timeout.cancel($scope.actionTimer);
         $scope.actionTimer = $timeout(function () {
           if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_TEXT ?>) {
             // テキスト発言
+            chatBotTypingRemove();
             $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message), 'action' + $scope.actionStep);
             $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
             $scope.actionStep++;
@@ -2196,6 +2225,7 @@
             self.callExternalApi(actionDetail);
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_SEND_FILE ?>) {
             // ファイル送信
+            chatBotTypingRemove();
             if ( $scope.sendFileIndex == 0 && !!actionDetail.message ) {
               $scope.$broadcast('addReMessage', $scope.replaceVariable(actionDetail.message), 'action' + $scope.actionStep);
               $scope.sendFileIndex++;
@@ -2207,12 +2237,16 @@
               $scope.doAction();
             }
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>) {
+            // 属性値取得
             $scope.actionStep++;
             $scope.doAction();
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION ?>) {
+            // 訪問ユーザ登録
             $scope.actionStep++;
             $scope.doAction();
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_RECEIVE_FILE ?>) {
+            // ファイル受信
+            chatBotTypingRemove();
             if ( actionDetail.dropAreaMessage ) {
               $scope.$broadcast('addSeReceiveFileUI', actionDetail.dropAreaMessage, actionDetail.cancelEnabled, actionDetail.cancelLabel, actionDetail.receiveFileType, actionDetail.extendedReceiveFileExtensions);
               $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
@@ -2225,8 +2259,9 @@
               });
             }
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>) {
-            // 指定の変数を取得
+            // 条件分岐
             chatBotTypingRemove();
+            $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1');
             var value = LocalStorageService.getItem('chatbotVariables', actionDetail.referenceVariable);
             for ( var i = 0; i < actionDetail.conditionList.length; i++ ) {
               if ( $scope.isMatch(value, actionDetail.conditionList[i]) ) {
@@ -2247,8 +2282,12 @@
           } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_BULK_HEARING ?>) {
             chatBotTypingRemove();
             $scope.doBulkHearingAction(actionDetail);
-          } else
-            chatBotTypingRemove();
+          } else if ( actionDetail.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER ?>) {
+            $scope.actionStep++;
+            $scope.doAction();
+          } else {
+
+          }
         }, time);
       } else {
         setTimeout(chatBotTypingRemove, 801);
@@ -2373,6 +2412,7 @@
      * @param Object actionDetail アクションの詳細
      */
     $scope.doHearingAction = function (actionDetail) {
+      chatBotTypingRemove();
       if ( !$scope.hearingInputResult ) {
         // エラーメッセージ
         // var message = actionDetail.errorMessage;
@@ -2403,6 +2443,7 @@
           $scope.$broadcast('allowInputLF', false, hearingDetail.inputType);
           var strInputRule = $scope.inputTypeList[hearingDetail.inputType].inputRule;
           $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
+          $scope.$broadcast('enableHearingInputFlg');
         }
 
         if ( hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_MULTIPLE_ROW_TEXT ?>) {
@@ -2414,6 +2455,7 @@
           $scope.$broadcast('allowSendMessageByShiftEnter', true, hearingDetail.inputType);
           var strInputRule = $scope.inputTypeList[hearingDetail.inputType].inputRule;
           $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
+          $scope.$broadcast('enableHearingInputFlg');
         }
 
         if ( hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_RADIO_BUTTON ?>) {
@@ -2631,17 +2673,48 @@
       $('#sincloBox [id^="action' + actionIndex + '"][id*="underline"]').find('.sinclo-text-line').removeClass('underlineText');
       $('#sincloBox [id^="action' + actionIndex + '"][id*="calendar"]').addClass('disabledArea');
       $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
+      $scope.$broadcast('disableHearingInputFlg');
     };
 
-    // hanlde radio button click
-    $(document).on('change', '#chatTalk input[type="radio"]', function () {
-      var prefix = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
-      var message = $(this).val().replace(/^\s/, '');
-      var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
-      var name = $(this).attr('name');
+    this.handleReselectionInput = function (message, actionStep, hearingIndex) {
+      var variable  = $scope.setActionList[actionStep].hearings[hearingIndex].variableName;
+      var isRestore = $scope.setActionList[actionStep].restore;
+      var item      = LocalStorageService.getItem('chatbotVariables', variable);
+      var skipped   = $scope.setActionList[actionStep].hearings[hearingIndex].skipped;
+      if (isRestore) {
+        if (!item && !skipped) {
+          // first time input
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+          $scope.addVisitorHearingMessage(message);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        } else if ((!item && skipped) || (item && item !== message)) {
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+          $scope.reSelectionHearing(message, actionStep, hearingIndex);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        }
+      } else {
+        if (!item && !skipped) {
+          // first time input
+          $scope.addVisitorHearingMessage(message);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        } else {
+          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+          $scope.reSelectionHearing(message, actionStep, hearingIndex);
+          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
+        }
+      }
+    };
 
-      var numbers = prefix.match(/\d+/g).map(Number);
-      var actionStep = numbers[0];
+    // handle radio button click
+    $(document).on('change', '#chatTalk input[type="radio"]', function () {
+      var prefix    = $(this).attr('id').replace(/-sinclo-radio[0-9a-z-]+$/i, '');
+      var message   = $(this).val().replace(/^\s/, '');
+      var isConfirm = prefix.indexOf('confirm') !== -1 ? true : false;
+      var name      = $(this).attr('name');
+
+      var numbers      = prefix.match(/\d+/g).map(Number);
+      var actionStep   = numbers[0];
       var hearingIndex = numbers[1];
       if ( isConfirm ) {
         // confirm message
@@ -2653,71 +2726,21 @@
         $('#action' + actionStep + '_hearing0_question').nextAll('div').removeAttr('id');
         $('#action' + actionStep + '_hearing0_question').removeAttr('id');
       } else {
-        // radio type
-        var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
-        var isRestore = $scope.setActionList[numbers[0]].restore;
-        var item = LocalStorageService.getItem('chatbotVariables', variable);
-        if ( isRestore ) {
-          if ( !item ) {
-            // first time input
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-            $scope.addVisitorHearingMessage(message);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else if ( item && item !== message ) {
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-            $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          }
-        } else {
-          if ( !item ) {
-            // first time input
-            $scope.addVisitorHearingMessage(message);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else {
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-            $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          }
-        }
+        self.handleReselectionInput(message, actionStep, hearingIndex);
       }
     });
 
     // プルダウンの選択
     $(document).on('change', '#chatTalk select', function () {
-      var prefix = $(this).attr('id').replace(/-sinclo-pulldown[0-9a-z-]+$/i, '');
+      var prefix  = $(this).attr('id').replace(/-sinclo-pulldown[0-9a-z-]+$/i, '');
       var message = $(this).val().replace(/^\s/, '');
 
-      var numbers = prefix.match(/\d+/g).map(Number);
-      var actionStep = numbers[0];
+      var numbers      = prefix.match(/\d+/g).map(Number);
+      var actionStep   = numbers[0];
       var hearingIndex = numbers[1];
 
-      if ( message !== '選択してください' ) {
-        var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
-        var isRestore = $scope.setActionList[numbers[0]].restore;
-        var item = LocalStorageService.getItem('chatbotVariables', variable);
-        if ( isRestore ) {
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-          if ( !item ) {
-            // first time input
-            $scope.addVisitorHearingMessage(message);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else if ( item && item !== message ) {
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-            $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          }
-        } else {
-          if ( !item ) {
-            // first time input
-            $scope.addVisitorHearingMessage(message);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else {
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-            $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          }
-        }
+      if (message !== '選択してください') {
+        self.handleReselectionInput(message, actionStep, hearingIndex);
       } else {
         $(this).parents('.sinclo_re').find('.nextBtn').hide();
       }
@@ -2725,42 +2748,13 @@
 
     // カレンダーの選択
     $(document).on('change', '#chatTalk .flatpickr-input', function () {
-      var prefix = $(this).attr('id').replace(/-sinclo-datepicker[0-9a-z-]+$/i, '');
+      var prefix  = $(this).attr('id').replace(/-sinclo-datepicker[0-9a-z-]+$/i, '');
       var message = $(this).val().replace(/^\s/, '');
 
-      var numbers = prefix.match(/\d+/g).map(Number);
-      var actionStep = numbers[0];
+      var numbers      = prefix.match(/\d+/g).map(Number);
+      var actionStep   = numbers[0];
       var hearingIndex = numbers[1];
-
-      var variable = $scope.setActionList[numbers[0]].hearings[numbers[1]].variableName;
-      var isRestore = $scope.setActionList[numbers[0]].restore;
-      var item = LocalStorageService.getItem('chatbotVariables', variable);
-      if ( isRestore ) {
-        if ( !item ) {
-          // first input
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-          $scope.addVisitorHearingMessage(message);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-        } else if ( item && item !== message ) {
-          // 再選択
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-          $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-        }
-      } else {
-        if ( !item ) {
-          // first input
-          $scope.addVisitorHearingMessage(message);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-        } else {
-          // 再選択
-          $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
-          $scope.reSelectionHearing(message, numbers[0], numbers[1]);
-          $scope.$broadcast('addSeMessage', $scope.replaceVariable(message), 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-        }
-      }
-
+      self.handleReselectionInput(message, actionStep, hearingIndex);
     });
 
     // re-input text type
@@ -2779,19 +2773,19 @@
       $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
 
       if ( hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_ONE_ROW_TEXT ?>) {
+        $('#miniSincloChatMessage').val(value);
         $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1', hearingDetail.uiType, hearingDetail.required);
         $scope.$broadcast('allowInputLF', false, hearingDetail.inputType);
         var strInputRule = $scope.inputTypeList[hearingDetail.inputType].inputRule;
         $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
-        $('#miniSincloChatMessage').val(value);
       }
 
       if ( hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_MULTIPLE_ROW_TEXT ?>) {
+        $('#sincloChatMessage').val(value);
         $scope.$broadcast('switchSimulatorChatTextArea', actionDetail.chatTextArea === '1', hearingDetail.uiType, hearingDetail.required);
         $scope.$broadcast('allowSendMessageByShiftEnter', true, hearingDetail.inputType);
         var strInputRule = $scope.inputTypeList[hearingDetail.inputType].inputRule;
         $scope.$broadcast('setInputRule', strInputRule.replace(/^\/(.+)\/$/, "$1"));
-        $('#sincloChatMessage').val(value);
       }
     });
   }])
@@ -3278,36 +3272,42 @@
         }
       });
     } else if ( actionItem.actionType == <?= C_SCENARIO_ACTION_LEAD_REGISTER?>) {
-      /*リード新規作成時
-    **リスト名のチェック
-    **項目名のチェック
- 　  */
-    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>) {
-      if (!actionItem.leadTitleLabel) {
-        messageList.push('リードリスト名が未入力です');
-        //既に名前は使われているかを判定する関数を作る
-      } else if (searchListLabel(actionItem.leadTitleLabel)) {
-        messageList.push('リードリスト名”'+ actionItem.leadTitleLabel +'”は既に使用されています');
-      }
 
       var invalidLabelName = actionItem.leadInformations.some(function(elm) {
         return !elm.leadLabelName || elm.leadLabelName === "";
       });
 
+      /*リード新規作成時
+      **リスト名のチェック
+      **項目名のチェック
+    　*/
+      if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_REGIST ?>) {
+        if (!actionItem.leadTitleLabel) {
+          messageList.push('リードリスト名が未入力です');
+          //既に名前は使われているかを判定する関数を作る
+        } else if (searchListLabel(actionItem.leadTitleLabel)) {
+          messageList.push('リードリスト名”'+ actionItem.leadTitleLabel +'”は既に使用されています');
+        }
+
         if ( invalidLabelName ) {
           messageList.push('リードリスト項目を設定してください');
         }
+
       }
 
       /*リード選択時
-    **リード選択のチェック
-     */
-    if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>) {
-      if(!actionItem.tLeadListSettingId || actionItem.tLeadListSettingId === "") {
-        messageList.push("リードリストを選択してください");
+      **リード選択のチェック
+       */
+      if(actionItem.makeLeadTypeList == <?= C_SCENARIO_LEAD_USE ?>) {
+        if(!actionItem.tLeadListSettingId || actionItem.tLeadListSettingId === "") {
+          messageList.push("リードリストを選択してください");
+        }
+
+        if ( invalidLabelName && actionItem.tLeadListSettingId !== "" ) {
+          messageList.push('リードリスト項目を設定してください');
+        }
       }
     }
-  }
 
   // 使用されている変数名を抽出する
   var setMessages = searchObj(actionItem, /^(?!\$).+$|^variableName$/i);
@@ -3366,9 +3366,9 @@
  */
 function searchListLabel (label) {
   var existLabelName = false;
-  var leadList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value)[99];
-  for(var leadInfo in leadList){
-    if(leadList[leadInfo].list_name === label){
+  var leadJsonList = JSON.parse(document.getElementById('TChatbotScenarioLeadList').value);
+  for(var leadData in leadJsonList){
+    if(leadJsonList[leadData]["TLeadListSetting"]["list_name"] === label){
       existLabelName = true;
     }
   }

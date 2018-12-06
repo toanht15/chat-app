@@ -1167,25 +1167,25 @@ var socket, // socket.io
         html += '#sincloBox ul#chatTalk li.sinclo_se.skip_input {display: none}';
 
         /* ファイル受信  */
-        var previewFileClasses = '#sincloBox #chatTalk li.sinclo_re';
-        var uploadFileClasses = '#sincloBox #chatTalk li.sinclo_se';
+        var previewFileClasses = '#sincloBox #chatTalk li.sinclo_se';
+        var uploadFileClasses = '#sincloBox #chatTalk li.sinclo_re';
         if(window.sincloInfo.widget.isSendMessagePositionLeft) {
-          previewFileClasses = '#sincloBox #chatTalk li.sinclo_se';
-          uploadFileClasses = '#sincloBox #chatTalk li.sinclo_re';
+          previewFileClasses = '#sincloBox #chatTalk li.sinclo_re';
+          uploadFileClasses = '#sincloBox #chatTalk li.sinclo_se';
         }
 
         if(Number(widget.widgetSizeType) == 1) {
-          html += previewFileClasses + '.recv_file_left, ' + uploadFileClasses + '.recv_file_right { display: block; padding: 10px!important; line-height: 0; }';
+          html += uploadFileClasses + '.recv_file_left, ' + uploadFileClasses + '.recv_file_right { display: block; padding: 10px!important; line-height: 0; }';
           html += previewFileClasses + '.uploaded { padding: 10px!important; line-height: 0; }';
           html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 9px 0 6.5px; line-height: 20px; }';
           html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 9px; }';
         } else if (check.smartphone() || Number(widget.widgetSizeType) == 2) {
-          html += previewFileClasses + '.recv_file_left, ' + uploadFileClasses + '.recv_file_right { display: block; padding: 12px!important; line-height: 0; }';
+          html += uploadFileClasses + '.recv_file_left, ' + uploadFileClasses + '.recv_file_right { display: block; padding: 12px!important; line-height: 0; }';
           html += previewFileClasses + '.uploaded { padding: 12px!important; line-height: 0; }';
           html += uploadFileClasses + '  div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; line-height: 24px; }';
           html += uploadFileClasses + '  div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 13px; }';
         } else if(Number(widget.widgetSizeType) == 3) {
-          html += previewFileClasses + '.recv_file_left, ' + uploadFileClasses + '.recv_file_right { display: block; padding: 14px!important; line-height: 0; }';
+          html += uploadFileClasses + '.recv_file_left, ' + uploadFileClasses + '.recv_file_right { display: block; padding: 14px!important; line-height: 0; }';
           html += previewFileClasses + '.uploaded { padding: 14px!important; line-height: 0; }';
           html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p.drop-area-message { margin: 13px 0 6.5px; line-height: 24px; }';
           html += uploadFileClasses + ' div.receiveFileContent div.selectFileArea p.drop-area-button { display: flex; justify-content: center; line-height: 0px; margin: 6.5px 0 13px; }';
