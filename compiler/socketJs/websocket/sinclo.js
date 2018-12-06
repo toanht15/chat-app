@@ -1260,7 +1260,7 @@
                   break;
                 }
               }
-              if ( !found ) {
+              if ( !found && chat.id !== chat.chatId ) {
                 // オートメッセージ設定で無効 or 削除された
                 console.log("delete " + chat.chatId);
                 window.sinclo.chatApi.autoMessages.delete(chat.chatId);
