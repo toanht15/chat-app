@@ -35,7 +35,7 @@ class FileAppController extends AppController
    * @return String       ファイル名
    */
   protected function getFilenameForSave($file) {
-    return $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".$this->getExtension($file['name']);
+    return $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".microtime(true).".".$this->getExtension($file['name']);
   }
 
   /**
