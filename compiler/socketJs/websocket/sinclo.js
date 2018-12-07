@@ -89,6 +89,9 @@
             //チャットのテキストエリア表示
             if ( textareaOpend == 'close' ) {
               sinclo.hideTextarea();
+              if ( Number(sincloInfo.widget.widgetSizeType) === 4 ) {
+                common.widgetHandler._maximumAnimation();
+              }
             }
             //チャットのテキストエリア非表示
             else {
