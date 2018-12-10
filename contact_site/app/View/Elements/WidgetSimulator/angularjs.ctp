@@ -76,6 +76,10 @@
       $scope.isHearingInput = false;
     });
 
+    $scope.$on('enableHearingInputFlg', function (event) {
+      $scope.isHearingInput = true;
+    });
+
     /**
      * addSeMessage
      * サイト訪問者側メッセージの追加 TODO: 現在使用されていないため、仮実装状態
@@ -134,7 +138,6 @@
       $scope.allowInputLF = true;
       $scope.allowSendMessageByShiftEnter = false;
       $scope.inputRule = <?= C_MATCH_INPUT_RULE_ALL ?>;
-
       var prefix = 'action' + $scope.simulatorSettings.getCurrentActionStep() + '_hearing' + ($scope.isHearingInput ? $scope.simulatorSettings.getCurrentHearingIndex() + '_underline' : "");
       console.log(message);
       $scope.addMessage('se', message, prefix);
