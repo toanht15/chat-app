@@ -5828,8 +5828,9 @@ ul.naviBtn {
           vertical-align: middle;
           #importExcelBtn {
             width: 20em;
-            height: 2em;
+            height: 30px;
             padding: 0.25em 0.5em;
+            padding-top: 6px;
             text-align: center;
           }
         }
@@ -5840,9 +5841,9 @@ ul.naviBtn {
   #autoMessageLayerMenu {
     display: none;
     position: absolute;
-    top: 101px;
-    right: 152px;
-    width: 252px;
+    top: 104px;
+    right: 150px;
+    width: 241px;
     font-size: 12px;
     z-index: 9999;
     ul {
@@ -5984,7 +5985,12 @@ ul.naviBtn {
       &.conditionValueLabel, &.actionValueLabel {
         background-color: #9BD6D1;
       }
-
+      &.actionValueMessageLabel {
+        background-color: #53d65b;
+      }
+      &.actionValueScenarioLabel {
+        background-color: #edbf35;
+      }
     }
 
     #balloons {

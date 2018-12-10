@@ -745,6 +745,22 @@ class TAutoMessagesController extends AppController {
     return json_encode($result);
   }
 
+  public function bulkExport() {
+    Configure::write('debug', 0);
+    $this->autoRender = false;
+    $this->layout = false;
+    $filePath = ROOT.DS.self::TEMPLATE_FILE_NAME;
+
+    $component = new AutoMessageExcelParserComponent($filePath);
+
+    $data = $component->getImportData();
+    return $component->writeData();
+
+//    $this->response->download(self::TEMPLATE_FILE_NAME);
+//    $this->response->file($filePath);
+    return "wip";
+  }
+
   public function downloadTemplate() {
     $this->autoRender = false;
     $filePath = ROOT.DS.self::TEMPLATE_FILE_NAME;
