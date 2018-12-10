@@ -845,14 +845,7 @@ sinclo@medialink-ml.co.jp
       ]
     ]);
     foreach($idList as $targetId){
-      $deleteTargetFlg = true;
-      foreach($searchList as $searchId){
-        if(strcmp($searchId, $targetId) == 0){
-          // どこかに使用されているリストは削除しない
-          $deleteTargetFlg = false;
-        }
-      }
-      if($deleteTargetFlg){
+      if(!in_array($targetId, $searchList)){
         $this->TLeadListSetting->delete((int)$targetId);
       }
     }
@@ -888,10 +881,7 @@ sinclo@medialink-ml.co.jp
       'fields' => 't_lead_list_settings_id',
       'group' => 't_lead_list_settings_id'
     ]);
-    foreach($allLeadList as $targetId){
-      $savedLeadListId[] = $targetId;
-    }
-    return $savedLeadListId;
+    return $allLeadList;
   }
 
   /**
@@ -926,9 +916,9 @@ sinclo@medialink-ml.co.jp
     return $resultArray;
   }
 
-  private function _getSameNameHash($currentLabelArray, $targetId, $result){
+  private function _getSameNameHash($currentLabelArray, $result){
     $uniqueKey = "";
-    $currentLabelArray = json_decode($currentLabelArray[$targetId]);
+    $currentLabelArray = json_decode($currentLabelArray);
     foreach($currentLabelArray as $searchTarget){
       if(strcmp($searchTarget->leadLabelName, $result->leadLabelName) == 0){
         $uniqueKey = $searchTarget->leadUniqueHash;
@@ -960,16 +950,8 @@ sinclo@medialink-ml.co.jp
     }
     foreach($saveData->leadInformations as $key => $result) {
       if(empty($result->leadUniqueHash)) {
-        if(!empty($targetId)) {
-          $uniqueKey = $this->_getSameNameHash($currentLabelArray, $targetId, $result);
-        } else {
-          $uniqueKey = "";
-        }
-        if ($uniqueKey !== "") {
-          $result->leadUniqueHash  = $uniqueKey;
-        } else {
-          $result->leadUniqueHash = $this->_makeHashProcess($result->leadLabelName);
-        }
+        $uniqueKey = empty($targetId) ? "" : $this->_getSameNameHash($currentLabelArray[$targetId], $result);
+        $result->leadUniqueHash = $uniqueKey == "" ? $this->_makeHashProcess($result->leadLabelName) : $uniqueKey;
       }
       $labelArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadLabelName' => $result->leadLabelName , 'deleted' => 0];
       $valueArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadVariableName' => $result->leadVariableName];
