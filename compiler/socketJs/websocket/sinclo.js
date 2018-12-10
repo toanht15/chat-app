@@ -885,7 +885,7 @@
             'sinclo',
             'width=' + screen.availWidth * (2 / 3) + ',height=' +
             screen.availHeight * (2 / 3) +
-            ',dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no',
+            ',dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no'
         );
         this.remove();
       };
@@ -1119,7 +1119,7 @@
                 accessType: userInfo.accessType,
               });
             },
-          },
+          }
       );
     },
     syncEvStart: function(d) {
@@ -9648,7 +9648,7 @@
       window.open(
           'https://ap1.sinclo.jp/index.html?userId=' + userInfo.userId,
           'monitor_' + userInfo.userId,
-          'width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no',
+          'width=480,height=400,dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no, scrollbars=no'
       );
 
       return false;
