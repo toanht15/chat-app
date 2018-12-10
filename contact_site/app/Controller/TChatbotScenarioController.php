@@ -2081,7 +2081,14 @@ sinclo@medialink-ml.co.jp
 
     $saveFileName = $this->getFilenameForSave(['name' => $file['file_name']]);
     $fileData = $this->getFile(substr($file['file_path'], $pos));
-    $filePath = $this->putFile($fileData['fileObj']['Body'], $saveFileName);
+    $fileObj = array();
+
+    $tmpFile = new File('/tmp/'.$file['file_name']);
+    $tmpFile->write($fileData['Body'], 'w');
+    $tmpFile->close();
+
+    $fileObj['tmp_name'] = '/tmp/'.$file['file_name'];
+    $filePath = $this->putFile($fileObj, $saveFileName);
 
     return [
       'file_path' => $filePath,
