@@ -3901,9 +3901,9 @@
           content += "</div>";
         }
 
-        li.className = 'sinclo_se effect_left recv_file_left';
+        li.className = 'sinclo_re effect_left recv_file_left';
         if(window.sincloInfo.widget.isSendMessagePositionLeft) {
-          li.className = 'sinclo_re effect_right recv_file_right';
+          li.className = 'sinclo_se effect_right recv_file_right';
         }
         li.innerHTML = content;
 

@@ -140,7 +140,7 @@ sinclo@medialink-ml.co.jp
     ),$this->request->data['scenarioList']);
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
-    $this->request->data['leadList'][99] = $this->_getLeadList();
+    $this->request->data['leadList'] = $this->leadInfoSet();
     $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
   }
@@ -190,7 +190,7 @@ sinclo@medialink-ml.co.jp
       )
     ),$this->request->data['scenarioList']);
     $this->set('storedVariableList', $this->getStoredAllVariableList($id));
-    $this->request->data['leadList'][99] = $this->_getLeadList();
+    $this->request->data['leadList'] = $this->leadInfoSet();
     $this->_viewElement();
   }
 
@@ -823,51 +823,103 @@ sinclo@medialink-ml.co.jp
     $page = floor((intval($count[0]['count']) + 99) / 100);
     return $page >= 1 ? $page : 1;
   }
+
+  /**
+   * ハッシュ値を作るプロセス
+   * @param hasSalt 項目名
+   * return ハッシュ値(8桁)
+   */
+  private function _makeHashProcess($hashSalt){
+    return hash("fnv132", (string)microtime().$hashSalt);
+  }
+
+  /*
+   *
+   */
+  private function _grantDeletedFlg($currentData, $labelArray){
+    $resultArray = $labelArray;
+    foreach($currentData as $oldLabelData){
+      $deleted = false;
+      foreach($labelArray as $newLabelData){
+        if(strcmp($newLabelData['leadUniqueHash'], $oldLabelData->leadUniqueHash) == 0){
+          $deleted = false;
+          break;
+        } else {
+          $deleted = true;
+        }
+      }
+      if($deleted){
+        $oldLabelData->deleted = 1;
+        $resultArray[] = json_decode(json_encode($oldLabelData),true);
+      }
+    }
+    return $resultArray;
+  }
+
+
   /**
    * リードリスト保存時に同名の同じ内容が存在するか？
    *
    *
    * */
-  private function _sameLeadList($saveData){
-    $resultArray = $this->TLeadListSetting->find('list', [
-      'fields' => 'list_parameter',
-      'conditions' => [
-        'list_name' => $saveData->leadTitleLabel
-      ],
-      'recursive' => '-1'
-    ]);
-    forEach($resultArray as $key => $result) {
-      if (json_encode($saveData->leadInformations) == $result) {
-        return $key;
-        break;
+  private function _makeLeadDataProcess($saveData){
+    $labelArray = [];
+    $valueArray = [];
+    foreach($saveData->leadInformations as $key => $result) {
+      if(empty($result->leadUniqueHash)) {
+        // ユニークキーが空（新規追加された場合)
+        if (false) {
+          // ①：既に保存されている該当IDリストの項目名と全く同じ情報がある場合は、ユニークキーを引っ張ってくる
+        } else {
+          $result->leadUniqueHash = $this->_makeHashProcess($result->leadLabelName);
+        }
+      }
+      $labelArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadLabelName' => $result->leadLabelName , 'deleted' => 0];
+      $valueArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadVariableName' => $result->leadVariableName];
+    }
+    // 現在保存しようとしている対象のデータを取得
+    if(!empty($saveData ->tLeadListSettingId)) {
+      $currentLabelArray = $this->TLeadListSetting->find('list', [
+        'recursive' => -1,
+        'fields' => [
+          'list_parameter'
+        ],
+        'conditions' => [
+          'id' => $saveData->tLeadListSettingId
+        ]
+      ]);
+      if (!empty($currentLabelArray)) {
+        $labelArray = $this->_grantDeletedFlg(json_decode($currentLabelArray[$saveData->tLeadListSettingId]), $labelArray);
       }
     }
-    return false;
+    // t_lead_list_settingsにはここで入れる
+    $this->TLeadListSetting->set([
+      'm_companies_id' => $this->userInfo['MCompany']['id'],
+      'list_name' => $saveData->leadTitleLabel,
+      'list_parameter' => json_encode($labelArray)
+    ]);
+    // t_chatbot_scenariosに入れる情報だけreturnする
+    return $valueArray;
   }
 
   /**
-   * リードリスト保存機能（ここでt_lead_list_settingsテーブルに情報が保存され、そのidだけアクション詳細に返却する
+   * リードリスト保存機能（ここでt_lead_list_settingsテーブルに情報が保存され、設定idとハッシュ値をアクション詳細に返却する
    * @param Object $saveData アクション詳細
    * @return Object          t_chatbot_scenarioに保存するアクション詳細
    * */
   private function _entryProcessForLeadRegister($saveData){
-    $leadListId = $this->_sameLeadList($saveData);
-    if (!empty($saveData->tLeadListSettingId) && $leadListId) {
-      $this->TLeadListSetting->read(null, $leadListId);
-      $saveData->tLeadListSettingId = strval($leadListId);
-    } else {
+    if (empty($saveData->tLeadListSettingId)) {
       $this->TLeadListSetting->create();
+    } else {
+      $this->TLeadListSetting->read(null, $saveData->tLeadListSettingId);
     }
-    $this->TLeadListSetting->set([
-      'm_companies_id' => $this->userInfo['MCompany']['id'],
-      'list_name' => $saveData->leadTitleLabel,
-      'list_parameter' => json_encode($saveData->leadInformations)
-    ]);
+    $saveData->leadInformations = $this->_makeLeadDataProcess($saveData);
+
     $errors = $this->TLeadListSetting->validationErrors;
     if(empty($errors)) {
       $this->TLeadListSetting->save();
-      //IDが無い、或いは被りチェックで引っ掛かっていない場合
-      if(empty($saveData->tLeadListSettingId) || !$leadListId) {
+      //IDが無い場合
+      if(empty($saveData->tLeadListSettingId)) {
         $saveData->tLeadListSettingId = $this->TLeadListSetting->getLastInsertId();
       }
     } else {
@@ -879,7 +931,6 @@ sinclo@medialink-ml.co.jp
 
     // リード登録設定DBに保存した情報をオブジェクトから削除する
     unset($saveData->leadTitleLabel);
-    unset($saveData->leadInformations);
     unset($saveData->makeLeadTypeList);
     return $saveData;
 
@@ -1152,9 +1203,6 @@ sinclo@medialink-ml.co.jp
     }
     else{
       //初回読み込み時
-//         $this->set('re_border_color_flg', false);
-//         $inputData['re_border_color'] = 'なし';
-//         $inputData]['re_border_none'] = true;
       $this->set('re_border_color_flg', true);
     }
     if(array_key_exists ('se_border_color',$json)){
@@ -1169,9 +1217,6 @@ sinclo@medialink-ml.co.jp
     }
     else{
       //初回読み込み時
-//         $this->set('se_border_color_flg', false);
-//         $inputData['se_border_color'] = 'なし';
-//         $inputData['se_border_none'] = true;
       $this->set('se_border_color_flg', true);
     }
     if(array_key_exists ('message_box_border_color',$json)){
@@ -1552,17 +1597,11 @@ sinclo@medialink-ml.co.jp
             }
             //13.企業側吹き出し枠線色
             if ( strcmp($v, 're_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-//               if($json['re_border_color'] === 'false'){
-//                 $d['re_border_color'] = 'false';
-//               }
-//               else{
                 $d['re_border_color'] = RE_BORDER_COLOR; // デフォルト値
 //               }
             }
 //             //14.企業側吹き出し枠線なし
-//             if ( strcmp($v, 're_border_none') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-//               $d['re_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
-//             }
+
             //15.訪問者側吹き出し文字色
             if ( strcmp($v, 'se_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['se_text_color'] = SE_TEXT_COLOR; // デフォルト値
@@ -1638,10 +1677,6 @@ sinclo@medialink-ml.co.jp
             if ( strcmp($v, 'widget_inside_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_inside_border_color'] = WIDGET_INSIDE_BORDER_COLOR; // デフォルト値
             }
-//             //26.ウィジット内枠線色
-//             if ( strcmp($v, 'widget_inside_border_none') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-//               $d['widget_inside_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
-//             }
             /* カラー設定end */
 
             //行：ラジオボタン間マージン
@@ -1807,24 +1842,6 @@ sinclo@medialink-ml.co.jp
         'TChatbotScenario.del_flg != ' => 1
       ]
     ]);
-  }
-
-  private function _getLeadList() {
-    $dataSet = $this->TLeadListSetting->find('all', [
-      'fields' => ['TLeadListSetting.id', 'TLeadListSetting.list_name', 'TLeadListSetting.list_parameter'],
-      'order' => [
-        'TLeadListSetting.id' => 'asc'
-      ],
-      'conditions' => [
-        'TLeadListSetting.m_companies_id' => $this->userInfo['MCompany']['id']
-      ],
-      'group' => 'list_name'
-    ]);
-    $result = [];
-    forEach($dataSet as $data){
-      array_push($result, $data['TLeadListSetting']);
-    }
-    return $result;
   }
 
   /**
@@ -1994,31 +2011,35 @@ sinclo@medialink-ml.co.jp
           }
           $leadData = $this->TLeadListSetting->findById($action->tLeadListSettingId);
           $action->leadTitleLabel = $leadData['TLeadListSetting']['list_name'];
-          $action->leadInformations = json_decode($leadData['TLeadListSetting']['list_parameter']);
-          $this->request->data['leadList'][$key] = $this->leadInfoSet($key,$action->tLeadListSettingId);
+          $action->leadInformations = $this->convertLeadDataForView($action->leadInformations, json_decode($leadData['TLeadListSetting']['list_parameter']));
         }
       }
     }
     $json = json_encode($activity);
   }
 
-  private function leadInfoSet($scenarioSeq,$targetId){
-    $target = $this->TLeadListSetting->find('first',[
-      'recursive' => -1,
-      'fields' => [
-        "id",
-        "list_name",
-        "list_parameter"
-      ],
-      'conditions' => [
-        "m_companies_id" => $this->userInfo['MCompany']['id'],
-        "id" => $targetId
-      ]
-    ]);
+  private function convertLeadDataForView($variables, $labels){
+    $resultArray = [];
 
-    $targetArray[] = $target['TLeadListSetting'];
-    $targetName = $target['TLeadListSetting']['list_name'];
+    foreach($labels as $key => $value){
+      if($value->deleted == 0) {
+        $varialbleName = "";
+        foreach ($variables as $variable) {
+          // ユニークキーが合致する情報を変数とラベル名から探す
+          if (strcmp($value->leadUniqueHash, $variable->leadUniqueHash) == 0) {
+            $varialbleName = $variable->leadVariableName;
+          }
+        }
+        $resultArray[] = ['leadUniqueHash' => $value->leadUniqueHash,
+          'leadLabelName' => $value->leadLabelName,
+          'leadVariableName' => $varialbleName];
+      }
+    }
 
+    return $resultArray;
+  }
+
+  private function leadInfoSet(){
     $targetList = $this->TLeadListSetting->find('all',[
       'recursive' => -1,
       'fields' => [
@@ -2028,15 +2049,19 @@ sinclo@medialink-ml.co.jp
       ],
       'conditions' => [
         "m_companies_id" => $this->userInfo['MCompany']['id'],
-        "list_name !=" => $targetName
-      ],
-      'group' => "list_name"
+      ]
     ]);
-    forEach($targetList as $value) {
-      $targetArray[] = $value['TLeadListSetting'];
-    }
 
-    return $targetArray;
+    foreach($targetList as $currentId => $target){
+      $labelList = json_decode($target['TLeadListSetting']['list_parameter']);
+      foreach($labelList as $key => $labelData){
+        if($labelData->deleted == 1){
+          array_splice($labelList, $key, 1);
+        }
+      }
+      $targetList[$currentId]['TLeadListSetting']['list_parameter'] = json_encode($labelList);
+    }
+    return $targetList;
   }
 
   /**

@@ -35,8 +35,8 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     $this->scenarioMessageBlock = "";
   }
 
-  public function setSenarioRequiredData($mailType, $variables, $templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array()) {
-    parent::setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData, $customerInfo);
+  public function setSenarioRequiredData($mailType, $variables, $templateId, $chatLogs, $firstStayLog, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array()) {
+    parent::setRequiredData($templateId, $chatLogs, $firstStayLog, $stayLog, $campaigns, $landscapeData, $customerInfo);
     $this->type = $mailType;
     $this->variables = $variables;
   }
@@ -93,7 +93,7 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
     if($isFullData) {
       $this->scenarioMessageBlock .= "シナリオ実行ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
       $this->scenarioMessageBlock .= "シナリオ実行ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
-      $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
+      $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->firstStayLog['THistoryStayLog']['url'])."\n";
       if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
         $this->scenarioMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
       }
