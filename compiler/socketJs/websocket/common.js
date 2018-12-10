@@ -3970,7 +3970,13 @@ var socket, // socket.io
         } else {
           return 26;
         }
-
+      },
+      _setInputAreaSize: function () {
+        if( $('#flexBoxWrap').is(':visible') ){
+          return $('#flexBoxWrap').outerHeight()
+        } else {
+          return 0;
+        }
       },
       _maximumAnimation: function() {
         if (check.smartphone()) {

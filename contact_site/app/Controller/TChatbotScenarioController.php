@@ -424,7 +424,7 @@ sinclo@medialink-ml.co.jp
               // ダウンロードURLの生成
               $lastInsertedId = $this->TChatbotScenarioSendFile->getLastInsertId();
               $created = $this->TChatbotScenarioSendFile->field('created');
-              $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId);
+              $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId, true);
               $this->TChatbotScenarioSendFile->set([
                 'download_url' => $downloadUrl
               ]);
@@ -2178,7 +2178,14 @@ sinclo@medialink-ml.co.jp
 
     $saveFileName = $this->getFilenameForSave(['name' => $file['file_name']]);
     $fileData = $this->getFile(substr($file['file_path'], $pos));
-    $filePath = $this->putFile($fileData['fileObj']['Body'], $saveFileName);
+    $fileObj = array();
+
+    $tmpFile = new File('/tmp/'.$file['file_name']);
+    $tmpFile->write($fileData['Body'], 'w');
+    $tmpFile->close();
+
+    $fileObj['tmp_name'] = '/tmp/'.$file['file_name'];
+    $filePath = $this->putFile($fileObj, $saveFileName);
 
     return [
       'file_path' => $filePath,

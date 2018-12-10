@@ -92,6 +92,9 @@
             //チャットのテキストエリア表示
             if (textareaOpend == 'close') {
               sinclo.hideTextarea();
+              if ( Number(sincloInfo.widget.widgetSizeType) === 4 ) {
+                common.widgetHandler._maximumAnimation();
+              }
             }
             //チャットのテキストエリア非表示
             else {
@@ -1378,7 +1381,7 @@
                   break;
                 }
               }
-              if (!found) {
+              if (!found && chat.id !== chat.chatId) {
                 // オートメッセージ設定で無効 or 削除された
                 console.log('delete ' + chat.chatId);
                 window.sinclo.chatApi.autoMessages.delete(chat.chatId);
