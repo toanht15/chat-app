@@ -302,7 +302,7 @@ class HistoriesController extends AppController {
         'fields' => [
           '*'
         ],
-        'joins' =>  $returnData['joinList'],
+        'joins' =>  array_merge(array('force index (t_histories_m_companies_id_access_date_id_index)'), $returnData['joinList']),
         'conditions' => $returnData['conditions']
       ]);
       $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
