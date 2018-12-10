@@ -305,7 +305,7 @@ class HistoriesController extends AppController {
         'joins' =>  $returnData['joinList'],
         'conditions' => $returnData['conditions']
       ]);
-//      $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
+      $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
       //$historyListに担当者を追加
       $this->printProcessTimetoLog('BEGIN $this->_userList($historyList)');
       $userList = $this->_userList($historyList);
@@ -1243,7 +1243,7 @@ class HistoriesController extends AppController {
 
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND `t_histories_id` = `THistoryChatLog`.t_histories_id GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_t_history_chat_logs_m_companies_id_t_histories_id_created) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND created between '" . $data['History']['start_day'] . " 00:00:00' AND '" . $data['History']['finish_day'] . " 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id desc)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -1955,7 +1955,7 @@ class HistoriesController extends AppController {
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ." AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND created >= '". $data['History']['start_day'] ." 00:00:00' AND created <= '". $data['History']['finish_day'] ." 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog force index (idx_t_history_chat_logs_m_companies_id_t_histories_id_created) WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ." AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND created >= '". $data['History']['start_day'] ." 00:00:00' AND created <= '". $data['History']['finish_day'] ." 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -2076,35 +2076,37 @@ class HistoriesController extends AppController {
       $customerIdList[$val['THistory']['visitors_id']] = true;
     }
 
-    $chunkedHistoryIdList = array_chunk($historyIdList, 100);
-
     $stayList = [];
+    if(count($historyIdList) >= 100000) {
 
-    foreach ($chunkedHistoryIdList as $index => $list) {
-      $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
-        'fields' => [
-          't_histories_id',
-          'title',
-          'url AS firstURL',
-          'COUNT(t_histories_id) AS count '
-        ],
-        'conditions' => [
-          't_histories_id' => $list
-        ],
-        'group' => 't_histories_id'
-      ]);
+    } else {
+      $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
 
-      foreach ($tHistoryStayLogList as $val) {
-        $stayList[$val['THistoryStayLog']['t_histories_id']] = [
-          'THistoryStayLog' => [
-            'firstURL' => $val['THistoryStayLog']['firstURL'],
-            'title' => $val['THistoryStayLog']['title'],
-            'count' => $val[0]['count']
-          ]
-        ];
+      foreach ($chunkedHistoryIdList as $index => $list) {
+        $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
+          'fields' => [
+            't_histories_id',
+            'title',
+            'url AS firstURL',
+            'COUNT(t_histories_id) AS count '
+          ],
+          'conditions' => [
+            't_histories_id' => $list
+          ],
+          'group' => 't_histories_id'
+        ]);
+
+        foreach ($tHistoryStayLogList as $val) {
+          $stayList[$val['THistoryStayLog']['t_histories_id']] = [
+            'THistoryStayLog' => [
+              'firstURL' => $val['THistoryStayLog']['firstURL'],
+              'title' => $val['THistoryStayLog']['title'],
+              'count' => $val[0]['count']
+            ]
+          ];
+        }
       }
     }
-
     return $stayList;
   }
 
@@ -2228,7 +2230,8 @@ class HistoriesController extends AppController {
       $terminal = "";
       $terminalEnd = "Build";
       preg_match('/(Android\s[0-9.]*);(\sja\-jp;)?\s([a-zA-Z0-9\-]*)?/',$val['THistory']['user_agent'], $match);
-      $os = $match[1].' ('.$match[3].')';
+
+      $os = $match[1].' ('.(isset($match[3]) ? $match[3] : "unknown").')';
       $os = trim($os);
     }
     else if(preg_match('/Firefox/' && '/Mobile/') && !preg_match('/Android/',$val['THistory']['user_agent'])) {
@@ -2310,7 +2313,7 @@ class HistoriesController extends AppController {
     }
     else if(preg_match('/opr/i',$val['THistory']['user_agent'])) {
       preg_match('/OPR.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("OPR/", "", $match[0]);
+      $version = str_replace("OPR/", "", (isset($match[0]) ? $match[0] : "unknown"));
       $browser = "Opera(ver." .$version.  ")";
     }
     else if(preg_match('/vivaldi/i',$val['THistory']['user_agent'])) {
