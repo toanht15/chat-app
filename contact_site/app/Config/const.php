@@ -983,7 +983,8 @@ $config['chatbotScenarioActionList'] = [
       'leadInformations' => [
         [
           'leadLabelName' => '',
-          'leadVariableName' => ''
+          'leadVariableName' => '',
+          'leadUniqueHash' => ''
         ]
       ]
     ]
