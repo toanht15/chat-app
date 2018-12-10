@@ -473,7 +473,12 @@ var openSelectFile = function() {
           // event.target.result に読み込んだファイルの内容が入っています.
           // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
           loadData = event.target.result;
-          _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】をインポートします。<br>よろしいですか？</div>");
+          _showConfirmDialog("<div style='text-align:center'><p>指定されたファイル【" + fileObj.name + "】をインポートします。</p>" +
+              "<br><p style='color:red; margin-top: 0'>現在の設定内容は削除され、指定されたファイルの内容に置き換わります。</p>" +
+              "<p style='color:red'>（全件洗い替え）\n</p>" +
+              "<p>※インポート後に元に戻すことはできません。</p>" +
+              "<p>※現在の設定内容をエクスポートしておくことを推奨します。</p>" +
+              "<br>インポートしてよろしいですか？</div>");
         } else {
           _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】は対応していません。</div>");
           $('#popupCloseBtn').css('display', 'block');
