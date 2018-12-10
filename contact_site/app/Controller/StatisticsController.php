@@ -1909,7 +1909,7 @@ class StatisticsController extends AppController {
     $response = "SELECT date_format(th.access_date, ?) as date,
       count(thcl.t_histories_id) as response_count
       FROM (select t_histories_id,m_companies_id, message_type, message_distinction
-      from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id)
+      from t_history_chat_logs force index(t_history_chat_logs_mcid_thid_mt_md_index)
       where message_type = ? and m_companies_id = ? group by t_histories_id,
        message_distinction) as thcl
       LEFT JOIN (select t_histories_id, message_request_flg,
