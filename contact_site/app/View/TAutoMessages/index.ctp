@@ -101,7 +101,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             'class'=>'btn-shadow'.($coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? " skyBlueBtn  commontooltip" : " grayBtn disabled commontooltip"),
             'id' => 'importExcelBtn',
             'disabled' => !$coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE],
-            'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "オートメッセージの設定をエクセルファイルにエクスポート／インポートすることが可能です。" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
+            'data-text' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? "オートメッセージの設定をエクセルにエクスポートしたり、エクセルで編集した内容をインポートすることが可能です。" : "こちらの機能はスタンダードプラン<br>からご利用いただけます。",
             'data-balloon-position' => '50',
             'data-balloon-width' => $coreSettings[C_COMPANY_USE_IMPORT_EXCEL_AUTO_MESSAGE] ? '460' : ''
           ));
@@ -133,6 +133,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
   <div id="autoMessageLayerMenu">
     <ul>
       <li class="t-link">
+        <!--<a href="javascript:void(0)" onclick="window.open('<?/*= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'bulkExport']) */?>//')">-->
         <a href="javascript:void(0)" onclick="">
           現在の設定内容をエクスポートする
         </a>
@@ -151,7 +152,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
     </ul>
   </div>
   <?php endif; ?>
-  <input type="file" id="selectFileInput" name="uploadFile" accept=".xlsm" style="display:none "/>
+  <input type="file" id="selectFileInput" name="uploadFile" accept=".xlsx" style="display:none "/>
 
   <div id='tautomessages_list' class="p20x">
     <table style="table-layout: fixed;">
@@ -198,7 +199,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
                 'type' => $val['TAutoMessage']['action_type'],
                 'detail' => $activity['message']
               ];
-              $activity_detail = "<span class='actionValueLabel'>メッセージ</span><span class='actionValue'>" . h($activity['message']) . "</span>";
+              $activity_detail = "<span class='actionValueMessageLabel'>メッセージ</span><span class='actionValue'>" . h($activity['message']) . "</span>";
             }
             break;
           case C_AUTO_ACTION_TYPE_SELECTSCENARIO:
@@ -206,7 +207,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               'type' => $val['TAutoMessage']['action_type'],
               'detail' => $val['TChatbotScenario']['name']
             ];
-            $activity_detail = "<span class='actionValueLabel'>シナリオ</span><span class='actionValue'>" . h($val['TChatbotScenario']['name']) . "</span>";
+            $activity_detail = "<span class='actionValueScenarioLabel'>シナリオ</span><span class='actionValue'>" . h($val['TChatbotScenario']['name']) . "</span>";
             break;
         }
         $conditionType = "";
@@ -239,7 +240,8 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             <span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=h($conditions)?></span>
           </td>
           <td class="p10x" width="29%">
-            <span class="actionTypeLabel m10b">対象</span><span class="m10b actionValue"><?=h($outMessageActionType[$val['TAutoMessage']['action_type']])?></span>
+<!--            <span class="actionTypeLabel m10b">対象</span>-->
+<!--            <span class="m10b actionValue">--><?//=h($outMessageActionType[$val['TAutoMessage']['action_type']])?><!--</span>-->
             <?=$activity_detail?>
           </td>
           <td class="p10x tCenter" style="font-size: 1em; font-weight: bold;" width=" 5%">
@@ -247,25 +249,25 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
               if(strcmp($val['TAutoMessage']['action_type'], 2) === 0 || (isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2)) {
                 echo '<span class="m10b">－</span>';
               } else {
-                echo '<span class="m10b">ON</span>';
+                echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1; font-size: 2em"></i></span>';
               }
             ?>
           </td>
-          <td class="p10x tCenter" style="font-size: 2em;" width=" 4%">
+          <td class="p10x tCenter" style="font-size: 1em;" width=" 4%">
             <?php
             if(strcmp($val['TAutoMessage']['action_type'], 2) !== 0 && (isset($activity['cv']) && $activity['cv'] === 1)) {
-              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;"></i></span>';
+              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1; font-size: 2em"></i></span>';
             } else {
-              echo '<span class="m10b"></span>';
+              echo '<span class="m10b">－</span>';
             }
             ?>
           </td>
-          <td class="p10x tCenter" style="font-size: 2em;" width=" 4%">
+          <td class="p10x tCenter" style="font-size: 1em;" width=" 4%">
             <?php
             if(strcmp($val['TAutoMessage']['action_type'], 2) !== 0 && (isset($val['TAutoMessage']['send_mail_flg']) && $val['TAutoMessage']['send_mail_flg'])) {
-              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1;"></i></span>';
+              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1; font-size: 2em"></i></span>';
             } else {
-              echo '<span class="m10b"></span>';
+              echo '<span class="m10b">－</span>';
             }
             ?>
           </td>
