@@ -305,7 +305,7 @@ class HistoriesController extends AppController {
         'joins' =>  $returnData['joinList'],
         'conditions' => $returnData['conditions']
       ]);
-      $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
+//      $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
       //$historyListに担当者を追加
       $this->printProcessTimetoLog('BEGIN $this->_userList($historyList)');
       $userList = $this->_userList($historyList);
@@ -1873,6 +1873,13 @@ class HistoriesController extends AppController {
       ];
     }
 
+//    $joinList[] = array(
+//      'type' => 'INNER',
+//      'alias' => 'THistoryStayLog',
+//      'table' => '(select thsl.t_histories_id as t_histories_id, thsl.title as title, thsl.url AS firstURL, COUNT(thsl.t_histories_id) as count from t_history_stay_logs as thsl inner join t_histories as th on (thsl.t_histories_id = th.id) where th.m_companies_id = '.$this->userInfo['MCompany']['id'].' and thsl.created >= "'.$data['History']['start_day'].' 00:00:00" and thsl.created <= "'.$data['History']['finish_day'].' 23:59:59" group by t_histories_id)',
+//      'conditions' => 'THistoryStayLog.t_histories_id = THistory.id'
+//    );
+
     if ( !empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog'])) ) {
       // 対象ユーザーのIDリストを取得するサブクエリを作成
       $users = $this->MUser->getDataSource();
@@ -1948,7 +1955,7 @@ class HistoriesController extends AppController {
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ." AND `t_histories_id` = `THistoryChatLog`.t_histories_id GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ." AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND created >= '". $data['History']['start_day'] ." 00:00:00' AND created <= '". $data['History']['finish_day'] ." 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -2059,41 +2066,45 @@ class HistoriesController extends AppController {
    * @param  csv出力内容
    * @return THistoryChatLogの「firstURL」と「count」
    * */
-  private function _stayList($userList){
+  private function _stayList($userList)
+  {
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
-    foreach($userList as $val){
+    foreach ($userList as $val) {
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
     }
-    /*
-    $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
-      'fields' => [
-        't_histories_id',
-        'title',
-        'url AS firstURL',
-        'COUNT(t_histories_id) AS count '
-      ],
-      'conditions' => [
-        't_histories_id' => $historyIdList
-      ],
-      'group' => 't_histories_id'
-    ]);
-    */
+
+    $chunkedHistoryIdList = array_chunk($historyIdList, 100);
 
     $stayList = [];
-    /*
-    foreach($tHistoryStayLogList as $val){
-      $stayList[$val['THistoryStayLog']['t_histories_id']] = [
-        'THistoryStayLog' => [
-          'firstURL' => $val['THistoryStayLog']['firstURL'],
-          'title' => $val['THistoryStayLog']['title'],
-          'count' => $val[0]['count']
-        ]
-      ];
+
+    foreach ($chunkedHistoryIdList as $index => $list) {
+      $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
+        'fields' => [
+          't_histories_id',
+          'title',
+          'url AS firstURL',
+          'COUNT(t_histories_id) AS count '
+        ],
+        'conditions' => [
+          't_histories_id' => $list
+        ],
+        'group' => 't_histories_id'
+      ]);
+
+      foreach ($tHistoryStayLogList as $val) {
+        $stayList[$val['THistoryStayLog']['t_histories_id']] = [
+          'THistoryStayLog' => [
+            'firstURL' => $val['THistoryStayLog']['firstURL'],
+            'title' => $val['THistoryStayLog']['title'],
+            'count' => $val[0]['count']
+          ]
+        ];
+      }
     }
-    */
+
     return $stayList;
   }
 
