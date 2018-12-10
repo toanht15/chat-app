@@ -319,6 +319,8 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function outputCsv() {
+    ini_set("max_execution_time", 1200);
+    ini_set('memory_limit', '-1');
     $this->autoRender = false;
 
     //json_decode
@@ -379,6 +381,8 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function outputOperatorCsv() {
+    ini_set("max_execution_time", 1200);
+    ini_set('memory_limit', '-1');
     //オペレータ統計一覧CSV
     $this->autoRender = false;
 
@@ -2866,6 +2870,8 @@ class StatisticsController extends AppController {
   }
 
   private function outputCSVStatistics($csv = [], $name = 'sinclo_statistics') {
+    ini_set("max_execution_time", 1200);
+    ini_set('memory_limit', '-1');
     $this->layout = null;
     //メモリ上に領域確保
     $fp = fopen('php://temp/maxmemory:'.(5*1024*1024),'a');
