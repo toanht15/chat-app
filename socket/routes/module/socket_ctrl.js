@@ -4005,7 +4005,6 @@ io.sockets.on('connection', function(socket) {
   socket.on('saveLeadList', function(data){
     var obj = JSON.parse(data);
     var targetId = Number(obj.leadSettingsId);
-    // 要修正！
     console.log("下下下");
     console.log(obj);
     console.log("上上上");
