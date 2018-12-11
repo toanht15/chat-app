@@ -240,14 +240,14 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             <span class="conditionValueLabel m10b">設定</span><span class="m10b actionValue"><?=h($conditions)?></span>
           </td>
           <td class="p10x" width="29%">
-<!--            <span class="actionTypeLabel m10b">対象</span>-->
-<!--            <span class="m10b actionValue">--><?//=h($outMessageActionType[$val['TAutoMessage']['action_type']])?><!--</span>-->
             <?=$activity_detail?>
           </td>
           <td class="p10x tCenter" style="font-size: 1em; font-weight: bold;" width=" 5%">
             <?php
-              if(strcmp($val['TAutoMessage']['action_type'], 2) === 0 || (isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2)) {
+              if(strcmp($val['TAutoMessage']['action_type'], 2) === 0) {
                 echo '<span class="m10b">－</span>';
+              } elseif (isset($activity['chatTextarea']) && $activity['chatTextarea'] === 2) {
+                echo '<span class="m10b"></span>';
               } else {
                 echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1; font-size: 2em"></i></span>';
               }
@@ -255,19 +255,23 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
           </td>
           <td class="p10x tCenter" style="font-size: 1em;" width=" 4%">
             <?php
-            if(strcmp($val['TAutoMessage']['action_type'], 2) !== 0 && (isset($activity['cv']) && $activity['cv'] === 1)) {
-              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1; font-size: 2em"></i></span>';
-            } else {
+            if(strcmp($val['TAutoMessage']['action_type'], 2) === 0) {
               echo '<span class="m10b">－</span>';
+            } elseif (isset($activity['cv']) && $activity['cv'] === 2) {
+              echo '<span class="m10b"></span>';
+            } else {
+              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1; font-size: 2em"></i></span>';
             }
             ?>
           </td>
           <td class="p10x tCenter" style="font-size: 1em;" width=" 4%">
             <?php
-            if(strcmp($val['TAutoMessage']['action_type'], 2) !== 0 && (isset($val['TAutoMessage']['send_mail_flg']) && $val['TAutoMessage']['send_mail_flg'])) {
-              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1; font-size: 2em"></i></span>';
-            } else {
+            if (strcmp($val['TAutoMessage']['action_type'], 2) === 0) {
               echo '<span class="m10b">－</span>';
+            } elseif (isset($val['TAutoMessage']['send_mail_flg']) && !$val['TAutoMessage']['send_mail_flg']) {
+              echo '<span class="m10b"></span>';
+            } else {
+              echo '<span class="m10b"><i class="fa fa-check" aria-hidden="true" style="color:#9BD6D1; font-size: 2em"></i></span>';
             }
             ?>
           </td>
