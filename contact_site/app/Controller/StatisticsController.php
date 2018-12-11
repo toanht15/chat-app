@@ -2033,23 +2033,23 @@ class StatisticsController extends AppController {
     count(distinct thcl.message_distinction,thcl.t_histories_id) as automaticResponse_count
     FROM
       (select id,m_companies_id,t_histories_id,message_distinction,message_type,message_request_flg,created from t_history_chat_logs
-       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = 5 and m_companies_id = ? and created between ? and ?) as thcl
+       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = 5 and m_companies_id = ? and created between ? and ? order by t_histories_id, message_distinction) as thcl
     INNER JOIN
       (select id,m_companies_id,t_histories_id,message_distinction,message_type,created from t_history_chat_logs
-       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where m_companies_id = ? and message_type = 1 and message_request_flg = 1 and created between ? and ?) as thcl3
-    ON
+       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where m_companies_id = ? and message_type = 1 and message_request_flg = 1 and created between ? and ? group by t_histories_id order by t_histories_id, message_distinction) as thcl3
+    ON (
       thcl.t_histories_id = thcl3.t_histories_id
     AND
       thcl.message_distinction = thcl3.message_distinction
+    )
     WHERE
       thcl.m_companies_id = ?
     AND
       thcl.created between ? and ?
-    AND
-      thcl.id > thcl3.id
-    group by date";
+    group by date
+    order by null";
 
-    $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format, $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate,  $this->userInfo['MCompany']['id'], $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate, $correctStartDate, $correctEndDate));
+    $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format, $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate,  $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate, $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate));
 
     $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
 

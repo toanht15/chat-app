@@ -2231,7 +2231,7 @@ class HistoriesController extends AppController {
       $terminalEnd = "Build";
       preg_match('/(Android\s[0-9.]*);(\sja\-jp;)?\s([a-zA-Z0-9\-]*)?/',$val['THistory']['user_agent'], $match);
 
-      $os = $match[1].' ('.(isset($match[3]) ? $match[3] : "unknown").')';
+      $os = (isset($match[1]) ? $match[1] : "Android").' ('.(isset($match[3]) ? $match[3] : "unknown").')';
       $os = trim($os);
     }
     else if(preg_match('/Firefox/' && '/Mobile/') && !preg_match('/Android/',$val['THistory']['user_agent'])) {
