@@ -474,7 +474,7 @@ class ChatHistoriesController extends AppController
   public function outputCSVOfHistory()
   {
     Configure::write('debug', 0);
-    ini_set("max_execution_time", 1200);
+    ini_set("max_execution_time", "1200");
     ini_set('memory_limit', '-1');
     $name = "sinclo-history";
 
@@ -676,7 +676,7 @@ class ChatHistoriesController extends AppController
   public function outputCSVOfChatHistory()
   {
     Configure::write('debug', 0);
-    ini_set("max_execution_time", 1200);
+    ini_set("max_execution_time", "1200");
     ini_set('memory_limit', '-1');
 
     if (isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {

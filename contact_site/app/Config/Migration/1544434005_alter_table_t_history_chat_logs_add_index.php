@@ -32,7 +32,7 @@ class AlterTableTHistoryChatLogsAddIndex extends CakeMigration {
 				),
 			),
       'drop_field' => array(
-        't_history_chat_logs' => array('indexes' => array('idx_t_history_chat_logs_message_type_companies_id', 'idx_m_companies_id_message_type_notice_flg')),
+        't_history_chat_logs' => array('indexes' => array('idx_t_history_chat_logs_message_type_companies_id')),
       ),
 		),
 		'down' => array(
