@@ -141,6 +141,7 @@ sinclo@medialink-ml.co.jp
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->request->data['leadList'] = $this->leadInfoSet();
+    $this->_deleteInvalidLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
   }
@@ -244,7 +245,7 @@ sinclo@medialink-ml.co.jp
       if (!empty($targetDeleteFileIds)) {
         $this->_deleteInvalidSendFileData($targetDeleteFileIds);
       }
-
+      $this->_deleteInvalidLeadList();
       $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
 
@@ -326,6 +327,7 @@ sinclo@medialink-ml.co.jp
           }
         }
       }
+      $this->_deleteInvalidLeadList();
 
       if($res){
         $this->TransactionManager->commitTransaction($transactions);
@@ -856,7 +858,8 @@ sinclo@medialink-ml.co.jp
     $calledLeadListId = [];
     $allScenarioActivity = $this->TChatbotScenario->find('list', [
       'conditions' => [
-        'm_companies_id' => $this->userInfo['MCompany']['id']
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'del_flg' => 0
       ],
       'fields' => 'activity'
     ]);
@@ -873,7 +876,6 @@ sinclo@medialink-ml.co.jp
   }
 
   private function _getSavedLeadLists(){
-    $savedLeadListId = [];
     $allLeadList= $this->TLeadList->find('list', [
       'conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']

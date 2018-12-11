@@ -238,16 +238,13 @@ class TLeadListsController extends AppController{
     $existCampaign = "";
     $url = explode("/",$lp);
     $searchTarget = $url[count($url) - 1];
-    $cnt = 1;
-    $length = count($campaignList);
     foreach($campaignList as $name => $campaign){
       if(strpos($searchTarget,$campaign)){
-        $existCampaign .= $name;
-        if($cnt < $length) {
-          $existCampaign .= "\n";
-        }
+        $existCampaign .= $name."\n";
       }
-      $cnt++;
+    }
+    if(preg_match('/\n$/', $existCampaign)){
+      $existCampaign = rtrim($existCampaign);
     }
     return $existCampaign;
   }
