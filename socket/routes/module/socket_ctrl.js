@@ -2165,8 +2165,8 @@ io.sockets.on('connection', function(socket) {
       Object.keys(customerList[siteKey]).forEach(function(key) {
         var splitedKey = key.split("/#");
         if (splitedKey.length === 2 && isset(splitedKey[1])) {
-          var targetSocketId = "/#" + splitedKey[1]
-          if (!io.sockets.connected[targetSocketId]) {
+          var targetSocketId = "/#" + splitedKey[1];
+          if (!io.sockets.connected[targetSocketId] || !isset(customerList[siteKey][key].sincloSessionId)) {
             var targetTabId = customerList[siteKey][key].tabId;
             console.log("【" + siteKey + "】 customerList key : " + key + " client is not exist. deleting. targetTabId : " + targetTabId);
             if (targetTabId && targetTabId !== "") {
