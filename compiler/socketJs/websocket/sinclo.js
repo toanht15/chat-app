@@ -6999,6 +6999,7 @@
         's_isSentMail': false,
       },
       _isReload: false,
+      _doingTimer: null,
       _events: {
         inputCompleted: 'sinclo:scenario:inputComplete',
         fileUploaded: 'sinclo:scenario:fileUploaded',
@@ -7138,6 +7139,9 @@
         this._process();
         this._isReload = false;
       },
+      beginImmediate: function() {
+        this._process();
+      },
       _end: function() {
         // シナリオ終了
         console.log('シナリオ終了時にそもそもウェイトアニメーションを出さない');
@@ -7176,6 +7180,17 @@
           result = true;
         }
         return result;
+      },
+      restartOnAnotherTab: function() {
+        var self = sinclo.scenarioApi;
+        if(sinclo.scenarioApi.isProcessing()) {
+          setTimeout(function() {
+            console.log("scenarioApi::restartOnAnotherTab");
+            sinclo.scenarioApi._cancel();
+            sinclo.scenarioApi.init(null, null);
+            sinclo.scenarioApi.begin();
+          }, 100);
+        }
       },
       isWaitingInput: function() {
         var self = sinclo.scenarioApi;
@@ -7926,8 +7941,17 @@
           // 一番最初のシナリオ開始は即時実行
           callFunction();
         } else {
-          setTimeout(callFunction, intervalSec * 1000);
+          self._doingTimer = setTimeout(function() {
+            if(self.isProcessing()) {
+              callFunction();
+            }
+          }, intervalSec * 1000);
         }
+      },
+      _cancel: function() {
+        var self = sinclo.scenarioApi;
+        clearTimeout(self._doingTimer);
+        self._doingTimer = null;
       },
       _valid: function(typeStr, val) {
         var self = sinclo.scenarioApi;
