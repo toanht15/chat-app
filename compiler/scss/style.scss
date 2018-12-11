@@ -8342,21 +8342,32 @@ ul.naviBtn {
             .action_lead_register {
               [class*="grid-container"]{
                 display: grid;
+                display: -ms-grid;
                 grid-template-columns: 20px 200px 200px 60px 1fr;
+                -ms-grid-columns: 20px 200px 200px 60px 1fr;
                 grid-template-rows: 31px 1fr;
+                -ms-grid-rows: 31px 1fr;
                 :first-child{
                   grid-column: 1;
+                  -ms-grid-column: 1;
                 }
                 :nth-child(2){
                   grid-column: 2;
+                  -ms-grid-column: 2;
                 }
                 :nth-child(3){
                   grid-column: 3;
+                  -ms-grid-column: 3;
+                }
+                :nth-child(4){
+                  grid-column: 4;
+                  -ms-grid-column: 4;
                 }
                 input[type="text"].make-box{
                   border-radius: 4px;
                   border: 1px solid #909090;
                   width: auto;
+                  min-width: 95%;
                 }
               }
               .grid-container-body {

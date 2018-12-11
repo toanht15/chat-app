@@ -264,7 +264,7 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfHistory(){
     Configure::write('debug', 0);
-    ini_set("max_execution_time", 180);
+    ini_set("max_execution_time", "1200");
     ini_set('memory_limit', '-1'); // 無制限
     $name = "sinclo-history";
 
@@ -302,9 +302,10 @@ class HistoriesController extends AppController {
         'fields' => [
           '*'
         ],
-        'joins' =>  $returnData['joinList'],
+        'joins' =>  array_merge(array('force index (t_histories_m_companies_id_access_date_id_index)'), $returnData['joinList']),
         'conditions' => $returnData['conditions']
       ]);
+      $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
       //$historyListに担当者を追加
       $this->printProcessTimetoLog('BEGIN $this->_userList($historyList)');
       $userList = $this->_userList($historyList);
@@ -341,14 +342,16 @@ class HistoriesController extends AppController {
       $campaignList = $this->TCampaign->getList();
       foreach($userList as $key => $history){
         $campaignParam = "";
-        $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-        if ( $tmp !== "" ) {
-          foreach($campaignList as $k => $v){
-            if ( strpos($tmp, $k) !== false ) {
-              if ( $campaignParam !== "" ) {
-                $campaignParam .= "\n";
+        if(array_key_exists($history['THistory']['id'], $stayList)) {
+          $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
+          if ( $tmp !== "" ) {
+            foreach($campaignList as $k => $v){
+              if ( strpos($tmp, $k) !== false ) {
+                if ( $campaignParam !== "" ) {
+                  $campaignParam .= "\n";
+                }
+                $campaignParam .= $v;
               }
-              $campaignParam .= $v;
             }
           }
         }
@@ -379,7 +382,7 @@ class HistoriesController extends AppController {
         if ( !empty($history['MCustomer']['informations']) ) {
           $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($history['MCustomer']['informations']));
           foreach($customerInfoDisplaySettingMap as $k => $v) {
-            if($v) {
+            if($v && array_key_exists($k, $informations)) {
               $row['customer'] .= $informations[$k]."\n";
             }
           }
@@ -392,9 +395,9 @@ class HistoriesController extends AppController {
         //キャンペーン
         $row['campaign'] = $campaignParam;
         //ランディングページ
-        $row['landing'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['title'];
+        $row['landing'] = array_key_exists($history['THistory']['id'], $stayList) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] : "";
         // 閲覧ページ数
-        $row['pageCnt'] = $stayList[$history['THistory']['id']]['THistoryStayLog']['count'];
+        $row['pageCnt'] = array_key_exists($history['THistory']['id'], $stayList) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['count'] : "";
         // 参照元URL
         $params = $excludeList['params'];
         $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
@@ -428,7 +431,7 @@ class HistoriesController extends AppController {
 
   public function outputCSVOfChatHistory(){
     Configure::write('debug', 0);
-    ini_set("max_execution_time", 180);
+    ini_set("max_execution_time", "1200");
     ini_set('memory_limit', '-1'); // 無制限
 
     if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
@@ -514,7 +517,7 @@ class HistoriesController extends AppController {
         if ( !empty($val['MCustomer']['informations']) ) {
           $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($val['MCustomer']['informations']));
           foreach($customerInfoDisplaySettingMap as $k => $v) {
-            if($v) {
+            if($v && array_key_exists($k, $informations)) {
               $row['customer'] .= $informations[$k]."\n";
             }
           }
@@ -1240,7 +1243,7 @@ class HistoriesController extends AppController {
 
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_m_companies_id_t_histories_id_t_history_stay_logs_id) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index(idx_t_history_chat_logs_m_companies_id_t_histories_id_created) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND created between '" . $data['History']['start_day'] . " 00:00:00' AND '" . $data['History']['finish_day'] . " 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id desc)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -1870,6 +1873,13 @@ class HistoriesController extends AppController {
       ];
     }
 
+//    $joinList[] = array(
+//      'type' => 'INNER',
+//      'alias' => 'THistoryStayLog',
+//      'table' => '(select thsl.t_histories_id as t_histories_id, thsl.title as title, thsl.url AS firstURL, COUNT(thsl.t_histories_id) as count from t_history_stay_logs as thsl inner join t_histories as th on (thsl.t_histories_id = th.id) where th.m_companies_id = '.$this->userInfo['MCompany']['id'].' and thsl.created >= "'.$data['History']['start_day'].' 00:00:00" and thsl.created <= "'.$data['History']['finish_day'].' 23:59:59" group by t_histories_id)',
+//      'conditions' => 'THistoryStayLog.t_histories_id = THistory.id'
+//    );
+
     if ( !empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog'])) ) {
       // 対象ユーザーのIDリストを取得するサブクエリを作成
       $users = $this->MUser->getDataSource();
@@ -1945,7 +1955,7 @@ class HistoriesController extends AppController {
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ."  GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog force index (idx_t_history_chat_logs_m_companies_id_t_histories_id_created) WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ." AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND created >= '". $data['History']['start_day'] ." 00:00:00' AND created <= '". $data['History']['finish_day'] ." 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -2056,36 +2066,46 @@ class HistoriesController extends AppController {
    * @param  csv出力内容
    * @return THistoryChatLogの「firstURL」と「count」
    * */
-  private function _stayList($userList){
+  private function _stayList($userList)
+  {
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
-    foreach($userList as $val){
+    foreach ($userList as $val) {
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
     }
-    $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
-      'fields' => [
-        't_histories_id',
-        'title',
-        'url AS firstURL',
-        'COUNT(t_histories_id) AS count '
-      ],
-      'conditions' => [
-        't_histories_id' => $historyIdList
-      ],
-      'group' => 't_histories_id'
-    ]);
 
     $stayList = [];
-    foreach($tHistoryStayLogList as $val){
-      $stayList[$val['THistoryStayLog']['t_histories_id']] = [
-        'THistoryStayLog' => [
-          'firstURL' => $val['THistoryStayLog']['firstURL'],
-          'title' => $val['THistoryStayLog']['title'],
-          'count' => $val[0]['count']
-        ]
-      ];
+    if(count($historyIdList) >= 100000) {
+
+    } else {
+      $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
+
+      foreach ($chunkedHistoryIdList as $index => $list) {
+        $tHistoryStayLogList = $this->THistoryStayLog->find('all', [
+          'fields' => [
+            't_histories_id',
+            'title',
+            'url AS firstURL',
+            'COUNT(t_histories_id) AS count '
+          ],
+          'conditions' => [
+            't_histories_id' => $list
+          ],
+          'group' => 't_histories_id'
+        ]);
+
+        foreach ($tHistoryStayLogList as $val) {
+          $stayList[$val['THistoryStayLog']['t_histories_id']] = [
+            'THistoryStayLog' => [
+              'firstURL' => $val['THistoryStayLog']['firstURL'],
+              'title' => $val['THistoryStayLog']['title'],
+              'count' => $val[0]['count']
+            ]
+          ];
+        }
+      }
     }
     return $stayList;
   }
@@ -2210,7 +2230,8 @@ class HistoriesController extends AppController {
       $terminal = "";
       $terminalEnd = "Build";
       preg_match('/(Android\s[0-9.]*);(\sja\-jp;)?\s([a-zA-Z0-9\-]*)?/',$val['THistory']['user_agent'], $match);
-      $os = $match[1].' ('.$match[3].')';
+
+      $os = (isset($match[1]) ? $match[1] : "Android").' ('.(isset($match[3]) ? $match[3] : "unknown").')';
       $os = trim($os);
     }
     else if(preg_match('/Firefox/' && '/Mobile/') && !preg_match('/Android/',$val['THistory']['user_agent'])) {
@@ -2292,7 +2313,7 @@ class HistoriesController extends AppController {
     }
     else if(preg_match('/opr/i',$val['THistory']['user_agent'])) {
       preg_match('/OPR.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("OPR/", "", $match[0]);
+      $version = str_replace("OPR/", "", (isset($match[0]) ? $match[0] : "unknown"));
       $browser = "Opera(ver." .$version.  ")";
     }
     else if(preg_match('/vivaldi/i',$val['THistory']['user_agent'])) {
@@ -2348,7 +2369,11 @@ class HistoriesController extends AppController {
     }
     else if(preg_match('/safari/i',$val['THistory']['user_agent']) && !preg_match('/android/i',$val['THistory']['user_agent'])) {
       preg_match('/Version.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Version/", "", $match[0]);
+      if(isset($match[0])) {
+        $version = str_replace("Version/", "", $match[0]);
+      } else {
+        $version = 'unknown';
+      }
       $browser = "Safari(ver." .$version.  ")";
     }
     else if(preg_match('/iphone/i',$val['THistory']['user_agent']) || preg_match('/ipad/i',$val['THistory']['user_agent'])) {
