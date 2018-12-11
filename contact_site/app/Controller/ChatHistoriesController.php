@@ -1493,25 +1493,6 @@ class ChatHistoriesController extends AppController
 
     // 3) チャットに関する検索条件
     if ($this->coreSettings[C_COMPANY_USE_CHAT]) {
-
-      $dbo2 = $this->THistoryChatLog->getDataSource();
-      $chatStateList = $dbo2->buildStatement(
-        [
-          'table' => $dbo2->fullTableName($this->THistoryChatLog),
-          'alias' => 'THistoryChatLog',
-          'fields' => [
-            't_histories_id, COUNT(*) AS count',
-            'MAX(achievement_flg) AS achievementFlg',
-            'SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp',
-            'SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry',
-            'SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus'
-          ],
-          'order' => 't_histories_id',
-          'group' => 't_histories_id'
-        ],
-        $this->THistoryChatLog
-      );
-
       $dbo2 = $this->THistoryChatLog->getDataSource();
       if (empty($chatLogCond['chat.achievementFlg']) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
         $value = 'MAX';

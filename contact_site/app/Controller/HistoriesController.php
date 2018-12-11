@@ -29,32 +29,9 @@ class HistoriesController extends AppController {
   public function beforeFilter(){
     parent::beforeFilter();
     $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
-    //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
-    /*$orList = [];
-    if ( !empty($ret['MCompany']['exclude_ips']) ) {
-      foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
-        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
-          $orList[] = "INET_ATON('".trim($v)."') = INET_ATON(THistory.ip_address)";
-          continue;
-        }
-        $ips = $this->MCompany->cidrToRange(trim($v));
-        $list = [];
-        if ( count($ips) === 2 ) {
-          $list[] = "INET_ATON('".trim($ips[0])."') <= INET_ATON(THistory.ip_address)";
-          $list[] = "INET_ATON('".trim($ips[1])."') >= INET_ATON(THistory.ip_address)";
-        }
-        $orList[] = $list;
-      }
-    }*/
-
     $this->paginate['THistory']['conditions'] = [
       'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
     ];
-
-    //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
-    /*if ( !empty($orList) ) {
-      $this->paginate['THistory']['conditions']['NOT'] = ['OR' => $orList];
-    }*/
 
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
     if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
@@ -2115,26 +2092,33 @@ class HistoriesController extends AppController {
     foreach($historyList as $val){
       $historyIdList[] = $val['THistory']['id'];
     }
-    $chatList = $this->THistoryChatLog->find('all',[
-      'fields' => [
-        'THistoryChatLog.t_histories_id',
-        'THistoryChatLog.message_type',
-        'MAX(created) as created'
-      ],
-      'order' => [
-        'THistoryChatLog.t_histories_id' => 'asc'
-      ],
-      'conditions' => [
-        'AND' => array(
-          't_histories_id' => $historyIdList,
-          'message_type = 1')
-      ],
-      'group' => ['THistoryChatLog.t_histories_id']
-    ]);
 
     $list = [];
-    foreach($chatList as $k => $chat) {
-      $list[$chat['THistoryChatLog']['t_histories_id']] = $chat[0]['created'];
+
+    if(count($historyIdList) >= 100000) {
+
+    } else {
+      $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
+      $chatList = $this->THistoryChatLog->find('all', [
+        'fields' => [
+          'THistoryChatLog.t_histories_id',
+          'THistoryChatLog.message_type',
+          'MAX(created) as created'
+        ],
+        'order' => [
+          'THistoryChatLog.t_histories_id' => 'asc'
+        ],
+        'conditions' => [
+          'AND' => array(
+            't_histories_id' => $chunkedHistoryIdList,
+            'message_type = 1')
+        ],
+        'group' => ['THistoryChatLog.t_histories_id']
+      ]);
+
+      foreach ($chatList as $k => $chat) {
+        $list[$chat['THistoryChatLog']['t_histories_id']] = $chat[0]['created'];
+      }
     }
     return $list;
   }
