@@ -44,6 +44,18 @@ document.body.onload = function(){
     targetBalloonList[i].addEventListener('mouseenter', balloonApi.show('act')); // 設定したアクション内容のポップアップ表示
     targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定したアクション内容のポップアップ非表示
   }
+
+  var targetBalloonList = document.querySelectorAll('.actionValueScenarioLabel');
+  for (var i = 0; i < targetBalloonList.length; i++) {
+    targetBalloonList[i].addEventListener('mouseenter', balloonApi.show('act')); // 設定したアクション内容のポップアップ表示
+    targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定したアクション内容のポップアップ非表示
+  }
+
+  var targetBalloonList = document.querySelectorAll('.actionValueMessageLabel');
+  for (var i = 0; i < targetBalloonList.length; i++) {
+    targetBalloonList[i].addEventListener('mouseenter', balloonApi.show('act')); // 設定したアクション内容のポップアップ表示
+    targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定したアクション内容のポップアップ非表示
+  }
 };
 
 // 全選択
@@ -160,6 +172,8 @@ var balloonApi = {
               switch(type){
               case "act":
                 label_height = $(".actionValueLabel").outerHeight(true);
+                label_height = $(".actionValueMessageLabel").outerHeight(true);
+                label_height = $(".actionValueScenarioLabel").outerHeight(true);
                 break;
               case "cond":
                 label_height = $(".conditionValueLabel").outerHeight(true);
