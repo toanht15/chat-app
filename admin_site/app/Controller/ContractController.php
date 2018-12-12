@@ -973,20 +973,26 @@ class ContractController extends AppController
             }
           } else if (strcmp($action['actionType'], 13) === 0) { // リードリスト登録
             $leadListSettings = $action['settings'];
+            $hashMaster = $this->hashDataSet($leadListSettings['leadInformations']);
+            $dataForLeadListSetting = $this->getHashAndLabel($hashMaster);
+            $dataForScenario = $this->getHashAndVariable($hashMaster);
             if (empty($savedLeadList) || !array_key_exists($leadListSettings['leadTitleLabel'], $savedLeadList)) {
               $this->TLeadListSetting->create();
               $this->TLeadListSetting->set(array(
                 'm_companies_id' => $m_companies_id,
                 'list_name' => $leadListSettings['leadTitleLabel'],
-                'list_parameter' => json_encode($leadListSettings['leadInformations'])
+                'list_parameter' => json_encode($dataForLeadListSetting)
               ));
               if (!$this->TLeadListSetting->save()) {
                 throw new Exception('シナリオのリードリスト設定登録に失敗しました');
               }
               $action['tLeadListSettingId'] = $this->TLeadListSetting->getLastInsertId();
-              $savedLeadList[$leadListSettings['leadTitleLabel']] = $action['tLeadListSettingId'];
+              $action['leadInformations'] = $dataForScenario;
+              $savedLeadList[$leadListSettings['leadTitleLabel']]['param'] = $action['leadInformations'];
+              $savedLeadList[$leadListSettings['leadTitleLabel']]['id'] = $action['tLeadListSettingId'];
             } else {
-              $action['tLeadListSettingId'] = $savedLeadList[$leadListSettings['leadTitleLabel']];
+              $action['tLeadListSettingId'] = $savedLeadList[$leadListSettings['leadTitleLabel']]['id'];
+              $action['leadInformations'] = $savedLeadList[$leadListSettings['leadTitleLabel']]['param'];
             }
             unset($action['settings']);
           }
@@ -1073,6 +1079,33 @@ class ContractController extends AppController
       }
     }
     return $autoMessageRelationAssoc;
+  }
+
+  private function hashDataSet($listParam)
+  {
+    foreach($listParam as &$param){
+      $hash = hash("fnv132", (string)microtime().$param['leadLabelName']);
+      $param['leadUniqueHash'] = $hash;
+    }
+    unset($param);
+    return $listParam;
+  }
+
+  private function getHashAndLabel($hashMaster)
+  {
+    foreach($hashMaster as $key => $data){
+      $hashMaster[$key]['deleted'] = 0;
+      unset($hashMaster[$key]['leadVariableName']);
+    }
+    return $hashMaster;
+  }
+
+  private function getHashAndVariable($hashMaster)
+  {
+    foreach($hashMaster as $key => $data){
+      unset($hashMaster[$key]['leadLabelName']);
+    }
+    return $hashMaster;
   }
 
   private function addCompanyJSFile($companyKey, $isLaCoBrowseEnabled)
