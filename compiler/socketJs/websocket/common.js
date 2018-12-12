@@ -19,13 +19,13 @@ var socket, // socket.io
   cnst = {
     access_type: {
       guest: 1,
-      host: 2,
+      host: 2
     },
     tab_type: {
       open: 1,
       close: 2,
       none: 3,
-      disable: 4,
+      disable: 4
     },
     info_type: {
       user: 1,
@@ -41,9 +41,9 @@ var socket, // socket.io
       gFrame: 11,
       sendTabId: 12,
       parentId: 13,
-      sincloSessionId: 14,
+      sincloSessionId: 14
     },
-    sync_type: {inner: 1, outer: 2},
+    sync_type: {inner: 1, outer: 2}
   };
 
   common = {
@@ -168,8 +168,7 @@ var socket, // socket.io
               (window.sincloInfo.contract.hasOwnProperty('document') &&
                   window.sincloInfo.contract.document)) && check.smartphone()) {
         displaySet += chat;
-      }
-      else {
+      } else {
         // チャットのみ契約の場合
         if (window.sincloInfo.contract.chat) {
           displaySet += chat;
@@ -186,14 +185,15 @@ var socket, // socket.io
           Number(widget.closeButtonModeType) === 1) {
         //バナーも同時に生成したsinclo
         var sincloBanner = this.sincloBannerTemplate(widget);
-        return '<sinclo id=\'sincloBox\' >' + css + '<div id=\'sincloWidgetBox\'>' +
+        return '<sinclo id=\'sincloBox\' >' + css +
+            '<div id=\'sincloWidgetBox\'>' +
             header + displaySet + fotter +
             '</div><div id=\'sincloBannerBox\' style=\'display: none;\'>' +
             sincloBanner + '</div></sinclo>';
-      }
-      else {
+      } else {
         //今までと同じ通常のsinclo
-        return '<sinclo id=\'sincloBox\' >' + css + '<div id=\'sincloWidgetBox\'>' +
+        return '<sinclo id=\'sincloBox\' >' + css +
+            '<div id=\'sincloWidgetBox\'>' +
             header + displaySet + fotter + '</div></sinclo>';
       }
     },
@@ -209,8 +209,7 @@ var socket, // socket.io
           r = String(code.substr(0, 1)) + String(code.substr(0, 1));
           g = String(code.substr(1, 1)) + String(code.substr(1, 1));
           b = String(code.substr(2)) + String(code.substr(2));
-        }
-        else {
+        } else {
           r = String(code.substr(0, 2));
           g = String(code.substr(2, 2));
           b = String(code.substr(4));
@@ -282,17 +281,15 @@ var socket, // socket.io
           //27.ウィジット内枠線なし ※通常設定の時は必ず0
           widgetInsideBorderNone: 0,
           //28.ウィジット外枠線なし ※通常設定の時は必ず0
-          widgetBorderNone: 0,
+          widgetBorderNone: 0
         };
-      }
-      else {
+      } else {
         //高度な設定
         if (widget.reBorderColor === undefined || widget.reBorderColor ===
             'none') {
           var reBorderColor = '#E8E7E0'; //念のため
           var reBorderNone = 1;
-        }
-        else {
+        } else {
           var reBorderColor = widget.reBorderColor;
           var reBorderNone = 0;
         }
@@ -300,8 +297,7 @@ var socket, // socket.io
             'none') {
           var seBorderColor = '#E8E7E0'; //念のため
           var seBorderNone = 1;
-        }
-        else {
+        } else {
           var seBorderColor = widget.seBorderColor;
           var seBorderNone = 0;
         }
@@ -309,8 +305,7 @@ var socket, // socket.io
             widget.messageBoxBorderColor === 'none') {
           var messageBoxBorderColor = '#E8E7E0'; //念のため
           var messageBoxBorderNone = 1;
-        }
-        else {
+        } else {
           var messageBoxBorderColor = widget.messageBoxBorderColor;
           var messageBoxBorderNone = 0;
         }
@@ -318,8 +313,7 @@ var socket, // socket.io
             widget.widgetBorderColor === 'none') {
           var widgetBorderColor = '#E8E7E0'; //念のため
           var widgetBorderNone = 1;
-        }
-        else {
+        } else {
           var widgetBorderColor = widget.widgetBorderColor;
           var widgetBorderNone = 0;
         }
@@ -327,8 +321,7 @@ var socket, // socket.io
             widget.widgetInsideBorderColor === 'none') {
           var widgetInsideBorderColor = '#E8E7E0'; //念のため
           var widgetInsideBorderNone = 1;
-        }
-        else {
+        } else {
           var widgetInsideBorderColor = widget.widgetInsideBorderColor;
           var widgetInsideBorderNone = 0;
         }
@@ -390,7 +383,7 @@ var socket, // socket.io
           //27.ウィジット内枠線なし
           widgetInsideBorderNone: widgetInsideBorderNone,
           //28.ウィジット外枠線なし
-          widgetBorderNone: widgetBorderNone,
+          widgetBorderNone: widgetBorderNone
         };
       }
       return portioneArray;
@@ -420,7 +413,7 @@ var socket, // socket.io
             d14font: 14,
             d18font: 18,
             d20font: 20,
-            d25font: 25,
+            d25font: 25
           };
           break;
         case 2: //中
@@ -445,7 +438,7 @@ var socket, // socket.io
             d14font: 15,
             d18font: 19,
             d20font: 21,
-            d25font: 26,
+            d25font: 26
           };
           break;
         case 3: //大
@@ -470,7 +463,7 @@ var socket, // socket.io
             d14font: 15,
             d18font: 19,
             d20font: 21,
-            d25font: 26,
+            d25font: 26
           };
           break;
         case 4: //最大、だが幅以外の値はwidgethandlerで計算する（要素表示、現状設定の兼ね合い）
@@ -495,7 +488,7 @@ var socket, // socket.io
             d14font: 15,
             d18font: 19,
             d20font: 21,
-            d25font: 26,
+            d25font: 26
           };
           break;
         default: //該当しないタイプが来たら小
@@ -519,7 +512,7 @@ var socket, // socket.io
             d14font: 14,
             d18font: 18,
             d20font: 20,
-            d25font: 25,
+            d25font: 25
           };
           break;
       }
@@ -549,8 +542,7 @@ var socket, // socket.io
             spMinRes = false;
             //sp最大化中
             spMaxRes = true;
-          }
-          else {
+          } else {
             //最大時のシンプル表示(スマホ)しない
             //pc最小化中
             pcMinRes = false;
@@ -573,8 +565,7 @@ var socket, // socket.io
             spMinRes = true;
             //sp最大化中
             spMaxRes = true;
-          }
-          else {
+          } else {
             //最大時のシンプル表示(スマホ)しない
             //pc最小化中
             pcMinRes = false;
@@ -597,8 +588,7 @@ var socket, // socket.io
             spMinRes = true;
             //sp最大化中
             spMaxRes = true;
-          }
-          else {
+          } else {
             //最大時のシンプル表示(スマホ)しない
             //pc最小化中
             pcMinRes = true;
@@ -621,8 +611,7 @@ var socket, // socket.io
             spMinRes = false;
             //sp最大化中
             spMaxRes = true;
-          }
-          else {
+          } else {
             //最大時のシンプル表示(スマホ)しない
             //pc最小化中
             pcMinRes = false;
@@ -639,7 +628,7 @@ var socket, // socket.io
         pcMinRes: pcMinRes,
         pcMaxRes: pcMaxRes,
         spMinRes: spMinRes,
-        spMaxRes: spMaxRes,
+        spMaxRes: spMaxRes
       };
       //false/true:通常（PC）/スマホ
       var smartphone = check.smartphone();
@@ -649,21 +638,19 @@ var socket, // socket.io
           //縦
           var MinRes = abridgementType['spMinRes'];
           var MaxRes = abridgementType['spMaxRes'];
-        }
-        else {
+        } else {
           //横
           var MinRes = true;
           var MaxRes = true;
         }
-      }
-      else {
+      } else {
         //PC
         var MinRes = abridgementType['pcMinRes'];
         var MaxRes = abridgementType['pcMaxRes'];
       }
       var res = {
         MinRes: MinRes,
-        MaxRes: MaxRes,
+        MaxRes: MaxRes
       };
       return res;
     },
@@ -718,7 +705,7 @@ var socket, // socket.io
             return;
           }
         }
-      },
+      }
     },
     indicateSimpleNoImage: function() {
       //画像を表示しない場合
@@ -744,13 +731,11 @@ var socket, // socket.io
           if (!$('#sincloBox p#widgetTitle').hasClass('notSimple')) {
             $('#sincloBox p#widgetTitle').addClass('notSimple');
           }
-        }
-        else {
+        } else {
           //横
           $('#widgetTitle').css('text-align', 'center');
         }
-      }
-      else {
+      } else {
         if (!$('#sincloBox p#widgetTitle').hasClass('notSimple')) {
           $('#sincloBox p#widgetTitle').addClass('notSimple');
         }
@@ -774,13 +759,11 @@ var socket, // socket.io
           if ($('#sincloBox p#widgetTitle').hasClass('notSimple')) {
             $('#sincloBox p#widgetTitle').removeClass('notSimple');
           }
-        }
-        else {
+        } else {
           //横
           $('#widgetTitle').css('text-align', 'center');
         }
-      }
-      else {
+      } else {
         //PC時
         if ($('#sincloBox p#widgetTitle').hasClass('notSimple')) {
           $('#sincloBox p#widgetTitle').removeClass('notSimple');
@@ -803,8 +786,7 @@ var socket, // socket.io
         //閉じるボタン無効
         $('#minimizeBtn').hide();
         $('#closeBtn').hide();
-      }
-      else {
+      } else {
         //閉じるボタン有効
         $('#minimizeBtn').hide();
         var smartphone = check.smartphone();
@@ -814,12 +796,10 @@ var socket, // socket.io
           if (common.isPortrait()) {
             //縦
             $('#closeBtn').show();
-          }
-          else {
+          } else {
             $('#closeBtn').hide();
           }
-        }
-        else {
+        } else {
           $('#closeBtn').show();
         }
       }
@@ -831,8 +811,7 @@ var socket, // socket.io
           r = String(code.substr(0, 1)) + String(code.substr(0, 1));
           g = String(code.substr(1, 1)) + String(code.substr(1, 1));
           b = String(code.substr(2)) + String(code.substr(2));
-        }
-        else {
+        } else {
           r = String(code.substr(0, 2));
           g = String(code.substr(2, 2));
           b = String(code.substr(4));
@@ -868,8 +847,7 @@ var socket, // socket.io
           r = String(code.substr(0, 1)) + String(code.substr(0, 1));
           g = String(code.substr(1, 1)) + String(code.substr(1, 1));
           b = String(code.substr(2)) + String(code.substr(2));
-        }
-        else {
+        } else {
           r = String(code.substr(0, 2));
           g = String(code.substr(2, 2));
           b = String(code.substr(4));
@@ -917,15 +895,15 @@ var socket, // socket.io
               color: colorList['seTextColor'],
               textSize: widget.seTextSize,
               backgroundColor: colorList['seBackgroundColor'],
-              borderColor: colorList['seBorderColor'],
+              borderColor: colorList['seBorderColor']
             },
             re: {
               mg: 'margin-right: 10px;',
               color: colorList['reTextColor'],
               textSize: widget.reTextSize,
               backgroundColor: colorList['reBackgroundColor'],
-              borderColor: colorList['reBorderColor'],
-            },
+              borderColor: colorList['reBorderColor']
+            }
           };
           if (Number(sincloInfo.widget.widgetSizeType) === 4 &&
               !check.smartphone()) {
@@ -941,15 +919,15 @@ var socket, // socket.io
               color: colorList['seTextColor'],
               textSize: widget.seTextSize,
               backgroundColor: colorList['seBackgroundColor'],
-              borderColor: colorList['seBorderColor'],
+              borderColor: colorList['seBorderColor']
             },
             re: {
               mg: 'margin-right: 10px;',
               color: colorList['reTextColor'],
               textSize: widget.reTextSize,
               backgroundColor: colorList['reBackgroundColor'],
-              borderColor: colorList['reBorderColor'],
-            },
+              borderColor: colorList['reBorderColor']
+            }
           };
           if (Number(sincloInfo.widget.widgetSizeType) === 4 &&
               !check.smartphone()) {
@@ -1160,8 +1138,7 @@ var socket, // socket.io
         html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' +
             window.sincloInfo.site.files +
             '/img/widget/close.png"); background-position-y: -1.5px; position: absolute; top: calc(50% - 9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }';
-      }
-      else {
+      } else {
         //閉じるボタン有効
         html += '      #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url("' +
             window.sincloInfo.site.files +
@@ -1175,8 +1152,7 @@ var socket, // socket.io
       html += '      #sincloBox .flexBox { position: relative; display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: column; -webkit-flex-direction: column; flex-direction: column }';
       if (widget.chatMessageCopy === 1) {
         html += '      #sincloBox .flexBoxRow { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: row; -webkit-flex-direction: row; flex-direction: row; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;}';
-      }
-      else {
+      } else {
         html += '      #sincloBox .flexBoxRow { display: -ms-flexbox; display: -webkit-flex; display: flex; -ms-flex-direction: row; -webkit-flex-direction: row; flex-direction: row; }';
       }
       // チャットを使用する際
@@ -1208,8 +1184,7 @@ var socket, // socket.io
           console.log('1に入っている');
           //　チャット本文コピーできない
           html += '      #sincloBox ul#chatTalk { width: 100%; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0; clear: both!important; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }';
-        }
-        else {
+        } else {
           console.log(widget.chatMessageCopy);
           console.log('0に入っている');
           //　チャット本文コピーできる
@@ -1529,8 +1504,7 @@ var socket, // socket.io
                 'px; text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid ' +
                 colorList['widgetInsideBorderColor'] +
                 '; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }';
-          }
-          else {
+          } else {
             html += '      #sincloBox section#chatTab #sincloAccessInfo { height: ' +
                 sizeList['sincloAccessInfoHeight'] +
                 'px; text-align: left; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; font-size: 0.9em; border-top: 1px solid ' +
@@ -1545,8 +1519,7 @@ var socket, // socket.io
       html += '      #sincloBox section#navigation ul { display: table; padding: 0; position: absolute; top: 0; left: 0; }';
       if (widget.chatMessageCopy === 1) {
         html += '      #sincloBox #fotter { text-align: center; color: #A1A1A1!important; background-color: #FFF; margin: 0;border-top: none; user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;}';
-      }
-      else {
+      } else {
         html += '      #sincloBox #fotter { text-align: center; color: #A1A1A1!important; background-color: #FFF; margin: 0;border-top: none; }';
       }
       html += '      #sincloBox section#navigation ul li { position: relative; overflow: hidden; cursor: pointer; color: ' +
@@ -1613,8 +1586,7 @@ var socket, // socket.io
             (30.8 * ratio) + 'px; display: block; }';
         if (sinclo.chatApi.sendErrCatchFlg) {
           html += '#sincloBox section#chatTab sinclo-chat-alert { display:block }';
-        }
-        else {
+        } else {
           html += '#sincloBox section#chatTab sinclo-chat-alert { display:none }';
         }
 
@@ -1670,8 +1642,7 @@ var socket, // socket.io
                 (7 * ratio) + 'px; right: ' + (10 * ratio) + 'px; bottom: ' +
                 (6 * ratio) + 'px; width: ' + (18 * ratio) + 'px; height: ' +
                 (18 * ratio) + 'px; z-index: 2; }';
-          }
-          else {
+          } else {
             //閉じるボタン有効
             /*
             html += '#sincloBox div#addBtn { display: none; top: ' + (6 * ratio) + 'px; right: ' + (25 * ratio) + 'px; bottom: ' + (6 * ratio) + 'px; width: ' + (20 * ratio) + 'px; height: ' + (20 * ratio) + 'px; z-index: 2; }';
@@ -1866,8 +1837,7 @@ var socket, // socket.io
                 (5 * ratio) + 'px 0 0 ' + (5 * ratio) +
                 'px!important; border: ' + (1 * ratio) + 'px solid ' +
                 colorList['messageBoxBorderColor'] + '!important; }';
-          }
-          else {
+          } else {
             html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border: none!important; }';
           }
 
@@ -1968,21 +1938,21 @@ var socket, // socket.io
             if (window.sincloInfo.widget.spBannerPosition) {
               //スマホ隠しパラメータの存在チェック
               var horizontalPosition = (5 * ratio) + 'px';
-              if (typeof(widget.spBannerHorizontalPosition) === 'string' &&
+              if (typeof (widget.spBannerHorizontalPosition) === 'string' &&
                   widget.spBannerHorizontalPosition.indexOf('px') !== -1) {
                 horizontalPosition = parseInt(
                     widget.spBannerHorizontalPosition) * ratio + 'px';
-              } else if (typeof(widget.spBannerHorizontal) === 'string') {
+              } else if (typeof (widget.spBannerHorizontal) === 'string') {
                 horizontalPosition = widget.spBannerHorizontalPosition;
               }
               var verticalPositionFromBottom = (5 * ratio) + 'px';
-              if (typeof(widget.spBannerVerticalPositionFromBottom) ===
+              if (typeof (widget.spBannerVerticalPositionFromBottom) ===
                   'string' &&
                   widget.spBannerVerticalPositionFromBottom.indexOf('px') !==
                   -1) {
                 verticalPositionFromBottom = parseInt(
                     widget.spBannerVerticalPositionFromBottom) * ratio + 'px';
-              } else if (typeof(widget.spBannerVerticalPositionFromBottom) ===
+              } else if (typeof (widget.spBannerVerticalPositionFromBottom) ===
                   'string') {
                 verticalPositionFromBottom = widget.spBannerVerticalPositionFromBottom;
               }
@@ -2128,8 +2098,7 @@ var socket, // socket.io
           html += '#sincloBox * { font-size: ' + hRatio + 'px }';
           if (widget.chatMessageCopy === 1) {
             html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.35em 2em 0; font-size: 1.2em;  user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; }';
-          }
-          else {
+          } else {
             html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.35em 2em 0; font-size: 1.2em;}';
           }
           if (widget.widgetSizeType !== 1) {
@@ -2203,8 +2172,7 @@ var socket, // socket.io
 
           if (hRatio > 16) {
             html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; }';
-          }
-          else {
+          } else {
             html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; font-size: 1.5em }';
           }
           html += '      #sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding: 0.6em 0; border: 1px solid ' +
@@ -2215,8 +2183,7 @@ var socket, // socket.io
                 (5 * ratio) + 'px 0 0 ' + (5 * ratio) +
                 'px!important; border: ' + (1 * ratio) + 'px solid ' +
                 colorList['messageBoxBorderColor'] + '!important; }';
-          }
-          else {
+          } else {
             html += '#sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border: none!important; }';
           }
           html += '#sincloBox section#navigation ul { width: 100% }';
@@ -2400,8 +2367,7 @@ var socket, // socket.io
             html += '      #sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border: 1px solid ' +
                 colorList['messageBoxBorderColor'] +
                 '!important; border-radius: 5px 0 0 5px!important; }';
-          }
-          else {
+          } else {
             html += '      #sincloBox section#chatTab #sincloChatMessage, #sincloBox section#chatTab #miniSincloChatMessage { border: none!important;}';
           }
           html += '      #sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding: 20px 0; height: 100%; border: 1px solid ' +
@@ -2426,8 +2392,7 @@ var socket, // socket.io
               sizeList['telContentHeight'] + 'px }';
           if (window.sincloInfo.contract.chat) {
             html += '      #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table; align-content: center;  height: 119px!important;  justify-content: center; }';
-          }
-          else {
+          } else {
             html += '      #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; align-content: center; justify-content: center; overflow-x: hidden; overflow-y: auto }';
           }
           html += '      #sincloBox section#callTab #telContent span { word-wrap: break-word ;word-break: break-all; font-size: ' +
@@ -3287,13 +3252,11 @@ var socket, // socket.io
         if (common.isPortrait()) {
           //縦
           var paddingpx = 'padding: ' + 10 * ratio + 'px 0';
-        }
-        else {
+        } else {
           //横
           var paddingpx = 'padding: 20px 0';
         }
-      }
-      else {
+      } else {
         var paddingpx = 'padding: ' + 10 + 'px 0';
       }
       var html = '';
@@ -3312,7 +3275,7 @@ var socket, // socket.io
           '</g>\n' +
           '</svg>';
       var bannertext = '';
-      if (check.smartphone() && typeof(widget.spBannerText) === 'string') {
+      if (check.smartphone() && typeof (widget.spBannerText) === 'string') {
         //スマホかつ隠しパラメータ設定済みの場合
         bannertext = check.escape_html(widget.spBannerText);
       } else {
@@ -3394,8 +3357,7 @@ var socket, // socket.io
             0) {
           html += '    <p id="widgetSubTitle">' + check.escape_html(subTitle) +
               '</p>';
-        }
-        else {
+        } else {
           html += '    <p id="widgetSubTitle">&thinsp;</p>';
         }
 
@@ -3404,8 +3366,7 @@ var socket, // socket.io
             (widget.description).length !== 0) {
           html += '    <p id="widgetDescription">' +
               check.escape_html(description) + '</p>';
-        }
-        else {
+        } else {
           html += '    <p id="widgetDescription">&thinsp;</p>';
         }
       }
@@ -3458,8 +3419,7 @@ var socket, // socket.io
         html += '    <pre id="telNumber" style="font-size: ' +
             sizeList['d18font'] + 'px; padding: 5px 0px 0px; height: 30px">' +
             check.escape_html(widget.tel) + '</pre>';
-      }
-      else {
+      } else {
         html += '    <pre id="telNumber" style="font-size: ' +
             sizeList['d20font'] + 'px; padding: 10px 0px 0px; height: 45px;">' +
             check.escape_html(widget.tel) + '</pre>';
@@ -3486,7 +3446,7 @@ var socket, // socket.io
       iframe.height = 400;
       var sincloData = {
         from: fromID,
-        to: toID,
+        to: toID
       };
       iframe.src = sincloInfo.site.webcam_view + '?h=false&sincloData=' +
           encodeURIComponent(JSON.stringify(sincloData)); // FIXME
@@ -3633,8 +3593,7 @@ var socket, // socket.io
           if (clickTab === 'call') {
             $('#sincloBox #chatTab').removeClass('flexBox');
             $('#sincloBox #callTab').addClass('flexBox');
-          }
-          else {
+          } else {
             $('#sincloBox #callTab').removeClass('flexBox');
             $('#sincloBox #chatTab').addClass('flexBox');
             sinclo.chatApi.showUnreadCnt();
@@ -3646,8 +3605,7 @@ var socket, // socket.io
           // 初期の画面向き
           if (window.screen.availHeight < window.screen.availWidth) {
             sincloBox.setAttribute('data-screen', 'horizontal'); // 横向き
-          }
-          else {
+          } else {
             sincloBox.setAttribute('data-screen', 'vertical'); // 縦向き
           }
 
@@ -3683,8 +3641,7 @@ var socket, // socket.io
           r = String(code.substr(0, 1)) + String(code.substr(0, 1));
           g = String(code.substr(1, 1)) + String(code.substr(1, 1));
           b = String(code.substr(2)) + String(code.substr(2));
-        }
-        else {
+        } else {
           r = String(code.substr(0, 2));
           g = String(code.substr(2, 2));
           b = String(code.substr(4));
@@ -3776,8 +3733,7 @@ var socket, // socket.io
             if (abridgementType['MinRes']) {
               //ヘッダ非表示（シンプル表示）
               common.abridgementTypehide();
-            }
-            else {
+            } else {
               //ヘッダ表示（通常表示）
               common.abridgementTypeShow();
             }
@@ -3803,8 +3759,7 @@ var socket, // socket.io
               if (abridgementType['MaxRes']) {
                 //ヘッダ非表示（シンプル表示）
                 common.abridgementTypehide();
-              }
-              else {
+              } else {
                 //ヘッダ表示（通常表示）
                 common.abridgementTypeShow();
               }
@@ -3816,16 +3771,14 @@ var socket, // socket.io
                 sinclo.adjustSpWidgetSize();
               }
             }
-          }
-          else {
+          } else {
             if (dataOpenflg === 'false') {
               console.log('saisyouka');
               //最小化
               if (abridgementType['MinRes']) {
                 //ヘッダ非表示（シンプル表示）
                 common.abridgementTypehide();
-              }
-              else {
+              } else {
                 //ヘッダ表示（通常表示）
                 common.abridgementTypeShow();
               }
@@ -3837,15 +3790,13 @@ var socket, // socket.io
               } else {
                 sinclo.adjustSpWidgetSize();
               }
-            }
-            else {
+            } else {
               console.log('saidaika');
               //最大化
               if (abridgementType['MaxRes']) {
                 //ヘッダ非表示（シンプル表示）
                 common.abridgementTypehide();
-              }
-              else {
+              } else {
                 //ヘッダ表示（通常表示）
                 common.abridgementTypeShow();
               }
@@ -3938,8 +3889,8 @@ var socket, // socket.io
         if (!check.smartphone()) {
           console.log('widgetHandler::beginToWatchResizeEvent');
           $(window).
-          on('resize.change_widget_size',
-              common.widgetHandler._handleResizeEvent);
+              on('resize.change_widget_size',
+                  common.widgetHandler._handleResizeEvent);
           // いったんリサイズ処理を走らせる
           common.widgetHandler._handleResizeEvent();
         }
@@ -3948,8 +3899,8 @@ var socket, // socket.io
         if (!check.smartphone()) {
           console.log('widgetHandler::stopToWatchResizeEvent');
           $(window).
-          off('resize.change_widget_size',
-              common.widgetHandler._handleResizeEvent);
+              off('resize.change_widget_size',
+                  common.widgetHandler._handleResizeEvent);
         }
       },
       _maximumReverseAnimation: function() {
@@ -3958,7 +3909,7 @@ var socket, // socket.io
         }
         console.log('「最大」設定時に最小化するアニメーションです');
         $('#sincloWidgetBox').animate({
-          width: '400px',
+          width: '400px'
         });
       },
       _setFooterSize: function() {
@@ -3971,9 +3922,9 @@ var socket, // socket.io
           return 26;
         }
       },
-      _setInputAreaSize: function () {
-        if( $('#flexBoxWrap').is(':visible') ){
-          return $('#flexBoxWrap').outerHeight()
+      _setInputAreaSize: function() {
+        if ($('#flexBoxWrap').is(':visible')) {
+          return $('#flexBoxWrap').outerHeight();
         } else {
           return 0;
         }
@@ -3989,7 +3940,7 @@ var socket, // socket.io
             $('#sincloAccessInfo').outerHeight() + footerSize;
         $('#chatTalk').css('height', $(window).height() - offset);
         $('#sincloWidgetBox').animate({
-          width: $(window).width() + 'px',
+          width: $(window).width() + 'px'
         }, 400);
       },
       _widgetFitForWindow: function() {
@@ -4177,7 +4128,7 @@ var socket, // socket.io
         $('#sincloWidgetBox').show();
         common.whenMaximizedBtnShow();
         common.widgetHandler._handleResizeEvent();
-      },
+      }
     },
     load: {
       id: 'loadingImg',
@@ -4563,7 +4514,7 @@ var socket, // socket.io
             this.finish();
           }
         }
-      },
+      }
     },
     chatBotTypingDelayTimer: null,
     firstTimeChatBotTyping: true,
@@ -4852,6 +4803,26 @@ var socket, // socket.io
       link = link.replace('tel:', '');
       return link;
     },
+    callGA: function(eventAction, eventLabel, eventValue) {
+      if (typeof ga === 'function' && typeof gtag === 'function') {
+        gtag('event', eventAction, {
+          'event_category': 'sinclo',
+          'event_label': eventLabel,
+          'value': eventValue
+        });
+      } else if (typeof ga === 'function') {
+        ga('send', 'event', 'sinclo', eventAction, eventLabel, eventValue);
+      } else if (typeof gtag === 'function') {
+        gtag('event', eventAction, {
+          'event_category': 'sinclo',
+          'event_label': eventLabel,
+          'value': eventValue
+        });
+      }
+    },
+    hasGA: function() {
+      return typeof ga === 'function' || typeof gtag === 'function';
+    }
   };
 
   storage = {
@@ -4864,7 +4835,7 @@ var socket, // socket.io
       },
       unset: function(name) {
         sessionStorage.removeItem(name);
-      },
+      }
     },
     l: {
       get: function(name) {
@@ -4875,7 +4846,7 @@ var socket, // socket.io
       },
       unset: function(name) {
         localStorage.removeItem(name);
-      },
+      }
     },
     c: {
       prefix: '___',
@@ -4900,8 +4871,8 @@ var socket, // socket.io
       },
       unset: function(name) {
         localStorage.removeItem(name);
-      },
-    },
+      }
+    }
   };
 
   check = {
@@ -4984,7 +4955,7 @@ var socket, // socket.io
           '`': '&#x60;',
           '"': '&quot;',
           '<': '&lt;',
-          '>': '&gt;',
+          '>': '&gt;'
         }[match];
       });
       return str;
@@ -4992,8 +4963,7 @@ var socket, // socket.io
     firstUrl: function() {
       if (location.href.match('/sincloData\=/')) {
         return true;
-      }
-      else {
+      } else {
         return false;
       }
     },
@@ -5002,7 +4972,7 @@ var socket, // socket.io
           '^http(s)?:\/\/([A-z]+.)?' + location.hostname + '\/'),
           ref = document.referrer;
       return ref.match(reg);
-    },
+    }
   };
 
   userInfo = {
@@ -5032,15 +5002,13 @@ var socket, // socket.io
 
       if (check.isset(storage.s.get('params'))) {
         common.setParams();
-      }
-      else {
+      } else {
         if (Number(common.tmpParams.type) === Number(cnst.access_type.host)) {
           userInfo.userId = common.tmpParams.userId;
           userInfo.setTabId();
           common.tmpParams.tabId = userInfo.tabId;
           common.saveParams();
-        }
-        else {
+        } else {
           var code = this.getCode(cnst.info_type.referrer);
           userInfo.referrer = storage.s.get(code);
           if (check.isset(userInfo.referrer)) {
@@ -5060,8 +5028,7 @@ var socket, // socket.io
         userInfo.tabId = common.params.tabId;
         userInfo.setConnect(common.params.connectToken);
         emit('connectSuccess', {confirm: false});
-      }
-      else {
+      } else {
         // 消費者がフレームの場合
         if (common.tmpParams.hasOwnProperty('gFrame') &&
             !check.isset(storage.s.get('gFrame'))) {
@@ -5083,7 +5050,7 @@ var socket, // socket.io
           userInfo.parentId = storage.s.get('parentId');
           emit('startSyncToFrame', {
             parentId: userInfo.parentId,
-            tabId: userInfo.tabId,
+            tabId: userInfo.tabId
           });
         }
         if (check.isset(storage.s.get('coBrowseConnectToken'))) {
@@ -5095,7 +5062,7 @@ var socket, // socket.io
       code: 'syncInfo',
       set: function() {
         storage.s.set(this.code, JSON.stringify({
-          sendTabId: userInfo.sendTabId,
+          sendTabId: userInfo.sendTabId
         }));
       },
       get: function() {
@@ -5110,7 +5077,7 @@ var socket, // socket.io
         delete userInfo.sendTabId;
         // TODO minify
         userInfo.unsetConnect();
-      },
+      }
     },
     getCode: function(type) {
       switch (type) {
@@ -5144,7 +5111,7 @@ var socket, // socket.io
     },
     set: function(type, val, session) {
       var code = this.getCode(type);
-      if (typeof(session) === 'undefined') {
+      if (typeof (session) === 'undefined') {
         storage.l.set(code, val);
       } else if (session === 'sincloSessionId') {
         console.log('sincloSessionId is set : ' + val);
@@ -5158,8 +5125,7 @@ var socket, // socket.io
       var code = this.getCode(type);
       if (check.isset(storage.l.get(code))) {
         return storage.l.get(code);
-      }
-      else if (check.isset(storage.s.get(code))) {
+      } else if (check.isset(storage.s.get(code))) {
         return storage.s.get(code);
       } else if (check.isset(storage.c.get(code))) {
         return storage.c.get(code);
@@ -5181,8 +5147,7 @@ var socket, // socket.io
         var code = this.getCode(cnst.info_type[array[i]]);
         if (check.isset(storage.l.get(code))) {
           userInfo[code] = storage.l.get(code);
-        }
-        else if (check.isset(storage.s.get(code))) {
+        } else if (check.isset(storage.s.get(code))) {
           userInfo[code] = storage.s.get(code);
         } else if (check.isset(storage.c.get(code))) {
           userInfo[code] = storage.c.get(code);
@@ -5198,7 +5163,7 @@ var socket, // socket.io
         cnst.info_type.connect,
         cnst.info_type.tab,
         cnst.info_type.gFrame,
-        cnst.info_type.parentId,
+        cnst.info_type.parentId
       ];
       for (var i in array) {
         userInfo.unset(array[i]);
@@ -5260,7 +5225,7 @@ var socket, // socket.io
     writePrevToLocalStorage: function() {
       var code = this.getCode(cnst.info_type.prev);
       var prev = [];
-      if (typeof(userInfo.oldSincloSessionId) !== 'undefined') {
+      if (typeof (userInfo.oldSincloSessionId) !== 'undefined') {
         console.log(
             'oldSincloSessionId is found. : ' + userInfo.oldSincloSessionId +
             ' overwrite.');
@@ -5312,7 +5277,7 @@ var socket, // socket.io
         chatUnread: {id: null, cnt: 0},
         service: check.browser(),
         widget: window.sincloInfo.widgetDisplay,
-        customVariables: window.userInfo.customVariables,
+        customVariables: window.userInfo.customVariables
       };
     },
     setCustomVariables: function() {
@@ -5338,7 +5303,7 @@ var socket, // socket.io
       } else {
         return '';
       }
-    },
+    }
   };
 
   browserInfo = {
@@ -5350,7 +5315,7 @@ var socket, // socket.io
     scrollSize: function() { // 全体のスクロール幅
       return {
         x: document.body.scrollWidth - window.innerWidth,
-        y: document.body.scrollHeight - window.innerHeight,
+        y: document.body.scrollHeight - window.innerHeight
       };
     },
     // TODO 画面同期時セットするようにする
@@ -5358,8 +5323,7 @@ var socket, // socket.io
       if (document.body.scrollTop > document.documentElement.scrollTop ||
           document.body.scrollLeft > document.documentElement.scrollLeft) {
         return document.body;
-      }
-      else {
+      } else {
         return document.documentElement;
       }
     },
@@ -5385,27 +5349,26 @@ var socket, // socket.io
       var y = (customDoc.scrollTop / scrollSize.y);
       return {
         x: (isNaN(x)) ? 0 : x,
-        y: (isNaN(y)) ? 0 : y,
+        y: (isNaN(y)) ? 0 : y
       };
     },
     windowScreen: function() {
       if (userInfo.accessType !== cnst.access_type.host) {
         return {
           height: window.parent.screen.height,
-          width: window.parent.screen.width,
+          width: window.parent.screen.width
         };
-      }
-      else {
+      } else {
         return {
           height: null,
-          width: null,
+          width: null
         };
       }
     },
     windowSize: function() {
       return {
         height: window.innerHeight,
-        width: window.innerWidth,
+        width: window.innerWidth
       };
     },
     interval: Math.floor(1000 / 60 * 10),
@@ -5417,7 +5380,7 @@ var socket, // socket.io
         document.body.scrollTop = scrollSize.y * obj.y;
         document.documentElement.scrollLeft = scrollSize.x * obj.x;
         document.documentElement.scrollTop = scrollSize.y * obj.y;
-      },
+      }
     },
     getActiveWindow: function() {
       var tabFlg = document.hasFocus(), widgetFlg = false, tabStatus, sincloBox;
@@ -5438,8 +5401,7 @@ var socket, // socket.io
         // ウィジェットが開いている
         if (widgetFlg) {
           tabStatus = cnst.tab_type.open;
-        }
-        else {
+        } else {
           tabStatus = cnst.tab_type.close;
         }
         // ウィジェット非表示中
@@ -5454,13 +5416,12 @@ var socket, // socket.io
         if (closeAct === 'true') {
           tabStatus = cnst.tab_type.none;
         }
-      }
-      else {
+      } else {
         tabStatus = cnst.tab_type.disable;
         sinclo.chatApi.startInactiveTimeout();
       }
       return tabStatus;
-    },
+    }
   };
 
   syncEvent = {
@@ -5478,10 +5439,10 @@ var socket, // socket.io
             this.timer = null;
             emit('syncBrowserInfoFrame', {
               accessType: userInfo.accessType,
-              mousePoint: {x: e.clientX, y: e.clientY},
+              mousePoint: {x: e.clientX, y: e.clientY}
             });
           }, 10);
-        },
+        }
       },
       {
         type: 'scroll',
@@ -5494,9 +5455,9 @@ var socket, // socket.io
           emit('syncScrollInfo', {
             accessType: userInfo.accessType,
             mousePoint: {x: e.clientX, y: e.clientY},
-            scrollPosition: browserInfo.windowScroll(),
+            scrollPosition: browserInfo.windowScroll()
           });
-        },
+        }
       },
       {
         type: 'hashchange',
@@ -5505,8 +5466,8 @@ var socket, // socket.io
           if (socket === undefined) return false;
           browserInfo.href = location.href;
           emit('reqUrlChecker', {});
-        },
-      },
+        }
+      }
     ],
     pcResize: function(e) {
       if (e) e.stopPropagation();
@@ -5519,7 +5480,7 @@ var socket, // socket.io
           // ブラウザのサイズ
           windowSize: browserInfo.windowSize(),
           mousePoint: {x: e.clientX, y: e.clientY},
-          scrollPosition: browserInfo.windowScroll(),
+          scrollPosition: browserInfo.windowScroll()
         });
         // do something ...
       }, browserInfo.interval);
@@ -5528,7 +5489,7 @@ var socket, // socket.io
       if (e) e.stopPropagation();
       var size = {
         width: window.innerWidth,
-        height: window.innerHeight,
+        height: window.innerHeight
       };
       var scroll = browserInfo.windowScroll();
 
@@ -5536,7 +5497,7 @@ var socket, // socket.io
         accessType: userInfo.accessType,
         // ブラウザのサイズ
         windowSize: size,
-        scrollPosition: scroll,
+        scrollPosition: scroll
       });
     },
     ctrlEventListener: function(eventFlg, evList) { // ウィンドウに対してのイベント操作
@@ -5548,8 +5509,7 @@ var socket, // socket.io
           evListener = window.attachEvent;
           attachFlg = true;
         }
-      }
-      else {
+      } else {
         evListener = window.removeEventListener;
         if (!window.removeEventListener) {
           evListener = window.detachEvent;
@@ -5568,22 +5528,18 @@ var socket, // socket.io
       var evName, attachFlg = true;
       if (eventFlg) {
         if (window.addEventListener) attachFlg = false;
-      }
-      else {
+      } else {
         if (window.removeEventListener) attachFlg = false;
       }
       evName = (attachFlg) ? 'on' + String(type) : type;
       for (var i = 0; i < els.length; i++) {
         if (eventFlg && attachFlg) {
           els[i].attachEvent(evName, ev, false);
-        }
-        else if (eventFlg && !attachFlg) {
+        } else if (eventFlg && !attachFlg) {
           els[i].addEventListener(evName, ev, false);
-        }
-        else if (!eventFlg && attachFlg) {
+        } else if (!eventFlg && attachFlg) {
           els[i].detachEvent(evName, ev, false);
-        }
-        else if (!eventFlg && !attachFlg) {
+        } else if (!eventFlg && !attachFlg) {
           els[i].removeEventListener(evName, ev, false);
         }
       }
@@ -5609,7 +5565,7 @@ var socket, // socket.io
         nodeType: e.target.type,
         checked: checked,
         idx: index,
-        value: this.value,
+        value: this.value
       });
     },
     focusCall: function(e) {
@@ -5638,8 +5594,7 @@ var socket, // socket.io
       ) {
         window.addEventListener('orientationchange', syncEvent.tabletResize,
             false);
-      }
-      else {
+      } else {
         window.addEventListener('resize', syncEvent.pcResize, false);
       }
     },
@@ -5655,7 +5610,7 @@ var socket, // socket.io
       var elem = document.getElementsByTagName(nodeName)[Number(index)],
           scrollBarSize = {
             height: elem.scrollHeight - elem.clientHeight,
-            width: elem.scrollWidth - elem.clientWidth,
+            width: elem.scrollWidth - elem.clientWidth
           };
 
       if (check.isset(syncEvent.elmScrollCallTimers[nodeName + '_' + index])) {
@@ -5673,8 +5628,8 @@ var socket, // socket.io
               idx: index,
               value: {
                 topRatio: elem.scrollTop / scrollBarSize.height,
-                leftRatio: elem.scrollLeft / scrollBarSize.width,
-              },
+                leftRatio: elem.scrollLeft / scrollBarSize.width
+              }
             });
           }, 1000);
 
@@ -5763,8 +5718,7 @@ var socket, // socket.io
           if (userInfo.accessType !== cnst.access_type.host) {
             emit('requestSyncStopForSubmit',
                 {message: 'お客様がsubmitボタンをクリックしましたので、\n画面共有を終了します。'});
-          }
-          else {
+          } else {
             e.preventDefault();
             e.stopPropagation();
             return false;
@@ -5778,15 +5732,15 @@ var socket, // socket.io
     },
     stop: function(e) {
       syncEvent.change(false);
-    },
+    }
   };
 
   popup = {
     const: {
       action: {
         alert: 1,
-        confirm: 2,
-      },
+        confirm: 2
+      }
     },
     getCss: function() {
       var css = '';
@@ -5884,8 +5838,7 @@ var socket, // socket.io
       if (type === popup.const.action.confirm) {
         html += '      <sinclo-a href="javascript:void(0)" id="sincloPopupOk" onclick="popup.ok()">許可する</sinclo-a>';
         html += '      <sinclo-a href="javascript:void(0)" id="sincloPopupNg" onclick="popup.no()">許可しない</sinclo-a>';
-      }
-      else {
+      } else {
         html += '      <sinclo-a href="javascript:void(0)" id="sincloPopupOk" onclick="popup.ok()">閉じる</sinclo-a>';
       }
       return html;
@@ -5935,7 +5888,7 @@ var socket, // socket.io
     },
     no: function() {
       this.remove();
-    },
+    }
   };
 
   vcPopup = {
@@ -5945,7 +5898,7 @@ var socket, // socket.io
       var html = '';
       var sincloData = {
         from: fromID,
-        to: toID,
+        to: toID
       };
       var url = sincloInfo.site.webcam_view + '?h=false&sincloData=' +
           encodeURIComponent(JSON.stringify(sincloData));
@@ -6092,12 +6045,12 @@ var socket, // socket.io
       var deltaY = e.screenY - vcPopup.startDragY;
       $('#sincloVcPopupFrame').css({
         top: $('#sincloVcPopupFrame').offset().top + deltaY,
-        left: $('#sincloVcPopupFrame').offset().left + deltaX,
+        left: $('#sincloVcPopupFrame').offset().left + deltaX
       });
       vcPopup.startDragX = e.screenX;
       vcPopup.startDragY = e.screenY;
       return false;
-    },
+    }
   };
 
   uploadFileSelectorModal = {
@@ -6106,7 +6059,7 @@ var socket, // socket.io
       var html = '';
       var sincloData = {
         from: fromID,
-        to: toID,
+        to: toID
       };
       html += '  <style>';
       html += '    #sincloVcPopupFrame {';
@@ -6229,7 +6182,7 @@ var socket, // socket.io
     },
     no: function() {
       this.remove();
-    },
+    }
   };
 
   var showTimer = null;
@@ -6254,32 +6207,32 @@ var socket, // socket.io
     }, false);
     if (check.smartphone()) {
       $('textarea:not(#sincloChatMessage), input:not(#miniSincloChatMessage)').
-      on('DOMFocusIn', function(e) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusIn');
-        if (!event.target) {
-          return;
-        }
-        if (event.target.nodeName.toLowerCase() === 'textarea' ||
-            focusTargetType.indexOf(e.target.type) >= 0) {
-          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> HIDE WIDGET');
-          if (showTimer) {
-            clearTimeout(showTimer);
-            showTimer = null;
-          }
-          common.widgetHandler.hide();
-          storage.s.set('closeAct', true);
-        }
-      }).
-      on('DOMFocusOut', function(e) {
-        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusOut');
-        if (!showTimer) {
-          showTimer = setTimeout(function() {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW WIDGET');
-            storage.s.set('closeAct', false);
-            common.widgetHandler.show();
-          }, 100);
-        }
-      });
+          on('DOMFocusIn', function(e) {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusIn');
+            if (!event.target) {
+              return;
+            }
+            if (event.target.nodeName.toLowerCase() === 'textarea' ||
+                focusTargetType.indexOf(e.target.type) >= 0) {
+              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> HIDE WIDGET');
+              if (showTimer) {
+                clearTimeout(showTimer);
+                showTimer = null;
+              }
+              common.widgetHandler.hide();
+              storage.s.set('closeAct', true);
+            }
+          }).
+          on('DOMFocusOut', function(e) {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusOut');
+            if (!showTimer) {
+              showTimer = setTimeout(function() {
+                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW WIDGET');
+                storage.s.set('closeAct', false);
+                common.widgetHandler.show();
+              }, 100);
+            }
+          });
     }
     var tabStateTimer = null;
     // ウィジェット最大化設定をクリア
@@ -6314,13 +6267,12 @@ var socket, // socket.io
           confirm: false,
           reconnect: true,
           tmpAutoMessages: tmpAutoMessages,
-          widget: window.sincloInfo.widgetDisplay,
+          widget: window.sincloInfo.widgetDisplay
         }, function(ev) {
           emit('customerInfo', emitData);
         });
         common.widgetHandler.show();
-      }
-      else {
+      } else {
         sinclo.trigger.flg = false;
         sinclo.connect();
       }
@@ -6577,14 +6529,13 @@ var socket, // socket.io
   };
 
   $.ajaxSetup({
-    cache: false,
+    cache: false
   });
 
   if (check.isset(storage.s.get('params'))) {
     common.params = common.jParse(storage.s.get('params'));
     userInfo.accessType = common.params.type;
-  }
-  else {
+  } else {
     common.getParams();
     if (Number(common.tmpParams.type) === Number(cnst.access_type.host)) {
       userInfo.accessType = cnst.access_type.host;
@@ -6597,7 +6548,7 @@ var socket, // socket.io
     cache: false,
     data: {
       'sitekey': window.sincloInfo.site.key,
-      accessType: userInfo.accessType,
+      accessType: userInfo.accessType
     },
     dataType: 'json',
     success: function(json) {
@@ -6612,8 +6563,7 @@ var socket, // socket.io
         window.sincloInfo.contract = json.contract;
         window.sincloInfo.chat = json.chat;
         window.sincloInfo.customVariable = json.customVariable;
-      }
-      else {
+      } else {
         clearTimeout(timer);
       }
     },
@@ -6621,7 +6571,7 @@ var socket, // socket.io
       $('#XMLHttpRequest').html('XMLHttpRequest : ' + XMLHttpRequest.status);
       $('#textStatus').html('textStatus : ' + textStatus);
       $('#errorThrown').html('errorThrown : ' + errorThrown.message);
-    },
+    }
   });
 
   var timer = window.setInterval(function() {
@@ -6766,8 +6716,7 @@ function link(word, link, eventLabel) {
       console.log('画像なので文字列を修正します');
       word = word.replace(/mailto\s*:/g, '');
     }
-  }
-  else if (eventLabel === 'clickTelno') {
+  } else if (eventLabel === 'clickTelno') {
     console.log('これは電話です。もし画像リンクなら文字列を修正します');
     if (word.match(/tel/)) {
       console.log('画像なので文字列を修正します');
@@ -6782,19 +6731,18 @@ function link(word, link, eventLabel) {
   data.userId = userInfo.userId;
   if (storage.s.get('requestFlg') === 'true') {
     data.messageRequestFlg = 0;
-  }
-  else {
+  } else {
     data.messageRequestFlg = 1;
     storage.s.set('requestFlg', true);
   }
-  if (typeof ga == 'function') {
+  if (common.hasGA()) {
     if (eventLabel === 'clickLink') {
       //リンククリック時に登録する値は今までと変わりないようにする
-      ga('send', 'event', 'sinclo', eventLabel, link, 1);
+      common.callGA(eventLabel, link, 1);
     } else {
       //メール及び電話の時は登録する文字列を修正して登録する
       link = common.stringReplaceProcessForGA(link);
-      ga('send', 'event', 'sinclo', eventLabel, link, 1);
+      common.callGA(eventLabel, link, 1);
     }
   }
   socket.emit('link', data);

@@ -1,7 +1,8 @@
 <script type = "text/javascript">
   $(function(){
     var popWinObj;
-    $('.loginLink').on("click",function(){
+    $('.loginLink').on("click",function(e){
+      e.preventDefault();
       var mailAddress = $(this).parents('tr').find('.adminId').text();
       var pass = $(this).parents('tr').find('.adminPass').text();
       $('#postjump').remove();
