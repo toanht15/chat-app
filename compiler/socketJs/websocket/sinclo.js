@@ -37,11 +37,11 @@
 //        sincloBox.setAttribute('data-openflg', false);
         var flg = sinclo.widget.condifiton.get();
         //ウィジェットを開いた回数
-        if (String(flg) === 'true' && typeof ga === 'function') {
-          ga('send', 'event', 'sinclo', 'clickMaximize', location.href, 1);
+        if (String(flg) === 'true' && common.hasGA()) {
+          common.callGA('clickMaximize', location.href, 1);
         }
-        if (String(flg) === 'false' && typeof ga === 'function') {
-          ga('send', 'event', 'sinclo', 'clickMinimize', location.href, 1);
+        if (String(flg) === 'false' && common.hasGA()) {
+          common.callGA('clickMinimize', location.href, 1);
           //ウィジェットを最小化した回数追加
           var now = new Date();
           month = ('0' + (now.getMonth() + 1)).slice(-2);
@@ -195,8 +195,8 @@
       //閉じるボタンがクリックされた時の挙動
       closeBtn: function() {
         //閉じるボタンをクリックした回数
-        if (typeof ga == 'function') {
-          ga('send', 'event', 'sinclo', 'clickClose', location.href, 1);
+        if (common.hasGA()) {
+          common.callGA('clickClose', location.href, 1);
           //閉じるボタンクリック数追加
           var now = new Date();
           month = ('0' + (now.getMonth() + 1)).slice(-2);
@@ -1254,8 +1254,8 @@
         if (storage.s.get('mannedRequestFlg') === 'true') {
           //OPが入室した数
           //入室数についてはタブでカウントする
-          if (typeof ga == 'function' && obj.tabId === userInfo.tabId) {
-            ga('send', 'event', 'sinclo', 'manualChat',
+          if (common.hasGA() && obj.tabId === userInfo.tabId) {
+            common.callGA('manualChat',
                 sinclo.chatApi.opUserName, 1);
           }
         }
@@ -1827,8 +1827,8 @@
           if (obj.messageType !== sinclo.chatApi.messageType.auto &&
               storage.s.get('requestFlg') === 'true') {
             //自動返信を出した数
-            if (typeof ga == 'function') {
-              ga('send', 'event', 'sinclo', 'autoChat', location.href, 1);
+            if (common.hasGA()) {
+              common.callGA()('autoChat', location.href, 1);
             }
             storage.s.set('requestFlg', false);
           }
@@ -2048,8 +2048,8 @@
                 storage.s.set('sorryMessageFlg', true);
                 //sorryメッセージを出した数
                 //sorryメッセージ受信数はメッセージを送信した対象のタブでカウントする
-                if (typeof ga == 'function' && obj.tabId === userInfo.tabId) {
-                  ga('send', 'event', 'sinclo', 'sorryMsg', location.href, 1);
+                if (common.hasGA() && obj.tabId === userInfo.tabId) {
+                  common.callGA('sorryMsg', location.href, 1);
                 }
               }
             }
@@ -5032,8 +5032,8 @@
 
           //サイト訪問者がチャット送信した初回のタイミング
           if (!check.isset(firstChatEmit)) {
-            if (typeof ga == 'function') {
-              ga('send', 'event', 'sinclo', 'sendChat', location.href, 1);
+            if (common.hasGA()) {
+              common.callGA('sendChat', location.href, 1);
             }
             if (storage.s.get('requestFlg') !== 'true') {
               storage.s.set('requestFlg', true);
