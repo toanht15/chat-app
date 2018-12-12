@@ -43,7 +43,6 @@ class ReplaceLeadListSettingsShell extends AppShell
           $this->printLog("企業ID:".$companyId."はスキップします");
           continue;
         }
-
         // リード設定を保持している会社毎に洗い替えを行う(別会社の同一リードリスト名の場合を考慮して)
 
         // [[マージ先id] => ハッシュ値, 項目名, 変数名], ...]　のセット配列を作る
@@ -63,7 +62,7 @@ class ReplaceLeadListSettingsShell extends AppShell
         $this->_replaceLeadListSettingData($hashMaster, $mergeIdList, $companyId);
 
       }
-      $transaction->rollback();
+      $transaction->commit();
     } catch(Exception $e) {
       $transaction->rollback();
       $this->printLog('ERROR FOUND. message : '.$e->getMessage());
