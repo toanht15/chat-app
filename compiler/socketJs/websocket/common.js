@@ -4804,7 +4804,13 @@ var socket, // socket.io
       return link;
     },
     callGA: function(eventAction, eventLabel, eventValue) {
-      if (typeof ga === 'function') {
+      if (typeof ga === 'function' && typeof gtag === 'function') {
+        gtag('event', eventAction, {
+          'event_category': 'sinclo',
+          'event_label': eventLabel,
+          'value': eventValue
+        });
+      } else if (typeof ga === 'function') {
         ga('send', 'event', 'sinclo', eventAction, eventLabel, eventValue);
       } else if (typeof gtag === 'function') {
         gtag('event', eventAction, {
