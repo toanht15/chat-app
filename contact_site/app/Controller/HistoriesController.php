@@ -2174,7 +2174,7 @@ class HistoriesController extends AppController
     } else {
       $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
       $chatList = array();
-      foreach ($chunkedHistoryIdList as $index => $list) {
+      foreach ($chunkedHistoryIdList as $index => $chunk) {
         $chatList = $this->THistoryChatLog->find('all', [
           'fields' => [
             'THistoryChatLog.t_histories_id',
@@ -2186,7 +2186,7 @@ class HistoriesController extends AppController
           ],
           'conditions' => [
             'AND' => array(
-              't_histories_id' => $chunkedHistoryIdList,
+              't_histories_id' => $chunk,
               'message_type = 1'
             )
           ],
