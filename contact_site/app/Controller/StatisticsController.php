@@ -85,8 +85,8 @@ class StatisticsController extends AppController {
     }
     //デフォルト画面
     else {
-      $date = '日別';
-      $type = date("Y-m");
+      $date = '月別';
+      $type = date("Y");
       $data = $this->calculateMonthlyData($type);
     }
 
