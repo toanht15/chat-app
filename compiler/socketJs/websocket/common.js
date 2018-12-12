@@ -4805,7 +4805,7 @@ var socket, // socket.io
     },
     callGA: function(eventAction, eventLabel, eventValue) {
       if (typeof ga === 'function') {
-        ga('send', 'event', 'sinclo', eventValue, eventLabel, eventValue);
+        ga('send', 'event', 'sinclo', eventAction, eventLabel, eventValue);
       } else if (typeof gtag === 'function') {
         gtag('event', eventAction, {
           'event_category': 'sinclo',
