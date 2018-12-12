@@ -84,15 +84,15 @@ if ( isset($history['THistory']['visitors_id']) ) {
                 }
                 if(isset($history['THistoryChatLog']['terminate']) && $history['THistoryChatLog']['terminate'] != 0 && $history['THistoryChatLog']['cv'] == 0) {
                   echo $achievementType[3];
-                } else if($history['THistoryChatLog']['cv'] != 0) {
+                } else if(isset($history['THistoryChatLog']) && $history['THistoryChatLog']['cv'] != 0) {
                   echo $achievementType[0];
                 }
             ?></td>
             <td class="tCenter">
-              <?php if( is_numeric($history['THistoryChatLog']['count']) ): ?>
-                  <a class="underL showBold" href="javascript:void(0)" onclick="openChatById('<?=h($history['THistory']['id'])?>')" >履歴<?php if (!empty($history['THistoryChatLog']['type'])) { echo "（".h($history['THistoryChatLog']['type'])."）"; } ?></a>
+              <?php if( isset($history['THistoryChatLog']) && is_numeric($history['THistoryChatLog']['count']) ): ?>
+                  <a class="underL showBold" href="javascript:void(0)" onclick="openChatById('<?=h($history['THistory']['id'])?>')" >履歴<?php if (isset($history['THistoryChatLog']) && !empty($history['THistoryChatLog']['type'])) { echo "（".h($history['THistoryChatLog']['type'])."）"; } ?></a>
               <?php endif; ?>
-              <?php if( !is_numeric($history['THistoryChatLog']['count']) ): ?>（未対応）<?php endif; ?>
+              <?php if( isset($history['THistoryChatLog']) && !is_numeric($history['THistoryChatLog']['count']) ): ?>（未対応）<?php endif; ?>
             </td>
             <td class="tCenter pre"><?php if (isset($chatUserList[$history['THistory']['id']])) { echo $chatUserList[$history['THistory']['id']]; } ?></td>
         <?php endif; ?>

@@ -320,6 +320,8 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function outputCsv() {
+    ini_set("max_execution_time", "1200");
+    ini_set('memory_limit', '-1');
     $this->autoRender = false;
 
     //json_decode
@@ -380,6 +382,8 @@ class StatisticsController extends AppController {
    * @return void
    * */
   public function outputOperatorCsv() {
+    ini_set("max_execution_time", "1200");
+    ini_set('memory_limit', '-1');
     //オペレータ統計一覧CSV
     $this->autoRender = false;
 
@@ -1821,19 +1825,12 @@ class StatisticsController extends AppController {
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg,message_distinction from
       t_history_chat_logs force index(idx_m_companies_id_message_type_notice_flg)
-      where m_companies_id = ? and notice_flg = ? group by t_histories_id,
+      where m_companies_id = ? and message_type = 1 and notice_flg = ? group by t_histories_id,
        message_distinction)
-      as thcl
-      LEFT JOIN (select t_histories_id, message_type,
-      message_distinction from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id_users_id)
-       where message_type = ? and m_companies_id = ?) as thcl2
-      ON
-      thcl.t_histories_id = thcl2.t_histories_id
-      AND
-      thcl.message_distinction = thcl2.message_distinction,
+      as thcl,
       t_histories as th
       WHERE
-        thcl2.t_histories_id IS NULL
+        NOT EXISTS(select id from t_history_chat_logs where message_type = ? and t_histories_id = thcl.t_histories_id and message_distinction = thcl.message_distinction and m_companies_id = ?)
       AND
         th.access_date between ? and ?
       AND
@@ -1844,6 +1841,8 @@ class StatisticsController extends AppController {
     $abandonRequestNumber = $this->THistory->query($abandonRequestNumber, array($date_format,
       $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
       $this->chatMessageType['messageType']['enteringRoom'],$this->userInfo['MCompany']['id'],$correctStartDate,$correctEndDate));
+
+    $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
 
     foreach($abandonRequestNumber as $k => $v) {
       $abandonRequestNumberData =  $abandonRequestNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['request_count']));
@@ -1871,7 +1870,7 @@ class StatisticsController extends AppController {
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg from
       t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-      where message_request_flg = ? and m_companies_id = ?)
+      where message_type = 1 and message_request_flg = ? and m_companies_id = ?)
       as thcl,t_histories as th
       WHERE
         thcl.t_histories_id = th.id
@@ -1882,6 +1881,8 @@ class StatisticsController extends AppController {
     $requestNumber = $this->THistory->query($requestNumber, array($date_format,
       $this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate));
+
+    $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
 
     foreach($requestNumber as $k => $v) {
       $requestNumberData =  $requestNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['request_count']));
@@ -1914,7 +1915,7 @@ class StatisticsController extends AppController {
     $response = "SELECT date_format(th.access_date, ?) as date,
       count(thcl.t_histories_id) as response_count
       FROM (select t_histories_id,m_companies_id, message_type, message_distinction
-      from t_history_chat_logs force index(idx_t_history_chat_logs_message_type_companies_id)
+      from t_history_chat_logs force index(t_history_chat_logs_mcid_thid_mt_md_index)
       where message_type = ? and m_companies_id = ? group by t_histories_id,
        message_distinction) as thcl
       LEFT JOIN (select t_histories_id, message_request_flg,
@@ -1938,6 +1939,8 @@ class StatisticsController extends AppController {
         $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['denial'],
         $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
         $correctStartDate,$correctEndDate,));
+
+    $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
 
     foreach($responseNumber as $k => $v) {
       if($v[0]['response_count'] != 0 and ($v[0]['response_count']+$abandonmentNumberData[$v[0]['date']]+$denialNumberData[$v[0]['date']]) != 0) {
@@ -2028,33 +2031,29 @@ class StatisticsController extends AppController {
     $automaticResponseRate = [];
 
     //自動返信応対件数
-    $automaticResponse = "SELECT date_format(th.access_date,?) as date,
+    $automaticResponse = "SELECT date_format(thcl3.created,?) as date,
     count(distinct thcl.message_distinction,thcl.t_histories_id) as automaticResponse_count
     FROM
-      (select id,t_histories_id,message_distinction,message_type,message_request_flg from t_history_chat_logs
-       force index(idx_t_history_chat_logs_message_type_companies_id) where (message_type = ? or message_type = ? or message_type = ? or message_type = ? or message_type = ?)  and m_companies_id = ?) as thcl
-    LEFT JOIN
-      (select id,t_histories_id,message_distinction,message_type from t_history_chat_logs
-       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where message_request_flg = ? and m_companies_id = ?) as thcl3
-    ON
+      (select id,m_companies_id,t_histories_id,message_distinction,message_type,message_request_flg,created from t_history_chat_logs
+       force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = 5 and m_companies_id = ? and created between ? and ? order by t_histories_id, message_distinction) as thcl
+    INNER JOIN
+      (select id,m_companies_id,t_histories_id,message_distinction,message_type,created from t_history_chat_logs
+       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where m_companies_id = ? and message_type = 1 and message_request_flg = 1 and created between ? and ? group by t_histories_id order by t_histories_id, message_distinction) as thcl3
+    ON (
       thcl.t_histories_id = thcl3.t_histories_id
     AND
-      thcl.message_distinction = thcl3.message_distinction,
-    t_histories as th
+      thcl.message_distinction = thcl3.message_distinction
+    )
     WHERE
-      th.id = thcl.t_histories_id
+      thcl.m_companies_id = ?
     AND
-      thcl.id > thcl3.id
-    AND
-      th.access_date between ? and ?
-    group by date";
+      thcl.created between ? and ?
+    group by date
+    order by null";
 
-    $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format,
-    $this->chatMessageType['messageType']['automatic'],$this->chatMessageType['messageType']['scenarioText'],
-    $this->chatMessageType['messageType']['scenarioHearing'],$this->chatMessageType['messageType']['scenarioSelection'],
-    $this->chatMessageType['messageType']['scenarioReceiveFile'],$this->userInfo['MCompany']['id'],
-    $this->chatMessageType['requestFlg']['effectiveness'],$this->userInfo['MCompany']['id'],
-    $correctStartDate,$correctEndDate));
+    $automaticResponseNumber = $this->THistory->query($automaticResponse, array($date_format, $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate,  $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate, $this->userInfo['MCompany']['id'], $correctStartDate, $correctEndDate));
+
+    $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
 
     foreach($automaticResponseNumber as $k => $v) {
       $automaticResponseNumberData =  $automaticResponseNumberData + array($v[0]['date'] => $this->isInValidDatetime($v[0]['date']) ? self::LABEL_NONE : intval($v[0]['automaticResponse_count']));
@@ -2131,6 +2130,8 @@ class StatisticsController extends AppController {
       $this->chatMessageType['achievementFlg']['effectiveness'],$this->chatMessageType['achievementFlg']['cv'],$this->userInfo['MCompany']['id'],
       $correctStartDate,$correctEndDate));
 
+    $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
+
     $denial = "SELECT date_format(th.access_date,?) as date,SUM(case when thcl.message_type = ? THEN 1 ELSE 0 END) denial
       FROM (select t_histories_id, m_companies_id,message_type,message_distinction from t_history_chat_logs
        force index(idx_t_history_chat_logs_message_type_companies_id) where message_type = ? and m_companies_id = ?
@@ -2156,6 +2157,8 @@ class StatisticsController extends AppController {
       $this->userInfo['MCompany']['id'],$this->chatMessageType['messageType']['enteringRoom'],
       $this->userInfo['MCompany']['id'],$this->chatMessageType['noticeFlg']['effectiveness'],
       $correctStartDate,$correctEndDate));
+
+    $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
 
     if(!empty($effectiveness)) {
       foreach($effectiveness as $k => $v) {
@@ -2880,7 +2883,8 @@ class StatisticsController extends AppController {
   }
 
   private function outputCSVStatistics($csv = [], $name = 'sinclo_statistics') {
-    ini_set("max_execution_time", 1200);
+    ini_set("max_execution_time", "1200");
+    ini_set('memory_limit', '-1');
     $this->layout = null;
     //メモリ上に領域確保
     $fp = fopen('php://temp/maxmemory:'.(5*1024*1024),'a');

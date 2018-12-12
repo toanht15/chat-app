@@ -2341,6 +2341,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         return;
       }
 
+      if(!obj.sincloSessionId) return;
+
       if ( 'ipAddress' in obj && 'ipAddress' in obj) {
         if (!$scope.checkToIP(obj.ipAddress)) return false;
       }
