@@ -1828,7 +1828,7 @@
               storage.s.get('requestFlg') === 'true') {
             //自動返信を出した数
             if (common.hasGA()) {
-              common.callGA()('autoChat', location.href, 1);
+              common.callGA('autoChat', location.href, 1);
             }
             storage.s.set('requestFlg', false);
           }
