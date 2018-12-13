@@ -122,6 +122,10 @@ class MailSenderComponent extends Component
     switch ($this->companiesId) {
       case 443:
         return 'biz_phc@post.pioneer.co.jp';
+      case 489:
+        return 'info@kagukuro.com';
+      case 533:
+        return 'yoyaku@247workout.net';
       default:
         return '';
     }
