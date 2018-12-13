@@ -421,11 +421,9 @@
           var sincloBox = document.getElementById('sincloBox');
           document.getElementById(
               'sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
-          sincloBox.style.opacity = 0;
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
           sinclo.widget.condifiton.set(openFlg, true);
           common.widgetHandler.show(true);
-          //sinclo.operatorInfo.widgetHide();
 
           sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
 
@@ -2621,9 +2619,12 @@
               document.getElementById(
                   'chatTalk').style.height = (chatAreaHeight - (6.5 * hRatio)) +
                   'px';
-            } else if(check.android()){
-              var chatElementHeight = $("#widgetHeader").height() + $("#flexBoxWrap").height();
-              document.getElementById('chatTalk').style.height = window.innerHeight - chatElementHeight +'px';
+            } else if (check.android()) {
+              var chatElementHeight = $('#widgetHeader').height() +
+                  $('#flexBoxWrap').height();
+              document.getElementById(
+                  'chatTalk').style.height = window.innerHeight -
+                  chatElementHeight + 'px';
             }
           }
         } else {
