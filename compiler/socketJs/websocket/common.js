@@ -2232,12 +2232,13 @@ var socket, // socket.io
       /* PC版 */
       else {
 //        html += "      #sincloBox { width: " + widgetWidth + "px }";
-        html += '      #sincloBox { overflow: hidden; }';
-        html += '      #sincloBox div#sincloWidgetBox { width: ' +
-            sizeList['boxWidth'] + 'px; box-shadow: 0px 0px ' +
+        html += '      #sincloBox { overflow: hidden; box-shadow: 0px 0px ' +
             widget.boxShadow + 'px ' + widget.boxShadow +
             'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' +
-            widget.radiusRatio +
+            widget.radiusRatio + 'px 0 0; }';
+        html += '      #sincloBox div#sincloWidgetBox { width: ' +
+            sizeList['boxWidth'] + 'px; border-radius: ' + widget.radiusRatio +
+            'px ' + widget.radiusRatio +
             'px 0 0; background-color: rgb(255, 255, 255);}';
         html += '      #sincloBox * { line-height: 1.4; font-size: ' +
             sizeList['d12font'] + 'px; }';
@@ -3889,8 +3890,8 @@ var socket, // socket.io
         if (!check.smartphone()) {
           console.log('widgetHandler::beginToWatchResizeEvent');
           $(window).
-              on('resize.change_widget_size',
-                  common.widgetHandler._handleResizeEvent);
+          on('resize.change_widget_size',
+              common.widgetHandler._handleResizeEvent);
           // いったんリサイズ処理を走らせる
           common.widgetHandler._handleResizeEvent();
         }
@@ -3899,8 +3900,8 @@ var socket, // socket.io
         if (!check.smartphone()) {
           console.log('widgetHandler::stopToWatchResizeEvent');
           $(window).
-              off('resize.change_widget_size',
-                  common.widgetHandler._handleResizeEvent);
+          off('resize.change_widget_size',
+              common.widgetHandler._handleResizeEvent);
         }
       },
       _maximumReverseAnimation: function() {
@@ -6201,32 +6202,32 @@ var socket, // socket.io
     }, false);
     if (check.smartphone()) {
       $('textarea:not(#sincloChatMessage), input:not(#miniSincloChatMessage)').
-          on('DOMFocusIn', function(e) {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusIn');
-            if (!event.target) {
-              return;
-            }
-            if (event.target.nodeName.toLowerCase() === 'textarea' ||
-                focusTargetType.indexOf(e.target.type) >= 0) {
-              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> HIDE WIDGET');
-              if (showTimer) {
-                clearTimeout(showTimer);
-                showTimer = null;
-              }
-              common.widgetHandler.hide();
-              storage.s.set('closeAct', true);
-            }
-          }).
-          on('DOMFocusOut', function(e) {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusOut');
-            if (!showTimer) {
-              showTimer = setTimeout(function() {
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW WIDGET');
-                storage.s.set('closeAct', false);
-                common.widgetHandler.show();
-              }, 100);
-            }
-          });
+      on('DOMFocusIn', function(e) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusIn');
+        if (!event.target) {
+          return;
+        }
+        if (event.target.nodeName.toLowerCase() === 'textarea' ||
+            focusTargetType.indexOf(e.target.type) >= 0) {
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> HIDE WIDGET');
+          if (showTimer) {
+            clearTimeout(showTimer);
+            showTimer = null;
+          }
+          common.widgetHandler.hide();
+          storage.s.set('closeAct', true);
+        }
+      }).
+      on('DOMFocusOut', function(e) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusOut');
+        if (!showTimer) {
+          showTimer = setTimeout(function() {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW WIDGET');
+            storage.s.set('closeAct', false);
+            common.widgetHandler.show();
+          }, 100);
+        }
+      });
     }
     var tabStateTimer = null;
     // ウィジェット最大化設定をクリア
