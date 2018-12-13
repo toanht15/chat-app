@@ -5,9 +5,22 @@ App::uses('CustomerInformationUtil', 'Vendor/Util');
  * HistoriesController controller.
  * 履歴一覧画面
  */
-class HistoriesController extends AppController {
+class HistoriesController extends AppController
+{
   public $helpers = ['Time'];
-  public $uses = ['MUser', 'MCompany', 'MCustomer', 'TCustomerInformationSetting', 'TCampaign', 'THistory', 'THistoryChatLog', 'THistoryStayLog', 'THistoryShareDisplay', 'MLandscapeData','THistoryLinkCountLog'];
+  public $uses = [
+    'MUser',
+    'MCompany',
+    'MCustomer',
+    'TCustomerInformationSetting',
+    'TCampaign',
+    'THistory',
+    'THistoryChatLog',
+    'THistoryStayLog',
+    'THistoryShareDisplay',
+    'MLandscapeData',
+    'THistoryLinkCountLog'
+  ];
   public $components = ['LandscapeLbcAPI'];
   public $paginate = [
     'THistory' => [
@@ -26,38 +39,16 @@ class HistoriesController extends AppController {
 
   const LABEL_AUTO_SPEECH_OPERATOR = '＊自動返信対応';
 
-  public function beforeFilter(){
+  public function beforeFilter()
+  {
     parent::beforeFilter();
     $ret = $this->MCompany->read(null, $this->userInfo['MCompany']['id']);
-    //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
-    /*$orList = [];
-    if ( !empty($ret['MCompany']['exclude_ips']) ) {
-      foreach( explode("\n", trim($ret['MCompany']['exclude_ips'])) as $v ){
-        if ( preg_match("/^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$/", trim($v)) ) {
-          $orList[] = "INET_ATON('".trim($v)."') = INET_ATON(THistory.ip_address)";
-          continue;
-        }
-        $ips = $this->MCompany->cidrToRange(trim($v));
-        $list = [];
-        if ( count($ips) === 2 ) {
-          $list[] = "INET_ATON('".trim($ips[0])."') <= INET_ATON(THistory.ip_address)";
-          $list[] = "INET_ATON('".trim($ips[1])."') >= INET_ATON(THistory.ip_address)";
-        }
-        $orList[] = $list;
-      }
-    }*/
-
     $this->paginate['THistory']['conditions'] = [
       'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
     ];
 
-    //20170913 仕様変更　除外IPアドレスを登録しても過去の履歴を表示する
-    /*if ( !empty($orList) ) {
-      $this->paginate['THistory']['conditions']['NOT'] = ['OR' => $orList];
-    }*/
-
     $this->set('siteKey', $this->userInfo['MCompany']['company_key']);
-    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
+    if (isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
       $this->set('token', $this->userInfo['accessToken']);
     } else {
       $this->set('token', '');
@@ -69,27 +60,29 @@ class HistoriesController extends AppController {
    * 一覧画面
    * @return void
    * */
-  public function index() {
+  public function index()
+  {
     $isChat = 'true';
-    if ( !empty($this->params->query['isChat']) ) {
-      $this->Session->write('authenticity',$this->params->query['isChat']);
+    if (!empty($this->params->query['isChat'])) {
+      $this->Session->write('authenticity', $this->params->query['isChat']);
     }
     $isChat = $this->Session->read('authenticity');
     $this->_searchProcessing(3);
     // 成果の名称リスト
     $this->set('achievementType', Configure::read('achievementTypeForSearch'));
-    if(!$this->request->is('ajax')) {
+    if (!$this->request->is('ajax')) {
       $this->_setList($isChat);
     }
   }
 
-  public function remoteGetCustomerInfo() {
+  public function remoteGetCustomerInfo()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
     $data = [];
 
-    if ( !empty($this->params->query['historyId']) ) {
+    if (!empty($this->params->query['historyId'])) {
       $params = [
         'fields' => '*',
         'conditions' => [
@@ -104,16 +97,17 @@ class HistoriesController extends AppController {
           'count(*) as cnt'
         ],
         'conditions' => [
-          'visitors_id = '.$tHistoryData['THistory']['visitors_id'],
+          'visitors_id = ' . $tHistoryData['THistory']['visitors_id'],
           'm_companies_id' => $this->userInfo['MCompany']['id'],
-          'id <= '.$tHistoryData['THistory']['id']
+          'id <= ' . $tHistoryData['THistory']['id']
         ]
       ];
       $tHistoryCountData = $this->THistory->find('first', $params);
 
       $mCusData = ['MCustomer' => []];
-      if ( !empty($tHistoryData['THistory']['visitors_id']) ) {
-        $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'], $tHistoryData['THistory']['visitors_id']);
+      if (!empty($tHistoryData['THistory']['visitors_id'])) {
+        $mCusData = $this->MCustomer->getCustomerInfoForVisitorId($this->userInfo['MCompany']['id'],
+          $tHistoryData['THistory']['visitors_id']);
       }
 
       $data = am($tHistoryData, ['THistoryCount' => $tHistoryCountData[0]], $mCusData);
@@ -124,13 +118,16 @@ class HistoriesController extends AppController {
     return $this->render('/Elements/Histories/remoteGetCustomerInfo');
   }
 
-  public function remoteSaveCustomerInfo() {
+  public function remoteSaveCustomerInfo()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
     $ret = true;
     $data = $this->params->query;
-    if ( !isset($data['visitorsId']) ) return false;
+    if (!isset($data['visitorsId'])) {
+      return false;
+    }
 
     $inputData = []; // 顧客情報リスト
     $saveData = [
@@ -140,17 +137,16 @@ class HistoriesController extends AppController {
       ]
     ]; // 保存データ
 
-    if ( isset($data['customerId']) ) {
+    if (isset($data['customerId'])) {
       $saveData['MCustomer']['id'] = $data['customerId'];
-    }
-    else {
+    } else {
       $this->MCustomer->create();
     }
 
     // 顧客情報のテンプレートを取得
     $infoList = $this->_getInfomationList();
-    foreach($infoList as $key => $val) {
-      $inputData[$key] = ( isset($data['saveData'][$key]) ) ? $data['saveData'][$key] : "";
+    foreach ($infoList as $key => $val) {
+      $inputData[$key] = (isset($data['saveData'][$key])) ? $data['saveData'][$key] : "";
     }
 
     $saveData['MCustomer']['informations'] = $this->jsonEncode($inputData);
@@ -158,11 +154,10 @@ class HistoriesController extends AppController {
     $this->MCustomer->begin();
     $this->MCustomer->set($saveData);
 
-    if ( $this->MCustomer->save() ) {
+    if ($this->MCustomer->save()) {
       $this->MCustomer->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-    }
-    else {
+    } else {
       $this->MCustomer->rollback();
       $ret = false;
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
@@ -170,9 +165,10 @@ class HistoriesController extends AppController {
     return new CakeResponse(['body' => json_encode($ret)]);
   }
 
-  public function remoteGetChatLogs() {
+  public function remoteGetChatLogs()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
 
     $ret = $this->_getChatLog($this->params->query['historyId']);
@@ -182,9 +178,10 @@ class HistoriesController extends AppController {
     return $this->render('/Elements/Histories/remoteGetChatLogs');
   }
 
-  public function remoteGetStayLogs() {
+  public function remoteGetStayLogs()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
 
     $historyId = $this->params->query['historyId'];
@@ -192,7 +189,7 @@ class HistoriesController extends AppController {
     $params = [
       'fields' => '*',
       'conditions' => [
-      'THistoryStayLog.t_histories_id' => $historyId
+        'THistoryStayLog.t_histories_id' => $historyId
       ],
       'recursive' => -1
     ];
@@ -203,15 +200,16 @@ class HistoriesController extends AppController {
     return $this->render('/Elements/Histories/remoteGetStayLogs');
   }
 
-    /**
+  /**
    * 滞在時間を計算する
    * @param $startDateTime　THistoryのaccess_date
    * @param $endDateTime THistoryのout_date
    * @return out_dateからaccess_dateを引いた滞在時間
    * */
-  public function calcTime($startDateTime, $endDateTime){
+  public function calcTime($startDateTime, $endDateTime)
+  {
     Configure::write('debug', 0);
-    if ( empty($startDateTime) || empty($endDateTime) || strtotime($startDateTime) > strtotime($endDateTime) ) {
+    if (empty($startDateTime) || empty($endDateTime) || strtotime($startDateTime) > strtotime($endDateTime)) {
       return "-";
     }
     $start = new DateTime($startDateTime);
@@ -219,32 +217,39 @@ class HistoriesController extends AppController {
     $diff = $start->diff($end);
     return $diff->format('%H:%I:%S');
   }
-    /**
+
+  /**
    * 指定されたパラメータを除外する
    * @param $excludes array パラメーターリスト
    * @param $url url URL
    * @return 加工後URL
    * */
-  public function trimToURL($excludes, $url){
-    if (empty($excludes)) return $url;
+  public function trimToURL($excludes, $url)
+  {
+    if (empty($excludes)) {
+      return $url;
+    }
     $elements = parse_url($url);
-    if (!isset($elements['query'])) return $url;
+    if (!isset($elements['query'])) {
+      return $url;
+    }
     $params = $this->request->params;
     parse_str($elements['query'], $params);
     $elements['query'] = "";
     foreach (array_diff_key($params, array_flip($excludes)) as $key => $val) {
-      $elements['query'] .= ($elements['query'] !== "") ? "&" :  "";
+      $elements['query'] .= ($elements['query'] !== "") ? "&" : "";
       $elements['query'] .= (isset($val) && $val !== "") ? $key . "=" . $val : $key;
     }
     return $this->build_url($elements);
   }
 
-    /**
+  /**
    * parseしたURLを元に戻す
    * @param $elements array parse_urlの結果配列
    * @return URL
    * */
-  public function build_url(array $elements) {
+  public function build_url(array $elements)
+  {
     $e = $elements;
     return
       (isset($e['host']) ? (
@@ -255,20 +260,21 @@ class HistoriesController extends AppController {
       ) : '') .
       (isset($e['path']) ? $e['path'] : '/') .
       (isset($e['query']) ? (
-        is_array($e['query']) ?
-          '?' . http_build_query($e['query'], '', '&') :
-          (($e['query'] !== "") ? '?' . $e['query'] : '')
+      is_array($e['query']) ?
+        '?' . http_build_query($e['query'], '', '&') :
+        (($e['query'] !== "") ? '?' . $e['query'] : '')
       ) : '') .
-    (isset($e['fragment']) ? "#$e[fragment]" : '');
+      (isset($e['fragment']) ? "#$e[fragment]" : '');
   }
 
-  public function outputCSVOfHistory(){
+  public function outputCSVOfHistory()
+  {
     Configure::write('debug', 0);
     ini_set("max_execution_time", "1200");
     ini_set('memory_limit', '-1'); // 無制限
     $name = "sinclo-history";
 
-    if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
+    if (isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
       $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
         'conditions' => array(
           'delete_flg' => 0,
@@ -279,12 +285,12 @@ class HistoriesController extends AppController {
         )
       ));
       $customerInformationSettingList = [];
-      foreach($customerSettingList as $k => $v) {
+      foreach ($customerSettingList as $k => $v) {
         array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
       }
 
       $customerInfoDisplaySettingMap = array();
-      foreach($customerSettingList as $index => $customerData) {
+      foreach ($customerSettingList as $index => $customerData) {
         $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = (boolean)$customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
       }
       //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -302,7 +308,8 @@ class HistoriesController extends AppController {
         'fields' => [
           '*'
         ],
-        'joins' =>  array_merge(array('force index (t_histories_m_companies_id_access_date_id_index)'), $returnData['joinList']),
+        'joins' => array_merge(array('force index (t_histories_m_companies_id_access_date_id_index)'),
+          $returnData['joinList']),
         'conditions' => $returnData['conditions']
       ]);
       $this->log($this->THistory->getDataSource()->getLog(), LOG_DEBUG);
@@ -330,7 +337,7 @@ class HistoriesController extends AppController {
         "滞在時間"
       ];
 
-      if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      if ($this->coreSettings[C_COMPANY_USE_CHAT]) {
         $csv[0][] = "最終発言後離脱時間";
         $csv[0][] = "成果";
         $csv[0][] = "チャット担当者";
@@ -340,14 +347,14 @@ class HistoriesController extends AppController {
       $excludeList = $this->MCompany->getExcludeList($this->userInfo['MCompany']['id']);
 
       $campaignList = $this->TCampaign->getList();
-      foreach($userList as $key => $history){
+      foreach ($userList as $key => $history) {
         $campaignParam = "";
-        if(array_key_exists($history['THistory']['id'], $stayList)) {
+        if (array_key_exists($history['THistory']['id'], $stayList)) {
           $tmp = mb_strstr($stayList[$history['THistory']['id']]['THistoryStayLog']['firstURL'], '?');
-          if ( $tmp !== "" ) {
-            foreach($campaignList as $k => $v){
-              if ( strpos($tmp, $k) !== false ) {
-                if ( $campaignParam !== "" ) {
+          if ($tmp !== "") {
+            foreach ($campaignList as $k => $v) {
+              if (strpos($tmp, $k) !== false) {
+                if ($campaignParam !== "") {
                   $campaignParam .= "\n";
                 }
                 $campaignParam .= $v;
@@ -360,17 +367,17 @@ class HistoriesController extends AppController {
         $dateTime = date_format(date_create($history['THistory']['access_date']), "Y/m/d\nH:i:s");
         $row['date'] = $dateTime;
         // IPアドレス
-        if ($history['THistory']['ip_address'] !== "" ) {
-          if(empty($row['ip'])) {
+        if ($history['THistory']['ip_address'] !== "") {
+          if (empty($row['ip'])) {
             $row['ip'] = "";
           }
-          if ( $row['ip'] !== "" ){
+          if ($row['ip'] !== "") {
             $row['ip'] .= "\n";
           }
           if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
               && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
-              && !empty($history['LandscapeData']['org_name'])
-              && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
+            && !empty($history['LandscapeData']['org_name'])
+            && ($this->isViewableMLCompanyInfo() || !LandscapeLbcAPIComponent::isMLLbcCode($history['LandscapeData']['lbc_code']))
           ) {
             $row['ip'] .= $history['LandscapeData']['org_name'];
           } else {
@@ -379,11 +386,11 @@ class HistoriesController extends AppController {
         }
         // 訪問ユーザ
         $row['customer'] = "";
-        if ( !empty($history['MCustomer']['informations']) ) {
+        if (!empty($history['MCustomer']['informations'])) {
           $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($history['MCustomer']['informations']));
-          foreach($customerInfoDisplaySettingMap as $k => $v) {
-            if($v && array_key_exists($k, $informations)) {
-              $row['customer'] .= $informations[$k]."\n";
+          foreach ($customerInfoDisplaySettingMap as $k => $v) {
+            if ($v && array_key_exists($k, $informations)) {
+              $row['customer'] .= $informations[$k] . "\n";
             }
           }
         }
@@ -395,31 +402,39 @@ class HistoriesController extends AppController {
         //キャンペーン
         $row['campaign'] = $campaignParam;
         //ランディングページ
-        $row['landing'] = array_key_exists($history['THistory']['id'], $stayList) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] : "";
+        $row['landing'] = array_key_exists($history['THistory']['id'],
+          $stayList) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['title'] : "";
         // 閲覧ページ数
-        $row['pageCnt'] = array_key_exists($history['THistory']['id'], $stayList) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['count'] : "";
+        $row['pageCnt'] = array_key_exists($history['THistory']['id'],
+          $stayList) ? $stayList[$history['THistory']['id']]['THistoryStayLog']['count'] : "";
         // 参照元URL
         $params = $excludeList['params'];
         $row['referrer'] = $this->trimToURL($params, $history['THistory']['referrer_url']);
         // 滞在時間
-        $row['visitTime'] = $this->calcTime($history['THistory']['access_date'], $history['THistory']['out_date']);
-        if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+        $row['visitTime'] = $this->calcTime($history['THistory']['access_date'],
+          $history['THistory']['out_date']);
+        if ($this->coreSettings[C_COMPANY_USE_CHAT]) {
           // 最終発言
-          $row['lastSpeechTime'] = $this->calcTime(!empty($lastSpeechList[$history['THistory']['id']]) ? $lastSpeechList[$history['THistory']['id']] : "", $history['THistory']['out_date']);
+          $row['lastSpeechTime'] = $this->calcTime(!empty($lastSpeechList[$history['THistory']['id']]) ? $lastSpeechList[$history['THistory']['id']] : "",
+            $history['THistory']['out_date']);
           // 成果
           $row['achievement'] = "";
-          if(!empty($history['THistoryChatLog2']['eff']) && $history['THistoryChatLog2']['eff'] != 0) {
+          if (!empty($history['THistoryChatLog2']['eff']) && $history['THistoryChatLog2']['eff'] != 0) {
             $row['achievement'] = Configure::read('achievementTypeForSearch')[2];
-          } else if(!empty($history['THistoryChatLog2']['deny']) && $history['THistoryChatLog2']['deny'] != 0) {
-            $row['achievement'] = Configure::read('achievementTypeForSearch')[1];
+          } else {
+            if (!empty($history['THistoryChatLog2']['deny']) && $history['THistoryChatLog2']['deny'] != 0) {
+              $row['achievement'] = Configure::read('achievementTypeForSearch')[1];
+            }
           }
-          if(isset($history['THistoryChatLog2']['terminate']) && $history['THistoryChatLog2']['terminate'] != 0 && $history['THistoryChatLog2']['cv'] == 0) {
+          if (isset($history['THistoryChatLog2']['terminate']) && $history['THistoryChatLog2']['terminate'] != 0 && $history['THistoryChatLog2']['cv'] == 0) {
             $row['achievement'] = Configure::read('achievementTypeForSearch')[3];
-          } else if($history['THistoryChatLog2']['cv'] != 0) {
-            $row['achievement'] .= Configure::read('achievementTypeForSearch')[0];
+          } else {
+            if ($history['THistoryChatLog2']['cv'] != 0) {
+              $row['achievement'] .= Configure::read('achievementTypeForSearch')[0];
+            }
           }
           //　担当者
-          $row['user'] =  $history['User'];
+          $row['user'] = $history['User'];
         }
 
         $csv[] = $row;
@@ -429,12 +444,13 @@ class HistoriesController extends AppController {
     }
   }
 
-  public function outputCSVOfChatHistory(){
+  public function outputCSVOfChatHistory()
+  {
     Configure::write('debug', 0);
     ini_set("max_execution_time", "1200");
     ini_set('memory_limit', '-1'); // 無制限
 
-    if(isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
+    if (isset($this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) && $this->coreSettings[C_COMPANY_USE_HISTORY_EXPORTING]) {
       $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
         'conditions' => array(
           'delete_flg' => 0,
@@ -445,12 +461,12 @@ class HistoriesController extends AppController {
         )
       ));
       $customerInformationSettingList = [];
-      foreach($customerSettingList as $k => $v) {
+      foreach ($customerSettingList as $k => $v) {
         array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
       }
 
       $customerInfoDisplaySettingMap = array();
-      foreach($customerSettingList as $index => $customerData) {
+      foreach ($customerSettingList as $index => $customerData) {
         $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = (boolean)$customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
       }
       //$returnData:$historyListで使うjoinのリストとconditionsの検索条件
@@ -467,7 +483,7 @@ class HistoriesController extends AppController {
           'THistory.access_date' => 'desc',
           'THistory.id' => 'desc',
           'THistoryChatLog.created'
-         ]
+        ]
       ]);
 
       //$historyListに担当者を追加
@@ -488,19 +504,19 @@ class HistoriesController extends AppController {
         "送信者",
         "メッセージ",
         "担当者"
-       ];
-      foreach($userList as $val){
+      ];
+      foreach ($userList as $val) {
         $outputTarget = true;
         $row = [];
         // 日時
         $dateTime = $val['THistory']['access_date'];
         $row['date'] = $dateTime;
         //IPアドレス
-        if ($val['THistory']['ip_address'] !== "" ) {
-          if(empty($row['ip'])) {
+        if ($val['THistory']['ip_address'] !== "") {
+          if (empty($row['ip'])) {
             $row['ip'] = "";
           }
-          if ( $row['ip'] !== "" ){
+          if ($row['ip'] !== "") {
             $row['ip'] .= "\n";
           }
           if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA])
@@ -514,11 +530,11 @@ class HistoriesController extends AppController {
         }
         //訪問ユーザ
         $row['customer'] = "";
-        if ( !empty($val['MCustomer']['informations']) ) {
+        if (!empty($val['MCustomer']['informations'])) {
           $informations = CustomerInformationUtil::convertOldIFData((array)json_decode($val['MCustomer']['informations']));
-          foreach($customerInfoDisplaySettingMap as $k => $v) {
-            if($v && array_key_exists($k, $informations)) {
-              $row['customer'] .= $informations[$k]."\n";
+          foreach ($customerInfoDisplaySettingMap as $k => $v) {
+            if ($v && array_key_exists($k, $informations)) {
+              $row['customer'] .= $informations[$k] . "\n";
             }
           }
         }
@@ -527,121 +543,122 @@ class HistoriesController extends AppController {
         //ブラウザ
         $row['browser'] = $this->_userAgentCheckBrowser($val);
         //送信元ページ
-        if($val['THistoryChatLog']['message_type'] == 1) {
+        if ($val['THistoryChatLog']['message_type'] == 1) {
           $row['sourcePage'] = $val['THistoryStayLog']['url'];
-        }
-        else{
+        } else {
           $row['sourcePage'] = '';
         }
         // 送信日時
-        $row['pageCnt'] =  substr(preg_replace("/[\n,]+/", " ", $val['THistoryChatLog']['created']),0,20);
+        $row['pageCnt'] = substr(preg_replace("/[\n,]+/", " ", $val['THistoryChatLog']['created']), 0, 20);
 
         // 送信種別
-        if($val['THistoryChatLog']['message_type'] == 1) {
+        if ($val['THistoryChatLog']['message_type'] == 1) {
           $row['transmissionKind'] = '訪問者';
           $row['transmissionPerson'] = '';
         }
-        if($val['THistoryChatLog']['message_type'] == 2) {
+        if ($val['THistoryChatLog']['message_type'] == 2) {
           $row['transmissionKind'] = 'オペレーター';
-          $row['transmissionPerson'] = $val['MUser']['display_name']."さん";
+          $row['transmissionPerson'] = $val['MUser']['display_name'] . "さん";
         }
-        if($val['THistoryChatLog']['message_type'] == 3) {
+        if ($val['THistoryChatLog']['message_type'] == 3) {
           $row['transmissionKind'] = 'オートメッセージ';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
-        if($val['THistoryChatLog']['message_type'] == 4) {
+        if ($val['THistoryChatLog']['message_type'] == 4) {
           $row['transmissionKind'] = 'Sorryメッセージ';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
-        if($val['THistoryChatLog']['message_type'] == 5) {
+        if ($val['THistoryChatLog']['message_type'] == 5) {
           $row['transmissionKind'] = '自動返信';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
-        if($val['THistoryChatLog']['message_type'] == 6) {
+        if ($val['THistoryChatLog']['message_type'] == 6) {
           $row['transmissionKind'] = 'ファイル送信';
           $row['transmissionPerson'] = $val['MUser']['display_name'];
-          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-          $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+          $json = json_decode($val['THistoryChatLog']['message'], true);
+          $val['THistoryChatLog']['message'] = $json['fileName'] . "\n" . $this->prettyByte2Str($json['fileSize']);
         }
-        if($val['THistoryChatLog']['message_type'] == 8) {
+        if ($val['THistoryChatLog']['message_type'] == 8) {
           $row['transmissionKind'] = '訪問者';
           $row['transmissionPerson'] = '';
-          $val['THistoryChatLog']['message'] = "（「".$val['THistoryChatLog']['message']."」をクリック）";
+          $val['THistoryChatLog']['message'] = "（「" . $val['THistoryChatLog']['message'] . "」をクリック）";
         }
-        if($val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 33 || $val['THistoryChatLog']['message_type'] == 34 || $val['THistoryChatLog']['message_type'] == 35) {
+        if ($val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 33 || $val['THistoryChatLog']['message_type'] == 34 || $val['THistoryChatLog']['message_type'] == 35) {
           $row['transmissionKind'] = '訪問者（ヒアリング回答）';
           $row['transmissionPerson'] = '';
         }
-        if($val['THistoryChatLog']['message_type'] == 13) {
+        if ($val['THistoryChatLog']['message_type'] == 13) {
           $row['transmissionKind'] = '訪問者（選択肢回答）';
           $row['transmissionPerson'] = '';
         }
-        if($val['THistoryChatLog']['message_type'] == 19) {
+        if ($val['THistoryChatLog']['message_type'] == 19) {
           $row['transmissionKind'] = 'シナリオメッセージ（ファイル受信）';
           $row['transmissionPerson'] = "";
-          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-          if(isset($json['downloadUrl']) && isset($json['comment'])) {
-            $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['downloadUrl'];
-          } else if(isset($json['canceled']) && isset($json['message']) && $json['canceled']) {
-            $val['THistoryChatLog']['message'] = "（".$json['message']."）";
+          $json = json_decode($val['THistoryChatLog']['message'], true);
+          if (isset($json['downloadUrl']) && isset($json['comment'])) {
+            $val['THistoryChatLog']['message'] = "＜コメント＞" . "\n" . $json['comment'] . "\n" . $json['downloadUrl'];
+          } else {
+            if (isset($json['canceled']) && isset($json['message']) && $json['canceled']) {
+              $val['THistoryChatLog']['message'] = "（" . $json['message'] . "）";
+            }
           }
         }
-        if($val['THistoryChatLog']['message_type'] == 21) {
+        if ($val['THistoryChatLog']['message_type'] == 21) {
           $row['transmissionKind'] = 'シナリオメッセージ（テキスト発言）';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
-        if($val['THistoryChatLog']['message_type'] == 22) {
+        if ($val['THistoryChatLog']['message_type'] == 22) {
           $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
           // replace [*] by [] radio selected
           $val['THistoryChatLog']['message'] = str_replace('[*]', '[]', $val['THistoryChatLog']['message']);
         }
-        if($val['THistoryChatLog']['message_type'] == 23) {
+        if ($val['THistoryChatLog']['message_type'] == 23) {
           $row['transmissionKind'] = 'シナリオメッセージ（選択肢）';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
-        if($val['THistoryChatLog']['message_type'] == 27) {
+        if ($val['THistoryChatLog']['message_type'] == 27) {
           $row['transmissionKind'] = 'シナリオメッセージ（ファイル送信）';
           $row['transmissionPerson'] = "";
-          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-          $val['THistoryChatLog']['message'] = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+          $json = json_decode($val['THistoryChatLog']['message'], true);
+          $val['THistoryChatLog']['message'] = $json['fileName'] . "\n" . $this->prettyByte2Str($json['fileSize']);
         }
-        if($val['THistoryChatLog']['message_type'] == 29) {
+        if ($val['THistoryChatLog']['message_type'] == 29) {
           $row['transmissionKind'] = 'シナリオメッセージ（ファイル受信）';
           $row['transmissionPerson'] = "";
-          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-          $val['THistoryChatLog']['message'] = "＜コメント＞"."\n".$json['comment']."\n".$json['downloadUrl'];
+          $json = json_decode($val['THistoryChatLog']['message'], true);
+          $val['THistoryChatLog']['message'] = "＜コメント＞" . "\n" . $json['comment'] . "\n" . $json['downloadUrl'];
         }
-        if($val['THistoryChatLog']['message_type'] == 30) {
+        if ($val['THistoryChatLog']['message_type'] == 30) {
           $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング回答）';
           $row['transmissionPerson'] = "";
         }
-        if($val['THistoryChatLog']['message_type'] == 31) {
+        if ($val['THistoryChatLog']['message_type'] == 31) {
           // 一括ヒアリング内容（未修正OK）は管理画面側で表示しない
           $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング解析結果未修正）';
           $row['transmissionPerson'] = "";
           $outputTarget = false;
         }
-        if($val['THistoryChatLog']['message_type'] == 32) {
+        if ($val['THistoryChatLog']['message_type'] == 32) {
           $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング内容修正）';
           $row['transmissionPerson'] = "";
-          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          $json = json_decode($val['THistoryChatLog']['message'], true);
           $val['THistoryChatLog']['message'] = "";
-          foreach($json as $variableName => $object) {
-            $val['THistoryChatLog']['message'] .= $object['label'].'：'.($object['value'])."\n";
+          foreach ($json as $variableName => $object) {
+            $val['THistoryChatLog']['message'] .= $object['label'] . '：' . ($object['value']) . "\n";
           }
         }
         if ($val['THistoryChatLog']['message_type'] == 36 || $val['THistoryChatLog']['message_type'] == 37 || $val['THistoryChatLog']['message_type'] == 38 || $val['THistoryChatLog']['message_type'] == 39) {
           $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング再回答）';
           $row['transmissionPerson'] = '';
         }
-        if($val['THistoryChatLog']['message_type'] == 40) {
+        if ($val['THistoryChatLog']['message_type'] == 40) {
           $row['transmissionKind'] = 'シナリオメッセージ（一括ヒアリング解析結果）';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
-          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+          $json = json_decode($val['THistoryChatLog']['message'], true);
           $val['THistoryChatLog']['message'] = "";
-          foreach($json['target'] as $index => $object) {
-            $val['THistoryChatLog']['message'] .= $object['label'].'：'.((!empty($json['message'][$object['inputType']])) ? $json['message'][$object['inputType']] : "（なし）")."\n";
+          foreach ($json['target'] as $index => $object) {
+            $val['THistoryChatLog']['message'] .= $object['label'] . '：' . ((!empty($json['message'][$object['inputType']])) ? $json['message'][$object['inputType']] : "（なし）") . "\n";
           }
         }
         if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42) {
@@ -650,11 +667,11 @@ class HistoriesController extends AppController {
           $json = json_decode($val['THistoryChatLog']['message']);
           $val['THistoryChatLog']['message'] = $json->message;
         }
-        if($val['THistoryChatLog']['message_type'] == 81) {
+        if ($val['THistoryChatLog']['message_type'] == 81) {
           $row['transmissionKind'] = 'チャットボットメッセージ';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
-        if($val['THistoryChatLog']['message_type'] == 82) {
+        if ($val['THistoryChatLog']['message_type'] == 82) {
           $row['transmissionKind'] = 'チャットボットメッセージ';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
         }
@@ -662,20 +679,19 @@ class HistoriesController extends AppController {
           // 何も表示しない
           continue;
         }
-        if($val['THistoryChatLog']['message_type'] == 998 || $val['THistoryChatLog']['message_type'] == 999) {
+        if ($val['THistoryChatLog']['message_type'] == 998 || $val['THistoryChatLog']['message_type'] == 999) {
           $row['transmissionKind'] = '通知メッセージ';
           $row['transmissionPerson'] = "";
-          $val['THistoryChatLog']['message'] = '-'.$val['MUser']['display_name'].'が'.$val['THistoryChatLog']['message'].'しました-';
+          $val['THistoryChatLog']['message'] = '-' . $val['MUser']['display_name'] . 'が' . $val['THistoryChatLog']['message'] . 'しました-';
         }
         // チャットメッセージ
-        if($val['THistoryChatLog']['delete_flg'] == 1) {
-          $row['message'] = "(このメッセージは ".$val['THistoryChatLog']['deleted']." に ".$val['DeleteMUser']['display_name']." さんによって削除されました。)";
-        }
-        else {
+        if ($val['THistoryChatLog']['delete_flg'] == 1) {
+          $row['message'] = "(このメッセージは " . $val['THistoryChatLog']['deleted'] . " に " . $val['DeleteMUser']['display_name'] . " さんによって削除されました。)";
+        } else {
           $row['message'] = $val['THistoryChatLog']['message'];
         }
         // チャット担当者
-        if($val['THistoryChatLog']['message_type'] == 2 || $val['THistoryChatLog']['message_type'] == 6) {
+        if ($val['THistoryChatLog']['message_type'] == 2 || $val['THistoryChatLog']['message_type'] == 6) {
           $row['user'] = $val['User'];
         }
         $csv[] = $row;
@@ -684,15 +700,16 @@ class HistoriesController extends AppController {
     }
   }
 
-    /**
+  /**
    * //
    *  csvチャット履歴出力、joinのテーブル追加
    * @param  検索条件
    * @return 検索条件にチャット履歴出力のために必要なテーブルを追加
    * */
-  private function _searchConditionsChat($returnData){
+  private function _searchConditionsChat($returnData)
+  {
     //message,messagetypeを使うためTHistoryChatLogとjoin
-    $returnData['joinList'][] =  [
+    $returnData['joinList'][] = [
       'type' => 'LEFT',
       'table' => "(SELECT * FROM t_history_chat_logs where m_companies_id = " . $this->userInfo['m_companies_id'] . " ORDER BY t_histories_id, created )",
       'alias' => 'THistoryChatLog',
@@ -701,17 +718,17 @@ class HistoriesController extends AppController {
       ]
     ];
     //display_nameを使うためMUserとjoin
-    $returnData['joinList'][] =  [
+    $returnData['joinList'][] = [
       'type' => 'LEFT',
       'table' => 'm_users',
       'alias' => 'MUser',
       'conditions' => [
-      'THistoryChatLog.m_users_id = MUser.id',
-      'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+        'THistoryChatLog.m_users_id = MUser.id',
+        'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
       ]
     ];
     //url（送信元ページ)を使うためTHistoryStayLogとjoin
-    $returnData['joinList'][] =  [
+    $returnData['joinList'][] = [
       'type' => 'LEFT',
       'table' => 't_history_stay_logs',
       'alias' => 'THistoryStayLog',
@@ -719,7 +736,7 @@ class HistoriesController extends AppController {
         'THistoryChatLog.t_history_stay_logs_id = THistoryStayLog.id'
       ],
     ];
-    $returnData['joinList'][] =  [
+    $returnData['joinList'][] = [
       'type' => 'LEFT',
       'table' => 'm_users',
       'alias' => 'DeleteMUser',
@@ -732,10 +749,13 @@ class HistoriesController extends AppController {
     return $returnData;
   }
 
-  public function outputCSVOfChat($id = null){
+  public function outputCSVOfChat($id = null)
+  {
     Configure::write('debug', 0);
 
-    if (empty($id)) return false;
+    if (empty($id)) {
+      return false;
+    }
     $name = "sinclo-chat-history";
     $ret = $this->_getChatLog($id);
 
@@ -745,21 +765,21 @@ class HistoriesController extends AppController {
       "送信種別",
       "送信者",
       "メッセージ"
-     ];
+    ];
 
-    foreach($ret as $val){
+    foreach ($ret as $val) {
       $row = [];
       $date = date('Y/m/d H:i:s', strtotime($val['THistoryChatLog']['created'])); // 送信日時
-      if($val['THistoryChatLog']['delete_flg'] == 1) {
-        $message = "(このメッセージは ".$val['THistoryChatLog']['deleted']." に ".$val['DeleteMUser']['display_name']." さんによって削除されました。)";
+      if ($val['THistoryChatLog']['delete_flg'] == 1) {
+        $message = "(このメッセージは " . $val['THistoryChatLog']['deleted'] . " に " . $val['DeleteMUser']['display_name'] . " さんによって削除されました。)";
+      } else {
+        if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42) {
+          $message = json_decode($val['THistoryChatLog']['message'], true)['message'];
+        } else {
+          $message = $val['THistoryChatLog']['message'];
+        }
       }
-      else if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42) {
-        $message = json_decode($val['THistoryChatLog']['message'], true)['message'];
-      }
-      else {
-        $message = $val['THistoryChatLog']['message'];
-      }
-      switch($val['THistoryChatLog']['message_type']){
+      switch ($val['THistoryChatLog']['message_type']) {
         case 1: // 企業側からの送信
           $row = $this->_setData($date, "訪問者", "", $message);
           break;
@@ -771,19 +791,19 @@ class HistoriesController extends AppController {
           break;
         case 4: //sorryメッセージ
           $row = $this->_setData($date, "Sorryメッセージ", $this->userInfo['MCompany']['company_name'], $message);
-        break;
+          break;
         case 5: // 自動返信
           $row = $this->_setData($date, "自動返信", $this->userInfo['MCompany']['company_name'], $message);
           break;
         case 6: // ファイル送信
-          $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-          if($val['THistoryChatLog']['delete_flg'] != 1) {
-            $message = $json['fileName']."\n".$this->prettyByte2Str($json['fileSize']);
+          $json = json_decode($val['THistoryChatLog']['message'], true);
+          if ($val['THistoryChatLog']['delete_flg'] != 1) {
+            $message = $json['fileName'] . "\n" . $this->prettyByte2Str($json['fileSize']);
           }
           $row = $this->_setData($date, "ファイル送信", $val['MUser']['display_name'], $message);
           break;
         case 8: // リンククリック
-            $row = $this->_setData($date, "訪問者","","（「".$message."」をクリック）");
+          $row = $this->_setData($date, "訪問者", "", "（「" . $message . "」をクリック）");
           break;
         case 12: // 訪問者（シナリオ：ヒアリング回答）
         case 33: // 訪問者（シナリオ：ヒアリング回答）radio
@@ -795,14 +815,17 @@ class HistoriesController extends AppController {
           $row = $this->_setData($date, "訪問者（選択肢回答）", "", $message);
           break;
         case 21: // シナリオメッセージ（テキスト発言）
-          $row = $this->_setData($date, "シナリオメッセージ（テキスト発言）", $this->userInfo['MCompany']['company_name'], $message);
+          $row = $this->_setData($date, "シナリオメッセージ（テキスト発言）", $this->userInfo['MCompany']['company_name'],
+            $message);
           break;
         case 22: // シナリオメッセージ（ヒアリング）
           $message = str_replace('[*]', '[]', $message);
-          $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'], $message);
+          $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'],
+            $message);
           break;
         case 23: // シナリオメッセージ（選択肢）
-          $row = $this->_setData($date, "シナリオメッセージ（選択肢）", $this->userInfo['MCompany']['company_name'], $message);
+          $row = $this->_setData($date, "シナリオメッセージ（選択肢）", $this->userInfo['MCompany']['company_name'],
+            $message);
           break;
         case 36: // 訪問者（シナリオ：ヒアリング再回答）text
         case 37: // 訪問者（シナリオ：ヒアリング再回答）radio
@@ -812,11 +835,13 @@ class HistoriesController extends AppController {
           break;
         case 41: // シナリオメッセージ（ヒアリング）pulldown
         case 42: // シナリオメッセージ（ヒアリング）calendar
-          $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'], $message);
+          $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'],
+            $message);
           break;
         case 998: // 入室メッセージ
         case 999: // 退室メッセージ
-          $row = $this->_setData($date, "通知メッセージ", "", " - ".$val['MUser']['display_name']."が".$message."しました - ");
+          $row = $this->_setData($date, "通知メッセージ", "",
+            " - " . $val['MUser']['display_name'] . "が" . $message . "しました - ");
           break;
       }
       $csv[] = $row;
@@ -824,23 +849,24 @@ class HistoriesController extends AppController {
     $this->_outputCSV($name, $csv);
   }
 
-  private function _outputCSV($name, $csv = []){
+  private function _outputCSV($name, $csv = [])
+  {
     $this->layout = null;
 
     //メモリ上に領域確保
-    $fp = fopen('php://temp/maxmemory:'.(5*1024*1024),'a');
+    $fp = fopen('php://temp/maxmemory:' . (5 * 1024 * 1024), 'a');
 
-    foreach($csv as $row){
+    foreach ($csv as $row) {
       fputcsv($fp, $row);
     }
 
     //ビューを使わない
     $this->autoRender = false;
 
-    $filename = date("YmdHis")."_".$name;
+    $filename = date("YmdHis") . "_" . $name;
 
     //download()内ではheader("Content-Disposition: attachment; filename=hoge.csv")を行っている
-    $this->response->download($filename.".csv");
+    $this->response->download($filename . ".csv");
 
     //ファイルポインタを先頭へ
     rewind($fp);
@@ -852,7 +878,7 @@ class HistoriesController extends AppController {
     $this->response->type('csv');
 
     //CSVをエクセルで開くことを想定して文字コードをSJIS-win
-    $csv = mb_convert_encoding($csv,'SJIS-win','utf8');
+    $csv = mb_convert_encoding($csv, 'SJIS-win', 'utf8');
 
     $this->response->body($csv);
 
@@ -867,7 +893,8 @@ class HistoriesController extends AppController {
    * @param $message string
    * @return array
    * */
-  private function _setData($date = "", $type = "", $name = "", $message = "") {
+  private function _setData($date = "", $type = "", $name = "", $message = "")
+  {
     return [
       $date, // 送信日時
       $type, // 送信種別
@@ -880,7 +907,8 @@ class HistoriesController extends AppController {
    * 顧客情報のデータリスト
    * @return array
    * */
-  private function _getInfomationList(){
+  private function _getInfomationList()
+  {
     $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
       'conditions' => array(
         'delete_flg' => 0,
@@ -891,19 +919,20 @@ class HistoriesController extends AppController {
       )
     ));
     $customerInformationSettingList = [];
-    foreach($customerSettingList as $k => $v) {
+    foreach ($customerSettingList as $k => $v) {
       array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
     }
 
     $customerInfoDisplaySettingMap = array();
-    foreach($customerSettingList as $index => $customerData) {
+    foreach ($customerSettingList as $index => $customerData) {
       $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting'];
     }
     return $customerInfoDisplaySettingMap;
   }
 
-  private function _setListByChat($type, $data, $visitorsIds = []){
-   $cond = [];
+  private function _setListByChat($type, $data, $visitorsIds = [])
+  {
+    $cond = [];
 
     return $cond;
   }
@@ -913,7 +942,8 @@ class HistoriesController extends AppController {
    * @param $searchData array 入力データ
    * @return array 顧客のIDリスト
    * */
-  private function _searchCustomer($searchData){
+  private function _searchCustomer($searchData)
+  {
     $visitorsIds = [];
     $userCond = [
       'MCustomer.m_companies_id' => $this->userInfo['MCompany']['id'],
@@ -930,12 +960,12 @@ class HistoriesController extends AppController {
     ));
 
     $customerInformationSettingList = [];
-    foreach($customerSettingList as $k => $v) {
+    foreach ($customerSettingList as $k => $v) {
       array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
     }
 
     $customerInfoDisplaySettingMap = array();
-    foreach($customerSettingList as $index => $customerData) {
+    foreach ($customerSettingList as $index => $customerData) {
       $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
     }
 
@@ -944,63 +974,69 @@ class HistoriesController extends AppController {
       'conditions' => $userCond
     ]);
 
-    foreach($allusers as $alluser) {
+    foreach ($allusers as $alluser) {
       $setFlg = false;
       $userInfo = CustomerInformationUtil::convertOldIFData((array)json_decode($alluser['MCustomer']['informations']));
       foreach ($customerInfoDisplaySettingMap as $key => $val) {
-        if ( isset($searchData[$key]) && $searchData[$key] != "" ) {
-          if ( !isset($userInfo[$key]) || $userInfo[$key] === "") {
+        if (isset($searchData[$key]) && $searchData[$key] != "") {
+          if (!isset($userInfo[$key]) || $userInfo[$key] === "") {
             $setFlg = false;
             continue 2;
-          } else if(strpos($userInfo[$key], $searchData[$key]) !== false) {
-            $setFlg = true;
           } else {
-            $setFlg = false;
+            if (strpos($userInfo[$key], $searchData[$key]) !== false) {
+              $setFlg = true;
+            } else {
+              $setFlg = false;
+            }
           }
         }
       }
-      if ( $setFlg ) {
+      if ($setFlg) {
         $visitorsIds[$alluser['MCustomer']['visitors_id']] = true;
       }
     }
     return array_keys($visitorsIds);
   }
 
-  private function _searchProcessing($type){
+  private function _searchProcessing($type)
+  {
     $data = $this->Session->read('Thistory');
-    $companyStartDay = date("Y/m/d",strtotime($this->userInfo['MCompany']['created']));
+    $companyStartDay = date("Y/m/d", strtotime($this->userInfo['MCompany']['created']));
     $historyConditions = [
-      'History'=>['company_start_day' => $companyStartDay,
-      'ip_address' => ''],
-      'CustomData' =>[],
-      'THistoryChatLog'=>['responsible_name' => '','achievement_flg' => '','message' => '']
+      'History' => [
+        'company_start_day' => $companyStartDay,
+        'ip_address' => ''
+      ],
+      'CustomData' => [],
+      'THistoryChatLog' => ['responsible_name' => '', 'achievement_flg' => '', 'message' => '']
     ];
     switch ($type) {
       //履歴一覧ボタンをクリックした場合
       case 1:
-        $historyConditions['History']['start_day'] = date("Y/m/d",strtotime("-1 day"));
+        $historyConditions['History']['start_day'] = date("Y/m/d", strtotime("-1 day"));
         $historyConditions['History']['finish_day'] = date("Y/m/d");
         $historyConditions['History']['period'] = '過去２日間';
-      break;
+        break;
       //条件クリアをクリックした場合
       case 2:
         $historyConditions['History']['start_day'] = $data['History']['start_day'];
-        $historyConditions['History']['finish_day'] =$data['History']['finish_day'];
+        $historyConditions['History']['finish_day'] = $data['History']['finish_day'];
         $historyConditions['History']['period'] = $data['History']['period'];
-      break;
+        break;
       //デフォルト
       default:
         $historyConditions = $data;
-        if($this->request->is('post')) {
+        if ($this->request->is('post')) {
           $historyConditions = $this->request->data;
           $historyConditions['History']['company_start_day'] = $companyStartDay;
         }
-      break;
+        break;
     }
-    $this->Session->write('Thistory',$historyConditions);
+    $this->Session->write('Thistory', $historyConditions);
   }
 
-  private function _setList($type=true){
+  private function _setList($type = true)
+  {
     $data = '';
     $userCond = [
       'm_companies_id' => $this->userInfo['MCompany']['id']
@@ -1014,34 +1050,34 @@ class HistoriesController extends AppController {
       /* ○ 検索処理 */
 
       /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
-       $check = false;
-      foreach($data['CustomData'] as $key => $value) {
-        if(!empty($value)) {
+      $check = false;
+      foreach ($data['CustomData'] as $key => $value) {
+        if (!empty($value)) {
           $check = true;
         }
       }
-      if($check === true) {
+      if ($check === true) {
         //会社名が入っている場合
-        if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
+        if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
           //会社名がランドスケープテーブルに登録されている場合
           $companyData = $this->MLandscapeData->find('all', [
             'fields' => 'lbc_code,ip_address,org_name',
             'conditions' => [
-              'MLandscapeData.org_name LIKE' => '%'. $data['CustomData']['会社名'].'%'
+              'MLandscapeData.org_name LIKE' => '%' . $data['CustomData']['会社名'] . '%'
             ]
           ]);
 
-          if(!empty($companyData)) {
+          if (!empty($companyData)) {
             $visitorsIds = $this->_searchCustomer($data['CustomData']);
             $customDataWithoutCompany = $data['CustomData'];
             unset($customDataWithoutCompany['会社名']);
             $visitorIdsWithoutCompany = $this->_searchCustomer($customDataWithoutCompany);
 
             $ipAddressList = [];
-            foreach($companyData as $k => $v) {
+            foreach ($companyData as $k => $v) {
               $ipAddressList[] = $v['MLandscapeData']['ip_address'];
             }
-            if(count($visitorIdsWithoutCompany) > 0) {
+            if (count($visitorIdsWithoutCompany) > 0) {
               $chatCond['visitors_id'] = $visitorIdsWithoutCompany;
               $this->paginate['THistory']['conditions'] = array(
                 'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
@@ -1063,14 +1099,12 @@ class HistoriesController extends AppController {
                 )
               );
             }
-          }
-          else {
+          } else {
             $visitorsIds = $this->_searchCustomer($data['CustomData']);
             $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
             $chatCond['visitors_id'] = $visitorsIds;
           }
-        }
-        else {
+        } else {
           $visitorsIds = $this->_searchCustomer($data['CustomData']);
           $this->paginate['THistory']['conditions']['THistory.visitors_id'] = $visitorsIds;
           $chatCond['visitors_id'] = $visitorsIds;
@@ -1078,37 +1112,38 @@ class HistoriesController extends AppController {
       }
 
       //ipアドレス
-      if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
+      if (isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
         //「%」が含まれていた場合
-        if(strpos($data['History']['ip_address'],'%') !== false){
+        if (strpos($data['History']['ip_address'], '%') !== false) {
           $data['History']['ip_address'] = str_replace('%', '\\%', $data['History']['ip_address']);
         }
-        $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%'.$data['History']['ip_address'].'%';
+        $this->paginate['THistory']['conditions']['THistory.ip_address LIKE'] = '%' . $data['History']['ip_address'] . '%';
       }
       //開始日
-      if(!empty($data['History']['start_day'])) {
-        $this->paginate['THistory']['conditions']['THistory.access_date >='] = $data['History']['start_day'].' 00:00:00';
+      if (!empty($data['History']['start_day'])) {
+        $this->paginate['THistory']['conditions']['THistory.access_date >='] = $data['History']['start_day'] . ' 00:00:00';
       }
       //終了日
-      if(!empty($data['History']['finish_day'] )) {
-        $this->paginate['THistory']['conditions']['THistory.access_date <='] = $data['History']['finish_day'].' 23:59:59';
+      if (!empty($data['History']['finish_day'])) {
+        $this->paginate['THistory']['conditions']['THistory.access_date <='] = $data['History']['finish_day'] . ' 23:59:59';
       }
 
       // 担当者に関する検索条件
       $joinType = 'LEFT';
-      if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
+      if (isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "") {
         //「%」が含まれていた場合
-        if(strpos($data['THistoryChatLog']['responsible_name'],'%') !== false){
-          $data['THistoryChatLog']['responsible_name'] = str_replace('%', '\\%', $data['THistoryChatLog']['responsible_name']);
+        if (strpos($data['THistoryChatLog']['responsible_name'], '%') !== false) {
+          $data['THistoryChatLog']['responsible_name'] = str_replace('%', '\\%',
+            $data['THistoryChatLog']['responsible_name']);
         }
-        $userCond['display_name LIKE'] = "%".$data['THistoryChatLog']['responsible_name']."%";
+        $userCond['display_name LIKE'] = "%" . $data['THistoryChatLog']['responsible_name'] . "%";
         $joinType = 'INNER';
       }
 
       /* チャットに関する検索条件 チャット担当者、チャット内容、チャット成果 */
 
       // 検索条件に成果がある場合
-      if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
+      if (isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "") {
         switch ($data['THistoryChatLog']['achievement_flg']) {
           case '0':
             $chatLogCond['chat.cv !='] = 0;
@@ -1123,14 +1158,16 @@ class HistoriesController extends AppController {
             $chatLogCond['chat.cv = 0 AND chat.terminate != '] = 0;
             break;
         }
-      } else if (!empty($type) && $type == 'false') {
-        $chatLogCond['chat.cv != '] = 0;
+      } else {
+        if (!empty($type) && $type == 'false') {
+          $chatLogCond['chat.cv != '] = 0;
+        }
       }
 
       // 検索条件にメッセージがある場合
-      if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
-      //「%」が含まれていた場合
-        if(strpos($data['THistoryChatLog']['message'],'%') !== false){
+      if (isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "") {
+        //「%」が含まれていた場合
+        if (strpos($data['THistoryChatLog']['message'], '%') !== false) {
           $data['THistoryChatLog']['message'] = str_replace('%', '\\%', $data['THistoryChatLog']['message']);
         }
         // メッセージ条件に対応した履歴のリストを取得するサブクエリを作成
@@ -1141,7 +1178,7 @@ class HistoriesController extends AppController {
             'alias' => 'thcl',
             'fields' => ['t_histories_id'],
             'conditions' => [
-              'message LIKE' => "%".$data['THistoryChatLog']['message']."%"
+              'message LIKE' => "%" . $data['THistoryChatLog']['message'] . "%"
             ], // メッセージでの絞り込み
             'order' => 't_histories_id',
             'group' => 't_histories_id'
@@ -1156,7 +1193,7 @@ class HistoriesController extends AppController {
         ];
       }
 
-      if ( !empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog'])) ) {
+      if (!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) {
         // 対象ユーザーのIDリストを取得するサブクエリを作成
         $users = $this->MUser->getDataSource();
         $userListQurey = $users->buildStatement(
@@ -1190,7 +1227,7 @@ class HistoriesController extends AppController {
           ],
           $this->THistoryChatLog
         );
-        if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+        if ($this->coreSettings[C_COMPANY_USE_CHAT]) {
           // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
           $this->paginate['THistory']['joins'][] = [
             'type' => 'INNER',
@@ -1202,24 +1239,24 @@ class HistoriesController extends AppController {
       }
     }
 
-    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
+    if (isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
       $joinToLandscapeData = [
-          'type' => 'LEFT',
-          'table' => 'm_landscape_data',
-          'alias' => 'LandscapeData',
-          'field' => ['lbc_code', 'ip_address', 'org_name'],
-          'conditions' => [
-              'LandscapeData.ip_address = THistory.ip_address',
-          ],
+        'type' => 'LEFT',
+        'table' => 'm_landscape_data',
+        'alias' => 'LandscapeData',
+        'field' => ['lbc_code', 'ip_address', 'org_name'],
+        'conditions' => [
+          'LandscapeData.ip_address = THistory.ip_address',
+        ],
       ];
       // MLの企業情報を閲覧できない企業であれば
-      if(!$this->isViewableMLCompanyInfo()) {
+      if (!$this->isViewableMLCompanyInfo()) {
         $joinToLandscapeData['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
       }
     }
 
     // 3) チャットに関する検索条件
-    if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+    if ($this->coreSettings[C_COMPANY_USE_CHAT]) {
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
       $chatStateList = $dbo2->buildStatement(
@@ -1263,23 +1300,24 @@ class HistoriesController extends AppController {
         ]
       ];
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
-      if ( strcmp($type, 'true') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
-        if(isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "") {
+      if (strcmp($type,
+          'true') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog'])))) {
+        if (isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "") {
           $joinToChat['type'] = "INNER";
         } else {
           $joinToChat['type'] = "LEFT";
         }
-      }
-      else if(empty($type)) {
-        $joinToChat['type'] = "LEFT";
-      }
-      else {
-        $joinToChat['type'] = "INNER";
+      } else {
+        if (empty($type)) {
+          $joinToChat['type'] = "LEFT";
+        } else {
+          $joinToChat['type'] = "INNER";
+        }
       }
 
       $joinToLastSpeechChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id ='. $this->userInfo['m_companies_id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id desc)',
+        'table' => '(SELECT t_histories_id, message_type, MAX(created) as created FROM t_history_chat_logs WHERE message_type = 1 AND m_companies_id =' . $this->userInfo['m_companies_id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id desc)',
         'alias' => 'LastSpeechTime',
         'field' => 'created as lastSpeechTime',
         'conditions' => [
@@ -1292,7 +1330,7 @@ class HistoriesController extends AppController {
       $this->paginate['THistory']['joins'][] = $joinToChat;
       $this->paginate['THistory']['joins'][] = $joinToLastSpeechChatTime;
 
-      if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
+      if (isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
         $this->paginate['THistory']['fields'][] = 'LandscapeData.*';
         $this->paginate['THistory']['joins'][] = $joinToLandscapeData;
       }
@@ -1302,7 +1340,7 @@ class HistoriesController extends AppController {
     // TODO 良いやり方が無いか模索する
     $historyIdList = [];
     $customerIdList = [];
-    foreach($historyList as $key => $val){
+    foreach ($historyList as $key => $val) {
       $historyIdList[] = $val['THistory']['id'];
       $customerIdList[$val['THistory']['visitors_id']] = true;
     }
@@ -1320,7 +1358,7 @@ class HistoriesController extends AppController {
     ]);
 
     $stayList = [];
-    foreach($tHistoryStayLogList as $val){
+    foreach ($tHistoryStayLogList as $val) {
       $stayList[$val['THistoryStayLog']['t_histories_id']] = [
         'THistoryStayLog' => [
           'firstURL' => $val['THistoryStayLog']['firstURL'],
@@ -1338,8 +1376,8 @@ class HistoriesController extends AppController {
       ]
     ]);
     // いったんJSONデータをデコードする
-    foreach($mCustomerList as $key => $value) {
-      $mCustomerList[$key] = json_decode($value, TRUE);
+    foreach ($mCustomerList as $key => $value) {
+      $mCustomerList[$key] = json_decode($value, true);
     }
 
     $customerSettingList = $this->TCustomerInformationSetting->find('all', array(
@@ -1353,12 +1391,12 @@ class HistoriesController extends AppController {
     ));
 
     $customerInformationSettingList = [];
-    foreach($customerSettingList as $k => $v) {
+    foreach ($customerSettingList as $k => $v) {
       array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
     }
 
     $customerInfoDisplaySettingMap = array();
-    foreach($customerSettingList as $index => $customerData) {
+    foreach ($customerSettingList as $index => $customerData) {
       $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = (boolean)$customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
     }
 
@@ -1384,8 +1422,11 @@ class HistoriesController extends AppController {
    * @param　array $historyList // 履歴リスト
    * @return array $ret 結果
    * */
-  private function _getChatUser($historyList){
-    if ( empty($historyList) ) return []; // 履歴が取得できなかったら
+  private function _getChatUser($historyList)
+  {
+    if (empty($historyList)) {
+      return [];
+    } // 履歴が取得できなかったら
     $params = [
       'fields' => [
         'THistory.id',
@@ -1395,11 +1436,11 @@ class HistoriesController extends AppController {
       'joins' => [
         [
           'type' => 'INNER',
-          'table' => '(SELECT * FROM t_history_chat_logs '.
-               ' WHERE (m_users_id IS NOT NULL OR message_type = 5 OR (message_type >= 21 AND message_type <= 27))'.
-               '   AND t_histories_id IN (' . implode(",", $historyList) .')'.
-               ' GROUP BY t_histories_id, m_users_id'.
-               ')',
+          'table' => '(SELECT * FROM t_history_chat_logs ' .
+            ' WHERE (m_users_id IS NOT NULL OR message_type = 5 OR (message_type >= 21 AND message_type <= 27))' .
+            '   AND t_histories_id IN (' . implode(",", $historyList) . ')' .
+            ' GROUP BY t_histories_id, m_users_id' .
+            ')',
           'alias' => 'THistoryChatLog',
           'conditions' => [
             'THistoryChatLog.t_histories_id = THistory.id'
@@ -1421,32 +1462,34 @@ class HistoriesController extends AppController {
     ];
     $ret = $this->THistory->find('all', $params);
     $chat = [];
-    foreach((array)$ret as $val){
-      if ( isset($chat[$val['THistory']['id']]) ) {
+    foreach ((array)$ret as $val) {
+      if (isset($chat[$val['THistory']['id']])) {
         if (strcmp($chat[$val['THistory']['id']], self::LABEL_AUTO_SPEECH_OPERATOR) === 0) {
           //自動返信後にオペレータが応対していた場合は自動返信の表示を消す
-          $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
+          $chat[$val['THistory']['id']] = $val['MUser']['display_name'] . "さん";
         } else {
-          $chat[$val['THistory']['id']] .= "\n".$val['MUser']['display_name']."さん";
+          $chat[$val['THistory']['id']] .= "\n" . $val['MUser']['display_name'] . "さん";
         }
-      }
-      else {
-        if($val['MUser']['display_name'] !== null) {
-          $chat[$val['THistory']['id']] = $val['MUser']['display_name']."さん";
-        } else if (strcmp($val['THistoryChatLog']['message_type'], "5") === 0
-          || strcmp($val['THistoryChatLog']['message_type'], "21") === 0
-          || strcmp($val['THistoryChatLog']['message_type'], "22") === 0
-          || strcmp($val['THistoryChatLog']['message_type'], "23") === 0
-          || strcmp($val['THistoryChatLog']['message_type'], "24") === 0
-          || strcmp($val['THistoryChatLog']['message_type'], "27") === 0) {
-          $chat[$val['THistory']['id']] = self::LABEL_AUTO_SPEECH_OPERATOR;
+      } else {
+        if ($val['MUser']['display_name'] !== null) {
+          $chat[$val['THistory']['id']] = $val['MUser']['display_name'] . "さん";
+        } else {
+          if (strcmp($val['THistoryChatLog']['message_type'], "5") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "21") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "22") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "23") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "24") === 0
+            || strcmp($val['THistoryChatLog']['message_type'], "27") === 0) {
+            $chat[$val['THistory']['id']] = self::LABEL_AUTO_SPEECH_OPERATOR;
+          }
         }
       }
     }
     return $chat;
   }
 
-  private function _getChatLog($historyId){
+  private function _getChatLog($historyId)
+  {
     $params = [
       'fields' => [
         'MUser.display_name',
@@ -1463,8 +1506,8 @@ class HistoriesController extends AppController {
           'table' => 'm_users',
           'alias' => 'MUser',
           'conditions' => [
-          'THistoryChatLog.m_users_id = MUser.id',
-          'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
+            'THistoryChatLog.m_users_id = MUser.id',
+            'MUser.m_companies_id' => $this->userInfo['MCompany']['id']
           ]
         ],
         [
@@ -1492,20 +1535,21 @@ class HistoriesController extends AppController {
     return $this->THistoryChatLog->find('all', $params);
   }
 
-    /* *
-   * 履歴削除ダイアログ表示
-   * @return void
-   * */
-  public function openEntryDelete(){
+  /* *
+ * 履歴削除ダイアログ表示
+ * @return void
+ * */
+  public function openEntryDelete()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
     $data = $this->request->data;
     //メッセージが10文字以上の場合3点リーダー表示
-    if(mb_strlen($data['message']) > 10) {
-       $data['message'] = mb_substr($data['message'], 0, 10).'…';
+    if (mb_strlen($data['message']) > 10) {
+      $data['message'] = mb_substr($data['message'], 0, 10) . '…';
     }
-    $data=json_encode($data);
+    $data = json_encode($data);
     $this->set('data', $data);
     //ポップアップの呼び出し
     $this->render('/Elements/Histories/remoteDelete');
@@ -1515,11 +1559,12 @@ class HistoriesController extends AppController {
    * 履歴削除
    * @return void
    * */
-  public function remoteDeleteChat() {
+  public function remoteDeleteChat()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
-    if($this->userInfo['permission_level'] == 1 &&
+    if ($this->userInfo['permission_level'] == 1 &&
       isset($this->coreSettings[C_COMPANY_USE_HISTORY_DELETE]) && $this->coreSettings[C_COMPANY_USE_HISTORY_DELETE]) {
       $id = $this->request->data['id'];
       $now = date('Y/m/d H:i:s');
@@ -1537,7 +1582,7 @@ class HistoriesController extends AppController {
       //対象の履歴が既に削除されていないかチェック
       $checkDeleteHistory = $this->THistoryChatLog->find('first', $params);
 
-      if(!empty($checkDeleteHistory)) {
+      if (!empty($checkDeleteHistory)) {
         $params = [
           'fields' => [
             'm_companies_id'
@@ -1550,7 +1595,7 @@ class HistoriesController extends AppController {
         //m_companies_id
         $m_companies_id = $this->THistoryChatLog->find('first', $params)['THistoryChatLog']['m_companies_id'];
 
-        if($m_companies_id == $this->userInfo['MCompany']['id']) {
+        if ($m_companies_id == $this->userInfo['MCompany']['id']) {
           $saveData = [];
           $saveData = $this->THistoryChatLog->read(null, $id);
           $saveData['THistoryChatLog']['message'] = "(このメッセージは $now に 削除されました。)";
@@ -1560,11 +1605,11 @@ class HistoriesController extends AppController {
 
           $this->THistoryChatLog->set($saveData);
           $this->THistoryChatLog->begin();
-          if ( $this->THistoryChatLog->save() ) {
+          if ($this->THistoryChatLog->save()) {
             $this->THistoryChatLog->commit();
 
             //リンククリック件数の場合
-            if($saveData['THistoryChatLog']['message_type'] == 8) {
+            if ($saveData['THistoryChatLog']['message_type'] == 8) {
               $deleteData = [
                 't_histories_id' => $saveData['THistoryChatLog']['t_histories_id'],
                 'm_companies_id' => $m_companies_id,
@@ -1573,22 +1618,18 @@ class HistoriesController extends AppController {
               $this->THistoryLinkCountLog->deleteAll($deleteData);
             }
             $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-          }
-          else {
+          } else {
             $this->THistoryChatLog->rollback();
             $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
           }
-        }
-        else {
+        } else {
           $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
         }
-      }
-      else {
+      } else {
         // すでに存在しない履歴のため変更済みとしてエラーを返す
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deletedHistory'));
       }
-    }
-    else {
+    } else {
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
   }
@@ -1597,19 +1638,19 @@ class HistoriesController extends AppController {
    * 検索画面
    * @return void
    * */
-  public function remoteSearchCustomerInfo() {
+  public function remoteSearchCustomerInfo()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
     $this->data = $this->Session->read('Thistory');
-    $this->set('data',$this->Session->read('Thistory'));
+    $this->set('data', $this->Session->read('Thistory'));
 
 
     // 成果種別リスト スタンダードプラン以上
-    if(isset($this->coreSettings[C_COMPANY_USE_CV]) && $this->coreSettings[C_COMPANY_USE_CV]) {
+    if (isset($this->coreSettings[C_COMPANY_USE_CV]) && $this->coreSettings[C_COMPANY_USE_CV]) {
       $this->set('achievementType', Configure::read('achievementTypeForSearch'));
-    }
-    // 成果種別リスト スタンダードプラン以下
+    } // 成果種別リスト スタンダードプラン以下
     else {
       $achievementType = Configure::read('achievementTypeForSearch');
       unset($achievementType[0]);
@@ -1629,12 +1670,12 @@ class HistoriesController extends AppController {
       )
     ));
     $customerInformationSettingList = [];
-    foreach($customerSettingList as $k => $v) {
+    foreach ($customerSettingList as $k => $v) {
       array_push($customerInformationSettingList, $v['TCustomerInformationSetting']);
     }
 
     $customerInfoDisplaySettingMap = array();
-    foreach($customerSettingList as $index => $customerData) {
+    foreach ($customerSettingList as $index => $customerData) {
       $customerInfoDisplaySettingMap[$customerData['TCustomerInformationSetting']['item_name']] = $customerData['TCustomerInformationSetting']['show_realtime_monitor_flg'];
     }
     $this->set('customerInformationList', $customerInformationSettingList);
@@ -1644,27 +1685,29 @@ class HistoriesController extends AppController {
     $this->render('/Elements/Histories/remoteSearchCustomerInfo');
   }
 
-   /* *
-   * Session削除(条件クリア)
-   * @return void
-   * */
-  public function portionClearSession() {
+  /* *
+  * Session削除(条件クリア)
+  * @return void
+  * */
+  public function portionClearSession()
+  {
     $this->_searchProcessing(2);
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
 
-   /* *
-   * Session削除(一覧画面)
-   * @return void
-   * */
-  public function clearSession() {
+  /* *
+  * Session削除(一覧画面)
+  * @return void
+  * */
+  public function clearSession()
+  {
     $this->Session->delete('Thistory');
     $this->Session->delete('authenticity');
     $this->_searchProcessing(1);
     $this->redirect(['controller' => 'Histories', 'action' => 'index']);
   }
 
-    /**
+  /**
    * //
    *  csv出力,join,検索条件(一覧画面)
    * @return 　検索条件にメッセージがある場合のjoin
@@ -1672,7 +1715,8 @@ class HistoriesController extends AppController {
    * @return 未入室、拒否、履歴を振り分けるためjoin
    * @return 検索条件(conditions)
    * */
-  private function _searchConditions(){
+  private function _searchConditions()
+  {
     $chatCond = [];
     $chatPlan = [];
     $chatLogCond = [];
@@ -1681,23 +1725,23 @@ class HistoriesController extends AppController {
       [
         'type' => 'left',
         'alias' => 'MCustomer',
-        'table' => '(SELECT * FROM m_customers WHERE m_companies_id = '.$this->userInfo["MCompany"]["id"].')',
+        'table' => '(SELECT * FROM m_customers WHERE m_companies_id = ' . $this->userInfo["MCompany"]["id"] . ')',
         'conditions' => [
           'THistory.visitors_id = MCustomer.visitors_id'
         ]
       ]
     ];
-    if(isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
+    if (isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
       $landscapeJoinListCondition = [
-          'type' => 'left',
-          'alias' => 'LandscapeData',
-          'table' => 'm_landscape_data',
-          'conditions' => [
-              'THistory.ip_address = LandscapeData.ip_address'
-          ]
+        'type' => 'left',
+        'alias' => 'LandscapeData',
+        'table' => 'm_landscape_data',
+        'conditions' => [
+          'THistory.ip_address = LandscapeData.ip_address'
+        ]
       ];
       // MLの企業情報を閲覧できない企業であれば
-      if(!$this->isViewableMLCompanyInfo()) {
+      if (!$this->isViewableMLCompanyInfo()) {
         $landscapeJoinListCondition['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
       }
       $joinList[] = $landscapeJoinListCondition;
@@ -1706,48 +1750,48 @@ class HistoriesController extends AppController {
       'm_companies_id' => $this->userInfo['MCompany']['id']
     ];
     $type = 'true';
-    if ( !empty($this->params->query['isChat']) ) {
-      $this->Session->write('authenticity',$this->params->query['isChat']);
+    if (!empty($this->params->query['isChat'])) {
+      $this->Session->write('authenticity', $this->params->query['isChat']);
     }
     $type = $this->Session->read('authenticity');
     $data = $this->Session->read('Thistory');
 
     /* 顧客情報に関する検索条件 会社名、名前、電話、メール検索 */
     $check = false;
-    if(!empty($data['CustomData'])) {
+    if (!empty($data['CustomData'])) {
       foreach ($data['CustomData'] as $key => $value) {
         if (!empty($value)) {
           $check = true;
         }
       }
     }
-    if($check) {
+    if ($check) {
       //会社名が入っている場合
-      if((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
+      if ((isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && (isset($data['CustomData']['会社名']) && $data['CustomData']['会社名'] !== "")) {
         //会社名がランドスケープテーブルに登録されている場合
         $companyConditions = [
           'fields' => 'lbc_code,ip_address,org_name',
           'conditions' => [
-            'MLandscapeData.org_name LIKE' => '%'. $data['CustomData']['会社名'].'%'
+            'MLandscapeData.org_name LIKE' => '%' . $data['CustomData']['会社名'] . '%'
           ]
         ];
         // MLの企業情報を閲覧できない企業であれば
-        if(!$this->isViewableMLCompanyInfo()) {
+        if (!$this->isViewableMLCompanyInfo()) {
           $companyConditions['conditions']['NOT']['MLandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
         }
         $companyData = $this->MLandscapeData->find('all', $companyConditions);
 
-        if(!empty($companyData)) {
+        if (!empty($companyData)) {
           $visitorsIds = $this->_searchCustomer($data['CustomData']);
           $customDataWithoutCompany = $data['CustomData'];
           unset($customDataWithoutCompany['会社名']);
           $visitorIdsWithoutCompany = $this->_searchCustomer($customDataWithoutCompany);
 
           $ipAddressList = [];
-          foreach($companyData as $k => $v) {
+          foreach ($companyData as $k => $v) {
             $ipAddressList[] = $v['MLandscapeData']['ip_address'];
           }
-          if(count($visitorIdsWithoutCompany) > 0) {
+          if (count($visitorIdsWithoutCompany) > 0) {
             $chatCond['visitors_id'] = $visitorIdsWithoutCompany;
             $conditions[] = array(
               'THistory.m_companies_id' => $this->userInfo['MCompany']['id'],
@@ -1769,62 +1813,61 @@ class HistoriesController extends AppController {
               )
             );
           }
-        }
-        else {
+        } else {
           $visitorsIds = $this->_searchCustomer($data['CustomData']);
           $conditions[] = [
-            'THistory.visitors_id'=> $visitorsIds
+            'THistory.visitors_id' => $visitorsIds
           ];
           $chatCond['visitors_id'] = $visitorsIds;
         }
-      }
-      else {
+      } else {
         $visitorsIds = $this->_searchCustomer($data['History']);
         $conditions[] = [
-          'THistory.visitors_id'=> $visitorsIds
+          'THistory.visitors_id' => $visitorsIds
         ];
         $chatCond['visitors_id'] = $visitorsIds;
       }
     }
 
-    if(isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
+    if (isset($data['History']['ip_address']) && $data['History']['ip_address'] !== "") {
       //「%」が含まれていた場合
-      if(strpos($data['History']['ip_address'],'%') !== false){
+      if (strpos($data['History']['ip_address'], '%') !== false) {
         $data['History']['ip_address'] = str_replace('%', '\\%', $data['History']['ip_address']);
       }
       $conditions[] = [
-        'THistory.ip_address LIKE' => '%'.$data['History']['ip_address'].'%',
+        'THistory.ip_address LIKE' => '%' . $data['History']['ip_address'] . '%',
       ];
     }
     //開始日
-    if(!empty($data['History']['start_day'])) {
+    if (!empty($data['History']['start_day'])) {
       $conditions[] = [
-        'THistory.access_date >=' => $data['History']['start_day'].' 00:00:00',
+        'THistory.access_date >=' => $data['History']['start_day'] . ' 00:00:00',
         'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
       ];
     }
 
     //終了日
-    if(!empty($data['History']['finish_day'] )) {
+    if (!empty($data['History']['finish_day'])) {
       $conditions[] = [
-        'THistory.access_date <=' => $data['History']['finish_day'].' 23:59:59',
+        'THistory.access_date <=' => $data['History']['finish_day'] . ' 23:59:59',
         'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
       ];
     }
 
     $joinType = 'LEFT';
     // 担当者に関する検索条件
-    if ( isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "" ) {
+    if (isset($data['THistoryChatLog']['responsible_name']) && $data['THistoryChatLog']['responsible_name'] !== "") {
       //「%」が含まれていた場合
-      if(strpos($data['THistoryChatLog']['responsible_name'],'%') !== false){
-        $data['THistoryChatLog']['responsible_name'] = str_replace('%', '\\%', $data['THistoryChatLog']['responsible_name']);
+      if (strpos($data['THistoryChatLog']['responsible_name'], '%') !== false) {
+        $data['THistoryChatLog']['responsible_name'] = str_replace('%', '\\%',
+          $data['THistoryChatLog']['responsible_name']);
       }
-      $userCond['display_name LIKE'] = "%".$data['THistoryChatLog']['responsible_name']."%";
+      $userCond['display_name LIKE'] = "%" . $data['THistoryChatLog']['responsible_name'] . "%";
       $joinType = 'INNER';
     }
 
     // 検索条件に成果がある場合
-    if ( isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "" ) {
+    if (isset($data['THistoryChatLog']['achievement_flg']) && $data['THistoryChatLog']['achievement_flg'] !== "") {
       $type = "false";
       switch ($data['THistoryChatLog']['achievement_flg']) {
         case '0':
@@ -1840,14 +1883,16 @@ class HistoriesController extends AppController {
           $chatLogCond['chat.cv = 0 AND chat.terminate != '] = 0;
           break;
       }
-    } else if (!empty($type) && $type == 'false') {
-      $chatLogCond['chat.cv != '] = 0;
+    } else {
+      if (!empty($type) && $type == 'false') {
+        $chatLogCond['chat.cv != '] = 0;
+      }
     }
 
     // 検索条件にメッセージがある場合
-    if ( isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "" ) {
+    if (isset($data['THistoryChatLog']['message']) && $data['THistoryChatLog']['message'] !== "") {
       //「%」が含まれていた場合
-      if(strpos($data['THistoryChatLog']['message'],'%') !== false){
+      if (strpos($data['THistoryChatLog']['message'], '%') !== false) {
         $data['THistoryChatLog']['message'] = str_replace('%', '\\%', $data['THistoryChatLog']['message']);
       }
       // メッセージ条件に対応した履歴のリストを取得するサブクエリを作成
@@ -1858,7 +1903,7 @@ class HistoriesController extends AppController {
           'alias' => 'thcl',
           'fields' => ['t_histories_id'],
           'conditions' => [
-             'message LIKE' => "%".$data['THistoryChatLog']['message']."%"
+            'message LIKE' => "%" . $data['THistoryChatLog']['message'] . "%"
           ], // メッセージでの絞り込み
           'order' => 't_histories_id',
           'group' => 't_histories_id'
@@ -1880,7 +1925,7 @@ class HistoriesController extends AppController {
 //      'conditions' => 'THistoryStayLog.t_histories_id = THistory.id'
 //    );
 
-    if ( !empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog'])) ) {
+    if (!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) {
       // 対象ユーザーのIDリストを取得するサブクエリを作成
       $users = $this->MUser->getDataSource();
       $userListQurey = $users->buildStatement(
@@ -1914,7 +1959,7 @@ class HistoriesController extends AppController {
         $this->THistoryChatLog
       );
 
-      if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+      if ($this->coreSettings[C_COMPANY_USE_CHAT]) {
         // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
         $joinList[] = [
           'type' => 'INNER',
@@ -1926,7 +1971,7 @@ class HistoriesController extends AppController {
     }
 
     // 3) チャットに関する検索条件
-    if ( $this->coreSettings[C_COMPANY_USE_CHAT] ) {
+    if ($this->coreSettings[C_COMPANY_USE_CHAT]) {
       $dbo2 = $this->THistoryChatLog->getDataSource();
       $chatStateList = $dbo2->buildStatement(
         [
@@ -1946,16 +1991,17 @@ class HistoriesController extends AppController {
       );
 
       $dbo2 = $this->THistoryChatLog->getDataSource();
-      if(empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
+      if (empty($chatLogCond) || $chatLogCond['chat.achievementFlg'] == 1 || $chatLogCond['chat.achievementFlg'] == 2) {
         $value = 'MAX';
-      }
-      //成果でCVを検索する場合
-      else if(!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
-        $value = 'MIN';
+      } //成果でCVを検索する場合
+      else {
+        if (!empty($chatLogCond) && $chatLogCond['chat.achievementFlg'] == 0) {
+          $value = 'MIN';
+        }
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog force index (idx_t_history_chat_logs_m_companies_id_t_histories_id_created) WHERE `THistoryChatLog`.m_companies_id =". $this->userInfo['m_companies_id'] ." AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND created >= '". $data['History']['start_day'] ." 00:00:00' AND created <= '". $data['History']['finish_day'] ." 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id)",
+          'table' => "(SELECT t_histories_id, t_history_stay_logs_id, m_companies_id, message_type, notice_flg, created, message_read_flg,COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message, SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech FROM t_history_chat_logs AS THistoryChatLog force index (idx_t_history_chat_logs_m_companies_id_t_histories_id_created) WHERE `THistoryChatLog`.m_companies_id =" . $this->userInfo['m_companies_id'] . " AND `t_histories_id` = `THistoryChatLog`.t_histories_id AND created >= '" . $data['History']['start_day'] . " 00:00:00' AND created <= '" . $data['History']['finish_day'] . " 23:59:59' GROUP BY t_histories_id ORDER BY t_histories_id)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -1975,27 +2021,29 @@ class HistoriesController extends AppController {
       ];
 
       // チャットのみ表示との切り替え（担当者検索の場合、強制的にINNER）
-      if ( strcmp($type, 'true') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog']))) ) {
+      if (strcmp($type,
+          'true') === 0 && !(!empty($data['THistoryChatLog']) && !empty(array_filter($data['THistoryChatLog'])))) {
         $joinToChat['type'] = "LEFT";
-      }
-      else if(empty($type)) {
-        $joinToChat['type'] = "LEFT";
-      }
-      else {
-        $joinToChat['type'] = "INNER";
+      } else {
+        if (empty($type)) {
+          $joinToChat['type'] = "LEFT";
+        } else {
+          $joinToChat['type'] = "INNER";
+        }
       }
       $joinList[] = $joinToChat;
     }
     return ['joinList' => $joinList, 'conditions' => $conditions];
   }
 
-    /**
+  /**
    * //
    *  csv出力担当者リスト(一覧画面)
    * @param  csv出力内容
    * @return 担当者リスト追加
    * */
-  private function _userList($historyList){
+  private function _userList($historyList)
+  {
 
     $userNameList = $this->MUser->find('list', [
       'fields' => [
@@ -2004,7 +2052,7 @@ class HistoriesController extends AppController {
       ],
     ]);
 
-    $chatList = $this->THistoryChatLog->find('all',[
+    $chatList = $this->THistoryChatLog->find('all', [
       'fields' => [
         'THistoryChatLog.t_histories_id',
         'THistoryChatLog.m_users_id',
@@ -2022,36 +2070,38 @@ class HistoriesController extends AppController {
           array('THistoryChatLog.m_companies_id' => $this->userInfo['MCompany']['id'])
         ]
       ],
-      'group' => ['THistoryChatLog.t_histories_id','THistoryChatLog.m_users_id']
+      'group' => ['THistoryChatLog.t_histories_id', 'THistoryChatLog.m_users_id']
     ]);
 
     $users = [];
 
-    foreach($chatList as $val2){
+    foreach ($chatList as $val2) {
       $users[$val2['THistoryChatLog']['t_histories_id']][] = $val2['THistoryChatLog']['m_users_id'];
     }
 
     $userList = [];
-    foreach($historyList as $value2){
+    foreach ($historyList as $value2) {
       $tmp = $value2;
       $tmp['User'] = '';
-      if(isset($users[$value2['THistory']['id']])) {
-        foreach($users[$value2['THistory']['id']] as $val3){
+      if (isset($users[$value2['THistory']['id']])) {
+        foreach ($users[$value2['THistory']['id']] as $val3) {
           $userName = !empty($userNameList[$val3]) ? $userNameList[$val3] : null;
-          if(!empty($tmp['User'])){
-            $tmp['User'] .='、'."\n";
+          if (!empty($tmp['User'])) {
+            $tmp['User'] .= '、' . "\n";
           }
-          if($userName === null) {
+          if ($userName === null) {
             // 名前がnullの場合は自動応答
             $userName = self::LABEL_AUTO_SPEECH_OPERATOR;
           }
-          if(strpos($tmp['User'],self::LABEL_AUTO_SPEECH_OPERATOR) !== false){
+          if (strpos($tmp['User'], self::LABEL_AUTO_SPEECH_OPERATOR) !== false) {
             // 自動対応オペレータの名前を挿入したあとにユーザー名を表示する場合は自動対応のラベルを消す
-            $tmp['User'] = $userName."さん";
-          } else if (empty($tmp['User']) && strcmp($userName, self::LABEL_AUTO_SPEECH_OPERATOR) === 0) {
-            $tmp['User'] = $userName;
+            $tmp['User'] = $userName . "さん";
           } else {
-            $tmp['User'] .= $userName."さん";
+            if (empty($tmp['User']) && strcmp($userName, self::LABEL_AUTO_SPEECH_OPERATOR) === 0) {
+              $tmp['User'] = $userName;
+            } else {
+              $tmp['User'] .= $userName . "さん";
+            }
           }
         }
       }
@@ -2060,7 +2110,7 @@ class HistoriesController extends AppController {
     return $userList;
   }
 
-    /**
+  /**
    * //
    *  csv出力、THistoryChatLogの「firstURL」と「count」を取ってくる(一覧画面)
    * @param  csv出力内容
@@ -2077,7 +2127,7 @@ class HistoriesController extends AppController {
     }
 
     $stayList = [];
-    if(count($historyIdList) >= 100000) {
+    if (count($historyIdList) >= 100000) {
 
     } else {
       $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
@@ -2110,282 +2160,415 @@ class HistoriesController extends AppController {
     return $stayList;
   }
 
-  private function _lastSpeechTimeList($historyList) {
+  private function _lastSpeechTimeList($historyList)
+  {
     $historyIdList = [];
-    foreach($historyList as $val){
+    foreach ($historyList as $val) {
       $historyIdList[] = $val['THistory']['id'];
     }
-    $chatList = $this->THistoryChatLog->find('all',[
-      'fields' => [
-        'THistoryChatLog.t_histories_id',
-        'THistoryChatLog.message_type',
-        'MAX(created) as created'
-      ],
-      'order' => [
-        'THistoryChatLog.t_histories_id' => 'asc'
-      ],
-      'conditions' => [
-        'AND' => array(
-          't_histories_id' => $historyIdList,
-          'message_type = 1')
-      ],
-      'group' => ['THistoryChatLog.t_histories_id']
-    ]);
 
-    $list = [];
-    foreach($chatList as $k => $chat) {
-      $list[$chat['THistoryChatLog']['t_histories_id']] = $chat[0]['created'];
+    $list = array();
+
+    if (count($historyIdList) >= 100000) {
+
+    } else {
+      $chunkedHistoryIdList = array_chunk($historyIdList, 1000);
+      $chatList = array();
+      foreach ($chunkedHistoryIdList as $index => $chunk) {
+        $chatList = $this->THistoryChatLog->find('all', [
+          'fields' => [
+            'THistoryChatLog.t_histories_id',
+            'THistoryChatLog.message_type',
+            'MAX(created) as created'
+          ],
+          'order' => [
+            'THistoryChatLog.t_histories_id' => 'asc'
+          ],
+          'conditions' => [
+            'AND' => array(
+              't_histories_id' => $chunk,
+              'message_type = 1'
+            )
+          ],
+          'group' => ['THistoryChatLog.t_histories_id']
+        ]);
+      }
+
+      foreach ($chatList as $k => $chat) {
+        $list[$chat['THistoryChatLog']['t_histories_id']] = $chat[0]['created'];
+      }
     }
     return $list;
   }
 
-    /**
+  /**
    * //
    *  csv,os出力(一覧画面)
    * @param  csv出力内容
    * @return  osの種類
    * */
-  private function _userAgentCheckOS($val){
-    if(preg_match('/Windows NT 10.0/',$val['THistory']['user_agent'])){
+  private function _userAgentCheckOS($val)
+  {
+    if (preg_match('/Windows NT 10.0/', $val['THistory']['user_agent'])) {
       $os = "Windows 10"; // Windows 10 の処理
-    }
-    else if(preg_match('/Windows NT 6.3/',$val['THistory']['user_agent'])){
-      $os = "Windows 8.1"; // Windows 8.1 の処理
-    }
-    else if(preg_match('/Windows NT 6.2/',$val['THistory']['user_agent'])){
-      $os = "Windows 8"; // Windows 8 の処理
-    }
-    else if(preg_match('/Windows NT 6.1/',$val['THistory']['user_agent'])){
-      $os = "Windows 7"; // Windows 7 の処理
-    }
-    else if(preg_match('/Windows NT 6.0/',$val['THistory']['user_agent'])){
-      $os = "Windows Vista"; // Windows Vista の処理
-    }
-    else if(preg_match('/Windows NT 5.2/',$val['THistory']['user_agent'])){
-      $os = "Windows Server 2003";  // Windows Server 2003 の処理
-    }
-    else if(preg_match('/Windows NT 5.1/',$val['THistory']['user_agent'])){
-      $os = "Windows XP"; // Windows XP の処理
-    }
-    else if(preg_match('/Windows NT 4.90/',$val['THistory']['user_agent'])){
-      $os = "Windows ME"; // Windows ME の処理
-    }
-    else if(preg_match('/Windows NT 5.0/',$val['THistory']['user_agent'])){
-      $os = "Windows 2000"; // Windows 2000 の処理
-    }
-    else if(preg_match('/Windows 98/',$val['THistory']['user_agent'])){
-      $os = "Windows 98"; // Windows 98 の処理
-    }
-    else if(preg_match('/Windows NT 4.0/',$val['THistory']['user_agent'])){
-      $os = "Windows NT"; // Windows NT の処理
-    }
-    else if(preg_match('/Windows 95/',$val['THistory']['user_agent'])){
-      $os = "Windows 95"; // Windows 95 の処理
-    }
-    else if(preg_match('/Windows NT 5.2/',$val['THistory']['user_agent']) && preg_match('/Phone/',$val['THistory']['user_agent'])) {
-      $os = "Windows Phone"; // Windows Phone の処理
-    }
-    else if(preg_match('/Xbox/',$val['THistory']['user_agent'])){
-      $os = "Xbox"; // Xbox の処理
-    }
-    else if(preg_match('/^.*\s([A-Za-z]*BSD)/',$val['THistory']['user_agent'])){
-      $os = "FreeBSD"; // BSD 系の処理
-    }
-    else if(preg_match('/SunOS/',$val['THistory']['user_agent'])){
-      $os = "Solaris"; // Solaris の処理
-    }
-    else if(preg_match('/iPhone/',$val['THistory']['user_agent'])){
-      $os = "iPhone"; // iPhone の処理
-      if(preg_match('/iPhone OS/',$val['THistory']['user_agent'])){
-        $myKey = "iPhone OS " ;
-        $myEnd = " like";
-        $myStart = strpos($val['THistory']['user_agent'],$myKey) + strlen($myKey);
-        $myEnd = strpos($val['THistory']['user_agent'],$myEnd);
-        $myDifference = $myEnd - $myStart;
-        $version = mb_substr($val['THistory']['user_agent'],$myStart,$myDifference);
-        $os = " iPhone(ver." .str_replace('_','.',$version). ")";
-      }
-    }
-    else if(preg_match('/iPad/',$val['THistory']['user_agent'])){
-      $os = "iPad"; // iPad の処理
-      if(preg_match('/ OS/',$val['THistory']['user_agent'])){
-        $myKey = " OS ";
-        $myEnd = " like";
-        $myStart = strpos($val['THistory']['user_agent'],$myKey) + strlen($myKey);
-        $myEnd = strpos($val['THistory']['user_agent'],$myEnd);
-        $myDifference = $myEnd - $myStart;
-        $version = mb_substr($val['THistory']['user_agent'],$myStart,$myDifference);
-        $os = " iPad(ver." .str_replace('_','.',$version). ")";
-      }
-    }
-    else if(preg_match('/iPod/',$val['THistory']['user_agent'])){
-      $os = "iPod"; // iPod の処理
-    }
-    else if(preg_match('/Mac|PPC/',$val['THistory']['user_agent'])){
-      $os = "Mac OS"; // Macintosh の処理
-    }
-    else if(preg_match('/Android/',$val['THistory']['user_agent'])){
-      $myKey = "Android";
-      $End = ";";
-      $terminal = "";
-      $terminalEnd = "Build";
-      preg_match('/(Android\s[0-9.]*);(\sja\-jp;)?\s([a-zA-Z0-9\-]*)?/',$val['THistory']['user_agent'], $match);
+    } else {
+      if (preg_match('/Windows NT 6.3/', $val['THistory']['user_agent'])) {
+        $os = "Windows 8.1"; // Windows 8.1 の処理
+      } else {
+        if (preg_match('/Windows NT 6.2/', $val['THistory']['user_agent'])) {
+          $os = "Windows 8"; // Windows 8 の処理
+        } else {
+          if (preg_match('/Windows NT 6.1/', $val['THistory']['user_agent'])) {
+            $os = "Windows 7"; // Windows 7 の処理
+          } else {
+            if (preg_match('/Windows NT 6.0/', $val['THistory']['user_agent'])) {
+              $os = "Windows Vista"; // Windows Vista の処理
+            } else {
+              if (preg_match('/Windows NT 5.2/', $val['THistory']['user_agent'])) {
+                $os = "Windows Server 2003";  // Windows Server 2003 の処理
+              } else {
+                if (preg_match('/Windows NT 5.1/', $val['THistory']['user_agent'])) {
+                  $os = "Windows XP"; // Windows XP の処理
+                } else {
+                  if (preg_match('/Windows NT 4.90/', $val['THistory']['user_agent'])) {
+                    $os = "Windows ME"; // Windows ME の処理
+                  } else {
+                    if (preg_match('/Windows NT 5.0/', $val['THistory']['user_agent'])) {
+                      $os = "Windows 2000"; // Windows 2000 の処理
+                    } else {
+                      if (preg_match('/Windows 98/', $val['THistory']['user_agent'])) {
+                        $os = "Windows 98"; // Windows 98 の処理
+                      } else {
+                        if (preg_match('/Windows NT 4.0/', $val['THistory']['user_agent'])) {
+                          $os = "Windows NT"; // Windows NT の処理
+                        } else {
+                          if (preg_match('/Windows 95/', $val['THistory']['user_agent'])) {
+                            $os = "Windows 95"; // Windows 95 の処理
+                          } else {
+                            if (preg_match('/Windows NT 5.2/',
+                                $val['THistory']['user_agent']) && preg_match('/Phone/',
+                                $val['THistory']['user_agent'])) {
+                              $os = "Windows Phone"; // Windows Phone の処理
+                            } else {
+                              if (preg_match('/Xbox/', $val['THistory']['user_agent'])) {
+                                $os = "Xbox"; // Xbox の処理
+                              } else {
+                                if (preg_match('/^.*\s([A-Za-z]*BSD)/',
+                                  $val['THistory']['user_agent'])) {
+                                  $os = "FreeBSD"; // BSD 系の処理
+                                } else {
+                                  if (preg_match('/SunOS/',
+                                    $val['THistory']['user_agent'])) {
+                                    $os = "Solaris"; // Solaris の処理
+                                  } else {
+                                    if (preg_match('/iPhone/',
+                                      $val['THistory']['user_agent'])) {
+                                      $os = "iPhone"; // iPhone の処理
+                                      if (preg_match('/iPhone OS/',
+                                        $val['THistory']['user_agent'])) {
+                                        $myKey = "iPhone OS ";
+                                        $myEnd = " like";
+                                        $myStart = strpos($val['THistory']['user_agent'],
+                                            $myKey) + strlen($myKey);
+                                        $myEnd = strpos($val['THistory']['user_agent'],
+                                          $myEnd);
+                                        $myDifference = $myEnd - $myStart;
+                                        $version = mb_substr($val['THistory']['user_agent'],
+                                          $myStart, $myDifference);
+                                        $os = " iPhone(ver." . str_replace('_',
+                                            '.', $version) . ")";
+                                      }
+                                    } else {
+                                      if (preg_match('/iPad/',
+                                        $val['THistory']['user_agent'])) {
+                                        $os = "iPad"; // iPad の処理
+                                        if (preg_match('/ OS/',
+                                          $val['THistory']['user_agent'])) {
+                                          $myKey = " OS ";
+                                          $myEnd = " like";
+                                          $myStart = strpos($val['THistory']['user_agent'],
+                                              $myKey) + strlen($myKey);
+                                          $myEnd = strpos($val['THistory']['user_agent'],
+                                            $myEnd);
+                                          $myDifference = $myEnd - $myStart;
+                                          $version = mb_substr($val['THistory']['user_agent'],
+                                            $myStart, $myDifference);
+                                          $os = " iPad(ver." . str_replace('_',
+                                              '.', $version) . ")";
+                                        }
+                                      } else {
+                                        if (preg_match('/iPod/',
+                                          $val['THistory']['user_agent'])) {
+                                          $os = "iPod"; // iPod の処理
+                                        } else {
+                                          if (preg_match('/Mac|PPC/',
+                                            $val['THistory']['user_agent'])) {
+                                            $os = "Mac OS"; // Macintosh の処理
+                                          } else {
+                                            if (preg_match('/Android/',
+                                              $val['THistory']['user_agent'])) {
+                                              $myKey = "Android";
+                                              $End = ";";
+                                              $terminal = "";
+                                              $terminalEnd = "Build";
+                                              preg_match('/(Android\s[0-9.]*);(\sja\-jp;)?\s([a-zA-Z0-9\-]*)?/',
+                                                $val['THistory']['user_agent'],
+                                                $match);
 
-      $os = (isset($match[1]) ? $match[1] : "Android").' ('.(isset($match[3]) ? $match[3] : "unknown").')';
-      $os = trim($os);
-    }
-    else if(preg_match('/Firefox/' && '/Mobile/') && !preg_match('/Android/',$val['THistory']['user_agent'])) {
-      $os = "FireFox Mobile"; // FireFoxOS の処理
-    }
-    else if(preg_match('/Firefox/' && '/Tablet/') && !preg_match('/Android/',$val['THistory']['user_agent'])) {
-      $os = "FireFox Tablet"; // FireFoxOS の処理
-    }
-    else if(preg_match('/BlackBerry/',$val['THistory']['user_agent']) || preg_match('/BB10/' && '/Android/',$val['THistory']['user_agent'])) {
-      $os = "BlackBerry"; // BlackBerry の処理
-    }
-    else if(preg_match('/Ubuntu/',$val['THistory']['user_agent'])){
-      $os = "Ubuntu"; // Ubuntu の処理
-    }
-    else if(preg_match('/Linux Mint/',$val['THistory']['user_agent'])){
-      $os = "Linux Mint"; // Linux Mint の処理
-    }
-    else if(preg_match('/Fedora/',$val['THistory']['user_agent'])){
-      $os = "Fedora"; // Fedora の処理
-    }
-    else if(preg_match('/Gentoo/',$val['THistory']['user_agent'])){
-      $os = "Gentoo"; // Gentoo の処理
-    }
-    else if(preg_match('/Linux/',$val['THistory']['user_agent'])){
-      $os = "Linux"; // Linux の処理
-    }
-    else {
-      $os = "unknown"; // 上記以外 OS の処理
+                                              $os = (isset($match[1]) ? $match[1] : "Android") . ' (' . (isset($match[3]) ? $match[3] : "unknown") . ')';
+                                              $os = trim($os);
+                                            } else {
+                                              if (preg_match('/Firefox/' && '/Mobile/') && !preg_match('/Android/',
+                                                  $val['THistory']['user_agent'])) {
+                                                $os = "FireFox Mobile"; // FireFoxOS の処理
+                                              } else {
+                                                if (preg_match('/Firefox/' && '/Tablet/') && !preg_match('/Android/',
+                                                    $val['THistory']['user_agent'])) {
+                                                  $os = "FireFox Tablet"; // FireFoxOS の処理
+                                                } else {
+                                                  if (preg_match('/BlackBerry/',
+                                                      $val['THistory']['user_agent']) || preg_match('/BB10/' && '/Android/',
+                                                      $val['THistory']['user_agent'])) {
+                                                    $os = "BlackBerry"; // BlackBerry の処理
+                                                  } else {
+                                                    if (preg_match('/Ubuntu/',
+                                                      $val['THistory']['user_agent'])) {
+                                                      $os = "Ubuntu"; // Ubuntu の処理
+                                                    } else {
+                                                      if (preg_match('/Linux Mint/',
+                                                        $val['THistory']['user_agent'])) {
+                                                        $os = "Linux Mint"; // Linux Mint の処理
+                                                      } else {
+                                                        if (preg_match('/Fedora/',
+                                                          $val['THistory']['user_agent'])) {
+                                                          $os = "Fedora"; // Fedora の処理
+                                                        } else {
+                                                          if (preg_match('/Gentoo/',
+                                                            $val['THistory']['user_agent'])) {
+                                                            $os = "Gentoo"; // Gentoo の処理
+                                                          } else {
+                                                            if (preg_match('/Linux/',
+                                                              $val['THistory']['user_agent'])) {
+                                                              $os = "Linux"; // Linux の処理
+                                                            } else {
+                                                              $os = "unknown"; // 上記以外 OS の処理
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
     return $os;
   }
 
-    /**
+  /**
    * //
    *  csv,browser出力(一覧画面)
    * @param  csv出力内容
    * @return  browserの種類
    * */
-  private function _userAgentCheckBrowser($val){
+  private function _userAgentCheckBrowser($val)
+  {
     Configure::write('debug', 0);
     $browser = 'unknown';
-    if (strpos($val['THistory']['user_agent'],'MSIE')) {
-      preg_match('/MSIE.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
+    if (strpos($val['THistory']['user_agent'], 'MSIE')) {
+      preg_match('/MSIE.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'],
+        $match);
       $version = str_replace("MSIE", "", $match[0]);
-      $browser = "IE(ver." .$version.  ")";
-    }
-    else if(preg_match('/sleipnir/i',$val['THistory']['user_agent'])) {
-      preg_match('/Sleipnir.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Sleipnir/", "", $match[0]);
-      $browser = "Sleipnir(ver." .$version.  ")";
-    }
-    else if(preg_match('/lunascape/i',$val['THistory']['user_agent'])) {
-      preg_match('/Lunascape.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Lunascape/", "", $match[0]);
-      $browser = "Lunascape(ver." .$version.  ")";
-    }
-    else if (strpos($val['THistory']['user_agent'],'Trident/7')){
-      preg_match('/rv:.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("rv:", "", $match[0]);
-      $browser = "IE(ver." .$version.  ")";
-    }
-    else if(preg_match('/edge/i',$val['THistory']['user_agent'])) {
-      preg_match('/Edge.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Edge/", "", $match[0]);
-      $browser = "Edge(ver." .$version.  ")";
-    }
-    else if(preg_match('/opera mini/i',$val['THistory']['user_agent'])) {
-      preg_match('/Opera Mini.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Opera Mini/", "", $match[0]);
-      $myEnd = "/";
-      $myEnd = strpos($version,$myEnd);
-      $version = mb_substr($version,0,$myEnd);
-      $browser = "Opera Mini(ver." .$version.  ")";
-    }
-    else if(preg_match('/opera/i',$val['THistory']['user_agent'])) {
-      preg_match('/Opera.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Opera/", "", $match[0]);
-      $browser = "Opera(ver." .$version.  ")";
-    }
-    else if(preg_match('/opr/i',$val['THistory']['user_agent'])) {
-      preg_match('/OPR.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("OPR/", "", (isset($match[0]) ? $match[0] : "unknown"));
-      $browser = "Opera(ver." .$version.  ")";
-    }
-    else if(preg_match('/vivaldi/i',$val['THistory']['user_agent'])) {
-      preg_match('/Vivaldi.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Vivaldi/", "", $match[0]);
-      $browser = "Vivaldi(ver." .$version.  ")";
-    }
-    else if(preg_match('/firefox/i',$val['THistory']['user_agent'])) {
-      preg_match('/Firefox.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Firefox/", "", $match[0]);
-      $browser = "Firefox(ver." .$version.  ")";
-    }
-    else if(preg_match('/palemoon/i',$val['THistory']['user_agent'])) {
-      preg_match('/Palemoon.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Palemoon/", "", $match[0]);
-      $browser = "Palemoon(ver." .$version.  ")";
-    }
-    else if(preg_match('/phantomjs/i',$val['THistory']['user_agent'])) {
-      preg_match('/PhantomJs.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("PhantomJs/", "", $match[0]);
-      $browser = "PhantomJs(ver." .$version.  ")";
-    }
-    else if(preg_match('/jp.co.yahoo.ipn.appli/i',$val['THistory']['user_agent'])) {
-      preg_match('/jp.co.yahoo.ipn.appli.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("jp.co.yahoo.ipn.appli/", "", $match[0]);
-      $browser = "YahooJapanブラウザ(ver." .$version.  ")";
-    }
-    else if(preg_match('/jp.co.yahoo.ymail/i',$val['THistory']['user_agent'])) {
-      preg_match('/jp.co.yahoo.ymail.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("jp.co.yahoo.ymail/", "", $match[0]);
-      $browser = "YahooJapanブラウザ(ver." .$version.  ")";
-    }
-    else if(preg_match('/Chrome/i',$val['THistory']['user_agent']) && !preg_match('/samsungbrowser/i',$val['THistory']['user_agent'])) {
-      preg_match('/Chrome.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Chrome/", "", $match[0]);
-      $browser = "Chrome(ver." .$version.  ")";
-    }
-    else if(preg_match('/crios/i',$val['THistory']['user_agent']) && !preg_match('/samsungbrowser/i',$val['THistory']['user_agent'])) {
-      preg_match('/CriOS.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("CriOS/", "", $match[0]);
-      $browser = "Chrome(ver." .$version.  ")";
-    }
-    else if(preg_match('/blackberry/i',$val['THistory']['user_agent']) || preg_match('/bb10/i',$val['THistory']['user_agent'])) {
-      preg_match('/Version.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      $version = str_replace("Version/", "", $match[0]);
-      $browser = "標準ブラウザ(ver." .$version.  ")";
-    }
-    else if(preg_match('/safari/i',$val['THistory']['user_agent']) && preg_match('/android/i',$val['THistory']['user_agent'])) {
-      $browser = "標準ブラウザ";
-    }
-    else if(preg_match('/samsungbrowser/i',$val['THistory']['user_agent']) && preg_match('/android/i',$val['THistory']['user_agent'])) {
-      $browser =  "標準ブラウザ";
-    }
-    else if(preg_match('/safari/i',$val['THistory']['user_agent']) && !preg_match('/android/i',$val['THistory']['user_agent'])) {
-      preg_match('/Version.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/', $val['THistory']['user_agent'], $match);
-      if(isset($match[0])) {
-        $version = str_replace("Version/", "", $match[0]);
+      $browser = "IE(ver." . $version . ")";
+    } else {
+      if (preg_match('/sleipnir/i', $val['THistory']['user_agent'])) {
+        preg_match('/Sleipnir.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+          $val['THistory']['user_agent'],
+          $match);
+        $version = str_replace("Sleipnir/", "", $match[0]);
+        $browser = "Sleipnir(ver." . $version . ")";
       } else {
-        $version = 'unknown';
+        if (preg_match('/lunascape/i', $val['THistory']['user_agent'])) {
+          preg_match('/Lunascape.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+            $val['THistory']['user_agent'], $match);
+          $version = str_replace("Lunascape/", "", $match[0]);
+          $browser = "Lunascape(ver." . $version . ")";
+        } else {
+          if (strpos($val['THistory']['user_agent'], 'Trident/7')) {
+            preg_match('/rv:.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+              $val['THistory']['user_agent'],
+              $match);
+            $version = str_replace("rv:", "", $match[0]);
+            $browser = "IE(ver." . $version . ")";
+          } else {
+            if (preg_match('/edge/i', $val['THistory']['user_agent'])) {
+              preg_match('/Edge.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                $val['THistory']['user_agent'], $match);
+              $version = str_replace("Edge/", "", $match[0]);
+              $browser = "Edge(ver." . $version . ")";
+            } else {
+              if (preg_match('/opera mini/i', $val['THistory']['user_agent'])) {
+                preg_match('/Opera Mini.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                  $val['THistory']['user_agent'], $match);
+                $version = str_replace("Opera Mini/", "", $match[0]);
+                $myEnd = "/";
+                $myEnd = strpos($version, $myEnd);
+                $version = mb_substr($version, 0, $myEnd);
+                $browser = "Opera Mini(ver." . $version . ")";
+              } else {
+                if (preg_match('/opera/i', $val['THistory']['user_agent'])) {
+                  preg_match('/Opera.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                    $val['THistory']['user_agent'], $match);
+                  $version = str_replace("Opera/", "", $match[0]);
+                  $browser = "Opera(ver." . $version . ")";
+                } else {
+                  if (preg_match('/opr/i', $val['THistory']['user_agent'])) {
+                    preg_match('/OPR.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                      $val['THistory']['user_agent'], $match);
+                    $version = str_replace("OPR/", "", (isset($match[0]) ? $match[0] : "unknown"));
+                    $browser = "Opera(ver." . $version . ")";
+                  } else {
+                    if (preg_match('/vivaldi/i', $val['THistory']['user_agent'])) {
+                      preg_match('/Vivaldi.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                        $val['THistory']['user_agent'], $match);
+                      $version = str_replace("Vivaldi/", "", $match[0]);
+                      $browser = "Vivaldi(ver." . $version . ")";
+                    } else {
+                      if (preg_match('/firefox/i', $val['THistory']['user_agent'])) {
+                        preg_match('/Firefox.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                          $val['THistory']['user_agent'], $match);
+                        $version = str_replace("Firefox/", "", $match[0]);
+                        $browser = "Firefox(ver." . $version . ")";
+                      } else {
+                        if (preg_match('/palemoon/i', $val['THistory']['user_agent'])) {
+                          preg_match('/Palemoon.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                            $val['THistory']['user_agent'], $match);
+                          $version = str_replace("Palemoon/", "", $match[0]);
+                          $browser = "Palemoon(ver." . $version . ")";
+                        } else {
+                          if (preg_match('/phantomjs/i', $val['THistory']['user_agent'])) {
+                            preg_match('/PhantomJs.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                              $val['THistory']['user_agent'], $match);
+                            $version = str_replace("PhantomJs/", "", $match[0]);
+                            $browser = "PhantomJs(ver." . $version . ")";
+                          } else {
+                            if (preg_match('/jp.co.yahoo.ipn.appli/i',
+                              $val['THistory']['user_agent'])) {
+                              preg_match('/jp.co.yahoo.ipn.appli.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                                $val['THistory']['user_agent'], $match);
+                              $version = str_replace("jp.co.yahoo.ipn.appli/", "",
+                                $match[0]);
+                              $browser = "YahooJapanブラウザ(ver." . $version . ")";
+                            } else {
+                              if (preg_match('/jp.co.yahoo.ymail/i',
+                                $val['THistory']['user_agent'])) {
+                                preg_match('/jp.co.yahoo.ymail.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                                  $val['THistory']['user_agent'], $match);
+                                $version = str_replace("jp.co.yahoo.ymail/", "",
+                                  $match[0]);
+                                $browser = "YahooJapanブラウザ(ver." . $version . ")";
+                              } else {
+                                if (preg_match('/Chrome/i',
+                                    $val['THistory']['user_agent']) && !preg_match('/samsungbrowser/i',
+                                    $val['THistory']['user_agent'])) {
+                                  preg_match('/Chrome.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                                    $val['THistory']['user_agent'], $match);
+                                  $version = str_replace("Chrome/", "", $match[0]);
+                                  $browser = "Chrome(ver." . $version . ")";
+                                } else {
+                                  if (preg_match('/crios/i',
+                                      $val['THistory']['user_agent']) && !preg_match('/samsungbrowser/i',
+                                      $val['THistory']['user_agent'])) {
+                                    preg_match('/CriOS.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                                      $val['THistory']['user_agent'], $match);
+                                    $version = str_replace("CriOS/", "", $match[0]);
+                                    $browser = "Chrome(ver." . $version . ")";
+                                  } else {
+                                    if (preg_match('/blackberry/i',
+                                        $val['THistory']['user_agent']) || preg_match('/bb10/i',
+                                        $val['THistory']['user_agent'])) {
+                                      preg_match('/Version.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                                        $val['THistory']['user_agent'], $match);
+                                      $version = str_replace("Version/", "",
+                                        $match[0]);
+                                      $browser = "標準ブラウザ(ver." . $version . ")";
+                                    } else {
+                                      if (preg_match('/safari/i',
+                                          $val['THistory']['user_agent']) && preg_match('/android/i',
+                                          $val['THistory']['user_agent'])) {
+                                        $browser = "標準ブラウザ";
+                                      } else {
+                                        if (preg_match('/samsungbrowser/i',
+                                            $val['THistory']['user_agent']) && preg_match('/android/i',
+                                            $val['THistory']['user_agent'])) {
+                                          $browser = "標準ブラウザ";
+                                        } else {
+                                          if (preg_match('/safari/i',
+                                              $val['THistory']['user_agent']) && !preg_match('/android/i',
+                                              $val['THistory']['user_agent'])) {
+                                            preg_match('/Version.([1-9][0-9]*|0)(.[0-9]+)(.[0-9]+)?(.[0-9]+)?(.[0-9]+)?/',
+                                              $val['THistory']['user_agent'],
+                                              $match);
+                                            if (isset($match[0])) {
+                                              $version = str_replace("Version/",
+                                                "", $match[0]);
+                                            } else {
+                                              $version = 'unknown';
+                                            }
+                                            $browser = "Safari(ver." . $version . ")";
+                                          } else {
+                                            if (preg_match('/iphone/i',
+                                                $val['THistory']['user_agent']) || preg_match('/ipad/i',
+                                                $val['THistory']['user_agent'])) {
+                                              $browser = "Safari";
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
-      $browser = "Safari(ver." .$version.  ")";
-    }
-    else if(preg_match('/iphone/i',$val['THistory']['user_agent']) || preg_match('/ipad/i',$val['THistory']['user_agent'])) {
-      $browser = "Safari";
     }
     return $browser;
   }
 
-  private function printProcessTimetoLog($prefix) {
+  private function printProcessTimetoLog($prefix)
+  {
     //microtimeを.で分割
-    $arrTime = explode('.',microtime(true));
+    $arrTime = explode('.', microtime(true));
     //日時＋ミリ秒
-    $this->log($prefix.'::PROCESS_TIME '.date('Y-m-d H:i:s', $arrTime[0]) . '.' .$arrTime[1], LOG_DEBUG);
+    $this->log($prefix . '::PROCESS_TIME ' . date('Y-m-d H:i:s', $arrTime[0]) . '.' . $arrTime[1], LOG_DEBUG);
   }
 }
