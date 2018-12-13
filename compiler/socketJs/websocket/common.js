@@ -2097,9 +2097,9 @@ var socket, // socket.io
               'px rgba(0,0,0,0.1);}';
           html += '#sincloBox * { font-size: ' + hRatio + 'px }';
           if (widget.chatMessageCopy === 1) {
-            html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.35em 2em 0; font-size: 1.2em;  user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; }';
+            html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.3em 2em 0; font-size: 1em;  user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; }';
           } else {
-            html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.35em 2em 0; font-size: 1.2em;}';
+            html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.3em 2em 0; font-size: 1em;}';
           }
           if (widget.widgetSizeType !== 1) {
             html += '#sincloBox p#widgetTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
@@ -2107,18 +2107,13 @@ var socket, // socket.io
           html += '#sincloBox section { width: 100% }';
           html += '#sincloBox section#chatTab ul { height: ' +
               (chatAreaHeight - (6.5 * hRatio)) + 'px }';
-          html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
+          if(check.android()){
+            html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.25em; bottom: 0; right: 0.3em; }';
+          } else {
+            html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.25em; bottom: 0; right: 0.3em; }';
+          }
           html += '#sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' +
               (13 * ratio) + 'px;}';
-          //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
-          //閉じるボタン無効
-          //＋ボタン無効に仕様変更
-          /*
-          html += '#sincloBox div#addBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
-*/
-          /*
-          html += '#sincloBox #widgetTitle:after { width: 1.5em; height: 1.5em; top: 0; bottom: 0; right: 0.25em;}';
-*/
           html += '#sincloBox[data-openflg="true"] p#widgetTitle:after { margin-top: 0.5em; }';
           html += '#sincloBox #widgetTitle em { width: 2em; height: 2em; font-size: 0.8em; padding: 0.25em; border-radius: 5em; margin: 0.25em; }';
           html += '#sincloBox ul#chatTalk { padding: 0.3em; padding-top:0px; background-color: ' +
@@ -2148,7 +2143,7 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"], #sincloBox ul#chatTalk li sinclo-radio label { webkit-transform: scale(1.3); transform: scale(1.3); moz-transform: scale(1.3); } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1em; font-size: 0.8em; } ';
-          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 10px; margin-top: -10px; left: -5px; width: 20px; height: 20px; border: 0.5px solid ' +
+          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 10px; margin-top: -10px; left: -5px; width: 17px; height: 17px; border: 0.5px solid ' +
               chatContentTextColor + '; border-radius: 50%; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 10px; left: 0px; margin-top: -5px; width: 11px; height: 11px; background: ' +
               colorList['mainColor'] + '; border-radius: 50%; } ';
@@ -2171,7 +2166,7 @@ var socket, // socket.io
           html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { height: 4em; padding: 0.5em; }';
 
           if (hRatio > 16) {
-            html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; }';
+            html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; font-size: 0.7em }';
           } else {
             html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; font-size: 1.5em }';
           }
@@ -3821,6 +3816,12 @@ var socket, // socket.io
               $('#mainImage').css('display') === 'inline') {
             common.indicateSimpleImage();
           }
+        }
+        if(check.smartphone() && !check.android() && window.orientation !== 0 && screen.width !== window.innerHeight) {
+          $('#sincloBox').
+          css('bottom', screen.width - window.innerHeight + 'px');
+          $('#sincloBanner').
+          css('bottom', screen.width - window.innerHeight + 5 + 'px');
         }
       },
       hide: function() {
