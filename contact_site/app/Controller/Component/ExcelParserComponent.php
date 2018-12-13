@@ -48,4 +48,14 @@ class ExcelParserComponent extends Component {
     }
     return $arr;
   }
+
+  public function exportData()
+  {
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="auto-message.xlsx"');
+    header('Cache-Control: max-age=0');
+
+    $objWriter = PHPExcel_IOFactory::createWriter($this->phpExcel, 'Excel2007');
+    $objWriter->save('php://output');
+  }
 }
