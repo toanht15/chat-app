@@ -2626,7 +2626,9 @@ io.sockets.on('connection', function(socket) {
           functionManager.keyList.monitorPollingMode)) return false;
       chatApi.sendUnreadCnt('sendChatInfo', obj, false);
 
-      sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = obj.customerInfo;
+      if (isset(sincloCore[val.siteKey][sincloSessionId])) {
+        sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = obj.customerInfo;
+      }
     };
 
     if (isset(company.info[obj.siteKey]) &&
@@ -3705,14 +3707,17 @@ io.sockets.on('connection', function(socket) {
                 }
               });
             }
-            var logData5 = (sincloCore.hasOwnProperty(obj.siteKey) &&
-                typeof (sincloCore[obj.siteKey]) === 'object') ?
-                JSON.stringify(sincloCore[obj.siteKey]) :
-                'typeof: ' + typeof (sincloCore[obj.siteKey]);
-            console.log('chatStart-5: [' + logToken + '] ' +
-                JSON.stringify(sincloCore[obj.siteKey]));
-            console.log('chatStart-6: [' + logToken +
-                '] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+            try {
+              var logData5 = (sincloCore.hasOwnProperty(obj.siteKey) &&
+                  typeof (sincloCore[obj.siteKey]) === 'object') ?
+                  JSON.stringify(sincloCore[obj.siteKey]) :
+                  'typeof: ' + typeof (sincloCore[obj.siteKey]);
+              console.log('chatStart-5: [' + logToken + '] ' +
+                  JSON.stringify(sincloCore[obj.siteKey]));
+              console.log('chatStart-6: [' + logToken +
+                  '] <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+            } catch (e) {
+            }
           });
     }
   });
@@ -4118,8 +4123,8 @@ io.sockets.on('connection', function(socket) {
                 message.chatId,
                 companyList[obj.siteKey]], loop);
           var sincloSession = sincloCore[obj.siteKey][obj.sincloSessionId];
-          if (message.chatId in
-              sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages) {
+          if (isset(sincloSession) && (message.chatId in
+              sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages)) {
             sincloCore[obj.siteKey][obj.sincloSessionId].autoMessages[message.chatId]['applied'] = true;
           } else if (isset(sincloSession) &&
               isset(sincloSession.autoMessages)) {
