@@ -2613,12 +2613,11 @@
           //横の場合
           else {
             if (!check.android()) {
-              var chatAreaHeight = window.innerHeight *
-                  (document.body.clientWidth / window.innerWidth);
-              var hRatio = chatAreaHeight * 0.07;
+              var chatElementHeight = $('#widgetHeader').height() +
+                  $('#flexBoxWrap').height();
               document.getElementById(
-                  'chatTalk').style.height = (chatAreaHeight - (6.5 * hRatio)) +
-                  'px';
+                  'chatTalk').style.height = window.innerHeight -
+                  chatElementHeight + 'px';
             } else if (check.android()) {
               var chatElementHeight = $('#widgetHeader').height() +
                   $('#flexBoxWrap').height();

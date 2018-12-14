@@ -3819,9 +3819,9 @@ var socket, // socket.io
         }
         if(check.smartphone() && !check.android() && window.orientation !== 0 && screen.width !== window.innerHeight) {
           $('#sincloBox').
-          css('bottom', screen.width - window.innerHeight + 'px');
+          css('bottom', screen.height - window.innerHeight + 'px');
           $('#sincloBanner').
-          css('bottom', screen.width - window.innerHeight + 5 + 'px');
+          css('bottom', screen.height - window.innerHeight + 5 + 'px');
         }
       },
       hide: function() {
