@@ -109,6 +109,10 @@
               //スマホ横
               height = window.innerHeight *
                   (document.body.clientWidth / window.innerWidth);
+              if(!check.android()){
+                // iPhoneは常にwindow.innerHeightがheight
+                height = window.innerHeight;
+              }
             } else {
               height += $('#sincloWidgetBox #widgetHeader').outerHeight(true);
               if ($('#sincloWidgetBox').children().is('#navigation')) {
