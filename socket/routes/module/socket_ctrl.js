@@ -1345,6 +1345,7 @@ io.sockets.on('connection', function(socket) {
             }
 
             if (d.messageType === 1 && insertData.message_read_flg != 1) {
+              sincloCore[d.siteKey][d.tabId].chatUnreadId = results.insertId;
               sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
             }
 
@@ -1518,6 +1519,7 @@ io.sockets.on('connection', function(socket) {
         message_distinction: d.messageDistinction,
         message_request_flg: chatApi.cnst.requestFlg.noFlg,
         message_read_flg: 1,
+        notice_flg: 0,
         created: new Date(d.created)
       };
 
@@ -1599,29 +1601,9 @@ io.sockets.on('connection', function(socket) {
           sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt) ?
           sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt :
           null;
+      console.log('getUnreadCnt:: chatUnreadId => ' + ret.chatUnreadId +
+          ', chatUnreadCnt => ' + ret.chatUnreadCnt);
       callback(ret);
-      // sql = " SELECT chat.id AS chatId, his.visitors_id, his.tab_id, chat.message FROM t_histories AS his";
-      // sql += " INNER JOIN t_history_chat_logs AS chat ON ( his.id = chat.t_histories_id )";
-      // sql += " WHERE his.tab_id = ? AND his.m_companies_id = ? AND chat.message_type = 1";
-      // sql += "   AND chat.m_users_id IS NULL AND chat.message_read_flg != 1 ORDER BY chat.id desc";
-      // pool.query(sql, [sincloSessionId, siteId], function(err, rows) {
-      //   if (err !== null && err !== '') return false; // DB接続断対応
-      //   if (!isset(err) && (rows.length > 0 && isset(rows[0].chatId))) {
-      //     ret.chatUnreadId = rows[0].chatId;
-      //     if (isset(sincloCore[obj.siteKey])
-      //       && isset(sincloCore[obj.siteKey][obj.tabId])
-      //       && isset(sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) {
-      //       if (rows.length > 0 && sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt === 0) {
-      //         ret.chatUnreadCnt = rows.length;
-      //       } else {
-      //         ret.chatUnreadCnt = sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt;
-      //       }
-      //     } else {
-      //       ret.chatUnreadCnt = rows.length;
-      //     }
-      //   }
-      //   callback(ret);
-      // });
     },
     calcScNum: function(obj, userId) { /* sincloCoreから対象ユーザーのチャット対応状態を算出 */
       var scNum = 0;
@@ -4166,12 +4148,15 @@ io.sockets.on('connection', function(socket) {
           [obj.historyId, obj.chatId], function(err, ret, fields) {
             if (isset(sincloCore[obj.siteKey]) &&
                 isset(sincloCore[obj.siteKey][obj.tabId])) {
+              sincloCore[obj.siteKey][obj.tabId].chatUnreadId = null;
               sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt = 0;
+              console.log('reset chatUnreadCnt');
             }
             chatApi.sendUnreadCnt('retReadChatMessage', obj, true);
             Object.keys(sincloCore[obj.siteKey]).forEach(function(key) {
               if (sincloCore[obj.siteKey][key].sincloSessionId ===
                   obj.sincloSessionId) {
+                sincloCore[obj.siteKey][key].chatUnreadId = null;
                 sincloCore[obj.siteKey][key].chatUnreadCnt = 0;
               }
             });
