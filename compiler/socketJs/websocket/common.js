@@ -2170,6 +2170,10 @@ var socket, // socket.io
           } else {
             html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; font-size: 1.5em }';
           }
+          if (!check.android()){
+            //iPhoneはフォントサイズが小さいと予期せぬ拡大が起こるため、強制的に指定する
+            html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage {font-size: 17px!important}';
+          }
           html += '      #sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding: 0.6em 0; border: 1px solid ' +
               colorList['chatSendBtnBackgroundColor'] + '; }';
           html += '      #sincloBox section#chatTab sinclo-chat-alert { left: 10%; right: 10%; bottom: 50%; border-radius: 5px; color: #FFF; text-align: center; padding: 0.25em 0; }';
@@ -3819,7 +3823,9 @@ var socket, // socket.io
         }
         if(check.smartphone() && !check.android() && window.orientation !== 0 && screen.width !== window.innerHeight) {
           $('#sincloBox').
-          css('bottom', screen.height - window.innerHeight + 'px');
+          css(
+              {'bottom': screen.height - window.innerHeight + 'px'}
+              );
           $('#sincloBanner').
           css('bottom', screen.height - window.innerHeight + 5 + 'px');
         }
