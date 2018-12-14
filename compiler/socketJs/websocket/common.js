@@ -3310,7 +3310,7 @@ var socket, // socket.io
                 '" style="width:calc(' + (62 * ratio) +
                 'px* ((3 * 14 + 36) / 81))!important; height:calc(' +
                 (70 * ratio) +
-                'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像">';
+                'px* ((3 * 14 + 36) / 81))!important; display:block" alt="チャット画像">';
           }
         } else {
           if (widget.mainImage.match(/^fa/) !== null) {
@@ -3326,7 +3326,7 @@ var socket, // socket.io
                 widget.headerTextSize +
                 ' + 36) / 81))!important; height:calc(' + (70 * ratio) +
                 'px* ((3 * ' + widget.headerTextSize +
-                ' + 36) / 81))!important;" alt="チャット画像">';
+                ' + 36) / 81))!important;" display:block" alt="チャット画像">';
           }
         }
         html += '  </span>';
