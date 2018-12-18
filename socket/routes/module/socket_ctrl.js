@@ -8,6 +8,7 @@ var request = require('request');
 var common = require('./common');
 var LandscapeAPI = require('./landscape');
 var CogmoAttendAPICaller = require('./cogmo_attend');
+var ChatLogTimeManager = require('./chat_log_time_manager');
 
 // mysql
 var mysql = require('mysql'),
@@ -1264,6 +1265,7 @@ io.sockets.on('connection', function(socket) {
     _handleInsertData: function(
         error, results, d, noReturnSelfMessage, insertData) {
       if (!isset(error)) {
+        ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, ((d.messageType !== 1 && d.messageType !== 8) ? 1 : 2), insertData.created);
         if (!isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
         var sendData = {
           tabId: d.tabId,
@@ -1284,6 +1286,7 @@ io.sockets.on('connection', function(socket) {
           // 応対可能かチェック(対応できるのであれば trueが返る)
           chatApi.sendCheck(d, function(err, ret) {
             sendData.opFlg = ret.opFlg;
+
             //チャット呼出中メッセージ利用するの場合
             //チャット呼出中メッセージの場合
             if (ret.message == null && ret.in_flg == chatApi.cnst.inFlg.flg
@@ -1351,6 +1354,7 @@ io.sockets.on('connection', function(socket) {
 
             //通知された場合
             if (ret.opFlg === true && d.notifyToCompany) {
+              ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, 3, insertData.created);
               pool.query(
                   'UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;',
                   [sincloCore[d.siteKey][d.tabId].historyId, results.insertId],
@@ -1540,6 +1544,7 @@ io.sockets.on('connection', function(socket) {
                         'RECORD INSERT ERROR: notifyCommit-func:' + error);
                   }
                   if (results.hasOwnProperty('insertId')) {
+                    ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, ((d.messageType !== 1 && d.messageType !== 8) ? 1 : 2), insertData.created);
                     d.id = results.insertId;
                     d.created = fullDateTime(d.created);
                   }
@@ -3837,6 +3842,7 @@ io.sockets.on('connection', function(socket) {
         obj.chatMessage.replace('button_', '').replace('\n', ''),
         obj.messageDistinction,
         obj.created).then((resultData) => {
+      ChatLogTimeManager.saveTime(resultData.insertId, sincloCore[obj.siteKey][obj.tabId].historyId, 2, obj.created);
       customerMessageInsertResult = resultData;
       customerSendData = {
         tabId: obj.tabId,
