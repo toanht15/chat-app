@@ -8,11 +8,11 @@
                                                                       data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の回答内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。<br><br>例）変数名：名前　⇒　{{showExpression('名前')}}様からのお問い合わせを受付いたしました。">?</icon></span>
         </div>
         <div class='area-type'>計算タイプ<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="ヒアリングの回答を入力する形式を指定します。<br>＜タイプ＞<br>テキスト(1行)　 　 ：フリーテキスト入力（改行不可）<br>テキスト(複数行)　 ：フリーテキスト入力（改行可）<br>ラジオボタン　　　：ラジオボタン形式の択一選択<br>プルダウン　　　　：プルダウン形式の択一選択<br>カレンダー　　　　：カレンダーから日付を選択"
+                                                                      data-tooltip="計算を行う形式を指定します。<br>＜タイプ＞<br>数値　 　 ：四則演算による数字の計算が可能です。<br>文字列　 ：&を用いた文字列同士の結合が可能です。"
                                                                       data-tooltip-width="30em">?</icon></span>
         </div>
         <div class='area-message'>計算式<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="チャットボットが自動送信する質問内容を設定します。<br><br>例）お名前を入力して下さい。">?</icon></span>
+                                                                      data-tooltip="計算式を入力します。計算式の結果が変数に代入されます。">?</icon></span>
         </div>
 
       </div>
