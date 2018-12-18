@@ -534,6 +534,7 @@
                 var calendar_options = {
                   dateFormat: 'Y/m/d',
                   minDate: 'today',
+                  maxDate: 'today',
                   inline: 'true',
                   disable: [],
                   enable: [],
@@ -561,6 +562,17 @@
                 } else {
                   calendar_options.minDate = hearing.settings.disablePastDate ? 'today' : '';
                 }
+                //set max date
+                if (hearing.settings.isDisableAfterDate) {
+                  if (!hearing.settings.disableAfterDate) {
+                    hearing.settings.disableAfterDate = 0;
+                  }
+                  calendar_options.maxDate = new Date().fp_incr(hearing.settings.disableAfterDate);
+                } else {
+                  calendar_options.maxDate = '';
+                }
+
+
                 // set disable date
                 if (hearing.settings.isSetDisableDate) {
                   if (hearing.settings.isDisableDayOfWeek) {
@@ -2585,6 +2597,7 @@
 
           if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CALENDAR ?>) {
             var data = {};
+            console.log(hearingDetail.settings);
             data.settings = hearingDetail.settings;
             data.design = hearingDetail.settings.customDesign;
             data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
