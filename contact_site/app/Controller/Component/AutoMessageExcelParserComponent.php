@@ -274,4 +274,10 @@ class AutoMessageExcelParserComponent extends ExcelParserComponent
     if (empty($errors[$type])) $errors[$type] = [];
     array_push($errors[$type], $message);
   }
+
+  public function writeData()
+  {
+    $this->phpExcel->getActiveSheet()->setCellValue('E4', 'する');
+    $this->exportData();
+  }
 }
