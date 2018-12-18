@@ -12,7 +12,7 @@
                                                                       data-tooltip-width="30em">?</icon></span>
         </div>
         <div class='area-message'>計算式<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="計算式を入力します。計算式の結果が変数に代入されます。">?</icon></span>
+                                                                      data-tooltip="計算式を入力します。計算式の結果が変数に代入されます。<br>※演算記号は半角で入力して下さい。">?</icon></span>
         </div>
 
       </div>
