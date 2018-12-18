@@ -5,14 +5,14 @@
     <li>
       <div class='grid-container-control-variable grid-container-header'>
         <div class='area-name'>変数名<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の回答内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。<br><br>例）変数名：名前　⇒　{{showExpression('名前')}}様からのお問い合わせを受付いたしました。">?</icon></span>
+                                                                      data-tooltip="変数名を設定します。<br>ここで設定した変数名に計算結果が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}<br>と指定することで利用することが可能です。">?</icon></span>
         </div>
         <div class='area-type'>計算タイプ<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="計算を行う形式を指定します。<br>＜タイプ＞<br>数値　 　 ：四則演算による数字の計算が可能です。<br>文字列　 ：&を用いた文字列同士の結合が可能です。"
+                                                                      data-tooltip="計算を行う形式を指定します。<br>＜タイプ＞<br>数値　：四則演算（+,-,*,/,()）や任意の数値を変数に代入することが可能です。<br>文字列：&を用いた文字列結合や任意の文字列を変数に代入することが可能です。"
                                                                       data-tooltip-width="30em">?</icon></span>
         </div>
         <div class='area-message'>計算式<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="計算式を入力します。計算式の結果が変数に代入されます。">?</icon></span>
+                                                                      data-tooltip='計算式または代入したい値や文字列を入力します。<br>計算式の結果が変数に代入されます。<br>＜利用できる記号＞<br>計算タイプ=数値の場合　："+"（足す）,"-"（引く）,"*"（掛ける）,<br>"/"（割る）,"()"（カッコ）<br>計算タイプ=文字列の場合："&"'>?</icon></span>
         </div>
 
       </div>

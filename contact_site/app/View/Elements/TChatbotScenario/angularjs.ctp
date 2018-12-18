@@ -2724,25 +2724,25 @@
        * @param Object actionDetail アクション詳細
        */
       this.doControlVariable = function(actionDetail) {
-        try {
           actionDetail['calcRules'].forEach(function(calcRule) {
-            var formula = calcRule.formula;
-            if (Number(calcRule.calcType) === 1) {
-              formula = self.toHalfWidth($scope.replaceIntegerVariable(formula));
-              formula = Number(eval(formula));
-            } else if (Number(calcRule.calcType) === 2) {
-              formula = self.adjustString($scope.replaceVariable(formula));
+            try {
+              var formula = calcRule.formula;
+              if (Number(calcRule.calcType) === 1) {
+                formula = self.toHalfWidth($scope.replaceIntegerVariable(formula));
+                formula = Number(eval(formula));
+              } else if (Number(calcRule.calcType) === 2) {
+                formula = self.adjustString($scope.replaceVariable(formula));
+              }
+              LocalStorageService.setItem('chatbotVariables', [
+                {
+                  key: calcRule.variableName,
+                  value: formula
+                }]);
             }
-            LocalStorageService.setItem('chatbotVariables', [
-              {
-                key: calcRule.variableName,
-                value: formula
-              }]);
+            catch(e){
+              console.log(e);
+            }
           });
-        }
-        catch (e) {
-          console.log(e);
-        }
         $scope.actionStep++;
         $scope.doAction();
       };

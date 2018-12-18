@@ -8402,7 +8402,6 @@ ul.naviBtn {
                 :nth-child(3) {
                   grid-column: 3;
                   -ms-grid-column: 3;
-                  overflow: hidden;
                 }
                 input[type="text"], select {
                   border-radius: 4px;
@@ -8430,8 +8429,8 @@ ul.naviBtn {
                 align-items: center;
               }
               .grid-container-body {
-                grid-template-rows: 50px 1fr;
-                -ms-grid-rows: 50px 1fr;
+                grid-template-rows: 1fr;
+                -ms-grid-rows: 1fr;
               }
             }
           }
