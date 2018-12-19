@@ -833,7 +833,7 @@ class TAutoMessagesController extends AppController {
             || $lastData['TAutoMessage']['sort'] === 0
             || $lastData['TAutoMessage']['sort'] === null){
           //ソート順が登録されていなかったらソート順をセットする
-          if(! $this->remoteSetSort()){
+          if(! $this->remoteSetSort()) {
             $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
             throw new AutoMessageException('ソート順が設定できませんでした。');
           }
