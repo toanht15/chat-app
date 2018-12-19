@@ -3485,7 +3485,8 @@
             var linkTab = a.match(this._regList.linkTabReg);
             var processedLink = linkTab[1].replace(/ /g, '\$nbsp;');
             a = a.replace(linkTab[1],
-                linkTab[1] + ' onclick=link(\'' + check.escape_html(linkTab[2]) + '\',\'' +
+                linkTab[1] + ' onclick=link(\'' +
+                check.escape_html(linkTab[2]) + '\',\'' +
                 processedLink + '\',\'' + option + '\')');
             str = str.replace(url, a);
           } else {
@@ -3518,14 +3519,16 @@
                 if (check.smartphone()) {
                   a = a.replace(linkTab[1], linkTab[1] +
                       'class=\'sincloTelConversion\' onclick=link(\'' +
-                      check.escape_html(linkTab[2]) + '\',\'' + processedLink + '\',\'' + option +
+                      check.escape_html(linkTab[2]) + '\',\'' + processedLink +
+                      '\',\'' + option +
                       '\');sinclo.api.callTelCV(\'' + telno + '\')');
                 } else {
                   a = '<span class=\'link\'>' + linkTab[2] + '</span>';
                 }
               } else {
                 a = a.replace(linkTab[1],
-                    linkTab[1] + ' onclick=link(\'' + check.escape_html(linkTab[2]) + '\',\'' +
+                    linkTab[1] + ' onclick=link(\'' +
+                    check.escape_html(linkTab[2]) + '\',\'' +
                     processedLink + '\',\'' + option + '\')');
               }
             } else {
@@ -3971,6 +3974,7 @@
         var options = {
           dateFormat: 'Y/m/d',
           minDate: 'today',
+          maxDate: 'today',
           inline: 'true',
           disable: [],
           enable: [],
@@ -3987,6 +3991,12 @@
           options.minDate = new Date().fp_incr(settings.enableAfterDate);
         } else {
           options.minDate = settings.disablePastDate ? 'today' : '';
+        }
+        // set maxDate
+        if (settings.isDisableAfterDate) {
+          options.maxDate = new Date().fp_incr(settings.disableAfterDate);
+        } else {
+          options.maxDate = '';
         }
         // set disable date
         if (settings.isDisableDayOfWeek) {
@@ -6979,7 +6989,8 @@
         branchOnCond: '10',
         addCustomerInformation: '11',
         bulkHearing: '12',
-        addLeadInformation: '13'
+        addLeadInformation: '13',
+        controlVariable: '14'
       },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
@@ -7378,11 +7389,12 @@
             self.set(self._lKey.sendCustomerMessageType, 30);
             break;
           case self._actionType.addLeadInformation:
-            console.log('★★★★★★');
-            console.log('リード登録');
-            console.log('★★★★★★');
             self._addLeadInformation._init(self);
             self._addLeadInformation._process();
+            break;
+          case self._actionType.controlVariable:
+            self._controlVariable._init(self);
+            self._controlVariable._process();
             break;
         }
       },
@@ -9565,6 +9577,95 @@
             delete data['leadVariableName'];
           });
           return dataSet;
+        }
+      },
+      _controlVariable: {
+        _parent: null,
+        _init: function(parent) {
+          this._parent = parent;
+        },
+        _process: function() {
+          var self = sinclo.scenarioApi._controlVariable;
+          self._parent._doing(0, function() {
+            self._parent._handleChatTextArea(self._parent.get(
+                self._parent._lKey.currentScenario).chatTextArea);
+            self._calculateFormula(function(result) {
+              if (self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
+            });
+          });
+        },
+        _calculateFormula: function( callback ) {
+          var self = sinclo.scenarioApi._controlVariable;
+          var result = "";
+          var rules = self._parent.get(
+              self._parent._lKey.currentScenario).calcRules;
+          rules.forEach( function(rule) {
+            try {
+              if (Number(rule.calcType) === 1) {
+                formula = self._replaceIntegerVariable(rule.formula);
+                console.log(formula);
+                result = Number(eval(self._toHalfWidth(formula)));
+                if(isNaN(result)){
+                  throw new Error("Not a Number");
+                }
+                console.log(result);
+              } else if (Number(rule.calcType) === 2) {
+                result = self._convertString(
+                    self._replaceVariable(rule.formula));
+              }
+              self._parent._saveVariable(rule.variableName, String(result));
+            }
+            catch (e) {
+              console.log(e);
+            }
+          });
+          callback();
+        },
+        _toHalfWidth: function(message) {
+          var halfWidth = message.replace(/[！-～]/g,
+              function(tmpStr) {
+                return String.fromCharCode(tmpStr.charCodeAt(0) - 0xFEE0);
+              }
+          );
+          return halfWidth.replace(/”/g, '"').
+              replace(/’/g, '\'').
+              replace(/￥/g, '\\').
+              replace(/　/g, ' ').
+              replace(/～/g, '~');
+        },
+        _replaceVariable: function(message) {
+          var self = sinclo.scenarioApi;
+          if (message) {
+            return message.replace(/\{\{(.+?)\}\}/g, function(param) {
+              var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
+              return self._getStoredVariable(name) || name;
+            });
+          } else {
+            return '';
+          }
+        },
+        _replaceIntegerVariable: function(message) {
+          var self = sinclo.scenarioApi;
+          if (message) {
+            return message.replace(/\{\{(.+?)\}\}/g, function(param) {
+              var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
+              return Number(self._getStoredVariable(name)) || name;
+            });
+          } else {
+            return '';
+          }
+        },
+        _convertString: function(message) {
+          if (message.indexOf('&') != -1) {
+            var itemArray = message.split('&');
+            message = '';
+            itemArray.forEach(function(item) {
+              message += item;
+            });
+          }
+          return message;
         }
       }
     },
