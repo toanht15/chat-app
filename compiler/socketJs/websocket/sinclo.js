@@ -3060,11 +3060,6 @@
             $(this).prop('disabled', false);
           }
         });
-        if(check.smartphone()){
-          $('#flexBoxWrap').focusin(function (e) {
-            console.log('スマホでフォーカスされてるのでブロックします');
-          });
-        }
       },
       removeAllEvent: function() {
         if (window.sincloInfo.contract.chat) {
