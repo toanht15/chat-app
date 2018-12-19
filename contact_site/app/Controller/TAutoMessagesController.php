@@ -637,6 +637,10 @@ class TAutoMessagesController extends AppController {
     );
   }
 
+  /**
+   * 一括インポート
+   * @return false|string
+   */
   public function bulkImport()
   {
     Configure::write('debug', 0);
@@ -748,115 +752,10 @@ class TAutoMessagesController extends AppController {
     return json_encode($result);
   }
 
-  public function import() {
-    Configure::write('debug', 0);
-    $this->autoRender = false;
-    $this->layout = false;
 
-    $result = [
-      'success' => false
-    ];
-
-    $file = $this->params['form']['file'];
-
-    $lastPage = $this->request->data['lastPage'];
-
-    $component = new AutoMessageExcelExportComponent($file['tmp_name']);
-    try {
-      $component->getImportData();
-      $transactions = null;
-      $data = $component->toArray();
-      $transactions = $this->TransactionManager->begin();
-      $dataArray = [];
-      $errorArray = [];
-      $errorFound = false;
-      foreach($data as $index => $row) {
-        $saveData = [
-          'TAutoMessage' => [
-            'lastPage' => $lastPage,
-            'm_companies_id' => $this->userInfo['MCompany']['id'],
-            'name' => $row['name'],
-            'trigger_type' => 0, // 「画面読み込み時」固定
-            'activity' => json_encode([
-              'conditionType' => 1, // 「全て一致」固定
-              'conditions' => [
-                C_AUTO_TRIGGER_SPEECH_CONTENT => [ // 条件「発言内容」固定
-                  [
-                    'keyword_contains' => $row['keyword_contains'],
-                    'keyword_contains_type' => (string)$row['keyword_contains_type'],
-                    'keyword_exclusions' => $row['keyword_exclusions'],
-                    'keyword_exclusions_type' => (string)$row['keyword_exclusions_type'],
-                    'speechContentCond' => $row['speechContentCond'],
-                    'triggerTimeSec' => $row['triggerTimeSec'],
-                    'speechTriggerCond' => $row['speechTriggerCond']
-                  ]
-                ]
-              ],
-              'widgetOpen' => 1, // 「最大化する」固定
-              'message' => $row['action'],
-              'chatTextarea' => $row['chat_textarea'],
-              'cv' => $row['cv']
-            ], JSON_UNESCAPED_UNICODE), // 日本語はエスケープしないで入れる仕様
-            'action_type' => 1, // 「チャットメッセージを送る」固定
-            'active_flg' => $row['active_flg'],
-            'del_flg' => 0
-          ]
-        ];
-
-        if($row['send_mail_flg'] === 1) {
-          $saveData['main']['send_mail_flg'] = $row['send_mail_flg'];
-          $saveData['main']['mail_address_1'] = $row['mail_address_1'];
-          $saveData['main']['mail_address_2'] = $row['mail_address_2'];
-          $saveData['main']['mail_address_3'] = $row['mail_address_3'];
-          $saveData['main']['mail_address_4'] = $row['mail_address_4'];
-          $saveData['main']['mail_address_5'] = $row['mail_address_5'];
-          $saveData['main']['subject'] = $row['mail_subject'];
-          $saveData['main']['from_name'] = $row['mail_from_name'];
-        }
-
-        $this->TAutoMessage->set($saveData);
-        $validate = $this->TAutoMessage->validates();
-        $errors = $this->TAutoMessage->validationErrors;
-        if(!empty($errors)) {
-          $errorFound = true;
-          $errorArray[$row['rowNum']] = $errors;
-        } else {
-          array_push($dataArray, $saveData);
-        }
-      }
-      $nextPage = '1';
-      if(!$errorFound) {
-        foreach ($dataArray as $index => $saveData) {
-          $nextPage = $this->_entryProcess($saveData);
-        }
-        $this->TransactionManager->commitTransaction($transactions);
-        $result['success'] = true;
-        $result['showPageNum'] = $nextPage;
-      } else {
-        $result['errorMessage'] = []; // FIXME 何行目の何列がどうダメなのか返す
-      }
-    } catch(AutoMessageException $e) {
-      if($transactions) {
-        $this->TransactionManager->rollbackTransaction($transactions);
-      }
-      $result['success'] = false;
-      $result['errorCode'] = 400;
-      $result['errorMessages'] = $e->getErrors();
-    } catch(Exception $e) {
-      if($transactions) {
-        $this->TransactionManager->rollbackTransaction($transactions);
-      }
-      $result['success'] = false;
-      $result['errorCode'] = 400;
-      $this->log("Excel import error found. message => ".$e->getMessage, LOG_WARNING);
-      $result['errorMessages'] = [
-        'type' => 'system',
-        'message' => 'ファイルの読み込みに失敗しました。'
-      ];
-    }
-    return json_encode($result);
-  }
-
+  /**
+   *一括エクスポート
+   */
   public function bulkExport() {
     Configure::write('debug', 0);
     $this->autoRender = false;
@@ -890,7 +789,7 @@ class TAutoMessagesController extends AppController {
 
     return $component->export($data);
   }
-
+  
   public function downloadTemplate() {
     $this->autoRender = false;
     $filePath = ROOT.DS.self::FULL_TEMPLATE_FILE_NAME;

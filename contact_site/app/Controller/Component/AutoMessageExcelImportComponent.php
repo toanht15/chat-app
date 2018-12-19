@@ -471,7 +471,40 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
 
     // 曜日・時間
     if ($this->isSettingMap[$row['U']] == 1) {
-      // TODO
+      if (empty($row['V'])) {
+        $this->addError($errors, 'V', '曜日が未入力です');
+      } else {
+        $string     = str_replace(' ', '', $row['V']);
+        $importDays = explode(',', rtrim($string, ','));
+        foreach ($importDays as $importDay) {
+          if (!in_array($importDay, array_keys($this->weekdayMap))) {
+            $this->addError($errors, 'V', '月/火/水/木/金/土/日 のみ指定可能です');
+            break;
+          }
+        }
+      }
+
+      if(empty($row['W']) && !empty($row['X'])) {
+        $this->addError($errors, 'X','開始時間が未入力です');
+      }
+
+      if(!empty($row['W']) && empty($row['X'])) {
+          $this->addError($errors, 'X','終了時間が未入力です');
+      }
+
+      if(!empty($row['W'])) {
+        $time = PHPExcel_Style_NumberFormat::toFormattedString($row['W'], 'hh:mm');
+        if (!preg_match("/^(?:2[0-4]|[01][1-9]|10):([0-5][0-9])$/", $time)) {
+          $this->addError($errors, 'W','MM:SS形式のみ指定可能です');
+        }
+      }
+
+      if(!empty($row['X'])) {
+        $time = PHPExcel_Style_NumberFormat::toFormattedString($row['X'], 'hh:mm');
+        if (!preg_match("/^(?:2[0-4]|[01][1-9]|10):([0-5][0-9])$/", $time)) {
+          $this->addError($errors, 'X','MM:SS形式のみ指定可能です');
+        }
+      }
     }
 
     // 参照元URL（リファラー）
@@ -585,22 +618,78 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     }
 
     // send message
-    if ($this->isSettingMap[$row['BD']] == 1) {
+    if ($this->actionTypeMap[$row['BD']] == 1) {
       if(empty($row['BE'])) {
         $this->addError($errors, 'BE','自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
       }
 
-      // todo
+      if(empty($row['BF'])) {
+        $this->addError($errors, 'BF','メッセージの指定は必須です');
+      }
+
+      if(empty($row['BG'])) {
+        $this->addError($errors, 'BG','ON（自由入力可）/OFF（自由入力不可） のいずれかの指定のみ可能です');
+      }
+
+      if(empty($row['BH'])) {
+        $this->addError($errors, 'BH','する/しない のいずれかの指定のみ可能です');
+      }
+
+      if(empty($row['BI'])) {
+        $this->addError($errors, 'BI','する/しない のいずれかの指定のみ可能です');
+      }
+      // if send mail
+      if($this->isSettingMap[$row['BI']] == 1) {
+        if(empty($row['BO'])) {
+          $this->addError($errors, 'BI','メールタイトルの指定は必須です');
+        }
+
+        if(!Validation::maxLength($row['BO'], 100)) {
+          $this->addError($errors, 'BI','メールタイトルは１００文字以内で設定してください');
+        }
+
+        if(empty($row['BP'])) {
+          $this->addError($errors, 'BI','差出人名の指定は必須です');
+        }
+
+        if(!Validation::maxLength($row['BP'], 100)) {
+          $this->addError($errors, 'BP','差出人名は１００文字以内で設定してください');
+        }
+
+        if(empty($row['BJ']) && empty($row['BK']) && empty($row['BL']) && empty($row['BM']) && empty($row['BN'])) {
+          $this->addError($errors, 'BJ','メールアドレスはいずれかの指定が必須です');
+        }
+
+        if(!empty($row['BJ']) && !Validation::email($row['BJ'])) {
+          $this->addError($errors, 'BJ','メールアドレスのみ指定可能です');
+        }
+
+        if(!empty($row['BK']) && !Validation::email($row['BK'])) {
+          $this->addError($errors, 'BK','メールアドレスのみ指定可能です');
+        }
+
+        if(!empty($row['BL']) && !Validation::email($row['BL'])) {
+          $this->addError($errors, 'BL','メールアドレスのみ指定可能です');
+        }
+
+        if(!empty($row['BM']) && !Validation::email($row['BM'])) {
+          $this->addError($errors, 'BM','メールアドレスのみ指定可能です');
+        }
+
+        if(!empty($row['BN']) && !Validation::email($row['BN'])) {
+          $this->addError($errors, 'BN','メールアドレスのみ指定可能です');
+        }
+      }
     }
 
     // scenario
-    if ($this->isSettingMap[$row['BD']] == 2) {
+    if ($this->actionTypeMap[$row['BD']] == 2) {
       if(empty($row['BR'])) {
         $this->addError($errors, 'BR','自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['BQ'])) {
-        $this->addError($errors, 'BQ','シナリオが未入力です');
+      if(empty($row['BR'])) {
+        $this->addError($errors, 'BR','シナリオが未入力です');
       }
     }
 
