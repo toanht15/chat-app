@@ -133,8 +133,7 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
   <div id="autoMessageLayerMenu">
     <ul>
       <li class="t-link">
-        <!--<a href="javascript:void(0)" onclick="window.open('<?/*= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'bulkExport']) */?>//')">-->
-        <a href="javascript:void(0)" onclick="">
+        <a href="javascript:void(0)" onclick="window.open('<?= $this->Html->url(['controller' => 'TAutoMessages', 'action' => 'bulkExport']) ?>')">
           現在の設定内容をエクスポートする
         </a>
       </li>
