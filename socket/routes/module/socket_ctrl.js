@@ -2603,7 +2603,7 @@ io.sockets.on('connection', function(socket) {
           functionManager.keyList.monitorPollingMode)) return false;
       chatApi.sendUnreadCnt('sendChatInfo', obj, false);
 
-      if (isset(sincloCore[val.siteKey][sincloSessionId])) {
+      if (isset(sincloCore[obj.siteKey][obj.sincloSessionId])) {
         sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo = obj.customerInfo;
       }
     };
