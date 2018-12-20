@@ -1162,7 +1162,7 @@ var socket, // socket.io
         html += '      @keyframes fadeIn { 0% { opacity :0; } 100% { opacity :1; } }';
         html += '      @keyframes noneRightEffect { 0% { opacity :0; } 70% {} 100% { opacity :1; } }';
         html += '      @keyframes noneLeftEffect { 0% { opacity :0; } 69% {} 100% { opacity :1; } }';
-        html += '      #sincloBox #mainImage em { position: absolute; background-image: url("' +
+        html += '      #sincloBox #mainImage em { display: flex; align-items: center; justify-content: center; position: fixed; background-image: url("' +
             window.sincloInfo.site.files +
             '/img/chat-bg.png");background-size: contain;background-repeat: no-repeat; color: #FFF; font-style: normal; text-align: center; font-weight: bold }';
         // ファイルフォントアイコン-----------
@@ -1612,6 +1612,7 @@ var socket, // socket.io
               'px; left: ' + (8 * ratio) + 'px; }';
           html += '#sincloBox sinclo-div#widgetHeader:after { top: ' +
               (35 * ratio) + 'px }';
+          html += '      #sincloBox #mainImage em { position:absolute; }';
           html += '#sincloBox p#widgetTitle { border-radius: ' +
               (widget.radiusRatio * ratio) + 'px ' +
               (widget.radiusRatio * ratio) + 'px 0 0; border: ' + (1 * ratio) +
@@ -3314,7 +3315,7 @@ var socket, // socket.io
                 '" style="width:calc(' + (62 * ratio) +
                 'px* ((3 * 14 + 36) / 81))!important; height:calc(' +
                 (70 * ratio) +
-                'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像">';
+                'px* ((3 * 14 + 36) / 81))!important; display:block;" alt="チャット画像">';
           }
         } else {
           if (widget.mainImage.match(/^fa/) !== null) {
@@ -3330,7 +3331,7 @@ var socket, // socket.io
                 widget.headerTextSize +
                 ' + 36) / 81))!important; height:calc(' + (70 * ratio) +
                 'px* ((3 * ' + widget.headerTextSize +
-                ' + 36) / 81))!important;" alt="チャット画像">';
+                ' + 36) / 81))!important; display:block;" alt="チャット画像">';
           }
         }
         html += '  </span>';
