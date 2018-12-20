@@ -3523,6 +3523,24 @@ io.sockets.on('connection', function(socket) {
     var obj = JSON.parse(d), date = new Date(), now = fullDateTime(date),
         type = chatApi.cnst.observeType.start;
     var logToken = makeToken();
+    // TODO 履歴IDチェック
+    try {
+      if (isset(sincloCore[obj.siteKey]) &&
+          isset(sincloCore[obj.siteKey][obj.tabId])) {
+        sincloCore[obj.siteKey][obj.tabId].chatUnreadId = null;
+        sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt = 0;
+        console.log('reset chatUnreadCnt');
+      }
+      Object.keys(sincloCore[obj.siteKey]).some(function(key) {
+        if (sincloCore[obj.siteKey][key].sincloSessionId ===
+            obj.sincloSessionId) {
+          sincloCore[obj.siteKey][key].chatUnreadId = null;
+          sincloCore[obj.siteKey][key].chatUnreadCnt = 0;
+          return true;
+        }
+      });
+    } catch (e) {
+    }
     console.log('chatStart-0: [' + logToken +
         '] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     console.log('chatStart-1: [' + logToken + '] ' + d);
@@ -4135,26 +4153,12 @@ io.sockets.on('connection', function(socket) {
   // 既読操作
   socket.on('isReadChatMessage', function(d) {
     var obj = JSON.parse(d);
-    // TODO 履歴IDチェック
     if (isset(sincloCore[obj.siteKey][obj.tabId].historyId)) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query(
           'UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;',
           [obj.historyId, obj.chatId], function(err, ret, fields) {
-            if (isset(sincloCore[obj.siteKey]) &&
-                isset(sincloCore[obj.siteKey][obj.tabId])) {
-              sincloCore[obj.siteKey][obj.tabId].chatUnreadId = null;
-              sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt = 0;
-              console.log('reset chatUnreadCnt');
-            }
             chatApi.sendUnreadCnt('retReadChatMessage', obj, true);
-            Object.keys(sincloCore[obj.siteKey]).forEach(function(key) {
-              if (sincloCore[obj.siteKey][key].sincloSessionId ===
-                  obj.sincloSessionId) {
-                sincloCore[obj.siteKey][key].chatUnreadId = null;
-                sincloCore[obj.siteKey][key].chatUnreadCnt = 0;
-              }
-            });
           }
       );
     }
