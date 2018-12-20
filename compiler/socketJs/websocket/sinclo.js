@@ -9605,12 +9605,11 @@
             try {
               if (Number(rule.calcType) === 1) {
                 formula = self._replaceIntegerVariable(rule.formula);
-                console.log(formula);
                 result = Number(eval(self._toHalfWidth(formula)));
+                result = self._adjustString( result, rule.significantDigits, rule.rulesForRounding );
                 if(isNaN(result)){
                   throw new Error("Not a Number");
                 }
-                console.log(result);
               } else if (Number(rule.calcType) === 2) {
                 result = self._convertString(
                     self._replaceVariable(rule.formula));
@@ -9622,6 +9621,25 @@
             }
           });
           callback();
+        },
+        _adjustString: function(value, digits, roundRule) {
+          var index = Math.pow(10, digits - 1);
+          switch ( Number(roundRule) ) {
+            case 1:
+              //四捨五入の場合
+              value = Math.round( value * index ) / index;
+              break;
+            case 2:
+              //切り捨ての場合
+              value = Math.floor( value * index ) / index;
+              break;
+            case 3:
+              //切り上げの場合
+              value = Math.ceil( value * index ) / index;
+              break;
+          }
+
+          return value;
         },
         _toHalfWidth: function(message) {
           var halfWidth = message.replace(/[！-～]/g,
