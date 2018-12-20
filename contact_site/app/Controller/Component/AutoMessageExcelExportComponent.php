@@ -246,8 +246,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     $this->setColumnConditionalFormat('AH', $row, $this->isSettingMap[2]);
     $this->setColumnConditionalFormat('AP', $row, $this->isSettingMap[2]);
     $this->setColumnConditionalFormat('AW', $row, $this->isSettingMap[2]);
-    $this->setColumnConditionalFormat('BE', $row, "シナリオを選択する");
-    $this->setColumnConditionalFormat('BQ', $row, "チャットメッセージを送る");
+    $this->setColumnConditionalFormat('BE', $row, $this->actionTypeMap[2]);
+    $this->setColumnConditionalFormat('BQ', $row, $this->actionTypeMap[1]);
   }
 
   /**
@@ -417,7 +417,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeStayTimeData($json, $row)
   {
     if (isset($json['conditions'][1])) {
-      $this->currentSheet->setCellValue('E' . $row, 'する');
+      $this->currentSheet->setCellValue('E' . $row, $this->isSettingMap[1]);
       $this->currentSheet->setCellValue('F' . $row, $this->stayTimeCheckTypeMap[$json['conditions'][1][0]['stayTimeCheckType']]);
       $this->currentSheet->setCellValue('G' . $row, $this->stayTimeTypeMap[$json['conditions'][1][0]['stayTimeType']]);
       $this->currentSheet->setCellValue('H' . $row, $json['conditions'][1][0]['stayTimeRange']);
@@ -432,7 +432,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeVisitCountData($json, $row)
   {
     if (isset($json['conditions'][2])) {
-      $this->currentSheet->setCellValue('I' . $row, 'する');
+      $this->currentSheet->setCellValue('I' . $row, $this->isSettingMap[1]);
       $this->currentSheet->setCellValue('J' . $row, $json['conditions'][2][0]['visitCnt']);
       $this->currentSheet->setCellValue('K' . $row, $this->visitCntCondMap[$json['conditions'][2][0]['visitCntCond']]);
     }
@@ -446,7 +446,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeURLData($json, $row)
   {
     if (isset($json['conditions'][3])) {
-      $this->currentSheet->setCellValue('L' . $row, 'する');
+      $this->currentSheet->setCellValue('L' . $row, $this->isSettingMap[1]);
       $this->currentSheet->setCellValue('M' . $row, $this->targetNameMap[$json['conditions'][3][0]['targetName']]);
       $this->currentSheet->setCellValue('N' . $row, $json['conditions'][3][0]['keyword_contains']);
       $this->currentSheet->setCellValue('O' . $row, $this->kWDContainTypeMap[$json['conditions'][3][0]['keyword_contains_type']]);
@@ -464,7 +464,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeWeekdayData($json, $row)
   {
     if (isset($json['conditions'][4])) {
-      $this->currentSheet->setCellValue('U' . $row, 'する');
+      $this->currentSheet->setCellValue('U' . $row, $this->isSettingMap[1]);
       $weekDays = '';
       foreach ($json['conditions'][4][0]['day'] as $day => $val) {
         if ($val) {
@@ -487,7 +487,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeRefferURLData($json, $row)
   {
     if (isset($json['conditions'][5])) {
-      $this->currentSheet->setCellValue('Y' . $row, 'する');
+      $this->currentSheet->setCellValue('Y' . $row, $this->isSettingMap[1]);
       $this->currentSheet->setCellValue('Z' . $row, $json['conditions'][5][0]['keyword_contains']);
       $this->currentSheet->setCellValue('AA' . $row, $this->kWDContainTypeMap[$json['conditions'][5][0]['keyword_contains_type']]);
       $this->currentSheet->setCellValue('AB' . $row, $json['conditions'][5][0]['keyword_exclusions']);
@@ -503,7 +503,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeSearchKeywordData($json, $row)
   {
     if (isset($json['conditions'][6])) {
-      $this->currentSheet->setCellValue('AE' . $row, 'する');
+      $this->currentSheet->setCellValue('AE' . $row, $this->isSettingMap[1]);
       $this->currentSheet->setCellValue('AF' . $row, $json['conditions'][6][0]['keyword']);
       $this->currentSheet->setCellValue('AG' . $row, $this->stayPageCondTypeMap[$json['conditions'][6][0]['searchCond']]);
     }
@@ -516,7 +516,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeSpeechContentData($json, $row)
   {
     if (isset($json['conditions'][7])) {
-      $this->currentSheet->setCellValue('AH' . $row, 'する');
+      $this->currentSheet->setCellValue('AH' . $row, $this->isSettingMap[1]);
       $this->currentSheet->setCellValue('AI' . $row, $json['conditions'][7][0]['keyword_contains']);
       $this->currentSheet->setCellValue('AJ' . $row, $this->kWDContainTypeMap[$json['conditions'][7][0]['keyword_contains_type']]);
       $this->currentSheet->setCellValue('AK' . $row, $json['conditions'][7][0]['keyword_exclusions']);
@@ -534,7 +534,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeFirstVisitPageData($json, $row)
   {
     if (isset($json['conditions'][8])) {
-      $this->currentSheet->setCellValue('AP' . $row, 'する');
+      $this->currentSheet->setCellValue('AP' . $row, $this->isSettingMap[1]);
       $this->currentSheet->setCellValue('AQ' . $row, $this->targetNameMap[$json['conditions'][8][0]['targetName']]);
       $this->currentSheet->setCellValue('AR' . $row, $json['conditions'][8][0]['keyword_contains']);
       $this->currentSheet->setCellValue('AS' . $row, $this->kWDContainTypeMap[$json['conditions'][8][0]['keyword_contains_type']]);
@@ -551,7 +551,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writePreviousPageData($json, $row)
   {
     if (isset($json['conditions'][9])) {
-      $this->currentSheet->setCellValue('AW' . $row, 'する');
+      $this->currentSheet->setCellValue('AW' . $row, $this->isSettingMap[1]);
       $this->currentSheet->setCellValue('AX' . $row, $this->targetNameMap[$json['conditions'][9][0]['targetName']]);
       $this->currentSheet->setCellValue('AY' . $row, $json['conditions'][9][0]['keyword_contains']);
       $this->currentSheet->setCellValue('AZ' . $row, $this->kWDContainTypeMap[$json['conditions'][9][0]['keyword_contains_type']]);
@@ -568,7 +568,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeBusinessHourData($json, $row)
   {
     if (isset($json['conditions'][10])) {
-      $this->currentSheet->setCellValue('S' . $row, 'する');
+      $this->currentSheet->setCellValue('S' . $row, $this->isSettingMap[1]);
       $this->currentSheet->setCellValue('T' . $row, $this->businessHourMap[$json['conditions'][10][0]['operatingHoursTime']]);
     }
   }
@@ -580,7 +580,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   private function writeScenarioData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, 'シナリオを選択する');
+    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[2]);
     $this->currentSheet->setCellValue('BQ' . $row, $value['TChatbotScenario']['name']);
     $this->currentSheet->setCellValue('BR' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
   }
@@ -592,7 +592,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   private function writeSendMessageData($json, $row, $value)
   {
-    $this->currentSheet->setCellValue('BD' . $row, 'チャットメッセージを送る');
+    $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[1]);
     $this->currentSheet->setCellValue('BE' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
     $this->currentSheet->setCellValue('BF' . $row, $json['message']);
     $this->currentSheet->setCellValue('BG' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
