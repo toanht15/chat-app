@@ -282,16 +282,21 @@
           var widgetHorizontalPosition = '10px';
           var widgetVerticalPosition = '0px';
           if (!check.smartphone()) {
-            widgetHorizontalPosition = (window.sincloInfo.custom &&
-                window.sincloInfo.custom.widget &&
-                window.sincloInfo.custom.widget.horizontalPosition) ?
-                window.sincloInfo.custom.widget.horizontalPosition :
-                '10px';
-            widgetVerticalPosition = (window.sincloInfo.custom &&
-                window.sincloInfo.custom.widget &&
-                window.sincloInfo.custom.widget.verticalPosition) ?
-                window.sincloInfo.custom.widget.verticalPosition :
-                '0px';
+            if(Number(sincloInfo.widget.widgetSizeType) === 4) {
+              widgetHorizontalPosition = "0px";
+              widgetVerticalPosition = "0px";
+            } else {
+              widgetHorizontalPosition = (window.sincloInfo.custom &&
+                  window.sincloInfo.custom.widget &&
+                  window.sincloInfo.custom.widget.horizontalPosition) ?
+                  window.sincloInfo.custom.widget.horizontalPosition :
+                  '10px';
+              widgetVerticalPosition = (window.sincloInfo.custom &&
+                  window.sincloInfo.custom.widget &&
+                  window.sincloInfo.custom.widget.verticalPosition) ?
+                  window.sincloInfo.custom.widget.verticalPosition :
+                  '0px';
+            }
           }
           common.widgetHandler._handleResizeEvent();
           switch (Number(window.sincloInfo.widget.showPosition)) {
