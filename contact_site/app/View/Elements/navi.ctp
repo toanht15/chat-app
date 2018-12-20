@@ -45,7 +45,6 @@ switch ($this->name) {
 $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デモサイト" ;
 ?>
 <!-- /* 上部カラーバー(ここから) */ -->
-<?php $this->log('userInfo',LOG_DEBUG); $this->log($userInfo['display_name'],LOG_DEBUG); ?>
 <div id="color-bar">
   <ul id="color-bar-right" class="fRight">
     <?php if(!empty($trialTime)) { ?>

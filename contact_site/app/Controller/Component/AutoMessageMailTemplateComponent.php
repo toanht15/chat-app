@@ -39,7 +39,6 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected $templateId;
   protected $template;
   protected $chatLogs;
-  protected $firstStayLog;
   protected $stayLog;
   protected $campaigns;
   protected $landscapeData;
@@ -59,10 +58,9 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
 
   }
 
-  public function setRequiredData($templateId, $chatLogs, $firstStayLog, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array()) {
+  public function setRequiredData($templateId, $chatLogs, $stayLog, $campaigns, $landscapeData = null, $customerInfo = array()) {
     $this->templateId = $templateId;
     $this->chatLogs = $chatLogs;
-    $this->firstStayLog = $firstStayLog;
     $this->stayLog = $stayLog;
     $this->campaigns = $campaigns;
     $this->landscapeData = $landscapeData;
@@ -88,7 +86,7 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
   protected function createMetaDataMessage($isFullData, $withDownloadURL) {
     $this->autoMessageBlock  = "チャット送信ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
     $this->autoMessageBlock .= "チャット送信ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
-    $this->autoMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->firstStayLog['THistoryStayLog']['url'])."\n";
+    $this->autoMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
     if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
     $this->autoMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
     }
