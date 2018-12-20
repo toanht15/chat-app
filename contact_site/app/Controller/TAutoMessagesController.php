@@ -15,9 +15,10 @@ App::uses('AutoMessageException','Lib/Error');
 
 class TAutoMessagesController extends AppController {
   const TEMPLATE_FILE_NAME = "auto_message_template.xlsx";
+  const FULL_TEMPLATE_FILE_NAME = "auto_message_setting_template.xlsx";
 
   public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting', 'TChatbotScenario'];
-  public $components = ['AutoMessageExcelParser', 'NodeSettingsReload'];
+  public $components = ['AutoMessageExcelExport', 'NodeSettingsReload', 'AutoMessageExcelImport'];
   public $helpers = ['AutoMessage'];
   public $paginate = [
     'TAutoMessage' => [
@@ -636,7 +637,12 @@ class TAutoMessagesController extends AppController {
     );
   }
 
-  public function import() {
+  /**
+   * 一括インポート
+   * @return false|string
+   */
+  public function bulkImport()
+  {
     Configure::write('debug', 0);
     $this->autoRender = false;
     $this->layout = false;
@@ -646,47 +652,39 @@ class TAutoMessagesController extends AppController {
     ];
 
     $file = $this->params['form']['file'];
-
     $lastPage = $this->request->data['lastPage'];
-
-    $component = new AutoMessageExcelParserComponent($file['tmp_name']);
+    $component = new AutoMessageExcelImportComponent($file['tmp_name']);
     try {
       $component->getImportData();
       $transactions = null;
-      $data = $component->toArray();
+      $data = $component->parseData();
       $transactions = $this->TransactionManager->begin();
       $dataArray = [];
       $errorArray = [];
       $errorFound = false;
       foreach($data as $index => $row) {
+        $scenarioId = null;
+        if ($row['scenario']) {
+          $scenarioId = $this->getScenarioIdByName($row['scenario']);
+          // scenario not exist
+          if (!$scenarioId) {
+            $errorArray = [];
+            $errorArray[$index]['BQ'][0] = "シナリオが存在しません";
+            $exception = new AutoMessageException("Excelデータバリデーションエラー", 200);
+            $exception->setErrors($errorArray);
+            throw $exception;
+          }
+        }
         $saveData = [
           'TAutoMessage' => [
             'lastPage' => $lastPage,
             'm_companies_id' => $this->userInfo['MCompany']['id'],
             'name' => $row['name'],
             'trigger_type' => 0, // 「画面読み込み時」固定
-            'activity' => json_encode([
-              'conditionType' => 1, // 「全て一致」固定
-              'conditions' => [
-                C_AUTO_TRIGGER_SPEECH_CONTENT => [ // 条件「発言内容」固定
-                  [
-                    'keyword_contains' => $row['keyword_contains'],
-                    'keyword_contains_type' => (string)$row['keyword_contains_type'],
-                    'keyword_exclusions' => $row['keyword_exclusions'],
-                    'keyword_exclusions_type' => (string)$row['keyword_exclusions_type'],
-                    'speechContentCond' => $row['speechContentCond'],
-                    'triggerTimeSec' => $row['triggerTimeSec'],
-                    'speechTriggerCond' => $row['speechTriggerCond']
-                  ]
-                ]
-              ],
-              'widgetOpen' => 1, // 「最大化する」固定
-              'message' => $row['action'],
-              'chatTextarea' => $row['chat_textarea'],
-              'cv' => $row['cv']
-            ], JSON_UNESCAPED_UNICODE), // 日本語はエスケープしないで入れる仕様
-            'action_type' => 1, // 「チャットメッセージを送る」固定
+            'activity' => json_encode($row['activity'], JSON_UNESCAPED_UNICODE), // 日本語はエスケープしないで入れる仕様
+            'action_type' => $row['action_type'], // 「チャットメッセージを送る」固定
             'active_flg' => $row['active_flg'],
+            't_chatbot_scenario_id' => $scenarioId,
             'del_flg' => 0
           ]
         ];
@@ -712,6 +710,14 @@ class TAutoMessagesController extends AppController {
           array_push($dataArray, $saveData);
         }
       }
+      // delete old data
+      $this->TAutoMessage->deleteAll(
+        [
+          'del_flg != ' => 1,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ]
+      );
+
       $nextPage = '1';
       if(!$errorFound) {
         foreach ($dataArray as $index => $saveData) {
@@ -742,29 +748,52 @@ class TAutoMessagesController extends AppController {
         'message' => 'ファイルの読み込みに失敗しました。'
       ];
     }
+
     return json_encode($result);
   }
 
+
+  /**
+   *一括エクスポート
+   */
   public function bulkExport() {
     Configure::write('debug', 0);
     $this->autoRender = false;
     $this->layout = false;
     $filePath = ROOT.DS.self::TEMPLATE_FILE_NAME;
+    $component = new AutoMessageExcelExportComponent($filePath);
+    $component->getImportData();
 
-    $component = new AutoMessageExcelParserComponent($filePath);
+    $params = [
+      'order'      => [
+        'TAutoMessage.sort' => 'asc',
+        'TAutoMessage.id'   => 'asc'
+      ],
+      'fields'     => ['TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name'],
+      'conditions' => [
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'TAutoMessage.del_flg != '    => 1
+      ],
+      'joins' => [[
+        'type'       => 'LEFT',
+        'table'      => 't_chatbot_scenarios',
+        'alias'      => 'TChatbotScenario',
+        'conditions' => [
+          'TAutoMessage.t_chatbot_scenario_id = TChatbotScenario.id'
+        ]
+                  ]],
+      'recursive'  => -1
+    ];
 
-    $data = $component->getImportData();
-    return $component->writeData();
+    $data = $this->TAutoMessage->find('all', $params);
 
-//    $this->response->download(self::TEMPLATE_FILE_NAME);
-//    $this->response->file($filePath);
-    return "wip";
+    return $component->export($data);
   }
 
   public function downloadTemplate() {
     $this->autoRender = false;
-    $filePath = ROOT.DS.self::TEMPLATE_FILE_NAME;
-    $this->response->download(self::TEMPLATE_FILE_NAME);
+    $filePath = ROOT.DS.self::FULL_TEMPLATE_FILE_NAME;
+    $this->response->download(self::FULL_TEMPLATE_FILE_NAME);
     $this->response->file($filePath);
   }
 
@@ -1802,5 +1831,23 @@ class TAutoMessagesController extends AppController {
       }
     }
     return $d;
+  }
+
+  /**
+   * @param $name
+   * @return mixed
+   */
+  private function getScenarioIdByName($name)
+  {
+    $data = $this->TChatbotScenario->find('first', [
+      'fields' => ['id'],
+      'conditions' => [
+        'name' => $name,
+        'del_flg != ' => 1,
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]);
+
+    return $data['TChatbotScenario']['id'];
   }
 }
