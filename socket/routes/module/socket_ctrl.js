@@ -976,7 +976,8 @@ var db = {
       var customVariables = obj.customVariables;
       var found = false;
       var customerInfo = (isset(
-          sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo)) ?
+          sincloCore[obj.siteKey][obj.sincloSessionId]) &&
+          isset(sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo)) ?
           sincloCore[obj.siteKey][obj.sincloSessionId].customerInfo :
           {};
       if (Object.keys(customVariables).length !== 0) {
