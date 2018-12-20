@@ -233,6 +233,7 @@ define('C_SCENARIO_ACTION_BRANCH_ON_CONDITION', 10); // 条件分岐
 define('C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION', 11); // 訪問ユーザ登録
 define('C_SCENARIO_ACTION_BULK_HEARING', 12); // 一括ヒアリング
 define('C_SCENARIO_ACTION_LEAD_REGISTER', 13); // リード登録
+define('C_SCENARIO_ACTION_CONTROL_VARIABLE', 14); // 計算・変数操作
 
 // シナリオ設定(ヒアリング)－入力タイプ種別コード
 define('C_SCENARIO_INPUT_TYPE_TEXT', 1);
@@ -290,6 +291,10 @@ define('C_SCENARIO_PROCESS_ACTION_TYPE_NONE', 4);
 // シナリオ設定（リード登録）-新規作成か流用か
 define('C_SCENARIO_LEAD_REGIST', 1);
 define('C_SCENARIO_LEAD_USE', 2);
+
+// シナリオ設定（計算・変数操作）-数値か文字列か
+define('C_SCENARIO_CONTROL_INTEGER', 1);
+define('C_SCENARIO_CONTROL_STRING', 2);
 
 // する/しない設定
 define('C_SELECT_CAN', 1); // する
@@ -795,6 +800,8 @@ $config['chatbotScenarioActionList'] = [
           'isSetSpecificDate' => false,
           'isEnableAfterDate' => false,
           'enableAfterDate' => null,
+          'isDisableAfterData' => false,
+          'enableAfterDate'=> null,
           'dayOfWeekSetting' => [
             0 => false, // sun
             1 => false, // mon
@@ -985,6 +992,19 @@ $config['chatbotScenarioActionList'] = [
           'leadLabelName' => '',
           'leadVariableName' => '',
           'leadUniqueHash' => ''
+        ]
+      ]
+    ]
+  ],
+  C_SCENARIO_ACTION_CONTROL_VARIABLE => [
+    'label' => '計算・変数操作',
+    'default' => [
+      'messageIntervalTimeSec' => '2',
+      'calcRules' => [
+        [
+          'variableName' => '',
+          'calcType' => '1',
+          'formula' => ''
         ]
       ]
     ]

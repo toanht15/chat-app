@@ -19,7 +19,7 @@ class TChatbotScenarioController extends FileAppController {
 
   const CALL_SELF_SCENARIO_NAME = "（このシナリオ）";
 
-  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting', 'TLeadListSetting'];
+  public $uses = ['TransactionManager', 'TChatbotScenario', 'TAutoMessage', 'MWidgetSetting', 'MMailTransmissionSetting', 'MMailTemplate', 'TExternalApiConnection', 'TChatbotScenarioSendFile', 'TCustomerInformationSetting', 'TLeadListSetting', 'TLeadList'];
   public $paginate = [
     'TChatbotScenario' => [
       'limit' => 100,
@@ -141,6 +141,7 @@ sinclo@medialink-ml.co.jp
     // プレビュー・シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
     $this->request->data['leadList'] = $this->leadInfoSet();
+    $this->_deleteInvalidLeadList();
     $this->set('storedVariableList', $this->getStoredAllVariableList());
     $this->_viewElement();
   }
@@ -244,7 +245,7 @@ sinclo@medialink-ml.co.jp
       if (!empty($targetDeleteFileIds)) {
         $this->_deleteInvalidSendFileData($targetDeleteFileIds);
       }
-
+      $this->_deleteInvalidLeadList();
       $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
 
@@ -326,6 +327,7 @@ sinclo@medialink-ml.co.jp
           }
         }
       }
+      $this->_deleteInvalidLeadList();
 
       if($res){
         $this->TransactionManager->commitTransaction($transactions);
@@ -424,7 +426,7 @@ sinclo@medialink-ml.co.jp
               // ダウンロードURLの生成
               $lastInsertedId = $this->TChatbotScenarioSendFile->getLastInsertId();
               $created = $this->TChatbotScenarioSendFile->field('created');
-              $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId);
+              $downloadUrl = $this->createDownloadUrl($created, $lastInsertedId, true);
               $this->TChatbotScenarioSendFile->set([
                 'download_url' => $downloadUrl
               ]);
@@ -820,8 +822,68 @@ sinclo@medialink-ml.co.jp
       'conditions' => ['TChatbotScenario.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
     ]);
 
+    $this->_deleteInvalidLeadList();
+
     $page = floor((intval($count[0]['count']) + 99) / 100);
     return $page >= 1 ? $page : 1;
+  }
+
+  /* シナリオの全activity・保存済みリードリストのt_lead_list_settingsIdを取得
+   * activityに無い && データが保存されていないリストはテーブルから存在を消す
+   */
+
+  private function _deleteInvalidLeadList(){
+    $remainLeadListId = [];
+    $remainLeadListId = array_merge($remainLeadListId,$this->_getCalledLeadLists());
+    $remainLeadListId = array_merge($remainLeadListId,$this->_getSavedLeadLists());
+    $remainLeadListId = array_unique($remainLeadListId);
+    $this->_deleteNotExistLeadList($remainLeadListId);
+  }
+
+  private function _deleteNotExistLeadList($searchList){
+    $idList = $this->TLeadListSetting->find('list', [
+      'conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]);
+    foreach($idList as $targetId){
+      if(!in_array($targetId, $searchList)){
+        $this->TLeadListSetting->delete((int)$targetId);
+      }
+    }
+  }
+
+
+  private function _getCalledLeadLists(){
+    $calledLeadListId = [];
+    $allScenarioActivity = $this->TChatbotScenario->find('list', [
+      'conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'del_flg' => 0
+      ],
+      'fields' => 'activity'
+    ]);
+
+    foreach ($allScenarioActivity as $scenarioActivity) {
+      $scenarioData = json_decode($scenarioActivity)->scenarios;
+      foreach ($scenarioData as $scenarioAction) {
+        if ($scenarioAction->actionType == C_SCENARIO_ACTION_LEAD_REGISTER) {
+          $calledLeadListId[] = $scenarioAction->tLeadListSettingId;
+        }
+      }
+    }
+    return $calledLeadListId;
+  }
+
+  private function _getSavedLeadLists(){
+    $allLeadList= $this->TLeadList->find('list', [
+      'conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ],
+      'fields' => 't_lead_list_settings_id',
+      'group' => 't_lead_list_settings_id'
+    ]);
+    return $allLeadList;
   }
 
   /**
@@ -856,41 +918,49 @@ sinclo@medialink-ml.co.jp
     return $resultArray;
   }
 
+  private function _getSameNameHash($currentLabelArray, $result){
+    $uniqueKey = "";
+    $currentLabelArray = json_decode($currentLabelArray);
+    foreach($currentLabelArray as $searchTarget){
+      if(strcmp($searchTarget->leadLabelName, $result->leadLabelName) == 0){
+        $uniqueKey = $searchTarget->leadUniqueHash;
+      }
+    }
+    return $uniqueKey;
+  }
+
 
   /**
-   * リードリスト保存時に同名の同じ内容が存在するか？
+   * リードリスト保存時、該当IDのリスト設定内に同名の項目が存在するか
    *
    *
    * */
   private function _makeLeadDataProcess($saveData){
     $labelArray = [];
     $valueArray = [];
-    foreach($saveData->leadInformations as $key => $result) {
-      if(empty($result->leadUniqueHash)) {
-        // ユニークキーが空（新規追加された場合)
-        if (false) {
-          // ①：既に保存されている該当IDリストの項目名と全く同じ情報がある場合は、ユニークキーを引っ張ってくる
-        } else {
-          $result->leadUniqueHash = $this->_makeHashProcess($result->leadLabelName);
-        }
-      }
-      $labelArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadLabelName' => $result->leadLabelName , 'deleted' => 0];
-      $valueArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadVariableName' => $result->leadVariableName];
-    }
-    // 現在保存しようとしている対象のデータを取得
-    if(!empty($saveData ->tLeadListSettingId)) {
+    $targetId = $saveData->tLeadListSettingId;
+    if(!empty($targetId)) {
       $currentLabelArray = $this->TLeadListSetting->find('list', [
         'recursive' => -1,
         'fields' => [
           'list_parameter'
         ],
         'conditions' => [
-          'id' => $saveData->tLeadListSettingId
+          'id' => $targetId
         ]
       ]);
-      if (!empty($currentLabelArray)) {
-        $labelArray = $this->_grantDeletedFlg(json_decode($currentLabelArray[$saveData->tLeadListSettingId]), $labelArray);
+    }
+    foreach($saveData->leadInformations as $key => $result) {
+      if(empty($result->leadUniqueHash)) {
+        $uniqueKey = empty($targetId) ? "" : $this->_getSameNameHash($currentLabelArray[$targetId], $result);
+        $result->leadUniqueHash = $uniqueKey == "" ? $this->_makeHashProcess($result->leadLabelName) : $uniqueKey;
       }
+      $labelArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadLabelName' => $result->leadLabelName , 'deleted' => 0];
+      $valueArray[] = ['leadUniqueHash' => $result->leadUniqueHash , 'leadVariableName' => $result->leadVariableName];
+    }
+    // 現在保存しようとしている対象のデータを取得
+    if (!empty($currentLabelArray)) {
+      $labelArray = $this->_grantDeletedFlg(json_decode($currentLabelArray[$targetId]), $labelArray);
     }
     // t_lead_list_settingsにはここで入れる
     $this->TLeadListSetting->set([
@@ -2055,8 +2125,12 @@ sinclo@medialink-ml.co.jp
     foreach($targetList as $currentId => $target){
       $labelList = json_decode($target['TLeadListSetting']['list_parameter']);
       foreach($labelList as $key => $labelData){
-        if($labelData->deleted == 1){
-          array_splice($labelList, $key, 1);
+        if(property_exists($labelData, "deleted")) {
+          if ($labelData->deleted == 1) {
+            array_splice($labelList, $key, 1);
+          }
+        } else {
+          $labelData->deleted = 0;
         }
       }
       $targetList[$currentId]['TLeadListSetting']['list_parameter'] = json_encode($labelList);
@@ -2106,7 +2180,14 @@ sinclo@medialink-ml.co.jp
 
     $saveFileName = $this->getFilenameForSave(['name' => $file['file_name']]);
     $fileData = $this->getFile(substr($file['file_path'], $pos));
-    $filePath = $this->putFile($fileData['fileObj']['Body'], $saveFileName);
+    $fileObj = array();
+
+    $tmpFile = new File('/tmp/'.$file['file_name']);
+    $tmpFile->write($fileData['Body'], 'w');
+    $tmpFile->close();
+
+    $fileObj['tmp_name'] = '/tmp/'.$file['file_name'];
+    $filePath = $this->putFile($fileObj, $saveFileName);
 
     return [
       'file_path' => $filePath,

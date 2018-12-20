@@ -22,7 +22,7 @@
         <!-- トリガー -->
         <li>
           <span class="require"><label>トリガー</label></span>
-          <?= $this->Form->input('trigger', array('type' => 'select', 'options' => $outMessageTriggerType, 'default' => C_AUTO_TRIGGER_TYPE_BODYLOAD)) ?>
+          <?= $this->Form->input('trigger_type', array('type' => 'select', 'options' => $outMessageTriggerType, 'default' => C_AUTO_TRIGGER_TYPE_BODYLOAD)) ?>
         </li>
         <!-- トリガー -->
       </ul>

@@ -11,3 +11,4 @@
 <?= $this->element('TChatbotScenario/template/add_customer_information'); ?>
 <?= $this->element('TChatbotScenario/template/bulk_hearing'); ?>
 <?= $this->element('TChatbotScenario/template/lead_register'); ?>
+<?= $this->element('TChatbotScenario/template/control_variable'); ?>
