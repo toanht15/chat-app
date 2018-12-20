@@ -12,6 +12,8 @@ App::uses('ExcelParserComponent', 'Controller/Component');
 class AutoMessageExcelExportComponent extends ExcelParserComponent
 {
   const PLUS_ROW = 25;
+  const FIRST_ROW = 5;
+  const SECOND_ROW = 6;
 
   private $activeFlgMap;
   private $conditionTypeMap;
@@ -202,14 +204,14 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   public function generateTemplate($endRow)
   {
     // create first row
-    $this->setRowDataValidation(5);
-    $this->setRowConditionalFormat(5);
+    $this->setRowDataValidation(self::FIRST_ROW);
+    $this->setRowConditionalFormat(self::FIRST_ROW);
     // copy style first row to other row
-    foreach (range(6, $endRow) as $row) {
+    foreach (range(self::SECOND_ROW, $endRow) as $row) {
       $this->setRowConditionalFormat($row);
-      $this->copyRowStyle(5, $row);
       $this->setRowDataValidation($row);
     }
+    $this->copyRowStyle(self::FIRST_ROW, $endRow);
   }
 
   /**
@@ -260,55 +262,45 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     switch ($beginColumn) {
       case 'E':
         $targetArray = ['E', 'F', 'G', 'H'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'I':
         $targetArray = ['I', 'J', 'K'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'L':
         $targetArray = ['L', 'M', 'N', 'O', 'P', 'Q', 'R'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'S':
         $targetArray = ['S', 'T'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'U':
         $targetArray = ['U', 'V', 'W', 'X'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'Y':
         $targetArray = ['Y', 'Z', 'AA', 'AB', 'AC', 'AD'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'AE':
         $targetArray = ['AE', 'AF', 'AG'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'AH':
         $targetArray = ['AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'AP':
         $targetArray = ['AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'AW':
         $targetArray = ['AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'BE':
         $targetArray = ['BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'BQ':
         $targetArray = ['BQ', 'BR'];
-        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       default:
+        $targetArray = [];
         break;
     }
+    $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
   }
 
   /**
@@ -395,17 +387,17 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
 
   /**
    * @param $baseRow
-   * @param $targetRow
+   * @param $endRow
    */
-  public function copyRowStyle($baseRow, $targetRow)
+  public function copyRowStyle($baseRow, $endRow)
   {
     foreach (range('A', 'R') as $column) {
-      $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('B' . $column . $baseRow), 'B' . $column . $targetRow);
+      $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('B' . $column . $baseRow), 'B' . $column . self::SECOND_ROW . ':' . 'B' . $column . $endRow);
     }
 
     foreach (range('A', 'Z') as $column) {
-      $this->currentSheet->duplicateStyle($this->currentSheet->getStyle($column . $baseRow), $column . $targetRow);
-      $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('A' . $column . $baseRow), 'A' . $column . $targetRow);
+      $this->currentSheet->duplicateStyle($this->currentSheet->getStyle($column . $baseRow), $column . self::SECOND_ROW . ':' . $column . $endRow);
+      $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('A' . $column . $baseRow), 'A' . $column . self::SECOND_ROW . ':' . 'A' . $column . $endRow);
     }
   }
 
