@@ -1344,13 +1344,12 @@ io.sockets.on('connection', function(socket) {
               emit.toCompany('sendChatResult', sendChatData, d.siteKey);
             }
 
-            if (d.messageType === 1 && insertData.message_read_flg != 1) {
-              sincloCore[d.siteKey][d.tabId].chatUnreadId = results.insertId;
-              sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
-            }
-
             //通知された場合
             if (ret.opFlg === true && d.notifyToCompany) {
+              if (d.messageType === 1 && insertData.message_read_flg != 1) {
+                sincloCore[d.siteKey][d.tabId].chatUnreadId = results.insertId;
+                sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
+              }
               pool.query(
                   'UPDATE t_history_chat_logs SET notice_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id = ?;',
                   [sincloCore[d.siteKey][d.tabId].historyId, results.insertId],
@@ -1365,11 +1364,7 @@ io.sockets.on('connection', function(socket) {
             pool.query(
                 'UPDATE t_history_chat_logs SET message_read_flg = 1 WHERE t_histories_id = ? AND message_type = 1 AND id <= ?;',
                 [historyId, results.insertId], function(err, ret, fields) {
-                  if (d.messageType === 1) {
-                    sincloCore[d.siteKey][d.tabId].chatUnreadCnt > 0 ?
-                        sincloCore[d.siteKey][d.tabId].chatUnreadCnt-- :
-                        0;
-                  }
+
                 }
             );
 
