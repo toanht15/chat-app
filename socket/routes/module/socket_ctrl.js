@@ -4005,7 +4005,7 @@ io.sockets.on('connection', function(socket) {
           if (obj.messageRequestFlg == 1) {
             //消費者が初回メッセージを送る前にオペレータが入室した場合
             pool.query(
-                'SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',
+                'SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 998',
                 [obj.userId, obj.historyId, obj.messageDistinction],
                 function(err, result) {
                   if (Object.keys(results) && Object.keys(result).length !==
@@ -4041,7 +4041,7 @@ io.sockets.on('connection', function(socket) {
         if (obj.messageRequestFlg == 1) {
           //消費者が初回メッセージを送る前にオペレータが入室した場合
           pool.query(
-              'SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 98',
+              'SELECT id FROM t_history_chat_logs WHERE visitors_id = ? and t_histories_id = ? and message_distinction = ? and message_type = 998',
               [obj.userId, obj.historyId, obj.messageDistinction],
               function(err, result) {
                 if (Object.keys(results) && Object.keys(result).length !== 0) {
