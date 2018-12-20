@@ -711,7 +711,7 @@ class TAutoMessagesController extends AppController {
         }
       }
       // delete old data
-      $this->TAutoMessage->deleteAll(
+      $this->TAutoMessage->updateAll(['del_flg' => 1],
         [
           'del_flg != ' => 1,
           'm_companies_id' => $this->userInfo['MCompany']['id']
