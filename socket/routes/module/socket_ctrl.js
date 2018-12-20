@@ -4153,6 +4153,23 @@ io.sockets.on('connection', function(socket) {
   // 既読操作
   socket.on('isReadChatMessage', function(d) {
     var obj = JSON.parse(d);
+    try {
+      if (isset(sincloCore[obj.siteKey]) &&
+          isset(sincloCore[obj.siteKey][obj.tabId])) {
+        sincloCore[obj.siteKey][obj.tabId].chatUnreadId = null;
+        sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt = 0;
+        console.log('reset chatUnreadCnt');
+      }
+      Object.keys(sincloCore[obj.siteKey]).some(function(key) {
+        if (sincloCore[obj.siteKey][key].sincloSessionId ===
+            obj.sincloSessionId) {
+          sincloCore[obj.siteKey][key].chatUnreadId = null;
+          sincloCore[obj.siteKey][key].chatUnreadCnt = 0;
+          return true;
+        }
+      });
+    } catch (e) {
+    }
     if (isset(sincloCore[obj.siteKey][obj.tabId].historyId)) {
       obj.historyId = sincloCore[obj.siteKey][obj.tabId].historyId;
       pool.query(
