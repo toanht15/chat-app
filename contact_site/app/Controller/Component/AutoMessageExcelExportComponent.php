@@ -13,23 +13,25 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
 {
   const PLUS_ROW = 25;
 
-  private $exportActiveFlgMap;
-  private $exportConditionTypeMap;
-  private $exportWidgetOpenMap;
-  private $exportChatTextAreaMap;
-  private $exportTriggerCVMap;
-  private $exportSendMailFlgMap;
-  private $exportStayTimeCheckTypeMap;
-  private $exportStayTimeTypeMap;
-  private $exportVisitCntCondMap;
-  private $exportTargetNameMap;
-  private $exportKWDContainTypeMap;
-  private $exportKWDExclusionTypeMap;
-  private $exportStayPageCondTypeMap;
+  private $activeFlgMap;
+  private $conditionTypeMap;
+  private $widgetOpenMap;
+  private $chatTextAreaMap;
+  private $triggerCVMap;
+  private $sendMailFlgMap;
+  private $stayTimeCheckTypeMap;
+  private $stayTimeTypeMap;
+  private $visitCntCondMap;
+  private $targetNameMap;
+  private $kWDContainTypeMap;
+  private $kWDExclusionTypeMap;
+  private $stayPageCondTypeMap;
   private $exportWeekdayMap;
-  private $exportSpeechTriggerCondMap;
-  private $exportBusinessHourMap;
-
+  private $speechTriggerCondMap;
+  private $businessHourMap;
+  private $isSettingMap;
+  private $actionTypeMap;
+  
   public function __construct($filePath)
   {
     parent::__construct($filePath);
@@ -42,69 +44,74 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   }
 
   private function readSettingMapFromConfig() {
-    $this->exportActiveFlgMap = [
+    $this->isSettingMap = [
+      1 => 'する',
+      2 => 'しない'
+    ];
+
+    $this->activeFlgMap = [
       0 => '有効',
       1 => '無効'
     ];
 
-    $this->exportWidgetOpenMap = [
+    $this->widgetOpenMap = [
       1 => '自動で最大化する',
       2 => '自動で最大化しない'
     ];
 
-    $this->exportConditionTypeMap = [
+    $this->conditionTypeMap = [
       1 => 'すべて一致',
       2 => 'いずれかが一致'
     ];
 
-    $this->exportChatTextAreaMap = [
+    $this->chatTextAreaMap = [
       1 => Configure::read('outMessageTextarea')[1],
       2 => Configure::read('outMessageTextarea')[2]
     ];
 
-    $this->exportTriggerCVMap = [
+    $this->triggerCVMap = [
       1 => Configure::read('outMessageCvType')[1],
       2 => Configure::read('outMessageCvType')[2]
     ];
 
-    $this->exportSendMailFlgMap = [
+    $this->sendMailFlgMap = [
       1 => 'する',
       0 => 'しない'
     ];
 
-    $this->exportStayTimeCheckTypeMap = [
+    $this->stayTimeCheckTypeMap = [
       1 => 'サイト',
       2 => 'ページ'
     ];
 
-    $this->exportStayTimeTypeMap = [
+    $this->stayTimeTypeMap = [
       1 => '秒',
       2 => '分',
       3 => '時'
     ];
 
-    $this->exportVisitCntCondMap = [
+    $this->visitCntCondMap = [
       1 => '一致',
       2 => '以上',
       3 => '未満'
     ];
 
-    $this->exportTargetNameMap = [
+    $this->targetNameMap = [
       1 => 'ページ',
       2 => 'URL',
     ];
 
-    $this->exportKWDContainTypeMap = [
+    $this->kWDContainTypeMap = [
       1 => 'をすぺて含む',
       2 => 'のいずれかを含む',
     ];
 
-    $this->exportKWDExclusionTypeMap = [
+    $this->kWDExclusionTypeMap = [
       1 => 'をすぺて含む',
       2 => 'のいずれかを含む',
     ];
 
-    $this->exportStayPageCondTypeMap = [
+    $this->stayPageCondTypeMap = [
       1 => '完全一致',
       2 => '部分一致',
       3 => '不一致'
@@ -120,14 +127,19 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
       'sun' => '日',
     ];
 
-    $this->exportSpeechTriggerCondMap = [
+    $this->speechTriggerCondMap = [
       1 => '１回のみ有効',
       2 => '何度でも有効',
     ];
 
-    $this->exportBusinessHourMap = [
+    $this->businessHourMap = [
       1 => '営業時間内',
       2 => '営業時間外'
+    ];
+
+    $this->actionTypeMap = [
+      2 => 'シナリオを選択する',
+      1 => 'チャットメッセージを送る'
     ];
   }
 
@@ -151,139 +163,39 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     foreach ($dataMap as $row => $value) {
       $json = json_decode($value['TAutoMessage']['activity'], true);
       // name
-      $this->phpExcel->getActiveSheet()->setCellValue('C' . $row, $value['TAutoMessage']['name']);
+      $this->currentSheet->setCellValue('C' . $row, $value['TAutoMessage']['name']);
       // active_flg
-      $this->phpExcel->getActiveSheet()->setCellValue('B' . $row, $this->exportActiveFlgMap[$value['TAutoMessage']['active_flg']]);
+      $this->currentSheet->setCellValue('B' . $row, $this->activeFlgMap[$value['TAutoMessage']['active_flg']]);
       // conditionType
-      $this->phpExcel->getActiveSheet()->setCellValue('D' . $row, $this->exportConditionTypeMap[$json['conditionType']]);
+      $this->currentSheet->setCellValue('D' . $row, $this->conditionTypeMap[$json['conditionType']]);
       // action type
       if ($value['TAutoMessage']['action_type'] == 2) {
         // select scenarios
-        $this->phpExcel->getActiveSheet()->setCellValue('BD' . $row, 'シナリオを選択する');
-        $this->phpExcel->getActiveSheet()->setCellValue('BQ' . $row, $value['TChatbotScenario']['name']);
-        $this->phpExcel->getActiveSheet()->setCellValue('BR' . $row, $this->exportWidgetOpenMap[$json['widgetOpen']]);
+        $this->writeScenarioData($json, $row, $value);
       } else {
         // send message
-        $this->phpExcel->getActiveSheet()->setCellValue('BD' . $row, 'チャットメッセージを送る');
-        $this->phpExcel->getActiveSheet()->setCellValue('BE' . $row, $this->exportWidgetOpenMap[$json['widgetOpen']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('BF' . $row, $json['message']);
-        $this->phpExcel->getActiveSheet()->setCellValue('BG' . $row, $this->exportChatTextAreaMap[$json['chatTextarea']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('BH' . $row, $this->exportTriggerCVMap[$json['cv']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('BI' . $row, $this->exportSendMailFlgMap[$value['TAutoMessage']['send_mail_flg']]);
-        // get mail information
-        $mailTransmission = ClassRegistry::init('MMailTransmissionSetting');
-        $transmissionData = $mailTransmission->findById($value['TAutoMessage']['m_mail_transmission_settings_id']);
-        if (!empty($transmissionData)) {
-          $splitedMailAddresses = explode(',', $transmissionData['MMailTransmissionSetting']['to_address']);
-          $this->phpExcel->getActiveSheet()->setCellValue('BJ' . $row, !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "");
-          $this->phpExcel->getActiveSheet()->setCellValue('BK' . $row, !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "");
-          $this->phpExcel->getActiveSheet()->setCellValue('BL' . $row, !empty($splitedMailAddresses[2]) ? $splitedMailAddresses[2] : "");
-          $this->phpExcel->getActiveSheet()->setCellValue('BM' . $row, !empty($splitedMailAddresses[3]) ? $splitedMailAddresses[3] : "");
-          $this->phpExcel->getActiveSheet()->setCellValue('BN' . $row, !empty($splitedMailAddresses[4]) ? $splitedMailAddresses[4] : "");
-          $this->phpExcel->getActiveSheet()->setCellValue('BO' . $row, !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "");
-          $this->phpExcel->getActiveSheet()->setCellValue('BP' . $row, !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "");
-        }
+        $this->writeSendMessageData($json, $row, $value);
       }
-
       // 滞在時間
-      if (isset($json['conditions'][1])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('E' . $row, 'する');
-        $this->phpExcel->getActiveSheet()->setCellValue('F' . $row, $this->exportStayTimeCheckTypeMap[$json['conditions'][1][0]['stayTimeCheckType']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('G' . $row, $this->exportStayTimeTypeMap[$json['conditions'][1][0]['stayTimeType']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('H' . $row, $json['conditions'][1][0]['stayTimeRange']);
-      }
-
+      $this->writeStayTimeData($json, $row);
       // 訪問回数
-      if (isset($json['conditions'][2])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('I' . $row, 'する');
-        $this->phpExcel->getActiveSheet()->setCellValue('J' . $row, $json['conditions'][2][0]['visitCnt']);
-        $this->phpExcel->getActiveSheet()->setCellValue('K' . $row, $this->exportVisitCntCondMap[$json['conditions'][2][0]['visitCntCond']]);
-      }
-
+      $this->writeVisitCountData($json, $row);
       // URL
-      if (isset($json['conditions'][3])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('L' . $row, 'する');
-        $this->phpExcel->getActiveSheet()->setCellValue('M' . $row, $this->exportTargetNameMap[$json['conditions'][3][0]['targetName']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('N' . $row, $json['conditions'][3][0]['keyword_contains']);
-        $this->phpExcel->getActiveSheet()->setCellValue('O' . $row, $this->exportKWDContainTypeMap[$json['conditions'][3][0]['keyword_contains_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('P' . $row, $json['conditions'][3][0]['keyword_exclusions']);
-        $this->phpExcel->getActiveSheet()->setCellValue('Q' . $row, $this->exportKWDContainTypeMap[$json['conditions'][3][0]['keyword_exclusions_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('R' . $row, $this->exportStayPageCondTypeMap[$json['conditions'][3][0]['stayPageCond']]);
-      }
-
+      $this->writeURLData($json, $row);
       // 曜日・時間
-      if (isset($json['conditions'][4])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('U' . $row, 'する');
-        $weekDays = '';
-        foreach ($json['conditions'][4][0]['day'] as $day => $val) {
-          if ($val) {
-            $weekDays = $weekDays . $this->exportWeekdayMap[$day] . ', ';
-          }
-        }
-
-        $this->phpExcel->getActiveSheet()->setCellValue('V' . $row, $weekDays);
-        if ($json['conditions'][4][0]['timeSetting'] == 1) {
-          $this->phpExcel->getActiveSheet()->setCellValue('W' . $row, $json['conditions'][4][0]['startTime']);
-          $this->phpExcel->getActiveSheet()->setCellValue('X' . $row, $json['conditions'][4][0]['endTime']);
-        }
-      }
-
+      $this->writeWeekdayData($json, $row);
       // 参照元URL
-      if (isset($json['conditions'][5])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('Y' . $row, 'する');
-        $this->phpExcel->getActiveSheet()->setCellValue('Z' . $row, $json['conditions'][5][0]['keyword_contains']);
-        $this->phpExcel->getActiveSheet()->setCellValue('AA' . $row, $this->exportKWDContainTypeMap[$json['conditions'][5][0]['keyword_contains_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('AB' . $row, $json['conditions'][5][0]['keyword_exclusions']);
-        $this->phpExcel->getActiveSheet()->setCellValue('AC' . $row, $this->exportKWDContainTypeMap[$json['conditions'][5][0]['keyword_exclusions_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('AD' . $row, $this->exportStayPageCondTypeMap[$json['conditions'][5][0]['referrerCond']]);
-      }
-
+      $this->writeRefferURLData($json, $row);
       // 検索キーワード
-      if (isset($json['conditions'][6])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('AE' . $row, 'する');
-        $this->phpExcel->getActiveSheet()->setCellValue('AF' . $row, $json['conditions'][6][0]['keyword']);
-        $this->phpExcel->getActiveSheet()->setCellValue('AG' . $row, $this->exportStayPageCondTypeMap[$json['conditions'][6][0]['searchCond']]);
-      }
-
+      $this->writeSearchKeywordData($json, $row);
       // 発言内容
-      if (isset($json['conditions'][7])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('AH' . $row, 'する');
-        $this->phpExcel->getActiveSheet()->setCellValue('AI' . $row, $json['conditions'][7][0]['keyword_contains']);
-        $this->phpExcel->getActiveSheet()->setCellValue('AJ' . $row, $this->exportKWDContainTypeMap[$json['conditions'][7][0]['keyword_contains_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('AK' . $row, $json['conditions'][7][0]['keyword_exclusions']);
-        $this->phpExcel->getActiveSheet()->setCellValue('AL' . $row, $this->exportKWDContainTypeMap[$json['conditions'][7][0]['keyword_exclusions_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('AM' . $row, $this->exportStayPageCondTypeMap[$json['conditions'][7][0]['speechContentCond']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('AN' . $row, $json['conditions'][7][0]['triggerTimeSec']);
-        $this->phpExcel->getActiveSheet()->setCellValue('AO' . $row, $this->exportSpeechTriggerCondMap[$json['conditions'][7][0]['speechTriggerCond']]);
-      }
-
+      $this->writeSpeechContentData($json, $row);
       // 最初に訪れたページ
-      if (isset($json['conditions'][8])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('AP' . $row, 'する');
-        $this->phpExcel->getActiveSheet()->setCellValue('AQ' . $row, $this->exportTargetNameMap[$json['conditions'][8][0]['targetName']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('AR' . $row, $json['conditions'][8][0]['keyword_contains']);
-        $this->phpExcel->getActiveSheet()->setCellValue('AS' . $row, $this->exportKWDContainTypeMap[$json['conditions'][8][0]['keyword_contains_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('AT' . $row, $json['conditions'][8][0]['keyword_exclusions']);
-        $this->phpExcel->getActiveSheet()->setCellValue('AU' . $row, $this->exportKWDContainTypeMap[$json['conditions'][8][0]['keyword_exclusions_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('AV' . $row, $this->exportStayPageCondTypeMap[$json['conditions'][8][0]['stayPageCond']]);
-      }
-
+      $this->writeFirstVisitPageData($json, $row);
       // 前のページ
-      if (isset($json['conditions'][9])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('AW' . $row, 'する');
-        $this->phpExcel->getActiveSheet()->setCellValue('AX' . $row, $this->exportTargetNameMap[$json['conditions'][9][0]['targetName']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('AY' . $row, $json['conditions'][9][0]['keyword_contains']);
-        $this->phpExcel->getActiveSheet()->setCellValue('AZ' . $row, $this->exportKWDContainTypeMap[$json['conditions'][9][0]['keyword_contains_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('BA' . $row, $json['conditions'][9][0]['keyword_exclusions']);
-        $this->phpExcel->getActiveSheet()->setCellValue('BB' . $row, $this->exportKWDContainTypeMap[$json['conditions'][9][0]['keyword_exclusions_type']]);
-        $this->phpExcel->getActiveSheet()->setCellValue('BC' . $row, $this->exportStayPageCondTypeMap[$json['conditions'][9][0]['stayPageCond']]);
-      }
-
+      $this->writePreviousPageData($json, $row);
       // 営業時間
-      if (isset($json['conditions'][10])) {
-        $this->phpExcel->getActiveSheet()->setCellValue('S' . $row, 'する');
-        $this->phpExcel->getActiveSheet()->setCellValue('T' . $row, $this->exportBusinessHourMap[$json['conditions'][10][0]['operatingHoursTime']]);
-      }
+      $this->writeBusinessHourData($json, $row);
     }
   }
 
@@ -314,7 +226,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     $objConditional->addCondition($condition);
     $objConditional->getStyle()->getFill()->setFillType(PHPExcel_Style_Fill::FILL_SOLID)->getEndColor()->setARGB('FFBFBFBF');
 
-    $conditionalStyles = $this->phpExcel->getActiveSheet()->getStyle($beginColumn . $row)->getConditionalStyles();
+    $conditionalStyles = $this->currentSheet->getStyle($beginColumn . $row)->getConditionalStyles();
     array_push($conditionalStyles, $objConditional);
     $this->setConditionStyle($beginColumn, $conditionalStyles, $row);
   }
@@ -324,16 +236,16 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function setRowConditionalFormat($row)
   {
-    $this->setColumnConditionalFormat('E', $row, "しない");
-    $this->setColumnConditionalFormat('I', $row, "しない");
-    $this->setColumnConditionalFormat('L', $row, "しない");
-    $this->setColumnConditionalFormat('S', $row, "しない");
-    $this->setColumnConditionalFormat('U', $row, "しない");
-    $this->setColumnConditionalFormat('Y', $row, "しない");
-    $this->setColumnConditionalFormat('AE', $row, "しない");
-    $this->setColumnConditionalFormat('AH', $row, "しない");
-    $this->setColumnConditionalFormat('AP', $row, "しない");
-    $this->setColumnConditionalFormat('AW', $row, "しない");
+    $this->setColumnConditionalFormat('E', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('I', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('L', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('S', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('U', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('Y', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('AE', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('AH', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('AP', $row, $this->isSettingMap[2]);
+    $this->setColumnConditionalFormat('AW', $row, $this->isSettingMap[2]);
     $this->setColumnConditionalFormat('BE', $row, "シナリオを選択する");
     $this->setColumnConditionalFormat('BQ', $row, "チャットメッセージを送る");
   }
@@ -347,93 +259,52 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   {
     switch ($beginColumn) {
       case 'E':
-        $this->phpExcel->getActiveSheet()->getStyle('E' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('F' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('G' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('H' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['E', 'F', 'G', 'H'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'I':
-        $this->phpExcel->getActiveSheet()->getStyle('I' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('J' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('K' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['I', 'J', 'K'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'L':
-        $this->phpExcel->getActiveSheet()->getStyle('L' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('M' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('N' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('O' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('P' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('Q' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('R' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['L', 'M', 'N', 'O', 'P', 'Q', 'R'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'S':
-        $this->phpExcel->getActiveSheet()->getStyle('S' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('T' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['S', 'T'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'U':
-        $this->phpExcel->getActiveSheet()->getStyle('U' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('V' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('W' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('X' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['U', 'V', 'W', 'X'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'Y':
-        $this->phpExcel->getActiveSheet()->getStyle('Y' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('Z' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AA' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AB' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AC' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AD' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['Y', 'Z', 'AA', 'AB', 'AC', 'AD'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'AE':
-        $this->phpExcel->getActiveSheet()->getStyle('AE' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AF' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AG' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['AE', 'AF', 'AG'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'AH':
-        $this->phpExcel->getActiveSheet()->getStyle('AH' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AI' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AJ' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AK' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AL' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AM' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AN' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AO' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'AP':
-        $this->phpExcel->getActiveSheet()->getStyle('AP' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AQ' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AR' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AS' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AT' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AU' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AV' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'AW':
-        $this->phpExcel->getActiveSheet()->getStyle('AW' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AX' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AY' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('AZ' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BA' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BB' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BC' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'BE':
-        $this->phpExcel->getActiveSheet()->getStyle('BE' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BF' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BG' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BH' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BI' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BJ' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BK' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BL' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BM' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BN' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BO' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BP' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       case 'BQ':
-        $this->phpExcel->getActiveSheet()->getStyle('BQ' . $index)->setConditionalStyles($conditionalStyles);
-        $this->phpExcel->getActiveSheet()->getStyle('BR' . $index)->setConditionalStyles($conditionalStyles);
+        $targetArray = ['BQ', 'BR'];
+        $this->setMultiColumnConditionStyle($targetArray, $index, $conditionalStyles);
         break;
       default:
         break;
@@ -445,61 +316,62 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function setRowDataValidation($row)
   {
-    $this->setCellDataValidation('B', $row, "無効", "無効, 有効");
-    $this->setCellDataValidation('D', $row, "すべて一致", "すべて一致, いずれかが一致");
+
+    $this->setCellDataValidation('B', $row, $this->activeFlgMap[1], $this->activeFlgMap[1] . ', ' . $this->activeFlgMap[0]);
+    $this->setCellDataValidation('D', $row, $this->conditionTypeMap[1], $this->conditionTypeMap[1] . ', ' . $this->conditionTypeMap[2]);
     // 滞在時間
-    $this->setCellDataValidation('E', $row, "しない", "しない, する");
-    $this->setCellDataValidation('F', $row, "", "サイト, ページ");
-    $this->setCellDataValidation('G', $row, "", "秒, 分, 時");
+    $this->setCellDataValidation('E', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('F', $row, "", $this->stayTimeCheckTypeMap[1] . ', ' . $this->stayTimeCheckTypeMap[2]);
+    $this->setCellDataValidation('G', $row, "", $this->stayTimeTypeMap[1] . ', ' . $this->stayTimeTypeMap[2] . ', ' . $this->stayTimeTypeMap[3]);
     // 訪問回数
-    $this->setCellDataValidation('I', $row, "しない", "しない, する");
-    $this->setCellDataValidation('K', $row, "", "一致, 以上, 未満");
+    $this->setCellDataValidation('I', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('K', $row, "", $this->visitCntCondMap[1] . ', ' . $this->visitCntCondMap[2] . ', ' . $this->visitCntCondMap[3]);
     // ページ
-    $this->setCellDataValidation('L', $row, "しない", "しない, する");
-    $this->setCellDataValidation('M', $row, "", "URL, タイトル");
-    $this->setCellDataValidation('O', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('Q', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('R', $row, "", "完全一致, 部分一致");
+    $this->setCellDataValidation('L', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('M', $row, "", $this->targetNameMap[1] . ', ' . $this->targetNameMap[2]);
+    $this->setCellDataValidation('O', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('Q', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('R', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
     // 営業時間
-    $this->setCellDataValidation('S', $row, "しない", "しない, する");
-    $this->setCellDataValidation('T', $row, "", "営業時間内, 営業時間外");
+    $this->setCellDataValidation('S', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('T', $row, "", $this->businessHourMap[1] . ', ' . $this->businessHourMap[2]);
     // 曜日・時間
-    $this->setCellDataValidation('U', $row, "しない", "しない, する");
+    $this->setCellDataValidation('U', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
     // 参照元URL（リファラー）
-    $this->setCellDataValidation('Y', $row, "しない", "しない, する");
-    $this->setCellDataValidation('AA', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('AC', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('AD', $row, "", "完全一致, 部分一致");
+    $this->setCellDataValidation('Y', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('AA', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('AC', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('AD', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
     // 検索キーワード
-    $this->setCellDataValidation('AE', $row, "しない", "しない, する");
-    $this->setCellDataValidation('AG', $row, "", "完全一致, 部分一致, 不一致");
+    $this->setCellDataValidation('AE', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('AG', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2] . ', ' . $this->stayPageCondTypeMap[3]);
     // 発言内容
-    $this->setCellDataValidation('AH', $row, "しない", "しない, する");
-    $this->setCellDataValidation('AJ', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('AM', $row, "", "完全一致, 部分一致");
-    $this->setCellDataValidation('AL', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('AO', $row, "", "一回のみ有効, 何度でも有効");
+    $this->setCellDataValidation('AH', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('AJ', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('AM', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
+    $this->setCellDataValidation('AL', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('AO', $row, "", $this->speechTriggerCondMap[1] . ', ' . $this->speechTriggerCondMap[2]);
     // 最初に訪れたページ
-    $this->setCellDataValidation('AP', $row, "しない", "しない, する");
-    $this->setCellDataValidation('AQ', $row, "", "URL, タイトル");
-    $this->setCellDataValidation('AS', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('AU', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('AV', $row, "", "完全一致, 部分一致");
+    $this->setCellDataValidation('AP', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('AQ', $row, "", $this->targetNameMap[1] . ', ' . $this->targetNameMap[2]);
+    $this->setCellDataValidation('AS', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('AU', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('AV', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
     // 前のページ
-    $this->setCellDataValidation('AW', $row, "しない", "しない, する");
-    $this->setCellDataValidation('AX', $row, "", "URL, タイトル");
-    $this->setCellDataValidation('AZ', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('BB', $row, "", "をすべて含む, のいずれかを含む");
-    $this->setCellDataValidation('BC', $row, "", "完全一致, 部分一致");
+    $this->setCellDataValidation('AW', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('AX', $row, "", $this->targetNameMap[1] . ', ' . $this->targetNameMap[2]);
+    $this->setCellDataValidation('AZ', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('BB', $row, "", $this->kWDContainTypeMap[1] . ', ' . $this->kWDContainTypeMap[2]);
+    $this->setCellDataValidation('BC', $row, "", $this->stayPageCondTypeMap[1] . ', ' . $this->stayPageCondTypeMap[2]);
 
     // 実行設定
-    $this->setCellDataValidation('BD', $row, "チャットメッセージを送る", "チャットメッセージを送る, シナリオを選択する");
-    $this->setCellDataValidation('BE', $row, "自動で最大化する", "自動で最大化する, 自動で最大化しない");
-    $this->setCellDataValidation('BG', $row, "ON （自由入力可）", "ON （自由入力可）, OFF (自由入力不可）");
-    $this->setCellDataValidation('BH', $row, "しない", "しない, する");
-    $this->setCellDataValidation('BI', $row, "しない", "しない, する");
+    $this->setCellDataValidation('BD', $row, $this->actionTypeMap[1], $this->actionTypeMap[1] . ', ' . $this->actionTypeMap[2]);
+    $this->setCellDataValidation('BE', $row, $this->widgetOpenMap[1], $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
+    $this->setCellDataValidation('BG', $row, $this->chatTextAreaMap[1], $this->chatTextAreaMap[1] . ', ' . $this->chatTextAreaMap[2]);
+    $this->setCellDataValidation('BH', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
+    $this->setCellDataValidation('BI', $row, $this->isSettingMap[2], $this->isSettingMap[2] . ', ' . $this->isSettingMap[1]);
 
-    $this->setCellDataValidation('BR', $row, "", "自動で最大化する, 自動で最大化しない");
+    $this->setCellDataValidation('BR', $row, "", $this->widgetOpenMap[1] . ', ' . $this->widgetOpenMap[2]);
   }
 
   /**
@@ -510,8 +382,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function setCellDataValidation($column, $row, $default, $options)
   {
-    $this->phpExcel->getActiveSheet()->setCellValue($column . $row, $default);
-    $objValidation = $this->phpExcel->getActiveSheet()->getCell($column . $row)->getDataValidation();
+    $this->currentSheet->setCellValue($column . $row, $default);
+    $objValidation = $this->currentSheet->getCell($column . $row)->getDataValidation();
     $objValidation->setType(PHPExcel_Cell_DataValidation::TYPE_LIST);
     $objValidation->setErrorStyle(PHPExcel_Cell_DataValidation::STYLE_INFORMATION);
     $objValidation->setAllowBlank(false);
@@ -528,12 +400,228 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   public function copyRowStyle($baseRow, $targetRow)
   {
     foreach (range('A', 'R') as $column) {
-      $this->phpExcel->getActiveSheet()->duplicateStyle($this->phpExcel->getActiveSheet()->getStyle('B' . $column . $baseRow), 'B' . $column . $targetRow);
+      $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('B' . $column . $baseRow), 'B' . $column . $targetRow);
     }
 
     foreach (range('A', 'Z') as $column) {
-      $this->phpExcel->getActiveSheet()->duplicateStyle($this->phpExcel->getActiveSheet()->getStyle($column . $baseRow), $column . $targetRow);
-      $this->phpExcel->getActiveSheet()->duplicateStyle($this->phpExcel->getActiveSheet()->getStyle('A' . $column . $baseRow), 'A' . $column . $targetRow);
+      $this->currentSheet->duplicateStyle($this->currentSheet->getStyle($column . $baseRow), $column . $targetRow);
+      $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('A' . $column . $baseRow), 'A' . $column . $targetRow);
+    }
+  }
+
+  /**
+   * 滞在時間
+   * @param $json
+   * @param $row
+   */
+  private function writeStayTimeData($json, $row)
+  {
+    if (isset($json['conditions'][1])) {
+      $this->currentSheet->setCellValue('E' . $row, 'する');
+      $this->currentSheet->setCellValue('F' . $row, $this->stayTimeCheckTypeMap[$json['conditions'][1][0]['stayTimeCheckType']]);
+      $this->currentSheet->setCellValue('G' . $row, $this->stayTimeTypeMap[$json['conditions'][1][0]['stayTimeType']]);
+      $this->currentSheet->setCellValue('H' . $row, $json['conditions'][1][0]['stayTimeRange']);
+    }
+  }
+
+  /**
+   * 訪問回数
+   * @param $json
+   * @param $row
+   */
+  private function writeVisitCountData($json, $row)
+  {
+    if (isset($json['conditions'][2])) {
+      $this->currentSheet->setCellValue('I' . $row, 'する');
+      $this->currentSheet->setCellValue('J' . $row, $json['conditions'][2][0]['visitCnt']);
+      $this->currentSheet->setCellValue('K' . $row, $this->visitCntCondMap[$json['conditions'][2][0]['visitCntCond']]);
+    }
+  }
+
+  /**
+   * URL
+   * @param $json
+   * @param $row
+   */
+  private function writeURLData($json, $row)
+  {
+    if (isset($json['conditions'][3])) {
+      $this->currentSheet->setCellValue('L' . $row, 'する');
+      $this->currentSheet->setCellValue('M' . $row, $this->targetNameMap[$json['conditions'][3][0]['targetName']]);
+      $this->currentSheet->setCellValue('N' . $row, $json['conditions'][3][0]['keyword_contains']);
+      $this->currentSheet->setCellValue('O' . $row, $this->kWDContainTypeMap[$json['conditions'][3][0]['keyword_contains_type']]);
+      $this->currentSheet->setCellValue('P' . $row, $json['conditions'][3][0]['keyword_exclusions']);
+      $this->currentSheet->setCellValue('Q' . $row, $this->kWDContainTypeMap[$json['conditions'][3][0]['keyword_exclusions_type']]);
+      $this->currentSheet->setCellValue('R' . $row, $this->stayPageCondTypeMap[$json['conditions'][3][0]['stayPageCond']]);
+    }
+  }
+
+  /**
+   * 曜日・時間
+   * @param $json
+   * @param $row
+   */
+  private function writeWeekdayData($json, $row)
+  {
+    if (isset($json['conditions'][4])) {
+      $this->currentSheet->setCellValue('U' . $row, 'する');
+      $weekDays = '';
+      foreach ($json['conditions'][4][0]['day'] as $day => $val) {
+        if ($val) {
+          $weekDays = $weekDays . $this->exportWeekdayMap[$day] . ', ';
+        }
+      }
+
+      $this->currentSheet->setCellValue('V' . $row, $weekDays);
+      if ($json['conditions'][4][0]['timeSetting'] == 1) {
+        $this->currentSheet->setCellValue('W' . $row, $json['conditions'][4][0]['startTime']);
+        $this->currentSheet->setCellValue('X' . $row, $json['conditions'][4][0]['endTime']);
+      }
+    }
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   */
+  private function writeRefferURLData($json, $row)
+  {
+    if (isset($json['conditions'][5])) {
+      $this->currentSheet->setCellValue('Y' . $row, 'する');
+      $this->currentSheet->setCellValue('Z' . $row, $json['conditions'][5][0]['keyword_contains']);
+      $this->currentSheet->setCellValue('AA' . $row, $this->kWDContainTypeMap[$json['conditions'][5][0]['keyword_contains_type']]);
+      $this->currentSheet->setCellValue('AB' . $row, $json['conditions'][5][0]['keyword_exclusions']);
+      $this->currentSheet->setCellValue('AC' . $row, $this->kWDContainTypeMap[$json['conditions'][5][0]['keyword_exclusions_type']]);
+      $this->currentSheet->setCellValue('AD' . $row, $this->stayPageCondTypeMap[$json['conditions'][5][0]['referrerCond']]);
+    }
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   */
+  private function writeSearchKeywordData($json, $row)
+  {
+    if (isset($json['conditions'][6])) {
+      $this->currentSheet->setCellValue('AE' . $row, 'する');
+      $this->currentSheet->setCellValue('AF' . $row, $json['conditions'][6][0]['keyword']);
+      $this->currentSheet->setCellValue('AG' . $row, $this->stayPageCondTypeMap[$json['conditions'][6][0]['searchCond']]);
+    }
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   */
+  private function writeSpeechContentData($json, $row)
+  {
+    if (isset($json['conditions'][7])) {
+      $this->currentSheet->setCellValue('AH' . $row, 'する');
+      $this->currentSheet->setCellValue('AI' . $row, $json['conditions'][7][0]['keyword_contains']);
+      $this->currentSheet->setCellValue('AJ' . $row, $this->kWDContainTypeMap[$json['conditions'][7][0]['keyword_contains_type']]);
+      $this->currentSheet->setCellValue('AK' . $row, $json['conditions'][7][0]['keyword_exclusions']);
+      $this->currentSheet->setCellValue('AL' . $row, $this->kWDContainTypeMap[$json['conditions'][7][0]['keyword_exclusions_type']]);
+      $this->currentSheet->setCellValue('AM' . $row, $this->stayPageCondTypeMap[$json['conditions'][7][0]['speechContentCond']]);
+      $this->currentSheet->setCellValue('AN' . $row, $json['conditions'][7][0]['triggerTimeSec']);
+      $this->currentSheet->setCellValue('AO' . $row, $this->speechTriggerCondMap[$json['conditions'][7][0]['speechTriggerCond']]);
+    }
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   */
+  private function writeFirstVisitPageData($json, $row)
+  {
+    if (isset($json['conditions'][8])) {
+      $this->currentSheet->setCellValue('AP' . $row, 'する');
+      $this->currentSheet->setCellValue('AQ' . $row, $this->targetNameMap[$json['conditions'][8][0]['targetName']]);
+      $this->currentSheet->setCellValue('AR' . $row, $json['conditions'][8][0]['keyword_contains']);
+      $this->currentSheet->setCellValue('AS' . $row, $this->kWDContainTypeMap[$json['conditions'][8][0]['keyword_contains_type']]);
+      $this->currentSheet->setCellValue('AT' . $row, $json['conditions'][8][0]['keyword_exclusions']);
+      $this->currentSheet->setCellValue('AU' . $row, $this->kWDContainTypeMap[$json['conditions'][8][0]['keyword_exclusions_type']]);
+      $this->currentSheet->setCellValue('AV' . $row, $this->stayPageCondTypeMap[$json['conditions'][8][0]['stayPageCond']]);
+    }
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   */
+  private function writePreviousPageData($json, $row)
+  {
+    if (isset($json['conditions'][9])) {
+      $this->currentSheet->setCellValue('AW' . $row, 'する');
+      $this->currentSheet->setCellValue('AX' . $row, $this->targetNameMap[$json['conditions'][9][0]['targetName']]);
+      $this->currentSheet->setCellValue('AY' . $row, $json['conditions'][9][0]['keyword_contains']);
+      $this->currentSheet->setCellValue('AZ' . $row, $this->kWDContainTypeMap[$json['conditions'][9][0]['keyword_contains_type']]);
+      $this->currentSheet->setCellValue('BA' . $row, $json['conditions'][9][0]['keyword_exclusions']);
+      $this->currentSheet->setCellValue('BB' . $row, $this->kWDContainTypeMap[$json['conditions'][9][0]['keyword_exclusions_type']]);
+      $this->currentSheet->setCellValue('BC' . $row, $this->stayPageCondTypeMap[$json['conditions'][9][0]['stayPageCond']]);
+    }
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   */
+  private function writeBusinessHourData($json, $row)
+  {
+    if (isset($json['conditions'][10])) {
+      $this->currentSheet->setCellValue('S' . $row, 'する');
+      $this->currentSheet->setCellValue('T' . $row, $this->businessHourMap[$json['conditions'][10][0]['operatingHoursTime']]);
+    }
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   * @param $value
+   */
+  private function writeScenarioData($json, $row, $value)
+  {
+    $this->currentSheet->setCellValue('BD' . $row, 'シナリオを選択する');
+    $this->currentSheet->setCellValue('BQ' . $row, $value['TChatbotScenario']['name']);
+    $this->currentSheet->setCellValue('BR' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
+  }
+
+  /**
+   * @param $json
+   * @param $row
+   * @param $value
+   */
+  private function writeSendMessageData($json, $row, $value)
+  {
+    $this->currentSheet->setCellValue('BD' . $row, 'チャットメッセージを送る');
+    $this->currentSheet->setCellValue('BE' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
+    $this->currentSheet->setCellValue('BF' . $row, $json['message']);
+    $this->currentSheet->setCellValue('BG' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
+    $this->currentSheet->setCellValue('BH' . $row, $this->triggerCVMap[$json['cv']]);
+    $this->currentSheet->setCellValue('BI' . $row, $this->sendMailFlgMap[$value['TAutoMessage']['send_mail_flg']]);
+    // get mail information
+    $mailTransmission = ClassRegistry::init('MMailTransmissionSetting');
+    $transmissionData = $mailTransmission->findById($value['TAutoMessage']['m_mail_transmission_settings_id']);
+    if (!empty($transmissionData)) {
+      $splitedMailAddresses = explode(',', $transmissionData['MMailTransmissionSetting']['to_address']);
+      $this->currentSheet->setCellValue('BJ' . $row, !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "");
+      $this->currentSheet->setCellValue('BK' . $row, !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "");
+      $this->currentSheet->setCellValue('BL' . $row, !empty($splitedMailAddresses[2]) ? $splitedMailAddresses[2] : "");
+      $this->currentSheet->setCellValue('BM' . $row, !empty($splitedMailAddresses[3]) ? $splitedMailAddresses[3] : "");
+      $this->currentSheet->setCellValue('BN' . $row, !empty($splitedMailAddresses[4]) ? $splitedMailAddresses[4] : "");
+      $this->currentSheet->setCellValue('BO' . $row, !empty($transmissionData['MMailTransmissionSetting']['subject']) ? $transmissionData['MMailTransmissionSetting']['subject'] : "");
+      $this->currentSheet->setCellValue('BP' . $row, !empty($transmissionData['MMailTransmissionSetting']['from_name']) ? $transmissionData['MMailTransmissionSetting']['from_name'] : "");
+    }
+  }
+
+  /**
+   * @param $targetArray
+   * @param $row
+   * @param $conditionalStyles
+   */
+  private function setMultiColumnConditionStyle($targetArray, $row, $conditionalStyles)
+  {
+    foreach ($targetArray as $column) {
+      $this->currentSheet->getStyle($column . $row)->setConditionalStyles($conditionalStyles);
     }
   }
 }

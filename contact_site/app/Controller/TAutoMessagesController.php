@@ -789,7 +789,7 @@ class TAutoMessagesController extends AppController {
 
     return $component->export($data);
   }
-  
+
   public function downloadTemplate() {
     $this->autoRender = false;
     $filePath = ROOT.DS.self::FULL_TEMPLATE_FILE_NAME;

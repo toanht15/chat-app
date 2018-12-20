@@ -235,7 +235,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
       'BD' => 'チャットメッセージを送る',
       'BE' => '自動で最大化する',
       'BF' => NULL,
-      'BG' => 'ON （自由入力可）',
+      'BG' => 'ON（自由入力可）',
       'BH' => 'しない',
       'BI' => 'しない',
       'BJ' => NULL,
