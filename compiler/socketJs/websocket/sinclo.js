@@ -9610,7 +9610,7 @@
                 if(isNaN(result)){
                   throw new Error("Not a Number");
                 }
-              } else if (Number(rule.calcType) === 2) {
+              } else {
                 result = self._convertString(
                     self._replaceVariable(rule.formula));
               }
@@ -9637,6 +9637,9 @@
               //切り上げの場合
               value = Math.ceil( value * index ) / index;
               break;
+            default:
+              //デフォルトは四捨五入
+              value = Math.round( value * index ) / index;
           }
 
           return value;
@@ -9658,11 +9661,10 @@
           if (message) {
             return message.replace(/\{\{(.+?)\}\}/g, function(param) {
               var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-              return self._getStoredVariable(name) || name;
+              return self._getStoredVariable(name) || '';
             });
-          } else {
-            return '';
           }
+          return '';
         },
         _replaceIntegerVariable: function(message) {
           var self = sinclo.scenarioApi;
@@ -9671,12 +9673,11 @@
               var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
               return Number(self._getStoredVariable(name)) || name;
             });
-          } else {
-            return '';
           }
+          return '';
         },
         _convertString: function(message) {
-          if (message.indexOf('&') != -1) {
+          if (message.indexOf('&') !== -1) {
             var itemArray = message.split('&');
             message = '';
             itemArray.forEach(function(item) {
