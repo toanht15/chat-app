@@ -1868,7 +1868,7 @@ class StatisticsController extends AppController {
       count(th.id) as request_count
       FROM (select t_histories_id,m_companies_id,message_request_flg from
       t_history_chat_logs force index(idx_t_history_chat_logs_request_flg_companies_id)
-      where message_type = 1 and message_request_flg = ? and m_companies_id = ?)
+      where message_request_flg = ? and m_companies_id = ?)
       as thcl,t_histories as th
       WHERE
         thcl.t_histories_id = th.id
