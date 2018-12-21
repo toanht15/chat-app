@@ -3251,6 +3251,11 @@
     });
   });
 
+  var replaceVariableAllEmpty = function( message ) {
+    message = message ? message : '';
+    return message.replace(/{{(.+?)\}}/g, '');
+  };
+
   /**
    * アクションのバリデーションとエラーメッセージの設定
    * @param  Node   element       チェック対象のアクションの要素(エラー表示を行う)
@@ -3551,6 +3556,10 @@
         }
         /* 数値入力の場合 */
         if (elm.calcType == <?= C_SCENARIO_CONTROL_INTEGER ?>) {
+          console.log(replaceVariableAllEmpty(elm.formula));
+          if(searchStr(replaceVariableAllEmpty(elm.formula), /^.*[^+\-*\/0-9＋－＊／０-９\s].*$/)) {
+            messageList.push('数値でない文字が指定されています');
+          }
           if (searchStr(elm.formula, /÷/)) {
             messageList.push('割り算には"/"（スラッシュ）を使用してください');
           }
