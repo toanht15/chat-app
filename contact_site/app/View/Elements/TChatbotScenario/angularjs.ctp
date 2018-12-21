@@ -2655,6 +2655,19 @@
       };
 
       /**
+       * メッセージ内の変数を、ローカルストレージ内のデータと置き換える、が、ない場合は空文字列を返す
+       * @param String message 変数を含む文字列
+       * @return String        置換後の文字列
+       */
+      $scope.replaceVariableWithEmpty = function(message) {
+        message = message ? message : '';
+        return message.replace(/{{(.+?)\}}/g, function(param) {
+          var name = param.replace(/^{{(.+)}}$/, '$1');
+          return LocalStorageService.getItem('chatbotVariables', name) || '';
+        });
+      };
+
+      /**
        * メッセージ内の変数を、ローカルストレージ内のデータと置き換える
        * @param String message 変数を含む文字列
        * @return String        置換後の文字列（数値）
@@ -2731,8 +2744,11 @@
                 result = self.toHalfWidth($scope.replaceIntegerVariable(result));
                 result = Number(eval(result));
                 result = self.roundResult(result, calcRule.significantDigits, calcRule.rulesForRounding);
-              } else if (Number(calcRule.calcType) === <?= C_SCENARIO_CONTROL_STRING ?>) {
-                result = self.adjustString($scope.replaceVariable(result));
+                if(isNaN(result)){
+                  throw new Error("Not a Number");
+                }
+              } else {
+                result = self.adjustString($scope.replaceVariableWithEmpty(result));
               }
               LocalStorageService.setItem('chatbotVariables', [
                 {
@@ -2742,6 +2758,11 @@
             }
             catch(e){
               console.log(e);
+              LocalStorageService.setItem('chatbotVariables', [
+                {
+                  key: calcRule.variableName,
+                  value: "計算エラー"
+                }]);
             }
           });
         $scope.actionStep++;
