@@ -1004,7 +1004,9 @@ $config['chatbotScenarioActionList'] = [
         [
           'variableName' => '',
           'calcType' => '1',
-          'formula' => ''
+          'formula' => '',
+          'significantDigits' => '0',
+          'rulesForRounding' => '1'
         ]
       ]
     ]
