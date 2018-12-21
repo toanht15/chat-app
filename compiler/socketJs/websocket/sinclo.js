@@ -170,16 +170,17 @@
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
           }
-          if (check.smartphone() &&
+          if ((check.smartphone() &&
               Number(window.sincloInfo.widget.spWidgetViewPattern) === 3 &&
               $('#minimizeBtn').is(':hidden') &&
               Number(window.sincloInfo.widget.closeButtonSetting) === 2 &&
-              Number(window.sincloInfo.widget.closeButtonModeType) === 1) {
+              Number(window.sincloInfo.widget.closeButtonModeType) === 1) || ($('#minimizeBtn').is(':hidden') && check.hasCustomBannerImageSetting())) {
             console.log(
                 '<><><><><><><><><><>スマホ用隠しパラメータ、即バナー<><><><><><><><><><><>');
             elm.css('height', height + 'px');
             sinclo.operatorInfo.closeBtn();
           } else {
+            $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
             elm.animate({
               height: height + 'px'
             }, 'first', null, function() {
@@ -187,7 +188,6 @@
                   '$(\'#sincloBox\').offset().top : %s, $(\'#sincloWidgetBox\').offset().top',
                   $('#sincloBox').offset().top,
                   $('#sincloWidgetBox').offset().top);
-              $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
             });
           }
         } else if (closeAct !== 'true') {
