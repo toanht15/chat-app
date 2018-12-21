@@ -8386,8 +8386,8 @@ ul.naviBtn {
               [class*="grid-container"]{
                 display: grid;
                 display: -ms-grid;
-                grid-template-columns: 175px 150px 1fr 48px;
-                -ms-grid-columns: 175px 150px 1fr 48px;
+                grid-template-columns: 150px 140px 1fr 100px 100px 48px;
+                -ms-grid-columns: 150px 150px 1fr 100px 100px 48px;
                 grid-template-rows: 31px 1fr;
                 -ms-grid-rows: 31px 1fr;
 
@@ -8403,6 +8403,7 @@ ul.naviBtn {
                   grid-column: 3;
                   -ms-grid-column: 3;
                 }
+
                 input[type="text"], select {
                   border-radius: 4px;
                   border: 1px solid #909090;
@@ -8414,7 +8415,7 @@ ul.naviBtn {
                 hr.separator {
                   margin-top: 15px;
                   margin-bottom: 10px;
-                  grid-column: 1/5;
+                  grid-column: 1/7;
                   width: 101%;
                   padding-bottom: 0px;
                 }
