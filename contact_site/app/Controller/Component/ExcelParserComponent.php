@@ -30,8 +30,9 @@ class ExcelParserComponent extends Component {
     $this->filePath = $file;
   }
 
-  public function readData() {
+  public function readData($readDataOnly = false) {
     $this->objRender = PHPExcel_IOFactory::createReader("Excel2007");
+    $this->objRender->setReadDataOnly($readDataOnly);
     $this->phpExcel = $this->objRender->load($this->filePath);
   }
 

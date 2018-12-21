@@ -267,6 +267,9 @@
         //バナー表示状態になった
         storage.l.set('bannerAct', true);
         storage.s.set('bannerAct', true);
+        if(check.hasCustomBannerImageSetting()) {
+          $('#sincloBox').addClass('onImageBanner');
+        }
         $('#sincloBannerBox').show();
       },
       //バナーがクリックされた時の挙動
@@ -276,6 +279,9 @@
         storage.s.set('bannerAct', false);
         $('#sincloWidgetBox').show();
         $('#sincloBannerBox').hide();
+        if(check.hasCustomBannerImageSetting()) {
+          $('#sincloBox').removeClass('onImageBanner');
+        }
         $('#sincloBox').css('bottom', '0');
         //スマホかつ横かを判定
         if (check.smartphone()) {
@@ -286,16 +292,21 @@
           var widgetHorizontalPosition = '10px';
           var widgetVerticalPosition = '0px';
           if (!check.smartphone()) {
-            widgetHorizontalPosition = (window.sincloInfo.custom &&
-                window.sincloInfo.custom.widget &&
-                window.sincloInfo.custom.widget.horizontalPosition) ?
-                window.sincloInfo.custom.widget.horizontalPosition :
-                '10px';
-            widgetVerticalPosition = (window.sincloInfo.custom &&
-                window.sincloInfo.custom.widget &&
-                window.sincloInfo.custom.widget.verticalPosition) ?
-                window.sincloInfo.custom.widget.verticalPosition :
-                '0px';
+            if(Number(sincloInfo.widget.widgetSizeType) === 4) {
+              widgetHorizontalPosition = "0px";
+              widgetVerticalPosition = "0px";
+            } else {
+              widgetHorizontalPosition = (window.sincloInfo.custom &&
+                  window.sincloInfo.custom.widget &&
+                  window.sincloInfo.custom.widget.horizontalPosition) ?
+                  window.sincloInfo.custom.widget.horizontalPosition :
+                  '10px';
+              widgetVerticalPosition = (window.sincloInfo.custom &&
+                  window.sincloInfo.custom.widget &&
+                  window.sincloInfo.custom.widget.verticalPosition) ?
+                  window.sincloInfo.custom.widget.verticalPosition :
+                  '0px';
+            }
           }
           common.widgetHandler._handleResizeEvent();
           switch (Number(window.sincloInfo.widget.showPosition)) {
@@ -3504,7 +3515,7 @@
             var linkTab = a.match(this._regList.linkTabReg);
             var processedLink = linkTab[1].replace(/ /g, '\$nbsp;');
             a = a.replace(linkTab[1],
-                linkTab[1] + ' onclick=link(\'' + linkTab[2] + '\',\'' +
+                linkTab[1] + ' onclick=link(\'' + check.escape_html(linkTab[2]) + '\',\'' +
                 processedLink + '\',\'' + option + '\')');
             str = str.replace(url, a);
           } else {
@@ -3537,14 +3548,14 @@
                 if (check.smartphone()) {
                   a = a.replace(linkTab[1], linkTab[1] +
                       'class=\'sincloTelConversion\' onclick=link(\'' +
-                      linkTab[2] + '\',\'' + processedLink + '\',\'' + option +
+                      check.escape_html(linkTab[2]) + '\',\'' + processedLink + '\',\'' + option +
                       '\');sinclo.api.callTelCV(\'' + telno + '\')');
                 } else {
                   a = '<span class=\'link\'>' + linkTab[2] + '</span>';
                 }
               } else {
                 a = a.replace(linkTab[1],
-                    linkTab[1] + ' onclick=link(\'' + linkTab[2] + '\',\'' +
+                    linkTab[1] + ' onclick=link(\'' + check.escape_html(linkTab[2]) + '\',\'' +
                     processedLink + '\',\'' + option + '\')');
               }
             } else {
