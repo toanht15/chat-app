@@ -109,6 +109,10 @@
               //スマホ横
               height = window.innerHeight *
                   (document.body.clientWidth / window.innerWidth);
+              if(!check.android()){
+                // iPhoneは常にwindow.innerHeightがheight
+                height = window.innerHeight;
+              }
             } else {
               height += $('#sincloWidgetBox #widgetHeader').outerHeight(true);
               if ($('#sincloWidgetBox').children().is('#navigation')) {
@@ -426,11 +430,9 @@
           var sincloBox = document.getElementById('sincloBox');
           document.getElementById(
               'sincloChatMessage').value = sinclo.operatorInfo.reCreateWidgetMessage;
-          sincloBox.style.opacity = 0;
           sinclo.operatorInfo.header = document.getElementById('widgetHeader');
           sinclo.widget.condifiton.set(openFlg, true);
           common.widgetHandler.show(true);
-          //sinclo.operatorInfo.widgetHide();
 
           sinclo.chatApi.targetTextarea = document.getElementById('chatTalk');
 
@@ -2620,12 +2622,17 @@
           //横の場合
           else {
             if (!check.android()) {
-              var chatAreaHeight = window.innerHeight *
-                  (document.body.clientWidth / window.innerWidth);
-              var hRatio = chatAreaHeight * 0.07;
+              var chatElementHeight = $('#widgetHeader').height() +
+                  $('#flexBoxWrap').height();
               document.getElementById(
-                  'chatTalk').style.height = (chatAreaHeight - (6.5 * hRatio)) +
-                  'px';
+                  'chatTalk').style.height = window.innerHeight -
+                  chatElementHeight + 'px';
+            } else if (check.android()) {
+              var chatElementHeight = $('#widgetHeader').height() +
+                  $('#flexBoxWrap').height();
+              document.getElementById(
+                  'chatTalk').style.height = window.innerHeight -
+                  chatElementHeight + 'px';
             }
           }
         } else {

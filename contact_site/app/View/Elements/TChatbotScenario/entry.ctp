@@ -105,6 +105,19 @@
                 </div>
             </div>
 
+            <!-- 計算・変数操作 -->
+            <div class="actionMenu">
+              <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_CONTROL_VARIABLE ?>)"
+                 class="greenBtn btn-shadow commontooltip"
+                 data-text="変数を操作することができるアクションです。数値同士の計算や、文字列の結合を行い変数に代入することが可能です。">計算・変数操作</a>
+              <div class="actionMenuOption" id="actionMenu<?= C_SCENARIO_ACTION_CONTROL_VARIABLE ?>">
+                <ul>
+                  <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_CONTROL_VARIABLE ?>)">選択されたアクションの下に追加する</li>
+                  <li ng-click="main.addItem(<?= C_SCENARIO_ACTION_CONTROL_VARIABLE ?>, true)">一番下に追加する</li>
+                </ul>
+              </div>
+            </div>
+
             <!-- 属性値取得 -->
             <div class="actionMenu">
                 <a ng-click="main.showOptionMenu(<?= C_SCENARIO_ACTION_GET_ATTRIBUTE ?>)"
@@ -117,7 +130,6 @@
                     </ul>
                 </div>
             </div>
-
 
             <!-- ファイル受信 -->
             <div class="actionMenu">
