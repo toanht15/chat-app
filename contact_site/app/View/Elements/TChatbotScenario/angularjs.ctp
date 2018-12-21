@@ -3556,15 +3556,20 @@
         }
         /* 数値入力の場合 */
         if (elm.calcType == <?= C_SCENARIO_CONTROL_INTEGER ?>) {
-          console.log(replaceVariableAllEmpty(elm.formula));
-          if(searchStr(replaceVariableAllEmpty(elm.formula), /^.*[^+\-*\/0-9＋－＊／０-９\s].*$/)) {
-            messageList.push('数値でない文字が指定されています');
-          }
-          if (searchStr(elm.formula, /÷/)) {
-            messageList.push('割り算には"/"（スラッシュ）を使用してください');
-          }
-          if (searchStr(elm.formula, /×/)) {
-            messageList.push('掛け算には"*"（アスタリスク）を使用してください');
+          var alreadyChecked = false;
+          if(searchStr(replaceVariableAllEmpty(elm.formula), /^.*[^()+\-*\/0-9（）＋－＊／０-９\s].*$/)) {
+            if (searchStr(elm.formula, /÷/)) {
+              messageList.push('割り算には"/"（スラッシュ）を使用してください');
+              alreadyChecked = true;
+            }
+            if (searchStr(elm.formula, /×/)) {
+              messageList.push('掛け算には"*"（アスタリスク）を使用してください');
+              alreadyChecked = true;
+            }
+            if(!alreadyChecked) {
+              messageList.push('数値でない文字が指定されています');
+            }
+
           }
         }
       });
