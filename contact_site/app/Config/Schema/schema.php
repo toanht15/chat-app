@@ -468,9 +468,9 @@ class AppSchema extends CakeSchema {
 	public $t_custom_variables = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => 'ID'),
 		'm_companies_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false, 'comment' => '企業ID'),
-		'variable_name' => array('type' => 'string', 'null' => false, 'collate' => 'utf8_general_ci', 'comment' => '変数名', 'charset' => 'utf8'),
+		'variable_name' => array('type' => 'string', 'null' => false, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => '変数名', 'charset' => 'utf8'),
 		'type' => array('type' => 'integer', 'null' => false, 'default' => '3', 'length' => 2, 'unsigned' => false, 'comment' => 'タイプ'),
-		'attribute_value' => array('type' => 'string', 'null' => false, 'length' => 500, 'collate' => 'utf8_general_ci', 'comment' => '属性値', 'charset' => 'utf8'),
+		'attribute_value' => array('type' => 'string', 'null' => false, 'default' => null, 'length' => 500, 'collate' => 'utf8_general_ci', 'comment' => '属性値', 'charset' => 'utf8'),
 		'comment' => array('type' => 'text', 'null' => true, 'default' => null, 'collate' => 'utf8_general_ci', 'comment' => 'コメント', 'charset' => 'utf8'),
 		'delete_flg' => array('type' => 'boolean', 'null' => false, 'default' => null, 'comment' => '削除フラグ'),
 		'sort' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'comment' => 'ソート順'),
@@ -654,6 +654,18 @@ class AppSchema extends CakeSchema {
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
 
+	public $t_history_chat_log_times = array(
+		't_history_chat_logs_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		't_histories_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary'),
+		'type' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 4, 'unsigned' => false, 'key' => 'primary'),
+		'datetime' => array('type' => 'datetime', 'null' => false, 'default' => null, 'length' => 2),
+		'indexes' => array(
+			'PRIMARY' => array('column' => array('t_history_chat_logs_id', 't_histories_id', 'type'), 'unique' => 1),
+			'idx_t_history_chat_log_times_type_t_histories_id_datetime' => array('column' => array('type', 't_histories_id', 'datetime'), 'unique' => 0)
+		),
+		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB', 'comment' => 'チャット履歴時間管理テーブル')
+	);
+
 	public $t_history_chat_logs = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'primary', 'comment' => 'ID'),
 		't_histories_id' => array('type' => 'integer', 'null' => false, 'default' => null, 'unsigned' => false, 'key' => 'index', 'comment' => '履歴ID'),
@@ -671,6 +683,7 @@ class AppSchema extends CakeSchema {
 		'send_mail_flg' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		't_mail_transmission_logs_id' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
 		'delete_flg' => array('type' => 'integer', 'null' => false, 'default' => '0', 'unsigned' => false),
+		'hide_flg' => array('type' => 'boolean', 'null' => false, 'default' => '0'),
 		'created' => array('type' => 'datetime', 'null' => true, 'default' => null, 'length' => 2),
 		'deleted' => array('type' => 'datetime', 'null' => true, 'default' => null),
 		'deleted_user_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'unsigned' => false),
@@ -684,11 +697,15 @@ class AppSchema extends CakeSchema {
 			'idx_t_history_chat_logs_message_type_companies_id_users_id' => array('column' => array('message_type', 'm_companies_id', 'm_users_id', 't_histories_id', 'message_distinction', 'created'), 'unique' => 0),
 			'idx_t_history_chat_logs_achievement_flg_companies_id' => array('column' => array('achievement_flg', 'm_companies_id', 't_histories_id'), 'unique' => 0),
 			'idx_t_history_chat_logs_request_flg_companies_id' => array('column' => array('message_request_flg', 'm_companies_id', 't_histories_id', 'message_distinction', 'created'), 'unique' => 0),
-			'idx_t_history_chat_logs_message_type_companies_id' => array('column' => array('message_type', 'm_companies_id', 't_histories_id', 'message_distinction', 'created'), 'unique' => 0),
 			'idx_t_history_chat_logs_achievement_flg_companies_id_users_id' => array('column' => array('achievement_flg', 'm_companies_id', 'm_users_id', 't_histories_id'), 'unique' => 0),
 			'idx_t_history_chat_logs_m_companies_id_visitors_id' => array('column' => array('m_companies_id', 'visitors_id', 't_histories_id', 'created'), 'unique' => 0),
 			'idx_m_companies_id_t_histories_id_t_history_stay_logs_id' => array('column' => array('m_companies_id', 't_histories_id', 't_history_stay_logs_id', 'message_type', 'notice_flg', 'created', 'message_read_flg', 'achievement_flg'), 'unique' => 0),
-			'idx_m_companies_id_message_type_notice_flg' => array('column' => array('m_companies_id', 'message_type', 'notice_flg'), 'unique' => 0)
+			'idx_t_history_chat_logs_m_companies_id_t_histories_id_created' => array('column' => array('m_companies_id', 't_histories_id', 'created'), 'unique' => 0),
+			'idx_t_history_chat_logs_m_companies_id_message_type_created' => array('column' => array('m_companies_id', 'message_type', 'created'), 'unique' => 0),
+			't_history_chat_logs_mcid_mt_nf_c_thid_index' => array('column' => array('m_companies_id', 't_histories_id', 'message_type', 'notice_flg', 'created'), 'unique' => 0),
+			't_history_chat_logs_mcid_thid_mt_c_index' => array('column' => array('m_companies_id', 't_histories_id', 'message_type', 'created'), 'unique' => 0),
+			't_history_chat_logs_mcid_thid_mt_md_index' => array('column' => array('m_companies_id', 't_histories_id', 'message_type', 'message_distinction'), 'unique' => 0),
+			'idx_m_companies_id_message_type_notice_flg' => array('column' => array('m_companies_id', 't_histories_id', 'message_type', 'notice_flg'), 'unique' => 0)
 		),
 		'tableParameters' => array('charset' => 'utf8', 'collate' => 'utf8_general_ci', 'engine' => 'InnoDB')
 	);
