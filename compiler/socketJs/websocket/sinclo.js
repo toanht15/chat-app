@@ -267,6 +267,9 @@
         //バナー表示状態になった
         storage.l.set('bannerAct', true);
         storage.s.set('bannerAct', true);
+        if(check.hasCustomBannerImageSetting()) {
+          $('#sincloBox').addClass('onImageBanner');
+        }
         $('#sincloBannerBox').show();
       },
       //バナーがクリックされた時の挙動
@@ -276,6 +279,9 @@
         storage.s.set('bannerAct', false);
         $('#sincloWidgetBox').show();
         $('#sincloBannerBox').hide();
+        if(check.hasCustomBannerImageSetting()) {
+          $('#sincloBox').removeClass('onImageBanner');
+        }
         $('#sincloBox').css('bottom', '0');
         //スマホかつ横かを判定
         if (check.smartphone()) {

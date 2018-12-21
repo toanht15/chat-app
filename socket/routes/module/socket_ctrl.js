@@ -1594,12 +1594,12 @@ io.sockets.on('connection', function(socket) {
         chatUnreadId: null,
         chatUnreadCnt: 0
       };
-      ret.chatUnreadId = isset(
-          sincloCore[obj.siteKey][obj.tabId].chatUnreadId) ?
+      ret.chatUnreadId = (isset(sincloCore[obj.siteKey][obj.tabId]) && isset(
+          sincloCore[obj.siteKey][obj.tabId].chatUnreadId)) ?
           sincloCore[obj.siteKey][obj.tabId].chatUnreadId :
           null;
-      ret.chatUnreadCnt = isset(
-          sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt) ?
+      ret.chatUnreadCnt = (isset(sincloCore[obj.siteKey][obj.tabId]) && isset(
+          sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) ?
           sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt :
           null;
       console.log('getUnreadCnt:: chatUnreadId => ' + ret.chatUnreadId +
@@ -2881,7 +2881,7 @@ io.sockets.on('connection', function(socket) {
           getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     }
     for (var key in customerList[obj.siteKey]) {
-      if (obj.tabId.indexOf(customerList[obj.siteKey][key]['tabId']) === 0) {
+      if (isset(obj.tabId) && obj.tabId.indexOf(customerList[obj.siteKey][key]['tabId']) === 0) {
         customerList[obj.siteKey][key]['status'] = obj.status;
         break;
       }
