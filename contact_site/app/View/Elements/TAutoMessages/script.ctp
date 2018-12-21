@@ -533,7 +533,7 @@ var uploadFile = function(fileObj, loadFile) {
   popupEvent.resize();
 
   $.ajax({
-    url  : "<?= $this->Html->url('/TAutoMessages/import') ?>",
+    url  : "<?= $this->Html->url('/TAutoMessages/bulkImport') ?>",
     type : "POST",
     data : fd,
     cache       : false,
