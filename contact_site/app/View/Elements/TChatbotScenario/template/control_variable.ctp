@@ -14,7 +14,7 @@
         <div class='area-message'>計算式<span class="questionBalloon"><icon class="questionBtn"
                                                                       data-tooltip='計算式または代入したい値や文字列を入力します。<br>計算式の結果が変数に代入されます。<br>＜利用できる記号＞<br>計算タイプ=数値の場合　："+"（足す）,"-"（引く）,"*"（掛ける）,<br>"/"（割る）,"()"（カッコ）<br>計算タイプ=文字列の場合："&"'>?</icon></span>
         </div>
-        <div class='area-message'>有効桁数<span class="questionBalloon"><icon class="questionBtn"
+        <div class='area-message'>小数点以下の桁数<span class="questionBalloon"><icon class="questionBtn"
                                                      data-tooltip="変数名を設定します。<br>ここで設定した変数名に計算結果が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}<br>と指定することで利用することが可能です。">?</icon></span>
         </div>
         <div class='area-message'>端数処理<span class="questionBalloon"><icon class="questionBtn"
