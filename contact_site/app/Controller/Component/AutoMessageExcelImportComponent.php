@@ -51,13 +51,13 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
 
   private function readSettingMapFromConfig() {
     $this->containsTypeMap = [
-      'をすぺて含む' => 1,
-      'のいずれかを含む' => 2
+      'をすぺて含む' => "1",
+      'のいずれかを含む' => "2"
     ];
 
     $this->exclusionsTypeMap = [
-      'をすぺて含む' => 1,
-      'のいずれかを含む' => 2
+      'をすぺて含む' => "1",
+      'のいずれかを含む' => "2"
     ];
 
     $this->keywordConditionMap = [
@@ -121,9 +121,9 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->stayTimeTypeMap = [
-      '秒' => 1,
-      '分' => 2,
-      '時' => 3
+      '秒' => "1",
+      '分' => "2",
+      '時' => "3"
     ];
 
     $this->visitCntCondMap = [
@@ -340,7 +340,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
             $importData[$key]['activity']['conditions'][8][0]['keyword_exclusions']      = $this->getCellValue($row['AK']);
             $importData[$key]['activity']['conditions'][8][0]['keyword_exclusions_type'] = $this->exclusionsTypeMap[$row['AL']];
             $importData[$key]['activity']['conditions'][8][0]['speechContentCond']       = $this->stayPageCondTypeMap[$row['AM']];
-            $importData[$key]['activity']['conditions'][8][0]['triggerTimeSec']          = $this->getCellValue($row['AN']);
+            $importData[$key]['activity']['conditions'][8][0]['triggerTimeSec']          = (int)$this->getCellValue($row['AN']);
             $importData[$key]['activity']['conditions'][8][0]['speechTriggerCond']       = $this->speechTriggerCondMap[$row['AO']];
           }
 
@@ -384,13 +384,13 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
             $importData[$key]['activity']['cv']           = $this->triggerCVMap[$row['BH']];
             $importData[$key]['send_mail_flg']            = $sendMailFlg = $this->sendMailFlgMap[$row['BI']];
             if ($sendMailFlg == 1) {
-              $importData[$key]['mail_address_1'] = !(empty(trim($row['BJ']))) ? trim($row['BJ']) : "";
-              $importData[$key]['mail_address_2'] = !(empty(trim($row['BK']))) ? trim($row['BK']) : "";
-              $importData[$key]['mail_address_3'] = !(empty(trim($row['BL']))) ? trim($row['BL']) : "";
-              $importData[$key]['mail_address_4'] = !(empty(trim($row['BM']))) ? trim($row['BM']) : "";
-              $importData[$key]['mail_address_5'] = !(empty(trim($row['BN']))) ? trim($row['BN']) : "";
-              $importData[$key]['mail_subject']   = !(empty(trim($row['BO']))) ? trim($row['BO']) : "";
-              $importData[$key]['mail_from_name'] = !(empty(trim($row['BP']))) ? trim($row['BP']) : "";
+              $importData[$key]['mail_address_1'] = $this->getCellValue($row['BJ']);
+              $importData[$key]['mail_address_2'] = $this->getCellValue($row['BK']);
+              $importData[$key]['mail_address_3'] = $this->getCellValue($row['BL']);
+              $importData[$key]['mail_address_4'] = $this->getCellValue($row['BM']);
+              $importData[$key]['mail_address_5'] = $this->getCellValue($row['BN']);
+              $importData[$key]['mail_subject']   = $this->getCellValue($row['BO']);
+              $importData[$key]['mail_from_name'] = $this->getCellValue($row['BP']);
             }
         }
 
