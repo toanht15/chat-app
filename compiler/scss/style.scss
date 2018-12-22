@@ -8409,6 +8409,10 @@ ul.naviBtn {
                   border: 1px solid #909090;
                   min-width: 95%;
                 }
+                select:disabled {
+                  background-color: rgb(235,235,228);
+                  cursor: default;
+                }
                 textarea {
                   width: calc(100% - 5px);
                 }
@@ -8428,6 +8432,7 @@ ul.naviBtn {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                text-align: center;
               }
               .grid-container-body {
                 grid-template-rows: 1fr;
