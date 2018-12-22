@@ -109,7 +109,7 @@
               //スマホ横
               height = window.innerHeight *
                   (document.body.clientWidth / window.innerWidth);
-              if(!check.android()){
+              if (!check.android()) {
                 // iPhoneは常にwindow.innerHeightがheight
                 height = window.innerHeight;
               }
@@ -170,16 +170,17 @@
             sinclo.widget.condifiton.set(false, true);
             sinclo.chatApi.unlockPageScroll();
           }
-          if (check.smartphone() &&
+          if ((check.smartphone() &&
               Number(window.sincloInfo.widget.spWidgetViewPattern) === 3 &&
               $('#minimizeBtn').is(':hidden') &&
               Number(window.sincloInfo.widget.closeButtonSetting) === 2 &&
-              Number(window.sincloInfo.widget.closeButtonModeType) === 1) {
+              Number(window.sincloInfo.widget.closeButtonModeType) === 1) || ($('#minimizeBtn').is(':hidden') && check.hasCustomBannerImageSetting())) {
             console.log(
                 '<><><><><><><><><><>スマホ用隠しパラメータ、即バナー<><><><><><><><><><><>');
             elm.css('height', height + 'px');
             sinclo.operatorInfo.closeBtn();
           } else {
+            $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
             elm.animate({
               height: height + 'px'
             }, 'first', null, function() {
@@ -187,7 +188,6 @@
                   '$(\'#sincloBox\').offset().top : %s, $(\'#sincloWidgetBox\').offset().top',
                   $('#sincloBox').offset().top,
                   $('#sincloWidgetBox').offset().top);
-              $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
             });
           }
         } else if (closeAct !== 'true') {
@@ -267,7 +267,7 @@
         //バナー表示状態になった
         storage.l.set('bannerAct', true);
         storage.s.set('bannerAct', true);
-        if(check.hasCustomBannerImageSetting()) {
+        if (check.hasCustomBannerImageSetting()) {
           $('#sincloBox').addClass('onImageBanner');
         }
         $('#sincloBannerBox').show();
@@ -279,7 +279,7 @@
         storage.s.set('bannerAct', false);
         $('#sincloWidgetBox').show();
         $('#sincloBannerBox').hide();
-        if(check.hasCustomBannerImageSetting()) {
+        if (check.hasCustomBannerImageSetting()) {
           $('#sincloBox').removeClass('onImageBanner');
         }
         $('#sincloBox').css('bottom', '0');
@@ -292,9 +292,9 @@
           var widgetHorizontalPosition = '10px';
           var widgetVerticalPosition = '0px';
           if (!check.smartphone()) {
-            if(Number(sincloInfo.widget.widgetSizeType) === 4) {
-              widgetHorizontalPosition = "0px";
-              widgetVerticalPosition = "0px";
+            if (Number(sincloInfo.widget.widgetSizeType) === 4) {
+              widgetHorizontalPosition = '0px';
+              widgetVerticalPosition = '0px';
             } else {
               widgetHorizontalPosition = (window.sincloInfo.custom &&
                   window.sincloInfo.custom.widget &&
@@ -3333,9 +3333,11 @@
         var displayStyleType = String(
             window.sincloInfo.widget.displayStyleType);
         var maxShowTime = Number(window.sincloInfo.widget.maxShowTime) * 1000;
-        if (check.smartphone()
+        if ((check.smartphone()
             && Number(sincloInfo.widget.spAutoOpenFlg) === 1
-            && Number(sincloInfo.widget.spWidgetViewPattern) === 3) {
+            && Number(sincloInfo.widget.spWidgetViewPattern) === 3) ||
+            check.hasCustomBannerImageSetting()
+        ) {
           if (!storage.l.get('bannerAct')) {
             console.log('spWidgetViewPattern 3 show banner');
             //バナー表示にする
@@ -3363,8 +3365,8 @@
             }
             break;
           case '2': // 最小化
-            if (check.smartphone()
-                && Number(sincloInfo.widget.spWidgetViewPattern) === 3) {
+            if ((check.smartphone()
+                && Number(sincloInfo.widget.spWidgetViewPattern) === 3) || check.hasCustomBannerImageSetting()) {
               if (!storage.l.get('bannerAct')) {
                 console.log(
                     'widget minimize and spWidgetViewPattern 3 show banner');
