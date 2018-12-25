@@ -9634,9 +9634,9 @@
           rules.forEach( function(rule) {
             try {
               if (Number(rule.calcType) === 1) {
-                formula = self._replaceIntegerVariable(rule.formula);
-                result = Number(eval(self._toHalfWidth(formula)));
-                result = self._adjustString( result, rule.significantDigits, rule.rulesForRounding );
+                formula = self._toHalfWidth(self._replaceIntegerVariable(rule.formula));
+                result = Number(eval(formula));
+                result = self._roundResult( result, rule.significantDigits, rule.rulesForRounding );
                 if(isNaN(result)){
                   throw new Error("Not a Number");
                 }
@@ -9648,12 +9648,21 @@
             }
             catch (e) {
               console.log(e);
+              self._parent._saveVariable(rule.variableName, "計算エラー");
             }
           });
           callback();
         },
-        _adjustString: function(value, digits, roundRule) {
+        _roundResult: function(value, digits, roundRule) {
           var index = Math.pow(10, digits - 1);
+          // 1桁目指定の場合は整数部だけ取り出して計算
+          if( Number(digits) === 0 ) {
+            if ( value > 0 ) {
+              value = Math.floor(value);
+            } else {
+              value = Math.ceil(value);
+            }
+          }
           switch ( Number(roundRule) ) {
             case 1:
               //四捨五入の場合
@@ -9687,21 +9696,25 @@
               replace(/～/g, '~');
         },
         _replaceVariable: function(message) {
-          var self = sinclo.scenarioApi;
+          var self = sinclo.scenarioApi._controlVariable;
           if (message) {
             return message.replace(/\{\{(.+?)\}\}/g, function(param) {
               var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-              return self._getStoredVariable(name) || '';
+              var val = self._parent._getStoredVariable(name);
+              if(val === name){
+                val = "";
+              }
+              return val;
             });
           }
           return '';
         },
         _replaceIntegerVariable: function(message) {
-          var self = sinclo.scenarioApi;
+          var self = sinclo.scenarioApi._controlVariable;
           if (message) {
-            return message.replace(/\{\{(.+?)\}\}/g, function(param) {
-              var name = param.replace(/^\{\{(.+)\}\}$/, '$1');
-              return Number(self._getStoredVariable(name)) || name;
+            return message.replace(/{{(.+?)\}}/g, function(param) {
+              var name = param.replace(/^{{(.+)}}$/, '$1');
+              return Number(self._toHalfWidth(self._parent._getStoredVariable(name))) || Number(name);
             });
           }
           return '';

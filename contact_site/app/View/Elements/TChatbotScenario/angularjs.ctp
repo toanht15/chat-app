@@ -1719,6 +1719,19 @@
         }
       };
 
+      this.handleControlVariableDetail = function( type, targetId, setActionId ) {
+        console.log(type);
+        var target = $scope.setActionList[setActionId].calcRules[targetId];
+        if (Number(type) === <?=C_SCENARIO_CONTROL_INTEGER ?>) {
+          target.significantDigits = "0";
+          target.rulesForRounding = "1";
+        } else {
+          target.significantDigits = "";
+          target.rulesForRounding = "";
+        }
+
+      };
+
       /**
        * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
        * @param String  actionType      アクション種別
@@ -2668,7 +2681,7 @@
       };
 
       /**
-       * メッセージ内の変数を、ローカルストレージ内のデータと置き換える
+       * メッセージ内の変数を、ローカルストレージ内のデータと置き換え、数字にする
        * @param String message 変数を含む文字列
        * @return String        置換後の文字列（数値）
        */
@@ -2771,6 +2784,14 @@
 
       this.roundResult = function(value, digits, roundRule) {
         var index = Math.pow(10, digits - 1);
+        // 1桁目指定の場合は整数部だけ取り出して計算
+        if( Number(digits) === 0 ) {
+          if ( value > 0 ) {
+            value = Math.floor(value);
+          } else {
+            value = Math.ceil(value);
+          }
+        }
         switch ( Number(roundRule) ) {
           case 1:
             //四捨五入の場合
