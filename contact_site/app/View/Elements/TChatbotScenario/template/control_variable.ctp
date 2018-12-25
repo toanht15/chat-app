@@ -15,10 +15,10 @@
                                                                       data-tooltip='計算式または代入したい値や文字列を入力します。<br>計算式の結果が変数に代入されます。<br>＜利用できる記号＞<br>計算タイプ=数値の場合　："+"（足す）,"-"（引く）,"*"（掛ける）,<br>"/"（割る）,"()"（カッコ）<br>計算タイプ=文字列の場合："&"'>?</icon></span>
         </div>
         <div class='area-message'>小数点以下の桁数<span class="questionBalloon"><icon class="questionBtn"
-                                                     data-tooltip="変数名を設定します。<br>ここで設定した変数名に計算結果が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}<br>と指定することで利用することが可能です。">?</icon></span>
+                                                     data-tooltip="小数点以下の丸め込みを行いたい桁数を指定します。（0を指定した場合は1の位が処理されます。）<br>ここで指定した桁数に、端数処理の操作が実行されます。">?</icon></span>
         </div>
         <div class='area-message'>端数処理<span class="questionBalloon"><icon class="questionBtn"
-                                                    data-tooltip="変数名を設定します。<br>ここで設定した変数名に計算結果が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}<br>と指定することで利用することが可能です。">?</icon></span>
+                                                    data-tooltip="端数処理の種類を指定します。<br>「四捨五入」「切り捨て」「切り上げ」の中から処理を指定できます。">?</icon></span>
         </div>
 
 
@@ -40,8 +40,8 @@
             <s ng-if="item.calcType == 1">※ “+“（足す）,“-“（引く）,“*“（掛ける）,“/“（割る）,“()“（カッコ）を利用した四則演算が可能です。</s>
             <s ng-if="item.calcType == 2">※ “&“を用いた文字列の結合や文字列の代入が可能です。</s>
           </div>
-          <div ng-if="item.calcType == 1">
-            <select id="digitList" ng-model="item.significantDigits">
+          <div>
+            <select id="digitList" ng-model="item.significantDigits" ng-disabled="item.calcType == 2">
               <option value="0">0</option>
               <option value="1">1</option>
               <option value="2">2</option>
@@ -75,8 +75,8 @@
               <option value="30">30</option>
             </select>
           </div>
-          <div ng-if="item.calcType == 1">
-            <select ng-model="item.rulesForRounding">
+          <div>
+            <select ng-model="item.rulesForRounding" ng-disabled="item.calcType == 2">
               <option value="1">四捨五入</option>
               <option value="2">切り捨て</option>
               <option value="3">切り上げ</option>
