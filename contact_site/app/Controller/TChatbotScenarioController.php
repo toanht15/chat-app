@@ -2219,7 +2219,7 @@ sinclo@medialink-ml.co.jp
     ));
     foreach($scenarioList as $key => $scenario) {
       $activity = json_decode($scenario['TChatbotScenario']['activity'], TRUE);
-      foreach($activity['scenarios'] as $scequenceNum => $action) {
+      foreach($activity['scenarios'] as $sequenceNum => $action) {
         if($this->hasVariableInAction($action)) {
           $variableList = array_merge($variableList, $this->getVariableListInAction($action));
           $variableList = array_unique($variableList);
@@ -2236,7 +2236,8 @@ sinclo@medialink-ml.co.jp
       || strcmp($action['actionType'], C_SCENARIO_ACTION_SELECT_OPTION) === 0
       || strcmp($action['actionType'], C_SCENARIO_ACTION_EXTERNAL_API) === 0
       || strcmp($action['actionType'], C_SCENARIO_ACTION_GET_ATTRIBUTE) === 0
-      || strcmp($action['actionType'], C_SCENARIO_ACTION_BULK_HEARING) === 0;
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_BULK_HEARING) === 0
+      || strcmp($action['actionType'], C_SCENARIO_ACTION_CONTROL_VARIABLE) === 0;
   }
 
   private function getVariableListInAction($action) {
@@ -2258,6 +2259,11 @@ sinclo@medialink-ml.co.jp
       case C_SCENARIO_ACTION_BULK_HEARING:
         foreach($action['multipleHearings'] as $index => $multipleHearing) {
           array_push($arr, $multipleHearing['variableName']);
+        }
+        break;
+      case C_SCENARIO_ACTION_CONTROL_VARIABLE:
+        foreach($action['calcRules'] as $index => $calcRule) {
+          array_push($arr, $calcRule['variableName']);
         }
         break;
     }
