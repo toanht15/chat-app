@@ -104,12 +104,12 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     ];
 
     $this->kWDContainTypeMap = [
-      1 => 'をすぺて含む',
+      1 => 'をすべて含む',
       2 => 'のいずれかを含む',
     ];
 
     $this->kWDExclusionTypeMap = [
-      1 => 'をすぺて含む',
+      1 => 'をすべて含む',
       2 => 'のいずれかを含む',
     ];
 

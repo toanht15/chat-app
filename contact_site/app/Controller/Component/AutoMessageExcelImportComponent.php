@@ -5,7 +5,7 @@
  * Date: 2018/12/14
  * Time: 10:28
  */
-App::uses('AutoMessageException','Lib/Error');
+App::uses('AutoMessageException', 'Lib/Error');
 App::uses('ExcelParserComponent', 'Controller/Component');
 
 class AutoMessageExcelImportComponent extends ExcelParserComponent
@@ -49,15 +49,16 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     $this->setActiveSheet(0);
   }
 
-  private function readSettingMapFromConfig() {
+  private function readSettingMapFromConfig()
+  {
     $this->containsTypeMap = [
-      'をすぺて含む' => 1,
-      'のいずれかを含む' => 2
+      'をすべて含む'   => "1",
+      'のいずれかを含む' => "2"
     ];
 
     $this->exclusionsTypeMap = [
-      'をすぺて含む' => 1,
-      'のいずれかを含む' => 2
+      'をすべて含む'   => "1",
+      'のいずれかを含む' => "2"
     ];
 
     $this->keywordConditionMap = [
@@ -76,7 +77,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->isSettingMap = [
-      'する' => 1,
+      'する'  => 1,
       'しない' => 0
     ];
 
@@ -86,17 +87,17 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->widgetOpenMap = [
-      '自動で最大化する' => 1,
+      '自動で最大化する'  => 1,
       '自動で最大化しない' => 2
     ];
 
     $this->conditionTypeMap = [
-      'すべて一致' => 1,
+      'すべて一致'   => 1,
       'いずれかが一致' => 2
     ];
 
     $this->actionTypeMap = [
-      'シナリオを選択する' => 2,
+      'シナリオを選択する'    => 2,
       'チャットメッセージを送る' => 1
     ];
 
@@ -111,7 +112,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->sendMailFlgMap = [
-      'する' => 1,
+      'する'  => 1,
       'しない' => 0
     ];
 
@@ -121,9 +122,9 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->stayTimeTypeMap = [
-      '秒' => 1,
-      '分' => 2,
-      '時' => 3
+      '秒' => "1",
+      '分' => "2",
+      '時' => "3"
     ];
 
     $this->visitCntCondMap = [
@@ -138,19 +139,19 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->kWDContainTypeMap = [
-      'すぺて含む' => 1,
+      'すべて含む'    => 1,
       'のいずれかを含む' => 2,
     ];
 
     $this->kWDExclusionTypeMap = [
-      'すぺて含む' => 1,
+      'すべて含む'    => 1,
       'のいずれかを含む' => 2,
     ];
 
     $this->stayPageCondTypeMap = [
       '完全一致' => 1,
       '部分一致' => 2,
-      '不一致' => 3
+      '不一致'  => 3
     ];
 
     $this->weekdayMap = [
@@ -176,33 +177,33 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
 
   public function parseData()
   {
-    $blankRow = [
-      'A' => NULL,
-      'B' => '無効',
-      'C' => NULL,
-      'D' => 'すべて一致',
-      'E' => 'しない',
-      'F' => NULL,
-      'G' => NULL,
-      'H' => NULL,
-      'I' => 'しない',
-      'J' => NULL,
-      'K' => NULL,
-      'L' => 'しない',
-      'M' => NULL,
-      'N' => NULL,
-      'O' => NULL,
-      'P' => NULL,
-      'Q' => NULL,
-      'R' => NULL,
-      'S' => 'しない',
-      'T' => NULL,
-      'U' => 'しない',
-      'V' => NULL,
-      'W' => NULL,
-      'X' => NULL,
-      'Y' => 'しない',
-      'Z' => NULL,
+    $blankRow   = [
+      'A'  => NULL,
+      'B'  => '無効',
+      'C'  => NULL,
+      'D'  => 'すべて一致',
+      'E'  => 'しない',
+      'F'  => NULL,
+      'G'  => NULL,
+      'H'  => NULL,
+      'I'  => 'しない',
+      'J'  => NULL,
+      'K'  => NULL,
+      'L'  => 'しない',
+      'M'  => NULL,
+      'N'  => NULL,
+      'O'  => NULL,
+      'P'  => NULL,
+      'Q'  => NULL,
+      'R'  => NULL,
+      'S'  => 'しない',
+      'T'  => NULL,
+      'U'  => 'しない',
+      'V'  => NULL,
+      'W'  => NULL,
+      'X'  => NULL,
+      'Y'  => 'しない',
+      'Z'  => NULL,
       'AA' => NULL,
       'AB' => NULL,
       'AC' => NULL,
@@ -260,7 +261,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
         $errors = $this->rowValidate($row);
 
         if (!empty($errors)) {
-          $errorFound = true;
+          $errorFound       = true;
           $errorArray[$key] = $errors;
         } else {
           $importData[$key]['name']       = $row['C'];
@@ -303,7 +304,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
               'sat' => false,
               'sun' => false,
             ];
-            $string = str_replace(' ', '', $row['V']);
+            $string     = str_replace(' ', '', $row['V']);
             $importDays = explode(',', rtrim($string, ','));
             foreach ($importDays as $importDay) {
               $day[$this->weekdayMap[$importDay]] = true;
@@ -340,7 +341,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
             $importData[$key]['activity']['conditions'][8][0]['keyword_exclusions']      = $this->getCellValue($row['AK']);
             $importData[$key]['activity']['conditions'][8][0]['keyword_exclusions_type'] = $this->exclusionsTypeMap[$row['AL']];
             $importData[$key]['activity']['conditions'][8][0]['speechContentCond']       = $this->stayPageCondTypeMap[$row['AM']];
-            $importData[$key]['activity']['conditions'][8][0]['triggerTimeSec']          = $this->getCellValue($row['AN']);
+            $importData[$key]['activity']['conditions'][8][0]['triggerTimeSec']          = (int)$this->getCellValue($row['AN']);
             $importData[$key]['activity']['conditions'][8][0]['speechTriggerCond']       = $this->speechTriggerCondMap[$row['AO']];
           }
 
@@ -371,11 +372,11 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
 
           if ($actionType == 2) {
             // scenario
-            $importData[$key]['activity']['widgetOpen'] = $this->widgetOpenMap[$row['BR']];
+            $importData[$key]['activity']['widgetOpen']   = $this->widgetOpenMap[$row['BR']];
             $importData[$key]['activity']['message']      = "";
             $importData[$key]['activity']['chatTextarea'] = 1;
             $importData[$key]['activity']['cv']           = 2;
-            $importData[$key]['scenario']               = $this->getCellValue($row['BQ']);
+            $importData[$key]['scenario']                 = $this->getCellValue($row['BQ']);
           } else {
             // send mail
             $importData[$key]['activity']['widgetOpen']   = $this->widgetOpenMap[$row['BE']];
@@ -384,21 +385,21 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
             $importData[$key]['activity']['cv']           = $this->triggerCVMap[$row['BH']];
             $importData[$key]['send_mail_flg']            = $sendMailFlg = $this->sendMailFlgMap[$row['BI']];
             if ($sendMailFlg == 1) {
-              $importData[$key]['mail_address_1'] = !(empty(trim($row['BJ']))) ? trim($row['BJ']) : "";
-              $importData[$key]['mail_address_2'] = !(empty(trim($row['BK']))) ? trim($row['BK']) : "";
-              $importData[$key]['mail_address_3'] = !(empty(trim($row['BL']))) ? trim($row['BL']) : "";
-              $importData[$key]['mail_address_4'] = !(empty(trim($row['BM']))) ? trim($row['BM']) : "";
-              $importData[$key]['mail_address_5'] = !(empty(trim($row['BN']))) ? trim($row['BN']) : "";
-              $importData[$key]['mail_subject']   = !(empty(trim($row['BO']))) ? trim($row['BO']) : "";
-              $importData[$key]['mail_from_name'] = !(empty(trim($row['BP']))) ? trim($row['BP']) : "";
+              $importData[$key]['mail_address_1'] = $this->getCellValue($row['BJ']);
+              $importData[$key]['mail_address_2'] = $this->getCellValue($row['BK']);
+              $importData[$key]['mail_address_3'] = $this->getCellValue($row['BL']);
+              $importData[$key]['mail_address_4'] = $this->getCellValue($row['BM']);
+              $importData[$key]['mail_address_5'] = $this->getCellValue($row['BN']);
+              $importData[$key]['mail_subject']   = $this->getCellValue($row['BO']);
+              $importData[$key]['mail_from_name'] = $this->getCellValue($row['BP']);
             }
-        }
+          }
 
         }
       }
     }
 
-    if($errorFound) {
+    if ($errorFound) {
       $exception = new AutoMessageException("Excelデータバリデーションエラー", 200);
       $exception->setErrors($errorArray);
       throw $exception;
@@ -411,61 +412,70 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
    * @param $row
    * @return array
    */
-  private function rowValidate($row) {
+  private function rowValidate($row)
+  {
     $errors = [];
-    if(!Validation::maxLength($row['C'], 50)) {
-      $this->addError($errors, 'C','５０文字以内で入力してください');
+    if (!Validation::maxLength($row['C'], 50)) {
+      $this->addError($errors, 'C', '５０文字以内で入力してください');
     }
 
-    if(empty($row['B'])) {
-      $this->addError($errors, 'B','有効／無効 のいずれかの指定のみ可能です');
+    if (empty($row['C'])) {
+      $this->addError($errors, 'C', '名称が未入力です');
+    }
+
+    if (empty($row['B'])) {
+      $this->addError($errors, 'B', '有効／無効 のいずれかの指定のみ可能です');
+    }
+
+    if (empty($row['D'])) {
+      $this->addError($errors, 'D', 'すべて一致／いずれかが一致 のいずれかの指定のみ可能です');
     }
     // 滞在時間
     if ($this->isSettingMap[$row['E']] == 1) {
-      if(empty($row['F'])) {
-        $this->addError($errors, 'F','サイト／ページ のいずれかの指定のみ可能です');
+      if (empty($row['F'])) {
+        $this->addError($errors, 'F', 'サイト／ページ のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['G'])) {
-        $this->addError($errors, 'G','秒/分/時 のいずれかの指定のみ可能です');
+      if (empty($row['G'])) {
+        $this->addError($errors, 'G', '秒/分/時 のいずれかの指定のみ可能です');
       }
 
-      if(!Validation::numeric($row['H'])) {
-        $this->addError($errors, 'H','数字のみ指定可能です');
+      if (!Validation::numeric($row['H'])) {
+        $this->addError($errors, 'H', '数字のみ指定可能です');
       }
     }
 
     // 訪問回数
     if ($this->isSettingMap[$row['I']] == 1) {
-      if(!Validation::numeric($row['J'])) {
-        $this->addError($errors, 'J','数字のみ指定可能です');
+      if (!Validation::numeric($row['J'])) {
+        $this->addError($errors, 'J', '数字のみ指定可能です');
       }
 
-      if(empty($row['K'])) {
-        $this->addError($errors, 'K','一致/以上/未満 のいずれかの指定のみ可能です');
+      if (empty($row['K'])) {
+        $this->addError($errors, 'K', '一致/以上/未満 のいずれかの指定のみ可能です');
       }
     }
 
     // ページ
     if ($this->isSettingMap[$row['L']] == 1) {
-      if(empty($row['M'])) {
-        $this->addError($errors, 'M','URL/タイトル のいずれかの指定のみ可能です');
+      if (empty($row['M'])) {
+        $this->addError($errors, 'M', 'URL/タイトル のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['N']) && empty($row['P'])) {
-        $this->addError($errors, 'N','キーワードはいずれかの指定が必須です');
+      if (empty($row['N']) && empty($row['P'])) {
+        $this->addError($errors, 'N', 'キーワードはいずれかの指定が必須です');
       }
 
-      if(!empty($row['N']) && empty($row['O'])) {
-        $this->addError($errors, 'O','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['N']) && empty($row['O'])) {
+        $this->addError($errors, 'O', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(!empty($row['P']) && empty($row['Q'])) {
-        $this->addError($errors, 'Q','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['P']) && empty($row['Q'])) {
+        $this->addError($errors, 'Q', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['R'])) {
-        $this->addError($errors, 'R','完全一致/部分一致 のいずれかの指定のみ可能です');
+      if (empty($row['R'])) {
+        $this->addError($errors, 'R', '完全一致/部分一致 のいずれかの指定のみ可能です');
       }
     }
 
@@ -484,212 +494,212 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
         }
       }
 
-      if(empty($row['W']) && !empty($row['X'])) {
-        $this->addError($errors, 'X','開始時間が未入力です');
+      if (empty($row['W']) && !empty($row['X'])) {
+        $this->addError($errors, 'X', '開始時間が未入力です');
       }
 
-      if(!empty($row['W']) && empty($row['X'])) {
-          $this->addError($errors, 'X','終了時間が未入力です');
+      if (!empty($row['W']) && empty($row['X'])) {
+        $this->addError($errors, 'X', '終了時間が未入力です');
       }
 
-      if(!empty($row['W'])) {
+      if (!empty($row['W'])) {
         $time = PHPExcel_Style_NumberFormat::toFormattedString($row['W'], 'hh:mm');
         if (!preg_match("/^(?:2[0-4]|[01][1-9]|10):([0-5][0-9])$/", $time)) {
-          $this->addError($errors, 'W','MM:SS形式のみ指定可能です');
+          $this->addError($errors, 'W', 'MM:SS形式のみ指定可能です');
         }
       }
 
-      if(!empty($row['X'])) {
+      if (!empty($row['X'])) {
         $time = PHPExcel_Style_NumberFormat::toFormattedString($row['X'], 'hh:mm');
         if (!preg_match("/^(?:2[0-4]|[01][1-9]|10):([0-5][0-9])$/", $time)) {
-          $this->addError($errors, 'X','MM:SS形式のみ指定可能です');
+          $this->addError($errors, 'X', 'MM:SS形式のみ指定可能です');
         }
       }
     }
 
     // 参照元URL（リファラー）
     if ($this->isSettingMap[$row['Y']] == 1) {
-      if(empty($row['AA']) && empty($row['AC'])) {
-        $this->addError($errors, 'AA','キーワードはいずれかの指定が必須です');
+      if (empty($row['Z']) && empty($row['AB'])) {
+        $this->addError($errors, 'Z', 'キーワードはいずれかの指定が必須です');
       }
 
-      if(!empty($row['Z']) && empty($row['AA'])) {
-        $this->addError($errors, 'AA','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['Z']) && empty($row['AA'])) {
+        $this->addError($errors, 'AA', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(!empty($row['AB']) && empty($row['AC'])) {
-        $this->addError($errors, 'AC','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['AB']) && empty($row['AC'])) {
+        $this->addError($errors, 'AC', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['AD'])) {
-        $this->addError($errors, 'AD','完全一致/部分一致 のいずれかの指定のみ可能です');
+      if (empty($row['AD'])) {
+        $this->addError($errors, 'AD', '完全一致/部分一致 のいずれかの指定のみ可能です');
       }
     }
 
     // 検索キーワード
     if ($this->isSettingMap[$row['AE']] == 1) {
-      if(empty($row['AF'])) {
-        $this->addError($errors, 'AF','キーワードが未入力です。');
+      if (empty($row['AF'])) {
+        $this->addError($errors, 'AF', 'キーワードが未入力です。');
       }
 
-      if(empty($row['AG'])) {
-        $this->addError($errors, 'AG','完全一致/部分一致/不一致 のいずれかの指定のみ可能です');
+      if (empty($row['AG'])) {
+        $this->addError($errors, 'AG', '完全一致/部分一致/不一致 のいずれかの指定のみ可能です');
       }
     }
 
     // 発言内容
     if ($this->isSettingMap[$row['AH']] == 1) {
-      if(empty($row['AI']) && empty($row['AK'])) {
-        $this->addError($errors, 'AI','キーワードはいずれかの指定が必須です');
+      if (empty($row['AI']) && empty($row['AK'])) {
+        $this->addError($errors, 'AI', 'キーワードはいずれかの指定が必須です');
       }
 
-      if(!empty($row['AI']) && empty($row['AJ'])) {
-        $this->addError($errors, 'AI','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['AI']) && empty($row['AJ'])) {
+        $this->addError($errors, 'AI', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(!empty($row['AK']) && empty($row['AL'])) {
-        $this->addError($errors, 'AK','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['AK']) && empty($row['AL'])) {
+        $this->addError($errors, 'AK', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['AM'])) {
-        $this->addError($errors, 'AM','完全一致/部分一致 のいずれかの指定のみ可能です');
+      if (empty($row['AM'])) {
+        $this->addError($errors, 'AM', '完全一致/部分一致 のいずれかの指定のみ可能です');
       }
 
-      if(!Validation::range($row['AN'], 0, 61)) {
-        $this->addError($errors, 'AN','1から60までの数値指定のみ可能です');
+      if (!Validation::range($row['AN'], 0, 61)) {
+        $this->addError($errors, 'AN', '1から60までの数値指定のみ可能です');
       }
 
-      if(empty($row['AO'])) {
-        $this->addError($errors, 'AO','1回のみ有効／何度でも有効 のいずれかの指定のみ可能です');
+      if (empty($row['AO'])) {
+        $this->addError($errors, 'AO', '1回のみ有効／何度でも有効 のいずれかの指定のみ可能です');
       }
     }
 
     // 最初に訪れたページ
     if ($this->isSettingMap[$row['AP']] == 1) {
-      if(empty($row['AQ'])) {
-        $this->addError($errors, 'AQ','URL/タイトル のいずれかの指定のみ可能です');
+      if (empty($row['AQ'])) {
+        $this->addError($errors, 'AQ', 'URL/タイトル のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['AR']) && empty($row['AT'])) {
-        $this->addError($errors, 'AR','キーワードはいずれかの指定が必須です');
+      if (empty($row['AR']) && empty($row['AT'])) {
+        $this->addError($errors, 'AR', 'キーワードはいずれかの指定が必須です');
       }
 
-      if(!empty($row['AR']) && empty($row['AS'])) {
-        $this->addError($errors, 'AR','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['AR']) && empty($row['AS'])) {
+        $this->addError($errors, 'AR', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(!empty($row['AT']) && empty($row['AU'])) {
-        $this->addError($errors, 'AT','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['AT']) && empty($row['AU'])) {
+        $this->addError($errors, 'AT', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['AV'])) {
-        $this->addError($errors, 'AV','完全一致/部分一致 のいずれかの指定のみ可能です');
+      if (empty($row['AV'])) {
+        $this->addError($errors, 'AV', '完全一致/部分一致 のいずれかの指定のみ可能です');
       }
     }
 
     // 前のページ
     if ($this->isSettingMap[$row['AW']] == 1) {
-      if(empty($row['AX'])) {
-        $this->addError($errors, 'AX','URL/タイトル のいずれかの指定のみ可能です');
+      if (empty($row['AX'])) {
+        $this->addError($errors, 'AX', 'URL/タイトル のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['AY']) && empty($row['BA'])) {
-        $this->addError($errors, 'AY','キーワードはいずれかの指定が必須です');
+      if (empty($row['AY']) && empty($row['BA'])) {
+        $this->addError($errors, 'AY', 'キーワードはいずれかの指定が必須です');
       }
 
-      if(!empty($row['AY']) && empty($row['AZ'])) {
-        $this->addError($errors, 'AY','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['AY']) && empty($row['AZ'])) {
+        $this->addError($errors, 'AY', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(!empty($row['BA']) && empty($row['BB'])) {
-        $this->addError($errors, 'BA','をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
+      if (!empty($row['BA']) && empty($row['BB'])) {
+        $this->addError($errors, 'BA', 'をすべて含む／のいずれかを含む のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['BC'])) {
-        $this->addError($errors, 'BC','完全一致/部分一致 のいずれかの指定のみ可能です');
+      if (empty($row['BC'])) {
+        $this->addError($errors, 'BC', '完全一致/部分一致 のいずれかの指定のみ可能です');
       }
     }
 
     // 営業時間
     if ($this->isSettingMap[$row['S']] == 1) {
-      if(empty($row['T'])) {
-        $this->addError($errors, 'T','営業時間内/営業時間外 のいずれかの指定のみ可能です');
+      if (empty($row['T'])) {
+        $this->addError($errors, 'T', '営業時間内/営業時間外 のいずれかの指定のみ可能です');
       }
     }
 
     // send message
     if ($this->actionTypeMap[$row['BD']] == 1) {
-      if(empty($row['BE'])) {
-        $this->addError($errors, 'BE','自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
+      if (empty($row['BE'])) {
+        $this->addError($errors, 'BE', '自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['BF'])) {
-        $this->addError($errors, 'BF','メッセージの指定は必須です');
+      if (empty($row['BF'])) {
+        $this->addError($errors, 'BF', 'メッセージの指定は必須です');
       }
 
-      if(empty($row['BG'])) {
-        $this->addError($errors, 'BG','ON（自由入力可）/OFF（自由入力不可） のいずれかの指定のみ可能です');
+      if (empty($row['BG'])) {
+        $this->addError($errors, 'BG', 'ON（自由入力可）/OFF（自由入力不可） のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['BH'])) {
-        $this->addError($errors, 'BH','する/しない のいずれかの指定のみ可能です');
+      if (empty($row['BH'])) {
+        $this->addError($errors, 'BH', 'する/しない のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['BI'])) {
-        $this->addError($errors, 'BI','する/しない のいずれかの指定のみ可能です');
+      if (empty($row['BI'])) {
+        $this->addError($errors, 'BI', 'する/しない のいずれかの指定のみ可能です');
       }
       // if send mail
-      if($this->isSettingMap[$row['BI']] == 1) {
-        if(empty($row['BO'])) {
-          $this->addError($errors, 'BI','メールタイトルの指定は必須です');
+      if ($this->isSettingMap[$row['BI']] == 1) {
+        if (empty($row['BO'])) {
+          $this->addError($errors, 'BI', 'メールタイトルの指定は必須です');
         }
 
-        if(!Validation::maxLength($row['BO'], 100)) {
-          $this->addError($errors, 'BI','メールタイトルは１００文字以内で設定してください');
+        if (!Validation::maxLength($row['BO'], 100)) {
+          $this->addError($errors, 'BI', 'メールタイトルは１００文字以内で設定してください');
         }
 
-        if(empty($row['BP'])) {
-          $this->addError($errors, 'BI','差出人名の指定は必須です');
+        if (empty($row['BP'])) {
+          $this->addError($errors, 'BI', '差出人名の指定は必須です');
         }
 
-        if(!Validation::maxLength($row['BP'], 100)) {
-          $this->addError($errors, 'BP','差出人名は１００文字以内で設定してください');
+        if (!Validation::maxLength($row['BP'], 100)) {
+          $this->addError($errors, 'BP', '差出人名は１００文字以内で設定してください');
         }
 
-        if(empty($row['BJ']) && empty($row['BK']) && empty($row['BL']) && empty($row['BM']) && empty($row['BN'])) {
-          $this->addError($errors, 'BJ','メールアドレスはいずれかの指定が必須です');
+        if (empty($row['BJ']) && empty($row['BK']) && empty($row['BL']) && empty($row['BM']) && empty($row['BN'])) {
+          $this->addError($errors, 'BJ', 'メールアドレスはいずれかの指定が必須です');
         }
 
-        if(!empty($row['BJ']) && !Validation::email($row['BJ'])) {
-          $this->addError($errors, 'BJ','メールアドレスのみ指定可能です');
+        if (!empty($row['BJ']) && !Validation::email($row['BJ'])) {
+          $this->addError($errors, 'BJ', 'メールアドレスのみ指定可能です');
         }
 
-        if(!empty($row['BK']) && !Validation::email($row['BK'])) {
-          $this->addError($errors, 'BK','メールアドレスのみ指定可能です');
+        if (!empty($row['BK']) && !Validation::email($row['BK'])) {
+          $this->addError($errors, 'BK', 'メールアドレスのみ指定可能です');
         }
 
-        if(!empty($row['BL']) && !Validation::email($row['BL'])) {
-          $this->addError($errors, 'BL','メールアドレスのみ指定可能です');
+        if (!empty($row['BL']) && !Validation::email($row['BL'])) {
+          $this->addError($errors, 'BL', 'メールアドレスのみ指定可能です');
         }
 
-        if(!empty($row['BM']) && !Validation::email($row['BM'])) {
-          $this->addError($errors, 'BM','メールアドレスのみ指定可能です');
+        if (!empty($row['BM']) && !Validation::email($row['BM'])) {
+          $this->addError($errors, 'BM', 'メールアドレスのみ指定可能です');
         }
 
-        if(!empty($row['BN']) && !Validation::email($row['BN'])) {
-          $this->addError($errors, 'BN','メールアドレスのみ指定可能です');
+        if (!empty($row['BN']) && !Validation::email($row['BN'])) {
+          $this->addError($errors, 'BN', 'メールアドレスのみ指定可能です');
         }
       }
     }
 
     // scenario
     if ($this->actionTypeMap[$row['BD']] == 2) {
-      if(empty($row['BR'])) {
-        $this->addError($errors, 'BR','自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
+      if (empty($row['BR'])) {
+        $this->addError($errors, 'BR', '自動で最大化する／自動で最大化しない のいずれかの指定のみ可能です');
       }
 
-      if(empty($row['BR'])) {
-        $this->addError($errors, 'BR','シナリオが未入力です');
+      if (empty($row['BR'])) {
+        $this->addError($errors, 'BQ', 'シナリオが未入力です');
       }
     }
 
