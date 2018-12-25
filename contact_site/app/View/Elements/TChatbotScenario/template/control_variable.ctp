@@ -14,6 +14,13 @@
         <div class='area-message'>計算式<span class="questionBalloon"><icon class="questionBtn"
                                                                       data-tooltip='計算式または代入したい値や文字列を入力します。<br>計算式の結果が変数に代入されます。<br>＜利用できる記号＞<br>計算タイプ=数値の場合　："+"（足す）,"-"（引く）,"*"（掛ける）,<br>"/"（割る）,"()"（カッコ）<br>計算タイプ=文字列の場合："&"'>?</icon></span>
         </div>
+        <div class='area-message'>小数点以下の桁数<span class="questionBalloon"><icon class="questionBtn"
+                                                     data-tooltip="小数点以下の表示桁数を指定します。">?</icon></span>
+        </div>
+        <div class='area-message'>端数処理<span class="questionBalloon"><icon class="questionBtn"
+                                                    data-tooltip="端数処理の種類を指定します。<br>「四捨五入」「切り捨て」「切り上げ」の中から処理を指定できます。">?</icon></span>
+        </div>
+
 
       </div>
       <ul class="input-one-row hearing-input-type"
@@ -22,8 +29,7 @@
             ng-repeat="(formulaId, item) in setItem.calcRules track by $index">
           <div class='area-name'><input type="text" ng-model="item.variableName"></div>
           <div class='area-type'>
-            <select name="hearing-input-option" ng-model="item.calcType"
-                    ng-change="">
+            <select name="hearing-input-option" ng-model="item.calcType" ng-change="main.handleControlVariableDetail(item.calcType, formulaId, setActionId)">
               <option value="1">数値</option>
               <option value="2">文字列</option>
             </select>
@@ -33,6 +39,48 @@
             data-maxRow="10"></resize-textarea>
             <s ng-if="item.calcType == 1">※ “+“（足す）,“-“（引く）,“*“（掛ける）,“/“（割る）,“()“（カッコ）を利用した四則演算が可能です。</s>
             <s ng-if="item.calcType == 2">※ “&“を用いた文字列の結合や文字列の代入が可能です。</s>
+          </div>
+          <div>
+            <select id="digitList" ng-model="item.significantDigits" ng-disabled="item.calcType == 2">
+              <option value="0">0</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+              <option value="11">11</option>
+              <option value="12">12</option>
+              <option value="13">13</option>
+              <option value="14">14</option>
+              <option value="15">15</option>
+              <option value="16">16</option>
+              <option value="17">17</option>
+              <option value="18">18</option>
+              <option value="19">19</option>
+              <option value="20">20</option>
+              <option value="21">21</option>
+              <option value="22">22</option>
+              <option value="23">23</option>
+              <option value="24">24</option>
+              <option value="25">25</option>
+              <option value="26">26</option>
+              <option value="27">27</option>
+              <option value="28">28</option>
+              <option value="29">29</option>
+              <option value="30">30</option>
+            </select>
+          </div>
+          <div>
+            <select ng-model="item.rulesForRounding" ng-disabled="item.calcType == 2">
+              <option value="1">四捨五入</option>
+              <option value="2">切り捨て</option>
+              <option value="3">切り上げ</option>
+            </select>
           </div>
           <div class='area-btn btnBlock'>
               <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn hearingBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, formulaId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn hearingBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, formulaId)')) ?></a>

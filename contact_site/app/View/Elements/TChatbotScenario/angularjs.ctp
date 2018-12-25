@@ -1719,6 +1719,19 @@
         }
       };
 
+      this.handleControlVariableDetail = function( type, targetId, setActionId ) {
+        console.log(type);
+        var target = $scope.setActionList[setActionId].calcRules[targetId];
+        if (Number(type) === <?=C_SCENARIO_CONTROL_INTEGER ?>) {
+          target.significantDigits = "0";
+          target.rulesForRounding = "1";
+        } else {
+          target.significantDigits = "";
+          target.rulesForRounding = "";
+        }
+
+      };
+
       /**
        * 選択肢、ヒアリング、メール送信,属性値取得のリストに対して、追加・削除ボタンの表示状態を更新する
        * @param String  actionType      アクション種別
@@ -2655,7 +2668,20 @@
       };
 
       /**
-       * メッセージ内の変数を、ローカルストレージ内のデータと置き換える
+       * メッセージ内の変数を、ローカルストレージ内のデータと置き換える、が、ない場合は空文字列を返す
+       * @param String message 変数を含む文字列
+       * @return String        置換後の文字列
+       */
+      $scope.replaceVariableWithEmpty = function(message) {
+        message = message ? message : '';
+        return message.replace(/{{(.+?)\}}/g, function(param) {
+          var name = param.replace(/^{{(.+)}}$/, '$1');
+          return LocalStorageService.getItem('chatbotVariables', name) || '';
+        });
+      };
+
+      /**
+       * メッセージ内の変数を、ローカルストレージ内のデータと置き換え、数字にする
        * @param String message 変数を含む文字列
        * @return String        置換後の文字列（数値）
        */
@@ -2726,27 +2752,66 @@
       this.doControlVariable = function(actionDetail) {
           actionDetail['calcRules'].forEach(function(calcRule) {
             try {
-              var formula = calcRule.formula;
-              if (Number(calcRule.calcType) === 1) {
-                formula = self.toHalfWidth($scope.replaceIntegerVariable(formula));
-                formula = Number(eval(formula));
-              } else if (Number(calcRule.calcType) === 2) {
-                formula = self.adjustString($scope.replaceVariable(formula));
+              var result = calcRule.formula;
+              if (Number(calcRule.calcType) === <?= C_SCENARIO_CONTROL_INTEGER ?>) {
+                result = self.toHalfWidth($scope.replaceIntegerVariable(result));
+                result = Number(eval(result));
+                result = self.roundResult(result, calcRule.significantDigits, calcRule.rulesForRounding);
+                if(isNaN(result)){
+                  throw new Error("Not a Number");
+                }
+              } else {
+                result = self.adjustString($scope.replaceVariableWithEmpty(result));
               }
               LocalStorageService.setItem('chatbotVariables', [
                 {
                   key: calcRule.variableName,
-                  value: formula
+                  value: String(result)
                 }]);
             }
             catch(e){
               console.log(e);
+              LocalStorageService.setItem('chatbotVariables', [
+                {
+                  key: calcRule.variableName,
+                  value: "計算エラー"
+                }]);
             }
           });
         $scope.actionStep++;
         $scope.doAction();
       };
 
+      this.roundResult = function(value, digits, roundRule) {
+        var index = Math.pow(10, digits - 1);
+        // 1桁目指定の場合は整数部だけ取り出して計算
+        if( Number(digits) === 0 ) {
+          if ( value > 0 ) {
+            value = Math.floor(value);
+          } else {
+            value = Math.ceil(value);
+          }
+        }
+        switch ( Number(roundRule) ) {
+          case 1:
+            //四捨五入の場合
+            value = Math.round(value * index) / index;
+            break;
+          case 2:
+            //切り捨ての場合
+            value = Math.floor(value * index) / index;
+            break;
+          case 3:
+            //切り上げの場合
+            value = Math.ceil(value * index) / index;
+            break;
+          default:
+            //デフォルトは四捨五入
+            value = Math.round( value * index ) / index;
+        }
+
+        return value;
+      };
       this.adjustString = function(formula) {
         if (formula.indexOf('&') != -1) {
           var itemArray = formula.split('&');
@@ -3046,6 +3111,7 @@
   }
 
   $(document).ready(function() {
+
     // ツールチップの表示制御（ヘルプ）
     $(document).off('mouseenter', '.questionBtn').on('mouseenter', '.questionBtn', function(event) {
       /**拡大率によって表示が崩れないよう、拡大率を取得し、表示の調整*********/
@@ -3205,6 +3271,11 @@
       $('#tchatbotscenario_form_action_body').css({height: actionWrapperHeight - actionHeaderHeight + 'px'});
     });
   });
+
+  var replaceVariableAllEmpty = function( message ) {
+    message = message ? message : '';
+    return message.replace(/{{(.+?)\}}/g, '');
+  };
 
   /**
    * アクションのバリデーションとエラーメッセージの設定
@@ -3506,11 +3577,20 @@
         }
         /* 数値入力の場合 */
         if (elm.calcType == <?= C_SCENARIO_CONTROL_INTEGER ?>) {
-          if (searchStr(elm.formula, /÷/)) {
-            messageList.push('割り算には"/"（スラッシュ）を使用してください');
-          }
-          if (searchStr(elm.formula, /×/)) {
-            messageList.push('掛け算には"*"（アスタリスク）を使用してください');
+          var alreadyChecked = false;
+          if(searchStr(replaceVariableAllEmpty(elm.formula), /^.*[^()+\-*\/0-9（）＋－＊／０-９\s].*$/)) {
+            if (searchStr(elm.formula, /÷/)) {
+              messageList.push('割り算には"/"（スラッシュ）を使用してください');
+              alreadyChecked = true;
+            }
+            if (searchStr(elm.formula, /×/)) {
+              messageList.push('掛け算には"*"（アスタリスク）を使用してください');
+              alreadyChecked = true;
+            }
+            if(!alreadyChecked) {
+              messageList.push('数値でない文字が指定されています');
+            }
+
           }
         }
       });
