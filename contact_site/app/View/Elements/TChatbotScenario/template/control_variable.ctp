@@ -15,7 +15,7 @@
                                                                       data-tooltip='計算式または代入したい値や文字列を入力します。<br>計算式の結果が変数に代入されます。<br>＜利用できる記号＞<br>計算タイプ=数値の場合　："+"（足す）,"-"（引く）,"*"（掛ける）,<br>"/"（割る）,"()"（カッコ）<br>計算タイプ=文字列の場合："&"'>?</icon></span>
         </div>
         <div class='area-message'>小数点以下の桁数<span class="questionBalloon"><icon class="questionBtn"
-                                                     data-tooltip="小数点以下の丸め込みを行いたい桁数を指定します。（0を指定した場合は1の位が処理されます。）<br>ここで指定した桁数に、端数処理の操作が実行されます。">?</icon></span>
+                                                     data-tooltip="小数点以下の表示桁数を指定します。">?</icon></span>
         </div>
         <div class='area-message'>端数処理<span class="questionBalloon"><icon class="questionBtn"
                                                     data-tooltip="端数処理の種類を指定します。<br>「四捨五入」「切り捨て」「切り上げ」の中から処理を指定できます。">?</icon></span>
@@ -29,7 +29,7 @@
             ng-repeat="(formulaId, item) in setItem.calcRules track by $index">
           <div class='area-name'><input type="text" ng-model="item.variableName"></div>
           <div class='area-type'>
-            <select name="hearing-input-option" ng-model="item.calcType">
+            <select name="hearing-input-option" ng-model="item.calcType" ng-change="main.handleControlVariableDetail(item.calcType, formulaId, setActionId)">
               <option value="1">数値</option>
               <option value="2">文字列</option>
             </select>
