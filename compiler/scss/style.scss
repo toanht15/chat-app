@@ -8386,8 +8386,8 @@ ul.naviBtn {
               [class*="grid-container"]{
                 display: grid;
                 display: -ms-grid;
-                grid-template-columns: 175px 150px 1fr 48px;
-                -ms-grid-columns: 175px 150px 1fr 48px;
+                grid-template-columns: 150px 140px 1fr 100px 100px 48px;
+                -ms-grid-columns: 150px 150px 1fr 100px 100px 48px;
                 grid-template-rows: 31px 1fr;
                 -ms-grid-rows: 31px 1fr;
 
@@ -8403,18 +8403,38 @@ ul.naviBtn {
                   grid-column: 3;
                   -ms-grid-column: 3;
                 }
+                :nth-child(4) {
+                  grid-column: 4;
+                  -ms-grid-column: 4;
+                }
+                :nth-child(5) {
+                  grid-column: 5;
+                  -ms-grid-column: 5;
+                }
+                :nth-child(6) {
+                  grid-column: 6;
+                  -ms-grid-column: 6;
+                }
+
                 input[type="text"], select {
                   border-radius: 4px;
                   border: 1px solid #909090;
                   min-width: 95%;
                 }
+                select:disabled {
+                  background-color: rgb(235,235,228);
+                  cursor: default;
+                }
                 textarea {
                   width: calc(100% - 5px);
                 }
                 hr.separator {
+                  grid-row: 2;
+                  -ms-grid-row: 2;
                   margin-top: 15px;
                   margin-bottom: 10px;
-                  grid-column: 1/5;
+                  grid-column: 1/7;
+                  -ms-grid-column-span: 6;
                   width: 101%;
                   padding-bottom: 0px;
                 }
@@ -8427,6 +8447,7 @@ ul.naviBtn {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                text-align: center;
               }
               .grid-container-body {
                 grid-template-rows: 1fr;
