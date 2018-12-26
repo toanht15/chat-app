@@ -26,15 +26,16 @@ class AddAllChatLogTimeShell extends AppShell
   public function addAll()
   {
     ini_set('memory_limit', -1);
-    $limit = 10000;
+    $limit = 200000;
     $offset = 0;
     try {
-      $this->THistoryChatLogTime->begin();
       $count = $this->THistory->find('count');
       $loopCount = ceil($count / $limit);
       $this->printLog('loop-count: '.$loopCount);
       for ($i = 0; $i < $loopCount; $i++) {
+        $this->THistoryChatLogTime->begin();
         $allData = $this->THistory->find('all', array(
+          'order' => array('id', 'desc'),
           'limit' => $limit,
           'offset' => $offset
         ));
@@ -70,12 +71,12 @@ class AddAllChatLogTimeShell extends AppShell
         $this->THistoryChatLogTime->query($queries, false);
         $offset += $limit;
         $this->printLog('next : ' . $offset);
+        $this->THistoryChatLogTime->commit();
       }
     } catch (Exception $e) {
       $this->THistoryChatLogTime->rollback();
       $this->printLog('ERROR FOUND. message : ' . $e->getMessage());
     }
-    $this->THistoryChatLogTime->commit();
     $this->printLog('FINISHED');
   }
 
