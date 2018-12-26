@@ -44,6 +44,18 @@ document.body.onload = function(){
     targetBalloonList[i].addEventListener('mouseenter', balloonApi.show('act')); // 設定したアクション内容のポップアップ表示
     targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定したアクション内容のポップアップ非表示
   }
+
+  var targetBalloonList = document.querySelectorAll('.actionValueScenarioLabel');
+  for (var i = 0; i < targetBalloonList.length; i++) {
+    targetBalloonList[i].addEventListener('mouseenter', balloonApi.show('act')); // 設定したアクション内容のポップアップ表示
+    targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定したアクション内容のポップアップ非表示
+  }
+
+  var targetBalloonList = document.querySelectorAll('.actionValueMessageLabel');
+  for (var i = 0; i < targetBalloonList.length; i++) {
+    targetBalloonList[i].addEventListener('mouseenter', balloonApi.show('act')); // 設定したアクション内容のポップアップ表示
+    targetBalloonList[i].addEventListener('mouseleave', balloonApi.hide); // 設定したアクション内容のポップアップ非表示
+  }
 };
 
 // 全選択
@@ -160,6 +172,8 @@ var balloonApi = {
               switch(type){
               case "act":
                 label_height = $(".actionValueLabel").outerHeight(true);
+                label_height = $(".actionValueMessageLabel").outerHeight(true);
+                label_height = $(".actionValueScenarioLabel").outerHeight(true);
                 break;
               case "cond":
                 label_height = $(".conditionValueLabel").outerHeight(true);
@@ -469,11 +483,16 @@ var openSelectFile = function() {
       fileReader.onload = function (event) {
         var split = fileObj.name.split(".");
         var targetExtension = split[split.length-1];
-        if(targetExtension === "xlsm") {
+        if(targetExtension === "xlsm" || targetExtension === "xlsx") {
           // event.target.result に読み込んだファイルの内容が入っています.
           // ドラッグ＆ドロップでファイルアップロードする場合は result の内容を Ajax でサーバに送信しましょう!
           loadData = event.target.result;
-          _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】をインポートします。<br>よろしいですか？</div>");
+          _showConfirmDialog("<div style='text-align:center'><p>指定されたファイル【" + fileObj.name + "】をインポートします。</p>" +
+              "<br><p style='color:red; margin-top: 0'>現在の設定内容は削除され、指定されたファイルの内容に置き換わります。</p>" +
+              "<p style='color:red'>（全件洗い替え）\n</p>" +
+              "<p>※インポート後に元に戻すことはできません。</p>" +
+              "<p>※現在の設定内容をエクスポートしておくことを推奨します。</p>" +
+              "<br>インポートしてよろしいですか？</div>");
         } else {
           _showConfirmDialog("<div class='confirm'>指定されたファイル【" + fileObj.name + "】は対応していません。</div>");
           $('#popupCloseBtn').css('display', 'block');
@@ -514,7 +533,7 @@ var uploadFile = function(fileObj, loadFile) {
   popupEvent.resize();
 
   $.ajax({
-    url  : "<?= $this->Html->url('/TAutoMessages/import') ?>",
+    url  : "<?= $this->Html->url('/TAutoMessages/bulkImport') ?>",
     type : "POST",
     data : fd,
     cache       : false,

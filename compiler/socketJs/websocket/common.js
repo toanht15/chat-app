@@ -141,6 +141,16 @@ var socket, // socket.io
       return parseFloat((a / Math.pow(c, f)).toFixed(d)) + ' ' + e[f];
     },
     createWidget: function() {
+      // 右下か左下に固定
+      if(check.hasCustomBannerImageSetting() && check.smartphone()) {
+        if (Number(window.sincloInfo.widget.spBannerPosition) === 3) {
+          // 右中央 => 右下
+          window.sincloInfo.widget.spBannerPosition = 1;
+        } else if (Number(window.sincloInfo.widget.spBannerPosition) === 4) {
+          // 右中央 => 右下
+          window.sincloInfo.widget.spBannerPosition = 2;
+        }
+      }
       var widget = window.sincloInfo.widget, displaySet = '';
       var css = this.widgetCssTemplate(widget),
           header = this.widgetHeaderTemplate(widget),
@@ -1542,19 +1552,25 @@ var socket, // socket.io
       //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
       if (Number(widget.closeButtonSetting) === 2 &&
           Number(widget.closeButtonModeType) === 1) {
-        html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background-color: rgb(255, 255, 255); border-radius: ' +
-            widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' +
-            widget.radiusRatio + 'px ' + widget.radiusRatio + 'px;}';
-        html += '      #sincloBox div#sincloBannerBox #sincloBanner:hover { opacity:0.75 !important}';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fal { display: inline-block; font-family: SincloFont ; font-style: normal; font-weight: normal; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; cursor: pointer; }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner .sinclo-fal.fa-comment:before { content: "\\f075" }';
-        html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 42px; width : -webkit-fit-content !important; width : -moz-fit-content !important; width : fit-content !important; background-color: ' +
-            colorList['mainColor'] + '; box-shadow: 0px 0px ' +
-            widget.boxShadow + 'px ' + widget.boxShadow +
-            'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' +
-            widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' +
-            widget.radiusRatio + 'px; color: ' + colorList['stringColor'] +
-            '; margin: auto; filter:alpha(opacity=90); -moz-opacity: 0.9; opacity: 0.9; cursor: pointer; }';
+        if (check.hasCustomBannerImageSetting()) {
+          html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background-color: transparent; }';
+          html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner { position: relative; z-index: 1; background-color: transparent; cursor: pointer; }';
+        } else {
+          html += '      #sincloBox div#sincloBannerBox { bottom:0px; right:0px; background-color: rgb(255, 255, 255); border-radius: ' +
+              widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' +
+              widget.radiusRatio + 'px ' + widget.radiusRatio + 'px;}';
+          html += '      #sincloBox div#sincloBannerBox #sincloBanner:hover { opacity:0.75 !important}';
+          html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner { position: relative; z-index: 1; height: 42px; width : -webkit-fit-content !important; width : -moz-fit-content !important; width : fit-content !important; background-color: ' +
+              colorList['mainColor'] + '; box-shadow: 0px 0px ' +
+              widget.boxShadow + 'px ' + widget.boxShadow +
+              'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio +
+              'px ' +
+              widget.radiusRatio + 'px ' + widget.radiusRatio + 'px ' +
+              widget.radiusRatio + 'px; color: ' + colorList['stringColor'] +
+              '; margin: auto; filter:alpha(opacity=90); -moz-opacity: 0.9; opacity: 0.9; cursor: pointer; }';
+        }
         html += '      #sincloBox div#sincloBannerBox #sincloBanner .sincloBannerText{ display: flex; justify-content: center; align-items: center; height: 100%; width: auto!important; margin: 0 5px; }';
         html += '      #sincloBox div#sincloBannerBox #sincloBanner.sincloBanner i{ color: ' +
             widget.stringColor + '; }';
@@ -1959,15 +1975,21 @@ var socket, // socket.io
               }
               switch (Number(window.sincloInfo.widget.spBannerPosition)) {
                 case 1://右下
-                  html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' +
-                      horizontalPosition + '; bottom: ' +
-                      verticalPositionFromBottom + '; height: ' + (30 * ratio) +
-                      'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio +
-                      'px ' + widget.boxShadow * ratio +
-                      'px rgba(0,0,0,0.1); border-radius: ' +
-                      widget.radiusRatio * ratio + 'px ' + widget.radiusRatio *
-                      ratio + 'px ' + widget.radiusRatio * ratio + 'px ' +
-                      widget.radiusRatio * ratio + 'px; }';
+                  if (check.hasCustomBannerImageSetting()) {
+                    html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' +
+                        horizontalPosition + '; bottom: ' +
+                        verticalPositionFromBottom + '; }';
+                  } else {
+                    html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; right: ' +
+                        horizontalPosition + '; bottom: ' +
+                        verticalPositionFromBottom + '; height: ' + (30 * ratio) +
+                        'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio +
+                        'px ' + widget.boxShadow * ratio +
+                        'px rgba(0,0,0,0.1); border-radius: ' +
+                        widget.radiusRatio * ratio + 'px ' + widget.radiusRatio *
+                        ratio + 'px ' + widget.radiusRatio * ratio + 'px ' +
+                        widget.radiusRatio * ratio + 'px; }';
+                  }
                   html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: ' +
                       widget.stringColor + '; font-size: ' + (10 * ratio) +
                       'px; vertical-align: middle; margin-right: ' +
@@ -1978,15 +2000,21 @@ var socket, // socket.io
                       (5 * ratio) + 'px; }';
                   break;
                 case 2://左下
-                  html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' +
-                      horizontalPosition + '; bottom: ' +
-                      verticalPositionFromBottom + '; height: ' + (30 * ratio) +
-                      'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio +
-                      'px ' + widget.boxShadow * ratio +
-                      'px rgba(0,0,0,0.1); border-radius: ' +
-                      widget.radiusRatio * ratio + 'px ' + widget.radiusRatio *
-                      ratio + 'px ' + widget.radiusRatio * ratio + 'px ' +
-                      widget.radiusRatio * ratio + 'px; }';
+                    if(check.hasCustomBannerImageSetting()) {
+                      html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' +
+                          horizontalPosition + '; bottom: ' +
+                          verticalPositionFromBottom + '; }';
+                    } else {
+                      html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner { position: fixed; left: ' +
+                          horizontalPosition + '; bottom: ' +
+                          verticalPositionFromBottom + '; height: ' + (30 * ratio) +
+                          'px; box-shadow: 0px 0px ' + widget.boxShadow * ratio +
+                          'px ' + widget.boxShadow * ratio +
+                          'px rgba(0,0,0,0.1); border-radius: ' +
+                          widget.radiusRatio * ratio + 'px ' + widget.radiusRatio *
+                          ratio + 'px ' + widget.radiusRatio * ratio + 'px ' +
+                          widget.radiusRatio * ratio + 'px; }';
+                    }
                   html += '      #sincloBox div#sincloBannerBox div#sincloBanner.sincloBanner .bannertext{ color: ' +
                       widget.stringColor + '; font-size: ' + (10 * ratio) +
                       'px; vertical-align: middle; margin-right: ' +
@@ -2098,9 +2126,9 @@ var socket, // socket.io
               'px rgba(0,0,0,0.1);}';
           html += '#sincloBox * { font-size: ' + hRatio + 'px }';
           if (widget.chatMessageCopy === 1) {
-            html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.35em 2em 0; font-size: 1.2em;  user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; }';
+            html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.3em 2em 0; font-size: 1em;  user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; }';
           } else {
-            html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.35em 2em 0; font-size: 1.2em;}';
+            html += '#sincloBox p#widgetTitle { border-radius: 0; border-top-width: 0.1em; height: 2em; padding: 0.3em 2em 0; font-size: 1em;}';
           }
           if (widget.widgetSizeType !== 1) {
             html += '#sincloBox p#widgetTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }';
@@ -2108,18 +2136,13 @@ var socket, // socket.io
           html += '#sincloBox section { width: 100% }';
           html += '#sincloBox section#chatTab ul { height: ' +
               (chatAreaHeight - (6.5 * hRatio)) + 'px }';
-          html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
+          if(check.android()){
+            html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.25em; bottom: 0; right: 0.3em; }';
+          } else {
+            html += '#sincloBox div#minimizeBtn { width: 1.5em; height: 1.5em; top: 0.25em; bottom: 0; right: 0.3em; }';
+          }
           html += '#sincloBox section#chatTab sinclo-div #sincloChatSendBtn, #sincloBox section#chatTab sinclo-div #miniSincloChatSendBtn { font-size: ' +
               (13 * ratio) + 'px;}';
-          //＋ボタンと×ボタンは閉じるボタン設定によってポジションが異なるため別々に記載。なお、IDは同一とする
-          //閉じるボタン無効
-          //＋ボタン無効に仕様変更
-          /*
-          html += '#sincloBox div#addBtn { width: 1.5em; height: 1.5em; top: 0.4em; bottom: 0; right: 0.7em; }';
-*/
-          /*
-          html += '#sincloBox #widgetTitle:after { width: 1.5em; height: 1.5em; top: 0; bottom: 0; right: 0.25em;}';
-*/
           html += '#sincloBox[data-openflg="true"] p#widgetTitle:after { margin-top: 0.5em; }';
           html += '#sincloBox #widgetTitle em { width: 2em; height: 2em; font-size: 0.8em; padding: 0.25em; border-radius: 5em; margin: 0.25em; }';
           html += '#sincloBox ul#chatTalk { padding: 0.3em; padding-top:0px; background-color: ' +
@@ -2148,8 +2171,8 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li sinclo-radio { margin: 0 0 -1em 0.5em; display: inline-block; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] { margin-right: 0.5em } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"], #sincloBox ul#chatTalk li sinclo-radio label { webkit-transform: scale(1.3); transform: scale(1.3); moz-transform: scale(1.3); } ';
-          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1em; font-size: 0.8em; } ';
-          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 10px; margin-top: -10px; left: -5px; width: 20px; height: 20px; border: 0.5px solid ' +
+          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1em; font-size: 0.7em; } ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 10px; margin-top: -10px; left: -5px; width: 17px; height: 17px; border: 0.5px solid ' +
               chatContentTextColor + '; border-radius: 50%; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 10px; left: 0px; margin-top: -5px; width: 11px; height: 11px; background: ' +
               colorList['mainColor'] + '; border-radius: 50%; } ';
@@ -2172,9 +2195,13 @@ var socket, // socket.io
           html += '#sincloBox section#chatTab sinclo-div:not(#flexBoxWrap) { height: 4em; padding: 0.5em; }';
 
           if (hRatio > 16) {
-            html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; }';
+            html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; font-size: 0.7em }';
           } else {
             html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage { height: 100%;  min-height: 100%!important; border-radius: 5px 0 0 5px!important; font-size: 1.5em }';
+          }
+          if (!check.android()){
+            //iPhoneはフォントサイズが小さいと予期せぬ拡大が起こるため、強制的に指定する
+            html += '#sincloBox #sincloChatMessage, #sincloBox #miniSincloChatMessage {font-size: 17px!important}';
           }
           html += '      #sincloBox section#chatTab #sincloChatSendBtn, #sincloBox section#chatTab #miniSincloChatSendBtn { padding: 0.6em 0; border: 1px solid ' +
               colorList['chatSendBtnBackgroundColor'] + '; }';
@@ -2233,12 +2260,14 @@ var socket, // socket.io
       /* PC版 */
       else {
 //        html += "      #sincloBox { width: " + widgetWidth + "px }";
-        html += '      #sincloBox { overflow: hidden; }';
-        html += '      #sincloBox div#sincloWidgetBox { width: ' +
-            sizeList['boxWidth'] + 'px; box-shadow: 0px 0px ' +
+        html += '      #sincloBox { overflow: hidden; box-shadow: 0px 0px ' +
             widget.boxShadow + 'px ' + widget.boxShadow +
             'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' +
-            widget.radiusRatio +
+            widget.radiusRatio + 'px 0 0; }';
+        html += '      #sincloBox.onImageBanner { box-shadow: none; border-radius: 0; }';
+        html += '      #sincloBox div#sincloWidgetBox { width: ' +
+            sizeList['boxWidth'] + 'px; border-radius: ' + widget.radiusRatio +
+            'px ' + widget.radiusRatio +
             'px 0 0; background-color: rgb(255, 255, 255);}';
         html += '      #sincloBox * { line-height: 1.4; font-size: ' +
             sizeList['d12font'] + 'px; }';
@@ -3262,29 +3291,37 @@ var socket, // socket.io
       }
       var html = '';
       html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
-      html += '    <div id="sincloBannerText" class="sincloBannerText">';
-      html += '      <svg version="1.1" id="bannerIcon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve">\n' +
-          '<style type="text/css">\n' +
-          '\t.st0{fill:' + sincloInfo.widget.stringColor + ';}\n' +
-          '</style>\n' +
-          '<g>\n' +
-          '\t<path class="st0" d="M257.135,19.179C103.967,19.179,0,97.273,0,218.763c0,74.744,31.075,134.641,91.108,173.176\n' +
-          '\t\tc4.004,2.572,8.728,2.962,6.955,10.365c-7.16,29.935-19.608,83.276-19.608,83.276c-0.527,2.26,0.321,4.618,2.162,6.03\n' +
-          '\t\tc1.84,1.402,4.334,1.607,6.38,0.507c0,0,87.864-52.066,99.583-58.573c27.333-15.625,50.878-18.654,68.558-18.654\n' +
-          '\t\tC376.619,414.89,512,366.282,512,217.458C512,102.036,418.974,19.179,257.135,19.179z" style="fill: ' +
-          common.toRGBCode(sincloInfo.widget.stringColor) + ';"></path>\n' +
-          '</g>\n' +
-          '</svg>';
-      var bannertext = '';
-      if (check.smartphone() && typeof (widget.spBannerText) === 'string') {
-        //スマホかつ隠しパラメータ設定済みの場合
-        bannertext = check.escape_html(widget.spBannerText);
+      if (check.hasCustomBannerImageSetting()) {
+        if (check.smartphone()) {
+          html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.sp +'" />';
+        } else {
+          html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.pc +'" />';
+        }
       } else {
-        bannertext = check.escape_html(widget.bannertext);
+        html += '    <div id="sincloBannerText" class="sincloBannerText">';
+        html += '      <svg version="1.1" id="bannerIcon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" xml:space="preserve">\n' +
+            '<style type="text/css">\n' +
+            '\t.st0{fill:' + sincloInfo.widget.stringColor + ';}\n' +
+            '</style>\n' +
+            '<g>\n' +
+            '\t<path class="st0" d="M257.135,19.179C103.967,19.179,0,97.273,0,218.763c0,74.744,31.075,134.641,91.108,173.176\n' +
+            '\t\tc4.004,2.572,8.728,2.962,6.955,10.365c-7.16,29.935-19.608,83.276-19.608,83.276c-0.527,2.26,0.321,4.618,2.162,6.03\n' +
+            '\t\tc1.84,1.402,4.334,1.607,6.38,0.507c0,0,87.864-52.066,99.583-58.573c27.333-15.625,50.878-18.654,68.558-18.654\n' +
+            '\t\tC376.619,414.89,512,366.282,512,217.458C512,102.036,418.974,19.179,257.135,19.179z" style="fill: ' +
+            common.toRGBCode(sincloInfo.widget.stringColor) + ';"></path>\n' +
+            '</g>\n' +
+            '</svg>';
+        var bannertext = '';
+        if (check.smartphone() && typeof (widget.spBannerText) === 'string') {
+          //スマホかつ隠しパラメータ設定済みの場合
+          bannertext = check.escape_html(widget.spBannerText);
+        } else {
+          bannertext = check.escape_html(widget.bannertext);
+        }
+        html += '      <span class="' +
+            (bannertext.length !== 0 ? 'bannertext' : 'notext') + '">' +
+            bannertext + '</span>';
       }
-      html += '      <span class="' +
-          (bannertext.length !== 0 ? 'bannertext' : 'notext') + '">' +
-          bannertext + '</span>';
       html += '    </div>';
       html += '  </div>';
       return html;
@@ -3315,7 +3352,7 @@ var socket, // socket.io
                 '" style="width:calc(' + (62 * ratio) +
                 'px* ((3 * 14 + 36) / 81))!important; height:calc(' +
                 (70 * ratio) +
-                'px* ((3 * 14 + 36) / 81))!important; display:block;" alt="チャット画像">';
+                'px* ((3 * 14 + 36) / 81))!important; display:block" alt="チャット画像">';
           }
         } else {
           if (widget.mainImage.match(/^fa/) !== null) {
@@ -3331,7 +3368,7 @@ var socket, // socket.io
                 widget.headerTextSize +
                 ' + 36) / 81))!important; height:calc(' + (70 * ratio) +
                 'px* ((3 * ' + widget.headerTextSize +
-                ' + 36) / 81))!important; display:block;" alt="チャット画像">';
+                ' + 36) / 81))!important;" display:block" alt="チャット画像">';
           }
         }
         html += '  </span>';
@@ -3822,6 +3859,14 @@ var socket, // socket.io
             common.indicateSimpleImage();
           }
         }
+        if(check.smartphone() && !check.android() && window.orientation !== 0 && screen.width !== window.innerHeight) {
+          $('#sincloBox').
+          css(
+              {'bottom': screen.height - window.innerHeight + 'px'}
+              );
+          $('#sincloBanner').
+          css('bottom', screen.height - window.innerHeight + 5 + 'px');
+        }
       },
       hide: function() {
         sincloBox.style.display = 'none';
@@ -3890,8 +3935,8 @@ var socket, // socket.io
         if (!check.smartphone()) {
           console.log('widgetHandler::beginToWatchResizeEvent');
           $(window).
-              on('resize.change_widget_size',
-                  common.widgetHandler._handleResizeEvent);
+          on('resize.change_widget_size',
+              common.widgetHandler._handleResizeEvent);
           // いったんリサイズ処理を走らせる
           common.widgetHandler._handleResizeEvent();
         }
@@ -3900,8 +3945,8 @@ var socket, // socket.io
         if (!check.smartphone()) {
           console.log('widgetHandler::stopToWatchResizeEvent');
           $(window).
-              off('resize.change_widget_size',
-                  common.widgetHandler._handleResizeEvent);
+          off('resize.change_widget_size',
+              common.widgetHandler._handleResizeEvent);
         }
       },
       _maximumReverseAnimation: function() {
@@ -4942,6 +4987,15 @@ var socket, // socket.io
       }
       return false;
     },
+    hasCustomBannerImageSetting: function() {
+      return check.isset(window.sincloInfo.custom) &&
+          check.isset(window.sincloInfo.custom.widget) &&
+          check.isset(window.sincloInfo.custom.widget.bannerImage) &&
+          ((!check.smartphone() &&
+              check.isset(window.sincloInfo.custom.widget.bannerImage.pc)) ||
+              (check.smartphone() &&
+                  check.isset(window.sincloInfo.custom.widget.bannerImage.sp)));
+    },
     // エスケープ用
     // http://qiita.com/saekis/items/c2b41cd8940923863791
     escape_html: function(string) {
@@ -4960,21 +5014,24 @@ var socket, // socket.io
         }[match];
       });
       return str;
-    },
+    }
+    ,
     firstUrl: function() {
       if (location.href.match('/sincloData\=/')) {
         return true;
       } else {
         return false;
       }
-    },
+    }
+    ,
     ref: function() {
       var reg = new RegExp(
           '^http(s)?:\/\/([A-z]+.)?' + location.hostname + '\/'),
           ref = document.referrer;
       return ref.match(reg);
     }
-  };
+  }
+  ;
 
   userInfo = {
     accessType: cnst.access_type.guest,
@@ -6208,32 +6265,32 @@ var socket, // socket.io
     }, false);
     if (check.smartphone()) {
       $('textarea:not(#sincloChatMessage), input:not(#miniSincloChatMessage)').
-          on('DOMFocusIn', function(e) {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusIn');
-            if (!event.target) {
-              return;
-            }
-            if (event.target.nodeName.toLowerCase() === 'textarea' ||
-                focusTargetType.indexOf(e.target.type) >= 0) {
-              console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> HIDE WIDGET');
-              if (showTimer) {
-                clearTimeout(showTimer);
-                showTimer = null;
-              }
-              common.widgetHandler.hide();
-              storage.s.set('closeAct', true);
-            }
-          }).
-          on('DOMFocusOut', function(e) {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusOut');
-            if (!showTimer) {
-              showTimer = setTimeout(function() {
-                console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW WIDGET');
-                storage.s.set('closeAct', false);
-                common.widgetHandler.show();
-              }, 100);
-            }
-          });
+      on('DOMFocusIn', function(e) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusIn');
+        if (!event.target) {
+          return;
+        }
+        if (event.target.nodeName.toLowerCase() === 'textarea' ||
+            focusTargetType.indexOf(e.target.type) >= 0) {
+          console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> HIDE WIDGET');
+          if (showTimer) {
+            clearTimeout(showTimer);
+            showTimer = null;
+          }
+          common.widgetHandler.hide();
+          storage.s.set('closeAct', true);
+        }
+      }).
+      on('DOMFocusOut', function(e) {
+        console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> DOMFocusOut');
+        if (!showTimer) {
+          showTimer = setTimeout(function() {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW WIDGET');
+            storage.s.set('closeAct', false);
+            common.widgetHandler.show();
+          }, 100);
+        }
+      });
     }
     var tabStateTimer = null;
     // ウィジェット最大化設定をクリア

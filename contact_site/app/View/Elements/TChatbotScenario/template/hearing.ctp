@@ -162,6 +162,15 @@
                                                     data-tooltip="サイト訪問日から設定した日数以降を選択できるようにします。例えば、当日は選択できなくし翌日以降から選択可能とする場合は「1」と設定します。">?</icon></span>
               </label>
               <br>
+              <label class="pointer">
+                <input type="checkbox" ng-model="hearingItem.settings.isDisableAfterDate">当日から<input
+                  style="width: 6em"
+                  type="number" min="0" ng-disabled="!hearingItem.settings.isDisableAfterDate"
+                  ng-model="hearingItem.settings.disableAfterDate">日以降を選択できないようにする
+                <span class="questionBalloon"><icon class="questionBtn"
+                                                    data-tooltip="サイト訪問日から設定した日数以降を選択できないようにします。">?</icon></span>
+              </label>
+              <br>
               <div class="cannot-select-date-setting-area">
                 <label class="pointer">
                   <input type="checkbox" id="set_cannot_select_date"

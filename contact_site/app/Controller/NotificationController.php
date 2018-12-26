@@ -38,11 +38,11 @@ class NotificationController extends AppController {
       $this->isValidAccessToken($jsonObj[self::PARAM_ACCESS_TOKEN]);
       $targetAutoMessage = $this->getTargetAutoMessageById($jsonObj[self::PARAM_AUTO_MESSAGE_ID]);
       if(empty($targetAutoMessage)) {
-        throw new InvalidArgumentException('指定のAutoMessageId : '.$jsonObj[self::PARAM_AUTO_MESSAGE_ID].' のオートメッセージが存在しません');
+        throw new InvalidArgumentException('指定のAutoMessageId : '.$jsonObj[self::PARAM_AUTO_MESSAGE_ID].' のオートメッセージが存在しません', 404);
       }
       $targetChatLog = $this->getTargetChatLogById($jsonObj[self::PARAM_LAST_CHAT_LOG_ID]);
       if(empty($targetAutoMessage)) {
-        throw new InvalidArgumentException('指定のchatLogId : '.$jsonObj[self::PARAM_LAST_CHAT_LOG_ID].' のチャットログが存在しません');
+        throw new InvalidArgumentException('指定のchatLogId : '.$jsonObj[self::PARAM_LAST_CHAT_LOG_ID].' のチャットログが存在しません', 404);
       }
       $allChatLogs = $this->getAllChatLogsByEntity($targetChatLog);
       $targetHistory = $this->getTargetHistoryById($targetChatLog['THistoryChatLog']['t_histories_id']);
@@ -105,6 +105,8 @@ class NotificationController extends AppController {
     } catch(Exception $e) {
       if(strpos($e->getMessage(), 'Invalid email') === 0) {
         $this->log('【MAIL_SEND_WARNING】メールアドレスが不正です。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
+      } else if($e->getCode === 404) {
+        $this->log('【MAIL_SEND_WARNING】存在しないデータに対するメール送信が発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
       } else {
         $this->log('【MAIL_SEND_ERROR】Notification/autoMessages呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
       }
@@ -134,7 +136,7 @@ class NotificationController extends AppController {
       }
       $targetChatLog = $this->getTargetChatLogByHistoryId($jsonObj[self::PARAM_HISTORY_ID]);
       if(empty($targetChatLog)) {
-        throw new InvalidArgumentException('指定のHistoryId : '.$jsonObj[self::PARAM_HISTORY_ID].' のチャットログが存在しません');
+        throw new InvalidArgumentException('指定のHistoryId : '.$jsonObj[self::PARAM_HISTORY_ID].' のチャットログが存在しません', 404);
       }
       $allChatLogs = $this->getAllChatLogsByEntityHistoryId($targetChatLog);
       $targetHistory = $this->getTargetHistoryById($targetChatLog['THistoryChatLog']['t_histories_id']);
@@ -188,6 +190,8 @@ class NotificationController extends AppController {
     } catch(Exception $e) {
       if(strpos($e->getMessage(), 'Invalid email') === 0) {
         $this->log('【MAIL_SEND_WARNING】メールアドレスが不正です。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
+      } else if($e->getCode === 404) {
+        $this->log('【MAIL_SEND_WARNING】存在しないデータに対するメール送信が発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
       } else {
         $this->log('【MAIL_SEND_ERROR】Notification/scenario呼び出し時にエラーが発生しました。 エラーメッセージ: '.$e->getMessage().' エラー番号 '.$e->getCode().' パラメータ: '.json_encode($jsonObj), 'mail-api-error');
       }
