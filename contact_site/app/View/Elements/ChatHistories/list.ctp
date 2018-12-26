@@ -538,8 +538,13 @@
           <li>
             <dt>ランディングページ</dt>
             <dd id = "landing">
-            <a href = "<?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing">
-            <span id = "landingPage"><?= $stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['title'] ?></span></a></dd>
+              <?php if(!empty($stayList[$defaultHistoryList['THistory']['id']])): ?>
+                <a href = "<?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing">
+                <span id = "landingPage"><?= $stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['title'] ?></span></a>
+            <?php else: ?>
+                <span id = "landingPage"></span>
+            <?php endif; ?>
+              </dd>
           </li>
           <li>
             <dt>チャット送信ページ</dt>
@@ -562,14 +567,25 @@
           <li>
             <dt>離脱ページ</dt>
             <dd id = "separation">
-            <a href = "<?=h($detailChatPagesData[0]['THistoryStayLog']['url'])?>" target = "landing">
-            <span id = "separationPage"><?= $detailChatPagesData[0]['THistoryStayLog']['title'] ?></span></a></dd></dd>
+              <?php if (!empty($detailChatPagesData[0])): ?>
+                <a href = "<?=h($detailChatPagesData[0]['THistoryStayLog']['url'])?>" target = "landing">
+                <span id = "separationPage"><?= $detailChatPagesData[0]['THistoryStayLog']['title'] ?></span></a>
+              <?php else: ?>
+                <span id = "separationPage"></span>
+              <?php endif; ?>
+            </dd>
           </li>
           <li>
             <dt>閲覧ページ数</dt>
             <dd>
+            <span id = "pageCount"><?php
+                if(!empty($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count'])) {
+                  echo h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count']);
+                } else {
+                  echo "";
+                }
+            ?></span>
             <?php if( is_numeric($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count']) ): ?>
-              <span id = "pageCount"><?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count'])?></span>
               <a id = "moveHistory" class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($defaultHistoryList['THistory']['id'])?>')" >(移動履歴)</a>
             <?php endif; ?></dd>
           </li>
