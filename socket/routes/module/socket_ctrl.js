@@ -1266,7 +1266,13 @@ io.sockets.on('connection', function(socket) {
     _handleInsertData: function(
         error, results, d, noReturnSelfMessage, insertData) {
       if (!isset(error)) {
-        ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, ((d.messageType !== 1 && d.messageType !== 8) ? 1 : 2), insertData.created);
+        let messageTimeType = 1;
+        if(Number(insertData.message_request_flg) === 1) {
+          messageTimeType = 2;
+        } else if (d.messageType === 1 || d.messageType === 8) {
+          messageTimeType = 2;
+        }
+        ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, messageTimeType, insertData.created);
         if (!isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
         var sendData = {
           tabId: d.tabId,
@@ -1540,7 +1546,13 @@ io.sockets.on('connection', function(socket) {
                         'RECORD INSERT ERROR: notifyCommit-func:' + error);
                   }
                   if (results.hasOwnProperty('insertId')) {
-                    ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, ((d.messageType !== 1 && d.messageType !== 8) ? 1 : 2), insertData.created);
+                    let messageTimeType = 1;
+                    if(Number(insertData.message_request_flg) === 1) {
+                      messageTimeType = 2;
+                    } else if (d.messageType === 1 || d.messageType === 8) {
+                      messageTimeType = 2;
+                    }
+                    ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, messageTimeType, insertData.created);
                     d.id = results.insertId;
                     d.created = fullDateTime(d.created);
                   }
