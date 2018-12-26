@@ -107,6 +107,8 @@
         responseType: "blob"
       })
       .done(function(response, textStatus, jqXHR){
+        console.log(response);
+        let userAgent = window.navigator.userAgent.toLowerCase();
         let responseHeader = jqXHR.getResponseHeader('Content-Type');
         let extension;
         if(responseHeader.match(/csv/)){
@@ -118,12 +120,18 @@
         let filename = dateTime + "_sinclo-lead-lists." + extension;
         let data = response;
 
-        let downloadUrl = (window.URL || window.webkitURL).createObjectURL(data);
-        let link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = filename;
-        link.click();
-        (window.URL || window.webkitURL).revokeObjectURL(downloadUrl);
+        if(userAgent.indexOf('msie') != -1 || userAgent.indexOf('trident') != -1 || userAgent.indexOf('edge') != -1) {
+          window.navigator.msSaveBlob(data, filename);
+        } else {
+          let link = document.createElement('a');
+          let downloadUrl = (window.URL || window.webkitURL).createObjectURL(data);
+          link.href = downloadUrl;
+          link.download = filename;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          (window.URL || window.webkitURL).revokeObjectURL(downloadUrl);
+        }
         window.loading.load.finish();
       });
     });
