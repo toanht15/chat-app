@@ -1670,7 +1670,6 @@ $(document).ready(function(){
       url: "<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>",
       success: function(html){
         location.href ="<?= $this->Html->url(['controller' => 'ChatHistories', 'action' => 'index']) ?>";
-        loading.load.finish();
       }
     });
   });
