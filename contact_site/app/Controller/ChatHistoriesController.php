@@ -1542,7 +1542,7 @@ class ChatHistoriesController extends AppController
       //初回チャット受信日時、最終発言後離脱時間
       $joinToSpeechChatTime = [
         'type' => 'INNER',
-          'table' => '(SELECT thclt.t_histories_id as t_histories_id, MAX(thcl.t_history_stay_logs_id) as t_history_stay_logs_id, min(thclt.datetime) as created, MAX(thclt.datetime) as firstSpeechTime FROM t_history_chat_log_times as thclt left join t_history_chat_logs as thcl on (thclt.t_history_chat_logs_id = thcl.id and thclt.type = 2) WHERE (thclt.t_histories_id, thclt.type) IN (select t_histories_id, MAX(type) from t_history_chat_log_times as thclt2 where type != 3 group by t_histories_id) AND type != 3 GROUP BY t_histories_id HAVING firstSpeechTime >= "'.$data['History']['start_day'].' 00:00:00" and firstSpeechTime <= "'.$data['History']['finish_day'].' 23:59:59" ORDER BY t_histories_id desc)',
+          'table' => '(SELECT thclt.t_histories_id as t_histories_id, MAX(thcl.t_history_stay_logs_id) as t_history_stay_logs_id, min(thclt.datetime) as created, MAX(thclt.datetime) as firstSpeechTime FROM t_history_chat_log_times as thclt left join t_history_chat_logs as thcl on (thclt.t_history_chat_logs_id = thcl.id and thclt.type = 2) WHERE (thclt.t_histories_id, thclt.type) IN (select t_histories_id, MAX(type) from t_history_chat_log_times as thclt2 where type != 3 AND datetime >= "'.$data['History']['start_day'].' 00:00:00" and datetime <= "'.$data['History']['finish_day'].' 23:59:59" group by t_histories_id) AND type != 3 AND datetime >= "'.$data['History']['start_day'].' 00:00:00" and datetime <= "'.$data['History']['finish_day'].' 23:59:59" GROUP BY t_histories_id ORDER BY t_histories_id desc)',
         'alias' => 'SpeechTime',
         'field' => 'datetime as SpeechTime',
         'conditions' => [
@@ -1555,7 +1555,7 @@ class ChatHistoriesController extends AppController
      //有人チャット受信日時
       $joinToNoticeChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT thclt.t_histories_id as t_histories_id, thcl.t_history_stay_logs_id as t_history_stay_logs_id, min(thclt.datetime) as created FROM t_history_chat_log_times as thclt inner join t_history_chat_logs as thcl on (thclt.t_history_chat_logs_id = thcl.id) WHERE type = 3 GROUP BY t_histories_id ORDER BY t_histories_id)',
+        'table' => '(SELECT thclt.t_histories_id as t_histories_id, thcl.t_history_stay_logs_id as t_history_stay_logs_id, min(thclt.datetime) as created FROM t_history_chat_log_times as thclt inner join t_history_chat_logs as thcl on (thclt.t_history_chat_logs_id = thcl.id) WHERE type = 3 AND datetime >= "'.$data['History']['start_day'].' 00:00:00" and datetime <= "'.$data['History']['finish_day'].' 23:59:59" GROUP BY t_histories_id ORDER BY t_histories_id)',
         'alias' => 'NoticeChatTime',
         'field' => 'created',
         'conditions' => [
