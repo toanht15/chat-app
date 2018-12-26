@@ -568,8 +568,14 @@
           <li>
             <dt>閲覧ページ数</dt>
             <dd>
+            <span id = "pageCount"><?php
+                if(!empty($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count'])) {
+                  echo h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count']);
+                } else {
+                  echo "";
+                }
+            ?></span>
             <?php if( is_numeric($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count']) ): ?>
-              <span id = "pageCount"><?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['count'])?></span>
               <a id = "moveHistory" class="underL" href="javascript:void(0)" onclick="openHistoryById('<?=h($defaultHistoryList['THistory']['id'])?>')" >(移動履歴)</a>
             <?php endif; ?></dd>
           </li>
