@@ -2447,16 +2447,14 @@ class ChatHistoriesController extends AppController
     //開始日
     if (!empty($data['History']['start_day'])) {
       $conditions[] = [
-        'THistory.access_date >=' => $data['History']['start_day'] . ' 00:00:00',
-        'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
+        'THistory.firstSpeechTime >=' => str_replace('/', '-', $data['History']['start_day']).' 00:00:00'
       ];
     }
 
     //終了日
     if (!empty($data['History']['finish_day'])) {
       $conditions[] = [
-        'THistory.access_date <=' => $data['History']['finish_day'] . ' 23:59:59',
-        'THistory.m_companies_id' => $this->userInfo['MCompany']['id']
+        'THistory.firstSpeechTime <=' => str_replace('/', '-', $data['History']['finish_day']).' 23:59:59'
       ];
     }
 
@@ -2602,7 +2600,7 @@ class ChatHistoriesController extends AppController
       }
       $chatStateList = $dbo2->buildStatement(
         [
-          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index (idx_t_history_chat_logs_m_companies_id_t_histories_id_created) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " AND created between '" . $data['History']['start_day'] . " 00:00:00' AND '" . $data['History']['finish_day'] . " 23:59:59'  GROUP BY t_histories_id ORDER BY t_histories_id desc)",
+          'table' => "(SELECT t_histories_id,t_history_stay_logs_id,m_companies_id,message_type,notice_flg,created,message_read_flg, COUNT(*) AS count, SUM(CASE WHEN achievement_flg = -1 THEN 1 ELSE 0 END) terminate, SUM(CASE WHEN achievement_flg = 0 THEN 1 ELSE 0 END) cv, SUM(CASE WHEN achievement_flg = 1 THEN 1 ELSE 0 END) deny, SUM(CASE WHEN achievement_flg = 2 THEN 1 ELSE 0 END) eff, SUM(CASE WHEN message_type = 998 THEN 1 ELSE 0 END) cmp,SUM(CASE WHEN notice_flg = 1 THEN 1 ELSE 0 END) notice,SUM(CASE WHEN message_type = 3 THEN 1 ELSE 0 END) auto_message,SUM(CASE WHEN message_type = 4 THEN 1 ELSE 0 END) sry, SUM(CASE WHEN message_type = 1 THEN 1 ELSE 0 END) cus,SUM(CASE WHEN message_type = 1 AND message_read_flg = 0 THEN 1 ELSE 0 END) unread, SUM(CASE WHEN message_type = 5 THEN 1 ELSE 0 END) auto_speech, SUM(CASE WHEN message_type >= 12 AND message_type <= 13 THEN 1 ELSE 0 END) se_cus, SUM(CASE WHEN message_type >= 21 AND message_type <= 27 THEN 1 ELSE 0 END) se_auto FROM t_history_chat_logs AS THistoryChatLog force index (idx_t_history_chat_logs_m_companies_id_t_histories_id_created) WHERE `THistoryChatLog`.m_companies_id = " . $this->userInfo['m_companies_id'] . " GROUP BY t_histories_id ORDER BY t_histories_id desc)",
           'alias' => 'chat',
           'fields' => [
             'chat.*',
@@ -2626,25 +2624,29 @@ class ChatHistoriesController extends AppController
       $joinToChat['type'] = "INNER";
 
       $joinToSpeechChatTime = [
-        'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, t_history_stay_logs_id,message_type, MIN(created) as firstSpeechTime, MAX(created) as created FROM t_history_chat_logs force index (t_history_chat_logs_mcid_mt_nf_c_thid_index) WHERE m_companies_id = '.$this->userInfo['MCompany']['id'].' AND (message_type = 1 OR message_type = 8) AND created between "' . $data['History']['start_day'] . ' 00:00:00" AND "' . $data['History']['finish_day'] . ' 23:59:59" GROUP BY t_histories_id)',
+        'type' => 'INNER',
+        'table' => '(SELECT thclt.t_histories_id as t_histories_id, MAX(thcl.t_history_stay_logs_id) as t_history_stay_logs_id, min(thclt.datetime) as created, MAX(thclt.datetime) as firstSpeechTime FROM t_history_chat_log_times as thclt left join t_history_chat_logs as thcl on (thclt.t_history_chat_logs_id = thcl.id and thclt.type = 2) WHERE (thclt.t_histories_id, thclt.type) IN (select t_histories_id, MAX(type) from t_history_chat_log_times as thclt2 where type != 3 group by t_histories_id) AND type != 3 GROUP BY t_histories_id HAVING firstSpeechTime >= "'.$data['History']['start_day'].' 00:00:00" and firstSpeechTime <= "'.$data['History']['finish_day'].' 23:59:59" ORDER BY t_histories_id desc)',
         'alias' => 'SpeechTime',
-        'field' => 'created as SpeechTime',
+        'field' => 'datetime as SpeechTime',
         'conditions' => [
           'SpeechTime.t_histories_id = THistoryChatLog2.t_histories_id'
         ],
       ];
       $joinList[] = $joinToSpeechChatTime;
 
+      $this->THistory->virtualFields['firstSpeechTime'] = 'SpeechTime.firstSpeechTime';
+
+      //有人チャット受信日時
       $joinToNoticeChatTime = [
         'type' => 'LEFT',
-        'table' => '(SELECT t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs force index (t_history_chat_logs_mcid_mt_nf_c_thid_index) WHERE m_companies_id = '.$this->userInfo['MCompany']['id'].' AND message_type = 1 AND notice_flg = 1 AND created between "' . $data['History']['start_day'] . ' 00:00:00" AND "' . $data['History']['finish_day'] . ' 23:59:59" GROUP BY t_histories_id)',
+        'table' => '(SELECT thclt.t_histories_id as t_histories_id, thcl.t_history_stay_logs_id as t_history_stay_logs_id, min(thclt.datetime) as created FROM t_history_chat_log_times as thclt inner join t_history_chat_logs as thcl on (thclt.t_history_chat_logs_id = thcl.id) WHERE type = 3 GROUP BY t_histories_id ORDER BY t_histories_id)',
         'alias' => 'NoticeChatTime',
         'field' => 'created',
         'conditions' => [
           'NoticeChatTime.t_histories_id = THistoryChatLog2.t_histories_id'
         ],
       ];
+
       $joinList[] = $joinToNoticeChatTime;
 
       // キャンペーンに関する検索条件
