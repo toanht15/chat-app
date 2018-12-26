@@ -35,7 +35,7 @@ class AddAllChatLogTimeShell extends AppShell
       for ($i = 0; $i < $loopCount; $i++) {
         $this->THistoryChatLogTime->begin();
         $allData = $this->THistory->find('all', array(
-          'order' => array('id', 'desc'),
+          'order' => array('id' => 'desc'),
           'limit' => $limit,
           'offset' => $offset
         ));
