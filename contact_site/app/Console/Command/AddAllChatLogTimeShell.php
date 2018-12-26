@@ -26,7 +26,7 @@ class AddAllChatLogTimeShell extends AppShell
   public function addAll()
   {
     ini_set('memory_limit', -1);
-    $limit = 1000;
+    $limit = 10000;
     $offset = 0;
     try {
       $this->THistoryChatLogTime->begin();
@@ -60,12 +60,13 @@ class AddAllChatLogTimeShell extends AppShell
         unset($noticeChatTime);
         if(strpos($queries, '(') === false) {
           $offset += $limit;
+          $this->printLog('skip. next : ' . $offset);
           continue;
         }
         $queries = rtrim($queries, ',');
         $queries .= ';';
         $this->printLog('INSERT count = ' . $offset + $limit);
-        $this->printLog($queries);
+        //$this->printLog($queries);
         $this->THistoryChatLogTime->query($queries);
         $offset += $limit;
         $this->printLog('next : ' . $offset);
