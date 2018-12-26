@@ -8,6 +8,7 @@ var request = require('request');
 var common = require('./common');
 var LandscapeAPI = require('./landscape');
 var CogmoAttendAPICaller = require('./cogmo_attend');
+var ChatLogTimeManager = require('./chat_log_time_manager');
 
 // mysql
 var mysql = require('mysql'),
@@ -1265,6 +1266,13 @@ io.sockets.on('connection', function(socket) {
     _handleInsertData: function(
         error, results, d, noReturnSelfMessage, insertData) {
       if (!isset(error)) {
+        let messageTimeType = 1;
+        if(Number(insertData.message_request_flg) === 1) {
+          messageTimeType = 2;
+        } else if (d.messageType === 1 || d.messageType === 8) {
+          messageTimeType = 2;
+        }
+        ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, messageTimeType, insertData.created);
         if (!isset(sincloCore[d.siteKey][d.tabId].sessionId)) return false;
         var sendData = {
           tabId: d.tabId,
@@ -1285,6 +1293,7 @@ io.sockets.on('connection', function(socket) {
           // 応対可能かチェック(対応できるのであれば trueが返る)
           chatApi.sendCheck(d, function(err, ret) {
             sendData.opFlg = ret.opFlg;
+
             //チャット呼出中メッセージ利用するの場合
             //チャット呼出中メッセージの場合
             if (ret.message == null && ret.in_flg == chatApi.cnst.inFlg.flg
@@ -1347,6 +1356,7 @@ io.sockets.on('connection', function(socket) {
 
             //通知された場合
             if (ret.opFlg === true && d.notifyToCompany) {
+              ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, 3, insertData.created);
               if (d.messageType === 1 && insertData.message_read_flg != 1) {
                 sincloCore[d.siteKey][d.tabId].chatUnreadId = results.insertId;
                 sincloCore[d.siteKey][d.tabId].chatUnreadCnt++;
@@ -1536,6 +1546,13 @@ io.sockets.on('connection', function(socket) {
                         'RECORD INSERT ERROR: notifyCommit-func:' + error);
                   }
                   if (results.hasOwnProperty('insertId')) {
+                    let messageTimeType = 1;
+                    if(Number(insertData.message_request_flg) === 1) {
+                      messageTimeType = 2;
+                    } else if (d.messageType === 1 || d.messageType === 8) {
+                      messageTimeType = 2;
+                    }
+                    ChatLogTimeManager.saveTime(results.insertId, insertData.t_histories_id, messageTimeType, insertData.created);
                     d.id = results.insertId;
                     d.created = fullDateTime(d.created);
                   }
@@ -1589,12 +1606,12 @@ io.sockets.on('connection', function(socket) {
         chatUnreadId: null,
         chatUnreadCnt: 0
       };
-      ret.chatUnreadId = isset(
-          sincloCore[obj.siteKey][obj.tabId].chatUnreadId) ?
+      ret.chatUnreadId = (isset(sincloCore[obj.siteKey][obj.tabId]) && isset(
+          sincloCore[obj.siteKey][obj.tabId].chatUnreadId)) ?
           sincloCore[obj.siteKey][obj.tabId].chatUnreadId :
           null;
-      ret.chatUnreadCnt = isset(
-          sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt) ?
+      ret.chatUnreadCnt = (isset(sincloCore[obj.siteKey][obj.tabId]) && isset(
+          sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt)) ?
           sincloCore[obj.siteKey][obj.tabId].chatUnreadCnt :
           null;
       console.log('getUnreadCnt:: chatUnreadId => ' + ret.chatUnreadId +
@@ -2875,7 +2892,7 @@ io.sockets.on('connection', function(socket) {
           getSessionId(obj.siteKey, obj.tabId, 'syncFrameSessionId'));
     }
     for (var key in customerList[obj.siteKey]) {
-      if (obj.tabId.indexOf(customerList[obj.siteKey][key]['tabId']) === 0) {
+      if (isset(obj.tabId) && obj.tabId.indexOf(customerList[obj.siteKey][key]['tabId']) === 0) {
         customerList[obj.siteKey][key]['status'] = obj.status;
         break;
       }
@@ -3850,6 +3867,7 @@ io.sockets.on('connection', function(socket) {
         obj.chatMessage.replace('button_', '').replace('\n', ''),
         obj.messageDistinction,
         obj.created).then((resultData) => {
+      ChatLogTimeManager.saveTime(resultData.insertId, sincloCore[obj.siteKey][obj.tabId].historyId, 2, obj.created);
       customerMessageInsertResult = resultData;
       customerSendData = {
         tabId: obj.tabId,
