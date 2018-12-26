@@ -32,7 +32,7 @@ module.exports = class ChatLogTimeManager {
     return new Promise((resolve, reject) => {
       let typeQuery = 'type = ?';
       if (type === 1) {
-        typeQuery = '(' + typeQuery + 'or type = 2)';
+        typeQuery = '(' + typeQuery + ' or type = 2)';
       }
       pool.query(
           'SELECT * from t_history_chat_log_times where t_histories_id = ? and ' +
