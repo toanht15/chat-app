@@ -543,7 +543,9 @@ function openChatById(id) {
       }
       $("#customerInfo").attr('onclick',"customerInfoSave("+customerData.THistory.id+")");
       $("#restore").attr('onclick',"reloadAct("+customerData.THistory.id+")");
-      document.getElementById("pageCount").innerHTML= customerData.pageCount[0].count;
+      if(customerData.pageCount) {
+        document.getElementById("pageCount").innerHTML= customerData.pageCount[0].count;
+      }
       $("#moveHistory").attr('onclick',"openHistoryById("+customerData.THistory.id+")");
 
       for(var i=0; i < customerInfoSettings.length; i++) {
