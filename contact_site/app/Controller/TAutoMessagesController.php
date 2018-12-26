@@ -780,6 +780,19 @@ class TAutoMessagesController extends AppController {
       'recursive'  => -1
     ];
     $data = $this->TAutoMessage->find('all', $params);
+    foreach($data as $index => $value) {
+      $activity = json_decode($value['TAutoMessage']['activity'], true);
+      foreach($activity['conditions'] as $key => $val){
+        $targetKey = $key;
+        if($targetKey >= 4) {
+          $targetKey = $targetKey+1;
+        } else if($targetKey === 10) {
+          $targetKey = 4;
+        }
+        $activity = $this->convertOldIFData($targetKey, $val, $activity, $key);
+      }
+      $data[$index]['TAutoMessage']['activity'] = json_encode($activity);
+    }
 
     return $component->export($data);
   }
