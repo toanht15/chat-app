@@ -39,24 +39,25 @@ class AddAllChatLogTimeShell extends AppShell
           'offset' => $offset
         ));
         $queries = 'INSERT INTO `t_history_chat_log_times` VALUES ';
-        foreach ($allData as $index => $data) {
-          $minTime = $this->THistoryChatLog->query('SELECT id, t_histories_id, t_history_stay_logs_id, MIN(created) as firstSpeechTime FROM t_history_chat_logs as THistoryChatLog WHERE t_histories_id = ' . $data['THistory']['id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id');
-          if (!empty($minTime)) {
-            if (!empty($this->THistoryChatLogTime)) {
-              $queries .= "(" . $minTime[0]['THistoryChatLog']['id'] . ", " . $minTime[0]['THistoryChatLog']['t_histories_id'] . ", " . $this->THistoryChatLogTime->type[THistoryChatLogTime::MIN_CHAT_LOG_TIME] . ", '" . $minTime[0][0]['firstSpeechTime'] . "'),";
-            }
-
-            $minCustomerTime = $this->THistoryChatLog->query('SELECT id, t_histories_id, t_history_stay_logs_id, message_type, MIN(created) as firstSpeechTime FROM t_history_chat_logs as THistoryChatLog WHERE t_histories_id = ' . $data['THistory']['id'] . ' AND (message_type = 1 OR message_type = 8) GROUP BY t_histories_id ORDER BY t_histories_id');
-            if (!empty($minCustomerTime)) {
-              $queries .= "(" . $minCustomerTime[0]['THistoryChatLog']['id'] . ", " . $minCustomerTime[0]['THistoryChatLog']['t_histories_id'] . ", " . $this->THistoryChatLogTime->type[THistoryChatLogTime::FIRST_CONSUMER_CHAT_LOG_TIME] . ", '" . $minCustomerTime[0][0]['firstSpeechTime'] . "'),";
-            }
-
-            $noticeChatTime = $this->THistoryChatLog->query('SELECT id, t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs as THistoryChatLog WHERE message_type = 1 AND notice_flg = 1 AND t_histories_id = ' . $data['THistory']['id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id desc');
-            if (!empty($noticeChatTime)) {
-              $queries .= "(" . $noticeChatTime[0]['THistoryChatLog']['id'] . ", " . $noticeChatTime[0]['THistoryChatLog']['t_histories_id'] . ", " . $this->THistoryChatLogTime->type[THistoryChatLogTime::FIRST_NOTICE_CHAT_LOG_TIME] . ", '" . $noticeChatTime[0]['THistoryChatLog']['created'] . "'),";
-            }
-          }
+        $minTime = $this->THistoryChatLog->query('SELECT id, t_histories_id, t_history_stay_logs_id, MIN(created) as firstSpeechTime FROM t_history_chat_logs as THistoryChatLog WHERE t_histories_id >= ' . $allData[0]['THistory']['id'] . ' AND t_histories_id <= ' . $allData[count($allData) - 1]['THistory']['id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id');
+        foreach($minTime as $index => $datum) {
+          $queries .= "(" . $datum['THistoryChatLog']['id'] . ", " . $datum['THistoryChatLog']['t_histories_id'] . ", " . $this->THistoryChatLogTime->type[THistoryChatLogTime::MIN_CHAT_LOG_TIME] . ", '" . $datum[0]['firstSpeechTime'] . "'),";
         }
+
+        $minCustomerTime = $this->THistoryChatLog->query('SELECT id, t_histories_id, t_history_stay_logs_id, message_type, MIN(created) as firstSpeechTime FROM t_history_chat_logs as THistoryChatLog WHERE t_histories_id >= ' . $allData[0]['THistory']['id'] . ' AND t_histories_id <= ' . $allData[count($allData) - 1]['THistory']['id'] . ' AND (message_type = 1 OR message_type = 8) GROUP BY t_histories_id ORDER BY t_histories_id');
+        foreach($minCustomerTime as $idx => $dat) {
+          $queries .= "(" . $dat['THistoryChatLog']['id'] . ", " . $dat['THistoryChatLog']['t_histories_id'] . ", " . $this->THistoryChatLogTime->type[THistoryChatLogTime::FIRST_CONSUMER_CHAT_LOG_TIME] . ", '" . $dat[0]['firstSpeechTime'] . "'),";
+        }
+
+        $noticeChatTime = $this->THistoryChatLog->query('SELECT id, t_histories_id, message_type, notice_flg,created FROM t_history_chat_logs as THistoryChatLog WHERE message_type = 1 AND notice_flg = 1 AND t_histories_id = t_histories_id >= ' . $allData[0]['THistory']['id'] . ' AND t_histories_id <= ' . $allData[count($allData) - 1]['THistory']['id'] . ' GROUP BY t_histories_id ORDER BY t_histories_id desc');
+        foreach($noticeChatTime as $ix => $dt) {
+          $queries .= "(" . $dt['THistoryChatLog']['id'] . ", " . $dt['THistoryChatLog']['t_histories_id'] . ", " . $this->THistoryChatLogTime->type[THistoryChatLogTime::FIRST_NOTICE_CHAT_LOG_TIME] . ", '" . $dt['THistoryChatLog']['created'] . "'),";
+        }
+
+        unset($allData);
+        unset($minTime);
+        unset($minCustomerTime);
+        unset($noticeChatTime);
         if(strpos($queries, '(') === false) {
           $offset += $limit;
           continue;
