@@ -538,8 +538,13 @@
           <li>
             <dt>ランディングページ</dt>
             <dd id = "landing">
-            <a href = "<?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing">
-            <span id = "landingPage"><?= $stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['title'] ?></span></a></dd>
+              <?php if(!empty($stayList[$defaultHistoryList['THistory']['id']])): ?>
+                <a href = "<?=h($stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['firstURL'])?>" target = "landing">
+                <span id = "landingPage"><?= $stayList[$defaultHistoryList['THistory']['id']]['THistoryStayLog']['title'] ?></span></a>
+            <?php else: ?>
+                <span id = "landingPage"></span>
+            <?php endif; ?>
+              </dd>
           </li>
           <li>
             <dt>チャット送信ページ</dt>
@@ -562,8 +567,13 @@
           <li>
             <dt>離脱ページ</dt>
             <dd id = "separation">
-            <a href = "<?=h($detailChatPagesData[0]['THistoryStayLog']['url'])?>" target = "landing">
-            <span id = "separationPage"><?= $detailChatPagesData[0]['THistoryStayLog']['title'] ?></span></a></dd></dd>
+              <?php if (!empty($detailChatPagesData[0])): ?>
+                <a href = "<?=h($detailChatPagesData[0]['THistoryStayLog']['url'])?>" target = "landing">
+                <span id = "separationPage"><?= $detailChatPagesData[0]['THistoryStayLog']['title'] ?></span></a>
+              <?php else: ?>
+                <span id = "separationPage"></span>
+              <?php endif; ?>
+            </dd>
           </li>
           <li>
             <dt>閲覧ページ数</dt>
