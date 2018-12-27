@@ -46,7 +46,7 @@ class NotificationController extends AppController {
       }
       $allChatLogs = $this->getAllChatLogsByEntity($targetChatLog);
       $targetHistory = $this->getTargetHistoryById($targetChatLog['THistoryChatLog']['t_histories_id']);
-      $targetStayLog = $this->getTargetStayLogByHistoriesId($targetChatLog['THistoryChatLog']['t_histories_id']);
+      $targetStayLog = $this->getTargetStayLogById($targetChatLog['THistoryChatLog']['t_history_stay_logs_id']);
       $campaign = $this->getAllCampaign($targetHistory['THistory']['m_companies_id']);
       $coreSettings = $this->getCoreSettingsById($targetHistory['THistory']['m_companies_id']);
       $targetLandscapeData = null;
@@ -140,7 +140,7 @@ class NotificationController extends AppController {
       }
       $allChatLogs = $this->getAllChatLogsByEntityHistoryId($targetChatLog);
       $targetHistory = $this->getTargetHistoryById($targetChatLog['THistoryChatLog']['t_histories_id']);
-      $targetStayLog = $this->getTargetStayLogByHistoriesId($targetChatLog['THistoryChatLog']['t_histories_id']);
+      $targetStayLog = $this->getTargetStayLogById($targetChatLog['THistoryChatLog']['t_history_stay_logs_id']);
       $campaign = $this->getAllCampaign($targetHistory['THistory']['m_companies_id']);
       $coreSettings = $this->getCoreSettingsById($targetHistory['THistory']['m_companies_id']);
       $targetLandscapeData = null;
@@ -388,15 +388,8 @@ class NotificationController extends AppController {
   /**
    * @param $id
    */
-  private function getTargetStayLogByHistoriesId($id) {
-    return $this->THistoryStayLog->find('first', array(
-      'conditions' => array(
-        't_histories_id' => $id
-      ),
-      'order' => array(
-        'id' => 'asc'
-      )
-    ));
+  private function getTargetStayLogById($id) {
+    return $this->THistoryStayLog->findById($id);
   }
 
   private function getTargetLandScapeDataByIpAddress($ip) {
