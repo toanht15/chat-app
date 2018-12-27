@@ -4475,7 +4475,7 @@
         content += '    <p class=\'drop-area-button\'>';
         content += '<a class=\'select-file-button\'>ファイルを選択</a>';
         content += '    </p>';
-        content += '    <input type=\'file\' class=\'receiveFileInput\' name=\'receiveFileInput\' style=\'display:none\'>';
+        content += '    <input type=\'file\' class=\'receiveFileInput\' name=\'receiveFileInput' + (new Date()).getTime() + '\' style=\'display:none\'>';
         content += '  </div>';
         content += '  <div class=\'loadingPopup hide\'><i class=\'sinclo-fal fa-spinner load\'></i><p class=\'progressMessage\'>読み込み中です。<br>しばらくお待ち下さい。</p></div>';
         content += '</div>';
