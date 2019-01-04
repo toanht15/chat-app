@@ -1268,7 +1268,8 @@ class ChatHistoriesController extends AppController
           $companyConditions = [
             'fields' => 'lbc_code,ip_address,org_name',
             'conditions' => [
-              'MLandscapeData.org_name LIKE' => '%' . $data['CustomData']['会社名'] . '%']
+              'MLandscapeData.org_name LIKE' => '%' . $data['CustomData']['会社名'] . '%'
+            ]
           ];
           // MLの企業情報を閲覧できない企業であれば
           if (!$this->isViewableMLCompanyInfo()) {
@@ -1475,18 +1476,20 @@ class ChatHistoriesController extends AppController
     }
 
     if (isset($this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) && $this->coreSettings[C_COMPANY_REF_COMPANY_DATA]) {
-      $joinToLandscapeData = [
+      $joinToLandscapeData = array(
         'type' => 'LEFT',
         'table' => 'm_landscape_data',
         'alias' => 'LandscapeData',
-        'field' => ['lbc_code', 'ip_address', 'org_name'],
-        'conditions' => [
+        'field' => array('lbc_code', 'ip_address', 'org_name'),
+        'conditions' => array(
           'LandscapeData.ip_address = THistory.ip_address',
-        ],
-      ];
+          'LandscapeData.lbc_code != ""'
+        ),
+      );
+
       // MLの企業情報を閲覧できない企業であれば
       if (!$this->isViewableMLCompanyInfo()) {
-        $joinToLandscapeData['conditions']['NOT']['LandscapeData.lbc_code'] = LandscapeLbcAPIComponent::ML_LBC_CODE;
+        $joinToLandscapeData['conditions'][] = 'LandscapeData.lbc_code != "'.LandscapeLbcAPIComponent::ML_LBC_CODE.'"';
       }
     }
 
