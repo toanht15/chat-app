@@ -366,6 +366,7 @@
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
         document.getElementById('chatTalk').appendChild(divElm);
 
+        $scope.handleBrowserZoom();
         $('#chatTalk > div:last-child').show();
         self.autoScroll();
       };
@@ -411,6 +412,14 @@
             break;
         }
         return type;
+      };
+
+      $scope.handleBrowserZoom = function() {
+        if (screen.width >= window.innerWidth) {
+          $('#sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label').removeClass('radio-zoom');
+        } else {
+          $('#sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label').addClass('radio-zoom');
+        }
       };
 
       /**

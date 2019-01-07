@@ -503,6 +503,13 @@
           // hearings
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
+              if (hearing.uiType == 3) {
+                $timeout(function() {
+                  $scope.$apply();
+                }).then(function() {
+                  handleBrowserZoom();
+                });
+              }
               // pulldown customize
               if (hearing.uiType === '4') {
                 $timeout(function() {
@@ -3269,7 +3276,10 @@
       var actionWrapperHeight = document.getElementById('tchatbotscenario_form_action').offsetHeight;
       var actionHeaderHeight = document.getElementById('tchatbotscenario_form_action_header').offsetHeight;
       $('#tchatbotscenario_form_action_body').css({height: actionWrapperHeight - actionHeaderHeight + 'px'});
+      handleBrowserZoom();
     });
+
+    handleBrowserZoom();
   });
 
   var replaceVariableAllEmpty = function( message ) {
@@ -3710,4 +3720,16 @@
       $('.set_action_item').blur();
     }
   });
+
+  function handleBrowserZoom() {
+    if (screen.width >= window.innerWidth) {
+      $('#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label').
+          removeClass('radio-zoom');
+      $('#sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label').removeClass('radio-zoom');
+    } else {
+      $('#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label').
+          addClass('radio-zoom');
+      $('#sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label').addClass('radio-zoom');
+    }
+  }
 </script>
