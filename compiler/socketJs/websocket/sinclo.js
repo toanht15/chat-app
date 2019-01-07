@@ -1715,6 +1715,8 @@
       }
       // 未読数
       sinclo.chatApi.showUnreadCnt();
+      // handle radio border when browser zoom
+      sinclo.chatApi.handleBrowserZoom();
     },
     sendChatResult: function(d) {
       console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>sendChatResult>>>');
@@ -5737,6 +5739,13 @@
             sinclo.chatApi.fileUploader._showInvalidError();
           });
         }
+      },
+      handleBrowserZoom: function() {
+        if(screen.width >= window.innerWidth){
+          $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').removeClass('radio-zoom');
+        } else {
+          $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').addClass('radio-zoom');
+        }
       }
     },
     trigger: {
@@ -7639,6 +7648,7 @@
             sinclo.chatApi.createMessageUnread(
                 {cn: cn, message: message, name: name, chatId: 0}, true);
           }
+          sinclo.chatApi.handleBrowserZoom();
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum),
               categoryNum);
           sinclo.chatApi.scDown();
