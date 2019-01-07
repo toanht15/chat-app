@@ -88,12 +88,14 @@ class ScenarioMailTemplateComponent extends AutoMessageMailTemplateComponent {
 
   /**
    * @override
+   * @param $isFullData
+   * @param $withDownloadURL
    */
   protected function createMetaDataMessage($isFullData, $withDownloadURL) {
     if($isFullData) {
-      $this->scenarioMessageBlock .= "シナリオ実行ページタイトル：".$this->stayLog['THistoryStayLog']['title']."\n";
-      $this->scenarioMessageBlock .= "シナリオ実行ページＵＲＬ　：".$this->stayLog['THistoryStayLog']['url']."\n";
-      $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['THistoryStayLog']['url'])."\n";
+      $this->scenarioMessageBlock .= "シナリオ実行ページタイトル：".$this->stayLog['title']."\n";
+      $this->scenarioMessageBlock .= "シナリオ実行ページＵＲＬ　：".$this->stayLog['url']."\n";
+      $this->scenarioMessageBlock .= "キャンペーン　　　　　　　：".$this->concatCampaign($this->stayLog['campaignUrl'])."\n";
       if(!empty($this->landscapeData) && !empty($this->landscapeData['MLandscapeData']['org_name'])) {
         $this->scenarioMessageBlock .= "企業名　　　　　　　　　　：".$this->landscapeData['MLandscapeData']['org_name']."\n";
       }

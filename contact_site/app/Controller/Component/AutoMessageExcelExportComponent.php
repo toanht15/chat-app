@@ -82,8 +82,8 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     ];
 
     $this->stayTimeCheckTypeMap = [
-      1 => 'サイト',
-      2 => 'ページ'
+      2 => 'サイト',
+      1 => 'ページ'
     ];
 
     $this->stayTimeTypeMap = [
@@ -573,6 +573,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private function writeScenarioData($json, $row, $value)
   {
     $this->currentSheet->setCellValue('BD' . $row, $this->actionTypeMap[2]);
+    $this->currentSheet->setCellValue('BG' . $row, $this->chatTextAreaMap[$json['chatTextarea']]);
     $this->currentSheet->setCellValue('BQ' . $row, $value['TChatbotScenario']['name']);
     $this->currentSheet->setCellValue('BR' . $row, $this->widgetOpenMap[$json['widgetOpen']]);
   }

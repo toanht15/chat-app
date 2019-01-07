@@ -189,7 +189,7 @@ define('C_AUTHORITY_NORMAL', 2); // 一般
 define('C_AUTHORITY_SUPER', 99); // ML管理者
 
 // オートメッセージ機能－トリガー種別コード
-define('C_AUTO_TRIGGER_TYPE_BODYLOAD', 1); // 画面読み込み時
+define('C_AUTO_TRIGGER_TYPE_BODYLOAD', 0); // 画面読み込み時
 
 // オートメッセージ機能－トリガーリスト
 define('C_AUTO_TRIGGER_STAY_TIME',  1); // 滞在時間

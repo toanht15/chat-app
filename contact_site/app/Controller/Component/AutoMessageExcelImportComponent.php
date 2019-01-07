@@ -36,6 +36,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
   private $weekdayMap;
   private $speechTriggerCondMap;
   private $businessHourMap;
+  private $referrerCondTypeMap;
 
   public function __construct($filePath)
   {
@@ -117,8 +118,8 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->stayTimeCheckTypeMap = [
-      'サイト' => 1,
-      'ページ' => 2
+      'サイト' => "2",
+      'ページ' => "1"
     ];
 
     $this->stayTimeTypeMap = [
@@ -128,14 +129,14 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->visitCntCondMap = [
-      '一致' => 1,
-      '以上' => 2,
-      '未満' => 3
+      '一致' => "1",
+      '以上' => "2",
+      '未満' => "3"
     ];
 
     $this->targetNameMap = [
-      'ページ' => 1,
-      'URL' => 2,
+      'ページ' => "1",
+      'URL' => "2",
     ];
 
     $this->kWDContainTypeMap = [
@@ -154,6 +155,12 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
       '不一致'  => 3
     ];
 
+    $this->referrerCondTypeMap = [
+      '完全一致' => "1",
+      '部分一致' => "2",
+      '不一致'  => "3"
+    ];
+
     $this->weekdayMap = [
       '月' => 'mon',
       '火' => 'tue',
@@ -165,8 +172,8 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
     ];
 
     $this->speechTriggerCondMap = [
-      '１回のみ有効' => 1,
-      '何度でも有効' => 2,
+      '１回のみ有効' => "1",
+      '何度でも有効' => "2",
     ];
 
     $this->businessHourMap = [
@@ -274,12 +281,12 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           if ($this->isSettingMap[$row['E']] == 1) {
             $importData[$key]['activity']['conditions'][1][0]['stayTimeCheckType'] = $this->stayTimeCheckTypeMap[$row['F']];
             $importData[$key]['activity']['conditions'][1][0]['stayTimeType']      = $this->stayTimeTypeMap[$row['G']];
-            $importData[$key]['activity']['conditions'][1][0]['stayTimeRange']     = $row['H'];
+            $importData[$key]['activity']['conditions'][1][0]['stayTimeRange']     = (string)$row['H'];
           }
 
           // 訪問回数
           if ($this->isSettingMap[$row['I']] == 1) {
-            $importData[$key]['activity']['conditions'][2][0]['visitCnt']     = $row['J'];
+            $importData[$key]['activity']['conditions'][2][0]['visitCnt']     = (string)$row['J'];
             $importData[$key]['activity']['conditions'][2][0]['visitCntCond'] = $this->visitCntCondMap[$row['K']];
           }
 
@@ -287,9 +294,9 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           if ($this->isSettingMap[$row['L']] == 1) {
             $importData[$key]['activity']['conditions'][3][0]['targetName']              = $this->targetNameMap[$row['M']];
             $importData[$key]['activity']['conditions'][3][0]['keyword_contains']        = $this->getCellValue($row['N']);
-            $importData[$key]['activity']['conditions'][3][0]['keyword_contains_type']   = $this->containsTypeMap[$row['O']];
+            $importData[$key]['activity']['conditions'][3][0]['keyword_contains_type']   = !empty($row['O']) ? $this->containsTypeMap[$row['O']] : "1";
             $importData[$key]['activity']['conditions'][3][0]['keyword_exclusions']      = $this->getCellValue($row['P']);
-            $importData[$key]['activity']['conditions'][3][0]['keyword_exclusions_type'] = $this->exclusionsTypeMap[$row['Q']];
+            $importData[$key]['activity']['conditions'][3][0]['keyword_exclusions_type'] = !empty($row['Q']) ? $this->exclusionsTypeMap[$row['Q']] : "1";
             $importData[$key]['activity']['conditions'][3][0]['stayPageCond']            = $this->stayPageCondTypeMap[$row['R']];
           }
 
@@ -322,25 +329,25 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           // 参照元URL（リファラー）
           if ($this->isSettingMap[$row['Y']] == 1) {
             $importData[$key]['activity']['conditions'][6][0]['keyword_contains']        = $this->getCellValue($row['Z']);
-            $importData[$key]['activity']['conditions'][6][0]['keyword_contains_type']   = $this->containsTypeMap[$row['AA']];
+            $importData[$key]['activity']['conditions'][6][0]['keyword_contains_type']   = !empty($row['AA']) ? $this->containsTypeMap[$row['AA']] : "1";
             $importData[$key]['activity']['conditions'][6][0]['keyword_exclusions']      = $this->getCellValue($row['AB']);
-            $importData[$key]['activity']['conditions'][6][0]['keyword_exclusions_type'] = $this->exclusionsTypeMap[$row['AC']];
-            $importData[$key]['activity']['conditions'][6][0]['referrerCond']            = $this->stayPageCondTypeMap[$row['AD']];
+            $importData[$key]['activity']['conditions'][6][0]['keyword_exclusions_type'] = !empty($row['AC']) ? $this->exclusionsTypeMap[$row['AC']] : "1";
+            $importData[$key]['activity']['conditions'][6][0]['referrerCond']            = $this->referrerCondTypeMap[$row['AD']];
           }
 
           // 検索キーワード
           if ($this->isSettingMap[$row['AE']] == 1) {
             $importData[$key]['activity']['conditions'][7][0]['keyword']    = $this->getCellValue($row['AF']);
-            $importData[$key]['activity']['conditions'][7][0]['searchCond'] = $this->stayPageCondTypeMap[$row['AG']];
+            $importData[$key]['activity']['conditions'][7][0]['searchCond'] = $this->referrerCondTypeMap[$row['AG']];
           }
 
           // 発言内容
           if ($this->isSettingMap[$row['AH']] == 1) {
             $importData[$key]['activity']['conditions'][8][0]['keyword_contains']        = $this->getCellValue($row['AI']);
-            $importData[$key]['activity']['conditions'][8][0]['keyword_contains_type']   = $this->containsTypeMap[$row['AJ']];
+            $importData[$key]['activity']['conditions'][8][0]['keyword_contains_type']   = !empty($row['AJ']) ? $this->containsTypeMap[$row['AJ']] : "1";
             $importData[$key]['activity']['conditions'][8][0]['keyword_exclusions']      = $this->getCellValue($row['AK']);
-            $importData[$key]['activity']['conditions'][8][0]['keyword_exclusions_type'] = $this->exclusionsTypeMap[$row['AL']];
-            $importData[$key]['activity']['conditions'][8][0]['speechContentCond']       = $this->stayPageCondTypeMap[$row['AM']];
+            $importData[$key]['activity']['conditions'][8][0]['keyword_exclusions_type'] = !empty($row['AA']) ? $this->exclusionsTypeMap[$row['AL']] : "1";
+            $importData[$key]['activity']['conditions'][8][0]['speechContentCond']       = $this->referrerCondTypeMap[$row['AM']];
             $importData[$key]['activity']['conditions'][8][0]['triggerTimeSec']          = (int)$this->getCellValue($row['AN']);
             $importData[$key]['activity']['conditions'][8][0]['speechTriggerCond']       = $this->speechTriggerCondMap[$row['AO']];
           }
@@ -349,9 +356,9 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           if ($this->isSettingMap[$row['AP']] == 1) {
             $importData[$key]['activity']['conditions'][9][0]['targetName']              = $this->targetNameMap[$row['AQ']];
             $importData[$key]['activity']['conditions'][9][0]['keyword_contains']        = $this->getCellValue($row['AR']);
-            $importData[$key]['activity']['conditions'][9][0]['keyword_contains_type']   = $this->containsTypeMap[$row['AS']];
+            $importData[$key]['activity']['conditions'][9][0]['keyword_contains_type']   = !empty($row['AS']) ? $this->containsTypeMap[$row['AS']] : "1";
             $importData[$key]['activity']['conditions'][9][0]['keyword_exclusions']      = $this->getCellValue($row['AT']);
-            $importData[$key]['activity']['conditions'][9][0]['keyword_exclusions_type'] = $this->exclusionsTypeMap[$row['AU']];
+            $importData[$key]['activity']['conditions'][9][0]['keyword_exclusions_type'] = !empty($row['AU']) ? $this->exclusionsTypeMap[$row['AU']] : "1";
             $importData[$key]['activity']['conditions'][9][0]['stayPageCond']            = $this->stayPageCondTypeMap[$row['AV']];
           }
 
@@ -359,9 +366,9 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
           if ($this->isSettingMap[$row['AW']] == 1) {
             $importData[$key]['activity']['conditions'][10][0]['targetName']              = $this->targetNameMap[$row['AX']];
             $importData[$key]['activity']['conditions'][10][0]['keyword_contains']        = $this->getCellValue($row['AY']);
-            $importData[$key]['activity']['conditions'][10][0]['keyword_contains_type']   = $this->containsTypeMap[$row['AZ']];
+            $importData[$key]['activity']['conditions'][10][0]['keyword_contains_type']   = !empty($row['AZ']) ? $this->containsTypeMap[$row['AZ']] : "1";
             $importData[$key]['activity']['conditions'][10][0]['keyword_exclusions']      = $this->getCellValue($row['BA']);
-            $importData[$key]['activity']['conditions'][10][0]['keyword_exclusions_type'] = $this->exclusionsTypeMap[$row['BB']];
+            $importData[$key]['activity']['conditions'][10][0]['keyword_exclusions_type'] = !empty($row['BB']) ? $this->exclusionsTypeMap[$row['BB']] : "1";
             $importData[$key]['activity']['conditions'][10][0]['stayPageCond']            = $this->stayPageCondTypeMap[$row['BC']];
           }
 
@@ -374,7 +381,7 @@ class AutoMessageExcelImportComponent extends ExcelParserComponent
             // scenario
             $importData[$key]['activity']['widgetOpen']   = $this->widgetOpenMap[$row['BR']];
             $importData[$key]['activity']['message']      = "";
-            $importData[$key]['activity']['chatTextarea'] = 1;
+            $importData[$key]['activity']['chatTextarea'] = 2;
             $importData[$key]['activity']['cv']           = 2;
             $importData[$key]['scenario']                 = $this->getCellValue($row['BQ']);
           } else {

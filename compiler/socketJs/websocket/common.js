@@ -3293,7 +3293,7 @@ var socket, // socket.io
       html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
       if (check.hasCustomBannerImageSetting()) {
         if (check.smartphone()) {
-          html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.sp +'" />';
+          html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.sp +'" style="width:100px; height:60px" />';
         } else {
           html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.pc +'" />';
         }
