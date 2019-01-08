@@ -7074,12 +7074,19 @@
         var obj = self._getBaseObj();
         return Object.keys(obj).length !== 0;
       },
-      init: function(id, scenarioObj) {
+      init: function(id, scenarioObj, isAnotherTabInit) {
         var self = sinclo.scenarioApi;
         self._resetDefaultVal();
         if (self.isProcessing()) {
           self._isReload = true;
         } else {
+          if ( document.hasFocus() && !isAnotherTabInit) {
+            var information = {
+              id: id,
+              scenarioObj: scenarioObj
+            };
+            this.syncScenarioData.sendDetail("startScenario", information);
+          }
           self._unsetUploadedFileData();
           self._setBaseObj({});
           self.set(self._lKey.beforeTextareaOpened,
@@ -7140,9 +7147,6 @@
       },
       begin: function() {
         // 起動したタブのみ他タブに開始情報を伝搬させる
-        if ( document.hasFocus() ) {
-          this.syncScenarioData.sendDetail("startScenario");
-        }
         this._disablePreviousRadioButton();
         this._saveProcessingState(true);
         this._process();
@@ -9769,7 +9773,7 @@
         }
       },
       syncScenarioData: {
-        sendDetail: function(param, targetChatId) {
+        sendDetail: function(param, otherInformation) {
           if( !document.hasFocus() ) {
             console.warn("別タブからは情報を送信しません");
             return false;
@@ -9791,7 +9795,6 @@
             console.warn(e);
           }
 
-          console.log(targetChatId);
 
           console.warn("トリガ元は【" + param + "】になります");
           console.warn("本タブのシナリオシーケンス番号は" + currentScenarioSeqNo);
@@ -9801,7 +9804,7 @@
             detail: param,
             scenarioSeq: currentScenarioSeqNo,
             hearingSeq: currentHearingSeqNo,
-            targetChatId: targetChatId,
+            otherInformation: otherInformation,
             siteKey: sincloInfo.site.key,
             sessionID: userInfo.sincloSessionId
           };
@@ -9824,7 +9827,7 @@
 
           console.log("▼▼▼別タブ同期の情報▼▼▼");
           if ( detail === "startScenario") {
-            this._startScenario();
+            this._startScenario(JSON.parse(data).otherInformation);
           } else if ( detail === "startHearing" ) {
             this._startHearing();
           } else if ( detail === "changeScenarioSeq") {
@@ -9836,21 +9839,27 @@
           } else if ( detail === "endScenario") {
             this._endScenario();
           } else if ( detail === "cancelHearing") {
-            this._cancelHearing(JSON.parse(data).targetChatId);
+            this._cancelHearing(JSON.parse(data).otherInformation);
           } else {
               console.log("<><><><><> UNEXPECTED DETAIL <><><><><>");
           }
           console.log("▲▲▲別タブ同期の情報▲▲▲");
         },
-        _startScenario: function() {
+        _startScenario: function(initData) {
           sinclo.scenarioApi._disablePreviousRadioButton();
           console.log("シナリオの開始が同期されました");
+          if( check.isIE() ) {
+            sinclo.scenarioApi.init(initData.id, initData.scenarioObj, true);
+          }
+          console.log(initData);
         },
         _startHearing: function() {
           sinclo.scenarioApi._hearing._init(sinclo.scenarioApi);
           sinclo.scenarioApi._hearing._process(false, true);
           console.log("ヒアリングの開始が同期されました");
-          sinclo.scenarioApi._saveWaitingInputState(true);
+          setTimeout(function() {
+            sinclo.scenarioApi._saveWaitingInputState(true);
+          }, 2000);
         },
         _changeScenarioSeq: function() {
           sinclo.scenarioApi._handleChatTextArea('2');

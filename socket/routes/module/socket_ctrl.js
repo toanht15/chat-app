@@ -3543,7 +3543,7 @@ io.sockets.on('connection', function(socket) {
       param: obj.detail,
       scenarioSeq: obj.scenarioSeq,
       hearingSeq: obj.hearingSeq,
-      targetChatId: obj.targetChatId
+      otherInformation: obj.otherInformation
     };
     console.log(obj);
     try {
