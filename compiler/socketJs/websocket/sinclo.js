@@ -7380,8 +7380,8 @@
             self.set(self._lKey.scenarioMessageType, 21);
             break;
           case self._actionType.hearing:
-            self.syncScenarioData.sendDetail("startHearing");
             self._hearing._init(self, self.get(self._lKey.currentScenario));
+            self.syncScenarioData.sendDetail("startHearing", self.get(self._lKey.currentScenario));
             self._hearing._process(forceFirst);
             break;
           case self._actionType.selection:
@@ -7601,6 +7601,7 @@
           return false;
         }
         if (!isJumpScenario) {
+          console.warn("★★★Add Scenario Sequence Number★★★");
           self.set(self._lKey.currentScenarioSeqNum,
               Number(self.get(self._lKey.currentScenarioSeqNum)) + 1);
         }
@@ -7762,6 +7763,7 @@
         self.set(self._lKey.processing, isProcessing);
       },
       _saveWaitingInputState: function(isWaitingInput) {
+        console.warn("isWaitingInputChanged >>>>> " + isWaitingInput);
         var self = sinclo.scenarioApi;
         self.set(self._lKey.waitingInput, isWaitingInput);
       },
@@ -8003,21 +8005,27 @@
         });
         return messageBlock;
       },
+      inputStateHandleTimer: null,
       _waitingInput: function(callback) {
         var self = sinclo.scenarioApi;
         self._unWaitingInput();
         $(document).on(self._events.inputCompleted, function(e, inputVal) {
           callback(inputVal);
         });
-        console.log("待ち状態に入ります！！");
+        // IEの時は時間差でInputStateがfalseになる場合があるので少し時間を設ける
+        if ( check.isIE() ) {
+          if(self.inputStateHandleTimer) {
+            clearTimeout(self.inputStateHandleTimer);
+          }
+          self.inputStateHandleTimer = setTimeout(function() {
+            self._saveWaitingInputState(true);
+          }, 2000);
+        }
         self._saveWaitingInputState(true);
       },
       _unWaitingInput: function() {
-        console.log("unWaitingInputを呼び出した関数は");
-        console.log(this._unWaitingInput.caller);
         var self = sinclo.scenarioApi;
         $(document).off(self._events.inputCompleted);
-        console.log("待ち状態を解除します！！");
         self._saveWaitingInputState(false);
       },
       _mergeScenario: function(result, executableNextAction) {
@@ -8397,6 +8405,7 @@
           }
         },
         _addForceFirst: function(forceFirst) {
+          var self = sinclo.scenarioApi._hearing;
           if (forceFirst) {
             console.log('FORCE RESET hearing process');
             self._setCurrentSeq(0);
@@ -8417,12 +8426,14 @@
           }
           var doHearing = self._getCurrentHearingProcess();
           if (self._isTheEnd()) {
-            self._executeConfirm();
+            self._executeConfirm(executeSilent);
           } else {
             self._execute(doHearing, executeSilent);
           }
         },
         _execute: function(hearing, executeSilent) {
+          console.warn("★★★★★_execute >> executeSilent:" + executeSilent);
+          console.warn("★★★★★_execute >> hearing:" + hearing);
           var message = hearing.message;
           // クロージャー用
           var self = sinclo.scenarioApi._hearing;
@@ -8438,7 +8449,7 @@
                 self._getCurrentHearingProcess().required);
             self._parent.setPlaceholderMessage(
                 self._parent.getPlaceholderMessage());
-            var afterShowMessageProcess = function() {
+            var afterShowMessageProcess = function(executeSilent) {
               sinclo.chatApi.addKeyDownEventToSendChat();
               self._parent._saveWaitingInputState(true);
               self._parent._waitingInput(function(inputVal) {
@@ -8449,7 +8460,8 @@
                   if (self._goToNext()) {
                     self._process();
                   } else {
-                    self._executeConfirm();
+                    console.warn("before _executeConfirm with executeSilent:" + executeSilent);
+                    self._executeConfirm(executeSilent);
                   }
                 } else {
                   self._showError(hearing);
@@ -8457,9 +8469,10 @@
               });
             };
             if (executeSilent) {
-              afterShowMessageProcess();
-              console.log("静かに実行してください！！！！！！！！！！！！！");
+              console.warn("★★★executeSilent!!★★★");
+              afterShowMessageProcess(executeSilent);
             } else {
+              console.warn("★★★execute!!★★★");
               self._showMessage(self._getCurrentHearingProcess().uiType,
                   message, self._getCurrentHearingProcess().required,
                   self._getCurrentHearingProcess().settings,
@@ -8612,10 +8625,10 @@
         },
         _disableGrantCancelAbleFlg: false,
         _executeConfirm: function(executeSilent) {
+          console.warn("_executeConfirm start with executeSilent: " + executeSilent);
           var self = sinclo.scenarioApi._hearing;
           //ヒアリングが終わるときはチャットエリアのreadOnlyを解除しておく
           //あと、ヒアリング中に立てたフラグ類も解除する
-          self._parent.syncScenarioData.sendDetail("endHearing");
           console.log(
               '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>ヒアリングの入力無効終了(ｽﾏﾎ)<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
           if (check.smartphone()) {
@@ -8642,6 +8655,7 @@
             setTimeout(function() {
               self._disableAllHearingMessageInput();
             }, 1000);
+            self._parent.syncScenarioData.sendDetail("endHearing");
             if (self._parent._goToNextScenario()) {
               self._setCurrentSeq(0);
               self._parent._process();
@@ -8772,7 +8786,22 @@
         _forceRadioTypeFlg: false,
         // エラー時フラグ
         errorCountFlg: false,
-        _showConfirmMessage: function(executeSilent) {
+        isConfirmingFlg: false,
+        _showConfirmMessage: function(silentRequest) {
+          var executeSilent = false;
+          if(typeof(silentRequest) !== "undefined") {
+            executeSilent = silentRequest;
+          }
+          if ( check.isIE() ) {
+            sinclo.scenarioApi.syncScenarioData.sendDetail("forceWaiting");
+          }
+          console.warn("_showConfirmMessage start with executeSilent: " + executeSilent);
+          console.warn("isConfirmingFlg is " + this.isConfirmingFlg);
+          if(this.isConfirmingFlg) {
+            executeSilent = true;
+          }
+          this.isConfirmingFlg = true;
+          console.warn("changed isConfirmingFlg to true! >>>" + this.isConfirmingFlg);
           var self = sinclo.scenarioApi._hearing;
           var messageBlock = self._parent._createSelectionMessage(
               self._parent.get(
@@ -8806,14 +8835,21 @@
                 }
                 // OKを押したタイミングで、現時点で復元可能対象を全て除去する
                 self._disableAllHearingMessageInput();
+                self._parent.syncScenarioData.sendDetail("endHearing");
                 if (self._parent._goToNextScenario()) {
                   self._setCurrentSeq(0);
                   self._parent._process();
                 }
+                self.isConfirmingFlg = false;
+                console.warn("changed isConfirmingFlg to false! >>>" + self.isConfirmingFlg);
               } else if (inputVal ===
                   self._parent.get(self._parent._lKey.currentScenario).cancel) {
                 // 入力確認がいいえの場合は、一旦それまでのヒアリングを全てdisableにする
+                console.warn("◆◆◆◆◆retryHearing◆◆◆◆◆");
+                self.isConfirmingFlg = false;
+                console.warn("changed isConfirmingFlg to false! >>>" + self.isConfirmingFlg);
                 self._disableAllHearingMessageInput();
+                self._parent.syncScenarioData.sendDetail("endHearing");
                 self._setRetryFlg();
                 self._parent._process(true);
               } else {
@@ -8824,6 +8860,7 @@
           self._parent._doing(self._parent._getIntervalTimeSec(), function() {
             self._parent._handleChatTextArea('2'); // 確認ダイアログを出すときはOFF固定
             if (executeSilent) {
+              console.log("静かに入力確認");
               handleConfirmMessageFunc();
             } else {
               self._parent._showMessage(self._parent.get(
@@ -9800,6 +9837,10 @@
           console.warn("本タブのシナリオシーケンス番号は" + currentScenarioSeqNo);
           console.warn("本タブのヒアリングシーケンス番号は" + currentHearingSeqNo);
 
+          if( param === "endHearing") {
+            self.set(self._lKey.currentScenarioSeqNum, 0);
+          }
+
           var data = {
             detail: param,
             scenarioSeq: currentScenarioSeqNo,
@@ -9829,7 +9870,7 @@
           if ( detail === "startScenario") {
             this._startScenario(JSON.parse(data).otherInformation);
           } else if ( detail === "startHearing" ) {
-            this._startHearing();
+            this._startHearing(JSON.parse(data).otherInformation);
           } else if ( detail === "changeScenarioSeq") {
             this._changeScenarioSeq();
           } else if ( detail === "changeHearingSeq") {
@@ -9840,6 +9881,9 @@
             this._endScenario();
           } else if ( detail === "cancelHearing") {
             this._cancelHearing(JSON.parse(data).otherInformation);
+          } else if ( detail === "forceWaiting") {
+            console.warn("FORCE WAITING STATEMENT TO TRUE");
+            this._forceInputWaiting();
           } else {
               console.log("<><><><><> UNEXPECTED DETAIL <><><><><>");
           }
@@ -9853,13 +9897,12 @@
           }
           console.log(initData);
         },
-        _startHearing: function() {
+        _startHearing: function(syncScenario) {
+          sinclo.scenarioApi.set(sinclo.scenarioApi._lKey.currentScenario, syncScenario);
           sinclo.scenarioApi._hearing._init(sinclo.scenarioApi);
           sinclo.scenarioApi._hearing._process(false, true);
           console.log("ヒアリングの開始が同期されました");
-          setTimeout(function() {
-            sinclo.scenarioApi._saveWaitingInputState(true);
-          }, 2000);
+          this._forceInputWaiting();
         },
         _changeScenarioSeq: function() {
           sinclo.scenarioApi._handleChatTextArea('2');
@@ -9873,13 +9916,13 @@
             nextBtn.eq(0).remove();
           }
           console.log("ヒアリングのシーケンス変更が同期されました");
-          setTimeout(function() {
-            sinclo.scenarioApi._saveWaitingInputState(true);
-          }, 2000);
+          this._forceInputWaiting();
         },
         _endHearing: function() {
           sinclo.scenarioApi._saveWaitingInputState(false);
           sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
+          // 終了時はシーケンス番号を0に戻しておく
+          sinclo.scenarioApi._hearing._setCurrentSeq(0);
           console.log("ヒアリングの終了が同期されました");
         },
         _endScenario: function() {
@@ -9906,6 +9949,11 @@
 
           sinclo.scenarioApi._hearing._execute(sinclo.scenarioApi._hearing._getCurrentHearingProcess(), true);
           console.log("ヒアリングのキャンセルが行われました");
+        },
+        _forceInputWaiting: function() {
+          setTimeout(function() {
+            sinclo.scenarioApi._saveWaitingInputState(true);
+          }, 1000);
         }
       }
     },
