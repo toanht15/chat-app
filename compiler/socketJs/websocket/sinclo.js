@@ -9853,6 +9853,7 @@
           sinclo.scenarioApi._saveWaitingInputState(true);
         },
         _changeScenarioSeq: function() {
+          sinclo.scenarioApi._handleChatTextArea('2');
           console.log("シナリオのシーケンス変更が同期されました");
         },
         _changeHearingSeq: function() {
