@@ -3536,6 +3536,36 @@ io.sockets.on('connection', function(socket) {
     emit.toUser('resAutoChatMessages', ret, obj.sendTo);
   });
 
+  // シナリオの状態を同期させる
+  socket.on('syncScenarioData', function(d) {
+    var obj = JSON.parse(d);
+    var dataSet = {
+      param: obj.detail,
+      scenarioSeq: obj.scenarioSeq,
+      hearingSeq: obj.hearingSeq,
+      targetChatId: obj.targetChatId
+    };
+    console.log(obj);
+    try {
+      if( obj.detail === "startScenario" ) {
+        console.log("START SCENARIO");
+      } else if ( obj.detail === "startHearing" ) {
+        console.log("START HEARING");
+      } else if ( obj.detail === "changeScenarioSeq" ) {
+        console.log("CHANGE SCENARIO SEQUENCE");
+      } else if ( obj.detail === "changeHearingSeq" ) {
+        console.log("CHANGE HEARING SEQUENCE");
+      } else if ( obj.detail === "endHearing") {
+        console.log("END HEARING");
+      } else if ( obj.detail === "endScenario" ){
+        console.log("END SCENARIO");
+      }
+      emit.toSameUser("syncScenarioDataResult", dataSet, obj.siteKey, obj.sessionID);
+    } catch (e) {
+      console.log('ERROR DETECTED!! >> ' + e);
+    }
+  });
+
   // チャット開始
   socket.on('chatStart', function(d) {
     var obj = JSON.parse(d), date = new Date(), now = fullDateTime(date),
@@ -4616,9 +4646,6 @@ io.sockets.on('connection', function(socket) {
   socket.on('saveLeadList', function(data) {
     var obj = JSON.parse(data);
     var targetId = Number(obj.leadSettingsId);
-    console.log('下下下');
-    console.log(obj);
-    console.log('上上上');
     db.addLeadInformation(obj);
   });
 
