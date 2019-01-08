@@ -8192,7 +8192,7 @@
               this._setLength(this._parent.get(
                   this._parent._lKey.currentScenario).hearings.length);
             } catch (e) {
-              // エラーが発生した場合はフルネームで記載する
+              // エラーが発生した場合はフルパスで記載する
               this._setLength(sinclo.scenarioApi.get(
                   sinclo.scenarioApi._lKey.currentScenario).hearings.length);
             }
@@ -9857,9 +9857,10 @@
         },
         _changeHearingSeq: function() {
           sinclo.scenarioApi._hearing._process(false, true);
-          var nextBtn = $('p.sincloButtonWrap')[0];
+          var nextBtn = $('p.sincloButtonWrap');
+          console.log(nextBtn);
           if(typeof(nextBtn) !== "undefined") {
-            nextBtn.remove();
+            nextBtn.eq(0).remove();
           }
           console.log("ヒアリングのシーケンス変更が同期されました");
           setTimeout(function() {
