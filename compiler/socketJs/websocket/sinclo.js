@@ -7209,9 +7209,15 @@
       isWaitingInput: function() {
         var self = sinclo.scenarioApi;
         var result = false;
-        var value = this.get(self._lKey.waitingInput);
+        var value = self.get(self._lKey.waitingInput);
         if (value !== null && (value === 'true' || value === true)) {
           result = true;
+        }
+        //IEの場合はlocalStorageの値がfalseの場合のみセッションストレージからも値を取得する
+        if ( check.isIE() && !result ) {
+          if(storage.s.get("Waiting_on_IE") !== null) {
+            result = storage.s.get("Waiting_on_IE");
+          }
         }
         return result;
       },
@@ -7301,8 +7307,6 @@
         return json ? JSON.parse(json) : {};
       },
       _setBaseObj: function(obj) {
-        console.warn(sinclo.scenarioApi._setBaseObj.caller);
-        console.warn(sinclo.scenarioApi.isWaitingInput());
         var self = sinclo.scenarioApi;
         storage.l.set(self._lKey.scenarioBase, JSON.stringify(obj));
       },
@@ -7377,10 +7381,8 @@
       _process: function(forceFirst) {
         var self = sinclo.scenarioApi;
         console.warn(" >>>>> PROCESS SCENARIO <<<<< ");
-        console.warn(self.get(self._lKey.currentScenario));
         switch (String(self.get(self._lKey.currentScenario).actionType)) {
           case self._actionType.speakText:
-            console.warn(" THIS ACTION IS SPEAK TEXT");
             self._speakText();
             self.set(self._lKey.scenarioMessageType, 21);
             break;
@@ -7602,6 +7604,7 @@
         if (!isJumpScenario &&
             Number(self.get(self._lKey.currentScenarioSeqNum)) ===
             Number(self.get(self._lKey.scenarioLength)) - 1) {
+          console.warn(" SCENARIO IS END ");
           self._end();
           return false;
         }
@@ -7634,7 +7637,6 @@
       },
       _showMessage: function(
           type, message, categoryNum, showTextArea, callback) {
-        console.warn("SHOW MESSAGE TYPE >>> " + type + "/MESSAGE >>> " + message );
         console.log(
             '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showMessage:type ' + type);
         var self = sinclo.scenarioApi;
@@ -7772,8 +7774,12 @@
         self.set(self._lKey.processing, isProcessing);
       },
       _saveWaitingInputState: function(isWaitingInput) {
-        console.warn(sinclo.scenarioApi._saveWaitingInputState.caller);
         console.warn("isWaitingInputChanged >>>>> " + isWaitingInput);
+        // IEの場合はセッションストレージにも値を格納しておく。
+        if( check.isIE() ){
+          storage.s.set("Waiting_on_IE", isWaitingInput);
+        }
+
         var self = sinclo.scenarioApi;
         self.set(self._lKey.waitingInput, isWaitingInput);
       },
@@ -7995,8 +8001,6 @@
         this._doing(self._getIntervalTimeSec(), function() {
           self._handleChatTextArea(
               self.get(self._lKey.currentScenario).chatTextArea);
-          console.warn("VVV DOING WITH THIS SCENARIO VVV");
-          console.warn( self.get(self._lKey.currentScenario) );
           self._showMessage(self.get(self._lKey.currentScenario).actionType,
               self._getMessage(), 0,
               self.get(self._lKey.currentScenario).chatTextArea, function() {
@@ -8028,7 +8032,6 @@
         self._saveWaitingInputState(true);
       },
       _unWaitingInput: function() {
-        console.warn("UNWAITING INPUT CALLED !!");
         var self = sinclo.scenarioApi;
         $(document).off(self._events.inputCompleted);
         self._saveWaitingInputState(false);
@@ -8200,17 +8203,18 @@
           return self._inputType[inputTypeStr];
         },
         _init: function(parent, currentScenario) {
-          this._parent = parent;
-          this._setCurrentSeq(this._getCurrentSeq());
-          if (this._isParseSignatureMode()) {
-            this._setLength(1);
+          var self = sinclo.scenarioApi._hearing;
+          self._parent = parent;
+          self._setCurrentSeq(self._getCurrentSeq());
+          if (self._isParseSignatureMode()) {
+            self._setLength(1);
           } else {
             try {
-              this._setLength(this._parent.get(
-                  this._parent._lKey.currentScenario).hearings.length);
+              self._setLength(self._parent.get(
+                  self._parent._lKey.currentScenario).hearings.length);
             } catch (e) {
               // エラーが発生した場合はフルパスで記載する
-              this._setLength(sinclo.scenarioApi.get(
+              self._setLength(sinclo.scenarioApi.get(
                   sinclo.scenarioApi._lKey.currentScenario).hearings.length);
             }
           }
@@ -8856,7 +8860,7 @@
                 self.isConfirmingFlg = false;
                 console.warn("changed isConfirmingFlg to false! >>>" + self.isConfirmingFlg);
                 self._disableAllHearingMessageInput();
-                self._parent.syncScenarioData.sendDetail("endHearing");
+                self._parent.syncScenarioData.sendDetail("endHearing", "isRetrying");
                 self._setRetryFlg();
                 self._parent._process(true);
               } else {
@@ -8867,9 +8871,10 @@
           self._parent._doing(self._parent._getIntervalTimeSec(), function() {
             self._parent._handleChatTextArea('2'); // 確認ダイアログを出すときはOFF固定
             if (executeSilent) {
-              console.log("静かに入力確認");
+              console.log("CONFIRM EVENT ADDED WITH SILENCE");
               handleConfirmMessageFunc();
             } else {
+              console.log("CONFIRM EVENT ADDED");
               self._parent._showMessage(self._parent.get(
                   self._parent._lKey.currentScenario).actionType, messageBlock,
                   self._parent.get(self._state.currentSeq) + 1, '2',
@@ -9841,8 +9846,8 @@
 
 
           console.warn("トリガ元は【" + param + "】になります");
-          console.warn("SCENARIO SEQUENCE NUMBER" + currentScenarioSeqNo);
-          console.warn("HEARING SEQUENCE NUMBER" + currentHearingSeqNo);
+          console.warn("SEND SCENARIO SEQUENCE NUMBER >>> " + currentScenarioSeqNo);
+          console.warn("SEND HEARING SEQUENCE NUMBER >>> " + currentHearingSeqNo);
 
           var data = {
             detail: param,
@@ -9864,8 +9869,8 @@
             return false;
           }
 
-          console.warn("SCENARIO SEQUENCE NUMBER" + JSON.parse(data).scenarioSeq);
-          console.warn("HEARING SEQUENCE NUMBER" + JSON.parse(data).hearingSeq);
+          console.warn("RECIEVE SCENARIO SEQUENCE NUMBER >>> " + JSON.parse(data).scenarioSeq);
+          console.warn("RECIEVE HEARING SEQUENCE NUMBER >>> " + JSON.parse(data).hearingSeq);
 
           if ( detail === "startScenario") {
             console.warn("START SCENARIO!");
@@ -9881,7 +9886,7 @@
             this._changeHearingSeq(JSON.parse(data).hearingSeq);
           } else if ( detail === "endHearing") {
             console.warn("END HEARING");
-            this._endHearing();
+            this._endHearing(JSON.parse(data).otherInformation);
           } else if ( detail === "endScenario") {
             console.warn("END SCENARIO");
             this._endScenario();
@@ -9901,14 +9906,12 @@
           if( check.isIE() ) {
             sinclo.scenarioApi.init(initData.id, initData.scenarioObj, true);
           }
-          console.log(initData);
         },
         _startHearing: function(syncScenario) {
           sinclo.scenarioApi.set(sinclo.scenarioApi._lKey.currentScenario, syncScenario);
           sinclo.scenarioApi._hearing._init(sinclo.scenarioApi);
           sinclo.scenarioApi._hearing._process(false, true);
           console.log("ヒアリングの開始が同期されました");
-          // this._forceInputWaiting();
         },
         _changeScenarioSeq: function(nextSeqNum, nextScenario) {
           sinclo.scenarioApi._handleChatTextArea('2');
@@ -9935,12 +9938,17 @@
           console.log("ヒアリングのシーケンス変更が同期されました");
           this._forceInputWaiting();
         },
-        _endHearing: function() {
+        _endHearing: function(state) {
           sinclo.scenarioApi._saveWaitingInputState(false);
           sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
           // 終了時はシーケンス番号を0に戻しておく
+          if(state !== null && state === "isRetrying") {
+            console.warn("RETRY");
+            sinclo.scenarioApi._hearing._setRetryFlg();
+          }
           sinclo.scenarioApi._hearing._setCurrentSeq(0);
           sinclo.scenarioApi._hearing.isConfirmingFlg = false;
+          sinclo.scenarioApi._hearing._saveConfirmFlg(false);
           console.warn("ヒアリングの終了が同期されました");
         },
         _endScenario: function() {
