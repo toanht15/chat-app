@@ -3540,6 +3540,8 @@ io.sockets.on('connection', function(socket) {
   socket.on('syncScenarioData', function(d) {
     var obj = JSON.parse(d);
     var dataSet = {
+      tabId: obj.tabId,
+      sincloSessionId: obj.sincloSessionId,
       param: obj.detail,
       scenarioSeq: obj.scenarioSeq,
       hearingSeq: obj.hearingSeq,
