@@ -94,7 +94,7 @@ class AppController extends Controller {
   protected $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
 
   // メディアリンクの企業情報を閲覧可能なcompany_keyのリスト
-  private $viewableMLCompanyInfoList = ['59f6e3aa713de'];
+  private $viewableMLCompanyInfoList = ['medialink','59f6e3aa713de'];
 
   public function beforeFilter(){
 
