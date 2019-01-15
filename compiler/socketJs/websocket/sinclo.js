@@ -2467,6 +2467,13 @@
       }
     },
     displayTextarea: function(skippable, disabled) {
+      if( document.hasFocus() ){
+        var dataSet = {
+          type: 1,
+          skippable: skippable
+        };
+        sinclo.scenarioApi.syncScenarioData.sendDetail("handleTextArea", dataSet);
+      }
       console.log(
           '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaCalled<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
       if (!document.getElementById('flexBoxWrap')) return;
@@ -2541,6 +2548,12 @@
       sinclo._skipLabelHandler();
     },
     hideTextarea: function() {
+      if( document.hasFocus() ){
+        var dataSet = {
+          type: 2
+        };
+        sinclo.scenarioApi.syncScenarioData.sendDetail("handleTextArea", dataSet);
+      }
       console.log(
           '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>hideTextareaCalled<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
       if (!document.getElementById('flexBoxWrap')) return;
@@ -7226,7 +7239,8 @@
         //IEの場合はlocalStorageの値がfalseの場合のみセッションストレージからも値を取得する
         if (check.isIE() && !result) {
           if (storage.s.get('Waiting_on_IE') !== null) {
-            result = storage.s.get('Waiting_on_IE');
+            var resultString = storage.s.get('Waiting_on_IE');
+            if ( resultString.toLowerCase() === "true" ) result = true;
           }
         }
         return result;
@@ -7444,6 +7458,8 @@
             self._addCustomerInformation._process();
             break;
           case self._actionType.bulkHearing:
+            self.syncScenarioData.sendDetail('startBulkHearing',
+                self.get(self._lKey.currentScenario));
             self._bulkHearing._init(self);
             self._bulkHearing._process();
             self.set(self._lKey.sendCustomerMessageType, 30);
@@ -7767,6 +7783,7 @@
         var self = sinclo.scenarioApi;
         var data = self.get(self._lKey.showSequenceSet);
         var arr = data[scenarioSeqNum] ? data[scenarioSeqNum] : [];
+        console.warn("IS SHOWN LIST >> " + arr);
         return arr.indexOf(categoryNum) !== -1;
       },
       /**
@@ -8369,10 +8386,15 @@
             $(this).remove();
           });
           self._hideMessage(deleteTargetIds);
+          if( check.isIE() ){
+            self._resetShownMessage(
+                self._parent.get(self._parent._lKey.currentScenarioSeqNum),
+                self._getCurrentSeq());
+          }
           self._setCurrentSeq(Number(targetSeqNum));
-          self._resetShownMessage(
-              self._parent.get(self._parent._lKey.currentScenarioSeqNum),
-              self._getCurrentSeq());
+            self._resetShownMessage(
+                self._parent.get(self._parent._lKey.currentScenarioSeqNum),
+                self._getCurrentSeq());
           var hearingProcess = self._getCurrentHearingProcess();
           if (isCancelTargetText) {
             $('#sincloChatMessage, #miniSincloChatMessage').val(text);
@@ -8399,7 +8421,8 @@
           arr.forEach(function(elm, idx, arr) {
             if (Number(elm) === Number(categoryNum)) {
               deleteTarget = true;
-            } else if (deleteTarget) {
+            }
+            if (deleteTarget) {
               delete arr[idx];
             }
           });
@@ -8675,6 +8698,7 @@
             self._saveConfirmFlg(true);
             self._showConfirmMessage(executeSilent);
           } else {
+            self._parent.syncScenarioData.sendDetail('endHearing');
             if (self._cvIsEnable()) {
               // 全てOKの場合はCV
               setTimeout(function() {
@@ -8685,7 +8709,6 @@
             setTimeout(function() {
               self._disableAllHearingMessageInput();
             }, 1000);
-            self._parent.syncScenarioData.sendDetail('endHearing');
             if (self._parent._goToNextScenario()) {
               self._setCurrentSeq(0);
               self._parent._process();
@@ -9927,8 +9950,14 @@
           } else if (detail === 'forceWaiting') {
             console.warn('FORCE WAITING STATEMENT TO TRUE');
             this._forceInputWaiting();
+          } else if (detail === 'handleTextArea') {
+            console.warn("SYNC FREE INPUT AREA");
+            this._syncFreeInputArea(obj.otherInformation);
+          } else if (detail === 'startBulkHearing') {
+            console.warn('START BULK HEARING');
+            this._startBulkHearing();
           } else {
-            console.log('<><><><><> UNEXPECTED DETAIL <><><><><>');
+              console.log('<><><><><> UNEXPECTED DETAIL <><><><><>');
           }
         },
         _startScenario: function(initData) {
@@ -9945,6 +9974,12 @@
           sinclo.scenarioApi._hearing._init(sinclo.scenarioApi);
           sinclo.scenarioApi._hearing._process(false, true);
           console.log('ヒアリングの開始が同期されました');
+        },
+        _startBulkHearing: function() {
+          sinclo.scenarioApi._bulkHearing._init(sinclo.scenarioApi);
+          sinclo.scenarioApi._bulkHearing._process();
+          sinclo.scenarioApi.set(sinclo.scenarioApi._lKey.sendCustomerMessageType, 30);
+          console.log('一括ヒアリングの開始が同期されました');
         },
         _changeScenarioSeq: function(nextSeqNum, nextScenario) {
           sinclo.scenarioApi._handleChatTextArea('2');
@@ -10016,6 +10051,16 @@
         _forceInputWaiting: function() {
           if (sinclo.scenarioApi.isProcessing()) {
             sinclo.scenarioApi._saveWaitingInputState(true);
+          }
+        },
+        _syncFreeInputArea: function( status ) {
+          switch( Number(status.type) ){
+            case 1:
+              sinclo.displayTextarea(status.skippable);
+              break;
+            case 2:
+              sinclo.hideTextarea();
+              break;
           }
         }
       }
