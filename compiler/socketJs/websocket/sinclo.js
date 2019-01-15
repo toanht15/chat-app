@@ -8709,9 +8709,12 @@
             setTimeout(function() {
               self._disableAllHearingMessageInput();
             }, 1000);
-            if (self._parent._goToNextScenario()) {
-              self._setCurrentSeq(0);
-              self._parent._process();
+            console.warn(executeSilent);
+            if ( !check.isIE() || !executeSilent ) {
+              if (self._parent._goToNextScenario()) {
+                self._setCurrentSeq(0);
+                self._parent._process();
+              }
             }
           }
         },
