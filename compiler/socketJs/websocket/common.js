@@ -6473,6 +6473,11 @@ var socket, // socket.io
       sinclo.resUrlChecker(d);
     }); // socket-on: receiveOtherTabURL
 
+    // シナリオ別タブ同期
+    socket.on('syncScenarioDataResult', function(d) {
+      sinclo.scenarioApi.syncScenarioData.checkDetail(d);
+    });
+
     // チャット対応開始結果
     socket.on('chatStartResult', function(d) {
       sinclo.chatStartResult(d);
