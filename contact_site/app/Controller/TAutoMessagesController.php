@@ -700,8 +700,10 @@ class TAutoMessagesController extends AppController {
         $validate = $this->TAutoMessage->validates();
         $errors   = $this->TAutoMessage->validationErrors;
         if (!empty($errors)) {
-          $errorFound                 = true;
-          $errorArray[$row['rowNum']] = $errors;
+          $errorArray[$index]['E'][0] = isset($errors['activity']) ? $errors['activity'][0] : '';
+          $exception                  = new AutoMessageException("データバリデーションエラー", 200);
+          $exception->setErrors($errorArray);
+          throw $exception;
         } else {
           array_push($dataArray, $saveData);
         }
@@ -715,16 +717,12 @@ class TAutoMessagesController extends AppController {
       );
 
       $nextPage = '1';
-      if (!$errorFound) {
-        foreach ($dataArray as $index => $saveData) {
-          $nextPage = $this->_entryProcess($saveData);
-        }
-        $this->TransactionManager->commitTransaction($transactions);
-        $result['success']     = true;
-        $result['showPageNum'] = $nextPage;
-      } else {
-        $result['errorMessage'] = []; // FIXME 何行目の何列がどうダメなのか返す
+      foreach ($dataArray as $index => $saveData) {
+        $nextPage = $this->_entryProcess($saveData);
       }
+      $this->TransactionManager->commitTransaction($transactions);
+      $result['success']     = true;
+      $result['showPageNum'] = $nextPage;
     } catch (AutoMessageException $e) {
       if ($transactions) {
         $this->TransactionManager->rollbackTransaction($transactions);
