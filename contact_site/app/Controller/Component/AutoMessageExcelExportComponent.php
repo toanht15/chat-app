@@ -33,7 +33,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
   private $businessHourMap;
   private $isSettingMap;
   private $actionTypeMap;
-  
+
   public function __construct($filePath)
   {
     parent::__construct($filePath);
@@ -140,7 +140,7 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
     ];
 
     $this->actionTypeMap = [
-      2 => 'シナリオを選択する',
+      2 => 'シナリオを呼び出す',
       1 => 'チャットメッセージを送る'
     ];
   }
