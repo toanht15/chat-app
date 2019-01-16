@@ -415,7 +415,7 @@
       };
 
       $scope.handleBrowserZoom = function() {
-        if (screen.width >= window.innerWidth) {
+        if (window.devicePixelRatio >= 1) {
           $('#sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label').removeClass('radio-zoom');
         } else {
           $('#sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label').addClass('radio-zoom');

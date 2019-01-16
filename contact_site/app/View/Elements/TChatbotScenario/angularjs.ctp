@@ -3722,7 +3722,7 @@
   });
 
   function handleBrowserZoom() {
-    if (screen.width >= window.innerWidth) {
+    if (window.devicePixelRatio >= 1) {
       $('#tchatbotscenario_form_preview_body .chatTalk li span.sinclo-radio [type="radio"] + label').
           removeClass('radio-zoom');
       $('#sincloBox ul#chatTalk li span.sinclo-radio [type="radio"] + label').removeClass('radio-zoom');
