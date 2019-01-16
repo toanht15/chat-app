@@ -478,7 +478,7 @@ router.get("/", function (req, res, next) {
       var date = now.getFullYear() + "/" + ("0" + (now.getMonth() + 1)).slice(-2) + '/' + ("0" + (now.getDate())).slice(-2) + " ";
       var today = ("0" + (now.getMonth() + 1)).slice(-2) + '/' + ("0" + (now.getDate())).slice(-2);
       for (var i = 0; i < common.autoMessageSettings[siteKey].length; i++) {
-        if (!(common.autoMessageSettings[siteKey][i].trigger_type in sendData['messages'])) {
+        if (!Array.isArray(sendData['messages'])) {
           sendData['messages'] = [];
         }
         for (var i2 = 0; i2 < common.operationHourSettings[siteKey].length; i2++) {

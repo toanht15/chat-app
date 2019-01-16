@@ -1299,6 +1299,13 @@ var socket, // socket.io
             (Number(chatPosition.re.textSize)) + 'px; height: ' +
             (Number(chatPosition.re.textSize)) +
             'px; border: 0.5px solid #999; border-radius: 50%; background-color: #FFF; } ';
+        html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label.radio-zoom:before { content: ""; display: block; position: absolute; top: ' +
+            Math.ceil((Number(chatPosition.re.textSize) / 2)) +
+            'px; left: 0px; margin-top: -' +
+            Math.ceil((Number(chatPosition.re.textSize) / 2)) + 'px; width: ' +
+            (Number(chatPosition.re.textSize) + 1) + 'px; height: ' +
+            (Number(chatPosition.re.textSize) + 1) +
+            'px; border: 1px solid #999; box-sizing: border-box; border-radius: 50%; background-color: #FFF; } ';
         html += '      #sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: ' +
             Math.ceil((Number(chatPosition.re.textSize) / 2)) + 'px; left: ' +
             ((chatPosition.re.textSize / 2 -
@@ -1820,6 +1827,12 @@ var socket, // socket.io
               'px; height: ' + (11 * ratio) + 'px; border: 0.5px solid ' +
               chatContentTextColor +
               '; border-radius: 50%; background-color: #FFF; } ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label.radio-zoom:before { content: ""; display: block; position: absolute; top: ' +
+              (11 * ratio) / 2 + 'px; margin-top: -' + (11 * ratio) / 2 +
+              'px; left: ' + (0 * ratio) + 'px; width: ' + (11 * ratio + 1) +
+              'px; height: ' + (11 * ratio + 1) + 'px; border: 1px solid ' +
+              chatContentTextColor +
+              '; box-sizing: border-box; border-radius: 50%; background-color: #FFF; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: ' +
               (11 * ratio) / 2 + 'px; left: ' + (11 * ratio) / 4 +
               'px; margin-top: -' + (11 * ratio) / 4 + 'px; width: ' +
@@ -2174,6 +2187,8 @@ var socket, // socket.io
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label { display: inline; padding-left: 1em; font-size: 0.7em; } ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label:before { content: ""; display: block; position: absolute; top: 10px; margin-top: -10px; left: -5px; width: 17px; height: 17px; border: 0.5px solid ' +
               chatContentTextColor + '; border-radius: 50%; } ';
+          html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label.radio-zoom:before { content: ""; display: block; position: absolute; top: 10px; margin-top: -10px; left: -5px; width: 18px; height: 18px; border: 1px solid ' +
+              chatContentTextColor + '; border-radius: 50%; box-sizing: border-box;} ';
           html += '#sincloBox ul#chatTalk li sinclo-radio [type="radio"]:checked + label:after { content: ""; display: block; position: absolute; top: 10px; left: 0px; margin-top: -5px; width: 11px; height: 11px; background: ' +
               colorList['mainColor'] + '; border-radius: 50%; } ';
           html += '#sincloBox ul#chatTalk li label, #sincloBox ul#chatTalk li span, #sincloBox ul#chatTalk li a { font-size: 1em; }';
@@ -3293,7 +3308,7 @@ var socket, // socket.io
       html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
       if (check.hasCustomBannerImageSetting()) {
         if (check.smartphone()) {
-          html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.sp +'" />';
+          html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.sp +'" style="width:100px; height:60px" />';
         } else {
           html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.pc +'" />';
         }
@@ -4006,6 +4021,12 @@ var socket, // socket.io
         $('#chatTab').css('width', '100%');
       },
       _handleResizeEvent: function() {
+        if(window.devicePixelRatio >= 1){
+          $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').removeClass('radio-zoom');
+        } else {
+          $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').addClass('radio-zoom');
+        }
+
         console.log('<><><><><><><><><>widgetHandler::_handleResizeEvent');
         if (storage.s.get('widgetMaximized') === 'true') {
           $('#sincloBox').css('height', 'auto');
@@ -6473,6 +6494,11 @@ var socket, // socket.io
       sinclo.resUrlChecker(d);
     }); // socket-on: receiveOtherTabURL
 
+    // シナリオ別タブ同期
+    socket.on('syncScenarioDataResult', function(d) {
+      sinclo.scenarioApi.syncScenarioData.checkDetail(d);
+    });
+
     // チャット対応開始結果
     socket.on('chatStartResult', function(d) {
       sinclo.chatStartResult(d);
@@ -6639,7 +6665,6 @@ var socket, // socket.io
       init();
     }
   }, 200);
-
 }(sincloJquery));
 
 function f_url(url) {

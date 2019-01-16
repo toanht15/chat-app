@@ -189,7 +189,7 @@ define('C_AUTHORITY_NORMAL', 2); // 一般
 define('C_AUTHORITY_SUPER', 99); // ML管理者
 
 // オートメッセージ機能－トリガー種別コード
-define('C_AUTO_TRIGGER_TYPE_BODYLOAD', 1); // 画面読み込み時
+define('C_AUTO_TRIGGER_TYPE_BODYLOAD', 0); // 画面読み込み時
 
 // オートメッセージ機能－トリガーリスト
 define('C_AUTO_TRIGGER_STAY_TIME',  1); // 滞在時間
@@ -205,7 +205,7 @@ define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
-define('C_AUTO_ACTION_TYPE_SELECTSCENARIO', 2);  // シナリオを選択する
+define('C_AUTO_ACTION_TYPE_SELECTSCENARIO', 2);  // シナリオを呼び出す
 
 // オートメッセージ機能－ウィジェット種別コード
 define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
@@ -747,7 +747,7 @@ $config['outMessageTriggerList'] = [
 /* オートメッセージ － アクション種別 */
 $config['outMessageActionType'] = [
     C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
-    C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを選択する"
+    C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す"
 ];
 
 /* オートメッセージ － ウィジェット種別 */
