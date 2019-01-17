@@ -4049,7 +4049,7 @@
           var disableWeekDays = [];
           Object.keys(settings.dayOfWeekSetting).forEach(function(elm, idx, arr) {
             if (settings.dayOfWeekSetting[elm]) {
-              disableWeekDays.push(elm);
+              disableWeekDays.push(Number(elm));
             }
           });
 
