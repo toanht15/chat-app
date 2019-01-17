@@ -4068,7 +4068,7 @@
             try {
               Object.keys(settings.specificDateData).
                   forEach(function(elm, idx, arr) {
-                    options.disable[elm + disableLength] = settings.specificDateData[elm];
+                    options.disable.push(settings.specificDateData[elm]);
                   });
             } catch(e) {}
           }
@@ -4192,7 +4192,9 @@
         style += 'background-color: ' + settings.customDesign.backgroundColor +
             ';';
         style += 'border: 1px solid ' + settings.customDesign.borderColor + ';';
-        style += 'font-size: 16px;';
+        if(check.smartphone()) {
+          style += 'font-size: 16px;';
+        }
 
         return style;
       },
