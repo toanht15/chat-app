@@ -4051,9 +4051,9 @@
         // set disable date
         if (settings.isDisableDayOfWeek) {
           var disableWeekDays = [];
-          angular.forEach(settings.dayOfWeekSetting, function(item, key) {
-            if (item) {
-              disableWeekDays.push(key);
+          Object.keys(settings.dayOfWeekSetting).forEach(function(elm, idx, arr) {
+            if (settings.dayOfWeekSetting[elm]) {
+              disableWeekDays.push(elm);
             }
           });
 
@@ -4069,15 +4069,21 @@
         if (settings.isSetSpecificDate) {
           if (settings.setSpecificDateType == 1) {
             var disableLength = options.disable.length;
-            angular.forEach(settings.specificDateData, function(item, key) {
-              options.disable[key + disableLength] = item;
-            });
+            try {
+              Object.keys(settings.specificDateData).
+                  forEach(function(elm, idx, arr) {
+                    options.disable[elm + disableLength] = settings.specificDateData[elm];
+                  });
+            } catch(e) {}
           }
 
           if (settings.setSpecificDateType == 2) {
-            angular.forEach(settings.specificDateData, function(item, key) {
-              options.enable[key] = item;
-            });
+            try {
+              Object.keys(settings.specificDateData).
+                  forEach(function(elm, idx, arr) {
+                    options.enable[elm] = settings.specificDateData[elm];
+                  });
+            } catch(e) {}
           }
         } else {
           settings.specificDateData = [''];
