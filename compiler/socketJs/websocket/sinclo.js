@@ -4186,7 +4186,9 @@
         style += 'background-color: ' + settings.customDesign.backgroundColor +
             ';';
         style += 'border: 1px solid ' + settings.customDesign.borderColor + ';';
-        style += 'font-size: 16px;';
+        if(check.smartphone()) {
+          style += 'font-size: 16px;';
+        }
 
         return style;
       },
