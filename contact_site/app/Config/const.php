@@ -343,11 +343,15 @@ define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
 define('C_WIDGET_SIZE_TYPE_MAXIMUM', 4); //最大
 
+//ウィジェットカスタムサイズデフォルト値
+define('C_WIDGET_CUSTOM_WIDTH', 343);
+define('C_WIDGET_CUSTOM_HEIGHT', 284);
+
 // ファイル送信設定タイプ
 define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);
 define('C_FILE_TRANSFER_SETTING_TYPE_EXTEND', 2);
 
-/* カラー設定初期値styat */
+/* カラー設定初期値start */
 //0.通常設定・高度設定
 define('COLOR_SETTING_TYPE_OFF', 0);
 define('COLOR_SETTING_TYPE_ON', 1);

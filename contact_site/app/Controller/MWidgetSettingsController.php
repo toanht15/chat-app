@@ -12,7 +12,7 @@ class MWidgetSettingsController extends AppController {
     'common' => [
       'display_style_type', 'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
-      'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
+      'show_main_image', 'main_image', 'show_chatbot_icon' ,'chatbot_icon' ,'show_operator_icon' ,'operator_icon', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext','widget_custom_height','widget_custom_width',
       /* カラー設定start */
       'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
@@ -219,6 +219,10 @@ class MWidgetSettingsController extends AppController {
         $subTitleLength = 24;
         $descriptionLength = 24;
         break;
+      default:
+        $titleLength = 19;
+        $subTitleLength = 24;
+        $descriptionLength = 24;
     }
     $maxFontSize = 20;
     $maxHeaderFontSize = 20;
@@ -245,6 +249,10 @@ class MWidgetSettingsController extends AppController {
         $maxHeaderFontSize = 42;
         $maxSendBtnFontSize = 36;
         break;
+      default:
+        $maxFontSize = 64;
+        $maxHeaderFontSize = 42;
+        $maxSendBtnFontSize = 36;
     }
 
     $this->set('max_fontsize', $maxFontSize);
@@ -364,6 +372,7 @@ class MWidgetSettingsController extends AppController {
           break;
         case '3': //大
         case '4': //最大
+        case '5': //カスタム
           $titleLength = 19;
           $subTitleLength = 24;
           $descriptionLength = 24;
@@ -673,6 +682,14 @@ class MWidgetSettingsController extends AppController {
             //ウィジットサイズタイプ
             if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_size_type'] = C_WIDGET_SIZE_TYPE_SMALL; // デフォルト値
+            }
+            //カスタム時横幅
+            if ( strcmp($v, 'widget_custom_width') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_custom_width'] = C_WIDGET_CUSTOM_WIDTH; // デフォルト値
+            }
+            //カスタム時高さ
+            if ( strcmp($v, 'widget_custom_height') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['widget_custom_height'] = C_WIDGET_CUSTOM_HEIGHT; // デフォルト値
             }
             //最小化時のデザインタイプ
             if ( strcmp($v, 'minimize_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {

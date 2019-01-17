@@ -73,7 +73,7 @@
         </th>
 <!-- UI/UX統合対応end -->
         <th width=" 5%">No</th>
-        <th width=" 15%">氏名</th>
+        <th width=" 5%">アイコン</th>
         <th width=" 20%">表示名</th>
         <th width=" 10%">権限</th>
         <th>メールアドレス</th>
