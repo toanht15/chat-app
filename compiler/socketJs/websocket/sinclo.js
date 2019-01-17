@@ -4068,7 +4068,7 @@
             try {
               Object.keys(settings.specificDateData).
                   forEach(function(elm, idx, arr) {
-                    options.disable[elm + disableLength] = settings.specificDateData[elm];
+                    options.disable.push(settings.specificDateData[elm]);
                   });
             } catch(e) {}
           }
