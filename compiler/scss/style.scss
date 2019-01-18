@@ -5575,6 +5575,42 @@ ul.naviBtn {
         }
       }
 
+      div#iconDivWrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 72px;
+        width: 64px;
+        margin-right: 10px;
+      }
+
+      div#iconChooseDiv {
+        .greenBtn {
+          cursor: pointer!important;
+          height: 30px;
+          background-color: $main-color;
+          color: #FFF;
+          font-weight: bold;
+          vertical-align: middle;
+          padding: 8px 10px;
+          display: block;
+          border-radius: 5px;
+          text-decoration: none;
+          margin: 3.5px 0;
+        }
+        input[type='file'] {
+          cursor: pointer!important;
+          opacity: 0;
+          position: absolute;
+          top: 0px;
+          right: 0px;
+          height: 30px;
+          display: block;
+          font-size: 300px;
+          z-index: 10;
+        }
+      }
+
       #imageSelectBtns {
         display: none;
 

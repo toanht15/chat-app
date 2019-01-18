@@ -406,6 +406,11 @@ define('CHAT_SEND_BTN_BACKGROUND_COLOR', "#ABCD05");
 define('WIDGET_INSIDE_BORDER_COLOR', "#E8E7E0");
 /* カラー設定初期値end */
 
+//ギャラリータイプ
+define('WIDGET_GALLERY_TYPE_MAIN', 1);    //メイン画像のギャラリー
+define('WIDGET_GALLERY_TYPE_CHATBOT', 2); //チャットボットアイコンのギャラリー
+define('WIDGET_GALLERY_TYPE_OPERATOR', 3);//オペレーターアイコンのギャラリー
+
 
 //タイトル位置
 define('WIDGET_TITLE_TOP_TYPE_LEFT', 1); //タイトル左寄せ

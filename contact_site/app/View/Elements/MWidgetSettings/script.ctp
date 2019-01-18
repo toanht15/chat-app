@@ -1093,7 +1093,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     $scope.indicateSimpleImage = function(){
     }
 
-    $scope.showGallary = function(){
+    $scope.showGallary = function(galleryType){
+      console.warn(galleryType);
       $.ajax({
         type: 'post',
         data: {
