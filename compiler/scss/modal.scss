@@ -105,8 +105,19 @@
                 padding: 3px 4px;
               }
 
+              &.op > img {
+                width: 62px;
+                height: 70px;
+              }
+
+              &.icon_op > img {
+                width: 55px;
+                height: 55px;
+                border-radius: 100%;
+              }
+
               i {
-                &.icon {
+                &.fi_main {
                   display: flex;
                   justify-content: center;
                   align-items: center;
@@ -114,6 +125,21 @@
                   height: 70px;
                   font-size: 43px;
                   border: 1px solid;
+                }
+                &.fi_icon {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 55px;
+                  height: 55px;
+                  border-radius: 100%;
+                  font-size: 35px;
+                  &.fa-comments-alt {
+                    padding-top: 4px;
+                  }
+                  &.fa-comment-alt-lines {
+                    padding-top: 6px;
+                  }
                 }
                 &.fa-robot{
                   padding-bottom: 3px;

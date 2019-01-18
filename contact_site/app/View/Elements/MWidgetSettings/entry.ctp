@@ -185,7 +185,7 @@ $headerNo = 1;
               <?php if($coreSettings[C_COMPANY_USE_CHAT]): ?>
               <label class="pointer choose" for="widgetSizeType4"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(4)" id="widgetSizeType4" class="showHeader" value="4" >最大</label><br>
               <?php endif; ?>
-              <div style="display:grid; grid-template-rows:60px 1fr; grid-template-columns:80px 1fr;">
+              <div style="display:grid; grid-template-columns:80px 1fr;">
                 <div>
                  <label class="pointer choose" for="widgetSizeType5"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(5)" id="widgetSizeType5" class="showHeader" value="5" >カスタム</label><br>
                 </div>
@@ -202,8 +202,7 @@ $headerNo = 1;
                       'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                       'error' => false,
                       'string-to-number' => true,
-                      'ng-max' => "false",
-                      'ng-change' => "changeCustomWidgetSize()"
+                      'ng-max' => "false"
                     ],
                       [
                         'entity' => 'MWidgetSetting.widget_custom_width'
@@ -222,8 +221,7 @@ $headerNo = 1;
                       'style' => "width: 100px; padding-left: 20px !important; margin: -5px 0 0 0;",
                       'error' => false,
                       'string-to-number' => true,
-                      'ng-max' => "false",
-                      'ng-change' => "changeCustomWidgetSize()"
+                      'ng-max' => "false"
                     ],
                       [
                         'entity' => 'MWidgetSetting.widget_custom_height'
@@ -231,10 +229,9 @@ $headerNo = 1;
                     ?><span style="display:inline-block; width:auto; padding-top: 0px; align-self: flex-start;">px</span>
                   </span>
                 </div>
-                <s ng-if="widgetSizeTypeToggle == 5"  style="display: inline-block; grid-column: 1/3">※ここで設定したウィジェットの縦幅よりもブラウザのウィンドウサイズが小さくなると、<br>
-                  ウィジェットの縦幅は自動的に縮小されます（レスポンシブ対応）</s>
               </div>
-
+              <s style="display: inline-block; margin-top: 5px;">※指定したウィジェットの縦幅よりもウィンドウサイズの縦幅が小さい場合、<br>
+                ウィジェットの縦幅は自動的に縮小されます（レスポンシブ対応）</s>
             </div>
           </li>
           <!-- ウィジットサイズ -->
@@ -1057,61 +1054,55 @@ $headerNo = 1;
               <hr class="separator" style="margin-top: 1em">
               <div>
                 <span>アイコン（チャットボット）</span>
-                <div style="margin-top: 10px">
+                <div style="margin-top: 10px" ng-init="chatbotIconToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_chatbot_icon'))?>'">
                   <?= $this->Form->hidden('chatbot_icon') ?>
                   <label class="pointer" for="showChatbotIcon1"><input type="radio" name="data[MWidgetSetting][show_chatbot_icon]" ng-model="chatbotIconToggle" id="showChatbotIcon1" value="1" >アイコンを表示する</label><br>
-                  <div ng-show="chatbotIconToggle == 1" style="margin-left: 20px; padding-top: 5px;">
-                    <label class="pointer" for="chatbotIconType1"><input type="radio" name="data[MWidgetSetting][chatbot_icon_type]" ng-model="chatbotIconType" id="chatbotIconType1" value="1" >メイン画像と同じ画像を利用する</label><br>
+                  <div ng-show="chatbotIconToggle == 1" style="margin-left: 20px; padding-top: 5px;" ng-init="chatbotIconType='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'chatbot_icon_type'))?>'">
+                    <label class="pointer" for="chatbotIconType1"><input type="radio" name="data[MWidgetSetting][chatbot_icon_type]" ng-model="chatbotIconType" id="chatbotIconType1" value="1" ng-change="denkanoHowto()">メイン画像と同じ画像を利用する</label><br>
                     <label class="pointer" for="chatbotIconType2"><input type="radio" name="data[MWidgetSetting][chatbot_icon_type]" ng-model="chatbotIconType" id="chatbotIconType2" value="2" >個別に設定する</label><br>
                     <div ng-show="chatbotIconType == 2" style="display: flex;" >
-                      <div id="iconDivWrapper" style="height: 72px; width: 64px; margin-right: 10px">
-                        <div id="iconDiv" style="height: 55px; width: 55px; border: 1px solid #000000; border-radius: 100%">
-                          <img ng-if="isPictureImage(chatbot_icon)" ng-src="{{chatbot_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" width="62" height="70" alt="チャットに設定している画像">
+                      <div id="iconDivWrapper">
+                        <div id="iconDiv" ng-class="{no_border :!checkWhiteColor() && isIconImage(chatbot_icon), icon_border: checkWhiteColor() && isIconImage(chatbot_icon),border: !isIconImage(chatbot_icon)}">
+                          <img ng-if="isPictureImage(chatbot_icon)" ng-src="{{chatbot_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="無人対応アイコンに設定している画像">
                           <i ng-if="isIconImage(chatbot_icon)" class="fal {{chatbot_icon}}" alt="チャット画像" ng-style="getIconColor(chatbot_icon)"></i>
                         </div>
                       </div>
                       <div id="iconChooseDiv">
                         <div class="greenBtn btn-shadow" ng-click="showGallary(<?=WIDGET_GALLERY_TYPE_CHATBOT ?>)">ギャラリーから選択</div>
-                        <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage', array('accept' => '.png,.jpeg,.jpg')); ?>画像をアップロード</div>
-                        <input type="hidden" name="data[Trimming][info]" ng-model="trimmingInfo" id="TrimmingInfo" />
+                        <div class="greenBtn btn-shadow" id="fileTagWrap">画像をアップロード</div>
                       </div>
                     </div>
                   </div>
                   <?php if ($this->Form->isFieldError('chatbot_icon')) echo $this->Form->error('chatbot_icon', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
-                  <?php if ($this->Form->isFieldError('uploadImage')) echo $this->Form->error('uploadImage', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
-                  <span ng-if="uploadImageError">{{uploadImageError}}</span>
                   <label class="pointer" for="showChatbotIcon2"><input type="radio" name="data[MWidgetSetting][show_chatbot_icon]" ng-model="chatbotIconToggle" id="showChatbotIcon2" value="2" >アイコンを表示しない</label>
                 </div>
               </div>
               <hr class="separator" style="margin-top: 1em">
               <div>
                 <span>アイコン（オペレータ）</span>
-                <div style="margin-top: 10px">
+                <div style="margin-top: 10px" ng-init="operatorIconToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_operator_icon'))?>'">
                   <?= $this->Form->hidden('operator_icon') ?>
                   <label class="pointer" for="showOperatorIcon1"><input type="radio" name="data[MWidgetSetting][show_operator_icon]" ng-model="operatorIconToggle" id="showOperatorIcon1" value="1" >アイコンを表示する</label><br>
-                  <div ng-show="operatorIconToggle == 1" style="margin-left: 20px; padding-top: 5px;">
+                  <div ng-show="operatorIconToggle == 1" style="margin-left: 20px; padding-top: 5px;" ng-init="operatorIconType='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'operator_icon_type'))?>'">
                     <label class="pointer" for="operatorIconType1"><input type="radio" name="data[MWidgetSetting][operator_icon_type]" ng-model="operatorIconType" id="operatorIconType1" value="1" >メイン画像と同じ画像を利用する</label><br>
                     <label class="pointer" for="operatorIconType2"><input type="radio" name="data[MWidgetSetting][operator_icon_type]" ng-model="operatorIconType" id="operatorIconType2" value="2" >個別に設定する</label><br>
                     <div ng-show="operatorIconType == 2" style="display: flex;">
                       <div>
-                        <div id="iconDivWrapper" style="height: 72px; width: 64px; margin-right: 10px">
-                          <div id="iconDiv" style="height: 55px; width: 55px; border: 1px solid #000000; border-radius: 100%">
-                            <img ng-if="isPictureImage(operator_icon)" ng-src="{{operator_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" width="62" height="70" alt="チャットに設定している画像">
-                            <i ng-if="isIconImage(operator_icon)" class="fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(main_image)"></i>
+                        <div id="iconDivWrapper">
+                          <div id="iconDiv" ng-class="{no_border :!checkWhiteColor() && isIconImage(operator_icon), icon_border: checkWhiteColor() && isIconImage(operator_icon),border: !isIconImage(operator_icon)}">
+                            <img ng-if="isPictureImage(operator_icon)" ng-src="{{operator_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="有人対応アイコンに設定している画像">
+                            <i ng-if="isIconImage(operator_icon)" class="fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(operator_icon)"></i>
                           </div>
                         </div>
                       </div>
                       <div id="iconChooseDiv">
                         <div class="greenBtn btn-shadow" ng-click="showGallary(<?=WIDGET_GALLERY_TYPE_OPERATOR ?>)">ギャラリーから選択</div>
-                        <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage', array('accept' => '.png,.jpeg,.jpg')); ?>画像をアップロード</div>
-                        <input type="hidden" name="data[Trimming][info]" ng-model="trimmingInfo" id="TrimmingInfo" />
+                        <div class="greenBtn btn-shadow" id="fileTagWrap">画像をアップロード</div>
                       </div>
                     </div>
                     <label class="pointer" for="operatorIconType3"><input type="radio" name="data[MWidgetSetting][operator_icon_type]" ng-model="operatorIconType" id="operatorIconType3" value="3" >オペレーター毎に個別のアイコンを利用する</label><br>
                   </div>
                   <?php if ($this->Form->isFieldError('operator_icon')) echo $this->Form->error('operator_icon', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
-                  <?php if ($this->Form->isFieldError('uploadImage')) echo $this->Form->error('uploadImage', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
-                  <span ng-if="uploadImageError">{{uploadImageError}}</span>
                   <label class="pointer" for="showOperatorIcon2"><input type="radio" name="data[MWidgetSetting][show_operator_icon]" ng-model="operatorIconToggle" id="showOperatorIcon2" value="2" >アイコンを表示しない</label>
                 </div>
               </div>

@@ -5582,6 +5582,37 @@ ul.naviBtn {
         height: 72px;
         width: 64px;
         margin-right: 10px;
+        #iconDiv {
+          height: 55px;
+          width: 55px;
+          border-radius: 100%;
+          &.no_border{
+            border: none;
+          }
+          &.border{
+            border: 1px solid #CCCCCC;
+          }
+          img{
+            height: 53px;
+            width: 53px;
+            border-radius: 100%;
+          }
+          i.fi_icon{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 53px;
+            height: 53px;
+            border-radius: 100%;
+            font-size: 35px;
+            &.fa-comments-alt {
+              padding-top: 4px;
+            }
+            &.fa-comment-alt-lines {
+              padding-top: 6px;
+            }
+          }
+        }
       }
 
       div#iconChooseDiv {

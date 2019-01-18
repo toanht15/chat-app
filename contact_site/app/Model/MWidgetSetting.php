@@ -33,7 +33,7 @@ class MWidgetSetting extends AppModel {
       'widget_title_name_type' => "widget_title_name_type",
       'widget_title_explain_type' => "widget_title_explain_type",
 
-      /* カラー設定styat */
+      /* カラー設定start */
       //0.通常設定・高度設定
       'color_setting_type' => "colorSettingType",
       //1.メインカラー
@@ -100,9 +100,11 @@ class MWidgetSetting extends AppModel {
       'main_image' => "mainImage",
 
       'show_chatbot_icon' => "showChatbotIcon",
+      'chatbot_icon_type' => "chatBotIconType",
       'chatbot_icon' => "chatbotIcon",
 
       'show_operator_icon' => "showOperatorIcon",
+      "operator_icon_type" => "operatorIconType",
       'operator_icon' => "operatorIcon",
 
       'radius_ratio' => "radiusRatio",

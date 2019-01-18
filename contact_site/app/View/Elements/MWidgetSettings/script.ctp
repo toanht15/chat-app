@@ -21,6 +21,8 @@ sincloApp.directive('stringToNumber', function() {
 sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     var coreSettingsChat = "<?= $coreSettings[C_COMPANY_USE_CHAT]?>";
     $scope.main_image = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'main_image')?>";
+    $scope.chatbot_icon = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'chatbot_icon')?>";
+    $scope.operator_icon = "<?=$this->formEx->val($this->data['MWidgetSetting'], 'operator_icon')?>";
 
     $scope.showWidgetType = 1; // デフォルト表示するウィジェット
     $scope.openFlg = true;
@@ -33,11 +35,9 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     $scope.beforeSpbPosition = 0;
 
-    $scope.changeCustomWidgetSize = function(){
-      console.log($scope.widget_custom_width);
-      console.log($scope.widget_custom_height);
+    $scope.denkanoHowto = function(){
+      $scope.chatbot_icon = $scope.main_image;
     };
-
 
     $scope.hideWidget = function(){
       $scope.resetSpView();
@@ -192,7 +192,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       else{
         $("#closeButtonMode").hide();
       }
-      return;
     };
 
     //小さなバナーの横幅を求める関数
@@ -751,7 +750,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         element.style.color = $scope.checkTxtColor(rgb['r'],rgb['g'],rgb['b']);
       }
       jscolor.installByClassName("jscolor");
-    }
+    };
 
     $scope.$watch('chat_trigger', function(){
       if ( Number($scope.chat_trigger) === 1 ) {
@@ -768,28 +767,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       var defColor = "#F1F5C8";
       //仕様変更、常に高度な設定が当たっている状態とする
       defColor = $scope.re_background_color;
-//       if($scope.color_setting_type === '1'){
-//         defColor = $scope.re_background_color;
-//       }
-//       else{
-//         if ( $scope.main_color.indexOf("#") >= 0 ) {
-//           var code = $scope.main_color.substr(1), r,g,b;
-//           if (code.length === 3) {
-//             r = String(code.substr(0,1)) + String(code.substr(0,1));
-//             g = String(code.substr(1,1)) + String(code.substr(1,1));
-//             b = String(code.substr(2)) + String(code.substr(2));
-//           }
-//           else {
-//             r = String(code.substr(0,2));
-//             g = String(code.substr(2,2));
-//             b = String(code.substr(4));
-//           }
-//           var balloonR = String(Math.floor(255 - (255 - parseInt(r,16)) * 0.1));
-//           var balloonG = String(Math.floor(255 - (255 - parseInt(g,16)) * 0.1));
-//           var balloonB = String(Math.floor(255 - (255 - parseInt(b,16)) * 0.1));
-//           defColor = 'rgb(' + balloonR  + ', ' +  balloonG  + ', ' +  balloonB + ')';
-//         }
-//       }
       return defColor;
     };
 
@@ -802,29 +779,15 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       else{
         defColor = $scope.se_border_color;
       }
-//       if($scope.color_setting_type === '1'){
-//         if(chk === 're'){
-//           defColor = $scope.re_border_color;
-//         }
-//         else{
-//           defColor = $scope.se_border_color;
-//         }
-//       }
-//       else{
-//         defColor = $scope.chat_talk_border_color;
-//       }
       return defColor;
-    }
+    };
 
     $scope.getSeBackgroundColor = function(){
       var defColor = "#FFFFFF";
       //仕様変更、常に高度な設定が当たっている状態とする
       defColor = $scope.se_background_color;
-//       if($scope.color_setting_type === '1'){
-//         defColor = $scope.se_background_color;
-//       }
       return defColor;
-    }
+    };
 
   $scope.makeBalloonTriangleColor = function(){
     var defColor = "#F1F5C8";
@@ -848,12 +811,18 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return defColor;
   };
 
-  $scope.isIconImage = function(main_image) {
-    return main_image.match(/^fa/) !== null;
+  $scope.isIconImage = function(image) {
+    if( typeof(image) === "undefined" ) return false;
+    return image.match(/^fa/) !== null;
   };
 
-  $scope.isPictureImage = function(main_image) {
-    return main_image.match(/^http|data/) !== null;
+  $scope.isPictureImage = function(image) {
+    if( typeof(image) === "undefined" ) return false;
+    return image.match(/^http|data|\/\/node/) !== null;
+  };
+
+  $scope.checkWhiteColor = function() {
+    return String($scope.main_color) === "#FFFFFF";
   };
 
   $scope.inputInitToggle = function(item){
@@ -1094,23 +1063,39 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     }
 
     $scope.showGallary = function(galleryType){
-      console.warn(galleryType);
       $.ajax({
         type: 'post',
         data: {
           color: $scope.main_color,
           string_color: $scope.string_color,
+          iconType: galleryType
         },
         cache: false,
         dataType: 'html',
         url: "<?= $this->Html->url('/MWidgetSettings/remoteShowGallary') ?>",
         success: function(html){
           modalOpen.call(window, html, 'p-show-gallary', 'ギャラリー', 'moveup');
-          popupEvent.customizeBtn = function(name){
+          popupEvent.customizeBtn = function(name, galleryType){
+            console.log(galleryType);
+            var src;
             if(name.match(/^fa/)) {
-              $scope.main_image = name;
+              src = name;
             } else {
-              $scope.main_image = "<?=$gallaryPath?>" + name;
+              src = "<?=$gallaryPath?>" + name;
+            }
+
+            switch( Number( galleryType ) ) {
+              case 1:
+                $scope.main_image = src;
+                break;
+              case 2:
+                $scope.chatbot_icon = src;
+                break;
+              case 3:
+                $scope.operator_icon = src;
+                break;
+              default:
+                $scope.main_image = src;
             }
 
             $("#MWidgetSettingUploadImage").val("");
@@ -1297,17 +1282,17 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           break;
       }
       $scope[target] = size;
-    }
+    };
 
     $scope.showNormalMaximized = function(){
       $scope.switchWidget(1);
       $scope.openFlg = true;
-    }
+    };
 
     //最小化表示する
     $scope.showNormalMinimized = function(){
       $scope.openFlg = false;
-    }
+    };
 
     //最小化時のデザインがクリックされた時の動作
     $scope.clickMinimizedDesignToggle = function(tag){
@@ -1324,12 +1309,12 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $timeout(function(){
         $scope.openFlg = false;
       },0);
-    }
+    };
 
     $scope.settingShowTimeRadioButtonEnable = function(jq) {
       jq.prop('disabled',false).parent().css('color','');
       jq.next().css('color','');
-    }
+    };
 
     $scope.settingShowTimeRadioButtonDisable = function(jq) {
       // 選択されていたら「常に最大化しない」設定にする
@@ -1666,8 +1651,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           beforeTrimmingInit(url, $('#trim'));
           trimmingInit($scope, null, 62 / 70);
         });
-          // $scope.main_image = url;
-          // $scope.$apply();
       }
     });
 
@@ -2010,15 +1993,17 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $scope.changeFlg = false;
         $('#widgetShowTab').val($scope.widget.showTab);
         $('#MWidgetSettingMainImage').val($scope.main_image);
+        $('#MWidgetSettingChatbotIcon').val($scope.chatbot_icon);
+        $('#MWidgetSettingOperatorIcon').val($scope.operator_icon);
         $('#TrimmingInfo').val($scope.trimmingInfo);
         $('#MWidgetSettingIndexForm').submit();
-    }
+    };
 
     $scope.reloadAct = function (){
       // 元に戻すボタンが押されたらconfirmを出さない
       $scope.changeFlg = false;
       window.location.reload();
-    }
+    };
 
     //param : String型 ng-classで付けたい情報を渡す
     //TODO 受け取った情報をカンマで分割してfor文を回したほうがいい

@@ -411,6 +411,19 @@ define('WIDGET_GALLERY_TYPE_MAIN', 1);    //メイン画像のギャラリー
 define('WIDGET_GALLERY_TYPE_CHATBOT', 2); //チャットボットアイコンのギャラリー
 define('WIDGET_GALLERY_TYPE_OPERATOR', 3);//オペレーターアイコンのギャラリー
 
+//無人アイコン有効無効
+define('C_CHATBOT_ICON_SETTING_ON', 1);
+define('C_CHATBOT_ICON_SETTING_OFF', 2);
+
+//有人アイコン有効無効
+define('C_OPERATOR_ICON_SETTING_ON', 1);
+define('C_OPERATOR_ICON_SETTING_OFF', 2);
+
+//アイコン設定
+define('ICON_USE_MAIN_IMAGE', 1);
+define('ICON_USE_ORIGINAL_IMAGE', 2);
+define('ICON_USE_OPERATOR_IMAGE', 3);
+
 
 //タイトル位置
 define('WIDGET_TITLE_TOP_TYPE_LEFT', 1); //タイトル左寄せ
