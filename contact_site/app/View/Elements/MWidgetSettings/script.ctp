@@ -829,6 +829,14 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return (item) ? 1 : 2;
   };
 
+  $scope.iconBorderSetting = function(isMainColorWhite) {
+    if( isMainColorWhite ) {
+      return {
+        'border': "1px solid" + $scope.string_color
+      };
+    }
+  };
+
   $scope.getIconColor = function(main_image) {
     var isInvert = main_image.match(/invert$/) !== null;
     if(isInvert) {

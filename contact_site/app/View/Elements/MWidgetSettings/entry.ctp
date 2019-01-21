@@ -1062,7 +1062,7 @@ $headerNo = 1;
                     <label class="pointer" for="chatbotIconType2"><input type="radio" name="data[MWidgetSetting][chatbot_icon_type]" ng-model="chatbotIconType" id="chatbotIconType2" value="2" >個別に設定する</label><br>
                     <div ng-show="chatbotIconType == 2" style="display: flex;" >
                       <div id="iconDivWrapper">
-                        <div id="iconDiv" ng-class="{no_border :!checkWhiteColor() && isIconImage(chatbot_icon), icon_border: checkWhiteColor() && isIconImage(chatbot_icon),border: !isIconImage(chatbot_icon)}">
+                        <div id="iconDiv" ng-class="{no_border :!checkWhiteColor() && isIconImage(chatbot_icon) ,border: !isIconImage(chatbot_icon)}" ng-style="iconBorderSetting(checkWhiteColor() && isIconImage(chatbot_icon))">
                           <img ng-if="isPictureImage(chatbot_icon)" ng-src="{{chatbot_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="無人対応アイコンに設定している画像">
                           <i ng-if="isIconImage(chatbot_icon)" class="fal {{chatbot_icon}}" alt="チャット画像" ng-style="getIconColor(chatbot_icon)"></i>
                         </div>
@@ -1089,7 +1089,7 @@ $headerNo = 1;
                     <div ng-show="operatorIconType == 2" style="display: flex;">
                       <div>
                         <div id="iconDivWrapper">
-                          <div id="iconDiv" ng-class="{no_border :!checkWhiteColor() && isIconImage(operator_icon), icon_border: checkWhiteColor() && isIconImage(operator_icon),border: !isIconImage(operator_icon)}">
+                          <div id="iconDiv" ng-class="{no_border :!checkWhiteColor() && isIconImage(operator_icon), border: !isIconImage(operator_icon)}" ng-style="iconBorderSetting(checkWhiteColor() && isIconImage(chatbot_icon))">
                             <img ng-if="isPictureImage(operator_icon)" ng-src="{{operator_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="有人対応アイコンに設定している画像">
                             <i ng-if="isIconImage(operator_icon)" class="fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(operator_icon)"></i>
                           </div>
