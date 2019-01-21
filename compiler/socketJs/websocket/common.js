@@ -4021,7 +4021,7 @@ var socket, // socket.io
         $('#chatTab').css('width', '100%');
       },
       _handleResizeEvent: function() {
-        if(screen.width >= window.innerWidth){
+        if(window.devicePixelRatio >= 1){
           $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').removeClass('radio-zoom');
         } else {
           $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').addClass('radio-zoom');
@@ -6493,6 +6493,11 @@ var socket, // socket.io
       window.focus();
       sinclo.resUrlChecker(d);
     }); // socket-on: receiveOtherTabURL
+
+    // シナリオ別タブ同期
+    socket.on('syncScenarioDataResult', function(d) {
+      sinclo.scenarioApi.syncScenarioData.checkDetail(d);
+    });
 
     // チャット対応開始結果
     socket.on('chatStartResult', function(d) {

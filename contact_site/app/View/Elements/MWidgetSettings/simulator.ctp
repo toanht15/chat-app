@@ -116,6 +116,10 @@
     #sincloBox.largeSize{
       width: 400px;
     }
+    #sincloBox.customSize{
+      width: {{widget_custom_width}}px;
+    }
+
     /* タブアイコンフォント化対応start */
     @font-face {
       font-family: 'SincloFont';

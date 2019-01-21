@@ -205,7 +205,7 @@ define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
-define('C_AUTO_ACTION_TYPE_SELECTSCENARIO', 2);  // シナリオを選択する
+define('C_AUTO_ACTION_TYPE_SELECTSCENARIO', 2);  // シナリオを呼び出す
 
 // オートメッセージ機能－ウィジェット種別コード
 define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
@@ -343,11 +343,15 @@ define('C_WIDGET_SIZE_TYPE_MEDIUM', 2); // 中
 define('C_WIDGET_SIZE_TYPE_LARGE', 3); // 大
 define('C_WIDGET_SIZE_TYPE_MAXIMUM', 4); //最大
 
+//ウィジェットカスタムサイズデフォルト値
+define('C_WIDGET_CUSTOM_WIDTH', 343);
+define('C_WIDGET_CUSTOM_HEIGHT', 284);
+
 // ファイル送信設定タイプ
 define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);
 define('C_FILE_TRANSFER_SETTING_TYPE_EXTEND', 2);
 
-/* カラー設定初期値styat */
+/* カラー設定初期値start */
 //0.通常設定・高度設定
 define('COLOR_SETTING_TYPE_OFF', 0);
 define('COLOR_SETTING_TYPE_ON', 1);
@@ -401,6 +405,24 @@ define('CHAT_SEND_BTN_BACKGROUND_COLOR', "#ABCD05");
 //26.ウィジット内枠線色
 define('WIDGET_INSIDE_BORDER_COLOR', "#E8E7E0");
 /* カラー設定初期値end */
+
+//ギャラリータイプ
+define('WIDGET_GALLERY_TYPE_MAIN', 1);    //メイン画像のギャラリー
+define('WIDGET_GALLERY_TYPE_CHATBOT', 2); //チャットボットアイコンのギャラリー
+define('WIDGET_GALLERY_TYPE_OPERATOR', 3);//オペレーターアイコンのギャラリー
+
+//無人アイコン有効無効
+define('C_CHATBOT_ICON_SETTING_ON', 1);
+define('C_CHATBOT_ICON_SETTING_OFF', 2);
+
+//有人アイコン有効無効
+define('C_OPERATOR_ICON_SETTING_ON', 1);
+define('C_OPERATOR_ICON_SETTING_OFF', 2);
+
+//アイコン設定
+define('ICON_USE_MAIN_IMAGE', 1);
+define('ICON_USE_ORIGINAL_IMAGE', 2);
+define('ICON_USE_OPERATOR_IMAGE', 3);
 
 
 //タイトル位置
@@ -747,7 +769,7 @@ $config['outMessageTriggerList'] = [
 /* オートメッセージ － アクション種別 */
 $config['outMessageActionType'] = [
     C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
-    C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを選択する"
+    C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す"
 ];
 
 /* オートメッセージ － ウィジェット種別 */
