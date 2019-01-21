@@ -73,7 +73,7 @@
         </th>
 <!-- UI/UX統合対応end -->
         <th width=" 5%">No</th>
-        <th width=" 15%">氏名</th>
+        <th width=" 5%">アイコン</th>
         <th width=" 20%">表示名</th>
         <th width=" 10%">権限</th>
         <th>メールアドレス</th>
@@ -97,7 +97,7 @@
           </td>
 <!-- UI/UX統合対応end -->
           <td class="tCenter"><?=$no?></td>
-          <td class="tCenter"><?=$val['MUser']['user_name']?></td>
+          <td class="tCenter" style="display: flex; align-items:center; justify-content: center;"><i class="fa-user fal" style="width: 45px; height: 45px; display: flex; justify-content: center; align-items: center;background-color: #ABCD05; border-radius: 50%; color: white; font-size: 30px;" ></i></td>
           <td class="tCenter"><?=$val['MUser']['display_name']?></td>
           <td class="tCenter"><?=$authorityList[$val['MUser']['permission_level']]?></td>
           <td class="tCenter"><?=$val['MUser']['mail_address']?></td>
