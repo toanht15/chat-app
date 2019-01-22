@@ -230,7 +230,7 @@ $headerNo = 1;
                   </span>
                 </div>
               </div>
-              <s style="display: inline-block; margin-top: 5px;">※指定したウィジェットの縦幅よりもウィンドウサイズの縦幅が小さい場合、<br>
+              <s style="display: inline-block; margin-top: 5px; padding-left: 16px; text-indent: -1em;">※指定したウィジェットの縦幅よりもウィンドウサイズの縦幅が小さい場合、<br>
                 ウィジェットの縦幅は自動的に縮小されます（レスポンシブ対応）</s>
             </div>
           </li>

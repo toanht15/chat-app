@@ -1199,6 +1199,7 @@
               }
               &:hover:after {
                 display: flex;
+                cursor: pointer;
                 justify-content: center;
                 align-items: center;
                 content: "変更";
@@ -1266,6 +1267,7 @@
                   display: flex;
                   justify-content: center;
                   align-items: center;
+                  cursor: pointer;
                   content: "変更";
                   height: 53px;
                   width: 53px;

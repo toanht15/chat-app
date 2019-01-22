@@ -150,23 +150,13 @@
     #sincloBox div#descriptionSet { cursor: pointer; }
     #sincloBox p#widgetTitle { position:relative; z-index: 1; cursor:pointer; border-radius: {{radius_ratio}}px {{radius_ratio}}px 0 0; border: 1px solid {{main_color}}; border-bottom:none; background-color: {{main_color}};text-align: center; font-size: {{header_text_size}}px; padding: 8px 0px 8px 70px; margin: 0; color: {{string_color}}; height: auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size}}px; line-height: {{header_text_size}}px; }
     #sincloBox p#widgetTitle.sp { font-size: 14px; line-height: 15px;}
-    /*#sincloBox p#widgetTitle.spText{ text-indent: 1em; }*/
     #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
     #sincloBox div.widgetHeaderWrap:not(.sp):hover { opacity: 0.75; }
     #sincloBox div.widgetHeaderWrap #titleWrap { position: relative; }
     #sincloBox p#widgetSubTitle.leftPosition { text-align: left; padding-left: calc(2.5em + 46px) }
     #sincloBox p#widgetDescription.centerPosition { text-align: center; padding-left: calc(2.5em + 38px); padding-right: 26px;}
-    /*
-          #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-      #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
-*/
     #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50% - 9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
     #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
-    /*
-          #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
-      #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
-      #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
-*/
     #sincloBox p#widgetSubTitle { background-color: {{header_background_color}}; margin: 0; padding: 3px 0; text-align: left; border-width: 0 1px 0 1px; border-color: {{widget_border_color}}; border-style: solid; padding-left: 74px; font-weight: bold; color: {{main_color}}; height: auto; line-height: calc(1em + 9px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: {{header_text_size-2}}px; }
     #sincloBox p#widgetSubTitle.sp { font-size: 12px; padding-top: 5px; padding-bottom: 4px;}
     #sincloBox p#widgetSubTitle:not(.notNoneWidgetOutsideBorder) { border:none; }
@@ -189,13 +179,23 @@
     #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 0px 5px 30.8px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
     #sincloBox ul#chatTalk.middleSize { height: 284px; padding: 0px 5px 45.6px 5px;}
     #sincloBox ul#chatTalk.largeSize { height: 374px; padding: 0px 5px 60px 5px;}
-    #sincloBox ul#chatTalk.customSize { height: {{ widget_custom_height }}px; padding: 0px 5px 60px 5px;}
+    #sincloBox ul#chatTalk.customSize { height: {{ widget_custom_height }}px; max-height: 590px; padding: 0px 5px 60px 5px;}
     #sincloBox ul#chatTalk.details { background-color: {{chat_talk_background_color}}; }
-    #sincloBox ul#chatTalk > div.with_icon { display:grid; grid-template-columns: 45px 1fr; }
-    #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal {display: flex; justify-content: center; align-items: center; height: 40px; width: 40px; border-radius: 100%; font-size: 26px;}
+    #sincloBox ul#chatTalk > div.with_icon { display: grid; grid-template-columns: 30px 1fr; }
+    #sincloBox ul#chatTalk > div.with_icon.middleSize { grid-template-columns: 37px 1fr; }
+    #sincloBox ul#chatTalk > div.with_icon.largeSize { grid-template-columns: 45px 1fr; }
+    #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal {display: flex; justify-content: center; align-items: center; border-radius: 50%}
+    #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.smallSize { height: 30px; width: 30px; font-size: 20px; }
+    #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.middleSize { height: 35px; width: 35px; font-size: 23px; }
+    #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.largeSize { height: 40px; width: 40px; font-size: 26px; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.icon_border {border: 1px solid {{string_color}}}
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.fa-comment-alt-lines { padding-top: 2px; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.fa-comments-alt { padding-top: 2px; }
+    #sincloBox ul#chatTalk > div.with_icon img { border-radius: 50% }
+    #sincloBox ul#chatTalk > div.with_icon img.smallSize { height: 30px; width: 30px; }
+    #sincloBox ul#chatTalk > div.with_icon img.middleSize { height: 35px; width: 35px; }
+    #sincloBox ul#chatTalk > div.with_icon img.largeSize { height: 40px; width: 40px; }
+    #sincloBox ul#chatTalk > div.with_icon img.customSize { height: calc(30 + ({{widget_custom_height}} - 194)/18); width: calc(30 + ({{widget_custom_height}} - 194)/18); }
     #sincloBox ul#chatTalk div.liLeft { text-align: left; }
     #sincloBox ul#chatTalk div.liBoxRight { text-align: right; }
     #sincloBox ul#chatTalk div.liRight { text-align: right; }
@@ -212,16 +212,12 @@
     #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: 100%; margin-top: -9px; border: 5px solid transparent; z-index: 1; }
     #sincloBox ul#chatTalk li.sinclo_se.balloonType.notNone:after { border-left: 5px solid {{getTalkBorderColor('se')}}; border-bottom: 5px solid {{getTalkBorderColor('se')}}; }
     /* 二等辺三角形バージョン */
-    /*#sincloBox ul#chatTalk li.sinclo_se.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 5px; left: calc(100% - 2.5px); margin-top: -10px; border: 10px solid transparent; border-left: 10px solid #FFF; z-index: 2; }*/
-    /*#sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }*/
     #sincloBox ul#chatTalk li.sinclo_re.notNone { border: 1px solid {{getTalkBorderColor('re')}}; }
     #sincloBox ul#chatTalk li.sinclo_re.balloonType { margin-left: 10px; padding-right: 15px; border-bottom-left-radius: 0px; }
     #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; z-index: 2; border: 5px solid transparent; border-right: 5px solid {{makeFaintColor()}}; border-bottom: 5px solid {{makeFaintColor()}}; }
     #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; z-index: 1; border: 5px solid transparent; }
     #sincloBox ul#chatTalk li.sinclo_re.balloonType.notNone:after { border-right: 5px solid {{getTalkBorderColor('re')}}; border-bottom: 5px solid {{getTalkBorderColor('re')}}; }
     /* 二等辺三角形バージョン */
-    /*#sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 5px; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid {{makeBalloonTriangleColor()}}; z-index: 2; }*/
-    /*#sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }*/
     #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; -moz-animation-fill-mode:both; -o-animation-fill-mode:both; -ms-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }
     #sincloBox ul#chatTalk li.boxType.chat_right { border-radius: 12px 12px 0 12px; margin-left: 37.5px; margin-right:10px; }
     #sincloBox ul#chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-right: 17.5px; margin-left:10px; }
@@ -229,6 +225,8 @@
     #sincloBox ul#chatTalk li.boxType.chat_left.middleSize { border-radius: 12px 12px 12px 0; margin-right: 21px; margin-left:10px; }
     #sincloBox ul#chatTalk li.boxType.chat_right.largeSize { border-radius: 12px 12px 0 12px; margin-left: 52.7px; margin-right:10px; }
     #sincloBox ul#chatTalk li.boxType.chat_left.largeSize { border-radius: 12px 12px 12px 0; margin-right: 24.6px; margin-left:10px; }
+    #sincloBox ul#chatTalk li.boxType.chat_left.with_icon { margin-left: 2px; }
+    #sincloBox ul#chatTalk li.boxType.chat_left.middleSize.with_icon { margin-left: 3px; }
     #sincloBox ul#chatTalk li.boxType.chat_left.largeSize.with_icon { margin-left: 5px; }
     #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 37.5px }
     #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 17.5px }
@@ -375,29 +373,29 @@
 
         <!-- chat_message_copy 0 start -->
         <ul id="chatTalk" class="details" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'),customSize: showWidgetType === 1 && widgetSizeTypeToggle === '5' ,disableCopy: chat_message_copy == '1'}">
-          <div style="height: auto!important; padding:0;" ng-class="{with_icon: chatbotIconToggle == 1}">
+          <div style="height: auto!important; padding:0;" ng-class="setGridDiv('bot')">
             <div ng-show="chatbotIconToggle == 1" style="height: 100%!important; padding:0px; display:flex; justify-content: flex-end; align-items: flex-end;">
-              <img ng-if="isPictureImage(chatbot_icon)" ng-src="{{chatbot_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" style="height: 40px; width: 40px; border-radius: 100%; border: 1px solid #DDDDDD;" alt="無人対応アイコンに設定している画像">
-              <i ng-if="isIconImage(chatbot_icon)" ng-class="{icon_border:checkWhiteColor() && isIconImage(chatbot_icon)}" class="sinclo-fal {{chatbot_icon}}" alt="チャット画像" ng-style="getIconColor(chatbot_icon)"></i>
+              <img ng-if="isPictureImage(chatbot_icon)" ng-class="setIconSettings('bot')" ng-src="{{chatbot_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="無人対応アイコンに設定している画像">
+              <i ng-if="isIconImage(chatbot_icon)" ng-class="setIconSettings('bot')"  class="sinclo-fal {{chatbot_icon}}" alt="チャット画像" ng-style="getIconColor(chatbot_icon)"></i>
             </div>
-            <li class="sinclo_re chat_left" style="justify-self:start" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'), with_icon: chatbotIconToggle == 1, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_automessage_name == 1" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'), sp:showWidgetType === 3}">{{sub_title}}</span><span class="details" ng-class="{sp:showWidgetType === 3}">これはオートメッセージです。<br>チャットで質問して下さい。</span></li>
+            <li class="sinclo_re chat_left" style="justify-self:start" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4' || widgetSizeTypeToggle === '5'), with_icon: chatbotIconToggle == 1, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="details" ng-class="{sp:showWidgetType === 3}">これはオートメッセージです。<br>チャットで質問して下さい。</span></li>
           </div>
            <div style="height: auto!important; padding:0;" ng-class="{liBoxRight: chat_message_design_type == 1, liRight: chat_message_design_type == 2}" >
             <li class="sinclo_se chat_right details" ng-class="{ notNone:se_border_none === '' || se_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'), boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}" ><span class="details" ng-class="{sp:showWidgetType === 3}">○○について質問したいのですが</span></li>
           </div>
           <li class="sinclo_etc" ng-if="show_name == 1" ng-class="{sp:showWidgetType === 3}">－ <?=$userInfo['display_name']?>が入室しました －</li>
           <li class="sinclo_etc" ng-if="show_name == 2" ng-class="{sp:showWidgetType === 3}">－ オペレーターが入室しました －</li>
-          <div style="height: auto!important; padding:0;" ng-class="{with_icon: operatorIconToggle == 1}">
+          <div style="height: auto!important; padding:0;" ng-class="setGridDiv('op')">
             <div ng-show="operatorIconToggle == 1" style="height: 100%!important; padding:0px; display:flex; justify-content: flex-end; align-items: flex-end;">
-              <img ng-if="isPictureImage(operator_icon)" ng-src="{{operator_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" style="height: 40px; width: 40px; border-radius: 100%; border: 1px solid #DDDDDD;" alt="有人対応アイコンに設定している画像">
-              <i ng-if="isIconImage(operator_icon)" ng-class="{icon_border:checkWhiteColor() && isIconImage(chatbot_icon)}" class="sinclo-fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(operator_icon)" style="display: flex; justify-content: center; align-items: center; height: 40px; width: 40px; border-radius: 100%; font-size: 26px"></i>
+              <img ng-if="isPictureImage(operator_icon)" ng-class="setIconSettings('op')" ng-src="{{operator_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="有人対応アイコンに設定している画像">
+              <i ng-if="isIconImage(operator_icon)" ng-class="setIconSettings('op')" class="sinclo-fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(operator_icon)"></i>
             </div>
             <li class="sinclo_re chat_left" style="justify-self:start" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'), with_icon: operatorIconToggle == 1, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_op_name == 1" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'),sp:showWidgetType === 3}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_op_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'), sp:showWidgetType === 3}">{{sub_title}}</span><span class="details" ng-class="{sp:showWidgetType === 3}">こんにちは</span></li>
           </div>
-          <div style="height: auto!important; padding:0;" ng-class="{with_icon: operatorIconToggle == 1}">
+          <div style="height: auto!important; padding:0;" ng-class="setGridDiv('op')">
             <div ng-show="operatorIconToggle == 1" style="height: 100%!important; padding:0px; display:flex; justify-content: flex-end; align-items: flex-end;">
-              <img ng-if="isPictureImage(operator_icon)" ng-src="{{operator_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" style="height: 40px; width: 40px; border-radius: 100%; border: 1px solid #DDDDDD;" alt="有人対応アイコンに設定している画像">
-              <i ng-if="isIconImage(operator_icon)" ng-class="{icon_border:checkWhiteColor() && isIconImage(chatbot_icon)}" class="sinclo-fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(operator_icon)"></i>
+              <img ng-if="isPictureImage(operator_icon)" ng-class="setIconSettings('op')" ng-src="{{operator_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="有人対応アイコンに設定している画像">
+              <i ng-if="isIconImage(operator_icon)" ng-class="setIconSettings('op')" class="sinclo-fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(operator_icon)"></i>
             </div>
             <li class="showAnimationSample sinclo_re chat_left" style="justify-self:start" ng-style="{backgroundColor:makeFaintColor()}" ng-class="{ notNone:re_border_none === '' || re_border_none === false, middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'), with_icon: operatorIconToggle == 1, boxType: chat_message_design_type == 1, balloonType: chat_message_design_type == 2}"><span class="cName details" ng-if="show_op_name == 1" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'),sp:showWidgetType === 3}"><?=$userInfo['display_name']?></span><span class="cName details" ng-if="show_op_name == 2" ng-class="{ middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'),sp:showWidgetType === 3}">{{sub_title}}</span><span class="details" ng-class="{sp:showWidgetType === 3}">○○についてですね<br>どのようなご質問でしょうか？</span></li>
           </div>

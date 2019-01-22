@@ -50,7 +50,7 @@ $codeAndDemoTitle = ( $adminFlg ) ? "コード設置・デモサイト" : "デ�
     <?php if(!empty($trialTime)) { ?>
       <li class="fLeft"><p style = "color: #c00000; font-weight:bold;margin-left: -265px !important;margin: 14px 0;"><?= 'トライアル期間終了まであと ' ?><span style = "color: #c00000; font-size: 19px;"><?= h($trialTime) ?></span> <?= ' 日です'?></p></li>
     <?php } ?>
-    <li class="fLeft" id = "menu-bar-right"><p style="display:flex; align-items: center; justify-content: space-between;"><i class="fa-user fal" style="font-size: 35px; color: #FFFFFF; margin-right: 10px;" ></i><?= h($userInfo['display_name'])  ?><span> &nbsp;さん</span><i class='fal fa-angle-down fa-2x'></i></p></li>
+    <li class="fLeft" id = "menu-bar-right"><p style="display:flex; align-items: center; justify-content: space-between;"><i class="fa-user fal" style="display: flex; justify-content: center; align-items: center; font-size: 24px; color: #FFFFFF; margin-right: 10px; width: 35px; height: 35px; border: 1px solid #FFFFFF; border-radius: 50%;" ></i><?= h($userInfo['display_name'])  ?><span> &nbsp;さん</span><i class='fal fa-angle-down fa-2x'></i></p></li>
   </ul>
 </div>
 <div id="colorBarMenu">
