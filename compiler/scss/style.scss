@@ -5562,22 +5562,30 @@ ul.naviBtn {
       }
       .form01 {
 
-        .settingList > li:not(.error-message) {
-          padding: 15px 0;
-          border-top: 1px solid #B7B7B7;
-          margin: 0;
 
-          pre { margin: 0 }
-
-          &:first-child {
-            border-top: none;
+        .settingList > li {
+          .icon_picker {
+            margin-left: 20px;
+            padding-bottom: 5px;
           }
+          &:not(.error-message) {
+            padding: 15px 0;
+            border-top: 1px solid #B7B7B7;
+            margin: 0;
 
-          .padding {
-            padding-top: 0.5em;
-            padding-bottom: 0.5em;
+            pre { margin: 0 }
+
+            &:first-child {
+              border-top: none;
+            }
+
+            .padding {
+              padding-top: 0.5em;
+              padding-bottom: 0.5em;
+            }
           }
         }
+
       }
 
       div#iconDivWrapper {

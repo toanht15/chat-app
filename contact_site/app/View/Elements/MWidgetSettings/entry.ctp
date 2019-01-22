@@ -1057,12 +1057,13 @@ $headerNo = 1;
                 <div style="margin-top: 10px" ng-init="chatbotIconToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_chatbot_icon'))?>'">
                   <?= $this->Form->hidden('chatbot_icon') ?>
                   <label class="pointer" for="showChatbotIcon1"><input type="radio" name="data[MWidgetSetting][show_chatbot_icon]" ng-model="chatbotIconToggle" id="showChatbotIcon1" value="1" >アイコンを表示する</label><br>
-                  <div ng-show="chatbotIconToggle == 1" style="margin-left: 20px; padding-top: 5px;" ng-init="chatbotIconType='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'chatbot_icon_type'))?>'">
-                    <label class="pointer" for="chatbotIconType1"><input type="radio" name="data[MWidgetSetting][chatbot_icon_type]" ng-model="chatbotIconType" id="chatbotIconType1" value="1" ng-change="denkanoHowto()">メイン画像と同じ画像を利用する</label><br>
+                  <div ng-show="chatbotIconToggle == 1" class="icon_picker" ng-init="chatbotIconType='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'chatbot_icon_type'))?>'">
+                    <label class="pointer" for="chatbotIconType1"><input type="radio" name="data[MWidgetSetting][chatbot_icon_type]" ng-model="chatbotIconType" id="chatbotIconType1" value="1">メイン画像と同じ画像を利用する</label><br>
                     <label class="pointer" for="chatbotIconType2"><input type="radio" name="data[MWidgetSetting][chatbot_icon_type]" ng-model="chatbotIconType" id="chatbotIconType2" value="2" >個別に設定する</label><br>
                     <div ng-show="chatbotIconType == 2" style="display: flex;" >
                       <div id="iconDivWrapper">
-                        <div id="iconDiv" ng-class="{no_border :!checkWhiteColor() && isIconImage(chatbot_icon) ,border: !isIconImage(chatbot_icon)}" ng-style="iconBorderSetting(checkWhiteColor() && isIconImage(chatbot_icon))">
+                        <div id="iconDiv" ng-style="iconBorderSetting(checkWhiteColor() && isIconImage(chatbot_icon))">
+                          <img ng-if="!isPictureImage(chatbot_icon) && !isIconImage(chatbot_icon)" ng-src="<?=C_PATH_WIDGET_GALLERY_IMG?>icon_sample_picture.png" alt="NO IMAGE">
                           <img ng-if="isPictureImage(chatbot_icon)" ng-src="{{chatbot_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="無人対応アイコンに設定している画像">
                           <i ng-if="isIconImage(chatbot_icon)" class="fal {{chatbot_icon}}" alt="チャット画像" ng-style="getIconColor(chatbot_icon)"></i>
                         </div>
@@ -1083,13 +1084,14 @@ $headerNo = 1;
                 <div style="margin-top: 10px" ng-init="operatorIconToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_operator_icon'))?>'">
                   <?= $this->Form->hidden('operator_icon') ?>
                   <label class="pointer" for="showOperatorIcon1"><input type="radio" name="data[MWidgetSetting][show_operator_icon]" ng-model="operatorIconToggle" id="showOperatorIcon1" value="1" >アイコンを表示する</label><br>
-                  <div ng-show="operatorIconToggle == 1" style="margin-left: 20px; padding-top: 5px;" ng-init="operatorIconType='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'operator_icon_type'))?>'">
+                  <div ng-show="operatorIconToggle == 1" class="icon_picker" ng-init="operatorIconType='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'operator_icon_type'))?>'">
                     <label class="pointer" for="operatorIconType1"><input type="radio" name="data[MWidgetSetting][operator_icon_type]" ng-model="operatorIconType" id="operatorIconType1" value="1" >メイン画像と同じ画像を利用する</label><br>
                     <label class="pointer" for="operatorIconType2"><input type="radio" name="data[MWidgetSetting][operator_icon_type]" ng-model="operatorIconType" id="operatorIconType2" value="2" >個別に設定する</label><br>
                     <div ng-show="operatorIconType == 2" style="display: flex;">
                       <div>
                         <div id="iconDivWrapper">
-                          <div id="iconDiv" ng-class="{no_border :!checkWhiteColor() && isIconImage(operator_icon), border: !isIconImage(operator_icon)}" ng-style="iconBorderSetting(checkWhiteColor() && isIconImage(chatbot_icon))">
+                          <div id="iconDiv" ng-style="iconBorderSetting(checkWhiteColor() && isIconImage(chatbot_icon))">
+                            <img ng-if="!isPictureImage(operator_icon) && !isIconImage(operator_icon)" ng-src="<?=C_PATH_WIDGET_GALLERY_IMG?>icon_sample_picture.png" alt="NO IMAGE">
                             <img ng-if="isPictureImage(operator_icon)" ng-src="{{operator_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="有人対応アイコンに設定している画像">
                             <i ng-if="isIconImage(operator_icon)" class="fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(operator_icon)"></i>
                           </div>
