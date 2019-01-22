@@ -2448,9 +2448,9 @@ io.sockets.on('connection', function(socket) {
     var arr = [keyLength];
     if (isset(customerList[siteKey])) {
       Object.keys(customerList[siteKey]).forEach(function(key) {
-        var splitedKey = key.split('/#');
+        var splitedKey = key.split('@@');
         if (splitedKey.length === 2 && isset(splitedKey[1])) {
-          var targetSocketId = '/#' + splitedKey[1];
+          var targetSocketId = splitedKey[1];
           if (!io.sockets.connected[targetSocketId] ||
               !isset(customerList[siteKey][key].sincloSessionId)) {
             var targetTabId = customerList[siteKey][key].tabId;
@@ -2461,7 +2461,6 @@ io.sockets.on('connection', function(socket) {
                   {siteKey: siteKey, tabId: targetTabId}, siteKey);
             }
             delete customerList[siteKey][key];
-
             if (totalCounter === keyLength - 1) {
               emit.toMine('receiveAccessInfo', arr, socket);
               arr = [keyLength];
@@ -2614,7 +2613,7 @@ io.sockets.on('connection', function(socket) {
       } else {
         emit.toCompany('sendCustomerInfo', obj, obj.siteKey);
       }
-      customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' +
+      customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '@@' +
       socket.id] = obj;
       if ((('contract' in obj) && ('chat' in obj.contract) &&
           obj.contract.chat === false) || functionManager.isEnabled(obj.siteKey,
