@@ -35,10 +35,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
     $scope.beforeSpbPosition = 0;
 
-    $scope.denkanoHowto = function(){
-      $scope.chatbot_icon = $scope.main_image;
-    };
-
     $scope.hideWidget = function(){
       $scope.resetSpView();
       $scope.switchWidget(4);
@@ -120,23 +116,26 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     $scope.setGridDiv = function( type ){
       var settings = {};
       var target;
+      var targetToggle;
       switch( type ) {
         case 'bot':
-          target = $scope.chatbotIconToggle;
+          targetToggle = $scope.chatbotIconToggle;
+          target = $scope.chatbot_icon;
           break;
         case 'op':
-          target = $scope.operatorIconToggle;
+          targetToggle = $scope.operatorIconToggle;
+          target = $scope.operator_icon;
       }
-      settings["with_icon"] = Number(target) === 1;
-      settings[$scope.checkWidgetSize()] = true;
-      return settings;
+      settings["with_icon"] = (Number( targetToggle ) === 1 && ( $scope.isPictureImage( target ) || $scope.isIconImage( target ) ));
+      settings = $scope.checkWidgetSize( settings );
+      return  settings;
     };
 
     $scope.setIconSettings = function( type ){
       var settings = {};
       var iconImage = $scope.checkIconImage( type );
       settings["icon_border"] = $scope.checkWhiteColor() && $scope.isIconImage(iconImage);
-      settings[$scope.checkWidgetSize()] = true;
+      settings = $scope.checkWidgetSize( settings );
       return settings;
     };
 
@@ -149,32 +148,30 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
     };
 
-    $scope.checkWidgetSize = function() {
-      if($scope.showWidgetType !== 1) return "dummy";
-      switch( Number($scope.widgetSizeTypeToggle) ){
-        case 1:
-          return "smallSize";
-        case 2:
-          return "middleSize";
-        case 3:
-        case 4:
-          return "largeSize";
-        case 5:
-          return $scope.checkCustomWidgetSize();
-        default:
-          return "dummy";
+    $scope.checkWidgetSize = function( settings ) {
+      if( settings == null ) {
+        settings = {}
       }
-    };
-
-    $scope.checkCustomWidgetSize = function() {
-      //ウィジェットサイズがカスタムの場合は、縦幅に合わせてreturn値を変える
-      if ( Number($scope.widget_custom_height) < 284 ) {
-        return "smallSize";
-      } else if ( Number($scope.widget_custom_height) < 374) {
-        return "middleSize";
-      } else {
-        return "largeSize";
+      var size = "dummy";
+      if($scope.showWidgetType === 1) {
+        switch (Number($scope.widgetSizeTypeToggle)) {
+          case 1:
+            size =  "smallSize";
+            break;
+          case 2:
+            size = "middleSize";
+            break;
+          case 3:
+          case 4:
+            size = "largeSize";
+            break;
+          case 5:
+            size = "customSize";
+            break;
+        }
       }
+      settings[size] = true;
+      return settings;
     };
 
     $scope.switchWidget = function(num){
