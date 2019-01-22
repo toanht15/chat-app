@@ -5596,6 +5596,8 @@ ul.naviBtn {
         width: 64px;
         margin-right: 10px;
         #iconDiv {
+          display: flex;
+          justify-content: center;
           height: 55px;
           width: 55px;
           border-radius: 100%;

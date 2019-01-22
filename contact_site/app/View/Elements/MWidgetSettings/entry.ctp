@@ -1065,7 +1065,7 @@ $headerNo = 1;
                         <div id="iconDiv" ng-style="iconBorderSetting(checkWhiteColor() && isIconImage(chatbot_icon))">
                           <img ng-if="!isPictureImage(chatbot_icon) && !isIconImage(chatbot_icon)" ng-src="<?=C_PATH_WIDGET_GALLERY_IMG?>icon_sample_picture.png" alt="NO IMAGE">
                           <img ng-if="isPictureImage(chatbot_icon)" ng-src="{{chatbot_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="無人対応アイコンに設定している画像">
-                          <i ng-if="isIconImage(chatbot_icon)" class="fal {{chatbot_icon}}" alt="チャット画像" ng-style="getIconColor(chatbot_icon)"></i>
+                          <i ng-if="isIconImage(chatbot_icon)" class="fal {{chatbot_icon}}" alt="チャット画像" ng-style="getIconColor(chatbot_icon)" style="margin-left: 1px;" ></i>
                         </div>
                       </div>
                       <div id="iconChooseDiv">
@@ -1093,7 +1093,7 @@ $headerNo = 1;
                           <div id="iconDiv" ng-style="iconBorderSetting(checkWhiteColor() && isIconImage(chatbot_icon))">
                             <img ng-if="!isPictureImage(operator_icon) && !isIconImage(operator_icon)" ng-src="<?=C_PATH_WIDGET_GALLERY_IMG?>icon_sample_picture.png" alt="NO IMAGE">
                             <img ng-if="isPictureImage(operator_icon)" ng-src="{{operator_icon}}" err-src="<?=C_PATH_WIDGET_GALLERY_IMG?>chat_sample_picture.png" ng-style="{'background-color': main_color}" alt="有人対応アイコンに設定している画像">
-                            <i ng-if="isIconImage(operator_icon)" class="fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(operator_icon)"></i>
+                            <i ng-if="isIconImage(operator_icon)" class="fal {{operator_icon}}" alt="チャット画像" ng-style="getIconColor(operator_icon)" style="margin-left: 1px;" ></i>
                           </div>
                         </div>
                       </div>
