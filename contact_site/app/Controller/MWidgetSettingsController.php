@@ -347,6 +347,37 @@ class MWidgetSettingsController extends AppController {
       $this->request->data['MWidgetSetting']['main_image'] = "";
     }
 
+    $uploadBotIcon = $inputData['MWidgetSetting']['uploadBotIcon'];
+
+    /*$prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
+    if ( is_numeric($inputData['MWidgetSetting']['show_main_image']) === 1 && count($prevFileInfo) > 0 ) {
+      $filename = $prevFileInfo[count($prevFileInfo) - 1];
+    }*/
+
+    if ( !(isset($uploadBotIcon['tmp_name']) && is_uploaded_file($uploadBotIcon['tmp_name'])) ) {
+      $inputData['MWidgetSetting']['uploadBotIcon'] = [];
+      $uploadBotIcon = null;
+    }
+    else {
+      $this->request->data['MWidgetSetting']['chatbot_icon'] = "";
+    }
+
+    $uploadOpIcon = $inputData['MWidgetSetting']['uploadOpIcon'];
+
+    /*$prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
+    if ( is_numeric($inputData['MWidgetSetting']['show_main_image']) === 1 && count($prevFileInfo) > 0 ) {
+      $filename = $prevFileInfo[count($prevFileInfo) - 1];
+    }*/
+
+    if ( !(isset($uploadOpIcon['tmp_name']) && is_uploaded_file($uploadOpIcon['tmp_name'])) ) {
+      $inputData['MWidgetSetting']['uploadOpIcon'] = [];
+      $uploadOpIcon = null;
+    }
+    else {
+      $this->request->data['MWidgetSetting']['operator_icon'] = "";
+    }
+
+
     //仕様変更常に高度な設定の設定値が反映されるようにする
     $inputData['MWidgetSetting']['color_setting_type'] = "1";
 

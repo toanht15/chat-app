@@ -20,6 +20,10 @@
         var password = document.getElementById('MUserNewPassword').value;
         var permissionLevel = document.getElementById('MUserPermissionLevel').value;
         var accessToken = "<?=$token?>";
+        // 氏名が無い場合は、表示名を氏名に代入する（氏名は表示以外どこにも使われていない為）
+        if( !userName ) {
+          userName = displayName;
+        }
         $.ajax({
             type: "post",
             url: "<?=$this->Html->url('/MUsers/remoteSaveEntryForm')?>",

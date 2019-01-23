@@ -5640,6 +5640,8 @@ ul.naviBtn {
           border-radius: 5px;
           text-decoration: none;
           margin: 3.5px 0;
+          position: relative;
+          overflow: hidden;
         }
         input[type='file'] {
           cursor: pointer!important;
@@ -8538,18 +8540,48 @@ ul.naviBtn {
 
         /* チャットボットシナリオ設定(追加・更新): プレビュー */
         #tchatbotscenario_form_preview{
-          flex-basis: 285px;
-          min-width: 285px;
-          height: 100%;
+
+          &.smallSize {
+            flex-basis: 285px;
+            min-width: 285px;
+            height: 100%;
+            .grid_preview {
+              display: grid;
+              grid-template-columns: 40px 1fr;
+              .iconDiv {
+                display: flex;
+                justify-content: flex-end;
+                align-items: flex-end;
+              }
+              img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+              }
+            }
+          }
 
           &.middleSize {
             flex-basis: 342.5px;
             min-width: 342.5px;
+            .grid_preview {
+              display: grid;
+              grid-template-columns: 40px 1fr;
+              .iconDiv {
+                display: flex;
+                justify-content: flex-end;
+                align-items: flex-end;
+              }
+            }
           }
 
           &.largeSize {
             flex-basis: 400px;
             min-width: 400px;
+            .grid_preview {
+              display: grid;
+              grid-template-columns: 40px 1fr;
+            }
           }
 
           .smallSizeImg {

@@ -11,15 +11,17 @@
   var trimmingInfoTag = null;
   var croppedData = {};
   var ngScope = null;
+  var targetImageName = null;
 
   function beforeTrimmingInit(img, viewTag) {
     targetImgTag.attr('src', img);
     viewImgTag = viewTag;
   }
 
-  function trimmingInit($scope, trimInfoTag, aspectRatio) {
+  function trimmingInit($scope, trimInfoTag, aspectRatio, target) {
     ngScope = $scope;
     trimmingInfoTag = trimInfoTag;
+    targetImageName = target;
     $image = $('.cropper-example-1 > img');
     targetImgTag.cropper({
       aspectRatio: aspectRatio // ここでアスペクト比の調整 ワイド画面にしたい場合は 16 / 9
@@ -42,9 +44,22 @@
     var imgDataUrl = targetImgTag.cropper('getCroppedCanvas').toDataURL();
     viewImgTag.attr('src', imgDataUrl);
     if(ngScope) {
-      ngScope.main_image = imgDataUrl;
-      console.log(trimmingData);
-      ngScope.trimmingInfo = JSON.stringify(trimmingData);
+      if(targetImageName) {
+        switch(targetImageName) {
+          case "main_image":
+            ngScope.main_image = imgDataUrl;
+            ngScope.trimmingInfo = JSON.stringify(trimmingData);
+            break;
+          case "chatbot_icon":
+            ngScope.chatbot_icon = imgDataUrl;
+            ngScope.trimmingBotIconInfo = JSON.stringify(trimmingData);
+            break;
+          case "operator_icon":
+            ngScope.operator_icon = imgDataUrl;
+            ngScope.trimmingOpIconInfo = JSON.stringify(trimmingData);
+            break;
+        }
+      }
       ngScope.$apply();
     }
     if(trimmingInfoTag) {

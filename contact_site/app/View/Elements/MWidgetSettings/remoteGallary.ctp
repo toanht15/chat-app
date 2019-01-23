@@ -26,9 +26,9 @@ $imagePath = $galleryPath.$imagePrefix;
 var imageList = document.querySelectorAll('#gallaryImage li');
 var clickEvnt = function(){
     popupEvent.customizeBtn(this.getAttribute("data-name"), this.getAttribute("data-galleryType"));
-    popupEvent.moveType = "moment"
+    popupEvent.moveType = "moment";
     popupEvent.close();
-}
+};
 for(var i = 0; imageList.length > i; i++) {
   imageList[i].addEventListener("click", clickEvnt);
 }

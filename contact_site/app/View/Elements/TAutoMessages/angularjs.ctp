@@ -195,14 +195,65 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       $scope.action = sendMessage.value;
       // シミュレーター上のメッセージ表示更新
       $scope.createMessage();
-    }
+    };
+
+    $scope.createBalloonWithChatbotIcon = function (){
+      if ($scope.isIconImage( SimulatorService.chatbotIconPath ) ){
+        //フォントアイコンだった場合
+        $scope.createIconWithFontIcon();
+      } else {
+        //画像だった場合
+        $scope.createIconWithPicture();
+      }
+
+    };
+
+    $scope.createIconWithFontIcon = function() {
+      var iconDiv = document.createElement("div");
+      iconDiv.id = "iconDiv";
+      var iconElm = document.createElement("i");
+      iconElm.classList.add("sinclo-fal");
+      var classNameArray = SimulatorService.chatbotIconPath.split(" ");
+      for( var i = 0; i < classNameArray.length; i++ ){
+        iconElm.classList.add(classNameArray[i]);
+      }
+      iconElm.classList.add("chatbot_icon_elm");
+      iconDiv.appendChild(iconElm);
+      document.getElementById('grid_balloon').appendChild(iconDiv);
+    };
+
+    $scope.createIconWithPicture = function() {
+      var iconDiv = document.createElement("div");
+      iconDiv.id = "iconDiv";
+      var iconElm = document.createElement("img");
+      iconElm.src = SimulatorService.operatorIconPath;
+      iconDiv.appendChild(iconElm);
+      document.getElementById('grid_balloon').appendChild(iconDiv);
+    };
+
+    $scope.isIconImage = function ( target ){
+      return target.match(/^fa/) !== null;
+    };
 
     angular.element(window).on('load', function(e) {
 
       // 吹き出しの要素をクローンして、メッセージのシミュレーションを行えるように固有のIDを設定する
+      // チャットボットアイコンが設定されている場合はappendChildするものが異なる
+      var gridElm = document.createElement("div");
+      gridElm.id = "grid_balloon";
+      document.getElementById('chatTalk').appendChild(gridElm);
+
+
       var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
       divElm.id = 'sample_widget_re_message';
-      document.getElementById('chatTalk').appendChild(divElm);
+      if ( Number( SimulatorService.chatbotIconToggle ) === 1 ) {
+        //ボットのアイコンを設定している場合
+        divElm.classList.add("with_icon");
+        $scope.createBalloonWithChatbotIcon();
+      } else {
+        divElm.classList.add("no_icon");
+      }
+      document.getElementById('grid_balloon').appendChild(divElm);
       $scope.createMessage();
 
       // メッセージ入力に応じて、シミュレーション上の吹き出しを表示更新する
@@ -272,9 +323,11 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       // プレビューの吹き出し表示制御
       if(typeof content !== 'undefined' && content.length > 1) {
         document.getElementById('sample_widget_re_message').style.display = "";
+        document.getElementById('grid_balloon').style.display = "";
         messageElement.innerHTML = content;
       } else {
         document.getElementById('sample_widget_re_message').style.display = "none";
+        document.getElementById('grid_balloon').style.display = "none";
       }
     }
 }]);

@@ -127,11 +127,78 @@
       $scope.makeLeadTypeList = <?php echo json_encode($chatbotScenarioLeadTypeList, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT);?>;
       $scope.widget = SimulatorService;
       $scope.widget.settings = getWidgetSettings();
+      $scope.widget_custom_width = Number( $scope.widget.settings['widget_custom_width'] );
+      $scope.widget_custom_height = Number( $scope.widget.settings['widget_custom_height'] );
 
       // 一時保存データのキー生成
       var scenarioId = document.getElementById('TChatbotScenarioId').value || 'tmp';
       $scope.storageKey = 'scenario_' + scenarioId;
 
+      $scope.chatbotIconIsFontIcon = function( target ) {
+        return target.match(/^fa/) !== null;
+      };
+
+
+      //ng-classが肥大化してるので対策
+      $scope.classNameChecker = {
+        resultClass : {},
+        checkMaster : function( className ) {
+          // 初期化
+          this.resultClass = {};
+          var targetArray = className.split(",");
+          for ( var i = 0; i< targetArray.length; i++ ){
+            switch( targetArray[i] ) {
+              case "notNone":
+                this.notNoneChecker();
+                break;
+              case "boxType":
+              case "balloonType":
+                this.balloonTypeChecker();
+                break;
+              case "middleSize":
+              case "largeSize":
+              case "customSize":
+                this.widgetSizeChecker();
+                break;
+              default :
+
+            }
+          }
+          return this.resultClass;
+        },
+        notNoneChecker : function() {
+          this.resultClass['notNone'] = $scope.widget.re_border_none === '' || $scope.widget.re_border_none === false
+        },
+
+        balloonTypeChecker : function() {
+          switch( Number($scope.widget.settings['chat_message_design_type']) ){
+            case 1:
+              this.resultClass['boxType'] = true;
+              break;
+            case 2:
+              this.resultClass['balloonType'] = true;
+              break;
+            default:
+              this.resultClass['boxType'] = true;
+          }
+        },
+        widgetSizeChecker : function() {
+          switch( Number($scope.widget.settings['widget_size_type']) ){
+            case 2:
+              this.resultClass['middleSize'] = true;
+              break;
+            case 3:
+            case 4:
+              this.resultClass['largeSize'] = true;
+              break;
+            case 5:
+              this.resultClass['customSize'] = true;
+              break;
+            default:
+              this.resultClass['smallSize'] = true;
+          }
+        }
+      };
       /**
        * angularのExpressionを文字列のまま表示する
        */

@@ -1319,7 +1319,16 @@
         $scope.resizeWidgetHeightByWindowHeight();
       });
 
+      $scope.resizeWidgetHeightForCustomSize = function() {
+
+      };
+
       $scope.resizeWidgetHeightByWindowHeight = function() {
+        console.log(getWidgetSettings());
+        if ( Number(getWidgetSettings().widget_size_type) === 5){
+          console.log("カスタムよ！");
+        }
+
         var windowHeight = $(window).innerHeight(),
             minCurrentWidgetHeight = $scope._getMinWidgetHeight(),
             currentWidgetHeight = $('#titleWrap').height() + $('#descriptionSet').height() + $('#miniTarget').height(),
@@ -1437,7 +1446,6 @@
           return 0 + invisibleUIOffset;
         }
       };
-
       /**
        * メッセージ追加後のスクロールアニメーション
        */

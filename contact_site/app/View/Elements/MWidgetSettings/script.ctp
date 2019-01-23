@@ -148,6 +148,44 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
     };
 
+    $scope.forceIconOriginal = function() {
+      //メイン画像をそのまま利用するアイコン設定の場合は、強制的に「個別に設定」を選択させる
+      if ( Number( $scope.chatbotIconType ) === <?= ICON_USE_MAIN_IMAGE ?> ) {
+        $scope.chatbotIconType = <?= ICON_USE_ORIGINAL_IMAGE ?>;
+        $scope.chatbot_icon = "";
+      }
+      if ( Number( $scope.operatorIconType ) === <?= ICON_USE_MAIN_IMAGE ?> ) {
+        $scope.operatorIconType = <?= ICON_USE_ORIGINAL_IMAGE ?>;
+        $scope.operator_icon = "";
+      }
+    };
+
+    $scope.changeIconToMainImage = function( type ){
+      switch( type ) {
+        case 'bot':
+          $scope.chatbot_icon = $scope.main_image;
+          break;
+        case 'op':
+          $scope.operator_icon = $scope.main_image;
+          break;
+      }
+    };
+
+    $scope.changeIconToNoImage = function( type ){
+      switch( type ) {
+        case 'bot':
+          $scope.chatbot_icon = "";
+          break;
+        case 'op':
+          $scope.operator_icon = "";
+          break;
+      }
+    };
+
+    $scope.testFunc = function() {
+      console.log("必要だよ!");
+    };
+
     $scope.checkWidgetSize = function( settings ) {
       if( settings == null ) {
         settings = {}
@@ -1152,6 +1190,12 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
             switch( Number( galleryType ) ) {
               case 1:
                 $scope.main_image = src;
+                if ( Number($scope.chatbotIconType) === 1 ) {
+                  $scope.changeIconToMainImage('bot');
+                }
+                if ( Number($scope.operatorIconType) === 1) {
+                  $scope.changeIconToMainImage('op');
+                }
                 break;
               case 2:
                 $scope.chatbot_icon = src;
@@ -1162,7 +1206,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
               default:
                 $scope.main_image = src;
             }
-
             $("#MWidgetSettingUploadImage").val("");
             $scope.$apply();
             popupEvent.close();
@@ -1490,10 +1533,14 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
     });
 
+    $scope.checkResponsiveCustomSize = function() {
+      console.log("創造と破壊");
+    }
+
     $scope.resizeWidgetHeightByWindowHeight = function() {
       // カスタム設定時にはリサイズ時の関数を別に呼び出す。
       if( Number($scope.widgetSizeTypeToggle) === 5 ) {
-        console.log("ウィジェットのサイズがカスタムです");
+        $scope.checkResponsiveCustomSize();
         return;
       }
       if($('#miniTarget').height() > 0) {
@@ -1709,6 +1756,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $("#MWidgetSettingUploadImage").val("");
     });
 
+    // メイン画像のトリミング
     angular.element('#MWidgetSettingUploadImage').change(function(e){
       var files = e.target.files;
       if ( window.URL && files.length > 0 ) {
@@ -1724,7 +1772,51 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
         openTrimmingDialog(function(){
           beforeTrimmingInit(url, $('#trim'));
-          trimmingInit($scope, null, 62 / 70);
+          trimmingInit($scope, null, 62 / 70, "main_image");
+        });
+      }
+    });
+
+    //チャットボットアイコンのトリミング
+    angular.element('#MWidgetSettingUploadBotIcon').change(function(e){
+      console.log("ボットアイコンのトリミング");
+      var files = e.target.files;
+      if ( window.URL && files.length > 0 ) {
+        var file = files[files.length-1];
+        // jpeg/jpg/png
+        var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+        if ( !reg.exec(file.type) ) {
+          $("#MWidgetSettingUploadBotIcon").val("");
+          $scope.uploadImageError = "画像はpng,jpeg,jpgのいずれかのみ利用可能です"
+        }
+
+        var url = window.URL.createObjectURL(file);
+
+        openTrimmingDialog(function(){
+          beforeTrimmingInit(url, $('#trim'));
+          trimmingInit($scope, null, 53 / 53, "chatbot_icon");
+        });
+      }
+    });
+
+    //オペレーターアイコンのトリミング
+    angular.element('#MWidgetSettingUploadOpIcon').change(function(e){
+      console.log("オペレーターアイコンのトリミング");
+      var files = e.target.files;
+      if ( window.URL && files.length > 0 ) {
+        var file = files[files.length-1];
+        // jpeg/jpg/png
+        var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+        if ( !reg.exec(file.type) ) {
+          $("#MWidgetSettingUploadOpIcon").val("");
+          $scope.uploadImageError = "画像はpng,jpeg,jpgのいずれかのみ利用可能です"
+        }
+
+        var url = window.URL.createObjectURL(file);
+
+        openTrimmingDialog(function(){
+          beforeTrimmingInit(url, $('#trim'));
+          trimmingInit($scope, null, 53 / 53, "operator_icon");
         });
       }
     });
@@ -2046,6 +2138,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         $('#MWidgetSettingChatbotIcon').val($scope.chatbot_icon);
         $('#MWidgetSettingOperatorIcon').val($scope.operator_icon);
         $('#TrimmingInfo').val($scope.trimmingInfo);
+        $('#TrimmingBotIconInfo').val($scope.trimmingBotIconInfo);
+        $('#TrimmingOpIconInfo').val($scope.trimmingOpIconInfo);
         $('#MWidgetSettingIndexForm').submit();
     };
 
