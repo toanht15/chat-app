@@ -1,7 +1,7 @@
 <script type="text/javascript">
   'use strict';
 
-  var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate', 'ui.sortable']);
+  var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate', 'ui.sortable', 'slickCarousel']);
 
   sincloApp.controller('MainController', [
     '$scope',
@@ -260,6 +260,27 @@
         }
       };
 
+      // リードリスト一覧の並び替えオプション
+      $scope.sortableOptionsCarousel = {
+        axis: 'y',
+        tolerance: 'pointer',
+        containment: 'parent',
+        handle: '.handleOption',
+        cursor: 'move',
+        helper: 'clone',
+        stop: function(event, ui) {
+          $timeout(function() {
+            $scope.$apply();
+          });
+
+          // 並び替え後、変数のチェックを行う
+          var elms = document.querySelectorAll('li.set_action_item');
+          $scope.setActionList.forEach(function(actionItem, index) {
+            actionValidationCheck(elms[index], $scope.setActionList, actionItem);
+          });
+        }
+      };
+
       // メッセージ間隔は同一の設定を各アクションに設定しているため、状態に応じて取得先を変更する
       $scope.messageIntervalTimeSec = "<?= !empty($this->data['TChatbotScenario']['messageIntervalTimeSec']) ? $this->data['TChatbotScenario']['messageIntervalTimeSec'] : '' ?>"
           || (typeof $scope.setActionList[0] !== 'undefined' ? $scope.setActionList[0].messageIntervalTimeSec : '')
@@ -321,6 +342,11 @@
         target.settings.customDesign.sundayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
+        target.settings.customDesign.titleColor = $scope.widget.settings.description_text_color;
+        target.settings.customDesign.subTitleColor = $scope.widget.settings.description_text_color;
+        target.settings.customDesign.arrowColor = '#FFFFFF';
+        target.settings.customDesign.titleFontSize = parseInt($scope.widget.settings.re_text_size) + 1;
+        target.settings.customDesign.subTitleFontSize = parseInt($scope.widget.settings.re_text_size);
 
         return target;
       };
@@ -426,6 +452,36 @@
         $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
         $('#action' + actionIndex + '_pulldown' + hearingIndex + '_' + customDesignIndex).
             css('background-color', defaultColor);
+        jscolor.installByClassName('jscolor');
+      };
+
+      this.revertCarouselDesign = function(actionIndex, hearingIndex, customDesignIndex) {
+        var defaultColor = '#FFFFFF';
+        var target = $('#action' + actionIndex + '_carousel' + hearingIndex + '_' + customDesignIndex);
+        switch (customDesignIndex) {
+          case 'titleColor':
+            defaultColor = $scope.widget.settings.description_text_color;
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+          case 'subTitleColor':
+            defaultColor = $scope.widget.settings.description_text_color;
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+          case 'arrowColor':
+            defaultColor = '#FFFFFF';
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+          case 'titleFontSize':
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = parseInt($scope.widget.settings.re_text_size) + 1;
+            break;
+          case 'subTitleFontSize':
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = parseInt($scope.widget.settings.re_text_size);
+            break;
+        }
+
         jscolor.installByClassName('jscolor');
       };
 
@@ -692,6 +748,28 @@
                     self.customCalendarTextColor(calendarTarget, hearing.settings.customDesign);
                   });
 
+                });
+              }
+
+              // carousel customize
+              if (hearing.uiType === '6') {
+                var carouselTarget = $('[id^="carousel_action' + index + '_hearing' + hearingIndex + '"]');
+                if (hearing.settings.balloonStyle === '2') {
+                  hearing.message = "";
+                }
+                $timeout(function() {
+                  $scope.$apply(function(){
+                    if (hearing.settings.carouselCustomDesign) {
+                      jscolor.installByClassName('jscolor');
+                    }
+
+
+                    // setTimeout(function(){
+                    //   carouselTarget.slick({
+                    //     dots: true
+                    //   });
+                    // }, 2000);
+                  });
                 });
               }
             });
@@ -1196,17 +1274,37 @@
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
         var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
         var actionType = $scope.setActionList[actionStep].actionType;
+        var target;
+        var src;
+
         if (optionType === '3' || optionType === '4') {
           // ラジオボタン、プルダウン
-          var src = $scope.actionList[actionType].default.hearings[0].settings.options;
-          var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
-        } else {
+          src = $scope.actionList[actionType].default.hearings[0].settings.options;
+          target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
+        } else if (optionIndex === '5') {
           // カレンダー
-          var src = $scope.actionList[actionType].default.hearings[0].settings.specificDateData;
-          var target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
-        }
+          src = $scope.actionList[actionType].default.hearings[0].settings.specificDateData;
+          target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
+        } else {
+          // カルーセル
+          var imageData = {
+            title: '',
+            subTitle: '',
+            answer: '',
+            url: ''
+          };
+          target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
 
-        target.splice(optionIndex + 1, 0, '');
+          // var carouselTarget = $('[id^="carousel_action' + actionStep + '_hearing' + listIndex + '"]');
+          // if (carouselTarget && carouselTarget.hasClass('slick-slider')) {
+          //   carouselTarget.slick('unslick');
+          // }
+        }
+        if (optionType === '6') {
+          target.splice(optionIndex + 1, 0, imageData);
+        } else {
+          target.splice(optionIndex + 1, 0, '');
+        }
         // 表示更新
         $timeout(function() {
           $scope.$apply();
@@ -1233,9 +1331,12 @@
         if (optionType === '3' || optionType === '4') {
           // ラジオボタン、プルダウン
           var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
-        } else {
+        } else if (optionType === '5' ){
           // カレンダー
           var target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
+        } else {
+          // カルーセル
+          var target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
         }
         target.splice(optionIndex, 1);
         // 表示更新
@@ -1329,11 +1430,25 @@
       this.selectFile = function($event) {
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
         var fileElm = document.querySelector('#' + targetActionId + ' .fileElm');
-
         if (fileElm) {
           // ファイルピッカー呼び出し
           fileElm.click();
         }
+      };
+
+      /**
+       * ファイル選択ダイアログの起動
+       */
+      this.carouselSelectFile = function($event, actionIndex, hearingIndex, imageIndex) {
+        var file = document.querySelector('#upload_action' + actionIndex + '_hearing' + hearingIndex + '_image' + imageIndex);
+        if (file) {
+          // ファイルピッカー呼び出し
+          file.click();
+        }
+      };
+
+      this.removeCarouselImage = function($event, actionIndex, hearingIndex, imageIndex) {
+        $scope.setActionList[actionIndex].hearings[hearingIndex].settings.images[imageIndex].url = "";
       };
 
       /**
@@ -1438,11 +1553,18 @@
 
         var hearings = [];
         angular.forEach(action.hearings, function(item, index) {
-          if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !==
-              'undefined' && item.message !== '') {
-            // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
-            hearings.push(item);
+          if (item.uiType === '1' || item.uiType == '2') {
+            if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !==
+                'undefined' && item.message !== '') {
+              // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
+              hearings.push(item);
+            }
+          } else {
+            if (typeof item.variableName !== 'undefined' && item.variableName !== '') {
+              hearings.push(item);
+            }
           }
+
         });
         if (hearings.length < 1) return null;
         action.hearings = hearings;
@@ -1806,8 +1928,8 @@
         if (!$scope.setActionList[actionIndex].hearings[hearingIndex].inputType) {
           $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = '1';
         }
-        // set defaut settings
-        if (!$scope.setActionList[actionIndex].hearings[hearingIndex].settings) {
+        // set default settings
+        if (!$scope.setActionList[actionIndex].hearings[hearingIndex].settings || !$scope.setActionList[actionIndex].hearings[hearingIndex].settings.images) {
           $scope.setActionList[actionIndex].hearings[hearingIndex].settings = $scope.actionList[2].default.hearings[0].settings;
         }
 
@@ -1817,7 +1939,7 @@
           $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = 1;
         }
         // set default design for pulldown or calendar
-        if (uiType === '5' || uiType === '4') {
+        if (uiType === '5' || uiType === '4' || uiType === '6') {
           $scope.setActionList[actionIndex].hearings[hearingIndex] = this.setDefaultColorHearing(
               $scope.setActionList[actionIndex].hearings[hearingIndex]);
         }
@@ -1914,6 +2036,41 @@
           };
           fileReader.readAsArrayBuffer(fileObj);
         });
+
+        $(document).on('change', '.carousel-item .image_upload_btn', function(e) {
+          var fileId = $(this).attr('id');
+          var files = e.target.files;
+          if ( window.URL && files.length > 0 ) {
+            var file = files[files.length-1];
+
+            // jpeg/jpg/png
+            var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+            if ( !reg.exec(file.type) ) {
+              $(this).val("");
+              return false;
+            }
+            var url = window.URL.createObjectURL(file);
+            // changeImagePath(url, file.name);
+            openTrimmingDialog(function(){
+              // beforeTrimmingInit(url, $('#picDiv img'));
+              beforeTrimmingInit(url, $('#trimmed_image'));
+              trimmingInit($scope, fileId, 5 / 3);
+            });
+          }
+        });
+
+        function openTrimmingDialog(callback){
+          $.ajax({
+            type: 'post',
+            dataType: 'html',
+            cache: false,
+            url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
+            success: function(html){
+              modalOpen.call(window, html, 'p-widget-carousel-trimming', 'トリミング', 'moment');
+              callback();
+            }
+          });
+        }
 
         // 変更を行っている場合、アラート表示を行う
         $(window).on('beforeunload', function(e) {
@@ -2632,6 +2789,23 @@
                 hearingDetail.required);
           }
 
+          if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CAROUSEL ?>) {
+            var data = {};
+            data.images = hearingDetail.settings.images;
+            data.design = hearingDetail.settings.customDesign;
+            data.settings = hearingDetail.settings;
+            data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
+            data.message = $scope.replaceVariable(message);
+            data.isRestore = isRestore;
+            data.oldValue = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
+            data.textColor = $scope.widget.settings.re_background_color;
+            data.backgroundColor = $scope.widget.settings.re_text_color;
+
+            $scope.$broadcast('addReCarousel', data);
+            $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
+                hearingDetail.required);
+          }
+
           $scope.$emit('setRestoreStatus', $scope.actionStep, $scope.hearingIndex, true);
         } else if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length)) {
           // 確認メッセージ
@@ -2925,6 +3099,7 @@
             find('.sinclo-text-line').
             removeClass('underlineText');
         $('#sincloBox [id^="action' + actionIndex + '"][id*="calendar"]').addClass('disabledArea');
+        $('#sincloBox [id^="action' + actionIndex + '"][id*="carousel"]').addClass('disabledArea');
         $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
         $scope.$broadcast('disableHearingInputFlg');
       };
@@ -2942,6 +3117,12 @@
             $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
           } else if ((!item && skipped) || (item && item !== message)) {
+            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+            $scope.reSelectionHearing(message, actionStep, hearingIndex);
+            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
+                'action' + actionStep + '_hearing' + $scope.hearingIndex);
+          } else if ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '6') {
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
             $scope.reSelectionHearing(message, actionStep, hearingIndex);
@@ -3002,6 +3183,17 @@
         } else {
           $(this).parents('.sinclo_re').find('.nextBtn').hide();
         }
+      });
+
+      $(document).on('click', '#chatTalk .carousel-container img', function() {
+        // var prefix = $(this).attr('id').replace(/-sinclo-carousel[0-9a-z-]+$/i, '');
+        var prefix = $(this).attr('id');
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        var imageIndex = numbers[2];
+        var message = $scope.setActionList[actionStep].hearings[hearingIndex].settings.images[imageIndex].answer;
+        self.handleReselectionInput(message, actionStep, hearingIndex);
       });
 
       // カレンダーの選択
@@ -3310,10 +3502,17 @@
 
     } else if (actionItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var invalidVariables = actionItem.hearings.some(function(obj) {
-        return !obj.variableName || !obj.message;
+        return !obj.variableName;
       });
       if (invalidVariables) {
-        messageList.push('変数名と質問内容が未入力です');
+        messageList.push('変数名が未入力です');
+      }
+
+      var invalidMessages = actionItem.hearings.some(function(obj) {
+        return !obj.message && (obj.uiType == 1 || obj.uiType == 2);
+      });
+      if (invalidMessages) {
+        messageList.push('質問内容が未入力です');
       }
 
       var hasBlankErrMess = false;
@@ -3321,6 +3520,9 @@
       var hasInvalidLengthErrMess = false;
       var hasBlankCanSelectDate = false;
       var hasBlankCannotSelectDate = false;
+      var hasBlankImageTitle = false;
+      var hasBlankImageAnswer = false;
+      var hasBlankImageUrl = false;
       angular.forEach(actionItem.hearings, function(item, itemKey) {
         // valid date error mesage
         if ((item.uiType === '1' || item.uiType === '2') && item.inputType != 1) {
@@ -3358,6 +3560,26 @@
             }
           }
         }
+
+        if (item.uiType === '6') {
+          if (item.settings.images.some(function(image) {
+            return image.title === '';
+          })) {
+            hasBlankImageTitle = true;
+          }
+
+          if (item.settings.images.some(function(image) {
+            return image.answer === '';
+          })) {
+            hasBlankImageAnswer = true;
+          }
+
+          if (item.settings.images.some(function(image) {
+            return image.url === '';
+          })) {
+            hasBlankImageUrl = true;
+          }
+        }
       });
       if (hasBlankErrMess) {
         messageList.push('入力エラー時の返信メッセージが未入力です');
@@ -3377,6 +3599,18 @@
 
       if (hasBlankCanSelectDate) {
         messageList.push('選択できる日付を指定するが未入力です');
+      }
+
+      if (hasBlankImageTitle) {
+        messageList.push('画像のタイトルが未入力です');
+      }
+
+      if (hasBlankImageAnswer) {
+        messageList.push('選択時の内容が未入力です');
+      }
+
+      if (hasBlankImageUrl) {
+        messageList.push('画像が選択されていません');
       }
 
       if (actionItem.isConfirm) {

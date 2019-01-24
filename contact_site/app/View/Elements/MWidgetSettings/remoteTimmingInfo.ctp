@@ -27,6 +27,36 @@
     popupEvent.resize();
   }
 
+  popupEvent.trimCarouselImage = function() {
+    targetImgTag.cropper('getCroppedCanvas').toBlob((blob) => {
+      const formData = new FormData();
+      formData.append('file', blob);
+
+      $.ajax({
+        url: "<?= $this->Html->url('/TChatbotScenario/remoteUploadCarouselImage') ?>",
+        type: 'POST',
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        dataType: 'json',
+        xhr: function() {
+          var XHR = $.ajaxSettings.xhr();
+          return XHR;
+        }
+      }).done(function(data, textStatus, jqXHR) {
+        console.log(data.url);
+        if (ngScope) {
+          var numbers = trimmingInfoTag.match(/\d+/g).map(Number);
+          ngScope.setActionList[numbers[0]].hearings[numbers[1]].settings.images[numbers[2]].url = data.url;
+          ngScope.$apply();
+        }
+      });
+
+      return popupEvent.close();
+    });
+  };
+
   popupEvent.doTrimming = function(){
     data = $('#img').cropper('getData');
     // 切り抜きした画像のデータ
@@ -41,6 +71,7 @@
 
     var imgDataUrl = targetImgTag.cropper('getCroppedCanvas').toDataURL();
     viewImgTag.attr('src', imgDataUrl);
+
     if(ngScope) {
       ngScope.main_image = imgDataUrl;
       console.log(trimmingData);
