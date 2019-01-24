@@ -633,6 +633,20 @@ sinclo@medialink-ml.co.jp
     }
   }
 
+  public function remoteUploadCarouselImage()
+  {
+    Configure::write('debug', 0);
+    $this->autoRender = FALSE;
+    $this->validatePostMethod();
+    $saveData = $this->params['form'];
+    $url = $this->_uploadCarouseImage($saveData['file']);
+
+    return json_encode([
+      'success' => true,
+      'url' => $url,
+    ]);
+  }
+
   /**
    * これまでのシナリオ設定を元に、登録可能なsort順を算出する
    * @return Integer sort順
@@ -2153,6 +2167,13 @@ sinclo@medialink-ml.co.jp
       'file_name' => $file['name'],
       'file_size' => $file['size']
     ];
+  }
+
+  private function _uploadCarouseImage($file) {
+    $saveFileName = $this->generateImageName($file);
+    $filePath = $this->putImage($file, $saveFileName);
+
+    return $filePath;
   }
 
   /**

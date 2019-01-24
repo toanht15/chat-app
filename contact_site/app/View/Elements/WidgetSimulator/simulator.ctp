@@ -305,6 +305,245 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none;}
         #sincloBox .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none;}
 
+        /* slick css */
+        #sincloBox .slick-slider {
+          position: relative;
+          display: block;
+          box-sizing: border-box;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+          -webkit-touch-callout: none;
+          -khtml-user-select: none;
+          -ms-touch-action: pan-y;
+          touch-action: pan-y;
+          -webkit-tap-highlight-color: transparent;
+        }
+        #sincloBox .slick-list {
+          position: relative;
+          display: block;
+          overflow: hidden;
+          margin: 0;
+          padding: 0;
+        }
+        #sincloBox .slick-list:focus {
+          outline: none;
+        }
+        #sincloBox .slick-list.dragging {
+          cursor: pointer;
+          cursor: hand;
+        }
+        #sincloBox .slick-slider .slick-track,
+        #sincloBox .slick-slider .slick-list {
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        #sincloBox .slick-track {
+          position: relative;
+          top: 0;
+          left: 0;
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        #sincloBox .slick-track:before,
+        #sincloBox .slick-track:after {
+          display: table;
+          content: "";
+        }
+        #sincloBox .slick-track:after {
+          clear: both;
+        }
+        #sincloBox .slick-loading .slick-track {
+          visibility: hidden;
+        }
+        #sincloBox .slick-slide {
+          display: none;
+          float: left;
+          height: 100%;
+          min-height: 1px;
+        }
+        #sincloBox [dir=rtl] .slick-slide {
+          float: right;
+        }
+        #sincloBox .slick-slide img {
+          display: block;
+        }
+        #sincloBox .slick-slide.slick-loading img {
+          display: none;
+        }
+        #sincloBox .slick-slide.dragging img {
+          pointer-events: none;
+        }
+        #sincloBox .slick-initialized .slick-slide {
+          display: block;
+        }
+        #sincloBox .slick-loading .slick-slide {
+          visibility: hidden;
+        }
+        #sincloBox .slick-vertical .slick-slide {
+          display: block;
+          height: auto;
+          border: 1px solid transparent;
+        }
+        #sincloBox .slick-arrow.slick-hidden {
+          display: none;
+        }
+        #sincloBox .slick-loading .slick-list {
+          background: #fff url("./ajax-loader.gif") center center no-repeat;
+        }
+        #sincloBox .slick-prev,
+        #sincloBox .slick-next {
+          font-size: 0;
+          line-height: 0;
+          position: absolute;
+          top: 50%;
+          display: block;
+          width: 20px;
+          height: 20px;
+          padding: 0;
+          -webkit-transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+          transform: translate(0, -50%);
+          cursor: pointer;
+          color: transparent;
+          border: none;
+          outline: none;
+          background: transparent;
+        }
+        #sincloBox .slick-prev:hover,
+        #sincloBox .slick-prev:focus,
+        #sincloBox .slick-next:hover,
+        #sincloBox .slick-next:focus {
+          color: transparent;
+          outline: none;
+          background: transparent;
+        }
+        #sincloBox .slick-prev:hover:before,
+        #sincloBox .slick-prev:focus:before,
+        #sincloBox .slick-next:hover:before,
+        #sincloBox .slick-next:focus:before {
+          opacity: 1;
+        }
+        #sincloBox .slick-prev.slick-disabled:before,
+        #sincloBox .slick-next.slick-disabled:before {
+          opacity: 0.25;
+        }
+        #sincloBox .slick-prev:before,
+        #sincloBox .slick-next:before {
+          font-family: "slick";
+          font-size: 20px;
+          line-height: 1;
+          opacity: 0.75;
+          color: white;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        #sincloBox .slick-prev {
+          left: -25px;
+          z-index: 999;
+        }
+        #sincloBox [dir=rtl] .slick-prev {
+          right: -25px;
+          left: auto;
+          z-index: 999;
+        }
+        /*#sincloBox .slick-prev:before {*/
+          /*content: "←";*/
+        /*}*/
+        /*#sincloBox [dir=rtl] .slick-prev:before {*/
+          /*content: "→";*/
+        /*}*/
+        #sincloBox .slick-next {
+          right: -25px;
+        }
+        #sincloBox [dir=rtl] .slick-next {
+          right: auto;
+          left: -25px;
+        }
+        /*#sincloBox .slick-next:before {*/
+          /*content: "→";*/
+        /*}*/
+        /*#sincloBox [dir=rtl] .slick-next:before {*/
+          /*content: "←";*/
+        /*}*/
+        #sincloBox .slick-dotted.slick-slider {
+          margin-bottom: 30px;
+        }
+        #sincloBox .slick-dots {
+          position: absolute;
+          bottom: -25px;
+          display: block;
+          width: 100%;
+          padding: 0;
+          margin: 0;
+          list-style: none;
+          text-align: center;
+        }
+        #sincloBox .slick-dots li {
+          position: relative;
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin: 0 5px;
+          padding: 0;
+          cursor: pointer;
+        }
+        #sincloBox .slick-dots li button {
+          font-size: 0;
+          line-height: 0;
+          display: block;
+          width: 20px;
+          height: 20px;
+          padding: 5px;
+          cursor: pointer;
+          color: transparent;
+          border: 0;
+          outline: none;
+          background: transparent;
+        }
+        #sincloBox .slick-dots li button:hover,
+        #sincloBox .slick-dots li button:focus {
+          outline: none;
+        }
+        #sincloBox .slick-dots li button:hover:before,
+        #sincloBox .slick-dots li button:focus:before {
+          opacity: 1;
+        }
+        #sincloBox .slick-dots li button:before {
+          font-family: "slick";
+          font-size: 6px;
+          line-height: 20px;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 20px;
+          height: 20px;
+          content: "•";
+          text-align: center;
+          opacity: 0.25;
+          color: black;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        #sincloBox .slick-dots li.slick-active button:before {
+          opacity: 0.75;
+          color: black;
+        }
+
+        #sincloBox .fa-chevron-right:before {
+          content: "\f054";
+        }
+
+        #sincloBox .fa-chevron-left:before {
+          content: "\f053";
+        }
+        /* slick css end */
+
         <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
         @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
         @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
@@ -638,6 +877,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
             </div>
             <div style="height: auto!important; padding:0; display: none;">
               <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+            </div>
+            <div style="height: auto!important; padding:0; display: none; margin-left: 25px">
+              <li class="sinclo_carousel chat_carousel" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">
               <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">ファイルが送信されました</span><div class="sendFileContent"><div class="sendFileThumbnailArea"><img class="sendFileThumbnail" src="" width="64" height="64"><i class="fa fa-4x sendFileThumbnail" aria-hidden="true"></i></div><div class="sendFileMetaArea"><span class="data sendFileName details">ファイル名</span><span class="data sendFileSize details">ファイルサイズ</span></div></div></li>

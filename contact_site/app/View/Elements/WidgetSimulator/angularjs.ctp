@@ -72,6 +72,10 @@
         $scope.addCalendar(message, settings, design, prefix);
       });
 
+      $scope.$on('addReCarousel', function(event, data) {
+        $scope.addCarousel(data);
+      });
+
       $scope.$on('disableHearingInputFlg', function(event) {
         $scope.isHearingInput = false;
       });
@@ -451,6 +455,64 @@
         $scope.addDatePicker(calendar.selector, data.settings, data.design);
 
         $('#chatTalk > div:last-child').show();
+        self.autoScroll();
+      };
+
+      /**
+       * add carousel in simulator
+       * @param object data: carousel options data
+       */
+      $scope.addCarousel = function(data) {
+        if (data.settings.balloonStyle === '1') {
+          // 吹き出しあり
+          var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+          divElm.firstElementChild.style.paddingRight = '25px';
+          divElm.firstElementChild.style.paddingLeft = '25px';
+        } else {
+          // 吹き出しなし
+          var divElm = document.querySelector('#chatTalk div > li.sinclo_carousel.chat_carousel').parentNode.cloneNode(true);
+        }
+        divElm.id = data.prefix + '_question';
+        var carousel = $scope.simulatorSettings.createCarousel(data);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = carousel.html;
+        document.getElementById('chatTalk').appendChild(divElm);
+
+
+        $('#chatTalk > div:last-child').show();
+        var prevIconClass = '';
+        var nextIconClass = '';
+        if (data.settings.arrowType == 3) {
+          prevIconClass = 'fa-chevron-left';
+          nextIconClass = 'fa-chevron-right';
+        } else {
+          prevIconClass = 'fa-chevron-circle-left';
+          nextIconClass = 'fa-chevron-circle-right';
+        }
+
+        var slidesToShow = data.settings.lineUpStyle === '1' ? 1 : 1.5;
+        $(carousel.selector).slick({
+          dots: true,
+          slidesToShow: slidesToShow,
+          infinite: false,
+          prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
+          nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
+        });
+        // 復元機能
+        var oldIndex = null;
+        angular.forEach(data.settings.images, function(image, index) {
+          if (data.oldValue == image.answer) {
+           oldIndex = index;
+          }
+        });
+        if (oldIndex) {
+          $(carousel.selector).slick('slickGoTo', oldIndex);
+        }
+        $('#' + data.prefix + '_question .slick-arrow').on('click', function() {
+          if (!$(this).hasClass('slick-disabled')) {
+            $('#' + data.prefix + '_question').find('.nextBtn').hide();
+          }
+        });
+
         self.autoScroll();
       };
 
