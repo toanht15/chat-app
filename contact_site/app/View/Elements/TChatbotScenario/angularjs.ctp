@@ -1271,6 +1271,7 @@
 
       // add option (radio, pulldown, calendar) in hearing
       this.addHearingOption = function($event, optionType, optionIndex, listIndex) {
+        $scope.dataLoaded = false;
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
         var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
         var actionType = $scope.setActionList[actionStep].actionType;
@@ -1295,19 +1296,21 @@
           };
           target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
 
-          // var carouselTarget = $('[id^="carousel_action' + actionStep + '_hearing' + listIndex + '"]');
-          // if (carouselTarget && carouselTarget.hasClass('slick-slider')) {
-          //   carouselTarget.slick('unslick');
-          // }
-        }
-        if (optionType === '6') {
-          target.splice(optionIndex + 1, 0, imageData);
-        } else {
-          target.splice(optionIndex + 1, 0, '');
+          var carouselTarget = $('[id^="carousel_action' + actionStep + '_hearing' + listIndex + '"]');
+          if (carouselTarget && carouselTarget.hasClass('slick-slider')) {
+            carouselTarget.slick('unslick');
+          }
         }
         // 表示更新
         $timeout(function() {
-          $scope.$apply();
+          $scope.$root.$apply(function(){
+            if (optionType === '6') {
+              $scope.setActionList[actionStep].hearings[listIndex].settings.images.splice(optionIndex + 1, 0, imageData);
+            } else {
+              target.splice(optionIndex + 1, 0, '');
+            }
+            $scope.dataLoaded = true;
+          });
         }).then(function() {
           var targetElmList = $('.action' + actionStep + '_option' + listIndex);
           self.controllListView(actionType, targetElmList, target);
@@ -1319,6 +1322,8 @@
                 el.flatpickr($scope.japaneseCalendar);
               }
             });
+          } else if (optionType === '6') {
+
           }
         });
       };

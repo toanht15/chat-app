@@ -146,7 +146,7 @@
             </span>
 
             <div ng-if="hearingItem.uiType === '6'">
-              <ul ui-sortable="sortableOptionsCarousel" ng-model="hearingItem.settings.images">
+              <ul ui-sortable="sortableOptionsCarousel">
                 <li class="carousel-item action{{setActionId}}_option{{listId}}" ng-repeat="(imageIndex, image) in hearingItem.settings.images  track by $index"
                      ng-init="main.controllHearingOptionView(setActionId, listId)">
                   <div class="carousel-item-header">
