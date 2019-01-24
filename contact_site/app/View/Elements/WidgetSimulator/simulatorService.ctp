@@ -779,7 +779,7 @@ sincloApp.factory('SimulatorService', function() {
       var index = $('#chatTalk > div:not([style*="display: none;"])').length;
       var carouselId = prefix + 'sinclo-carousel-' + index;
       var html = '';
-      var carouselSize = this.getCarouselSize();
+      var carouselSize = this.getCarouselSize(data.settings.lineUpStyle);
       html+= '<div class=\'carousel-container\' style="width: ' + carouselSize.width + 'px; margin-top: 6px;">';
       html += '<style>';
       html += '#sincloBox #' + carouselId + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
@@ -788,7 +788,9 @@ sincloApp.factory('SimulatorService', function() {
       html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-family: "Font Awesome 5 Pro";  color: ' + data.settings.customDesign.arrowColor + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { margin: 8px; font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 8px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '}';
+      var slideMargin = 0;
       if (data.settings.lineUpStyle === '2') {
+         slideMargin = 5;
         // html += '#sincloBox #' + carouselId + ' .slick-list {padding:0 20% 0 0;}';
       }
       if (data.settings.arrowType !== '2') {
@@ -796,19 +798,19 @@ sincloApp.factory('SimulatorService', function() {
         html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-weight: 900 }';
       }
 
+      // custom arrow position
       if (data.settings.carouselPattern === '1') {
         html += '#sincloBox #' + carouselId + ' .slick-next { right: 8px }';
         html += '#sincloBox #' + carouselId + ' .slick-prev { left: 8px }';
       } else if (data.settings.arrowType === '3') {
         html += '#sincloBox #' + carouselId + ' .slick-prev { left: -16px }';
       }
-
       html += '</style>';
 
       html+= '<div class="single-item" id="' + carouselId + '">';
       angular.forEach(data.images, function (image, key) {
         html+= '<div style="width: ' + carouselSize.width + 'px">';
-        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; padding: 4px; border: 1px solid black; background-color: #FFFFFF;">';
+        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; padding: 4px; border: 1px solid black; background-color: #FFFFFF; margin-right: ' + slideMargin + 'px;">';
         html+= '<img id="' + prefix + 'image' + key +'" style="cursor: pointer; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
         html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
         html+= '<div class="title"><strong>' + image.title + '</strong></div>';
@@ -860,28 +862,28 @@ sincloApp.factory('SimulatorService', function() {
       return result;
     },
 
-    getCarouselSize: function(){
+    getCarouselSize: function(lineUpStyle){
       var data = { width: 0, height: 0};
       switch (Number(this.widgetSizeTypeToggle)) {
         case 1:
           data.width = 200;
-          data.height = 120;
+          data.height = lineUpStyle === '1' ? 120 : 73;
           break;
         case 2:
           data.width = 250;
-          data.height = 150;
+          data.height = lineUpStyle === '1' ? 150 : 91;
           break;
         case 3:
           data.width = 300;
-          data.height = 180;
+          data.height = lineUpStyle === '1' ? 150 : 109;
           break;
         case 4:
           data.width = 300;
-          data.height = 180;
+          data.height = lineUpStyle === '1' ? 150 : 109;
           break;
         default:
           data.width = 300;
-          data.height = 180;
+          data.height = lineUpStyle === '1' ? 150 : 109;
           break;
       }
 

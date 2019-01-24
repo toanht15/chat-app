@@ -1558,11 +1558,18 @@
 
         var hearings = [];
         angular.forEach(action.hearings, function(item, index) {
-          if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !==
-              'undefined' && item.message !== '') {
-            // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
-            hearings.push(item);
+          if (item.uiType === '1' || item.uiType == '2') {
+            if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !==
+                'undefined' && item.message !== '') {
+              // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
+              hearings.push(item);
+            }
+          } else {
+            if (typeof item.variableName !== 'undefined' && item.variableName !== '') {
+              hearings.push(item);
+            }
           }
+
         });
         if (hearings.length < 1) return null;
         action.hearings = hearings;

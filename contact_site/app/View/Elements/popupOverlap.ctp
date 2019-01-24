@@ -58,26 +58,36 @@ var popupEventOverlap = {
                 area.removeChild(area.childNodes[i]);
             }
             switch ( popupEventOverlap.id ) {
-                case 'p-history-del':
-                  var closeBtn = _button("はい");
-                  closeBtn.onclick = function(){
-                    popupEventOverlap.closeNoPopupOverlap();
-                    return popupEventOverlap.closePopup();
-                  };
-                  var cancelBtn = _button("いいえ");
-                  cancelBtn.onclick = function(){
-                    return popupEventOverlap.closeNoPopupOverlap();
-                  };
-                break;
-                case 'p-tcustomerinformation-alert':
-                  var closeBtn = _button("キャンセルする");
-                  closeBtn.onclick = function () {
-                    return popupEventOverlap.closeNoPopupOverlap();
-                  };
-                  var entryBtn = _button("項目名を変更する");
-                  entryBtn.onclick = function () {
-                    return popupEventOverlap.closePopup();
-                  };
+              case 'p-history-del':
+                var closeBtn = _button("はい");
+                closeBtn.onclick = function(){
+                  popupEventOverlap.closeNoPopupOverlap();
+                  return popupEventOverlap.closePopup();
+                };
+                var cancelBtn = _button("いいえ");
+                cancelBtn.onclick = function(){
+                  return popupEventOverlap.closeNoPopupOverlap();
+                };
+              break;
+              case 'p-tcustomerinformation-alert':
+                var closeBtn = _button("キャンセルする");
+                closeBtn.onclick = function () {
+                  return popupEventOverlap.closeNoPopupOverlap();
+                };
+                var entryBtn = _button("項目名を変更する");
+                entryBtn.onclick = function () {
+                  return popupEventOverlap.closePopup();
+                };
+              break;
+              case 'p-seticontodefault-alert':
+                var closeBtn = _button('いいえ');
+                closeBtn.onclick = function () {
+                  return popupEventOverlap.closeNoPopupOverlap();
+                };
+                var entryBtn = _button("はい");
+                entryBtn.onclick = function () {
+                  return popupEventOverlap.closePopup();
+                };
                 break;
             }
             function _button(text){

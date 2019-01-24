@@ -5,6 +5,12 @@
 <?php $this->request->data['MUser']['password'] = htmlspecialchars($this->request->data['MUser']['password'], ENT_QUOTES, 'UTF-8');?>
 <?php $this->request->data['MUser']['permission_level'] = htmlspecialchars($this->request->data['MUser']['permission_level'], ENT_QUOTES, 'UTF-8');?>
 
+
+    var confirmToDefault = function(){
+      message = "現在設定されているアイコンをデフォルトアイコンに戻します。<br>よろしいですか？<br>";
+      modalOpenOverlap.call(window, message, 'p-seticontodefault-alert', '確認してください', 'moment');
+    };
+
     popupEvent.closePopup = function(){
         var page = Number("<?=$page?>");
         var userId = document.getElementById('MUserId').value;
@@ -68,37 +74,40 @@
     };
 </script>
 <?= $this->Form->create('MUser', array('action' => 'add')); ?>
-    <div class="form01">
+    <div class="form01" style="display:flex; flex-direction: column;">
         <?= $this->Form->input('id', array('type' => 'hidden')); ?>
         <?= $this->Form->input('other', array('type' => 'hidden')); ?>
-        <div>
-            <span class="require"><?= $this->Html->image('monitor_g.png', array('alt' => '氏名', 'width' => 30, 'height' => 30)) ?></span>
-            <?= $this->Form->input('user_name', array('placeholder' => '氏名', 'div' => false, 'label' => false, 'maxlength' => 50)) ?>
+        <?= $this->Form->input('user_name', array('type' => 'hidden')) ?>
+        <div class="profile_icon_register" style="display:flex; flex-direction: column; align-items: center;" >
+          <i class="fa-user fal hover-changer" style="width: 53px; height: 53px; display: flex; justify-content: center; align-items: center;background-color: #ABCD05; border-radius: 50%; color: white; font-size: 35px;" ></i>
+          <div id="profile_register_btn" style="width: 100px">
+            <div class="greenBtn btn-shadow icon_register" style="height: 25px; display: flex; justify-content: center; align-items: center;">写真を変更する</div>
+            <div class="greenBtn btn-shadow icon_register" onclick="confirmToDefault()" style="height: 25px; display: flex; justify-content: center; align-items: center;">標準に戻す</div>
+            <input type="hidden" name="data[Trimming][info]" ng-model="trimmingInfo" id="TrimmingInfo" class="ng-pristine ng-untouched ng-valid">
+          </div>
         </div>
-        <div>
-            <span class="require"><?= $this->Html->image('headphone.png', array('alt' => '表示名', 'width' => 30, 'height' => 30)) ?></span>
-            <?= $this->Form->input('display_name', array('placeholder' => '表示名', 'div' => false, 'label' => false, 'maxlength' => 10)) ?>
+        <div class = "grid_item">
+          <div class="input_label"><span class="require"><label>表示名</label></span></div>
+          <?= $this->Form->input('display_name', array('placeholder' => 'display_name', 'div' => false, 'label' => false, 'maxlength' => 10, 'error' => false,'class' => 'inputItems')) ?>
         </div>
-        <div>
-            <span class="require"><?= $this->Html->image('mail_g.png', array('alt' => 'メールアドレス', 'width' => 30, 'height' => 30)) ?></span>
-            <?= $this->Form->input('mail_address', array('placeholder' => 'メールアドレス', 'div' => false, 'label' => false, 'maxlength' => 200, 'autocomplete' => 'email')) ?>
+        <div class = "grid_item">
+          <div class="input_label"><span class="require"><label>メールアドレス</label></span></div>
+          <?= $this->Form->input('mail_address', array('placeholder' => 'mail_address', 'div' => false, 'label' => false, 'maxlength' => 200, 'error' => false, 'class' => 'inputItems')) ?>
         </div>
-        <div>
+        <div class = "grid_item">
 <?php
 $pwReq = "";
 if ( empty($this->params->data['MUser']['id']) ) {
-  $pwReq = 'class="require"';
+$pwReq = 'class="require"';
 }
 
 ?>
-            <input type="text" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
-            <input type="password" style="display:block; position: fixed; top: -500px; left: -500px; z-index: 0;">
-            <span <?=$pwReq?>><?= $this->Html->image('password.png', array('alt' => 'パスワード', 'width' => 30, 'height' => 30)) ?></span>
-            <?= $this->Form->input('new_password', array('type' => 'password', 'placeholder' => 'パスワード', 'div' => false, 'label' => false, 'maxlength' => 12, 'autocomplete' => 'off')) ?>
-        </div>
-        <div>
-            <span class="require"><?= $this->Html->image('permission.png', array('alt' => '権限', 'width' => 30, 'height' => 30)) ?></span>
-            <?= $this->Form->input('permission_level', array('type' => 'select', 'options' => $authorityList, 'empty' => '-- 権限を選択してください --', 'div' => false, 'label' => false)) ?>
-        </div>
+         <div class="input_label"><span class="require"><label>パスワード</label></span></div>
+          <?= $this->Form->input('new_password', array('type' => 'password', 'placeholder' => 'パスワード', 'div' => false, 'label' => false, 'maxlength' => 12, 'autocomplete' => 'off')) ?>
+       </div>
+       <div class = "grid_item">
+        <div class="input_label"><span class="require"><label>権限</label></span></div>
+        <?= $this->Form->input('permission_level', array('type' => 'select', 'options' => $authorityList, 'empty' => '-- 権限を選択してください --', 'div' => false, 'label' => false)) ?>
+      </div>
     </div>
 <?= $this->Form->end(); ?>
