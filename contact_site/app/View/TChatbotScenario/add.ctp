@@ -15,3 +15,6 @@
 </div><!-- /tchatbotscenario_form -->
 
 </div>
+<script>
+  FontAwesomeConfig = { searchPseudoElements: true };
+</script>

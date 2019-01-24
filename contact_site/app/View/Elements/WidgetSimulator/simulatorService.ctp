@@ -772,6 +772,59 @@ sincloApp.factory('SimulatorService', function() {
       return messageHtml + html;
     },
 
+    createCarousel: function (data) {
+      var result = { html: '', selector: ''};
+      var messageHtml = this.createMessage(data.message, data.prefix);
+      var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
+      var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+      var carouselId = prefix + 'sinclo-carousel-' + index;
+      var html = '';
+      var carouselSize = this.getCarouselSize();
+      html+= '<div class=\'carousel-container\' style="width: ' + carouselSize.width + 'px; margin-top: 6px;">';
+      html += '<style>';
+      html += '#sincloBox #' + carouselId + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
+      html += '#sincloBox #' + carouselId + ' .slick-dots li button:before { font-size: 25px;}';
+      html += '#sincloBox #' + carouselId + ' .slick-next:before { font-family: "Font Awesome 5 Pro";  color: ' + data.settings.customDesign.arrowColor + ';}';
+      html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-family: "Font Awesome 5 Pro";  color: ' + data.settings.customDesign.arrowColor + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { margin: 8px; font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 8px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '}';
+      if (data.settings.lineUpStyle === '2') {
+        // html += '#sincloBox #' + carouselId + ' .slick-list {padding:0 20% 0 0;}';
+      }
+      if (data.settings.arrowType !== '2') {
+        html += '#sincloBox #' + carouselId + ' .slick-next:before { font-weight: 900 }';
+        html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-weight: 900 }';
+      }
+
+      if (data.settings.carouselPattern === '1') {
+        html += '#sincloBox #' + carouselId + ' .slick-next { right: 8px }';
+        html += '#sincloBox #' + carouselId + ' .slick-prev { left: 8px }';
+      } else if (data.settings.arrowType === '3') {
+        html += '#sincloBox #' + carouselId + ' .slick-prev { left: -16px }';
+      }
+
+      html += '</style>';
+
+      html+= '<div class="single-item" id="' + carouselId + '">';
+      angular.forEach(data.images, function (image, key) {
+        html+= '<div style="width: ' + carouselSize.width + 'px">';
+        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; padding: 4px; border: 1px solid black; background-color: #FFFFFF;">';
+        html+= '<img id="' + prefix + 'image' + key +'" style="cursor: pointer; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
+        html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
+        html+= '<div class="title"><strong>' + image.title + '</strong></div>';
+        html+= '<p class="sub-title">' + image.subTitle + '</p>';
+        html+= '</div></div></div>';
+      });
+      html+= '</div></div>';
+      if (data.isRestore) {
+        html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' + data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
+      }
+
+      result.html = data.settings.balloonStyle === '1' ? messageHtml + html : html;
+      result.selector = '#' + carouselId;
+      return result;
+    },
+
     createCalendarInput: function (data) {
       var result = { html: '', selector: ''};
       var messageHtml = this.createMessage(data.message, data.prefix);
@@ -805,6 +858,34 @@ sincloApp.factory('SimulatorService', function() {
       result.selector = '#' + calendarId;
 
       return result;
+    },
+
+    getCarouselSize: function(){
+      var data = { width: 0, height: 0};
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          data.width = 200;
+          data.height = 120;
+          break;
+        case 2:
+          data.width = 250;
+          data.height = 150;
+          break;
+        case 3:
+          data.width = 300;
+          data.height = 180;
+          break;
+        case 4:
+          data.width = 300;
+          data.height = 180;
+          break;
+        default:
+          data.width = 300;
+          data.height = 180;
+          break;
+      }
+
+      return data;
     },
 
     getContrastColor: function (hex) {

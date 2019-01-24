@@ -7907,6 +7907,12 @@ ul.naviBtn {
                       border: 1px solid #909090 !important;
                       width: calc(100% - 5px);
                     }
+
+                    .disabledArea {
+                      pointer-events: none;
+                      opacity: 0.5;
+                      background-color: #d9d9d9;
+                    }
                   }
 
                   .area-btn {
@@ -7965,8 +7971,8 @@ ul.naviBtn {
                         height: 35px;
 
                         label {
-                          -ms-flex-preferred-size: 100px;
-                          flex-basis: 100px;
+                          -ms-flex-preferred-size: 110px;
+                          flex-basis: 110px;
                           margin-top: 10px;
                         }
 
@@ -7974,7 +7980,7 @@ ul.naviBtn {
                           border: none !important;
                           border-bottom: 1px solid #909090 !important;
                           border-radius: 0 !important;
-                          width: 120px;
+                          width: 108px;
                           height: 26px;
                         }
                       }
@@ -7986,6 +7992,72 @@ ul.naviBtn {
                         -ms-flex-pack: center;
                         justify-content: center;
                         height: 25px
+                      }
+
+                      .carousel-pattern {
+                        display: inline-block;
+                        input {
+                          width: 20px;
+                          height: 13px;
+                        }
+                      }
+
+                      .carousel-arrow-type{
+                        display: inline-block;
+                        input {
+                          width: 20px;
+                          height: 13px;
+                        }
+
+                        .fa-chevron-right:before {
+                          content: "\f054";
+                        }
+                      }
+                    }
+
+                    .carousel-item {
+                      border: 1px solid #C3D69B;
+                      border-radius: 5px;
+                      margin-top: 10px;
+
+                      .carousel-item-header {
+                        border-bottom: 1px solid #C3D69B;
+                        padding-top: 2px;
+                        padding-left: 5px;
+                        height: 32px;
+
+                        p {
+                          display: inline-block;
+                          font-size: 14px;
+                          margin: 5px 3px 3px 3px;
+                        }
+                      }
+
+                      .carousel-item-body {
+                        .carousel-title {
+                          margin-top: 10px;
+                        }
+
+                        .carousel-label {
+                          margin-left: 10px;
+                          display: inline-block;
+                          width: 110px;
+                        }
+
+                        .carousel-answer {
+                          margin-top: 2px;
+                        }
+
+                        .carousel-button {
+                          margin-left: 128px;
+                        }
+
+                        input, textarea {
+                          width: 75%;
+                          display: inline-block;
+                          height: 27px;
+                          margin-top: 3px;
+                        }
                       }
                     }
                   }

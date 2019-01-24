@@ -1071,6 +1071,21 @@
         }
       }
 
+      &.p-widget-carousel-trimming {
+        width: 840px;
+
+        & #popup-button {
+          width: 43em;
+          margin: 0 auto;
+
+          .textBtn {
+            width: 12em;
+            margin: 0 2.5em;
+            float: left;
+          }
+        }
+      }
+
       &.p-auto-importexcel-upload {
         width: 50em;
 
