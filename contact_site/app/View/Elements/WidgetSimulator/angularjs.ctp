@@ -481,7 +481,7 @@
         $('#chatTalk > div:last-child').show();
         var prevIconClass = '';
         var nextIconClass = '';
-        if (data.settings.arrowType == 3) {
+        if (data.settings.arrowType === '3') {
           prevIconClass = 'fa-chevron-left';
           nextIconClass = 'fa-chevron-right';
         } else {

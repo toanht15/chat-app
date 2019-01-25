@@ -757,19 +757,32 @@
                 if (hearing.settings.balloonStyle === '2') {
                   hearing.message = "";
                 }
+
+                var prevIconClass = '';
+                var nextIconClass = '';
+                if (hearing.settings.arrowType === '3') {
+                  prevIconClass = 'fa-chevron-left';
+                  nextIconClass = 'fa-chevron-right';
+                } else {
+                  prevIconClass = 'fa-chevron-circle-left';
+                  nextIconClass = 'fa-chevron-circle-right';
+                }
+                var slidesToShow = hearing.settings.lineUpStyle === '1' ? 1 : 1.5;
+                hearing.settings.slickSettings = {
+                  dots: true,
+                  slidesToShow: slidesToShow,
+                  infinite: false,
+                  prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
+                  nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
+                };
+
                 $timeout(function() {
-                  $scope.$apply(function(){
-                    if (hearing.settings.carouselCustomDesign) {
-                      jscolor.installByClassName('jscolor');
-                    }
-
-
-                    // setTimeout(function(){
-                    //   carouselTarget.slick({
-                    //     dots: true
-                    //   });
-                    // }, 2000);
-                  });
+                  $scope.$apply();
+                }).then(function() {
+                  if (hearing.settings.carouselCustomDesign) {
+                    jscolor.installByClassName('jscolor');
+                  }
+                  hearing.settings.dataLoaded = true;
                 });
               }
             });
@@ -1294,20 +1307,19 @@
             url: ''
           };
           target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
-
-          // var carouselTarget = $('[id^="carousel_action' + actionStep + '_hearing' + listIndex + '"]');
-          // if (carouselTarget && carouselTarget.hasClass('slick-slider')) {
-          //   carouselTarget.slick('unslick');
-          // }
+          $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = false;
         }
         if (optionType === '6') {
           target.splice(optionIndex + 1, 0, imageData);
         } else {
           target.splice(optionIndex + 1, 0, '');
         }
+
         // 表示更新
         $timeout(function() {
-          $scope.$apply();
+          $scope.$apply(function() {
+            $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = true;
+          });
         }).then(function() {
           var targetElmList = $('.action' + actionStep + '_option' + listIndex);
           self.controllListView(actionType, targetElmList, target);
@@ -1323,6 +1335,37 @@
         });
       };
 
+      this.getCarouselSize = function(lineUpStyle, widgetSizeType){
+        var data = { width: 0, height: 0};
+        switch (Number(widgetSizeType)) {
+          case 1:
+            data.width = 190;
+            data.height = lineUpStyle === '1' ? 114 : 69;
+            break;
+          case 2:
+            data.width = 240;
+            data.height = lineUpStyle === '1' ? 144 : 87;
+            break;
+          case 3:
+            data.width = 300;
+            data.height = lineUpStyle === '1' ? 150 : 109;
+            break;
+          case 4:
+            data.width = 300;
+            data.height = lineUpStyle === '1' ? 150 : 109;
+            break;
+          default:
+            data.width = 300;
+            data.height = lineUpStyle === '1' ? 150 : 109;
+            break;
+        }
+
+        return data;
+      };
+
+      this.convertNegativeNum = function(value) {
+        return Number(value);
+      };
       // remove options (radio, pulldown, calendar) in hearing
       this.removeHearingOption = function($event, optionType, optionIndex, listIndex) {
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
