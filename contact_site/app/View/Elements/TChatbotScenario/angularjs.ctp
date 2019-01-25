@@ -272,7 +272,6 @@
           $timeout(function() {
             $scope.$apply();
           });
-
           // 並び替え後、変数のチェックを行う
           var elms = document.querySelectorAll('li.set_action_item');
           $scope.setActionList.forEach(function(actionItem, index) {
