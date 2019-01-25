@@ -17,6 +17,11 @@
     });
   });
 
+  var confirmToDefault = function(){
+    message = "現在設定されているアイコンをデフォルトアイコンに戻します。<br>よろしいですか？<br>";
+    modalOpenOverlap.call(window, message, 'p-seticontodefault-alert', '確認してください', 'moment');
+  };
+
   popupEvent.closePopup = function(){
     var id = document.getElementById('MUserId').value;
     var userName = document.getElementById('MUserUserName').value;
@@ -98,9 +103,16 @@ if ( !empty($this->data['MUser']['settings']) ) {
         <!-- /* 基本情報 */ -->
         <section>
             <?= $this->Form->input('id', array('type' => 'hidden')); ?>
-            <div class = "item">
-            <div class="labelArea fLeft"><span class="require"><label>氏名</label></span></div>
-            <?= $this->Form->input('user_name', array('placeholder' => 'user_name', 'div' => false, 'label' => false, 'maxlength' => 50, 'error' => false,'class' => 'inputItems')) ?>
+            <?= $this->Form->input('user_name', array('type' => 'hidden')); ?>
+            <div class="profile_icon_register">
+              <div>
+                <i class="fa-user fal hover-changer" style="width: 53px; height: 53px; display: flex; justify-content: center; align-items: center;background-color: #ABCD05; border-radius: 50%; color: white; font-size: 35px;" ></i>
+              </div>
+              <div id="profile_register_btn">
+                <div class="greenBtn btn-shadow icon_register">写真を変更する</div>
+                <div class="greenBtn btn-shadow icon_register" onclick="confirmToDefault()">標準に戻す</div>
+                <input type="hidden" name="data[Trimming][info]" ng-model="trimmingInfo" id="TrimmingInfo" class="ng-pristine ng-untouched ng-valid">
+              </div>
             </div>
             <div class = "item">
             <div class="labelArea fLeft"><span class="require"><label>表示名</label></span></div>

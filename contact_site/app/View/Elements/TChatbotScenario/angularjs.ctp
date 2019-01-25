@@ -1331,6 +1331,8 @@
                 el.flatpickr($scope.japaneseCalendar);
               }
             });
+          } else if (optionType === '6') {
+
           }
         });
       };

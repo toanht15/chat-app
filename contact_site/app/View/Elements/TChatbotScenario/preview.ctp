@@ -152,24 +152,6 @@
                 <span ng-repeat="(optionIndex, option) in hearings.settings.options track by $index" class="sinclo-radio" style="display: block" ng-if="option"><input name="action{{setActionId}}_index{{index}}" id="action{{setActionId}}_index{{index}}_option{{optionIndex}}" type="radio" value="{{option}}"><label for="action{{setActionId}}_index{{index}}_option{{optionIndex}}" ng-bind="option"></label></span></div></li>
       <li ng-if="hearings.uiType === '6'" class="chat_left details carousel-box" ng-class="{sinclo_re: hearings.settings.balloonStyle === '1', notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details" ng-if="hearings.message">{{hearings.message}}</span><div class='carousel-container' id="carousel_container{{setActionId}}_hearing{{index}}"><div class='single-item' id="carousel_action{{setActionId}}_hearing{{index}}"><slick ng-if="hearings.settings.dataLoaded" init-onload="false" data="hearings.settings.images" dots="true" settings="hearings.settings.slickSettings"><div ng-repeat="(imageIndex, image) in hearings.settings.images track by $index" class="carousel_action{{setActionId}}_hearing{{index}}_image{{imageIndex}}"><div class="thumbnail" style="display: flex; flex-direction: column; padding: 4px; border: 1px solid black; background-color: #FFFFFF;"><img  ng-if="!!image.url" ng-src="{{image.url}}" /><img  ng-if="!image.url" src="" /><div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;"><div class="title"><strong>{{image.title}}</strong></div><p class="sub-title">{{image.subTitle}}</p></div></div></div></slick></div></div></li>
 
-<!--      <div class='carousel-container' id="carousel_container{{setActionId}}_hearing{{index}}">-->
-<!--        <div class='single-item' id="carousel_action{{setActionId}}_hearing{{index}}">-->
-<!--          <slick ng-if="hearings.settings.dataLoaded" init-onload="false" data="hearings.settings.images" dots="true" settings="hearings.settings.slickSettings">-->
-<!--            <div ng-repeat="(imageIndex, image) in hearings.settings.images track by $index" class="carousel_action{{setActionId}}_hearing{{index}}_image{{imageIndex}}">-->
-<!--              <div class="thumbnail" style="display: flex; flex-direction: column; padding: 4px; border: 1px solid black; background-color: #FFFFFF;">-->
-<!--                <img  ng-if="!!image.url" ng-src="{{image.url}}" />-->
-<!--                <img  ng-if="!image.url" src="" />-->
-<!--                <div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">-->
-<!--                  <div class="title"><strong>{{image.title}}</strong></div>-->
-<!--                  <p class="sub-title">{{image.subTitle}}</p>-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </slick>-->
-<!--        </div>-->
-<!--      </div>-->
-
-
       <br><li ng-show="hearings.errorMessage" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span id="action{{setActionId}}_error_message" class="details">{{hearings.errorMessage}}</span></li>
     </div>
     <!-- 確認メッセージ -->
