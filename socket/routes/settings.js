@@ -390,6 +390,7 @@ router.get("/", function (req, res, next) {
         chatbotIcon: settings.chatbotIcon,
         showOperatorIcon: settings.showOperatorIcon,
         operatorIcon: settings.operatorIcon,
+        operatorIconType: settings.operatorIconType,
         chatInitShowTextarea: chatInitShowTextarea,
         chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
         chatTrigger: isNumeric(settings.chatTrigger),

@@ -1242,7 +1242,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           b: balloonB
       };
       return res;
-    }
+    };
 
     //テキストカラーの振り分け
     $scope.checkTxtColor = function(cR,cG,cB){
@@ -1253,7 +1253,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           return "#000000"; // 黒に設定
       }
       return "#FFFFFF"; // 白に設定
-    }
+    };
 
     $scope.switchMaxLength = function(size){
       var settingTitle = document.getElementById('MWidgetSettingTitle');
@@ -1285,7 +1285,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       settingTitle.maxLength = titleLength;
       settingSubTitle.maxLength = subTitleLength;
       settingDescription.maxLength = descriptionLength;
-    }
+    };
 
     $scope.switchMaxTextSize = function(size){
       //テキストサイズの最大値を変更します
@@ -1323,7 +1323,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       settingReText.max = textSize;
       settingSeText.max = textSize;
       settingSendBtnText.max = sendBtnTextSize;
-    }
+    };
 
     //ウィジェットサイズがクリックされた時の動作
     $scope.clickWidgetSizeTypeToggle = function(size){
@@ -1343,7 +1343,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       setTimeout(function(){
         $('#miniTarget').css('height', 'auto');
       },0);
-    }
+    };
 
     $scope.revertStandardTextSize = function(target) {
       var widgetSize = $scope.widgetSizeTypeToggle;

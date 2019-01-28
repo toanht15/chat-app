@@ -1239,9 +1239,10 @@
       storage.s.set('operatorEntered', true); // オペレータが入室した
       storage.l.set('leaveFlg', 'false'); // オペレータが入室した
 
-      console.log(obj.profileIcon);
-      sincloInfo.widget.operatorIcon = obj.profileIcon;
-      console.log( sincloInfo.widget.operatorIcon );
+      if( Number( sincloInfo.widget.operatorIconType ) === 3 ) {
+        //op別のアイコンを使用する場合はオペレーターのアイコンパスを上書きする。
+        sincloInfo.widget.operatorIcon = obj.profileIcon;
+      }
 
       //サイト訪問者側のテキストエリア表示
       sinclo.displayTextarea();
