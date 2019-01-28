@@ -157,12 +157,14 @@
         var icon = getWidgetSettings().chatbot_icon;
         iconDiv.id = "iconDiv";
         var elm;
-        switch( $scope.checkIconType( icon ) ) {
+        switch( $scope.getIconType( icon ) ) {
           case "fontIcon":
             elm = $scope.createFontIcon( icon );
             break;
           case "imageIcon":
             elm = $scope.createImageIcon( icon );
+            break;
+          default:
             break;
         }
         iconDiv.appendChild(elm);
@@ -170,7 +172,7 @@
         return parentElm;
       };
 
-      $scope.checkIconType = function ( icon ) {
+      $scope.getIconType = function (icon ) {
         if ( icon.match(/^fa/) !== null ){
           return "fontIcon"
         } else {
@@ -1422,15 +1424,8 @@
         $scope.resizeWidgetHeightByWindowHeight();
       });
 
-      $scope.resizeWidgetHeightForCustomSize = function() {
-
-      };
 
       $scope.resizeWidgetHeightByWindowHeight = function() {
-        console.log(getWidgetSettings());
-        if ( Number(getWidgetSettings().widget_size_type) === 5){
-          console.log("カスタムよ！");
-        }
 
         var windowHeight = $(window).innerHeight(),
             minCurrentWidgetHeight = $scope._getMinWidgetHeight(),

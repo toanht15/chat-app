@@ -88,6 +88,11 @@
             ngScope.operator_icon = imgDataUrl;
             ngScope.trimmingOpIconInfo = JSON.stringify(trimmingData);
             break;
+          default:
+            //default is main_image
+            ngScope.main_image = imgDataUrl;
+            ngScope.trimmingInfo = JSON.stringify(trimmingData);
+            break;
         }
       }
       ngScope.$apply();

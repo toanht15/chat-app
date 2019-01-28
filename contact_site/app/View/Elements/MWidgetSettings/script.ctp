@@ -125,17 +125,20 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'op':
           targetToggle = $scope.operatorIconToggle;
           target = $scope.operator_icon;
+          break;
+        default:
+          break;
       }
       settings["with_icon"] = (Number( targetToggle ) === 1 && ( $scope.isPictureImage( target ) || $scope.isIconImage( target ) ));
-      settings = $scope.checkWidgetSize( settings );
+      settings = $scope.setWidgetSize( settings );
       return  settings;
     };
 
-    $scope.setIconSettings = function( type ){
+    $scope.getIconSettings = function( type ){
       var settings = {};
       var iconImage = $scope.checkIconImage( type );
       settings["icon_border"] = $scope.checkWhiteColor() && $scope.isIconImage(iconImage);
-      settings = $scope.checkWidgetSize( settings );
+      settings = $scope.setWidgetSize( settings );
       return settings;
     };
 
@@ -145,6 +148,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           return $scope.chatbot_icon;
         case 'op':
           return $scope.operator_icon;
+        default:
+          break;
       }
     };
 
@@ -168,6 +173,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'op':
           $scope.operator_icon = $scope.main_image;
           break;
+        default:
+          break;
       }
     };
 
@@ -178,6 +185,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           break;
         case 'op':
           $scope.operator_icon = "";
+          break;
+        default:
           break;
       }
     };
@@ -192,7 +201,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     };
 
 
-    $scope.checkWidgetSize = function( settings ) {
+    $scope.setWidgetSize = function(settings ) {
       if( settings == null ) {
         settings = {}
       }
@@ -935,6 +944,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       return {
         'border': "1px solid" + $scope.string_color
       };
+    } else {
+      // メインカラーが白でない場合は何も返却しない
     }
   };
 
@@ -1539,16 +1550,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
     });
 
-    $scope.checkResponsiveCustomSize = function() {
-      console.log("創造と破壊");
-    }
-
     $scope.resizeWidgetHeightByWindowHeight = function() {
-      // カスタム設定時にはリサイズ時の関数を別に呼び出す。
-      if( Number($scope.widgetSizeTypeToggle) === 5 ) {
-        $scope.checkResponsiveCustomSize();
-        return;
-      }
       if($('#miniTarget').height() > 0) {
         $('#miniTarget').css('height', 'auto');
       }

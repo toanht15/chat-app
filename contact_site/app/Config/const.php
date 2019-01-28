@@ -347,6 +347,13 @@ define('C_WIDGET_SIZE_TYPE_MAXIMUM', 4); //最大
 define('C_WIDGET_CUSTOM_WIDTH', 343);
 define('C_WIDGET_CUSTOM_HEIGHT', 284);
 
+//正方形トリミング最低サイズ
+define('C_SQUARE_TRIMMING_MIN_SIDE_SIZE', 200);
+
+//メイン画像トリミングサイズ
+define('C_TRIMMING_MIN_WIDTH', 248);
+define('C_TRIMMING_MIN_HEIGHT', 280);
+
 // ファイル送信設定タイプ
 define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);
 define('C_FILE_TRANSFER_SETTING_TYPE_EXTEND', 2);

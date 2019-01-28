@@ -3642,6 +3642,8 @@
           case "imageIcon":
             elm = this._createImageIcon( icon );
             break;
+          default:
+            break;
         }
         div.classList.add( this._addWidgetSizeClassName(), "effect_left" );
         div.appendChild(elm);
@@ -3684,6 +3686,8 @@
             return "largeSize";
           case 5:
             return "customSize";
+          default:
+            return;
         }
       },
 

@@ -399,32 +399,32 @@ sincloApp.factory('SimulatorService', function() {
       for( var i = 0; i < classArray.length; i++ ){
         switch( classArray[i] ){
           case "size":
-            this.widgetSizeChecker();
+            this.getWidgetSizeClassName();
             break;
           case "sp":
           case "spText":
-            this.spChecker( classArray[i] );
+            this.setSmartPhoneClassName( classArray[i] );
             break;
           case "titlePosition":
             this.setTitlePositionSetting();
             break;
           case "image":
-            this.ImageChecker();
+            this.setMainImageClassName();
             break;
           case "notNone":
-            this.notNoneChecker();
+            this.setNotNoneClassName();
             break;
           case "notNoneWidgetOutsideBorder":
             this.notNoneWidgetOutsideBorderChecker();
             break;
           case "headerContents" :
-            this.headerContentsChecker();
+            this.setHeaderContentsCount();
             break;
           case "headerName" :
-            this.headerNameChecker();
+            this.setHeaderClassName();
             break;
           case "headerDescription" :
-            this.headerDescriptionChecker();
+            this.setDescriptionClassName();
             break;
 
 
@@ -436,7 +436,7 @@ sincloApp.factory('SimulatorService', function() {
     /*ng-class用のオブジェクトを設定する関数群--開始--*/
 
 
-    widgetSizeChecker: function() {
+    getWidgetSizeClassName: function() {
       if ( this.showWidgetType === 3 ) {
         //スマホ縦の場合
         this.resultClass['spSize'] = true;
@@ -456,10 +456,12 @@ sincloApp.factory('SimulatorService', function() {
         case 5:
           this.resultClass['customSize'] = true;
           break;
+        default:
+          break;
       }
     },
 
-    spChecker: function(param ) {
+    setSmartPhoneClassName: function(param ) {
       this.resultClass[param] = this.isSmartPhonePortrait();
     },
 
@@ -471,26 +473,28 @@ sincloApp.factory('SimulatorService', function() {
         case 2:
           this.resultClass["centerPositionTitle"] = true;
           break;
+        default:
+          break;
       }
     },
 
-    headerNameChecker: function() {
+    setHeaderClassName: function() {
       if ( Number(this.subTitleToggle) === 2 ) {
         this.resultClass['noCompany'] = true;
       } else {
-        this.headerPositionChecker( Number(this._settings.widget_title_name_type) );
+        this.setHeaderPosition( Number(this._settings.widget_title_name_type) );
       }
     },
 
-    headerDescriptionChecker: function() {
+    setDescriptionClassName: function() {
       if ( Number(this.descriptionToggle) === 2 ) {
         this.resultClass['noExplain'] = true;
       } else {
-        this.headerPositionChecker( Number(this._settings.widget_title_explain_type) );
+        this.setHeaderPosition( Number(this._settings.widget_title_explain_type) );
       }
     },
 
-    headerPositionChecker: function( param ) {
+    setHeaderPosition: function(param ) {
       switch( param ) {
         case 1:
           this.resultClass['leftPosition'] = true;
@@ -501,7 +505,7 @@ sincloApp.factory('SimulatorService', function() {
       }
     },
 
-    ImageChecker: function(){
+    setMainImageClassName: function(){
       switch( Number(this.mainImageToggle) ) {
         case 1:
           this.resultClass['Image'] = true;
@@ -516,11 +520,11 @@ sincloApp.factory('SimulatorService', function() {
       this.resultClass['notNoneWidgetOutsideBorder'] = this.widget_outside_border_none === '' || !this.widget_outside_border_none;
     },
 
-    notNoneChecker: function() {
+    setNotNoneClassName: function() {
       this.resultClass['notNone'] = this.widget_inside_border_none === '' || !this.widget_inside_border_none;
     },
 
-    headerContentsChecker: function() {
+    setHeaderContentsCount: function() {
       //コンテンツ数が多いほどNumは小さい
       var contentsNum = Number(this.descriptionToggle) + Number(this.subTitleToggle);
       switch( contentsNum ) {

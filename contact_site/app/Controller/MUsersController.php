@@ -320,8 +320,8 @@ class MUsersController extends AppController {
         $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
         $width = ImageSx($in); // 画像の幅を取得
         $height = ImageSy($in); // 画像の高さを取得
-        $save_width = 200; // 幅の最低サイズ
-        $save_height = 200; // 高さの最低サイズ
+        $save_width = C_SQUARE_TRIMMING_MIN_SIDE_SIZE; // 幅の最低サイズ
+        $save_height = C_SQUARE_TRIMMING_MIN_SIDE_SIZE; // 高さの最低サイズ
         $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
         $out = ImageCreateTrueColor($save_width , $save_height);
         //ブレンドモードを無効にする
