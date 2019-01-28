@@ -1591,6 +1591,7 @@ var socket, // socket.io
       }
 
       html += common.injectCalendarCSS();
+      html += common.injectCarouselCss();
 
       /* iPhone/iPod/Androidの場合 */
       if (check.smartphone()) {
@@ -3288,6 +3289,245 @@ var socket, // socket.io
           '  #sincloBox ul#chatTalk li.sinclo_re .flatpickr-calendar .dayContainer .flatpickr-day {flex-basis: 28.42px;}\n' +
           '  #sincloBox ul#chatTalk li.sinclo_re  .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: 0px;width: 27px;height: 29px;display: inline-block;}\n' +
           '}';
+    },
+
+    injectCarouselCss: function() {
+      return '#sincloBox ul#chatTalk li.sinclo_re .slick-slider {\n' +
+          '          position: relative;\n' +
+          '          display: block;\n' +
+          '          box-sizing: border-box;\n' +
+          '          -webkit-user-select: none;\n' +
+          '          -moz-user-select: none;\n' +
+          '          -ms-user-select: none;\n' +
+          '          user-select: none;\n' +
+          '          -webkit-touch-callout: none;\n' +
+          '          -khtml-user-select: none;\n' +
+          '          -ms-touch-action: pan-y;\n' +
+          '          touch-action: pan-y;\n' +
+          '          -webkit-tap-highlight-color: transparent;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-list {\n' +
+          '          position: relative;\n' +
+          '          display: block;\n' +
+          '          overflow: hidden;\n' +
+          '          margin: 0;\n' +
+          '          padding: 0;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-list:focus {\n' +
+          '          outline: none;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-list.dragging {\n' +
+          '          cursor: pointer;\n' +
+          '          cursor: hand;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-slider .slick-track,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-slider .slick-list {\n' +
+          '          -webkit-transform: translate3d(0, 0, 0);\n' +
+          '          -moz-transform: translate3d(0, 0, 0);\n' +
+          '          -ms-transform: translate3d(0, 0, 0);\n' +
+          '          -o-transform: translate3d(0, 0, 0);\n' +
+          '          transform: translate3d(0, 0, 0);\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-track {\n' +
+          '          position: relative;\n' +
+          '          top: 0;\n' +
+          '          left: 0;\n' +
+          '          display: block;\n' +
+          '          margin-left: auto;\n' +
+          '          margin-right: auto;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-track:before,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-track:after {\n' +
+          '          display: table;\n' +
+          '          content: "";\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-track:after {\n' +
+          '          clear: both;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-loading .slick-track {\n' +
+          '          visibility: hidden;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-slide {\n' +
+          '          display: none;\n' +
+          '          float: left;\n' +
+          '          height: 100%;\n' +
+          '          min-height: 1px;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re [dir=rtl] .slick-slide {\n' +
+          '          float: right;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-slide img {\n' +
+          '          display: block;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-slide.slick-loading img {\n' +
+          '          display: none;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-slide.dragging img {\n' +
+          '          pointer-events: none;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-initialized .slick-slide {\n' +
+          '          display: block;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-loading .slick-slide {\n' +
+          '          visibility: hidden;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-vertical .slick-slide {\n' +
+          '          display: block;\n' +
+          '          height: auto;\n' +
+          '          border: 1px solid transparent;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-arrow.slick-hidden {\n' +
+          '          display: none;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-loading .slick-list {\n' +
+          '          background: #fff url("./ajax-loader.gif") center center no-repeat;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-prev,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-next {\n' +
+          '          font-size: 0;\n' +
+          '          line-height: 0;\n' +
+          '          position: absolute;\n' +
+          '          top: 50%;\n' +
+          '          display: block;\n' +
+          '          width: 20px;\n' +
+          '          height: 20px;\n' +
+          '          padding: 0;\n' +
+          '          -webkit-transform: translate(0, -50%);\n' +
+          '          -ms-transform: translate(0, -50%);\n' +
+          '          transform: translate(0, -50%);\n' +
+          '          cursor: pointer;\n' +
+          '          color: transparent;\n' +
+          '          border: none;\n' +
+          '          outline: none;\n' +
+          '          background: transparent;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-prev:hover,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-prev:focus,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-next:hover,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-next:focus {\n' +
+          '          color: transparent;\n' +
+          '          outline: none;\n' +
+          '          background: transparent;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-prev:hover:before,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-prev:focus:before,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-next:hover:before,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-next:focus:before {\n' +
+          '          opacity: 1;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-prev.slick-disabled:before,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-next.slick-disabled:before {\n' +
+          '          opacity: 0.25;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-prev:before,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-next:before {\n' +
+          '          font-family: "slick";\n' +
+          '          font-size: 20px;\n' +
+          '          line-height: 1;\n' +
+          '          opacity: 0.75;\n' +
+          '          color: white;\n' +
+          '          -webkit-font-smoothing: antialiased;\n' +
+          '          -moz-osx-font-smoothing: grayscale;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-prev {\n' +
+          '          left: -25px;\n' +
+          '          z-index: 999;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re [dir=rtl] .slick-prev {\n' +
+          '          right: -25px;\n' +
+          '          left: auto;\n' +
+          '          z-index: 999;\n' +
+          '        }\n' +
+          '        /*#sincloBox ul#chatTalk li.sinclo_re .slick-prev:before {*/\n' +
+          '          /*content: "←";*/\n' +
+          '        /*}*/\n' +
+          '        /*#sincloBox ul#chatTalk li.sinclo_re [dir=rtl] .slick-prev:before {*/\n' +
+          '          /*content: "→";*/\n' +
+          '        /*}*/\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-next {\n' +
+          '          right: -25px;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re [dir=rtl] .slick-next {\n' +
+          '          right: auto;\n' +
+          '          left: -25px;\n' +
+          '        }\n' +
+          '        /*#sincloBox ul#chatTalk li.sinclo_re .slick-next:before {*/\n' +
+          '          /*content: "→";*/\n' +
+          '        /*}*/\n' +
+          '        /*#sincloBox ul#chatTalk li.sinclo_re [dir=rtl] .slick-next:before {*/\n' +
+          '          /*content: "←";*/\n' +
+          '        /*}*/\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dotted.slick-slider {\n' +
+          '          margin-bottom: 30px;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dots {\n' +
+          '          position: absolute;\n' +
+          '          bottom: -25px;\n' +
+          '          display: block;\n' +
+          '          width: 100%;\n' +
+          '          padding: 0;\n' +
+          '          margin: 0;\n' +
+          '          list-style: none;\n' +
+          '          text-align: center;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dots li {\n' +
+          '          position: relative;\n' +
+          '          display: inline-block;\n' +
+          '          width: 20px;\n' +
+          '          height: 20px;\n' +
+          '          margin: 0 5px;\n' +
+          '          padding: 0;\n' +
+          '          cursor: pointer;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dots li button {\n' +
+          '          font-size: 0;\n' +
+          '          line-height: 0;\n' +
+          '          display: block;\n' +
+          '          width: 20px;\n' +
+          '          height: 20px;\n' +
+          '          padding: 5px;\n' +
+          '          cursor: pointer;\n' +
+          '          color: transparent;\n' +
+          '          border: 0;\n' +
+          '          outline: none;\n' +
+          '          background: transparent;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dots li button:hover,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dots li button:focus {\n' +
+          '          outline: none;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dots li button:hover:before,\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dots li button:focus:before {\n' +
+          '          opacity: 1;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dots li button:before {\n' +
+          '          font-family: "slick";\n' +
+          '          font-size: 6px;\n' +
+          '          line-height: 20px;\n' +
+          '          position: absolute;\n' +
+          '          top: 0;\n' +
+          '          left: 0;\n' +
+          '          width: 20px;\n' +
+          '          height: 20px;\n' +
+          '          content: "•";\n' +
+          '          text-align: center;\n' +
+          '          opacity: 0.25;\n' +
+          '          color: black;\n' +
+          '          -webkit-font-smoothing: antialiased;\n' +
+          '          -moz-osx-font-smoothing: grayscale;\n' +
+          '        }\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .slick-dots li.slick-active button:before {\n' +
+          '          opacity: 0.75;\n' +
+          '          color: black;\n' +
+          '        }\n' +
+          '\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .fa-chevron-right:before {\n' +
+          '          content: "\\f054";\n' +
+          '        }\n' +
+          '\n' +
+          '        #sincloBox ul#chatTalk li.sinclo_re .fa-chevron-left:before {\n' +
+          '          content: "\\f053";\n' +
+          '        }';
     },
     //バナーを生成する関数
     sincloBannerTemplate: function(widget) {

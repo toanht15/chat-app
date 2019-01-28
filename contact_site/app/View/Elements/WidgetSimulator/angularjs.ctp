@@ -484,18 +484,34 @@
         if (data.settings.arrowType === '3') {
           prevIconClass = 'fa-chevron-left';
           nextIconClass = 'fa-chevron-right';
+        } else if (data.settings.arrowType === '4') {
+          prevIconClass = 'fa-chevron-square-left';
+          nextIconClass = 'fa-chevron-square-right';
         } else {
           prevIconClass = 'fa-chevron-circle-left';
           nextIconClass = 'fa-chevron-circle-right';
         }
 
         var slidesToShow = data.settings.lineUpStyle === '1' ? 1 : 1.5;
+        $(carousel.selector).on('init', function(event, slick) {
+          var maxHeight = 0;
+          slick.$slides.each(function(slide) {
+            var currentHeight = $(this).find('.caption').height();
+            maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+          });
+
+          slick.$slides.each(function(slide) {
+            $(this).find('.caption').css('min-height', maxHeight + 'px');
+          });
+        });
+
         $(carousel.selector).slick({
           dots: true,
           slidesToShow: slidesToShow,
           infinite: false,
+          lazyLoad: 'ondemand',
           prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
-          nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
+          nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>',
         });
         // 復元機能
         var oldIndex = null;
@@ -504,7 +520,7 @@
            oldIndex = index;
           }
         });
-        if (oldIndex) {
+        if (data.isRestore && oldIndex) {
           $(carousel.selector).slick('slickGoTo', oldIndex);
         }
         $('#' + data.prefix + '_question .slick-arrow').on('click', function() {

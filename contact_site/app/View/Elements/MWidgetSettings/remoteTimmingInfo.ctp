@@ -22,16 +22,36 @@
     trimmingInfoTag = trimInfoTag;
     $image = $('.cropper-example-1 > img');
     targetImgTag.cropper({
-      aspectRatio: aspectRatio // ここでアスペクト比の調整 ワイド画面にしたい場合は 16 / 9
+      aspectRatio: aspectRatio, // ここでアスペクト比の調整 ワイド画面にしたい場合は 16 / 9
+    });
+    popupEvent.resize();
+  }
+
+  function carouselTrimmingInit($scope, trimInfoTag) {
+    ngScope = $scope;
+    trimmingInfoTag = trimInfoTag;
+    var numbers = trimmingInfoTag.match(/\d+/g).map(Number);
+    var aspectRatio = ngScope.setActionList[numbers[0]].hearings[numbers[1]].settings.aspectRatio;
+    $image = $('.cropper-example-1 > img');
+
+    targetImgTag.cropper({
+      viewMode: 0,
+      aspectRatio: aspectRatio, // ここでアスペクト比の調整 ワイド画面にしたい場合は 16 / 9
     });
     popupEvent.resize();
   }
 
   popupEvent.trimCarouselImage = function() {
+    var aspectRatio = targetImgTag.cropper('getCroppedCanvas').width / targetImgTag.cropper('getCroppedCanvas').height;
+    var numbers = trimmingInfoTag.match(/\d+/g).map(Number);
+    if (!ngScope.setActionList[numbers[0]].hearings[numbers[1]].settings.aspectRatio) {
+      ngScope.setActionList[numbers[0]].hearings[numbers[1]].settings.aspectRatio = aspectRatio;
+    }
+
     targetImgTag.cropper('getCroppedCanvas').toBlob((blob) => {
       const formData = new FormData();
       formData.append('file', blob);
-
+      var numbers = trimmingInfoTag.match(/\d+/g).map(Number);
       $.ajax({
         url: "<?= $this->Html->url('/TChatbotScenario/remoteUploadCarouselImage') ?>",
         type: 'POST',
@@ -42,15 +62,25 @@
         dataType: 'json',
         xhr: function() {
           var XHR = $.ajaxSettings.xhr();
+          if (XHR.upload) {
+            XHR.upload.addEventListener('progress', function(e) {
+              var progress = parseInt(e.loaded / e.total * 10000) / 100;
+              ngScope.setActionList[numbers[0]].hearings[numbers[1]].settings.images[numbers[2]].isUploading = true;
+              $('.progressbar_action' + numbers[0] + '_hearing' + numbers[1] + '_image' + numbers[2]).css('width', progress + '%');
+              ngScope.$apply();
+            }, false);
+          }
+
           return XHR;
         }
       }).done(function(data, textStatus, jqXHR) {
         console.log(data.url);
         if (ngScope) {
-          var numbers = trimmingInfoTag.match(/\d+/g).map(Number);
           ngScope.setActionList[numbers[0]].hearings[numbers[1]].settings.images[numbers[2]].url = data.url;
           ngScope.$apply();
         }
+      }).always(function() {
+        ngScope.setActionList[numbers[0]].hearings[numbers[1]].settings.images[numbers[2]].isUploading = false;
       });
 
       return popupEvent.close();

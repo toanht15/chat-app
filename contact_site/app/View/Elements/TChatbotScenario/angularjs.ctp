@@ -342,8 +342,10 @@
         target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
         target.settings.customDesign.titleColor = $scope.widget.settings.description_text_color;
-        target.settings.customDesign.subTitleColor = $scope.widget.settings.description_text_color;
-        target.settings.customDesign.arrowColor = '#FFFFFF';
+        target.settings.customDesign.subTitleColor = '#333333';
+        target.settings.customDesign.arrowColor = $scope.widget.settings.main_color;
+        target.settings.customDesign.outBorderColor = '#E8E7E0';
+        target.settings.customDesign.inBorderColor = '#E8E7E0';
         target.settings.customDesign.titleFontSize = parseInt($scope.widget.settings.re_text_size) + 1;
         target.settings.customDesign.subTitleFontSize = parseInt($scope.widget.settings.re_text_size);
 
@@ -464,12 +466,12 @@
             target.css('background-color', defaultColor);
             break;
           case 'subTitleColor':
-            defaultColor = $scope.widget.settings.description_text_color;
+            defaultColor = '#333333';
             $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
             target.css('background-color', defaultColor);
             break;
           case 'arrowColor':
-            defaultColor = '#FFFFFF';
+            defaultColor = $scope.widget.settings.main_color;
             $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
             target.css('background-color', defaultColor);
             break;
@@ -478,6 +480,16 @@
             break;
           case 'subTitleFontSize':
             $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = parseInt($scope.widget.settings.re_text_size);
+            break;
+          case 'outBorderColor':
+            defaultColor = '#E8E7E0';
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+          case 'inBorderColor':
+            defaultColor = '#E8E7E0';
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
             break;
         }
 
@@ -762,18 +774,43 @@
                 if (hearing.settings.arrowType === '3') {
                   prevIconClass = 'fa-chevron-left';
                   nextIconClass = 'fa-chevron-right';
+                } else if (hearing.settings.arrowType === '4') {
+                  prevIconClass = 'fa-chevron-square-left';
+                  nextIconClass = 'fa-chevron-square-right';
                 } else {
                   prevIconClass = 'fa-chevron-circle-left';
                   nextIconClass = 'fa-chevron-circle-right';
                 }
                 var slidesToShow = hearing.settings.lineUpStyle === '1' ? 1 : 1.5;
+                carouselTarget.on('init', function(event, slick) {
+                  var maxHeight = 0;
+                  slick.$slides.each(function(slide) {
+                    var currentHeight = $(this).find('.caption').height();
+                    maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+                  });
+
+                  slick.$slides.each(function(slide) {
+                    $(this).find('.caption').css('min-height', maxHeight + 'px');
+                  });
+                });
+
                 hearing.settings.slickSettings = {
                   dots: true,
                   slidesToShow: slidesToShow,
                   infinite: false,
+                  lazyLoad: 'ondemand',
                   prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
                   nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
                 };
+                var maxHeight = 0;
+                carouselTarget.find('.caption').each(function() {
+                  var currentHeight = $(this).height();
+                  maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+                });
+
+                carouselTarget.find('.caption').each(function() {
+                  $(this).css('min-height', maxHeight + 'px');
+                });
 
                 $timeout(function() {
                   $scope.$apply();
@@ -1330,42 +1367,58 @@
                 el.flatpickr($scope.japaneseCalendar);
               }
             });
-          } else if (optionType === '6') {
-
           }
         });
       };
 
-      this.getCarouselSize = function(lineUpStyle, widgetSizeType){
-        var data = { width: 0, height: 0};
+      this.getCarouselSize = function(lineUpStyle, widgetSizeType, aspectRatio){
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
         switch (Number(widgetSizeType)) {
           case 1:
-            data.width = 190;
-            data.height = lineUpStyle === '1' ? 114 : 69;
+            data.containerWidth = 190;
+            data.width = lineUpStyle === '1' ? 190 : 120;
             break;
           case 2:
-            data.width = 240;
-            data.height = lineUpStyle === '1' ? 144 : 87;
+            data.containerWidth = 240;
+            data.width = lineUpStyle === '1' ? 240 : 150;
             break;
           case 3:
-            data.width = 300;
-            data.height = lineUpStyle === '1' ? 150 : 109;
+            data.containerWidth = 300;
+            data.width = lineUpStyle === '1' ? 300 : 184;
             break;
           case 4:
-            data.width = 300;
-            data.height = lineUpStyle === '1' ? 150 : 109;
+            data.containerWidth = 300;
+            data.width = lineUpStyle === '1' ? 300 : 184;
             break;
           default:
-            data.width = 300;
-            data.height = lineUpStyle === '1' ? 150 : 109;
+            data.containerWidth = 300;
+            data.width = lineUpStyle === '1' ? 300 : 184;
             break;
         }
+
+        data.height = data.width / aspectRatio;
 
         return data;
       };
 
       this.convertNegativeNum = function(value) {
         return Number(value);
+      };
+
+      this.getTitleTextAlign = function(value) {
+        switch (Number(value)) {
+          case 1:
+            return 'left';
+          case 2:
+            return 'center';
+          case 3:
+            return 'right';
+          default:
+            return 'left';
+        }
       };
       // remove options (radio, pulldown, calendar) in hearing
       this.removeHearingOption = function($event, optionType, optionIndex, listIndex) {
@@ -2098,7 +2151,7 @@
             openTrimmingDialog(function(){
               // beforeTrimmingInit(url, $('#picDiv img'));
               beforeTrimmingInit(url, $('#trimmed_image'));
-              trimmingInit($scope, fileId, 5 / 3);
+              carouselTrimmingInit($scope, fileId);
             });
           }
         });
