@@ -1105,7 +1105,7 @@ $headerNo = 1;
                         <input type="hidden" name="data[Trimming][opIconInfo]" ng-model="trimmingOpIconInfo" id="TrimmingOpIconInfo" />
                       </div>
                     </div>
-                    <label class="pointer" for="operatorIconType3"><input type="radio" name="data[MWidgetSetting][operator_icon_type]" ng-model="operatorIconType" id="operatorIconType3" value="3" >オペレーター毎に個別のアイコンを利用する</label><br>
+                    <label class="pointer" for="operatorIconType3"><input type="radio" name="data[MWidgetSetting][operator_icon_type]" ng-model="operatorIconType" ng-change="getProfileIconForOperatorIcon()" id="operatorIconType3" value="3" >オペレーター毎に個別のアイコンを利用する</label><br>
                   </div>
                   <?php if ($this->Form->isFieldError('operator_icon')) echo $this->Form->error('operator_icon', null, ['ng-if'=>'mainImageToggle=="1"']); ?>
                   <label class="pointer" for="showOperatorIcon2"><input type="radio" name="data[MWidgetSetting][show_operator_icon]" ng-model="operatorIconToggle" id="showOperatorIcon2" value="2" >アイコンを表示しない</label>

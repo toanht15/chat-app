@@ -1,6 +1,32 @@
 <script type="text/javascript">
 <?php $this->request->data['MUser']['user_name'] = htmlspecialchars($this->request->data['MUser']['user_name'], ENT_QUOTES, 'UTF-8');?>
 <?php $this->request->data['MUser']['display_name'] = htmlspecialchars($this->request->data['MUser']['display_name'], ENT_QUOTES, 'UTF-8');?>
+<?php $this->request->data['MUser']['profile_icon'] = htmlspecialchars(json_decode($this->request->data['MUser']['settings'], true)['profileIcon'], ENT_QUOTES, 'UTF-8');?>
+<?php
+  if( empty($this->request->data['MUser']['memo'])  ){
+    if( !empty($this->request->data['MUser']['user_name']) ) {
+      $this->request->data['MUser']['memo'] = $this->request->data['MUser']['user_name'];
+    }
+  } else {
+    $this->request->data['MUser']['memo'] = htmlspecialchars($this->request->data['MUser']['memo'], ENT_QUOTES, 'UTF-8');
+  }
+?>
+  var checkIconIsDefault = function() {
+    var icon = $('.hover-changer')[0];
+    return icon.tagName === "I";
+  };
+
+  var disableSetDefaultBtn = function() {
+    var defaultBtn = document.getElementById("setToDefault");
+    defaultBtn.classList.remove("greenBtn");
+    defaultBtn.classList.add("disOffgrayBtn");
+  };
+  var ableSetDefaultBtn = function() {
+    var defaultBtn = document.getElementById("setToDefault");
+    defaultBtn.classList.remove("disOffgrayBtn");
+    defaultBtn.classList.add("greenBtn");
+  };
+
   $(function(){
     var passwordElm = $("[type='password']");
     var editCheck = document.getElementById('MUserEditPassword');
@@ -15,42 +41,126 @@
         pwArea.removeClass('require');
       }
     });
+
+    //何かしらアイコンをどうにかする必要がある
+
+
+    if( checkIconIsDefault() ) {
+      disableSetDefaultBtn();
+    }
   });
 
-  var confirmToDefault = function(){
+  var confirmToDefault = function() {
+    if( checkIconIsDefault() ) {
+      //デフォルトアイコンの場合はなにもさせない。
+      return;
+    }
     message = "現在設定されているアイコンをデフォルトアイコンに戻します。<br>よろしいですか？<br>";
     modalOpenOverlap.call(window, message, 'p-seticontodefault-alert', '確認してください', 'moment');
+    initPopupOverlapEvent();
+
   };
 
+
+  var initPopupOverlapEvent = function() {
+    popupEventOverlap.closePopup = function(){
+      var icon = $('.hover-changer')[0];
+      if(icon.tagName === "IMG") {
+        changeIconToDefault( icon );
+      }
+      popupEventOverlap.closeNoPopupOverlap();
+    };
+  };
+
+  var changeIconToDefault = function( icon ) {
+    if( icon.parentNode ) {
+      icon.parentNode.removeChild( icon );
+    }
+    $("#MUserUploadProfileIcon").val("");
+    $('#TrimmingProfileIconInfo').val("");
+    var iconComponent = $('.profile_icon_register > div')[0];
+    var defaultElm = document.createElement("i");
+    defaultElm.classList.add("fa-user","fal","hover-changer");
+    defaultElm.style.color = "<?=$iconFontColor ?>";
+    defaultElm.style.backgroundColor = "<?=$iconMainColor ?>";
+    iconComponent.appendChild(defaultElm);
+  };
+
+  var changeProfileIcon = function(e) {
+    var files = e.target.files;
+    if ( window.URL && files.length > 0 ) {
+      var file = files[files.length-1];
+      // 2MB以下である
+      if (file.size > 2000000) {
+        $("#MUserUploadProfileIcon").val("");
+        return false;
+      }
+      // jpeg/jpg/png
+      var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+      if ( !reg.exec(file.type) ) {
+        $("#MUserUploadProfileIcon").val("");
+        return false;
+      }
+      var url = window.URL.createObjectURL(file);
+      target = changeIconPath(url, file.name);
+      openTrimmingDialog(function(){
+        beforeTrimmingInit(url, $('.hover-changer'));
+        trimmingInit(null,$('#TrimmingProfileIconInfo'), 1, "profile_icon");
+      });
+    }
+  };
+
+  $('.hover-changer').click(function(){
+    $('#MUserUploadProfileIcon').click();
+  });
+
+  $('#MUserUploadProfileIcon').change(function(e){
+    changeProfileIcon(e);
+    ableSetDefaultBtn();
+  });
+
+  var  changeIconPath = function(path, fileName){
+    var currentIcon = document.querySelector('.hover-changer');
+    var newIcon = document.createElement("img");
+    var parentElm = currentIcon.parentNode;
+    if( currentIcon.parentNode ) {
+      currentIcon.parentNode.removeChild( currentIcon );
+    }
+    newIcon.src = path;
+    newIcon.classList.add("hover-changer");
+    parentElm.appendChild(newIcon);
+    var iconData = document.getElementById('MUserProfileIcon');
+    iconData.value = fileName;
+    return newIcon;
+  };
+
+
+  function openTrimmingDialog(callback){
+    $.ajax({
+      type: 'post',
+      dataType: 'html',
+      cache: false,
+      url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
+      success: function(html){
+        modalOpenOverlap.call(window, html, 'p-profile-icon-trimming', 'トリミング', 'moment');
+        callback();
+      }
+    });
+  }
+
   popupEvent.closePopup = function(){
-    var id = document.getElementById('MUserId').value;
-    var userName = document.getElementById('MUserUserName').value;
-    var displayName = document.getElementById('MUserDisplayName').value;
-    var settings = document.getElementById('MUserSettings').value;
-    var mailAddress = document.getElementById('MUserMailAddress').value;
-    var password = document.getElementById('MUserNewPassword').value;
-    var edit_password = document.getElementById("MUserEditPassword").checked;
-    var current_password = document.getElementById('MUserCurrentPassword').value;
-    var new_password = document.getElementById('MUserNewPassword').value;
-    var confirm_password = document.getElementById('MUserConfirmPassword').value;
+    var form = $('#MUserRemoteOpenEntryFormForm').get(0);
+    var formData = new FormData( form );
     var accessToken = "<?=$token?>";
+    formData.append("accessToken", accessToken);
     $.ajax({
         type: "post",
         url: "<?=$this->Html->url('/PersonalSettings/remoteSaveEntryForm')?>",
-        data: {
-            id: id,
-            userName: userName,
-            displayName: displayName,
-            settings: settings,
-            mailAddress: mailAddress,
-            edit_password: edit_password,
-            current_password: current_password,
-            new_password: new_password,
-            confirm_password: confirm_password,
-            accessToken: accessToken
-        },
-        cache: false,
         dataType: "JSON",
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
         success: function(data){
           var keys = Object.keys(data), num = 0, popup = $("#popup-frame");
           $(".error-message").remove();
@@ -106,17 +216,22 @@ if ( !empty($this->data['MUser']['settings']) ) {
             <?= $this->Form->input('user_name', array('type' => 'hidden')); ?>
             <div class="profile_icon_register">
               <div>
-                <i class="fa-user fal hover-changer" style="width: 53px; height: 53px; display: flex; justify-content: center; align-items: center;background-color: #ABCD05; border-radius: 50%; color: white; font-size: 35px;" ></i>
+                <?= $this->Form->input('profile_icon', ['type' => 'hidden']); ?>
+                <?php if (empty($this->request->data['MUser']['profile_icon'])) { ?>
+                  <i class="fa-user fal hover-changer" style="color:<?=$iconFontColor ?> ; background-color: <?=$iconMainColor ?>;" ></i>
+                <?php } else { ?>
+                  <img class="hover-changer" src="<?=$this->request->data['MUser']['profile_icon']?>" >
+                <?php }?>
               </div>
               <div id="profile_register_btn">
-                <div class="greenBtn btn-shadow icon_register">写真を変更する</div>
-                <div class="greenBtn btn-shadow icon_register" onclick="confirmToDefault()">標準に戻す</div>
-                <input type="hidden" name="data[Trimming][info]" ng-model="trimmingInfo" id="TrimmingInfo" class="ng-pristine ng-untouched ng-valid">
+                <div class="greenBtn btn-shadow icon_register"><?php echo $this->Form->file('uploadProfileIcon'); ?>写真を変更する</div>
+                <div id="setToDefault" class="greenBtn btn-shadow icon_register" onclick="confirmToDefault()">標準に戻す</div>
+                <input type="hidden" name="data[Trimming][profileIconInfo]" ng-model="trimmingProfileIconInfo" id="TrimmingProfileIconInfo" class="ng-pristine ng-untouched ng-valid">
               </div>
             </div>
             <div class = "item">
             <div class="labelArea fLeft"><span class="require"><label>表示名</label></span></div>
-            <?= $this->Form->input('display_name', array('placeholder' => 'display_name', 'div' => false, 'label' => false, 'maxlength' => 10, 'error' => false,'class' => 'inputItems')) ?>
+            <?= $this->Form->input('display_name', array('placeholder' => '表示名', 'div' => false, 'label' => false, 'maxlength' => 10, 'error' => false,'class' => 'inputItems')) ?>
             </div>
             <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && !empty($mChatSetting['MChatSetting']) && strcmp($mChatSetting['MChatSetting']['sc_flg'], C_SC_ENABLED) === 0 ) : ?>
               <div class = "item">
@@ -131,7 +246,11 @@ if ( !empty($this->data['MUser']['settings']) ) {
               </div>
             <div class = "item">
             <div class="labelArea fLeft"><span class="require"><label>メールアドレス</label></span></div>
-            <?= $this->Form->input('mail_address', array('placeholder' => 'mail_address', 'div' => false, 'label' => false, 'maxlength' => 200, 'error' => false, 'class' => 'inputItems')) ?>
+            <?= $this->Form->input('mail_address', array('placeholder' => 'メールアドレス', 'div' => false, 'label' => false, 'maxlength' => 200, 'error' => false, 'class' => 'inputItems')) ?>
+            </div>
+            <div class = "item">
+              <div class="labelArea fLeft align-start"><label>メモ</label></div>
+              <?= $this->Form->input('memo', array('type' => 'textarea', 'placeholder' => 'メモ', 'div' => false, 'label' => false, 'maxlength' => 200, 'error' => false, 'class' => 'profile_memo_area')) ?>
             </div>
         </section>
         <!-- /* パスワード変更 */ -->

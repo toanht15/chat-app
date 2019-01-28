@@ -1147,6 +1147,12 @@ ul#color-bar-right {
       padding: 3.5px 0 3.5px 0;
     }
   }
+  #headerProfileImg {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
 }
 
 #menu-bar-right{
@@ -5410,6 +5416,12 @@ ul.naviBtn {
       background-color: #EEEEEE;
     }
   }
+  #userProfileIcon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+  }
+
 
   .lineCtrl {
     text-align: center;
@@ -8541,22 +8553,47 @@ ul.naviBtn {
         /* チャットボットシナリオ設定(追加・更新): プレビュー */
         #tchatbotscenario_form_preview{
 
+          .grid_preview {
+            display: -ms-grid;
+            display: grid;
+            -ms-grid-columns: minmax(max-content, max-content) 1fr;
+            grid-template-columns: minmax(max-content, max-content) 1fr;
+            .iconDiv {
+              display: flex;
+              justify-content: flex-end;
+              align-items: flex-end;
+              i {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+              img {
+                border-radius: 50%;
+              }
+            }
+            li.sinclo_re {
+              -ms-grid-column: 2;
+              -ms-grid-column-align: start;
+              justify-self: start;
+              &.recv_file_left {
+                justify-self: stretch;
+              }
+            }
+          }
+
           &.smallSize {
             flex-basis: 285px;
             min-width: 285px;
-            height: 100%;
-            .grid_preview {
-              display: grid;
-              grid-template-columns: 40px 1fr;
+            .grid_preview  {
               .iconDiv {
-                display: flex;
-                justify-content: flex-end;
-                align-items: flex-end;
+                i, img {
+                  height: 30px;
+                  width: 30px;
+                  font-size: 20px;
+                }
               }
-              img {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
+              li.sinclo_re {
+                margin-left: 2px;
               }
             }
           }
@@ -8564,13 +8601,16 @@ ul.naviBtn {
           &.middleSize {
             flex-basis: 342.5px;
             min-width: 342.5px;
-            .grid_preview {
-              display: grid;
-              grid-template-columns: 40px 1fr;
+            .grid_preview  {
               .iconDiv {
-                display: flex;
-                justify-content: flex-end;
-                align-items: flex-end;
+                i, img {
+                  height: 35px;
+                  width: 35px;
+                  font-size: 23px;
+                }
+              }
+              li.sinclo_re {
+                margin-left: 3px;
               }
             }
           }
@@ -8578,9 +8618,17 @@ ul.naviBtn {
           &.largeSize {
             flex-basis: 400px;
             min-width: 400px;
-            .grid_preview {
-              display: grid;
-              grid-template-columns: 40px 1fr;
+            .grid_preview  {
+              .iconDiv {
+                i, img {
+                  height: 40px;
+                  width: 40px;
+                  font-size: 26px;
+                }
+              }
+              li.sinclo_re {
+                margin-left: 5px;
+              }
             }
           }
 
@@ -11093,6 +11141,104 @@ div.balloon {
     width: 62px;
     height: 70px;
     font-size: 43px;
+  }
+}
+
+#sincloBox {
+  section#chatTab {
+    #grid_balloon {
+      display: -ms-grid;
+      display: grid;
+      -ms-grid-columns: minmax(max-content, max-content) 1fr;
+      grid-template-columns: minmax(max-content, max-content) 1fr;
+      &.no_icon {
+        grid-template-columns: 1fr;
+      }
+      #iconDiv {
+        display: flex;
+        justify-content: flex-end;
+        align-items: flex-end;
+        i {
+          display:flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+      li.sinclo_re {
+        margin-left: 3px;
+      }
+    }
+    &[class$="Size"] {
+      #grid_balloon.no_icon {
+        li.sinclo_re {
+          margin-left: 10px;
+        }
+      }
+    }
+    &.smallSize {
+      #grid_balloon {
+        #iconDiv {
+          max-width: 30px;
+          min-width: 30px;
+          i, img {
+            height: 30px;
+            width: 30px;
+            font-size: 20px;
+          }
+        }
+        li.sinclo_re {
+          margin-left: 2px;
+        }
+      }
+    }
+    &.middleSize {
+      #grid_balloon {
+        #iconDiv {
+          max-width: 37px;
+          min-width: 37px;
+          i, img {
+            height: 35px;
+            width: 35px;
+            font-size: 23px;
+          }
+        }
+        li.sinclo_re {
+          margin-left: 3px;
+        }
+      }
+    }
+    &.largeSize {
+      #grid_balloon {
+        #iconDiv {
+          max-width: 42px;
+          min-width: 42px;
+          i, img {
+            height: 40px;
+            width: 40px;
+            font-size: 26px;
+          }
+        }
+        li.sinclo_re {
+          margin-left: 5px;
+        }
+      }
+    }
+    &.customSize {
+      #grid_balloon {
+        #iconDiv {
+          max-width: 30px;
+          min-width: 30px;
+          i {
+            height: 30px;
+            width: 30px;
+            font-size: 20px;
+          }
+        }
+        li.sinclo_re {
+          margin-left: 2px;
+        }
+      }
+    }
   }
 }
 

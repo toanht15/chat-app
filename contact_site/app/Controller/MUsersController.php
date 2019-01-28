@@ -5,6 +5,7 @@
  */
 class MUsersController extends AppController {
   public $uses = ['MUser', 'MCompany', 'MChatSetting'];
+  public $components = ['ImageTrimming'];
   public $paginate = [
     'MUser' => [
       'limit' => 10,
@@ -91,9 +92,9 @@ class MUsersController extends AppController {
     $token = $this->Session->read('token');
     //トークンチェック
     if($this->request->data['accessToken'] == $token) {
-      if (!empty($this->request->data['userId'])) {
+      if (!empty($this->request->data['MUser']['id'])) {
         $this->MUser->recursive = -1;
-        $tmpData = $this->MUser->read(null, $this->request->data['userId']);
+        $tmpData = $this->MUser->read(null, $this->request->data['MUser']['id']);
         if($tmpData['MUser']['m_companies_id'] == $this->userInfo['MCompany']['id'] && $tmpData['MUser']['permission_level'] != 99 && $tmpData['MUser']['del_flg'] != 1) {
           $insertFlg = false;
         }
@@ -111,22 +112,35 @@ class MUsersController extends AppController {
         }
       }
 
-      $tmpData['MUser']['user_name'] = $this->request->data['userName'];
-      $tmpData['MUser']['display_name'] = $this->request->data['displayName'];
-      $tmpData['MUser']['mail_address'] = $this->request->data['mailAddress'];
-      $tmpData['MUser']['permission_level'] = $this->request->data['permissionLevel'];
+      $uploadImage = $this->request->data['MUser']['uploadProfileIcon'];
+      if ( !(isset($uploadImage['tmp_name']) && is_uploaded_file($uploadImage['tmp_name'])) ) {
+        unset($this->request->data['MUser']['uploadProfileIcon']);
+        $uploadImage = null;
+      }
+      if ( !empty($uploadImage) ){
+        $filename = $this->trimProfileImg();
+        $this->request->data['MUser']["profile_custom_image"] = $filename;
+      }
 
-      if ( !$insertFlg && empty($this->request->data['password']) ) {
+      $tmpData['MUser']['user_name'] = $this->request->data['MUser']['user_name'];
+      $tmpData['MUser']['display_name'] = $this->request->data['MUser']['display_name'];
+      $tmpData['MUser']['mail_address'] = $this->request->data['MUser']['mail_address'];
+      $tmpData['MUser']['permission_level'] = $this->request->data['MUser']['permission_level'];
+      $tmpData['MUser']['memo'] = $this->request->data['MUser']['memo'];
+
+      if ( !$insertFlg && empty($this->request->data['MUser']['new_password']) ) {
         unset($this->MUser->validate['password']);
       }
       else {
-        $tmpData['MUser']['new_password'] = $this->request->data['password'];
+        $tmpData['MUser']['new_password'] = $this->request->data['MUser']['new_password'];
       }
 
       // チャットアカウント用処理（アカウント登録時のみ）
       if ( !isset($tmpData['MUser']['id']) && isset($this->coreSettings[C_COMPANY_USE_CHAT]) && $this->coreSettings[C_COMPANY_USE_CHAT] ) {
         $tmpData['MUser']['settings'] = $this->_setChatSetting($tmpData);
       }
+
+      $tmpData['MUser']['settings'] = $this->_collectUserSettings($tmpData['MUser']['settings']);
       // const
       $this->MUser->set($tmpData);
 
@@ -260,5 +274,71 @@ class MUsersController extends AppController {
     $data = $this->request->data;
     $password = $this->MUser->passwordHash($data['password']);
     return $password;
+  }
+
+  private function _collectUserSettings($tmpData) {
+    $settings = json_decode($tmpData, true);
+    $imageName = $this->request->data['MUser']['profile_custom_image'];
+    if ( isset($imageName) ) {
+      $settings['profileIcon'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$imageName;
+    } else {
+      $settings['profileIcon'] = "";
+    }
+    $settings = json_encode($settings);
+    return $settings;
+  }
+
+  /* *
+   * トリミング処理
+   *
+   */
+  private function trimProfileImg() {
+    $uploadImage = "";
+    $inputData = $this->request->data['MUser'];
+    if ( !empty($inputData['uploadProfileIcon']) ) {
+      $uploadImage = $inputData['uploadProfileIcon'];
+    }
+    $inputData['profile_icon'] = "";
+
+    if ( !empty($uploadImage) ) {
+      $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
+      $filename = $this->userInfo['MCompany']['company_key'].'_'.$this->userInfo['id'].'_'.date('YmdHis').'.'.$extension;
+      $tmpFile = $uploadImage['tmp_name'];
+      // ファイルの保存先フルパス＋ファイル名
+      $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
+      if (!empty($this->request->data['Trimming']['info'])) {
+        $trimmingInfo = json_decode($this->request->data['Trimming']['info'], TRUE);
+        $component = new ImageTrimmingComponent();
+        $component->setFileData($uploadImage);
+        $component->setSavePath($saveFile);
+        $component->setX($trimmingInfo['x']);
+        $component->setY($trimmingInfo['y']);
+        $component->setWidth($trimmingInfo['width']);
+        $component->setHeight($trimmingInfo['height']);
+        $component->save();
+      } else {
+        $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
+        $width = ImageSx($in); // 画像の幅を取得
+        $height = ImageSy($in); // 画像の高さを取得
+        $save_width = 200; // 幅の最低サイズ
+        $save_height = 200; // 高さの最低サイズ
+        $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
+        $out = ImageCreateTrueColor($save_width , $save_height);
+        //ブレンドモードを無効にする
+        imagealphablending($out, false);
+        //完全なアルファチャネル情報を保存するフラグをonにする
+        imagesavealpha($out, true);
+        ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
+        $this->imageOut($extension, $out, $saveFile);
+      }
+    }
+    else {
+      $inputData['image'] = $inputData['profile_icon'];
+      $filename = $inputData['profile_icon'];
+      unset($inputData['profile_icon']);
+    }
+
+    return $filename;
+
   }
 }

@@ -424,37 +424,19 @@ class MWidgetSettingsController extends AppController {
 
     if ( $this->MWidgetSetting->validates() ) {
       if ( !empty($uploadImage) ) {
-        $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
-        $filename = $this->userInfo['MCompany']['company_key'] . '_' . date('YmdHis') . '.' . $extension;
-        $tmpFile = $uploadImage['tmp_name'];
-        // ファイルの保存先フルパス＋ファイル名
-        $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
-        if (!empty($inputData['Trimming']['info'])) {
-          $trimmingInfo = json_decode($inputData['Trimming']['info'], TRUE);
-          $component = new ImageTrimmingComponent();
-          $component->setFileData($uploadImage);
-          $component->setSavePath($saveFile);
-          $component->setX($trimmingInfo['x']);
-          $component->setY($trimmingInfo['y']);
-          $component->setWidth($trimmingInfo['width']);
-          $component->setHeight($trimmingInfo['height']);
-          $component->save();
-        } else {
-          $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
-          $width = ImageSx($in); // 画像の幅を取得
-          $height = ImageSy($in); // 画像の高さを取得
-          $save_width = 248; // 幅の最低サイズ
-          $save_height = 280; // 高さの最低サイズ
-          $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
-          $out = ImageCreateTrueColor($save_width , $save_height);
-          //ブレンドモードを無効にする
-          imagealphablending($out, false);
-          //完全なアルファチャネル情報を保存するフラグをonにする
-          imagesavealpha($out, true);
-          ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
-          $this->imageOut($extension, $out, $saveFile);
-        }
-        $inputData['MWidgetSetting']['main_custom_image'] = $filename;
+        $imageConjunction = "_";
+        $filename = $this->_startTrimming( $uploadImage, "info", $imageConjunction, $inputData );
+        $inputData['MWidgetSetting']["main_custom_image"] = $filename;
+      }
+      if ( !empty($uploadBotIcon) ) {
+        $botIconConjunction = "_botIcon";
+        $botIconFilename = $this->_startTrimming( $uploadBotIcon, "botIconInfo", $botIconConjunction, $inputData );
+        $inputData['MWidgetSetting']["bot_custom_icon"] = $botIconFilename;
+      }
+      if ( !empty($uploadOpIcon) ) {
+        $opIconConjunction = "_opIcon";
+        $opIconFilename = $this->_startTrimming( $uploadOpIcon, "opIconInfo", $opIconConjunction, $inputData );
+        $inputData['MWidgetSetting']["op_custom_icon"] = $opIconFilename;
       }
       // ウィジェットのスタイル設定周りをJSON化
       $widgetStyle = $this->_settingToJson($inputData['MWidgetSetting']);
@@ -469,10 +451,22 @@ class MWidgetSettingsController extends AppController {
       // 保存処理
       if ( $this->MWidgetSetting->save($saveData, false) ) {
         $this->MWidgetSetting->commit();
-        $pattern = "files/".$this->userInfo['MCompany']['company_key']."_[0-9]*.*";
+        $pattern = "files/".$this->userInfo['MCompany']['company_key']."_"."[0-9]*.*";
+        $botIconPattern = "files/".$this->userInfo['MCompany']['company_key']."_botIcon"."[0-9]*.*";
+        $opIconPattern = "files/".$this->userInfo['MCompany']['company_key']."_opIcon"."[0-9]*.*";
 
         foreach (glob($pattern) as $file) {
           if ( !empty($uploadImage) && strcmp("files/".$filename, $file) !== 0 ) {
+            unlink($file);
+          }
+        }
+        foreach (glob($botIconPattern) as $file) {
+          if ( !empty($uploadBotIcon) && strcmp("files/".$botIconFilename, $file) !== 0 ) {
+            unlink($file);
+          }
+        }
+        foreach (glob($opIconPattern) as $file) {
+          if ( !empty($uploadOpIcon) && strcmp("files/".$opIconFilename, $file) !== 0 ) {
             unlink($file);
           }
         }
@@ -495,6 +489,47 @@ class MWidgetSettingsController extends AppController {
     return $errors;
   }
 
+  private function _startTrimming( $targetImg, $trimmingKey, $conjunction, $inputData) {
+    $extension = pathinfo($targetImg['name'], PATHINFO_EXTENSION);
+    $filename = $this->userInfo['MCompany']['company_key'] . $conjunction . date('YmdHis') . '.' . $extension;
+    $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
+    if (!empty($inputData['Trimming'][$trimmingKey])) {
+      $trimmingInfo = json_decode($inputData['Trimming'][$trimmingKey], TRUE);
+      $this->_useTrimmingInfo( $targetImg, $saveFile, $trimmingInfo);
+    } else {
+      $this->_notUseTrimmingInfo( $targetImg, $saveFile, $extension);
+    }
+    return $filename;
+  }
+
+  private function _useTrimmingInfo( $targetImg, $saveFile, $trimmingInfo ) {
+    $component = new ImageTrimmingComponent();
+    $component->setFileData($targetImg);
+    $component->setSavePath($saveFile);
+    $component->setX($trimmingInfo['x']);
+    $component->setY($trimmingInfo['y']);
+    $component->setWidth($trimmingInfo['width']);
+    $component->setHeight($trimmingInfo['height']);
+    $component->save();
+  }
+
+  private function _notUseTrimmingInfo( $targetImg, $saveFile, $extension ) {
+    $tmpFile = $targetImg['tmp_name'];
+    $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
+    $width = ImageSx($in); // 画像の幅を取得
+    $height = ImageSy($in); // 画像の高さを取得
+    $save_width = 248; // 幅の最低サイズ
+    $save_height = 280; // 高さの最低サイズ
+    $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
+    $out = ImageCreateTrueColor($save_width , $save_height);
+    //ブレンドモードを無効にする
+    imagealphablending($out, false);
+    //完全なアルファチャネル情報を保存するフラグをonにする
+    imagesavealpha($out, true);
+    ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
+    $this->imageOut($extension, $out, $saveFile);
+  }
+
   /**
    * _settingToJson
    * 配列で渡された値を保存用にJSON形式に変換
@@ -515,6 +550,22 @@ class MWidgetSettingsController extends AppController {
     else if( !empty($settings['mainImage']) ) {
       if ( isset($objData['main_custom_image']) ) {
       $settings['mainImage'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['main_custom_image'];
+      }
+    }
+    if ( isset($settings['showChatbotIcon']) && strcmp($settings['showChatbotIcon'], "2") === 0 ) {
+      $settings['chatbotIcon'] = "";
+    }
+    else if( !empty($settings['chatbotIcon']) ) {
+      if ( isset($objData['bot_custom_icon']) ) {
+        $settings['chatbotIcon'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['bot_custom_icon'];
+      }
+    }
+    if ( isset($settings['showOperatorIcon']) && strcmp($settings['showOperatorIcon'], "2") === 0 ) {
+      $settings['operatorIcon'] = "";
+    }
+    else if( !empty($settings['operatorIcon']) ) {
+      if ( isset($objData['op_custom_icon']) ) {
+        $settings['operatorIcon'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['op_custom_icon'];
       }
     }
 

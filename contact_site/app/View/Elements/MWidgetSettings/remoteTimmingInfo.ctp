@@ -26,8 +26,38 @@
     targetImgTag.cropper({
       aspectRatio: aspectRatio // ここでアスペクト比の調整 ワイド画面にしたい場合は 16 / 9
     });
-    popupEvent.resize();
+    if( target === "chatbot_icon" || target === "operator_icon" || target === "profile_icon") {
+      //アイコンに関する設定の場合はクラスを付ける
+      $('.cropper-example-1').addClass( "icon_trimming" );
+    }
+    if( $('#popup-frame')[0] != null ) {
+      popupEvent.resize();
+    }
+    if ( $('#popup-frame-overlap')[0] != null ) {
+      popupEventOverlap.resize();
+    }
   }
+
+  popupEventOverlap.doTrimming = function(){
+    data = $('#img').cropper('getData');
+    // 切り抜きした画像のデータ
+    // このデータを元にして画像の切り抜きが行われます
+    var trimmingData = {
+      width: Math.round(data.width),
+      height: Math.round(data.height),
+      x: Math.round(data.x),
+      y: Math.round(data.y),
+      _token: 'jf89ajtr234534829057835wjLA-SF_d8Z' // csrf用
+    };
+
+    var imgDataUrl = targetImgTag.cropper('getCroppedCanvas').toDataURL();
+    viewImgTag.attr('src', imgDataUrl);
+    console.log(trimmingInfoTag);
+    if(trimmingInfoTag) {
+      trimmingInfoTag.val(JSON.stringify(trimmingData));
+    }
+    return popupEventOverlap.close();
+  };
 
   popupEvent.doTrimming = function(){
     data = $('#img').cropper('getData');

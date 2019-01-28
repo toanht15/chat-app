@@ -152,6 +152,52 @@
         }
       };
 
+      $scope.addIconImage = function( parentElm ) {
+        var iconDiv = document.createElement("div");
+        var icon = getWidgetSettings().chatbot_icon;
+        iconDiv.id = "iconDiv";
+        var elm;
+        switch( $scope.checkIconType( icon ) ) {
+          case "fontIcon":
+            elm = $scope.createFontIcon( icon );
+            break;
+          case "imageIcon":
+            elm = $scope.createImageIcon( icon );
+            break;
+        }
+        iconDiv.appendChild(elm);
+        parentElm.appendChild(iconDiv);
+        return parentElm;
+      };
+
+      $scope.checkIconType = function ( icon ) {
+        if ( icon.match(/^fa/) !== null ){
+          return "fontIcon"
+        } else {
+          return "imageIcon"
+        }
+      };
+
+      $scope.createFontIcon = function ( icon ) {
+        var elm = document.createElement("i");
+        var classArray = icon.split(" ");
+        for( var i = 0; i < classArray.length ; i++ ) {
+          elm.classList.add("sinclo-fal");
+          elm.classList.add(classArray[i]);
+        }
+        return elm;
+      };
+
+      $scope.createImageIcon = function ( icon ) {
+        var elm = document.createElement("img");
+        elm.src = icon;
+        return elm;
+      };
+
+      $scope.needsIcon = function() {
+        return Number(getWidgetSettings().show_chatbot_icon) === 1;
+      };
+
       /**
        * addMessage
        * シミュレーター上へのメッセージ追加
@@ -161,6 +207,8 @@
        */
       $scope.addMessage = function(type, message, prefix, appendClass) {
         // ベースとなる要素をクローンし、メッセージを挿入する
+        var gridElm = document.createElement("div");
+        gridElm.id = "grid_balloon";
         if (type === 're') {
           var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
           divElm.id = prefix + '_question';
@@ -168,14 +216,24 @@
           var divElm = document.querySelector('#chatTalk div > li.sinclo_se.chat_right').parentNode.cloneNode(true);
           divElm.id = prefix + '_answer';
         }
+        console.log(divElm);
         var formattedMessage = $scope.simulatorSettings.createMessage(message, prefix);
         divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
         if (appendClass) {
           divElm.classList.add(appendClass);
         }
         // 要素を追加する
-        document.getElementById('chatTalk').appendChild(divElm);
-        $('#chatTalk > div:last-child').show();
+        divElm.style.display = "";
+        if( $scope.needsIcon() && type === 're') {
+          //チャットボットのアイコンを表示する場合は
+          //アイコンを含む要素を作成する。
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
         self.autoScroll();
       };
 
@@ -360,11 +418,23 @@
        * @param object data: radio options data
        */
       $scope.addRadioButton = function(data) {
+        var gridElm = document.createElement("div");
+        gridElm.id = "grid_balloon";
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
         var html = $scope.simulatorSettings.createRadioButton(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
-        document.getElementById('chatTalk').appendChild(divElm);
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          //チャットボットのアイコンを表示する場合は
+          //アイコンを含む要素を作成する。
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
 
         $scope.handleBrowserZoom();
         $('#chatTalk > div:last-child').show();
@@ -427,13 +497,23 @@
        * @param object data: pulldown options data
        */
       $scope.addPulldown = function(data) {
+        var gridElm = document.createElement("div");
+        gridElm.id = "grid_balloon";
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
         var html = $scope.simulatorSettings.createPulldown(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;
-        document.getElementById('chatTalk').appendChild(divElm);
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          //チャットボットのアイコンを表示する場合は
+          //アイコンを含む要素を作成する。
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
 
-        $('#chatTalk > div:last-child').show();
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
         self.autoScroll();
       };
 
@@ -442,15 +522,26 @@
        * @param object data: calendar options data
        */
       $scope.addCalendar = function(data) {
+        var gridElm = document.createElement("div");
+        gridElm.id = "grid_balloon";
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
         var calendar = $scope.simulatorSettings.createCalendarInput(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = calendar.html;
         // 要素を追加する
-        document.getElementById('chatTalk').appendChild(divElm);
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          //チャットボットのアイコンを表示する場合は
+          //アイコンを含む要素を作成する。
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
         $scope.addDatePicker(calendar.selector, data.settings, data.design);
 
-        $('#chatTalk > div:last-child').show();
         self.autoScroll();
       };
 
@@ -643,6 +734,8 @@
        */
       $scope.addReceiveFileUI = function(dropAreaMessage, cancelEnabled, cancelButtonLabel) {
         // ベースとなる要素をクローン
+        var gridElm = document.createElement("div");
+        gridElm.id = "grid_balloon";
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left.recv_file_left').
             parentNode.
             cloneNode(true);
@@ -663,7 +756,17 @@
         }
         dropAreaMessageElm.innerHTML = dropAreaMessage;
         // 要素を追加する
-        document.getElementById('chatTalk').appendChild(divElm);
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          //チャットボットのアイコンを表示する場合は
+          //アイコンを含む要素を作成する。
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
         $scope.fileUploader.init($(document.querySelector('#chatTalk')), $(dropAreaElm), $(selectFileButtonElm),
             $(selectInputElm));
         $('#chatTalk > div:last-child').show();
@@ -1574,14 +1677,17 @@
       }
     } else {
       //ウィジェットサイズが大の場合
-      if (widgetSizeType == 3 || widgetSizeType == 4) {
+      if (Number( widgetSizeType ) === 3 || Number( widgetSizeType ) === 4) {
         html += 'botNowTypingLarge\'>';
         //ウィジェットサイズが中の場合
-      } else if (widgetSizeType == 2) {
+      } else if (Number( widgetSizeType )  === 2) {
         html += 'botNowTypingMedium\'>';
         //ウィジェットサイズが小の場合
-      } else if (widgetSizeType == 1) {
+      } else if (Number( widgetSizeType ) === 1) {
         html += 'botNowTypingSmall\'>';
+      } else if (Number( widgetSizeType )  === 5) {
+        console.log("なんかするヵ");
+        html += 'botNowTypingLarge\'>';
       }
       html += '    <div class=\'reload_dot_left\'></div>';
       html += '    <div class=\'reload_dot_center\'></div>';

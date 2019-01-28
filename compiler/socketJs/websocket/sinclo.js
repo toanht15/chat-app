@@ -1239,6 +1239,10 @@
       storage.s.set('operatorEntered', true); // オペレータが入室した
       storage.l.set('leaveFlg', 'false'); // オペレータが入室した
 
+      console.log(obj.profileIcon);
+      sincloInfo.widget.operatorIcon = obj.profileIcon;
+      console.log( sincloInfo.widget.operatorIcon );
+
       //サイト訪問者側のテキストエリア表示
       sinclo.displayTextarea();
       storage.l.set('textareaOpend', 'open');
@@ -3611,6 +3615,77 @@
           return str;
         }
       },
+
+
+      _isNeedBotIcon: function() {
+        return Number(window.sincloInfo.widget.showChatbotIcon) === 1
+            && (storage.s.get("operatorEntered") === null
+                || storage.s.get("operatorEntered") === "false");
+      },
+
+      _isNeedOpIcon: function() {
+        return Number(window.sincloInfo.widget.showOperatorIcon) === 1
+            && (storage.s.get("operatorEntered") !== null
+                && storage.s.get("operatorEntered") === "true");
+      },
+
+      _createIconDiv: function( icon ) {
+        console.warn("アイコンを付与します");
+        var div = document.createElement("div");
+        div.id = "iconDiv";
+        var elm;
+        switch (this._checkIconType( icon )) {
+          case "fontIcon":
+            elm = this._createFontIcon( icon );
+            break;
+          case "imageIcon":
+            elm = this._createImageIcon( icon );
+            break;
+        }
+        div.classList.add( this._addWidgetSizeClassName(), "effect_left" );
+        div.appendChild(elm);
+        return div;
+
+      },
+
+      _checkIconType: function( icon ) {
+        if ( icon.match(/^fa/) !== null) {
+          return "fontIcon";
+        } else {
+          return "imageIcon";
+        }
+      },
+
+      _createFontIcon: function( icon ) {
+        var elm = document.createElement("i");
+        var classArray = icon.split(" ");
+        for( var i = 0; i < classArray.length ; i++ ) {
+          elm.classList.add("sinclo-fal");
+          elm.classList.add(classArray[i]);
+        }
+        return elm;
+      },
+
+      _createImageIcon: function( icon ) {
+        var elm = document.createElement("img");
+        elm.src = icon;
+        return elm;
+      },
+
+      _addWidgetSizeClassName: function() {
+        switch( Number(sincloInfo.widget.widgetSizeType) ) {
+          case 1:
+            return "smallSize";
+          case 2:
+            return "middleSize";
+          case 3:
+          case 4:
+            return "largeSize";
+          case 5:
+            return "customSize";
+        }
+      },
+
       /**
        * <code>
        *   obj = {
@@ -3626,9 +3701,22 @@
       createMessage: function(obj, isScenarioMsg) {
         common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
+
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        if ( obj.cn.indexOf('sinclo_se') === -1 ) {
+          //オペレーター側の発言を作るときはアイコンの有無を確認する。
+          if( this._isNeedBotIcon() ) {
+            var fontIcon = this._createIconDiv( sincloInfo.widget.chatbotIcon );
+            div.appendChild(fontIcon);
+            div.id = "grid_for_icon";
+          } else if ( this._isNeedOpIcon() ) {
+            var imageIcon = this._createIconDiv( sincloInfo.widget.operatorIcon );
+            div.appendChild(imageIcon);
+            div.id = "grid_for_icon";
+          }
+        }
         console.log(obj);
         // 送った直後はchatIdが0
         // 再読み込み時はchatIdが付与される

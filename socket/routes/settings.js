@@ -302,13 +302,17 @@ router.get("/", function (req, res, next) {
         //ウィジットサイズ対応
         widgetSizeType: isNumeric(settings.widgetSizeType),
         //ウィジットサイズ対応
+        //ウィジェットカスタムサイズ対応
+        widgetCustomHeight: isNumeric(settings.widgetCustomHeight),
+        widgetCustomWidth: isNumeric(settings.widgetCustomWidth),
+        //ウィジェットカスタムサイズ対応
         title: settings.title,
         showSubtitle: isNumeric(settings.showSubtitle),
         subTitle: settings.subTitle,
         showDescription: isNumeric(settings.showDescription),
         description: settings.description,
 
-        /* カラー設定styat */
+        /* カラー設定start */
         //0.通常設定・高度設定
         colorSettingType: colorSettingType,
         //1.メインカラー
@@ -382,6 +386,10 @@ router.get("/", function (req, res, next) {
 
         showMainImage: settings.showMainImage,
         mainImage: settings.mainImage,
+        showChatbotIcon: settings.showChatbotIcon,
+        chatbotIcon: settings.chatbotIcon,
+        showOperatorIcon: settings.showOperatorIcon,
+        operatorIcon: settings.operatorIcon,
         chatInitShowTextarea: chatInitShowTextarea,
         chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
         chatTrigger: isNumeric(settings.chatTrigger),
@@ -830,7 +838,6 @@ router.post("/reload/operationHour", function (req, res, next) {
     next(err);
     return false;
   }
-  // res.render('index', { title: 'Settings' });
 });
 
 router.post("/reload/chatSettings", function (req, res, next) {
@@ -904,7 +911,6 @@ router.post("/reload/customVariableSettings", function (req, res, next) {
     next(err);
     return false;
   }
-  // res.render('index', { title: 'Settings' });
 });
 
 /**

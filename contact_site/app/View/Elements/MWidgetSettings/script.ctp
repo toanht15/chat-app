@@ -182,15 +182,21 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
     };
 
-    $scope.testFunc = function() {
-      console.log("必要だよ!");
+    $scope.getProfileIconForOperatorIcon = function() {
+      var profileIcon = $('.header_profile_icon')[0];
+      if ( profileIcon.tagName === "IMG" ) {
+        $scope.operator_icon = profileIcon.src;
+      } else {
+        $scope.operator_icon = "";
+      }
     };
+
 
     $scope.checkWidgetSize = function( settings ) {
       if( settings == null ) {
         settings = {}
       }
-      var size = "dummy";
+      var size = "middleSize";
       if($scope.showWidgetType === 1) {
         switch (Number($scope.widgetSizeTypeToggle)) {
           case 1:
@@ -1794,7 +1800,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
         openTrimmingDialog(function(){
           beforeTrimmingInit(url, $('#trim'));
-          trimmingInit($scope, null, 53 / 53, "chatbot_icon");
+          trimmingInit($scope, null, 1, "chatbot_icon");
         });
       }
     });
@@ -1816,7 +1822,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
         openTrimmingDialog(function(){
           beforeTrimmingInit(url, $('#trim'));
-          trimmingInit($scope, null, 53 / 53, "operator_icon");
+          trimmingInit($scope, null, 1, "operator_icon");
         });
       }
     });

@@ -101,8 +101,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
       }
 
       #sincloBox .sinclo-fal.chatbot_icon_elm {
-        width: 45px;
-        height: 45px;
+        width: 35px;
+        height: 35px;
         border-radius: 50%;
         font-size: 23px;
         color: #FFF;
@@ -329,13 +329,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk.largeSize { height: 374px; padding: 0 5px 60px 5px;}
         #sincloBox ul#chatTalk.customSize { height: {{widget.settings['widget_custom_height']}}px; padding: 0 5px 60px 5px;}
         #sincloBox ul#chatTalk.details { background-color: {{widget.settings['chat_talk_background_color']}}; }
-        #sincloBox ul#chatTalk #sample_widget_re_message.with_icon { grid-column: 2 }
-        #sincloBox ul#chatTalk #iconDiv { display:flex; justify-content: flex-end; align-items: flex-end; }
-        #sincloBox ul#chatTalk #iconDiv img { height:45px; width: 45px; border-radius: 50%;}
-        #sincloBox ul#chatTalk #grid_balloon { display: grid; grid-template-columns: 40px 1fr; }
-        #sincloBox ul#chatTalk.middleSize #grid_balloon { display: grid; grid-template-columns: 40px 1fr; }
-        #sincloBox ul#chatTalk.largeSize #grid_balloon { display: grid; grid-template-columns: 40px 1fr; }
-        #sincloBox ul#chatTalk.customSize #grid_balloon { display: grid; grid-template-columns: 40px 1fr; }
+        #sincloBox ul#chatTalk #sample_widget_re_message.with_icon { grid-column: 2; -ms-grid-column: 2;}
+        #sincloBox ul#chatTalk #iconDiv img { height:35px; width: 35px; border-radius: 50%;}
+        #sincloBox ul#chatTalk #grid_balloon .no_icon { grid-column: 1/3; }
+        #sincloBox ul#chatTalk #grid_balloon .no_icon li.sinclo_re { margin-left: 10px; }
         #sincloBox ul#chatTalk div.liLeft { text-align: left; }
         #sincloBox ul#chatTalk div.liBoxRight { text-align: right; }
         #sincloBox ul#chatTalk div.liRight { text-align: right; }
@@ -658,19 +655,19 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
             <div style="height: auto!important; padding:0; display: none;" ng-class="{liBoxRight: widget.settings['chat_message_design_type'] == 1, liRight: widget.settings['chat_message_design_type'] == 2}" >
             <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
             </div>
-            <div style="height: auto!important; padding:0; display: none;">
-              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+            <div style="height: auto!important; padding:0; display: none;" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1}">
+              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize, largeSize: widget.isLargeSize ,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
-            <div style="height: auto!important; padding:0; display: none;">
+            <div style="height: auto!important; padding:0; display: none;" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1}">
               <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">ファイルが送信されました</span><div class="sendFileContent"><div class="sendFileThumbnailArea"><img class="sendFileThumbnail" src="" width="64" height="64"><i class="fa fa-4x sendFileThumbnail" aria-hidden="true"></i></div><div class="sendFileMetaArea"><span class="data sendFileName details">ファイル名</span><span class="data sendFileSize details">ファイルサイズ</span></div></div></li>
             </div>
-            <div style="height: auto!important; padding:0; display: none;">
+            <div style="height: auto!important; padding:0; display: none;" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1}">
               <li class="sinclo_re chat_left recv_file_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1', middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="drop-area-message" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}"></p><p class="drop-area-icon" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}"><i class="sinclo-fal fa-cloud-upload"></i></p><p ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">または</p><p class="drop-area-button" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}"><a class="select-file-button">ファイルを選択</a></p><input type="file" class="receiveFileInput" name="receiveFileInput" style="display:none"></div><div class='loadingPopup hide'><i class='sinclo-fal fa-spinner load'></i><p class='progressMessage'>読み込み中です。<br>しばらくお待ち下さい。</p></div></div><div class="cancelReceiveFileArea"><a>{{setItem.cancelLabel}}</a></div></li>
             </div>
             <div style="height: auto!important; padding:0; display: none; text-align: right;">
               <li class="sinclo_se chat_right recv_file_right details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1', middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3}"><div class="receiveFileContent"><div class="selectFileArea"><p class="preview"></p><p class="commentLabel">コメント</p><p class="commentarea"><textarea style="font-size: 13px; border-width: 1px; padding: 5px; line-height: 1.5;"></textarea></p><div class="actionButtonWrap"><a class="cancel-file-button">選択し直す</a><a class="send-file-button">送信する</a></div></div><div class='loadingPopup hide'><i class='sinclo-fal fa-spinner load'></i><p class='progressMessage'>読み込み中です。<br>しばらくお待ち下さい。</p></div></div></li>
             </div>
-            <div style="height: auto!important; padding:0; display: none;">
+            <div style="height: auto!important; padding:0; display: none;" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1}">
               <li class="sinclo_re chat_left sinclo_form details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3, effect_left: widget.settings['chat_message_with_animation'] === '1'}"></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">

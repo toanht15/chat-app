@@ -181,6 +181,7 @@
     #sincloBox ul#chatTalk.largeSize { height: 374px; padding: 0px 5px 60px 5px;}
     #sincloBox ul#chatTalk.customSize { height: {{ widget_custom_height }}px; max-height: 590px; min-height: 194px; padding: 0px 5px 60px 5px;}
     #sincloBox ul#chatTalk.details { background-color: {{chat_talk_background_color}}; }
+    #sincloBox ul#chatTalk > div.with_icon { display: -ms-grid; -ms-grid-columns: minmax(max-content, max-content) 1fr; }
     #sincloBox ul#chatTalk > div.with_icon { display: grid; grid-template-columns: minmax(max-content, max-content) 1fr; height: auto!important; padding:0; }
     #sincloBox ul#chatTalk > div.with_icon .icon_container { height: 100%!important; padding:0px; display:flex; justify-content: flex-end; align-items: flex-end; }
     #sincloBox ul#chatTalk > div.with_icon .icon_container { width: calc(24px + ({{widget_custom_height}} - 104) * ({{widget_custom_height}}px + 886px) / 16200); }
@@ -230,7 +231,7 @@
     #sincloBox ul#chatTalk li.boxType.chat_left.middleSize { border-radius: 12px 12px 12px 0; margin-right: 21px; margin-left:10px; }
     #sincloBox ul#chatTalk li.boxType.chat_right.largeSize { border-radius: 12px 12px 0 12px; margin-left: 52.7px; margin-right:10px; }
     #sincloBox ul#chatTalk li.boxType.chat_left.largeSize { border-radius: 12px 12px 12px 0; margin-right: 24.6px; margin-left:10px; }
-    #sincloBox ul#chatTalk li.boxType.chat_left.with_icon { margin-left: 2px; }
+    #sincloBox ul#chatTalk li.boxType.chat_left.with_icon { margin-left: 2px; -ms-grid-column: 2; -ms-grid-column-align: start;}
     #sincloBox ul#chatTalk li.boxType.chat_left.middleSize.with_icon { margin-left: 3px; }
     #sincloBox ul#chatTalk li.boxType.chat_left.largeSize.with_icon { margin-left: 5px; }
     #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 37.5px }

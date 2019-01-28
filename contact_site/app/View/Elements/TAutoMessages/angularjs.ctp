@@ -235,10 +235,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       return target.match(/^fa/) !== null;
     };
 
-    angular.element(window).on('load', function(e) {
-
-      // 吹き出しの要素をクローンして、メッセージのシミュレーションを行えるように固有のIDを設定する
-      // チャットボットアイコンが設定されている場合はappendChildするものが異なる
+    $scope.onLoadBalloonCreator = function () {
       var gridElm = document.createElement("div");
       gridElm.id = "grid_balloon";
       document.getElementById('chatTalk').appendChild(gridElm);
@@ -246,7 +243,8 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
       var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
       divElm.id = 'sample_widget_re_message';
-      if ( Number( SimulatorService.chatbotIconToggle ) === 1 ) {
+      console.log(SimulatorService.showWidgetType);
+      if ( Number( SimulatorService.chatbotIconToggle ) === 1 && Number(SimulatorService.showWidgetType) !== 2) {
         //ボットのアイコンを設定している場合
         divElm.classList.add("with_icon");
         $scope.createBalloonWithChatbotIcon();
@@ -254,6 +252,13 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         divElm.classList.add("no_icon");
       }
       document.getElementById('grid_balloon').appendChild(divElm);
+    };
+
+    angular.element(window).on('load', function(e) {
+      $scope.onLoadBalloonCreator();
+      // 吹き出しの要素をクローンして、メッセージのシミュレーションを行えるように固有のIDを設定する
+      // チャットボットアイコンが設定されている場合はappendChildするものが異なる
+
       $scope.createMessage();
 
       // メッセージ入力に応じて、シミュレーション上の吹き出しを表示更新する
@@ -263,12 +268,11 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
       // ウィジェットのタブ切替時、シミュレーション上の吹き出しを表示更新する
       $scope.$on('switchWidget', function(event, type) {
-        var divElm = document.getElementById('sample_widget_re_message');
+        var divElm = document.getElementById('grid_balloon');
         if (!divElm) {
-          var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
-          divElm.id = 'sample_widget_re_message';
-          document.getElementById('chatTalk').appendChild(divElm);
+          $scope.onLoadBalloonCreator();
         }
+
         $scope.createMessage();
       });
 

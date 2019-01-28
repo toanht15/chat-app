@@ -388,7 +388,7 @@ sincloApp.factory('SimulatorService', function() {
       return this.settings['main_image'].match(/^fa/) !== null;
     },
     isPictureImage: function() {
-      return this.settings['main_image'].match(/^http/) !== null;
+      return this.settings['main_image'].match(/^http|data|\/\/node/) !== null
     },
     //param : String型 ng-classで付けたい情報を渡す
     resultClass: {},
@@ -437,6 +437,11 @@ sincloApp.factory('SimulatorService', function() {
 
 
     widgetSizeChecker: function() {
+      if ( this.showWidgetType === 3 ) {
+        //スマホ縦の場合
+        this.resultClass['spSize'] = true;
+        return;
+      }
       switch (Number(this.widgetSizeTypeToggle)) {
         case 1:
           this.resultClass['smallSize'] = true;
