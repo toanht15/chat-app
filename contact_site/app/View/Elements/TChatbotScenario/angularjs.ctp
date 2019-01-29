@@ -797,8 +797,8 @@
                 hearing.settings.slickSettings = {
                   dots: true,
                   slidesToShow: slidesToShow,
+                  infinite: false,
                   lazyLoad: 'ondemand',
-                  adaptiveHeight: true,
                   prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
                   nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
                 };
