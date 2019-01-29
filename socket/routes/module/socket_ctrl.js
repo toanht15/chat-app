@@ -3547,21 +3547,7 @@ io.sockets.on('connection', function(socket) {
       hearingSeq: obj.hearingSeq,
       otherInformation: obj.otherInformation
     };
-    console.log(obj);
     try {
-      if( obj.detail === "startScenario" ) {
-        console.log("START SCENARIO");
-      } else if ( obj.detail === "startHearing" ) {
-        console.log("START HEARING");
-      } else if ( obj.detail === "changeScenarioSeq" ) {
-        console.log("CHANGE SCENARIO SEQUENCE");
-      } else if ( obj.detail === "changeHearingSeq" ) {
-        console.log("CHANGE HEARING SEQUENCE");
-      } else if ( obj.detail === "endHearing") {
-        console.log("END HEARING");
-      } else if ( obj.detail === "endScenario" ){
-        console.log("END SCENARIO");
-      }
       emit.toSameUser("syncScenarioDataResult", dataSet, obj.siteKey, obj.sessionID);
     } catch (e) {
       console.log('ERROR DETECTED!! >> ' + e);
