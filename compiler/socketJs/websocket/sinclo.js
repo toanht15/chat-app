@@ -8393,15 +8393,7 @@
           var data = self._parent.get(self._parent._lKey.showSequenceSet),
               data = data ? data : {};
           var arr = data[seqNum] ? data[seqNum] : [];
-          var deleteTarget = false;
-          arr.forEach(function(elm, idx, arr) {
-            if (Number(elm) === Number(categoryNum)) {
-              deleteTarget = true;
-            }
-            if (deleteTarget) {
-              delete arr[idx];
-            }
-          });
+          arr.splice(Number(categoryNum), arr.length - Number(categoryNum));
           data[seqNum] = arr;
           self._parent.set(self._parent._lKey.showSequenceSet, data);
         },
