@@ -179,6 +179,11 @@ class AppController extends Controller {
     Configure::write('logged_company_id', $this->userInfo['MCompany']['id']);
     // ウィジェットの情報をビューへ渡す
     $widgetInfo = $this->MWidgetSetting->coFind('first', []);
+    $widgetStyle = json_decode($widgetInfo['MWidgetSetting']['style_settings'], true);
+    $this->log(json_decode($newInfo['MUser']['settings']), LOG_DEBUG);
+    $this->set('iconImgSource', json_decode($newInfo['MUser']['settings'], true)['profileIcon']);
+    $this->set('iconMainColor', $widgetStyle['mainColor']);
+    $this->set('iconFontColor', $widgetStyle['stringColor']);
 
     /* オペレーター待ち状態 */
     // 在籍/退席

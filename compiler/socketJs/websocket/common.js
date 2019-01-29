@@ -501,6 +501,31 @@ var socket, // socket.io
             d25font: 26
           };
           break;
+        case 5: //カスタムサイズ
+          var sizeArray = {
+            boxHeight: 632,
+            boxWidth: sincloInfo.widget.widgetCustomWidth,
+            widgetTitlePadding: 7,
+            widgetTitleHeight: 32,
+            widgetTitleTop: 6,
+            widgetSubTitleHeight: 24,
+            widgetDescriptionHeight: 15,
+            navigationHeight: 40,
+            chatTalkHeight: sincloInfo.widget.widgetCustomHeight,
+            classFlexBoxRowHeight: 75,
+            sincloAccessInfoHeight: 26.5,
+            fotterHeight: 26.5,
+            telContentHeight: 305,
+            paddingBottom: 60,
+            d11font: 12,
+            d12font: 13,
+            d13font: 14,
+            d14font: 15,
+            d18font: 19,
+            d20font: 21,
+            d25font: 26
+          };
+          break;
         default: //該当しないタイプが来たら小
           var sizeArray = {
             boxHeight: 447,
@@ -1116,6 +1141,20 @@ var socket, // socket.io
           chatPosition.re.color + '; }';
       html += '      #sincloBox ul#chatTalk li.sinclo_re span.link { color: ' +
           chatPosition.re.color + '; }';
+      /* アイコン表示時用CSS */
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon { display:grid; grid-template-columns: minmax(max-content, max-content) 1fr; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv { display: flex; justify-content: flex-end; align-items: flex-end; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv img { border-radius: 50% }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.smallSize { max-width: 30px; min-width: 30px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.smallSize img { height: 30px; width: 30px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.smallSize i { height: 30px; width: 30px; font-size: 20px }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.middleSize { max-width: 37px; min-width: 37px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.middleSize img { height: 35px; width: 35px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.middleSize i { height: 35px; width: 35px; font-size: 23px }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.largeSize { max-width: 42px; min-width: 42px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.largeSize img { height: 40px; width: 40px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.largeSize i { height: 40px; width: 40px; font-size: 26px }';
+      /* アイコン表示時用CSS */
       html += '      #sincloBox ul#chatTalk li.sinclo_re .smallSizeImg { max-width: 165px; max-height: 120px; display:block;}';
       html += '      #sincloBox ul#chatTalk li.sinclo_re .middleSizeImg { max-width: 215px; max-height: 188px; display:block;}';
       html += '      #sincloBox ul#chatTalk li.sinclo_re .largeSizeImg { max-width: 265px; max-height: 285px; display:block;}';
@@ -1274,10 +1313,11 @@ var socket, // socket.io
         if (widget.chatMessageWithAnimation === 1) {
           html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:rightEffect; animation-name:rightEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }';
           html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }';
+          html += '      #sincloBox ul#chatTalk #iconDiv.effect_left { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }';
         } else {
           html += '      #sincloBox ul#chatTalk li.effect_right { -webkit-animation-name:noneRightEffect; animation-name:noneRightEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0; -webkit-animation-delay:0.7s; animation-delay:0.7s; }';
           html += '      #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0; -webkit-animation-delay:0.7s; animation-delay:0.7s; }';
-
+          html += '      #sincloBox ul#chatTalk #iconDiv.effect_left { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0; -webkit-animation-delay:0.7s; animation-delay:0.7s; }';
         }
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message { position: relative; color: #d5d5d5; border: none; text-align: center; }';
         html += '      #sincloBox ul#chatTalk li#sinclo_typeing_message span { position: absolute; top: 0; bottom: 0; left: 50%; display: block; }';
@@ -2274,11 +2314,10 @@ var socket, // socket.io
       }
       /* PC版 */
       else {
-//        html += "      #sincloBox { width: " + widgetWidth + "px }";
         html += '      #sincloBox { overflow: hidden; box-shadow: 0px 0px ' +
             widget.boxShadow + 'px ' + widget.boxShadow +
             'px rgba(0,0,0,0.1); border-radius: ' + widget.radiusRatio + 'px ' +
-            widget.radiusRatio + 'px 0 0; }';
+            widget.radiusRatio + 'px 0 0;}';
         html += '      #sincloBox.onImageBanner { box-shadow: none; border-radius: 0; }';
         html += '      #sincloBox div#sincloWidgetBox { width: ' +
             sizeList['boxWidth'] + 'px; border-radius: ' + widget.radiusRatio +
@@ -2291,8 +2330,6 @@ var socket, // socket.io
 
         html += '      #sincloBox sinclo-div#widgetHeader:hover { opacity: 0.75; }';
         html += '      #sincloBox sinclo-div#widgetHeader:after { top: 32px }';
-//        html += "      #sincloBox section { width: " + widgetWidth + "px }";
-//        html += "      #sincloBox section#navigation ul { width: " + widgetWidth + "px }";
         html += '      #sincloBox section { width: ' + sizeList['boxWidth'] +
             'px }';
         html += '      #sincloBox section#navigation ul { width: ' +
@@ -4020,6 +4057,20 @@ var socket, // socket.io
         $('#sincloWidgetBox').css('width', $(window).width() + 'px');
         $('#chatTab').css('width', '100%');
       },
+      _setMaxWidthForCustom: function() {
+        var currentWindowWidth = Number( window.innerWidth );
+        var currentWidgetWidth = Number( sincloInfo.widget.widgetCustomWidth );
+        var margin = 20;
+        var widget = $('#sincloWidgetBox');
+        var chatArea = $('#chatTab');
+        if( currentWindowWidth < currentWidgetWidth ) {
+          widget.css("max-width" , currentWindowWidth - margin);
+          chatArea.css("max-width" , currentWindowWidth - margin);
+        } else {
+          widget.css("max-width" , "");
+          chatArea.css("max-width" , "");
+        }
+      },
       _handleResizeEvent: function() {
         if(window.devicePixelRatio >= 1){
           $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').removeClass('radio-zoom');
@@ -4036,6 +4087,13 @@ var socket, // socket.io
           common.widgetHandler._widgetFitForWindow();
           return;
         }
+
+        //カスタム設定時の横幅設定
+        if (Number(sincloInfo.widget.widgetSizeType) === 5 &&
+            !check.smartphone()) {
+          common.widgetHandler._setMaxWidthForCustom();
+        }
+
         var windowHeight = $(window).innerHeight(),
             minCurrentWidgetHeight = common.widgetHandler._getMinWidgetHeight(),
             currentWidgetHeight = $('#sincloWidgetBox').height(),
@@ -4044,6 +4102,10 @@ var socket, // socket.io
                 $('#chatTalk') :
                 $('#telContent'),
             delta = windowHeight - common.widgetHandler._currentWindowHeight;
+        console.log("windowHeightは" + windowHeight);
+        console.log("minCurrentWidgetHeightは" + minCurrentWidgetHeight);
+        console.log("currentWidgetHeightは" + currentWidgetHeight);
+        console.log("maxCurrentWidgetHeightは" + maxCurrentWidgetHeight);
         if (windowHeight * 0.85 > maxCurrentWidgetHeight) {
           changeTarget.height(common.widgetHandler._getMaxChatTalkHeight());
           return;
@@ -4080,6 +4142,8 @@ var socket, // socket.io
             return 496 - offset;
           case 3:
             return 596 - offset;
+          case 5:
+            return Number(sincloInfo.widget.widgetCustomHeight) + 210 - offset;
           default:
             return 496 - offset;
         }
@@ -4092,6 +4156,8 @@ var socket, // socket.io
           case 2:
             return 364 - offset;
           case 3:
+            return 409 - offset;
+          case 5:
             return 409 - offset;
           default:
             return 364 - offset;
@@ -4108,6 +4174,8 @@ var socket, // socket.io
               return 284 + offset;
             case 3:
               return 374 + offset;
+            case 5:
+              return Number(sincloInfo.widget.widgetCustomHeight) + offset;
             default:
               return 284 + offset;
           }
@@ -4136,6 +4204,8 @@ var socket, // socket.io
             case 2:
               return 142 + offset;
             case 3:
+              return 187 + offset;
+            case 5:
               return 187 + offset;
             default:
               return 142 + offset;
