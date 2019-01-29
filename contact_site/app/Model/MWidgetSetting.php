@@ -262,7 +262,7 @@ class MWidgetSetting extends AppModel {
             ],
         ],
         'uploadImage' => [
-            // ルール：extension => pathinfoを使用して拡張子を検証
+            // ルール：extension => pathInfoを使用して拡張子を検証
             'extension' => [
                 'rule' => [ 'extension', [ 'jpg', 'jpeg', 'png'] ],
                 'allowEmpty' => true,
@@ -280,6 +280,20 @@ class MWidgetSetting extends AppModel {
                     'message' => ['無効なファイルです']
                 ],
             ],
+        ],
+        'widget_custom_width' => [
+            'minWidth' => [
+                'rule' => ['range', 284, 9999],
+                'message' => '横幅は285px以上で指定して下さい',
+                'allowEmpty' => true
+            ]
+        ],
+        'widget_custom_height' => [
+            'maxHeight' => [
+                'rule' => ['range', 193, 9999],
+                'message' => '高さは194px以上で指定して下さい',
+                'allowEmpty' => true
+            ]
         ],
         'radius_ratio' => [
             'between' => [

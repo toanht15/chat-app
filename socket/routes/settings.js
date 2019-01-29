@@ -289,6 +289,22 @@ router.get("/", function (req, res, next) {
       if ('chatInitShowTextarea' in settings) {
         chatInitShowTextarea = isNumeric(settings.chatInitShowTextarea);
       }
+
+      //チャットボットアイコン表示:設定していない場合は「表示しない」
+      var showChatbotIcon = 2;
+      if ('showChatbotIcon' in settings) {
+        showChatbotIcon = isNumeric(settings.showChatbotIcon);
+      }
+
+      //オペレーターアイコン表示:設定していない場合は「表示しない」
+      var showOperatorIcon = 2;
+      if ('showOperatorIcon' in settings) {
+        showOperatorIcon = isNumeric(settings.showOperatorIcon);
+      }
+
+
+
+
       sendData['widget'] = {
         showTiming: showTimingSetting,
         display_type: isNumeric(common.companySettings[siteKey].display_type),
@@ -386,9 +402,9 @@ router.get("/", function (req, res, next) {
 
         showMainImage: settings.showMainImage,
         mainImage: settings.mainImage,
-        showChatbotIcon: settings.showChatbotIcon,
+        showChatbotIcon: isNumeric(showChatbotIcon),
         chatbotIcon: settings.chatbotIcon,
-        showOperatorIcon: settings.showOperatorIcon,
+        showOperatorIcon: isNumeric(showOperatorIcon),
         operatorIcon: settings.operatorIcon,
         operatorIconType: settings.operatorIconType,
         chatInitShowTextarea: chatInitShowTextarea,
