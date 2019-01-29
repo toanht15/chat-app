@@ -779,18 +779,30 @@ sincloApp.factory('SimulatorService', function() {
       var index = $('#chatTalk > div:not([style*="display: none;"])').length;
       var carouselId = prefix + 'sinclo-carousel-' + index;
       var html = '';
-      var carouselSize = this.getCarouselSize(data.settings.lineUpStyle);
-      html+= '<div class=\'carousel-container\' style="width: ' + carouselSize.width + 'px; margin-top: 6px;">';
+      var carouselSize = this.getCarouselSize(data.settings.lineUpStyle, data.settings.aspectRatio);
+      html+= '<div class=\'carousel-container\' style="width: ' + carouselSize.containerWidth + 'px; margin-top: 6px;">';
       html += '<style>';
       html += '#sincloBox #' + carouselId + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
       html += '#sincloBox #' + carouselId + ' .slick-dots li button:before { font-size: 25px;}';
       html += '#sincloBox #' + carouselId + ' .slick-next:before { font-family: "Font Awesome 5 Pro";  color: ' + data.settings.customDesign.arrowColor + ';}';
       html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-family: "Font Awesome 5 Pro";  color: ' + data.settings.customDesign.arrowColor + ';}';
-      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { margin: 8px; font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + ';}';
-      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 8px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { margin: 8px; font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title {  text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 8px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
+      if (data.settings.outCarouselNoneBorder) {
+        html += '#sincloBox #' + carouselId + ' .thumbnail { border: none;} ';
+      } else {
+        html += '#sincloBox #' + carouselId + ' .thumbnail { border: 1px solid ' + data.settings.customDesign.outBorderColor + ';} ';
+      }
+
+      if (data.settings.inCarouselNoneBorder) {
+        html += '#sincloBox #' + carouselId + ' .thumbnail img { border-bottom: none;} ';
+      } else {
+        html += '#sincloBox #' + carouselId + ' .thumbnail img { border-bottom: 1px solid ' + data.settings.customDesign.inBorderColor + ';} ';
+      }
       var slideMargin = 0;
       if (data.settings.lineUpStyle === '2') {
-         slideMargin = 5;
+         slideMargin = 16;
         // html += '#sincloBox #' + carouselId + ' .slick-list {padding:0 20% 0 0;}';
       }
       if (data.settings.arrowType !== '2') {
@@ -810,8 +822,8 @@ sincloApp.factory('SimulatorService', function() {
       html+= '<div class="single-item" id="' + carouselId + '">';
       angular.forEach(data.images, function (image, key) {
         html+= '<div style="width: ' + carouselSize.width + 'px">';
-        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; padding: 4px; border: 1px solid black; background-color: #FFFFFF; margin-right: ' + slideMargin + 'px;">';
-        html+= '<img id="' + prefix + 'image' + key +'" style="cursor: pointer; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
+        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; background-color: #FFFFFF; margin-right: ' + slideMargin + 'px;">';
+        html+= '<img id="' + prefix + 'image' + key +'" style="cursor: pointer; width: ' + carouselSize.width + '; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
         html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
         html+= '<div class="title"><strong>' + image.title + '</strong></div>';
         html+= '<p class="sub-title">' + image.subTitle + '</p>';
@@ -862,32 +874,50 @@ sincloApp.factory('SimulatorService', function() {
       return result;
     },
 
-    getCarouselSize: function(lineUpStyle){
-      var data = { width: 0, height: 0};
+    getCarouselSize: function(lineUpStyle, aspectRatio){
+      if (!aspectRatio) {
+        aspectRatio = 1;
+      }
+      var data = { width: 0, height: 0, containerWidth: 0};
       switch (Number(this.widgetSizeTypeToggle)) {
         case 1:
-          data.width = 200;
-          data.height = lineUpStyle === '1' ? 120 : 73;
+          data.containerWidth = 200;
+          data.width = lineUpStyle === '1' ? 200 : 125;
           break;
         case 2:
-          data.width = 250;
-          data.height = lineUpStyle === '1' ? 150 : 91;
+          data.containerWidth = 250;
+          data.width = lineUpStyle === '1' ? 250 : 155;
           break;
         case 3:
-          data.width = 300;
-          data.height = lineUpStyle === '1' ? 150 : 109;
+          data.containerWidth = 300;
+          data.width = lineUpStyle === '1' ? 300 : 184;
           break;
         case 4:
-          data.width = 300;
-          data.height = lineUpStyle === '1' ? 150 : 109;
+          data.containerWidth = 300;
+          data.width = lineUpStyle === '1' ? 300 : 184;
           break;
         default:
-          data.width = 300;
-          data.height = lineUpStyle === '1' ? 150 : 109;
+          data.containerWidth = 300;
+          data.width = lineUpStyle === '1' ? 300 : 184;
           break;
       }
 
+      data.height = data.width / aspectRatio;
+
       return data;
+    },
+
+    getTitleTextAlign: function (value){
+      switch (Number(value)) {
+        case 1:
+          return 'left';
+        case 2:
+          return 'center';
+        case 3:
+          return 'right';
+        default:
+          return 'left';
+      }
     },
 
     getContrastColor: function (hex) {

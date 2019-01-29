@@ -41,8 +41,8 @@
               <option value="2">テキスト（複数行）</option>
               <option value="3">ラジオボタン</option>
               <option value="4">プルダウン</option>
+              <option value="6">カルーセル（画像表示）</option>
               <option value="5">カレンダー</option>
-              <option value="6">カルーセル</option>
             </select>
           </div>
           <div class='area-message' >
@@ -150,7 +150,7 @@
                 <li class="carousel-item action{{setActionId}}_option{{listId}}" ng-repeat="(imageIndex, image) in hearingItem.settings.images  track by $index"
                      ng-init="main.controllHearingOptionView(setActionId, listId)">
                   <div class="carousel-item-header">
-                    <div class="area-drag-symbol handleOption" style="cursor: move; display: inline-block">
+                    <div class="area-drag-symbol handleOption" style="cursor: move; display: inline-block; margin-left: 3px;">
                       <i class="fas fa-arrows-alt-v fa-2x" style="font-size: 16px;"></i>
                     </div>
                     <p><strong>画像 {{imageIndex + 1}}</strong></p>
@@ -160,6 +160,25 @@
                     </div>
                   </div>
                   <div class="carousel-item-body">
+                    <div class="carousel-image styleFlexbox">
+                      <span class="carousel-label"><label class="">画像 <span class="questionBalloon"><icon
+                                class="questionBtn"
+                                data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                      <p style="display: inline-block" class="m20l" ng-show="!hearingItem.settings.images[imageIndex].url && !hearingItem.settings.images[imageIndex].isUploading">画像が選択されていません</p>
+                      <div class="uploadProgress" style="margin-left: 10px" ng-show="hearingItem.settings.images[imageIndex].isUploading">
+                        <div class="uploadProgressArea" style="width: 20em;"><span>アップロード中 ...</span><div class="uploadProgressRate progressbar_action{{setActionId}}_hearing{{listId}}_image{{imageIndex}}"><span>アップロード中 ...</span></div></div>
+                      </div>
+                      <img ng-show="hearingItem.settings.images[imageIndex].url && !hearingItem.settings.images[imageIndex].isUploading" ng-src="{{hearingItem.settings.images[imageIndex].url}}" alt="プレビュー" style="margin: 8px 12px;" id="image_preview_action{{setActionId}}_hearing{{listId}}_image{{imageIndex}}" width="100" height="{{hearingItem.settings.aspectRatio ? 100 / hearingItem.settings.aspectRatio : 100}}">
+                    </div>
+                    <div class="carousel-button styleFlexbox">
+                      <input type="file" class="hide image_upload_btn" id="upload_action{{setActionId}}_hearing{{listId}}_image{{imageIndex}}">
+                      <span class="greenBtn btn-shadow" ng-click="main.carouselSelectFile($event, setActionId, listId, imageIndex)">ファイル選択</span>
+                      <span class="btn-shadow"
+                            ng-class="{disOffgrayBtn: !hearingItem.settings.images[imageIndex].url, redBtn: !!hearingItem.settings.images[imageIndex].url}"
+                            ng-click="main.removeCarouselImage($event, setActionId, listId, imageIndex)">
+                        ファイル削除
+                      </span>
+                    </div>
                     <div class="carousel-title styleFlexbox">
                       <span class="carousel-label"><label class="">タイトル <span class="questionBalloon"><icon
                                 class="questionBtn"
@@ -179,22 +198,7 @@
                             data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
                       <input type="text" class="m20l m10r" ng-model="hearingItem.settings.images[imageIndex].answer">
                     </div>
-                    <div class="carousel-image styleFlexbox">
-                      <span class="carousel-label"><label class="">画像 <span class="questionBalloon"><icon
-                            class="questionBtn"
-                            data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
-                      <p style="display: inline-block" class="m20l" ng-show="!hearingItem.settings.images[imageIndex].url">画像が選択されていません</p>
-                      <img ng-show="hearingItem.settings.images[imageIndex].url" ng-src="{{hearingItem.settings.images[imageIndex].url}}" alt="プレビュー" style="margin: 8px 12px;" id="image_preview_action{{setActionId}}_hearing{{listId}}_image{{imageIndex}}" width="100" height="60">
-                    </div>
-                    <div class="carousel-button styleFlexbox">
-                      <input type="file" class="hide image_upload_btn" id="upload_action{{setActionId}}_hearing{{listId}}_image{{imageIndex}}">
-                      <span class="greenBtn btn-shadow" ng-click="main.carouselSelectFile($event, setActionId, listId, imageIndex)">ファイル選択</span>
-                      <span class="btn-shadow"
-                            ng-class="{disOffgrayBtn: !hearingItem.settings.images[imageIndex].url, redBtn: !!hearingItem.settings.images[imageIndex].url}"
-                            ng-click="main.removeCarouselImage($event, setActionId, listId, imageIndex)">
-                        ファイル削除
-                      </span>
-                    </div>
+
                   </div>
                 </li>
               </ul>
@@ -218,13 +222,61 @@
                       ng-click="main.revertCarouselDesign(setActionId, listId, 'titleColor')">標準に戻す</span>
               </span>
               <span>
-                <label for="">本文文字色</label>
-                <input type="text" class="jscolor{hash:true} ignore-click-event"
-                       id="action{{setActionId}}_carousel{{listId}}_subTitleColor"
-                       ng-model="hearingItem.settings.customDesign.subTitleColor">
+                <label for="">タイトル文字サイズ</label>
+                <input type="number" class="" min="5" max="100"
+                       id="action{{setActionId}}_carousel{{listId}}_titleFontSize"
+                       ng-model="hearingItem.settings.customDesign.titleFontSize"><p>px</p>
                 <span class="greenBtn btn-shadow revert-button"
-                      ng-click="main.revertCarouselDesign(setActionId, listId, 'subTitleColor')">標準に戻す</span>
+                      ng-click="main.revertCarouselDesign(setActionId, listId, 'titleFontSize')">標準に戻す</span>
               </span>
+
+              <span class="language-setting carousel-arrow-type">
+                  <label>タイトル位置</label>
+                  <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-title-position"
+                                                value="1"
+                                                ng-model="hearingItem.settings.titlePosition"
+                                                style="margin-left: 20px;">左寄せ</label>
+                  <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-title-position"
+                                                     value="2" style="margin-left: 20px"
+                                                     ng-model="hearingItem.settings.titlePosition">中央寄せ</label>
+                <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-title-position"
+                                                   value="3" style="margin-left: 20px"
+                                                   ng-model="hearingItem.settings.titlePosition">右寄せ</i></label>
+                </span>
+                <span>
+                  <label for="">本文文字色</label>
+                  <input type="text" class="jscolor{hash:true} ignore-click-event"
+                         id="action{{setActionId}}_carousel{{listId}}_subTitleColor"
+                         ng-model="hearingItem.settings.customDesign.subTitleColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCarouselDesign(setActionId, listId, 'subTitleColor')">標準に戻す</span>
+                </span>
+
+                <span>
+                  <label for="">本文文字サイズ</label>
+                  <input type="number" class="" min="5" max="100"
+                         id="action{{setActionId}}_carousel{{listId}}_subTitleFontSize"
+                         ng-model="hearingItem.settings.customDesign.subTitleFontSize"><p>px</p>
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCarouselDesign(setActionId, listId, 'subTitleFontSize')">標準に戻す</span>
+                </span>
+
+              <span class="language-setting carousel-arrow-type">
+                  <label>本文文字位置</label>
+                  <label class="pointer"><input type="radio"
+                                                name="action{{setActionId}}-hearing{{listId}}-subTitle-position"
+                                                value="1"
+                                                ng-model="hearingItem.settings.subTitlePosition"
+                                                style="margin-left: 20px;">左寄せ</label>
+                  <label class="pointer m20l"><input type="radio"
+                                                     name="action{{setActionId}}-hearing{{listId}}-subTitle-position"
+                                                     value="2" style="margin-left: 20px"
+                                                     ng-model="hearingItem.settings.subTitlePosition">中央寄せ</label>
+                <label class="pointer m20l"><input type="radio"
+                                                   name="action{{setActionId}}-hearing{{listId}}-subTitle-postiion"
+                                                   value="3" style="margin-left: 20px"
+                                                   ng-model="hearingItem.settings.subTitlePosition">右寄せ</i></label>
+                </span>
 
               <span>
                 <label for="">矢印色</label>
@@ -235,48 +287,62 @@
                       ng-click="main.revertCarouselDesign(setActionId, listId, 'arrowColor')">標準に戻す</span>
               </span>
 
-              <span>
-                <label for="">タイトル文字サイズ</label>
-                <input type="number" class="" min="5" max="100"
-                       id="action{{setActionId}}_carousel{{listId}}_titleFontSize"
-                       ng-model="hearingItem.settings.customDesign.titleFontSize"><p>px</p>
-                <span class="greenBtn btn-shadow revert-button"
-                      ng-click="main.revertCarouselDesign(setActionId, listId, 'titleFontSize')">標準に戻す</span>
-              </span>
-
-              <span>
-                <label for="">本文文字サイズ</label>
-                <input type="number" class="" min="5" max="100"
-                       id="action{{setActionId}}_carousel{{listId}}_subTitleFontSize"
-                       ng-model="hearingItem.settings.customDesign.subTitleFontSize"><p>px</p>
-                <span class="greenBtn btn-shadow revert-button"
-                      ng-click="main.revertCarouselDesign(setActionId, listId, 'subTitleFontSize')">標準に戻す</span>
-              </span>
 
               <span class="language-setting carousel-pattern">
-                  <label>表示パターン</label>
+                  <label>矢印の位置</label>
                   <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-pattern"
                                                 value="1"
                                                 ng-model="hearingItem.settings.carouselPattern"
-                                                style="margin-left: 12px;">パターン１</label>
+                                                style="margin-left: 32px;">画像の内側</label>
                   <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-pattern"
                                                      value="2"
-                                                     ng-model="hearingItem.settings.carouselPattern">パターン２</label>
+                                                     ng-model="hearingItem.settings.carouselPattern">画像の外側</label>
                 </span>
 
-              <span class="language-setting carousel-arrow-type">
+              <span class="language-setting carousel-arrow-type" style="width: 38em">
                   <label>矢印スタイル</label>
                   <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-arrow"
                                                 value="1"
                                                 ng-model="hearingItem.settings.arrowType"
-                                                style="margin-left: 12px;"><i class="fas fa-chevron-circle-right fa-2x"></i></label>
+                                                style="margin-left: 20px;"><i class="fas fa-chevron-circle-right fa-2x"></i></label>
                   <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-arrow"
-                                                     value="2" style="margin-left: 36px"
+                                                     value="2" style="margin-left: 20px"
                                                      ng-model="hearingItem.settings.arrowType"><i class="fal fa-chevron-circle-right fa-2x"></i></label>
                 <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-arrow"
-                                                   value="3" style="margin-left: 36px"
+                                                   value="3" style="margin-left: 20px"
                                                    ng-model="hearingItem.settings.arrowType"><i class="fas fa-chevron-right fa-2x"></i></label>
+                <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-arrow"
+                                                   value="4" style="margin-left: 20px"
+                                                   ng-model="hearingItem.settings.arrowType"><i class="fas fa-chevron-square-right fa-2x"></i></i></label>
                 </span>
+
+              <span>
+                <label for="">外枠線色</label>
+                <input type="text" class="jscolor{hash:true} ignore-click-event"
+                       id="action{{setActionId}}_carousel{{listId}}_outBorderColor"
+                       ng-model="hearingItem.settings.customDesign.outBorderColor">
+                <span class="greenBtn btn-shadow revert-button"
+                      ng-click="main.revertCarouselDesign(setActionId, listId, 'outBorderColor')">標準に戻す</span>
+              </span>
+
+              <label class="pointer" style="margin-left: 125px">
+                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
+                       ng-model="hearingItem.settings.outCarouselNoneBorder">枠線なしにする
+              </label>
+
+              <span>
+                <label for="">内枠線色</label>
+                <input type="text" class="jscolor{hash:true} ignore-click-event"
+                       id="action{{setActionId}}_carousel{{listId}}_inBorderColor"
+                       ng-model="hearingItem.settings.customDesign.inBorderColor">
+                <span class="greenBtn btn-shadow revert-button"
+                      ng-click="main.revertCarouselDesign(setActionId, listId, 'inBorderColor')">標準に戻す</span>
+              </span>
+
+              <label class="pointer" style="margin-left: 125px">
+                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
+                       ng-model="hearingItem.settings.inCarouselNoneBorder">枠線なしにする
+              </label>
             </div>
 
 
