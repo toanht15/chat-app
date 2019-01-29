@@ -69,6 +69,18 @@ sincloApp.factory('SimulatorService', function() {
     get mainImageToggle() {
       return this._settings['show_main_image'];
     },
+    get chatbotIconToggle() {
+      return this._settings['show_chatbot_icon'];
+    },
+    get chatbotIconPath() {
+      return this._settings['chatbot_icon'];
+    },
+    get operatorIconToggle() {
+      return this._settings['show_operator_icon'];
+    },
+    get operatorIconPath() {
+      return this._settings['operator_icon'];
+    },
     get minimizedDesignToggle() {
       return this._settings['minimize_design_type'];
     },
@@ -94,7 +106,10 @@ sincloApp.factory('SimulatorService', function() {
       return this._showWidgetType === 1 && this._settings['widget_size_type'] === '2';
     },
     get isLargeSize() {
-      return this._showWidgetType === 1 && this._settings['widget_size_type'] === '3';
+      return this._showWidgetType === 1 && ( this._settings['widget_size_type'] === '3' || this._settings['widget_size_type'] === '4');
+    },
+    get isCustomSize() {
+      return this._showWidgetType === 1 && this._settings['widget_size_type'] === '5';
     },
     get isSpPortrait() {
       return this._showWidgetType === 3;
@@ -188,14 +203,6 @@ sincloApp.factory('SimulatorService', function() {
       return 'rgba(' + red + ', ' + green + ', ' + blue + ', ' + opacity + ')';
     },
     //シンプル表示判定
-    /*
-    * 最小化時のデザイン
-    * $scope.minimizedDesignToggle = 1/2/3:シンプル表示しない/スマホのみシンプル表示する/すべての端末でシンプル表示する
-    * $scope.showWidgetType = 1/3:通常/スマホ（縦）
-    * 最大時のシンプル表示(スマホ)
-    * $scope.sp_header_light_flg = 0/1:しない/する
-    * $scope.openFlg = true/false:最大化/最小化
-    */
     spHeaderLightToggle: function(){
       switch (this.minimizedDesignToggle) {
       case "1": //シンプル表示しない
@@ -381,176 +388,162 @@ sincloApp.factory('SimulatorService', function() {
       return this.settings['main_image'].match(/^fa/) !== null;
     },
     isPictureImage: function() {
-      return this.settings['main_image'].match(/^http/) !== null;
+      return this.settings['main_image'].match(/^http|data|\/\/node/) !== null
     },
     //param : String型 ng-classで付けたい情報を渡す
-    //TODO 受け取った情報をカンマで分割してfor文を回したほうがいい
-    viewWidgetSetting: function (param){
-      var widgetClasses = {};
-      if(typeof param !== 'undefined' && param.indexOf("size") !== -1){
-        widgetClasses = this.setWidgetSizeSetting(widgetClasses);
+    resultClass: {},
+    viewWidgetSetting: function(param) {
+      //初期化
+      this.resultClass = {};
+      var classArray = param.split(",");
+      for( var i = 0; i < classArray.length; i++ ){
+        switch( classArray[i] ){
+          case "size":
+            this.getWidgetSizeClassName();
+            break;
+          case "sp":
+          case "spText":
+            this.setSmartPhoneClassName( classArray[i] );
+            break;
+          case "titlePosition":
+            this.setTitlePositionSetting();
+            break;
+          case "image":
+            this.setMainImageClassName();
+            break;
+          case "notNone":
+            this.setNotNoneClassName();
+            break;
+          case "notNoneWidgetOutsideBorder":
+            this.notNoneWidgetOutsideBorderChecker();
+            break;
+          case "headerContents" :
+            this.setHeaderContentsCount();
+            break;
+          case "headerName" :
+            this.setHeaderClassName();
+            break;
+          case "headerDescription" :
+            this.setDescriptionClassName();
+            break;
+
+
+        }
       }
-      if(typeof param !== 'undefined' && param.indexOf("sp") !== -1){
-        widgetClasses = this.setSmartPhoneSetting(widgetClasses);
-      }
-      if(typeof param !== 'undefined' && param.indexOf("toptitle") !== -1){
-        widgetClasses = this.setTitlePositionSetting(widgetClasses);
-      }
-      if(typeof param !== 'undefined' && param.indexOf("topname") !== -1){
-        widgetClasses = this.setHeaderNamePositionSetting(widgetClasses);
-      }
-      if(typeof param !== 'undefined' && param.indexOf("desc") !== -1){
-        widgetClasses = this.setHeaderDescPositionSetting(widgetClasses);
-      }
-      if(typeof param !== 'undefined' && param.indexOf("topimg") !== -1){
-        widgetClasses = this.setHeaderImageSetting(widgetClasses);
-      }
-      if(typeof param !== 'undefined' && param.indexOf("outsideborder") !== -1){
-        widgetClasses = this.setOutSideBorderSetting(widgetClasses);
-      }
-      if(typeof param !== 'undefined' && param.indexOf("insideborder") !== -1){
-        widgetClasses = this.setInSideBorderSetting(widgetClasses);
-      }
-      if(typeof param !== 'undefined' && param.indexOf("headercontent") !== -1){
-        widgetClasses = this.setHeaderContentSetting(widgetClasses);
-      }
-      return widgetClasses;
+      return this.resultClass;
     },
 
     /*ng-class用のオブジェクトを設定する関数群--開始--*/
 
 
-    setWidgetSizeSetting : function (obj){
-      obj.middleSize = this.judgeSize("middle");
-      obj.largeSize = this.judgeSize("large");
-      return obj;
-    },
-
-    setSmartPhoneSetting : function (obj){
-      obj.spText = this.isSmartPhonePortrait();
-      obj.sp = this.isSmartPhonePortrait();
-      return obj;
-    },
-
-    setTitlePositionSetting : function(obj){
-      if (Number(this._settings.widget_title_top_type) === 1){
-        obj["leftPositionTitle"] = true;
-      } else if (Number(this._settings.widget_title_top_type) === 2){
-        obj["centerPositionTitle"] = true;
+    getWidgetSizeClassName: function() {
+      if ( this.showWidgetType === 3 ) {
+        //スマホ縦の場合
+        this.resultClass['spSize'] = true;
+        return;
       }
-      return obj;
-    },
-
-    setHeaderNamePositionSetting : function(obj){
-      if (Number(this.subTitleToggle) === 2){
-        obj["noCompany"] = true;
-      } else if (Number(this.subTitleToggle) === 1){
-        if (Number(this._settings.widget_title_name_type) === 1){
-          obj["leftPosition"] = true;
-        } else if (Number(this._settings.widget_title_name_type) === 2) {
-          obj["centerPosition"] = true;
-        }
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          this.resultClass['smallSize'] = true;
+          break;
+        case 2:
+          this.resultClass['middleSize'] = true;
+          break;
+        case 3:
+        case 4:
+          this.resultClass['largeSize'] = true;
+          break;
+        case 5:
+          this.resultClass['customSize'] = true;
+          break;
+        default:
+          break;
       }
-      return obj;
     },
 
-    setHeaderDescPositionSetting : function(obj){
-      if (Number(this.descriptionToggle) === 2){
-        obj["noExplain"] = true;
-      } else if (Number(this.descriptionToggle) === 1){
-        if (Number(this._settings.widget_title_explain_type) === 1){
-          obj["leftPosition"] = true;
-        } else if (Number(this._settings.widget_title_explain_type) === 2) {
-          obj["centerPosition"] = true;
-        }
+    setSmartPhoneClassName: function(param ) {
+      this.resultClass[param] = this.isSmartPhonePortrait();
+    },
+
+    setTitlePositionSetting: function() {
+      switch ( Number(this._settings.widget_title_top_type) ){
+        case 1:
+          this.resultClass["leftPositionTitle"] = true;
+          break;
+        case 2:
+          this.resultClass["centerPositionTitle"] = true;
+          break;
+        default:
+          break;
       }
-      return obj;
     },
 
-    setHeaderImageSetting : function(obj){
-      if (Number(this.mainImageToggle) === 1){
-        obj["Image"] = true;
-      } else if (Number(this.mainImageToggle) === 2){
-        obj["NoImage"] = true;
-      }
-      return obj;
-    },
-
-    setOutSideBorderSetting : function(obj){
-      if (Number(this.widget_outside_border_none === '' || this.widget_outside_border_none === false)){
-        obj["notNoneWidgetOutsideBorder"] = true;
+    setHeaderClassName: function() {
+      if ( Number(this.subTitleToggle) === 2 ) {
+        this.resultClass['noCompany'] = true;
       } else {
-
+        this.setHeaderPosition( Number(this._settings.widget_title_name_type) );
       }
-      return obj;
     },
 
-    setInSideBorderSetting : function(obj){
-      if (Number(this.widget_inside_border_none === '' || this.widget_inside_border_none === false)){
-        obj["notNone"] = true;
+    setDescriptionClassName: function() {
+      if ( Number(this.descriptionToggle) === 2 ) {
+        this.resultClass['noExplain'] = true;
       } else {
-
+        this.setHeaderPosition( Number(this._settings.widget_title_explain_type) );
       }
-      return obj;
     },
 
-    setHeaderContentSetting : function(obj){
-      if(Number(this.descriptionToggle) === 1 && Number(this.subTitleToggle) === 1){
-        obj["twoContents"] = true;
-      } else if (Number(this.descriptionToggle) === 1 || Number(this.subTitleToggle) === 1){
-        obj["oneContents"] = true;
-      } else if (Number(this.descriptionToggle) === 2 || Number(this.subTitleToggle) === 2){
-        obj["noContents"] = true;
+    setHeaderPosition: function(param ) {
+      switch( param ) {
+        case 1:
+          this.resultClass['leftPosition'] = true;
+          break;
+        case 2:
+          this.resultClass['centerPosition'] = true;
+          break;
       }
-      return obj;
+    },
+
+    setMainImageClassName: function(){
+      switch( Number(this.mainImageToggle) ) {
+        case 1:
+          this.resultClass['Image'] = true;
+          break;
+        case 2:
+          this.resultClass['NoImage'] = true;
+          break;
+      }
+    },
+
+    notNoneWidgetOutsideBorderChecker: function() {
+      this.resultClass['notNoneWidgetOutsideBorder'] = this.widget_outside_border_none === '' || !this.widget_outside_border_none;
+    },
+
+    setNotNoneClassName: function() {
+      this.resultClass['notNone'] = this.widget_inside_border_none === '' || !this.widget_inside_border_none;
+    },
+
+    setHeaderContentsCount: function() {
+      //コンテンツ数が多いほどNumは小さい
+      var contentsNum = Number(this.descriptionToggle) + Number(this.subTitleToggle);
+      switch( contentsNum ) {
+        case 2:
+          this.resultClass['twoContents'] = true;
+          break;
+        case 3:
+          this.resultClass['oneContents'] = true;
+          break;
+        case 4:
+          this.resultClass['noContents'] = true;
+          break;
+      }
     },
 
     /*ng-class用のオブジェクトを設定する関数群--終了--*/
 
-
-
-
-    //size : String型 small,middle,large のいずれか
-    //現状の設定が渡されたサイズかどうかを判別する
-    //return : boolean型
-    judgeSize : function(size){
-
-       //通常表示でない場合は判定させない
-      if(Number(this.showWidgetType !== 1)){
-        return false;
-      }
-
-      switch(size){
-      case "small":
-        //現状設定が無いため判別無し
-        return true;
-      break;
-      case "middle":
-        if(Number(this.showWidgetType) === 2){
-          return true;
-        } else {
-          return false;
-        }
-      break;
-      case "large":
-        if(Number(this.showWidgetType) === 3 || Number(this.widgetSizeTypeToggle) === 4){
-          return true;
-        } else {
-          return false;
-        }
-      break;
-      default:
-        //デフォルトはfalseを返す
-        return false;
-      }
-    },
-
-    isSmartPhonePortrait : function(){
-      if(Number(this.showWidgetType) === 3){
-        return true;
-      } else {
-        return false;
-      }
+    isSmartPhonePortrait: function() {
+      return Number(this.showWidgetType) === 3
     },
 
 
@@ -563,7 +556,7 @@ sincloApp.factory('SimulatorService', function() {
     createMessage: function(val, prefix) {
       if (val === '') return;
       prefix =  (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
-      var isSmartphone = this._showWidgetType != 1;
+      var isSmartphone = Number(this._showWidgetType) !== 1;
       var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
       var strings = val.split('\n');
       var radioCnt = 1;

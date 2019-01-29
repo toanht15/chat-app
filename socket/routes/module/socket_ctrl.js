@@ -3546,21 +3546,7 @@ io.sockets.on('connection', function(socket) {
       hearingSeq: obj.hearingSeq,
       otherInformation: obj.otherInformation
     };
-    console.log(obj);
     try {
-      if( obj.detail === "startScenario" ) {
-        console.log("START SCENARIO");
-      } else if ( obj.detail === "startHearing" ) {
-        console.log("START HEARING");
-      } else if ( obj.detail === "changeScenarioSeq" ) {
-        console.log("CHANGE SCENARIO SEQUENCE");
-      } else if ( obj.detail === "changeHearingSeq" ) {
-        console.log("CHANGE HEARING SEQUENCE");
-      } else if ( obj.detail === "endHearing") {
-        console.log("END HEARING");
-      } else if ( obj.detail === "endScenario" ){
-        console.log("END SCENARIO");
-      }
       emit.toSameUser("syncScenarioDataResult", dataSet, obj.siteKey, obj.sessionID);
     } catch (e) {
       console.log('ERROR DETECTED!! >> ' + e);
@@ -3658,6 +3644,14 @@ io.sockets.on('connection', function(socket) {
           sendData.hide = true;
         }
       }
+
+      pool.query(
+          'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
+          [obj.userId, companyList[obj.siteKey]], function(err, result) {
+            if (err !== null && err !== '') return false;
+            var settingObj = result[0]["settings"];
+            sendData.profileIcon = JSON.parse(settingObj)["profileIcon"];
+      });
 
       pool.query(
           'SELECT mu.id, mu.display_name, wid.style_settings FROM m_users as mu LEFT JOIN m_widget_settings AS wid ON ( wid.m_companies_id = mu.m_companies_id ) WHERE mu.id = ? AND mu.del_flg != 1 AND wid.del_flg != 1 AND wid.m_companies_id = ?',
