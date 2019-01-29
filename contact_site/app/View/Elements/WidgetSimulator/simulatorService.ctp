@@ -774,7 +774,8 @@ sincloApp.factory('SimulatorService', function() {
 
     createCarousel: function (data) {
       var result = { html: '', selector: ''};
-      var messageHtml = this.createMessage(data.message, data.prefix);
+
+      var messageHtml = data.message !== "" ? this.createMessage(data.message, data.prefix) : "";
       var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
       var index = $('#chatTalk > div:not([style*="display: none;"])').length;
       var carouselId = prefix + 'sinclo-carousel-' + index;
@@ -788,7 +789,7 @@ sincloApp.factory('SimulatorService', function() {
       html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-family: "Font Awesome 5 Pro";  color: ' + data.settings.customDesign.arrowColor + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { margin: 8px; font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title {  text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
-      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 8px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 8px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.subTitlePosition) + ';}';
       if (data.settings.outCarouselNoneBorder) {
         html += '#sincloBox #' + carouselId + ' .thumbnail { border: none;} ';
       } else {
@@ -800,11 +801,12 @@ sincloApp.factory('SimulatorService', function() {
       } else {
         html += '#sincloBox #' + carouselId + ' .thumbnail img { border-bottom: 1px solid ' + data.settings.customDesign.inBorderColor + ';} ';
       }
-      var slideMargin = 0;
+
       if (data.settings.lineUpStyle === '2') {
-         slideMargin = 16;
-        // html += '#sincloBox #' + carouselId + ' .slick-list {padding:0 20% 0 0;}';
+        html += '#sincloBox #' + carouselId + ' .slick-slide {margin: 0 8px;}';
+        html += '#sincloBox #' + carouselId + ' .slick-list {margin: 0 -8px;}';
       }
+      
       if (data.settings.arrowType !== '2') {
         html += '#sincloBox #' + carouselId + ' .slick-next:before { font-weight: 900 }';
         html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-weight: 900 }';
@@ -822,7 +824,7 @@ sincloApp.factory('SimulatorService', function() {
       html+= '<div class="single-item" id="' + carouselId + '">';
       angular.forEach(data.images, function (image, key) {
         html+= '<div style="width: ' + carouselSize.width + 'px">';
-        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; background-color: #FFFFFF; margin-right: ' + slideMargin + 'px;">';
+        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; background-color: #FFFFFF;">';
         html+= '<img id="' + prefix + 'image' + key +'" style="cursor: pointer; width: ' + carouselSize.width + '; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
         html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
         html+= '<div class="title"><strong>' + image.title + '</strong></div>';
@@ -834,7 +836,8 @@ sincloApp.factory('SimulatorService', function() {
         html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' + data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
       }
 
-      result.html = data.settings.balloonStyle === '1' ? messageHtml + html : html;
+      // result.html = data.settings.balloonStyle === '1' ? messageHtml + html : html;
+      result.html = messageHtml === "" ? html :messageHtml +  html;
       result.selector = '#' + carouselId;
       return result;
     },
