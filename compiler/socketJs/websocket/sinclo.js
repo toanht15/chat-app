@@ -1538,6 +1538,15 @@
                 chat.chatId)) {
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
             }
+          } else if (Number(chat.messageType) === 43) {
+            var carousel = JSON.parse(chat.message);
+            this.chatApi.addCarousel('hearing_msg sinclo_re', carousel.message,
+                carousel.settings);
+            // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
+            if (sinclo.scenarioApi._hearing.disableRestoreMessage(
+                chat.chatId)) {
+              sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
+            }
           } else {
             //通知した場合
             if (chat.noticeFlg == 1 && firstCheck == true &&
@@ -3874,6 +3883,26 @@
         li.className = cs;
         li.innerHTML = messageHtml + pulldownHtml;
       },
+      addCarousel: function(cs, message, settings, storedValue) {
+        common.chatBotTypingTimerClear();
+        common.chatBotTypingRemove();
+        var chatList = document.getElementsByTagName('sinclo-chat')[0];
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+        div.classList.add('sinclo-scenario-msg');
+        div.appendChild(li);
+        chatList.appendChild(div);
+
+        var messageHtml = sinclo.chatApi.createMessageHtml(message);
+        var carouselHtml = sinclo.chatApi.createCarouselHtml(settings,
+            chatList.children.length, storedValue);
+        div.style.textAlign = 'left';
+        cs += ' effect_left';
+        cs += ' hearing_msg';
+
+        li.className = cs;
+        li.innerHTML = messageHtml + carouselHtml;
+      },
       addCalendar: function(cs, message, settings, storedValue) {
         common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
@@ -4171,6 +4200,36 @@
           }
         });
         html += '</select>';
+
+        if (storedValueIsFound) {
+          html += '<p class=\'sincloButtonWrap\' onclick=\'sinclo.chatApi.send("' +
+              storedValue + '")\'><span class=\'sincloButton\'>次へ</span></p>';
+        }
+
+        return html;
+      },
+      createCarouselHtml: function(settings, index, storedValue) {
+        var style = sinclo.chatApi.createPulldownStyle(settings);
+        var name = 'sinclo-carousel' + index;
+        var html = '';
+        var storedValueIsFound = false;
+
+        html+= '<div class="carousel-container" style="width: 300px; margin-top: 6px;">';
+
+        html+= '<div class="single-item" id="' + name + '">';
+        settings.images.forEach(function (image, key) {
+          if (image.answer === storedValue) {
+            storedValueIsFound = true;
+          }
+          html+= '<div style="width: 300px">';
+          html+= '<div class="thumbnail" style="display: flex; flex-direction: column; padding: 4px; border: 1px solid black; background-color: #FFFFFF; margin-right: 0px;">';
+          html+= '<img id="' + name + '_image' + key + '" alt="画像" style="cursor: pointer; height: 180px" src="' + image.url + '" />';
+          html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
+          html+= '<div class="title"><strong>' + image.title + '</strong></div>';
+          html+= '<p class="sub-title">' + image.subTitle + '</p>';
+          html+= '</div></div></div>';
+        });
+        html+= '</div></div>';
 
         if (storedValueIsFound) {
           html += '<p class=\'sincloButtonWrap\' onclick=\'sinclo.chatApi.send("' +
@@ -7600,6 +7659,28 @@
           callback();
         }
       },
+      _showCarousel: function(params, callback) {
+        console.log(
+            '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW CAROUSEL <<<<<<<<<<<<<<<<<<<<<<<<<<<');
+        var self = sinclo.scenarioApi;
+        params.message = self._replaceVariable(params.message);
+        if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum),
+            params.categoryNum)) {
+          var name = (sincloInfo.widget.showAutomessageName === 2 ?
+              '' :
+              sincloInfo.widget.subTitle);
+
+          sinclo.chatApi.addCarousel('sinclo_re', params.message,
+              params.settings, params.storedValue);
+          self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum),
+              params.categoryNum);
+          sinclo.chatApi.scDown();
+          // ローカルに蓄積しておく
+          self._putHearingPulldown(params, callback);
+        } else {
+          callback();
+        }
+      },
       _showCalendar: function(params, callback) {
         console.log(
             '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW CALENDAR <<<<<<<<<<<<<<<<<<<<<<<<<<<');
@@ -8500,6 +8581,22 @@
                     self._getCurrentHearingProcess().variableName);
               }
               self._parent._showCalendar(params, callback);
+              break;
+            case '6': // カルーセル
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 43);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 44);
+              var params = {
+                type: '2',
+                uiType: uiType,
+                message: message,
+                settings: settings,
+                categoryNum: self._getCurrentSeq()
+              };
+              if (self._parent._getCurrentScenario().restore) {
+                params.storedValue = self._parent._getSavedVariable(
+                    self._getCurrentHearingProcess().variableName);
+              }
+              self._parent._showCarousel(params, callback);
               break;
             default:
               self._parent.set(self._parent._lKey.sendCustomerMessageType, 12);

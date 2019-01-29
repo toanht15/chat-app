@@ -843,6 +843,11 @@ $config['chatbotScenarioActionList'] = [
           'lineUpStyle' => '1', //1: 1つずつ表示、２：並べて表示
           'carouselPattern' => '1',
           'arrowType' => '1',
+          'titlePosition' => '1', // 1 : left, 2: center , 3: right
+          'subTitlePosition' => '1', // 1 : left, 2: center , 3: right
+          'outCarouselNoneBorder' => false,
+          'inCarouselNoneBorder' => false,
+          'aspectRatio' => null,
           'customDesign' => [
             'borderColor'                  => '',
             'backgroundColor'              => '#FFFFFF',
@@ -855,10 +860,12 @@ $config['chatbotScenarioActionList'] = [
             'saturdayColor'                => '',
             'sundayColor'                  => '',
             'titleColor'                   => '',
-            'subTitleColor'                => '',
+            'subTitleColor'                => '#333333',
             'arrowColor'                   => '',
             'titleFontSize'                => '15',
-            'subTitleFontSize'             => '14'
+            'subTitleFontSize'             => '14',
+            'outBorderColor'               => '#E8E7E0',
+            'inBorderColor'               => '#E8E7E0',
           ],
           'images' => [
             [

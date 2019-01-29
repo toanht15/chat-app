@@ -272,7 +272,6 @@
           $timeout(function() {
             $scope.$apply();
           });
-
           // 並び替え後、変数のチェックを行う
           var elms = document.querySelectorAll('li.set_action_item');
           $scope.setActionList.forEach(function(actionItem, index) {
@@ -343,8 +342,10 @@
         target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
         target.settings.customDesign.titleColor = $scope.widget.settings.description_text_color;
-        target.settings.customDesign.subTitleColor = $scope.widget.settings.description_text_color;
-        target.settings.customDesign.arrowColor = '#FFFFFF';
+        target.settings.customDesign.subTitleColor = '#333333';
+        target.settings.customDesign.arrowColor = $scope.widget.settings.main_color;
+        target.settings.customDesign.outBorderColor = '#E8E7E0';
+        target.settings.customDesign.inBorderColor = '#E8E7E0';
         target.settings.customDesign.titleFontSize = parseInt($scope.widget.settings.re_text_size) + 1;
         target.settings.customDesign.subTitleFontSize = parseInt($scope.widget.settings.re_text_size);
 
@@ -465,12 +466,12 @@
             target.css('background-color', defaultColor);
             break;
           case 'subTitleColor':
-            defaultColor = $scope.widget.settings.description_text_color;
+            defaultColor = '#333333';
             $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
             target.css('background-color', defaultColor);
             break;
           case 'arrowColor':
-            defaultColor = '#FFFFFF';
+            defaultColor = $scope.widget.settings.main_color;
             $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
             target.css('background-color', defaultColor);
             break;
@@ -479,6 +480,16 @@
             break;
           case 'subTitleFontSize':
             $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = parseInt($scope.widget.settings.re_text_size);
+            break;
+          case 'outBorderColor':
+            defaultColor = '#E8E7E0';
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+          case 'inBorderColor':
+            defaultColor = '#E8E7E0';
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
             break;
         }
 
@@ -757,19 +768,57 @@
                 if (hearing.settings.balloonStyle === '2') {
                   hearing.message = "";
                 }
-                $timeout(function() {
-                  $scope.$apply(function(){
-                    if (hearing.settings.carouselCustomDesign) {
-                      jscolor.installByClassName('jscolor');
-                    }
 
-
-                    // setTimeout(function(){
-                    //   carouselTarget.slick({
-                    //     dots: true
-                    //   });
-                    // }, 2000);
+                var prevIconClass = '';
+                var nextIconClass = '';
+                if (hearing.settings.arrowType === '3') {
+                  prevIconClass = 'fa-chevron-left';
+                  nextIconClass = 'fa-chevron-right';
+                } else if (hearing.settings.arrowType === '4') {
+                  prevIconClass = 'fa-chevron-square-left';
+                  nextIconClass = 'fa-chevron-square-right';
+                } else {
+                  prevIconClass = 'fa-chevron-circle-left';
+                  nextIconClass = 'fa-chevron-circle-right';
+                }
+                var slidesToShow = hearing.settings.lineUpStyle === '1' ? 1 : 1.5;
+                carouselTarget.on('init', function(event, slick) {
+                  var maxHeight = 0;
+                  slick.$slides.each(function(slide) {
+                    var currentHeight = $(this).find('.caption').height();
+                    maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
                   });
+
+                  slick.$slides.each(function(slide) {
+                    $(this).find('.caption').css('min-height', maxHeight + 'px');
+                  });
+                });
+
+                hearing.settings.slickSettings = {
+                  dots: true,
+                  slidesToShow: slidesToShow,
+                  infinite: false,
+                  lazyLoad: 'ondemand',
+                  prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
+                  nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
+                };
+                var maxHeight = 0;
+                carouselTarget.find('.caption').each(function() {
+                  var currentHeight = $(this).height();
+                  maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+                });
+
+                carouselTarget.find('.caption').each(function() {
+                  $(this).css('min-height', maxHeight + 'px');
+                });
+
+                $timeout(function() {
+                  $scope.$apply();
+                }).then(function() {
+                  if (hearing.settings.carouselCustomDesign) {
+                    jscolor.installByClassName('jscolor');
+                  }
+                  hearing.settings.dataLoaded = true;
                 });
               }
             });
@@ -1294,20 +1343,19 @@
             url: ''
           };
           target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
-
-          // var carouselTarget = $('[id^="carousel_action' + actionStep + '_hearing' + listIndex + '"]');
-          // if (carouselTarget && carouselTarget.hasClass('slick-slider')) {
-          //   carouselTarget.slick('unslick');
-          // }
+          $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = false;
         }
         if (optionType === '6') {
           target.splice(optionIndex + 1, 0, imageData);
         } else {
           target.splice(optionIndex + 1, 0, '');
         }
+
         // 表示更新
         $timeout(function() {
-          $scope.$apply();
+          $scope.$apply(function() {
+            $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = true;
+          });
         }).then(function() {
           var targetElmList = $('.action' + actionStep + '_option' + listIndex);
           self.controllListView(actionType, targetElmList, target);
@@ -1323,6 +1371,55 @@
         });
       };
 
+      this.getCarouselSize = function(lineUpStyle, widgetSizeType, aspectRatio){
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
+        switch (Number(widgetSizeType)) {
+          case 1:
+            data.containerWidth = 190;
+            data.width = lineUpStyle === '1' ? 190 : 120;
+            break;
+          case 2:
+            data.containerWidth = 240;
+            data.width = lineUpStyle === '1' ? 240 : 150;
+            break;
+          case 3:
+            data.containerWidth = 300;
+            data.width = lineUpStyle === '1' ? 300 : 184;
+            break;
+          case 4:
+            data.containerWidth = 300;
+            data.width = lineUpStyle === '1' ? 300 : 184;
+            break;
+          default:
+            data.containerWidth = 300;
+            data.width = lineUpStyle === '1' ? 300 : 184;
+            break;
+        }
+
+        data.height = data.width / aspectRatio;
+
+        return data;
+      };
+
+      this.convertNegativeNum = function(value) {
+        return Number(value);
+      };
+
+      this.getTitleTextAlign = function(value) {
+        switch (Number(value)) {
+          case 1:
+            return 'left';
+          case 2:
+            return 'center';
+          case 3:
+            return 'right';
+          default:
+            return 'left';
+        }
+      };
       // remove options (radio, pulldown, calendar) in hearing
       this.removeHearingOption = function($event, optionType, optionIndex, listIndex) {
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
@@ -2054,7 +2151,7 @@
             openTrimmingDialog(function(){
               // beforeTrimmingInit(url, $('#picDiv img'));
               beforeTrimmingInit(url, $('#trimmed_image'));
-              trimmingInit($scope, fileId, 5 / 3);
+              carouselTrimmingInit($scope, fileId);
             });
           }
         });
