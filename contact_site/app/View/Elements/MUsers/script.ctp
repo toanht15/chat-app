@@ -72,7 +72,7 @@ var setAllCheck = function() {
     $(".actCtrlBtn").css('display', 'none');
   }
   actBtnShow();
-}
+};
 
 //全選択用チェックボックスのコントロール
 var allCheckCtrl = function(){
@@ -83,7 +83,7 @@ var allCheckCtrl = function(){
   else {
     $('input[name="allCheck"]').prop('checked', false);
   }
-}
+};
 
 //有効/無効ボタンの表示/非表示
 var actBtnShow = function(){
