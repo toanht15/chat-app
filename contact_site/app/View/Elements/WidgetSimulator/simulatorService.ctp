@@ -801,10 +801,12 @@ sincloApp.factory('SimulatorService', function() {
       } else {
         html += '#sincloBox #' + carouselId + ' .thumbnail img { border-bottom: 1px solid ' + data.settings.customDesign.inBorderColor + ';} ';
       }
-      var slideMargin = 0;
+
       if (data.settings.lineUpStyle === '2') {
-         slideMargin = 16;
+        html += '#sincloBox #' + carouselId + ' .slick-slide {margin: 0 8px;}';
+        html += '#sincloBox #' + carouselId + ' .slick-list {margin: 0 -8px;}';
       }
+      
       if (data.settings.arrowType !== '2') {
         html += '#sincloBox #' + carouselId + ' .slick-next:before { font-weight: 900 }';
         html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-weight: 900 }';
@@ -822,7 +824,7 @@ sincloApp.factory('SimulatorService', function() {
       html+= '<div class="single-item" id="' + carouselId + '">';
       angular.forEach(data.images, function (image, key) {
         html+= '<div style="width: ' + carouselSize.width + 'px">';
-        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; background-color: #FFFFFF; margin-right: ' + slideMargin + 'px;">';
+        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; background-color: #FFFFFF;">';
         html+= '<img id="' + prefix + 'image' + key +'" style="cursor: pointer; width: ' + carouselSize.width + '; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
         html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
         html+= '<div class="title"><strong>' + image.title + '</strong></div>';

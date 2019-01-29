@@ -128,6 +128,8 @@
       </style>
 
       <style ng-if="hearings.uiType === '6'">
+        #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .slick-slide {margin: 0 {{hearings.settings.lineUpStyle === '2' ? 8 : 0}}px;}
+        #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .slick-list {margin: 0 {{hearings.settings.lineUpStyle === '2' ? main.convertNegativeNum('-8') : 0}}px;}
         #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}
         #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .slick-dots li button:before { font-size: 25px;}
         #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .slick-next { right: {{hearings.settings.carouselPattern === '1' ? 8 : main.convertNegativeNum('-25')}}px;}
@@ -137,7 +139,6 @@
         #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .thumbnail .caption .title strong { margin: 8px; font-size: {{hearings.settings.customDesign.titleFontSize}}px; color: {{hearings.settings.customDesign.titleColor}};}
         #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .thumbnail .caption .title { text-align: {{main.getTitleTextAlign(hearings.settings.titlePosition)}};}
         #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .thumbnail .caption .sub-title { margin: 8px; font-size: {{hearings.settings.customDesign.subTitleFontSize}}px; color: {{hearings.settings.customDesign.subTitleColor}}; text-align: {{main.getTitleTextAlign(hearings.settings.subTitlePosition)}};}
-        #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .thumbnail { margin-right: {{hearings.settings.lineUpStyle === '2' ? 16 : 0}}px;}
         #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .thumbnail img { height: {{main.getCarouselSize(hearings.settings.lineUpStyle, widget.settings['widget_size_type'], hearings.settings.aspectRatio).height}}px; width: {{main.getCarouselSize(hearings.settings.lineUpStyle, widget.settings['widget_size_type'], hearings.settings.aspectRatio).width}}px;}
         #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .thumbnail { height: 100%; display: flex; flex-direction: column; background-color: #FFFFFF; width: {{main.getCarouselSize(hearings.settings.lineUpStyle, widget.settings['widget_size_type'], hearings.settings.aspectRatio).width + 2}}px;}
         #tchatbotscenario_form_preview_body .chatTalk li #carousel_action{{setActionId}}_hearing{{index}} .noneBorder { border: none }
