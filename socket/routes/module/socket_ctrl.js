@@ -3587,6 +3587,7 @@ io.sockets.on('connection', function(socket) {
           [obj.userId, companyList[obj.siteKey]], function(err, result) {
             if (err !== null && err !== '') return false;
             var settingObj = result[0]["settings"];
+            if( settingObj == null ) return false;
             var profileIcon = JSON.parse(settingObj)["profileIcon"];
             emit.toMine('chatStartResult', {
               ret: false,
@@ -3685,6 +3686,7 @@ io.sockets.on('connection', function(socket) {
                   [obj.userId, companyList[obj.siteKey]], function(err, result) {
                     if (err !== null && err !== '') return false;
                     var settingObj = result[0]["settings"];
+                    if( settingObj == null ) return false;
                     sendData.profileIcon = JSON.parse(settingObj)["profileIcon"];
                     emit.toSameUser('chatStartResult', sendData, obj.siteKey,
                         obj.sincloSessionId);
