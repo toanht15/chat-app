@@ -1133,7 +1133,7 @@ var socket, // socket.io
           colorList['stringColor'] + '; background-color: ' +
           colorList['mainColor'] + '; }';
       html += '      #sincloBox span#mainImage i.fa-robot { padding-bottom: 3px; }';
-      html += '      #sincloBox p#widgetTitle { position:relative; cursor:pointer; border: 1px solid ' +
+      html += '      #sincloBox p#widgetTitle, #sincloBox sinclo-div#widgetTitle { position:relative; cursor:pointer; border: 1px solid ' +
           colorList['mainColor'] + '; border-bottom:none; background-color: ' +
           colorList['mainColor'] + ';text-align: center; margin: 0; color: ' +
           colorList['stringColor'] +
@@ -3353,88 +3353,99 @@ var socket, // socket.io
     },
     widgetHeaderTemplate: function(widget) {
       var html = '', chatAndTitleOnly = false;
-      // チャットとタイトルバーのみ表示するフラグ
-//      if ( check.smartphone() && ( window.screen.availHeight < window.screen.availWidth || (widget.hasOwnProperty('spHeaderLightFlg') && Number(widget.spHeaderLightFlg) === 1) ) ) {
-//        chatAndTitleOnly = true;
-//      }
-      // 画像
-      if (!chatAndTitleOnly &&
-          (Number(widget.showMainImage) === 1 || widget.mainImage !== '')) {
-        var ratio = 1;
-        if (check.smartphone()) {
-          ratio = ($(window).width() - 20) * (1 / 285);
-        }
-        html += '  <span id="mainImage" onclick="sinclo.operatorInfo.toggle()">';
-        if (check.smartphone()) {
-          if (widget.mainImage.match(/^fa/) !== null) {
-            html += '    <i class="sinclo-fal ' + widget.mainImage +
-                '" style="width:calc(' + (62 * ratio) +
-                'px* ((3 * 14 + 36) / 81))!important; height:calc(' +
-                (70 * ratio) +
-                'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像"></i>';
-          } else {
-            html += '    <img src="' + widget.mainImage +
-                '" style="width:calc(' + (62 * ratio) +
-                'px* ((3 * 14 + 36) / 81))!important; height:calc(' +
-                (70 * ratio) +
-                'px* ((3 * 14 + 36) / 81))!important; display:block" alt="チャット画像">';
+      if(window.sincloInfo.custom
+          && window.sincloInfo.custom.widget
+          && window.sincloInfo.custom.widget.header
+          && window.sincloInfo.custom.widget.header.customImage) {
+        html += '<sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
+        html += '  <sinclo-div id="titleWrap">';
+        html += '    <sinclo-div id="widgetTitle" style="padding: 10px 0; display:flex; justify-content: center; align-items: center;">';
+        html += '      <img class="sinclo-header-image" src="' + window.sincloInfo.custom.widget.header.customImage.url + '" width="' + window.sincloInfo.custom.widget.header.customImage.width + '" height="' + window.sincloInfo.custom.widget.header.customImage.height + '" style="display: inline-block; width:' + window.sincloInfo.custom.widget.header.customImage.width + 'px; height:' + window.sincloInfo.custom.widget.header.customImage.height + 'px;" />';
+        html += '    </sinclo-div>';
+        html += '  </sinclo-div>';
+        html += '</sinclo-div>';
+      } else {
+        // 画像
+        if (!chatAndTitleOnly &&
+            (Number(widget.showMainImage) === 1 || widget.mainImage !== '')) {
+          var ratio = 1;
+          if (check.smartphone()) {
+            ratio = ($(window).width() - 20) * (1 / 285);
           }
-        } else {
-          if (widget.mainImage.match(/^fa/) !== null) {
-            html += '    <i class="sinclo-fal ' + widget.mainImage +
-                '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' +
-                widget.headerTextSize +
-                ' + 36) / 81))!important; height:calc(' + (70 * ratio) +
-                'px* ((3 * ' + widget.headerTextSize +
-                ' + 36) / 81))!important;" alt="チャット画像"></i>';
+          html += '  <span id="mainImage" onclick="sinclo.operatorInfo.toggle()">';
+          if (check.smartphone()) {
+            if (widget.mainImage.match(/^fa/) !== null) {
+              html += '    <i class="sinclo-fal ' + widget.mainImage +
+                  '" style="width:calc(' + (62 * ratio) +
+                  'px* ((3 * 14 + 36) / 81))!important; height:calc(' +
+                  (70 * ratio) +
+                  'px* ((3 * 14 + 36) / 81))!important;" alt="チャット画像"></i>';
+            } else {
+              html += '    <img src="' + widget.mainImage +
+                  '" style="width:calc(' + (62 * ratio) +
+                  'px* ((3 * 14 + 36) / 81))!important; height:calc(' +
+                  (70 * ratio) +
+                  'px* ((3 * 14 + 36) / 81))!important; display:block" alt="チャット画像">';
+            }
           } else {
-            html += '    <img src="' + widget.mainImage +
-                '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' +
-                widget.headerTextSize +
-                ' + 36) / 81))!important; height:calc(' + (70 * ratio) +
-                'px* ((3 * ' + widget.headerTextSize +
-                ' + 36) / 81))!important;" display:block" alt="チャット画像">';
+            if (widget.mainImage.match(/^fa/) !== null) {
+              html += '    <i class="sinclo-fal ' + widget.mainImage +
+                  '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' +
+                  widget.headerTextSize +
+                  ' + 36) / 81))!important; height:calc(' + (70 * ratio) +
+                  'px* ((3 * ' + widget.headerTextSize +
+                  ' + 36) / 81))!important;" alt="チャット画像"></i>';
+            } else {
+              html += '    <img src="' + widget.mainImage +
+                  '" style="width:calc(' + (62 * ratio) + 'px* ((3 * ' +
+                  widget.headerTextSize +
+                  ' + 36) / 81))!important; height:calc(' + (70 * ratio) +
+                  'px* ((3 * ' + widget.headerTextSize +
+                  ' + 36) / 81))!important;" display:block" alt="チャット画像">';
+            }
           }
+          html += '  </span>';
         }
-        html += '  </span>';
-      }
-      html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
-      html += '  <sinclo-div id="titleWrap">';
-      // タイトル
-      html += '    <p id="widgetTitle">' + check.escape_html(widget.title) +
-          '</p>';
-      //ボタン差し替え対応
-      html += '    <div id="minimizeBtn"></div>';
-      html += '    <div id="closeBtn" onclick="sinclo.operatorInfo.closeBtn()"></div>';
-      html += '  </sinclo-div>';
-      var subTitle = (widget.subTitle === undefined &&
-          Number(widget.showSubtitle) === 1) ? '' : widget.subTitle;
-      var description = (widget.description === undefined) ?
-          '' :
-          widget.description;
-      if (!chatAndTitleOnly &&
-          (Number(widget.showMainImage) === 1 || Number(widget.showSubtitle) ===
-              1 || Number(widget.showDescription) === 1)) {
-        // サブタイトル
-        if (Number(widget.showSubtitle) === 1 && (widget.subTitle).length !==
-            0) {
-          html += '    <p id="widgetSubTitle">' + check.escape_html(subTitle) +
-              '</p>';
-        } else {
-          html += '    <p id="widgetSubTitle">&thinsp;</p>';
+        html += '  <sinclo-div id="widgetHeader" class="notSelect" onclick="sinclo.operatorInfo.toggle()">';
+        html += '  <sinclo-div id="titleWrap">';
+        // タイトル
+        html += '    <p id="widgetTitle">' + check.escape_html(widget.title) +
+            '</p>';
+        //ボタン差し替え対応
+        html += '    <div id="minimizeBtn"></div>';
+        html += '    <div id="closeBtn" onclick="sinclo.operatorInfo.closeBtn()"></div>';
+        html += '  </sinclo-div>';
+        var subTitle = (widget.subTitle === undefined &&
+            Number(widget.showSubtitle) === 1) ? '' : widget.subTitle;
+        var description = (widget.description === undefined) ?
+            '' :
+            widget.description;
+        if (!chatAndTitleOnly &&
+            (Number(widget.showMainImage) === 1 ||
+                Number(widget.showSubtitle) ===
+                1 || Number(widget.showDescription) === 1)) {
+          // サブタイトル
+          if (Number(widget.showSubtitle) === 1 && (widget.subTitle).length !==
+              0) {
+            html += '    <p id="widgetSubTitle">' +
+                check.escape_html(subTitle) +
+                '</p>';
+          } else {
+            html += '    <p id="widgetSubTitle">&thinsp;</p>';
+          }
+
+          // 説明文
+          if (Number(widget.showDescription) === 1 &&
+              (widget.description).length !== 0) {
+            html += '    <p id="widgetDescription">' +
+                check.escape_html(description) + '</p>';
+          } else {
+            html += '    <p id="widgetDescription">&thinsp;</p>';
+          }
         }
 
-        // 説明文
-        if (Number(widget.showDescription) === 1 &&
-            (widget.description).length !== 0) {
-          html += '    <p id="widgetDescription">' +
-              check.escape_html(description) + '</p>';
-        } else {
-          html += '    <p id="widgetDescription">&thinsp;</p>';
-        }
+        html += '  </sinclo-div>';
       }
-
-      html += '  </sinclo-div>';
       return html;
     },
     widgetNaviTemplate: function(widget) {
