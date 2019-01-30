@@ -3586,9 +3586,15 @@ io.sockets.on('connection', function(socket) {
           'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
           [obj.userId, companyList[obj.siteKey]], function(err, result) {
             if (err !== null && err !== '') return false;
-            var settingObj = result[0]["settings"];
-            if( settingObj == null ) return false;
-            var profileIcon = JSON.parse(settingObj)["profileIcon"];
+            var settingObj = "";
+            var profileIcon = "";
+            try {
+              if( isset(result[0]["settings"]) ) {
+                settingObj = result[0]["settings"];
+                profileIcon = JSON.parse(settingObj)["profileIcon"];
+              }
+            } catch (e) {}
+
             emit.toMine('chatStartResult', {
               ret: false,
               siteKey: obj.siteKey,
@@ -3685,9 +3691,16 @@ io.sockets.on('connection', function(socket) {
                   'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
                   [obj.userId, companyList[obj.siteKey]], function(err, result) {
                     if (err !== null && err !== '') return false;
-                    var settingObj = result[0]["settings"];
-                    if( settingObj == null ) return false;
-                    sendData.profileIcon = JSON.parse(settingObj)["profileIcon"];
+                    var settingObj = "";
+                    var profileIcon = "";
+                    try {
+                      if( isset(result[0]["settings"]) ) {
+                        settingObj = result[0]["settings"];
+                        profileIcon = JSON.parse(settingObj)["profileIcon"];
+                      }
+                    } catch (e) {}
+
+                    sendData.profileIcon = profileIcon;
                     emit.toSameUser('chatStartResult', sendData, obj.siteKey,
                         obj.sincloSessionId);
                   });
