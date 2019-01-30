@@ -344,7 +344,7 @@
         target.settings.customDesign.sundayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
-        target.settings.customDesign.titleColor = $scope.widget.settings.description_text_color;
+        target.settings.customDesign.titleColor = '#333333';
         target.settings.customDesign.subTitleColor = '#333333';
         target.settings.customDesign.arrowColor = $scope.widget.settings.main_color;
         target.settings.customDesign.outBorderColor = '#E8E7E0';
@@ -464,7 +464,7 @@
         var target = $('#action' + actionIndex + '_carousel' + hearingIndex + '_' + customDesignIndex);
         switch (customDesignIndex) {
           case 'titleColor':
-            defaultColor = $scope.widget.settings.description_text_color;
+            defaultColor = '#333333';
             $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
             target.css('background-color', defaultColor);
             break;
