@@ -988,7 +988,7 @@
       };
 
       $scope.showPreview = function(target, fileObj, loadData) {
-        $scope.effectScene(false, $(target).parents('li.sinclo_re.recv_file_left').parent(), function() {
+        $scope.effectScene(false, $(target).parents('li.sinclo_re.recv_file_left').parent().parent(), function() {
           // ベースとなる要素をクローン
           var divElm = document.querySelector('#chatTalk div > li.sinclo_se.recv_file_right').
               parentNode.
@@ -1004,7 +1004,7 @@
                 addEventListener('click', function(e) {
                   $scope.effectScene(false, $(divElm), function() {
                     document.getElementById('chatTalk').removeChild(divElm);
-                    $(target).parents('li.sinclo_re.recv_file_left').parent().show();
+                    $(target).parents('li.sinclo_re.recv_file_left').parent().parent().show();
                   });
                 });
             divElm.querySelector('li.sinclo_se.recv_file_right div.actionButtonWrap a.send-file-button').
