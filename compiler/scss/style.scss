@@ -11161,7 +11161,7 @@ div.balloon {
 
 #sincloBox {
   section#chatTab {
-    #grid_balloon {
+    .grid_balloon {
       display: -ms-grid;
       display: grid;
       -ms-grid-columns: minmax(max-content, max-content) 1fr;
@@ -11169,7 +11169,7 @@ div.balloon {
       &.no_icon {
         grid-template-columns: 1fr;
       }
-      #iconDiv {
+      .iconDiv {
         display: flex;
         justify-content: flex-end;
         align-items: flex-end;
@@ -11184,15 +11184,15 @@ div.balloon {
       }
     }
     &[class$="Size"] {
-      #grid_balloon.no_icon {
+      .grid_balloon.no_icon {
         li.sinclo_re {
           margin-left: 10px;
         }
       }
     }
     &.smallSize {
-      #grid_balloon {
-        #iconDiv {
+      .grid_balloon {
+        .iconDiv {
           max-width: 30px;
           min-width: 30px;
           i, img {
@@ -11207,8 +11207,8 @@ div.balloon {
       }
     }
     &.middleSize {
-      #grid_balloon {
-        #iconDiv {
+      .grid_balloon {
+        .iconDiv {
           max-width: 37px;
           min-width: 37px;
           i, img {
@@ -11223,8 +11223,8 @@ div.balloon {
       }
     }
     &.largeSize {
-      #grid_balloon {
-        #iconDiv {
+      .grid_balloon {
+        .iconDiv {
           max-width: 42px;
           min-width: 42px;
           i, img {
@@ -11239,8 +11239,8 @@ div.balloon {
       }
     }
     &.customSize {
-      #grid_balloon {
-        #iconDiv {
+      .grid_balloon {
+        .iconDiv {
           max-width: 42px;
           min-width: 42px;
           i, img {

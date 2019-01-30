@@ -155,7 +155,7 @@
       $scope.addIconImage = function( parentElm ) {
         var iconDiv = document.createElement("div");
         var icon = getWidgetSettings().chatbot_icon;
-        iconDiv.id = "iconDiv";
+        $(iconDiv).addClass("iconDiv");
         var elm;
         switch( $scope.getIconType( icon ) ) {
           case "fontIcon":
@@ -229,7 +229,7 @@
       $scope.addMessage = function(type, message, prefix, appendClass) {
         // ベースとなる要素をクローンし、メッセージを挿入する
         var gridElm = document.createElement("div");
-        gridElm.id = "grid_balloon";
+        $(gridElm).addClass("grid_balloon");
         if (type === 're') {
           var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
           divElm.id = prefix + '_question';
@@ -439,7 +439,7 @@
        */
       $scope.addRadioButton = function(data) {
         var gridElm = document.createElement("div");
-        gridElm.id = "grid_balloon";
+        $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
         var html = $scope.simulatorSettings.createRadioButton(data);
@@ -518,7 +518,7 @@
        */
       $scope.addPulldown = function(data) {
         var gridElm = document.createElement("div");
-        gridElm.id = "grid_balloon";
+        $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
         var html = $scope.simulatorSettings.createPulldown(data);
@@ -543,7 +543,7 @@
        */
       $scope.addCalendar = function(data) {
         var gridElm = document.createElement("div");
-        gridElm.id = "grid_balloon";
+        $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
         var calendar = $scope.simulatorSettings.createCalendarInput(data);
@@ -718,7 +718,7 @@
        */
       $scope.addFileMessage = function(type, fileObj) {
         var gridElm = document.createElement("div");
-        gridElm.id = "grid_balloon";
+        $(gridElm).addClass("grid_balloon");
         // ベースとなる要素をクローンする
         if (type === 're') {
           var list = document.querySelector('#chatTalk div > li.sinclo_re.file_left');
@@ -765,7 +765,7 @@
       $scope.addReceiveFileUI = function(dropAreaMessage, cancelEnabled, cancelButtonLabel) {
         // ベースとなる要素をクローン
         var gridElm = document.createElement("div");
-        gridElm.id = "grid_balloon";
+        $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left.recv_file_left').
             parentNode.
             cloneNode(true);
