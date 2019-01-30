@@ -3691,7 +3691,7 @@
           iconSource = sincloInfo.widget.chatbotIcon;
           var fontIcon = sinclo.chatApi._createIconDiv( iconSource );
           div.appendChild(fontIcon);
-          div.id = "grid_for_icon";
+          div.classList.add("grid_for_icon");
           div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
         } else if ( Number(sincloInfo.widget.showOperatorIcon) === 1 && isOp ) {
           if( Number(sincloInfo.widget.operatorIconType) === 3) {
@@ -3702,7 +3702,7 @@
           }
           var imageIcon = sinclo.chatApi._createIconDiv( iconSource );
           div.appendChild(imageIcon);
-          div.id = "grid_for_icon";
+          div.classList.add("grid_for_icon");
           div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
         }
         sinclo.chatApi.iconSource = null;
@@ -3712,19 +3712,24 @@
       _createIconDiv: function( icon ) {
         console.warn("アイコンを付与します");
         var div = document.createElement("div");
-        div.id = "iconDiv";
+        div.classList.add("iconDiv");
         var elm;
         switch (sinclo.chatApi._checkIconType( icon )) {
           case "fontIcon":
             elm = sinclo.chatApi._createFontIcon( icon );
             break;
           case "imageIcon":
+            var imgWrapper = document.createElement("div");
+            imgWrapper.classList.add("img_wrapper");
             elm = sinclo.chatApi._createImageIcon( icon );
+            imgWrapper.appendChild(elm);
+            elm = imgWrapper;
             break;
           default:
             break;
         }
-        div.classList.add( sinclo.chatApi._addWidgetSizeClassName(), "effect_left" );
+        div.classList.add( sinclo.chatApi._addWidgetSizeClassName() );
+        div.classList.add( "effect_left" );
         div.appendChild(elm);
         return div;
 

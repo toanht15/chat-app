@@ -231,10 +231,13 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
     $scope.createIconWithPicture = function() {
       var iconDiv = document.createElement("div");
+      var imgWrapDiv = document.createElement("div");
+      $(imgWrapDiv).addClass("img_wrapper");
       $(iconDiv).addClass("iconDiv");
       var iconElm = document.createElement("img");
       iconElm.src = $scope.widget.chatbotIconPath;
-      iconDiv.appendChild(iconElm);
+      imgWrapDiv.appendChild(iconElm);
+      iconDiv.appendChild(imgWrapDiv);
       $(".grid_balloon").last().get(0).appendChild(iconDiv);
     };
 

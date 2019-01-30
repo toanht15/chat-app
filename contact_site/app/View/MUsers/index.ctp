@@ -100,6 +100,11 @@
         } else {
           $operatorIcon = "";
         }
+
+        if(empty($val['MUser']['memo']) && isset($val['MUser']['user_name'])){
+          $val['MUser']['memo'] = $val['MUser']['user_name'];
+        }
+
         $params = $this->Paginator->params();
         $prevCnt = ($params['page'] - 1) * $params['limit'];
         $no = $prevCnt + h($key+1);

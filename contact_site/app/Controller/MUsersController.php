@@ -135,6 +135,11 @@ class MUsersController extends AppController {
       $tmpData['MUser']['permission_level'] = $this->request->data['MUser']['permission_level'];
       $tmpData['MUser']['memo'] = $this->request->data['MUser']['memo'];
 
+      if(empty($tmpData['MUser']['user_name'])) {
+        //氏名が空(新規追加される人の場合は表示名を代入する)
+        $tmpData['MUser']['user_name'] = $tmpData['MUser']['display_name'];
+      }
+
       if ( !$insertFlg && empty($this->request->data['MUser']['new_password']) ) {
         unset($this->MUser->validate['password']);
       }
@@ -158,6 +163,12 @@ class MUsersController extends AppController {
         $saveData = $tmpData;
         $saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
         if ( $this->MUser->save($saveData, false) ) {
+            $pattern = "files/".$this->userInfo['MCompany']['company_key']."_user".$this->request->data['MUser']['id']."_"."[0-9]*.*";
+            foreach (glob($pattern) as $file) {
+              if ( !empty($uploadImage) && strcmp("files/".$filename, $file) !== 0 ) {
+                unlink($file);
+              }
+            }
           $this->MUser->commit();
           $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         }
@@ -309,7 +320,7 @@ class MUsersController extends AppController {
 
     if ( !empty($uploadImage) ) {
       $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
-      $filename = $this->userInfo['MCompany']['company_key'].'_'.$this->userInfo['id'].'_'.date('YmdHis').'.'.$extension;
+      $filename = $this->userInfo['MCompany']['company_key'].'_user'.$this->request->data['MUser']['id'].'_'.date('YmdHis').'.'.$extension;
       $tmpFile = $uploadImage['tmp_name'];
       // ファイルの保存先フルパス＋ファイル名
       $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
