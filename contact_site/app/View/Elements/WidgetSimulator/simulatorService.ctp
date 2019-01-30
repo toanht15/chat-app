@@ -774,22 +774,25 @@ sincloApp.factory('SimulatorService', function() {
 
     createCarousel: function (data) {
       var result = { html: '', selector: ''};
-
       var messageHtml = data.message !== "" ? this.createMessage(data.message, data.prefix) : "";
       var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
       var index = $('#chatTalk > div:not([style*="display: none;"])').length;
       var carouselId = prefix + 'sinclo-carousel-' + index;
       var html = '';
       var carouselSize = this.getCarouselSize(data.settings.lineUpStyle, data.settings.aspectRatio);
-      html+= '<div class=\'carousel-container\' style="width: ' + carouselSize.containerWidth + 'px; margin-top: 6px;">';
+      var arrowPosition = this.getArrowPosition(data.settings);
+      var thumbnailWidth = carouselSize.width + 2;
+      var containerWidth = carouselSize.containerWidth + 2;
+      html+= '<div class=\'carousel-container\' style="width: ' + containerWidth + 'px; margin-top: 6px;">';
       html += '<style>';
       html += '#sincloBox #' + carouselId + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
       html += '#sincloBox #' + carouselId + ' .slick-dots li button:before { font-size: 25px;}';
-      html += '#sincloBox #' + carouselId + ' .slick-next:before { font-family: "Font Awesome 5 Pro";  color: ' + data.settings.customDesign.arrowColor + ';}';
-      html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-family: "Font Awesome 5 Pro";  color: ' + data.settings.customDesign.arrowColor + ';}';
+      html += '#sincloBox #' + carouselId + ' .slick-next:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + data.settings.customDesign.arrowColor + ';}';
+      html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + data.settings.customDesign.arrowColor + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { margin: 8px; font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title {  text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
-      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 8px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.subTitlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 0 8px 8px 8px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.subTitlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail:hover { -webkit-filter: brightness(110%); filter: brightness(110%);}';
       if (data.settings.outCarouselNoneBorder) {
         html += '#sincloBox #' + carouselId + ' .thumbnail { border: none;} ';
       } else {
@@ -802,30 +805,20 @@ sincloApp.factory('SimulatorService', function() {
         html += '#sincloBox #' + carouselId + ' .thumbnail img { border-bottom: 1px solid ' + data.settings.customDesign.inBorderColor + ';} ';
       }
 
-      if (data.settings.lineUpStyle === '2') {
-        html += '#sincloBox #' + carouselId + ' .slick-slide {margin: 0 8px;}';
-        html += '#sincloBox #' + carouselId + ' .slick-list {margin: 0 -8px;}';
-      }
-      
       if (data.settings.arrowType !== '2') {
         html += '#sincloBox #' + carouselId + ' .slick-next:before { font-weight: 900 }';
         html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-weight: 900 }';
       }
 
-      // custom arrow position
-      if (data.settings.carouselPattern === '1') {
-        html += '#sincloBox #' + carouselId + ' .slick-next { right: 8px }';
-        html += '#sincloBox #' + carouselId + ' .slick-prev { left: 8px }';
-      } else if (data.settings.arrowType === '3') {
-        html += '#sincloBox #' + carouselId + ' .slick-prev { left: -16px }';
-      }
+      html += '#sincloBox #' + carouselId + ' .slick-next { right: ' + arrowPosition.right + 'px }';
+      html += '#sincloBox #' + carouselId + ' .slick-prev { left: ' + arrowPosition.left + 'px }';
       html += '</style>';
 
       html+= '<div class="single-item" id="' + carouselId + '">';
       angular.forEach(data.images, function (image, key) {
-        html+= '<div style="width: ' + carouselSize.width + 'px">';
-        html+= '<div class="thumbnail" style="display: flex; flex-direction: column; background-color: #FFFFFF;">';
-        html+= '<img id="' + prefix + 'image' + key +'" style="cursor: pointer; width: ' + carouselSize.width + '; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
+        html+= '<div style="width: ' + containerWidth + 'px">';
+        html+= '<div class="thumbnail" id="' + prefix + 'image' + key + '" style="margin-left: auto; margin-right: auto; cursor: pointer; display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
+        html+= '<img id="img_' + prefix + 'image' + key +'" style="cursor: pointer; width: ' + carouselSize.width + 'px; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
         html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
         html+= '<div class="title"><strong>' + image.title + '</strong></div>';
         html+= '<p class="sub-title">' + image.subTitle + '</p>';
@@ -884,28 +877,106 @@ sincloApp.factory('SimulatorService', function() {
       var data = { width: 0, height: 0, containerWidth: 0};
       switch (Number(this.widgetSizeTypeToggle)) {
         case 1:
-          data.containerWidth = 200;
-          data.width = lineUpStyle === '1' ? 200 : 125;
+          data.containerWidth = 170;
+          data.width = lineUpStyle === '1' ? 170 : 100;
           break;
         case 2:
-          data.containerWidth = 250;
-          data.width = lineUpStyle === '1' ? 250 : 155;
+          data.containerWidth = 220;
+          data.width = lineUpStyle === '1' ? 220 : 130;
           break;
         case 3:
-          data.containerWidth = 300;
-          data.width = lineUpStyle === '1' ? 300 : 184;
+          data.containerWidth = 260;
+          data.width = lineUpStyle === '1' ? 260 : 158;
           break;
         case 4:
-          data.containerWidth = 300;
-          data.width = lineUpStyle === '1' ? 300 : 184;
+          data.containerWidth = 260;
+          data.width = lineUpStyle === '1' ? 260 : 158;
           break;
         default:
-          data.containerWidth = 300;
-          data.width = lineUpStyle === '1' ? 300 : 184;
+          data.containerWidth = 260;
+          data.width = lineUpStyle === '1' ? 260 : 158;
           break;
       }
 
       data.height = data.width / aspectRatio;
+
+      return data;
+    },
+    getArrowPosition: function(setting){
+      var data = { left: 0, right: 0 };
+      if (setting.lineUpStyle === '1') {
+        if (setting.carouselPattern === '2') {
+          if (setting.arrowType === '3') {
+            data.left = -30;
+            data.right = -30;
+          } else {
+            data.left = -34;
+            data.right = -30;
+          }
+        } else {
+          switch (setting.arrowType) {
+            case '1':
+            case '2':
+              data.left = 8;
+              data.right = 14;
+              break;
+            case '3':
+              data.left = 8;
+              data.right = 8;
+              break;
+            case '4':
+              data.left = 8;
+              data.right = 10;
+              break;
+            default:
+              data.left = 8;
+              data.right = 8;
+              break;
+          }
+        }
+      } else {
+        if (setting.carouselPattern === '2') {
+          switch (setting.arrowType) {
+            case '1':
+            case '2':
+              data.left = -27;
+              data.right = -25;
+              break;
+            case '3':
+              data.left = -20;
+              data.right = -25;
+              break;
+            case '4':
+              data.left = -27;
+              data.right = -25;
+              break;
+            default:
+              data.left = -27;
+              data.right = -25;
+              break;
+          }
+        } else {
+          switch (setting.arrowType) {
+            case '1':
+            case '2':
+              data.left = 16;
+              data.right = 16;
+              break;
+            case '3':
+              data.left = 12;
+              data.right = 8;
+              break;
+            case '4':
+              data.left = 16;
+              data.right = 16;
+              break;
+            default:
+              data.left = 16;
+              data.right = 16;
+              break;
+          }
+        }
+      }
 
       return data;
     },

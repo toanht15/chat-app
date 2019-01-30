@@ -103,6 +103,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
       /* タブアイコンフォント化対応end */
     </style>
     <div id="sincloBox" ng-if="widget.showWidgetType !== 2" ng-hide="widget.showWidgetType === 4" ng-class="{middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">
+      <!-- 画像 -->
+      <span id="mainImage" class="widgetOpener" ng-hide="widget.spHeaderLightToggle() || widget.mainImageToggle !== '1'">
+        <img ng-if="widget.isPictureImage()" ng-src="{{widget.settings['main_image']}}" ng-class="widget.viewWidgetSetting('sp')" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像"/>
+        <i ng-if="widget.isIconImage()" class="sinclo-fal {{widget.settings['main_image']}}" ng-class="widget.viewWidgetSetting('sp')" alt="チャット画像"></i>
+      </span>
+      <!-- 画像 -->
       <style>
         /* http://meyerweb.com/eric/tools/css/reset/
        v2.0 | 20110126
@@ -251,14 +257,14 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox p#widgetTitle.sp {font-size: 14px; line-height: 14px}
         /*#sincloBox p#widgetTitle.spText{ text-indent: 1em; }*/
         #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-  /*
-        #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+        /*
+              #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
         #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
   */
         #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50%-9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
         #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
-  /*
-        #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
+        /*
+              #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
         #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
         #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
   */
@@ -453,10 +459,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
           z-index: 999;
         }
         /*#sincloBox .slick-prev:before {*/
-          /*content: "←";*/
+        /*content: "←";*/
         /*}*/
         /*#sincloBox [dir=rtl] .slick-prev:before {*/
-          /*content: "→";*/
+        /*content: "→";*/
         /*}*/
         #sincloBox .slick-next {
           right: -25px;
@@ -466,10 +472,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
           left: -25px;
         }
         /*#sincloBox .slick-next:before {*/
-          /*content: "→";*/
+        /*content: "→";*/
         /*}*/
         /*#sincloBox [dir=rtl] .slick-next:before {*/
-          /*content: "←";*/
+        /*content: "←";*/
         /*}*/
         #sincloBox .slick-dotted.slick-slider {
           margin-bottom: 30px;
@@ -544,10 +550,12 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         }
         /* slick css end */
 
+
         <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
         @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
         @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
         @keyframes dotScale { 0%,100%{transform: scale(0.4);opacity:0.3;} 30%,70%{opacity:0.7} 50% {transform: scale(1);opacity:1.0; } }
+        #sincloBox ul#chatTalk li.chat_carousel { background-color: transparent }
         #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 0px 5px 30.8px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
         #sincloBox ul#chatTalk.spPortrait {height: 310px; overflow: hidden}
         #sincloBox ul#chatTalk.middleSize { height: 284px; padding: 0px 5px 45.6px 5px;}
@@ -759,8 +767,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab #messageBox.messageBox, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox {border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
         #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder), #sincloBox section#chatTab #miniFlexBoxHeight.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
         #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
-      <?php endif; ?>
-      <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
+        <?php endif; ?>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
         #sincloBox section#callTab{height: 296.5px;}
         #sincloBox section#callTab.middleSize {height: 387px;}
         #sincloBox section#callTab.largeSize {height: 476.5px;}
@@ -780,9 +788,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#callTab #telContent.middleSize{ max-height: 202px; height: 202px}
         #sincloBox section#callTab #telContent.largeSize{ max-height: 280px; height: 280px}
         <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-          #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }
+        #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }
         <?php else: ?>
-          #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
+        #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
         <?php endif; ?>
         #sincloBox section#callTab #telContent span { word-wrap: break-word; word-break: break-all; font-size: 11px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; display: table-cell; vertical-align: middle; text-align: center }
         #sincloBox section#callTab #telContent span.middleSize { font-size: 12px; line-height: 1.5!important; }
@@ -796,8 +804,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#callTab #accessIdArea.middleSize { margin: 10px auto; padding: 7px; font-size: 26px; }
         #sincloBox section#callTab #accessIdArea.largeSize { margin: 10px auto; padding: 7px; font-size: 26px; }
         <?php endif; ?>
-      <?php endif; ?>
-      <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) ) :?>
+        <?php endif; ?>
+        <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) ) :?>
         #sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }
         #sincloBox section#navigation ul { margin: 0 0 0 -1px; display: table; padding: 0; position: absolute; top: 0; left: 0; height: 40px; width: 285px }
         #sincloBox section#navigation ul.middleSize { width: 343.5px }
@@ -822,31 +830,25 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#navigation ul li[data-tab='chat'].details:not(.selected):not(.notNone){ border-right: none }
         #sincloBox section#navigation ul li.selected::after{ content: " "; border-bottom: 2px solid {{widget.settings['main_color']}}; position: absolute; bottom: 0px; left: 5px; right: 5px;}
         #sincloBox section#navigation ul li::before{ margin-right: 5px; color: #BCBCBC; content: " "; display: inline-block; width: 18px; height: 18px; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }
-  /*
-        #sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('/img/widget/icon_tel.png'); }
-        #sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('/img/widget/icon_chat.png'); }
-  */
+        /*
+              #sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('/img/widget/icon_tel.png'); }
+              #sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('/img/widget/icon_chat.png'); }
+        */
         #sincloBox section#navigation ul li[data-tab='call']::before{ content: "\f095"; font-family: SincloFont; font-size: 17px; margin: -5px 7px 0 0; font-weight: bold;}
         #sincloBox section#navigation ul li[data-tab='chat']::before{ content: "\f075"; font-family: SincloFont; font-size: 17px; margin: -5px 7px 0 0; transform: scale( 1 , 1.1 ); }
 
         #sincloBox section#navigation ul li.selected::before{ color: {{widget.settings['main_color']}}; }
-      <?php endif; ?>
-      <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
+        <?php endif; ?>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
         #sincloBox span#sincloAccessInfo{ height: 26.5px; display: block; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; border-top: 1px solid {{widget.settings['widget_border_color']}}; font-size: 0.9em; }
         #sincloBox span#sincloAccessInfo:not(.notNoneWidgetOutsideBorder) { border-top:none; }
         #sincloBox span#sincloAccessInfo.details{ border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
         #sincloBox span#sincloAccessInfo.details:not(.notNone){ border-top: none; }
-      <?php endif; ?>
+        <?php endif; ?>
         #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget.settings['widget_border_color']}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
         #sincloBox #footer:not(.notNoneWidgetOutsideBorder) { border:none; }
         .disableCopy{ user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }
       </style>
-      <!-- 画像 -->
-      <span id="mainImage" class="widgetOpener" ng-hide="widget.spHeaderLightToggle() || widget.mainImageToggle !== '1'">
-        <img ng-if="widget.isPictureImage()" ng-src="{{widget.settings['main_image']}}" ng-class="widget.viewWidgetSetting('sp')" err-src="<?=$gallaryPath?>chat_sample_picture.png" width="62" height="70" alt="チャット画像"/>
-        <i ng-if="widget.isIconImage()" class="sinclo-fal {{widget.settings['main_image']}}" ng-class="widget.viewWidgetSetting('sp')" alt="チャット画像"></i>
-      </span>
-      <!-- 画像 -->
       <div id="titleWrap">
         <!-- タイトル -->
         <p id="widgetTitle" class="widgetOpener notSelect" ng-class="widget.viewWidgetSetting('size,sp,toptitle,topimg')">{{widget.settings['title']}}</p>

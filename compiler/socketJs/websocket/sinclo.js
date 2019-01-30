@@ -1401,6 +1401,7 @@
               || Number(chat.messageType) === 27
               || Number(chat.messageType) === 41
               || Number(chat.messageType) === 42
+              || Number(chat.messageType) === 45
               || Number(chat.messageType) === 81
               || Number(chat.messageType) === 82) {
             if (check.isset(window.sincloInfo.widget.showAutomessageName) &&
@@ -1411,7 +1412,8 @@
             }
             if (Number(chat.messageType) === 22
                 || Number(chat.messageType) === 41
-                || Number(chat.messageType) === 42) {
+                || Number(chat.messageType) === 42
+                || Number(chat.messageType) === 45) {
               cn = 'hearing_msg ' + cn;
             } else {
               answerCount = 0;
@@ -1538,9 +1540,9 @@
                 chat.chatId)) {
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
             }
-          } else if (Number(chat.messageType) === 43) {
+          } else if (Number(chat.messageType) === 45) {
             var carousel = JSON.parse(chat.message);
-            this.chatApi.addCarousel('hearing_msg sinclo_re', carousel.message,
+            this.chatApi.addCarousel('hearing_msg', carousel.message,
                 carousel.settings);
             // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
             if (sinclo.scenarioApi._hearing.disableRestoreMessage(
@@ -1808,9 +1810,13 @@
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.calendar
             || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.customer.carousel
+            || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputRadio
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputPulldown
+            || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.customer.reInputCarousel
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputCalendar) {
           cn = 'sinclo_se';
@@ -1846,6 +1852,8 @@
             sinclo.chatApi.messageType.scenario.message.pulldown
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.calendar
+            || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.message.carousel
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.selection
             || obj.messageType ===
@@ -2804,10 +2812,12 @@
             radio: 33,
             pulldown: 34,
             calendar: 35,
+            carousel: 43,
             reInputText: 36,
             reInputRadio: 37,
             reInputPulldown: 38,
             reInputCalendar: 39,
+            reInputCarousel: 44,
             skipHearing: 90
           },
           message: {
@@ -2817,7 +2827,8 @@
             receiveFile: 27,
             returnBulkHearing: 40,
             pulldown: 41,
-            calendar: 42
+            calendar: 42,
+            carousel: 45
           }
         },
         cogmo: {
@@ -2992,6 +3003,10 @@
             e.target = tmpTarget;
           }
           sinclo.chatApi.send(e.target.value.trim());
+        });
+
+        $(document).on('click', 'img [id^="sinclo-carousel"]', function(e) {
+          alert($(this).attr('data-answer'));
         });
 
         $(document).
@@ -3892,16 +3907,35 @@
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
+        var index = chatList.children.length;
 
         var messageHtml = sinclo.chatApi.createMessageHtml(message);
         var carouselHtml = sinclo.chatApi.createCarouselHtml(settings,
             chatList.children.length, storedValue);
         div.style.textAlign = 'left';
-        cs += ' effect_left';
-        cs += ' hearing_msg';
+        cs += ' effect_left carousel_msg';
+        if (settings.balloonStyle === '1') {
+          cs += ' sinclo_re';
+        }
+
 
         li.className = cs;
         li.innerHTML = messageHtml + carouselHtml;
+
+        var option = sinclo.chatApi.getSlickOption(settings);
+        $('#sinclo-carousel' + index).on('init', function(event, slick) {
+          var maxHeight = 0;
+          slick.$slides.each(function(slide) {
+            var currentHeight = $(this).find('.caption').height();
+            maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+          });
+
+          slick.$slides.each(function(slide) {
+            $(this).find('.caption').css('min-height', maxHeight + 'px');
+          });
+        });
+
+        $('#sinclo-carousel' + index).slick(option);
       },
       addCalendar: function(cs, message, settings, storedValue) {
         common.chatBotTypingTimerClear();
@@ -4209,21 +4243,24 @@
         return html;
       },
       createCarouselHtml: function(settings, index, storedValue) {
-        var style = sinclo.chatApi.createPulldownStyle(settings);
+        var style = sinclo.chatApi.createCarouselStyle(settings, '#carousel-container' + index);
+        var carouselSize = sinclo.chatApi.getCarouselSize(settings.lineUpStyle, settings.aspectRatio);
+        var thumbnailWidth = carouselSize.width + 2;
         var name = 'sinclo-carousel' + index;
         var html = '';
         var storedValueIsFound = false;
 
-        html+= '<div class="carousel-container" style="width: 300px; margin-top: 6px;">';
+        html+= style;
+        html+= '<div class="carousel-container" id="carousel-container' + index + '" style="width: ' + carouselSize.containerWidth + 'px; margin-top: 6px;">';
 
         html+= '<div class="single-item" id="' + name + '">';
         settings.images.forEach(function (image, key) {
           if (image.answer === storedValue) {
             storedValueIsFound = true;
           }
-          html+= '<div style="width: 300px">';
-          html+= '<div class="thumbnail" style="display: flex; flex-direction: column; padding: 4px; border: 1px solid black; background-color: #FFFFFF; margin-right: 0px;">';
-          html+= '<img id="' + name + '_image' + key + '" alt="画像" style="cursor: pointer; height: 180px" src="' + image.url + '" />';
+          html+= '<div style="width: ' + carouselSize.width + 'px">';
+          html+= '<div class="thumbnail" style="display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
+          html+= '<img id="' + name + '_image' + key + '" alt="画像" data-answer="' + image.answer + '" style="cursor: pointer; height: ' + carouselSize.height + 'px; width: ' + carouselSize.width + 'px;" src="' + image.url + '" />';
           html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
           html+= '<div class="title"><strong>' + image.title + '</strong></div>';
           html+= '<p class="sub-title">' + image.subTitle + '</p>';
@@ -4248,6 +4285,131 @@
         style += 'font-size: 16px;';
 
         return style;
+      },
+      createCarouselStyle: function(settings, id) {
+        var style = '<style>';
+        style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: 25px;}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { margin: 8px; font-size: ' + settings.customDesign.titleFontSize + 'px; color: ' + settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title {  text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin: 0 8px 8px 8px; font-size: ' + settings.customDesign.subTitleFontSize + 'px; color: ' + settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(settings.subTitlePosition) + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail:hover { -webkit-filter: brightness(110%); filter: brightness(110%);}';
+
+        if (settings.outCarouselNoneBorder) {
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail { border: none;} ';
+        } else {
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail { border: 1px solid ' + settings.customDesign.outBorderColor + ';} ';
+        }
+
+        if (settings.inCarouselNoneBorder) {
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail img { border-bottom: none;} ';
+        } else {
+          style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail img { border-bottom: 1px solid ' + settings.customDesign.inBorderColor + ';} ';
+        }
+
+        if (settings.lineUpStyle === '2') {
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-slide {margin: 0 8px;}';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-list {margin: 0 -8px;}';
+        }
+
+        if (settings.arrowType !== '2') {
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-weight: 900 }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-weight: 900 }';
+        }
+        // custom arrow position
+        if (settings.carouselPattern === '1') {
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: 3px }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: 3px }';
+        } else if (settings.arrowType === '3') {
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: -16px }';
+        }
+
+        style += '</style>';
+
+
+        return style;
+      },
+      getCarouselSize: function(lineUpStyle, aspectRatio){
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
+        switch (Number(sincloInfo.widget.widgetSizeType)) {
+          case 1:
+            data.containerWidth = 200;
+            data.width = lineUpStyle === '1' ? 200 : 125;
+            break;
+          case 2:
+            data.containerWidth = 250;
+            data.width = lineUpStyle === '1' ? 250 : 155;
+            break;
+          case 3:
+            data.containerWidth = 300;
+            data.width = lineUpStyle === '1' ? 300 : 184;
+            break;
+          case 4:
+            data.containerWidth = 300;
+            data.width = lineUpStyle === '1' ? 300 : 184;
+            break;
+          default:
+            data.containerWidth = 300;
+            data.width = lineUpStyle === '1' ? 300 : 184;
+            break;
+        }
+
+        data.height = data.width / aspectRatio;
+
+        return data;
+      },
+      getTitleTextAlign: function(value) {
+        switch (Number(value)) {
+          case 1:
+            return 'left';
+          case 2:
+            return 'center';
+          case 3:
+            return 'right';
+          default:
+            return 'left';
+        }
+      },
+      getSlickOption: function(settings) {
+        var prevIconClass = '';
+        var nextIconClass = '';
+        if (settings.arrowType === '3') {
+          prevIconClass = 'fa-chevron-left';
+          nextIconClass = 'fa-chevron-right';
+        } else if (settings.arrowType === '4') {
+          prevIconClass = 'fa-chevron-square-left';
+          nextIconClass = 'fa-chevron-square-right';
+        } else {
+          prevIconClass = 'fa-chevron-circle-left';
+          nextIconClass = 'fa-chevron-circle-right';
+        }
+
+        var slidesToShow = settings.lineUpStyle === '1' ? 1 : 1.5;
+        // $(carousel.selector).on('init', function(event, slick) {
+        //   var maxHeight = 0;
+        //   slick.$slides.each(function(slide) {
+        //     var currentHeight = $(this).find('.caption').height();
+        //     maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+        //   });
+        //
+        //   slick.$slides.each(function(slide) {
+        //     $(this).find('.caption').css('min-height', maxHeight + 'px');
+        //   });
+        // });
+
+        return {
+          dots: true,
+          slidesToShow: slidesToShow,
+          infinite: false,
+          lazyLoad: 'ondemand',
+          prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
+          nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
+        };
       },
       createCogmoAttendBotMessage: function(cs, val, cName, isFeedbackMsg) {
         common.chatBotTypingRemove();
@@ -7670,13 +7832,13 @@
               '' :
               sincloInfo.widget.subTitle);
 
-          sinclo.chatApi.addCarousel('sinclo_re', params.message,
+          sinclo.chatApi.addCarousel('', params.message,
               params.settings, params.storedValue);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum),
               params.categoryNum);
           sinclo.chatApi.scDown();
           // ローカルに蓄積しておく
-          self._putHearingPulldown(params, callback);
+          self._putHearingCarousel(params, callback);
         } else {
           callback();
         }
@@ -7825,6 +7987,34 @@
         }
       },
       _putHearingCalendar: function(data, callback) {
+        var calendarData = {
+          message: data.message,
+          settings: data.settings
+        };
+        var self = sinclo.scenarioApi,
+            storeObj = {
+              scenarioId: self.get(self._lKey.scenarioId),
+              type: data.type,
+              uiType: data.uiType,
+              messageType: self.get(self._lKey.scenarioMessageType),
+              sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
+              requireCv: self._bulkHearing.isInMode() ||
+                  (data.type === self._actionType.hearing &&
+                      self._hearing._cvIsEnable()),
+              categoryNum: data.categoryNum,
+              showTextarea: data.showTextArea,
+              message: JSON.stringify(calendarData)
+            };
+        if (self._disallowSaveing()) {
+          self._pushScenarioMessage(storeObj, function(item) {
+            self._saveMessage(item.data);
+            callback();
+          });
+        } else {
+          self._storeMessageToDB([storeObj], callback);
+        }
+      },
+      _putHearingCarousel: function(data, callback) {
         var calendarData = {
           message: data.message,
           settings: data.settings
@@ -8159,6 +8349,8 @@
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.calendar
               || obj.messageType ===
+              sinclo.chatApi.messageType.scenario.customer.carousel
+              || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.reInputText
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.reInputRadio
@@ -8166,6 +8358,8 @@
               sinclo.chatApi.messageType.scenario.customer.reInputPulldown
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.reInputCalendar
+              || obj.messageType ===
+              sinclo.chatApi.messageType.scenario.customer.reInputCarousel
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.skipHearing);
         },
@@ -8584,7 +8778,7 @@
               break;
             case '6': // カルーセル
               self._parent.set(self._parent._lKey.sendCustomerMessageType, 43);
-              self._parent.set(self._parent._lKey.scenarioMessageType, 44);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 45);
               var params = {
                 type: '2',
                 uiType: uiType,
