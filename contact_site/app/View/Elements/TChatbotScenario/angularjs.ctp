@@ -268,6 +268,9 @@
         handle: '.handleOption',
         cursor: 'move',
         helper: 'clone',
+        start: function(event, ui) {
+          ui.helper.find('.area-btn').css('right', '-50px');
+        },
         stop: function(event, ui) {
           $timeout(function() {
             $scope.$apply();
