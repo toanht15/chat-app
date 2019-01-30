@@ -156,6 +156,12 @@ class MUsersController extends AppController {
         $saveData = $tmpData;
         $saveData['MUser']['m_companies_id'] = $this->userInfo['MCompany']['id'];
         if ( $this->MUser->save($saveData, false) ) {
+            $pattern = "files/".$this->userInfo['MCompany']['company_key']."_user".$this->request->data['MUser']['id']."_"."[0-9]*.*";
+            foreach (glob($pattern) as $file) {
+              if ( !empty($uploadImage) && strcmp("files/".$filename, $file) !== 0 ) {
+                unlink($file);
+              }
+            }
           $this->MUser->commit();
           $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
         }
@@ -307,7 +313,7 @@ class MUsersController extends AppController {
 
     if ( !empty($uploadImage) ) {
       $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
-      $filename = $this->userInfo['MCompany']['company_key'].'_'.$this->userInfo['id'].'_'.date('YmdHis').'.'.$extension;
+      $filename = $this->userInfo['MCompany']['company_key'].'_user'.$this->request->data['MUser']['id'].'_'.date('YmdHis').'.'.$extension;
       $tmpFile = $uploadImage['tmp_name'];
       // ファイルの保存先フルパス＋ファイル名
       $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;

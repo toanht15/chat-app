@@ -1174,8 +1174,8 @@ var socket, // socket.io
 
       //TODO カスタムサイズ時は値を取得してアイコンのサイズを変更する必要があるのでは？
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.customSize { max-width: 42px; min-width: 42px; }';
-      html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper { width: 40px; height: 40px; }';
-      html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.largeSize .img_wrapper img { max-width: 40px; }';
+      html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.customSize .img_wrapper { width: 40px; height: 40px; }';
+      html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.customSize .img_wrapper img { max-width: 40px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv.customSize i { height: 40px; width: 40px; font-size: 26px }';
       /* アイコン表示時用CSS */
       html += '      #sincloBox ul#chatTalk li.sinclo_re .smallSizeImg { max-width: 165px; max-height: 120px; display:block;}';
