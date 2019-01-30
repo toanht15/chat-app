@@ -78,7 +78,8 @@
         <?php endif; ?>
         <th width=" 20%">表示名</th>
         <th width=" 10%">権限</th>
-        <th>メールアドレス</th>
+        <th width=" 20%">メールアドレス</th>
+        <th>メモ</th>
 <!--
         <th>操作</th>
  -->
@@ -123,6 +124,7 @@
           <td class="tCenter"><?=$val['MUser']['display_name']?></td>
           <td class="tCenter"><?=$authorityList[$val['MUser']['permission_level']]?></td>
           <td class="tCenter"><?=$val['MUser']['mail_address']?></td>
+          <td class="tCenter"><?=$val['MUser']['memo']?></td>
 <!--
           <td class="tCenter ctrlBtnArea">
             <?php

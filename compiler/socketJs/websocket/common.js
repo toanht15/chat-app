@@ -1142,8 +1142,8 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk li.sinclo_re span.link { color: ' +
           chatPosition.re.color + '; }';
       /* アイコン表示時用CSS */
-      html += '      #sincloBox ul#chatTalk div#grid_for_icon { display:grid; grid-template-columns: minmax(max-content, max-content) 1fr; }';
-      html += '      #sincloBox ul#chatTalk div#grid_for_icon li.sinclo_re { justify-self: start; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon { display:grid; display:-ms-grid; grid-template-columns: minmax(max-content, max-content) 1fr; -ms-grid-columns: minmax(max-content, max-content) 1fr; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon li.sinclo_re { justify-self: start; -ms-grid-column: 2; }';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon li.sinclo_re.recv_file_left { justify-self: stretch; }';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon.smallSize li.sinclo_re { margin-left: 1px; }';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon.middleSize li.sinclo_re { margin-left: 3px; }';

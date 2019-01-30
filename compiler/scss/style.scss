@@ -8632,6 +8632,21 @@ ul.naviBtn {
             }
           }
 
+          &.customSize {
+            .grid_preview {
+              .iconDiv {
+                i, img {
+                  height: 40px;
+                  width: 40px;
+                  font-size: 26px;
+                }
+              }
+              li.sinclo_re {
+                margin-left: 3px;
+              }
+            }
+          }
+
           .smallSizeImg {
             max-width: 165px;
             max-height: 120px;
@@ -11226,16 +11241,16 @@ div.balloon {
     &.customSize {
       #grid_balloon {
         #iconDiv {
-          max-width: 30px;
-          min-width: 30px;
-          i {
-            height: 30px;
-            width: 30px;
-            font-size: 20px;
+          max-width: 42px;
+          min-width: 42px;
+          i, img {
+            height: 40px;
+            width: 40px;
+            font-size: 26px;
           }
         }
         li.sinclo_re {
-          margin-left: 2px;
+          margin-left: 5px;
         }
       }
     }
