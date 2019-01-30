@@ -775,6 +775,8 @@ router.post("/reload/widgetSettings", function (req, res, next) {
       throw new Error('Forbidden');
     }
     common.reloadWidgetSettings(req['body']['sitekey']);
+    res.send('OK');
+    res.status(200);
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
@@ -812,6 +814,8 @@ router.post("/reload/autoMessages", function (req, res, next) {
       throw new Error('Forbidden');
     }
     common.reloadAutoMessageSettings(req['body']['sitekey']);
+    res.send('OK');
+    res.status(200);
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
@@ -849,6 +853,8 @@ router.post("/reload/operationHour", function (req, res, next) {
       throw new Error('Forbidden');
     }
     common.reloadOperationHourSettings(req['body']['sitekey']);
+    res.send('OK');
+    res.status(200);
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
@@ -885,6 +891,8 @@ router.post("/reload/chatSettings", function (req, res, next) {
       throw new Error('Forbidden');
     }
     common.reloadChatSettings(req['body']['sitekey']);
+    res.send('OK');
+    res.status(200);
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
@@ -922,6 +930,8 @@ router.post("/reload/customVariableSettings", function (req, res, next) {
       throw new Error('Forbidden');
     }
     common.reloadCustomVariableSettings(req['body']['sitekey']);
+    res.send('OK');
+    res.status(200);
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
