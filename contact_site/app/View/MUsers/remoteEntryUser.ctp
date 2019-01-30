@@ -156,7 +156,6 @@ popupEvent.closePopup = function(){
             dataType: "JSON",
             success: function(data){
                 var keys = Object.keys(data), num = 0, popup = $("#popup-frame");
-                popup.removeAttr('style');
                 $(".error-message").remove();
 
                 if ( keys.length === 0 ) {
@@ -180,6 +179,7 @@ popupEvent.closePopup = function(){
                     }, {
                         duration: 500,
                         complete: function(){
+                            popupEvent.resize();
                             $(".error-message.hide").removeClass("hide");
                             $(this).css("overflow", "");
                         }

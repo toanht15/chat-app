@@ -187,6 +187,7 @@
               }, {
                   duration: 500,
                   complete: function(){
+                      popupEvent.resize();
                       $(".error-message.hide").removeClass("hide");
                       $(this).css("overflow", "");
                   }
