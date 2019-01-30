@@ -100,11 +100,7 @@
     var files = e.target.files;
     if ( window.URL && files.length > 0 ) {
       var file = files[files.length-1];
-      // 2MB以下である
-      if (file.size > 2000000) {
-        $("#MUserUploadProfileIcon").val("");
-        return false;
-      }
+
       // jpeg/jpg/png
       var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
       if ( !reg.exec(file.type) ) {
