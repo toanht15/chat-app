@@ -11235,6 +11235,8 @@ div.balloon {
     }
     .grid_balloon {
       .iconDiv {
+        max-width: 35px;
+        min-width: 35px;
         div.img_wrapper {
           display: inline-block;
           padding: 0px;
@@ -11242,11 +11244,14 @@ div.balloon {
           border-radius: 50%;
           overflow: hidden;
           position: relative;
+          width: 35px;
+          height: 35px;
           img {
             position: absolute;
             left: -100%;
             right: -100%;
             margin: auto;
+            max-width: 35px;
           }
         }
       }

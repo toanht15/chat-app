@@ -202,7 +202,7 @@
     #sincloBox ul#chatTalk > div.with_icon img.middleSize { width: 35px; }
     #sincloBox ul#chatTalk > div.with_icon img.largeSize { width: 40px; }
     #sincloBox ul#chatTalk > div.with_icon img.customSize { width: calc(30px + ({{widget_custom_height}}px - 194px)/18); max-width: 40px; }
-    #sincloBox section#chatTab ul#chatTalk div.icon_container.customSize .img_wrapper { max-height: calc(30px + ({{widget_custom_height}}px - 194px)/18); }
+    #sincloBox section#chatTab ul#chatTalk div.icon_container.customSize .img_wrapper { height: calc(30px + ({{widget_custom_height}}px - 194px)/18)!important; }
     #sincloBox ul#chatTalk div.liLeft { text-align: left; }
     #sincloBox ul#chatTalk div.liBoxRight { text-align: right; }
     #sincloBox ul#chatTalk div.liRight { text-align: right; }
