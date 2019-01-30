@@ -1337,6 +1337,8 @@
             case 37:
             case 38:
             case 39:
+            case 43:
+            case 44:
               // ラジオボタン、プルダウン、カレンダーの回答・再回答に対してはcancelableは付与しない
               cn = 'sinclo_se';
               isHearingAnswer = true;
@@ -3005,8 +3007,26 @@
           sinclo.chatApi.send(e.target.value.trim());
         });
 
-        $(document).on('click', 'img [id^="sinclo-carousel"]', function(e) {
-          alert($(this).attr('data-answer'));
+        $(document).on('click', '[id^="slide_sinclo-carousel"]', function(e) {
+          if (sinclo.chatApi.isDisabledSlightly(this)) {
+            return false;
+          }
+          sinclo.chatApi.disableAllButtonsSlightly();
+          if (e) e.stopPropagation();
+          console.log('sinclo.scenarioApi.isProcessing() : ' +
+              sinclo.scenarioApi.isProcessing() +
+              ' sinclo.scenarioApi.isWaitingInput() : ' +
+              sinclo.scenarioApi.isWaitingInput());
+          console.log('☆★☆★☆★☆★☆★☆★☆');
+          console.log('カルーセルが入力されました');
+          console.log('☆★☆★☆★☆★☆★☆★☆');
+          // 変更された要素が再入力の対象であれば再入力させる
+          if (sinclo.scenarioApi._hearing._needCancel(e.target)) {
+            sinclo.scenarioApi._hearing._handleCancel(e);
+            sinclo.scenarioApi.set(
+                sinclo.scenarioApi._lKey.sendCustomerMessageType, 44);
+          }
+          sinclo.chatApi.send($(this).attr('data-answer').trim());
         });
 
         $(document).
@@ -3157,6 +3177,8 @@
         $('[name^=\'sinclo-pulldown\']').addClass(addClassName);
         // ヒアリング：カレンダー
         $('[name^=\'sinclo-datepicker\']').addClass(addClassName);
+        // カルーセル
+        $('[id^="slide_sinclo-carousel"]').addClass(addClassName);
       },
       _handleAllDisableSelectableUI: function() {
         var addClassName = 'onetime-disabled';
@@ -3169,6 +3191,8 @@
         $('[name^=\'sinclo-pulldown\']').removeClass(addClassName);
         // ヒアリング：カレンダー
         $('[name^=\'sinclo-datepicker\']').removeClass(addClassName);
+        // カルーセル
+        $('[id^="slide_sinclo-carousel"]').removeClass(addClassName);
       },
       showMiniMessageArea: function() {
         console.log('>>>>>>>>>>>>>>>>>>>>>showMiniMessageArea');
@@ -4259,8 +4283,8 @@
             storedValueIsFound = true;
           }
           html+= '<div style="width: ' + carouselSize.width + 'px">';
-          html+= '<div class="thumbnail" style="display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
-          html+= '<img id="' + name + '_image' + key + '" alt="画像" data-answer="' + image.answer + '" style="cursor: pointer; height: ' + carouselSize.height + 'px; width: ' + carouselSize.width + 'px;" src="' + image.url + '" />';
+          html+= '<div class="thumbnail" id="slide_' + name + '_image' + key + '" data-answer="' + image.answer + '" style="display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
+          html+= '<img id="img' + name + '_image' + key + '" alt="画像" data-answer="' + image.answer + '" style="cursor: pointer; height: ' + carouselSize.height + 'px; width: ' + carouselSize.width + 'px;" src="' + image.url + '" />';
           html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
           html+= '<div class="title"><strong>' + image.title + '</strong></div>';
           html+= '<p class="sub-title">' + image.subTitle + '</p>';
@@ -8977,6 +9001,11 @@
                     css('opacity', 0.5);
                 // カレンダー
                 $(this).find('.flatpickr-calendar').addClass('disable');
+                //　カルーセル
+                $(this).
+                    find('[id^="slide_sinclo-carousel"]').
+                    prop('disabled', true).
+                    css('opacity', 0.5);
               });
           $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').
               each(function(index, elm) {
