@@ -6465,7 +6465,7 @@
           }, 1);
         } else if (String(type) === '2') {
           console.log('SENARIO TRIGGERED!!!!!! ' + scenarioId);
-          if (scenarioId && !sinclo.scenarioApi.isProcessing()) {
+          if (window.sincloInfo.contract.chatbotScenario && scenarioId && !sinclo.scenarioApi.isProcessing()) {
             emit('getScenario', {'scenarioId': scenarioId});
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
@@ -6900,10 +6900,8 @@
               sinclo.scenarioApi.isWaitingInput());
           if (
               !window.sincloInfo.contract.useCogmoAttendApi &&
-              (!check.isset(storage.s.get('operatorEntered')) ||
-                  storage.s.get('operatorEntered') === 'false')
-              && !sinclo.scenarioApi.isProcessing() &&
-              !sinclo.scenarioApi.isWaitingInput() &&
+              (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === 'false')
+              && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() &&
               this.speechContentRegEx.length > 0) {
             for (var index in this.speechContentRegEx) {
               console.log(this.speechContentRegEx[index].id);
@@ -8472,15 +8470,7 @@
           var data = self._parent.get(self._parent._lKey.showSequenceSet),
               data = data ? data : {};
           var arr = data[seqNum] ? data[seqNum] : [];
-          var deleteTarget = false;
-          arr.forEach(function(elm, idx, arr) {
-            if (Number(elm) === Number(categoryNum)) {
-              deleteTarget = true;
-            }
-            if (deleteTarget) {
-              delete arr[idx];
-            }
-          });
+          arr.splice(Number(categoryNum), arr.length - Number(categoryNum));
           data[seqNum] = arr;
           self._parent.set(self._parent._lKey.showSequenceSet, data);
         },
