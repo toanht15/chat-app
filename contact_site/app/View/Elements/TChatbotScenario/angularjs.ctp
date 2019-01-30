@@ -3010,7 +3010,7 @@
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
           } else if ((!item && skipped) || (item && item !== message)) {
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
             $scope.reSelectionHearing(message, actionStep, hearingIndex);
             $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
@@ -3022,7 +3022,7 @@
             $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
           } else {
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
             $scope.reSelectionHearing(message, actionStep, hearingIndex);
             $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
@@ -3048,8 +3048,8 @@
           $('input[name=' + name + '][type="radio"]').prop('disabled', true);
           // ラジオボタンを非活性にする
           self.disableHearingInput($scope.actionStep);
-          $('#action' + actionStep + '_hearing0_question').nextAll('div').removeAttr('id');
-          $('#action' + actionStep + '_hearing0_question').removeAttr('id');
+          $('#action' + actionStep + '_hearing0_question').parent().nextAll('div').removeAttr('id');
+          $('#action' + actionStep + '_hearing0_question').parent().removeAttr('id');
         } else {
           self.handleReselectionInput(message, actionStep, hearingIndex);
         }
@@ -3095,7 +3095,7 @@
 
         var variable = $scope.setActionList[actionStep].hearings[hearingIndex].variableName;
         var value = LocalStorageService.getItem('chatbotVariables', variable);
-        $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+        $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
 
         if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_ONE_ROW_TEXT ?>) {
           $('#miniSincloChatMessage').val(value);
