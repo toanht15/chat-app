@@ -858,11 +858,6 @@
       this.changeButtonColor = function(actionIndex, hearingIndex, index) {
         switch(index) {
           case 'buttonTextColor':
-            var color = this.getRawColor(
-                $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[index]);
-            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign['buttonTextColor'] = color;
-            $('#action' + actionIndex + '_option' + hearingIndex + '_buttonTextColor').
-                css('background-color', color);
             break;
         }
       };

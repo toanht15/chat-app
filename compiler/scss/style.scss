@@ -7659,10 +7659,10 @@ ul.naviBtn {
                       display: flex;
                       width: 32em;
                       padding: 2px 0;
-                      justify-content: center;
                       align-items: center;
 
-                      input {
+                      input[type="text"] {
+                        width: 120px;
                         height: 26px;
                         font-size: 12px;
                         padding-left: 4px;
@@ -7673,19 +7673,20 @@ ul.naviBtn {
                       }
 
                       label {
-                        flex-basis: 150px;
+                        flex-basis: 100px;
                       }
 
                       .radio-buttons {
                         display: flex;
                         align-items: center;
+                        flex-basis: 265px;
                         label {
                           margin-top: 0px;
                           &.text3 {
 
                           }
                           &.text4 {
-                            flex-shrink: 1;
+                            margin-right: 20px;
                           }
                         }
                       }
@@ -7694,7 +7695,7 @@ ul.naviBtn {
                         position: relative;
                         left: 10px;
                         padding: 4px;
-                        bottom: 5px;
+                        bottom: 0px;
                       }
                     }
                   }
