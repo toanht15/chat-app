@@ -43,11 +43,11 @@
     });
 
     //何かしらアイコンをどうにかする必要がある
-
-
+    <?php if($coreSettings[C_COMPANY_USE_ICON_SETTINGS]): ?>
     if( checkIconIsDefault() ) {
       disableSetDefaultBtn();
     }
+    <?php endif; ?>
   });
 
   var confirmToDefault = function() {
@@ -214,6 +214,7 @@ if ( !empty($this->data['MUser']['settings']) ) {
         <section>
             <?= $this->Form->input('id', array('type' => 'hidden')); ?>
             <?= $this->Form->input('user_name', array('type' => 'hidden')); ?>
+            <?php if($coreSettings[C_COMPANY_USE_ICON_SETTINGS]): ?>
             <div class="profile_icon_register">
               <div>
                 <?= $this->Form->input('profile_icon', ['type' => 'hidden']); ?>
@@ -229,6 +230,7 @@ if ( !empty($this->data['MUser']['settings']) ) {
                 <input type="hidden" name="data[Trimming][profileIconInfo]" ng-model="trimmingProfileIconInfo" id="TrimmingProfileIconInfo" class="ng-pristine ng-untouched ng-valid">
               </div>
             </div>
+            <?php endif; ?>
             <div class = "item">
             <div class="labelArea fLeft"><span class="require"><label>表示名</label></span></div>
             <?= $this->Form->input('display_name', array('placeholder' => '表示名', 'div' => false, 'label' => false, 'maxlength' => 10, 'error' => false,'class' => 'inputItems')) ?>
