@@ -1600,7 +1600,8 @@
                           chatId: 0,
                           cn: 'sinclo_re',
                           isHearingAnswer: isHearingAnswer,
-                          answerCount: answerCount
+                          answerCount: answerCount,
+                          isBot: true
                         };
                         sinclo.chatApi.createMessageUnread(sendData);
                         sinclo.chatApi.scDown();
@@ -1625,8 +1626,7 @@
               }
             }
             console.log(JSON.stringify(chat, null, 4));
-            var isBot = (Number(chat.messageType) >= 3 && Number(chat.messageType) <= 9) || (Number(chat.messageType) > 20 && Number(chat.messageType) < 29) || (Number(chat.messageType) >= 40 && Number(chat.messageType) < 50)
-            var isOp = Number(chat.messageType) === 2;
+            var isBot = (Number(chat.messageType) >= 3 && Number(chat.messageType) <= 9) || (Number(chat.messageType) > 20 && Number(chat.messageType) < 29) || (Number(chat.messageType) >= 40 && Number(chat.messageType) < 50);
             this.chatApi.createMessage({
               cn: cn,
               message: chat.message,
@@ -1776,6 +1776,7 @@
         sinclo.scenarioApi.set('s_targetChatId', currentScenarioChatId);
       }
       common.chatBotTypingRemove();
+      var isBot = (Number(chat.messageType) >= 3 && Number(chat.messageType) <= 9) || (Number(chat.messageType) > 20 && Number(chat.messageType) < 29) || (Number(chat.messageType) >= 40 && Number(chat.messageType) < 50);
       if (obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !==
           userInfo.tabId) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = '';
@@ -1948,7 +1949,8 @@
               cn: cn,
               message: obj.chatMessage,
               name: userName,
-              chatId: obj.chatId
+              chatId: obj.chatId,
+              isBot: isBot
             }, true);
             sinclo.chatApi.scDown();
             return false;
@@ -2024,7 +2026,8 @@
               cn: cn,
               message: obj.chatMessage,
               name: '',
-              chatId: obj.chatId
+              chatId: obj.chatId,
+              isBot: isBot
             });
           }
           this.chatApi.scDown();
@@ -2090,7 +2093,8 @@
               cn: cn,
               message: obj.chatMessage,
               name: userName,
-              chatId: obj.chatId
+              chatId: obj.chatId,
+              isBot: true
             });
             if (sinclo.chatApi.isShowChatReceiver() &&
                 Number(obj.messageType) ===
@@ -2246,7 +2250,8 @@
           cn: 'sinclo_re',
           message: obj.message,
           name: sincloInfo.widget.subTitle,
-          chatId: obj.chatId
+          chatId: obj.chatId,
+          isBot: true
         };
         sinclo.chatApi.createMessage(sendData);
       }
@@ -2291,7 +2296,8 @@
         cn: cn,
         message: obj.message,
         name: sincloInfo.widget.subTitle,
-        chatId: obj.chatId
+        chatId: obj.chatId,
+        isBot: true
       });
       if (this.chatApi.isShowChatReceiver() && Number(obj.messageType) ===
           sinclo.chatApi.messageType.company) {
@@ -3788,7 +3794,7 @@
       createMessage: function(obj, isScenarioMsg) {
         common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
-        
+
         console.log(obj.isOp);
         console.log(obj.isBot);
 
@@ -6430,7 +6436,8 @@
             cn: 'sinclo_re',
             message: cond.message,
             name: userName,
-            chatId: id
+            chatId: id,
+            isBot: true
           };
           sinclo.chatApi.createMessageUnread(createMessageData);
           sinclo.chatApi.scDown();
