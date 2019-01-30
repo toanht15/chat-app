@@ -381,6 +381,11 @@ class MWidgetSettingsController extends AppController {
     //仕様変更常に高度な設定の設定値が反映されるようにする
     $inputData['MWidgetSetting']['color_setting_type'] = "1";
 
+    if($inputData['MWidgetSetting']['widget_size_type'] !== '5') {
+      unset($inputData['MWidgetSetting']['widget_custom_width']);
+      unset($inputData['MWidgetSetting']['widget_custom_height']);
+    }
+
     //ウィジットサイズが中もしくは大の場合バリデーションの上限をトップタイトル、企業名、説明文のみ可変とする
     if($inputData['MWidgetSetting']['widget_size_type'] !== '1'){
       $titleLength = 12;
@@ -772,11 +777,35 @@ class MWidgetSettingsController extends AppController {
             }
             //カスタム時横幅
             if ( strcmp($v, 'widget_custom_width') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['widget_custom_width'] = C_WIDGET_CUSTOM_WIDTH; // デフォルト値
+              // デフォルト値はウィジェットサイズによって違う
+              switch($d['widget_size_type']) {
+                case C_WIDGET_SIZE_TYPE_SMALL:
+                  $d['widget_custom_width'] = 285;
+                  break;
+                case C_WIDGET_SIZE_TYPE_MEDIUM:
+                  $d['widget_custom_width'] = 344;
+                  break;
+                case C_WIDGET_SIZE_TYPE_LARGE:
+                case C_WIDGET_SIZE_TYPE_MAXIMUM:
+                  $d['widget_custom_width'] = 400;
+                  break;
+              }
             }
             //カスタム時高さ
             if ( strcmp($v, 'widget_custom_height') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              $d['widget_custom_height'] = C_WIDGET_CUSTOM_HEIGHT; // デフォルト値
+              // デフォルト値はウィジェットサイズによって違う
+              switch($d['widget_size_type']) {
+                case C_WIDGET_SIZE_TYPE_SMALL:
+                  $d['widget_custom_height'] = 194;
+                  break;
+                case C_WIDGET_SIZE_TYPE_MEDIUM:
+                  $d['widget_custom_height'] = 284;
+                  break;
+                case C_WIDGET_SIZE_TYPE_LARGE:
+                case C_WIDGET_SIZE_TYPE_MAXIMUM:
+                  $d['widget_custom_height'] = 374;
+                  break;
+              }
             }
             //最小化時のデザインタイプ
             if ( strcmp($v, 'minimize_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
