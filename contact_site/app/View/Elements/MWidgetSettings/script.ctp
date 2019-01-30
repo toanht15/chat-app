@@ -933,6 +933,27 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return image.match(/^http|data|\/\/node/) !== null;
   };
 
+  $scope.getActualChatTalkHeight = function() {
+    var offset = (Number($scope.chat_init_show_textarea) === 2) ? 75 : 0;
+    var actualHeight = 284;
+    switch(Number($scope.widgetSizeTypeToggle)) {
+      case 1:
+        actualHeight = 194 + offset;
+        break;
+      case 2:
+        actualHeight = 284 + offset;
+        break;
+      case 3:
+      case 4:
+        actualHeight = 374 + offset;
+        break;
+      case 5:
+        actualHeight = Number($scope.widget_custom_height) + offset;
+        break;
+    }
+    return actualHeight;
+  };
+
   $scope.resetChatbotIconTypeToMain = function() {
     $scope.chatbotIconType = 1;
     $scope.changeIconToMainImage('bot');
