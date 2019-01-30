@@ -35,7 +35,7 @@
           </div>
           <div class='area-name'><input type="text" ng-model="hearingItem.variableName"></div>
           <div class='area-type'>
-            <select name="hearing-input-option" ng-model="hearingItem.uiType"
+            <select ng-if="hearingItem.uiType !== '7'" name="hearing-input-option" ng-model="hearingItem.uiType"
                     ng-change="main.handleChangeUitype(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
               <option value="1">テキスト（１行）</option>
               <option value="2">テキスト（複数行）</option>
@@ -43,6 +43,7 @@
               <option value="4">プルダウン</option>
               <option value="5">カレンダー</option>
             </select>
+            <input ng-if="hearingItem.uiType == '7'" type="hidden" name="hearing-input-option" ng-model="hearingItem.uiType" ng-init="hearingItem.uiType='7'" value="7"/>
           </div>
           <div class='area-message'>
             <resize-textarea maxlength="4000" ng-model="hearingItem.message" rows="1"
@@ -94,7 +95,7 @@
               </div>
             </div>
 
-            <div ng-if="hearingItem.uiType === '3' || hearingItem.uiType === '4'"
+            <div ng-if="hearingItem.uiType === '3' || hearingItem.uiType === '4' || hearingItem.uiType === '7'"
                  ng-repeat="(optionIndex, option) in hearingItem.settings.options  track by $index"
                  class="select-option-input action{{setActionId}}_option{{listId}}" ng-init="main.controllHearingOptionView(setActionId, listId)">
                             <span><label class="">選択肢 {{optionIndex + 1}}<span class="questionBalloon"><icon
@@ -359,6 +360,66 @@
                 </span>
               </div>
             </div>
+
+            <label ng-if="hearingItem.uiType === '7'" class="pointer">
+            <input type="checkbox" ng-model="hearingItem.settings.isCustomDesign">デザインをカスタマイズする
+            <span class="questionBalloon"><icon class="questionBtn"
+                                                data-tooltip="ボタンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
+            </label>
+              <div ng-if="hearingItem.uiType === '7'" class="button-design-custom-area">
+                  <span class="button-custom-items">
+                  <label>質問内容位置</label>
+                      <div class="radio-buttons">
+                  <input type="radio" id="action{{setActionId}}_option{{listId}}_messageAlign1"
+                         ng-model="hearingItem.settings.customDesign.messageAlign" value="1">
+                  <label class="radio-label text3" for="action{{setActionId}}_option{{listId}}_messageAlign1">左寄せ</label>
+
+                  <input type="radio" id="action{{setActionId}}_option{{listId}}_messageAlign2"
+                         ng-model="hearingItem.settings.customDesign.messageAlign" value="2">
+                  <label class="radio-label text4" for="action{{setActionId}}_option{{listId}}_messageAlign1">中央寄せ</label>
+
+                  <input type="radio" id="action{{setActionId}}_option{{listId}}_messageAlign3"
+                         ng-model="hearingItem.settings.customDesign.messageAlign" value="3">
+                  <label class="radio-label text3" for="action{{setActionId}}_option{{listId}}_messageAlign1">右寄せ</label>
+                          </div>
+                </span>
+                <span class="button-custom-items">
+                  <label>ボタン背景色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_buttonBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.buttonBackgroundColor"
+                         ng-change="main.changeButtonColor(setActionId, listId, 'buttonBackgroundColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'buttonBackgroundColor')">標準に戻す</span>
+                </span>
+                <span class="button-custom-items">
+                  <label>ボタン文字色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_buttonTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.buttonTextColor"
+                         ng-change="main.changeButtonColor(setActionId, listId, 'buttonTextColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'buttonTextColor')">標準に戻す</span>
+                </span>
+                <span class="button-custom-items">
+                  <label>ボタン選択色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_buttonActiveColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.buttonActiveColor"
+                         ng-change="main.changeButtonColor(setActionId, listId, 'buttonActiveColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'buttonActiveColor')">標準に戻す</span>
+                </span>
+                <span class="button-custom-items">
+                  <label>ボタン枠線色</label>
+                  <input type="text" id="action{{setActionId}}_option{{listId}}_borderColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.borderColor"
+                         ng-change="main.changeButtonColor(setActionId, listId, 'borderColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCalendarColor(setActionId, listId, 'borderColor')">標準に戻す</span>
+                </span>
+              </div>
           </div>
           <hr class="separator">
         </li>

@@ -7648,6 +7648,56 @@ ul.naviBtn {
 
                   }
 
+                  .button-design-custom-area {
+                    input[type="checkbox"], input[type="radio"] {
+                      margin-top: 0px;
+                    }
+
+                    .button-custom-items {
+                      margin-left: 16px;
+                      height: 35px;
+                      display: flex;
+                      width: 32em;
+                      padding: 2px 0;
+                      justify-content: center;
+                      align-items: center;
+
+                      input {
+                        height: 26px;
+                        font-size: 12px;
+                        padding-left: 4px;
+                        position: relative;
+                        border: none !important;
+                        border-bottom: 1px solid #909090 !important;
+                        border-radius: 0 !important;
+                      }
+
+                      label {
+                        flex-basis: 150px;
+                      }
+
+                      .radio-buttons {
+                        display: flex;
+                        align-items: center;
+                        label {
+                          margin-top: 0px;
+                          &.text3 {
+
+                          }
+                          &.text4 {
+                            flex-shrink: 1;
+                          }
+                        }
+                      }
+
+                      .revert-button {
+                        position: relative;
+                        left: 10px;
+                        padding: 4px;
+                        bottom: 5px;
+                      }
+                    }
+                  }
                 }
 
                 &.action_bulk_hearing {

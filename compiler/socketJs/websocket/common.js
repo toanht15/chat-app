@@ -1481,6 +1481,16 @@ var socket, // socket.io
             chatPosition.re.textSize + 'px;}';
         html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
 
+        /* ボタン */
+        html += '#sincloBox #chatTalk li.sinclo_re.no-wrap { display:block; padding: 10px 0 0 0!important; }';
+        html += '#sincloBox #chatTalk li.sinclo_re.all-round { border-radius: 12px!important; }';
+        html += '#sincloBox #chatTalk li.sinclo_re.no-wrap span.sinclo-text-line { padding: 0 15px!important; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons span.sincloHearingButton { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 12px; border: 0px solid #00aa00; color: #007aff; background-color: #FFF; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons span.sincloHearingButton:active { background-color: #E7E7E7; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons.sideBySide span.sincloHearingButton:first-child { border-bottom-left-radius: 12px; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons.sideBySide span.sincloHearingButton:last-child { border-bottom-right-radius: 12px; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons:not(.sideBySide) span.sincloHearingButton:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }';
+
         html += '#sincloBox #chatTalk li.sinclo_re select {cursor: pointer;}';
         /* flatpickr カスタム値の方が強いため基本important指定 */
         html += '#sincloBox #chatTalk li.sinclo_re div.flatpickr-calendar.disable { pointer-events: none!important; opacity: 0.5!important; }';

@@ -854,6 +854,19 @@
         }
       };
 
+      // change calendar header color
+      this.changeButtonColor = function(actionIndex, hearingIndex, index) {
+        switch(index) {
+          case 'buttonTextColor':
+            var color = this.getRawColor(
+                $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[index]);
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign['buttonTextColor'] = color;
+            $('#action' + actionIndex + '_option' + hearingIndex + '_buttonTextColor').
+                css('background-color', color);
+            break;
+        }
+      };
+
       $scope.autoResizeTextArea = function() {
         var maxRow = 4;   // 表示可能な最大行数
         var fontSize = 13;  // 行数計算のため、templateにて設定したフォントサイズを取得
@@ -1196,7 +1209,7 @@
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
         var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
         var actionType = $scope.setActionList[actionStep].actionType;
-        if (optionType === '3' || optionType === '4') {
+        if (optionType === '3' || optionType === '4'|| optionType === '7') {
           // ラジオボタン、プルダウン
           var src = $scope.actionList[actionType].default.hearings[0].settings.options;
           var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
@@ -1230,7 +1243,7 @@
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
         var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
         var actionType = $scope.setActionList[actionStep].actionType;
-        if (optionType === '3' || optionType === '4') {
+        if (optionType === '3' || optionType === '4' || optionType === '7') {
           // ラジオボタン、プルダウン
           var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
         } else {
@@ -2615,9 +2628,25 @@
                 hearingDetail.required);
           }
 
-          if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CALENDAR ?>) {
+          if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_BUTTON ?>) {
             var data = {};
-            console.log(hearingDetail.settings);
+            data.options = hearingDetail.settings.options;
+            data.design = hearingDetail.settings.customDesign;
+            data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
+            data.message = $scope.replaceVariable(message);
+            data.isRestore = isRestore;
+            data.oldValue = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
+            data.textColor = $scope.widget.settings.re_background_color;
+            data.backgroundColor = $scope.widget.settings.re_text_color;
+
+            $scope.$broadcast('addRePulldown', data);
+            $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
+                hearingDetail.required);
+          }
+
+          if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CALENDAR ?>) {
+              var data = {};
+              console.log(hearingDetail.settings);
             data.settings = hearingDetail.settings;
             data.design = hearingDetail.settings.customDesign;
             data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;

@@ -573,6 +573,10 @@ sincloApp.factory('SimulatorService', function() {
       var isAddUnderline = prefix.indexOf('underline') !== -1 ? true : false;
 
       for (var i = 0; strings.length > i; i++) {
+        if(strings[i].match(/(<div|<\/div>)/)) {
+          content += strings[i];
+          continue;
+        }
         var str = escape_html(strings[i]);
         // ラジオボタン
         var radio = str.indexOf('[]');

@@ -248,6 +248,8 @@ define('C_SCENARIO_UI_TYPE_RADIO_BUTTON', 3);
 define('C_SCENARIO_UI_TYPE_PULLDOWN', 4);
 define('C_SCENARIO_UI_TYPE_CALENDAR', 5);
 
+define('C_SCENARIO_UI_TYPE_BUTTON', 7);
+
 /* シナリオ設定(ヒアリング) - 改行設定 */
 define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
 define('C_SCENARIO_INPUT_LF_TYPE_ALLOW', 2);
