@@ -187,7 +187,11 @@ $headerNo = 1;
               <?php endif; ?>
               <div style="display:grid; grid-template-columns:80px 1fr;">
                 <div>
+                  <?php if($coreSettings[C_COMPANY_USE_CUSTOM_WIDGET_SIZE]): ?>
                  <label class="pointer choose" for="widgetSizeType5"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" ng-click="clickWidgetSizeTypeToggle(5)" id="widgetSizeType5" class="showHeader" value="5" >カスタム</label><br>
+                  <?php else: ?>
+                  <label class="pointer choose commontooltip" for="widgetSizeType5" style="color: rgb(204, 204, 204);" data-text="こちらの機能はスタンダードプラン<br>からご利用いただけます。"><input type="radio" name="data[MWidgetSetting][widget_size_type]" ng-model="widgetSizeTypeToggle" id="MWidgetSettingChatInitShowTextarea2" id="widgetSizeType5" class="showHeader" value="" disabled>カスタム</label>
+                  <?php endif; ?>
                 </div>
                 <div ng-show="widgetSizeTypeToggle == 5" style="margin-left: 10px"  >
                   <span style="display: flex; width: 19em;">
@@ -1030,8 +1034,12 @@ $headerNo = 1;
             <span ng-class="{require: mainImageToggle=='1'}"><label>画像の設定</label></span>
             <div style="display: flex; flex-direction: column;">
               <div>
+                <?php if($coreSettings[C_COMPANY_USE_ICON_SETTINGS]): ?>
                 <span>メイン画像</span>
                 <div style="margin-top: 10px" ng-init="mainImageToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_main_image'))?>'">
+                <?php else: ?>
+                <div ng-init="mainImageToggle='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'show_main_image'))?>'">
+                <?php endif; ?>
                 <?= $this->ngForm->hidden('main_image') ?>
                 <label class="pointer" for="showMainImage1"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-model="mainImageToggle" id="showMainImage1" value="1" >画像を表示する</label><br>
                 <div id="imageSelectBtns" ng-class="{chooseImg: showChooseImg()}">
@@ -1052,6 +1060,7 @@ $headerNo = 1;
                 <label class="pointer" for="showMainImage2"><input type="radio" name="data[MWidgetSetting][show_main_image]" ng-change="forceIconOriginal()" ng-model="mainImageToggle" id="showMainImage2" value="2" >画像を表示しない</label>
               </div>
               </div>
+              <?php if($coreSettings[C_COMPANY_USE_ICON_SETTINGS]): ?>
               <hr class="separator" style="margin-top: 1em">
               <div>
                 <span>アイコン（チャットボット）</span>
@@ -1111,6 +1120,12 @@ $headerNo = 1;
                   <label class="pointer" for="showOperatorIcon2"><input type="radio" name="data[MWidgetSetting][show_operator_icon]" ng-model="operatorIconToggle" id="showOperatorIcon2" value="2" >アイコンを表示しない</label>
                 </div>
               </div>
+              <?php else: ?>
+              <input type="hidden" name="data[MWidgetSetting][uploadBotIcon]" value="" />
+              <input type="hidden" name="data[Trimming][botIconInfo]" ng-model="trimmingBotIconInfo" id="TrimmingBotIconInfo" value="" />
+              <input type="hidden" name="data[MWidgetSetting][uploadOpIcon]" value="" />
+              <input type="hidden" name="data[Trimming][opIconInfo]" ng-model="trimmingOpIconInfo" id="TrimmingOpIconInfo" value="" />
+              <?php endif; ?>
             </div>
           </li>
           <!-- 画像の設定 -->

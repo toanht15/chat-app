@@ -88,7 +88,9 @@ class AppController extends Controller {
     C_COMPANY_USE_CUSTOMVARIABLES => false, //カスタム変数
     C_COMPANY_USE_EDITCUSTOMERINFORMATIONS => false, //訪問ユーザ情報
     C_COMPANY_USE_COGMO_ATTEND_API => false, // CogmoAttend連携
-    C_COMPANY_USE_MESSAGE_RANKING => false //メッセージランキング機能
+    C_COMPANY_USE_MESSAGE_RANKING => false, //メッセージランキング機能
+    C_COMPANY_USE_ICON_SETTINGS => false, // ボット・有人時のアイコン設定
+    C_COMPANY_USE_CUSTOM_WIDGET_SIZE => false // ウィジェットサイズ「カスタム」
   ];
 
   protected $secretKey = 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK';
@@ -180,8 +182,11 @@ class AppController extends Controller {
     // ウィジェットの情報をビューへ渡す
     $widgetInfo = $this->MWidgetSetting->coFind('first', []);
     $widgetStyle = json_decode($widgetInfo['MWidgetSetting']['style_settings'], true);
+    $userSetting = json_decode($newInfo['MUser']['settings'], true);
     $this->log(json_decode($newInfo['MUser']['settings']), LOG_DEBUG);
-    $this->set('iconImgSource', json_decode($newInfo['MUser']['settings'], true)['profileIcon']);
+    if(!is_null($userSetting) && array_key_exists('profileIcon', $userSetting)) {
+      $this->set('iconImgSource', $userSetting['profileIcon']);
+    }
     $this->set('iconMainColor', $widgetStyle['mainColor']);
     $this->set('iconFontColor', $widgetStyle['stringColor']);
 
