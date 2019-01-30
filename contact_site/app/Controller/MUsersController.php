@@ -128,6 +128,11 @@ class MUsersController extends AppController {
       $tmpData['MUser']['permission_level'] = $this->request->data['MUser']['permission_level'];
       $tmpData['MUser']['memo'] = $this->request->data['MUser']['memo'];
 
+      if(empty($tmpData['MUser']['user_name'])) {
+        //氏名が空(新規追加される人の場合は表示名を代入する)
+        $tmpData['MUser']['user_name'] = $tmpData['MUser']['display_name'];
+      }
+
       if ( !$insertFlg && empty($this->request->data['MUser']['new_password']) ) {
         unset($this->MUser->validate['password']);
       }

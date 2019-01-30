@@ -28,6 +28,7 @@
   };
 
   var initHoverClickEvent = function() {
+    $('.hover-changer').off("click");
     $('.hover-changer').click(function(){
       $('#MUserUploadProfileIcon').click();
     });
@@ -88,7 +89,10 @@
     $('#MUserProfileIcon').val("");
     var iconComponent = $('.profile_icon_register > div')[0];
     var defaultElm = document.createElement("i");
-    defaultElm.classList.add("fa-user","fal","profile_icon_selector");
+    // IE対策でわざと分離
+    defaultElm.classList.add("fa-user");
+    defaultElm.classList.add("fal");
+    defaultElm.classList.add("profile_icon_selector");
     defaultElm.style.color = "<?=$iconFontColor ?>";
     defaultElm.style.backgroundColor = "<?=$iconMainColor ?>";
     iconComponent.appendChild(defaultElm);

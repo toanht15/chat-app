@@ -162,7 +162,11 @@
             elm = $scope.createFontIcon( icon );
             break;
           case "imageIcon":
+            var imgWrapperDiv = document.createElement("div");
+            $(imgWrapperDiv).addClass("img_wrapper");
             elm = $scope.createImageIcon( icon );
+            imgWrapperDiv.appendChild(elm);
+            elm = imgWrapperDiv;
             break;
           default:
             break;

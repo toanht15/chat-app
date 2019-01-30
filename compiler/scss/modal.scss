@@ -76,6 +76,12 @@
 
       }
 
+      &.p-show-gallary #popup-main ul{
+          justify-content: space-between;
+          margin-right: 5px;
+          margin-left: 5px;
+      }
+
       /* ウィジェット設定-ギャラリー用 */
       &.p-show-gallary, &.p-show-notification-gallary {
         width: 290px;
@@ -1218,6 +1224,7 @@
               height: 53px;
               border-radius: 50%;
               position: relative;
+              cursor: pointer;
               &:after {
                 content: " ";
                 position: absolute;
@@ -1310,6 +1317,7 @@
                 height: 53px;
                 border-radius: 50%;
                 position: relative;
+                cursor: pointer;
                 &:after {
                   content: " ";
                   position: absolute;

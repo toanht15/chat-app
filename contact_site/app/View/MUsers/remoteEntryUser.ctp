@@ -138,18 +138,8 @@ popupEvent.closePopup = function(){
         var form = $('#MUserAddForm').get(0);
         var page = Number("<?=$page?>");
         var formData = new FormData( form );
-        var userId = document.getElementById('MUserId').value;
-        var userName = document.getElementById('MUserUserName').value;
-        var displayName = document.getElementById('MUserDisplayName').value;
-        var mailAddress = document.getElementById('MUserMailAddress').value;
-        var password = document.getElementById('MUserNewPassword').value;
-        var permissionLevel = document.getElementById('MUserPermissionLevel').value;
         var accessToken = "<?=$token?>";
         formData.append("accessToken", accessToken);
-        // 氏名が無い場合は、表示名を氏名に代入する（氏名は表示以外どこにも使われていない為）
-        if( !userName ) {
-          userName = displayName;
-        }
         $.ajax({
             type: "post",
             url: "<?=$this->Html->url('/MUsers/remoteSaveEntryForm')?>",
