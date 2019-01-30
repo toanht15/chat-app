@@ -268,6 +268,9 @@
         handle: '.handleOption',
         cursor: 'move',
         helper: 'clone',
+        start: function(event, ui) {
+          ui.helper.find('.area-btn').css('right', '-50px');
+        },
         stop: function(event, ui) {
           $timeout(function() {
             $scope.$apply();
@@ -788,7 +791,6 @@
                     var currentHeight = $(this).find('.caption').height();
                     maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
                   });
-
                   slick.$slides.each(function(slide) {
                     $(this).find('.caption').css('min-height', maxHeight + 'px');
                   });
@@ -799,18 +801,11 @@
                   slidesToShow: slidesToShow,
                   infinite: false,
                   lazyLoad: 'ondemand',
+                  // centerMode: true,
                   prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
                   nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
                 };
-                var maxHeight = 0;
-                carouselTarget.find('.caption').each(function() {
-                  var currentHeight = $(this).height();
-                  maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
-                });
 
-                carouselTarget.find('.caption').each(function() {
-                  $(this).css('min-height', maxHeight + 'px');
-                });
 
                 $timeout(function() {
                   $scope.$apply();
@@ -819,6 +814,18 @@
                     jscolor.installByClassName('jscolor');
                   }
                   hearing.settings.dataLoaded = true;
+
+                  var maxHeight = 0;
+                  carouselTarget.find('.caption p').each(function() {
+                    var currentHeight = $(this).height();
+                    maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+                  });
+                  console.log(maxHeight);
+                  carouselTarget.find('.caption').each(function() {
+                    var titleHeight = $(this).find('.title').height();
+                    var height = titleHeight + maxHeight + 8; // 8: subtitle margin bottom
+                    $(this).css('min-height', height + 'px');
+                  });
                 });
               }
             });
@@ -1378,28 +1385,107 @@
         var data = { width: 0, height: 0, containerWidth: 0};
         switch (Number(widgetSizeType)) {
           case 1:
-            data.containerWidth = 190;
-            data.width = lineUpStyle === '1' ? 190 : 120;
+            data.containerWidth = 170;
+            data.width = lineUpStyle === '1' ? 170 : 100;
             break;
           case 2:
-            data.containerWidth = 240;
-            data.width = lineUpStyle === '1' ? 240 : 150;
+            data.containerWidth = 220;
+            data.width = lineUpStyle === '1' ? 220 : 132;
             break;
           case 3:
-            data.containerWidth = 300;
-            data.width = lineUpStyle === '1' ? 300 : 184;
+            data.containerWidth = 280;
+            data.width = lineUpStyle === '1' ? 280 : 175;
             break;
           case 4:
-            data.containerWidth = 300;
-            data.width = lineUpStyle === '1' ? 300 : 184;
+            data.containerWidth = 280;
+            data.width = lineUpStyle === '1' ? 280 : 175;
             break;
           default:
-            data.containerWidth = 300;
-            data.width = lineUpStyle === '1' ? 300 : 184;
+            data.containerWidth = 280;
+            data.width = lineUpStyle === '1' ? 280 : 175;
             break;
         }
 
         data.height = data.width / aspectRatio;
+
+        return data;
+      };
+
+      this.getArrowPosition = function(setting){
+        var data = { left: 0, right: 0 };
+        if (setting.lineUpStyle === '1') {
+            if (setting.carouselPattern === '2') {
+              if (setting.arrowType === '3') {
+                data.left = -30;
+                data.right = -30;
+              } else {
+                data.left = -34;
+                data.right = -30;
+              }
+            } else {
+              switch (setting.arrowType) {
+                case '1':
+                case '2':
+                  data.left = 8;
+                  data.right = 14;
+                  break;
+                case '3':
+                  data.left = 8;
+                  data.right = 8;
+                  break;
+                case '4':
+                  data.left = 8;
+                  data.right = 10;
+                  break;
+                default:
+                  data.left = 8;
+                  data.right = 8;
+                  break;
+              }
+            }
+        } else {
+          if (setting.carouselPattern === '2') {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = -27;
+                data.right = -25;
+                break;
+              case '3':
+                data.left = -20;
+                data.right = -25;
+                break;
+              case '4':
+                data.left = -27;
+                data.right = -25;
+                break;
+              default:
+                data.left = -27;
+                data.right = -25;
+                break;
+            }
+          } else {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = 16;
+                data.right = 16;
+                break;
+              case '3':
+                data.left = 12;
+                data.right = 8;
+                break;
+              case '4':
+                data.left = 16;
+                data.right = 16;
+                break;
+              default:
+                data.left = 16;
+                data.right = 16;
+                break;
+            }
+          }
+        }
 
         return data;
       };
@@ -1545,6 +1631,8 @@
       };
 
       this.removeCarouselImage = function($event, actionIndex, hearingIndex, imageIndex) {
+        var file = document.querySelector('#upload_action' + actionIndex + '_hearing' + hearingIndex + '_image' + imageIndex);
+        file.value = "";
         $scope.setActionList[actionIndex].hearings[hearingIndex].settings.images[imageIndex].url = "";
       };
 
@@ -3282,7 +3370,7 @@
         }
       });
 
-      $(document).on('click', '#chatTalk .carousel-container img', function() {
+      $(document).on('click', '#chatTalk .carousel-container .thumbnail', function() {
         // var prefix = $(this).attr('id').replace(/-sinclo-carousel[0-9a-z-]+$/i, '');
         var prefix = $(this).attr('id');
         var numbers = prefix.match(/\d+/g).map(Number);

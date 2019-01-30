@@ -79,10 +79,12 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             radio: 33,
             pulldown: 34,
             calendar: 35,
+            carousel: 43,
             reInputText: 36,
             reInputRadio: 37,
             reInputPulldown: 38,
             reInputCalendar: 39,
+            reInputCarousel: 44,
             cancel: 90
           },
           message: {
@@ -92,7 +94,8 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             receiveFile: 27,
             returnBulkHearing: 40,
             pulldown: 41,
-            calendar: 42
+            calendar: 42,
+            carousel: 45
           }
         },
         cogmo: {
@@ -1703,9 +1706,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
       }// 消費者からのメッセージの場合
       else if ( type === chatApi.messageType.scenario.customer.hearing || type === chatApi.messageType.scenario.customer.radio
-        || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar
+        || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar || type === chatApi.messageType.scenario.customer.carousel
         || type === chatApi.messageType.scenario.customer.reInputText || type === chatApi.messageType.scenario.customer.reInputRadio
-        || type === chatApi.messageType.scenario.customer.reInputPulldown || type === chatApi.messageType.scenario.customer.reInputCalendar) {
+        || type === chatApi.messageType.scenario.customer.reInputPulldown || type === chatApi.messageType.scenario.customer.reInputCalendar || type === chatApi.messageType.scenario.customer.reInputCarousel) {
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
@@ -1737,7 +1740,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
         content += $scope.createTextOfMessage(chat, message);
       }
-      else if ( type === chatApi.messageType.scenario.message.pulldown || type === chatApi.messageType.scenario.message.calendar) {
+      else if ( type === chatApi.messageType.scenario.message.pulldown || type === chatApi.messageType.scenario.message.calendar || type === chatApi.messageType.scenario.message.carousel) {
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
