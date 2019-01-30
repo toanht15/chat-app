@@ -214,7 +214,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
     $scope.createIconWithFontIcon = function() {
       var iconDiv = document.createElement("div");
-      iconDiv.id = "iconDiv";
+      $(iconDiv).addClass("iconDiv");
       var iconElm = document.createElement("i");
       iconElm.classList.add("sinclo-fal");
       var classNameArray = $scope.widget.chatbotIconPath.split(" ");
@@ -226,16 +226,16 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
         iconElm.classList.add("icon_border");
       }
       iconDiv.appendChild(iconElm);
-      document.getElementById('grid_balloon').appendChild(iconDiv);
+      $(".grid_balloon").last().get(0).appendChild(iconDiv);
     };
 
     $scope.createIconWithPicture = function() {
       var iconDiv = document.createElement("div");
-      iconDiv.id = "iconDiv";
+      $(iconDiv).addClass("iconDiv");
       var iconElm = document.createElement("img");
       iconElm.src = $scope.widget.chatbotIconPath;
       iconDiv.appendChild(iconElm);
-      document.getElementById('grid_balloon').appendChild(iconDiv);
+      $(".grid_balloon").last().get(0).appendChild(iconDiv);
     };
 
     $scope.isIconImage = function ( target ){
@@ -244,7 +244,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
     $scope.onLoadBalloonCreator = function () {
       var gridElm = document.createElement("div");
-      gridElm.id = "grid_balloon";
+      $(gridElm).addClass("grid_balloon");
       document.getElementById('chatTalk').appendChild(gridElm);
 
 
@@ -258,7 +258,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       } else {
         divElm.classList.add("no_icon");
       }
-      document.getElementById('grid_balloon').appendChild(divElm);
+      $(".grid_balloon").last().get(0).appendChild(divElm);
     };
 
     angular.element(window).on('load', function(e) {
@@ -275,8 +275,8 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
       // ウィジェットのタブ切替時、シミュレーション上の吹き出しを表示更新する
       $scope.$on('switchWidget', function(event, type) {
-        var divElm = document.getElementById('grid_balloon');
-        if (!divElm) {
+        var divElm = $(".grid_balloon").length;
+        if (divElm === 0) {
           $scope.onLoadBalloonCreator();
         }
 
@@ -334,11 +334,11 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       // プレビューの吹き出し表示制御
       if(typeof content !== 'undefined' && content.length > 1) {
         document.getElementById('sample_widget_re_message').style.display = "";
-        document.getElementById('grid_balloon').style.display = "";
+        $(".grid_balloon").last().get(0).style.display = "";
         messageElement.innerHTML = content;
       } else {
         document.getElementById('sample_widget_re_message').style.display = "none";
-        document.getElementById('grid_balloon').style.display = "none";
+        $(".grid_balloon").last().get(0).style.display = "none";
       }
     }
 }]);
