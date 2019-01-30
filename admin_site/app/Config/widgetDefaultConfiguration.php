@@ -225,14 +225,40 @@ $config['default'] = [
 
       /* カラー設定end */
 
-        /**
-         * 画像の設定
-         */
+      /**
+       * 画像の設定
+       */
       "mainImage" => C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT."/img/widget/op02.jpg",
       /**
        * 画像を表示する
        */
       "showMainImage"=>"1",
+
+      /**
+       * チャットボットアイコン
+       */
+      "showChatbotIcon" => "1",
+      /**
+       * チャットボットアイコンの種類
+       */
+      "chatBotIconType" => "2",
+      /**
+       * チャットボットアイコンのリソース
+       */
+      "chatbotIcon" => "fa-robot normal fi_icon",
+
+      /**
+       * 有人チャットアイコン
+       */
+      "showOperatorIcon" => "1",
+      /**
+       * 有人チャットアイコンの種類
+       */
+      "operatorIconType" => "2",
+      /**
+       * 有人チャットアイコンのリソース
+       */
+      "operatorIcon" => C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT."/img/widget/icon_op02.jpg",
 
       /**
        * 角丸

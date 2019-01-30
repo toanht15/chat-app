@@ -665,6 +665,11 @@
 
       if (obj.sincloSessionIdIsNew) {
         userInfo.setStayCount();
+        if ( check.isIE() ) {
+          if (storage.s.get('Waiting_on_IE') !== null) {
+            storage.s.unset('Waiting_on_IE');
+          }
+        }
         storage.l.unset('widgetOpen');
         storage.l.unset('widgetMaximized');
       } else {
@@ -1232,13 +1237,39 @@
         });
       }
     },
+    setChatIdWidthOperatorId: function( obj ) {
+      var list = {};
+      var userId = storage.l.get('currentChatOperator');
+      var currentOpList = storage.l.get('answeringChatIdList');
+      if( currentOpList != null && userId != null) {
+        // localStorageに情報があった場合
+        list = JSON.parse(currentOpList);
+      }
+      list[obj.chatId] = userId;
+      storage.l.set('answeringChatIdList', JSON.stringify(list));
+    },
+    setOperatorInfoForIcon: function( obj ) {
+      var list = {};
+      var currentList = storage.l.get('operatorIconList');
+      if( currentList != null ){
+        list = JSON.parse(currentList);
+      }
+      list[obj.userId] = obj.profileIcon;
+      console.log(list);
+      storage.l.set('operatorIconList', JSON.stringify(list));
+      storage.l.set('currentChatOperator', obj.userId);
+    },
+    unsetOperatorInfoForIcon: function( ) {
+      storage.l.unset('currentChatOperator');
+    },
     chatStartResult: function(d) {
       var obj = JSON.parse(d), opUser;
+      console.warn(obj);
       this.chatApi.online = true;
       storage.s.set('chatAct', true); // オートメッセージを表示しない
       storage.s.set('operatorEntered', true); // オペレータが入室した
       storage.l.set('leaveFlg', 'false'); // オペレータが入室した
-
+      this.setOperatorInfoForIcon( obj );
       if( Number( sincloInfo.widget.operatorIconType ) === 3 ) {
         //op別のアイコンを使用する場合はオペレーターのアイコンパスを上書きする。
         sincloInfo.widget.operatorIcon = obj.profileIcon;
@@ -1288,6 +1319,7 @@
       storage.s.set('chatAct', false); // オートメッセージを表示してもいい
       storage.l.set('leaveFlg', 'true'); // オペレータが退室した
       storage.s.set('initialNotification', 'true'); // 初回通知メッセージ
+      this.unsetOperatorInfoForIcon();
       if (sinclo.scenarioApi.isProcessing() &&
           sinclo.scenarioApi.isScenarioLFDisabled()) {
         sinclo.chatApi.showMiniMessageArea();
@@ -1593,11 +1625,15 @@
               }
             }
             console.log(JSON.stringify(chat, null, 4));
+            var isBot = (Number(chat.messageType) >= 3 && Number(chat.messageType) <= 9) || (Number(chat.messageType) > 20 && Number(chat.messageType) < 29) || (Number(chat.messageType) >= 40 && Number(chat.messageType) < 50)
+            var isOp = Number(chat.messageType) === 2;
             this.chatApi.createMessage({
               cn: cn,
               message: chat.message,
               name: userName,
               chatId: chat.chatId,
+              isOp: isOp,
+              isBot: isBot,
               isHearingAnswer: sinclo.scenarioApi._hearing.isHearingAnswer(
                   chat),
               answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(chat)) ?
@@ -1762,6 +1798,8 @@
         }
 
         if (obj.messageType === sinclo.chatApi.messageType.company) {
+          //会社からのメッセージだったら、現在応対中のUserIdとチャットIDを紐づける
+          this.setChatIdWidthOperatorId(obj);
           cn = 'sinclo_re';
           sinclo.chatApi.call();
           console.log('sendChatResult :: sincloInfo.widget.showOpName : %s',
@@ -2101,7 +2139,8 @@
                     cn: 'sinclo_re',
                     message: data[times].message,
                     name: userName,
-                    chatId: obj.chatId
+                    chatId: obj.chatId,
+                    isBot: true
                   });
                   sinclo.chatApi.scDown();
                   var sendData = {
@@ -2127,11 +2166,15 @@
         if (!obj.hideMessage && obj.messageType !=
             sinclo.chatApi.messageType.sorry && obj.messageType !=
             sinclo.chatApi.messageType.linkClick) {
+          var isBot = (Number(obj.messageType) >= 3 && Number(obj.messageType) <= 9) || (Number(obj.messageType) > 20 && Number(obj.messageType) < 29) || (Number(obj.messageType) >= 40 && Number(obj.messageType) < 50);
+          var isOp = Number(obj.messageType) === 2;
           this.chatApi.createMessageUnread({
             cn: cn,
             message: obj.chatMessage,
             name: userName,
             chatId: obj.chatId,
+            isBot: isBot,
+            isOp: isOp,
             isHearingAnswer: sinclo.scenarioApi._hearing.isHearingAnswer(obj),
             answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(obj)) ?
                 sinclo.scenarioApi._hearing._getPrevSeqNum() :
@@ -3616,18 +3659,47 @@
           return str;
         }
       },
-
-
-      _isNeedBotIcon: function() {
-        return Number(window.sincloInfo.widget.showChatbotIcon) === 1
-            && (storage.s.get("operatorEntered") === null
-                || storage.s.get("operatorEntered") === "false");
+      iconSource: null,
+      _searchChatIdWithIcon: function( chatId ) {
+        var targetList = storage.l.get('answeringChatIdList');
+        if ( targetList == null ) return;
+        targetList = JSON.parse(targetList);
+        if ( targetList[chatId] ){
+          sinclo.chatApi._setIconSource( targetList[chatId] );
+        }
       },
-
-      _isNeedOpIcon: function() {
-        return Number(window.sincloInfo.widget.showOperatorIcon) === 1
-            && (storage.s.get("operatorEntered") !== null
-                && storage.s.get("operatorEntered") === "true");
+      _setIconSource: function( targetNum ) {
+        var operatorIconList = storage.l.get('operatorIconList');
+        if( operatorIconList == null ) return;
+        operatorIconList = JSON.parse( operatorIconList );
+        if( operatorIconList[targetNum] ) {
+          sinclo.chatApi.iconSource = operatorIconList[targetNum];
+        } else {
+          sinclo.chatApi.iconSource = "fa-user sinclo-fal normal"
+        }
+      },
+      _editDivForIconSetting: function( div , isBot, isOp, chatId ) {
+        var iconSource = "";
+        if( Number(sincloInfo.widget.showChatbotIcon) === 1 && isBot ) {
+          iconSource = sincloInfo.widget.chatbotIcon;
+          var fontIcon = sinclo.chatApi._createIconDiv( iconSource );
+          div.appendChild(fontIcon);
+          div.id = "grid_for_icon";
+          div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
+        } else if ( Number(sincloInfo.widget.showOperatorIcon) === 1 && isOp ) {
+          if( Number(sincloInfo.widget.operatorIconType) === 3) {
+            sinclo.chatApi._searchChatIdWithIcon(chatId);
+            iconSource = sinclo.chatApi.iconSource;
+          } else {
+            iconSource = sincloInfo.widget.operatorIcon;
+          }
+          var imageIcon = sinclo.chatApi._createIconDiv( iconSource );
+          div.appendChild(imageIcon);
+          div.id = "grid_for_icon";
+          div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
+        }
+        sinclo.chatApi.iconSource = null;
+        return div;
       },
 
       _createIconDiv: function( icon ) {
@@ -3635,17 +3707,17 @@
         var div = document.createElement("div");
         div.id = "iconDiv";
         var elm;
-        switch (this._checkIconType( icon )) {
+        switch (sinclo.chatApi._checkIconType( icon )) {
           case "fontIcon":
-            elm = this._createFontIcon( icon );
+            elm = sinclo.chatApi._createFontIcon( icon );
             break;
           case "imageIcon":
-            elm = this._createImageIcon( icon );
+            elm = sinclo.chatApi._createImageIcon( icon );
             break;
           default:
             break;
         }
-        div.classList.add( this._addWidgetSizeClassName(), "effect_left" );
+        div.classList.add( sinclo.chatApi._addWidgetSizeClassName(), "effect_left" );
         div.appendChild(elm);
         return div;
 
@@ -3659,6 +3731,10 @@
         }
       },
 
+      _isMainColorWhite: function() {
+        return window.sincloInfo.widget.mainColor === "#FFFFFF";
+      },
+
       _createFontIcon: function( icon ) {
         var elm = document.createElement("i");
         var classArray = icon.split(" ");
@@ -3666,6 +3742,12 @@
           elm.classList.add("sinclo-fal");
           elm.classList.add(classArray[i]);
         }
+
+        if( sinclo.chatApi._isMainColorWhite() ) {
+          elm.classList.add("icon_border");
+        }
+
+
         return elm;
       },
 
@@ -3706,23 +3788,17 @@
       createMessage: function(obj, isScenarioMsg) {
         common.chatBotTypingTimerClear();
         common.chatBotTypingRemove();
+        
+        console.log(obj.isOp);
+        console.log(obj.isBot);
 
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
         if ( obj.cn.indexOf('sinclo_se') === -1 ) {
-          //オペレーター側の発言を作るときはアイコンの有無を確認する。
-          if( this._isNeedBotIcon() ) {
-            var fontIcon = this._createIconDiv( sincloInfo.widget.chatbotIcon );
-            div.appendChild(fontIcon);
-            div.id = "grid_for_icon";
-          } else if ( this._isNeedOpIcon() ) {
-            var imageIcon = this._createIconDiv( sincloInfo.widget.operatorIcon );
-            div.appendChild(imageIcon);
-            div.id = "grid_for_icon";
-          }
+          //発言を作るときはアイコンの有無を確認する。
+          div = sinclo.chatApi._editDivForIconSetting( div , obj.isBot, obj.isOp, obj.chatId );
         }
-        console.log(obj);
         // 送った直後はchatIdが0
         // 再読み込み時はchatIdが付与される
         // 再読み込み時はhearing_msgにchatIdを付与しない
@@ -3953,6 +4029,7 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        div = sinclo.chatApi._editDivForIconSetting( div, true );
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
@@ -3973,6 +4050,7 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        div = sinclo.chatApi._editDivForIconSetting( div,true );
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
@@ -4502,7 +4580,7 @@
         var thumbnail = '';
         var isExpired = Math.floor((new Date()).getTime() / 1000) >=
             (Date.parse(data.expired.replace(/-/g, '/')) / 1000);
-
+        div = sinclo.chatApi._editDivForIconSetting( div,true );
         div.appendChild(li);
         chatList.appendChild(div);
 
@@ -4574,6 +4652,7 @@
         var div = document.createElement('div');
         div.style.cursor = 'pointer';
         var li = document.createElement('li');
+        div = sinclo.chatApi._editDivForIconSetting( div,true );
         var thumbnail = '';
 
         div.appendChild(li);
@@ -7659,11 +7738,11 @@
           }
           if (String(categoryNum).indexOf('delete_') >= 0) {
             sinclo.chatApi.createMessageUnread(
-                {cn: cn + categoryNum, message: message, name: name, chatId: 0},
+                {cn: cn + categoryNum, message: message, name: name, chatId: 0, isBot:true},
                 true);
           } else {
             sinclo.chatApi.createMessageUnread(
-                {cn: cn, message: message, name: name, chatId: 0}, true);
+                {cn: cn, message: message, name: name, chatId: 0, isBot:true}, true);
           }
           sinclo.chatApi.handleBrowserZoom();
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum),

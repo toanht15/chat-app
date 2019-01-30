@@ -349,10 +349,10 @@ class MWidgetSettingsController extends AppController {
 
     $uploadBotIcon = $inputData['MWidgetSetting']['uploadBotIcon'];
 
-    /*$prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
-    if ( is_numeric($inputData['MWidgetSetting']['show_main_image']) === 1 && count($prevFileInfo) > 0 ) {
-      $filename = $prevFileInfo[count($prevFileInfo) - 1];
-    }*/
+    $prevBotIconFileInfo = mb_split("/", $inputData['MWidgetSetting']['chatbot_icon']);
+    if ( is_numeric($inputData['MWidgetSetting']['show_chatbot_icon']) === 1 && count($prevFileInfo) > 0 ) {
+      $botIconFilename = $prevBotIconFileInfo[count($prevBotIconFileInfo) - 1];
+    }
 
     if ( !(isset($uploadBotIcon['tmp_name']) && is_uploaded_file($uploadBotIcon['tmp_name'])) ) {
       $inputData['MWidgetSetting']['uploadBotIcon'] = [];
@@ -364,10 +364,10 @@ class MWidgetSettingsController extends AppController {
 
     $uploadOpIcon = $inputData['MWidgetSetting']['uploadOpIcon'];
 
-    /*$prevFileInfo = mb_split("/", $inputData['MWidgetSetting']['main_image']);
-    if ( is_numeric($inputData['MWidgetSetting']['show_main_image']) === 1 && count($prevFileInfo) > 0 ) {
-      $filename = $prevFileInfo[count($prevFileInfo) - 1];
-    }*/
+    $prevOpIconFileInfo = mb_split("/", $inputData['MWidgetSetting']['operator_icon']);
+    if ( is_numeric($inputData['MWidgetSetting']['show_operator_icon']) === 1 && count($prevOpIconFileInfo) > 0 ) {
+      $opIconFilename = $prevOpIconFileInfo[count($prevOpIconFileInfo) - 1];
+    }
 
     if ( !(isset($uploadOpIcon['tmp_name']) && is_uploaded_file($uploadOpIcon['tmp_name'])) ) {
       $inputData['MWidgetSetting']['uploadOpIcon'] = [];
@@ -559,6 +559,9 @@ class MWidgetSettingsController extends AppController {
       if ( isset($objData['bot_custom_icon']) ) {
         $settings['chatbotIcon'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['bot_custom_icon'];
       }
+      else if( !empty($settings['mainImage'] ) && strcmp($settings['chatBotIconType'], "1") === 0 ) {
+        $settings['chatbotIcon'] = $settings['mainImage'];
+      }
     }
     if ( isset($settings['showOperatorIcon']) && strcmp($settings['showOperatorIcon'], "2") === 0 ) {
       $settings['operatorIcon'] = "";
@@ -567,7 +570,14 @@ class MWidgetSettingsController extends AppController {
       if ( isset($objData['op_custom_icon']) ) {
         $settings['operatorIcon'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['op_custom_icon'];
       }
+      else if( !empty($settings['mainImage'] ) && strcmp($settings['operatorIconType'], "1") === 0 ) {
+        $settings['operatorIcon'] = $settings['mainImage'];
+      }
+      else if( strcmp($settings['showOperatorIcon'], "1") === 0 && strcmp($settings['operatorIconType'], "3") === 0 ){
+        $settings['operatorIcon'] = "";
+      }
     }
+
 
     return $this->jsonEncode($settings);
   }

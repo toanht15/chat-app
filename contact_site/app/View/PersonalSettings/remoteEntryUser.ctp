@@ -12,7 +12,7 @@
   }
 ?>
   var checkIconIsDefault = function() {
-    var icon = $('.hover-changer')[0];
+    var icon = $('.profile_icon_selector')[0];
     return icon.tagName === "I";
   };
 
@@ -25,6 +25,12 @@
     var defaultBtn = document.getElementById("setToDefault");
     defaultBtn.classList.remove("disOffgrayBtn");
     defaultBtn.classList.add("greenBtn");
+  };
+
+  var initHoverClickEvent = function() {
+    $('.hover-changer').click(function(){
+      $('#MUserUploadProfileIcon').click();
+    });
   };
 
   $(function(){
@@ -43,11 +49,12 @@
     });
 
     //何かしらアイコンをどうにかする必要がある
-
-
+    <?php if($coreSettings[C_COMPANY_USE_ICON_SETTINGS]): ?>
     if( checkIconIsDefault() ) {
       disableSetDefaultBtn();
     }
+    initHoverClickEvent();
+    <?php endif; ?>
   });
 
   var confirmToDefault = function() {
@@ -64,7 +71,7 @@
 
   var initPopupOverlapEvent = function() {
     popupEventOverlap.closePopup = function(){
-      var icon = $('.hover-changer')[0];
+      var icon = $('.profile_icon_selector')[0];
       if(icon.tagName === "IMG") {
         changeIconToDefault( icon );
       }
@@ -78,12 +85,15 @@
     }
     $("#MUserUploadProfileIcon").val("");
     $('#TrimmingProfileIconInfo').val("");
+    $('#MUserProfileIcon').val("");
     var iconComponent = $('.profile_icon_register > div')[0];
     var defaultElm = document.createElement("i");
-    defaultElm.classList.add("fa-user","fal","hover-changer");
+    defaultElm.classList.add("fa-user","fal","profile_icon_selector");
     defaultElm.style.color = "<?=$iconFontColor ?>";
     defaultElm.style.backgroundColor = "<?=$iconMainColor ?>";
     iconComponent.appendChild(defaultElm);
+    disableSetDefaultBtn();
+    initHoverClickEvent();
   };
 
   var changeProfileIcon = function(e) {
@@ -104,15 +114,11 @@
       var url = window.URL.createObjectURL(file);
       target = changeIconPath(url, file.name);
       openTrimmingDialog(function(){
-        beforeTrimmingInit(url, $('.hover-changer'));
+        beforeTrimmingInit(url, $('.profile_icon_selector'));
         trimmingInit(null,$('#TrimmingProfileIconInfo'), 1, "profile_icon");
       });
     }
   };
-
-  $('.hover-changer').click(function(){
-    $('#MUserUploadProfileIcon').click();
-  });
 
   $('#MUserUploadProfileIcon').change(function(e){
     changeProfileIcon(e);
@@ -120,14 +126,14 @@
   });
 
   var  changeIconPath = function(path, fileName){
-    var currentIcon = document.querySelector('.hover-changer');
+    var currentIcon = document.querySelector('.hover-changer').children[1];
     var newIcon = document.createElement("img");
     var parentElm = currentIcon.parentNode;
     if( currentIcon.parentNode ) {
       currentIcon.parentNode.removeChild( currentIcon );
     }
     newIcon.src = path;
-    newIcon.classList.add("hover-changer");
+    newIcon.classList.add("profile_icon_selector");
     parentElm.appendChild(newIcon);
     var iconData = document.getElementById('MUserProfileIcon');
     iconData.value = fileName;
@@ -214,13 +220,14 @@ if ( !empty($this->data['MUser']['settings']) ) {
         <section>
             <?= $this->Form->input('id', array('type' => 'hidden')); ?>
             <?= $this->Form->input('user_name', array('type' => 'hidden')); ?>
+            <?php if($coreSettings[C_COMPANY_USE_ICON_SETTINGS]): ?>
             <div class="profile_icon_register">
-              <div>
+              <div class="hover-changer">
                 <?= $this->Form->input('profile_icon', ['type' => 'hidden']); ?>
                 <?php if (empty($this->request->data['MUser']['profile_icon'])) { ?>
-                  <i class="fa-user fal hover-changer" style="color:<?=$iconFontColor ?> ; background-color: <?=$iconMainColor ?>;" ></i>
+                  <i class="fa-user fal profile_icon_selector" style="color:<?=$iconFontColor ?> ; background-color: <?=$iconMainColor ?>;" ></i>
                 <?php } else { ?>
-                  <img class="hover-changer" src="<?=$this->request->data['MUser']['profile_icon']?>" >
+                  <img class="profile_icon_selector" src="<?=$this->request->data['MUser']['profile_icon']?>" >
                 <?php }?>
               </div>
               <div id="profile_register_btn">
@@ -229,6 +236,7 @@ if ( !empty($this->data['MUser']['settings']) ) {
                 <input type="hidden" name="data[Trimming][profileIconInfo]" ng-model="trimmingProfileIconInfo" id="TrimmingProfileIconInfo" class="ng-pristine ng-untouched ng-valid">
               </div>
             </div>
+            <?php endif; ?>
             <div class = "item">
             <div class="labelArea fLeft"><span class="require"><label>表示名</label></span></div>
             <?= $this->Form->input('display_name', array('placeholder' => '表示名', 'div' => false, 'label' => false, 'maxlength' => 10, 'error' => false,'class' => 'inputItems')) ?>

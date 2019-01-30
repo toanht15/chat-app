@@ -38,6 +38,16 @@
     }
   }
 
+  var isBotIconNeedChangeToMainImage = function(ngScope){
+    return Number(ngScope.chatbotIconToggle) === 1
+        && Number(ngScope.chatbotIconType) === 1;
+  };
+
+  var isOpIconNeedChangeToMainImage = function(ngScope){
+    return Number(ngScope.operatorIconToggle) === 1
+        && Number(ngScope.operatorIconType) === 1;
+  };
+
   popupEventOverlap.doTrimming = function(){
     data = $('#img').cropper('getData');
     // 切り抜きした画像のデータ
@@ -79,6 +89,12 @@
           case "main_image":
             ngScope.main_image = imgDataUrl;
             ngScope.trimmingInfo = JSON.stringify(trimmingData);
+            if ( isBotIconNeedChangeToMainImage(ngScope) ) {
+              ngScope.chatbot_icon = ngScope.main_image;
+            }
+            if ( isOpIconNeedChangeToMainImage(ngScope) ) {
+              ngScope.operator_icon = ngScope.main_image;
+            }
             break;
           case "chatbot_icon":
             ngScope.chatbot_icon = imgDataUrl;
