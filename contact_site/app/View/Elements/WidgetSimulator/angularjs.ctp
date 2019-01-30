@@ -466,8 +466,8 @@
         if (data.settings.balloonStyle === '1') {
           // 吹き出しあり
           var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
-          divElm.firstElementChild.style.paddingRight = '25px';
-          divElm.firstElementChild.style.paddingLeft = '25px';
+          divElm.firstElementChild.style.paddingRight = '40px';
+          divElm.firstElementChild.style.paddingLeft = '40px';
         } else {
           // 吹き出しなし
           var divElm = document.querySelector('#chatTalk div > li.sinclo_carousel.chat_carousel').parentNode.cloneNode(true);

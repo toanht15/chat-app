@@ -147,17 +147,14 @@
 
             <div ng-if="hearingItem.uiType === '6'">
               <ul ui-sortable="sortableOptionsCarousel" ng-model="hearingItem.settings.images">
-                <li class="carousel-item action{{setActionId}}_option{{listId}}" ng-repeat="(imageIndex, image) in hearingItem.settings.images  track by $index"
+                <li class="action{{setActionId}}_option{{listId}}" ng-repeat="(imageIndex, image) in hearingItem.settings.images  track by $index"
                      ng-init="main.controllHearingOptionView(setActionId, listId)">
+                  <div class="carousel-item">
                   <div class="carousel-item-header">
                     <div class="area-drag-symbol handleOption" style="cursor: move; display: inline-block; margin-left: 3px;">
                       <i class="fas fa-arrows-alt-v fa-2x" style="font-size: 16px;"></i>
                     </div>
                     <p><strong>画像 {{imageIndex + 1}}</strong></p>
-                    <div class="btnBlock" style="float: right">
-                      <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, imageIndex, listId)')) ?></a>
-                      <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, imageIndex, listId)')) ?></a>
-                    </div>
                   </div>
                   <div class="carousel-item-body">
                     <div class="carousel-image styleFlexbox">
@@ -198,7 +195,13 @@
                             data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
                       <input type="text" class="m20l m10r" ng-model="hearingItem.settings.images[imageIndex].answer">
                     </div>
-
+                  </div>
+                  </div>
+                  <div class="area-btn" style="display: inline-block; position: absolute; right: 14px; margin-top: -25px;">
+                    <div class="btnBlock">
+                      <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, imageIndex, listId)')) ?></a>
+                      <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, imageIndex, listId)')) ?></a>
+                    </div>
                   </div>
                 </li>
               </ul>
@@ -231,11 +234,11 @@
               </span>
 
               <span class="language-setting carousel-arrow-type">
-                  <label>タイトル位置</label>
+                  <label for="">タイトル位置</label>
                   <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-title-position"
                                                 value="1"
                                                 ng-model="hearingItem.settings.titlePosition"
-                                                style="margin-left: 20px;">左寄せ</label>
+                                                style="margin-left: 40px;">左寄せ</label>
                   <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-title-position"
                                                      value="2" style="margin-left: 20px"
                                                      ng-model="hearingItem.settings.titlePosition">中央寄せ</label>
@@ -262,12 +265,12 @@
                 </span>
 
               <span class="language-setting carousel-arrow-type">
-                  <label>本文文字位置</label>
+                  <label for="">本文文字位置</label>
                   <label class="pointer"><input type="radio"
                                                 name="action{{setActionId}}-hearing{{listId}}-subTitle-position"
                                                 value="1"
                                                 ng-model="hearingItem.settings.subTitlePosition"
-                                                style="margin-left: 20px;">左寄せ</label>
+                                                style="margin-left: 40px;">左寄せ</label>
                   <label class="pointer m20l"><input type="radio"
                                                      name="action{{setActionId}}-hearing{{listId}}-subTitle-position"
                                                      value="2" style="margin-left: 20px"
@@ -289,18 +292,21 @@
 
 
               <span class="language-setting carousel-pattern">
-                  <label>矢印の位置</label>
+                  <label for="">矢印の位置</label>
                   <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-pattern"
+                                                     value="2" style="margin-left: 52px"
+                                                     ng-model="hearingItem.settings.carouselPattern">画像の外側</label>
+                  <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-pattern"
                                                 value="1"
                                                 ng-model="hearingItem.settings.carouselPattern"
-                                                style="margin-left: 32px;">画像の内側</label>
-                  <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-pattern"
-                                                     value="2"
-                                                     ng-model="hearingItem.settings.carouselPattern">画像の外側</label>
+                                                >画像の内側</label>
                 </span>
 
               <span class="language-setting carousel-arrow-type" style="width: 38em">
                   <label>矢印スタイル</label>
+                  <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-arrow"
+                                                   value="4" style="margin-left: 40px"
+                                                   ng-model="hearingItem.settings.arrowType"><i class="fas fa-chevron-square-right fa-2x"></i></i></label>
                   <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-arrow"
                                                 value="1"
                                                 ng-model="hearingItem.settings.arrowType"
@@ -311,9 +317,7 @@
                 <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-arrow"
                                                    value="3" style="margin-left: 20px"
                                                    ng-model="hearingItem.settings.arrowType"><i class="fas fa-chevron-right fa-2x"></i></label>
-                <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-arrow"
-                                                   value="4" style="margin-left: 20px"
-                                                   ng-model="hearingItem.settings.arrowType"><i class="fas fa-chevron-square-right fa-2x"></i></i></label>
+
                 </span>
 
               <span>
@@ -325,7 +329,7 @@
                       ng-click="main.revertCarouselDesign(setActionId, listId, 'outBorderColor')">標準に戻す</span>
               </span>
 
-              <label class="pointer" style="margin-left: 125px">
+              <label class="pointer" style="margin-left: 145px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
                        ng-model="hearingItem.settings.outCarouselNoneBorder">枠線なしにする
               </label>
@@ -339,7 +343,7 @@
                       ng-click="main.revertCarouselDesign(setActionId, listId, 'inBorderColor')">標準に戻す</span>
               </span>
 
-              <label class="pointer" style="margin-left: 125px">
+              <label class="pointer" style="margin-left: 145px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
                        ng-model="hearingItem.settings.inCarouselNoneBorder">枠線なしにする
               </label>
