@@ -49,6 +49,12 @@ if( isset($iconImgSource) ) {
 } else {
   $operatorIcon = "";
 }
+
+if( strtolower($iconMainColor) === "#b2d251") {
+  $iconBorderColor = "#FFFFFF";
+} else {
+  $iconBorderColor = $iconMainColor;
+}
 ?>
 <!-- /* 上部カラーバー(ここから) */ -->
 <div id="color-bar">
@@ -58,7 +64,7 @@ if( isset($iconImgSource) ) {
     <?php } ?>
     <li class="fLeft" id = "menu-bar-right"><p style="display:flex; align-items: center; justify-content: space-between;">
         <?php if( empty($operatorIcon) ) {?>
-        <i class="fa-user fal header_profile_icon" style=" color:<?=$iconFontColor ?> ; background-color:<?=$iconMainColor ?> ; display: flex; justify-content: center; align-items: center; font-size: 24px; margin-right: 10px; width: 37px; height: 37px; border: 1px solid #FFFFFF; border-radius: 50%;" ></i>
+        <i class="fa-user fal header_profile_icon" style=" color:<?=$iconFontColor ?> ; background-color:<?=$iconMainColor ?> ; border: 1px solid <?=$iconBorderColor?>; display: flex; justify-content: center; align-items: center; font-size: 24px; margin-right: 10px; width: 37px; height: 37px; border-radius: 50%;" ></i>
         <?php } else { ?>
         <img id="headerProfileImg" class="header_profile_icon" src ="<?= h($operatorIcon) ?>" >
         <?php } ?>

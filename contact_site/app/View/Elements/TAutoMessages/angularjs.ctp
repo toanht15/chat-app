@@ -198,7 +198,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
     };
 
     $scope.createBalloonWithChatbotIcon = function (){
-      if ($scope.isIconImage( SimulatorService.chatbotIconPath ) ){
+      if ($scope.isIconImage( $scope.widget.chatbotIconPath ) ){
         //フォントアイコンだった場合
         $scope.createIconWithFontIcon();
       } else {
@@ -208,16 +208,23 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
     };
 
+    $scope.isMainColorWhite = function() {
+      return $scope.widget.settings['main_color'] === "#FFFFFF"
+    };
+
     $scope.createIconWithFontIcon = function() {
       var iconDiv = document.createElement("div");
       iconDiv.id = "iconDiv";
       var iconElm = document.createElement("i");
       iconElm.classList.add("sinclo-fal");
-      var classNameArray = SimulatorService.chatbotIconPath.split(" ");
+      var classNameArray = $scope.widget.chatbotIconPath.split(" ");
       for( var i = 0; i < classNameArray.length; i++ ){
         iconElm.classList.add(classNameArray[i]);
       }
       iconElm.classList.add("chatbot_icon_elm");
+      if ( $scope.isMainColorWhite() ) {
+        iconElm.classList.add("icon_border");
+      }
       iconDiv.appendChild(iconElm);
       document.getElementById('grid_balloon').appendChild(iconDiv);
     };
@@ -226,7 +233,7 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       var iconDiv = document.createElement("div");
       iconDiv.id = "iconDiv";
       var iconElm = document.createElement("img");
-      iconElm.src = SimulatorService.operatorIconPath;
+      iconElm.src = $scope.widget.chatbotIconPath;
       iconDiv.appendChild(iconElm);
       document.getElementById('grid_balloon').appendChild(iconDiv);
     };
@@ -243,8 +250,8 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
       var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
       divElm.id = 'sample_widget_re_message';
-      console.log(SimulatorService.showWidgetType);
-      if ( Number( SimulatorService.chatbotIconToggle ) === 1 && Number(SimulatorService.showWidgetType) !== 2) {
+      console.log($scope.widget.showWidgetType);
+      if ( Number( $scope.widget.chatbotIconToggle ) === 1 && Number($scope.widget.showWidgetType) !== 2) {
         //ボットのアイコンを設定している場合
         divElm.classList.add("with_icon");
         $scope.createBalloonWithChatbotIcon();

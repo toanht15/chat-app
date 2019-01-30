@@ -191,12 +191,14 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
     };
 
-    $scope.getProfileIconForOperatorIcon = function() {
-      var profileIcon = $('.header_profile_icon')[0];
-      if ( profileIcon.tagName === "IMG" ) {
-        $scope.operator_icon = profileIcon.src;
-      } else {
-        $scope.operator_icon = "";
+    $scope.getProfileIconForOperatorIcon = function( type ) {
+      if( Number( type ) === <?=ICON_USE_OPERATOR_IMAGE?> ) {
+        var profileIcon = $('.header_profile_icon')[0];
+        if (profileIcon.tagName === "IMG") {
+          $scope.operator_icon = profileIcon.src;
+        } else {
+          $scope.operator_icon = "fa-user fal";
+        }
       }
     };
 
@@ -931,6 +933,16 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return image.match(/^http|data|\/\/node/) !== null;
   };
 
+  $scope.resetChatbotIconTypeToMain = function() {
+    $scope.chatbotIconType = 1;
+    $scope.changeIconToMainImage('bot');
+  };
+
+  $scope.resetOperatorIconTypeToMain = function() {
+    $scope.operatorIconType = 1;
+    $scope.changeIconToMainImage('op');
+  };
+
   $scope.checkWhiteColor = function() {
     return String($scope.main_color) === "#FFFFFF";
   };
@@ -961,6 +973,15 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         'background-color': $scope.main_color,
         'color': $scope.string_color
       };
+    }
+  };
+  $scope.getProfileIconForOpIcon = function( type ) {
+    if( Number( type ) === <?=ICON_USE_OPERATOR_IMAGE?> ){
+      var profileIcon = document.getElementById("headerProfileImg");
+      if ( !profileIcon == null) {
+        $scope.operator_icon = profileIcon.src
+      }
+      $scope.operator_icon = "fa-user fal";
     }
   };
 

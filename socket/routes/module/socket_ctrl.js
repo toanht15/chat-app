@@ -3576,16 +3576,27 @@ io.sockets.on('connection', function(socket) {
       });
     } catch (e) {
     }
+
     console.log('chatStart-0: [' + logToken +
         '] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     console.log('chatStart-1: [' + logToken + '] ' + d);
     if (sincloCore[obj.siteKey][obj.tabId] === null) {
-      emit.toMine('chatStartResult', {
-        ret: false,
-        siteKey: obj.siteKey,
-        userId: sincloCore[obj.siteKey][obj.tabId].chat,
-        sincloSessionId: obj.sincloSessionId
-      }, socket);
+
+      pool.query(
+          'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
+          [obj.userId, companyList[obj.siteKey]], function(err, result) {
+            if (err !== null && err !== '') return false;
+            var settingObj = result[0]["settings"];
+            var profileIcon = JSON.parse(settingObj)["profileIcon"];
+            emit.toMine('chatStartResult', {
+              ret: false,
+              siteKey: obj.siteKey,
+              profileIcon: profileIcon,
+              userId: sincloCore[obj.siteKey][obj.tabId].chat,
+              sincloSessionId: obj.sincloSessionId
+            }, socket);
+          });
+
 
       var userId = (getSessionId(obj.siteKey, obj.tabId, 'chat')) ?
           sincloCore[obj.siteKey][obj.tabId].chat :
@@ -3646,14 +3657,6 @@ io.sockets.on('connection', function(socket) {
       }
 
       pool.query(
-          'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
-          [obj.userId, companyList[obj.siteKey]], function(err, result) {
-            if (err !== null && err !== '') return false;
-            var settingObj = result[0]["settings"];
-            sendData.profileIcon = JSON.parse(settingObj)["profileIcon"];
-      });
-
-      pool.query(
           'SELECT mu.id, mu.display_name, wid.style_settings FROM m_users as mu LEFT JOIN m_widget_settings AS wid ON ( wid.m_companies_id = mu.m_companies_id ) WHERE mu.id = ? AND mu.del_flg != 1 AND wid.del_flg != 1 AND wid.m_companies_id = ?',
           [obj.userId, companyList[obj.siteKey]], function(err, rows) {
             if (err !== null && err !== '') return false; // DB接続断対応
@@ -3676,9 +3679,19 @@ io.sockets.on('connection', function(socket) {
                 userName: userName,
                 userId: obj.userId
               };
+
+              pool.query(
+                  'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
+                  [obj.userId, companyList[obj.siteKey]], function(err, result) {
+                    if (err !== null && err !== '') return false;
+                    var settingObj = result[0]["settings"];
+                    sendData.profileIcon = JSON.parse(settingObj)["profileIcon"];
+                    emit.toSameUser('chatStartResult', sendData, obj.siteKey,
+                        obj.sincloSessionId);
+                  });
+
               //emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-              emit.toSameUser('chatStartResult', sendData, obj.siteKey,
-                  obj.sincloSessionId);
+
 
               /* チャット対応上限の処理（対応人数加算の処理） */
               if (scList.hasOwnProperty(obj.siteKey) &&

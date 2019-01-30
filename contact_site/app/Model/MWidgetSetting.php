@@ -286,14 +286,14 @@ class MWidgetSetting extends AppModel {
                 'rule' => ['range', 284, 9999],
                 'message' => '横幅は285px以上で指定して下さい',
                 'allowEmpty' => true
-            ]
+            ],
         ],
         'widget_custom_height' => [
             'maxHeight' => [
                 'rule' => ['range', 193, 9999],
                 'message' => '高さは194px以上で指定して下さい',
                 'allowEmpty' => true
-            ]
+            ],
         ],
         'radius_ratio' => [
             'between' => [

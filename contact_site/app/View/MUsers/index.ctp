@@ -83,6 +83,12 @@
       </tr>
       </thead>
       <tbody>
+      <?php
+      $mUserIconBorder = "";
+        if( $iconMainColor === "#FFFFFF") {
+          $mUserIconBorder = "border: 1px solid ".$iconFontColor.";";
+        }
+      ?>
       <?php foreach((array)$userList as $key => $val): ?>
         <?php
         $userSetting = json_decode($val['MUser']['settings'], true);
@@ -105,7 +111,7 @@
           <td class="tCenter"><?=$no?></td>
           <td class="tCenter" style="display: flex; align-items:center; justify-content: center;">
             <?php if( empty($operatorIcon) ){ ?>
-              <i class="fa-user fal" style="width: 45px; height: 45px; display: flex; justify-content: center; align-items: center;background-color: #ABCD05; border-radius: 50%; color: white; font-size: 30px;" ></i>
+              <i class="fa-user fal" style="width: 45px; height: 45px; display: flex; justify-content: center; align-items: center;background-color: <?=$iconMainColor ?>; <?=$mUserIconBorder?> border-radius: 50%; color: <?=$iconFontColor?>; font-size: 30px;" ></i>
             <?php } else { ?>
               <img id="userProfileIcon"  src="<?= $operatorIcon?>" >
             <?php } ?>

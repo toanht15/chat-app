@@ -47,6 +47,13 @@ class PersonalSettingsController extends AppController {
         $tmpData = [];
 
         $uploadImage = $this->request->data['MUser']['uploadProfileIcon'];
+
+        $prevFileInfo = mb_split("/", $this->request->data['MUser']['profile_icon']);
+        if ( count($prevFileInfo) > 1 ) {
+          $filename = $prevFileInfo[count($prevFileInfo) - 1];
+          $this->request->data['MUser']["profile_custom_image"] = $filename;
+        }
+
         if ( !(isset($uploadImage['tmp_name']) && is_uploaded_file($uploadImage['tmp_name'])) ) {
           unset($this->request->data['MUser']['uploadProfileIcon']);
           $uploadImage = null;

@@ -1143,8 +1143,17 @@ var socket, // socket.io
           chatPosition.re.color + '; }';
       /* アイコン表示時用CSS */
       html += '      #sincloBox ul#chatTalk div#grid_for_icon { display:grid; grid-template-columns: minmax(max-content, max-content) 1fr; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon li.sinclo_re { justify-self: start; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon li.sinclo_re.recv_file_left { justify-self: stretch; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon.smallSize li.sinclo_re { margin-left: 1px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon.middleSize li.sinclo_re { margin-left: 3px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon.largeSize li.sinclo_re { margin-left: 5px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon.customSize li.sinclo_re { margin-left: 5px; }';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv { display: flex; justify-content: flex-end; align-items: flex-end; }';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv img { border-radius: 50% }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv i { display:flex; justify-content: center; align-items: center; border-radius: 50%; ';
+      html += '      color:' + widget.stringColor +'; background-color:'+ widget.mainColor +';}';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv i.icon_border { border:1px solid'+ widget.stringColor +'}';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.smallSize { max-width: 30px; min-width: 30px; }';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.smallSize img { height: 30px; width: 30px; }';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.smallSize i { height: 30px; width: 30px; font-size: 20px }';
@@ -1154,6 +1163,11 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.largeSize { max-width: 42px; min-width: 42px; }';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.largeSize img { height: 40px; width: 40px; }';
       html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.largeSize i { height: 40px; width: 40px; font-size: 26px }';
+
+      //TODO カスタムサイズ時は値を取得してアイコンのサイズを変更する必要があるのでは？
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.customSize { max-width: 42px; min-width: 42px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.customSize img { height: 40px; width: 40px; }';
+      html += '      #sincloBox ul#chatTalk div#grid_for_icon #iconDiv.customSize i { height: 40px; width: 40px; font-size: 26px }';
       /* アイコン表示時用CSS */
       html += '      #sincloBox ul#chatTalk li.sinclo_re .smallSizeImg { max-width: 165px; max-height: 120px; display:block;}';
       html += '      #sincloBox ul#chatTalk li.sinclo_re .middleSizeImg { max-width: 215px; max-height: 188px; display:block;}';
@@ -4739,7 +4753,7 @@ var socket, // socket.io
       } else {
         //スマホかウィジェットサイズが大以上の場合
         if (check.smartphone() || widget.widgetSizeType === 3 ||
-            widget.widgetSizeType === 4) {
+            widget.widgetSizeType === 4 || widget.widgetSizeType === 5) {
           html += '<li class=\'effect_left_wait botNowTypingLarge\'>';
           //ウィジェットサイズが中の場合
         } else if (widget.widgetSizeType === 2) {

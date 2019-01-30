@@ -734,14 +734,25 @@ sincloApp.factory('SimulatorService', function() {
       return messageHtml + html;
     },
 
+    _needResizeCauseIcon: function() {
+      return Number(this.settings.widget_size_type) === 1
+          && Number(this.settings.show_chatbot_icon) === 1;
+    },
+
     createPulldown: function(data) {
       var messageHtml = this.createMessage(data.message, data.prefix);
       var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
       var index = $('#chatTalk > div:not([style*="display: none;"])').length;
       var pulldownName = prefix + 'sinclo-pulldown-' + index;
       var hasOldOptionValue = false;
+      /* ウィジェットサイズ小でアイコン表示だとプルダウンが見切れてしまう対策*/
+      var minWidth = "210";
+      if ( this._needResizeCauseIcon() ) {
+        minWidth = "183";
+      }
       // style
-      var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; min-width: 210px;';
+
+      var style = 'style="margin-top: 10px; border: 1px solid #909090; height: 30px; min-width: ' + minWidth + 'px;';
       style += 'background-color: ' + data.design.backgroundColor + ';';
       style += 'color: ' + data.design.textColor + ';';
       style += 'border-color: ' + data.design.borderColor + ';"';

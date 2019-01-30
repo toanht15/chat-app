@@ -138,6 +138,10 @@
         return target.match(/^fa/) !== null;
       };
 
+      $scope.isMainColorWhite = function() {
+        return $scope.widget.settings['main_color'] === "#FFFFFF";
+      };
+
 
       //ng-classが肥大化してるので対策
       $scope.classNameChecker = {

@@ -5,7 +5,8 @@
   #tchatbotscenario_form_preview_body .actionTitle.active { color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}};}
 
   #tchatbotscenario_form_preview_body .chatTalk { width: 100%; padding: 5px 5px 10px 5px; list-style-type: none; margin: 0px}
-  #tchatbotscenario_form_preview_body .chatTalk .iconDiv > i { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; font-size: 23px; color: #fff; border-radius: 50%; background-color: {{widget.settings['main_color']}}}
+  #tchatbotscenario_form_preview_body .chatTalk .iconDiv > i { display: flex; justify-content: center; align-items: center; width: 40px; height: 40px; font-size: 23px; color: {{widget.settings['string_color']}}; border-radius: 50%; background-color: {{widget.settings['main_color']}}}
+  #tchatbotscenario_form_preview_body .chatTalk .iconDiv > i.icon_border { border: 1px solid {{widget.settings['string_color']}};}
   #tchatbotscenario_form_preview_body .chatTalk li { border-radius: 5px; background-color: #FFF; margin: 10px 0 0; padding: 12px; font-size: 12px; line-height: 1.4; white-space: pre; color: {{widget.settings['message_text_color']}}; }
   #tchatbotscenario_form_preview_body .chatTalk li { word-break: break-all; white-space: pre-wrap; }
   #tchatbotscenario_form_preview_body .chatTalk li.boxType { display: inline-block; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; }
@@ -96,6 +97,7 @@
     #tchatbotscenario_form_preview_body .chatTalk li .flatpickr-calendar .dayContainer .flatpickr-day.today:after { content: "";position: absolute;top: 0px;left: -1px;width: 28px;height: 29px;display: inline-block;}
   }
   #tchatbotscenario_form_preview_body .chatTalk li select { border: 1px solid #909090; border-radius: 0; padding: 5px; height: 30px; margin-top: 9px; margin-bottom: -2px; min-width: 210px; max-width: 220px}
+  #tchatbotscenario_form_preview_body .chatTalk .grid_preview li.smallSize select { min-width: 183px;}
 
 </style>
 <section ng-repeat="(setActionId, setItem) in setActionList" id="action{{setActionId}}_preview">
@@ -105,7 +107,7 @@
     <div ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1 }">
       <div ng-if="(setItem.message || main.visibleSelectOptionSetting(setItem)) && widget.settings['show_chatbot_icon'] == 1" class="iconDiv" >
         <img ng-if="!chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-src="{{widget.settings['chatbot_icon']}}">
-        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" class="fal {{widget.settings['chatbot_icon']}}"></i>
+        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-class="{icon_border:isMainColorWhite()}" class="fal {{widget.settings['chatbot_icon']}}"></i>
       </div>
       <li ng-show="setItem.message || main.visibleSelectOptionSetting(setItem)" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span id="action{{setActionId}}_message" class="details"></span></li>
     </div>
@@ -128,7 +130,7 @@
       <div ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1 }">
         <div ng-if="hearings.message && widget.settings['show_chatbot_icon'] == 1" class="iconDiv" >
           <img ng-if="!chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-src="{{widget.settings['chatbot_icon']}}">
-          <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" class="fal {{widget.settings['chatbot_icon']}}"></i>
+          <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-class="{icon_border:isMainColorWhite()}" class="fal {{widget.settings['chatbot_icon']}}"></i>
         </div>
         <li ng-show="hearings.message" ng-if="hearings.uiType === '1' || hearings.uiType === '2'" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}}</span></li>
         <li ng-if="hearings.uiType === '5'" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}} <div id="action{{setActionId}}_calendar{{index}}" style="margin-top: 7px; margin-bottom: 6px"></div></span></li>
@@ -144,7 +146,7 @@
       <!-- アイコン設定START -->
       <div ng-if="(setItem.isConfirm && (setItem.confirmMessage || setItem.success || setItem.cancel)) && widget.settings['show_chatbot_icon'] == 1" class="iconDiv" >
         <img ng-if="!chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-src="{{widget.settings['chatbot_icon']}}">
-        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" class="fal {{widget.settings['chatbot_icon']}}"></i>
+        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-class="{icon_border:isMainColorWhite()}" class="fal {{widget.settings['chatbot_icon']}}"></i>
       </div>
       <!-- アイコン設定END -->
       <li ng-show="setItem.isConfirm && (setItem.confirmMessage || setItem.success || setItem.cancel)" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span id="action{{setActionId}}_confirm_message" class="details"></span></li>
@@ -154,7 +156,7 @@
       <!-- アイコン設定START -->
       <div ng-if="setItem.file.download_url && setItem.file.file_name && setItem.file.file_size && widget.settings['show_chatbot_icon'] == 1" class="iconDiv" >
         <img ng-if="!chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-src="{{widget.settings['chatbot_icon']}}">
-        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" class="fal {{widget.settings['chatbot_icon']}}"></i>
+        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-class="{icon_border:isMainColorWhite()}" class="fal {{widget.settings['chatbot_icon']}}"></i>
       </div>
       <!-- アイコン設定END -->
       <li ng-if="setItem.file.download_url && setItem.file.file_name && setItem.file.file_size" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">ファイルが送信されました</span><div class="sendFileContent"><div class="sendFileThumbnailArea"><img ng-if="widget.isImage(setItem.file.extension)" ng-src="{{setItem.file.download_url}}" class="sendFileThumbnail" width="64" height="64"><i ng-if="!widget.isImage(setItem.file.extension)" ng-class="widget.selectIconClassFromExtension(setItem.file.extension)" class="fa fa-4x sendFileThumbnail" aria-hidden="true"></i></div><div class="sendFileMetaArea"><span class="data sendFileName details">{{setItem.file.file_name}}</span><span class="data sendFileSize details">{{setItem.file.file_size}}</span></div></div></li>
@@ -164,7 +166,7 @@
       <!-- アイコン設定START -->
       <div ng-if="setItem.dropAreaMessage && widget.settings['show_chatbot_icon'] == 1" class="iconDiv" >
         <img ng-if="!chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-src="{{widget.settings['chatbot_icon']}}">
-        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" class="fal {{widget.settings['chatbot_icon']}}"></i>
+        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-class="{icon_border:isMainColorWhite()}" class="fal {{widget.settings['chatbot_icon']}}"></i>
       </div>
       <!-- アイコン設定END -->
       <li ng-show="setItem.dropAreaMessage" class="sinclo_re chat_left recv_file_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><div class="receiveFileContent"><div class="selectFileArea"><p class="dropFileMessage" ng-class="classNameChecker.checkMaster('middleSize,largeSize,customSize')">{{setItem.dropAreaMessage}}</p><p class="drop-area-icon" ng-class="{middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><i class="fal fa-3x fa-cloud-upload"></i></p><p ng-class="{middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}">または</p><p ng-class="{middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><a class="select-file-button">ファイルを選択</a></p></div></div><div ng-if="setItem.cancelEnabled" class="cancelReceiveFileArea"><a>{{setItem.cancelLabel}}</a></div></li>
@@ -173,7 +175,7 @@
     <div ng-repeat="(index, condition) in setItem.conditionList" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1 }">
       <div ng-if="condition.actionType == '1' && condition.action.message && widget.settings['show_chatbot_icon'] == 1" class="iconDiv" >
         <img ng-if="!chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-src="{{widget.settings['chatbot_icon']}}">
-        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" class="fal {{widget.settings['chatbot_icon']}}"></i>
+        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-class="{icon_border:isMainColorWhite()}" class="fal {{widget.settings['chatbot_icon']}}"></i>
       </div>
       <li ng-show="condition.actionType == '1' && condition.action.message" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span id="action{{setActionId}}-{{index}}_message" class="details"></span></li>
     </div>
@@ -182,7 +184,7 @@
       <!-- アイコン設定START -->
       <div ng-if="setItem.elseEnabled && setItem.elseAction.actionType == '1' && setItem.elseAction.action.message && widget.settings['show_chatbot_icon'] == 1" class="iconDiv" >
         <img ng-if="!chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-src="{{widget.settings['chatbot_icon']}}">
-        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" class="fal {{widget.settings['chatbot_icon']}}"></i>
+        <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-class="{icon_border:isMainColorWhite()}" class="fal {{widget.settings['chatbot_icon']}}"></i>
       </div>
       <!-- アイコン設定END -->
       <li ng-show="setItem.elseEnabled && setItem.elseAction.actionType == '1' && setItem.elseAction.action.message" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span id="action{{setActionId}}_else-message" class="details"></span></li>

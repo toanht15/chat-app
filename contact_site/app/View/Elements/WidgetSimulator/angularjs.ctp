@@ -180,6 +180,16 @@
         }
       };
 
+      $scope.isMainColorWhite = function() {
+        return getWidgetSettings().main_color === "#FFFFFF";
+      };
+
+      $scope.isNeedAnimationClass = function() {
+        return Number(getWidgetSettings().chat_message_with_animation) === 1
+      };
+
+
+
       $scope.createFontIcon = function ( icon ) {
         var elm = document.createElement("i");
         var classArray = icon.split(" ");
@@ -187,6 +197,15 @@
           elm.classList.add("sinclo-fal");
           elm.classList.add(classArray[i]);
         }
+
+        if ( $scope.isMainColorWhite() ) {
+          elm.classList.add("icon_border");
+        }
+
+        if ( $scope.isNeedAnimationClass ) {
+          elm.classList.add("effect_left");
+        }
+
         return elm;
       };
 
@@ -218,7 +237,6 @@
           var divElm = document.querySelector('#chatTalk div > li.sinclo_se.chat_right').parentNode.cloneNode(true);
           divElm.id = prefix + '_answer';
         }
-        console.log(divElm);
         var formattedMessage = $scope.simulatorSettings.createMessage(message, prefix);
         divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
         if (appendClass) {
@@ -699,6 +717,8 @@
        * @param String prefix   ラジオボタンに付与するプレフィックス
        */
       $scope.addFileMessage = function(type, fileObj) {
+        var gridElm = document.createElement("div");
+        gridElm.id = "grid_balloon";
         // ベースとなる要素をクローンする
         if (type === 're') {
           var list = document.querySelector('#chatTalk div > li.sinclo_re.file_left');
@@ -723,9 +743,17 @@
         divElm.addEventListener('click', function() {
           window.open(fileObj.download_url);
         });
-
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          //チャットボットのアイコンを表示する場合は
+          //アイコンを含む要素を作成する。
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+        gridElm.appendChild(divElm);
         // 要素を追加する
-        document.getElementById('chatTalk').appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
         $('#chatTalk > div:last-child').show();
         self.autoScroll();
       };
