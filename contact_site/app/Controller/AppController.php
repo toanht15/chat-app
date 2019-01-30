@@ -180,8 +180,11 @@ class AppController extends Controller {
     // ウィジェットの情報をビューへ渡す
     $widgetInfo = $this->MWidgetSetting->coFind('first', []);
     $widgetStyle = json_decode($widgetInfo['MWidgetSetting']['style_settings'], true);
+    $userSetting = json_decode($newInfo['MUser']['settings'], true);
     $this->log(json_decode($newInfo['MUser']['settings']), LOG_DEBUG);
-    $this->set('iconImgSource', json_decode($newInfo['MUser']['settings'], true)['profileIcon']);
+    if(array_key_exists('profileIcon', $userSetting)) {
+      $this->set('iconImgSource', $userSetting['profileIcon']);
+    }
     $this->set('iconMainColor', $widgetStyle['mainColor']);
     $this->set('iconFontColor', $widgetStyle['stringColor']);
 
