@@ -331,7 +331,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk.spPortrait {height: 310px; overflow: hidden}
         #sincloBox ul#chatTalk.middleSize { height: 284px; padding: 0 5px 45.6px 5px;}
         #sincloBox ul#chatTalk.largeSize { height: 374px; padding: 0 5px 60px 5px;}
-        #sincloBox ul#chatTalk.customSize { height: {{widget.settings['widget_custom_height']}}px; padding: 0 5px 60px 5px;}
+        #sincloBox ul#chatTalk.customSize { height: {{widget.settings['widget_custom_height']}}px; max-height: 590px; padding: 0 5px 60px 5px;}
         #sincloBox ul#chatTalk.details { background-color: {{widget.settings['chat_talk_background_color']}}; }
         #sincloBox ul#chatTalk #sample_widget_re_message.with_icon { grid-column: 2; -ms-grid-column: 2;}
         #sincloBox ul#chatTalk .grid_balloon .no_icon { grid-column: 1/3; }
