@@ -50,7 +50,7 @@ var setAllCheck = function() {
   $('#tchatbotscenario_list input[name="selectTab"]').prop('checked', this.checked);
   document.querySelector('#tchatbotscenario_list input[name="allCheck"]').checked = this.checked;
   actBtnShow();
-}
+};
 
 // 全選択用チェックボックスのコントロール
 var allCheckCtrl = function(){
@@ -59,7 +59,7 @@ var allCheckCtrl = function(){
   if (!!document.querySelector('#tchatbotscenario_list input[name="selectTab"]')) {
     allCheck.checked = !document.querySelector('#tchatbotscenario_list input[name="selectTab"]:not(:checked)');
   }
-}
+};
 
 // コピー・削除ボタンの有効・無効切り替え
 var actBtnShow = function(){

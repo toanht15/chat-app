@@ -23,7 +23,7 @@
     }
 </style>
 <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ){?>
-<p ng-if="widgetSizeTypeToggle==='4' && showWidgetType === 1" style="width:400px; color:#F57E7E">表示されているウィジェットのサイズは実際のサイズ（最大）ではありません。実際のサイズは ＜<?= $this->Html->link('デモサイト', array('controller' => 'ScriptSettings', 'action' => 'testpage',$companyKey), array('target' => '_demo', 'class' => 'underL', 'style' => 'color:#F57E7E')) ?>＞ から確認してください。</p>
+<p ng-cloak ng-if="widgetSizeTypeToggle==='4' && showWidgetType === 1" style="width:400px; color:#F57E7E">表示されているウィジェットのサイズは実際のサイズ（最大）ではありません。実際のサイズは ＜<?= $this->Html->link('デモサイト', array('controller' => 'ScriptSettings', 'action' => 'testpage',$companyKey), array('target' => '_demo', 'class' => 'underL', 'style' => 'color:#F57E7E')) ?>＞ から確認してください。</p>
 <section id="switch_widget" ng-cloak ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
   <ul class="ulTab" data-col=3 ng-hide="closeButtonSettingToggle === '2'">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
@@ -116,6 +116,11 @@
     #sincloBox.largeSize{
       width: 400px;
     }
+    #sincloBox.customSize{
+      width: {{widget_custom_width}}px;
+      max-width: 708px;
+    }
+
     /* タブアイコンフォント化対応start */
     @font-face {
       font-family: 'SincloFont';

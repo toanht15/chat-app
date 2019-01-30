@@ -76,6 +76,12 @@
 
       }
 
+      &.p-show-gallary #popup-main ul{
+          justify-content: space-between;
+          margin-right: 5px;
+          margin-left: 5px;
+      }
+
       /* ウィジェット設定-ギャラリー用 */
       &.p-show-gallary, &.p-show-notification-gallary {
         width: 290px;
@@ -105,8 +111,19 @@
                 padding: 3px 4px;
               }
 
+              &.op > img {
+                width: 62px;
+                height: 70px;
+              }
+
+              &.icon_op > img {
+                width: 55px;
+                height: 55px;
+                border-radius: 100%;
+              }
+
               i {
-                &.icon {
+                &.fi_main {
                   display: flex;
                   justify-content: center;
                   align-items: center;
@@ -114,6 +131,21 @@
                   height: 70px;
                   font-size: 43px;
                   border: 1px solid;
+                }
+                &.fi_icon {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  width: 55px;
+                  height: 55px;
+                  border-radius: 100%;
+                  font-size: 35px;
+                  &.fa-comments-alt {
+                    padding-top: 4px;
+                  }
+                  &.fa-comment-alt-lines {
+                    padding-top: 6px;
+                  }
                 }
                 &.fa-robot{
                   padding-bottom: 3px;
@@ -1059,6 +1091,12 @@
       &.p-widget-image-trimming {
         width: 840px;
 
+        .icon_trimming {
+          .cropper-view-box {
+            border-radius: 50%;
+          }
+        }
+
         & #popup-button {
           width: 43em;
           margin: 0 auto;
@@ -1146,29 +1184,108 @@
 
       /* ユーザーマスタ-登録ダイアログ用 */
       &.p-muser-entry {
-        width: 350px;
-        height: 320px;
+        width: 600px;
+        height: auto;
         #popup-main {
           input, select {
             height: 26px;
             font-size: 12px;
             margin: 2px 5px;
-            width: 260px;
+            width: 355px;
             padding-left: 4px;
+            -ms-grid-column: 2;
           }
-        }
-        #popup-main {
           .form01 div {
             margin: 5px 0;
+            &.profile_icon_register {
+              i {
+                display: flex;
+                font-size: 35px;
+                justify-content: center;
+                align-items: center;
+              }
+            }
+            .icon_register {
+              overflow: hidden;
+              input[type='file'] {
+                opacity: 0;
+                cursor: pointer!important;
+                position: absolute;
+                top: 0;
+                right :0;
+                height: 25px;
+                display: block;
+                z-index: 50;
+              }
+            }
+            .hover-changer {
+              position: relative;
+              width: 53px;
+              height: 53px;
+              border-radius: 50%;
+              position: relative;
+              cursor: pointer;
+              &:after {
+                content: " ";
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 0;
+                padding: 0;
+                background-color: #333;
+                opacity: 0.9;
+              }
+              &:hover:after {
+                display: flex;
+                cursor: pointer;
+                justify-content: center;
+                align-items: center;
+                content: "変更";
+                height: 53px;
+                width: 53px;
+                border-radius: 50%;
+                box-shadow: 0px -1px 10px rgba(0, 0, 0, 0.3);
+                background-color: #3A3A3A;
+                background-color: rgba(58, 58, 58, 0.7);
+                color: #FFF;
+                text-align: center;
+                font-size: 15px;
+                font-weight: bold;
+              }
+            }
           }
           img {
             float: left;
           }
+          .grid_item {
+            display: -ms-grid;
+            display: grid;
+            -ms-grid-columns: 160px 1fr;
+            grid-template-columns: 160px 1fr;
+            .input_label {
+              display: flex;
+              justify-content: start;
+              align-items: center;
+              padding-left: 40px;
+              &.profile_memo_label_div{
+                align-items: flex-start;
+              }
+            }
+            .profile_memo_area {
+              width: 355px;
+              margin-left: 5px;
+              resize: none;
+            }
+          }
         }
-        #popup-button a {
-          width: 75px;
-          float: left;
-          margin: 0 50px;
+        #popup-button {
+          display: flex;
+          justify-content: space-around;
+          align-items: start;
+          a {
+            width: 75px;
+          }
         }
       }
 
@@ -1178,21 +1295,103 @@
         height: 450px;
         #MUserRemoteOpenEntryFormForm{
           .form01 {
+            .profile_icon_register {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              i {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                font-size: 35px;
+
+              }
+              .profile_icon_selector {
+                width: 53px;
+                height: 53px;
+                border-radius: 50%;
+              }
+              .hover-changer {
+                width: 53px;
+                height: 53px;
+                border-radius: 50%;
+                position: relative;
+                cursor: pointer;
+                &:after {
+                  content: " ";
+                  position: absolute;
+                  bottom: 0;
+                  left: 0;
+                  right: 0;
+                  height: 0;
+                  padding: 0;
+                  background-color: #333;
+                  opacity: 0.9;
+                }
+                &:hover:after {
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  cursor: pointer;
+                  content: "変更";
+                  height: 53px;
+                  width: 53px;
+                  border-radius: 50%;
+                  box-shadow: 0px -1px 10px rgba(0, 0, 0, 0.3);
+                  background-color: #3A3A3A;
+                  background-color: rgba(58, 58, 58, 0.7);
+                  color: #FFF;
+                  text-align: center;
+                  font-size: 15px;
+                  font-weight: bold;
+                }
+              }
+              .operator_profile_icon {
+                width: 53px;
+                height: 53px;
+                border-radius: 50%;
+              }
+              .icon_register {
+                position: relative;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100px;
+                height: 25px;
+                overflow: hidden;
+                input[type='file'] {
+                  cursor: pointer!important;
+                  opacity: 0;
+                  position: absolute;
+                  top: 0;
+                  right: 0;
+                  height: 25px;
+                  display: block;
+                  z-index: 50;
+                }
+              }
+            }
             .inputItems {
-              width:427px;
+              width:358px;
             }
             .item {
               display:flex;
+              margin: 15px 0 !important;
+              .profile_memo_area {
+                resize: none;
+                width: 358px;
+              }
             }
             .labelArea {
               width:11em;
-              margin: 5px 0 !important;
+              margin: 5px 0 5px 36px !important;
+              &.align-start {
+                align-items: flex-start;
+              }
             }
             .labelAreaPassword {
               width:15em;
-            }
-            .item {
-              margin: 15px 0 !important;
             }
             #upperLimit {
               padding: 5px 10px;
@@ -1203,6 +1402,7 @@
               cursor: pointer;
               display: flex;
               position: relative;
+              margin-left: 36px;
             }
             span {
               -ms-flex-align: center;
@@ -2311,70 +2511,57 @@
   padding: 6.5px;
 }
 
-.t-link {
-  /*display: block;*/
-  /*width: 100%;*/
-/*  padding: 10px 5px 2px;*/
-}
-
 #popup-overlap #popup-frame-base-overlap #popup-frame-overlap.p-history-del {
   width: 450px;
   height: 150px;
   text-align: center;
+  #popup-button-overlap {
+    text-align: center;
+    a {
+      width: 125px;
+      float: left;
+      margin: 0 50px;
+    }
+  }
 }
 
-#popup-overlap #popup-frame-base-overlap #popup-frame-overlap.p-history-del #popup-button-overlap {
-  text-align: center;
-}
-
-#popup-overlap #popup-frame-base-overlap #popup-frame-overlap.p-history-del #popup-button-overlap a {
-  width: 125px;
-  float: left;
-  margin: 0 50px;
-}
-
-#popup #popup-frame-base #popup-frame.p-tdictionary-entry {
-  width: 500px;
-  height: 450px !important;
-}
-
-#popup #popup-frame-base #popup-frame.p-operatinghours-entry {
-  width: 415px;
-  /*height: 480px !important;*/
-}
-
-#popup #popup-frame-base #popup-frame.p-copy {
-  width: 450px;
-  height: 150px;
-}
-
-#popup #popup-frame-base #popup-frame.p-copy #popup-button {
-  text-align: center;
-}
-
-#popup #popup-frame-base #popup-frame.p-copy #popup-button a {
-  width: 10em;
-  margin: 0 auto;
-  height: 2em;
-  font-size: 1.1em;
-  padding: 4px 0px;
+#popup #popup-frame-base #popup-frame {
+  &.p-tdictionary-entry {
+    width: 500px;
+    height: 450px !important;
+  }
+  &.p-operatinghours-entry {
+    width: 415px;
+  }
+  &.p-copy {
+    width: 450px;
+    height: 150px;
+    #popup-button {
+      text-align: center;
+      a {
+        width: 10em;
+        margin: 0 auto;
+        height: 2em;
+        font-size: 1.1em;
+        padding: 4px 0px;
+      }
+    }
+  }
 }
 
 #popup #popup-frame-base #popup-frame.p-move {
   width: 450px;
   height: 150px;
-}
-
-#popup #popup-frame-base #popup-frame.p-move #popup-button {
-  text-align: center;
-}
-
-#popup #popup-frame-base #popup-frame.p-move #popup-button a {
-  width: 10em;
-  margin: 0 auto;
-  height: 2em;
-  font-size: 1.1em;
-  padding: 4px 0px;
+  #popup-button {
+    text-align: center;
+    a {
+      width: 10em;
+      margin: 0 auto;
+      height: 2em;
+      font-size: 1.1em;
+      padding: 4px 0px;
+    }
+  }
 }
 
 #popup #popup-frame-base #popup-frame.p-tabsort-save-confirm {
@@ -2443,52 +2630,46 @@
   width: 450px;
   height: 150px;
   text-align: center;
-}
-
-#popup #popup-frame-base #popup-frame.p-dictionary-del #popup-button {
-  text-align: center;
-}
-
-#popup #popup-frame-base #popup-frame.p-dictionary-del #popup-button a {
-  width: 10em;
-  margin: 0 auto;
-  height: 2em;
-  font-size: 1.1em;
-  padding: 4px 0px;
+  #popup-button {
+    text-align: center;
+    a {
+      width: 10em;
+      margin: 0 auto;
+      height: 2em;
+      font-size: 1.1em;
+      padding: 4px 0px;
+    }
+  }
 }
 
 #popup #popup-frame-base #popup-frame.p-category-edit {
   width: 450px;
   height: 150px;
-}
-
-#popup #popup-frame-base #popup-frame.p-category-edit #popup-button {
-  text-align: center;
-}
-
-#popup #popup-frame-base #popup-frame.p-category-edit #popup-button a {
-  width: 10em;
-  margin: 0 auto;
-  height: 2em;
-  font-size: 1.1em;
-  padding: 4px 0px;
+  #popup-button {
+    text-align: center;
+    a {
+      width: 10em;
+      margin: 0 auto;
+      height: 2em;
+      font-size: 1.1em;
+      padding: 4px 0px;
+    }
+  }
 }
 
 #popup #popup-frame-base #popup-frame.p-category-del {
   width: 450px;
   height: 150px;
-}
-
-#popup #popup-frame-base #popup-frame.p-category-del #popup-button {
-  text-align: center;
-}
-
-#popup #popup-frame-base #popup-frame.p-category-del #popup-button a {
-  width: 10em;
-  margin: 0 auto;
-  height: 2em;
-  font-size: 1.1em;
-  padding: 4px 0px;
+  #popup-button {
+    text-align: center;
+    a {
+      width: 10em;
+      margin: 0 auto;
+      height: 2em;
+      font-size: 1.1em;
+      padding: 4px 0px;
+    }
+  }
 }
 
 #popup #popup-frame-base #popup-frame.p-category-dictionary-edit {
@@ -2725,10 +2906,9 @@
 
 .ui-tabs.ui-tabs-nav{
   padding: .0em .0em 0;
-}
-
-.ui-tabs.ui-tabs-nav.tablist{
-  padding: .0em .0em 0;
+  tablist{
+    padding: .0em .0em 0;
+  }
 }
 
 [id^="tabBoxborder"]{
@@ -2777,6 +2957,47 @@
       background: white;
       margin: auto;
       z-index: 53;
+
+      /* プロフィール設定_トリミングモーダル */
+      &.p-profile-icon-trimming {
+        width: 840px;
+
+        .cropper-view-box {
+          border-radius: 50%;
+        }
+
+        & #popup-button-overlap {
+          width: 43em;
+          margin: 0 auto;
+
+          .textBtn {
+            width: 12em;
+            margin: 0 2.5em;
+            float: left;
+          }
+        }
+      }
+
+      /* アイコンデフォルト変更時注意文 */
+      &.p-seticontodefault-alert {
+        width: 500px;
+
+        #popup-main-overlap {
+          text-align: center;
+          font-size: 13px;
+          color: #c00000;
+        }
+        #popup-button-overlap {
+          display: flex;
+          justify-content: space-around;
+          align-items: start;
+          a {
+            height: 25px;
+            width: 75px;
+          }
+        }
+      }
+
 
       /*ポップアップ用:装飾系*/
       #popup-content-overlap {
