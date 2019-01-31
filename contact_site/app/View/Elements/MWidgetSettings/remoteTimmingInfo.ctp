@@ -33,6 +33,26 @@
     var numbers = trimmingInfoTag.match(/\d+/g).map(Number);
     var aspectRatio = ngScope.setActionList[numbers[0]].hearings[numbers[1]].settings.aspectRatio;
     $image = $('.cropper-example-1 > img');
+    if (aspectRatio) {
+      var style = '<style>';
+      style += '#popup #popup-frame-base #popup-frame.p-widget-carousel-trimming .point-e {\n' +
+          '  display: none;\n' +
+          '}\n' +
+          '\n' +
+          '#popup #popup-frame-base #popup-frame.p-widget-carousel-trimming .point-s {\n' +
+          '  display: none;\n' +
+          '}\n' +
+          '\n' +
+          '#popup #popup-frame-base #popup-frame.p-widget-carousel-trimming .point-n {\n' +
+          '  display: none;\n' +
+          '}\n' +
+          '\n' +
+          '#popup #popup-frame-base #popup-frame.p-widget-carousel-trimming .point-w {\n' +
+          '  display: none;\n' +
+          '}';
+      style += '</style>';
+      $('.cropper-example-1').after(style);
+    }
 
     targetImgTag.cropper({
       viewMode: 0,

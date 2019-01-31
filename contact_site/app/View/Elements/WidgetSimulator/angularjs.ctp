@@ -466,8 +466,14 @@
         if (data.settings.balloonStyle === '1') {
           // 吹き出しあり
           var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
-          divElm.firstElementChild.style.paddingRight = '40px';
-          divElm.firstElementChild.style.paddingLeft = '40px';
+          if (data.settings.carouselPattern === '1') {
+            divElm.firstElementChild.style.paddingRight = '15px';
+            divElm.firstElementChild.style.paddingLeft = '15px';
+          } else {
+            divElm.firstElementChild.style.paddingRight = '40px';
+            divElm.firstElementChild.style.paddingLeft = '40px';
+          }
+
         } else {
           // 吹き出しなし
           var divElm = document.querySelector('#chatTalk div > li.sinclo_carousel.chat_carousel').parentNode.cloneNode(true);
@@ -517,17 +523,14 @@
         var oldIndex = null;
         angular.forEach(data.settings.images, function(image, index) {
           if (data.oldValue == image.answer) {
-           oldIndex = index;
+            oldIndex = index;
+            console.log('in: ' + oldIndex);
           }
         });
+        console.log('out: ' + oldIndex);
         if (data.isRestore && oldIndex) {
           $(carousel.selector).slick('slickGoTo', oldIndex);
         }
-        $('#' + data.prefix + '_question .slick-arrow').on('click', function() {
-          if (!$(this).hasClass('slick-disabled')) {
-            $('#' + data.prefix + '_question').find('.nextBtn').hide();
-          }
-        });
 
         self.autoScroll();
       };

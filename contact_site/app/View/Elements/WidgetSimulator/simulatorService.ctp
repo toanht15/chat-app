@@ -779,7 +779,7 @@ sincloApp.factory('SimulatorService', function() {
       var index = $('#chatTalk > div:not([style*="display: none;"])').length;
       var carouselId = prefix + 'sinclo-carousel-' + index;
       var html = '';
-      var carouselSize = this.getCarouselSize(data.settings.lineUpStyle, data.settings.aspectRatio);
+      var carouselSize = this.getCarouselSize(data.settings);
       var arrowPosition = this.getArrowPosition(data.settings);
       var thumbnailWidth = carouselSize.width + 2;
       var containerWidth = carouselSize.containerWidth + 2;
@@ -789,9 +789,9 @@ sincloApp.factory('SimulatorService', function() {
       html += '#sincloBox #' + carouselId + ' .slick-dots li button:before { font-size: 25px;}';
       html += '#sincloBox #' + carouselId + ' .slick-next:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + data.settings.customDesign.arrowColor + ';}';
       html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + data.settings.customDesign.arrowColor + ';}';
-      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { margin: 8px; font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
-      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title {  text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
-      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 0 8px 8px 8px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.subTitlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title {  margin: 4px 12px 3px 12px; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 0 12px 8px 12px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.subTitlePosition) + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail:hover { -webkit-filter: brightness(110%); filter: brightness(110%);}';
       if (data.settings.outCarouselNoneBorder) {
         html += '#sincloBox #' + carouselId + ' .thumbnail { border: none;} ';
@@ -825,11 +825,7 @@ sincloApp.factory('SimulatorService', function() {
         html+= '</div></div></div>';
       });
       html+= '</div></div>';
-      if (data.isRestore) {
-        html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' + data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
-      }
 
-      // result.html = data.settings.balloonStyle === '1' ? messageHtml + html : html;
       result.html = messageHtml === "" ? html :messageHtml +  html;
       result.selector = '#' + carouselId;
       return result;
@@ -869,32 +865,74 @@ sincloApp.factory('SimulatorService', function() {
 
       return result;
     },
+    getCarouselSize: function(settings) {
+      if (settings.carouselPattern === '1') {
+        return this.getInsideArrowCarouselSize(settings);
+      } else {
+        return this.getOutsideArrowCarouselSize(settings);
+      }
+    },
 
-    getCarouselSize: function(lineUpStyle, aspectRatio){
+    getOutsideArrowCarouselSize: function(settings) {
+      var aspectRatio = settings.aspectRatio;
       if (!aspectRatio) {
         aspectRatio = 1;
       }
-      var data = { width: 0, height: 0, containerWidth: 0};
+      var data = {width: 0, height: 0, containerWidth: 0};
       switch (Number(this.widgetSizeTypeToggle)) {
         case 1:
           data.containerWidth = 170;
-          data.width = lineUpStyle === '1' ? 170 : 100;
+          data.width          = settings.lineUpStyle === '1' ? 170 : 100;
           break;
         case 2:
           data.containerWidth = 220;
-          data.width = lineUpStyle === '1' ? 220 : 130;
+          data.width          = settings.lineUpStyle === '1' ? 220 : 130;
           break;
         case 3:
           data.containerWidth = 260;
-          data.width = lineUpStyle === '1' ? 260 : 158;
+          data.width          = settings.lineUpStyle === '1' ? 260 : 158;
           break;
         case 4:
           data.containerWidth = 260;
-          data.width = lineUpStyle === '1' ? 260 : 158;
+          data.width          = settings.lineUpStyle === '1' ? 260 : 158;
           break;
         default:
           data.containerWidth = 260;
-          data.width = lineUpStyle === '1' ? 260 : 158;
+          data.width          = settings.lineUpStyle === '1' ? 260 : 158;
+          break;
+      }
+
+      data.height = data.width / aspectRatio;
+
+      return data;
+    },
+
+    getInsideArrowCarouselSize: function(settings) {
+      var aspectRatio = settings.aspectRatio;
+      if (!aspectRatio) {
+        aspectRatio = 1;
+      }
+      var data = {width: 0, height: 0, containerWidth: 0};
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          data.containerWidth = 200;
+          data.width          = settings.lineUpStyle === '1' ? 200 : 125;
+          break;
+        case 2:
+          data.containerWidth = 250;
+          data.width          = settings.lineUpStyle === '1' ? 250 : 155;
+          break;
+        case 3:
+          data.containerWidth = 310;
+          data.width          = settings.lineUpStyle === '1' ? 310 : 193;
+          break;
+        case 4:
+          data.containerWidth = 310;
+          data.width          = settings.lineUpStyle === '1' ? 310 : 193;
+          break;
+        default:
+          data.containerWidth = 310;
+          data.width          = settings.lineUpStyle === '1' ? 310 : 193;
           break;
       }
 
