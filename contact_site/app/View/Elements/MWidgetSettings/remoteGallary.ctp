@@ -33,7 +33,7 @@ for(var i = 0; imageList.length > i; i++) {
   imageList[i].addEventListener("click", clickEvnt);
 }
 </script>
-<ul id="gallaryImage">
+<ul id="gallaryImage" class="widget_setting">
   <li class="<?=$imagePrefix?>" data-name="<?=$imagePrefix?>01.jpg" data-galleryType="<?=$iconType?>">
     <img src="<?=$imagePath?>01.jpg" alt="オペレータ１">
   </li>

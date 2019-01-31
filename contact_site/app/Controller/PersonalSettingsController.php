@@ -94,7 +94,7 @@ class PersonalSettingsController extends AppController {
           // バリデーションチェックが成功した場合
           // 保存処理
           if ( $this->MUser->save($tmpData, false) ) {
-            $pattern = "files/".$this->userInfo['MCompany']['company_key']."_".$this->userInfo['id']."_"."[0-9]*.*";
+            $pattern = "files/".$this->userInfo['MCompany']['company_key']."_user".$this->userInfo['id']."_"."[0-9]*.*";
             foreach (glob($pattern) as $file) {
               if ( !empty($uploadImage) && strcmp("files/".$filename, $file) !== 0 ) {
                 unlink($file);
@@ -153,7 +153,7 @@ class PersonalSettingsController extends AppController {
 
     if ( !empty($uploadImage) ) {
       $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
-      $filename = $this->userInfo['MCompany']['company_key'].'_'.$this->userInfo['id'].'_'.date('YmdHis').'.'.$extension;
+      $filename = $this->userInfo['MCompany']['company_key'].'_user'.$this->userInfo['id'].'_'.date('YmdHis').'.'.$extension;
       $tmpFile = $uploadImage['tmp_name'];
       // ファイルの保存先フルパス＋ファイル名
       $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
