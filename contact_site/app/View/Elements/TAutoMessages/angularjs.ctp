@@ -195,14 +195,77 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       $scope.action = sendMessage.value;
       // シミュレーター上のメッセージ表示更新
       $scope.createMessage();
-    }
+    };
 
-    angular.element(window).on('load', function(e) {
+    $scope.createBalloonWithChatbotIcon = function (){
+      if ($scope.isIconImage( $scope.widget.chatbotIconPath ) ){
+        //フォントアイコンだった場合
+        $scope.createIconWithFontIcon();
+      } else {
+        //画像だった場合
+        $scope.createIconWithPicture();
+      }
 
-      // 吹き出しの要素をクローンして、メッセージのシミュレーションを行えるように固有のIDを設定する
+    };
+
+    $scope.isMainColorWhite = function() {
+      return $scope.widget.settings['main_color'] === "#FFFFFF"
+    };
+
+    $scope.createIconWithFontIcon = function() {
+      var iconDiv = document.createElement("div");
+      $(iconDiv).addClass("iconDiv");
+      var iconElm = document.createElement("i");
+      iconElm.classList.add("sinclo-fal");
+      var classNameArray = $scope.widget.chatbotIconPath.split(" ");
+      for( var i = 0; i < classNameArray.length; i++ ){
+        iconElm.classList.add(classNameArray[i]);
+      }
+      iconElm.classList.add("chatbot_icon_elm");
+      if ( $scope.isMainColorWhite() ) {
+        iconElm.classList.add("icon_border");
+      }
+      iconDiv.appendChild(iconElm);
+      $(".grid_balloon").last().get(0).appendChild(iconDiv);
+    };
+
+    $scope.createIconWithPicture = function() {
+      var iconDiv = document.createElement("div");
+      $(iconDiv).addClass("iconDiv");
+      var iconElm = document.createElement("img");
+      iconElm.src = $scope.widget.chatbotIconPath;
+      iconDiv.appendChild(iconElm);
+      $(".grid_balloon").last().get(0).appendChild(iconDiv);
+    };
+
+    $scope.isIconImage = function ( target ){
+      return target.match(/^fa/) !== null;
+    };
+
+    $scope.onLoadBalloonCreator = function () {
+      var gridElm = document.createElement("div");
+      $(gridElm).addClass("grid_balloon");
+      document.getElementById('chatTalk').appendChild(gridElm);
+
+
       var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
       divElm.id = 'sample_widget_re_message';
-      document.getElementById('chatTalk').appendChild(divElm);
+      console.log($scope.widget.showWidgetType);
+      if ( Number( $scope.widget.chatbotIconToggle ) === 1 && Number($scope.widget.showWidgetType) !== 2) {
+        //ボットのアイコンを設定している場合
+        divElm.classList.add("with_icon");
+        $scope.createBalloonWithChatbotIcon();
+      } else {
+        divElm.classList.add("no_icon");
+      }
+      $(".grid_balloon").last().get(0).appendChild(divElm);
+    };
+
+    angular.element(window).on('load', function(e) {
+      $scope.onLoadBalloonCreator();
+      // 吹き出しの要素をクローンして、メッセージのシミュレーションを行えるように固有のIDを設定する
+      // チャットボットアイコンが設定されている場合はappendChildするものが異なる
+
       $scope.createMessage();
 
       // メッセージ入力に応じて、シミュレーション上の吹き出しを表示更新する
@@ -212,12 +275,11 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
 
       // ウィジェットのタブ切替時、シミュレーション上の吹き出しを表示更新する
       $scope.$on('switchWidget', function(event, type) {
-        var divElm = document.getElementById('sample_widget_re_message');
-        if (!divElm) {
-          var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
-          divElm.id = 'sample_widget_re_message';
-          document.getElementById('chatTalk').appendChild(divElm);
+        var divElm = $(".grid_balloon").length;
+        if (divElm === 0) {
+          $scope.onLoadBalloonCreator();
         }
+
         $scope.createMessage();
       });
 
@@ -272,9 +334,11 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       // プレビューの吹き出し表示制御
       if(typeof content !== 'undefined' && content.length > 1) {
         document.getElementById('sample_widget_re_message').style.display = "";
+        $(".grid_balloon").last().get(0).style.display = "";
         messageElement.innerHTML = content;
       } else {
         document.getElementById('sample_widget_re_message').style.display = "none";
+        $(".grid_balloon").last().get(0).style.display = "none";
       }
     }
 }]);

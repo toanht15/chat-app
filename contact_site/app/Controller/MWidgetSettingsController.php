@@ -12,7 +12,7 @@ class MWidgetSettingsController extends AppController {
     'common' => [
       'display_style_type', 'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
-      'show_main_image', 'main_image', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext',
+      'show_main_image', 'main_image', 'show_chatbot_icon' ,'chatbot_icon_type' ,'chatbot_icon' ,'show_operator_icon', 'operator_icon_type','operator_icon', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext','widget_custom_height','widget_custom_width',
       /* カラー設定start */
       'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
       'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
@@ -198,9 +198,6 @@ class MWidgetSettingsController extends AppController {
       }
       $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
     }
-    $titleLength = 12;
-    $subTitleLength = 15;
-    $descriptionLength = 15;
     switch ($inputData['MWidgetSetting']['widget_size_type']) {
       //大きさによってトップタイトル、企業名、説明文のmaxlengthを可変とする
       case '1': //小
@@ -219,10 +216,11 @@ class MWidgetSettingsController extends AppController {
         $subTitleLength = 24;
         $descriptionLength = 24;
         break;
+      default:
+        $titleLength = 19;
+        $subTitleLength = 24;
+        $descriptionLength = 24;
     }
-    $maxFontSize = 20;
-    $maxHeaderFontSize = 20;
-    $maxSendBtnFontSize = 26;
     switch ($inputData['MWidgetSetting']['widget_size_type']) {
       //大きさにより各種フォントサイズのmaxを可変とする(最大のみ別設定)
       case '1': //小
@@ -245,6 +243,10 @@ class MWidgetSettingsController extends AppController {
         $maxHeaderFontSize = 42;
         $maxSendBtnFontSize = 36;
         break;
+      default:
+        $maxFontSize = 64;
+        $maxHeaderFontSize = 42;
+        $maxSendBtnFontSize = 36;
     }
 
     $this->set('max_fontsize', $maxFontSize);
@@ -271,6 +273,7 @@ class MWidgetSettingsController extends AppController {
       ];
     }
 
+    $this->set('iconType', $this->request->data['iconType']);
     $this->set('cssStyle', $cssStyle);
     $this->_viewElement();
 
@@ -344,8 +347,44 @@ class MWidgetSettingsController extends AppController {
       $this->request->data['MWidgetSetting']['main_image'] = "";
     }
 
+    $uploadBotIcon = $inputData['MWidgetSetting']['uploadBotIcon'];
+
+    $prevBotIconFileInfo = mb_split("/", $inputData['MWidgetSetting']['chatbot_icon']);
+    if ( is_numeric($inputData['MWidgetSetting']['show_chatbot_icon']) === 1 && count($prevFileInfo) > 0 ) {
+      $botIconFilename = $prevBotIconFileInfo[count($prevBotIconFileInfo) - 1];
+    }
+
+    if ( !(isset($uploadBotIcon['tmp_name']) && is_uploaded_file($uploadBotIcon['tmp_name'])) ) {
+      $inputData['MWidgetSetting']['uploadBotIcon'] = [];
+      $uploadBotIcon = null;
+    }
+    else {
+      $this->request->data['MWidgetSetting']['chatbot_icon'] = "";
+    }
+
+    $uploadOpIcon = $inputData['MWidgetSetting']['uploadOpIcon'];
+
+    $prevOpIconFileInfo = mb_split("/", $inputData['MWidgetSetting']['operator_icon']);
+    if ( is_numeric($inputData['MWidgetSetting']['show_operator_icon']) === 1 && count($prevOpIconFileInfo) > 0 ) {
+      $opIconFilename = $prevOpIconFileInfo[count($prevOpIconFileInfo) - 1];
+    }
+
+    if ( !(isset($uploadOpIcon['tmp_name']) && is_uploaded_file($uploadOpIcon['tmp_name'])) ) {
+      $inputData['MWidgetSetting']['uploadOpIcon'] = [];
+      $uploadOpIcon = null;
+    }
+    else {
+      $this->request->data['MWidgetSetting']['operator_icon'] = "";
+    }
+
+
     //仕様変更常に高度な設定の設定値が反映されるようにする
     $inputData['MWidgetSetting']['color_setting_type'] = "1";
+
+    if($inputData['MWidgetSetting']['widget_size_type'] !== '5') {
+      unset($inputData['MWidgetSetting']['widget_custom_width']);
+      unset($inputData['MWidgetSetting']['widget_custom_height']);
+    }
 
     //ウィジットサイズが中もしくは大の場合バリデーションの上限をトップタイトル、企業名、説明文のみ可変とする
     if($inputData['MWidgetSetting']['widget_size_type'] !== '1'){
@@ -364,6 +403,7 @@ class MWidgetSettingsController extends AppController {
           break;
         case '3': //大
         case '4': //最大
+        case '5': //カスタム
           $titleLength = 19;
           $subTitleLength = 24;
           $descriptionLength = 24;
@@ -389,37 +429,19 @@ class MWidgetSettingsController extends AppController {
 
     if ( $this->MWidgetSetting->validates() ) {
       if ( !empty($uploadImage) ) {
-        $extension = pathinfo($uploadImage['name'], PATHINFO_EXTENSION);
-        $filename = $this->userInfo['MCompany']['company_key'] . '_' . date('YmdHis') . '.' . $extension;
-        $tmpFile = $uploadImage['tmp_name'];
-        // ファイルの保存先フルパス＋ファイル名
-        $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
-        if (!empty($inputData['Trimming']['info'])) {
-          $trimmingInfo = json_decode($inputData['Trimming']['info'], TRUE);
-          $component = new ImageTrimmingComponent();
-          $component->setFileData($uploadImage);
-          $component->setSavePath($saveFile);
-          $component->setX($trimmingInfo['x']);
-          $component->setY($trimmingInfo['y']);
-          $component->setWidth($trimmingInfo['width']);
-          $component->setHeight($trimmingInfo['height']);
-          $component->save();
-        } else {
-          $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
-          $width = ImageSx($in); // 画像の幅を取得
-          $height = ImageSy($in); // 画像の高さを取得
-          $save_width = 248; // 幅の最低サイズ
-          $save_height = 280; // 高さの最低サイズ
-          $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
-          $out = ImageCreateTrueColor($save_width , $save_height);
-          //ブレンドモードを無効にする
-          imagealphablending($out, false);
-          //完全なアルファチャネル情報を保存するフラグをonにする
-          imagesavealpha($out, true);
-          ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
-          $this->imageOut($extension, $out, $saveFile);
-        }
-        $inputData['MWidgetSetting']['main_custom_image'] = $filename;
+        $imageConjunction = "_";
+        $filename = $this->_startTrimming( $uploadImage, "info", $imageConjunction, $inputData );
+        $inputData['MWidgetSetting']["main_custom_image"] = $filename;
+      }
+      if ( !empty($uploadBotIcon) ) {
+        $botIconConjunction = "_botIcon";
+        $botIconFilename = $this->_startTrimming( $uploadBotIcon, "botIconInfo", $botIconConjunction, $inputData );
+        $inputData['MWidgetSetting']["bot_custom_icon"] = $botIconFilename;
+      }
+      if ( !empty($uploadOpIcon) ) {
+        $opIconConjunction = "_opIcon";
+        $opIconFilename = $this->_startTrimming( $uploadOpIcon, "opIconInfo", $opIconConjunction, $inputData );
+        $inputData['MWidgetSetting']["op_custom_icon"] = $opIconFilename;
       }
       // ウィジェットのスタイル設定周りをJSON化
       $widgetStyle = $this->_settingToJson($inputData['MWidgetSetting']);
@@ -434,10 +456,22 @@ class MWidgetSettingsController extends AppController {
       // 保存処理
       if ( $this->MWidgetSetting->save($saveData, false) ) {
         $this->MWidgetSetting->commit();
-        $pattern = "files/".$this->userInfo['MCompany']['company_key']."_[0-9]*.*";
+        $pattern = "files/".$this->userInfo['MCompany']['company_key']."_"."[0-9]*.*";
+        $botIconPattern = "files/".$this->userInfo['MCompany']['company_key']."_botIcon"."[0-9]*.*";
+        $opIconPattern = "files/".$this->userInfo['MCompany']['company_key']."_opIcon"."[0-9]*.*";
 
         foreach (glob($pattern) as $file) {
           if ( !empty($uploadImage) && strcmp("files/".$filename, $file) !== 0 ) {
+            unlink($file);
+          }
+        }
+        foreach (glob($botIconPattern) as $file) {
+          if ( !empty($uploadBotIcon) && strcmp("files/".$botIconFilename, $file) !== 0 ) {
+            unlink($file);
+          }
+        }
+        foreach (glob($opIconPattern) as $file) {
+          if ( !empty($uploadOpIcon) && strcmp("files/".$opIconFilename, $file) !== 0 ) {
             unlink($file);
           }
         }
@@ -458,6 +492,47 @@ class MWidgetSettingsController extends AppController {
       $errors = $this->MWidgetSetting->validationErrors;
     }
     return $errors;
+  }
+
+  private function _startTrimming( $targetImg, $trimmingKey, $conjunction, $inputData) {
+    $extension = pathinfo($targetImg['name'], PATHINFO_EXTENSION);
+    $filename = $this->userInfo['MCompany']['company_key'] . $conjunction . date('YmdHis') . '.' . $extension;
+    $saveFile = C_PATH_WIDGET_IMG_DIR . DS . $filename;
+    if (!empty($inputData['Trimming'][$trimmingKey])) {
+      $trimmingInfo = json_decode($inputData['Trimming'][$trimmingKey], TRUE);
+      $this->_useTrimmingInfo( $targetImg, $saveFile, $trimmingInfo);
+    } else {
+      $this->_notUseTrimmingInfo( $targetImg, $saveFile, $extension);
+    }
+    return $filename;
+  }
+
+  private function _useTrimmingInfo( $targetImg, $saveFile, $trimmingInfo ) {
+    $component = new ImageTrimmingComponent();
+    $component->setFileData($targetImg);
+    $component->setSavePath($saveFile);
+    $component->setX($trimmingInfo['x']);
+    $component->setY($trimmingInfo['y']);
+    $component->setWidth($trimmingInfo['width']);
+    $component->setHeight($trimmingInfo['height']);
+    $component->save();
+  }
+
+  private function _notUseTrimmingInfo( $targetImg, $saveFile, $extension ) {
+    $tmpFile = $targetImg['tmp_name'];
+    $in = $this->imageCreate($extension, $tmpFile); // 元画像ファイル読み込み
+    $width = ImageSx($in); // 画像の幅を取得
+    $height = ImageSy($in); // 画像の高さを取得
+    $save_width = C_TRIMMING_MIN_WIDTH; // 幅の最低サイズ
+    $save_height = C_TRIMMING_MIN_HEIGHT; // 高さの最低サイズ
+    $image_type = exif_imagetype($tmpFile); // 画像タイプ判定用
+    $out = ImageCreateTrueColor($save_width , $save_height);
+    //ブレンドモードを無効にする
+    imagealphablending($out, false);
+    //完全なアルファチャネル情報を保存するフラグをonにする
+    imagesavealpha($out, true);
+    ImageCopyResampled($out, $in,0,0,0,0, $save_width, $save_height, $width, $height);
+    $this->imageOut($extension, $out, $saveFile);
   }
 
   /**
@@ -482,6 +557,32 @@ class MWidgetSettingsController extends AppController {
       $settings['mainImage'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['main_custom_image'];
       }
     }
+    if ( isset($settings['showChatbotIcon']) && strcmp($settings['showChatbotIcon'], "2") === 0 ) {
+      $settings['chatbotIcon'] = "";
+    }
+    else if( !empty($settings['chatbotIcon']) ) {
+      if ( isset($objData['bot_custom_icon']) ) {
+        $settings['chatbotIcon'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['bot_custom_icon'];
+      }
+      else if( !empty($settings['mainImage'] ) && strcmp($settings['chatBotIconType'], "1") === 0 ) {
+        $settings['chatbotIcon'] = $settings['mainImage'];
+      }
+    }
+    if ( isset($settings['showOperatorIcon']) && strcmp($settings['showOperatorIcon'], "2") === 0 ) {
+      $settings['operatorIcon'] = "";
+    }
+    else if( !empty($settings['operatorIcon']) ) {
+      if ( isset($objData['op_custom_icon']) ) {
+        $settings['operatorIcon'] = C_PATH_WIDGET_CUSTOM_IMG.'/'.$objData['op_custom_icon'];
+      }
+      else if( !empty($settings['mainImage'] ) && strcmp($settings['operatorIconType'], "1") === 0 ) {
+        $settings['operatorIcon'] = $settings['mainImage'];
+      }
+      else if( strcmp($settings['showOperatorIcon'], "1") === 0 && strcmp($settings['operatorIconType'], "3") === 0 ){
+        $settings['operatorIcon'] = "";
+      }
+    }
+
 
     return $this->jsonEncode($settings);
   }
@@ -673,6 +774,38 @@ class MWidgetSettingsController extends AppController {
             //ウィジットサイズタイプ
             if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
               $d['widget_size_type'] = C_WIDGET_SIZE_TYPE_SMALL; // デフォルト値
+            }
+            //カスタム時横幅
+            if ( strcmp($v, 'widget_custom_width') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              // デフォルト値はウィジェットサイズによって違う
+              switch($d['widget_size_type']) {
+                case C_WIDGET_SIZE_TYPE_SMALL:
+                  $d['widget_custom_width'] = 285;
+                  break;
+                case C_WIDGET_SIZE_TYPE_MEDIUM:
+                  $d['widget_custom_width'] = 344;
+                  break;
+                case C_WIDGET_SIZE_TYPE_LARGE:
+                case C_WIDGET_SIZE_TYPE_MAXIMUM:
+                  $d['widget_custom_width'] = 400;
+                  break;
+              }
+            }
+            //カスタム時高さ
+            if ( strcmp($v, 'widget_custom_height') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              // デフォルト値はウィジェットサイズによって違う
+              switch($d['widget_size_type']) {
+                case C_WIDGET_SIZE_TYPE_SMALL:
+                  $d['widget_custom_height'] = 194;
+                  break;
+                case C_WIDGET_SIZE_TYPE_MEDIUM:
+                  $d['widget_custom_height'] = 284;
+                  break;
+                case C_WIDGET_SIZE_TYPE_LARGE:
+                case C_WIDGET_SIZE_TYPE_MAXIMUM:
+                  $d['widget_custom_height'] = 374;
+                  break;
+              }
             }
             //最小化時のデザインタイプ
             if ( strcmp($v, 'minimize_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
@@ -993,6 +1126,26 @@ class MWidgetSettingsController extends AppController {
 //               $d['widget_inside_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
 //             }
             /* カラー設定end */
+
+            //無人対応アイコン設定
+            if ( strcmp($v, 'show_chatbot_icon') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_chatbot_icon'] = C_CHATBOT_ICON_SETTING_OFF;
+            }
+
+            //無人対応アイコンタイプ
+            if ( strcmp($v, 'chatbot_icon_type') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['chatbot_icon_type'] = ICON_USE_MAIN_IMAGE;
+            }
+
+            //有人対応アイコン設定
+            if ( strcmp($v, 'show_operator_icon') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['show_operator_icon'] = C_OPERATOR_ICON_SETTING_OFF;
+            }
+
+            //有人対応アイコンタイプ
+            if ( strcmp($v, 'operator_icon_type') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+              $d['operator_icon_type'] = ICON_USE_MAIN_IMAGE;
+            }
 
             //行：ラジオボタン間マージン
             if ( strcmp($v, 'line_button_margin') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {

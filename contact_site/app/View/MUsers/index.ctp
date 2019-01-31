@@ -73,18 +73,33 @@
         </th>
 <!-- UI/UX統合対応end -->
         <th width=" 5%">No</th>
-        <th width=" 15%">氏名</th>
+        <?php if($coreSettings[C_COMPANY_USE_ICON_SETTINGS]): ?>
+        <th width=" 5%">アイコン</th>
+        <?php endif; ?>
         <th width=" 20%">表示名</th>
         <th width=" 10%">権限</th>
-        <th>メールアドレス</th>
+        <th width=" 20%">メールアドレス</th>
+        <th>メモ</th>
 <!--
         <th>操作</th>
  -->
       </tr>
       </thead>
       <tbody>
+      <?php
+      $mUserIconBorder = "";
+        if( $iconMainColor === "#FFFFFF") {
+          $mUserIconBorder = "border: 1px solid ".$iconFontColor.";";
+        }
+      ?>
       <?php foreach((array)$userList as $key => $val): ?>
         <?php
+        $userSetting = json_decode($val['MUser']['settings'], true);
+        if(isset( $userSetting['profileIcon'] )) {
+          $operatorIcon = $userSetting['profileIcon'];
+        } else {
+          $operatorIcon = "";
+        }
         $params = $this->Paginator->params();
         $prevCnt = ($params['page'] - 1) * $params['limit'];
         $no = $prevCnt + h($key+1);
@@ -97,10 +112,19 @@
           </td>
 <!-- UI/UX統合対応end -->
           <td class="tCenter"><?=$no?></td>
-          <td class="tCenter"><?=$val['MUser']['user_name']?></td>
+          <?php if($coreSettings[C_COMPANY_USE_ICON_SETTINGS]): ?>
+          <td class="tCenter" style="display: flex; align-items:center; justify-content: center;">
+            <?php if( empty($operatorIcon) ){ ?>
+              <i class="fa-user fal" style="width: 45px; height: 45px; display: flex; justify-content: center; align-items: center;background-color: <?=$iconMainColor ?>; <?=$mUserIconBorder?> border-radius: 50%; color: <?=$iconFontColor?>; font-size: 30px;" ></i>
+            <?php } else { ?>
+              <img id="userProfileIcon"  src="<?= $operatorIcon?>" >
+            <?php } ?>
+          </td>
+          <?php endif; ?>
           <td class="tCenter"><?=$val['MUser']['display_name']?></td>
           <td class="tCenter"><?=$authorityList[$val['MUser']['permission_level']]?></td>
           <td class="tCenter"><?=$val['MUser']['mail_address']?></td>
+          <td class="tCenter"><?=$val['MUser']['memo']?></td>
 <!--
           <td class="tCenter ctrlBtnArea">
             <?php

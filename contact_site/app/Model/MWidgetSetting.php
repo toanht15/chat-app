@@ -21,6 +21,8 @@ class MWidgetSetting extends AppModel {
       'show_access_id' => "showAccessId",
       //ウィジットサイズ対応
       'widget_size_type' => "widgetSizeType",
+      'widget_custom_width' => 'widgetCustomWidth',
+      'widget_custom_height' => 'widgetCustomHeight',
       //ウィジットサイズ対応
       'title' => "title",
       'show_subtitle' => "showSubtitle",
@@ -31,7 +33,7 @@ class MWidgetSetting extends AppModel {
       'widget_title_name_type' => "widget_title_name_type",
       'widget_title_explain_type' => "widget_title_explain_type",
 
-      /* カラー設定styat */
+      /* カラー設定start */
       //0.通常設定・高度設定
       'color_setting_type' => "colorSettingType",
       //1.メインカラー
@@ -96,6 +98,15 @@ class MWidgetSetting extends AppModel {
 
       'show_main_image' => "showMainImage",
       'main_image' => "mainImage",
+
+      'show_chatbot_icon' => "showChatbotIcon",
+      'chatbot_icon_type' => "chatBotIconType",
+      'chatbot_icon' => "chatbotIcon",
+
+      'show_operator_icon' => "showOperatorIcon",
+      "operator_icon_type" => "operatorIconType",
+      'operator_icon' => "operatorIcon",
+
       'radius_ratio' => "radiusRatio",
       //背景の影
       'box_shadow' => "boxShadow",
@@ -251,7 +262,7 @@ class MWidgetSetting extends AppModel {
             ],
         ],
         'uploadImage' => [
-            // ルール：extension => pathinfoを使用して拡張子を検証
+            // ルール：extension => pathInfoを使用して拡張子を検証
             'extension' => [
                 'rule' => [ 'extension', [ 'jpg', 'jpeg', 'png'] ],
                 'allowEmpty' => true,
@@ -268,6 +279,20 @@ class MWidgetSetting extends AppModel {
                     'allowEmpty' => true,
                     'message' => ['無効なファイルです']
                 ],
+            ],
+        ],
+        'widget_custom_width' => [
+            'minWidth' => [
+                'rule' => ['range', 284, 9999],
+                'message' => '横幅は285px以上で指定して下さい',
+                'allowEmpty' => true
+            ],
+        ],
+        'widget_custom_height' => [
+            'maxHeight' => [
+                'rule' => ['range', 193, 9999],
+                'message' => '高さは194px以上で指定して下さい',
+                'allowEmpty' => true
             ],
         ],
         'radius_ratio' => [
