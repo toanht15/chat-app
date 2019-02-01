@@ -35,16 +35,15 @@
           </div>
           <div class='area-name'><input type="text" ng-model="hearingItem.variableName"></div>
           <div class='area-type'>
-            <select ng-if="hearingItem.uiType !== '7'" name="hearing-input-option" ng-model="hearingItem.uiType"
+            <select name="hearing-input-option" ng-model="hearingItem.uiType"
                     ng-change="main.handleChangeUitype(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
               <option value="1">テキスト（１行）</option>
               <option value="2">テキスト（複数行）</option>
               <option value="3">ラジオボタン</option>
               <option value="4">プルダウン</option>
               <option value="5">カレンダー</option>
+              <option value="7">ボタン</option>
             </select>
-            <input ng-if="hearingItem.uiType == '7'" type="hidden" name="hearing-input-option"
-                   ng-model="hearingItem.uiType" ng-init="hearingItem.uiType='7'" value="7"/>
           </div>
           <div class='area-message'>
             <resize-textarea maxlength="4000" ng-model="hearingItem.message" rows="1"
