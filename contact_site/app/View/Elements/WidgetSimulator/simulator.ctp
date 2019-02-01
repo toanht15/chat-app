@@ -437,7 +437,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         }
         #sincloBox .slick-prev.slick-disabled:before,
         #sincloBox .slick-next.slick-disabled:before {
-          opacity: 0.25;
+          opacity: 0.25 !important;
         }
         #sincloBox .slick-prev:before,
         #sincloBox .slick-next:before {

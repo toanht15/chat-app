@@ -344,7 +344,7 @@
         target.settings.customDesign.sundayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
-        target.settings.customDesign.titleColor = $scope.widget.settings.description_text_color;
+        target.settings.customDesign.titleColor = '#333333';
         target.settings.customDesign.subTitleColor = '#333333';
         target.settings.customDesign.arrowColor = $scope.widget.settings.main_color;
         target.settings.customDesign.outBorderColor = '#E8E7E0';
@@ -464,7 +464,7 @@
         var target = $('#action' + actionIndex + '_carousel' + hearingIndex + '_' + customDesignIndex);
         switch (customDesignIndex) {
           case 'titleColor':
-            defaultColor = $scope.widget.settings.description_text_color;
+            defaultColor = '#333333';
             $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
             target.css('background-color', defaultColor);
             break;
@@ -785,16 +785,6 @@
                   nextIconClass = 'fa-chevron-circle-right';
                 }
                 var slidesToShow = hearing.settings.lineUpStyle === '1' ? 1 : 1.5;
-                carouselTarget.on('init', function(event, slick) {
-                  var maxHeight = 0;
-                  slick.$slides.each(function(slide) {
-                    var currentHeight = $(this).find('.caption').height();
-                    maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
-                  });
-                  slick.$slides.each(function(slide) {
-                    $(this).find('.caption').css('min-height', maxHeight + 'px');
-                  });
-                });
 
                 hearing.settings.slickSettings = {
                   dots: true,
@@ -816,15 +806,18 @@
                   hearing.settings.dataLoaded = true;
 
                   var maxHeight = 0;
-                  carouselTarget.find('.caption p').each(function() {
-                    var currentHeight = $(this).height();
+                  carouselTarget.find('.caption').each(function() {
+                    var currentHeight = $(this).find('.title').height() + $(this).find('p').height();
+                    // var currentHeight = $(this).height();
                     maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
                   });
                   console.log(maxHeight);
+                  maxHeight = maxHeight + 15; // 15 margin
                   carouselTarget.find('.caption').each(function() {
-                    var titleHeight = $(this).find('.title').height();
-                    var height = titleHeight + maxHeight + 8; // 8: subtitle margin bottom
-                    $(this).css('min-height', height + 'px');
+                    // var titleHeight = $(this).find('.title').height();
+                    // var height = titleHeight + maxHeight + 16; // 8: subtitle margin bottom
+                    $(this).css('min-height', maxHeight + 'px');
+                    $(this).css('height', maxHeight + 'px');
                   });
                 });
               }
@@ -1378,7 +1371,16 @@
         });
       };
 
-      this.getCarouselSize = function(lineUpStyle, widgetSizeType, aspectRatio){
+      this.getCarouselSize = function(settings, widgetSizeType) {
+        if (settings.carouselPattern === '2') {
+          return this.getOutsideArrowCarouselSize(settings, widgetSizeType)
+        } else {
+          return this.getInsideArrowCarouselSize(settings, widgetSizeType);
+        }
+      };
+
+      this.getOutsideArrowCarouselSize = function(settings, widgetSizeType) {
+        var aspectRatio = settings.aspectRatio;
         if (!aspectRatio) {
           aspectRatio = 1;
         }
@@ -1386,23 +1388,58 @@
         switch (Number(widgetSizeType)) {
           case 1:
             data.containerWidth = 170;
-            data.width = lineUpStyle === '1' ? 170 : 100;
+            data.width = settings.lineUpStyle === '1' ? 170 : 100;
             break;
           case 2:
             data.containerWidth = 220;
-            data.width = lineUpStyle === '1' ? 220 : 132;
+            data.width = settings.lineUpStyle === '1' ? 220 : 132;
             break;
           case 3:
             data.containerWidth = 280;
-            data.width = lineUpStyle === '1' ? 280 : 175;
+            data.width = settings.lineUpStyle === '1' ? 280 : 175;
             break;
           case 4:
             data.containerWidth = 280;
-            data.width = lineUpStyle === '1' ? 280 : 175;
+            data.width = settings.lineUpStyle === '1' ? 280 : 175;
             break;
           default:
             data.containerWidth = 280;
-            data.width = lineUpStyle === '1' ? 280 : 175;
+            data.width = settings.lineUpStyle === '1' ? 280 : 175;
+            break;
+        }
+
+        data.height = data.width / aspectRatio;
+
+        return data;
+      };
+
+
+      this.getInsideArrowCarouselSize = function(settings, widgetSizeType){
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
+        switch (Number(widgetSizeType)) {
+          case 1:
+            data.containerWidth = 210;
+            data.width = settings.lineUpStyle === '1' ? 210 : 132;
+            break;
+          case 2:
+            data.containerWidth = 260;
+            data.width = settings.lineUpStyle === '1' ? 260 : 162;
+            break;
+          case 3:
+            data.containerWidth = 320;
+            data.width = settings.lineUpStyle === '1' ? 320 : 200;
+            break;
+          case 4:
+            data.containerWidth = 320;
+            data.width = settings.lineUpStyle === '1' ? 320 : 200;
+            break;
+          default:
+            data.containerWidth = 320;
+            data.width = settings.lineUpStyle === '1' ? 320 : 200;
             break;
         }
 
@@ -2252,6 +2289,7 @@
             url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
             success: function(html){
               modalOpen.call(window, html, 'p-widget-carousel-trimming', 'トリミング', 'moment');
+              $('.cropper-example-1').after('<p style="margin-bottom: 0;">※ マウスホイールで画像を拡大、縮小することができます。</p>');
               callback();
             }
           });
