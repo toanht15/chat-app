@@ -85,7 +85,7 @@
 <ul ng-if="itemType == '<?=C_AUTO_TRIGGER_SEARCH_KEY?>'" class="setSearchKeyword">
   <li>
     <span><label>キーワード</label></span>
-    <input type="text" ng-model="setItem.keyword" name="keyword" maxlength="20" required="">
+    <input type="text" ng-model="setItem.keyword" name="keyword" maxlength="300" required="">
   </li>
   <li>
     <?=$this->AutoMessage->radio('searchCond')?>

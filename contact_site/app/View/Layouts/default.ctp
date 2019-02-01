@@ -67,6 +67,7 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
     echo $this->Html->css("light.min");
     echo $this->Html->css("solid.min");
     echo $this->Html->css('fontawesome.min');
+    echo $this->Html->css("//cdnjs.cloudflare.com/ajax/libs/cropper/1.0.0/cropper.min.css");
   ?>
   <?php
     if ( strcmp($this->name, 'TAutoMessages') === 0 || strcmp($this->name, 'MOperatingHours') === 0) {
@@ -117,6 +118,8 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       //echo $this->Html->script("cropper.min.js");
       //cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js
       echo $this->Html->script("//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js");
+      echo $this->Html->script("//cdnjs.cloudflare.com/ajax/libs/cropper/1.0.0/cropper.min.js");
+    } else {
       echo $this->Html->script("//cdnjs.cloudflare.com/ajax/libs/cropper/1.0.0/cropper.min.js");
     }
     if ( strcmp($this->name, 'Histories') === 0 || strcmp($this->name, 'ChatHistories') === 0 || strcmp($this->name, 'TLeadLists') === 0) {
