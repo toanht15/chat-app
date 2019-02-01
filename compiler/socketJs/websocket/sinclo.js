@@ -3021,8 +3021,8 @@
           console.log('カルーセルが入力されました');
           console.log('☆★☆★☆★☆★☆★☆★☆');
           // 変更された要素が再入力の対象であれば再入力させる
-          if (sinclo.scenarioApi._hearing._needCancel(e.target)) {
-            sinclo.scenarioApi._hearing._handleCancel(e);
+          if (sinclo.scenarioApi._hearing._needCancel(e.target.closest('.carousel-container'))) {
+            sinclo.scenarioApi._hearing._handleCancel(e.target.closest('.carousel-container'));
             sinclo.scenarioApi.set(
                 sinclo.scenarioApi._lKey.sendCustomerMessageType, 44);
           }
@@ -3937,7 +3937,7 @@
         var carouselHtml = sinclo.chatApi.createCarouselHtml(settings,
             chatList.children.length, storedValue);
         div.style.textAlign = 'left';
-        cs += ' effect_left carousel_msg';
+        cs += 'hearing_msg effect_left carousel_msg';
         if (settings.balloonStyle === '1') {
           cs += ' sinclo_re';
         }
@@ -4292,10 +4292,10 @@
         });
         html+= '</div></div>';
 
-        if (storedValueIsFound) {
-          html += '<p class=\'sincloButtonWrap\' onclick=\'sinclo.chatApi.send("' +
-              storedValue + '")\'><span class=\'sincloButton\'>次へ</span></p>';
-        }
+        // if (storedValueIsFound) {
+        //   html += '<p class=\'sincloButtonWrap\' onclick=\'sinclo.chatApi.send("' +
+        //       storedValue + '")\'><span class=\'sincloButton\'>次へ</span></p>';
+        // }
 
         return html;
       },

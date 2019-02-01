@@ -3417,7 +3417,7 @@ var socket, // socket.io
           '        }\n' +
           '        #sincloBox ul#chatTalk li .slick-prev.slick-disabled:before,\n' +
           '        #sincloBox ul#chatTalk li .slick-next.slick-disabled:before {\n' +
-          '          opacity: 0.25;\n' +
+          '          opacity: 0.25 !important;\n' +
           '        }\n' +
           '        #sincloBox ul#chatTalk li .slick-prev:before,\n' +
           '        #sincloBox ul#chatTalk li .slick-next:before {\n' +
