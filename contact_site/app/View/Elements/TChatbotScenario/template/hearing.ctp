@@ -438,25 +438,30 @@
               <span class="questionBalloon"><icon class="questionBtn"
                                                   data-tooltip="ボタンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
             </label>
-            <div ng-if="hearingItem.uiType === '7'" class="button-design-custom-area">
+            <div ng-if="hearingItem.uiType === '7' && hearingItem.settings.isCustomDesign"
+                 class="button-design-custom-area">
                   <span class="button-custom-items">
                   <label style="width: 100px;">質問内容位置</label>
-                      <div class="radio-buttons">
-                  <input type="radio" id="action{{setActionId}}_button{{listId}}_messageAlign1"
-                         ng-model="hearingItem.settings.customDesign.messageAlign" value="1">
-                  <label class="radio-label text3"
-                         for="action{{setActionId}}_option{{listId}}_messageAlign1">左寄せ</label>
-
-                  <input type="radio" id="action{{setActionId}}_option{{listId}}_messageAlign2"
-                         ng-model="hearingItem.settings.customDesign.messageAlign" value="2">
-                  <label class="radio-label text4"
-                         for="action{{setActionId}}_option{{listId}}_messageAlign1">中央寄せ</label>
-
-                  <input type="radio" id="action{{setActionId}}_option{{listId}}_messageAlign3"
-                         ng-model="hearingItem.settings.customDesign.messageAlign" value="3">
-                  <label class="radio-label text3"
-                         for="action{{setActionId}}_option{{listId}}_messageAlign1">右寄せ</label>
-                          </div>
+                      <div class="radio-buttons" ng-init="hearingItem.settings.customDesign.messageAlign = 1">
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_messageAlign1">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_messageAlign1"
+                                 ng-model="hearingItem.settings.customDesign.messageAlign"
+                                 value="1">左寄せ</label>
+                        <label class="radio-label text4 pointer"
+                               for="action{{setActionId}}_button{{listId}}_messageAlign2">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_messageAlign2"
+                                 ng-model="hearingItem.settings.customDesign.messageAlign"
+                                 value="2">中央寄せ</label>
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_messageAlign3">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_messageAlign3"
+                                 ng-model="hearingItem.settings.customDesign.messageAlign"
+                                 value="3">右寄せ</label>
+                      </div>
                 </span>
               <span class="button-custom-items">
                   <label>ボタン背景色</label>
@@ -465,7 +470,7 @@
                          ng-model="hearingItem.settings.customDesign.buttonBackgroundColor"
                          ng-change="main.changeButtonColor(setActionId, listId, 'buttonBackgroundColor')">
                   <span class="greenBtn btn-shadow revert-button"
-                        ng-click="main.revertCalendarColor(setActionId, listId, 'buttonBackgroundColor')">標準に戻す</span>
+                        ng-click="main.revertButtonColor(setActionId, listId, 'buttonBackgroundColor')">標準に戻す</span>
                 </span>
               <span class="button-custom-items">
                   <label>ボタン文字色</label>
@@ -474,7 +479,7 @@
                          ng-model="hearingItem.settings.customDesign.buttonTextColor"
                          ng-change="main.changeButtonColor(setActionId, listId, 'buttonTextColor')">
                   <span class="greenBtn btn-shadow revert-button"
-                        ng-click="main.revertCalendarColor(setActionId, listId, 'buttonTextColor')">標準に戻す</span>
+                        ng-click="main.revertButtonColor(setActionId, listId, 'buttonTextColor')">標準に戻す</span>
                 </span>
               <span class="button-custom-items">
                   <label>ボタン選択色</label>
@@ -483,7 +488,7 @@
                          ng-model="hearingItem.settings.customDesign.buttonActiveColor"
                          ng-change="main.changeButtonColor(setActionId, listId, 'buttonActiveColor')">
                   <span class="greenBtn btn-shadow revert-button"
-                        ng-click="main.revertCalendarColor(setActionId, listId, 'buttonActiveColor')">標準に戻す</span>
+                        ng-click="main.revertButtonColor(setActionId, listId, 'buttonActiveColor')">標準に戻す</span>
                 </span>
               <span class="button-custom-items">
                 <label>ボタン枠線色</label>
@@ -491,12 +496,12 @@
                        id="action{{setActionId}}_button{{listId}}_buttonBorderColor"
                        ng-model="hearingItem.settings.customDesign.buttonBorderColor">
                 <span class="greenBtn btn-shadow revert-button"
-                      ng-click="main.revertCarouselDesign(setActionId, listId, 'buttonBorderColor')">標準に戻す</span>
+                      ng-click="main.revertButtonColor(setActionId, listId, 'buttonBorderColor')">標準に戻す</span>
               </span>
 
-              <label class="pointer" style="margin-left: 125px">
+              <label class="pointer" style="margin-left: 116px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
-                       ng-model="hearingItem.settings.outCarouselNoneBorder">枠線なしにする
+                       ng-model="hearingItem.settings.customDesign.outButtonNoneBorder" value="1">枠線なしにする
               </label>
             </div>
           </div>

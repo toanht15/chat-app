@@ -69,9 +69,9 @@
 
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap { display: flex; justify-content: center; align-items: center; margin-top: 10px; flex-flow: column nowrap; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide { flex-flow: row nowrap; }
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 12px; border: 0px solid #00aa00; color: #007aff; background-color: #FFF; }
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button:active { background-color: #E7E7E7; }
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button { display: flex; justify-content: center; align-items: center width: 100%; padding: 12px; border: 0px solid #FF0000; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 12px; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button.noneBorder { border-top-style: none!important; border-left-style: none!important; border-right-style: none!important; border-bottom-style: none!important; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button { display: flex; justify-content: center; align-items: center width: 100%; padding: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button:first-child { border-bottom-left-radius: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button:last-child { border-bottom-right-radius: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap:not(.sideBySide) .sinclo-button:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px };
@@ -142,8 +142,21 @@
         #action{{setActionId}}_calendar{{index}} .flatpickr-calendar span.flatpickr-weekday { color: {{hearings.weekdayTextColor}} !important;}
       </style>
       <style ng-if="hearings.uiType === '7'">
-        li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}} span.sinclo-button { border-top: 1px solid {{hearings.settings.customDesign.buttonBorderColor}}!important; color:{{hearings.settings.customDesign.buttonTextColor}}!important; background-color:{{hearings.settings.customDesign.buttonBackgroundColor}}!important; }
-        li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}} span.sinclo-button:active { background-color:{{hearings.settings.customDesign.buttonActiveColor}}!important; }
+        .tal { text-align: left; }
+        .tac { text-align: center; }
+        .tar { text-align: right; }
+        li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}} span.sinclo-button {
+          border-top: 1px solid {{hearings.settings.customDesign.buttonBorderColor}}!important;
+          color:{{hearings.settings.customDesign.buttonTextColor}}!important;
+          background-color:{{hearings.settings.customDesign.buttonBackgroundColor}}!important;
+        }
+        li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}}.sideBySide span.sinclo-button:first-child {
+          border-right: 1px solid {{hearings.settings.customDesign.buttonBorderColor}}!important;
+        }
+        li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}} span.sinclo-button:active
+        {
+          background-color:{{hearings.settings.customDesign.buttonActiveColor}}!important;
+        }
       </style>
       <div ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1 }">
         <div ng-if="hearings.message && widget.settings['show_chatbot_icon'] == 1" class="iconDiv" >
@@ -152,14 +165,22 @@
           </div>
           <i ng-if="chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" ng-class="{icon_border:isMainColorWhite()}" class="fal {{widget.settings['chatbot_icon']}}"></i>
         </div>
+        <!-- テキスト（複数） -->
         <li ng-show="hearings.message" ng-if="hearings.uiType === '1' || hearings.uiType === '2'" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}}</span></li>
         <li ng-if="hearings.uiType === '5'" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="details">{{hearings.message}} <div id="action{{setActionId}}_calendar{{index}}" style="margin-top: 7px; margin-bottom: 6px"></div></span></li>
+        <!-- プルダウン -->
         <li ng-show="hearings.message || hearings.settings.options[0]" ng-if="hearings.uiType === '4'" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')" style="padding-bottom: 0"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="sinclo-text-line">{{hearings.message}}</span><br><select id="action{{setActionId}}_selection{{index}}"><option class="action{{setActionId}}_selection{{index}}_option" value="">選択してください</option><option class="action{{setActionId}}_selection{{index}}_option" ng-repeat="item in hearings.settings.options track by $index" ng-if="item" value="{{item}}" ng-bind="item""></option></select>
         </li>
+
+        <!-- ラジオボタン -->
         <li ng-show="hearings.message || hearings.settings.options[0]" ng-if="hearings.uiType === '3'" class="sinclo_re chat_left details" ng-class="classNameChecker.checkMaster('notNone,boxType,balloonType,middleSize,largeSize,customSize')"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="sinclo-text-line" ng-bind="hearings.message"></span><div style="margin-top: -32px">
                 <span ng-repeat="(optionIndex, option) in hearings.settings.options track by $index" class="sinclo-radio" style="display: block" ng-if="option"><input name="action{{setActionId}}_index{{index}}" id="action{{setActionId}}_index{{index}}_option{{optionIndex}}" type="radio" value="{{option}}"><label for="action{{setActionId}}_index{{index}}_option{{optionIndex}}" ng-bind="option"></label></span></div></li>
-        <li ng-show="hearings.message || hearings.settings.options[0]" ng-if="hearings.uiType === '7'" class="sinclo_re chat_left details no-wrap all-round action{{setActionId}}_button{{index}}" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="sinclo-text-line" ng-bind="hearings.message"></span><div id="sinclo-button-wrap{{index}}" class="sinclo-button-wrap" ng-class="{sideBySide: hearings.settings.options.length == 2}">
-                <span ng-repeat="(optionIndex, option) in hearings.settings.options track by $index" class="sinclo-button" ng-if="option">{{option}}</span></div></li>
+
+        <!-- ボタン -->
+        <li ng-show="hearings.message || hearings.settings.options[0]" ng-if="hearings.uiType === '7'" class="sinclo_re chat_left details no-wrap all-round action{{setActionId}}_button{{index}}" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="sinclo-text-line" ng-class="{tal: hearings.settings.customDesign.messageAlign == '1', tac: hearings.settings.customDesign.messageAlign == '2', tar: hearings.settings.customDesign.messageAlign == '3'}" ng-bind="hearings.message"></span><div id="sinclo-button-wrap{{index}}" class="sinclo-button-wrap" ng-class="{sideBySide: hearings.settings.options.length == 2}">
+                <span ng-repeat="(optionIndex, option) in hearings.settings.options track by $index" class="sinclo-button" ng-class="{noneBorder: hearings.settings.customDesign.outButtonNoneBorder}" ng-if="option">{{option}}</span></div></li>
+
+      <!-- エラーメッセージ -->
       <br><li ng-show="hearings.errorMessage" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span id="action{{setActionId}}_error_message" class="details">{{hearings.errorMessage}}</span></li>
       </div>
     </div>

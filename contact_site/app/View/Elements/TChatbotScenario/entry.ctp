@@ -1,4 +1,4 @@
-<?php echo $this->element('TChatbotScenario/angularjs'); ?>
+f<?php echo $this->element('TChatbotScenario/angularjs'); ?>
 <?php echo $this->element('TChatbotScenario/localStorageService'); ?>
 <?php echo $this->element('WidgetSimulator/simulatorService'); ?>
 <script type="text/javascript">addTooltipEvent();</script>
