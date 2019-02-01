@@ -1545,7 +1545,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re.withButton { line-height: 0; }';
 
         /* ボタン */
-        html += '#sincloBox #chatTalk li.sinclo_re.no-wrap { display:block; padding: 10px 0 0 0!important; }';
+        html += '#sincloBox #chatTalk li.sinclo_re.no-wrap { padding: 10px 0 0 0!important; }';
         html += '#sincloBox #chatTalk li.sinclo_re.all-round { border-radius: 12px!important; }';
         html += '#sincloBox #chatTalk li.sinclo_re.no-wrap span.sinclo-text-line { padding: 0 15px!important; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons span.sincloHearingButton { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 12px; border: 0px solid #00aa00; color: #007aff; background-color: #FFF; }';
