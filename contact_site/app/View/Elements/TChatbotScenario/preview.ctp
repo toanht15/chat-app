@@ -71,7 +71,7 @@
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide { flex-flow: row nowrap; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 10px 15px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button.noneBorder { border-top-style: none!important; border-left-style: none!important; border-right-style: none!important; border-bottom-style: none!important; }
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button { width: 50%; display: flex; align-items: center; padding: 12px; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button { display: flex; align-items: center; padding: 12px; flex-basis: 0; flex-grow: 1; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button:first-child { border-bottom-left-radius: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button:last-child { border-bottom-right-radius: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap:not(.sideBySide) .sinclo-button:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px };

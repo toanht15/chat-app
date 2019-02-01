@@ -4029,9 +4029,13 @@
           }
         }
       },
-      createMessageHtml: function(message) {
+      createMessageHtml: function(message, align) {
         var content = '';
         var strings = message.split('\n');
+        var style = '';
+        if(align) {
+          style = 'style="display:block; text-align:"' + align + ';"';
+        }
         for (var i = 0; strings.length > i; i++) {
           var str = check.escape_html(strings[i]);
           str = str.replace(/(&lt;)/g, '<').
@@ -4043,7 +4047,7 @@
           if (str.match(/<(".*?"|'.*?'|[^'"])*?>/)) {
             content += '' + str + '\n';
           } else {
-            content += '<span class=\'sinclo-text-line\'>' +
+            content += '<span class=\'sinclo-text-line\' ' + style + '>' +
                 str.replace(/^[\n|\r\n|\r]$/g, '') + '</span>\n';
           }
         }

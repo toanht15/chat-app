@@ -441,7 +441,7 @@
                  class="button-design-custom-area">
                   <span class="button-custom-items">
                   <label style="width: 100px;">質問内容位置</label>
-                      <div class="radio-buttons" ng-init="hearingItem.settings.customDesign.messageAlign = 1">
+                      <div class="radio-buttons" ng-init="hearingItem.settings.customDesign.messageAlign = '1'">
                         <label class="radio-label text3 pointer"
                                for="action{{setActionId}}_button{{listId}}_messageAlign1">
                           <input type="radio"
