@@ -27,6 +27,10 @@ var popupEventOverlap = {
         closeNoPopupOverlap: function(){
           return popupEventOverlap.close();
         },
+        resize: function() {
+          var contHeight = $('#popup-content-overlap').height();
+          $('#popup-frame-overlap').css('top', 0).css('height', contHeight);
+        },
         initOverlap: function() {
             this.closePopup = '';
             if ( !this.moveType ) {
@@ -87,6 +91,16 @@ var popupEventOverlap = {
                 var entryBtn = _button("はい");
                 entryBtn.onclick = function () {
                   return popupEventOverlap.closePopup();
+                };
+                break;
+              case 'p-profile-icon-trimming':
+                var entryBtn = _button("トリミング");
+                entryBtn.onclick = function () {
+                  return popupEventOverlap.doTrimming();
+                };
+                var closeBtn = _button("キャンセル");
+                closeBtn.onclick = function () {
+                  return popupEventOverlap.closeNoPopupOverlap();
                 };
                 break;
             }
