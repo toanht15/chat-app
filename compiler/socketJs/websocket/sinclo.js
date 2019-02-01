@@ -1438,6 +1438,7 @@
               || Number(chat.messageType) === 27
               || Number(chat.messageType) === 41
               || Number(chat.messageType) === 42
+              || Number(chat.messageType) === 44
               || Number(chat.messageType) === 81
               || Number(chat.messageType) === 82) {
             if (check.isset(window.sincloInfo.widget.showAutomessageName) &&
@@ -1448,7 +1449,8 @@
             }
             if (Number(chat.messageType) === 22
                 || Number(chat.messageType) === 41
-                || Number(chat.messageType) === 42) {
+                || Number(chat.messageType) === 42
+                || Number(chat.messageType) === 44) {
               cn = 'hearing_msg ' + cn;
             } else {
               answerCount = 0;
@@ -1575,7 +1577,7 @@
                 chat.chatId)) {
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
             }
-          } else if (Number(chat.messageType) === 43) {
+          } else if (Number(chat.messageType) === 44) {
             var calendar = JSON.parse(chat.message);
             this.chatApi.addButton('hearing_msg sinclo_re', calendar.message,
                 calendar.settings);
@@ -4415,7 +4417,7 @@
         return style;
       },
       createButtonHtml: function(settings, index, storedValue) {
-        var style = sinclo.chatApi.createButtonStyle(settings);
+        var style = sinclo.chatApi.createButtonWrapStyle(settings);
         var name = 'sinclo-button' + index;
         var html = '';
         var storedValueIsFound = false;
@@ -4427,9 +4429,9 @@
         settings.options.forEach(function(option, index) {
           if (storedValue === option) {
             storedValueIsFound = true;
-            html += '<span class="sincloHearingButton selected">' + option + '</span>';
+            html += '<span class="sincloHearingButton selected" style="' + sinclo.chatApi.createButtonStyle(settings, index) + '">' + option + '</span>';
           } else {
-            html += '<span class="sincloHearingButton">' + option + '</span>';
+            html += '<span class="sincloHearingButton" style="' + sinclo.chatApi.createButtonStyle(settings, index) + '" onclick="sinclo.chatApi.send(\'' + option +'\');">' + option + '</span>';
           }
         });
         html += '</div>';
@@ -4441,8 +4443,33 @@
 
         return html;
       },
-      createButtonStyle: function(settings) {
-        var style = 'display: flex; justify-content: center; align-items: center; margin-top: 10px; ';
+      createButtonStyle: function(settings, index) {
+        var style = 'padding: 12px; color: ' + settings.customDesign.buttonTextColor + '; background-color: ' + settings.customDesign.buttonBackgroundColor +';';
+        if(!settings.customDesign.outButtonNoneBorder) {
+          style += 'border-top: 1px solid ' + settings.customDesign.buttonBorderColor + ';'
+        }
+        if (settings.options.length === 2) {
+          style += 'flex-flow: row nowrap; ';
+          if(settings.customDesign)
+          if(index === 0) {
+            style += 'border-bottom-left-radius: 12px; ';
+            if(!settings.customDesign.outButtonNoneBorder) {
+              style += 'border-right: 1px solid ' + settings.customDesign.buttonBorderColor + '!important;'
+            }
+          } else {
+            style += 'border-bottom-right-radius: 12px; ';
+          }
+        } else {
+          style += 'flex-flow: column nowrap; ';
+          if(index === settings.options.length - 1) {
+            style += 'border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; ';
+          }
+        }
+
+        return style;
+      },
+      createButtonWrapStyle: function(settings) {
+        var style = 'display: flex; margin-top: 10px; justify-content: center; align-items: center; width: 100%; ';
         if (settings.options.length === 2) {
           style += 'flex-flow: row nowrap; ';
         } else {
@@ -7887,6 +7914,7 @@
             params.categoryNum)) {
           sinclo.chatApi.addButton('sinclo_re', params.message,
               params.settings, params.storedValue);
+          self._handleChatTextArea(params.type);
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum),
               params.categoryNum);
           sinclo.chatApi.scDown();
