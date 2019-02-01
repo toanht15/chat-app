@@ -249,6 +249,7 @@ define('C_SCENARIO_UI_TYPE_MULTIPLE_ROW_TEXT', 2);
 define('C_SCENARIO_UI_TYPE_RADIO_BUTTON', 3);
 define('C_SCENARIO_UI_TYPE_PULLDOWN', 4);
 define('C_SCENARIO_UI_TYPE_CALENDAR', 5);
+define('C_SCENARIO_UI_TYPE_CAROUSEL', 6);
 
 define('C_SCENARIO_UI_TYPE_BUTTON', 7);
 
@@ -834,7 +835,6 @@ $config['chatbotScenarioActionList'] = [
           'isEnableAfterDate' => false,
           'enableAfterDate' => null,
           'isDisableAfterData' => false,
-          'enableAfterDate'=> null,
           'dayOfWeekSetting' => [
             0 => false, // sun
             1 => false, // mon
@@ -849,17 +849,42 @@ $config['chatbotScenarioActionList'] = [
           'language' => 1, // 1: japanese, 2: english
           'pulldownCustomDesign' => false,
           'calendarCustomDesign' => false,
+          'carouselCustomDesign' => false,
+          'balloonStyle' => '1', //1: 吹き出しあり、２：吹き出しなし
+          'lineUpStyle' => '1', //1: 1つずつ表示、２：並べて表示
+          'carouselPattern' => '2', // arrow position
+          'arrowType' => '4',
+          'titlePosition' => '1', // 1 : left, 2: center , 3: right
+          'subTitlePosition' => '1', // 1 : left, 2: center , 3: right
+          'outCarouselNoneBorder' => false,
+          'inCarouselNoneBorder' => false,
+          'aspectRatio' => null,
           'customDesign' => [
-            'borderColor' => '',
-            'backgroundColor' => '#FFFFFF',
-            'textColor' => '',
-            'headerBackgroundColor' => '',
-            'headerTextColor' => '#FFFFFF',
+            'borderColor'                  => '',
+            'backgroundColor'              => '#FFFFFF',
+            'textColor'                    => '',
+            'headerBackgroundColor'        => '',
+            'headerTextColor'              => '#FFFFFF',
             'headerWeekdayBackgroundColor' => '',
-            'calendarBackgroundColor' => '#FFFFFF',
-            'calendarTextColor' => '',
-            'saturdayColor' => '',
-            'sundayColor' => '',
+            'calendarBackgroundColor'      => '#FFFFFF',
+            'calendarTextColor'            => '',
+            'saturdayColor'                => '',
+            'sundayColor'                  => '',
+            'titleColor'                   => '#333333',
+            'subTitleColor'                => '#333333',
+            'arrowColor'                   => '',
+            'titleFontSize'                => '15',
+            'subTitleFontSize'             => '14',
+            'outBorderColor'               => '#E8E7E0',
+            'inBorderColor'               => '#E8E7E0',
+          ],
+          'images' => [
+            [
+              'title' => '',
+              'subTitle' => '',
+              'answer' => '',
+              'url' => '',
+            ]
           ]
         ]
       ]

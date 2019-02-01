@@ -72,6 +72,10 @@
         $scope.addCalendar(message, settings, design, prefix);
       });
 
+      $scope.$on('addReCarousel', function(event, data) {
+        $scope.addCarousel(data);
+      });
+
       $scope.$on('disableHearingInputFlg', function(event) {
         $scope.isHearingInput = false;
       });
@@ -565,6 +569,83 @@
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
         $scope.addDatePicker(calendar.selector, data.settings, data.design);
+
+        self.autoScroll();
+      };
+
+      /**
+       * add carousel in simulator
+       * @param object data: carousel options data
+       */
+      $scope.addCarousel = function(data) {
+        if (data.settings.balloonStyle === '1') {
+          // 吹き出しあり
+          var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+          if (data.settings.carouselPattern === '1') {
+            divElm.firstElementChild.style.paddingRight = '15px';
+            divElm.firstElementChild.style.paddingLeft = '15px';
+          } else {
+            divElm.firstElementChild.style.paddingRight = '40px';
+            divElm.firstElementChild.style.paddingLeft = '40px';
+          }
+
+        } else {
+          // 吹き出しなし
+          var divElm = document.querySelector('#chatTalk div > li.sinclo_carousel.chat_carousel').parentNode.cloneNode(true);
+        }
+        divElm.id = data.prefix + '_question';
+        var carousel = $scope.simulatorSettings.createCarousel(data);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = carousel.html;
+        document.getElementById('chatTalk').appendChild(divElm);
+
+
+        $('#chatTalk > div:last-child').show();
+        var prevIconClass = '';
+        var nextIconClass = '';
+        if (data.settings.arrowType === '3') {
+          prevIconClass = 'fa-chevron-left';
+          nextIconClass = 'fa-chevron-right';
+        } else if (data.settings.arrowType === '4') {
+          prevIconClass = 'fa-chevron-square-left';
+          nextIconClass = 'fa-chevron-square-right';
+        } else {
+          prevIconClass = 'fa-chevron-circle-left';
+          nextIconClass = 'fa-chevron-circle-right';
+        }
+
+        var slidesToShow = data.settings.lineUpStyle === '1' ? 1 : 1.5;
+        $(carousel.selector).on('init', function(event, slick) {
+          var maxHeight = 0;
+          slick.$slides.each(function(slide) {
+            var currentHeight = $(this).find('.caption').height();
+            maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+          });
+
+          slick.$slides.each(function(slide) {
+            $(this).find('.caption').css('min-height', maxHeight + 'px');
+          });
+        });
+
+        $(carousel.selector).slick({
+          dots: true,
+          slidesToShow: slidesToShow,
+          infinite: false,
+          lazyLoad: 'ondemand',
+          prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
+          nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>',
+        });
+        // 復元機能
+        var oldIndex = null;
+        angular.forEach(data.settings.images, function(image, index) {
+          if (data.oldValue == image.answer) {
+            oldIndex = index;
+            console.log('in: ' + oldIndex);
+          }
+        });
+        console.log('out: ' + oldIndex);
+        if (data.isRestore && oldIndex) {
+          $(carousel.selector).slick('slickGoTo', oldIndex);
+        }
 
         self.autoScroll();
       };

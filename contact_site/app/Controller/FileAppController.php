@@ -22,6 +22,7 @@ class FileAppController extends AppController
 
   // デフォルト設定
   protected $fileTransferPrefix = 'fileTransfer/';
+  protected $carouselPrefix = 'carouselImages/';
 
   protected $scenarioMode = false;
 
@@ -38,6 +39,10 @@ class FileAppController extends AppController
     return $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".microtime(true).".".$this->getExtension($file['name']);
   }
 
+
+  protected function generateImageName($file) {
+    return $this->userInfo['MCompany']['company_key']."-".date("YmdHis").".".microtime(true).".".$this->getExtensionFromFileType($file['type']);
+  }
   /**
    * ファイルアップロード
    * @param  Object $file         ファイルオブジェクト
@@ -46,6 +51,10 @@ class FileAppController extends AppController
    */
   protected function putFile($file, $saveFileName) {
     return $this->Amazon->putObject($this->getSaveKey($saveFileName), $file['tmp_name']);
+  }
+
+  protected function putImage($file, $saveFileName) {
+    return $this->Amazon->putObject($this->getImageSaveKey($saveFileName), $file['tmp_name']);
   }
 
   protected function putFileByFullpath($fileFullPath, $saveFileName) {
@@ -102,6 +111,9 @@ class FileAppController extends AppController
     }
   }
 
+  protected function getImageSaveKey($saveFileName) {
+    return $this->carouselPrefix . $saveFileName;
+  }
 
   protected function updateDownloadDataById($fileId) {
     $this->TUploadTransferFile->read(null, $fileId);
@@ -212,5 +224,10 @@ class FileAppController extends AppController
   protected function urlSafeBase64Decode($str) {
     $val = str_replace(array('_','-', '.'), array('+', '/', '='), $str);
     return base64_decode($val);
+  }
+
+  protected function getExtensionFromFileType($string)
+  {
+    return str_replace('image/', '', $string);
   }
 }
