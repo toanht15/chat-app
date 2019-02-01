@@ -650,7 +650,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
 
         <!-- サブタイトル -->
 
-        <p id="widgetSubTitle" ng-class="widget.viewWidgetSetting('sp,spText,titlePosition,image,notNoneOutsideBorder,headerContents')" class="details">{{widget.settings['sub_title']}}</p>
+        <p id="widgetSubTitle" ng-class="widget.viewWidgetSetting('sp,spText,headerName,image,notNoneOutsideBorder,headerContents')" class="details">{{widget.settings['sub_title']}}</p>
         <!-- 説明文 -->
         <p  id="widgetDescription" class="details" ng-class="widget.viewWidgetSetting('sp,spText,headerDescription,image,notNoneWidgetOutsideBorder,notNone,headerContents')">{{widget.settings['description']}}</p>
       </div>
