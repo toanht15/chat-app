@@ -990,7 +990,7 @@
       };
       // 一括登録のモダールを表示
       this.showBulkSelectionPopup = function(actionIndex, hearingIndex, uiType) {
-        if (uiType === '3' || uiType === '4') {
+        if (uiType === '3' || uiType === '4' || uiType === '7') {
           // ラジオボタン、プルダウン
           var options = $scope.setActionList[actionIndex].hearings[hearingIndex].settings.options;
           var title = '選択肢を一括登録する';
@@ -1044,7 +1044,7 @@
           }
           var convertedInputOptions = inputOptions.split('\n');
 
-          if (uiType === '3' || uiType === '4') {
+          if (uiType === '3' || uiType === '4' || uiType === '7') {
             $scope.setActionList[actionIndex].hearings[hearingIndex].settings.options = [];
             angular.forEach(convertedInputOptions, function(option, optionKey) {
               if (option) {

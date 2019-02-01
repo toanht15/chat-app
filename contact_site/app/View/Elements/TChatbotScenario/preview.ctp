@@ -16,7 +16,7 @@
 #tchatbotscenario_form_preview_body .chatTalk li.balloonType { display: inline-block; position: relative; padding: 10px 15px; text-align: left!important; word-wrap: break-word; word-break: break-all; border-radius: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li.no-wrap { display: block!important; padding: 10px 0 0 0!important; }
 #tchatbotscenario_form_preview_body .chatTalk li.all-round { border-radius: 12px!important; }
-#tchatbotscenario_form_preview_body .chatTalk li.no-wrap .sinclo-text-line { padding: 0 15px; }
+#tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.no-wrap span.sinclo-text-line { display: block; padding: 0 15px; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re {  background-color: {{widget.makeFaintColor()}}; font-size: {{widget.settings['re_text_size']}}px; }
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re span.details{ color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re span.sinclo-text-line{ display: inline-block; color: {{widget.settings['re_text_color']}}; font-size: {{widget.settings['re_text_size']}}px;}
@@ -67,11 +67,11 @@
   #tchatbotscenario_form_preview_body .chatTalk li .sendFileContent .sendFileMetaArea .data { margin-left: 1em; margin-bottom: 5px; display: block; }
   #tchatbotscenario_form_preview_body .chatTalk li .sendFileContent .sendFileMetaArea .data.sendFileSize { margin-bottom: 0px; }
 
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap { display: flex; justify-content: center; align-items: center; margin-top: 10px; flex-flow: column nowrap; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap { display: flex; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide { flex-flow: row nowrap; }
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 12px; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 10px 15px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button.noneBorder { border-top-style: none!important; border-left-style: none!important; border-right-style: none!important; border-bottom-style: none!important; }
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button { display: flex; justify-content: center; align-items: center; width: 100%; padding: 12px; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button { width: 50%; display: flex; align-items: center; padding: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button:first-child { border-bottom-left-radius: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button:last-child { border-bottom-right-radius: 12px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap:not(.sideBySide) .sinclo-button:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px };
@@ -151,7 +151,7 @@
           background-color:{{hearings.settings.customDesign.buttonBackgroundColor}}!important;
         }
         li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}}.sideBySide span.sinclo-button:first-child {
-          border-right: 1px solid {{hearings.settings.customDesign.buttonBorderColor}}!important;
+          border-right: 1px solid {{hearings.settings.customDesign.buttonBorderColor}};
         }
         li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}} span.sinclo-button:active
         {
@@ -178,7 +178,7 @@
 
         <!-- ボタン -->
         <li ng-show="hearings.message || hearings.settings.options[0]" ng-if="hearings.uiType === '7'" class="sinclo_re chat_left details no-wrap all-round action{{setActionId}}_button{{index}}" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span class="sinclo-text-line" ng-class="{tal: hearings.settings.customDesign.messageAlign == '1', tac: hearings.settings.customDesign.messageAlign == '2', tar: hearings.settings.customDesign.messageAlign == '3'}" ng-bind="hearings.message"></span><div id="sinclo-button-wrap{{index}}" class="sinclo-button-wrap" ng-class="{sideBySide: hearings.settings.options.length == 2}">
-                <span ng-repeat="(optionIndex, option) in hearings.settings.options track by $index" class="sinclo-button" ng-class="{noneBorder: hearings.settings.customDesign.outButtonNoneBorder}" ng-if="option">{{option}}</span></div></li>
+                <span ng-repeat="(optionIndex, option) in hearings.settings.options track by $index" class="sinclo-button" ng-class="{noneBorder: hearings.settings.customDesign.outButtonNoneBorder}" ng-if="option !== null">{{option}}</span></div></li>
 
       <!-- エラーメッセージ -->
       <br><li ng-show="hearings.errorMessage" class="sinclo_re chat_left details" ng-class="{notNone: widget.re_border_none === '' || widget.re_border_none === false, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, middleSize: widget.settings['widget_size_type'] == 2, largeSize: widget.settings['widget_size_type'] == 3 || widget.settings['widget_size_type'] == 4}"><span ng-if="widget.settings['show_automessage_name'] === '1'" class="cName details">{{widget.settings['sub_title']}}</span><span id="action{{setActionId}}_error_message" class="details">{{hearings.errorMessage}}</span></li>
