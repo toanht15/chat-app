@@ -971,20 +971,28 @@ var socket, // socket.io
           break;
       }
 
+
+
       switch (Number(widget.chatMessageDesignType)) {
         case 1: //BOX型
+            var seArrowPosition = ' border-bottom-right-radius: 0;',
+                reArrowPosition = ' border-bottom-left-radius: 0;';
+            if(Number(widget.chatMessageArrowPosition) === 1) {
+              seArrowPosition = ' border-top-right-radius: 0;';
+              reArrowPosition = ' border-top-left-radius: 0;';
+            }
           if (Number(widget.widgetSizeType) == 1) {
-            chatPosition.se.mg = 'margin-left: 37.5px; margin-right: 10px;  border-bottom-right-radius: 0;';
-            chatPosition.re.mg = 'margin-left: 10px; margin-right: 17.5px; border-bottom-left-radius: 0;';
+            chatPosition.se.mg = 'margin-left: 37.5px; margin-right: 10px;' + seArrowPosition;
+            chatPosition.re.mg = 'margin-left: 10px; margin-right: 17.5px;' + reArrowPosition;
           }
           if (Number(widget.widgetSizeType) == 2) {
-            chatPosition.se.mg = 'margin-left: 45px; margin-right: 10px;  border-bottom-right-radius: 0;';
-            chatPosition.re.mg = 'margin-left: 10px; margin-right: 21px; border-bottom-left-radius: 0;';
+            chatPosition.se.mg = 'margin-left: 45px; margin-right: 10px;' + seArrowPosition;
+            chatPosition.re.mg = 'margin-left: 10px; margin-right: 21px;' + reArrowPosition;
           }
           if (Number(widget.widgetSizeType) == 3 ||
               Number(widget.widgetSizeType) == 4) {
-            chatPosition.se.mg = 'margin-left: 52.7px; margin-right: 10px;  border-bottom-right-radius: 0;';
-            chatPosition.re.mg = 'margin-left: 10px; margin-right: 24.6px; border-bottom-left-radius: 0;';
+            chatPosition.se.mg = 'margin-left: 52.7px; margin-right: 10px;' + seArrowPosition;
+            chatPosition.re.mg = 'margin-left: 10px; margin-right: 24.6px;' + reArrowPosition;
           }
           break;
         case 2: //吹き出し型
@@ -1149,7 +1157,11 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk div.grid_for_icon.middleSize li.sinclo_re { margin-left: 3px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon.largeSize li.sinclo_re { margin-left: 5px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon.customSize li.sinclo_re { margin-left: 5px; }';
-      html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv { display: flex; justify-content: flex-end; align-items: flex-end; }';
+      if(Number(widget.chatMessageArrowPosition) === 1) {
+        html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv { display: flex; justify-content: flex-end; align-items: flex-start; }';
+      } else {
+        html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv { display: flex; justify-content: flex-end; align-items: flex-end; }';
+      }
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv .img_wrapper { display: inline-block; padding: 0px; text-align: center; border-radius: 50%; overflow: hidden; position: relative; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv .img_wrapper img { position:absolute; left: -100%; right: -100%; margin: auto; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv img { border-radius: 50% }';

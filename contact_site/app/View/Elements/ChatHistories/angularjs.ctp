@@ -216,8 +216,17 @@
       var isSmartphone = true;
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
+      var isFreeBlock = false;
       for (var i = 0; strings.length > i; i++) {
-        if(strings[i].match(/(<div|<\/div>)/)) {
+        if(strings[i].match(/(<div class="free-block")/)) {
+          content += strings[i];
+          isFreeBlock = true;
+          continue;
+        } else if(strings[i].match(/(<\/div>)/)) {
+          isFreeBlock = false;
+          content += strings[i];
+          continue;
+        } else if(isFreeBlock) {
           content += strings[i];
           continue;
         }
