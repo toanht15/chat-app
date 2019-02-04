@@ -467,7 +467,7 @@
                   <input type="text" id="action{{setActionId}}_button{{listId}}_buttonBackgroundColor"
                          class="jscolor{hash:true} ignore-click-event"
                          ng-model="hearingItem.settings.customDesign.buttonBackgroundColor"
-                         ng-init="hearingItem.settings.customDesign.buttonBackgroundColor = '#FFFFFFF'"
+                         ng-init="hearingItem.settings.customDesign.buttonBackgroundColor = '#FFFFFF'"
                          ng-change="main.changeButtonColor(setActionId, listId, 'buttonBackgroundColor')">
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertButtonColor(setActionId, listId, 'buttonBackgroundColor')">標準に戻す</span>

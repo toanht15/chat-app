@@ -511,6 +511,18 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; grid-row: 1/2; -ms-grid-column: 2; -ms-grid-row: 1; }
         #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { grid-column: 3/4; grid-row: 1/2; -ms-grid-column: 3; -ms-grid-row: 1; }
 
+        #sincloBox #chatTalk li.sinclo_re.no-wrap { padding: 10px 0 0 0!important; }
+        #sincloBox #chatTalk li.sinclo_re.all-round { border-radius: 12px!important; }
+        #sincloBox #chatTalk li.sinclo_re.no-wrap span.sinclo-text-line { padding: 0 15px!important; width: 100%; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap {display: flex; margin-top: 10px; justify-content: center; flex-wrap: wrap; width: 100%;}
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide { flex-flow: row nowrap;  }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; padding: 12px; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button:active { background-color: #E7E7E7; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button { flex-basis: 0; flex-grow: 1; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button:first-child { border-bottom-left-radius: 12px; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button:last-child { border-bottom-right-radius: 12px; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap:not(.sideBySide) span.sinclo-button:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+
         #sincloBox section#chatTab #flexBoxWrap div#messageBox { height: 75px!important; padding: 5px; }
         #sincloBox section#chatTab #flexBoxWrap div#miniFlexBoxHeight { height: 48px!important; padding: 5px; }
         #sincloBox section#chatTab textarea#sincloChatMessage, #sincloBox section#chatTab input#miniSincloChatMessage { width: 80%; height: 100%; color: {{widget.settings['other_text_color']}}; margin: 0; resize: none; padding: 5px; }

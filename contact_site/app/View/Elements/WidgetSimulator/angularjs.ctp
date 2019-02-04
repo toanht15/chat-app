@@ -72,6 +72,10 @@
         $scope.addCalendar(message, settings, design, prefix);
       });
 
+      $scope.$on('addReButton', function(event, message, settings, design, prefix) {
+        $scope.addButton(message, settings, design, prefix);
+      });
+
       $scope.$on('disableHearingInputFlg', function(event) {
         $scope.isHearingInput = false;
       });
@@ -643,6 +647,28 @@
 
         calendarTarget.find('.flatpickr-calendar .dayContainer').
             css('background-color', design.calendarBackgroundColor);
+      };
+
+      $scope.addButton = function(data) {
+        var gridElm = document.createElement("div");
+        $(gridElm).addClass("grid_balloon");
+        var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+        divElm.id = data.prefix + '_question';
+        var html = $scope.simulatorSettings.createButton(data);
+        $(divElm).find('li.sinclo_re').addClass("no-wrap").addClass("all-round");
+        divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          //チャットボットのアイコンを表示する場合は
+          //アイコンを含む要素を作成する。
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
+        self.autoScroll();
       };
 
       /**

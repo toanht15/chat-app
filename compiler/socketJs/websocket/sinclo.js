@@ -25,8 +25,8 @@
             storage.l.set('widgetMaximized', flg);
             storage.s.set('widgetMaximized', flg);
           }
-        }
-      }
+        },
+      },
     },
     sorryMsgTimer: null,
     syncTimeout: '',
@@ -52,7 +52,7 @@
             year: now.getFullYear(),
             month: month,
             day: day,
-            hour: hour
+            hour: hour,
           });
         }
       },
@@ -184,7 +184,7 @@
           } else {
             $('#sincloWidgetBox').offset({top: $('#sincloBox').offset().top});
             elm.animate({
-              height: height + 'px'
+              height: height + 'px',
             }, 'first', null, function() {
               console.log(
                   '$(\'#sincloBox\').offset().top : %s, $(\'#sincloWidgetBox\').offset().top',
@@ -213,7 +213,7 @@
             year: now.getFullYear(),
             month: month,
             day: day,
-            hour: hour
+            hour: hour,
           });
         }
         //閉じるボタン設定が有効かつバナー表示設定になっているかどうか
@@ -316,14 +316,14 @@
               //right: 10px;
               $('#sincloBox').css({
                 'right': widgetHorizontalPosition,
-                'bottom': widgetVerticalPosition
+                'bottom': widgetVerticalPosition,
               });
               break;
             case 2: // 左下
               //left: 10px;
               $('#sincloBox').css({
                 'left': widgetHorizontalPosition,
-                'bottom': widgetVerticalPosition
+                'bottom': widgetVerticalPosition,
               });
               break;
           }
@@ -488,7 +488,7 @@
           sinclo.chatApi.scDown();
 
         }, 500);
-      }
+      },
     },
     connect: function() {
       // 新規アクセスの場合
@@ -508,7 +508,7 @@
         firstConnection: userInfo.firstConnection,
         userAgent: window.navigator.userAgent,
         service: check.browser(),
-        prevList: userInfo.prevList
+        prevList: userInfo.prevList,
       };
 
       // チャットの契約をしている場合
@@ -543,7 +543,7 @@
             Number(cnst.access_type.host)) {
           browserInfo.resetPrevList();
           emit('requestSyncStart', {
-            accessType: common.params.type
+            accessType: common.params.type,
           });
         }
 
@@ -558,7 +558,7 @@
           emit('connectContinue', {
             connectToken: userInfo.connectToken,
             accessType: common.params.type,
-            receiverID: userInfo.vc_receiverID
+            receiverID: userInfo.vc_receiverID,
           });
 
           var vcInfo = common.getVcInfo();
@@ -608,7 +608,7 @@
 
       emit('connected', {
         type: 'user',
-        data: emitData
+        data: emitData,
       });
     },
     retConnectedForSync: function(d) {
@@ -665,7 +665,7 @@
 
       if (obj.sincloSessionIdIsNew) {
         userInfo.setStayCount();
-        if ( check.isIE() ) {
+        if (check.isIE()) {
           if (storage.s.get('Waiting_on_IE') !== null) {
             storage.s.unset('Waiting_on_IE');
           }
@@ -706,7 +706,7 @@
         userAgent: window.navigator.userAgent,
         time: userInfo.time,
         ipAddress: userInfo.getIp(),
-        referrer: userInfo.referrer
+        referrer: userInfo.referrer,
       };
 
       if (obj.inactiveReconnect) {
@@ -803,9 +803,9 @@
             url: location.href,
             userId: userInfo.userId,
             tabId: userInfo.tabId,
-            connectToken: obj.connectToken
+            connectToken: obj.connectToken,
           },
-          site: window.sincloInfo.site
+          site: window.sincloInfo.site,
         };
         var url = window.sincloInfo.site.files + '/frame/' +
             encodeURIComponent(JSON.stringify(params));
@@ -849,7 +849,7 @@
           // ブラウザのサイズ
           windowSize: browserInfo.windowSize(),
           // スクロール位置の取得
-          scrollPosition: browserInfo.windowScroll()
+          scrollPosition: browserInfo.windowScroll(),
         });
         this.remove();
       };
@@ -879,8 +879,8 @@
             tabId: userInfo.tabId,
             url: location.href,
             screen: browserInfo.windowScreen(), // 解像度
-            connectToken: userInfo.connectToken
-          }
+            connectToken: userInfo.connectToken,
+          },
         };
         var filePath = window.sincloInfo.site.files.replace('https://',
             'http://');
@@ -890,8 +890,7 @@
             'sinclo',
             'width=' + screen.availWidth * (2 / 3) + ',height=' +
             screen.availHeight * (2 / 3) +
-            ',dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no'
-        );
+            ',dialog=no,toolbar=no,location=no,status=no,menubar=no,directories=no,resizable=no,scrollbars=no');
         this.remove();
       };
       popup.set(title, content);
@@ -916,7 +915,7 @@
         var params = {
           userId: userInfo.userId,
           tabId: userInfo.tabId,
-          coBrowseConnectToken: userInfo.coBrowseConnectToken
+          coBrowseConnectToken: userInfo.coBrowseConnectToken,
         };
         emit('beginToCoBrowse', params);
         this.remove();
@@ -992,7 +991,7 @@
             responderId: operatorId,
             url: location.href,
             coBrowseConnectToken: userInfo.coBrowseConnectToken,
-            shortcode: laUtil.shortcode
+            shortcode: laUtil.shortcode,
           };
           emit('readyToCoBrowse', params);
         }
@@ -1005,7 +1004,7 @@
       emit('coBrowseFailed', {
         userId: userInfo.userId,
         tabId: userInfo.tabId,
-        connectToken: userInfo.coBrowseConnectToken
+        connectToken: userInfo.coBrowseConnectToken,
       });
       var title = location.host + 'の内容';
       var content = '接続時にエラーが発生しました。<br>再度お試しください。';
@@ -1072,12 +1071,12 @@
         textareaInfo: textareaInfo,
         selectInfo: selectInfo,
         // スクロール位置の取得
-        scrollPosition: browserInfo.windowScroll()
+        scrollPosition: browserInfo.windowScroll(),
       });
       if (String(userInfo.gFrame) === 'true') return false;
       emit('sendTabInfo', {
         status: browserInfo.getActiveWindow(),
-        widget: window.sincloInfo.widgetDisplay
+        widget: window.sincloInfo.widgetDisplay,
       });
     },
     syncElement: function(d) {
@@ -1087,7 +1086,7 @@
       $('html, body').animate(
           {
             scrollLeft: scrollSize.x * obj.scrollPosition.x,
-            scrollTop: scrollSize.y * obj.scrollPosition.y
+            scrollTop: scrollSize.y * obj.scrollPosition.y,
           },
           {
             duration: 'first',
@@ -1120,9 +1119,9 @@
               }
               emit('syncCompleate', {
                 userId: userInfo.userId,
-                accessType: userInfo.accessType
+                accessType: userInfo.accessType,
               });
-            }
+            },
           }
       );
     },
@@ -1195,7 +1194,7 @@
           if (elm.length > 0) {
             var scrollBarSize = {
               height: elm[0].scrollHeight - elm[0].clientHeight,
-              width: elm[0].scrollWidth - elm[0].clientWidth
+              width: elm[0].scrollWidth - elm[0].clientWidth,
             };
             elm.stop(false, false).
                 scrollTop(scrollBarSize.height * Number(obj.value.topRatio));
@@ -1233,25 +1232,25 @@
         location.href = obj.url;
       } else {
         emit('requestSyncStart', {
-          accessType: common.params.type
+          accessType: common.params.type,
         });
       }
     },
-    setChatIdWidthOperatorId: function( obj ) {
+    setChatIdWidthOperatorId: function(obj) {
       var list = {};
       var userId = storage.l.get('currentChatOperator');
       var currentOpList = storage.l.get('answeringChatIdList');
-      if( currentOpList != null && userId != null) {
+      if (currentOpList != null && userId != null) {
         // localStorageに情報があった場合
         list = JSON.parse(currentOpList);
       }
       list[obj.chatId] = userId;
       storage.l.set('answeringChatIdList', JSON.stringify(list));
     },
-    setOperatorInfoForIcon: function( obj ) {
+    setOperatorInfoForIcon: function(obj) {
       var list = {};
       var currentList = storage.l.get('operatorIconList');
-      if( currentList != null ){
+      if (currentList != null) {
         list = JSON.parse(currentList);
       }
       list[obj.userId] = obj.profileIcon;
@@ -1259,7 +1258,7 @@
       storage.l.set('operatorIconList', JSON.stringify(list));
       storage.l.set('currentChatOperator', obj.userId);
     },
-    unsetOperatorInfoForIcon: function( ) {
+    unsetOperatorInfoForIcon: function() {
       storage.l.unset('currentChatOperator');
     },
     chatStartResult: function(d) {
@@ -1269,8 +1268,8 @@
       storage.s.set('chatAct', true); // オートメッセージを表示しない
       storage.s.set('operatorEntered', true); // オペレータが入室した
       storage.l.set('leaveFlg', 'false'); // オペレータが入室した
-      this.setOperatorInfoForIcon( obj );
-      if( Number( sincloInfo.widget.operatorIconType ) === 3 ) {
+      this.setOperatorInfoForIcon(obj);
+      if (Number(sincloInfo.widget.operatorIconType) === 3) {
         //op別のアイコンを使用する場合はオペレーターのアイコンパスを上書きする。
         sincloInfo.widget.operatorIcon = obj.profileIcon;
       }
@@ -1409,7 +1408,7 @@
                     chatId: chat.chatId,
                     message: chat.message,
                     created: chat.created,
-                    applied: chat.applied ? chat.applied : false
+                    applied: chat.applied ? chat.applied : false,
                   });
                   found = true;
                   break;
@@ -1438,7 +1437,7 @@
               || Number(chat.messageType) === 27
               || Number(chat.messageType) === 41
               || Number(chat.messageType) === 42
-              || Number(chat.messageType) === 44
+              || Number(chat.messageType) === 46
               || Number(chat.messageType) === 81
               || Number(chat.messageType) === 82) {
             if (check.isset(window.sincloInfo.widget.showAutomessageName) &&
@@ -1450,7 +1449,7 @@
             if (Number(chat.messageType) === 22
                 || Number(chat.messageType) === 41
                 || Number(chat.messageType) === 42
-                || Number(chat.messageType) === 44) {
+                || Number(chat.messageType) === 46) {
               cn = 'hearing_msg ' + cn;
             } else {
               answerCount = 0;
@@ -1510,7 +1509,7 @@
                 chatId: chat.chatId,
                 cn: cn,
                 isHearingAnswer: isHearingAnswer,
-                answerCount: answerCount
+                answerCount: answerCount,
               };
               this.chatApi.createMessage(sendData,
                   ((Number(chat.messageType) > 20 &&
@@ -1532,7 +1531,7 @@
                 chatId: chat.chatId,
                 cn: 'sinclo_se',
                 isHearingAnswer: isHearingAnswer,
-                answerCount: answerCount
+                answerCount: answerCount,
               };
               this.chatApi.createMessage(sendData,
                   ((Number(chat.messageType) > 20 &&
@@ -1577,7 +1576,7 @@
                 chat.chatId)) {
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
             }
-          } else if (Number(chat.messageType) === 44) {
+          } else if (Number(chat.messageType) === 46) {
             var calendar = JSON.parse(chat.message);
             this.chatApi.addButton('hearing_msg sinclo_re', calendar.message,
                 calendar.settings);
@@ -1612,7 +1611,7 @@
                           cn: 'sinclo_re',
                           isHearingAnswer: isHearingAnswer,
                           answerCount: answerCount,
-                          isBot: true
+                          isBot: true,
                         };
                         sinclo.chatApi.createMessageUnread(sendData);
                         sinclo.chatApi.scDown();
@@ -1623,7 +1622,7 @@
                           messageType: sinclo.chatApi.messageType.notification,
                           messageDistinction: chat.messageDistinction,
                           mUserId: chat.userId,
-                          userId: chat.visitorsId
+                          userId: chat.visitorsId,
                         };
                         emit('sendInitialNotificationChat',
                             {messageList: sendData});
@@ -1638,7 +1637,12 @@
             }
             console.log(JSON.stringify(chat, null, 4));
             var isOp = (Number(chat.messageType) === 2);
-            var isBot = (Number(chat.messageType) >= 3 && Number(chat.messageType) <= 9) || (Number(chat.messageType) > 20 && Number(chat.messageType) < 29) || (Number(chat.messageType) >= 40 && Number(chat.messageType) < 50);
+            var isBot = (Number(chat.messageType) >= 3 &&
+                Number(chat.messageType) <= 9) ||
+                (Number(chat.messageType) > 20 && Number(chat.messageType) <
+                    29) ||
+                (Number(chat.messageType) >= 40 && Number(chat.messageType) <
+                    50);
             this.chatApi.createMessage({
               cn: cn,
               message: chat.message,
@@ -1650,7 +1654,7 @@
                   chat),
               answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(chat)) ?
                   answerCount :
-                  0
+                  0,
             }, ((Number(chat.messageType) > 20 &&
                 (Number(chat.messageType) < 29))));
           }
@@ -1788,7 +1792,10 @@
         sinclo.scenarioApi.set('s_targetChatId', currentScenarioChatId);
       }
       common.chatBotTypingRemove();
-      var isBot = (Number(obj.messageType) >= 3 && Number(obj.messageType) <= 9) || (Number(obj.messageType) > 20 && Number(obj.messageType) < 29) || (Number(obj.messageType) >= 40 && Number(obj.messageType) < 50);
+      var isBot = (Number(obj.messageType) >= 3 && Number(obj.messageType) <=
+          9) ||
+          (Number(obj.messageType) > 20 && Number(obj.messageType) < 29) ||
+          (Number(obj.messageType) >= 40 && Number(obj.messageType) < 50);
       if (obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !==
           userInfo.tabId) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = '';
@@ -1894,6 +1901,8 @@
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.calendar
             || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.message.button
+            || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.selection
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.receiveFile) {
@@ -1962,7 +1971,7 @@
               message: obj.chatMessage,
               name: userName,
               chatId: obj.chatId,
-              isBot: isBot
+              isBot: isBot,
             }, true);
             sinclo.chatApi.scDown();
             return false;
@@ -1994,6 +2003,21 @@
             var calendar = JSON.parse(obj.chatMessage);
             this.chatApi.addCalendar('hearing_msg sinclo_re', calendar.message,
                 calendar.settings);
+            sinclo.chatApi.scDown();
+            return false;
+          } else if (obj.messageType ===
+              sinclo.chatApi.messageType.scenario.message.button) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = 'sinclo_re';
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = '';
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            var button = JSON.parse(obj.chatMessage);
+            this.chatApi.addButton('hearing_msg sinclo_re', button.message,
+                button.settings);
             sinclo.chatApi.scDown();
             return false;
           } else if (obj.messageType ===
@@ -2039,7 +2063,7 @@
               message: obj.chatMessage,
               name: '',
               chatId: obj.chatId,
-              isBot: isBot
+              isBot: isBot,
             });
           }
           this.chatApi.scDown();
@@ -2078,7 +2102,7 @@
             cn: cn,
             message: obj.message,
             name: userName,
-            chatId: obj.chatId
+            chatId: obj.chatId,
           };
           this.chatApi.createMessageUnread(createMessageData, false, true,
               obj.isFeedbackMsg);
@@ -2106,7 +2130,7 @@
               message: obj.chatMessage,
               name: userName,
               chatId: obj.chatId,
-              isBot: true
+              isBot: true,
             });
             if (sinclo.chatApi.isShowChatReceiver() &&
                 Number(obj.messageType) ===
@@ -2156,7 +2180,7 @@
                     message: data[times].message,
                     name: userName,
                     chatId: obj.chatId,
-                    isBot: true
+                    isBot: true,
                   });
                   sinclo.chatApi.scDown();
                   var sendData = {
@@ -2167,7 +2191,7 @@
                     messageDistinction: obj.messageDistinction,
                     chatId: obj.chatId,
                     mUserId: obj.mUserId,
-                    userId: obj.userId
+                    userId: obj.userId,
                   };
                   emit('sendInitialNotificationChat', {messageList: sendData});
                 }
@@ -2182,7 +2206,10 @@
         if (!obj.hideMessage && obj.messageType !=
             sinclo.chatApi.messageType.sorry && obj.messageType !=
             sinclo.chatApi.messageType.linkClick) {
-          var isBot = (Number(obj.messageType) >= 3 && Number(obj.messageType) <= 9) || (Number(obj.messageType) > 20 && Number(obj.messageType) < 29) || (Number(obj.messageType) >= 40 && Number(obj.messageType) < 50);
+          var isBot = (Number(obj.messageType) >= 3 &&
+              Number(obj.messageType) <= 9) ||
+              (Number(obj.messageType) > 20 && Number(obj.messageType) < 29) ||
+              (Number(obj.messageType) >= 40 && Number(obj.messageType) < 50);
           var isOp = Number(obj.messageType) === 2;
           this.chatApi.createMessageUnread({
             cn: cn,
@@ -2194,7 +2221,7 @@
             isHearingAnswer: sinclo.scenarioApi._hearing.isHearingAnswer(obj),
             answerCount: (sinclo.scenarioApi._hearing.isHearingAnswer(obj)) ?
                 sinclo.scenarioApi._hearing._getPrevSeqNum() :
-                0
+                0,
           });
           if (obj.messageType ==
               sinclo.chatApi.messageType.scenario.customer.answerBulkHearing) {
@@ -2245,7 +2272,7 @@
         messages: sinclo.chatApi.autoMessages.getByArray(),
         scenarios: sinclo.scenarioApi.getStoredMessage(),
         sendTo: obj.sendTo,
-        chatToken: obj.chatToken
+        chatToken: obj.chatToken,
       });
       var value = '';
       if (window.sincloInfo.widgetDisplay) {
@@ -2263,7 +2290,7 @@
           message: obj.message,
           name: sincloInfo.widget.subTitle,
           chatId: obj.chatId,
-          isBot: true
+          isBot: true,
         };
         sinclo.chatApi.createMessage(sendData);
       }
@@ -2309,7 +2336,7 @@
         message: obj.message,
         name: sincloInfo.widget.subTitle,
         chatId: obj.chatId,
-        isBot: true
+        isBot: true,
       });
       if (this.chatApi.isShowChatReceiver() && Number(obj.messageType) ===
           sinclo.chatApi.messageType.company) {
@@ -2342,7 +2369,7 @@
         var size = browserInfo.windowSize();
         var params = {
           data: obj,
-          site: window.sincloInfo.site
+          site: window.sincloInfo.site,
         };
         var url = window.sincloInfo.site.files + '/docFrame/' +
             encodeURIComponent(JSON.stringify(params));
@@ -2361,7 +2388,7 @@
           // ブラウザのサイズ
           windowSize: browserInfo.windowSize(),
           // スクロール位置の取得
-          scrollPosition: browserInfo.windowScroll()
+          scrollPosition: browserInfo.windowScroll(),
         });
         this.remove();
       };
@@ -2535,12 +2562,13 @@
       }
     },
     displayTextarea: function(skippable, disabled) {
-      if( document.hasFocus() ){
+      if (document.hasFocus()) {
         var dataSet = {
           type: 1,
-          skippable: skippable
+          skippable: skippable,
         };
-        sinclo.scenarioApi.syncScenarioData.sendDetail("handleTextArea", dataSet);
+        sinclo.scenarioApi.syncScenarioData.sendDetail('handleTextArea',
+            dataSet);
       }
       console.log(
           '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>displayTextAreaCalled<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
@@ -2616,11 +2644,12 @@
       sinclo._skipLabelHandler();
     },
     hideTextarea: function() {
-      if( document.hasFocus() ){
+      if (document.hasFocus()) {
         var dataSet = {
-          type: 2
+          type: 2,
         };
-        sinclo.scenarioApi.syncScenarioData.sendDetail("handleTextArea", dataSet);
+        sinclo.scenarioApi.syncScenarioData.sendDetail('handleTextArea',
+            dataSet);
       }
       console.log(
           '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>hideTextareaCalled<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<');
@@ -2777,7 +2806,7 @@
         mouseSync: null,
         scrollSync: null,
         resizeSync: null,
-        pageSync: null
+        pageSync: null,
       },
       _func: {
         inner: {
@@ -2785,49 +2814,49 @@
             send: function() {
             },
             receive: function() {
-            }
+            },
           },
           mouseSync: {
             send: function() {
             },
             receive: function() {
-            }
+            },
           },
           scrollSync: {
             send: function() {
             },
             receive: function() {
-            }
+            },
           },
           resizeSync: {
             send: function() {
             },
             receive: function() {
-            }
+            },
           },
           pageSync: {
             send: function() {
             },
             receive: function() {
-            }
-          }
+            },
+          },
         },
         outer: {
           formSync: {
             send: function() {
             },
             receive: function() {
-            }
+            },
           },
           mouseSync: {
             send: function() {
             },
             receive: function() {
-            }
-          }
+            },
+          },
 
-        }
-      }
+        },
+      },
     },
     chatApi: {
       saveFlg: false,
@@ -2865,7 +2894,7 @@
             reInputRadio: 37,
             reInputPulldown: 38,
             reInputCalendar: 39,
-            skipHearing: 90
+            skipHearing: 90,
           },
           message: {
             text: 21,
@@ -2874,13 +2903,14 @@
             receiveFile: 27,
             returnBulkHearing: 40,
             pulldown: 41,
-            calendar: 42
-          }
+            calendar: 42,
+            button: 46,
+          },
         },
         cogmo: {
           message: 81,
-          feedback: 82
-        }
+          feedback: 82,
+        },
       },
       clickRadioMessages: {},
       autoMessages: {
@@ -2942,7 +2972,7 @@
           var list = this.get(true);
           delete list[id];
           storage.s.set('amsg', JSON.stringify(list));
-        }
+        },
       },
       init: function() {
         this.initEvent();
@@ -3059,6 +3089,7 @@
           e.stopPropagation();
 
           var text = $(this).text();
+          $(this).addClass('selected');
           sinclo.chatApi.send(text.trim());
         });
 
@@ -3586,7 +3617,7 @@
         if (!this.isShowChatReceiver()) {
           var chatTalk = document.getElementById('chatTalk');
           $('#sincloBox #chatTalk').animate({
-            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight
+            scrollTop: chatTalk.scrollHeight - chatTalk.clientHeight,
           }, 300);
         }
       },
@@ -3602,7 +3633,7 @@
               /(mailto:[\w\-\.\/\?\=\&\;\,\#\:\%\!\(\)\<\>\"\u3000-\u30FE\u4E00-\u9FA0\uFF01-\uFFE3]+)/),
           telLinkReg: RegExp(/(tel:[0-9]{9,})/),
           telnoTagReg: RegExp(/&lt;telno&gt;([\s\S]*?)&lt;\/telno&gt;/),
-          urlTagReg: RegExp(/href="([\s\S]*?)"([\s\S]*?)/)
+          urlTagReg: RegExp(/href="([\s\S]*?)"([\s\S]*?)/),
         },
         _linkWithoutText: function(option, link, unEscapeStr, str, className) {
           var url = link[0];
@@ -3690,122 +3721,121 @@
           }
           str = unEscapeStr.replace(linkTab[0], a);
           return str;
-        }
+        },
       },
       iconSource: null,
-      _searchChatIdWithIcon: function( chatId ) {
+      _searchChatIdWithIcon: function(chatId) {
         var targetList = storage.l.get('answeringChatIdList');
-        if ( targetList == null ) return;
+        if (targetList == null) return;
         targetList = JSON.parse(targetList);
-        if ( targetList[chatId] ){
-          sinclo.chatApi._setIconSource( targetList[chatId] );
+        if (targetList[chatId]) {
+          sinclo.chatApi._setIconSource(targetList[chatId]);
         }
       },
-      _setIconSource: function( targetNum ) {
+      _setIconSource: function(targetNum) {
         var operatorIconList = storage.l.get('operatorIconList');
-        if( operatorIconList == null ) return;
-        operatorIconList = JSON.parse( operatorIconList );
-        if( operatorIconList[targetNum] ) {
+        if (operatorIconList == null) return;
+        operatorIconList = JSON.parse(operatorIconList);
+        if (operatorIconList[targetNum]) {
           sinclo.chatApi.iconSource = operatorIconList[targetNum];
         } else {
-          sinclo.chatApi.iconSource = "fa-user sinclo-fal normal"
+          sinclo.chatApi.iconSource = 'fa-user sinclo-fal normal';
         }
       },
-      _editDivForIconSetting: function( div , isBot, isOp, chatId ) {
-        var iconSource = "";
-        if( Number(sincloInfo.widget.showChatbotIcon) === 1 && isBot ) {
+      _editDivForIconSetting: function(div, isBot, isOp, chatId) {
+        var iconSource = '';
+        if (Number(sincloInfo.widget.showChatbotIcon) === 1 && isBot) {
           iconSource = sincloInfo.widget.chatbotIcon;
-          var fontIcon = sinclo.chatApi._createIconDiv( iconSource );
+          var fontIcon = sinclo.chatApi._createIconDiv(iconSource);
           div.appendChild(fontIcon);
-          div.classList.add("grid_for_icon");
+          div.classList.add('grid_for_icon');
           div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
-        } else if ( Number(sincloInfo.widget.showOperatorIcon) === 1 && isOp ) {
-          if( Number(sincloInfo.widget.operatorIconType) === 3) {
+        } else if (Number(sincloInfo.widget.showOperatorIcon) === 1 && isOp) {
+          if (Number(sincloInfo.widget.operatorIconType) === 3) {
             sinclo.chatApi._searchChatIdWithIcon(chatId);
             iconSource = sinclo.chatApi.iconSource;
           } else {
             iconSource = sincloInfo.widget.operatorIcon;
           }
-          var imageIcon = sinclo.chatApi._createIconDiv( iconSource );
+          var imageIcon = sinclo.chatApi._createIconDiv(iconSource);
           div.appendChild(imageIcon);
-          div.classList.add("grid_for_icon");
+          div.classList.add('grid_for_icon');
           div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
         }
         sinclo.chatApi.iconSource = null;
         return div;
       },
 
-      _createIconDiv: function( icon ) {
-        console.warn("アイコンを付与します");
-        var div = document.createElement("div");
-        div.classList.add("iconDiv");
+      _createIconDiv: function(icon) {
+        console.warn('アイコンを付与します');
+        var div = document.createElement('div');
+        div.classList.add('iconDiv');
         var elm;
-        switch (sinclo.chatApi._checkIconType( icon )) {
-          case "fontIcon":
-            elm = sinclo.chatApi._createFontIcon( icon );
+        switch (sinclo.chatApi._checkIconType(icon)) {
+          case 'fontIcon':
+            elm = sinclo.chatApi._createFontIcon(icon);
             break;
-          case "imageIcon":
-            var imgWrapper = document.createElement("div");
-            imgWrapper.classList.add("img_wrapper");
-            elm = sinclo.chatApi._createImageIcon( icon );
+          case 'imageIcon':
+            var imgWrapper = document.createElement('div');
+            imgWrapper.classList.add('img_wrapper');
+            elm = sinclo.chatApi._createImageIcon(icon);
             imgWrapper.appendChild(elm);
             elm = imgWrapper;
             break;
           default:
             break;
         }
-        div.classList.add( sinclo.chatApi._addWidgetSizeClassName() );
-        div.classList.add( "effect_left" );
+        div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
+        div.classList.add('effect_left');
         div.appendChild(elm);
         return div;
 
       },
 
-      _checkIconType: function( icon ) {
-        if ( icon.match(/^fa/) !== null) {
-          return "fontIcon";
+      _checkIconType: function(icon) {
+        if (icon.match(/^fa/) !== null) {
+          return 'fontIcon';
         } else {
-          return "imageIcon";
+          return 'imageIcon';
         }
       },
 
       _isMainColorWhite: function() {
-        return window.sincloInfo.widget.mainColor === "#FFFFFF";
+        return window.sincloInfo.widget.mainColor === '#FFFFFF';
       },
 
-      _createFontIcon: function( icon ) {
-        var elm = document.createElement("i");
-        var classArray = icon.split(" ");
-        for( var i = 0; i < classArray.length ; i++ ) {
-          elm.classList.add("sinclo-fal");
+      _createFontIcon: function(icon) {
+        var elm = document.createElement('i');
+        var classArray = icon.split(' ');
+        for (var i = 0; i < classArray.length; i++) {
+          elm.classList.add('sinclo-fal');
           elm.classList.add(classArray[i]);
         }
 
-        if( sinclo.chatApi._isMainColorWhite() ) {
-          elm.classList.add("icon_border");
+        if (sinclo.chatApi._isMainColorWhite()) {
+          elm.classList.add('icon_border');
         }
-
 
         return elm;
       },
 
-      _createImageIcon: function( icon ) {
-        var elm = document.createElement("img");
+      _createImageIcon: function(icon) {
+        var elm = document.createElement('img');
         elm.src = icon;
         return elm;
       },
 
       _addWidgetSizeClassName: function() {
-        switch( Number(sincloInfo.widget.widgetSizeType) ) {
+        switch (Number(sincloInfo.widget.widgetSizeType)) {
           case 1:
-            return "smallSize";
+            return 'smallSize';
           case 2:
-            return "middleSize";
+            return 'middleSize';
           case 3:
           case 4:
-            return "largeSize";
+            return 'largeSize';
           case 5:
-            return "customSize";
+            return 'customSize';
           default:
             return;
         }
@@ -3833,9 +3863,10 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
-        if ( obj.cn.indexOf('sinclo_se') === -1 ) {
+        if (obj.cn.indexOf('sinclo_se') === -1) {
           //発言を作るときはアイコンの有無を確認する。
-          div = sinclo.chatApi._editDivForIconSetting( div , obj.isBot, obj.isOp, obj.chatId );
+          div = sinclo.chatApi._editDivForIconSetting(div, obj.isBot, obj.isOp,
+              obj.chatId);
         }
         // 送った直後はchatIdが0
         // 再読み込み時はchatIdが付与される
@@ -3889,7 +3920,7 @@
           }
         }
         for (var i = 0; strings.length > i; i++) {
-          if(strings[i].match(/(<div|<\/div>)/)) {
+          if (strings[i].match(/(<div|<\/div>)/)) {
             content += strings[i];
             continue;
           }
@@ -4048,7 +4079,7 @@
         var content = '';
         var strings = message.split('\n');
         var style = '';
-        if(align) {
+        if (align) {
           style = 'style="display:block; text-align:"' + align + ';"';
         }
         for (var i = 0; strings.length > i; i++) {
@@ -4075,7 +4106,7 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
-        div = sinclo.chatApi._editDivForIconSetting( div, true );
+        div = sinclo.chatApi._editDivForIconSetting(div, true);
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
@@ -4096,7 +4127,7 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
-        div = sinclo.chatApi._editDivForIconSetting( div,true );
+        div = sinclo.chatApi._editDivForIconSetting(div, true);
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
@@ -4128,11 +4159,22 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        div = sinclo.chatApi._editDivForIconSetting(div, true);
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
 
-        var messageHtml = sinclo.chatApi.createMessageHtml(message);
+        var messageHtml = '<style>';
+        messageHtml += '  #sincloBox li.sinclo_re.no-wrap.all-round .sincloHearingButtons[name="sinclo-button' +
+            chatList.children.length +
+            '"] .sincloHearingButton:active {background-color: ' +
+            settings.customDesign.buttonActiveColor + '!important;}';
+        messageHtml += '  #sincloBox li.sinclo_re.no-wrap.all-round .sincloHearingButtons[name="sinclo-button' +
+            chatList.children.length +
+            '"] .sincloHearingButton.selected {background-color: ' +
+            settings.customDesign.buttonActiveColor + '!important;}';
+        messageHtml += '</style>';
+        messageHtml += sinclo.chatApi.createMessageHtml(message);
         var buttonsHtml = sinclo.chatApi.createButtonHtml(settings,
             chatList.children.length, storedValue);
         div.style.textAlign = 'left';
@@ -4222,7 +4264,7 @@
             firstDayOfWeek: 0,
             weekdays: {
               shorthand: ['日', '月', '火', '水', '木', '金', '土'],
-              longhand: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日']
+              longhand: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
             },
             months: {
               shorthand: [
@@ -4250,9 +4292,9 @@
                 '9月',
                 '10月',
                 '11月',
-                '12月']
-            }
-          }
+                '12月'],
+            },
+          },
         };
         var options = {
           dateFormat: 'Y/m/d',
@@ -4262,8 +4304,8 @@
           disable: [],
           enable: [],
           locale: {
-            firstDayOfWeek: 0
-          }
+            firstDayOfWeek: 0,
+          },
         };
         // set language
         options.locale = settings.language == 1 ?
@@ -4284,16 +4326,17 @@
         // set disable date
         if (settings.isDisableDayOfWeek) {
           var disableWeekDays = [];
-          Object.keys(settings.dayOfWeekSetting).forEach(function(elm, idx, arr) {
-            if (settings.dayOfWeekSetting[elm]) {
-              disableWeekDays.push(Number(elm));
-            }
-          });
+          Object.keys(settings.dayOfWeekSetting).
+              forEach(function(elm, idx, arr) {
+                if (settings.dayOfWeekSetting[elm]) {
+                  disableWeekDays.push(Number(elm));
+                }
+              });
 
           options.disable = [
             function(date) {
               return disableWeekDays.indexOf(date.getDay()) !== -1;
-            }
+            },
           ];
         } else {
           options.disable = [];
@@ -4307,7 +4350,8 @@
                   forEach(function(elm, idx, arr) {
                     options.disable.push(settings.specificDateData[elm]);
                   });
-            } catch(e) {}
+            } catch (e) {
+            }
           }
 
           if (settings.setSpecificDateType == 2) {
@@ -4316,7 +4360,8 @@
                   forEach(function(elm, idx, arr) {
                     options.enable[elm] = settings.specificDateData[elm];
                   });
-            } catch(e) {}
+            } catch (e) {
+            }
           }
         } else {
           settings.specificDateData = [''];
@@ -4393,7 +4438,7 @@
         return result ? {
           r: parseInt(result[1], 16),
           g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16)
+          b: parseInt(result[3], 16),
         } : null;
       },
       createPullDownHtml: function(settings, index, storedValue) {
@@ -4429,7 +4474,7 @@
         style += 'background-color: ' + settings.customDesign.backgroundColor +
             ';';
         style += 'border: 1px solid ' + settings.customDesign.borderColor + ';';
-        if(check.smartphone()) {
+        if (check.smartphone()) {
           style += 'font-size: 16px;';
         }
 
@@ -4440,17 +4485,22 @@
         var name = 'sinclo-button' + index;
         var html = '';
         var storedValueIsFound = false;
-        var sideBySideClass = "";
-        if(settings.options.length === 2) {
-          sideBySideClass = " sideBySide";
+        var sideBySideClass = '';
+        if (settings.options.length === 2) {
+          sideBySideClass = ' sideBySide';
         }
-        html += '<div class="sincloHearingButtons' + sideBySideClass + '" name="' + name + '" id="' + name + '" style="' + style + '">';
+        html += '<div class="sincloHearingButtons' + sideBySideClass +
+            '" name="' + name + '" id="' + name + '" style="' + style + '">';
         settings.options.forEach(function(option, index) {
           if (storedValue === option) {
             storedValueIsFound = true;
-            html += '<span class="sincloHearingButton selected" style="' + sinclo.chatApi.createButtonStyle(settings, index) + '">' + option + '</span>';
+            html += '<span class="sincloHearingButton selected" style="' +
+                sinclo.chatApi.createButtonStyle(settings, index) + '">' +
+                option + '</span>';
           } else {
-            html += '<span class="sincloHearingButton" style="' + sinclo.chatApi.createButtonStyle(settings, index) + '">' + option + '</span>';
+            html += '<span class="sincloHearingButton" style="' +
+                sinclo.chatApi.createButtonStyle(settings, index) + '">' +
+                option + '</span>';
           }
         });
         html += '</div>';
@@ -4463,24 +4513,28 @@
         return html;
       },
       createButtonStyle: function(settings, index) {
-        var style = 'padding: 12px; color: ' + settings.customDesign.buttonTextColor + '; background-color: ' + settings.customDesign.buttonBackgroundColor +';';
-        if(!settings.customDesign.outButtonNoneBorder) {
-          style += 'border-top: 1px solid ' + settings.customDesign.buttonBorderColor + ';'
+        var style = 'justify-content: center; padding: 12px; color: ' +
+            settings.customDesign.buttonTextColor + '; background-color: ' +
+            settings.customDesign.buttonBackgroundColor + ';';
+        if (!settings.customDesign.outButtonNoneBorder) {
+          style += 'border-top: 1px solid ' +
+              settings.customDesign.buttonBorderColor + ';';
         }
         if (settings.options.length === 2) {
           style += 'flex-flow: row nowrap; ';
-          if(settings.customDesign)
-          if(index === 0) {
-            style += 'border-bottom-left-radius: 12px; ';
-            if(!settings.customDesign.outButtonNoneBorder) {
-              style += 'border-right: 1px solid ' + settings.customDesign.buttonBorderColor + '!important;'
+          if (settings.customDesign)
+            if (index === 0) {
+              style += 'border-bottom-left-radius: 12px; ';
+              if (!settings.customDesign.outButtonNoneBorder) {
+                style += 'border-right: 1px solid ' +
+                    settings.customDesign.buttonBorderColor + '!important;';
+              }
+            } else {
+              style += 'border-bottom-right-radius: 12px; ';
             }
-          } else {
-            style += 'border-bottom-right-radius: 12px; ';
-          }
         } else {
           style += 'flex-flow: column nowrap; ';
-          if(index === settings.options.length - 1) {
+          if (index === settings.options.length - 1) {
             style += 'border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; ';
           }
         }
@@ -4488,7 +4542,7 @@
         return style;
       },
       createButtonWrapStyle: function(settings) {
-        var style = 'display: flex; margin-top: 10px; justify-content: center; align-items: center; width: 100%; ';
+        var style = 'display: flex; margin-top: 10px; justify-content: center; width: 100%; ';
         if (settings.options.length === 2) {
           style += 'flex-flow: row nowrap; ';
         } else {
@@ -4708,7 +4762,7 @@
         var thumbnail = '';
         var isExpired = Math.floor((new Date()).getTime() / 1000) >=
             (Date.parse(data.expired.replace(/-/g, '/')) / 1000);
-        div = sinclo.chatApi._editDivForIconSetting( div,true );
+        div = sinclo.chatApi._editDivForIconSetting(div, true);
         div.appendChild(li);
         chatList.appendChild(div);
 
@@ -4780,7 +4834,7 @@
         var div = document.createElement('div');
         div.style.cursor = 'pointer';
         var li = document.createElement('li');
-        div = sinclo.chatApi._editDivForIconSetting( div,true );
+        div = sinclo.chatApi._editDivForIconSetting(div, true);
         var thumbnail = '';
 
         div.appendChild(li);
@@ -4828,12 +4882,12 @@
                   messageRequestFlg: 0,
                   isAutoSpeech: false,
                   notifyToCompany: false,
-                  isScenarioMessage: true
+                  isScenarioMessage: true,
                 }, function() {
                   $(document).trigger(sinclo.scenarioApi._events.fileUploaded, [
                     true, {
                       'canceled': true,
-                      'message': 'ファイル送信をキャンセル'
+                      'message': 'ファイル送信をキャンセル',
                     }]);
                 });
               });
@@ -4897,7 +4951,7 @@
               zip: 'fa-file-zip',
               code: 'fa-file-code',
               text: 'fa-file-text',
-              file: 'fa-file'
+              file: 'fa-file',
             },
             extensions = {
               gif: icons.image,
@@ -4925,7 +4979,7 @@
               js: icons.code,
               txt: icons.text,
               csv: icons.csv,
-              file: icons.file
+              file: icons.file,
             };
         if (check.isset(extensions[ext])) {
           selectedClass = extensions[ext];
@@ -5050,7 +5104,7 @@
                 value: $(element).val(),
                 required: $(element).data('required'),
                 changed: $(element).val() !==
-                    resultData[Number($(element).data('input-type'))]
+                    resultData[Number($(element).data('input-type'))],
               };
               return;
             } else if (required && $(element).val() === '') {
@@ -5075,7 +5129,7 @@
               value: $(element).val(),
               required: $(element).data('required'),
               changed: $(element).val() !==
-                  resultData[Number($(element).data('input-type'))]
+                  resultData[Number($(element).data('input-type'))],
             };
           });
           if (!invalid) {
@@ -5224,27 +5278,27 @@
             }
             if (chatTalk.clientHeight > (lastMessageHeight + paddingBottom)) { // FIXME ウィジェットサイズに合わせた余白で計算すること
               $('#sincloBox #chatTalk').animate({
-                scrollTop: (chatScrollHeight - chatClientHeight - 2)
+                scrollTop: (chatScrollHeight - chatClientHeight - 2),
               }, 300);
             } else {
               //「○○が入力中です」のメッセージが残っていない場合
               if (document.getElementById('sinclo_typeing_message') === null) {
                 $('#sincloBox #chatTalk').animate({
                   scrollTop: (chatScrollHeight -
-                      (lastMessageHeight + paddingBottom)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                      (lastMessageHeight + paddingBottom)), // FIXME ウィジェットサイズに合わせた余白で計算すること
                 }, 300);
               }
               //「○○が入力中です」のメッセージが残っている場合
               else {
                 $('#sincloBox #chatTalk').animate({
                   scrollTop: (chatScrollHeight -
-                      (lastMessageHeight + paddingBottom + 25)) // FIXME ウィジェットサイズに合わせた余白で計算すること
+                      (lastMessageHeight + paddingBottom + 25)), // FIXME ウィジェットサイズに合わせた余白で計算すること
                 }, 300);
               }
             }
           } else {
             $('#sincloBox #chatTalk').animate({
-              scrollTop: (chatScrollHeight - chatClientHeight - 2)
+              scrollTop: (chatScrollHeight - chatClientHeight - 2),
             }, 300);
           }
           console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>scDownNowEnd!!');
@@ -5375,7 +5429,7 @@
               messageRequestFlg: 0,
               isAutoSpeech: false,
               notifyToCompany: false,
-              isScenarioMessage: true
+              isScenarioMessage: true,
             });
             sinclo.scenarioApi.triggerInputWaitComplete(' ');
           }
@@ -5466,7 +5520,7 @@
                 initialNotification: initialNotification,
                 isAutoSpeech: result,
                 notifyToCompany: !result,
-                isScenarioMessage: isScenarioMessage
+                isScenarioMessage: isScenarioMessage,
               });
             }, 100);
           });
@@ -5513,9 +5567,9 @@
             type: 2,
             status: status,
             message: message,
-            sincloSessionId: userInfo.sincloSessionId
+            sincloSessionId: userInfo.sincloSessionId,
           });
-        }
+        },
       },
       sendErrCatchFlg: false,
       sendErrCatchTimer: null,
@@ -6028,7 +6082,7 @@
             xhr: function() {
               var XHR = $.ajaxSettings.xhr();
               return XHR;
-            }
+            },
           }).done(function(data, textStatus, jqXHR) {
             sinclo.chatApi.fileUploader._hideLoadingPopup(targetDivElm);
             sinclo.chatApi.fileUploader._effectScene(false, $(targetDivElm),
@@ -6046,13 +6100,13 @@
                     messageRequestFlg: 0,
                     isAutoSpeech: false,
                     notifyToCompany: false,
-                    isScenarioMessage: true
+                    isScenarioMessage: true,
                   }, function() {
                     $(document).
                         trigger(sinclo.scenarioApi._events.fileUploaded, [
                           true, {
                             'downloadUrl': data.downloadUrl,
-                            'comment': data.comment
+                            'comment': data.comment,
                           }]);
                   });
                 });
@@ -6060,15 +6114,17 @@
             sinclo.chatApi.fileUploader._hideLoadingPopup(targetDivElm);
             sinclo.chatApi.fileUploader._showInvalidError();
           });
-        }
+        },
       },
       handleBrowserZoom: function() {
-        if(window.devicePixelRatio >= 1){
-          $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').removeClass('radio-zoom');
+        if (window.devicePixelRatio >= 1) {
+          $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').
+              removeClass('radio-zoom');
         } else {
-          $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').addClass('radio-zoom');
+          $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').
+              addClass('radio-zoom');
         }
-      }
+      },
     },
     trigger: {
       flg: false,
@@ -6296,7 +6352,7 @@
                       callback(7, cloneCondition, key, ret);
                     });
                 ret = {
-                  delay: ret
+                  delay: ret,
                 };
               }
               break;
@@ -6490,7 +6546,7 @@
             message: cond.message,
             isAutoSpeech: isSpeechContent,
             achievementFlg: 3,
-            sendMailFlg: sendMail
+            sendMailFlg: sendMail,
           };
           emit('sendAutoChat',
               {messageList: sinclo.chatApi.autoMessages.getByArray()});
@@ -6501,7 +6557,7 @@
             chatId: id,
             message: cond.message,
             isAutoSpeech: isSpeechContent,
-            sendMailFlg: sendMail
+            sendMailFlg: sendMail,
           };
           emit('sendAutoChat',
               {messageList: sinclo.chatApi.autoMessages.getByArray()});
@@ -6512,7 +6568,7 @@
             chatId: id,
             message: cond.message,
             isAutoSpeech: isSpeechContent,
-            sendMailFlg: sendMail
+            sendMailFlg: sendMail,
           };
         }
 
@@ -6559,7 +6615,7 @@
             message: cond.message,
             name: userName,
             chatId: id,
-            isBot: true
+            isBot: true,
           };
           sinclo.chatApi.createMessageUnread(createMessageData);
           sinclo.chatApi.scDown();
@@ -6594,7 +6650,8 @@
           }, 1);
         } else if (String(type) === '2') {
           console.log('SENARIO TRIGGERED!!!!!! ' + scenarioId);
-          if (window.sincloInfo.contract.chatbotScenario && scenarioId && !sinclo.scenarioApi.isProcessing()) {
+          if (window.sincloInfo.contract.chatbotScenario && scenarioId &&
+              !sinclo.scenarioApi.isProcessing()) {
             emit('getScenario', {'scenarioId': scenarioId});
             if (sincloInfo.widget.showTiming === 3) {
               console.log('シナリオ表示処理発動');
@@ -6811,7 +6868,7 @@
           }
 
           return result;
-        }
+        },
       },
       judge: {
         speechContentRegEx: [],
@@ -6868,7 +6925,7 @@
           if (sinclo.trigger.common.pregContainsAndExclsion({
             wordType: Number(cond.stayPageCond),
             containsType: Number(cond.keyword_contains_type),
-            exclusionsType: Number(cond.keyword_exclusions_type)
+            exclusionsType: Number(cond.keyword_exclusions_type),
           }, cond.keyword_contains, cond.keyword_exclusions, target)) {
             callback(false, 0);
           } else {
@@ -6891,7 +6948,7 @@
               'wed': 3,
               'thu': 4,
               'fri': 5,
-              'sat': 6
+              'sat': 6,
             };
             return (str in day) ? day[str] : null;
           }
@@ -6973,7 +7030,7 @@
           if (sinclo.trigger.common.pregContainsAndExclsion({
                 wordType: Number(cond.referrerCond),
                 containsType: Number(cond.keyword_contains_type),
-                exclusionsType: Number(cond.keyword_exclusions_type)
+                exclusionsType: Number(cond.keyword_exclusions_type),
               }, cond.keyword_contains, cond.keyword_exclusions,
               userInfo.referrer)) {
             callback(false, 0);
@@ -7005,13 +7062,13 @@
             typeObj: {
               wordType: Number(cond.speechContentCond),
               containsType: Number(cond.keyword_contains_type),
-              exclusionsType: Number(cond.keyword_exclusions_type)
+              exclusionsType: Number(cond.keyword_exclusions_type),
             },
             keyword_contains: cond.keyword_contains,
             keyword_exclusions: cond.keyword_exclusions,
             delay: cond.triggerTimeSec,
             conditionType: conditionType,
-            callback: callback
+            callback: callback,
           });
         },
         matchAllSpeechContent: function(msg, callback) {
@@ -7029,8 +7086,10 @@
               sinclo.scenarioApi.isWaitingInput());
           if (
               !window.sincloInfo.contract.useCogmoAttendApi &&
-              (!check.isset(storage.s.get('operatorEntered')) || storage.s.get('operatorEntered') === 'false')
-              && !sinclo.scenarioApi.isProcessing() && !sinclo.scenarioApi.isWaitingInput() &&
+              (!check.isset(storage.s.get('operatorEntered')) ||
+                  storage.s.get('operatorEntered') === 'false')
+              && !sinclo.scenarioApi.isProcessing() &&
+              !sinclo.scenarioApi.isWaitingInput() &&
               this.speechContentRegEx.length > 0) {
             for (var index in this.speechContentRegEx) {
               console.log(this.speechContentRegEx[index].id);
@@ -7076,7 +7135,7 @@
           if (sinclo.trigger.common.pregContainsAndExclsion({
             wordType: Number(cond.stayPageCond),
             containsType: Number(cond.keyword_contains_type),
-            exclusionsType: Number(cond.keyword_exclusions_type)
+            exclusionsType: Number(cond.keyword_exclusions_type),
           }, cond.keyword_contains, cond.keyword_exclusions, target)) {
             callback(false, 0);
           } else {
@@ -7101,7 +7160,7 @@
           if (sinclo.trigger.common.pregContainsAndExclsion({
             wordType: Number(cond.stayPageCond),
             containsType: Number(cond.keyword_contains_type),
-            exclusionsType: Number(cond.keyword_exclusions_type)
+            exclusionsType: Number(cond.keyword_exclusions_type),
           }, cond.keyword_contains, cond.keyword_exclusions, target)) {
             callback(false, 0);
           } else {
@@ -7126,7 +7185,7 @@
               3: 'wed',
               4: 'thu',
               5: 'fri',
-              6: 'sat'
+              6: 'sat',
             };
             day = day[nowDay];
             timeData = cond.everyday[day];
@@ -7141,7 +7200,7 @@
               3: 'wed',
               4: 'thu',
               5: 'fri',
-              6: 'sat'
+              6: 'sat',
             };
             if (nowDay == 1 || nowDay == 2 || nowDay == 3 || nowDay == 4 ||
                 nowDay == 5) {
@@ -7268,8 +7327,8 @@
               }
             }
           }
-        }
-      }
+        },
+      },
     },
     /**
      * =================================
@@ -7281,7 +7340,7 @@
         '1': '.+',
         '2': '[0-9]+',
         '3': '^(([^<>()\\[\\]\\.,;:\\s@"]+(\\.[^<>()\\[\\]\\.,;:\\s@"]+)*)|(".+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$',
-        '4': '^(0|\\+)(\\d{9,}|[\\d-]{11,})'
+        '4': '^(0|\\+)(\\d{9,}|[\\d-]{11,})',
       },
       _validChars: {
         '1': '.+',
@@ -7291,7 +7350,7 @@
         '3': '[abcdefg.hijklmnopqrstuvwxyz!#$%&\'*/=?^_+-`{|}~0123456789)]+',
         '3_lf': '([abcdefg.hijklmnopqrstuvwxyz!#$%&\'*/=?^_+-`{|}~0123456789]|\\r\\n|\\n|\\r)+',
         '4': '([0-9]|\-)+',
-        '4_lf': '([0-9]|\-|\\r\\n|\\n|\\r)+'
+        '4_lf': '([0-9]|\-|\\r\\n|\\n|\\r)+',
       },
       _lKey: {
         beforeTextareaOpened: 's_beforeTextareaOpened',
@@ -7312,7 +7371,7 @@
         scenarioMessageType: 's_scenarioMessageType',
         previousChatMessageLength: 's_prevChatMessageLength',
         stackReturnSettings: 's_stackReturnSettings',
-        isSentMail: 's_isSentMail'
+        isSentMail: 's_isSentMail',
       },
       defaultVal: {
         's_id': 0,
@@ -7330,13 +7389,13 @@
         's_showSequenceList': {},
         's_scenarioMessageType': 3,
         's_stackReturnSettings': {},
-        's_isSentMail': false
+        's_isSentMail': false,
       },
       _isReload: false,
       _doingTimer: null,
       _events: {
         inputCompleted: 'sinclo:scenario:inputComplete',
-        fileUploaded: 'sinclo:scenario:fileUploaded'
+        fileUploaded: 'sinclo:scenario:fileUploaded',
       },
       _actionType: {
         speakText: '1',
@@ -7352,7 +7411,7 @@
         addCustomerInformation: '11',
         bulkHearing: '12',
         addLeadInformation: '13',
-        controlVariable: '14'
+        controlVariable: '14',
       },
       set: function(key, data) {
         var self = sinclo.scenarioApi;
@@ -7392,12 +7451,12 @@
       unsetSequenceList: function(sequenceNum) {
         var self = sinclo.scenarioApi;
         var obj = self._getBaseObj();
-        console.warn(" BEFORE EXECUTE UNSET SEQUENCE LIST !!! ");
+        console.warn(' BEFORE EXECUTE UNSET SEQUENCE LIST !!! ');
         console.warn(obj);
         delete obj[self._lKey.showSequenceSet][sequenceNum];
-        console.warn(" EXECUTE UNSET SEQUENCE LIST !!! ");
+        console.warn(' EXECUTE UNSET SEQUENCE LIST !!! ');
         console.warn(obj);
-        console.warn(" AFTER EXECUTE UNSET SEQUENCE LIST !!! ");
+        console.warn(' AFTER EXECUTE UNSET SEQUENCE LIST !!! ');
         self._setBaseObj(obj);
         console.warn(self._getBaseObj());
       },
@@ -7419,7 +7478,7 @@
           if (document.hasFocus() && !isAnotherTabInit) {
             var information = {
               id: id,
-              scenarioObj: scenarioObj
+              scenarioObj: scenarioObj,
             };
             this.syncScenarioData.sendDetail('startScenario', information);
           }
@@ -7478,7 +7537,7 @@
           's_showSequenceList': {},
           's_scenarioMessageType': 3,
           's_stackReturnSettings': {},
-          's_isSentMail': false
+          's_isSentMail': false,
         };
       },
       begin: function() {
@@ -7553,7 +7612,7 @@
         if (check.isIE() && !result) {
           if (storage.s.get('Waiting_on_IE') !== null) {
             var resultString = storage.s.get('Waiting_on_IE');
-            if ( resultString.toLowerCase() === "true" ) result = true;
+            if (resultString.toLowerCase() === 'true') result = true;
           }
         }
         return result;
@@ -7847,12 +7906,12 @@
           type, message, categoryNum, showTextArea, callback) {
         console.log(
             '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>_showMessage:type ' + type);
-        console.warn("VVV SHOW MESSAGE VVV");
+        console.warn('VVV SHOW MESSAGE VVV');
         var self = sinclo.scenarioApi;
         message = self._replaceVariable(message);
         if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum),
             categoryNum)) {
-          console.warn(" THIS IS NOT SHOWN MESSAGE");
+          console.warn(' THIS IS NOT SHOWN MESSAGE');
           var name = (sincloInfo.widget.showAutomessageName === 2 ?
               '' :
               sincloInfo.widget.subTitle);
@@ -7867,11 +7926,18 @@
           }
           if (String(categoryNum).indexOf('delete_') >= 0) {
             sinclo.chatApi.createMessageUnread(
-                {cn: cn + categoryNum, message: message, name: name, chatId: 0, isBot:true},
+                {
+                  cn: cn + categoryNum,
+                  message: message,
+                  name: name,
+                  chatId: 0,
+                  isBot: true,
+                },
                 true);
           } else {
             sinclo.chatApi.createMessageUnread(
-                {cn: cn, message: message, name: name, chatId: 0, isBot:true}, true);
+                {cn: cn, message: message, name: name, chatId: 0, isBot: true},
+                true);
           }
           sinclo.chatApi.handleBrowserZoom();
           self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum),
@@ -7881,7 +7947,7 @@
           self._putScenarioMessage(type, message, categoryNum, showTextArea,
               callback);
         } else {
-          console.warn("!!!!! THIS IS SHOWN MESSAGE !!!!!");
+          console.warn('!!!!! THIS IS SHOWN MESSAGE !!!!!');
           callback();
         }
       },
@@ -7983,7 +8049,7 @@
         var self = sinclo.scenarioApi;
         var data = self.get(self._lKey.showSequenceSet);
         var arr = data[scenarioSeqNum] ? data[scenarioSeqNum] : [];
-        console.warn("IS SHOWN LIST >> " + arr);
+        console.warn('IS SHOWN LIST >> ' + arr);
         return arr.indexOf(categoryNum) !== -1;
       },
       /**
@@ -8026,7 +8092,7 @@
                       self._hearing._cvIsEnable()),
               categoryNum: categoryNum,
               showTextarea: showTextArea,
-              message: message
+              message: message,
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(data) {
@@ -8042,8 +8108,8 @@
           message: data.message,
           settings: {
             options: data.settings.options,
-            customDesign: data.settings.customDesign
-          }
+            customDesign: data.settings.customDesign,
+          },
         };
         var self = sinclo.scenarioApi,
             storeObj = {
@@ -8057,7 +8123,7 @@
                       self._hearing._cvIsEnable()),
               categoryNum: data.categoryNum,
               showTextarea: data.showTextArea,
-              message: JSON.stringify(pulldownData)
+              message: JSON.stringify(pulldownData),
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
@@ -8071,7 +8137,7 @@
       _putHearingCalendar: function(data, callback) {
         var calendarData = {
           message: data.message,
-          settings: data.settings
+          settings: data.settings,
         };
         var self = sinclo.scenarioApi,
             storeObj = {
@@ -8085,7 +8151,7 @@
                       self._hearing._cvIsEnable()),
               categoryNum: data.categoryNum,
               showTextarea: data.showTextArea,
-              message: JSON.stringify(calendarData)
+              message: JSON.stringify(calendarData),
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
@@ -8099,7 +8165,7 @@
       _putHearingButtons: function(data, callback) {
         var buttonData = {
           message: data.message,
-          settings: data.settings
+          settings: data.settings,
         };
         var self = sinclo.scenarioApi,
             storeObj = {
@@ -8113,7 +8179,7 @@
                       self._hearing._cvIsEnable()),
               categoryNum: data.categoryNum,
               showTextarea: data.showTextArea,
-              message: JSON.stringify(buttonData)
+              message: JSON.stringify(buttonData),
             };
         if (self._disallowSaveing()) {
           self._pushScenarioMessage(storeObj, function(item) {
@@ -8342,7 +8408,7 @@
         var savedSettings = self.get(self._lKey.stackReturnSettings);
         var settings = {
           lastSequenceNum: 0,
-          isReturn: false
+          isReturn: false,
         };
         Object.keys(savedSettings).some(function(e) {
           if (Number(e) >= currentSequenceNum) {
@@ -8377,18 +8443,18 @@
           retry: 'sh_retry',
           length: 'sh_length',
           confirming: 'sh_comfirming',
-          prevSeq: 'sh_prevSeq'
+          prevSeq: 'sh_prevSeq',
         },
         _cvType: {
           validOnce: '1',
           validAll: '2',
-          confirmOK: '3'
+          confirmOK: '3',
         },
         _inputType: {
           '1': 'text',
           '2': 'number',
           '3': 'email',
-          '4': 'tel'
+          '4': 'tel',
         },
         _watcher: null,
         disableRestoreMessage: function(chatId) {
@@ -8614,15 +8680,15 @@
             $(this).remove();
           });
           self._hideMessage(deleteTargetIds);
-          if( check.isIE() ){
+          if (check.isIE()) {
             self._resetShownMessage(
                 self._parent.get(self._parent._lKey.currentScenarioSeqNum),
                 self._getCurrentSeq());
           }
           self._setCurrentSeq(Number(targetSeqNum));
-            self._resetShownMessage(
-                self._parent.get(self._parent._lKey.currentScenarioSeqNum),
-                self._getCurrentSeq());
+          self._resetShownMessage(
+              self._parent.get(self._parent._lKey.currentScenarioSeqNum),
+              self._getCurrentSeq());
           var hearingProcess = self._getCurrentHearingProcess();
           if (isCancelTargetText) {
             $('#sincloChatMessage, #miniSincloChatMessage').val(text);
@@ -8651,7 +8717,7 @@
         },
         _hideMessage: function(messageIds) {
           emit('hideScenarioMessages', {
-            hideMessages: messageIds
+            hideMessages: messageIds,
           });
         },
         _setPrevSeqNum: function() {
@@ -8686,7 +8752,7 @@
             self._beginCancelHandler();
           }, 2000);
           var executeSilent = false;
-          console.warn("_process SILENT REQUEST IS >>> " + silentRequest );
+          console.warn('_process SILENT REQUEST IS >>> ' + silentRequest);
           if (typeof silentRequest !== 'undefined') {
             executeSilent = silentRequest;
           }
@@ -8748,11 +8814,11 @@
           });
         },
         _showMessage: function(uiType, message, required, settings, callback) {
-          console.warn("HEARING SHOW MESSAGE");
-          console.warn("UI TYPE IS >> " + uiType);
-          console.warn("MESSAGE IS >> " + message);
-          console.warn("CALLBACK IS >> " + callback);
-          console.warn("HEARING SHOW MESSAGE");
+          console.warn('HEARING SHOW MESSAGE');
+          console.warn('UI TYPE IS >> ' + uiType);
+          console.warn('MESSAGE IS >> ' + message);
+          console.warn('CALLBACK IS >> ' + callback);
+          console.warn('HEARING SHOW MESSAGE');
           var self = sinclo.scenarioApi._hearing;
           switch (uiType) {
             case '1': //テキスト1行
@@ -8822,7 +8888,7 @@
                 uiType: uiType,
                 message: message,
                 settings: settings,
-                categoryNum: self._getCurrentSeq()
+                categoryNum: self._getCurrentSeq(),
               };
               if (self._parent._getCurrentScenario().restore) {
                 params.storedValue = self._parent._getSavedVariable(
@@ -8838,7 +8904,7 @@
                 uiType: uiType,
                 message: message,
                 settings: settings,
-                categoryNum: self._getCurrentSeq()
+                categoryNum: self._getCurrentSeq(),
               };
               if (self._parent._getCurrentScenario().restore) {
                 params.storedValue = self._parent._getSavedVariable(
@@ -8848,13 +8914,13 @@
               break;
             case '7':
               self._parent.set(self._parent._lKey.sendCustomerMessageType, 37);
-              self._parent.set(self._parent._lKey.scenarioMessageType, 44);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 46);
               var params = {
                 type: '2',
                 uiType: uiType,
                 message: message,
                 settings: settings,
-                categoryNum: self._getCurrentSeq()
+                categoryNum: self._getCurrentSeq(),
               };
               if (self._parent._getCurrentScenario().restore) {
                 params.storedValue = self._parent._getSavedVariable(
@@ -8946,7 +9012,7 @@
               self._disableAllHearingMessageInput();
             }, 1000);
             console.warn(executeSilent);
-            if ( !check.isIE() || !executeSilent ) {
+            if (!check.isIE() || !executeSilent) {
               if (self._parent._goToNextScenario()) {
                 self._setCurrentSeq(0);
                 self._parent._process();
@@ -9168,7 +9234,7 @@
                   handleConfirmMessageFunc);
             }
           });
-        }
+        },
       },
       _selection: {
         _parent: null,
@@ -9211,7 +9277,7 @@
             return String(self._parent._getCurrentScenario().actionType) ===
                 '3';
           }
-        }
+        },
       },
       _mail: {
         _parent: null,
@@ -9230,7 +9296,7 @@
             templateId: self._parent.get(
                 self._parent._lKey.currentScenario).mMailTemplateId,
             withDownloadURL: self._isNeedToAddDownloadURL(),
-            variables: targetVariables
+            variables: targetVariables,
           };
 
           // 外部連携実装後に外す
@@ -9249,7 +9315,7 @@
           var isNeed = self._parent.get(
               self._parent._lKey.currentScenario).sendWithDownloadURL;
           return (isNeed) ? isNeed : false;
-        }
+        },
       },
       _anotherScenario: {
         _parent: null,
@@ -9276,13 +9342,13 @@
           var result = self._parent.get(
               self._parent._lKey.currentScenario).executeNextAction;
           return (result && '1'.indexOf(result) >= 0);
-        }
+        },
       },
       _callExternalApi: {
         _parent: null,
         _externalType: {
           useApi: '1',
-          useScript: '2'
+          useScript: '2',
         },
         _init: function(parent) {
           this._parent = parent;
@@ -9318,7 +9384,7 @@
             type: 'i',
             message: 'call external script. from scenarioID : ' +
                 self._parent.get(self._parent._lKey.scenarioId),
-            data: externalScript
+            data: externalScript,
           });
           try {
             eval(externalScript);
@@ -9326,7 +9392,7 @@
             emit('traceScenarioInfo', {
               type: 'w',
               message: 'call external script error found. error: ' + e.message,
-              data: externalScript
+              data: externalScript,
             });
             console.log(e.message);
             return;
@@ -9334,7 +9400,7 @@
           emit('traceScenarioInfo', {
             type: 'i',
             message: 'result is OK.',
-            data: externalScript
+            data: externalScript,
           });
         },
         _callApi: function(callback) {
@@ -9343,11 +9409,11 @@
               self._parent._lKey.currentScenario).tExternalApiConnectionId;
           emit('callExternalApi', {
             externalApiConnectionId: externalApiConnectionId,
-            variables: self._parent._getAllTargetVariables()
+            variables: self._parent._getAllTargetVariables(),
           }, function(result) {
             callback(result);
           });
-        }
+        },
       },
       _receiveFile: { // 管理画面上ではファイル送信
         _parent: null,
@@ -9388,11 +9454,11 @@
           var sendFileId = self._parent.get(
               self._parent._lKey.currentScenario).tChatbotScenarioSendFileId;
           emit('getScenarioDownloadInfo', {
-            sendFileId: sendFileId
+            sendFileId: sendFileId,
           }, function(result) {
             callback(result);
           });
-        }
+        },
       },
       _getAttributeValue: {
         _parent: null,
@@ -9442,7 +9508,7 @@
           } else {
             return '';
           }
-        }
+        },
       },
       _sendFile: {
         _parent: null,
@@ -9520,7 +9586,7 @@
           } else {
             self._showError();
           }
-        }
+        },
       },
       _branchOnCond: {
         _parent: null,
@@ -9698,7 +9764,7 @@
           }
           //最後まで含んでいなかったらOK
           return true;
-        }
+        },
       },
       _addCustomerInformation: {
         _parent: null,
@@ -9728,20 +9794,20 @@
             var variable = self._parent._getSavedVariable(targetVariableName);
             sendArray.push({
               id: targetId,
-              value: variable
+              value: variable,
             });
           }
           emit('saveCustomerInfoValue', {targetValues: sendArray});
           // 即時で返す
           callback();
-        }
+        },
       },
       _bulkHearing: { // 一括ヒアリング
         _parent: null,
         _analyseResult: {},
         _state: {
           waitInput: 'sbh_waitInput',
-          confirm: 'sbh_confirm'
+          confirm: 'sbh_confirm',
         },
         _init: function(parent) {
           this._parent = parent;
@@ -9769,7 +9835,7 @@
               messageRequestFlg: 0,
               isAutoSpeech: false,
               notifyToCompany: false,
-              isScenarioMessage: true
+              isScenarioMessage: true,
             }, function() {
               setTimeout(function() {
                 emit('addLastMessageToCV',
@@ -9814,7 +9880,7 @@
                 'text': '1',
                 'number': '2',
                 'email': '3',
-                'tel': '4'
+                'tel': '4',
               },
               inputType = targetObj.attr('type'),
               inputText = targetObj.val(),
@@ -9912,13 +9978,13 @@
             notifyToCompany: false,
             isScenarioMessage: true,
             targetVariable: self._parent.get(
-                self._parent._lKey.currentScenario).multipleHearings
+                self._parent._lKey.currentScenario).multipleHearings,
           }, callback);
         },
         _notifyBeginBulkHearing: function() {
           var self = sinclo.scenarioApi._bulkHearing;
           emit('beginBulkHearing', {
-            historyId: sinclo.chatApi.historyId
+            historyId: sinclo.chatApi.historyId,
           });
         },
         _saveWaitingInputState: function() {
@@ -9934,7 +10000,7 @@
           var state = self._parent.get(self._state.confirm);
           return state && ((typeof (state) === 'boolean' && state) ||
               (typeof (state) === 'string' && state === 'true'));
-        }
+        },
       },
       _addLeadInformation: {
         _parent: null,
@@ -9957,7 +10023,7 @@
               dataSet: dataSet,
               userAgent: window.navigator.userAgent,
               executeUrl: location.href,
-              landingUrl: userInfo.prev[0].url
+              landingUrl: userInfo.prev[0].url,
             };
             emit('saveLeadList', sendData);
             // データを渡し次の処理を行う
@@ -9985,7 +10051,7 @@
             delete data['leadVariableName'];
           });
           return dataSet;
-        }
+        },
       },
       _controlVariable: {
         _parent: null,
@@ -10109,7 +10175,7 @@
             });
           }
           return message;
-        }
+        },
       },
       syncScenarioData: {
         sendDetail: function(param, otherInformation) {
@@ -10146,7 +10212,7 @@
             hearingSeq: currentHearingSeqNo,
             otherInformation: otherInformation,
             siteKey: sincloInfo.site.key,
-            sessionID: userInfo.sincloSessionId
+            sessionID: userInfo.sincloSessionId,
           };
           emit('syncScenarioData', data);
         },
@@ -10190,13 +10256,13 @@
             console.warn('FORCE WAITING STATEMENT TO TRUE');
             this._forceInputWaiting();
           } else if (detail === 'handleTextArea') {
-            console.warn("SYNC FREE INPUT AREA");
+            console.warn('SYNC FREE INPUT AREA');
             this._syncFreeInputArea(obj.otherInformation);
           } else if (detail === 'startBulkHearing') {
             console.warn('START BULK HEARING');
             this._startBulkHearing();
           } else {
-              console.log('<><><><><> UNEXPECTED DETAIL <><><><><>');
+            console.log('<><><><><> UNEXPECTED DETAIL <><><><><>');
           }
         },
         _startScenario: function(initData) {
@@ -10217,7 +10283,8 @@
         _startBulkHearing: function() {
           sinclo.scenarioApi._bulkHearing._init(sinclo.scenarioApi);
           sinclo.scenarioApi._bulkHearing._process();
-          sinclo.scenarioApi.set(sinclo.scenarioApi._lKey.sendCustomerMessageType, 30);
+          sinclo.scenarioApi.set(
+              sinclo.scenarioApi._lKey.sendCustomerMessageType, 30);
           console.log('一括ヒアリングの開始が同期されました');
         },
         _changeScenarioSeq: function(nextSeqNum, nextScenario) {
@@ -10292,8 +10359,8 @@
             sinclo.scenarioApi._saveWaitingInputState(true);
           }
         },
-        _syncFreeInputArea: function( status ) {
-          switch( Number(status.type) ){
+        _syncFreeInputArea: function(status) {
+          switch (Number(status.type)) {
             case 1:
               sinclo.displayTextarea(status.skippable);
               break;
@@ -10301,8 +10368,8 @@
               sinclo.hideTextarea();
               break;
           }
-        }
-      }
+        },
+      },
     },
     // 外部連携API
     api: {
@@ -10346,7 +10413,7 @@
             type: 'w',
             message: 'call google tel-cv function is failed. error : ' +
                 gFuncError.message,
-            data: telNumberStr
+            data: telNumberStr,
           });
         }
         try {
@@ -10359,11 +10426,11 @@
             type: 'w',
             message: 'call yahoo tel-cv function is failed. error : ' +
                 yFuncError.message,
-            data: telNumberStr
+            data: telNumberStr,
           });
         }
-      }
-    }
+      },
+    },
   };
 
   sincloVideo = {
@@ -10375,7 +10442,7 @@
       );
 
       return false;
-    }
+    },
   };
 
 }(sincloJquery));

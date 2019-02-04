@@ -797,6 +797,32 @@
 
                 });
               }
+              // button customize
+              if (hearing.uiType === '7') {
+                $timeout(function() {
+                  $scope.$apply();
+                }).then(function() {
+                  if (hearing.settings.customDesign) {
+                    jscolor.installByClassName('jscolor');
+                    var selectionTarget = $('#action' + index + '_button' + hearingIndex);
+                    selectionTarget.css('border-color', hearing.settings.customDesign.buttonBorderColor);
+                    selectionTarget.css('background-color', hearing.settings.customDesign.buttonBackgroundColor);
+                    selectionTarget.css('color', hearing.settings.customDesign.buttonTextColor);
+                    $('#action' + index + '_button' + hearingIndex + '_button').
+                        css('color', hearing.settings.customDesign.buttonTextColor);
+                  } else {
+                    var hearingSetting = self.setDefaultColorHearing(
+                        $scope.setActionList[index].hearings[hearingIndex]);
+                    jscolor.installByClassName('jscolor');
+                    var selectionTarget = $('#action' + index + '_selection' + hearingIndex);
+                    selectionTarget.css('border-color', hearing.settings.customDesign.buttonBorderColor);
+                    selectionTarget.css('background-color', hearing.settings.customDesign.buttonBackgroundColor);
+                    selectionTarget.css('color', hearing.settings.customDesign.buttonTextColor);
+                    $('#action' + index + '_selection' + hearingIndex + '_button').
+                        css('color', hearingSetting.settings.customDesign.buttonTextColor);
+                  }
+                });
+              }
             });
           }
 
@@ -2727,16 +2753,14 @@
 
           if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_BUTTON ?>) {
             var data = {};
+            data.settings = hearingDetail.settings;
             data.options = hearingDetail.settings.options;
-            data.design = hearingDetail.settings.customDesign;
             data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
             data.message = $scope.replaceVariable(message);
             data.isRestore = isRestore;
             data.oldValue = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
-            data.textColor = $scope.widget.settings.re_background_color;
-            data.backgroundColor = $scope.widget.settings.re_text_color;
 
-            $scope.$broadcast('addRePulldown', data);
+            $scope.$broadcast('addReButton', data);
             $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
                 hearingDetail.required);
           }
@@ -3133,6 +3157,19 @@
       $(document).on('change', '#chatTalk .flatpickr-input', function() {
         var prefix = $(this).attr('id').replace(/-sinclo-datepicker[0-9a-z-]+$/i, '');
         var message = $(this).val().replace(/^\s/, '');
+
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
+
+      // ボタンの選択
+      $(document).on('click', '#chatTalk .sinclo-button', function() {
+        $(this).parents('div.sinclo-button-wrap').find('.sinclo-button').removeClass('selected');
+        $(this).addClass('selected');
+        var prefix = $(this).parents('div.sinclo-button-wrap').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
+        var message = $(this).text().replace(/^\s/, '');
 
         var numbers = prefix.match(/\d+/g).map(Number);
         var actionStep = numbers[0];
