@@ -581,6 +581,9 @@ function getMessageTypeByUiType(type) {
     case 6:
       result = 45;
       break;
+    case 7:
+      result = 46;
+      break;
     default:
       result = 22;
   }
@@ -2451,9 +2454,9 @@ io.sockets.on('connection', function(socket) {
     var arr = [keyLength];
     if (isset(customerList[siteKey])) {
       Object.keys(customerList[siteKey]).forEach(function(key) {
-        var splitedKey = key.split('/#');
+        var splitedKey = key.split('@@');
         if (splitedKey.length === 2 && isset(splitedKey[1])) {
-          var targetSocketId = '/#' + splitedKey[1];
+          var targetSocketId = splitedKey[1];
           if (!io.sockets.connected[targetSocketId] ||
               !isset(customerList[siteKey][key].sincloSessionId)) {
             var targetTabId = customerList[siteKey][key].tabId;
@@ -2464,7 +2467,6 @@ io.sockets.on('connection', function(socket) {
                   {siteKey: siteKey, tabId: targetTabId}, siteKey);
             }
             delete customerList[siteKey][key];
-
             if (totalCounter === keyLength - 1) {
               emit.toMine('receiveAccessInfo', arr, socket);
               arr = [keyLength];
@@ -2617,7 +2619,7 @@ io.sockets.on('connection', function(socket) {
       } else {
         emit.toCompany('sendCustomerInfo', obj, obj.siteKey);
       }
-      customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '_' +
+      customerList[obj.siteKey][obj.accessId + '_' + obj.ipAddress + '@@' +
       socket.id] = obj;
       if ((('contract' in obj) && ('chat' in obj.contract) &&
           obj.contract.chat === false) || functionManager.isEnabled(obj.siteKey,
@@ -3550,21 +3552,7 @@ io.sockets.on('connection', function(socket) {
       hearingSeq: obj.hearingSeq,
       otherInformation: obj.otherInformation
     };
-    console.log(obj);
     try {
-      if( obj.detail === "startScenario" ) {
-        console.log("START SCENARIO");
-      } else if ( obj.detail === "startHearing" ) {
-        console.log("START HEARING");
-      } else if ( obj.detail === "changeScenarioSeq" ) {
-        console.log("CHANGE SCENARIO SEQUENCE");
-      } else if ( obj.detail === "changeHearingSeq" ) {
-        console.log("CHANGE HEARING SEQUENCE");
-      } else if ( obj.detail === "endHearing") {
-        console.log("END HEARING");
-      } else if ( obj.detail === "endScenario" ){
-        console.log("END SCENARIO");
-      }
       emit.toSameUser("syncScenarioDataResult", dataSet, obj.siteKey, obj.sessionID);
     } catch (e) {
       console.log('ERROR DETECTED!! >> ' + e);
@@ -3594,16 +3582,34 @@ io.sockets.on('connection', function(socket) {
       });
     } catch (e) {
     }
+
     console.log('chatStart-0: [' + logToken +
         '] >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>');
     console.log('chatStart-1: [' + logToken + '] ' + d);
     if (sincloCore[obj.siteKey][obj.tabId] === null) {
-      emit.toMine('chatStartResult', {
-        ret: false,
-        siteKey: obj.siteKey,
-        userId: sincloCore[obj.siteKey][obj.tabId].chat,
-        sincloSessionId: obj.sincloSessionId
-      }, socket);
+
+      pool.query(
+          'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
+          [obj.userId, companyList[obj.siteKey]], function(err, result) {
+            if (err !== null && err !== '') return false;
+            var settingObj = "";
+            var profileIcon = "";
+            try {
+              if( isset(result[0]["settings"]) ) {
+                settingObj = result[0]["settings"];
+                profileIcon = JSON.parse(settingObj)["profileIcon"];
+              }
+            } catch (e) {}
+
+            emit.toMine('chatStartResult', {
+              ret: false,
+              siteKey: obj.siteKey,
+              profileIcon: profileIcon,
+              userId: sincloCore[obj.siteKey][obj.tabId].chat,
+              sincloSessionId: obj.sincloSessionId
+            }, socket);
+          });
+
 
       var userId = (getSessionId(obj.siteKey, obj.tabId, 'chat')) ?
           sincloCore[obj.siteKey][obj.tabId].chat :
@@ -3686,9 +3692,27 @@ io.sockets.on('connection', function(socket) {
                 userName: userName,
                 userId: obj.userId
               };
+
+              pool.query(
+                  'SELECT mu.settings FROM m_users as mu WHERE mu.id = ? AND mu.del_flg != 1 AND mu.m_companies_id = ?',
+                  [obj.userId, companyList[obj.siteKey]], function(err, result) {
+                    if (err !== null && err !== '') return false;
+                    var settingObj = "";
+                    var profileIcon = "";
+                    try {
+                      if( isset(result[0]["settings"]) ) {
+                        settingObj = result[0]["settings"];
+                        profileIcon = JSON.parse(settingObj)["profileIcon"];
+                      }
+                    } catch (e) {}
+
+                    sendData.profileIcon = profileIcon;
+                    emit.toSameUser('chatStartResult', sendData, obj.siteKey,
+                        obj.sincloSessionId);
+                  });
+
               //emit.toUser("chatStartResult", sendData, getSessionId(obj.siteKey, obj.tabId, 'sessionId'));
-              emit.toSameUser('chatStartResult', sendData, obj.siteKey,
-                  obj.sincloSessionId);
+
 
               /* チャット対応上限の処理（対応人数加算の処理） */
               if (scList.hasOwnProperty(obj.siteKey) &&

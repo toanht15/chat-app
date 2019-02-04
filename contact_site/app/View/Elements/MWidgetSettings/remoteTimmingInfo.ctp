@@ -11,21 +11,63 @@
   var trimmingInfoTag = null;
   var croppedData = {};
   var ngScope = null;
+  var targetImageName = null;
 
   function beforeTrimmingInit(img, viewTag) {
     targetImgTag.attr('src', img);
     viewImgTag = viewTag;
   }
 
-  function trimmingInit($scope, trimInfoTag, aspectRatio) {
+  function trimmingInit($scope, trimInfoTag, aspectRatio, target) {
     ngScope = $scope;
     trimmingInfoTag = trimInfoTag;
+    targetImageName = target;
     $image = $('.cropper-example-1 > img');
     targetImgTag.cropper({
       aspectRatio: aspectRatio, // ここでアスペクト比の調整 ワイド画面にしたい場合は 16 / 9
     });
-    popupEvent.resize();
+    if( target === "chatbot_icon" || target === "operator_icon" || target === "profile_icon") {
+      //アイコンに関する設定の場合はクラスを付ける
+      $('.cropper-example-1').addClass( "icon_trimming" );
+    }
+    if( $('#popup-frame')[0] != null ) {
+      popupEvent.resize();
+    }
+    if ( $('#popup-frame-overlap')[0] != null ) {
+      popupEventOverlap.resize();
+    }
   }
+
+  var isBotIconNeedChangeToMainImage = function(ngScope){
+    return Number(ngScope.chatbotIconToggle) === 1
+        && Number(ngScope.chatbotIconType) === 1;
+  };
+
+  var isOpIconNeedChangeToMainImage = function(ngScope){
+    return Number(ngScope.operatorIconToggle) === 1
+        && Number(ngScope.operatorIconType) === 1;
+  };
+
+  popupEventOverlap.doTrimming = function(){
+    data = $('#img').cropper('getData');
+    // 切り抜きした画像のデータ
+    // このデータを元にして画像の切り抜きが行われます
+    var trimmingData = {
+      width: Math.round(data.width),
+      height: Math.round(data.height),
+      x: Math.round(data.x),
+      y: Math.round(data.y),
+      _token: 'jf89ajtr234534829057835wjLA-SF_d8Z' // csrf用
+    };
+
+    var imgDataUrl = targetImgTag.cropper('getCroppedCanvas').toDataURL();
+    viewImgTag.attr('src', imgDataUrl);
+    console.log(trimmingInfoTag);
+    if(trimmingInfoTag) {
+      trimmingInfoTag.val(JSON.stringify(trimmingData));
+    }
+    return popupEventOverlap.close();
+  };
 
   function carouselTrimmingInit($scope, trimInfoTag) {
     ngScope = $scope;
@@ -135,9 +177,33 @@
     viewImgTag.attr('src', imgDataUrl);
 
     if(ngScope) {
-      ngScope.main_image = imgDataUrl;
-      console.log(trimmingData);
-      ngScope.trimmingInfo = JSON.stringify(trimmingData);
+      if(targetImageName) {
+        switch(targetImageName) {
+          case "main_image":
+            ngScope.main_image = imgDataUrl;
+            ngScope.trimmingInfo = JSON.stringify(trimmingData);
+            if ( isBotIconNeedChangeToMainImage(ngScope) ) {
+              ngScope.chatbot_icon = ngScope.main_image;
+            }
+            if ( isOpIconNeedChangeToMainImage(ngScope) ) {
+              ngScope.operator_icon = ngScope.main_image;
+            }
+            break;
+          case "chatbot_icon":
+            ngScope.chatbot_icon = imgDataUrl;
+            ngScope.trimmingBotIconInfo = JSON.stringify(trimmingData);
+            break;
+          case "operator_icon":
+            ngScope.operator_icon = imgDataUrl;
+            ngScope.trimmingOpIconInfo = JSON.stringify(trimmingData);
+            break;
+          default:
+            //default is main_image
+            ngScope.main_image = imgDataUrl;
+            ngScope.trimmingInfo = JSON.stringify(trimmingData);
+            break;
+        }
+      }
       ngScope.$apply();
     }
     if(trimmingInfoTag) {
