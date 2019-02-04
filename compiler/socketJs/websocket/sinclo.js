@@ -3051,6 +3051,17 @@
           sinclo.chatApi.send(e.target.value.trim());
         });
 
+        $(document).on('click', '.sincloHearingButton', function(e) {
+          if (sinclo.chatApi.isDisabledSlightly(this)) {
+            return false;
+          }
+          sinclo.chatApi.disableAllButtonsSlightly();
+          e.stopPropagation();
+
+          var text = $(this).text();
+          sinclo.chatApi.send(text.trim());
+        });
+
         $(document).
             on('focus', '#sincloChatMessage,#miniSincloChatMessage',
                 function(e) {
@@ -3199,6 +3210,8 @@
         $('[name^=\'sinclo-pulldown\']').addClass(addClassName);
         // ヒアリング：カレンダー
         $('[name^=\'sinclo-datepicker\']').addClass(addClassName);
+        // ヒアリング：ボタン
+        $('.sincloHearingButton').addClass(addClassName);
       },
       _handleAllDisableSelectableUI: function() {
         var addClassName = 'onetime-disabled';
@@ -3211,6 +3224,8 @@
         $('[name^=\'sinclo-pulldown\']').removeClass(addClassName);
         // ヒアリング：カレンダー
         $('[name^=\'sinclo-datepicker\']').removeClass(addClassName);
+        // ヒアリング：ボタン
+        $('.sincloHearingButton').removeClass(addClassName);
       },
       showMiniMessageArea: function() {
         console.log('>>>>>>>>>>>>>>>>>>>>>showMiniMessageArea');
@@ -4435,7 +4450,7 @@
             storedValueIsFound = true;
             html += '<span class="sincloHearingButton selected" style="' + sinclo.chatApi.createButtonStyle(settings, index) + '">' + option + '</span>';
           } else {
-            html += '<span class="sincloHearingButton" style="' + sinclo.chatApi.createButtonStyle(settings, index) + '" onclick="sinclo.chatApi.send(\'' + option +'\');">' + option + '</span>';
+            html += '<span class="sincloHearingButton" style="' + sinclo.chatApi.createButtonStyle(settings, index) + '">' + option + '</span>';
           }
         });
         html += '</div>';
