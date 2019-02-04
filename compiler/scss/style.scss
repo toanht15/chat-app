@@ -8727,6 +8727,7 @@ ul.naviBtn {
                   width: 40px;
                   height: 40px;
                   img {
+                    max-height: 40px;
                     max-width: 40px;
                   }
                 }
@@ -11390,6 +11391,7 @@ div.balloon {
             width: 40px;
             height: 40px;
             img {
+              max-height: 40px;
               max-width: 40px;
             }
           }
@@ -11446,6 +11448,7 @@ div.balloon {
           .img_wrapper {
             width: 40px;
             max-height: 40px;
+            max-width: 40px;
             img {
               max-width: 40px;
             }

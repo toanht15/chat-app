@@ -1389,7 +1389,21 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return fontSize;
     };
 
+    $scope.getCustomBalloonMargin = function(){
+      var height = Number($scope.widget_custom_height);
+      var maxHeight = 374;
+      //ウィジェットサイズ大を計算値の最大基準とする
+      if( height > maxHeight){
+        height = maxHeight;
+      }
 
+      //計算方法は各サイズのmargin-leftを基に階差数列で式を算出した
+      var margin = 2 + (height - 194) * (height - 104) / 16200;
+      return margin;
+    };
+
+
+    //ウィジェットの縦幅が中サイズより大きい場合はデフォ値も大きくする
     $scope.customSizeRevertProcess = function() {
       var height = Number($scope.widget_custom_height);
       var headerTextSize = 14;
@@ -1449,7 +1463,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'header_text_size2':
         case 'header_text_size3':
         case 'header_text_size4':
-          case 'header_text_size5':
           size = 15;
           break;
         case 're_text_size1':
@@ -1458,7 +1471,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 're_text_size2':
         case 're_text_size3':
         case 're_text_size4':
-        case 're_text_size5':
           size = 13;
           break;
         case 'se_text_size1':
@@ -1467,7 +1479,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'se_text_size2':
         case 'se_text_size3':
         case 'se_text_size4':
-        case 'se_text_size5':
           size = 13;
           break;
         case 'chat_send_btn_text_size1':
@@ -1476,7 +1487,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'chat_send_btn_text_size2':
         case 'chat_send_btn_text_size3':
         case 'chat_send_btn_text_size4':
-        case 'chat_send_btn_text_size5':
           size = 13;
           break;
         case 'message_box_text_size1':
@@ -1485,7 +1495,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'message_box_text_size2':
         case 'message_box_text_size3':
         case 'message_box_text_size4':
-        case 'message_box_text_size5':
           size = 13;
           break;
       }

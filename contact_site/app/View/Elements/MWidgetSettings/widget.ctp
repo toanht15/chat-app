@@ -189,7 +189,7 @@
     #sincloBox ul#chatTalk > div.with_icon .icon_container.smallSize { max-width: 32px; min-width: 32px; }
     #sincloBox ul#chatTalk > div.with_icon .icon_container.middleSize { max-width: 37px; min-width: 37px; }
     #sincloBox ul#chatTalk > div.with_icon .icon_container.largeSize { max-width: 42px; min-width: 42px; }
-    #sincloBox ul#chatTalk > div.with_icon .icon_container.customSize { max-width: 45px; }
+    #sincloBox ul#chatTalk > div.with_icon .icon_container.customSize { max-width: 42px; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal {display: flex; justify-content: center; align-items: center; border-radius: 50%}
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.smallSize { height: 30px; width: 30px; font-size: 20px; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.middleSize { height: 35px; width: 35px; font-size: 23px; }
@@ -236,7 +236,7 @@
     #sincloBox ul#chatTalk li.boxType.chat_left.with_icon { margin-left: 2px; -ms-grid-column: 2; -ms-grid-column-align: start;}
     #sincloBox ul#chatTalk li.boxType.chat_left.middleSize.with_icon { margin-left: 3px; }
     #sincloBox ul#chatTalk li.boxType.chat_left.largeSize.with_icon { margin-left: 5px; }
-    #sincloBox ul#chatTalk li.boxType.chat_left.customSize.with_icon { margin-left: calc( 2px + ({{widget_custom_height}}px - 194px) * ({{widget_custom_height}} - 104) / 16200); }
+    #sincloBox ul#chatTalk li.boxType.chat_left.customSize.with_icon { margin-left: {{getCustomBalloonMargin()}}px; }
     #sincloBox ul#chatTalk li.balloonType.chat_right { margin-left: 37.5px }
     #sincloBox ul#chatTalk li.balloonType.chat_left { margin-right: 17.5px }
     #sincloBox ul#chatTalk li.balloonType.chat_right.middleSize { margin-left: 45px }
