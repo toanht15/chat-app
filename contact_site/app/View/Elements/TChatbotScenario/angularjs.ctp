@@ -864,7 +864,6 @@
                   $('#action' + index + '_datepicker' + hearingIndex).on('change', function() {
                     self.customCalendarTextColor(calendarTarget, hearing.settings.customDesign);
                   });
-
                 });
               }
 
@@ -901,30 +900,27 @@
                   nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
                 };
 
-
                 $timeout(function() {
                   $scope.$apply(function() {
                     hearing.settings.dataLoaded = true;
+
+                    var maxHeight = 0;
+                    carouselTarget.find('.caption').each(function() {
+                      var currentHeight = $(this).find('.title').height() + $(this).find('p').height();
+                      maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+                    });
+                    console.log(maxHeight);
+                    maxHeight = maxHeight + 23; // 23 margin
+                    carouselTarget.find('.caption').each(function() {
+                      $(this).css('min-height', maxHeight + 'px');
+                      $(this).css('height', maxHeight + 'px');
+                    });
                   });
-                }).then(function() {
+                }, 200).then(function() {
                   if (hearing.settings.carouselCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   }
 
-                  var maxHeight = 0;
-                  carouselTarget.find('.caption').each(function() {
-                    var currentHeight = $(this).find('.title').height() + $(this).find('p').height();
-                    // var currentHeight = $(this).height();
-                    maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
-                  });
-                  console.log(maxHeight);
-                  maxHeight = maxHeight + 23; // 15 margin
-                  carouselTarget.find('.caption').each(function() {
-                    // var titleHeight = $(this).find('.title').height();
-                    // var height = titleHeight + maxHeight + 16; // 8: subtitle margin bottom
-                    $(this).css('min-height', maxHeight + 'px');
-                    $(this).css('height', maxHeight + 'px');
-                  });
                 });
 
               }
