@@ -798,7 +798,7 @@ sincloApp.factory('SimulatorService', function() {
       html += '#sincloBox #' + carouselId + ' .slick-next:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + data.settings.customDesign.arrowColor + ';}';
       html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + data.settings.customDesign.arrowColor + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
-      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title {  margin: 4px 12px 3px 12px; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title {  margin: 10px 12px 3px 12px; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 0 12px 8px 12px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.subTitlePosition) + ';}';
       html += '#sincloBox #' + carouselId + ' .thumbnail:hover { -webkit-filter: brightness(110%); filter: brightness(110%);}';
       if (data.settings.outCarouselNoneBorder) {
@@ -825,10 +825,10 @@ sincloApp.factory('SimulatorService', function() {
       html+= '<div class="single-item" id="' + carouselId + '">';
       angular.forEach(data.images, function (image, key) {
         html+= '<div style="width: ' + containerWidth + 'px">';
-        html+= '<div class="thumbnail" id="' + prefix + 'image' + key + '" style="margin-left: auto; margin-right: auto; cursor: pointer; display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
+        html+= '<div class="thumbnail" id="' + prefix + 'image' + key + '" style="cursor: pointer; margin-left: auto; margin-right: auto; display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
         html+= '<img id="img_' + prefix + 'image' + key +'" style="cursor: pointer; width: ' + carouselSize.width + 'px; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
         html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
-        html+= '<div class="title"><strong>' + image.title + '</strong></div>';
+        html+= '<div class="title"><strong style="font-weight: bold">' + image.title + '</strong></div>';
         html+= '<p class="sub-title">' + image.subTitle + '</p>';
         html+= '</div></div></div>';
       });
@@ -880,8 +880,47 @@ sincloApp.factory('SimulatorService', function() {
         return this.getOutsideArrowCarouselSize(settings);
       }
     },
-
     getOutsideArrowCarouselSize: function(settings) {
+      if (settings.balloonStyle === '1'){
+        return this.getOutsideArrowHasBalloonCarouselSize(settings);
+      } else {
+        return this.getOutsideArrowNoneBalloonCarouselSize(settings);
+      }
+    },
+    getOutsideArrowNoneBalloonCarouselSize: function(settings) {
+      var aspectRatio = settings.aspectRatio;
+      if (!aspectRatio) {
+        aspectRatio = 1;
+      }
+      var data = {width: 0, height: 0, containerWidth: 0};
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          data.containerWidth = 170;
+          data.width          = settings.lineUpStyle === '1' ? 170 : 100;
+          break;
+        case 2:
+          data.containerWidth = 220;
+          data.width          = settings.lineUpStyle === '1' ? 220 : 130;
+          break;
+        case 3:
+          data.containerWidth = 280;
+          data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+          break;
+        case 4:
+          data.containerWidth = 280;
+          data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+          break;
+        default:
+          data.containerWidth = 280;
+          data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+          break;
+      }
+
+      data.height = data.width / aspectRatio;
+
+      return data;
+    },
+    getOutsideArrowHasBalloonCarouselSize: function(settings) {
       var aspectRatio = settings.aspectRatio;
       if (!aspectRatio) {
         aspectRatio = 1;
@@ -914,8 +953,14 @@ sincloApp.factory('SimulatorService', function() {
 
       return data;
     },
-
     getInsideArrowCarouselSize: function(settings) {
+      if (settings.balloonStyle === '1'){
+        return this.getInsideArrowHasBalloonCarouselSize(settings);
+      } else {
+        return this.insideArrowNoneBalloonCarouselSize(settings);
+      }
+    },
+    getInsideArrowHasBalloonCarouselSize: function(settings) {
       var aspectRatio = settings.aspectRatio;
       if (!aspectRatio) {
         aspectRatio = 1;
@@ -941,6 +986,39 @@ sincloApp.factory('SimulatorService', function() {
         default:
           data.containerWidth = 310;
           data.width          = settings.lineUpStyle === '1' ? 310 : 193;
+          break;
+      }
+
+      data.height = data.width / aspectRatio;
+
+      return data;
+    },
+    insideArrowNoneBalloonCarouselSize: function(settings) {
+      var aspectRatio = settings.aspectRatio;
+      if (!aspectRatio) {
+        aspectRatio = 1;
+      }
+      var data = {width: 0, height: 0, containerWidth: 0};
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          data.containerWidth = 220;
+          data.width          = settings.lineUpStyle === '1' ? 220 : 136;
+          break;
+        case 2:
+          data.containerWidth = 280;
+          data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+          break;
+        case 3:
+          data.containerWidth = 340;
+          data.width          = settings.lineUpStyle === '1' ? 340 : 215;
+          break;
+        case 4:
+          data.containerWidth = 340;
+          data.width          = settings.lineUpStyle === '1' ? 340 : 215;
+          break;
+        default:
+          data.containerWidth = 340;
+          data.width          = settings.lineUpStyle === '1' ? 340 : 215;
           break;
       }
 
