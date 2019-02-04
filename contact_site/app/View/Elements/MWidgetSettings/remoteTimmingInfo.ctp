@@ -51,11 +51,12 @@
           '  display: none;\n' +
           '}';
       style += '</style>';
-      var html = '<i style="margin-top: 10px; cursor: pointer" id="cropper_zoom_btn" onclick="zoomIn();" class="fas fa-2x fa-search-plus"></i>';
-      html += '<i style="margin-top: 10px; margin-left: 10px; cursor: pointer" onclick="zoomOut();" class="fas fa-2x fa-search-minus"></i>';
       $('.cropper-example-1').after(style);
-      $('.cropper-example-1').after(html);
     }
+
+    var html = '<i style="margin-top: 10px; cursor: pointer" id="cropper_zoom_btn" onclick="zoomIn();" class="fas fa-2x fa-search-plus"></i>';
+    html += '<i style="margin-top: 10px; margin-left: 10px; cursor: pointer" onclick="zoomOut();" class="fas fa-2x fa-search-minus"></i>';
+    $('.cropper-example-1').after(html);
 
     targetImgTag.cropper({
       viewMode: 0,
