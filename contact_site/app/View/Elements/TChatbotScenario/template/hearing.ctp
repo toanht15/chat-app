@@ -483,6 +483,29 @@
                         ng-click="main.revertButtonColor(setActionId, listId, 'buttonTextColor')">標準に戻す</span>
                 </span>
               <span class="button-custom-items">
+                  <label style="width: 100px;">ボタン文字位置</label>
+                      <div class="radio-buttons" ng-init="hearingItem.settings.customDesign.buttonAlign = '2'">
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign1">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign1"
+                                 ng-model="hearingItem.settings.customDesign.buttonAlign"
+                                 value="1">左寄せ</label>
+                        <label class="radio-label text4 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign2">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign2"
+                                 ng-model="hearingItem.settings.customDesign.buttonAlign"
+                                 value="2">中央寄せ</label>
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign3">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign3"
+                                 ng-model="hearingItem.settings.customDesign.buttonAlign"
+                                 value="3">右寄せ</label>
+                      </div>
+                </span>
+              <span class="button-custom-items">
                   <label>ボタン選択色</label>
                   <input type="text" id="action{{setActionId}}_button{{listId}}_buttonActiveColor"
                          class="jscolor{hash:true} ignore-click-event"

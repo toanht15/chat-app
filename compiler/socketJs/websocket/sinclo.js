@@ -4532,7 +4532,13 @@
         return html;
       },
       createButtonStyle: function(settings, index) {
-        var style = 'justify-content: center; padding: 12px; color: ' +
+        var alignItems = 'align-items: center; ';
+        if(settings.customDesign.buttonAlign === '1') {
+          alignItems = 'align-items: flex-start; ';
+        } else if(settings.customDesign.buttonAlign === '3') {
+          alignItems = 'align-items: flex-end; ';
+        }
+        var style = alignItems + 'padding: 12px; color: ' +
             settings.customDesign.buttonTextColor + '; background-color: ' +
             settings.customDesign.buttonBackgroundColor + ';';
         if (!settings.customDesign.outButtonNoneBorder) {
