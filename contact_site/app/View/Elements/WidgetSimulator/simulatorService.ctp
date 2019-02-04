@@ -529,7 +529,7 @@
        * @param String prefix ラジオボタンに付与するプレフィックス
        * @return String       変換したメッセージ
        */
-      createMessage: function(val, prefix) {
+      createMessage: function(val, prefix, align) {
         if (val === '') return;
         prefix = (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
         var isSmartphone = Number(this._showWidgetType) !== 1;
@@ -540,6 +540,17 @@
         var radioName = prefix + 'sinclo-radio' + messageIndex;
         var content = '';
         var isAddUnderline = prefix.indexOf('underline') !== -1 ? true : false;
+        var alignStyle = 'text-align: left;';
+        switch(align) {
+          case '2':
+            alignStyle = 'text-align: center;';
+            break;
+          case '3':
+            alignStyle = 'text-align: right;';
+            break;
+          default:
+            break;
+        }
 
         for (var i = 0; strings.length > i; i++) {
           if (strings[i].match(/(<div|<\/div>)/)) {
@@ -563,9 +574,9 @@
             content += '' + str + '\n';
           } else {
             if (isAddUnderline) {
-              content += '<span class=\'sinclo-text-line underlineText\'>' + str + '</span>\n';
+              content += '<span class=\'sinclo-text-line underlineText\' style=\'' + alignStyle + '\'>' + str + '</span>\n';
             } else {
-              content += '<span class=\'sinclo-text-line\'>' + str + '</span>\n';
+              content += '<span class=\'sinclo-text-line\' style=\'' + alignStyle + '\'>' + str + '</span>\n';
             }
           }
         }
@@ -833,7 +844,7 @@
       },
 
       createButton: function(data) {
-        var messageHtml = this.createMessage(data.message, data.prefix);
+        var messageHtml = this.createMessage(data.message, data.prefix, data.settings.customDesign.messageAlign);
         var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
         var index = $('#chatTalk > div:not([style*="display: none;"])').length;
         var buttonName = prefix + 'sinclo-button-' + index;
@@ -858,9 +869,11 @@
         var html = '<style>';
         html += '  #sincloBox li.sinclo_re.no-wrap.all-round .sinclo-button-wrap .sinclo-button:active {background-color: ' +
             data.settings.customDesign.buttonActiveColor + '!important;}';
+        html += '  #sincloBox li.sinclo_re.no-wrap.all-round .sinclo-button-wrap .sinclo-button.selected {background-color: ' +
+            data.settings.customDesign.buttonActiveColor + '!important;}';
         html += '</style>';
 
-        html += messageHtml + '<div class="sinclo-button-wrap' + sideBySideClass + '" >';
+        html += messageHtml + '<div id="' + buttonName + '" class="sinclo-button-wrap' + sideBySideClass + '" >';
 
         angular.forEach(data.options, function(option, key) {
           var buttonStyle = 'padding: 12px; color: ' + data.settings.customDesign.buttonTextColor +
@@ -894,10 +907,6 @@
           }
         });
         html += '</div>';
-        if (data.isRestore && hasOldOptionValue) {
-          html += '<div><a class="nextBtn" style="color: ' + data.textColor + '; background-color: ' +
-              data.backgroundColor + ';" id="' + data.prefix + '_next"">次へ</a></div>';
-        }
 
         return html;
       },

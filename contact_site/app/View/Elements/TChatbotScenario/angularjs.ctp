@@ -3164,6 +3164,19 @@
         self.handleReselectionInput(message, actionStep, hearingIndex);
       });
 
+      // ボタンの選択
+      $(document).on('click', '#chatTalk .sinclo-button', function() {
+        $(this).parents('div.sinclo-button-wrap').find('.sinclo-button').removeClass('selected');
+        $(this).addClass('selected');
+        var prefix = $(this).parents('div.sinclo-button-wrap').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
+        var message = $(this).text().replace(/^\s/, '');
+
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
+
       // re-input text type
       $(document).on('click', '#chatTalk .underlineText', function() {
         var prefix = $(this).parents('.liBoxRight, .liRight').attr('id');
