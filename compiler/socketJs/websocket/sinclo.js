@@ -3091,6 +3091,7 @@
           e.stopPropagation();
 
           var text = $(this).text();
+          $(this).parents('div.sincloHearingButtons').find('div.sincloHearingButton').removeClass('selected');
           $(this).addClass('selected');
           sinclo.chatApi.send(text.trim());
         });
