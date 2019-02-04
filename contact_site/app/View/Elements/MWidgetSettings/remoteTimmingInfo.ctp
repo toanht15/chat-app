@@ -93,7 +93,10 @@
           '  display: none;\n' +
           '}';
       style += '</style>';
+      var html = '<i style="margin-top: 10px; cursor: pointer" id="cropper_zoom_btn" onclick="zoomIn();" class="fas fa-2x fa-search-plus"></i>';
+      html += '<i style="margin-top: 10px; margin-left: 10px; cursor: pointer" onclick="zoomOut();" class="fas fa-2x fa-search-minus"></i>';
       $('.cropper-example-1').after(style);
+      $('.cropper-example-1').after(html);
     }
 
     targetImgTag.cropper({
@@ -101,6 +104,14 @@
       aspectRatio: aspectRatio, // ここでアスペクト比の調整 ワイド画面にしたい場合は 16 / 9
     });
     popupEvent.resize();
+  }
+
+  function zoomIn() {
+    targetImgTag.cropper('zoom', 0.1);
+  }
+
+  function zoomOut() {
+    targetImgTag.cropper('zoom', -0.1);
   }
 
   popupEvent.trimCarouselImage = function() {

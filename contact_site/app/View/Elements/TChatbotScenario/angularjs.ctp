@@ -888,25 +888,28 @@
                   nextIconClass = 'fa-chevron-circle-right';
                 }
                 var slidesToShow = hearing.settings.lineUpStyle === '1' ? 1 : 1.5;
+                var lazyLoad     = hearing.settings.balloonStyle === '1' ? 'ondemand' : 'progressive';
+                var speed        = hearing.settings.carouselPattern === '1' ? 300 : 350;
 
                 hearing.settings.slickSettings = {
                   dots: true,
                   slidesToShow: slidesToShow,
                   infinite: false,
-                  lazyLoad: 'ondemand',
-                  // centerMode: true,
+                  lazyLoad: lazyLoad,
+                  speed: speed,
                   prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
                   nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
                 };
 
 
                 $timeout(function() {
-                  $scope.$apply();
+                  $scope.$apply(function() {
+                    hearing.settings.dataLoaded = true;
+                  });
                 }).then(function() {
                   if (hearing.settings.carouselCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   }
-                  hearing.settings.dataLoaded = true;
 
                   var maxHeight = 0;
                   carouselTarget.find('.caption').each(function() {
@@ -915,7 +918,7 @@
                     maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
                   });
                   console.log(maxHeight);
-                  maxHeight = maxHeight + 15; // 15 margin
+                  maxHeight = maxHeight + 23; // 15 margin
                   carouselTarget.find('.caption').each(function() {
                     // var titleHeight = $(this).find('.title').height();
                     // var height = titleHeight + maxHeight + 16; // 8: subtitle margin bottom
@@ -923,6 +926,7 @@
                     $(this).css('height', maxHeight + 'px');
                   });
                 });
+
               }
             });
           }
@@ -1489,6 +1493,14 @@
       };
 
       this.getOutsideArrowCarouselSize = function(settings, widgetSizeType) {
+        if (settings.balloonStyle === '1') {
+          return this.getOutsideArrowHasBalloonCarouselSize(settings, widgetSizeType);
+        } else {
+          return this.getOutsideArrowNoneBalloonCarouselSize(settings, widgetSizeType);
+        }
+      };
+
+      this.getOutsideArrowHasBalloonCarouselSize = function(settings, widgetSizeType) {
         var aspectRatio = settings.aspectRatio;
         if (!aspectRatio) {
           aspectRatio = 1;
@@ -1522,8 +1534,49 @@
         return data;
       };
 
+      this.getOutsideArrowNoneBalloonCarouselSize = function(settings, widgetSizeType) {
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
+        switch (Number(widgetSizeType)) {
+          case 1:
+            data.containerWidth = 170;
+            data.width = settings.lineUpStyle === '1' ? 170 : 100;
+            break;
+          case 2:
+            data.containerWidth = 230;
+            data.width = settings.lineUpStyle === '1' ? 230 : 140;
+            break;
+          case 3:
+            data.containerWidth = 290;
+            data.width = settings.lineUpStyle === '1' ? 290 : 180;
+            break;
+          case 4:
+            data.containerWidth = 290;
+            data.width = settings.lineUpStyle === '1' ? 290 : 180;
+            break;
+          default:
+            data.containerWidth = 290;
+            data.width = settings.lineUpStyle === '1' ? 290 : 180;
+            break;
+        }
+
+        data.height = data.width / aspectRatio;
+
+        return data;
+      };
 
       this.getInsideArrowCarouselSize = function(settings, widgetSizeType){
+        if (settings.balloonStyle === '1') {
+          return this.getInsideArrowHasBalloonCarouselSize(settings, widgetSizeType);
+        } else {
+          return this.getInsideArrowNoneBalloonCarouselSize(settings, widgetSizeType);
+        }
+      };
+
+      this.getInsideArrowHasBalloonCarouselSize = function(settings, widgetSizeType){
         var aspectRatio = settings.aspectRatio;
         if (!aspectRatio) {
           aspectRatio = 1;
@@ -1549,6 +1602,40 @@
           default:
             data.containerWidth = 320;
             data.width = settings.lineUpStyle === '1' ? 320 : 200;
+            break;
+        }
+
+        data.height = data.width / aspectRatio;
+
+        return data;
+      };
+
+      this.getInsideArrowNoneBalloonCarouselSize = function(settings, widgetSizeType){
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
+        switch (Number(widgetSizeType)) {
+          case 1:
+            data.containerWidth = 230;
+            data.width = settings.lineUpStyle === '1' ? 230 : 142;
+            break;
+          case 2:
+            data.containerWidth = 280;
+            data.width = settings.lineUpStyle === '1' ? 280 : 172;
+            break;
+          case 3:
+            data.containerWidth = 340;
+            data.width = settings.lineUpStyle === '1' ? 340 : 212;
+            break;
+          case 4:
+            data.containerWidth = 340;
+            data.width = settings.lineUpStyle === '1' ? 340 : 212;
+            break;
+          default:
+            data.containerWidth = 340;
+            data.width = settings.lineUpStyle === '1' ? 340 : 212;
             break;
         }
 
@@ -1666,11 +1753,14 @@
         } else {
           // カルーセル
           var target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
+          $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = false;
         }
         target.splice(optionIndex, 1);
         // 表示更新
         $timeout(function() {
-          $scope.$apply();
+          $scope.$apply(function() {
+            $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = true;
+          });
         }).then(function() {
           var targetElmList = $('.action' + actionStep + '_option' + listIndex);
           self.controllListView(actionType, targetElmList, target);
@@ -2398,7 +2488,6 @@
             url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
             success: function(html){
               modalOpen.call(window, html, 'p-widget-carousel-trimming', 'トリミング', 'moment');
-              $('.cropper-example-1').after('<p style="margin-bottom: 0;">※ マウスホイールで画像を拡大、縮小することができます。</p>');
               callback();
             }
           });
