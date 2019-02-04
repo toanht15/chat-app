@@ -936,7 +936,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
   $scope.getActualChatTalkHeight = function() {
     var offset = (Number($scope.chat_init_show_textarea) === 2) ? 75 : 0;
     var actualHeight = 284;
-    switch(Number($scope.widgetSizeTypeToggle)) {
+    switch (Number($scope.widgetSizeTypeToggle)) {
       case 1:
         actualHeight = 194 + offset;
         break;
@@ -1398,8 +1398,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       }
 
       //計算方法は各サイズのmargin-leftを基に階差数列で式を算出した
-      var margin = 2 + (height - 194) * (height - 104) / 16200;
-      return margin;
+      return 2 + (height - 194) * (height - 104) / 16200;
     };
 
 

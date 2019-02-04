@@ -70,6 +70,22 @@
       right: 5px;
     }
 
+    #sincloBox.sp-preview #chatTalk {
+    <?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>
+      height: 194px;
+    <?php else: ?>
+      height: 220px;
+    <?php endif;?>
+    }
+
+    #sincloBox.sp-preview.simpleHeader #chatTalk {
+    <?php if(!defined('APP_MODE_OEM') || !APP_MODE_OEM): ?>
+      height: 246px;
+    <?php else: ?>
+      height: 272px;
+    <?php endif;?>
+    }
+
     #sincloBox.sp-preview.fullSize {
       position: absolute;
       width: auto;
