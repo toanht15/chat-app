@@ -66,7 +66,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         border-radius: {{widget.settings['radius_ratio']}}px {{widget.settings['radius_ratio']}}px 0 0;
       }
       #sincloBox.middleSize{
-        width: 342.5px;
+        width: 344px;
       }
       #sincloBox.largeSize{
         width: 400px;

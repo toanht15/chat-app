@@ -1378,15 +1378,56 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       settingSendBtnText.max = sendBtnTextSize;
     };
 
+
+    //ウィジェットサイズ小より大きい場合は13
+    $scope.getFontSizeFromCustomWidgetSize = function(){
+      var height = Number($scope.widget_custom_height);
+      var fontSize = 12;
+      if( 194 < height ){
+        fontSize = 13;
+      }
+    return fontSize;
+    };
+
+
+    $scope.customSizeRevertProcess = function() {
+      var height = Number($scope.widget_custom_height);
+      var headerTextSize = 14;
+      var otherTextSize = 12;
+      if(284 <= height){
+        headerTextSize = 15;
+        otherTextSize = 13;
+      }
+      $scope.revertCustomTextSize(otherTextSize);
+      $scope.revertCustomHeaderSize(headerTextSize);
+    };
+
+    $scope.revertCustomTextSize = function(size){
+      $scope['re_text_size'] = size;
+      $scope['se_text_size'] = size;
+      $scope['chat_send_btn_text_size'] = size;
+      $scope['message_box_text_size'] = size;
+    };
+
+    $scope.revertCustomHeaderSize = function(size){
+      $scope['header_text_size'] = size;
+    };
+
+
     //ウィジェットサイズがクリックされた時の動作
     $scope.clickWidgetSizeTypeToggle = function(size){
+
       $scope.switchMaxLength(size);
       $scope.switchMaxTextSize(size);
-      $scope.revertStandardTextSize('header_text_size');
-      $scope.revertStandardTextSize('re_text_size');
-      $scope.revertStandardTextSize('se_text_size');
-      $scope.revertStandardTextSize('chat_send_btn_text_size');
-      $scope.revertStandardTextSize('message_box_text_size');
+      if ( Number( size ) === 5 ) {
+        $scope.customSizeRevertProcess();
+      } else {
+        $scope.revertStandardTextSize('header_text_size');
+        $scope.revertStandardTextSize('re_text_size');
+        $scope.revertStandardTextSize('se_text_size');
+        $scope.revertStandardTextSize('chat_send_btn_text_size');
+        $scope.revertStandardTextSize('message_box_text_size');
+      }
       if($('#chatTalk').length > 0) {
         $('#chatTalk').css('height', '');
       } else {

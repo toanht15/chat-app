@@ -111,7 +111,7 @@
       height: 254px;
     }
     #sincloBox.middleSize{
-      width: 342.5px;
+      width: 344px;
     }
     #sincloBox.largeSize{
       width: 400px;
