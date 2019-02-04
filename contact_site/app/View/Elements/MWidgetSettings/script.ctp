@@ -125,17 +125,20 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'op':
           targetToggle = $scope.operatorIconToggle;
           target = $scope.operator_icon;
+          break;
+        default:
+          break;
       }
       settings["with_icon"] = (Number( targetToggle ) === 1 && ( $scope.isPictureImage( target ) || $scope.isIconImage( target ) ));
-      settings = $scope.checkWidgetSize( settings );
+      settings = $scope.setWidgetSize( settings );
       return  settings;
     };
 
-    $scope.setIconSettings = function( type ){
+    $scope.getIconSettings = function( type ){
       var settings = {};
       var iconImage = $scope.checkIconImage( type );
       settings["icon_border"] = $scope.checkWhiteColor() && $scope.isIconImage(iconImage);
-      settings = $scope.checkWidgetSize( settings );
+      settings = $scope.setWidgetSize( settings );
       return settings;
     };
 
@@ -145,14 +148,66 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           return $scope.chatbot_icon;
         case 'op':
           return $scope.operator_icon;
+        default:
+          break;
       }
     };
 
-    $scope.checkWidgetSize = function( settings ) {
+    $scope.forceIconOriginal = function() {
+      //メイン画像をそのまま利用するアイコン設定の場合は、強制的に「個別に設定」を選択させる
+      if ( Number( $scope.chatbotIconType ) === <?= ICON_USE_MAIN_IMAGE ?> ) {
+        $scope.chatbotIconType = <?= ICON_USE_ORIGINAL_IMAGE ?>;
+        $scope.chatbot_icon = "";
+      }
+      if ( Number( $scope.operatorIconType ) === <?= ICON_USE_MAIN_IMAGE ?> ) {
+        $scope.operatorIconType = <?= ICON_USE_ORIGINAL_IMAGE ?>;
+        $scope.operator_icon = "";
+      }
+    };
+
+    $scope.changeIconToMainImage = function( type ){
+      switch( type ) {
+        case 'bot':
+          $scope.chatbot_icon = $scope.main_image;
+          break;
+        case 'op':
+          $scope.operator_icon = $scope.main_image;
+          break;
+        default:
+          break;
+      }
+    };
+
+    $scope.changeIconToNoImage = function( type ){
+      switch( type ) {
+        case 'bot':
+          $scope.chatbot_icon = "";
+          break;
+        case 'op':
+          $scope.operator_icon = "";
+          break;
+        default:
+          break;
+      }
+    };
+
+    $scope.getProfileIconForOperatorIcon = function( type ) {
+      if( Number( type ) === <?=ICON_USE_OPERATOR_IMAGE?> ) {
+        var profileIcon = $('.header_profile_icon')[0];
+        if (profileIcon.tagName === "IMG") {
+          $scope.operator_icon = profileIcon.src;
+        } else {
+          $scope.operator_icon = "fa-user fal";
+        }
+      }
+    };
+
+
+    $scope.setWidgetSize = function(settings ) {
       if( settings == null ) {
         settings = {}
       }
-      var size = "dummy";
+      var size = "middleSize";
       if($scope.showWidgetType === 1) {
         switch (Number($scope.widgetSizeTypeToggle)) {
           case 1:
@@ -265,8 +320,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       var oneByteCount = 0;
       var towByteCount = 0;
 
-      if((text.length === 0 && $scope.showWidgetType === 4)
-        ||sptext.length === 0 && $scope.showWidgetType === 3) {
+      if((text && text.length === 0 && $scope.showWidgetType === 4)
+        || (sptext && sptext.length === 0) && $scope.showWidgetType === 3) {
         $('#sincloBanner').css("width","44px");
         $('#bannertext').css("margin-right", "0px");
         return;
@@ -878,6 +933,37 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return image.match(/^http|data|\/\/node/) !== null;
   };
 
+  $scope.getActualChatTalkHeight = function() {
+    var offset = (Number($scope.chat_init_show_textarea) === 2) ? 75 : 0;
+    var actualHeight = 284;
+    switch(Number($scope.widgetSizeTypeToggle)) {
+      case 1:
+        actualHeight = 194 + offset;
+        break;
+      case 2:
+        actualHeight = 284 + offset;
+        break;
+      case 3:
+      case 4:
+        actualHeight = 374 + offset;
+        break;
+      case 5:
+        actualHeight = Number($scope.widget_custom_height) + offset;
+        break;
+    }
+    return actualHeight;
+  };
+
+  $scope.resetChatbotIconTypeToMain = function() {
+    $scope.chatbotIconType = 1;
+    $scope.changeIconToMainImage('bot');
+  };
+
+  $scope.resetOperatorIconTypeToMain = function() {
+    $scope.operatorIconType = 1;
+    $scope.changeIconToMainImage('op');
+  };
+
   $scope.checkWhiteColor = function() {
     return String($scope.main_color) === "#FFFFFF";
   };
@@ -891,6 +977,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       return {
         'border': "1px solid" + $scope.string_color
       };
+    } else {
+      // メインカラーが白でない場合は何も返却しない
     }
   };
 
@@ -906,6 +994,15 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         'background-color': $scope.main_color,
         'color': $scope.string_color
       };
+    }
+  };
+  $scope.getProfileIconForOpIcon = function( type ) {
+    if( Number( type ) === <?=ICON_USE_OPERATOR_IMAGE?> ){
+      var profileIcon = document.getElementById("headerProfileImg");
+      if ( !profileIcon == null) {
+        $scope.operator_icon = profileIcon.src
+      }
+      $scope.operator_icon = "fa-user fal";
     }
   };
 
@@ -1152,6 +1249,12 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
             switch( Number( galleryType ) ) {
               case 1:
                 $scope.main_image = src;
+                if ( Number($scope.chatbotIconType) === 1 ) {
+                  $scope.changeIconToMainImage('bot');
+                }
+                if ( Number($scope.operatorIconType) === 1) {
+                  $scope.changeIconToMainImage('op');
+                }
                 break;
               case 2:
                 $scope.chatbot_icon = src;
@@ -1162,7 +1265,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
               default:
                 $scope.main_image = src;
             }
-
             $("#MWidgetSettingUploadImage").val("");
             $scope.$apply();
             popupEvent.close();
@@ -1193,7 +1295,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           b: balloonB
       };
       return res;
-    }
+    };
 
     //テキストカラーの振り分け
     $scope.checkTxtColor = function(cR,cG,cB){
@@ -1204,7 +1306,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           return "#000000"; // 黒に設定
       }
       return "#FFFFFF"; // 白に設定
-    }
+    };
 
     $scope.switchMaxLength = function(size){
       var settingTitle = document.getElementById('MWidgetSettingTitle');
@@ -1236,7 +1338,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       settingTitle.maxLength = titleLength;
       settingSubTitle.maxLength = subTitleLength;
       settingDescription.maxLength = descriptionLength;
-    }
+    };
 
     $scope.switchMaxTextSize = function(size){
       //テキストサイズの最大値を変更します
@@ -1274,7 +1376,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       settingReText.max = textSize;
       settingSeText.max = textSize;
       settingSendBtnText.max = sendBtnTextSize;
-    }
+    };
 
     //ウィジェットサイズがクリックされた時の動作
     $scope.clickWidgetSizeTypeToggle = function(size){
@@ -1294,7 +1396,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       setTimeout(function(){
         $('#miniTarget').css('height', 'auto');
       },0);
-    }
+    };
 
     $scope.revertStandardTextSize = function(target) {
       var widgetSize = $scope.widgetSizeTypeToggle;
@@ -1491,11 +1593,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     });
 
     $scope.resizeWidgetHeightByWindowHeight = function() {
-      // カスタム設定時にはリサイズ時の関数を別に呼び出す。
-      if( Number($scope.widgetSizeTypeToggle) === 5 ) {
-        console.log("ウィジェットのサイズがカスタムです");
-        return;
-      }
       if($('#miniTarget').height() > 0) {
         $('#miniTarget').css('height', 'auto');
       }
@@ -1709,6 +1806,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       $("#MWidgetSettingUploadImage").val("");
     });
 
+    // メイン画像のトリミング
     angular.element('#MWidgetSettingUploadImage').change(function(e){
       var files = e.target.files;
       if ( window.URL && files.length > 0 ) {
@@ -1724,7 +1822,51 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
         openTrimmingDialog(function(){
           beforeTrimmingInit(url, $('#trim'));
-          trimmingInit($scope, null, 62 / 70);
+          trimmingInit($scope, null, 62 / 70, "main_image");
+        });
+      }
+    });
+
+    //チャットボットアイコンのトリミング
+    angular.element('#MWidgetSettingUploadBotIcon').change(function(e){
+      console.log("ボットアイコンのトリミング");
+      var files = e.target.files;
+      if ( window.URL && files.length > 0 ) {
+        var file = files[files.length-1];
+        // jpeg/jpg/png
+        var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+        if ( !reg.exec(file.type) ) {
+          $("#MWidgetSettingUploadBotIcon").val("");
+          $scope.uploadImageError = "画像はpng,jpeg,jpgのいずれかのみ利用可能です"
+        }
+
+        var url = window.URL.createObjectURL(file);
+
+        openTrimmingDialog(function(){
+          beforeTrimmingInit(url, $('#trim'));
+          trimmingInit($scope, null, 1, "chatbot_icon");
+        });
+      }
+    });
+
+    //オペレーターアイコンのトリミング
+    angular.element('#MWidgetSettingUploadOpIcon').change(function(e){
+      console.log("オペレーターアイコンのトリミング");
+      var files = e.target.files;
+      if ( window.URL && files.length > 0 ) {
+        var file = files[files.length-1];
+        // jpeg/jpg/png
+        var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+        if ( !reg.exec(file.type) ) {
+          $("#MWidgetSettingUploadOpIcon").val("");
+          $scope.uploadImageError = "画像はpng,jpeg,jpgのいずれかのみ利用可能です"
+        }
+
+        var url = window.URL.createObjectURL(file);
+
+        openTrimmingDialog(function(){
+          beforeTrimmingInit(url, $('#trim'));
+          trimmingInit($scope, null, 1, "operator_icon");
         });
       }
     });
@@ -2046,6 +2188,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         $('#MWidgetSettingChatbotIcon').val($scope.chatbot_icon);
         $('#MWidgetSettingOperatorIcon').val($scope.operator_icon);
         $('#TrimmingInfo').val($scope.trimmingInfo);
+        $('#TrimmingBotIconInfo').val($scope.trimmingBotIconInfo);
+        $('#TrimmingOpIconInfo').val($scope.trimmingOpIconInfo);
         $('#MWidgetSettingIndexForm').submit();
     };
 

@@ -289,6 +289,22 @@ router.get("/", function (req, res, next) {
       if ('chatInitShowTextarea' in settings) {
         chatInitShowTextarea = isNumeric(settings.chatInitShowTextarea);
       }
+
+      //チャットボットアイコン表示:設定していない場合は「表示しない」
+      var showChatbotIcon = 2;
+      if ('showChatbotIcon' in settings) {
+        showChatbotIcon = isNumeric(settings.showChatbotIcon);
+      }
+
+      //オペレーターアイコン表示:設定していない場合は「表示しない」
+      var showOperatorIcon = 2;
+      if ('showOperatorIcon' in settings) {
+        showOperatorIcon = isNumeric(settings.showOperatorIcon);
+      }
+
+
+
+
       sendData['widget'] = {
         showTiming: showTimingSetting,
         display_type: isNumeric(common.companySettings[siteKey].display_type),
@@ -302,13 +318,17 @@ router.get("/", function (req, res, next) {
         //ウィジットサイズ対応
         widgetSizeType: isNumeric(settings.widgetSizeType),
         //ウィジットサイズ対応
+        //ウィジェットカスタムサイズ対応
+        widgetCustomHeight: isNumeric(settings.widgetCustomHeight),
+        widgetCustomWidth: isNumeric(settings.widgetCustomWidth),
+        //ウィジェットカスタムサイズ対応
         title: settings.title,
         showSubtitle: isNumeric(settings.showSubtitle),
         subTitle: settings.subTitle,
         showDescription: isNumeric(settings.showDescription),
         description: settings.description,
 
-        /* カラー設定styat */
+        /* カラー設定start */
         //0.通常設定・高度設定
         colorSettingType: colorSettingType,
         //1.メインカラー
@@ -382,6 +402,11 @@ router.get("/", function (req, res, next) {
 
         showMainImage: settings.showMainImage,
         mainImage: settings.mainImage,
+        showChatbotIcon: isNumeric(showChatbotIcon),
+        chatbotIcon: settings.chatbotIcon,
+        showOperatorIcon: isNumeric(showOperatorIcon),
+        operatorIcon: settings.operatorIcon,
+        operatorIconType: settings.operatorIconType,
         chatInitShowTextarea: chatInitShowTextarea,
         chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
         chatTrigger: isNumeric(settings.chatTrigger),
@@ -749,7 +774,10 @@ router.post("/reload/widgetSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadWidgetSettings(req['body']['sitekey']);
+    common.reloadWidgetSettings(req['body']['sitekey'], function(){
+      res.send('OK');
+      res.status(200);
+    });
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
@@ -786,7 +814,10 @@ router.post("/reload/autoMessages", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadAutoMessageSettings(req['body']['sitekey']);
+    common.reloadAutoMessageSettings(req['body']['sitekey'], function(){
+      res.send('OK');
+      res.status(200);
+    });
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
@@ -823,14 +854,16 @@ router.post("/reload/operationHour", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadOperationHourSettings(req['body']['sitekey']);
+    common.reloadOperationHourSettings(req['body']['sitekey'], function(){
+      res.send('OK');
+      res.status(200);
+    });
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
     next(err);
     return false;
   }
-  // res.render('index', { title: 'Settings' });
 });
 
 router.post("/reload/chatSettings", function (req, res, next) {
@@ -860,7 +893,11 @@ router.post("/reload/chatSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadChatSettings(req['body']['sitekey']);
+    common.reloadChatSettings(req['body']['sitekey'], function(){
+      res.send('OK');
+      res.status(200);
+    });
+
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
@@ -897,14 +934,16 @@ router.post("/reload/customVariableSettings", function (req, res, next) {
     if (!('body' in req) || (('body' in req) && !('sitekey' in req['body']))) {
       throw new Error('Forbidden');
     }
-    common.reloadCustomVariableSettings(req['body']['sitekey']);
+    common.reloadCustomVariableSettings(req['body']['sitekey'], function(){
+      res.send('OK');
+      res.status(200);
+    });
   } catch (e) {
     var err = new Error(' Service Unavailable');
     err.status = 503;
     next(err);
     return false;
   }
-  // res.render('index', { title: 'Settings' });
 });
 
 /**

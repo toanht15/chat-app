@@ -76,6 +76,12 @@
 
       }
 
+      &.p-show-gallary #popup-main ul{
+          justify-content: space-between;
+          margin-right: 5px;
+          margin-left: 5px;
+      }
+
       /* ウィジェット設定-ギャラリー用 */
       &.p-show-gallary, &.p-show-notification-gallary {
         width: 290px;
@@ -1085,6 +1091,12 @@
       &.p-widget-image-trimming {
         width: 840px;
 
+        .icon_trimming {
+          .cropper-view-box {
+            border-radius: 50%;
+          }
+        }
+
         & #popup-button {
           width: 43em;
           margin: 0 auto;
@@ -1196,11 +1208,38 @@
             margin: 2px 5px;
             width: 355px;
             padding-left: 4px;
+            -ms-grid-column: 2;
           }
           .form01 div {
             margin: 5px 0;
+            &.profile_icon_register {
+              i {
+                display: flex;
+                font-size: 35px;
+                justify-content: center;
+                align-items: center;
+              }
+            }
+            .icon_register {
+              overflow: hidden;
+              input[type='file'] {
+                opacity: 0;
+                cursor: pointer!important;
+                position: absolute;
+                top: 0;
+                right :0;
+                height: 25px;
+                display: block;
+                z-index: 50;
+              }
+            }
             .hover-changer {
               position: relative;
+              width: 53px;
+              height: 53px;
+              border-radius: 50%;
+              position: relative;
+              cursor: pointer;
               &:after {
                 content: " ";
                 position: absolute;
@@ -1235,13 +1274,23 @@
             float: left;
           }
           .grid_item {
+            display: -ms-grid;
             display: grid;
+            -ms-grid-columns: 160px 1fr;
             grid-template-columns: 160px 1fr;
             .input_label {
               display: flex;
               justify-content: start;
               align-items: center;
               padding-left: 40px;
+              &.profile_memo_label_div{
+                align-items: flex-start;
+              }
+            }
+            .profile_memo_area {
+              width: 355px;
+              margin-left: 5px;
+              resize: none;
             }
           }
         }
@@ -1265,8 +1314,25 @@
               display: flex;
               flex-direction: column;
               align-items: center;
+              i {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: white;
+                font-size: 35px;
+
+              }
+              .profile_icon_selector {
+                width: 53px;
+                height: 53px;
+                border-radius: 50%;
+              }
               .hover-changer {
+                width: 53px;
+                height: 53px;
+                border-radius: 50%;
                 position: relative;
+                cursor: pointer;
                 &:after {
                   content: " ";
                   position: absolute;
@@ -1302,11 +1368,23 @@
                 border-radius: 50%;
               }
               .icon_register {
+                position: relative;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 width: 100px;
                 height: 25px;
+                overflow: hidden;
+                input[type='file'] {
+                  cursor: pointer!important;
+                  opacity: 0;
+                  position: absolute;
+                  top: 0;
+                  right: 0;
+                  height: 25px;
+                  display: block;
+                  z-index: 50;
+                }
               }
             }
             .inputItems {
@@ -1314,16 +1392,21 @@
             }
             .item {
               display:flex;
+              margin: 15px 0 !important;
+              .profile_memo_area {
+                resize: none;
+                width: 358px;
+              }
             }
             .labelArea {
               width:11em;
               margin: 5px 0 5px 36px !important;
+              &.align-start {
+                align-items: flex-start;
+              }
             }
             .labelAreaPassword {
               width:15em;
-            }
-            .item {
-              margin: 15px 0 !important;
             }
             #upperLimit {
               padding: 5px 10px;
@@ -2889,6 +2972,26 @@
       background: white;
       margin: auto;
       z-index: 53;
+
+      /* プロフィール設定_トリミングモーダル */
+      &.p-profile-icon-trimming {
+        width: 840px;
+
+        .cropper-view-box {
+          border-radius: 50%;
+        }
+
+        & #popup-button-overlap {
+          width: 43em;
+          margin: 0 auto;
+
+          .textBtn {
+            width: 12em;
+            margin: 0 2.5em;
+            float: left;
+          }
+        }
+      }
 
       /* アイコンデフォルト変更時注意文 */
       &.p-seticontodefault-alert {

@@ -65,6 +65,8 @@ define('C_COMPANY_USE_CUSTOMVARIABLES', 'customVariables');  // カスタム変�
 define('C_COMPANY_USE_EDITCUSTOMERINFORMATIONS', 'editCustomerInformations');  // 訪問ユーザ情報
 define('C_COMPANY_USE_COGMO_ATTEND_API', 'useCogmoAttendApi');  // CogmoAttend連携
 define('C_COMPANY_USE_MESSAGE_RANKING', 'useMessageRanking');  // メッセージランキング機能
+define('C_COMPANY_USE_ICON_SETTINGS', 'iconSettings');  // ボット・有人時のアイコン設定
+define('C_COMPANY_USE_CUSTOM_WIDGET_SIZE', 'customWidgetSize');  // ウィジェットサイズ「カスタム」
 
 // リアルタイムモニタ - ポーリングモード定数
 define('C_REALTIME_MONITOR_POLLING_MODE_INTERVAL_MSEC', 3000);
@@ -249,6 +251,8 @@ define('C_SCENARIO_UI_TYPE_PULLDOWN', 4);
 define('C_SCENARIO_UI_TYPE_CALENDAR', 5);
 define('C_SCENARIO_UI_TYPE_CAROUSEL', 6);
 
+define('C_SCENARIO_UI_TYPE_BUTTON', 7);
+
 /* シナリオ設定(ヒアリング) - 改行設定 */
 define('C_SCENARIO_INPUT_LF_TYPE_DISALLOW', 1);
 define('C_SCENARIO_INPUT_LF_TYPE_ALLOW', 2);
@@ -347,6 +351,13 @@ define('C_WIDGET_SIZE_TYPE_MAXIMUM', 4); //最大
 //ウィジェットカスタムサイズデフォルト値
 define('C_WIDGET_CUSTOM_WIDTH', 343);
 define('C_WIDGET_CUSTOM_HEIGHT', 284);
+
+//正方形トリミング最低サイズ
+define('C_SQUARE_TRIMMING_MIN_SIDE_SIZE', 200);
+
+//メイン画像トリミングサイズ
+define('C_TRIMMING_MIN_WIDTH', 248);
+define('C_TRIMMING_MIN_HEIGHT', 280);
 
 // ファイル送信設定タイプ
 define('C_FILE_TRANSFER_SETTING_TYPE_BASIC', 1);
