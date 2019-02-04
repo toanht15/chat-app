@@ -1438,7 +1438,7 @@
               || Number(chat.messageType) === 27
               || Number(chat.messageType) === 41
               || Number(chat.messageType) === 42
-              || Number(chat.messageType) === 44
+              || Number(chat.messageType) === 46
               || Number(chat.messageType) === 81
               || Number(chat.messageType) === 82) {
             if (check.isset(window.sincloInfo.widget.showAutomessageName) &&
@@ -1450,7 +1450,7 @@
             if (Number(chat.messageType) === 22
                 || Number(chat.messageType) === 41
                 || Number(chat.messageType) === 42
-                || Number(chat.messageType) === 44) {
+                || Number(chat.messageType) === 46) {
               cn = 'hearing_msg ' + cn;
             } else {
               answerCount = 0;
@@ -1577,7 +1577,7 @@
                 chat.chatId)) {
               sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
             }
-          } else if (Number(chat.messageType) === 44) {
+          } else if (Number(chat.messageType) === 46) {
             var calendar = JSON.parse(chat.message);
             this.chatApi.addButton('hearing_msg sinclo_re', calendar.message,
                 calendar.settings);
@@ -1854,6 +1854,8 @@
             sinclo.chatApi.messageType.scenario.customer.pulldown
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.calendar
+            || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.customer.button
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputRadio
             || obj.messageType ===
@@ -2861,6 +2863,7 @@
             radio: 33,
             pulldown: 34,
             calendar: 35,
+            button: 46,
             reInputText: 36,
             reInputRadio: 37,
             reInputPulldown: 38,
@@ -4128,6 +4131,7 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        div = sinclo.chatApi._editDivForIconSetting( div, true );
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
@@ -8848,7 +8852,7 @@
               break;
             case '7':
               self._parent.set(self._parent._lKey.sendCustomerMessageType, 37);
-              self._parent.set(self._parent._lKey.scenarioMessageType, 44);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 46);
               var params = {
                 type: '2',
                 uiType: uiType,

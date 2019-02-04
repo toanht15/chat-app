@@ -797,6 +797,32 @@
 
                 });
               }
+              // button customize
+              if (hearing.uiType === '7') {
+                $timeout(function() {
+                  $scope.$apply();
+                }).then(function() {
+                  if (hearing.settings.customDesign) {
+                    jscolor.installByClassName('jscolor');
+                    var selectionTarget = $('#action' + index + '_button' + hearingIndex);
+                    selectionTarget.css('border-color', hearing.settings.customDesign.buttonBorderColor);
+                    selectionTarget.css('background-color', hearing.settings.customDesign.buttonBackgroundColor);
+                    selectionTarget.css('color', hearing.settings.customDesign.buttonTextColor);
+                    $('#action' + index + '_button' + hearingIndex + '_button').
+                        css('color', hearing.settings.customDesign.buttonTextColor);
+                  } else {
+                    var hearingSetting = self.setDefaultColorHearing(
+                        $scope.setActionList[index].hearings[hearingIndex]);
+                    jscolor.installByClassName('jscolor');
+                    var selectionTarget = $('#action' + index + '_selection' + hearingIndex);
+                    selectionTarget.css('border-color', hearing.settings.customDesign.buttonBorderColor);
+                    selectionTarget.css('background-color', hearing.settings.customDesign.buttonBackgroundColor);
+                    selectionTarget.css('color', hearing.settings.customDesign.buttonTextColor);
+                    $('#action' + index + '_selection' + hearingIndex + '_button').
+                        css('color', hearingSetting.settings.customDesign.buttonTextColor);
+                  }
+                });
+              }
             });
           }
 
@@ -2727,16 +2753,14 @@
 
           if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_BUTTON ?>) {
             var data = {};
+            data.settings = hearingDetail.settings;
             data.options = hearingDetail.settings.options;
-            data.design = hearingDetail.settings.customDesign;
             data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
             data.message = $scope.replaceVariable(message);
             data.isRestore = isRestore;
             data.oldValue = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
-            data.textColor = $scope.widget.settings.re_background_color;
-            data.backgroundColor = $scope.widget.settings.re_text_color;
 
-            $scope.$broadcast('addRePulldown', data);
+            $scope.$broadcast('addReButton', data);
             $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
                 hearingDetail.required);
           }
