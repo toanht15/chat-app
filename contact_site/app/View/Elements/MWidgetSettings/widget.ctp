@@ -194,7 +194,7 @@
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.smallSize { height: 30px; width: 30px; font-size: 20px; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.middleSize { height: 35px; width: 35px; font-size: 23px; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.largeSize { height: 40px; width: 40px; font-size: 26px; }
-    #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.customSize { height: calc(30px + ({{widget_custom_height}}px - 194px)/18); max-height: 40px; width: calc(30px + ({{widget_custom_height}}px - 194px)/18); max-width: 40px; font-size: 26px; }
+    #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.customSize { height: calc(({{widget_custom_height}}px + 346px)/18); max-height: 40px; width: calc(({{widget_custom_height}}px + 346px)/18); max-width: 40px; font-size: {{getActualIconFontSize()}}px ; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.icon_border {border: 1px solid {{string_color}}}
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.fa-comment-alt-lines { padding-top: 2px; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.fa-comments-alt { padding-top: 2px; }

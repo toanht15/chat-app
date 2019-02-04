@@ -933,6 +933,22 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return image.match(/^http|data|\/\/node/) !== null;
   };
 
+  $scope.getActualIconFontSize = function() {
+    var height = $scope.getMaxHeight();
+    console.log(height);
+    return (height + 406) / 30;
+  };
+
+  $scope.getMaxHeight = function() {
+    // アイコンに関するサイズは上限値をウィジェットサイズ大とする
+    var height = Number($scope.widget_custom_height);
+    var maxHeight = 374;
+    if( height > maxHeight ) {
+      height = maxHeight;
+    }
+    return height;
+  };
+
   $scope.getActualChatTalkHeight = function() {
     var offset = (Number($scope.chat_init_show_textarea) === 2) ? 75 : 0;
     var actualHeight = 284;
@@ -1390,13 +1406,7 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     };
 
     $scope.getCustomBalloonMargin = function(){
-      var height = Number($scope.widget_custom_height);
-      var maxHeight = 374;
-      //ウィジェットサイズ大を計算値の最大基準とする
-      if( height > maxHeight){
-        height = maxHeight;
-      }
-
+      var height = $scope.getMaxHeight();
       //計算方法は各サイズのmargin-leftを基に階差数列で式を算出した
       return 2 + (height - 194) * (height - 104) / 16200;
     };
