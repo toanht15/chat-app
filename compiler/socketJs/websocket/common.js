@@ -4750,7 +4750,9 @@ var socket, // socket.io
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.calendar
           || obj.messageType ===
-          sinclo.chatApi.messageType.scenario.message.selection) {
+          sinclo.chatApi.messageType.scenario.message.selection
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.button) {
         return;
       } else if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.text

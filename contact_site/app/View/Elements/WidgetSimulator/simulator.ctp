@@ -514,10 +514,11 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_re.no-wrap { padding: 10px 0 0 0!important; }
         #sincloBox #chatTalk li.sinclo_re.all-round { border-radius: 12px!important; }
         #sincloBox #chatTalk li.sinclo_re.no-wrap span.sinclo-text-line { padding: 0 15px!important; width: 100%; }
-        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap {display: flex; margin-top: 10px; justify-content: center; align-items: center; flex-wrap: wrap; width: 100%;}
-        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide { flex-flow: row nowrap; }
-        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 12px; border: 0px solid #00aa00; color: #007aff; background-color: #FFF; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap {display: flex; margin-top: 10px; justify-content: center; flex-wrap: wrap; width: 100%;}
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide { flex-flow: row nowrap;  }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; padding: 12px; }
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button:active { background-color: #E7E7E7; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button { flex-basis: 0; flex-grow: 1; }
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button:first-child { border-bottom-left-radius: 12px; }
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button:last-child { border-bottom-right-radius: 12px; }
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap:not(.sideBySide) span.sinclo-button:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }

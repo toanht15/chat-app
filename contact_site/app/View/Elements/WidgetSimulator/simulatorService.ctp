@@ -877,7 +877,7 @@
 
         angular.forEach(data.options, function(option, key) {
           var buttonStyle = 'padding: 12px; color: ' + data.settings.customDesign.buttonTextColor +
-              '; background-color: ' + data.settings.customDesign.buttonBackgroundColor + '; width: 100%;';
+              '; background-color: ' + data.settings.customDesign.buttonBackgroundColor + ';';
           if (!data.settings.customDesign.outButtonNoneBorder) {
             buttonStyle += 'border-top: 1px solid ' + data.settings.customDesign.buttonBorderColor + ';';
           }
