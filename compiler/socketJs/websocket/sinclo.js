@@ -3711,27 +3711,34 @@
           sinclo.chatApi.iconSource = "fa-user sinclo-fal normal"
         }
       },
+      _addClassToIconDiv: function( div ) {
+        // IE はclassListを第一引数しか追加できない為、全て1つずつ追加している
+        div.classList.add("grid_for_icon");
+        div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
+        div.classList.add("effect_left");
+        return div;
+      },
       _editDivForIconSetting: function( div , isBot, isOp, chatId ) {
         var iconSource = "";
-        if( Number(sincloInfo.widget.showChatbotIcon) === 1 && isBot ) {
-          iconSource = sincloInfo.widget.chatbotIcon;
-          var fontIcon = sinclo.chatApi._createIconDiv( iconSource );
+        var self = sinclo.chatApi;
+        var setting = sincloInfo.widget;
+        if( Number(setting.showChatbotIcon) === 1 && isBot ) {
+          iconSource = setting.chatbotIcon;
+          var fontIcon = self._createIconDiv( iconSource );
           div.appendChild(fontIcon);
-          div.classList.add("grid_for_icon");
-          div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
-        } else if ( Number(sincloInfo.widget.showOperatorIcon) === 1 && isOp ) {
-          if( Number(sincloInfo.widget.operatorIconType) === 3) {
-            sinclo.chatApi._searchChatIdWithIcon(chatId);
-            iconSource = sinclo.chatApi.iconSource;
+          div = self._addClassToIconDiv( div );
+        } else if ( Number(setting.showOperatorIcon) === 1 && isOp ) {
+          if( Number(setting.operatorIconType) === 3) {
+            self._searchChatIdWithIcon(chatId);
+            iconSource = self.iconSource;
           } else {
-            iconSource = sincloInfo.widget.operatorIcon;
+            iconSource = setting.operatorIcon;
           }
-          var imageIcon = sinclo.chatApi._createIconDiv( iconSource );
+          var imageIcon = self._createIconDiv( iconSource );
           div.appendChild(imageIcon);
-          div.classList.add("grid_for_icon");
-          div.classList.add(sinclo.chatApi._addWidgetSizeClassName());
+          div = self._addClassToIconDiv( div );
         }
-        sinclo.chatApi.iconSource = null;
+        self.iconSource = null;
         return div;
       },
 
