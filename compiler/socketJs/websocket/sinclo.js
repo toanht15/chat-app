@@ -3091,7 +3091,7 @@
           e.stopPropagation();
 
           var text = $(this).text();
-          $(this).parents('div.sincloHearingButtons').find('div.sincloHearingButton').removeClass('selected');
+          $(this).parents('div.sincloHearingButtons').find('span.sincloHearingButton').removeClass('selected');
           $(this).addClass('selected');
           sinclo.chatApi.send(text.trim());
         });
@@ -3929,8 +3929,17 @@
             div.style.textAlign = 'right';
           }
         }
+        var isFreeBlock = false;
         for (var i = 0; strings.length > i; i++) {
-          if (strings[i].match(/(<div|<\/div>)/)) {
+          if(strings[i].match(/(<div class="free-block")/)) {
+            content += strings[i];
+            isFreeBlock = true;
+            continue;
+          } else if(strings[i].match(/(<\/div>)/)) {
+            isFreeBlock = false;
+            content += strings[i];
+            continue;
+          } else if(isFreeBlock) {
             content += strings[i];
             continue;
           }
