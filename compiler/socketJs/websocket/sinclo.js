@@ -2312,6 +2312,8 @@
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.button
+          || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.receiveFile) {
         if (obj.tabId === userInfo.tabId) {
           common.chatBotTypingCall(obj);
