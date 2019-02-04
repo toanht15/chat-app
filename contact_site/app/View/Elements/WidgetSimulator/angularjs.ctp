@@ -160,6 +160,12 @@
         var iconDiv = document.createElement("div");
         var icon = getWidgetSettings().chatbot_icon;
         $(iconDiv).addClass("iconDiv");
+
+        if( $scope.simulatorSettings.chatMessageArrowPosition == '1' ) {
+          $(iconDiv).addClass("arrowUp");
+        } else {
+          $(iconDiv).addClass("arrowBottom");
+        }
         var elm;
         switch( $scope.getIconType( icon ) ) {
           case "fontIcon":

@@ -84,6 +84,9 @@
       get minimizedDesignToggle() {
         return this._settings['minimize_design_type'];
       },
+      get chatMessageArrowPosition() {
+        return this._settings['chat_message_arrow_position'];
+      },
       get closeButtonSettingToggle() {
         return this._settings['close_button_setting'];
       },
