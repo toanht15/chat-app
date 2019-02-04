@@ -217,6 +217,10 @@
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
       for (var i = 0; strings.length > i; i++) {
+        if(strings[i].match(/(<div|<\/div>)/)) {
+          content += strings[i];
+          continue;
+        }
           var str = escape_html(strings[i]);
           // ラジオボタン
           var radio = str.indexOf('[]');
