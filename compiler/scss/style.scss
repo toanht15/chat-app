@@ -5596,6 +5596,32 @@ ul.naviBtn {
               padding-bottom: 0.5em;
             }
           }
+          .chatMessageDesignBlock {
+            display: flex;
+            flex-flow: column nowrap;
+            label.pointer {
+              display: flex;
+              align-items: center;
+              &.first {
+                margin-top: 2px;
+              }
+              &.last {
+                margin-top: 5px;
+              }
+            }
+            div.chatMessageArrowPositionBlock {
+              margin-top: 3px;
+              margin-left: 19px;
+              display: flex;
+              span.subMenu {
+                width: 8em;
+                display: inline-block;
+              }
+              div.chatMessageArrowPosition {
+                display: inline-block;
+              }
+            }
+          }
         }
 
       }
