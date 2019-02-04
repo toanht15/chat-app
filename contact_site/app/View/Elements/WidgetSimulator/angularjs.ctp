@@ -477,12 +477,15 @@
         } else {
           // 吹き出しなし
           var divElm = document.querySelector('#chatTalk div > li.sinclo_carousel.chat_carousel').parentNode.cloneNode(true);
+          if (data.settings.carouselPattern === '2') {
+            divElm.firstElementChild.style.marginLeft = '30px';
+          }
         }
         divElm.id = data.prefix + '_question';
         var carousel = $scope.simulatorSettings.createCarousel(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = carousel.html;
         document.getElementById('chatTalk').appendChild(divElm);
-
+        $('#' + divElm.id).find('.sinclo-text-line').css('margin-left', '-25px');
 
         $('#chatTalk > div:last-child').show();
         var prevIconClass = '';
@@ -527,7 +530,6 @@
             console.log('in: ' + oldIndex);
           }
         });
-        console.log('out: ' + oldIndex);
         if (data.isRestore && oldIndex) {
           $(carousel.selector).slick('slickGoTo', oldIndex);
         }

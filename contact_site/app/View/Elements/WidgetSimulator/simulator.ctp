@@ -645,7 +645,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: {{widget.radioButtonAfterTop}}px; left: {{widget.radioButtonAfterLeft}}px;; margin-top: -{{widget.radioButtonAfterMarginTop}}px; width: {{widget.re_text_size-7}}px; height: {{widget.re_text_size-7}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:disabled + label { opacity: 0.5;}
         #sincloBox ul#chatTalk li.sinclo_re select:disabled { opacity: 0.5;}
-        #sincloBox ul#chatTalk li.sinclo_re .disabledArea {pointer-events: none; opacity: 0.5;}
+        #sincloBox ul#chatTalk li .disabledArea {pointer-events: none; opacity: 0.5;}
 
         /* ファイル送信 */
         #sincloBox ul#chatTalk li .sendFileContent { display: table; table-layout: fixed; width: 100%; height: 64px; white-space: pre-line; margin-bottom: 0; }
@@ -880,7 +880,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
             <div style="height: auto!important; padding:0; display: none;">
               <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
-            <div style="height: auto!important; padding:0; display: none; margin-left: 25px">
+            <div style="height: auto!important; padding:0; display: none;">
               <li class="sinclo_carousel chat_carousel" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;">

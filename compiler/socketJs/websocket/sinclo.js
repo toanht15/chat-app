@@ -3937,9 +3937,16 @@
         var carouselHtml = sinclo.chatApi.createCarouselHtml(settings,
             chatList.children.length, storedValue);
         div.style.textAlign = 'left';
-        cs += 'hearing_msg effect_left carousel_msg';
+        cs += 'hearing_msg effect_left';
+        if (settings.carouselPattern === '1') {
+          cs += ' insideArrow';
+        } else {
+          cs += ' outsideArrow';
+        }
         if (settings.balloonStyle === '1') {
           cs += ' sinclo_re';
+        } else {
+          cs += ' noneBalloon';
         }
 
 
@@ -4268,25 +4275,26 @@
       },
       createCarouselHtml: function(settings, index, storedValue) {
         var style = sinclo.chatApi.createCarouselStyle(settings, '#carousel-container' + index);
-        var carouselSize = sinclo.chatApi.getCarouselSize(settings.lineUpStyle, settings.aspectRatio);
+        var carouselSize = sinclo.chatApi.getCarouselSize(settings);
         var thumbnailWidth = carouselSize.width + 2;
+        var containerWidth = carouselSize.containerWidth + 2;
         var name = 'sinclo-carousel' + index;
         var html = '';
         var storedValueIsFound = false;
 
         html+= style;
-        html+= '<div class="carousel-container" id="carousel-container' + index + '" style="width: ' + carouselSize.containerWidth + 'px; margin-top: 6px;">';
+        html+= '<div class="carousel-container" id="carousel-container' + index + '" style="width: ' + containerWidth + 'px; margin-top: 6px;">';
 
         html+= '<div class="single-item" id="' + name + '">';
         settings.images.forEach(function (image, key) {
           if (image.answer === storedValue) {
             storedValueIsFound = true;
           }
-          html+= '<div style="width: ' + carouselSize.width + 'px">';
+          html+= '<div style="width: ' + containerWidth + 'px">';
           html+= '<div class="thumbnail" id="slide_' + name + '_image' + key + '" data-answer="' + image.answer + '" style="display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
           html+= '<img id="img' + name + '_image' + key + '" alt="画像" data-answer="' + image.answer + '" style="cursor: pointer; height: ' + carouselSize.height + 'px; width: ' + carouselSize.width + 'px;" src="' + image.url + '" />';
           html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
-          html+= '<div class="title"><strong>' + image.title + '</strong></div>';
+          html+= '<div class="title"><strong style="font-weight: bold;">' + image.title + '</strong></div>';
           html+= '<p class="sub-title">' + image.subTitle + '</p>';
           html+= '</div></div></div>';
         });
@@ -4311,14 +4319,15 @@
         return style;
       },
       createCarouselStyle: function(settings, id) {
+        var arrowPosition = sinclo.chatApi.getArrowPosition(settings);
         var style = '<style>';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: 25px;}';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
-        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { margin: 8px; font-size: ' + settings.customDesign.titleFontSize + 'px; color: ' + settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
-        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title {  text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
-        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin: 0 8px 8px 8px; font-size: ' + settings.customDesign.subTitleFontSize + 'px; color: ' + settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(settings.subTitlePosition) + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize + 'px; color: ' + settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: 4px 12px 3px 12px; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin: 0 12px 8px 12px; font-size: ' + settings.customDesign.subTitleFontSize + 'px; color: ' + settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(settings.subTitlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail:hover { -webkit-filter: brightness(110%); filter: brightness(110%);}';
 
         if (settings.outCarouselNoneBorder) {
@@ -4333,57 +4342,167 @@
           style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail img { border-bottom: 1px solid ' + settings.customDesign.inBorderColor + ';} ';
         }
 
-        if (settings.lineUpStyle === '2') {
-          style += '#sincloBox ul#chatTalk ' + id + ' .slick-slide {margin: 0 8px;}';
-          style += '#sincloBox ul#chatTalk ' + id + ' .slick-list {margin: 0 -8px;}';
-        }
-
         if (settings.arrowType !== '2') {
           style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-weight: 900 }';
           style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-weight: 900 }';
         }
         // custom arrow position
-        if (settings.carouselPattern === '1') {
-          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: 3px }';
-          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: 3px }';
-        } else if (settings.arrowType === '3') {
-          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: -16px }';
-        }
-
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + arrowPosition.right + 'px }';
+          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left + 'px }';
+          
         style += '</style>';
 
 
         return style;
       },
-      getCarouselSize: function(lineUpStyle, aspectRatio){
+      getCarouselSize: function(settings) {
+        if (settings.carouselPattern === '1') {
+          return this.getInsideArrowCarouselSize(settings);
+        } else {
+          return this.getOutsideArrowCarouselSize(settings);
+        }
+      },
+      getInsideArrowCarouselSize: function(settings){
+        var aspectRatio = settings.aspectRatio;
         if (!aspectRatio) {
           aspectRatio = 1;
         }
-        var data = { width: 0, height: 0, containerWidth: 0};
+        var data = {width: 0, height: 0, containerWidth: 0};
         switch (Number(sincloInfo.widget.widgetSizeType)) {
           case 1:
             data.containerWidth = 200;
-            data.width = lineUpStyle === '1' ? 200 : 125;
+            data.width          = settings.lineUpStyle === '1' ? 200 : 125;
             break;
           case 2:
             data.containerWidth = 250;
-            data.width = lineUpStyle === '1' ? 250 : 155;
+            data.width          = settings.lineUpStyle === '1' ? 250 : 155;
             break;
           case 3:
-            data.containerWidth = 300;
-            data.width = lineUpStyle === '1' ? 300 : 184;
+            data.containerWidth = 310;
+            data.width          = settings.lineUpStyle === '1' ? 310 : 193;
             break;
           case 4:
-            data.containerWidth = 300;
-            data.width = lineUpStyle === '1' ? 300 : 184;
+            data.containerWidth = 310;
+            data.width          = settings.lineUpStyle === '1' ? 310 : 193;
             break;
           default:
-            data.containerWidth = 300;
-            data.width = lineUpStyle === '1' ? 300 : 184;
+            data.containerWidth = 310;
+            data.width          = settings.lineUpStyle === '1' ? 310 : 193;
             break;
         }
 
         data.height = data.width / aspectRatio;
+
+        return data;
+      },
+      getOutsideArrowCarouselSize: function(settings){
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = {width: 0, height: 0, containerWidth: 0};
+        switch (Number(sincloInfo.widget.widgetSizeType)) {
+          case 1:
+            data.containerWidth = 170;
+            data.width          = settings.lineUpStyle === '1' ? 170 : 100;
+            break;
+          case 2:
+            data.containerWidth = 220;
+            data.width          = settings.lineUpStyle === '1' ? 220 : 130;
+            break;
+          case 3:
+            data.containerWidth = 260;
+            data.width          = settings.lineUpStyle === '1' ? 260 : 158;
+            break;
+          case 4:
+            data.containerWidth = 260;
+            data.width          = settings.lineUpStyle === '1' ? 260 : 158;
+            break;
+          default:
+            data.containerWidth = 260;
+            data.width          = settings.lineUpStyle === '1' ? 260 : 158;
+            break;
+        }
+
+        data.height = data.width / aspectRatio;
+
+        return data;
+      },
+      getArrowPosition: function(setting){
+        var data = { left: 0, right: 0 };
+        if (setting.lineUpStyle === '1') {
+          if (setting.carouselPattern === '2') {
+            if (setting.arrowType === '3') {
+              data.left = -30;
+              data.right = -30;
+            } else {
+              data.left = -34;
+              data.right = -30;
+            }
+          } else {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = 8;
+                data.right = 14;
+                break;
+              case '3':
+                data.left = 8;
+                data.right = 8;
+                break;
+              case '4':
+                data.left = 8;
+                data.right = 10;
+                break;
+              default:
+                data.left = 8;
+                data.right = 8;
+                break;
+            }
+          }
+        } else {
+          if (setting.carouselPattern === '2') {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = -27;
+                data.right = -25;
+                break;
+              case '3':
+                data.left = -20;
+                data.right = -25;
+                break;
+              case '4':
+                data.left = -27;
+                data.right = -25;
+                break;
+              default:
+                data.left = -27;
+                data.right = -25;
+                break;
+            }
+          } else {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = 16;
+                data.right = 16;
+                break;
+              case '3':
+                data.left = 12;
+                data.right = 8;
+                break;
+              case '4':
+                data.left = 16;
+                data.right = 16;
+                break;
+              default:
+                data.left = 16;
+                data.right = 16;
+                break;
+            }
+          }
+        }
 
         return data;
       },

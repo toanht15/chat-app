@@ -3528,7 +3528,13 @@ var socket, // socket.io
           '        #sincloBox ul#chatTalk li .fa-chevron-left:before {\n' +
           '          content: "\\f053";\n' +
           '        }' + '#sincloBox ul#chatTalk li.carousel_msg {' +
-          'padding: 10px 30px;' +
+          'padding: 10px 40px;' +
+          '}' + '#sincloBox ul#chatTalk li.insideArrow { ' +
+          'padding: 10px 15px; ' +
+          '}' + '#sincloBox ul#chatTalk li.outsideArrow { ' +
+          'padding: 10px 40px; ' +
+          '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
+          'margin-left: 15px; ' +
           '}';
     },
     //バナーを生成する関数
