@@ -183,7 +183,9 @@
     #sincloBox ul#chatTalk.details { background-color: {{chat_talk_background_color}}; }
     #sincloBox ul#chatTalk > div.with_icon { display: -ms-grid; -ms-grid-columns: minmax(max-content, max-content) 1fr; }
     #sincloBox ul#chatTalk > div.with_icon { display: grid; grid-template-columns: minmax(max-content, max-content) 1fr; height: auto!important; padding:0; }
-    #sincloBox ul#chatTalk > div.with_icon .icon_container { height: 100%!important; padding:0px; display:flex; justify-content: flex-end; align-items: flex-end; }
+    #sincloBox ul#chatTalk > div.with_icon.arrowUp .icon_container { height: 100%!important; padding:0px; display:flex; justify-content: flex-end; align-items: flex-start; }
+    #sincloBox ul#chatTalk > div.with_icon.arrowUp .icon_container .img_wrapper {margin-top: 9px;}
+    #sincloBox ul#chatTalk > div.with_icon.arrowBottom .icon_container { height: 100%!important; padding:0px; display:flex; justify-content: flex-end; align-items: flex-end; }
     #sincloBox ul#chatTalk > div.with_icon .icon_container { width: calc(24px + ({{widget_custom_height}} - 104) * ({{widget_custom_height}}px + 886px) / 16200); }
     #sincloBox ul#chatTalk > div.with_icon .icon_container.smallSize { max-width: 30px; min-width: 30px; }
     #sincloBox ul#chatTalk > div.with_icon .icon_container.middleSize { max-width: 37px; min-width: 37px; }

@@ -130,6 +130,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           break;
       }
       settings["with_icon"] = (Number( targetToggle ) === 1 && ( $scope.isPictureImage( target ) || $scope.isIconImage( target ) ));
+      settings["arrowUp"] = (Number( $scope.chat_message_design_type ) == 1 && Number( $scope.chat_message_arrow_position ) == 1);
+      settings["arrowBottom"] = (Number( $scope.chat_message_design_type ) == 1 && Number( $scope.chat_message_arrow_position ) == 2);
       settings = $scope.setWidgetSize( settings );
       return  settings;
     };
