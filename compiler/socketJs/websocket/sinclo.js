@@ -4193,6 +4193,9 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        if(!message || message.length === 0) {
+          $(li).addClass('noText');
+        }
         div = sinclo.chatApi._editDivForIconSetting(div, true);
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
@@ -4203,6 +4206,10 @@
             chatList.children.length +
             '"] .sincloHearingButton:active {background-color: ' +
             settings.customDesign.buttonActiveColor + '!important;}';
+        messageHtml += '  #sincloBox li.sinclo_re.no-wrap.all-round .sincloHearingButtons[name="sinclo-button' +
+            chatList.children.length +
+            '"] .sincloHearingButton:hover {background-color: ' +
+            common.getThinColor(sincloInfo.widget.mainColor, 0.2) + '!important;}';
         messageHtml += '  #sincloBox li.sinclo_re.no-wrap.all-round .sincloHearingButtons[name="sinclo-button' +
             chatList.children.length +
             '"] .sincloHearingButton.selected {background-color: ' +

@@ -883,7 +883,7 @@
         }
 
         var html = '<style>';
-        html += '  #sincloBox li.sinclo_re.no-wrap.all-round .sinclo-button-wrap .sinclo-button:hover {background-color: ' +
+        html += '  #sincloBox li.sinclo_re.no-wrap.all-round .sinclo-button-wrap .sinclo-button:hover {background-color: ' + this.getRawColor(this._settings.main_color, 0.2) + '!important;}';
             data.settings.customDesign.buttonActiveColor + '!important;}';
         html += '  #sincloBox li.sinclo_re.no-wrap.all-round .sinclo-button-wrap .sinclo-button:active {background-color: ' +
             data.settings.customDesign.buttonActiveColor + '!important;}';
@@ -941,6 +941,31 @@
         // values range from 0 to 1
         // anything greater than 0.5 should be bright enough for dark text
         return brightness >= 0.5 ? 'black' : 'white';
+      },
+
+      getRawColor: function(hex, opacity) {
+        if(!opacity) {
+          opacity = 0.1;
+        }
+        var code = hex.substr(1), r, g, b;
+        if (code.length === 3) {
+          r = String(code.substr(0, 1)) + String(code.substr(0, 1));
+          g = String(code.substr(1, 1)) + String(code.substr(1, 1));
+          b = String(code.substr(2)) + String(code.substr(2));
+        } else {
+          r = String(code.substr(0, 2));
+          g = String(code.substr(2, 2));
+          b = String(code.substr(4));
+        }
+
+        var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * opacity));
+        var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * opacity));
+        var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * opacity));
+        var codeR = parseInt(balloonR).toString(16);
+        var codeG = parseInt(balloonG).toString(16);
+        var codeB = parseInt(balloonB).toString(16);
+
+        return ('#' + codeR + codeG + codeB).toUpperCase();
       },
 
       hexToRgb: function(hex) {

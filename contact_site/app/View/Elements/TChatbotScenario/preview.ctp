@@ -172,6 +172,10 @@
         li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}}.sideBySide span.sinclo-button:first-child {
           border-right: 1px solid {{hearings.settings.customDesign.buttonBorderColor}};
         }
+        li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}} span.sinclo-button:hover
+        {
+          background-color:{{main.getRawColor(widget.settings['main_color'], 0.2)}}!important;
+        }
         li.action{{setActionId}}_button{{index}} div#sinclo-button-wrap{{index}} span.sinclo-button:active
         {
           background-color:{{hearings.settings.customDesign.buttonActiveColor}}!important;

@@ -996,7 +996,10 @@
       };
 
       // remove opacity from hex color
-      this.getRawColor = function(hex) {
+      this.getRawColor = function(hex, opacity) {
+        if(!opacity) {
+          opacity = 0.1;
+        }
         var code = hex.substr(1), r, g, b;
         if (code.length === 3) {
           r = String(code.substr(0, 1)) + String(code.substr(0, 1));
@@ -1008,9 +1011,9 @@
           b = String(code.substr(4));
         }
 
-        var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * 0.1));
-        var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * 0.1));
-        var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * 0.1));
+        var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * opacity));
+        var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * opacity));
+        var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * opacity));
         var codeR = parseInt(balloonR).toString(16);
         var codeG = parseInt(balloonG).toString(16);
         var codeB = parseInt(balloonB).toString(16);
