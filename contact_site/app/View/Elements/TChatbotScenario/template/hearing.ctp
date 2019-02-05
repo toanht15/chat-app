@@ -11,7 +11,7 @@
                                                                       data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の回答内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。<br><br>例）変数名：名前　⇒　{{showExpression('名前')}}様からのお問い合わせを受付いたしました。">?</icon></span>
         </div>
         <div class='area-type'>タイプ<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="ヒアリングの回答を入力する形式を指定します。<br>＜タイプ＞<br>テキスト(1行)　 　 ：フリーテキスト入力（改行不可）<br>テキスト(複数行)　 ：フリーテキスト入力（改行可）<br>ラジオボタン　　　：ラジオボタン形式の択一選択<br>プルダウン　　　　：プルダウン形式の択一選択<br>カレンダー　　　　：カレンダーから日付を選択<br>コンファーム　　　：ボタン形式の択一選択"
+                                                                      data-tooltip="ヒアリングの回答を入力する形式を指定します。<br>＜タイプ＞<br>テキスト(1行)　 　 ：フリーテキスト入力（改行不可）<br>テキスト(複数行)　 ：フリーテキスト入力（改行可）<br>ラジオボタン　　　：ラジオボタン形式の択一選択<br>プルダウン　　　　：プルダウン形式の択一選択<br>コンファーム　　　：ボタン形式の択一選択<br>カレンダー　　　　：カレンダーから日付を選択"
                                                                       data-tooltip-width="30em">?</icon></span>
         </div>
         <div class='area-message'>質問内容<span class="questionBalloon"><icon class="questionBtn"
@@ -41,8 +41,8 @@
               <option value="2">テキスト（複数行）</option>
               <option value="3">ラジオボタン</option>
               <option value="4">プルダウン</option>
-              <option value="5">カレンダー</option>
               <option value="7">コンファーム</option>
+              <option value="5">カレンダー</option>
             </select>
           </div>
           <div class='area-message'>

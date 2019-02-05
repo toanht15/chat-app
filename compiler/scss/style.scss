@@ -8677,7 +8677,9 @@ ul.naviBtn {
             li.sinclo_re {
               -ms-grid-column: 2;
               -ms-grid-column-align: start;
-              justify-self: start;
+              &:not(.no-wrap) {
+                justify-self: start;
+              }
               &.recv_file_left {
                 justify-self: stretch;
               }

@@ -515,7 +515,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; grid-row: 1/2; -ms-grid-column: 2; -ms-grid-row: 1; }
         #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { grid-column: 3/4; grid-row: 1/2; -ms-grid-column: 3; -ms-grid-row: 1; }
 
-        #sincloBox #chatTalk li.sinclo_re.no-wrap { padding: 10px 0 0 0; }
+        #sincloBox #chatTalk li.sinclo_re.no-wrap { display: block!important; padding: 10px 0 0 0; justify-self: stretch; }
         #sincloBox #chatTalk li.sinclo_re.noText  { padding-top: 0px; }
         #sincloBox #chatTalk li.sinclo_re.all-round { border-radius: 12px!important; }
         #sincloBox #chatTalk li.sinclo_re.no-wrap span.sinclo-text-line { padding: 0 15px!important; width: 100%; }
