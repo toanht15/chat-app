@@ -4219,7 +4219,18 @@
             '"] .sincloHearingButton.selected {background-color: ' +
             settings.customDesign.buttonActiveColor + '!important;}';
         messageHtml += '</style>';
-        messageHtml += sinclo.chatApi.createMessageHtml(message);
+        var messageAlign = 'left';
+        switch(Number(settings.customDesign.buttonAlign)) {
+          case 1:
+            break;
+          case 2:
+            messageAlign = 'center';
+            break;
+          case 3:
+            messageAlign = 'right';
+            break;
+        }
+        messageHtml += sinclo.chatApi.createMessageHtml(message, messageAlign);
         var buttonsHtml = sinclo.chatApi.createButtonHtml(settings,
             chatList.children.length, storedValue, isNoText);
         div.style.textAlign = 'left';
