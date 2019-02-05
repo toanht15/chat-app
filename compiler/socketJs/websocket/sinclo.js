@@ -4220,7 +4220,7 @@
             settings.customDesign.buttonActiveColor + '!important;}';
         messageHtml += '</style>';
         var messageAlign = 'left';
-        switch(Number(settings.customDesign.buttonAlign)) {
+        switch(Number(settings.customDesign.messageAlign)) {
           case 1:
             break;
           case 2:
