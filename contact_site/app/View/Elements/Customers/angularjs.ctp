@@ -84,7 +84,7 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             reInputRadio: 37,
             reInputPulldown: 38,
             reInputCalendar: 39,
-            reInputButton: 47,
+            reInputButton: 48,
             cancel: 90
           },
           message: {
