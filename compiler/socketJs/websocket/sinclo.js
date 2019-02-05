@@ -4117,7 +4117,7 @@
         var strings = message.split('\n');
         var style = '';
         if (align) {
-          style = 'style="display:block; text-align:"' + align + ';"';
+          style = 'style="width:100%; text-align:' + align + ';"';
         }
         for (var i = 0; strings.length > i; i++) {
           var str = check.escape_html(strings[i]);
