@@ -1179,6 +1179,8 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk div.grid_for_icon.customSize li.sinclo_re { margin-left: 5px; }';
       if(Number(widget.chatMessageArrowPosition) === 1) {
         html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv { display: flex; justify-content: flex-end; align-items: flex-start; }';
+        html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv .img_wrapper { margin-top: 10px; }';
+        html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv i { margin-top: 10px; }';
       } else {
         html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv { display: flex; justify-content: flex-end; align-items: flex-end; }';
       }

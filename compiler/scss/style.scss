@@ -8646,10 +8646,13 @@ ul.naviBtn {
               justify-content: flex-end;
               align-items: flex-end;
               &.arrowUp {
-                align-items: flex-start
+                align-items: flex-start;
+                i, div.img_wrapper {
+                  margin-top: 10px;
+                }
               }
               &.arrowBottom {
-                align-items: flex-end
+                align-items: flex-end;
               }
               i {
                 display: flex;
@@ -8687,10 +8690,13 @@ ul.naviBtn {
             .grid_preview  {
               .iconDiv {
                 &.arrowUp {
-                  align-items: flex-start
+                  align-items: flex-start;
+                  i, div.img_wrapper {
+                    margin-top: 10px;
+                  }
                 }
                 &.arrowBottom {
-                  align-items: flex-end
+                  align-items: flex-end;
                 }
                 i {
                   height: 30px;
@@ -8717,10 +8723,13 @@ ul.naviBtn {
             .grid_preview  {
               .iconDiv {
                 &.arrowUp {
-                  align-items: flex-start
+                  align-items: flex-start;
+                  i, div.img_wrapper {
+                    margin-top: 10px;
+                  }
                 }
                 &.arrowBottom {
-                  align-items: flex-end
+                  align-items: flex-end;
                 }
                 i {
                   height: 35px;
@@ -8747,10 +8756,13 @@ ul.naviBtn {
             .grid_preview  {
               .iconDiv {
                 &.arrowUp {
-                  align-items: flex-start
+                  align-items: flex-start;
+                  i, div.img_wrapper {
+                    margin-top: 10px;
+                  }
                 }
                 &.arrowBottom {
-                  align-items: flex-end
+                  align-items: flex-end;
                 }
                 i {
                   height: 40px;
@@ -8775,10 +8787,13 @@ ul.naviBtn {
             .grid_preview {
               .iconDiv {
                 &.arrowUp {
-                  align-items: flex-start
+                  align-items: flex-start;
+                  i, div.img_wrapper {
+                    margin-top: 10px;
+                  }
                 }
                 &.arrowBottom {
-                  align-items: flex-end
+                  align-items: flex-end;
                 }
                 i {
                   height: 40px;
@@ -11326,10 +11341,13 @@ div.balloon {
         justify-content: flex-end;
         align-items: flex-end;
         &.arrowUp {
-          align-items: flex-start
+          align-items: flex-start;
+          i, div.img_wrapper {
+            margin-top: 10px;
+          }
         }
         &.arrowBottom {
-          align-items: flex-end
+          align-items: flex-end;
         }
         i {
           display:flex;
@@ -11357,10 +11375,13 @@ div.balloon {
         max-width: 35px;
         min-width: 35px;
         &.arrowUp {
-          align-items: flex-start
+          align-items: flex-start;
+          i, div.img_wrapper {
+            margin-top: 10px;
+          }
         }
         &.arrowBottom {
-          align-items: flex-end
+          align-items: flex-end;
         }
         div.img_wrapper {
           display: inline-block;
@@ -11387,10 +11408,13 @@ div.balloon {
           max-width: 30px;
           min-width: 30px;
           &.arrowUp {
-            align-items: flex-start
+            align-items: flex-start;
+            i, div.img_wrapper {
+              margin-top: 10px;
+            }
           }
           &.arrowBottom {
-            align-items: flex-end
+            align-items: flex-end;
           }
           i {
             height: 30px;
@@ -11416,10 +11440,13 @@ div.balloon {
           max-width: 37px;
           min-width: 37px;
           &.arrowUp {
-            align-items: flex-start
+            align-items: flex-start;
+            i, div.img_wrapper {
+              margin-top: 10px;
+            }
           }
           &.arrowBottom {
-            align-items: flex-end
+            align-items: flex-end;
           }
           i {
             height: 35px;
@@ -11445,10 +11472,13 @@ div.balloon {
           max-width: 42px;
           min-width: 42px;
           &.arrowUp {
-            align-items: flex-start
+            align-items: flex-start;
+            i, div.img_wrapper {
+              margin-top: 10px;
+            }
           }
           &.arrowBottom {
-            align-items: flex-end
+            align-items: flex-end;
           }
           i {
             height: 40px;
@@ -11474,11 +11504,15 @@ div.balloon {
           max-width: 42px;
           min-width: 42px;
           &.arrowUp {
-            align-items: flex-start
+            align-items: flex-start;
+            i, div.img_wrapper {
+              margin-top: 10px;
+            }
           }
           &.arrowBottom {
-            align-items: flex-end
+            align-items: flex-end;
           }
+
           i {
             height: 40px;
             width: 40px;
