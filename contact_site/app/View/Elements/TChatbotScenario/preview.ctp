@@ -71,7 +71,7 @@
 
 #tchatbotscenario_form_preview_body .chatTalk li.sinclo_re.noText { padding-top: 0px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap { display: flex; justify-content: center; margin-top: 10px; flex-flow: column nowrap; }
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.noText { margin-top: 0px; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.noText { margin-top: 0px; height: 100%; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide { flex-flow: row nowrap; }
 
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 10px 15px; }
@@ -86,6 +86,7 @@
 
   #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button.noText:last-child { border-radius: 0 12px 12px 0; }
 
+  #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap:not(.sideBySide) .sinclo-button.noText { height: 100%; }
   #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap:not(.sideBySide) .sinclo-button.noText:first-child { border-radius: 12px 12px 0 0; }
   #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap:not(.sideBySide) .sinclo-button.noText:only-child { border-radius: 12px }
   #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap:not(.sideBySide) .sinclo-button:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px }
