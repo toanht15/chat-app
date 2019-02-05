@@ -343,6 +343,53 @@
         },
       };
 
+      $scope.getHearingButtonSetting = function(target, settings) {
+        switch(target) {
+          case 'messageAlign':
+            if(settings && settings.customDesign.messageAlign) {
+              return settings.customDesign.messageAlign;
+            } else {
+              return '1';
+            }
+            break;
+          case 'buttonBackgroundColor':
+            if(settings && settings.customDesign.buttonBackgroundColor) {
+              return settings.customDesign.buttonBackgroundColor;
+            } else {
+              return '#FFFFFF';
+            }
+            break;
+          case 'buttonTextColor':
+            if(settings && settings.customDesign.buttonTextColor) {
+              return settings.customDesign.buttonTextColor;
+            } else {
+              return '#007AFF';
+            }
+            break;
+          case 'buttonAlign':
+            if(settings && settings.customDesign.buttonAlign) {
+              return settings.customDesign.buttonAlign;
+            } else {
+              return '2';
+            }
+            break;
+          case 'buttonActiveColor':
+            if(settings && settings.customDesign.buttonActiveColor) {
+              return settings.customDesign.buttonActiveColor;
+            } else {
+              return '#BABABA';
+            }
+            break;
+          case 'buttonBorderColor':
+            if(settings && settings.customDesign.buttonBorderColor) {
+              return settings.customDesign.buttonBorderColor;
+            } else {
+              return '#E3E3E3';
+            }
+            break;
+        }
+      };
+
       // メッセージ間隔は同一の設定を各アクションに設定しているため、状態に応じて取得先を変更する
       $scope.messageIntervalTimeSec = "<?= !empty($this->data['TChatbotScenario']['messageIntervalTimeSec']) ? $this->data['TChatbotScenario']['messageIntervalTimeSec'] : '' ?>"
           || (typeof $scope.setActionList[0] !== 'undefined' ? $scope.setActionList[0].messageIntervalTimeSec : '')
@@ -404,6 +451,12 @@
         target.settings.customDesign.sundayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
+        target.settings.customDesign.messageAlign = '1';
+        target.settings.customDesign.buttonBackgroundColor = $scope.widget.settings.re_background_color;
+        target.settings.customDesign.buttonTextColor = '#007AFF';
+        target.settings.customDesign.buttonAlign = '2';
+        target.settings.customDesign.buttonActiveColor = this.getRawColor($scope.widget.settings.main_color, 0.5);
+        target.settings.customDesign.buttonBorderColor = '#E3E3E3';
 
         return target;
       };
@@ -496,13 +549,13 @@
       this.revertButtonColor = function(actionIndex, hearingIndex, customDesignIndex) {
         switch (customDesignIndex) {
           case 'buttonBackgroundColor':
-            var defaultColor = '#FFFFFF';
+            var defaultColor = $scope.widget.settings.re_background_color;
             break;
           case 'buttonTextColor':
             var defaultColor = '#007AFF';
             break;
           case 'buttonActiveColor':
-            var defaultColor = '#BABABA';
+            var defaultColor = this.getRawColor($scope.widget.settings.main_color, 0.5);
             break;
           case 'buttonBorderColor':
             var defaultColor = '#E3E3E3';
@@ -797,6 +850,32 @@
 
                 });
               }
+              // button customize
+              if (hearing.uiType === '7') {
+                $timeout(function() {
+                  $scope.$apply();
+                }).then(function() {
+                  if (hearing.settings.customDesign) {
+                    jscolor.installByClassName('jscolor');
+                    var selectionTarget = $('#action' + index + '_button' + hearingIndex);
+                    selectionTarget.css('border-color', hearing.settings.customDesign.buttonBorderColor);
+                    selectionTarget.css('background-color', hearing.settings.customDesign.buttonBackgroundColor);
+                    selectionTarget.css('color', hearing.settings.customDesign.buttonTextColor);
+                    $('#action' + index + '_button' + hearingIndex + '_button').
+                        css('color', hearing.settings.customDesign.buttonTextColor);
+                  } else {
+                    var hearingSetting = self.setDefaultColorHearing(
+                        $scope.setActionList[index].hearings[hearingIndex]);
+                    jscolor.installByClassName('jscolor');
+                    var selectionTarget = $('#action' + index + '_selection' + hearingIndex);
+                    selectionTarget.css('border-color', hearing.settings.customDesign.buttonBorderColor);
+                    selectionTarget.css('background-color', hearing.settings.customDesign.buttonBackgroundColor);
+                    selectionTarget.css('color', hearing.settings.customDesign.buttonTextColor);
+                    $('#action' + index + '_selection' + hearingIndex + '_button').
+                        css('color', hearingSetting.settings.customDesign.buttonTextColor);
+                  }
+                });
+              }
             });
           }
 
@@ -923,7 +1002,10 @@
       };
 
       // remove opacity from hex color
-      this.getRawColor = function(hex) {
+      this.getRawColor = function(hex, opacity) {
+        if(!opacity) {
+          opacity = 0.1;
+        }
         var code = hex.substr(1), r, g, b;
         if (code.length === 3) {
           r = String(code.substr(0, 1)) + String(code.substr(0, 1));
@@ -935,9 +1017,9 @@
           b = String(code.substr(4));
         }
 
-        var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * 0.1));
-        var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * 0.1));
-        var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * 0.1));
+        var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * opacity));
+        var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * opacity));
+        var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * opacity));
         var codeR = parseInt(balloonR).toString(16);
         var codeG = parseInt(balloonG).toString(16);
         var codeB = parseInt(balloonB).toString(16);
@@ -1547,9 +1629,13 @@
 
         var hearings = [];
         angular.forEach(action.hearings, function(item, index) {
-          if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !==
-              'undefined' && item.message !== '') {
+          if (typeof item.variableName !== 'undefined' && item.variableName !== '' && (item.uiType === '7' || (typeof item.message !==
+              'undefined' && item.message !== ''))) {
             // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
+            if(item.uiType === '7' && (typeof item.message ===
+                'undefined' || item.message === '')) {
+              item.message = "";
+            }
             hearings.push(item);
           }
         });
@@ -1926,7 +2012,7 @@
           $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = 1;
         }
         // set default design for pulldown or calendar
-        if (uiType === '5' || uiType === '4') {
+        if (uiType === '5' || uiType === '4' || uiType === '7') {
           $scope.setActionList[actionIndex].hearings[hearingIndex] = this.setDefaultColorHearing(
               $scope.setActionList[actionIndex].hearings[hearingIndex]);
         }
@@ -2727,16 +2813,14 @@
 
           if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_BUTTON ?>) {
             var data = {};
+            data.settings = hearingDetail.settings;
             data.options = hearingDetail.settings.options;
-            data.design = hearingDetail.settings.customDesign;
             data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
             data.message = $scope.replaceVariable(message);
             data.isRestore = isRestore;
             data.oldValue = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
-            data.textColor = $scope.widget.settings.re_background_color;
-            data.backgroundColor = $scope.widget.settings.re_text_color;
 
-            $scope.$broadcast('addRePulldown', data);
+            $scope.$broadcast('addReButton', data);
             $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
                 hearingDetail.required);
           }
@@ -3066,7 +3150,7 @@
             $scope.addVisitorHearingMessage(message);
             $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else if ((!item && skipped) || (item && item !== message)) {
+          } else if ((!item && skipped) || (item && ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '7' || item !== message))) {
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
             $scope.reSelectionHearing(message, actionStep, hearingIndex);
@@ -3133,6 +3217,19 @@
       $(document).on('change', '#chatTalk .flatpickr-input', function() {
         var prefix = $(this).attr('id').replace(/-sinclo-datepicker[0-9a-z-]+$/i, '');
         var message = $(this).val().replace(/^\s/, '');
+
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        self.handleReselectionInput(message, actionStep, hearingIndex);
+      });
+
+      // ボタンの選択
+      $(document).on('click', '#chatTalk .sinclo-button', function() {
+        $(this).parents('div.sinclo-button-wrap').find('.sinclo-button').removeClass('selected');
+        $(this).addClass('selected');
+        var prefix = $(this).parents('div.sinclo-button-wrap').attr('id').replace(/-sinclo-button[0-9a-z-]+$/i, '');
+        var message = $(this).text().replace(/^\s/, '');
 
         var numbers = prefix.match(/\d+/g).map(Number);
         var actionStep = numbers[0];
@@ -3436,7 +3533,7 @@
 
     } else if (actionItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var invalidVariables = actionItem.hearings.some(function(obj) {
-        return !obj.variableName || !obj.message;
+        return !obj.variableName || (obj.uiType !== '7' && !obj.message);
       });
       if (invalidVariables) {
         messageList.push('変数名と質問内容が未入力です');
@@ -3459,7 +3556,7 @@
           }
         }
         // check all option is blank
-        if (item.uiType === '3' || item.uiType === '4') {
+        if (item.uiType === '3' || item.uiType === '4' || item.uiType === '7') {
           if (item.settings.options.some(function(option) {
             return option === '';
           })) {
