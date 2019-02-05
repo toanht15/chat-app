@@ -930,9 +930,9 @@
       console.log('assistAgentIsReady');
       var operatorId = d.responderId;
       var _self = this;
-      laUtil.setOnErrorCallback(function(error) {
-        _self.coBrowseErrorProcess();
-      });
+      //laUtil.setOnErrorCallback(function(error) {
+      //  _self.coBrowseErrorProcess();
+      //});
       laUtil.setOnAgentLeftCallback(function() {
         if (!check.isset(userInfo.coBrowseConnectToken)) return false;
 
