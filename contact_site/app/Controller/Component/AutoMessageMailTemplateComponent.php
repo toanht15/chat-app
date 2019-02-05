@@ -211,6 +211,16 @@ class AutoMessageMailTemplateComponent extends MailTemplateComponent {
       case 42:
         $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']['message']);
         break;
+      case 46:
+        $chatMessage = empty($chatLog['message']['message']) ? "（質問内容なし）" : $chatLog['message']['message'];
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatMessage);
+        break;
+      case 47:
+        $message = $this->generateScenarioHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
+      case 48:
+        $message = $this->generateScenarioReInputHearingBlockStr($chatLog['created'],$chatLog['message']);
+        break;
       case 81:
         $message = $this->generateAutoMessageBlockStr($chatLog['created'],$chatLog['message']);
         break;
