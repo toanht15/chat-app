@@ -2012,7 +2012,7 @@
           $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = 1;
         }
         // set default design for pulldown or calendar
-        if (uiType === '5' || uiType === '4') {
+        if (uiType === '5' || uiType === '4' || uiType === '7') {
           $scope.setActionList[actionIndex].hearings[hearingIndex] = this.setDefaultColorHearing(
               $scope.setActionList[actionIndex].hearings[hearingIndex]);
         }
