@@ -437,7 +437,7 @@
               <span class="questionBalloon"><icon class="questionBtn"
                                                   data-tooltip="ボタンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
             </label>
-            <div ng-show="hearingItem.uiType === '7' && hearingItem.settings.isCustomDesign"
+            <div ng-if="hearingItem.uiType === '7' && hearingItem.settings.isCustomDesign"
                  class="button-design-custom-area">
                   <span class="button-custom-items">
                   <label style="width: 100px;">質問内容位置</label>
