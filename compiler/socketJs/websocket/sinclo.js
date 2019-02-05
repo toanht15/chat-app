@@ -4110,6 +4110,9 @@
         }
       },
       createMessageHtml: function(message, align) {
+        if(!message || message.length > 0) {
+          return '';
+        }
         var content = '';
         var strings = message.split('\n');
         var style = '';
@@ -4193,8 +4196,9 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        var isNoText = false;
         if(!message || message.length === 0) {
-          $(li).addClass('noText');
+          isNoText = true;
         }
         div = sinclo.chatApi._editDivForIconSetting(div, true);
         div.classList.add('sinclo-scenario-msg');
@@ -4217,10 +4221,13 @@
         messageHtml += '</style>';
         messageHtml += sinclo.chatApi.createMessageHtml(message);
         var buttonsHtml = sinclo.chatApi.createButtonHtml(settings,
-            chatList.children.length, storedValue);
+            chatList.children.length, storedValue, isNoText);
         div.style.textAlign = 'left';
         cs += ' effect_left';
         cs += ' hearing_msg no-wrap all-round';
+        if(isNoText) {
+          cs += ' noText';
+        }
 
         li.className = cs;
         li.innerHTML = messageHtml + buttonsHtml;
@@ -4521,8 +4528,8 @@
 
         return style;
       },
-      createButtonHtml: function(settings, index, storedValue) {
-        var style = sinclo.chatApi.createButtonWrapStyle(settings);
+      createButtonHtml: function(settings, index, storedValue, isNoText) {
+        var style = sinclo.chatApi.createButtonWrapStyle(settings, isNoText);
         var name = 'sinclo-button' + index;
         var html = '';
         var storedValueIsFound = false;
@@ -4530,17 +4537,21 @@
         if (settings.options.length === 2) {
           sideBySideClass = ' sideBySide';
         }
-        html += '<div class="sincloHearingButtons' + sideBySideClass +
+        var noTextClass = '';
+        if (isNoText) {
+          noTextClass = ' noText';
+        }
+        html += '<div class="sincloHearingButtons' + sideBySideClass + noTextClass +
             '" name="' + name + '" id="' + name + '" style="' + style + '">';
         settings.options.forEach(function(option, index) {
           if (storedValue === option) {
             storedValueIsFound = true;
-            html += '<span class="sincloHearingButton selected" style="' +
-                sinclo.chatApi.createButtonStyle(settings, index) + '">' +
+            html += '<span class="sincloHearingButton selected' + noTextClass + '" style="' +
+                sinclo.chatApi.createButtonStyle(settings, index, isNoText) + '">' +
                 option + '</span>';
           } else {
-            html += '<span class="sincloHearingButton" style="' +
-                sinclo.chatApi.createButtonStyle(settings, index) + '">' +
+            html += '<span class="sincloHearingButton' + noTextClass + '" style="' +
+                sinclo.chatApi.createButtonStyle(settings, index, isNoText) + '">' +
                 option + '</span>';
           }
         });
@@ -4553,7 +4564,7 @@
 
         return html;
       },
-      createButtonStyle: function(settings, index) {
+      createButtonStyle: function(settings, index, isNoText) {
         var alignItems = 'align-items: center; ';
         if(settings.customDesign.buttonAlign === '1') {
           alignItems = 'align-items: flex-start; ';
@@ -4564,32 +4575,60 @@
             settings.customDesign.buttonTextColor + '; background-color: ' +
             settings.customDesign.buttonBackgroundColor + ';';
         if (!settings.customDesign.outButtonNoneBorder) {
-          style += 'border-top: 1px solid ' +
-              settings.customDesign.buttonBorderColor + ';';
+          if (isNoText && settings.options.length > 2 && Number(index) !== settings.options.length - 1) {
+            style += 'border-bottom: 1px solid ' +
+                settings.customDesign.buttonBorderColor + ';';
+          } else if(!isNoText) {
+            style += 'border-top: 1px solid ' +
+                settings.customDesign.buttonBorderColor + ';';
+          }
         }
         if (settings.options.length === 2) {
           style += 'flex-flow: row nowrap; ';
-          if (settings.customDesign)
-            if (index === 0) {
-              style += 'border-bottom-left-radius: 12px; ';
-              if (!settings.customDesign.outButtonNoneBorder) {
-                style += 'border-right: 1px solid ' +
-                    settings.customDesign.buttonBorderColor + '!important;';
+          if (settings.customDesign) {
+            if (isNoText) {
+              if (index === 0) {
+                style += 'border-radius: 12px 0 0 12px; ';
+                if (!settings.customDesign.outButtonNoneBorder) {
+                  style += 'border-right: 1px solid ' +
+                      settings.customDesign.buttonBorderColor + '!important;';
+                }
+              } else {
+                style += 'border-radius: 0 12px 12px 0; ';
               }
             } else {
-              style += 'border-bottom-right-radius: 12px; ';
+              if (index === 0) {
+                style += 'border-bottom-left-radius: 12px; ';
+                if (!settings.customDesign.outButtonNoneBorder) {
+                  style += 'border-right: 1px solid ' +
+                      settings.customDesign.buttonBorderColor + '!important;';
+                }
+              } else {
+                style += 'border-bottom-right-radius: 12px; ';
+              }
             }
+          }
         } else {
           style += 'flex-flow: column nowrap; ';
           if (index === settings.options.length - 1) {
-            style += 'border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; ';
+            if(isNoText && settings.options.length === 1) {
+              style += 'border-radius: 12px; ';
+            } else {
+              style += 'border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; ';
+            }
           }
         }
 
         return style;
       },
-      createButtonWrapStyle: function(settings) {
-        var style = 'display: flex; margin-top: 10px; justify-content: center; width: 100%; ';
+      createButtonWrapStyle: function(settings, isNoText) {
+
+        var style = 'display: flex; justify-content: center; width: 100%; ';
+        if(isNoText) {
+          style += 'margin-top: 0px; ';
+        } else {
+          style += 'margin-top: 10px; ';
+        }
         if (settings.options.length === 2) {
           style += 'flex-flow: row nowrap; ';
         } else {
