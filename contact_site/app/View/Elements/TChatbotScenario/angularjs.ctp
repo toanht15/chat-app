@@ -451,7 +451,7 @@
         target.settings.customDesign.sundayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
-        target.settings.customDesign.messageAlign = '1';
+        target.settings.customDesign.messageAlign = '2';
         target.settings.customDesign.buttonBackgroundColor = $scope.widget.settings.re_background_color;
         target.settings.customDesign.buttonTextColor = '#007AFF';
         target.settings.customDesign.buttonAlign = '2';
