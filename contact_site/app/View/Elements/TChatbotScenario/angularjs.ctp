@@ -549,13 +549,13 @@
       this.revertButtonColor = function(actionIndex, hearingIndex, customDesignIndex) {
         switch (customDesignIndex) {
           case 'buttonBackgroundColor':
-            var defaultColor = '#FFFFFF';
+            var defaultColor = $scope.widget.settings.re_background_color;
             break;
           case 'buttonTextColor':
             var defaultColor = '#007AFF';
             break;
           case 'buttonActiveColor':
-            var defaultColor = '#BABABA';
+            var defaultColor = this.getRawColor($scope.widget.settings.main_color, 0.5);
             break;
           case 'buttonBorderColor':
             var defaultColor = '#E3E3E3';

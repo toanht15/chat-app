@@ -4110,7 +4110,7 @@
         }
       },
       createMessageHtml: function(message, align) {
-        if(!message || message.length > 0) {
+        if(!message || message.length === 0) {
           return '';
         }
         var content = '';
@@ -4556,11 +4556,6 @@
           }
         });
         html += '</div>';
-
-        if (storedValueIsFound) {
-          html += '<p class=\'sincloButtonWrap\' onclick=\'sinclo.chatApi.send("' +
-              storedValue + '")\'><span class=\'sincloButton\'>次へ</span></p>';
-        }
 
         return html;
       },
