@@ -343,6 +343,46 @@
         },
       };
 
+      $scope.getHearingButtonSetting = function(target, settings) {
+        switch(target) {
+          case 'messageAlign':
+            if(settings.customDesign.messageAlign) {
+              return settings.customDesign.messageAlign;
+            } else {
+              return '1';
+            }
+            break;
+          case 'buttonBackgroundColor':
+            if(settings.customDesign.buttonBackgroundColor) {
+              return settings.customDesign.buttonBackgroundColor;
+            } else {
+              return '#FFFFFF';
+            }
+            break;
+          case 'buttonTextColor':
+            if(settings.customDesign.buttonTextColor) {
+              return settings.customDesign.buttonTextColor;
+            } else {
+              return '#007AFF';
+            }
+            break;
+          case 'buttonAlign':
+            if(settings.customDesign.buttonAlign) {
+              return settings.customDesign.buttonAlign;
+            } else {
+              return '2';
+            }
+            break;
+          case 'buttonActiveColor':
+            if(settings.customDesign.buttonActiveColor) {
+              return settings.customDesign.buttonActiveColor;
+            } else {
+              return '#BABABA';
+            }
+            break;
+        }
+      };
+
       // メッセージ間隔は同一の設定を各アクションに設定しているため、状態に応じて取得先を変更する
       $scope.messageIntervalTimeSec = "<?= !empty($this->data['TChatbotScenario']['messageIntervalTimeSec']) ? $this->data['TChatbotScenario']['messageIntervalTimeSec'] : '' ?>"
           || (typeof $scope.setActionList[0] !== 'undefined' ? $scope.setActionList[0].messageIntervalTimeSec : '')

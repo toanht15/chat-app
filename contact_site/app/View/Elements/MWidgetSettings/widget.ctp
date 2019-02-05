@@ -191,7 +191,7 @@
     #sincloBox ul#chatTalk > div.with_icon .icon_container.middleSize { max-width: 37px; min-width: 37px; }
     #sincloBox ul#chatTalk > div.with_icon .icon_container.largeSize { max-width: 42px; min-width: 42px; }
     #sincloBox ul#chatTalk > div.with_icon .icon_container.customSize { max-width: 45px; }
-    #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal {display: flex; justify-content: center; align-items: center; border-radius: 50%}
+    #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal {display: flex; justify-content: center; align-items: center; border-radius: 50%; margin-top: 9px;}
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.smallSize { height: 30px; width: 30px; font-size: 20px; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.middleSize { height: 35px; width: 35px; font-size: 23px; }
     #sincloBox ul#chatTalk > div.with_icon i.sinclo-fal.largeSize { height: 40px; width: 40px; font-size: 26px; }

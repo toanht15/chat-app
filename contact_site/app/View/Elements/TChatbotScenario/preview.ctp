@@ -69,7 +69,7 @@
   #tchatbotscenario_form_preview_body .chatTalk li .sendFileContent .sendFileMetaArea .data { margin-left: 1em; margin-bottom: 5px; display: block; }
   #tchatbotscenario_form_preview_body .chatTalk li .sendFileContent .sendFileMetaArea .data.sendFileSize { margin-bottom: 0px; }
 
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap { display: flex; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap { display: flex; justify-content: center; margin-top: 10px; flex-flow: column nowrap; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide { flex-flow: row nowrap; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 10px 15px; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button.alignLeft { justify-content: flex-start; }
