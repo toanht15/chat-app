@@ -46,7 +46,7 @@
 </section>
 <?php } else { ?>
 <section id="switch_widget" ng-cloak ng-hide="closeButtonSettingToggle !== '2'" ng-class="{showBanner:closeButtonModeTypeToggle === '1' && closeButtonSettingToggle === '2' && showWidgetType === 4}">
-  <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4')}">
+  <ul class="ulTab showType4" data-col=3  ng-class="{middleSize: showWidgetType === 1 && widgetSizeTypeToggle === '2',largeSize: showWidgetType === 1 && (widgetSizeTypeToggle === '3' || widgetSizeTypeToggle === '4'), customSize: showWidgetType === 1 && widgetSizeTypeToggle === '5'}}">
     <li ng-class="{choose: showWidgetType === 1}" ng-click="switchWidget(1)">通常</li>
     <li ng-class="{choose: showWidgetType === 4}" ng-click="switchWidget(4)">非表示</li>
   </ul>
