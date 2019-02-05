@@ -1990,6 +1990,12 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     $scope.resizeChatArea();
   });
 
+  $scope.$watch('chat_message_design_type', function() {
+    if($scope.chat_message_design_type === '2') {
+      $scope.chat_message_arrow_position = '2';
+    }
+  });
+
   $scope.resizeChatArea = function() {
     var offset = (Number($scope.showWidgetType) !== 2) ? 74 : 64;
     switch(Number($scope.chat_init_show_textarea)) {
