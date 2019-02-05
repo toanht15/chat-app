@@ -130,6 +130,8 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
           break;
       }
       settings["with_icon"] = (Number( targetToggle ) === 1 && ( $scope.isPictureImage( target ) || $scope.isIconImage( target ) ));
+      settings["arrowUp"] = (Number( $scope.chat_message_design_type ) == 1 && Number( $scope.chat_message_arrow_position ) == 1);
+      settings["arrowBottom"] = (Number( $scope.chat_message_design_type ) != 1 || Number( $scope.chat_message_arrow_position ) == 2);
       settings = $scope.setWidgetSize( settings );
       return  settings;
     };
@@ -933,10 +935,26 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
     return image.match(/^http|data|\/\/node/) !== null;
   };
 
+  $scope.getActualIconFontSize = function() {
+    var height = $scope.getMaxHeight();
+    console.log(height);
+    return (height + 406) / 30;
+  };
+
+  $scope.getMaxHeight = function() {
+    // アイコンに関するサイズは上限値をウィジェットサイズ大とする
+    var height = Number($scope.widget_custom_height);
+    var maxHeight = 374;
+    if( height > maxHeight ) {
+      height = maxHeight;
+    }
+    return height;
+  };
+
   $scope.getActualChatTalkHeight = function() {
     var offset = (Number($scope.chat_init_show_textarea) === 2) ? 75 : 0;
     var actualHeight = 284;
-    switch(Number($scope.widgetSizeTypeToggle)) {
+    switch (Number($scope.widgetSizeTypeToggle)) {
       case 1:
         actualHeight = 194 + offset;
         break;
@@ -1378,15 +1396,63 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       settingSendBtnText.max = sendBtnTextSize;
     };
 
+
+    //ウィジェットサイズ小より大きい場合は13
+    $scope.getFontSizeFromCustomWidgetSize = function(){
+      var height = Number($scope.widget_custom_height);
+      var fontSize = 12;
+      if( 194 < height ){
+        fontSize = 13;
+      }
+    return fontSize;
+    };
+
+    $scope.getCustomBalloonMargin = function(){
+      var height = $scope.getMaxHeight();
+      //計算方法は各サイズのmargin-leftを基に階差数列で式を算出した
+      return 2 + (height - 194) * (height - 104) / 16200;
+    };
+
+
+    //ウィジェットの縦幅が中サイズより大きい場合はデフォ値も大きくする
+    $scope.customSizeRevertProcess = function() {
+      var height = Number($scope.widget_custom_height);
+      var headerTextSize = 14;
+      var otherTextSize = 12;
+      if(284 <= height){
+        headerTextSize = 15;
+        otherTextSize = 13;
+      }
+      $scope.revertCustomTextSize(otherTextSize);
+      $scope.revertCustomHeaderSize(headerTextSize);
+    };
+
+    $scope.revertCustomTextSize = function(size){
+      $scope['re_text_size'] = size;
+      $scope['se_text_size'] = size;
+      $scope['chat_send_btn_text_size'] = size;
+      $scope['message_box_text_size'] = size;
+    };
+
+    $scope.revertCustomHeaderSize = function(size){
+      $scope['header_text_size'] = size;
+    };
+
+
     //ウィジェットサイズがクリックされた時の動作
     $scope.clickWidgetSizeTypeToggle = function(size){
+
       $scope.switchMaxLength(size);
       $scope.switchMaxTextSize(size);
-      $scope.revertStandardTextSize('header_text_size');
-      $scope.revertStandardTextSize('re_text_size');
-      $scope.revertStandardTextSize('se_text_size');
-      $scope.revertStandardTextSize('chat_send_btn_text_size');
-      $scope.revertStandardTextSize('message_box_text_size');
+      if ( Number( size ) === 5 ) {
+        $scope.customSizeRevertProcess();
+      } else {
+        $scope.revertStandardTextSize('header_text_size');
+        $scope.revertStandardTextSize('re_text_size');
+        $scope.revertStandardTextSize('se_text_size');
+        $scope.revertStandardTextSize('chat_send_btn_text_size');
+        $scope.revertStandardTextSize('message_box_text_size');
+      }
       if($('#chatTalk').length > 0) {
         $('#chatTalk').css('height', '');
       } else {
@@ -1408,7 +1474,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'header_text_size2':
         case 'header_text_size3':
         case 'header_text_size4':
-          case 'header_text_size5':
           size = 15;
           break;
         case 're_text_size1':
@@ -1417,7 +1482,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 're_text_size2':
         case 're_text_size3':
         case 're_text_size4':
-        case 're_text_size5':
           size = 13;
           break;
         case 'se_text_size1':
@@ -1426,7 +1490,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'se_text_size2':
         case 'se_text_size3':
         case 'se_text_size4':
-        case 'se_text_size5':
           size = 13;
           break;
         case 'chat_send_btn_text_size1':
@@ -1435,7 +1498,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'chat_send_btn_text_size2':
         case 'chat_send_btn_text_size3':
         case 'chat_send_btn_text_size4':
-        case 'chat_send_btn_text_size5':
           size = 13;
           break;
         case 'message_box_text_size1':
@@ -1444,7 +1506,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         case 'message_box_text_size2':
         case 'message_box_text_size3':
         case 'message_box_text_size4':
-        case 'message_box_text_size5':
           size = 13;
           break;
       }
@@ -1927,6 +1988,12 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
   $scope.$watch('chat_init_show_textarea', function() {
     $scope.resizeChatArea();
+  });
+
+  $scope.$watch('chat_message_design_type', function() {
+    if($scope.chat_message_design_type === '2') {
+      $scope.chat_message_arrow_position = '2';
+    }
   });
 
   $scope.resizeChatArea = function() {

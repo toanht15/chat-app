@@ -11,7 +11,7 @@
                                                                       data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の回答内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。<br><br>例）変数名：名前　⇒　{{showExpression('名前')}}様からのお問い合わせを受付いたしました。">?</icon></span>
         </div>
         <div class='area-type'>タイプ<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="ヒアリングの回答を入力する形式を指定します。<br>＜タイプ＞<br>テキスト(1行)　 　 ：フリーテキスト入力（改行不可）<br>テキスト(複数行)　 ：フリーテキスト入力（改行可）<br>ラジオボタン　　　：ラジオボタン形式の択一選択<br>プルダウン　　　　：プルダウン形式の択一選択<br>カレンダー　　　　：カレンダーから日付を選択"
+                                                                      data-tooltip="ヒアリングの回答を入力する形式を指定します。<br>＜タイプ＞<br>テキスト(1行)　 　 ：フリーテキスト入力（改行不可）<br>テキスト(複数行)　 ：フリーテキスト入力（改行可）<br>ラジオボタン　　　：ラジオボタン形式の択一選択<br>プルダウン　　　　：プルダウン形式の択一選択<br>コンファーム　　　：ボタン形式の択一選択<br>カレンダー　　　　：カレンダーから日付を選択"
                                                                       data-tooltip-width="30em">?</icon></span>
         </div>
         <div class='area-message'>質問内容<span class="questionBalloon"><icon class="questionBtn"
@@ -41,6 +41,7 @@
               <option value="2">テキスト（複数行）</option>
               <option value="3">ラジオボタン</option>
               <option value="4">プルダウン</option>
+              <option value="7">コンファーム</option>
               <option value="5">カレンダー</option>
             </select>
           </div>
@@ -50,23 +51,45 @@
           </div>
           <div class='area-btn'>
             <div class="btnBlock">
-              <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn hearingBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn hearingBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
+              <a><?= $this->Html->image('add.png', array(
+                  'alt' => '追加',
+                  'width' => 25,
+                  'height' => 25,
+                  'class' => 'btn-shadow disOffgreenBtn hearingBtn',
+                  'style' => 'padding: 2px',
+                  'ng-click' => 'main.addActionItemList($event, listId)'
+                )) ?></a><a><?= $this->Html->image('dustbox.png', array(
+                  'alt' => '削除',
+                  'width' => 25,
+                  'height' => 25,
+                  'class' => 'btn-shadow redBtn deleteBtn hearingBtn',
+                  'style' => 'padding: 2px',
+                  'ng-click' => 'main.removeActionItemList($event, listId)'
+                )) ?></a>
             </div>
           </div>
           <div class='area-detail'>
                         <span ng-if="hearingItem.uiType === '1'" style="padding: 0;">
                             <label>テキストタイプ<span class="questionBalloon"><icon class="questionBtn"
                                                                               data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ<br>email　　　：メールアドレス形式のみ<br>tel_number：0から始まる10桁以上の数字とハイフンのみ">?</icon></span></label>
-                            <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-one-row-type" value="1"
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-one-row-type"
+                                                          value="1"
                                                           ng-model="hearingItem.inputType">text</label>
-                            <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-one-row-type" value="2"
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-one-row-type"
+                                                          value="2"
                                                           ng-model="hearingItem.inputType">number</label>
-                            <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-one-row-type" value="3"
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-one-row-type"
+                                                          value="3"
                                                           ng-model="hearingItem.inputType">email</label>
-                            <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-one-row-type" value="4"
+                            <label class="pointer"><input type="radio"
+                                                          name="action{{setActionId}}-hearing{{listId}}-one-row-type"
+                                                          value="4"
                                                           ng-model="hearingItem.inputType">tel</label>
                         </span>
-                        <span ng-if="hearingItem.uiType === '2'" style="padding: 0;">
+            <span ng-if="hearingItem.uiType === '2'" style="padding: 0;">
                             <label>テキストタイプ<span class="questionBalloon"><icon class="questionBtn"
                                                                               data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ">?</icon></span></label>
                             <label class="pointer"><input type="radio"
@@ -77,8 +100,9 @@
                                                           value="2" ng-model="hearingItem.inputType">number</label>
                         </span>
 
-            <div ng-if="(hearingItem.uiType === '1' && hearingItem.inputType != 1) || (hearingItem.uiType === '2' &&  hearingItem.inputType != 1)"
-                 class="styleFlexbox m15t">
+            <div
+                ng-if="(hearingItem.uiType === '1' && hearingItem.inputType != 1) || (hearingItem.uiType === '2' &&  hearingItem.inputType != 1)"
+                class="styleFlexbox m15t">
                             <span class="fb11em"><label class="hearingErrorMessageLabel">入力エラー時の<br>返信メッセージ
                                     <span class="questionBalloon">
                                         <icon class="questionBtn"
@@ -94,17 +118,32 @@
               </div>
             </div>
 
-            <div ng-if="hearingItem.uiType === '3' || hearingItem.uiType === '4'"
+            <div ng-if="hearingItem.uiType === '3' || hearingItem.uiType === '4' || hearingItem.uiType === '7'"
                  ng-repeat="(optionIndex, option) in hearingItem.settings.options  track by $index"
-                 class="select-option-input action{{setActionId}}_option{{listId}}" ng-init="main.controllHearingOptionView(setActionId, listId)">
+                 class="select-option-input action{{setActionId}}_option{{listId}}"
+                 ng-init="main.controllHearingOptionView(setActionId, listId)">
                             <span><label class="">選択肢 {{optionIndex + 1}}<span class="questionBalloon"><icon
-                                          class="questionBtn"
-                                          data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                                      class="questionBtn"
+                                      data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
               <input type="text" class="m20l" ng-model="hearingItem.settings.options[optionIndex]"
                      style="width: 200px;">
               <div class="btnBlock">
-                <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, optionIndex, listId)')) ?></a>
-                <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, optionIndex, listId)')) ?></a>
+                <a><?= $this->Html->image('add.png', array(
+                    'alt' => '追加',
+                    'width' => 25,
+                    'height' => 25,
+                    'class' => 'btn-shadow disOffgreenBtn',
+                    'style' => 'padding: 2px',
+                    'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, optionIndex, listId)'
+                  )) ?></a>
+                <a><?= $this->Html->image('dustbox.png', array(
+                    'alt' => '削除',
+                    'width' => 25,
+                    'height' => 25,
+                    'class' => 'btn-shadow redBtn deleteBtn',
+                    'style' => 'padding: 2px;',
+                    'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, optionIndex, listId)'
+                  )) ?></a>
               </div>
               <a ng-if="!optionIndex" href="" class="greenBtn btn-shadow bulk-button commontooltip"
                  style="display: inline; margin-top: 5px" data-text="選択肢として登録する内容をテキストエリア内で改行して一括で登録することができます。"
@@ -164,9 +203,9 @@
               <br>
               <label class="pointer">
                 <input type="checkbox" ng-model="hearingItem.settings.isDisableAfterDate">当日から<input
-                  style="width: 6em"
-                  type="number" min="0" ng-disabled="!hearingItem.settings.isDisableAfterDate"
-                  ng-model="hearingItem.settings.disableAfterDate">日以降を選択できないようにする
+                    style="width: 6em"
+                    type="number" min="0" ng-disabled="!hearingItem.settings.isDisableAfterDate"
+                    ng-model="hearingItem.settings.disableAfterDate">日以降を選択できないようにする
                 <span class="questionBalloon"><icon class="questionBtn"
                                                     data-tooltip="サイト訪問日から設定した日数以降を選択できないようにします。">?</icon></span>
               </label>
@@ -234,12 +273,28 @@
                            style="margin-left: 60px;"
                            ng-repeat="(dateIndex, date) in hearingItem.settings.specificDateData track by $index"
                            ng-if="hearingItem.settings.setSpecificDateType == 1">
-                        <input type="text" ng-model="hearingItem.settings.specificDateData[dateIndex]" id="action{{setActionId}}_option{{listId}}_datepicker{{dateIndex}}">
+                        <input type="text" ng-model="hearingItem.settings.specificDateData[dateIndex]"
+                               id="action{{setActionId}}_option{{listId}}_datepicker{{dateIndex}}">
                         <div class="btnBlock">
-                          <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
-                          <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px; display: none;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
+                          <a><?= $this->Html->image('add.png', array(
+                              'alt' => '追加',
+                              'width' => 25,
+                              'height' => 25,
+                              'class' => 'btn-shadow disOffgreenBtn',
+                              'style' => 'padding: 2px',
+                              'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, dateIndex, listId)'
+                            )) ?></a>
+                          <a><?= $this->Html->image('dustbox.png', array(
+                              'alt' => '削除',
+                              'width' => 25,
+                              'height' => 25,
+                              'class' => 'btn-shadow redBtn deleteBtn',
+                              'style' => 'padding: 2px; display: none;',
+                              'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, dateIndex, listId)'
+                            )) ?></a>
                         </div>
-                        <a href="" class="greenBtn btn-shadow bulk-button commontooltip" data-text="設定する日付をテキストエリア内で改行して一括で登録することができます。"
+                        <a href="" class="greenBtn btn-shadow bulk-button commontooltip"
+                           data-text="設定する日付をテキストエリア内で改行して一括で登録することができます。"
                            ng-click="main.showBulkSelectionPopup(setActionId, listId, hearingItem.uiType);"
                            ng-if="!dateIndex">日付を一括登録</a>
                       </div>
@@ -256,10 +311,25 @@
                                ng-model="hearingItem.settings.specificDateData[dateIndex]"
                                id="action{{setActionId}}_option{{listId}}_datepicker{{dateIndex}}" type="text">
                         <div class="btnBlock">
-                          <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
-                          <a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px; display: none;', 'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, dateIndex, listId)')) ?></a>
+                          <a><?= $this->Html->image('add.png', array(
+                              'alt' => '追加',
+                              'width' => 25,
+                              'height' => 25,
+                              'class' => 'btn-shadow disOffgreenBtn',
+                              'style' => 'padding: 2px',
+                              'ng-click' => 'main.addHearingOption($event, hearingItem.uiType, dateIndex, listId)'
+                            )) ?></a>
+                          <a><?= $this->Html->image('dustbox.png', array(
+                              'alt' => '削除',
+                              'width' => 25,
+                              'height' => 25,
+                              'class' => 'btn-shadow redBtn deleteBtn',
+                              'style' => 'padding: 2px; display: none;',
+                              'ng-click' => 'main.removeHearingOption($event, hearingItem.uiType, dateIndex, listId)'
+                            )) ?></a>
                         </div>
-                        <a href="" class="greenBtn btn-shadow bulk-button commontooltip" data-text="設定する日付をテキストエリア内で改行して一括で登録することができます。"
+                        <a href="" class="greenBtn btn-shadow bulk-button commontooltip"
+                           data-text="設定する日付をテキストエリア内で改行して一括で登録することができます。"
                            ng-click="main.showBulkSelectionPopup(setActionId, listId, hearingItem.uiType);"
                            ng-if="!dateIndex">日付を一括登録</a>
                       </div>
@@ -351,13 +421,110 @@
 
                 <span class="language-setting">
                   <label>言語</label>
-                  <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-language" value="1"
+                  <label class="pointer"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-language"
+                                                value="1"
                                                 ng-model="hearingItem.settings.language"
                                                 style="margin-left: 60px;">日本語表記</label>
-                  <label class="pointer m20l"><input type="radio" name="action{{setActionId}}-hearing{{listId}}-language" value="2"
+                  <label class="pointer m20l"><input type="radio"
+                                                     name="action{{setActionId}}-hearing{{listId}}-language" value="2"
                                                      ng-model="hearingItem.settings.language">英語表記</label>
                 </span>
               </div>
+            </div>
+
+            <label ng-if="hearingItem.uiType === '7'" class="pointer">
+              <input type="checkbox" ng-model="hearingItem.settings.isCustomDesign">デザインをカスタマイズする
+              <span class="questionBalloon"><icon class="questionBtn"
+                                                  data-tooltip="ボタンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
+            </label>
+            <div ng-if="hearingItem.uiType === '7' && hearingItem.settings.isCustomDesign"
+                 class="button-design-custom-area">
+                  <span class="button-custom-items">
+                  <label style="width: 100px;">質問内容位置</label>
+                      <div class="radio-buttons">
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_messageAlign1">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_messageAlign1"
+                                 ng-model="hearingItem.settings.customDesign.messageAlign"
+                                 value="1">左寄せ</label>
+                        <label class="radio-label text4 pointer"
+                               for="action{{setActionId}}_button{{listId}}_messageAlign2">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_messageAlign2"
+                                 ng-model="hearingItem.settings.customDesign.messageAlign"
+                                 value="2">中央寄せ</label>
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_messageAlign3">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_messageAlign3"
+                                 ng-model="hearingItem.settings.customDesign.messageAlign"
+                                 value="3">右寄せ</label>
+                      </div>
+                </span>
+              <span class="button-custom-items">
+                  <label>ボタン背景色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_buttonBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.buttonBackgroundColor"
+                         ng-change="main.changeButtonColor(setActionId, listId, 'buttonBackgroundColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertButtonColor(setActionId, listId, 'buttonBackgroundColor')">標準に戻す</span>
+                </span>
+              <span class="button-custom-items">
+                  <label>ボタン文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_buttonTextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.buttonTextColor"
+                         ng-change="main.changeButtonColor(setActionId, listId, 'buttonTextColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertButtonColor(setActionId, listId, 'buttonTextColor')">標準に戻す</span>
+                </span>
+              <span class="button-custom-items">
+                  <label style="width: 100px;">ボタン文字位置</label>
+                      <div class="radio-buttons">
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign1">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign1"
+                                 ng-model="hearingItem.settings.customDesign.buttonAlign"
+                                 value="1">左寄せ</label>
+                        <label class="radio-label text4 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign2">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign2"
+                                 ng-model="hearingItem.settings.customDesign.buttonAlign"
+                                 value="2">中央寄せ</label>
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign3">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign3"
+                                 ng-model="hearingItem.settings.customDesign.buttonAlign"
+                                 value="3">右寄せ</label>
+                      </div>
+                </span>
+              <span class="button-custom-items">
+                  <label>ボタン選択色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_buttonActiveColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.buttonActiveColor"
+                         ng-change="main.changeButtonColor(setActionId, listId, 'buttonActiveColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertButtonColor(setActionId, listId, 'buttonActiveColor')">標準に戻す</span>
+                </span>
+              <span class="button-custom-items">
+                <label>ボタン枠線色</label>
+                <input type="text" class="jscolor{hash:true} ignore-click-event"
+                       id="action{{setActionId}}_button{{listId}}_buttonBorderColor"
+                       ng-model="hearingItem.settings.customDesign.buttonBorderColor">
+                <span class="greenBtn btn-shadow revert-button"
+                      ng-click="main.revertButtonColor(setActionId, listId, 'buttonBorderColor')">標準に戻す</span>
+              </span>
+
+              <label class="pointer" style="margin-left: 116px">
+                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
+                       ng-model="hearingItem.settings.customDesign.outButtonNoneBorder" value="1">枠線なしにする
+              </label>
             </div>
           </div>
           <hr class="separator">
@@ -374,8 +541,8 @@
         <li>
           <label class="pointer"><input type="checkbox" ng-model="setItem.isConfirm"
                                         ng-init="setItem.isConfirm = setItem.isConfirm == 1">入力内容の確認を行う<span
-                    class="questionBalloon"><icon class="questionBtn"
-                                                  data-tooltip="質問内容を全て聞き終えた後に、サイト訪問者に確認メッセージを送ることが出来ます。">?</icon></span></label>
+                class="questionBalloon"><icon class="questionBtn"
+                                              data-tooltip="質問内容を全て聞き終えた後に、サイト訪問者に確認メッセージを送ることが出来ます。">?</icon></span></label>
           <ul ng-if="setItem.isConfirm == true" class="indentDown">
             <li class="styleFlexbox">
                     <span class="fb9em"><label>確認内容<span class="questionBalloon"><icon class="questionBtn"
@@ -404,8 +571,8 @@
         </li>
         <li>
           <label class="pointer"><input type="checkbox" ng-model="setItem.cv" ng-init="setItem.cv = setItem.cv == 1">成果にCVとして登録する<span
-                    class="questionBalloon"><icon class="questionBtn"
-                                                  data-tooltip="チャット履歴の「成果」に「途中離脱」または「CV」として自動登録します。<br><br>【途中離脱】ヒアリング途中で終了した場合<br>【CV】全項目のヒアリングが完了した場合（入力内容の確認を行う場合は「OK」が選択された場合）">?</icon></span></label>
+                class="questionBalloon"><icon class="questionBtn"
+                                              data-tooltip="チャット履歴の「成果」に「途中離脱」または「CV」として自動登録します。<br><br>【途中離脱】ヒアリング途中で終了した場合<br>【CV】全項目のヒアリングが完了した場合（入力内容の確認を行う場合は「OK」が選択された場合）">?</icon></span></label>
         </li>
       </ul>
 </div>

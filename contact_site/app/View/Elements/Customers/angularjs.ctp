@@ -1512,6 +1512,10 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
       var widgetSize = '4'; //リアルタイムモニタ詳細画面
       for (var i = 0; strings.length > i; i++) {
+        if(strings[i].match(/(<div |<\/div>)/)) {
+          content += strings[i];
+          continue;
+        }
         var str = escape_html(strings[i]);
         // ラジオボタン
         var radio = str.indexOf('[]');

@@ -66,7 +66,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         border-radius: {{widget.settings['radius_ratio']}}px {{widget.settings['radius_ratio']}}px 0 0;
       }
       #sincloBox.middleSize{
-        width: 342.5px;
+        width: 344px;
       }
       #sincloBox.largeSize{
         width: 400px;
@@ -367,10 +367,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         /*#sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: 100%; margin-top: -9px; border: 9px solid transparent; border-left: 9px solid #C9C9C9; z-index: 1; }*/
         #sincloBox ul#chatTalk li.sinclo_re { background-color: {{widget.makeFaintColor()}}; }
         #sincloBox ul#chatTalk li.sinclo_re.notNone { border: 1px solid {{widget.getTalkBorderColor('re')}}; }
-        #sincloBox ul#chatTalk li.sinclo_re.balloonType { margin-left: 10px; padding-right: 15px; border-bottom-left-radius: 0px; }
-        #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; z-index: 2; border: 5px solid transparent; border-right: 5px solid {{widget.makeFaintColor()}}; border-bottom: 5px solid {{widget.makeFaintColor()}}; }
-        #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; z-index: 1; border: 5px solid transparent; }
-        #sincloBox ul#chatTalk li.sinclo_re.balloonType.notNone:after { border-right: 5px solid {{widget.getTalkBorderColor('re')}}; border-bottom: 5px solid {{widget.getTalkBorderColor('re')}}; }
+        #sincloBox ul#chatTalk li.sinclo_re.balloonType:not(.no-wrap) { margin-left: 10px; padding-right: 15px; border-bottom-left-radius: 0px; }
+        #sincloBox ul#chatTalk li.sinclo_re.balloonType:before:not(.no-wrap) { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; z-index: 2; border: 5px solid transparent; border-right: 5px solid {{widget.makeFaintColor()}}; border-bottom: 5px solid {{widget.makeFaintColor()}}; }
+        #sincloBox ul#chatTalk li.sinclo_re.balloonType:after:not(.no-wrap) { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; z-index: 1; border: 5px solid transparent; }
+        #sincloBox ul#chatTalk li.sinclo_re.balloonType.notNone:after:not(.no-wrap) { border-right: 5px solid {{widget.getTalkBorderColor('re')}}; border-bottom: 5px solid {{widget.getTalkBorderColor('re')}}; }
         /* 二等辺三角形バージョン */
         /*#sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 5px; left: -19px; margin-top: -10px; border: 10px solid transparent; border-right: 10px solid {{makeBalloonTriangleColor()}}; z-index: 2; }*/
         /*#sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: 6px; left: -19px; margin-top: -9px; border: 9px solid transparent; border-right: 9px solid #C9C9C9; z-index: 1; }*/
@@ -380,12 +380,16 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li.effect_left_wait_none { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:1;}
         #sincloBox ul#chatTalk .grid_balloon i.effect_left { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }
         #sincloBox ul#chatTalk .grid_balloon img.effect_left { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; animation-delay:0.6s; }
-        #sincloBox ul#chatTalk li.boxType.chat_right { border-radius: 12px 12px 0 12px; margin-left: 37.5px; margin-right:10px; }
-        #sincloBox ul#chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-left: 10px; margin-right: 17.5px; }
-        #sincloBox ul#chatTalk li.boxType.chat_right.middleSize { border-radius: 12px 12px 0 12px; margin-left: 45px; margin-right:10px; }
-        #sincloBox ul#chatTalk li.boxType.chat_left.middleSize { border-radius: 12px 12px 12px 0; margin-right: 21px; margin-left:10px; }
-        #sincloBox ul#chatTalk li.boxType.chat_right.largeSize { border-radius: 12px 12px 0 12px; margin-left: 52.7px; margin-right:10px; }
-        #sincloBox ul#chatTalk li.boxType.chat_left.largeSize { border-radius: 12px 12px 12px 0; margin-right: 24.6px; margin-left:10px; }
+        #sincloBox ul#chatTalk li.boxType.chat_right.arrowUp { border-radius: 12px 0 12px 12px; }
+        #sincloBox ul#chatTalk li.boxType.chat_right.arrowBottom { border-radius: 12px 12px 0 12px; }
+        #sincloBox ul#chatTalk li.boxType.chat_left.arrowUp { border-radius: 0 12px 12px 12px; }
+        #sincloBox ul#chatTalk li.boxType.chat_left.arrowBottom { border-radius: 12px 12px 12px 0; }
+        #sincloBox ul#chatTalk li.boxType.chat_right { margin-left: 37.5px; margin-right:10px; }
+        #sincloBox ul#chatTalk li.boxType.chat_left { margin-left: 10px; margin-right: 17.5px; }
+        #sincloBox ul#chatTalk li.boxType.chat_right.middleSize { margin-left: 45px; margin-right:10px; }
+        #sincloBox ul#chatTalk li.boxType.chat_left.middleSize { margin-right: 21px; margin-left:10px; }
+        #sincloBox ul#chatTalk li.boxType.chat_right.largeSize { margin-left: 52.7px; margin-right:10px; }
+        #sincloBox ul#chatTalk li.boxType.chat_left.largeSize { margin-right: 24.6px; margin-left:10px; }
         #sincloBox ul#chatTalk li.boxType.chat_right .smallSizeImg {max-width: 165px; max-height: 120px; transform:none; display:block;}
         #sincloBox ul#chatTalk li.boxType.chat_left .smallSizeImg { max-width: 165px; max-height: 120px; transform:none; display:block;}
         #sincloBox ul#chatTalk li.boxType.chat_right .middleSizeImg {max-width: 215px; max-height: 188px; transform:none; display:block;}
@@ -511,6 +515,26 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formLabelSeparator { margin: 0 3px; grid-column: 2/3; grid-row: 1/2; -ms-grid-column: 2; -ms-grid-row: 1; }
         #sincloBox #chatTalk li.sinclo_se div.formSubmitArea div.formElement span.formValue { grid-column: 3/4; grid-row: 1/2; -ms-grid-column: 3; -ms-grid-row: 1; }
 
+        #sincloBox #chatTalk li.sinclo_re.no-wrap { display: block!important; padding: 10px 0 0 0; justify-self: stretch; }
+        #sincloBox #chatTalk li.sinclo_re.noText  { padding-top: 0px; }
+        #sincloBox #chatTalk li.sinclo_re.all-round { border-radius: 12px!important; }
+        #sincloBox #chatTalk li.sinclo_re.no-wrap span.sinclo-text-line { padding: 0 15px!important; width: 100%; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap {display: flex; margin-top: 10px; justify-content: center; flex-flow: column nowrap; width: 100%;}
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.noText { margin-top: 0px; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide { flex-flow: row nowrap; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; padding: 12px; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button.alignLeft { flex-direction: row!important; flex-wrap: wrap; text-align: left; justify-content: flex-start; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button.alignRight { flex-direction: row!important; text-align: right; justify-content: flex-end; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button:active { background-color: #E7E7E7; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button { flex-basis: 0; flex-grow: 1; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button:first-child { border-bottom-left-radius: 12px; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button:last-child { border-bottom-right-radius: 12px; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button.noText:first-child { border-radius: 12px 0 0 12px; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button.noText:last-child { border-radius: 0 12px 12px 0; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap:not(.sideBySide) span.sinclo-button.noText:only-child { border-radius: 12px }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap:not(.sideBySide) span.sinclo-button.noText:first-child { border-radius: 12px 12px 0 0; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap:not(.sideBySide) span.sinclo-button:last-child { border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+
         #sincloBox section#chatTab #flexBoxWrap div#messageBox { height: 75px!important; padding: 5px; }
         #sincloBox section#chatTab #flexBoxWrap div#miniFlexBoxHeight { height: 48px!important; padding: 5px; }
         #sincloBox section#chatTab textarea#sincloChatMessage, #sincloBox section#chatTab input#miniSincloChatMessage { width: 80%; height: 100%; color: {{widget.settings['other_text_color']}}; margin: 0; resize: none; padding: 5px; }
@@ -544,7 +568,6 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#chatTab #messageBox.messageBox, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox {border-top: 1px solid {{widget.settings['widget_border_color']}}; padding: 0.5em;}
         #sincloBox section#chatTab #messageBox.messageBox:not(.notNoneWidgetOutsideBorder), #sincloBox section#chatTab #miniFlexBoxHeight.messageBox:not(.notNoneWidgetOutsideBorder) { border-top:none; }
         #sincloBox section#chatTab #messageBox.messageBox.details, #sincloBox section#chatTab #miniFlexBoxHeight.messageBox.details { background-color: {{widget.settings['chat_message_background_color']}}; border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
-
         #sincloBox section#chatTab .grid_balloon .iconDiv i { border-radius: 50%; color: {{widget.settings['string_color']}}; background-color: {{widget.settings['main_color']}}}
         #sincloBox section#chatTab .grid_balloon .iconDiv i.icon_border { border: 1px solid {{widget.settings['string_color']}};}
         <?php endif; ?>
@@ -650,7 +673,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
 
         <!-- サブタイトル -->
 
-        <p id="widgetSubTitle" ng-class="widget.viewWidgetSetting('sp,spText,titlePosition,image,notNoneOutsideBorder,headerContents')" class="details">{{widget.settings['sub_title']}}</p>
+        <p id="widgetSubTitle" ng-class="widget.viewWidgetSetting('sp,spText,headerName,image,notNoneOutsideBorder,headerContents')" class="details">{{widget.settings['sub_title']}}</p>
         <!-- 説明文 -->
         <p  id="widgetDescription" class="details" ng-class="widget.viewWidgetSetting('sp,spText,headerDescription,image,notNoneWidgetOutsideBorder,notNone,headerContents')">{{widget.settings['description']}}</p>
       </div>
@@ -661,10 +684,10 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
   <!-- chat_message_copy 0 start -->
           <ul id="chatTalk" class="details" ng-class="{ spPortrait: widget.isSpPortrait,middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize,customSize: widget.isCustomSize, disableCopy: widget.settings['chat_message_copy']== '1'}">
             <div style="height: auto!important; padding:0; display: none;" ng-class="{liBoxRight: widget.settings['chat_message_design_type'] == 1, liRight: widget.settings['chat_message_design_type'] == 2}" >
-            <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
+            <li class="sinclo_se chat_right details" ng-class="{ notNone:widget.se_border_none === '' || widget.se_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, arrowUp: widget.settings['chat_message_design_type'] == 1 && widget.settings['chat_message_arrow_position'] == 1, arrowBottom: widget.settings['chat_message_design_type'] != 1 || widget.settings['chat_message_arrow_position'] == 2, effect_right: widget.settings['chat_message_with_animation'] === '1'}" ><span class="details">サイト訪問者側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1}">
-              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize, largeSize: widget.isLargeSize ,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+              <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize, largeSize: widget.isLargeSize ,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, arrowUp: widget.settings['chat_message_design_type'] == 1 && widget.settings['chat_message_arrow_position'] == 1, arrowBottom: widget.settings['chat_message_design_type'] != 1 || widget.settings['chat_message_arrow_position'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1}">
               <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">ファイルが送信されました</span><div class="sendFileContent"><div class="sendFileThumbnailArea"><img class="sendFileThumbnail" src="" width="64" height="64"><i class="fa fa-4x sendFileThumbnail" aria-hidden="true"></i></div><div class="sendFileMetaArea"><span class="data sendFileName details">ファイル名</span><span class="data sendFileSize details">ファイルサイズ</span></div></div></li>
@@ -781,11 +804,11 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li.sinclo_se.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: 100%; margin-top: -9px; border: 5px solid transparent; z-index: 1; }
         #sincloBox ul#chatTalk li.sinclo_se.balloonType.notNone:after { border-left: 5px solid {{widget.getTalkBorderColor('se')}}; border-bottom: 5px solid {{widget.getTalkBorderColor('se')}}; }
         #sincloBox ul#chatTalk li.sinclo_re { background-color: {{widget.makeFaintColor()}}; }
-        #sincloBox ul#chatTalk li.sinclo_re.notNone { border: 1px solid {{widget.getTalkBorderColor('re')}}; }
-        #sincloBox ul#chatTalk li.sinclo_re.balloonType { margin-left: 10px; padding-right: 15px; border-bottom-left-radius: 0px; }
-        #sincloBox ul#chatTalk li.sinclo_re.balloonType:before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; border: 5px solid transparent; border-right: 5px solid {{widget.makeFaintColor()}}; border-bottom: 5px solid {{widget.makeFaintColor()}}; z-index: 2; }
-        #sincloBox ul#chatTalk li.sinclo_re.balloonType:after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; border: 5px solid transparent; z-index: 1; }
-        #sincloBox ul#chatTalk li.sinclo_re.balloonType.notNone:after { border-right: 5px solid {{widget.getTalkBorderColor('re')}}; border-bottom: 5px solid {{widget.getTalkBorderColor('re')}}; }
+        #sincloBox ul#chatTalk li.sinclo_re.notNone:not(.no-wrap) { border: 1px solid {{widget.getTalkBorderColor('re')}}; }
+        #sincloBox ul#chatTalk li.sinclo_re.balloonType:not(.no-wrap) { margin-left: 10px; padding-right: 15px; border-bottom-left-radius: 0px; }
+        #sincloBox ul#chatTalk li.sinclo_re.balloonType:before:not(.no-wrap) { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; border: 5px solid transparent; border-right: 5px solid {{widget.makeFaintColor()}}; border-bottom: 5px solid {{widget.makeFaintColor()}}; z-index: 2; }
+        #sincloBox ul#chatTalk li.sinclo_re.balloonType:after:not(.no-wrap) { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; border: 5px solid transparent; z-index: 1; }
+        #sincloBox ul#chatTalk li.sinclo_re.balloonType.notNone:after:not(.no-wrap) { border-right: 5px solid {{widget.getTalkBorderColor('re')}}; border-bottom: 5px solid {{widget.getTalkBorderColor('re')}}; }
         #sincloBox ul#chatTalk li.effect_left { -webkit-animation-name:leftEffect; -moz-animation-name:leftEffect; -o-animation-name:leftEffect; -ms-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; -moz-animation-duration:0.5s; -o-animation-duration:0.5s; -ms-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; -moz-animation-iteration-count:1; -o-animation-iteration-count:1; -ms-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; -moz-animation-fill-mode:both; -o-animation-fill-mode:both; -ms-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; -moz-transform-origin:left bottom; -o-transform-origin:left bottom; -ms-transform-origin:left bottom; transform-origin:left bottom; opacity:0; -webkit-animation-delay:0.6s; -moz-animation-delay:0.6s; -o-animation-delay:0.6s; -ms-animation-delay:0.6s; animation-delay:0.6s; }
         #sincloBox ul#chatTalk li.boxType.chat_right { border-radius: 12px 12px 0 12px; margin-left: 37.5px; margin-right:10px; }
         #sincloBox ul#chatTalk li.boxType.chat_left { border-radius: 12px 12px 12px 0; margin-right: 10px; margin-right: 17.5px; }
