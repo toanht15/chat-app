@@ -4220,7 +4220,7 @@
             settings.customDesign.buttonActiveColor + '!important;}';
         messageHtml += '</style>';
         var messageAlign = 'left';
-        switch(Number(settings.customDesign.buttonAlign)) {
+        switch(Number(settings.customDesign.messageAlign)) {
           case 1:
             break;
           case 2:
@@ -4552,16 +4552,22 @@
         if (isNoText) {
           noTextClass = ' noText';
         }
+        var alignClass = '';
+        if(settings.customDesign.buttonAlign === '1') {
+          alignClass = ' alignLeft';
+        } else if(settings.customDesign.buttonAlign === '3') {
+          alignClass = ' alignRight';
+        }
         html += '<div class="sincloHearingButtons' + sideBySideClass + noTextClass +
             '" name="' + name + '" id="' + name + '" style="' + style + '">';
         settings.options.forEach(function(option, index) {
           if (storedValue === option) {
             storedValueIsFound = true;
-            html += '<span class="sincloHearingButton selected' + noTextClass + '" style="' +
+            html += '<span class="sincloHearingButton selected' + noTextClass + alignClass + '" style="' +
                 sinclo.chatApi.createButtonStyle(settings, index, isNoText) + '">' +
                 option + '</span>';
           } else {
-            html += '<span class="sincloHearingButton' + noTextClass + '" style="' +
+            html += '<span class="sincloHearingButton' + noTextClass + alignClass + '" style="' +
                 sinclo.chatApi.createButtonStyle(settings, index, isNoText) + '">' +
                 option + '</span>';
           }
@@ -4572,11 +4578,6 @@
       },
       createButtonStyle: function(settings, index, isNoText) {
         var alignItems = 'align-items: center; ';
-        if(settings.customDesign.buttonAlign === '1') {
-          alignItems = 'align-items: flex-start; ';
-        } else if(settings.customDesign.buttonAlign === '3') {
-          alignItems = 'align-items: flex-end; ';
-        }
         var style = alignItems + 'padding: 12px; color: ' +
             settings.customDesign.buttonTextColor + '; background-color: ' +
             settings.customDesign.buttonBackgroundColor + ';';
