@@ -451,6 +451,12 @@
         target.settings.customDesign.sundayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
+        target.settings.customDesign.messageAlign = '1';
+        target.settings.customDesign.buttonBackgroundColor = $scope.widget.settings.re_background_color;
+        target.settings.customDesign.buttonTextColor = '#007AFF';
+        target.settings.customDesign.buttonAlign = '2';
+        target.settings.customDesign.buttonActiveColor = this.getRawColor($scope.widget.settings.main_color, 0.5);
+        target.settings.customDesign.buttonBorderColor = '#E3E3E3';
 
         return target;
       };
@@ -1626,8 +1632,8 @@
           if (typeof item.variableName !== 'undefined' && item.variableName !== '' && (item.uiType === '7' || (typeof item.message !==
               'undefined' && item.message !== ''))) {
             // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
-            if(item.uiType === '7' && typeof item.message !==
-                'undefined' && item.message !== '') {
+            if(item.uiType === '7' && (typeof item.message ===
+                'undefined' || item.message === '')) {
               item.message = "";
             }
             hearings.push(item);
@@ -3144,7 +3150,7 @@
             $scope.addVisitorHearingMessage(message);
             $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else if ((!item && skipped) || (item && item !== message)) {
+          } else if ((!item && skipped) || (item && ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '7' || item !== message))) {
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
             $scope.reSelectionHearing(message, actionStep, hearingIndex);
