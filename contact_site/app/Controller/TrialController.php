@@ -23,6 +23,7 @@ class TrialController extends AppController {
   const OTHER = "##OTHER##";
   public $components = ['AutoMessageMailTemplate', 'MailSender', 'Auth'];
   public $uses = ['MUser','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate','MCompany'];
+  private $tuIps = array('150.60.30.56','150.60.30.57','150.60.30.58','150.60.30.59');
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -35,13 +36,17 @@ class TrialController extends AppController {
     else if($_SERVER['HTTP_HOST'] == 'ml1.sinclo.jp') {
       if($_SERVER['HTTP_ORIGIN'] == 'http://127.0.0.1:81/Contract/add' || $_SERVER['HTTP_ORIGIN'] == 'http://192.168.1.120') {
         header("Access-Control-Allow-Origin: ".$_SERVER['HTTP_ORIGIN']);
+      } else if(array_search($_SERVER['X-FORWARDED-FOR'], $this->tuIps)) {
+        header('Access-Control-Allow-Origin: *');
       }
     }
     //本番環境
     else if($_SERVER['HTTP_HOST'] == 'sinclo.jp') {
      if($_SERVER['HTTP_ORIGIN'] == 'http://127.0.0.1:81/Contract/add' || $_SERVER['HTTP_ORIGIN'] == 'https://sinclo.medialink-ml.co.jp') {
-        header("Access-Control-Allow-Origin: ".$_SERVER['HTTP_ORIGIN']);
-      }
+       header("Access-Control-Allow-Origin: ".$_SERVER['HTTP_ORIGIN']);
+     } else if(array_search($_SERVER['X-FORWARDED-FOR'], $this->tuIps)) {
+       header('Access-Control-Allow-Origin: *');
+     }
     }
   }
 
