@@ -3416,7 +3416,7 @@ var socket, // socket.io
       html += '  <div id="sincloBanner" class="sincloBanner" onclick="sinclo.operatorInfo.clickBanner()">';
       if (check.hasCustomBannerImageSetting()) {
         if (check.smartphone()) {
-          html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.sp +'" style="width:100px; height:60px" />';
+          html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.sp +'" style="width:150px; height:90px" />';
         } else {
           html += '<img src="' + window.sincloInfo.custom.widget.bannerImage.pc +'" />';
         }
@@ -4882,12 +4882,15 @@ var socket, // socket.io
           css += '#sincloBox ul#chatTalk div.botNowDiv { text-align: right; }';
           css += '#sincloBox ul#chatTalk :not(.grid_for_icon) > .botNowDiv > li.effect_left_wait { -webkit-animation-name:rightEffect; animation-name:rightEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0;}';
         } else {
+          css += "#sincloBox ul#chatTalk div.botNowDiv { text-align: left; }";
           css += '#sincloBox ul#chatTalk :not(.grid_for_icon) > .botNowDiv > li.effect_left_wait { -webkit-animation-name:leftEffect; animation-name:leftEffect; -webkit-animation-duration:0.5s; animation-duration:0.5s; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; -webkit-transform-origin:left bottom; transform-origin:left bottom; opacity:0;}';
         }
       } else {
         if (window.sincloInfo.widget.isSendMessagePositionLeft) {
+          css += "#sincloBox ul#chatTalk div.botNowDiv { text-align: right; }";
           css += '#sincloBox ul#chatTalk :not(.grid_for_icon) > .botNowDiv > li.effect_left_wait { -webkit-animation-name:noneRightEffect; animation-name:noneRightEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0;}';
         } else {
+          css += "#sincloBox ul#chatTalk div.botNowDiv { text-align: left; }";
           css += '#sincloBox ul#chatTalk :not(.grid_for_icon) > .botNowDiv > li.effect_left_wait { -webkit-animation-name:noneLeftEffect; animation-name:noneLeftEffect; -webkit-animation-duration:1ms; animation-duration:1ms; -webkit-animation-iteration-count:1; animation-iteration-count:1; -webkit-animation-fill-mode:both; animation-fill-mode:both; opacity:0;}';
         }
       }
