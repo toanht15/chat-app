@@ -1342,11 +1342,11 @@ var socket, // socket.io
               chatPosition.re.color + '; font-size: ' +
               chatPosition.re.textSize + 'px; }';
           html += '      #sincloBox ul#chatTalk li.' + leftMessageClass +
-              ':before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; border: 5px solid transparent; border-right: 5px solid ' +
+              ':not(.no-wrap):before { height: 0px; content: ""; position: absolute; bottom: 0px; left: -7px; margin-top: -10px; border: 5px solid transparent; border-right: 5px solid ' +
               chatPosition.re.backgroundColor + '; border-bottom: 5px solid ' +
               chatPosition.re.backgroundColor + '; z-index: 2; }';
           html += '      #sincloBox ul#chatTalk li.' + leftMessageClass +
-              ':after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; border: 5px solid transparent; z-index: 1; }';
+              ':not(.no-wrap):after { height: 0px; content: ""; position: absolute; bottom: -1px; left: -10px; margin-top: -9px; border: 5px solid transparent; z-index: 1; }';
           if (colorList['reBorderNone'] === 0) {
             html += '      #sincloBox ul#chatTalk li.' + leftMessageClass +
                 ':after {border-right: 5px solid ' +
