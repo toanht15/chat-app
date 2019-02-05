@@ -4610,7 +4610,9 @@
           }
         } else {
           style += 'flex-flow: column nowrap; ';
-          if (index === settings.options.length - 1) {
+          if (isNoText && index === 0) {
+            style += 'border-top-left-radius: 12px; border-top-right-radius: 12px; ';
+          } else if (index === settings.options.length - 1) {
             if(isNoText && settings.options.length === 1) {
               style += 'border-radius: 12px; ';
             } else {
