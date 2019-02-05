@@ -1406,7 +1406,7 @@ sinclo@medialink-ml.co.jp
                             "buttonTextColor" => "#007AFF",
                             "buttonActiveColor" => "#D5E682",
                             "buttonBorderColor" => "#FFFFFF",
-                            "messageAlign" => "2",
+                            "messageAlign" => "1",
                             "buttonAlign" => "2"
                           ),
                         "isCustomDesign" => true
