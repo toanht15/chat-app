@@ -523,6 +523,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.noText { margin-top: 0px; }
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide { flex-flow: row nowrap; }
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; padding: 12px; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button.alignLeft { flex-direction: row!important; flex-wrap: wrap; text-align: left; justify-content: flex-start; }
+        #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button.alignRight { flex-direction: row!important; text-align: right; justify-content: flex-end; }
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap span.sinclo-button:active { background-color: #E7E7E7; }
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button { flex-basis: 0; flex-grow: 1; }
         #sincloBox #chatTalk li.sinclo_re div.sinclo-button-wrap.sideBySide span.sinclo-button:first-child { border-bottom-left-radius: 12px; }

@@ -874,6 +874,18 @@
         if (messageHtml.length === 0) {
           noTextClass = ' noText';
         }
+        var alignClass = '';
+        switch(Number(data.settings.customDesign.buttonAlign)) {
+          case 1:
+            alignClass = ' alignLeft';
+            break;
+          case 2:
+            alignClass = '';
+            break;
+          case 3:
+            alignClass = ' alignRight';
+            break;
+        }
         // style
         var style = '';
         if (data.options.length === 2) {
@@ -922,10 +934,10 @@
           }
           if (!option || option == '') return false;
           if (data.isRestore && option === data.oldValue) {
-            html += '<span class="sinclo-button selected' + noTextClass + '" style="' + buttonStyle + '">' + option + '</span>';
+            html += '<span class="sinclo-button selected' + noTextClass + alignClass + '" style="' + buttonStyle + '">' + option + '</span>';
             hasOldOptionValue = true;
           } else {
-            html += '<span class="sinclo-button' + noTextClass + '" style="' + buttonStyle + '">' + option + '</span>';
+            html += '<span class="sinclo-button' + noTextClass + alignClass + '" style="' + buttonStyle + '">' + option + '</span>';
           }
         });
         html += '</div>';

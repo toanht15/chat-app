@@ -74,9 +74,9 @@
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.noText { margin-top: 0px; height: 100%; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide { flex-flow: row nowrap; }
 
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 10px 15px; }
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button.alignLeft { justify-content: flex-start; }
-#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button.alignRight { justify-content: flex-end; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 10px 15px; text-align: center;  }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button.alignLeft { text-align: left; justify-content: flex-start; }
+#tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button.alignRight { text-align: right; justify-content: flex-end; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap .sinclo-button.noneBorder { border-top-style: none!important; border-left-style: none!important; border-right-style: none!important; border-bottom-style: none!important; }
 #tchatbotscenario_form_preview_body .chatTalk li .sinclo-button-wrap.sideBySide .sinclo-button { display: flex; align-items: center; padding: 12px; flex-basis: 0; flex-grow: 1; }
 
