@@ -346,38 +346,45 @@
       $scope.getHearingButtonSetting = function(target, settings) {
         switch(target) {
           case 'messageAlign':
-            if(settings.customDesign.messageAlign) {
+            if(settings && settings.customDesign.messageAlign) {
               return settings.customDesign.messageAlign;
             } else {
               return '1';
             }
             break;
           case 'buttonBackgroundColor':
-            if(settings.customDesign.buttonBackgroundColor) {
+            if(settings && settings.customDesign.buttonBackgroundColor) {
               return settings.customDesign.buttonBackgroundColor;
             } else {
               return '#FFFFFF';
             }
             break;
           case 'buttonTextColor':
-            if(settings.customDesign.buttonTextColor) {
+            if(settings && settings.customDesign.buttonTextColor) {
               return settings.customDesign.buttonTextColor;
             } else {
               return '#007AFF';
             }
             break;
           case 'buttonAlign':
-            if(settings.customDesign.buttonAlign) {
+            if(settings && settings.customDesign.buttonAlign) {
               return settings.customDesign.buttonAlign;
             } else {
               return '2';
             }
             break;
           case 'buttonActiveColor':
-            if(settings.customDesign.buttonActiveColor) {
+            if(settings && settings.customDesign.buttonActiveColor) {
               return settings.customDesign.buttonActiveColor;
             } else {
               return '#BABABA';
+            }
+            break;
+          case 'buttonBorderColor':
+            if(settings && settings.customDesign.buttonBorderColor) {
+              return settings.customDesign.buttonBorderColor;
+            } else {
+              return '#E3E3E3';
             }
             break;
         }
@@ -989,7 +996,10 @@
       };
 
       // remove opacity from hex color
-      this.getRawColor = function(hex) {
+      this.getRawColor = function(hex, opacity) {
+        if(!opacity) {
+          opacity = 0.1;
+        }
         var code = hex.substr(1), r, g, b;
         if (code.length === 3) {
           r = String(code.substr(0, 1)) + String(code.substr(0, 1));
@@ -1001,9 +1011,9 @@
           b = String(code.substr(4));
         }
 
-        var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * 0.1));
-        var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * 0.1));
-        var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * 0.1));
+        var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * opacity));
+        var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * opacity));
+        var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * opacity));
         var codeR = parseInt(balloonR).toString(16);
         var codeG = parseInt(balloonG).toString(16);
         var codeB = parseInt(balloonB).toString(16);
@@ -1613,9 +1623,13 @@
 
         var hearings = [];
         angular.forEach(action.hearings, function(item, index) {
-          if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !==
-              'undefined' && item.message !== '') {
+          if (typeof item.variableName !== 'undefined' && item.variableName !== '' && (item.uiType === '7' || (typeof item.message !==
+              'undefined' && item.message !== ''))) {
             // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
+            if(item.uiType === '7' && typeof item.message !==
+                'undefined' && item.message !== '') {
+              item.message = "";
+            }
             hearings.push(item);
           }
         });
@@ -3513,7 +3527,7 @@
 
     } else if (actionItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var invalidVariables = actionItem.hearings.some(function(obj) {
-        return !obj.variableName || !obj.message;
+        return !obj.variableName || (obj.uiType !== '7' && !obj.message);
       });
       if (invalidVariables) {
         messageList.push('変数名と質問内容が未入力です');
@@ -3536,7 +3550,7 @@
           }
         }
         // check all option is blank
-        if (item.uiType === '3' || item.uiType === '4') {
+        if (item.uiType === '3' || item.uiType === '4' || item.uiType === '7') {
           if (item.settings.options.some(function(option) {
             return option === '';
           })) {

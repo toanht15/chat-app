@@ -1373,6 +1373,8 @@
             case 37:
             case 38:
             case 39:
+            case 47:
+            case 48:
               // ラジオボタン、プルダウン、カレンダーの回答・再回答に対してはcancelableは付与しない
               cn = 'sinclo_se';
               isHearingAnswer = true;
@@ -1795,7 +1797,8 @@
       var isBot = (Number(obj.messageType) >= 3 && Number(obj.messageType) <=
           9) ||
           (Number(obj.messageType) > 20 && Number(obj.messageType) < 29) ||
-          (Number(obj.messageType) >= 40 && Number(obj.messageType) < 50);
+          (Number(obj.messageType) >= 40 && Number(obj.messageType) < 43) ||
+          (Number(obj.messageType) === 45 || Number(obj.messageType) === 46);
       if (obj.sincloSessionId !== userInfo.sincloSessionId && obj.tabId !==
           userInfo.tabId) return false;
       var elm = document.getElementById('sincloChatMessage'), cn, userName = '';
@@ -1862,11 +1865,15 @@
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.calendar
             || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.customer.button
+            || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputRadio
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputPulldown
             || obj.messageType ===
-            sinclo.chatApi.messageType.scenario.customer.reInputCalendar) {
+            sinclo.chatApi.messageType.scenario.customer.reInputCalendar
+            || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.customer.reInputButton) {
           cn = 'sinclo_se';
           elm.value = '';
         } else if (obj.messageType === sinclo.chatApi.messageType.customer
@@ -2209,7 +2216,8 @@
           var isBot = (Number(obj.messageType) >= 3 &&
               Number(obj.messageType) <= 9) ||
               (Number(obj.messageType) > 20 && Number(obj.messageType) < 29) ||
-              (Number(obj.messageType) >= 40 && Number(obj.messageType) < 50);
+              (Number(obj.messageType) >= 40 && Number(obj.messageType) < 43) ||
+              (Number(obj.messageType) === 45 || Number(obj.messageType) === 46);
           var isOp = Number(obj.messageType) === 2;
           this.chatApi.createMessageUnread({
             cn: cn,
@@ -2896,6 +2904,8 @@
             reInputRadio: 37,
             reInputPulldown: 38,
             reInputCalendar: 39,
+            button: 47,
+            reInputButton: 48,
             skipHearing: 90,
           },
           message: {
@@ -3084,7 +3094,7 @@
         });
 
         $(document).on('click', '.sincloHearingButton', function(e) {
-          if (sinclo.chatApi.isDisabledSlightly(this)) {
+          if (sinclo.chatApi.isDisabledSlightly(this) || $(e.target).hasClass('disabled')) {
             return false;
           }
           sinclo.chatApi.disableAllButtonsSlightly();
@@ -3093,6 +3103,11 @@
           var text = $(this).text();
           $(this).parents('div.sincloHearingButtons').find('span.sincloHearingButton').removeClass('selected');
           $(this).addClass('selected');
+          if (sinclo.scenarioApi._hearing._needCancel(e.target)) {
+            sinclo.scenarioApi._hearing._handleButtonCancel(e);
+            sinclo.scenarioApi.set(
+                sinclo.scenarioApi._lKey.sendCustomerMessageType, 48);
+          }
           sinclo.chatApi.send(text.trim());
         });
 
@@ -4095,6 +4110,9 @@
         }
       },
       createMessageHtml: function(message, align) {
+        if(!message || message.length > 0) {
+          return '';
+        }
         var content = '';
         var strings = message.split('\n');
         var style = '';
@@ -4178,6 +4196,10 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        var isNoText = false;
+        if(!message || message.length === 0) {
+          isNoText = true;
+        }
         div = sinclo.chatApi._editDivForIconSetting(div, true);
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
@@ -4190,15 +4212,22 @@
             settings.customDesign.buttonActiveColor + '!important;}';
         messageHtml += '  #sincloBox li.sinclo_re.no-wrap.all-round .sincloHearingButtons[name="sinclo-button' +
             chatList.children.length +
+            '"] .sincloHearingButton:hover {background-color: ' +
+            common.getThinColor(sincloInfo.widget.mainColor, 0.2) + '!important;}';
+        messageHtml += '  #sincloBox li.sinclo_re.no-wrap.all-round .sincloHearingButtons[name="sinclo-button' +
+            chatList.children.length +
             '"] .sincloHearingButton.selected {background-color: ' +
             settings.customDesign.buttonActiveColor + '!important;}';
         messageHtml += '</style>';
         messageHtml += sinclo.chatApi.createMessageHtml(message);
         var buttonsHtml = sinclo.chatApi.createButtonHtml(settings,
-            chatList.children.length, storedValue);
+            chatList.children.length, storedValue, isNoText);
         div.style.textAlign = 'left';
         cs += ' effect_left';
         cs += ' hearing_msg no-wrap all-round';
+        if(isNoText) {
+          cs += ' noText';
+        }
 
         li.className = cs;
         li.innerHTML = messageHtml + buttonsHtml;
@@ -4499,8 +4528,8 @@
 
         return style;
       },
-      createButtonHtml: function(settings, index, storedValue) {
-        var style = sinclo.chatApi.createButtonWrapStyle(settings);
+      createButtonHtml: function(settings, index, storedValue, isNoText) {
+        var style = sinclo.chatApi.createButtonWrapStyle(settings, isNoText);
         var name = 'sinclo-button' + index;
         var html = '';
         var storedValueIsFound = false;
@@ -4508,17 +4537,21 @@
         if (settings.options.length === 2) {
           sideBySideClass = ' sideBySide';
         }
-        html += '<div class="sincloHearingButtons' + sideBySideClass +
+        var noTextClass = '';
+        if (isNoText) {
+          noTextClass = ' noText';
+        }
+        html += '<div class="sincloHearingButtons' + sideBySideClass + noTextClass +
             '" name="' + name + '" id="' + name + '" style="' + style + '">';
         settings.options.forEach(function(option, index) {
           if (storedValue === option) {
             storedValueIsFound = true;
-            html += '<span class="sincloHearingButton selected" style="' +
-                sinclo.chatApi.createButtonStyle(settings, index) + '">' +
+            html += '<span class="sincloHearingButton selected' + noTextClass + '" style="' +
+                sinclo.chatApi.createButtonStyle(settings, index, isNoText) + '">' +
                 option + '</span>';
           } else {
-            html += '<span class="sincloHearingButton" style="' +
-                sinclo.chatApi.createButtonStyle(settings, index) + '">' +
+            html += '<span class="sincloHearingButton' + noTextClass + '" style="' +
+                sinclo.chatApi.createButtonStyle(settings, index, isNoText) + '">' +
                 option + '</span>';
           }
         });
@@ -4531,7 +4564,7 @@
 
         return html;
       },
-      createButtonStyle: function(settings, index) {
+      createButtonStyle: function(settings, index, isNoText) {
         var alignItems = 'align-items: center; ';
         if(settings.customDesign.buttonAlign === '1') {
           alignItems = 'align-items: flex-start; ';
@@ -4542,32 +4575,60 @@
             settings.customDesign.buttonTextColor + '; background-color: ' +
             settings.customDesign.buttonBackgroundColor + ';';
         if (!settings.customDesign.outButtonNoneBorder) {
-          style += 'border-top: 1px solid ' +
-              settings.customDesign.buttonBorderColor + ';';
+          if (isNoText && settings.options.length > 2 && Number(index) !== settings.options.length - 1) {
+            style += 'border-bottom: 1px solid ' +
+                settings.customDesign.buttonBorderColor + ';';
+          } else if(!isNoText) {
+            style += 'border-top: 1px solid ' +
+                settings.customDesign.buttonBorderColor + ';';
+          }
         }
         if (settings.options.length === 2) {
           style += 'flex-flow: row nowrap; ';
-          if (settings.customDesign)
-            if (index === 0) {
-              style += 'border-bottom-left-radius: 12px; ';
-              if (!settings.customDesign.outButtonNoneBorder) {
-                style += 'border-right: 1px solid ' +
-                    settings.customDesign.buttonBorderColor + '!important;';
+          if (settings.customDesign) {
+            if (isNoText) {
+              if (index === 0) {
+                style += 'border-radius: 12px 0 0 12px; ';
+                if (!settings.customDesign.outButtonNoneBorder) {
+                  style += 'border-right: 1px solid ' +
+                      settings.customDesign.buttonBorderColor + '!important;';
+                }
+              } else {
+                style += 'border-radius: 0 12px 12px 0; ';
               }
             } else {
-              style += 'border-bottom-right-radius: 12px; ';
+              if (index === 0) {
+                style += 'border-bottom-left-radius: 12px; ';
+                if (!settings.customDesign.outButtonNoneBorder) {
+                  style += 'border-right: 1px solid ' +
+                      settings.customDesign.buttonBorderColor + '!important;';
+                }
+              } else {
+                style += 'border-bottom-right-radius: 12px; ';
+              }
             }
+          }
         } else {
           style += 'flex-flow: column nowrap; ';
           if (index === settings.options.length - 1) {
-            style += 'border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; ';
+            if(isNoText && settings.options.length === 1) {
+              style += 'border-radius: 12px; ';
+            } else {
+              style += 'border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; ';
+            }
           }
         }
 
         return style;
       },
-      createButtonWrapStyle: function(settings) {
-        var style = 'display: flex; margin-top: 10px; justify-content: center; width: 100%; ';
+      createButtonWrapStyle: function(settings, isNoText) {
+
+        var style = 'display: flex; justify-content: center; width: 100%; ';
+        if(isNoText) {
+          style += 'margin-top: 0px; ';
+        } else {
+          style += 'margin-top: 10px; ';
+        }
         if (settings.options.length === 2) {
           style += 'flex-flow: row nowrap; ';
         } else {
@@ -8522,6 +8583,8 @@
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.calendar
               || obj.messageType ===
+              sinclo.chatApi.messageType.scenario.customer.button
+              || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.reInputText
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.reInputRadio
@@ -8529,6 +8592,8 @@
               sinclo.chatApi.messageType.scenario.customer.reInputPulldown
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.reInputCalendar
+              || obj.messageType ===
+              sinclo.chatApi.messageType.scenario.customer.reInputButton
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.skipHearing);
         },
@@ -8720,6 +8785,41 @@
           }
           self._execute(hearingProcess, true);
         },
+        _handleButtonCancel: function(e) {
+          var self = sinclo.scenarioApi._hearing;
+          // テキストの場合はクリックしたテキスト自身、それ以外の場合は変更したターゲットの次にあるdivからchatIdを取得する
+          var target = $(e.target).parents('li').parent().next('div').find('li');
+          var targetChatId = target.data('chatId');
+          sinclo.scenarioApi.syncScenarioData.sendDetail('cancelHearing',
+              targetChatId);
+          var text = target.text();
+          var targetSeqNum = target.data('hearingSeqNum');
+          console.log('cancelable click %s %s => %s', targetChatId, text,
+              targetSeqNum);
+          var deleteTargetIds = [];
+          deleteTargetIds.push(targetChatId);
+          target.closest('div').nextAll().each(function(index, value) {
+            deleteTargetIds.push($(this).find('li').data('chatId'));
+            $(this).fadeOut('fast').promise().then(function() {
+              $(this).remove();
+            });
+          });
+          target.closest('div').fadeOut('fast').promise().then(function() {
+            $(this).remove();
+          });
+          self._hideMessage(deleteTargetIds);
+          if (check.isIE()) {
+            self._resetShownMessage(
+                self._parent.get(self._parent._lKey.currentScenarioSeqNum),
+                self._getCurrentSeq());
+          }
+          self._setCurrentSeq(Number(targetSeqNum));
+          self._resetShownMessage(
+              self._parent.get(self._parent._lKey.currentScenarioSeqNum),
+              self._getCurrentSeq());
+          var hearingProcess = self._getCurrentHearingProcess();
+          self._execute(hearingProcess, true);
+        },
         /*  操作されたメッセージと現状表示しているメッセージが一致しているか確認する
          *  @param element(要素)
          *  @return boolean
@@ -8729,7 +8829,7 @@
           for (var i = 0; typeof $('.hearing_msg')[i] !== "undefined"; i++) {
             lastElement = $('.hearing_msg')[i];
           }
-          return lastElement !== element.parentNode;
+          return lastElement !== $(element).parents('li').get(0);
         },
         _resetShownMessage: function(seqNum, categoryNum) {
           var self = sinclo.scenarioApi._hearing;
@@ -8938,7 +9038,7 @@
               self._parent._showCalendar(params, callback);
               break;
             case '7':
-              self._parent.set(self._parent._lKey.sendCustomerMessageType, 37);
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 47);
               self._parent.set(self._parent._lKey.scenarioMessageType, 46);
               var params = {
                 type: '2',
@@ -9123,6 +9223,7 @@
           return self._getCurrentSeq() === self._getLength();
         },
         _disableAllHearingMessageInput: function() {
+          console.log('<><><><><><> DISABLE ALL HEARING MESSAGE INPUT <><><><><><>');
           $('#sincloBox ul#chatTalk li.sinclo_re.hearing_msg').
               each(function(index, elm) {
                 // ラジオボタン
@@ -9138,6 +9239,11 @@
                     css('opacity', 0.5);
                 // カレンダー
                 $(this).find('.flatpickr-calendar').addClass('disable');
+                // ボタン
+                $(this)
+                    .find('.sincloHearingButton')
+                    .addClass('disabled')
+                    .css('opacity', 0.5);
               });
           $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').
               each(function(index, elm) {
