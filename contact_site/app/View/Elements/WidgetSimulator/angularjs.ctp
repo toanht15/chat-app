@@ -660,6 +660,9 @@
         $(gridElm).addClass("grid_balloon");
         var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
         divElm.id = data.prefix + '_question';
+        if(!data.message || data.message.length === 0) {
+          $(divElm).find('li.sinclo_re').addClass('noText');
+        }
         var html = $scope.simulatorSettings.createButton(data);
         $(divElm).find('li.sinclo_re').addClass("no-wrap").addClass("all-round");
         divElm.querySelector('li .details:not(.cName)').innerHTML = html;

@@ -860,6 +860,12 @@ $config['chatbotScenarioActionList'] = [
             'calendarTextColor' => '',
             'saturdayColor' => '',
             'sundayColor' => '',
+            'messageAlign' => '1',
+            'buttonBackgroundColor' => '#FFFFFF',
+            'buttonTextColor' => '#007AFF',
+            'buttonAlign' => '2',
+            'buttonActiveColor' => '#BABABA',
+            'buttonBorderColor' => '#E3E3E3'
           ]
         ]
       ]

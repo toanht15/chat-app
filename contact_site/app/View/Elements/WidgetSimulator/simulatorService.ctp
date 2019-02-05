@@ -533,7 +533,7 @@
        * @return String       変換したメッセージ
        */
       createMessage: function(val, prefix, align) {
-        if (val === '') return;
+        if (val === '') return　'';
         prefix = (typeof prefix !== 'undefined' && prefix !== '') ? prefix + '-' : '';
         var isSmartphone = Number(this._showWidgetType) !== 1;
         var messageIndex = $('#chatTalk > div:not([style*="display: none;"])').length;
@@ -870,6 +870,10 @@
         if (data.options.length === 2) {
           sideBySideClass = ' sideBySide';
         }
+        var noTextClass = '';
+        if (messageHtml.length === 0) {
+          noTextClass = ' noText';
+        }
         // style
         var style = '';
         if (data.options.length === 2) {
@@ -879,19 +883,25 @@
         }
 
         var html = '<style>';
+        html += '  #sincloBox li.sinclo_re.no-wrap.all-round .sinclo-button-wrap .sinclo-button:hover {background-color: ' +
+            data.settings.customDesign.buttonActiveColor + '!important;}';
         html += '  #sincloBox li.sinclo_re.no-wrap.all-round .sinclo-button-wrap .sinclo-button:active {background-color: ' +
             data.settings.customDesign.buttonActiveColor + '!important;}';
         html += '  #sincloBox li.sinclo_re.no-wrap.all-round .sinclo-button-wrap .sinclo-button.selected {background-color: ' +
             data.settings.customDesign.buttonActiveColor + '!important;}';
         html += '</style>';
 
-        html += messageHtml + '<div id="' + buttonName + '" class="sinclo-button-wrap' + sideBySideClass + '" >';
+        html += messageHtml + '<div id="' + buttonName + '" class="sinclo-button-wrap' + sideBySideClass + noTextClass + '" >';
 
         angular.forEach(data.options, function(option, key) {
           var buttonStyle = 'padding: 12px; color: ' + data.settings.customDesign.buttonTextColor +
               '; background-color: ' + data.settings.customDesign.buttonBackgroundColor + ';';
           if (!data.settings.customDesign.outButtonNoneBorder) {
-            buttonStyle += 'border-top: 1px solid ' + data.settings.customDesign.buttonBorderColor + ';';
+            if (noTextClass.length === 0) {
+              buttonStyle += 'border-top: 1px solid ' + data.settings.customDesign.buttonBorderColor + ';';
+            } else if(data.settings.options.length > 2 && Number(key) !== data.settings.options.length - 1) {
+              buttonStyle += 'border-bottom: 1px solid ' + data.settings.customDesign.buttonBorderColor + ';';
+            }
           }
           if (data.settings.options.length === 2) {
             buttonStyle += 'flex-flow: row nowrap; ';
@@ -912,10 +922,10 @@
           }
           if (!option || option == '') return false;
           if (data.isRestore && option === data.oldValue) {
-            html += '<span class="sinclo-button selected" style="' + buttonStyle + '">' + option + '</span>';
+            html += '<span class="sinclo-button selected' + noTextClass + '" style="' + buttonStyle + '">' + option + '</span>';
             hasOldOptionValue = true;
           } else {
-            html += '<span class="sinclo-button" style="' + buttonStyle + '">' + option + '</span>';
+            html += '<span class="sinclo-button' + noTextClass + '" style="' + buttonStyle + '">' + option + '</span>';
           }
         });
         html += '</div>';

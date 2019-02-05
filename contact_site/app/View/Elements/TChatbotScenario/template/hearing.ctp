@@ -441,7 +441,7 @@
                  class="button-design-custom-area">
                   <span class="button-custom-items">
                   <label style="width: 100px;">質問内容位置</label>
-                      <div class="radio-buttons" ng-init="hearingItem.settings.customDesign.messageAlign = getHearingButtonSetting('messageAlign', settings)">
+                      <div class="radio-buttons">
                         <label class="radio-label text3 pointer"
                                for="action{{setActionId}}_button{{listId}}_messageAlign1">
                           <input type="radio"
@@ -467,7 +467,6 @@
                   <input type="text" id="action{{setActionId}}_button{{listId}}_buttonBackgroundColor"
                          class="jscolor{hash:true} ignore-click-event"
                          ng-model="hearingItem.settings.customDesign.buttonBackgroundColor"
-                         ng-init="hearingItem.settings.customDesign.buttonBackgroundColor = getHearingButtonSetting('buttonBackgroundColor', settings)"
                          ng-change="main.changeButtonColor(setActionId, listId, 'buttonBackgroundColor')">
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertButtonColor(setActionId, listId, 'buttonBackgroundColor')">標準に戻す</span>
@@ -477,14 +476,13 @@
                   <input type="text" id="action{{setActionId}}_button{{listId}}_buttonTextColor"
                          class="jscolor{hash:true} ignore-click-event"
                          ng-model="hearingItem.settings.customDesign.buttonTextColor"
-                         ng-init="hearingItem.settings.customDesign.buttonTextColor = getHearingButtonSetting('buttonBackgroundColor', settings)"
                          ng-change="main.changeButtonColor(setActionId, listId, 'buttonTextColor')">
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertButtonColor(setActionId, listId, 'buttonTextColor')">標準に戻す</span>
                 </span>
               <span class="button-custom-items">
                   <label style="width: 100px;">ボタン文字位置</label>
-                      <div class="radio-buttons" ng-init="hearingItem.settings.customDesign.buttonAlign = getHearingButtonSetting('buttonAlign', settings)">
+                      <div class="radio-buttons">
                         <label class="radio-label text3 pointer"
                                for="action{{setActionId}}_button{{listId}}_buttonAlign1">
                           <input type="radio"
@@ -510,7 +508,6 @@
                   <input type="text" id="action{{setActionId}}_button{{listId}}_buttonActiveColor"
                          class="jscolor{hash:true} ignore-click-event"
                          ng-model="hearingItem.settings.customDesign.buttonActiveColor"
-                         ng-init="hearingItem.settings.customDesign.buttonActiveColor = getHearingButtonSetting('buttonActiveColor', settings)"
                          ng-change="main.changeButtonColor(setActionId, listId, 'buttonActiveColor')">
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertButtonColor(setActionId, listId, 'buttonActiveColor')">標準に戻す</span>
@@ -519,8 +516,7 @@
                 <label>ボタン枠線色</label>
                 <input type="text" class="jscolor{hash:true} ignore-click-event"
                        id="action{{setActionId}}_button{{listId}}_buttonBorderColor"
-                       ng-model="hearingItem.settings.customDesign.buttonBorderColor"
-                       ng-init="hearingItem.settings.customDesign.buttonBorderColor = getHearingButtonSetting('buttonBorderColor', settings)">
+                       ng-model="hearingItem.settings.customDesign.buttonBorderColor">
                 <span class="greenBtn btn-shadow revert-button"
                       ng-click="main.revertButtonColor(setActionId, listId, 'buttonBorderColor')">標準に戻す</span>
               </span>
