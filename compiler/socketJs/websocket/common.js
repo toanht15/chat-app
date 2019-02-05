@@ -1586,7 +1586,7 @@ var socket, // socket.io
         html += '#sincloBox #chatTalk li.sinclo_re.noText { padding-top: 0px; }';
         html += '#sincloBox #chatTalk li.sinclo_re.all-round { border-radius: 12px!important; }';
         html += '#sincloBox #chatTalk li.sinclo_re.no-wrap span.sinclo-text-line { padding: 0 15px!important; }';
-        html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons span.sincloHearingButton { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 12px; }';
+        html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons span.sincloHearingButton { display: flex; cursor: pointer; justify-content: center; align-items: center; width: 100%; padding: 12px; text-align:center; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons span.sincloHearingButton.alignLeft { flex-direction: row!important; text-align: left; justify-content: flex-start; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons span.sincloHearingButton.alignRight { flex-direction: row!important; text-align: right; justify-content: flex-end; }';
         html += '#sincloBox #chatTalk li.sinclo_re div.sincloHearingButtons span.sincloHearingButton:active { background-color: #E7E7E7; }';
