@@ -187,7 +187,7 @@
         }
       </style>
       <div ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1 }">
-        <div ng-if="hearings.message && widget.settings['show_chatbot_icon'] == 1" class="iconDiv" >
+        <div ng-if="canShowChatbotIcon(hearings, widget.settings['show_chatbot_icon'])" class="iconDiv" >
           <div ng-if="!chatbotIconIsFontIcon(widget.settings['chatbot_icon'])" class="img_wrapper">
             <img ng-src="{{widget.settings['chatbot_icon']}}" alt="無人対応アイコンに設定している画像">
           </div>

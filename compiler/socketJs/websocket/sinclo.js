@@ -4125,6 +4125,7 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
+        div = sinclo.chatApi._editDivForIconSetting( div, true );
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
@@ -4687,7 +4688,10 @@
             data.width          = settings.lineUpStyle === '1' ? 310 : 193;
             break;
         }
-
+        if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
+          data.containerWidth = data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+        }
         data.height = data.width / aspectRatio;
 
         return data;
@@ -4720,7 +4724,10 @@
             data.width          = settings.lineUpStyle === '1' ? 340 : 215;
             break;
         }
-
+        if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
+          data.containerWidth = data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+        }
         data.height = data.width / aspectRatio;
 
         return data;
@@ -4761,7 +4768,10 @@
             data.width          = settings.lineUpStyle === '1' ? 260 : 158;
             break;
         }
-
+        if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
+          data.containerWidth = data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+        }
         data.height = data.width / aspectRatio;
 
         return data;
@@ -4794,7 +4804,10 @@
             data.width          = settings.lineUpStyle === '1' ? 280 : 170;
             break;
         }
-
+        if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
+          data.containerWidth = data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+        }
         data.height = data.width / aspectRatio;
 
         return data;
@@ -4876,6 +4889,20 @@
         }
 
         return data;
+      },
+      getChatIconWidth: function() {
+        switch (Number(sincloInfo.widget.widgetSizeType)) {
+          case 1:
+            return 32;
+          case 2:
+            return 37;
+          case 3:
+            return 42;
+          case 4:
+            return 42;
+          default:
+            return 37;
+        }
       },
       getTitleTextAlign: function(value) {
         switch (Number(value)) {

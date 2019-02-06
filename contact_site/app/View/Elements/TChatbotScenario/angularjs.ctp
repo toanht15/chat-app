@@ -151,6 +151,32 @@
         return target.match(/^fa/) !== null;
       };
 
+      $scope.canShowChatbotIcon = function(hearing, showFlg) {
+        var canShow = false;
+        switch (hearing.uiType) {
+          case 1:
+          case 2:
+            canShow = !!hearing.message;
+            break;
+          case 3:
+          case 4:
+            canShow = !!(hearing.message || hearing.settings.options[0]);
+            break;
+          case 5:
+          case 6:
+            canShow = true;
+            break;
+          case 7:
+            canShow = !!(hearing.message || hearing.settings.options[0]);
+            break;
+          default:
+            canShow = true;
+            break;
+        }
+
+        return canShow && Number(showFlg) === 1;
+      };
+
       $scope.isMainColorWhite = function() {
         return $scope.widget.settings['main_color'] === '#FFFFFF';
       };
@@ -1521,7 +1547,10 @@
             data.width = settings.lineUpStyle === '1' ? 280 : 175;
             break;
         }
-
+        if (Number($scope.widget.settings['show_chatbot_icon']) === 1) {
+          data.containerWidth = data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 10;
+        }
         data.height = data.width / aspectRatio;
 
         return data;
@@ -1555,7 +1584,10 @@
             data.width = settings.lineUpStyle === '1' ? 290 : 180;
             break;
         }
-
+        if (Number($scope.widget.settings['show_chatbot_icon']) === 1) {
+          data.containerWidth = data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 10;
+        }
         data.height = data.width / aspectRatio;
 
         return data;
@@ -1597,7 +1629,10 @@
             data.width = settings.lineUpStyle === '1' ? 320 : 200;
             break;
         }
-
+        if (Number($scope.widget.settings['show_chatbot_icon']) === 1) {
+          data.containerWidth = data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 10;
+        }
         data.height = data.width / aspectRatio;
 
         return data;
@@ -1631,10 +1666,28 @@
             data.width = settings.lineUpStyle === '1' ? 340 : 212;
             break;
         }
-
+        if (Number($scope.widget.settings['show_chatbot_icon']) === 1) {
+          data.containerWidth = data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 10;
+        }
         data.height = data.width / aspectRatio;
 
         return data;
+      };
+
+      this.getChatIconWidth = function() {
+        switch (Number($scope.widget.settings['widget_size_type'])) {
+          case 1:
+            return 32;
+          case 2:
+            return 37;
+          case 3:
+            return 42;
+          case 4:
+            return 42;
+          default:
+            return 37;
+        }
       };
 
       this.getArrowPosition = function(setting){

@@ -613,11 +613,13 @@
         }
 
         gridElm.appendChild(divElm);
+        if (data.settings.balloonStyle === '2') {
+          $(gridElm).find('.sinclo-fal').css('margin-bottom', '12px');
+        }
         document.getElementById('chatTalk').appendChild(gridElm);
         if (data.settings.carouselPattern === '2') {
           $('#' + divElm.id).find('.sinclo-text-line').css('margin-left', '-25px');
         }
-
         $('#chatTalk > div:last-child').show();
         var prevIconClass = '';
         var nextIconClass = '';
