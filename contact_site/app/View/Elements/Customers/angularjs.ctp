@@ -1751,7 +1751,25 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         div.style.padding = '0';
         content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
         var json = JSON.parse(message);
-        content += $scope.createTextOfMessage(chat, json.message);
+        if(!json.message) {
+          switch (type) {
+            case chatApi.messageType.scenario.message.pulldown:
+              content += '（プルダウン質問内容なし）';
+              break;
+            case chatApi.messageType.scenario.message.calendar:
+              content += '（カレンダー質問内容なし）';
+              break;
+            case chatApi.messageType.scenario.message.carousel:
+              content += '（カルーセル質問内容なし）';
+              break;
+            default:
+              content += '（質問内容なし）';
+              break;
+          }
+        } else {
+          content += $scope.createTextOfMessage(chat, json.message);
+        }
+
       }
       else if ( type === chatApi.messageType.scenario.message.selection ) {
         cn = "sinclo_auto";

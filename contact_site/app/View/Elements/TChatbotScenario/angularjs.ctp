@@ -873,7 +873,6 @@
                 if (hearing.settings.balloonStyle === '2') {
                   hearing.message = "";
                 }
-
                 var prevIconClass = '';
                 var nextIconClass = '';
                 if (hearing.settings.arrowType === '3') {
@@ -920,9 +919,7 @@
                   if (hearing.settings.carouselCustomDesign) {
                     jscolor.installByClassName('jscolor');
                   }
-
                 });
-
               }
             });
           }
@@ -3445,7 +3442,7 @@
         var halfWidth = formula.replace(/[！-～]/g,
             function(tmpStr) {
               return String.fromCharCode(tmpStr.charCodeAt(0) - 0xFEE0);
-            },
+            }
         );
         return halfWidth.replace(/”/g, '"').
             replace(/’/g, '\'').

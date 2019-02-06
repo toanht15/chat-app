@@ -3604,7 +3604,9 @@ var socket, // socket.io
           '}' + '#sincloBox ul#chatTalk li.outsideArrow { ' +
           'padding: 10px 40px; ' +
           '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
-          'margin-left: 15px; ' +
+          'margin-left: 0; ' +
+          '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
+          'margin-left: -25px; ' +
           '}';
     },
     //バナーを生成する関数
@@ -4997,6 +4999,8 @@ var socket, // socket.io
           sinclo.chatApi.messageType.scenario.message.pulldown
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.calendar
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.carousel
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection) {
         return;
