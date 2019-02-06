@@ -10392,7 +10392,9 @@
         }
       },
       syncScenarioData: {
+        sendLockFlg: false,
         sendDetail: function(param, otherInformation) {
+          if(this.sendLockFlg) return;
           var self = sinclo.scenarioApi;
           var currentScenarioSeqNo = 0;
           var currentHearingSeqNo = 0;
@@ -10410,9 +10412,6 @@
             console.warn(e);
           }
 
-          if (!document.hasFocus()) {
-            return false;
-          }
 
           console.warn('トリガ元は【' + param + '】になります');
           console.warn(
@@ -10444,6 +10443,7 @@
           console.warn('RECIEVE HEARING SEQUENCE NUMBER >>> ' +
               obj.hearingSeq);
 
+          this.sendLockFlg = true;
           if (detail === 'startScenario') {
             console.warn('START SCENARIO!');
             this._startScenario(obj.otherInformation);
@@ -10478,6 +10478,7 @@
           } else {
             console.log('<><><><><> UNEXPECTED DETAIL <><><><><>');
           }
+          this.sendLockFlg = false;
         },
         _startScenario: function(initData) {
           sinclo.scenarioApi._disablePreviousRadioButton();
