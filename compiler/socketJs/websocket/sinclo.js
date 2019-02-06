@@ -2319,6 +2319,12 @@
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.hearing
           || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.pulldown
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.calendar
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.button
+          || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.receiveFile) {
@@ -2333,8 +2339,42 @@
       }
 
       if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.pulldown) {
+        // 別タブで送信されたシナリオのメッセージは表示する
+        cn = 'sinclo_re';
+        if (window.sincloInfo.widget.showAutomessageName === 2) {
+          userName = '';
+        } else {
+          userName = window.sincloInfo.widget.subTitle;
+        }
+
+        var pulldown = JSON.parse(obj.chatMessage);
+        this.chatApi.addPulldown('hearing_msg sinclo_re', pulldown.message,
+            userName, pulldown.settings);
+        sinclo.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.calendar) {
+        // 別タブで送信されたシナリオのメッセージは表示する
+        cn = 'sinclo_re';
+        if (window.sincloInfo.widget.showAutomessageName === 2) {
+          userName = '';
+        } else {
+          userName = window.sincloInfo.widget.subTitle;
+        }
+
+        var calendar = JSON.parse(obj.message);
+        this.chatApi.addCalendar('hearing_msg sinclo_re', calendar.message,
+            calendar.settings);
+        sinclo.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.button) {
-        this.chatApi.addButton('sinclo_re', JSON.parse(obj.message).message,
+        this.chatApi.addButton('hearing_msg sinclo_re', JSON.parse(obj.message).message,
             JSON.parse(obj.message).settings);
         this.chatApi.scDown();
         return false;
@@ -8583,14 +8623,13 @@
           var disableRestoreFlg = true;
           if (!sinclo.scenarioApi.isProcessing()) {
             // シナリオ中でないなら復元機能を除去する
-            return false;
+            return disableRestoreFlg;
           } else {
-            var currentScenarioChatId = sinclo.scenarioApi.get(
-                's_targetChatId');
+            var currentScenarioChatId = sinclo.scenarioApi.get('s_targetChatId');
             console.log(currentScenarioChatId);
             if(currentScenarioChatId.length === 0) {
               // 回答していない状態のため復元機能を有効状態とする
-              return true;
+              return false;
             }
             for (var i = 0; i < currentScenarioChatId.length; i++) {
               if (currentScenarioChatId[i] === chatId) {
@@ -9121,6 +9160,7 @@
             case '3': // ラジオボタン
             case '4': // プルダウン
             case '5': // カレンダー
+            case '7':
               if (!required) {
                 sinclo.chatApi.showMiniMessageArea();
                 sinclo.displayTextarea(true, true);
