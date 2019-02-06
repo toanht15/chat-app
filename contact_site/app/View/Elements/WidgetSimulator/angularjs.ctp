@@ -578,29 +578,45 @@
        * @param object data: carousel options data
        */
       $scope.addCarousel = function(data) {
+        var gridElm = document.createElement("div");
+        $(gridElm).addClass("grid_balloon");
         if (data.settings.balloonStyle === '1') {
           // 吹き出しあり
           var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
           if (data.settings.carouselPattern === '1') {
             divElm.firstElementChild.style.paddingRight = '15px';
-            divElm.firstElementChild.style.paddingLeft = '15px';
+            divElm.firstElementChild.style.paddingLeft  = '15px';
           } else {
             divElm.firstElementChild.style.paddingRight = '40px';
-            divElm.firstElementChild.style.paddingLeft = '40px';
+            divElm.firstElementChild.style.paddingLeft  = '40px';
           }
-
         } else {
           // 吹き出しなし
-          var divElm = document.querySelector('#chatTalk div > li.sinclo_carousel.chat_carousel').parentNode.cloneNode(true);
+          var divElm = document.querySelector('#chatTalk div > li.sinclo_carousel.chat_carousel').
+              parentNode.
+              cloneNode(true);
           if (data.settings.carouselPattern === '2') {
             divElm.firstElementChild.style.marginLeft = '30px';
           }
         }
-        divElm.id = data.prefix + '_question';
-        var carousel = $scope.simulatorSettings.createCarousel(data);
+        divElm.id                                                 = data.prefix + '_question';
+        var carousel                                              = $scope.simulatorSettings.createCarousel(data);
         divElm.querySelector('li .details:not(.cName)').innerHTML = carousel.html;
-        document.getElementById('chatTalk').appendChild(divElm);
-        $('#' + divElm.id).find('.sinclo-text-line').css('margin-left', '-25px');
+
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          //チャットボットのアイコンを表示する場合は
+          //アイコンを含む要素を作成する。
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
+        if (data.settings.carouselPattern === '2') {
+          $('#' + divElm.id).find('.sinclo-text-line').css('margin-left', '-25px');
+        }
 
         $('#chatTalk > div:last-child').show();
         var prevIconClass = '';
@@ -621,7 +637,7 @@
           var maxHeight = 0;
           slick.$slides.each(function(slide) {
             var currentHeight = $(this).find('.caption').height();
-            maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+            maxHeight         = currentHeight > maxHeight ? currentHeight : maxHeight;
           });
 
           slick.$slides.each(function(slide) {
@@ -630,19 +646,18 @@
         });
 
         $(carousel.selector).slick({
-          dots: true,
+          dots        : true,
           slidesToShow: slidesToShow,
-          infinite: false,
-          lazyLoad: 'ondemand',
-          prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
-          nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>',
+          infinite    : false,
+          lazyLoad    : 'ondemand',
+          prevArrow   : '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
+          nextArrow   : '<i class="fas ' + nextIconClass + ' slick-next"></i>'
         });
         // 復元機能
         var oldIndex = null;
         angular.forEach(data.settings.images, function(image, index) {
           if (data.oldValue == image.answer) {
             oldIndex = index;
-            console.log('in: ' + oldIndex);
           }
         });
         if (data.isRestore && oldIndex) {
