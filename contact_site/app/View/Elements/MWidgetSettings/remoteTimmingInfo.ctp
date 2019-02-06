@@ -122,7 +122,7 @@
       ngScope.setActionList[numbers[0]].hearings[numbers[1]].settings.aspectRatio = aspectRatio;
     }
 
-    targetImgTag.cropper('getCroppedCanvas').toBlob((blob) => {
+    targetImgTag.cropper('getCroppedCanvas').toBlob(function(blob) {
       const formData = new FormData();
       formData.append('file', blob);
       var numbers = trimmingInfoTag.match(/\d+/g).map(Number);
@@ -144,7 +144,6 @@
               ngScope.$apply();
             }, false);
           }
-
           return XHR;
         }
       }).done(function(data, textStatus, jqXHR) {

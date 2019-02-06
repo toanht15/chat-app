@@ -152,10 +152,9 @@ if(strcmp($this->action, 'baseForAnotherWindow') == 0) {
       echo $this->Html->script("openclose.js");
     }
   if (strcmp($this->name, 'TChatbotScenario') === 0) {
+    echo $this->Html->script("canvas-toBlob.js"); // support toBlob() in IE
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.min.js");
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/angular-slick-carousel/3.1.7/angular-slick.js");
-//    echo $this->Html->css("https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick.css");
-//    echo $this->Html->css("https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.9.0/slick-theme.css");
     echo $this->Html->script("https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.js");
     echo $this->Html->css("https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.css");
   }

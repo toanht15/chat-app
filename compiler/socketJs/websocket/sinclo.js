@@ -1592,7 +1592,7 @@
             }
           } else if (Number(chat.messageType) === 45) {
             var carousel = JSON.parse(chat.message);
-            this.chatApi.addCarousel('hearing_msg', carousel.message,
+            this.chatApi.addCarousel('', carousel.message,
                 carousel.settings);
             // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
             if (sinclo.scenarioApi._hearing.disableRestoreMessage(
@@ -3088,7 +3088,7 @@
           console.log('☆★☆★☆★☆★☆★☆★☆');
           // 変更された要素が再入力の対象であれば再入力させる
           if (sinclo.scenarioApi._hearing._needCancel(e.target.closest('.carousel-container'))) {
-            sinclo.scenarioApi._hearing._handleCancel(e.target.closest('.carousel-container'));
+            sinclo.scenarioApi._hearing._handleCarouselCancel(e.target.closest('.carousel-container'));
             sinclo.scenarioApi.set(
                 sinclo.scenarioApi._lKey.sendCustomerMessageType, 44);
           }
@@ -4134,7 +4134,7 @@
         var carouselHtml = sinclo.chatApi.createCarouselHtml(settings,
             chatList.children.length, storedValue);
         div.style.textAlign = 'left';
-        cs += 'hearing_msg effect_left';
+        cs += ' hearing_msg effect_left';
         if (settings.carouselPattern === '1') {
           cs += ' insideArrow';
         } else {
@@ -4146,12 +4146,13 @@
           cs += ' noneBalloon';
         }
 
-
         li.className = cs;
         li.innerHTML = messageHtml + carouselHtml;
 
         var option = sinclo.chatApi.getSlickOption(settings);
-        $('#sinclo-carousel' + index).on('init', function(event, slick) {
+        var carouselTarget = $('#sinclo-carousel' + index);
+        // adjust slide caption height
+        carouselTarget.on('init', function(event, slick) {
           var maxHeight = 0;
           slick.$slides.each(function(slide) {
             var currentHeight = $(this).find('.caption').height();
@@ -4163,7 +4164,18 @@
           });
         });
 
-        $('#sinclo-carousel' + index).slick(option);
+        carouselTarget.slick(option);
+
+        var oldValueIndex = null;
+        settings.images.forEach(function (image, key) {
+          if (image.answer === storedValue) {
+            oldValueIndex = key;
+          }
+        });
+
+        if (oldValueIndex) {
+          carouselTarget.slick('slickGoTo', oldValueIndex);
+        }
       },
       addCalendar: function(cs, message, settings, storedValue) {
         common.chatBotTypingTimerClear();
@@ -4504,16 +4516,12 @@
         var containerWidth = carouselSize.containerWidth + 2;
         var name = 'sinclo-carousel' + index;
         var html = '';
-        var storedValueIsFound = false;
 
         html+= style;
         html+= '<div class="carousel-container" id="carousel-container' + index + '" style="width: ' + containerWidth + 'px; margin-top: 6px;">';
 
         html+= '<div class="single-item" id="' + name + '">';
         settings.images.forEach(function (image, key) {
-          if (image.answer === storedValue) {
-            storedValueIsFound = true;
-          }
           html+= '<div style="width: ' + containerWidth + 'px">';
           html+= '<div class="thumbnail" id="slide_' + name + '_image' + key + '" data-answer="' + image.answer + '" style="display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
           html+= '<img id="img' + name + '_image' + key + '" alt="画像" data-answer="' + image.answer + '" style="cursor: pointer; height: ' + carouselSize.height + 'px; width: ' + carouselSize.width + 'px;" src="' + image.url + '" />';
@@ -4523,11 +4531,6 @@
           html+= '</div></div></div>';
         });
         html+= '</div></div>';
-
-        // if (storedValueIsFound) {
-        //   html += '<p class=\'sincloButtonWrap\' onclick=\'sinclo.chatApi.send("' +
-        //       storedValue + '")\'><span class=\'sincloButton\'>次へ</span></p>';
-        // }
 
         return html;
       },
@@ -4614,7 +4617,7 @@
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize + 'px; color: ' + settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
-        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: 4px 12px 3px 12px; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: 10px 12px 3px 12px; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin: 0 12px 8px 12px; font-size: ' + settings.customDesign.subTitleFontSize + 'px; color: ' + settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(settings.subTitlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail:hover { -webkit-filter: brightness(110%); filter: brightness(110%);}';
 
@@ -4635,11 +4638,10 @@
           style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-weight: 900 }';
         }
         // custom arrow position
-          style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + arrowPosition.right + 'px }';
-          style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left + 'px }';
+        style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + arrowPosition.right + 'px }';
+        style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left + 'px }';
           
         style += '</style>';
-
 
         return style;
       },
@@ -4651,6 +4653,13 @@
         }
       },
       getInsideArrowCarouselSize: function(settings){
+        if (settings.balloonStyle === '1'){
+          return this.getInsideArrowHasBalloonCarouselSize(settings);
+        } else {
+          return this.insideArrowNoneBalloonCarouselSize(settings);
+        }
+      },
+      getInsideArrowHasBalloonCarouselSize: function(settings) {
         var aspectRatio = settings.aspectRatio;
         if (!aspectRatio) {
           aspectRatio = 1;
@@ -4683,7 +4692,48 @@
 
         return data;
       },
+      insideArrowNoneBalloonCarouselSize: function(settings) {
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = {width: 0, height: 0, containerWidth: 0};
+        switch (Number(sincloInfo.widget.widgetSizeType)) {
+          case 1:
+            data.containerWidth = 220;
+            data.width          = settings.lineUpStyle === '1' ? 220 : 136;
+            break;
+          case 2:
+            data.containerWidth = 280;
+            data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+            break;
+          case 3:
+            data.containerWidth = 340;
+            data.width          = settings.lineUpStyle === '1' ? 340 : 215;
+            break;
+          case 4:
+            data.containerWidth = 340;
+            data.width          = settings.lineUpStyle === '1' ? 340 : 215;
+            break;
+          default:
+            data.containerWidth = 340;
+            data.width          = settings.lineUpStyle === '1' ? 340 : 215;
+            break;
+        }
+
+        data.height = data.width / aspectRatio;
+
+        return data;
+      },
       getOutsideArrowCarouselSize: function(settings){
+        if (settings.balloonStyle === '1'){
+          return this.getOutsideArrowHasBalloonCarouselSize(settings);
+        } else {
+          return this.getOutsideArrowNoneBalloonCarouselSize(settings);
+        }
+
+      },
+      getOutsideArrowHasBalloonCarouselSize: function(settings) {
         var aspectRatio = settings.aspectRatio;
         if (!aspectRatio) {
           aspectRatio = 1;
@@ -4709,6 +4759,39 @@
           default:
             data.containerWidth = 260;
             data.width          = settings.lineUpStyle === '1' ? 260 : 158;
+            break;
+        }
+
+        data.height = data.width / aspectRatio;
+
+        return data;
+      },
+      getOutsideArrowNoneBalloonCarouselSize: function(settings) {
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = {width: 0, height: 0, containerWidth: 0};
+        switch (Number(sincloInfo.widget.widgetSizeType)) {
+          case 1:
+            data.containerWidth = 170;
+            data.width          = settings.lineUpStyle === '1' ? 170 : 100;
+            break;
+          case 2:
+            data.containerWidth = 220;
+            data.width          = settings.lineUpStyle === '1' ? 220 : 130;
+            break;
+          case 3:
+            data.containerWidth = 280;
+            data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+            break;
+          case 4:
+            data.containerWidth = 280;
+            data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+            break;
+          default:
+            data.containerWidth = 280;
+            data.width          = settings.lineUpStyle === '1' ? 280 : 170;
             break;
         }
 
@@ -9028,6 +9111,41 @@
           }
           self._execute(hearingProcess, true);
         },
+        _handleCarouselCancel: function(e) {
+          var self = sinclo.scenarioApi._hearing;
+          // var target = $(e.target).closest('.sinclo-scenario-msg').next('div').find('li');
+          var target = $(e).closest('.sinclo-scenario-msg').nextAll(':has(.sinclo_se):first').find('.sinclo_se');
+          var targetChatId = target.data('chatId');
+          sinclo.scenarioApi.syncScenarioData.sendDetail('cancelHearing',
+              targetChatId);
+          var text = target.text();
+          var targetSeqNum = target.data('hearingSeqNum');
+          console.log('cancelable click %s %s => %s', targetChatId, text,
+              targetSeqNum);
+          var deleteTargetIds = [];
+          deleteTargetIds.push(targetChatId);
+          target.closest('div').nextAll().each(function(index, value) {
+            deleteTargetIds.push($(this).find('li').data('chatId'));
+            $(this).fadeOut('fast').promise().then(function() {
+              $(this).remove();
+            });
+          });
+          target.closest('div').fadeOut('fast').promise().then(function() {
+            $(this).remove();
+          });
+          self._hideMessage(deleteTargetIds);
+          if( check.isIE() ){
+            self._resetShownMessage(
+                self._parent.get(self._parent._lKey.currentScenarioSeqNum),
+                self._getCurrentSeq());
+          }
+          self._setCurrentSeq(Number(targetSeqNum));
+          self._resetShownMessage(
+              self._parent.get(self._parent._lKey.currentScenarioSeqNum),
+              self._getCurrentSeq());
+          var hearingProcess = self._getCurrentHearingProcess();
+          self._execute(hearingProcess, true);
+        },
         /*  操作されたメッセージと現状表示しているメッセージが一致しているか確認する
          *  @param element(要素)
          *  @return boolean
@@ -9303,6 +9421,7 @@
             case '3': // ラジオボタン
             case '4': // プルダウン
             case '5': // カレンダー
+            case '6':
               if (!required) {
                 sinclo.chatApi.showMiniMessageArea();
                 sinclo.displayTextarea(true, true);
@@ -9462,12 +9581,21 @@
                     css('opacity', 0.5);
                 // カレンダー
                 $(this).find('.flatpickr-calendar').addClass('disable');
+              });
+
+          $('#sincloBox ul#chatTalk li.hearing_msg').
+              each(function(index, elm) {
                 //　カルーセル
                 $(this).
                     find('[id^="slide_sinclo-carousel"]').
                     prop('disabled', true).
                     css('opacity', 0.5);
+                $(this).
+                    find('[id^="slide_sinclo-carousel"]').
+                    prop('disabled', true).
+                    css('opacity', 0.5);
               });
+
           $('#sincloBox ul#chatTalk li.sinclo_se.cancelable').
               each(function(index, elm) {
                 // 再回答用リンク

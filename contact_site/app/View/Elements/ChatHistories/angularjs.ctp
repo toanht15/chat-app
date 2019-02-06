@@ -700,7 +700,26 @@
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
           var messageContent = JSON.parse(message);
-          content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, messageContent.message)+"</span>";
+          var textOfMessage = '';
+          if (!messageContent.message) {
+            switch (type) {
+              case chatApi.messageType.scenario.message.pulldown:
+                textOfMessage = '（プルダウン質問内容なし）';
+                break;
+              case chatApi.messageType.scenario.message.calendar:
+                textOfMessage = '（カレンダー質問内容なし）';
+                break;
+              case chatApi.messageType.scenario.message.carousel:
+                textOfMessage = '（カルーセル質問内容なし）';
+                break;
+              default:
+                textOfMessage = '（質問内容なし）';
+                break;
+            }
+          } else {
+            textOfMessage = $scope.createTextOfMessage(chat, messageContent.message);
+          }
+          content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+ textOfMessage +"</span>";
         }
       }
       else if ( type === chatApi.messageType.scenario.message.selection) {
