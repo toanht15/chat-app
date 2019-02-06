@@ -4904,17 +4904,6 @@
         }
 
         var slidesToShow = settings.lineUpStyle === '1' ? 1 : 1.5;
-        // $(carousel.selector).on('init', function(event, slick) {
-        //   var maxHeight = 0;
-        //   slick.$slides.each(function(slide) {
-        //     var currentHeight = $(this).find('.caption').height();
-        //     maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
-        //   });
-        //
-        //   slick.$slides.each(function(slide) {
-        //     $(this).find('.caption').css('min-height', maxHeight + 'px');
-        //   });
-        // });
 
         return {
           dots: true,
