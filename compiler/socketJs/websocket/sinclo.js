@@ -2348,7 +2348,7 @@
           userName = window.sincloInfo.widget.subTitle;
         }
 
-        var pulldown = JSON.parse(obj.chatMessage);
+        var pulldown = JSON.parse(obj.message);
         this.chatApi.addPulldown('hearing_msg sinclo_re', pulldown.message,
             userName, pulldown.settings);
         sinclo.chatApi.scDown();
