@@ -3605,6 +3605,8 @@ var socket, // socket.io
           'padding: 10px 40px; ' +
           '}' + '#sincloBox ul#chatTalk li.noneBalloon { ' +
           'margin-left: 0; ' +
+          '}' + '#sincloBox ul#chatTalk li.outsideArrow .sinclo-text-line{ ' +
+          'margin-left: -25px; ' +
           '}';
     },
     //バナーを生成する関数
