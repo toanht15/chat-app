@@ -17,35 +17,37 @@ class TAutoMessagesController extends AppController {
   const TEMPLATE_FILE_NAME = "auto_message_template.xlsx";
   const FULL_TEMPLATE_FILE_NAME = "auto_message_setting_template.xlsx";
 
-  public $uses = ['TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting', 'TChatbotScenario'];
-  public $components = ['AutoMessageExcelExport', 'NodeSettingsReload', 'AutoMessageExcelImport'];
-  public $helpers = ['AutoMessage'];
-  public $paginate = [
-    'TAutoMessage' => [
+  public $uses = array('TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting', 'TChatbotScenario');
+  public $components = array('AutoMessageExcelExport', 'NodeSettingsReload', 'AutoMessageExcelImport');
+  public $helpers = array('AutoMessage');
+  public $paginate = array(
+    'TAutoMessage' => array(
       'limit' => 100,
-      'order' => [
+      'order' => array(
           'TAutoMessage.sort' => 'asc',
           'TAutoMessage.id' => 'asc'
-      ],
-      'fields' => ['TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name'],
-      'conditions' => ['TAutoMessage.del_flg != ' => 1],
-      'joins' => [[
+      ),
+      'fields' => array('TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name'),
+      'conditions' => array('TAutoMessage.del_flg != ' => 1),
+      'joins' => array(
+        array(
         'type' => 'LEFT',
         'table' => 't_chatbot_scenarios',
         'alias' => 'TChatbotScenario',
-        'conditions' => [
+        'conditions' => array(
           'TAutoMessage.t_chatbot_scenario_id = TChatbotScenario.id'
-        ]
-      ]],
+        )
+        )
+      ),
       'recursive' => -1
-    ]
-  ];
+    )
+  );
   public $outMessageIfType;
   public $outMessageTriggerList;
 
   public $coreSettings = null;
-  public $styleSetting = [
-    'common' => [
+  public $styleSetting = array(
+    'common' => array(
       'show_timing', 'max_show_timing_site', 'max_show_timing_page',
       'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
       'show_main_image', 'main_image', 'show_chatbot_icon' ,'chatbot_icon_type' ,'chatbot_icon' ,'show_operator_icon', 'operator_icon_type','operator_icon', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext','widget_custom_height','widget_custom_width',
@@ -55,10 +57,10 @@ class TAutoMessagesController extends AppController {
       'message_box_text_color','message_box_text_size','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_text_size','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
       'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
       'btw_button_margin', 'line_button_margin','sp_banner_position','sp_scroll_view_setting','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
-    ],
-    'synclo' => ['tel', 'content', 'display_time_flg', 'time_text'],
-    'chat' => ['chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_arrow_position', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'],
-  ];
+    ),
+    'synclo' => array('tel', 'content', 'display_time_flg', 'time_text'),
+    'chat' => array('chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_arrow_position', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'),
+  );
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -101,6 +103,19 @@ class TAutoMessagesController extends AppController {
       }
       $data[$index]['TAutoMessage']['activity'] = json_encode($activity);
     }
+
+    // オートメッセージ一覧を取得する
+    $otherAutoMessages = $this->TAutoMessage->find('list', array(
+      'fields' => array('id', 'name'),
+      'order' => array(
+        'TAutoMessage.sort' => 'asc'
+      ),
+      'conditions' => array(
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+      )
+    ));
+
+    $this->set('autoMessageList', $otherAutoMessages);
     $this->set('settingList', $data);
     $this->_viewElement();
   }
@@ -141,6 +156,19 @@ class TAutoMessagesController extends AppController {
       ]
     ]);
     $this->request->data['chatbotScenario'] = $chatbotScenario;
+
+    // オートメッセージ一覧を取得する
+    $otherAutoMessages = $this->TAutoMessage->find('list', array(
+      'fields' => array('id', 'name'),
+      'order' => array(
+        'TAutoMessage.sort' => 'asc'
+      ),
+      'conditions' => array(
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'TAutoMessage.del_flg' => 0
+      )
+    ));
+    $this->request->data['otherAutoMessages'] = $otherAutoMessages;
 
     $this->_viewElement();
   }
@@ -234,6 +262,25 @@ class TAutoMessagesController extends AppController {
       ]
     ]);
     $this->request->data['chatbotScenario'] = $chatbotScenario;
+
+    // オートメッセージ一覧を取得する
+    $otherAutoMessages = $this->TAutoMessage->find('list', array(
+      'fields' => array('id', 'name'),
+      'order' => array(
+        'TAutoMessage.sort' => 'asc'
+      ),
+      'conditions' => array(
+        'AND' => array(
+          'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
+          'TAutoMessage.del_flg' => 0
+        ),
+        'NOT' => array(
+          'TAutoMessage.id' => $id,
+          'TAutoMessage.call_automessage_id' => $id
+        )
+      )
+    ));
+    $this->request->data['otherAutoMessages'] = $otherAutoMessages;
 
     $this->_viewElement();
   }

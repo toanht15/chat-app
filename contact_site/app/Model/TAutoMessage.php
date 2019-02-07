@@ -45,11 +45,18 @@ class TAutoMessage extends AppModel {
    */
   public function checkBeforeValidates($actionType) {
     if ($actionType == C_AUTO_ACTION_TYPE_SELECTSCENARIO) {
-      $this->validator()->add('t_chatbot_scenario_id', 'checkScenario', [
+      $this->validator()->add('t_chatbot_scenario_id', 'checkScenario', array(
         'rule' => 'checkScenario',
         'required' => true,
         'message' => 'シナリオを選択してください'
-      ]);
+      ));
+      $this->validator()->remove('action');
+    } else if($actionType == C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE) {
+      $this->validator()->add('call_automessage_id', 'checkCallAutoMessage', array(
+        'rule' => 'checkCallAutoMessage',
+        'required' => true,
+        'message' => '呼出先を選択してください'
+      ));
       $this->validator()->remove('action');
     }
   }
@@ -184,5 +191,19 @@ class TAutoMessage extends AppModel {
       return true;
     }
     return !empty($param['t_chatbot_scenario_id']);
+  }
+
+  /**
+   * checkCallAutoMessage
+   * action_typeの設定状態を確認し、オートメッセージ呼出のバリデーションを行う
+   *
+   * @param Array $param t_chatbot_scenario_idのパラメーター
+   * @return Boolean バリデーション結果
+   */
+  public function checkCallAutoMessage($param) {
+    if ($this->data['TAutoMessage']['action_type'] != C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE) {
+      return true;
+    }
+    return !empty($param['call_automessage_id']);
   }
 }

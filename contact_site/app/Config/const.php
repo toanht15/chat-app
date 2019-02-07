@@ -1,13 +1,13 @@
 <?php
 
 /* 定数定義 */
-define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
+define('C_PATH_NODE_FILE_SERVER', C_NODE_SERVER_ADDR . C_NODE_SERVER_FILE_PORT); // Nodeサーバーの公開ファイルパス
 
 // AWS: S3
 define('C_AWS_S3_VERSION', 'latest'); // ウィジェット用参照先
 define('C_AWS_S3_REGION', 'ap-northeast-1'); // ウィジェット用参照先
 define('C_AWS_S3_STORAGE', 'STANDARD'); // ウィジェット用参照先
-define('C_AWS_S3_HOSTNAME', 'https://s3-'.C_AWS_S3_REGION.'.amazonaws.com/'); // S3パス
+define('C_AWS_S3_HOSTNAME', 'https://s3-' . C_AWS_S3_REGION . '.amazonaws.com/'); // S3パス
 
 // AWS: SES
 define('C_AWS_SES_SMTP_SERVER_NAME', 'medialink-ml.co.jp');
@@ -19,11 +19,11 @@ define('C_AWS_SES_SMTP_CREDENTIAL', 'Jwq28Gt5');
 define('C_PREFIX_DOCUMENT', 'thumb_'); // 資料
 
 // 画像関連
-define('C_PATH_WIDGET_GALLERY_IMG', C_PATH_NODE_FILE_SERVER.'/img/widget/'); // ウィジェット用参照先
-define('C_PATH_SYNC_TOOL_IMG', C_PATH_NODE_FILE_SERVER.'/img/sync/'); // 画面同期用参照先
-define('C_PATH_WIDGET_CUSTOM_IMG', C_NODE_SERVER_ADDR.'/widget'); // ウィジェット用保存先
-define('C_PATH_WIDGET_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files'); // ウィジェット用保存先
-define('C_PATH_TMP_IMG_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'files/tmp'); // ウィジェット用保存先
+define('C_PATH_WIDGET_GALLERY_IMG', C_PATH_NODE_FILE_SERVER . '/img/widget/'); // ウィジェット用参照先
+define('C_PATH_SYNC_TOOL_IMG', C_PATH_NODE_FILE_SERVER . '/img/sync/'); // 画面同期用参照先
+define('C_PATH_WIDGET_CUSTOM_IMG', C_NODE_SERVER_ADDR . '/widget'); // ウィジェット用保存先
+define('C_PATH_WIDGET_IMG_DIR', ROOT . DS . APP_DIR . DS . WEBROOT_DIR . DS . 'files'); // ウィジェット用保存先
+define('C_PATH_TMP_IMG_DIR', ROOT . DS . APP_DIR . DS . WEBROOT_DIR . DS . 'files/tmp'); // ウィジェット用保存先
 
 // タブステータス
 define('C_WIDGET_TAB_STATUS_CODE_OPEN', 1); // ウィジェットが開いている状態
@@ -34,7 +34,8 @@ define('C_WIDGET_TAB_STATUS_CODE_OUT', 5); // ページ離脱状態
 
 // 通知機能
 define('C_PATH_NOTIFICATION_IMG_DIR', 'notification/'); // デスクトップ通知用画像参照先
-define('C_PATH_NOTIFICATION_IMG_SAVE_DIR', ROOT.DS.APP_DIR.DS.WEBROOT_DIR.DS.'img'.DS.'notification'.DS); // デスクトップ通知用画像保存先
+define('C_PATH_NOTIFICATION_IMG_SAVE_DIR',
+  ROOT . DS . APP_DIR . DS . WEBROOT_DIR . DS . 'img' . DS . 'notification' . DS); // デスクトップ通知用画像保存先
 
 // 使用機能
 define('C_COMPANY_USE_SYNCLO', 'synclo'); // 画面同期
@@ -171,7 +172,8 @@ define('C_MATCH_RULE_NUM_2', '/^(100|[1-9][0-9]|[1-9]{1})$/');
 define('C_MATCH_RULE_NUM_3', '/^(60|[1-5][0-9]|[1-9]{1})$/');
 define('C_MATCH_RULE_TEXT', '/.+/'); // 1文字以上のテキスト
 define('C_MATCH_RULE_NUMBER', '/^\d+$/');  // 1文字以上の数字
-define('C_MATCH_RULE_EMAIL', '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
+define('C_MATCH_RULE_EMAIL',
+  '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/'); // メールアドレス http://emailregex.com/
 
 define('C_MATCH_INPUT_RULE_ALL', '/.*/');  // 入力制限なし
 define('C_MATCH_INPUT_RULE_NUMBER', '/[\d]*/');  // 数字入力
@@ -194,12 +196,12 @@ define('C_AUTHORITY_SUPER', 99); // ML管理者
 define('C_AUTO_TRIGGER_TYPE_BODYLOAD', 0); // 画面読み込み時
 
 // オートメッセージ機能－トリガーリスト
-define('C_AUTO_TRIGGER_STAY_TIME',  1); // 滞在時間
-define('C_AUTO_TRIGGER_VISIT_CNT',  2); // 訪問回数
-define('C_AUTO_TRIGGER_STAY_PAGE',  3); // ページ
+define('C_AUTO_TRIGGER_STAY_TIME', 1); // 滞在時間
+define('C_AUTO_TRIGGER_VISIT_CNT', 2); // 訪問回数
+define('C_AUTO_TRIGGER_STAY_PAGE', 3); // ページ
 define('C_AUTO_TRIGGER_OPERATING_HOURS', 4); // 営業時間
-define('C_AUTO_TRIGGER_DAY_TIME',   5); // 曜日・時間
-define('C_AUTO_TRIGGER_REFERRER',   6); // 参照元URL（リファラー）
+define('C_AUTO_TRIGGER_DAY_TIME', 5); // 曜日・時間
+define('C_AUTO_TRIGGER_REFERRER', 6); // 参照元URL（リファラー）
 define('C_AUTO_TRIGGER_SEARCH_KEY', 7); // 検索キーワード
 define('C_AUTO_TRIGGER_SPEECH_CONTENT', 8); // 発言内容
 define('C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST', 9); // 最初の滞在ページ
@@ -208,6 +210,7 @@ define('C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS', 10); // 前のページ
 // オートメッセージ機能－アクション種別コード
 define('C_AUTO_ACTION_TYPE_SENDMESSAGE', 1); // チャットメッセージを送る
 define('C_AUTO_ACTION_TYPE_SELECTSCENARIO', 2);  // シナリオを呼び出す
+define('C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE', 3);  // オートメッセージを呼び出す
 
 // オートメッセージ機能－ウィジェット種別コード
 define('C_AUTO_WIDGET_TYPE_OPEN', 1); // 自動で最大化する
@@ -492,470 +495,483 @@ define('C_AFTER_PASSWORD_CHANGE_TO_CUSTOMER', 7); // いきなり契約登録後
 define('C_AFTER_PASSWORD_RESET_TO_CUSTOMER', 8); //パスワード変更 お客さん向けメール
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
-$config['Authority'] = [
-    C_AUTHORITY_ADMIN => "管理者",
-    C_AUTHORITY_NORMAL => "一般"
-];
+$config['Authority'] = array(
+  C_AUTHORITY_ADMIN => "管理者",
+  C_AUTHORITY_NORMAL => "一般"
+);
 
 /* タブステータス(js-const用) */
 $config['tabStatusList'] = [
-    'open' => C_WIDGET_TAB_STATUS_CODE_OPEN,
-    'close' => C_WIDGET_TAB_STATUS_CODE_CLOSE,
-    'none' => C_WIDGET_TAB_STATUS_CODE_NONE,
-    'disable' => C_WIDGET_TAB_STATUS_CODE_DISABLE
+  'open' => C_WIDGET_TAB_STATUS_CODE_OPEN,
+  'close' => C_WIDGET_TAB_STATUS_CODE_CLOSE,
+  'none' => C_WIDGET_TAB_STATUS_CODE_NONE,
+  'disable' => C_WIDGET_TAB_STATUS_CODE_DISABLE
 ];
 
 /* タブステータス(メッセージ用) */
-$config['tabStatusStrList'] = [
-    C_WIDGET_TAB_STATUS_CODE_OPEN => "ウィジェットが開いている状態",
-    C_WIDGET_TAB_STATUS_CODE_CLOSE => "ウィジェットが閉じている状態",
-    C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットが非表示の状態",
-    C_WIDGET_TAB_STATUS_CODE_DISABLE => "非アクティブ状態",
-    C_WIDGET_TAB_STATUS_CODE_OUT => "ページ離脱"
-];
+$config['tabStatusStrList'] = array(
+  C_WIDGET_TAB_STATUS_CODE_OPEN => "ウィジェットが開いている状態",
+  C_WIDGET_TAB_STATUS_CODE_CLOSE => "ウィジェットが閉じている状態",
+  C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットが非表示の状態",
+  C_WIDGET_TAB_STATUS_CODE_DISABLE => "非アクティブ状態",
+  C_WIDGET_TAB_STATUS_CODE_OUT => "ページ離脱"
+);
 
 /* タブステータス(通知用) */
-$config['tabStatusNotificationMessageList'] = [
-    C_WIDGET_TAB_STATUS_CODE_OPEN => "", // 表示しないため文言の指定もしない
-    C_WIDGET_TAB_STATUS_CODE_CLOSE => "ウィジェットが閉じられています",
-    C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットが表示されていません",
-    C_WIDGET_TAB_STATUS_CODE_DISABLE => "別の作業をしています",
-    C_WIDGET_TAB_STATUS_CODE_OUT => "ページが閉じられました"
-];
+$config['tabStatusNotificationMessageList'] = array(
+  C_WIDGET_TAB_STATUS_CODE_OPEN => "", // 表示しないため文言の指定もしない
+  C_WIDGET_TAB_STATUS_CODE_CLOSE => "ウィジェットが閉じられています",
+  C_WIDGET_TAB_STATUS_CODE_NONE => "ウィジェットが表示されていません",
+  C_WIDGET_TAB_STATUS_CODE_DISABLE => "別の作業をしています",
+  C_WIDGET_TAB_STATUS_CODE_OUT => "ページが閉じられました"
+);
 
 /* ユーザー権限（単体あり：C_AUTHORITY_%） */
-$config['dictionaryType'] = [
-    C_DICTIONARY_TYPE_COMP => "共有設定",
-    C_DICTIONARY_TYPE_PERSON => "個人設定"
-];
+$config['dictionaryType'] = array(
+  C_DICTIONARY_TYPE_COMP => "共有設定",
+  C_DICTIONARY_TYPE_PERSON => "個人設定"
+);
 
 /* 通常選択肢 */
-$config['normalChoices'] = [
+$config['normalChoices'] = array(
   C_SELECT_CAN => "する",
   C_SELECT_CAN_NOT => "しない"
-];
+);
 
 /* ウィジェット設定 ー Web接客コード */
-$config['widgetShowChoices'] = [
+$config['widgetShowChoices'] = array(
   C_SELECT_CAN => "表示する",
   C_SELECT_CAN_NOT => "表示しない"
-];
+);
 
 /* ウィジェット設定 － 表示設定種別 */
-$config['WidgetDisplayType'] = [
-    1 => "常に表示する",
-    4 => "営業時間内のみ表示する",
-    2 => "オペレーターが待機中の時のみ表示する",
-    3 => "表示しない"
-];
+$config['WidgetDisplayType'] = array(
+  1 => "常に表示する",
+  4 => "営業時間内のみ表示する",
+  2 => "オペレーターが待機中の時のみ表示する",
+  3 => "表示しない"
+);
 
 /* ウィジェット設定 － 表示設定種別 */
-$config['WidgetDisplayStyleType'] = [
+$config['WidgetDisplayStyleType'] = array(
   1 => "最大化して表示する",
   2 => "最小化して表示する",
   3 => "小さなバナーを表示する"
-];
+);
 
 /* ウィジェット設定 － 表示位置種別 */
-$config['widgetPositionType'] = [
-    C_WIDGET_POSITION_RIGHT_BOTTOM => "右下",
-    C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
-];
+$config['widgetPositionType'] = array(
+  C_WIDGET_POSITION_RIGHT_BOTTOM => "右下",
+  C_WIDGET_POSITION_LEFT_BOTTOM => "左下"
+);
 
 /* ウィジェット設定 － スマホ用表示位置種別 */
-$config['widgetSpPositionType'] = [
-    C_WIDGET_SP_POSITION_RIGHT_BOTTOM => "右下",
-    C_WIDGET_SP_POSITION_LEFT_BOTTOM => "左下",
-    C_WIDGET_SP_POSITION_RIGHT_CENTER=> "右中央",
-    C_WIDGET_SP_POSITION_LEFT_CENTER => "左中央"
-];
+$config['widgetSpPositionType'] = array(
+  C_WIDGET_SP_POSITION_RIGHT_BOTTOM => "右下",
+  C_WIDGET_SP_POSITION_LEFT_BOTTOM => "左下",
+  C_WIDGET_SP_POSITION_RIGHT_CENTER => "右中央",
+  C_WIDGET_SP_POSITION_LEFT_CENTER => "左中央"
+);
 
 /* ウィジェット設定 － スマホ用状態遷移種別 */
-$config['widgetSpViewPattern'] = [
-    C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER => "3段階：（最大化・最小化・小さなバナー）",
-    C_WIDGET_SP_VIEW_TWO_PATTERN_BANNER => "2段階：（最大化・小さなバナー）"
-];
+$config['widgetSpViewPattern'] = array(
+  C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER => "3段階：（最大化・最小化・小さなバナー）",
+  C_WIDGET_SP_VIEW_TWO_PATTERN_BANNER => "2段階：（最大化・小さなバナー）"
+);
 
 /* ウィジェット設定 ー Web接客コード */
-$config['widgetShowAccessId'] = [
+$config['widgetShowAccessId'] = array(
   C_SELECT_CAN => "表示する",
   C_SELECT_CAN_NOT => "表示しない<br>　<s>※ウェブ接客コード（4桁のID）を電話口でヒアリングすることで、リアルタイムモニター上で</s><br><s>　  相手を特定することができます。（電話口の相手のウェブ行動履歴や流入経路の把握が可能）</s>"
-];
+);
 
 /* ウィジェット設定 － 担当者表示名種別 */
-$config['widgetShowNameType'] = [
-    C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
-    C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
-];
+$config['widgetShowNameType'] = array(
+  C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
+  C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>"
+);
 
 /* ウィジェット設定 － 表示名種別 */
-$config['widgetShowAutomessageNameType'] = [
+$config['widgetShowAutomessageNameType'] = array(
   C_WIDGET_SHOW_AUTOMESSAGE_COMP => "企業名を表示する<br>　<s>※オートメッセージやSorryメッセージなど自動メッセージの吹き出しに企業名を表示します</s>",
   C_WIDGET_SHOW_AUTOMESSAGE_NONE => "表示しない"
-];
+);
 
 /* ウィジェット設定 － 表示名種別 */
-$config['widgetShowOpNameType'] = [
+$config['widgetShowOpNameType'] = array(
   C_WIDGET_SHOW_NAME => "担当者名を表示する<br>　<s>※ユーザーマスタの「表示名」に設定された名称を表示します</s>",
   C_WIDGET_SHOW_COMP => "企業名を表示する<br>　<s>※こちらの画面の「企業名」に設定された名称を表示します</s>",
   C_WIDGET_SHOW_NONE => "表示しない"
-];
+);
 
 /* ウィジェット設定 － 吹き出しデザイン */
-$config['chatMessageDesignType'] = [
+$config['chatMessageDesignType'] = array(
   C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX => "BOX型",
   C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BALLOON => "吹き出し型"
-];
+);
 
 /* ウィジェット設定 － ラジオボタン操作時の動作種別 */
-$config['widgetRadioBtnBehaviorType'] = [
-    C_WIDGET_RADIO_CLICK_SEND => "選択された文字列が即時送信されます",
-    C_WIDGET_RADIO_CLICK_TEXT => "選択された文字列がテキストエリアに入力されます"
-];
+$config['widgetRadioBtnBehaviorType'] = array(
+  C_WIDGET_RADIO_CLICK_SEND => "選択された文字列が即時送信されます",
+  C_WIDGET_RADIO_CLICK_TEXT => "選択された文字列がテキストエリアに入力されます"
+);
 
 /* ウィジェット設定 － チャット送信アクション種別 */
-$config['widgetSendActType'] = [
-    C_WIDGET_SEND_ACT_PUSH_KEY => "送信ボタン及びEnterキー（スマホの場合改行ボタン）",
-    C_WIDGET_SEND_ACT_PUSH_BTN => "送信ボタンのみ"
-];
+$config['widgetSendActType'] = array(
+  C_WIDGET_SEND_ACT_PUSH_KEY => "送信ボタン及びEnterキー（スマホの場合改行ボタン）",
+  C_WIDGET_SEND_ACT_PUSH_BTN => "送信ボタンのみ"
+);
 
-$config['widgetSpMiximizeSizeType'] = [
+$config['widgetSpMiximizeSizeType'] = array(
   C_SELECT_CAN => "余白を残して表示する",
   C_SELECT_CAN_NOT => "画面いっぱいに表示する"
-];
+);
 
 /* オートメッセージ － トリガー種別 */
-$config['chatNotificationType'] = [
-    C_NOTIFICATION_TYPE_TITLE => "タイトル",
-    C_NOTIFICATION_TYPE_URL => "URL"
-];
+$config['chatNotificationType'] = array(
+  C_NOTIFICATION_TYPE_TITLE => "タイトル",
+  C_NOTIFICATION_TYPE_URL => "URL"
+);
 
 /* オートメッセージ － トリガー種別 */
-$config['outMessageTriggerType'] = [
-    C_AUTO_TRIGGER_TYPE_BODYLOAD => "画面読み込み時"
-];
+$config['outMessageTriggerType'] = array(
+  C_AUTO_TRIGGER_TYPE_BODYLOAD => "画面読み込み時"
+);
 
 /* オートメッセージ － 条件設定 */
-$config['outMessageIfType'] = [
-    C_COINCIDENT => "全て一致",
-    C_SOME_EITHER => "いずれかが一致"
-];
+$config['outMessageIfType'] = array(
+  C_COINCIDENT => "全て一致",
+  C_SOME_EITHER => "いずれかが一致"
+);
 
 /* オートメッセージ － 条件設定 */
-$config['outMessageAvailableType'] = [
-    C_STATUS_AVAILABLE => "有効",
-    C_STATUS_UNAVAILABLE => "無効"
-];
+$config['outMessageAvailableType'] = array(
+  C_STATUS_AVAILABLE => "有効",
+  C_STATUS_UNAVAILABLE => "無効"
+);
 
 /* オートメッセージ － 条件リスト */
-$config['outMessageTriggerList'] = [
-    // 滞在時間
-    C_AUTO_TRIGGER_STAY_TIME => [
-        'label' => '滞在時間',
-        // いずれも複数はNG固定で（sinclo.jsを書き直す必要がある為）
-        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-        'key' => 'stay_time',
-        'default' => [
-            "stayTimeCheckType" => 2,
-            "stayTimeType" => "1",
-            "stayTimeRange" => 3
-        ]
-    ],
-    // 訪問回数
-    C_AUTO_TRIGGER_VISIT_CNT => [
-        'label' => '訪問回数',
-        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-        'key' => 'visit_cnt',
-        'default' => [
-            "visitCnt" => "",
-            "visitCntCond" => 2
-        ]
-    ],
-    // 発言内容
-    C_AUTO_TRIGGER_SPEECH_CONTENT => [
-        'label' => '発言内容',
-        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-        'key' => 'speech_content',
-        'default' => [
-            "keyword_contains" => "",
-            "keyword_contains_type" => "1",
-            "keyword_exclusions" => "",
-            "keyword_exclusions_type" => "1",
-            "speechContentCond" => "1",
-            "triggerTimeSec" => 2,
-            "speechTriggerCond" => "2"
-        ]
-    ],
-    // ページ
-    C_AUTO_TRIGGER_STAY_PAGE => [
-        'label' => 'ページ',
-        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-        'key' => 'stay_page',
-        'default' => [
-            "targetName" => 2,
-            "keyword_contains" => "",
-            "keyword_contains_type" => "1",
-            "keyword_exclusions" => "",
-            "keyword_exclusions_type" => "1",
-            "stayPageCond" => 2
-        ]
-    ],
-    // 曜日・時間
-    C_AUTO_TRIGGER_DAY_TIME => [
-        'label' => '曜日・時間',
-        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 7],
-        'key' => 'day_time',
-        'default' => [
-            "day" => [
-              "mon" => false, "tue" => false, "wed" => false, "thu" => false,
-              "fri" => false, "sat" => false, "sun" => false
-            ],
-            "timeSetting" => C_SELECT_CAN,
-            "startTime" => "09:00",
-            "endTime" => "18:00",
-        ]
-    ],
-    // 参照元URL（リファラー）
-    C_AUTO_TRIGGER_REFERRER => [
-        'label' => '参照元URL（リファラー）',
-        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-        'key' => 'referrer',
-        'default' => [
-            "keyword_contains" => "",
-            "keyword_contains_type" => "1",
-            "keyword_exclusions" => "",
-            "keyword_exclusions_type" => "1",
-            "referrerCond" => 2
-        ]
-    ],
-    // 検索キーワード
-    C_AUTO_TRIGGER_SEARCH_KEY => [
-        'label' => '検索キーワード',
-        'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-        'key' => 'search_keyword',
-        'default' => [
-           "keyword" => "",
-           "searchCond" => "1"
-        ]
-    ],
-    // 最初に訪れたページ
-    C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => [
-      'label' => '最初に訪れたページ',
-      'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-      'key' => 'stay_page_of_first',
-      'default' => [
-          "targetName" => 2,
-          "keyword_contains" => "",
-          "keyword_contains_type" => "1",
-          "keyword_exclusions" => "",
-          "keyword_exclusions_type" => "1",
-          "stayPageCond" => 2
-      ]
-    ],
-    // 前のページ
-    C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS => [
-      'label' => '前のページ',
-      'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-      'key' => 'stay_page_of_previous',
-      'default' => [
-          "targetName" => 2,
-          "keyword_contains" => "",
-          "keyword_contains_type" => "1",
-          "keyword_exclusions" => "",
-          "keyword_exclusions_type" => "1",
-          "stayPageCond" => 2
-      ]
-    ],
-    // 営業時間設定
-    C_AUTO_TRIGGER_OPERATING_HOURS => [
-      'label' => '営業時間',
-      'createLimit' => [C_COINCIDENT => 1, C_SOME_EITHER => 1],
-      'key' => 'operating_hours',
-      'default' => [
-         "operatingHoursTime" => 1
-      ]
-    ]
-];
+$config['outMessageTriggerList'] = array(
+  // 滞在時間
+  C_AUTO_TRIGGER_STAY_TIME => array(
+    'label' => '滞在時間',
+    // いずれも複数はNG固定で（sinclo.jsを書き直す必要がある為）
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'stay_time',
+    'default' => array(
+      "stayTimeCheckType" => 2,
+      "stayTimeType" => "1",
+      "stayTimeRange" => 3
+    )
+  ),
+  // 訪問回数
+  C_AUTO_TRIGGER_VISIT_CNT => array(
+    'label' => '訪問回数',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'visit_cnt',
+    'default' => array(
+      "visitCnt" => "",
+      "visitCntCond" => 2
+    )
+  ),
+  // 発言内容
+  C_AUTO_TRIGGER_SPEECH_CONTENT => array(
+    'label' => '発言内容',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'speech_content',
+    'default' => array(
+      "keyword_contains" => "",
+      "keyword_contains_type" => "1",
+      "keyword_exclusions" => "",
+      "keyword_exclusions_type" => "1",
+      "speechContentCond" => "1",
+      "triggerTimeSec" => 2,
+      "speechTriggerCond" => "2"
+    )
+  ),
+  // ページ
+  C_AUTO_TRIGGER_STAY_PAGE => array(
+    'label' => 'ページ',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'stay_page',
+    'default' => array(
+      "targetName" => 2,
+      "keyword_contains" => "",
+      "keyword_contains_type" => "1",
+      "keyword_exclusions" => "",
+      "keyword_exclusions_type" => "1",
+      "stayPageCond" => 2
+    )
+  ),
+  // 曜日・時間
+  C_AUTO_TRIGGER_DAY_TIME => array(
+    'label' => '曜日・時間',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 7),
+    'key' => 'day_time',
+    'default' => array(
+      "day" => array(
+        "mon" => false,
+        "tue" => false,
+        "wed" => false,
+        "thu" => false,
+        "fri" => false,
+        "sat" => false,
+        "sun" => false
+      ),
+      "timeSetting" => C_SELECT_CAN,
+      "startTime" => "09:00",
+      "endTime" => "18:00",
+    )
+  ),
+  // 参照元URL（リファラー）
+  C_AUTO_TRIGGER_REFERRER => array(
+    'label' => '参照元URL（リファラー）',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'referrer',
+    'default' => array(
+      "keyword_contains" => "",
+      "keyword_contains_type" => "1",
+      "keyword_exclusions" => "",
+      "keyword_exclusions_type" => "1",
+      "referrerCond" => 2
+    )
+  ),
+  // 検索キーワード
+  C_AUTO_TRIGGER_SEARCH_KEY => array(
+    'label' => '検索キーワード',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'search_keyword',
+    'default' => array(
+      "keyword" => "",
+      "searchCond" => "1"
+    )
+  ),
+  // 最初に訪れたページ
+  C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST => array(
+    'label' => '最初に訪れたページ',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'stay_page_of_first',
+    'default' => array(
+      "targetName" => 2,
+      "keyword_contains" => "",
+      "keyword_contains_type" => "1",
+      "keyword_exclusions" => "",
+      "keyword_exclusions_type" => "1",
+      "stayPageCond" => 2
+    )
+  ),
+  // 前のページ
+  C_AUTO_TRIGGER_STAY_PAGE_OF_PREVIOUS => array(
+    'label' => '前のページ',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'stay_page_of_previous',
+    'default' => array(
+      "targetName" => 2,
+      "keyword_contains" => "",
+      "keyword_contains_type" => "1",
+      "keyword_exclusions" => "",
+      "keyword_exclusions_type" => "1",
+      "stayPageCond" => 2
+    )
+  ),
+  // 営業時間設定
+  C_AUTO_TRIGGER_OPERATING_HOURS => array(
+    'label' => '営業時間',
+    'createLimit' => array(C_COINCIDENT => 1, C_SOME_EITHER => 1),
+    'key' => 'operating_hours',
+    'default' => array(
+      "operatingHoursTime" => 1
+    )
+  )
+);
 
 /* オートメッセージ － アクション種別 */
-$config['outMessageActionType'] = [
-    C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
-    C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す"
-];
+$config['outMessageActionType'] = array(
+  C_AUTO_ACTION_TYPE_SENDMESSAGE => "チャットメッセージを送る",
+  C_AUTO_ACTION_TYPE_SELECTSCENARIO => "シナリオを呼び出す",
+  C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE => "オートメッセージを呼び出す"
+);
 
 /* オートメッセージ － ウィジェット種別 */
-$config['outMessageWidgetOpenType'] = [
-    C_AUTO_WIDGET_TYPE_OPEN => "自動で最大化する",
-    C_AUTO_WIDGET_TYPE_CLOSE => "自動で最大化しない"
-];
+$config['outMessageWidgetOpenType'] = array(
+  C_AUTO_WIDGET_TYPE_OPEN => "自動で最大化する",
+  C_AUTO_WIDGET_TYPE_CLOSE => "自動で最大化しない"
+);
 
 /* オートメッセージ － 自由入力種別 */
-$config['outMessageTextarea'] = [
-    C_AUTO_WIDGET_TEXTAREA_OPEN => "ON（自由入力可）",
-    C_AUTO_WIDGET_TEXTAREA_CLOSE => "OFF（自由入力不可）"
-];
+$config['outMessageTextarea'] = array(
+  C_AUTO_WIDGET_TEXTAREA_OPEN => "ON（自由入力可）",
+  C_AUTO_WIDGET_TEXTAREA_CLOSE => "OFF（自由入力不可）"
+);
 
 /* オートメッセージ － cv種別 */
-$config['outMessageCvType'] = [
-    C_AUTO_CV_EFFECTIVENESS => "する",
-    C_AUTO_CV_DISABLED => "しない"
-];
+$config['outMessageCvType'] = array(
+  C_AUTO_CV_EFFECTIVENESS => "する",
+  C_AUTO_CV_DISABLED => "しない"
+);
 
 /* シナリオ設定 - アクション種別 */
-$config['chatbotScenarioActionList'] = [
+$config['chatbotScenarioActionList'] = array(
   // テキスト発言
-  C_SCENARIO_ACTION_TEXT => [
+  C_SCENARIO_ACTION_TEXT => array(
     'label' => 'テキスト発言',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
       'message' => ''
-    ]
-  ],
+    )
+  ),
   // ヒアリング
-  C_SCENARIO_ACTION_HEARING => [
+  C_SCENARIO_ACTION_HEARING => array(
     'label' => 'ヒアリング',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '1',
-      'hearings' => [[
-        'variableName' => '',
-        'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
-        'uiType' => '1',
-        'message' => '',
-        'required' => true,
-        'errorMessage' => '',
-        'settings' => [
-          'options' => [""], // options for radio or pulldown
-          'disablePastDate' => true,
-          'isSetDisableDate' => false,
-          'isDisableDayOfWeek' => false,
-          'isSetSpecificDate' => false,
-          'isEnableAfterDate' => false,
-          'enableAfterDate' => null,
-          'isDisableAfterData' => false,
-          'enableAfterDate'=> null,
-          'dayOfWeekSetting' => [
-            0 => false, // sun
-            1 => false, // mon
-            2 => false, // tue
-            3 => false, // wed
-            4 => false, // thur
-            5 => false, // fri
-            6 => false, // sat
-          ],
-          'setSpecificDateType' => '',
-          'specificDateData' => [""],
-          'language' => 1, // 1: japanese, 2: english
-          'pulldownCustomDesign' => false,
-          'calendarCustomDesign' => false,
-          'customDesign' => [
-            'borderColor' => '',
-            'backgroundColor' => '#FFFFFF',
-            'textColor' => '',
-            'headerBackgroundColor' => '',
-            'headerTextColor' => '#FFFFFF',
-            'headerWeekdayBackgroundColor' => '',
-            'calendarBackgroundColor' => '#FFFFFF',
-            'calendarTextColor' => '',
-            'saturdayColor' => '',
-            'sundayColor' => '',
-            'messageAlign' => '2',
-            'buttonBackgroundColor' => '#FFFFFF',
-            'buttonTextColor' => '#007AFF',
-            'buttonAlign' => '2',
-            'buttonActiveColor' => '#BABABA',
-            'buttonBorderColor' => '#E3E3E3'
-          ]
-        ]
-      ]
-      ],
+      'hearings' => array(
+        array(
+          'variableName' => '',
+          'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
+          'uiType' => '1',
+          'message' => '',
+          'required' => true,
+          'errorMessage' => '',
+          'settings' => array(
+            'options' => array(""), // options for radio or pulldown
+            'disablePastDate' => true,
+            'isSetDisableDate' => false,
+            'isDisableDayOfWeek' => false,
+            'isSetSpecificDate' => false,
+            'isEnableAfterDate' => false,
+            'enableAfterDate' => null,
+            'isDisableAfterData' => false,
+            'enableAfterDate' => null,
+            'dayOfWeekSetting' => array(
+              0 => false, // sun
+              1 => false, // mon
+              2 => false, // tue
+              3 => false, // wed
+              4 => false, // thur
+              5 => false, // fri
+              6 => false, // sat
+            ),
+            'setSpecificDateType' => '',
+            'specificDateData' => array(""),
+            'language' => 1, // 1: japanese, 2: english
+            'pulldownCustomDesign' => false,
+            'calendarCustomDesign' => false,
+            'customDesign' => array(
+              'borderColor' => '',
+              'backgroundColor' => '#FFFFFF',
+              'textColor' => '',
+              'headerBackgroundColor' => '',
+              'headerTextColor' => '#FFFFFF',
+              'headerWeekdayBackgroundColor' => '',
+              'calendarBackgroundColor' => '#FFFFFF',
+              'calendarTextColor' => '',
+              'saturdayColor' => '',
+              'sundayColor' => '',
+              'messageAlign' => '2',
+              'buttonBackgroundColor' => '#FFFFFF',
+              'buttonTextColor' => '#007AFF',
+              'buttonAlign' => '2',
+              'buttonActiveColor' => '#BABABA',
+              'buttonBorderColor' => '#E3E3E3'
+            )
+          )
+        )
+      ),
       'restore' => true,
       'isConfirm' => '2',
       'confirmMessage' => '',
       'success' => '',
       'cancel' => '',
       'cv' => '2'
-    ]
-  ],
+    )
+  ),
   // 選択肢
-  C_SCENARIO_ACTION_SELECT_OPTION => [
+  C_SCENARIO_ACTION_SELECT_OPTION => array(
     'label' => '選択肢',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'selection' => [
+      'selection' => array(
         'variableName' => '',
-        'options' => ['']
-      ]
-    ]
-  ],
+        'options' => array('')
+      )
+    )
+  ),
   // メール送信
-  C_SCENARIO_ACTION_SEND_MAIL => [
+  C_SCENARIO_ACTION_SEND_MAIL => array(
     'label' => 'メール送信',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'toAddress' => [''],
+      'toAddress' => array(''),
       'mailType' => C_SCENARIO_MAIL_TYPE_ALL_MESSAGE
-    ]
-  ],
+    )
+  ),
   // シナリオ呼び出し
-  C_SCENARIO_ACTION_CALL_SCENARIO => [
+  C_SCENARIO_ACTION_CALL_SCENARIO => array(
     'label' => 'シナリオ呼出',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
       'scenarioId' => '',
       'executeNextAction' => '2'
-    ]
-  ],
+    )
+  ),
   // 属性値取得
-  C_SCENARIO_ACTION_GET_ATTRIBUTE => [
+  C_SCENARIO_ACTION_GET_ATTRIBUTE => array(
     'label' => '属性値取得',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'getAttributes' => [[
-        'variableName' => '',
-        'type' => C_SCENARIO_ATTRIBUTE_TYPE_ID,
-        'attributeValue' => '',
-      ]]
-    ]
-  ],  // 外部システム連携
-  C_SCENARIO_ACTION_EXTERNAL_API => [
+      'getAttributes' => array(
+        array(
+          'variableName' => '',
+          'type' => C_SCENARIO_ATTRIBUTE_TYPE_ID,
+          'attributeValue' => '',
+        )
+      )
+    )
+  ),  // 外部システム連携
+  C_SCENARIO_ACTION_EXTERNAL_API => array(
     'label' => '外部連携',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
       'externalType' => '1',
       'methodType' => '1',
-      'requestHeaders' => [[
-        'name' => '',
-        'value' => ''
-      ]],
+      'requestHeaders' => array(
+        array(
+          'name' => '',
+          'value' => ''
+        )
+      ),
       'requestBody' => '',
       'responseType' => '0',
-      'responseBodyMaps' => [[
-        'sourceKey' => '',
-        'variableName' => ''
-      ]]
-    ]
-  ],
+      'responseBodyMaps' => array(
+        array(
+          'sourceKey' => '',
+          'variableName' => ''
+        )
+      )
+    )
+  ),
   // ファイル送信
-  C_SCENARIO_ACTION_SEND_FILE => [
+  C_SCENARIO_ACTION_SEND_FILE => array(
     'label' => 'ファイル送信',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
       'file' => ''
-    ]
-  ]
+    )
+  )
   ,
   // ファイル受信
-  C_SCENARIO_ACTION_RECEIVE_FILE => [
+  C_SCENARIO_ACTION_RECEIVE_FILE => array(
     'label' => 'ファイル受信',
-    'default' => [
+    'default' => array(
       'chatTextArea' => '2',
       'dropAreaMessage' => 'ここにファイルをドロップ
 してください',
@@ -964,268 +980,268 @@ $config['chatbotScenarioActionList'] = [
       'extendedReceiveFileExtensions' => '',
       'cancelEnabled' => false,
       'cancelLabel' => 'ファイル送信をキャンセルする'
-    ]
-  ]
+    )
+  )
   ,
   // 条件分岐
-  C_SCENARIO_ACTION_BRANCH_ON_CONDITION => [
+  C_SCENARIO_ACTION_BRANCH_ON_CONDITION => array(
     'label' => '条件分岐',
-    'default' => [
+    'default' => array(
       'chatTextArea' => '2',
       'referenceVariable' => "",
-      'conditionList' => [
-        [
+      'conditionList' => array(
+        array(
           "matchValue" => "",
           "matchValueType" => "1", // のいずれかを含む場合
           "actionType" => "1", //テキスト発言
-          "action" => [
+          "action" => array(
             "message" => ""
-          ]
-        ]
-      ],
+          )
+        )
+      ),
       'elseEnabled' => 0,
-      'elseAction' => [
+      'elseAction' => array(
         "actionType" => "1",
-        "action" => [
+        "action" => array(
           "message" => ""
-        ]
-      ]
-    ]
-  ],  // 属性値取得
-  C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION => [
+        )
+      )
+    )
+  ),  // 属性値取得
+  C_SCENARIO_ACTION_ADD_CUSTOMER_INFORMATION => array(
     'label' => '訪問ユーザ登録',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'addCustomerInformations' => [
-        [
+      'addCustomerInformations' => array(
+        array(
           'variableName' => '',
           'targetId' => ""
-        ]
-      ]
-    ]
-  ],  // 一括ヒアリング
-  C_SCENARIO_ACTION_BULK_HEARING => [
+        )
+      )
+    )
+  ),  // 一括ヒアリング
+  C_SCENARIO_ACTION_BULK_HEARING => array(
     'label' => '一括ヒアリング',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '2',
-      'multipleHearings' => [
-        [
+      'multipleHearings' => array(
+        array(
           'variableName' => '会社名',
           'inputType' => "1", // 会社名
           'label' => "会社名",
           'required' => true
-        ]
-      ]
-    ]
-  ],  // リード登録
-  C_SCENARIO_ACTION_LEAD_REGISTER => [
+        )
+      )
+    )
+  ),  // リード登録
+  C_SCENARIO_ACTION_LEAD_REGISTER => array(
     'label' => 'リード登録',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
       'makeLeadTypeList' => '1',
       'chatTextArea' => '2',
-      'leadInformations' => [
-        [
+      'leadInformations' => array(
+        array(
           'leadLabelName' => '',
           'leadVariableName' => '',
           'leadUniqueHash' => ''
-        ]
-      ]
-    ]
-  ],
-  C_SCENARIO_ACTION_CONTROL_VARIABLE => [
+        )
+      )
+    )
+  ),
+  C_SCENARIO_ACTION_CONTROL_VARIABLE => array(
     'label' => '計算・変数操作',
-    'default' => [
+    'default' => array(
       'messageIntervalTimeSec' => '2',
-      'calcRules' => [
-        [
+      'calcRules' => array(
+        array(
           'variableName' => '',
           'calcType' => '1',
           'formula' => '',
           'significantDigits' => '0',
           'rulesForRounding' => '1'
-        ]
-      ]
-    ]
-  ]
-];
+        )
+      )
+    )
+  )
+);
 
 /* シナリオ設定 - ヒアリング入力タイプ */
-$config['chatbotScenarioInputType'] = [
-  C_SCENARIO_INPUT_TYPE_TEXT => [
+$config['chatbotScenarioInputType'] = array(
+  C_SCENARIO_INPUT_TYPE_TEXT => array(
     'label' => '@text',
     'rule' => C_MATCH_RULE_TEXT,
     'inputRule' => C_MATCH_INPUT_RULE_ALL
-  ],
-  C_SCENARIO_INPUT_TYPE_NUMBER => [
+  ),
+  C_SCENARIO_INPUT_TYPE_NUMBER => array(
     'label' => '@number',
     'rule' => C_MATCH_RULE_NUMBER,
     'inputRule' => C_MATCH_INPUT_RULE_NUMBER
-  ],
-  C_SCENARIO_INPUT_TYPE_EMAIL => [
+  ),
+  C_SCENARIO_INPUT_TYPE_EMAIL => array(
     'label' => '@email',
     'rule' => C_MATCH_RULE_EMAIL,
     'inputRule' => C_MATCH_INPUT_RULE_EMAIL
-  ],
-  C_SCENARIO_INPUT_TYPE_TEL => [
+  ),
+  C_SCENARIO_INPUT_TYPE_TEL => array(
     'label' => '@tel_number',
     'rule' => C_MATCH_RULE_TEL,
     'inputRule' => C_MATCH_INPUT_RULE_TEL
-  ]
-];
+  )
+);
 
 /* シナリオ設定 - 属性タイプ */
-$config['chatbotScenarioAttributeType'] = [
-  C_SCENARIO_ATTRIBUTE_TYPE_ID => [
+$config['chatbotScenarioAttributeType'] = array(
+  C_SCENARIO_ATTRIBUTE_TYPE_ID => array(
     'label' => '@id',
     'rule' => C_MATCH_RULE_TEXT,
     'inputRule' => C_MATCH_INPUT_RULE_ALL
-  ],
-  C_SCENARIO_ATTRIBUTE_TYPE_NAME => [
+  ),
+  C_SCENARIO_ATTRIBUTE_TYPE_NAME => array(
     'label' => '@name',
     'rule' => C_MATCH_RULE_NUMBER,
     'inputRule' => C_MATCH_INPUT_RULE_NUMBER
-  ],
-  C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR => [
+  ),
+  C_SCENARIO_ATTRIBUTE_TYPE_SELECTOR => array(
     'label' => '@cssセレクタ',
     'rule' => C_MATCH_RULE_TEXT,
     'inputRule' => C_MATCH_INPUT_RULE_ALL
-  ]
-];
+  )
+);
 
 /* シナリオ設定 - メール送信タイプ */
-$config['chatbotScenarioSendMailType'] = [
-  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => [
+$config['chatbotScenarioSendMailType'] = array(
+  C_SCENARIO_MAIL_TYPE_ALL_MESSAGE => array(
     'label' => 'チャット内容をすべてメールする',
     'tooltip' => 'それまでのすべてのチャットやり取り内容すべてをメールします。'
-  ],
-  C_SCENARIO_MAIL_TYPE_VARIABLES => [
+  ),
+  C_SCENARIO_MAIL_TYPE_VARIABLES => array(
     'label' => '変数の値のみメールする',
     'tooltip' => 'ヒアリングおよび選択肢にて入力（または選択）された内容をメールします。'
-  ],
-  C_SCENARIO_MAIL_TYPE_CUSTOMIZE => [
+  ),
+  C_SCENARIO_MAIL_TYPE_CUSTOMIZE => array(
     'label' => 'メール本文をカスタマイズする',
     'tooltip' => '自由にメール本文を編集することが可能です。<br>（変数の利用も可能です）'
-  ]
-];
+  )
+);
 
 /* シナリオ設定 - メール送信タイプ */
-$config['chatbotScenarioReceiveFileTypeList'] = [
-  C_SCENARIO_RECEIVE_FILE_TYPE_BASIC => [
+$config['chatbotScenarioReceiveFileTypeList'] = array(
+  C_SCENARIO_RECEIVE_FILE_TYPE_BASIC => array(
     'label' => '一般的なファイルに限定',
     'annotation' => '※PDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限されます。',
     'tooltip' => '送信可能なファイル形式を、PDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限します。'
-  ],
-  C_SCENARIO_RECEIVE_FILE_TYPE_EXTENDED => [
+  ),
+  C_SCENARIO_RECEIVE_FILE_TYPE_EXTENDED => array(
     'label' => '拡張設定',
     'annotation' => '※送信可能なファイルの拡張子を指定します。複数の拡張子を指定する場合はカンマ（,）で区切ります。',
     'tooltip' => 'PDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に加え、下記に指定した拡張子のファイルを受信可能とします。<br>複数の拡張子を指定する必要がある場合は、カンマ区切りで設定します。'
-  ]
-];
+  )
+);
 
 /* シナリオ設定 - 外部連携のタイプ */
-$config['chatbotScenarioExternalType'] = [
+$config['chatbotScenarioExternalType'] = array(
   C_SCENARIO_EXTERNAL_TYPE_API => 'API連携',
   C_SCENARIO_EXTERNAL_TYPE_SCRIPT => 'スクリプト'
-];
+);
 
 /* シナリオ設定 - 外部連携のメソッド種別 */
-$config['chatbotScenarioApiMethodType'] = [
+$config['chatbotScenarioApiMethodType'] = array(
   C_SCENARIO_METHOD_TYPE_GET => 'GET',
   C_SCENARIO_METHOD_TYPE_POST => 'POST'
-];
+);
 
 /* シナリオ設定 - 外部システム連携のレスポンス種別 */
-$config['chatbotScenarioApiResponseType'] = [
+$config['chatbotScenarioApiResponseType'] = array(
   0 => 'JSON'
-];
+);
 
 /* シナリオ設定 - 条件分岐 - 実行するアクション */
-$config['chatbotScenarioBranchOnConditionMatchValueType'] = [
-  C_SCENARIO_VARIABLE_CONDITION_IN => [
+$config['chatbotScenarioBranchOnConditionMatchValueType'] = array(
+  C_SCENARIO_VARIABLE_CONDITION_IN => array(
     'label' => 'のいずれかを含む'
-  ],
-  C_SCENARIO_VARIABLE_CONDITION_NOT_IN => [
+  ),
+  C_SCENARIO_VARIABLE_CONDITION_NOT_IN => array(
     'label' => 'のいずれも含まない場合'
-  ]
-];
+  )
+);
 
 /* シナリオ設定 - 条件分岐 - 実行するアクション */
-$config['chatbotScenarioBranchOnConditionActionType'] = [
-  C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT => [
+$config['chatbotScenarioBranchOnConditionActionType'] = array(
+  C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT => array(
     'label' => 'テキスト発言'
-  ],
-  C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO => [
+  ),
+  C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO => array(
     'label' => 'シナリオ呼出'
-  ],
-  C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE => [
+  ),
+  C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE => array(
     'label' => 'シナリオを終了'
-  ],
-  C_SCENARIO_PROCESS_ACTION_TYPE_NONE => [
+  ),
+  C_SCENARIO_PROCESS_ACTION_TYPE_NONE => array(
     'label' => '次のアクションへ'
-  ]
-];
+  )
+);
 
 /* シナリオ設定 - 条件分岐 - 実行するアクション（上記を満たさない） */
-  $config['chatbotScenarioBranchOnConditionElseActionType'] = [
-  C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT => [
+$config['chatbotScenarioBranchOnConditionElseActionType'] = array(
+  C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT => array(
     'label' => 'テキスト発言'
-  ],
-  C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO => [
+  ),
+  C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO => array(
     'label' => 'シナリオ呼出'
-  ],
-  C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE => [
+  ),
+  C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE => array(
     'label' => 'シナリオを終了'
-  ]
-];
-  $config['chatbotScenarioLeadTypeList'] = [
-    C_SCENARIO_LEAD_REGIST => '新規作成',
-    C_SCENARIO_LEAD_USE => '既存リストを使用'
-  ];
+  )
+);
+$config['chatbotScenarioLeadTypeList'] = array(
+  C_SCENARIO_LEAD_REGIST => '新規作成',
+  C_SCENARIO_LEAD_USE => '既存リストを使用'
+);
 
 /* 成果種別 */
-$config['achievementType'] = [
+$config['achievementType'] = array(
   C_ACHIEVEMENT_CV => "CV",
   C_ACHIEVEMENT_AVAILABLE => "有効",
   C_ACHIEVEMENT_UNAVAILABLE => "無効",
-];
+);
 
 /* 成果種別（検索用） */
-$config['achievementTypeForSearch'] = [
+$config['achievementTypeForSearch'] = array(
   C_ACHIEVEMENT_CV => "CV",
   C_ACHIEVEMENT_TERMINATE_SCENARIO => "途中離脱",
   C_ACHIEVEMENT_AVAILABLE => "有効",
   C_ACHIEVEMENT_UNAVAILABLE => "無効",
-];
+);
 
 /* 種別 */
-$config['chatType'] = [
+$config['chatType'] = array(
   C_CHAT_AUTO => "自動返信",
   C_CHAT_MANUAL => "",
   C_CHAT_NOENTRY => "未入室",
   C_CHAT_SORRY => "拒否"
-];
+);
 
 /* ファイル送信設定 - ファイル送信許可設定 */
 /* 通常選択肢 */
-$config['fileTransferSettingType'] = [
+$config['fileTransferSettingType'] = array(
   C_FILE_TRANSFER_SETTING_TYPE_BASIC => "基本設定<br>　<s>※ 送信できるファイルはPDF（pdf）、PowerPoint（ppt, pptx）、JPEG（jpg）、PNG（png）、GIF（gif）に制限されます。</s>",
   C_FILE_TRANSFER_SETTING_TYPE_EXTEND => "拡張設定<br>　<s>※ 基本設定で送信できるファイルに加えて、指定したファイルの種類を許可します。</s>"
-];
+);
 
 /* セキュリティ設定 - ログインIP許可設定 */
 /* 通常選択肢 */
-$config['securityEnableLoginIpFilterSetting'] = [
-    0 => "利用しない", // FIXME 定数化
-    1 => "ホワイトリスト登録する",
-    2 => "ブラックリスト登録する"
-];
+$config['securityEnableLoginIpFilterSetting'] = array(
+  0 => "利用しない", // FIXME 定数化
+  1 => "ホワイトリスト登録する",
+  2 => "ブラックリスト登録する"
+);
 
 /* 無料トライアル設定 － ビジネスモデル */
-$config['businessModelType'] = [
-    C_FREE_B_TO_B => "BtoB",
-    C_FREE_B_TO_C => "BtoC",
-    C_FREE_BOTH => "どちらも"
-];
+$config['businessModelType'] = array(
+  C_FREE_B_TO_B => "BtoB",
+  C_FREE_B_TO_C => "BtoC",
+  C_FREE_BOTH => "どちらも"
+);
