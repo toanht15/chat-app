@@ -1,12 +1,12 @@
 <?php
-class AlterTableMAgreementAddColumnSectorType extends CakeMigration {
+class AlterTableMAgreementsAddColumnWebsite extends CakeMigration {
 
 /**
  * Migration description
  *
  * @var string
  */
-	public $description = 'alter_table_m_agreement_add_column_sector_type';
+	public $description = 'alter_table_m_agreements_add_column_website';
 
 /**
  * Actions to be performed
@@ -17,14 +17,15 @@ class AlterTableMAgreementAddColumnSectorType extends CakeMigration {
 		'up' => array(
 			'create_field' => array(
 				'm_agreements' => array(
-					'sector_type' => array('type' => 'integer', 'null' => true, 'default' => '0', 'unsigned' => false, 'after' => 'business_model'),
-				),
-			),
+					'sector' => array('type' => 'string', 'null' => true, 'default' => '0', 'unsigned' => false, 'after' => 'business_model'),
+					'website' => array('type' => 'string', 'null' => true, 'default' => '', 'length' => 200, 'collate' => 'utf8_general_ci', 'charset' => 'utf8', 'after' => 'installation_url')
+        )
+      ),
 		),
 		'down' => array(
 			'drop_field' => array(
-				'm_agreements' => array('sector_type'),
-      ),
+				'm_agreements' => array('sector', 'website')
+      )
 		),
 	);
 
