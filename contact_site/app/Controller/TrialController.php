@@ -140,7 +140,12 @@ class TrialController extends AppController {
       $this->log('登録時バリデーションエラー：'.var_export($this->MUser->validationErrors, TRUE).'　データ：'.var_export($data['MUser'], TRUE), LOG_WARNING);
       // 画面に返す
       $this->response->statusCode(409);
-      return;
+      $returnData = json_encode([
+        'success' => false,
+        'message' => $this->MUser->validationErrors
+      ]);
+      $this->log('返却データ：'.$returnData, LOG_WARNING);
+      return $returnData;
     }
 
     $socket = new HttpSocket(array(
