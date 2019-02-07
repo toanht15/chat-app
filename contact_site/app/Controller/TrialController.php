@@ -24,6 +24,61 @@ class TrialController extends AppController {
   public $components = ['AutoMessageMailTemplate', 'MailSender', 'Auth'];
   public $uses = ['MUser','TMailTransmissionLog','MSystemMailTemplate','TSendSystemMailSchedule','MJobMailTemplate','MCompany'];
   private $tuIps = array('150.60.30.56','150.60.30.57','150.60.30.58','150.60.30.59');
+  // フリーメールアドレスドメイン
+  private $freeMailaddressDomains = array(
+    'gmail.com',
+    'yahoo.co.jp',
+    'outlook.jp',
+    'outlook.com',
+    'hotmail.co.jp',
+    'excite.co.jp',
+    'aol.jp',
+    'biglobe.ne.jp',
+    'zoho.com',
+    'yandex.com',
+    'mail.ru',
+    'inbox.ru',
+    'list.ru',
+    'bk.ru',
+    'dqnwara.com'
+  );
+
+  // 携帯電話ドメイン
+  private $careerDomains = array(
+    'ezweb.ne.jp',
+    'ido.ne.jp',
+    'biz.ezweb.ne.jp',
+    'augps.ezweb.ne.jp',
+    'uqmobile.jp',
+    'docomo.ne.jp',
+    'mopera.net',
+    'dwmail.jp',
+    'pdx.ne.jp',
+    'wcm.ne.jp',
+    'willcom.com',
+    'y-mobile.ne.jp',
+    'emnet.ne.jp',
+    'emobile-s.ne.jp',
+    'emobile.ne.jp',
+    'ymobile1.ne.jp',
+    'ymobile.ne.jp',
+    'jp-c.ne.jp',
+    'jp-d.ne.jp',
+    'jp-h.ne.jp',
+    'jp-k.ne.jp',
+    'jp-n.ne.jp',
+    'jp-q.ne.jp',
+    'jp-r.ne.jp',
+    'jp-s.ne.jp',
+    'jp-t.ne.jp',
+    'sky.tkc.ne.jp',
+    'sky.tkk.ne.jp',
+    'sky.tu-ka.ne.jp',
+    'disney.ne.jp',
+    'i.softbank.jp',
+    'softbank.ne.jp',
+    'vodafone.ne.jp'
+  );
 
   public function beforeFilter(){
     parent::beforeFilter();
@@ -85,7 +140,12 @@ class TrialController extends AppController {
       $this->log('登録時バリデーションエラー：'.var_export($this->MUser->validationErrors, TRUE).'　データ：'.var_export($data['MUser'], TRUE), LOG_WARNING);
       // 画面に返す
       $this->response->statusCode(409);
-      return;
+      $returnData = json_encode([
+        'success' => false,
+        'message' => $this->MUser->validationErrors
+      ]);
+      $this->log('返却データ：'.$returnData, LOG_WARNING);
+      return $returnData;
     }
 
     $socket = new HttpSocket(array(
@@ -129,6 +189,10 @@ class TrialController extends AppController {
       $this->log('入力時バリデーションエラー：'.var_export($this->MUser->validationErrors, TRUE).'　データ：'.var_export($data['MUser'], TRUE), LOG_WARNING);
       $errorMessage = $this->MUser->validationErrors;
       return $errorMessage['mail_address'][0];
+    } else if(!$this->isFreeAddressChk($data['MUser']['mail_address'])) {
+      return 'フリーアドレスのご利用はできません。';
+    } else if(!$this->isCareerDomainChk($data['MUser']['mail_address'])) {
+      return '携帯電話のメールアドレスのご利用はできません。';
     }
   }
 
@@ -151,5 +215,23 @@ class TrialController extends AppController {
       $r_str .= $str[rand(0, count($str) - 1)];
     }
     return $r_str;
+  }
+
+  private function isFreeAddressChk($field = array()) {
+    foreach($this->freeMailaddressDomains as $k => $v){
+      if(preg_match('/(@'.$v.'$)/', $field['mail_address'])) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private function isCareerDomainChk($field=array()) {
+    forEach($this->careerDomains as $index => $domain) {
+      if(preg_match('/(@'.$domain.'$)/', $field['mail_address'])) {
+        return false;
+      }
+    }
+    return true;
   }
 }
