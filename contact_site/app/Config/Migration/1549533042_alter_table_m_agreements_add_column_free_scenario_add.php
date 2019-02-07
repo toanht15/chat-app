@@ -1,12 +1,12 @@
 <?php
-class AlterTableMAgreementsAddColumnWebsite extends CakeMigration {
+class AlterTableMAgreementsAddColumnFreeScenarioAdd extends CakeMigration {
 
 /**
  * Migration description
  *
  * @var string
  */
-	public $description = 'alter_table_m_agreements_add_column_website';
+	public $description = 'alter_table_m_agreements_add_column_free_scenario_add';
 
 /**
  * Actions to be performed
