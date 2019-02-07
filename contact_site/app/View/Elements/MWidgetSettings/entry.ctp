@@ -1361,19 +1361,16 @@ $headerNo = 1;
           <!-- 吹き出しデザイン -->
           <li>
             <span class="require"><label>吹き出しデザイン</label></span>
-            <pre><label class="pointer"><?= $this->ngForm->input('chat_message_design_type', [
-                  'type' => 'radio',
-                  'options' => $chatMessageDesignType,
-                  'legend' => false,
-                  'separator' => '</label><br><label class="pointer">',
-                  'class' => 'chatMessageDesignType',
-                  'div' => false,
-                  'label' => false,
-                  'error' => false
-                ],
-                  [
-                    'entity' => 'MWidgetSetting.chat_message_design_type'
-                  ]) ?></label></pre>
+            <div class="chatMessageDesignBlock">
+              <label class="pointer"><input type="radio" name="data[MWidgetSetting][chat_message_design_type]" id="MWidgetSettingChatMessageDesignType1" value="1" checked="checked" class="chatMessageDesignType" ng-model="chat_message_design_type" ng-init="chat_message_design_type='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'chat_message_design_type'))?>'">BOX型</label>
+              <div ng-show="chat_message_design_type === '1'" class="chatMessageArrowPositionBlock">
+                <div class="chatMessageArrowPosition">
+                  <label class="pointer first"><input type="radio" name="data[MWidgetSetting][chat_message_arrow_position]" id="MWidgetSettingChatMessageArrowPosition1" value="1" class="chatMessageArrowPositionType" ng-model="chat_message_arrow_position" ng-init="chat_message_arrow_position=<?=h($this->formEx->val($this->data['MWidgetSetting'], 'chat_message_arrow_position'))?>">カドを上にする</label>
+                  <label class="pointer last"><input type="radio" name="data[MWidgetSetting][chat_message_arrow_position]" id="MWidgetSettingChatMessageArrowPosition2" value="2" class="chatMessageArrowPositionType" ng-model="chat_message_arrow_position" ng-init="chat_message_arrow_position=<?=h($this->formEx->val($this->data['MWidgetSetting'], 'chat_message_arrow_position'))?>">カドを下にする</label>
+                </div>
+              </div>
+              <label class="pointer last"><input type="radio" name="data[MWidgetSetting][chat_message_design_type]" id="MWidgetSettingChatMessageDesignType2" value="2" class="chatMessageDesignType" ng-model="chat_message_design_type" ng-init="chat_message_design_type='<?=h($this->formEx->val($this->data['MWidgetSetting'], 'chat_message_design_type'))?>'">吹き出し型</label>
+            </div>
           </li>
           <?php if ( $this->Form->isFieldError('chat_message_design_type') ) echo $this->Form->error('chat_message_design_type', null, ['wrap' => 'li']); ?>
           <!-- 吹き出しデザイン -->

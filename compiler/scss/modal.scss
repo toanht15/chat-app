@@ -1402,7 +1402,8 @@
               width:11em;
               margin: 5px 0 5px 36px !important;
               &.align-start {
-                align-items: flex-start;
+                justify-content: start;
+                align-items: start;
               }
             }
             .labelAreaPassword {

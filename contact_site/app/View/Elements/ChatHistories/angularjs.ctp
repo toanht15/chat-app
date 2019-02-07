@@ -216,8 +216,17 @@
       var isSmartphone = true;
       var radioName = "sinclo-radio" + Object.keys(chat).length;
       var option = ( typeof(opt) !== 'object' ) ? { radio: true } : opt;
+      var isFreeBlock = false;
       for (var i = 0; strings.length > i; i++) {
-        if(strings[i].match(/(<div|<\/div>)/)) {
+        if(strings[i].match(/(<div class="free-block")/)) {
+          content += strings[i];
+          isFreeBlock = true;
+          continue;
+        } else if(strings[i].match(/(<\/div>)/)) {
+          isFreeBlock = false;
+          content += strings[i];
+          continue;
+        } else if(isFreeBlock) {
           content += strings[i];
           continue;
         }
@@ -280,6 +289,8 @@
               reInputPulldown: 38,
               reInputCalendar: 39,
               reInputCarousel: 44,
+              button: 47,
+              reInputButton: 48,
               cancel: 90
             },
             message: {
@@ -291,6 +302,7 @@
               pulldown: 41,
               calendar: 42,
               carousel: 45
+              button: 46
             }
           },
           cogmo: {
@@ -532,7 +544,12 @@
           content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
         }
       }
-       else if ( type === chatApi.messageType.scenario.customer.hearing || type === chatApi.messageType.scenario.customer.radio || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar || type === chatApi.messageType.scenario.customer.carousel) {
+       else if ( type === chatApi.messageType.scenario.customer.hearing
+          || type === chatApi.messageType.scenario.customer.radio
+          || type === chatApi.messageType.scenario.customer.pulldown
+          || type === chatApi.messageType.scenario.customer.calendar
+          || type === chatApi.messageType.scenario.customer.carousel
+          || type === chatApi.messageType.scenario.customer.button) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
         forDeletionMessage = escape_html(forDeletionMessage);
@@ -560,7 +577,12 @@
           }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
-      } else if ( type === chatApi.messageType.scenario.customer.reInputText || type === chatApi.messageType.scenario.customer.reInputRadio || type === chatApi.messageType.scenario.customer.reInputPulldown || type === chatApi.messageType.scenario.customer.reInputCalendar || type === chatApi.messageType.scenario.customer.reInputCarousel) {
+      } else if ( type === chatApi.messageType.scenario.customer.reInputText
+          || type === chatApi.messageType.scenario.customer.reInputRadio
+          || type === chatApi.messageType.scenario.customer.reInputPulldown
+          || type === chatApi.messageType.scenario.customer.reInputCalendar
+          || type === chatApi.messageType.scenario.customer.reInputCarousel
+          || type === chatApi.messageType.scenario.customer.reInputButton) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
         forDeletionMessage = escape_html(forDeletionMessage);
@@ -674,7 +696,10 @@
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
-      else if ( type === chatApi.messageType.scenario.message.pulldown || type === chatApi.messageType.scenario.message.calendar || type === chatApi.messageType.scenario.message.carousel) {
+      else if ( type === chatApi.messageType.scenario.message.pulldown
+          || type === chatApi.messageType.scenario.message.calendar
+          || type === chatApi.messageType.scenario.message.carousel
+          || type === chatApi.messageType.scenario.message.button) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");

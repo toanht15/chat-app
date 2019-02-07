@@ -876,7 +876,13 @@ $config['chatbotScenarioActionList'] = [
             'titleFontSize'                => '15',
             'subTitleFontSize'             => '14',
             'outBorderColor'               => '#E8E7E0',
-            'inBorderColor'               => '#E8E7E0',
+            'inBorderColor'                => '#E8E7E0',
+            'messageAlign'                 => '2',
+            'buttonBackgroundColor'        => '#FFFFFF',
+            'buttonTextColor'              => '#007AFF',
+            'buttonAlign'                  => '2',
+            'buttonActiveColor'            => '#BABABA',
+            'buttonBorderColor'            => '#E3E3E3'
           ],
           'images' => [
             [
