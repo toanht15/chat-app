@@ -301,7 +301,7 @@
               returnBulkHearing: 40,
               pulldown: 41,
               calendar: 42,
-              carousel: 45
+              carousel: 45,
               button: 46
             }
           },
