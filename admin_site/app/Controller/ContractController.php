@@ -667,7 +667,13 @@ class ContractController extends AppController
       $agreementInfo['memo'] = "";
     }
     if (empty($agreementInfo['sector'])) {
-      $agreementInfo['sector_type'] = 0;
+      $agreementInfo['sector'] = "";
+    }
+    if (empty($agreementInfo['website'])) {
+      $agreementInfo['website'] = "";
+    }
+    if (empty($agreementInfo['free_scenario_add'])) {
+      $agreementInfo['free_scenario_add'] = 0;
     }
 
     $applicationMailAddress = '';
@@ -684,7 +690,7 @@ class ContractController extends AppController
       $administratorMailAddress = $userInfo["user_mail_address"];
     }
 
-    $this->MAgreements->set([
+    $this->MAgreements->set(array(
       'm_companies_id' => $addedCompanyInfo['id'],
       'company_name' => $companyInfo['company_name'],
       'business_model' => $agreementInfo['business_model'],
@@ -705,8 +711,11 @@ class ContractController extends AppController
       'admin_password' => $password,
       'telephone_number' => $agreementInfo['telephone_number'],
       'note' => $agreementInfo['note'],
-      'memo' => $agreementInfo['memo']
-    ]);
+      'memo' => $agreementInfo['memo'],
+      'sector' => $agreementInfo['sector'],
+      'website' => $agreementInfo['website'],
+      'free_scenario_add' => $agreementInfo['free_scenario_add']
+    ));
     // スーパー管理者情報追加
     $tmpData = [
       "m_companies_id" => $addedCompanyInfo['id'],
