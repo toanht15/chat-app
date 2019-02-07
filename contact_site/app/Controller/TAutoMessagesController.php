@@ -809,7 +809,7 @@ class TAutoMessagesController extends AppController {
         'TAutoMessage.sort' => 'asc',
         'TAutoMessage.id'   => 'asc'
       ],
-      'fields' => ['TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name'],
+      'fields' => ['TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name', 'CalledAutoMessage.name'],
       'conditions' => [
         'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
         'TAutoMessage.del_flg != '    => 1
@@ -820,8 +820,15 @@ class TAutoMessagesController extends AppController {
         'alias'      => 'TChatbotScenario',
         'conditions' => [
           'TAutoMessage.t_chatbot_scenario_id = TChatbotScenario.id'
-        ]
-                  ]],
+        ]],
+        [
+          'type'       => 'LEFT',
+          'table'      => 't_auto_messages',
+          'alias'      => 'CalledAutoMessage',
+          'conditions' => [
+            'TAutoMessage.call_automessage_id = CalledAutoMessage.id'
+          ]
+        ]],
       'recursive'  => -1
     ];
     $data = $this->TAutoMessage->find('all', $params);
