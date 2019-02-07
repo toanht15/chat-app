@@ -268,14 +268,14 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox p#widgetTitle.sp {font-size: 14px; line-height: 14px}
         /*#sincloBox p#widgetTitle.spText{ text-indent: 1em; }*/
         #sincloBox div#minimizeBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>minimize.png'); background-position-y: 0px; position: absolute; top: calc(50% - 10px); right: 6px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
-  /*
-        #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
+        /*
+              #sincloBox div#addBtn { cursor: pointer; background-image: url('<?=$gallaryPath?>add.png'); background-position-y: 0px; top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
         #sincloBox div#addBtn.closeButtonSetting { right: 25px; }
   */
         #sincloBox div#closeBtn { display: none; cursor: pointer; background-image: url('<?=$gallaryPath?>close.png'); background-position-y: -1.5px; position: absolute; top: calc(50%-9px); right: 6px; content: " "; width: 18px; height: 18px; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear; z-index: 2; }
         #sincloBox div#closeBtn.closeButtonSetting {display: inline-block; right: 5px; }
-  /*
-        #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
+        /*
+              #sincloBox p#widgetTitle:after { background-position-y: 3px; background-image: url('<?=$gallaryPath?>yajirushi.png'); top: 6px; right: 10px; bottom: 6px; content: " "; display: inline-block; width: 20px; height: 20px; position: absolute; background-size: contain; vertical-align: middle; background-repeat: no-repeat; transition: transform 200ms linear}
         #sincloBox.open p#widgetTitle:after { transform: rotate(0deg); }
         #sincloBox:not(.open) p#widgetTitle:after { transform: rotate(180deg); }
   */
@@ -323,10 +323,251 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox .flatpickr-calendar .dayContainer .flatpickr-day.today { border: none;}
         #sincloBox .flatpickr-calendar .dayContainer span:nth-child(7n+7) { border-right: none;}
 
+        /* slick css */
+        #sincloBox .slick-slider {
+          position: relative;
+          display: block;
+          box-sizing: border-box;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+          -webkit-touch-callout: none;
+          -khtml-user-select: none;
+          -ms-touch-action: pan-y;
+          touch-action: pan-y;
+          -webkit-tap-highlight-color: transparent;
+        }
+        #sincloBox .slick-list {
+          position: relative;
+          display: block;
+          overflow: hidden;
+          margin: 0;
+          padding: 0;
+        }
+        #sincloBox .slick-list:focus {
+          outline: none;
+        }
+        #sincloBox .slick-list.dragging {
+          cursor: pointer;
+          cursor: hand;
+        }
+        #sincloBox .slick-slider .slick-track,
+        #sincloBox .slick-slider .slick-list {
+          -webkit-transform: translate3d(0, 0, 0);
+          -moz-transform: translate3d(0, 0, 0);
+          -ms-transform: translate3d(0, 0, 0);
+          -o-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+        }
+        #sincloBox .slick-track {
+          position: relative;
+          top: 0;
+          left: 0;
+          display: block;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        #sincloBox .slick-track:before,
+        #sincloBox .slick-track:after {
+          display: table;
+          content: "";
+        }
+        #sincloBox .slick-track:after {
+          clear: both;
+        }
+        #sincloBox .slick-loading .slick-track {
+          visibility: hidden;
+        }
+        #sincloBox .slick-slide {
+          display: none;
+          float: left;
+          height: 100%;
+          min-height: 1px;
+        }
+        #sincloBox [dir=rtl] .slick-slide {
+          float: right;
+        }
+        #sincloBox .slick-slide img {
+          display: block;
+        }
+        #sincloBox .slick-slide.slick-loading img {
+          display: none;
+        }
+        #sincloBox .slick-slide.dragging img {
+          pointer-events: none;
+        }
+        #sincloBox .slick-initialized .slick-slide {
+          display: block;
+        }
+        #sincloBox .slick-loading .slick-slide {
+          visibility: hidden;
+        }
+        #sincloBox .slick-vertical .slick-slide {
+          display: block;
+          height: auto;
+          border: 1px solid transparent;
+        }
+        #sincloBox .slick-arrow.slick-hidden {
+          display: none;
+        }
+        #sincloBox .slick-loading .slick-list {
+          background: #fff url("./ajax-loader.gif") center center no-repeat;
+        }
+        #sincloBox .slick-prev,
+        #sincloBox .slick-next {
+          font-size: 0;
+          line-height: 0;
+          position: absolute;
+          top: 50%;
+          display: block;
+          width: 20px;
+          height: 20px;
+          padding: 0;
+          -webkit-transform: translate(0, -50%);
+          -ms-transform: translate(0, -50%);
+          transform: translate(0, -50%);
+          cursor: pointer;
+          color: transparent;
+          border: none;
+          outline: none;
+          background: transparent;
+        }
+        #sincloBox .slick-prev:hover,
+        #sincloBox .slick-prev:focus,
+        #sincloBox .slick-next:hover,
+        #sincloBox .slick-next:focus {
+          color: transparent;
+          outline: none;
+          background: transparent;
+        }
+        #sincloBox .slick-prev:hover:before,
+        #sincloBox .slick-prev:focus:before,
+        #sincloBox .slick-next:hover:before,
+        #sincloBox .slick-next:focus:before {
+          opacity: 1;
+        }
+        #sincloBox .slick-prev.slick-disabled:before,
+        #sincloBox .slick-next.slick-disabled:before {
+          opacity: 0.25 !important;
+        }
+        #sincloBox .slick-prev:before,
+        #sincloBox .slick-next:before {
+          font-family: "slick";
+          font-size: 20px;
+          line-height: 1;
+          opacity: 0.75;
+          color: white;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        #sincloBox .slick-prev {
+          left: -25px;
+          z-index: 999;
+        }
+        #sincloBox [dir=rtl] .slick-prev {
+          right: -25px;
+          left: auto;
+          z-index: 999;
+        }
+        /*#sincloBox .slick-prev:before {*/
+        /*content: "←";*/
+        /*}*/
+        /*#sincloBox [dir=rtl] .slick-prev:before {*/
+        /*content: "→";*/
+        /*}*/
+        #sincloBox .slick-next {
+          right: -25px;
+        }
+        #sincloBox [dir=rtl] .slick-next {
+          right: auto;
+          left: -25px;
+        }
+        /*#sincloBox .slick-next:before {*/
+        /*content: "→";*/
+        /*}*/
+        /*#sincloBox [dir=rtl] .slick-next:before {*/
+        /*content: "←";*/
+        /*}*/
+        #sincloBox .slick-dotted.slick-slider {
+          margin-bottom: 30px;
+        }
+        #sincloBox .slick-dots {
+          position: absolute;
+          bottom: -25px;
+          display: block;
+          width: 100%;
+          padding: 0;
+          margin: 0;
+          list-style: none;
+          text-align: center;
+        }
+        #sincloBox .slick-dots li {
+          position: relative;
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          margin: 0 5px;
+          padding: 0;
+          cursor: pointer;
+        }
+        #sincloBox .slick-dots li button {
+          font-size: 0;
+          line-height: 0;
+          display: block;
+          width: 20px;
+          height: 20px;
+          padding: 5px;
+          cursor: pointer;
+          color: transparent;
+          border: 0;
+          outline: none;
+          background: transparent;
+        }
+        #sincloBox .slick-dots li button:hover,
+        #sincloBox .slick-dots li button:focus {
+          outline: none;
+        }
+        #sincloBox .slick-dots li button:hover:before,
+        #sincloBox .slick-dots li button:focus:before {
+          opacity: 1;
+        }
+        #sincloBox .slick-dots li button:before {
+          font-family: "slick";
+          font-size: 6px;
+          line-height: 20px;
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 20px;
+          height: 20px;
+          content: "•";
+          text-align: center;
+          opacity: 0.25;
+          color: black;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+        }
+        #sincloBox .slick-dots li.slick-active button:before {
+          opacity: 0.75;
+          color: black;
+        }
+
+        #sincloBox .fa-chevron-right:before {
+          content: "\f054";
+        }
+
+        #sincloBox .fa-chevron-left:before {
+          content: "\f053";
+        }
+        /* slick css end */
+
+
         <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
         @keyframes rightEffect { 0% { transform :translate3d(20px, 0px, 0px); opacity :0; } 70% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
         @keyframes leftEffect { 0% { transform :translate3d(-20px, 0px, 0px) scale(0.8); opacity :0; } 69% {} 100% { transform :translate3d(0px, 0px, 0px); opacity :1; } }
         @keyframes dotScale { 0%,100%{transform: scale(0.4);opacity:0.3;} 30%,70%{opacity:0.7} 50% {transform: scale(1);opacity:1.0; } }
+        #sincloBox ul#chatTalk li.chat_carousel { background-color: transparent }
         #sincloBox ul#chatTalk { width: 100%; height: 194px; padding: 0 5px 30.8px 5px; list-style-type: none; overflow-y: scroll; overflow-x: hidden; margin: 0}
         #sincloBox ul#chatTalk.spPortrait {height: 310px; overflow: hidden}
         #sincloBox ul#chatTalk.middleSize { height: 284px; padding: 0 5px 45.6px 5px;}
@@ -426,7 +667,7 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:checked + label:after { content: ""; position: absolute; top: {{widget.radioButtonAfterTop}}px; left: {{widget.radioButtonAfterLeft}}px;; margin-top: -{{widget.radioButtonAfterMarginTop}}px; width: {{widget.re_text_size-7}}px; height: {{widget.re_text_size-7}}px; background: {{widget.settings['main_color']}}; border-radius: 50%; }
         #sincloBox ul#chatTalk li span.sinclo-radio [type="radio"]:disabled + label { opacity: 0.5;}
         #sincloBox ul#chatTalk li.sinclo_re select:disabled { opacity: 0.5;}
-        #sincloBox ul#chatTalk li.sinclo_re .disabledArea {pointer-events: none; opacity: 0.5;}
+        #sincloBox ul#chatTalk li .disabledArea {pointer-events: none; opacity: 0.5;}
 
         /* ファイル送信 */
         #sincloBox ul#chatTalk li .sendFileContent { display: table; table-layout: fixed; width: 100%; height: 64px; white-space: pre-line; margin-bottom: 0; }
@@ -591,9 +832,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#callTab #telContent.middleSize{ max-height: 202px; height: 202px}
         #sincloBox section#callTab #telContent.largeSize{ max-height: 280px; height: 280px}
         <?php if ( $coreSettings[C_COMPANY_USE_CHAT] ) :?>
-          #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }
+        #sincloBox section#callTab #telContent .tblBlock {  text-align: center;  margin: 0 auto;  width: 240px;  display: table;  flex-direction: column;  align-content: center;  height: 119px!important;  justify-content: center; }
         <?php else: ?>
-          #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
+        #sincloBox section#callTab #telContent .tblBlock { text-align: center; margin: 0 auto; width: 240px; display: table; flex-direction: column; align-content: center; justify-content: center; }
         <?php endif; ?>
         #sincloBox section#callTab #telContent span { word-wrap: break-word; word-break: break-all; font-size: 11px; line-height: 1.5!important; color: #6B6B6B; white-space: pre-wrap; display: table-cell; vertical-align: middle; text-align: center }
         #sincloBox section#callTab #telContent span.middleSize { font-size: 12px; line-height: 1.5!important; }
@@ -607,8 +848,8 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#callTab #accessIdArea.middleSize { margin: 10px auto; padding: 7px; font-size: 26px; }
         #sincloBox section#callTab #accessIdArea.largeSize { margin: 10px auto; padding: 7px; font-size: 26px; }
         <?php endif; ?>
-      <?php endif; ?>
-      <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) ) :?>
+        <?php endif; ?>
+        <?php if ( $coreSettings[C_COMPANY_USE_CHAT] && ($coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT])) ) :?>
         #sincloBox section#navigation { border-width: 0 1px; height: 40px; position: relative; display: block; }
         #sincloBox section#navigation ul { margin: 0 0 0 -1px; display: table; padding: 0; position: absolute; top: 0; left: 0; height: 40px; width: 285px }
         #sincloBox section#navigation ul.middleSize { width: 343.5px }
@@ -633,21 +874,21 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
         #sincloBox section#navigation ul li[data-tab='chat'].details:not(.selected):not(.notNone){ border-right: none }
         #sincloBox section#navigation ul li.selected::after{ content: " "; border-bottom: 2px solid {{widget.settings['main_color']}}; position: absolute; bottom: 0px; left: 5px; right: 5px;}
         #sincloBox section#navigation ul li::before{ margin-right: 5px; color: #BCBCBC; content: " "; display: inline-block; width: 18px; height: 18px; position: relative; background-size: contain; vertical-align: middle; background-repeat: no-repeat }
-  /*
-        #sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('/img/widget/icon_tel.png'); }
-        #sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('/img/widget/icon_chat.png'); }
-  */
+        /*
+              #sincloBox section#navigation ul li[data-tab='call']::before{ background-image: url('/img/widget/icon_tel.png'); }
+              #sincloBox section#navigation ul li[data-tab='chat']::before{ background-image: url('/img/widget/icon_chat.png'); }
+        */
         #sincloBox section#navigation ul li[data-tab='call']::before{ content: "\f095"; font-family: SincloFont; font-size: 17px; margin: -5px 7px 0 0; font-weight: bold;}
         #sincloBox section#navigation ul li[data-tab='chat']::before{ content: "\f075"; font-family: SincloFont; font-size: 17px; margin: -5px 7px 0 0; transform: scale( 1 , 1.1 ); }
 
         #sincloBox section#navigation ul li.selected::before{ color: {{widget.settings['main_color']}}; }
-      <?php endif; ?>
-      <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
+        <?php endif; ?>
+        <?php if ( $coreSettings[C_COMPANY_USE_SYNCLO] || (isset($coreSettings[C_COMPANY_USE_DOCUMENT]) && $coreSettings[C_COMPANY_USE_DOCUMENT]) ) :?>
         #sincloBox span#sincloAccessInfo{ height: 26.5px; display: block; padding-left: 0.5em; padding-top: 5px; padding-bottom: 5px; border-top: 1px solid {{widget.settings['widget_border_color']}}; font-size: 0.9em; }
         #sincloBox span#sincloAccessInfo:not(.notNoneWidgetOutsideBorder) { border-top:none; }
         #sincloBox span#sincloAccessInfo.details{ border-top: 1px solid {{widget.settings['widget_inside_border_color']}}; }
         #sincloBox span#sincloAccessInfo.details:not(.notNone){ border-top: none; }
-      <?php endif; ?>
+        <?php endif; ?>
         #sincloBox #footer{ height: 26.5px; padding: 5px 0; text-align: center; border: 1px solid {{widget.settings['widget_border_color']}}; color:#A1A1A1!important; font-size: 11px;margin: 0; border-top: none; }
         #sincloBox #footer:not(.notNoneWidgetOutsideBorder) { border:none; }
         .disableCopy{ user-select: none;-moz-user-select: none;-webkit-user-select: none;-ms-user-select: none; }
@@ -688,6 +929,9 @@ $gallaryPath = C_PATH_NODE_FILE_SERVER.'/img/widget/';
             </div>
             <div style="height: auto!important; padding:0; display: none;" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1}">
               <li class="sinclo_re chat_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize, largeSize: widget.isLargeSize ,boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, arrowUp: widget.settings['chat_message_design_type'] == 1 && widget.settings['chat_message_arrow_position'] == 1, arrowBottom: widget.settings['chat_message_design_type'] != 1 || widget.settings['chat_message_arrow_position'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
+            </div>
+            <div style="height: auto!important; padding:0; display: none;" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1}">
+              <li class="sinclo_carousel chat_carousel" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize,boxType: widget.settings['chat_message_design_type'] == 1, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">企業側メッセージ</span></li>
             </div>
             <div style="height: auto!important; padding:0; display: none;" ng-class="{grid_preview : widget.settings['show_chatbot_icon'] == 1}">
               <li class="sinclo_re file_left" ng-class="{ notNone:widget.re_border_none === '' || widget.re_border_none === false, middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize, boxType: widget.settings['chat_message_design_type'] == 1, balloonType: widget.settings['chat_message_design_type'] == 2, effect_left: widget.settings['chat_message_with_animation'] === '1'}"><span class="cName details" ng-if="widget.settings['show_automessage_name'] === '1'" ng-class="{ middleSize: widget.isMiddleSize,largeSize: widget.isLargeSize || widget.isMaximumSize}">{{widget.settings['sub_title']}}</span><span class="details">ファイルが送信されました</span><div class="sendFileContent"><div class="sendFileThumbnailArea"><img class="sendFileThumbnail" src="" width="64" height="64"><i class="fa fa-4x sendFileThumbnail" aria-hidden="true"></i></div><div class="sendFileMetaArea"><span class="data sendFileName details">ファイル名</span><span class="data sendFileSize details">ファイルサイズ</span></div></div></li>

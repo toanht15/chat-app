@@ -8083,6 +8083,12 @@ ul.naviBtn {
                       border: 1px solid #909090 !important;
                       width: calc(100% - 5px);
                     }
+
+                    .disabledArea {
+                      pointer-events: none;
+                      opacity: 0.5;
+                      background-color: #d9d9d9;
+                    }
                   }
 
                   .area-btn {
@@ -8129,8 +8135,41 @@ ul.naviBtn {
                       width: 500px;
                     }
 
+                    .uploadProgress {
+                      padding: 0.5em 0;
+
+                      .uploadProgressArea {
+                        position: relative;
+                        width: 100%;
+                        max-width: 35em;
+                        height: 1.5em;
+                        border: 1px solid #d9d9d9;
+                        white-space: nowrap;
+                        overflow: hidden;
+
+                        .uploadProgressRate {
+                          position: absolute;
+                          top: 0;
+                          left: 0;
+                          background-image: linear-gradient(  -45deg,  #ffffff 25%,  $main-color 25%,  $main-color 50%,  #ffffff 50%,  #ffffff 75%,  $main-color 75%,  $main-color );
+                          background-size: 15px 15px;
+                          background-attachment: fixed;
+                          white-space: nowrap;
+                          overflow: hidden;
+                          height: 100%;
+                          width: 0%;
+                        }
+
+                        span {
+                          padding: 0 5px;
+                          height: 100%;
+                          line-height: 1.5em;
+                        }
+                      }
+                    }
+
                     .dropdown-custom-design-area {
-                      width: 32em;
+                      width: 35em;
 
                       span {
                         margin-left: 15px;
@@ -8141,16 +8180,16 @@ ul.naviBtn {
                         height: 35px;
 
                         label {
-                          -ms-flex-preferred-size: 100px;
-                          flex-basis: 100px;
-                          margin-top: 10px;
+                          -ms-flex-preferred-size: 130px;
+                          flex-basis: 130px;
+                          margin-top: 6px;
                         }
 
                         input {
                           border: none !important;
                           border-bottom: 1px solid #909090 !important;
                           border-radius: 0 !important;
-                          width: 120px;
+                          width: 108px;
                           height: 26px;
                         }
                       }
@@ -8162,6 +8201,72 @@ ul.naviBtn {
                         -ms-flex-pack: center;
                         justify-content: center;
                         height: 25px
+                      }
+
+                      .carousel-pattern {
+                        display: inline-block;
+                        input {
+                          width: 20px;
+                          height: 13px;
+                        }
+                      }
+
+                      .carousel-arrow-type{
+                        display: inline-block;
+                        input {
+                          width: 20px;
+                          height: 13px;
+                        }
+
+                        .fa-chevron-right:before {
+                          content: "\f054";
+                        }
+                      }
+                    }
+
+                    .carousel-item {
+                      border: 1px solid #C3D69B;
+                      border-radius: 5px;
+                      margin-top: 10px;
+
+                      .carousel-item-header {
+                        border-bottom: 1px solid #C3D69B;
+                        padding-top: 2px;
+                        padding-left: 5px;
+                        height: 32px;
+
+                        p {
+                          display: inline-block;
+                          font-size: 14px;
+                          margin: 5px 3px 3px 3px;
+                        }
+                      }
+
+                      .carousel-item-body {
+                        .carousel-title {
+                          margin-top: 10px;
+                        }
+
+                        .carousel-label {
+                          margin-left: 10px;
+                          display: inline-block;
+                          width: 110px;
+                        }
+
+                        .carousel-answer {
+                          margin-top: 2px;
+                        }
+
+                        .carousel-button {
+                          margin-left: 128px;
+                        }
+
+                        input, textarea {
+                          width: 75%;
+                          display: inline-block;
+                          height: 27px;
+                          margin-top: 3px;
+                        }
                       }
                     }
                   }

@@ -140,7 +140,8 @@ $(function(){
     else if ( strcmp($val['THistoryChatLog']['message_type'], 12) === 0 || strcmp($val['THistoryChatLog']['message_type'], 33) === 0
       || strcmp($val['THistoryChatLog']['message_type'], 34) === 0 || strcmp($val['THistoryChatLog']['message_type'], 35) === 0
       || strcmp($val['THistoryChatLog']['message_type'], 36) === 0 || strcmp($val['THistoryChatLog']['message_type'], 37) === 0
-      || strcmp($val['THistoryChatLog']['message_type'], 38) === 0 || strcmp($val['THistoryChatLog']['message_type'], 39) === 0) {
+      || strcmp($val['THistoryChatLog']['message_type'], 38) === 0 || strcmp($val['THistoryChatLog']['message_type'], 39) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 43) === 0 || strcmp($val['THistoryChatLog']['message_type'], 44) === 0) {
       $className = "sinclo_re";
       $id = $val['THistoryChatLog']['id'];
       $historyId = $val['THistoryChatLog']['t_histories_id'];
@@ -304,7 +305,9 @@ $(function(){
       $isRecieveFile = false;
       $imgTag = false;
     }
-    else if ( strcmp($val['THistoryChatLog']['message_type'], 41) === 0 || strcmp($val['THistoryChatLog']['message_type'], 42) === 0) {
+    else if ( strcmp($val['THistoryChatLog']['message_type'], 41) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 42) === 0
+      || strcmp($val['THistoryChatLog']['message_type'], 45) === 0) {
       // pulldown and calendar
       $className = "sinclo_auto";
       $name = "シナリオメッセージ（ヒアリング）";
@@ -376,10 +379,29 @@ $(function(){
               echo $json['message'];
               break;
           }
-        } else if(intval($val['THistoryChatLog']['message_type']) === 41 || intval($val['THistoryChatLog']['message_type']) === 42) {
-          // pulldown and calendar
+        } else if(intval($val['THistoryChatLog']['message_type']) === 41 || intval($val['THistoryChatLog']['message_type']) === 42 || intval($val['THistoryChatLog']['message_type']) === 45) {
+          // pulldown, calendar, carousel
           $json = json_decode($val['THistoryChatLog']['message'], TRUE);
-          echo $this->htmlEx->makeChatView($json['message'], $isSendFile, $isRecieveFile, $imgTag);
+          $textOfMessage = '';
+          if (!$json['message']) {
+            switch (intval($val['THistoryChatLog']['message_type'])) {
+              case 41:
+                $textOfMessage = '（プルダウン質問内容なし）';
+                break;
+              case 42:
+                $textOfMessage = '（カレンダー質問内容なし）';
+                break;
+              case 45:
+                $textOfMessage = '（カルーセル質問内容なし）';
+                break;
+              default:
+                $textOfMessage = '（質問内容なし）';
+                break;
+            }
+          } else {
+            $textOfMessage = $json['message'];
+          }
+          echo $this->htmlEx->makeChatView($textOfMessage, $isSendFile, $isRecieveFile, $imgTag);
         }
         else {
           echo $this->htmlEx->makeChatView($val['THistoryChatLog']['message'], $isSendFile, $isRecieveFile, $imgTag);
