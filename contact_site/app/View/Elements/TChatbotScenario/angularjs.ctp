@@ -755,7 +755,7 @@
           // hearings
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
-              if (hearing.uiType == 3) {
+              if (hearing.uiType === '3') {
                 $timeout(function() {
                   $scope.$apply();
                 }).then(function() {
@@ -986,7 +986,6 @@
                       var currentHeight = $(this).find('.title').height() + $(this).find('p').height();
                       maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
                     });
-                    console.log(maxHeight);
                     maxHeight = maxHeight + 23; // 23 margin
                     carouselTarget.find('.caption').each(function() {
                       $(this).css('min-height', maxHeight + 'px');
@@ -2137,9 +2136,13 @@
             delete item.settings;
           }
 
+          if (item.uiType === '6') {
+            delete item.settings.dataLoaded;
+            delete item.settings.slickSettings;
+          }
+
           hearings.push(item);
         });
-
         action.hearings = hearings;
         return action;
       };
@@ -3690,7 +3693,7 @@
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
           } else if ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '6') {
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
-            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').nextAll('div').remove();
+            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
             $scope.reSelectionHearing(message, actionStep, hearingIndex);
             $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
@@ -3752,7 +3755,6 @@
       });
 
       $(document).on('click', '#chatTalk .carousel-container .thumbnail', function() {
-        // var prefix = $(this).attr('id').replace(/-sinclo-carousel[0-9a-z-]+$/i, '');
         var prefix = $(this).attr('id');
         var numbers = prefix.match(/\d+/g).map(Number);
         var actionStep = numbers[0];
