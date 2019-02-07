@@ -4116,10 +4116,12 @@ var socket, // socket.io
           return;
         }
         console.log('「最大」設定時に最大化するアニメーションです');
-        var footerSize = this._setFooterSize();
+        var self = common.widgetHandler;
+        var footerSize = self._setFooterSize();
+        var inputAreaSize = self._setInputAreaSize();
         var offset = $('#widgetHeader').outerHeight() +
-            $('#flexBoxWrap').outerHeight() +
-            $('#sincloAccessInfo').outerHeight() + footerSize;
+            inputAreaSize + footerSize +
+            $('#sincloAccessInfo').outerHeight();
         $('#chatTalk').css('height', $(window).height() - offset);
         $('#sincloWidgetBox').animate({
           width: $(window).width() + 'px'
@@ -4128,10 +4130,12 @@ var socket, // socket.io
       _widgetFitForWindow: function() {
         console.log('<><><><><><><><><>最大設定!!!!<><><><><><><><><><>');
         //他のウィジェットサイズタイプとは大きく違うため、別の関数を用意しました。
-        var footerSize = this._setFooterSize();
+        var self = common.widgetHandler;
+        var footerSize = self._setFooterSize();
+        var inputAreaSize = self._setInputAreaSize();
         var offset = $('#widgetHeader').outerHeight() +
-            $('#flexBoxWrap').outerHeight() +
-            $('#sincloAccessInfo').outerHeight() + footerSize;
+            inputAreaSize + footerSize +
+            $('#sincloAccessInfo').outerHeight();
         $('#chatTalk').css('height', $(window).height() - offset);
         if ($('#minimizeBtn').is(':hidden')) {
           //最大化時以外は横幅400px

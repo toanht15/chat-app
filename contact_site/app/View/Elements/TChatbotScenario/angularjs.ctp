@@ -28,13 +28,13 @@
           firstDayOfWeek: 0,
           weekdays: {
             shorthand: ['日', '月', '火', '水', '木', '金', '土'],
-            longhand: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
+            longhand: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日']
           },
           months: {
             shorthand: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-            longhand: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-          },
-        },
+            longhand: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+          }
+        }
       };
 
       // アクション設定の取得・初期化
@@ -53,16 +53,16 @@
                 setActionListTmp[key].requestHeaders = [
                   {
                     name: '',
-                    value: '',
-                  },
+                    value: ''
+                  }
                 ];
               }
               if (!setActionListTmp[key].responseBodyMaps || setActionListTmp[key].responseBodyMaps.length === 0) {
                 setActionListTmp[key].responseBodyMaps = [
                   {
                     sourceKey: '',
-                    variableName: '',
-                  },
+                    variableName: ''
+                  }
                 ];
               }
             }
@@ -85,7 +85,7 @@
         if (scenarioJsonList.hasOwnProperty(key)) {
           this.scenarioList.push({
             'id': scenarioJsonList[key].TChatbotScenario.id,
-            'name': scenarioJsonList[key].TChatbotScenario.name,
+            'name': scenarioJsonList[key].TChatbotScenario.name
           });
         }
       }
@@ -98,7 +98,7 @@
         if (leadJsonList.hasOwnProperty(key)) {
           this.leadList.push({
             'id': leadJsonList[key]['TLeadListSetting']['id'],
-            'name': leadJsonList[key]['TLeadListSetting']['list_name'],
+            'name': leadJsonList[key]['TLeadListSetting']['list_name']
           });
         }
       }
@@ -111,7 +111,7 @@
         if (scenarioJsonListForBranchOnCond.hasOwnProperty(key)) {
           this.scenarioListForBranchOnCond.push({
             'id': scenarioJsonListForBranchOnCond[key].TChatbotScenario.id,
-            'name': scenarioJsonListForBranchOnCond[key].TChatbotScenario.name,
+            'name': scenarioJsonListForBranchOnCond[key].TChatbotScenario.name
           });
         }
       }
@@ -213,7 +213,7 @@
             default:
               this.resultClass['smallSize'] = true;
           }
-        },
+        }
       };
       /**
        * angularのExpressionを文字列のまま表示する
@@ -251,7 +251,7 @@
           $scope.setActionList.forEach(function(actionItem, index) {
             actionValidationCheck(elms[index], $scope.setActionList, actionItem);
           });
-        },
+        }
       };
 
       // ヒアリング一覧の並び替えオプション
@@ -283,7 +283,7 @@
         },
         stop: function(event, ui) {
           $scope.$apply();
-        },
+        }
       };
 
       // ヒアリング一覧の並び替えオプション
@@ -319,7 +319,7 @@
           $scope.setActionList.forEach(function(actionItem, index) {
             actionValidationCheck(elms[index], $scope.setActionList, actionItem);
           });
-        },
+        }
       };
 
       // リードリスト一覧の並び替えオプション
@@ -340,48 +340,48 @@
           $scope.setActionList.forEach(function(actionItem, index) {
             actionValidationCheck(elms[index], $scope.setActionList, actionItem);
           });
-        },
+        }
       };
 
       $scope.getHearingButtonSetting = function(target, settings) {
-        switch(target) {
+        switch (target) {
           case 'messageAlign':
-            if(settings && settings.customDesign.messageAlign) {
+            if (settings && settings.customDesign.messageAlign) {
               return settings.customDesign.messageAlign;
             } else {
               return '1';
             }
             break;
           case 'buttonBackgroundColor':
-            if(settings && settings.customDesign.buttonBackgroundColor) {
+            if (settings && settings.customDesign.buttonBackgroundColor) {
               return settings.customDesign.buttonBackgroundColor;
             } else {
               return '#FFFFFF';
             }
             break;
           case 'buttonTextColor':
-            if(settings && settings.customDesign.buttonTextColor) {
+            if (settings && settings.customDesign.buttonTextColor) {
               return settings.customDesign.buttonTextColor;
             } else {
               return '#007AFF';
             }
             break;
           case 'buttonAlign':
-            if(settings && settings.customDesign.buttonAlign) {
+            if (settings && settings.customDesign.buttonAlign) {
               return settings.customDesign.buttonAlign;
             } else {
               return '2';
             }
             break;
           case 'buttonActiveColor':
-            if(settings && settings.customDesign.buttonActiveColor) {
+            if (settings && settings.customDesign.buttonActiveColor) {
               return settings.customDesign.buttonActiveColor;
             } else {
               return '#BABABA';
             }
             break;
           case 'buttonBorderColor':
-            if(settings && settings.customDesign.buttonBorderColor) {
+            if (settings && settings.customDesign.buttonBorderColor) {
               return settings.customDesign.buttonBorderColor;
             } else {
               return '#E3E3E3';
@@ -419,10 +419,10 @@
             var time = 500;
             if (isAppendAtLast) {
               actionBox.stop().animate({
-                scrollTop: actionBox.scrollTop() + actionBox[0].scrollHeight,
+                scrollTop: actionBox.scrollTop() + actionBox[0].scrollHeight
               }, time);
               previewBox.stop().animate({
-                scrollTop: previewBox.scrollTop() + previewBox[0].scrollHeight,
+                scrollTop: previewBox.scrollTop() + previewBox[0].scrollHeight
               }, time);
               // フォーカス移動
               $('#tchatbotscenario_form_action_body .set_action_item:last-of-type').focus();
@@ -431,7 +431,7 @@
               var target = $('#action' + index + '_setting');
               var targetY = target.position().top - actionBox.position().top;
               actionBox.stop().animate({
-                scrollTop: actionBox.scrollTop() + targetY,
+                scrollTop: actionBox.scrollTop() + targetY
               }, time);
               // フォーカス移動
               $('#tchatbotscenario_form_action_body .set_action_item:eq(' + index + ')').focus();
@@ -495,7 +495,7 @@
           LocalStorageService.setItem($scope.storageKey, [
             {
               key: 'targetDeleteFileIds',
-              value: $scope.targetDeleteFileIds,
+              value: $scope.targetDeleteFileIds
             }]);
         }
         $scope.setActionList.splice(setActionId, 1);
@@ -612,7 +612,7 @@
         7: '電話番号',
         8: 'FAX番号',
         9: '携帯番号',
-        10: 'メールアドレス',
+        10: 'メールアドレス'
       };
 
       // 各アクション内の変更を検知し、プレビューのメッセージを表示更新する
@@ -703,8 +703,8 @@
                   disable: [],
                   enable: [],
                   locale: {
-                    firstDayOfWeek: 0,
-                  },
+                    firstDayOfWeek: 0
+                  }
                 };
                 // set language for calendar
                 if (hearing.settings.language == 1) {
@@ -713,7 +713,7 @@
                 } else {
                   // english
                   calendar_options.locale = {
-                    firstDayOfWeek: 0,
+                    firstDayOfWeek: 0
                   };
                 }
 
@@ -749,7 +749,7 @@
                     calendar_options.disable = [
                       function(date) {
                         return disableWeekDays.indexOf(date.getDay()) !== -1;
-                      },
+                      }
                     ];
                   } else {
                     calendar_options.disable = [];
@@ -987,7 +987,7 @@
         return result ? {
           r: parseInt(result[1], 16),
           g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16),
+          b: parseInt(result[3], 16)
         } : null;
       };
 
@@ -1003,7 +1003,7 @@
 
       // remove opacity from hex color
       this.getRawColor = function(hex, opacity) {
-        if(!opacity) {
+        if (!opacity) {
           opacity = 0.1;
         }
         var code = hex.substr(1), r, g, b;
@@ -1217,7 +1217,7 @@
               }, false);
             }
             return XHR;
-          },
+          }
         }).done(function(data, textStatus, jqXHR) {
           // 更新前のファイルIDを、削除リストに追加する
           if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' &&
@@ -1232,7 +1232,7 @@
           LocalStorageService.setItem($scope.storageKey, [
             {
               key: 'targetDeleteFileIds',
-              value: $scope.targetDeleteFileIds,
+              value: $scope.targetDeleteFileIds
             }]);
         }).fail(function(jqXHR, textStatus, errorThrown) {
           alert('fail');
@@ -1287,7 +1287,7 @@
             type: 'post',
             data: {
               id: document.getElementById('TChatbotScenarioId').value,
-              targetDeleteFileIds: JSON.stringify($scope.targetDeleteFileIds),
+              targetDeleteFileIds: JSON.stringify($scope.targetDeleteFileIds)
             },
             cache: false,
             url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
@@ -1297,7 +1297,7 @@
               // 一覧ページへ遷移する
               var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
               location.href = url + '/page:' + lastPage;
-            },
+            }
           });
         };
       };
@@ -1629,12 +1629,13 @@
 
         var hearings = [];
         angular.forEach(action.hearings, function(item, index) {
-          if (typeof item.variableName !== 'undefined' && item.variableName !== '' && (item.uiType === '7' || (typeof item.message !==
-              'undefined' && item.message !== ''))) {
+          if (typeof item.variableName !== 'undefined' && item.variableName !== '' &&
+              (item.uiType === '7' || (typeof item.message !==
+                  'undefined' && item.message !== ''))) {
             // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
-            if(item.uiType === '7' && (typeof item.message ===
+            if (item.uiType === '7' && (typeof item.message ===
                 'undefined' || item.message === '')) {
-              item.message = "";
+              item.message = '';
             }
             hearings.push(item);
           }
@@ -2081,7 +2082,7 @@
                 LocalStorageService.setItem($scope.storageKey, [
                   {
                     key: 'targetDeleteFileIds',
-                    value: $scope.targetDeleteFileIds,
+                    value: $scope.targetDeleteFileIds
                   }]);
                 LocalStorageService.removeItem($scope.storageKey, 'scenarios');
               } else {
@@ -2148,7 +2149,7 @@
         }).then(function() {
           $('#simulator_popup').css({
             width: $('#sincloBox').outerWidth() + 28 + 'px',
-            height: $('#sincloBox').outerHeight() + defaultHeight + 'px',
+            height: $('#sincloBox').outerHeight() + defaultHeight + 'px'
           });
           $scope.actionInit();
         }, 0);
@@ -2161,7 +2162,7 @@
         }
         $('#simulator_popup').css({
           width: $('#sincloBox').outerWidth() + 28 + 'px',
-          height: $('#sincloBox').outerHeight() + defaultHeight + 'px',
+          height: $('#sincloBox').outerHeight() + defaultHeight + 'px'
         });
       });
 
@@ -2202,7 +2203,7 @@
               LocalStorageService.setItem('chatbotVariables', [
                 {
                   key: actionDetail.hearings[$scope.hearingIndex].variableName,
-                  value: message,
+                  value: message
                 }]);
               // 次のアクション
               $scope.hearingIndex++;
@@ -2237,7 +2238,7 @@
           LocalStorageService.setItem('chatbotVariables', [
             {
               key: $scope.setActionList[$scope.actionStep].selection.variableName,
-              value: message,
+              value: message
             }]);
           $scope.actionStep++;
           $scope.doAction();
@@ -2249,14 +2250,14 @@
           $.post("<?=$this->Html->url(['controller' => 'CompanyData', 'action' => 'parseSignature'])?>",
               JSON.stringify({
                 'accessToken': 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK',
-                'targetText': message,
+                'targetText': message
               }), null, 'json').done(function(result) {
             setTimeout(function() {
               $scope.$broadcast('addReForm', {
                 prefix: 'action' + $scope.actionStep + '_bulk-hearing',
                 isConfirm: true,
                 bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
-                resultData: result,
+                resultData: result
               });
               $scope.$broadcast('switchSimulatorChatTextArea', false);
               chatBotTypingRemove();
@@ -2271,14 +2272,14 @@
           Object.keys(message).forEach(function(elm) {
             saveValue.push({
               key: elm,
-              value: message[elm].value,
+              value: message[elm].value
             });
           });
           $scope.$broadcast('addReForm', {
             prefix: 'action' + $scope.actionStep + '_bulk-hearing',
             isConfirm: false,
             bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
-            resultData: {data: message},
+            resultData: {data: message}
           });
           LocalStorageService.setItem('chatbotVariables', saveValue);
           $scope.actionStep++;
@@ -2303,7 +2304,7 @@
               LocalStorageService.setItem('chatbotVariables', [
                 {
                   key: actionDetail.hearings[$scope.hearingIndex].variableName,
-                  value: message,
+                  value: message
                 }]);
               // 次のアクション
               $scope.hearingIndex++;
@@ -2320,7 +2321,7 @@
             LocalStorageService.setItem('chatbotVariables', [
               {
                 key: actionDetail.hearings[$scope.hearingIndex].variableName,
-                value: message,
+                value: message
               }]);
             // 次のアクション
             $scope.hearingIndex++;
@@ -2367,7 +2368,7 @@
             LocalStorageService.setItem('chatbotVariables', [
               {
                 key: actionDetail.hearings[hearingIndex].variableName,
-                value: message,
+                value: message
               }]);
             // 次のアクション
             $scope.hearingIndex++;
@@ -2386,7 +2387,7 @@
           LocalStorageService.setItem('chatbotVariables', [
             {
               key: actionDetail.hearings[hearingIndex].variableName,
-              value: message,
+              value: message
             }]);
           // 次のアクション
           $scope.hearingIndex++;
@@ -2921,10 +2922,10 @@
           type: 'post',
           dataType: 'json',
           data: {
-            id: scenarioId,
+            id: scenarioId
           },
           cache: false,
-          timeout: 10000,
+          timeout: 10000
         }).done(function(data) {
           console.info('successed get scenario detail.');
           try {
@@ -2983,14 +2984,14 @@
             LocalStorageService.setItem('chatbotVariables', [
               {
                 key: calcRule.variableName,
-                value: String(result),
+                value: String(result)
               }]);
           } catch (e) {
             console.log(e);
             LocalStorageService.setItem('chatbotVariables', [
               {
                 key: calcRule.variableName,
-                value: '計算エラー',
+                value: '計算エラー'
               }]);
           }
         });
@@ -3047,7 +3048,7 @@
         var halfWidth = formula.replace(/[！-～]/g,
             function(tmpStr) {
               return String.fromCharCode(tmpStr.charCodeAt(0) - 0xFEE0);
-            },
+            }
         );
         return halfWidth.replace(/”/g, '"').
             replace(/’/g, '\'').
@@ -3074,7 +3075,7 @@
           'requestHeaders': requestHeaders,
           'requestBody': $scope.replaceVariable(actionDetail.requestBody),
           'responseType': actionDetail.responseType,
-          'responseBodyMaps': actionDetail.responseBodyMaps,
+          'responseBodyMaps': actionDetail.responseBodyMaps
         };
 
         $.ajax({
@@ -3082,10 +3083,10 @@
           type: 'post',
           dataType: 'json',
           data: {
-            apiParams: JSON.stringify(sendData),
+            apiParams: JSON.stringify(sendData)
           },
           cache: false,
-          timeout: 10000,
+          timeout: 10000
         }).done(function(data) {
           console.info('successed calling external api.');
           var storageParam = [];
@@ -3150,7 +3151,8 @@
             $scope.addVisitorHearingMessage(message);
             $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else if ((!item && skipped) || (item && ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '7' || item !== message))) {
+          } else if ((!item && skipped) ||
+              (item && ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '7' || item !== message))) {
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
             $scope.reSelectionHearing(message, actionStep, hearingIndex);
@@ -3309,7 +3311,7 @@
         $(window).on('load', autoResize);
         $(window).on('resize', autoResize);
         elm[0].addEventListener('input', autoResize);
-      },
+      }
     };
   }).directive('validateAction', function() {
     return {
@@ -3321,7 +3323,7 @@
         scope.$watch(attrs.ngModel, function(actionItem) {
           actionValidationCheck(elm[0], scope.$parent.setActionList, actionItem);
         }, true);
-      },
+      }
     };
   });
 
@@ -3358,7 +3360,7 @@
       var targetHeight = Number(targetObj.find('ul').css('height').replace('px', ''));
       targetObj.css({
         top: $(this).offset().top - 45 + 15 * per_expand + 'px',
-        left: $(this).offset().left - targetWidth * 0.65 + 'px',
+        left: $(this).offset().left - targetWidth * 0.65 + 'px'
       });
       //画面の拡大率を取得(どのような状況でもしっかり処理を行えるよう
 
@@ -3367,14 +3369,14 @@
       var contentposition = Number(targetObj.css('top').replace('px', '')) + targetHeight + 175;
       if (contentposition > window.innerHeight) {
         targetObj.css({
-          top: $(this).offset().top - 60 - 30 * per_expand + 'px',
+          top: $(this).offset().top - 60 - 30 * per_expand + 'px'
         });
         //ヘルプを上に出しても下に出してもオーバーしてしまう場合
         if (Number(targetObj.css('top').replace('px', '')) - targetHeight + targetObj.outerHeight() <
             $('#color-bar').outerHeight()) {
           targetObj.css({
             left: $(this).offset().left - (targetWidth * 1.2) + 5 + 'px',
-            top: $('#content').outerHeight() / 2 - targetHeight / 2 + 'px',
+            top: $('#content').outerHeight() / 2 - targetHeight / 2 + 'px'
           });
         } else {
           targetObj.find('ul').css('top', 'auto');
@@ -3413,7 +3415,7 @@
       targetObj.css({
         top: ($(this).offset().top - targetObj.outerHeight() - 70) + 'px',
         left: ($(this).offset().left - 79) + 'px',
-        display: 'block',
+        display: 'block'
       });
     }).off('mouseleave', '.errorBtn').on('mouseleave', '.errorBtn', function(event) {
       var targetObj = $('.errorBalloon');
@@ -3431,7 +3433,7 @@
       var targetY = target.position().top - box.position().top;
 
       box.stop().animate({
-        scrollTop: box.scrollTop() + targetY,
+        scrollTop: box.scrollTop() + targetY
       }, time);
       return false;
     });
@@ -3443,7 +3445,7 @@
       var targetY = target.position().top - box.position().top;
 
       box.stop().animate({
-        scrollTop: box.scrollTop() + targetY,
+        scrollTop: box.scrollTop() + targetY
       }, time);
       target.closest('.set_action_item ').focus();
     });
@@ -3485,7 +3487,7 @@
       var targetY = target.position().top - box.position().top;
 
       box.stop().animate({
-        scrollTop: box.scrollTop() + targetY,
+        scrollTop: box.scrollTop() + targetY
       }, time);
     });
 
