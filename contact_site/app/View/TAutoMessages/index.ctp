@@ -202,11 +202,18 @@ $prevCnt = ($params['page'] - 1) * $params['limit'];
             }
             break;
           case C_AUTO_ACTION_TYPE_SELECTSCENARIO:
+          $allActionList[$id] = [
+            'type' => $val['TAutoMessage']['action_type'],
+            'detail' => $val['TChatbotScenario']['name']
+          ];
+          $activity_detail = "<span class='actionValueScenarioLabel'>シナリオ</span><span class='actionValue'>" . h($val['TChatbotScenario']['name']) . "</span>";
+          break;
+          case C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE:
             $allActionList[$id] = [
               'type' => $val['TAutoMessage']['action_type'],
               'detail' => $val['TChatbotScenario']['name']
             ];
-            $activity_detail = "<span class='actionValueScenarioLabel'>シナリオ</span><span class='actionValue'>" . h($val['TChatbotScenario']['name']) . "</span>";
+            $activity_detail = "<span class='actionValueCallAutomessageLabel'>呼び出し</span><span class='actionValue'>" . h($autoMessageList[$val['TAutoMessage']['call_automessage_id']]) . "</span>";
             break;
         }
         $conditionType = "";

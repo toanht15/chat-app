@@ -132,8 +132,23 @@
           </li>
           <!-- シナリオ選択 -->
 
+          <!-- オートメッセージを呼び出す -->
+          <li id="callAutoMessageSetting" class="no-border" ng-show="action_type == <?= C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE ?>">
+            <span class="require"><label>呼出先</label></span>
+            <label id="tautomessage_select_scenario" style="display: inline-block;" <?php echo true ? '' : 'class="commontooltip" data-text="こちらの機能はオプションの加入が必要です。"' ?>>
+              <?= $this->Form->input('call_automessage_id', array(
+                'type' => 'select',
+                'options' => $this->data['otherAutoMessages'],
+                'empty' => 'オートメッセージを選択してください',
+                'disabled' => !true,
+              ), array(
+                'default' => (!empty($this->data['TAutoMessage']['call_automessage_id'])) ? $this->data['TAutoMessage']['call_automessage_id'] : ''
+              )) ?>
+            </label>
+          </li>
+
           <!-- ウィジェット -->
-          <li class="bt0">
+          <li class="bt0" ng-show="action_type != <?= C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE ?>">
             <span class="require"><label>ウィジェット</label></span>
             <label class="pointer"><?= $this->ngForm->input('main.widget_open', [
               'type' => 'radio',
