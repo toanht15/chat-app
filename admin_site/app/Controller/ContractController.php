@@ -666,6 +666,9 @@ class ContractController extends AppController
     if (empty($agreementInfo['memo'])) {
       $agreementInfo['memo'] = "";
     }
+    if (empty($agreementInfo['sector'])) {
+      $agreementInfo['sector_type'] = 0;
+    }
 
     $applicationMailAddress = '';
     if (!empty($agreementInfo['application_mail_address'])) {
@@ -804,7 +807,8 @@ class ContractController extends AppController
         'show_send_mail_flg' => $data['show_send_mail_flg'],
         'sync_custom_variable_flg' => $data['sync_custom_variable_flg'],
         't_custom_variable_flg' => $data['t_custom_variable_flg'],
-        'sort' => $data['sort']
+        'sort' => $data['sort'],
+        'delete_flg' => 0
       ));
       $this->TCustomerInformationSetting->save();
     }
@@ -981,7 +985,8 @@ class ContractController extends AppController
               $this->TLeadListSetting->set(array(
                 'm_companies_id' => $m_companies_id,
                 'list_name' => $leadListSettings['leadTitleLabel'],
-                'list_parameter' => json_encode($dataForLeadListSetting)
+                'list_parameter' => json_encode($dataForLeadListSetting),
+                'created_user_id' => 0
               ));
               if (!$this->TLeadListSetting->save()) {
                 throw new Exception('シナリオのリードリスト設定登録に失敗しました');
