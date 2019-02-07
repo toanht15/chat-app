@@ -283,10 +283,12 @@
               radio: 33,
               pulldown: 34,
               calendar: 35,
+              carousel: 43,
               reInputText: 36,
               reInputRadio: 37,
               reInputPulldown: 38,
               reInputCalendar: 39,
+              reInputCarousel: 44,
               button: 47,
               reInputButton: 48,
               cancel: 90
@@ -299,6 +301,7 @@
               returnBulkHearing: 40,
               pulldown: 41,
               calendar: 42,
+              carousel: 45
               button: 46
             }
           },
@@ -541,7 +544,12 @@
           content += $scope.createTextOfSendFile(chat, message.downloadUrl, message.fileName, message.fileSize, message.extension, isExpired);
         }
       }
-       else if ( type === chatApi.messageType.scenario.customer.hearing || type === chatApi.messageType.scenario.customer.radio || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar || type === chatApi.messageType.scenario.customer.button) {
+       else if ( type === chatApi.messageType.scenario.customer.hearing
+          || type === chatApi.messageType.scenario.customer.radio
+          || type === chatApi.messageType.scenario.customer.pulldown
+          || type === chatApi.messageType.scenario.customer.calendar
+          || type === chatApi.messageType.scenario.customer.carousel
+          || type === chatApi.messageType.scenario.customer.button) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
         forDeletionMessage = escape_html(forDeletionMessage);
@@ -569,7 +577,12 @@
           }
           content +=  "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message, {radio: false})+"</span>";
         }
-      } else if ( type === chatApi.messageType.scenario.customer.reInputText || type === chatApi.messageType.scenario.customer.reInputRadio || type === chatApi.messageType.scenario.customer.reInputPulldown || type === chatApi.messageType.scenario.customer.reInputCalendar || type === chatApi.messageType.scenario.customer.reInputButton) {
+      } else if ( type === chatApi.messageType.scenario.customer.reInputText
+          || type === chatApi.messageType.scenario.customer.reInputRadio
+          || type === chatApi.messageType.scenario.customer.reInputPulldown
+          || type === chatApi.messageType.scenario.customer.reInputCalendar
+          || type === chatApi.messageType.scenario.customer.reInputCarousel
+          || type === chatApi.messageType.scenario.customer.reInputButton) {
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
         forDeletionMessage = escape_html(forDeletionMessage);
@@ -683,7 +696,10 @@
           content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, message)+"</span>";
         }
       }
-      else if ( type === chatApi.messageType.scenario.message.pulldown || type === chatApi.messageType.scenario.message.calendar || type === chatApi.messageType.scenario.message.button) {
+      else if ( type === chatApi.messageType.scenario.message.pulldown
+          || type === chatApi.messageType.scenario.message.calendar
+          || type === chatApi.messageType.scenario.message.carousel
+          || type === chatApi.messageType.scenario.message.button) {
         cn = "sinclo_auto";
         var created = chat.created.replace(" ","%");
         var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g,"");
@@ -709,11 +725,26 @@
             content += '<img src= /img/close_b.png alt=履歴削除  width=21 height=21 class = \"commontooltip disabled deleteChat\" data-text= \"こちらの機能はスタンダードプラン<br>からご利用いただけます。\" data-balloon-position = \"'+dataBaloon+'\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
           }
           var messageContent = JSON.parse(message);
-          if(messageContent.message.length > 0) {
-            content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+$scope.createTextOfMessage(chat, messageContent.message)+"</span>";
+          var textOfMessage = '';
+          if (!messageContent.message) {
+            switch (type) {
+              case chatApi.messageType.scenario.message.pulldown:
+                textOfMessage = '（プルダウン質問内容なし）';
+                break;
+              case chatApi.messageType.scenario.message.calendar:
+                textOfMessage = '（カレンダー質問内容なし）';
+                break;
+              case chatApi.messageType.scenario.message.carousel:
+                textOfMessage = '（カルーセル質問内容なし）';
+                break;
+              default:
+                textOfMessage = '（質問内容なし）';
+                break;
+            }
           } else {
-            content += "<span class='cChat' style = 'font-size:"+fontSize+"'>（質問内容なし）</span>";
+            textOfMessage = $scope.createTextOfMessage(chat, messageContent.message);
           }
+          content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+ textOfMessage +"</span>";
         }
       }
       else if ( type === chatApi.messageType.scenario.message.selection) {
