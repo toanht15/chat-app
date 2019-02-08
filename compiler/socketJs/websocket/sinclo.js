@@ -3181,7 +3181,7 @@
           console.log('カルーセルが入力されました');
           console.log('☆★☆★☆★☆★☆★☆★☆');
           // 変更された要素が再入力の対象であれば再入力させる
-          if (sinclo.scenarioApi._hearing._needCancel(e.target.closest('.carousel-container'))) {
+          if (sinclo.scenarioApi._hearing._needCancel($(e.target).closest('.carousel-container'))) {
             sinclo.scenarioApi._hearing._handleCarouselCancel(e.target.closest('.carousel-container'));
             sinclo.scenarioApi.set(
                 sinclo.scenarioApi._lKey.sendCustomerMessageType, 44);
@@ -4299,12 +4299,12 @@
         carouselTarget.on('init', function(event, slick) {
           var maxHeight = 0;
           slick.$slides.each(function(slide) {
-            var currentHeight = $(this).find('.caption').height();
+            var currentHeight = $(this).find('.thumbnail').height();
             maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
           });
 
           slick.$slides.each(function(slide) {
-            $(this).find('.caption').css('min-height', maxHeight + 'px');
+            $(this).find('.thumbnail').css('min-height', maxHeight + 'px');
           });
         });
 
@@ -4695,6 +4695,7 @@
         var carouselSize = sinclo.chatApi.getCarouselSize(settings);
         var thumbnailWidth = carouselSize.width + 2;
         var containerWidth = carouselSize.containerWidth + 2;
+        var imgWidth = settings.outCarouselNoneBorder ? carouselSize.width + 2 : carouselSize.width;
         var name = 'sinclo-carousel' + index;
         var html = '';
 
@@ -4705,7 +4706,7 @@
         settings.images.forEach(function (image, key) {
           html+= '<div style="width: ' + containerWidth + 'px">';
           html+= '<div class="thumbnail" id="slide_' + name + '_image' + key + '" data-answer="' + image.answer + '" style="margin: auto; display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
-          html+= '<img id="img' + name + '_image' + key + '" alt="画像" data-answer="' + image.answer + '" style="cursor: pointer; height: ' + carouselSize.height + 'px; width: ' + carouselSize.width + 'px;" src="' + image.url + '" />';
+          html+= '<img id="img' + name + '_image' + key + '" alt="画像" data-answer="' + image.answer + '" style="cursor: pointer; height: ' + carouselSize.height + 'px; width: ' + imgWidth + 'px;" src="' + image.url + '" />';
           html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
           html+= '<div class="title"><strong style="font-weight: bold;">' + image.title + '</strong></div>';
           html+= '<p class="sub-title">' + image.subTitle + '</p>';

@@ -8789,6 +8789,14 @@ ul.naviBtn {
                 justify-self: stretch;
               }
             }
+
+            .noneBalloon {
+              -ms-grid-column: 2;
+              -ms-grid-column-align: start;
+              &:not(.no-wrap) {
+                justify-self: start;
+              }
+            }
           }
 
           &.smallSize {
