@@ -403,10 +403,12 @@ class AutoMessageExcelExportComponent extends ExcelParserComponent
    */
   public function copyRowStyle($baseRow, $endRow)
   {
-    foreach (range('A', 'R') as $column) {
+    // column BA ~ BS
+    foreach (range('A', 'S') as $column) {
       $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('B' . $column . $baseRow), 'B' . $column . self::SECOND_ROW . ':' . 'B' . $column . $endRow);
     }
 
+    // column A ~ AZ
     foreach (range('A', 'Z') as $column) {
       $this->currentSheet->duplicateStyle($this->currentSheet->getStyle($column . $baseRow), $column . self::SECOND_ROW . ':' . $column . $endRow);
       $this->currentSheet->duplicateStyle($this->currentSheet->getStyle('A' . $column . $baseRow), 'A' . $column . self::SECOND_ROW . ':' . 'A' . $column . $endRow);

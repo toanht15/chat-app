@@ -105,15 +105,17 @@ class TAutoMessagesController extends AppController {
     }
 
     // オートメッセージ一覧を取得する
-    $otherAutoMessages = $this->TAutoMessage->find('list', array(
-      'fields' => array('id', 'name'),
+    $otherAllAutoMessages = $this->TAutoMessage->find('all', array(
       'order' => array(
         'TAutoMessage.sort' => 'asc'
       ),
       'conditions' => array(
-        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'TAutoMessage.del_flg' => 0
       )
     ));
+
+    $otherAutoMessages = $this->convertCallAutomessageList($otherAllAutoMessages, false);
 
     $this->set('autoMessageList', $otherAutoMessages);
     $this->set('settingList', $data);
@@ -158,8 +160,7 @@ class TAutoMessagesController extends AppController {
     $this->request->data['chatbotScenario'] = $chatbotScenario;
 
     // オートメッセージ一覧を取得する
-    $otherAutoMessages = $this->TAutoMessage->find('list', array(
-      'fields' => array('id', 'name'),
+    $otherAllAutoMessages = $this->TAutoMessage->find('all', array(
       'order' => array(
         'TAutoMessage.sort' => 'asc'
       ),
@@ -168,6 +169,9 @@ class TAutoMessagesController extends AppController {
         'TAutoMessage.del_flg' => 0
       )
     ));
+
+    $otherAutoMessages = $this->convertCallAutomessageList($otherAllAutoMessages, false);
+
     $this->request->data['otherAutoMessages'] = $otherAutoMessages;
 
     $this->_viewElement();
@@ -264,22 +268,17 @@ class TAutoMessagesController extends AppController {
     $this->request->data['chatbotScenario'] = $chatbotScenario;
 
     // オートメッセージ一覧を取得する
-    $otherAutoMessages = $this->TAutoMessage->find('list', array(
-      'fields' => array('id', 'name'),
+    $otherAllAutoMessages = $this->TAutoMessage->find('all', array(
       'order' => array(
         'TAutoMessage.sort' => 'asc'
       ),
       'conditions' => array(
-        'AND' => array(
-          'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
-          'TAutoMessage.del_flg' => 0
-        ),
-        'NOT' => array(
-          'TAutoMessage.id' => $id,
-          'TAutoMessage.call_automessage_id' => $id
-        )
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'TAutoMessage.del_flg' => 0
       )
     ));
+
+    $otherAutoMessages = $this->convertCallAutomessageList($otherAllAutoMessages, $id);
     $this->request->data['otherAutoMessages'] = $otherAutoMessages;
 
     $this->_viewElement();
@@ -1911,5 +1910,21 @@ class TAutoMessagesController extends AppController {
     ]);
 
     return $data['TChatbotScenario']['id'];
+  }
+
+  private function convertCallAutomessageList($array, $editTargetId) {
+    $resultArray = array();
+    foreach($array as $index => $data) {
+      if(strcmp($data['TAutoMessage']['active_flg'], 1) === 0) continue;
+
+      if($editTargetId && strcmp($data['TAutoMessage']['id'], $editTargetId) !== 0 && strcmp($data['TAutoMessage']['call_automessage_id'], $editTargetId) !== 0) {
+        // 編集時に必要なデータ
+        $resultArray[$data['TAutoMessage']['id']] = 'No.'.($index + 1).'：'.$data['TAutoMessage']['name'];
+      } else if(!$editTargetId) {
+        $resultArray[$data['TAutoMessage']['id']] = 'No.'.($index + 1).'：'.$data['TAutoMessage']['name'];
+      }
+    }
+
+    return $resultArray;
   }
 }
