@@ -1018,7 +1018,7 @@ $config['chatbotScenarioActionList'] = array(
         array(
           "matchValue" => "",
           "matchValueType" => "1", // のいずれかを含む場合
-          "actionType" => "1", //テキスト発言
+          "actionType" => 1, //テキスト発言
           "action" => array(
             "message" => ""
           )
