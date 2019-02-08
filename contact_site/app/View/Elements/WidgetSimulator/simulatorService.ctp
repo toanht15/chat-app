@@ -990,6 +990,7 @@
       var arrowPosition = this.getArrowPosition(data.settings);
       var thumbnailWidth = carouselSize.width + 2;
       var containerWidth = carouselSize.containerWidth + 2;
+      var imgWidth = data.settings.outCarouselNoneBorder ? carouselSize.width + 2 : carouselSize.width;
       html+= '<div class=\'carousel-container\' style="width: ' + containerWidth + 'px; margin-top: 6px;">';
       html += '<style>';
       html += '#sincloBox #' + carouselId + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
@@ -1025,7 +1026,7 @@
       angular.forEach(data.images, function (image, key) {
         html+= '<div style="width: ' + containerWidth + 'px">';
         html+= '<div class="thumbnail" id="' + prefix + 'image' + key + '" style="cursor: pointer; margin-left: auto; margin-right: auto; display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
-        html+= '<img id="img_' + prefix + 'image' + key +'" style="cursor: pointer; width: ' + carouselSize.width + 'px; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
+        html+= '<img id="img_' + prefix + 'image' + key +'" style="cursor: pointer; width: ' + imgWidth + 'px; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
         html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
         html+= '<div class="title"><strong style="font-weight: bold">' + image.title + '</strong></div>';
         html+= '<p class="sub-title">' + image.subTitle + '</p>';

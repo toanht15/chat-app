@@ -982,14 +982,14 @@
                     hearing.settings.dataLoaded = true;
 
                     var maxHeight = 0;
-                    carouselTarget.find('.caption').each(function() {
-                      var currentHeight = $(this).find('.title').height() + $(this).find('p').height();
+                    carouselTarget.find('.thumbnail').each(function() {
+                      var currentHeight = $(this).find('.title').height() + $(this).find('p').height() + $(this).find('img').height();
                       maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
                     });
-                    maxHeight = maxHeight + 23; // 23 margin
-                    carouselTarget.find('.caption').each(function() {
+                    maxHeight = maxHeight + 25; // 25 margin
+                    console.log(maxHeight);
+                    carouselTarget.find('.thumbnail').each(function() {
                       $(this).css('min-height', maxHeight + 'px');
-                      $(this).css('height', maxHeight + 'px');
                     });
                   });
                 }, 200).then(function() {

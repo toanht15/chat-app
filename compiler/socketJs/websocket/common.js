@@ -1172,12 +1172,18 @@ var socket, // socket.io
       /* アイコン表示時用CSS */
       html += '      #sincloBox ul#chatTalk div.grid_for_icon { display:grid; display:-ms-grid; grid-template-columns: minmax(max-content, max-content) 1fr; -ms-grid-columns: minmax(max-content, max-content) 1fr; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon li.sinclo_re:not(.no-wrap) { justify-self: start; }';
+      html += '      #sincloBox ul#chatTalk div.grid_for_icon li.noneBalloon:not(.no-wrap) { justify-self: start; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon li.sinclo_re { -ms-grid-column-align: start; -ms-grid-column: 2; }';
+      html += '      #sincloBox ul#chatTalk div.grid_for_icon li.noneBalloon { -ms-grid-column-align: start; -ms-grid-column: 2; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon li.sinclo_re.recv_file_left { justify-self: stretch; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon.smallSize li.sinclo_re { margin-left: 1px; }';
+      html += '      #sincloBox ul#chatTalk div.grid_for_icon.smallSize li.noneBalloon { margin-left: 1px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon.middleSize li.sinclo_re { margin-left: 3px; }';
+      html += '      #sincloBox ul#chatTalk div.grid_for_icon.middleSize li.noneBalloon { margin-left: 3px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon.largeSize li.sinclo_re { margin-left: 5px; }';
+      html += '      #sincloBox ul#chatTalk div.grid_for_icon.largeSize li.noneBalloon { margin-left: 5px; }';
       html += '      #sincloBox ul#chatTalk div.grid_for_icon.customSize li.sinclo_re { margin-left: 5px; }';
+      html += '      #sincloBox ul#chatTalk div.grid_for_icon.customSize li.noneBalloon { margin-left: 5px; }';
       if(Number(widget.chatMessageArrowPosition) === 1) {
         html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv { display: flex; justify-content: flex-end; align-items: flex-start; }';
         html += '      #sincloBox ul#chatTalk div.grid_for_icon .iconDiv .img_wrapper { margin-top: 10px; }';

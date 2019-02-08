@@ -648,12 +648,12 @@
         $(carousel.selector).on('init', function(event, slick) {
           var maxHeight = 0;
           slick.$slides.each(function(slide) {
-            var currentHeight = $(this).find('.caption').height();
+            var currentHeight = $(this).find('.thumbnail').height();
             maxHeight         = currentHeight > maxHeight ? currentHeight : maxHeight;
           });
 
           slick.$slides.each(function(slide) {
-            $(this).find('.caption').css('min-height', maxHeight + 'px');
+            $(this).find('.thumbnail').css('min-height', maxHeight + 'px');
           });
         });
 
@@ -665,7 +665,7 @@
           prevArrow   : '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
           nextArrow   : '<i class="fas ' + nextIconClass + ' slick-next"></i>',
         });
-        
+
         // 復元機能
         var oldIndex = null;
         angular.forEach(data.settings.images, function(image, index) {
