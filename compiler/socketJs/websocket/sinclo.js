@@ -10492,6 +10492,24 @@
                 self._parent._process();
               }
               break;
+            case 5:
+              // リンク呼出
+              var url = condition.action.url,
+                  openType = condition.action.openType;
+              console.log('url : %s openType : %s',url ,openType);
+              switch(Number(openType)) {
+                case 1:
+                  // ページ遷移
+                  location.href = url;
+                  break;
+                case 2:
+                  window.open(url);
+                  break;
+              }
+              if (self._parent._goToNextScenario()) {
+                self._parent._process();
+              }
+              break;
           }
         },
         _splitMatchValue: function(val) {
