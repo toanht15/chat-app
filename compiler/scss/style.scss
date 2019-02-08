@@ -11466,6 +11466,7 @@ div.balloon {
       grid-template-columns: minmax(max-content, max-content) 1fr;
       &.no_icon {
         grid-template-columns: 1fr;
+        -ms-grid-columns: 1fr;
       }
       .iconDiv {
         display: flex;
