@@ -62,8 +62,14 @@ class TChatbotScenario extends AppModel {
       if ($action['actionType'] == C_SCENARIO_ACTION_HEARING) {
         // ヒアリング
         foreach ($action['hearings'] as $key => $item) {
-          if (empty($item['variableName']) || (strcmp($item['uiType'], 7) !== 0 && empty($item['message']))) {
-            return false;
+          if ($item['uiType'] === '1' || $item['uiType'] === '2') {
+            if (empty($item['variableName']) || empty($item['message'])) {
+              return false;
+            }
+          } else {
+            if (empty($item['variableName'])) {
+              return false;
+            }
           }
         }
         if ($action['isConfirm'] == 1 && (empty($action['confirmMessage'] || empty($action['succes'] || empty($action['cancel']))))) {

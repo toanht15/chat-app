@@ -283,10 +283,12 @@
                 radio: 33,
                 pulldown: 34,
                 calendar: 35,
+                carousel: 43,
                 reInputText: 36,
                 reInputRadio: 37,
                 reInputPulldown: 38,
                 reInputCalendar: 39,
+                reInputCarousel: 44,
                 button: 47,
                 reInputButton: 48,
                 cancel: 90
@@ -299,6 +301,7 @@
                 returnBulkHearing: 40,
                 pulldown: 41,
                 calendar: 42,
+                carousel: 45,
                 button: 46
               }
             },
@@ -443,7 +446,8 @@
           }
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
-            content = '<span class=\'cName\' style = \'color:#bdbdbd !important; font-size:' + fontSize + '\'>' + chatName +
+            content = '<span class=\'cName\' style = \'color:#bdbdbd !important; font-size:' + fontSize + '\'>' +
+                chatName +
                 '</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important; font-size:' + timeFontSize + '\'\'>' +
                 chat.created + '</span>';
@@ -584,7 +588,8 @@
         } else if (type === chatApi.messageType.scenario.customer.hearing || type ===
             chatApi.messageType.scenario.customer.radio || type === chatApi.messageType.scenario.customer.pulldown ||
             type === chatApi.messageType.scenario.customer.calendar || type ===
-            chatApi.messageType.scenario.customer.button) {
+            chatApi.messageType.scenario.customer.carousel
+            || type === chatApi.messageType.scenario.customer.button) {
           var created = chat.created.replace(' ', '%');
           var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g, '');
           forDeletionMessage = escape_html(forDeletionMessage);
@@ -623,6 +628,7 @@
             chatApi.messageType.scenario.customer.reInputRadio || type ===
             chatApi.messageType.scenario.customer.reInputPulldown || type ===
             chatApi.messageType.scenario.customer.reInputCalendar || type ===
+            chatApi.messageType.scenario.customer.reInputCarousel || type ===
             chatApi.messageType.scenario.customer.reInputButton) {
           var created = chat.created.replace(' ', '%');
           var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g, '');
@@ -671,14 +677,16 @@
           li.className = cn;
           if (chat.delete_flg == 1) {
             var deleteUser = userList[Number(chat.deleted_user_id)];
-            content = '<span class=\'cName\' style = \'color:#bdbdbd !important;font-size:' + fontSize + '\'>ゲスト(選択肢回答)(' +
+            content = '<span class=\'cName\' style = \'color:#bdbdbd !important;font-size:' + fontSize +
+                '\'>ゲスト(選択肢回答)(' +
                 Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'color:#bdbdbd !important; font-size:' + timeFontSize + '\'>' +
                 chat.created + '</span>';
             content += '<span class=\'cChat\' style = \'color:#bdbdbd; font-size:' + fontSize + '\'>(このメッセージは' +
                 chat.deleted + 'に' + deleteUser + 'さんによって削除されました。)</span>';
           } else {
-            content = '<span class=\'cName\' style = \'color:#333333 !important; font-size:' + fontSize + '\'>ゲスト(選択肢回答)(' +
+            content = '<span class=\'cName\' style = \'color:#333333 !important; font-size:' + fontSize +
+                '\'>ゲスト(選択肢回答)(' +
                 Number($('#visitorsId').text()) + ')</span>';
             content += '<span class=\'cTime\' style = \'font-size:' + timeFontSize + '\'>' + chat.created + '</span>';
             if (chat.permissionLevel == 1 && coreSettings == 1) {
@@ -760,7 +768,7 @@
                 $scope.createTextOfMessage(chat, message) + '</span>';
           }
         } else if (type === chatApi.messageType.scenario.message.pulldown || type ===
-            chatApi.messageType.scenario.message.calendar || type === chatApi.messageType.scenario.message.button) {
+            chatApi.messageType.scenario.message.calendar || type === chatApi.messageType.scenario.message.carousel || type === chatApi.messageType.scenario.message.button) {
           cn = 'sinclo_auto';
           var created = chat.created.replace(' ', '%');
           var forDeletionMessage = chat.message.replace(/\r?\n?\s+/g, '');
@@ -791,12 +799,26 @@
                   '\" style="cursor:pointer; float:right; color: #C9C9C9 !important; padding:2px !important; margin-right: auto;">';
             }
             var messageContent = JSON.parse(message);
-            if (messageContent.message.length > 0) {
-              content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>' +
-                  $scope.createTextOfMessage(chat, messageContent.message) + '</span>';
+            var textOfMessage = '';
+            if (!messageContent.message) {
+              switch (type) {
+                case chatApi.messageType.scenario.message.pulldown:
+                  textOfMessage = '（プルダウン質問内容なし）';
+                  break;
+                case chatApi.messageType.scenario.message.calendar:
+                  textOfMessage = '（カレンダー質問内容なし）';
+                  break;
+                case chatApi.messageType.scenario.message.carousel:
+                  textOfMessage = '（カルーセル質問内容なし）';
+                  break;
+                default:
+                  textOfMessage = '（質問内容なし）';
+                  break;
+              }
             } else {
-              content += '<span class=\'cChat\' style = \'font-size:' + fontSize + '\'>（質問内容なし）</span>';
+              textOfMessage = $scope.createTextOfMessage(chat, messageContent.message);
             }
+            content += "<span class='cChat' style = 'font-size:"+fontSize+"'>"+ textOfMessage +"</span>";
           }
         } else if (type === chatApi.messageType.scenario.message.selection) {
           cn = 'sinclo_auto';
@@ -1117,7 +1139,8 @@
             window.open(message.downloadUrl);
           });
         }
-      };
+      }
+      ;
 
       $scope.createBulkHearingAnalyseData = function(chat, data) {
         var resultVal = '';
@@ -1313,7 +1336,9 @@
         ;
         return trimToURL(targetParams, url);
       };
-    }]);
+    };
+  ])
+  ;
 
   sincloApp.directive('ngCreateMessage', [
     function() {
