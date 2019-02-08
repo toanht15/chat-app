@@ -1082,7 +1082,7 @@
       }
       if (Number(this.settings.show_chatbot_icon) === 1) {
         data.containerWidth = data.containerWidth - this.getChatIconWidth();
-        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
       }
       data.height = data.width / aspectRatio;
 
@@ -1118,7 +1118,7 @@
       }
       if (Number(this.settings.show_chatbot_icon) === 1) {
         data.containerWidth = data.containerWidth - this.getChatIconWidth();
-        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
       }
       data.height = data.width / aspectRatio;
 
@@ -1161,7 +1161,7 @@
       }
       if (Number(this.settings.show_chatbot_icon) === 1) {
         data.containerWidth = data.containerWidth - this.getChatIconWidth();
-        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
       }
       data.height = data.width / aspectRatio;
 
@@ -1197,7 +1197,7 @@
       }
       if (Number(this.settings.show_chatbot_icon) === 1) {
         data.containerWidth = data.containerWidth - this.getChatIconWidth();
-        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
       }
       data.height = data.width / aspectRatio;
 
