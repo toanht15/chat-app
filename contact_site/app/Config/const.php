@@ -294,6 +294,7 @@ define('C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT', 1);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO', 2);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE', 3);
 define('C_SCENARIO_PROCESS_ACTION_TYPE_NONE', 4);
+define('C_SCENARIO_PROCESS_ACTION_TYPE_JUMP_LINK', 5);
 
 // シナリオ設定（リード登録）-新規作成か流用か
 define('C_SCENARIO_LEAD_REGIST', 1);
@@ -967,7 +968,7 @@ $config['chatbotScenarioActionList'] = array(
       'file' => ''
     )
   )
-  ,
+,
   // ファイル受信
   C_SCENARIO_ACTION_RECEIVE_FILE => array(
     'label' => 'ファイル受信',
@@ -982,7 +983,7 @@ $config['chatbotScenarioActionList'] = array(
       'cancelLabel' => 'ファイル送信をキャンセルする'
     )
   )
-  ,
+,
   // 条件分岐
   C_SCENARIO_ACTION_BRANCH_ON_CONDITION => array(
     'label' => '条件分岐',
@@ -1170,30 +1171,54 @@ $config['chatbotScenarioBranchOnConditionMatchValueType'] = array(
 
 /* シナリオ設定 - 条件分岐 - 実行するアクション */
 $config['chatbotScenarioBranchOnConditionActionType'] = array(
-  C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT => array(
-    'label' => 'テキスト発言'
+  array(
+    'index' => 1,
+    'label' => 'テキスト発言',
+    'value' => C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT
   ),
-  C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO => array(
-    'label' => 'シナリオ呼出'
+  array(
+    'index' => 2,
+    'label' => 'シナリオ呼出',
+    'value' => C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO
   ),
-  C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE => array(
-    'label' => 'シナリオを終了'
+  array(
+    'index' => 3,
+    'label' => 'リンク呼出',
+    'value' => C_SCENARIO_PROCESS_ACTION_TYPE_JUMP_LINK
   ),
-  C_SCENARIO_PROCESS_ACTION_TYPE_NONE => array(
-    'label' => '次のアクションへ'
+  array(
+    'index' => 4,
+    'label' => 'シナリオを終了',
+    'value' => C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE
+  ),
+  array(
+    'index' => 5,
+    'label' => '次のアクションへ',
+    'value' => C_SCENARIO_PROCESS_ACTION_TYPE_NONE
   )
 );
 
 /* シナリオ設定 - 条件分岐 - 実行するアクション（上記を満たさない） */
 $config['chatbotScenarioBranchOnConditionElseActionType'] = array(
-  C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT => array(
-    'label' => 'テキスト発言'
+  array(
+    'index' => 1,
+    'label' => 'テキスト発言',
+    'value' => C_SCENARIO_PROCESS_ACTION_TYPE_SPEECH_TEXT
   ),
-  C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO => array(
-    'label' => 'シナリオ呼出'
+  array(
+    'index' => 2,
+    'label' => 'シナリオ呼出',
+    'value' => C_SCENARIO_PROCESS_ACTION_TYPE_CALL_SCENARIO
   ),
-  C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE => array(
-    'label' => 'シナリオを終了'
+  array(
+    'index' => 3,
+    'label' => 'リンク呼出',
+    'value' => C_SCENARIO_PROCESS_ACTION_TYPE_JUMP_LINK
+  ),
+  array(
+    'index' => 4,
+    'label' => 'シナリオを終了',
+    'value' => C_SCENARIO_PROCESS_ACTION_TYPE_TERMINATE
   )
 );
 $config['chatbotScenarioLeadTypeList'] = array(
