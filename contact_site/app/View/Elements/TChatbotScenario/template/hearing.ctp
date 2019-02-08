@@ -41,8 +41,8 @@
               <option value="2">テキスト（複数行）</option>
               <option value="3">ラジオボタン</option>
               <option value="4">プルダウン</option>
-              <option value="7">コンファーム</option>
               <option value="6">カルーセル（画像表示）</option>
+              <option value="7">コンファーム</option>
               <option value="5">カレンダー</option>
             </select>
           </div>
