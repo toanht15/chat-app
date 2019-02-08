@@ -11,32 +11,41 @@
  * @property TChatbotScenario $TChatbotScenario
  */
 
-App::uses('AutoMessageException','Lib/Error');
+App::uses('AutoMessageException', 'Lib/Error');
 
-class TAutoMessagesController extends AppController {
+class TAutoMessagesController extends AppController
+{
   const TEMPLATE_FILE_NAME = "auto_message_template.xlsx";
   const FULL_TEMPLATE_FILE_NAME = "auto_message_setting_template.xlsx";
 
-  public $uses = array('TransactionManager', 'TAutoMessage','MOperatingHour', 'MMailTransmissionSetting', 'MMailTemplate', 'MWidgetSetting', 'TChatbotScenario');
+  public $uses = array(
+    'TransactionManager',
+    'TAutoMessage',
+    'MOperatingHour',
+    'MMailTransmissionSetting',
+    'MMailTemplate',
+    'MWidgetSetting',
+    'TChatbotScenario'
+  );
   public $components = array('AutoMessageExcelExport', 'NodeSettingsReload', 'AutoMessageExcelImport');
   public $helpers = array('AutoMessage');
   public $paginate = array(
     'TAutoMessage' => array(
       'limit' => 100,
       'order' => array(
-          'TAutoMessage.sort' => 'asc',
-          'TAutoMessage.id' => 'asc'
+        'TAutoMessage.sort' => 'asc',
+        'TAutoMessage.id' => 'asc'
       ),
       'fields' => array('TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name'),
       'conditions' => array('TAutoMessage.del_flg != ' => 1),
       'joins' => array(
         array(
-        'type' => 'LEFT',
-        'table' => 't_chatbot_scenarios',
-        'alias' => 'TChatbotScenario',
-        'conditions' => array(
-          'TAutoMessage.t_chatbot_scenario_id = TChatbotScenario.id'
-        )
+          'type' => 'LEFT',
+          'table' => 't_chatbot_scenarios',
+          'alias' => 'TChatbotScenario',
+          'conditions' => array(
+            'TAutoMessage.t_chatbot_scenario_id = TChatbotScenario.id'
+          )
         )
       ),
       'recursive' => -1
@@ -48,36 +57,123 @@ class TAutoMessagesController extends AppController {
   public $coreSettings = null;
   public $styleSetting = array(
     'common' => array(
-      'show_timing', 'max_show_timing_site', 'max_show_timing_page',
-      'show_time', 'max_show_time', 'max_show_time_page', 'show_position', 'show_access_id', 'widget_size_type', 'title', 'show_subtitle', 'sub_title', 'show_description', 'description',
-      'show_main_image', 'main_image', 'show_chatbot_icon' ,'chatbot_icon_type' ,'chatbot_icon' ,'show_operator_icon', 'operator_icon_type','operator_icon', 'radius_ratio', 'box_shadow', 'minimize_design_type','close_button_setting','close_button_mode_type','bannertext','widget_custom_height','widget_custom_width',
+      'show_timing',
+      'max_show_timing_site',
+      'max_show_timing_page',
+      'show_time',
+      'max_show_time',
+      'max_show_time_page',
+      'show_position',
+      'show_access_id',
+      'widget_size_type',
+      'title',
+      'show_subtitle',
+      'sub_title',
+      'show_description',
+      'description',
+      'show_main_image',
+      'main_image',
+      'show_chatbot_icon',
+      'chatbot_icon_type',
+      'chatbot_icon',
+      'show_operator_icon',
+      'operator_icon_type',
+      'operator_icon',
+      'radius_ratio',
+      'box_shadow',
+      'minimize_design_type',
+      'close_button_setting',
+      'close_button_mode_type',
+      'bannertext',
+      'widget_custom_height',
+      'widget_custom_width',
       /* カラー設定styat */
-      'color_setting_type','main_color','string_color','message_text_color','other_text_color','header_text_size','widget_border_color','chat_talk_border_color','header_background_color','sub_title_text_color','description_text_color',
-      'chat_talk_background_color','c_name_text_color','re_text_color','re_text_size','re_background_color','re_border_color','re_border_none','se_text_color','se_text_size','se_background_color','se_border_color','se_border_none','chat_message_background_color',
-      'message_box_text_color','message_box_text_size','message_box_background_color','message_box_border_color','message_box_border_none','chat_send_btn_text_color','chat_send_btn_text_size','chat_send_btn_background_color','widget_inside_border_color','widget_inside_border_none',
-      'widget_title_top_type','widget_title_name_type','widget_title_explain_type', /* カラー設定end */
-      'btw_button_margin', 'line_button_margin','sp_banner_position','sp_scroll_view_setting','sp_banner_vertical_position_from_top','sp_banner_vertical_position_from_bottom','sp_banner_horizontal_position','sp_banner_text','sp_widget_view_pattern'
+      'color_setting_type',
+      'main_color',
+      'string_color',
+      'message_text_color',
+      'other_text_color',
+      'header_text_size',
+      'widget_border_color',
+      'chat_talk_border_color',
+      'header_background_color',
+      'sub_title_text_color',
+      'description_text_color',
+      'chat_talk_background_color',
+      'c_name_text_color',
+      're_text_color',
+      're_text_size',
+      're_background_color',
+      're_border_color',
+      're_border_none',
+      'se_text_color',
+      'se_text_size',
+      'se_background_color',
+      'se_border_color',
+      'se_border_none',
+      'chat_message_background_color',
+      'message_box_text_color',
+      'message_box_text_size',
+      'message_box_background_color',
+      'message_box_border_color',
+      'message_box_border_none',
+      'chat_send_btn_text_color',
+      'chat_send_btn_text_size',
+      'chat_send_btn_background_color',
+      'widget_inside_border_color',
+      'widget_inside_border_none',
+      'widget_title_top_type',
+      'widget_title_name_type',
+      'widget_title_explain_type', /* カラー設定end */
+      'btw_button_margin',
+      'line_button_margin',
+      'sp_banner_position',
+      'sp_scroll_view_setting',
+      'sp_banner_vertical_position_from_top',
+      'sp_banner_vertical_position_from_bottom',
+      'sp_banner_horizontal_position',
+      'sp_banner_text',
+      'sp_widget_view_pattern'
     ),
     'synclo' => array('tel', 'content', 'display_time_flg', 'time_text'),
-    'chat' => array('chat_init_show_textarea', 'chat_radio_behavior', 'chat_trigger', 'show_name', 'show_automessage_name', 'show_op_name', 'chat_message_design_type', 'chat_message_arrow_position', 'chat_message_with_animation', 'chat_message_copy', 'sp_show_flg', 'sp_header_light_flg', 'sp_auto_open_flg', 'sp_maximize_size_type'),
+    'chat' => array(
+      'chat_init_show_textarea',
+      'chat_radio_behavior',
+      'chat_trigger',
+      'show_name',
+      'show_automessage_name',
+      'show_op_name',
+      'chat_message_design_type',
+      'chat_message_arrow_position',
+      'chat_message_with_animation',
+      'chat_message_copy',
+      'sp_show_flg',
+      'sp_header_light_flg',
+      'sp_auto_open_flg',
+      'sp_maximize_size_type'
+    ),
   );
 
-  public function beforeFilter(){
+  public function beforeFilter()
+  {
     parent::beforeFilter();
     $this->set('title_for_layout', 'オートメッセージ機能');
     $this->outMessageIfType = Configure::read('outMessageIfType');
     $this->outMessageTriggerList = Configure::read('outMessageTriggerList');
-    $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
+    $operatingHourData = $this->MOperatingHour->find('first', [
+      'conditions' => [
         'm_companies_id' => $this->userInfo['MCompany']['id']
-    ]]);
-    if(empty($operatingHourData)) {
+      ]
+    ]);
+    if (empty($operatingHourData)) {
       $operatingHourData['MOperatingHour']['active_flg'] = 2;
     }
-    $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+    $this->set('operatingHourData', $operatingHourData['MOperatingHour']['active_flg']);
   }
 
-  public function afterFilter() {
-    if($this->request->is('put') || $this->request->is('post')) {
+  public function afterFilter()
+  {
+    if ($this->request->is('put') || $this->request->is('post')) {
       NodeSettingsReloadComponent::reloadAutoMessages($this->userInfo['MCompany']['company_key']);
     }
   }
@@ -86,18 +182,21 @@ class TAutoMessagesController extends AppController {
    * 一覧画面
    * @return void
    * */
-  public function index() {
+  public function index()
+  {
 
     $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $data = $this->paginate('TAutoMessage');
-    foreach($data as $index => $value) {
+    foreach ($data as $index => $value) {
       $activity = json_decode($value['TAutoMessage']['activity'], true);
-      foreach($activity['conditions'] as $key => $val){
+      foreach ($activity['conditions'] as $key => $val) {
         $targetKey = $key;
-        if($targetKey >= 4) {
-          $targetKey = $targetKey+1;
-        } else if($targetKey === 10) {
-          $targetKey = 4;
+        if ($targetKey >= 4) {
+          $targetKey = $targetKey + 1;
+        } else {
+          if ($targetKey === 10) {
+            $targetKey = 4;
+          }
         }
         $activity = $this->convertOldIFData($targetKey, $val, $activity, $key);
       }
@@ -117,7 +216,7 @@ class TAutoMessagesController extends AppController {
 
     $otherAutoMessages = $this->convertCallAutomessageList($otherAllAutoMessages, false);
 
-    $this->set('autoMessageList', $otherAutoMessages);
+    $this->set('autoMessageList', $otherAutoMessages['data']);
     $this->set('settingList', $data);
     $this->_viewElement();
   }
@@ -126,22 +225,25 @@ class TAutoMessagesController extends AppController {
    * 登録画面
    * @return void
    * */
-  public function add() {
-    if ( $this->request->is('post') ) {
-      if(!empty($this->request->data['TAutoMessage']['t_chatbot_scenario_id']) &&
+  public function add()
+  {
+    if ($this->request->is('post')) {
+      if (!empty($this->request->data['TAutoMessage']['t_chatbot_scenario_id']) &&
         !(isset($this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO])) {
         $this->redirect("/");
       }
       $this->_entry($this->request->data);
     }
 
-    $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
-      'm_companies_id' => $this->userInfo['MCompany']['id']
-    ]]);
-    if(empty($operatingHourData)) {
+    $operatingHourData = $this->MOperatingHour->find('first', [
+      'conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]);
+    if (empty($operatingHourData)) {
       $operatingHourData['MOperatingHour']['active_flg'] = 2;
     }
-    $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+    $this->set('operatingHourData', $operatingHourData['MOperatingHour']['active_flg']);
 
     // シミュレーター表示用ウィジェット設定の取得
     $this->request->data['widgetSettings'] = $this->_getWidgetSettings();
@@ -177,19 +279,19 @@ class TAutoMessagesController extends AppController {
     $this->_viewElement();
   }
 
-   /**
+  /**
    * 更新画面
    * @return void
    * */
-  public function edit($id=null) {
+  public function edit($id = null)
+  {
     if ($this->request->is('put')) {
-      if(!empty($this->request->data['TAutoMessage']['t_chatbot_scenario_id']) &&
+      if (!empty($this->request->data['TAutoMessage']['t_chatbot_scenario_id']) &&
         (!(isset($this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $this->coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]))) {
         $this->redirect("/");
       }
       $this->_entry($this->request->data);
-    }
-    else {
+    } else {
       // 確実なデータを取得するために企業IDを指定する形とする
       $editData = $this->TAutoMessage->coFind("all", [
         'conditions' => [
@@ -200,17 +302,19 @@ class TAutoMessagesController extends AppController {
       //オートメッセージ　営業時間を4番目に入れたので並び替え処理
       $changeEditData = json_decode($editData[0]['TAutoMessage']['activity'], true);
       $changeEditData['conditions'] = array_reverse($changeEditData['conditions'], true);
-      foreach($changeEditData['conditions'] as $key => $val){
-        if($key >= 4) {
+      foreach ($changeEditData['conditions'] as $key => $val) {
+        if ($key >= 4) {
           unset($changeEditData['conditions'][$key]);
-          $changeEditData['conditions'][$key+1] = json_decode($editData[0]['TAutoMessage']['activity'], true)['conditions'][$key];
+          $changeEditData['conditions'][$key + 1] = json_decode($editData[0]['TAutoMessage']['activity'],
+            true)['conditions'][$key];
         }
       }
 
-      foreach($changeEditData['conditions'] as $key => $val){
-        if($key === 11) {
+      foreach ($changeEditData['conditions'] as $key => $val) {
+        if ($key === 11) {
           unset($changeEditData['conditions'][11]);
-          $changeEditData['conditions'][4] = json_decode($editData[0]['TAutoMessage']['activity'], true)['conditions'][10];
+          $changeEditData['conditions'][4] = json_decode($editData[0]['TAutoMessage']['activity'],
+            true)['conditions'][10];
         }
         $changeEditData = $this->convertOldIFData($key, $val, $changeEditData, $key);
       }
@@ -229,16 +333,16 @@ class TAutoMessagesController extends AppController {
       $this->request->data['TAutoMessage']['widget_open'] = (!empty($json['widgetOpen'])) ? $json['widgetOpen'] : "";
       $this->request->data['TAutoMessage']['chat_textarea'] = (!empty($json['chatTextarea'])) ? $json['chatTextarea'] : "";
       $this->request->data['TAutoMessage']['cv'] = (!empty($json['cv'])) ? $json['cv'] : "";
-      if(strcmp($this->request->data['TAutoMessage']['action_type'], 1) === 0) {
+      if (strcmp($this->request->data['TAutoMessage']['action_type'], 1) === 0) {
         // チャットを送信するアクションの場合は明示的にシナリオ紐づけを解除する
         $this->request->data['TAutoMessage']['t_chatbot_scenario_id'] = 0;
       }
       if (array_key_exists('send_mail_flg', $editData[0]['TAutoMessage'])) {
         $this->request->data['TAutoMessage']['send_mail_flg'] = $editData[0]['TAutoMessage']['send_mail_flg'];
         $transmissionData = $this->MMailTransmissionSetting->findById($editData[0]['TAutoMessage']['m_mail_transmission_settings_id']);
-        if(!empty($transmissionData)) {
+        if (!empty($transmissionData)) {
           $this->request->data['TAutoMessage']['m_mail_transmission_settings_id'] = $editData[0]['TAutoMessage']['m_mail_transmission_settings_id'];
-          $splitedMailAddresses = explode(',',$transmissionData['MMailTransmissionSetting']['to_address']);
+          $splitedMailAddresses = explode(',', $transmissionData['MMailTransmissionSetting']['to_address']);
           $this->request->data['TAutoMessage']['mail_address_1'] = !empty($splitedMailAddresses[0]) ? $splitedMailAddresses[0] : "";
           $this->request->data['TAutoMessage']['mail_address_2'] = !empty($splitedMailAddresses[1]) ? $splitedMailAddresses[1] : "";
           $this->request->data['TAutoMessage']['mail_address_3'] = !empty($splitedMailAddresses[2]) ? $splitedMailAddresses[2] : "";
@@ -279,7 +383,8 @@ class TAutoMessagesController extends AppController {
     ));
 
     $otherAutoMessages = $this->convertCallAutomessageList($otherAllAutoMessages, $id);
-    $this->request->data['otherAutoMessages'] = $otherAutoMessages;
+    $this->request->data['otherAutoMessages'] = $otherAutoMessages['data'];
+    $this->request->data['disallowActiveChanging'] = $otherAutoMessages['disallowActiveChanging'];
 
     $this->_viewElement();
   }
@@ -288,9 +393,10 @@ class TAutoMessagesController extends AppController {
    * 削除
    * @return void
    * */
-  public function remoteDelete(){
+  public function remoteDelete()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
     $id = (isset($this->request->data['id'])) ? $this->request->data['id'] : "";
     $ret = $this->TAutoMessage->find('first', [
@@ -302,46 +408,48 @@ class TAutoMessagesController extends AppController {
       ],
       'recursive' => -1
     ]);
-    if ( count($ret) === 1 ) {
-      if ( $this->TAutoMessage->logicalDelete($id) ) {
+    if (count($ret) === 1) {
+      if ($this->TAutoMessage->logicalDelete($id)) {
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-      }
-      else {
+      } else {
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
       }
     }
   }
 
-  public function chkRemoteDelete(){
+  public function chkRemoteDelete()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
 
     $selectedList = $this->request->data['selectedList'];
     $this->TAutoMessage->begin();
     $res = true;
-    foreach($selectedList as $key => $val){
-      $id = (isset($val)) ? $val: "";
-      $ret = $this->TAutoMessage->find('first', [
-          'fields' => 'TAutoMessage.*',
-          'conditions' => [
-              'TAutoMessage.del_flg' => 0,
-              'TAutoMessage.id' => $id,
-              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
-          ],
-          'recursive' => -1
-      ]);
-      if ( count($ret) === 1 ) {
-        if (! $this->TAutoMessage->delete($val) ) {
+    foreach ($selectedList as $key => $val) {
+      $id = (isset($val)) ? $val : "";
+      $ret = $this->TAutoMessage->find('first', array(
+        'fields' => 'TAutoMessage.*',
+        'conditions' => array(
+          'TAutoMessage.del_flg' => 0,
+          'TAutoMessage.id' => $id,
+          'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
+          'NOT' => array(
+            'TAutoMessage.call_automessage_id' => $id
+          )
+        ),
+        'recursive' => -1
+      ));
+      if (count($ret) === 1) {
+        if (!$this->TAutoMessage->delete($val)) {
           $res = false;
         }
       }
     }
-    if($res){
+    if ($res) {
       $this->TAutoMessage->commit();
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.deleteSuccessful'));
-    }
-    else {
+    } else {
       $this->TAutoMessage->rollback();
       $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.deleteFailed'));
     }
@@ -351,47 +459,49 @@ class TAutoMessagesController extends AppController {
    * コピー処理
    * @return void
    * */
-  public function remoteCopyEntryForm() {
+  public function remoteCopyEntryForm()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
     $selectedList = $this->request->data['selectedList'];
     //コピー元のオートメッセージリスト取得
-    foreach($selectedList as $value){
+    foreach ($selectedList as $value) {
       $copyData[] = $this->TAutoMessage->read(null, $value);
     }
     $errorMessage = [];
     //コピー元のオートメッセージリストの数だけ繰り返し
     $res = true;
-    foreach($copyData as $value){
+    foreach ($copyData as $value) {
       $this->TAutoMessage->create();
       $saveData = [];
       $params = [
-          'fields' => [
-              'TAutoMessage.sort'
-          ],
-          'conditions' => [
-              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
-              //'TAutoMessage.del_flg != ' => 1
-          ],
-          'order' => [
-              'TAutoMessage.sort' => 'desc',
-              'TAutoMessage.id' => 'desc'
-          ],
-          'limit' => 1,
-          'recursive' => -1
+        'fields' => [
+          'TAutoMessage.sort'
+        ],
+        'conditions' => [
+          'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+          //'TAutoMessage.del_flg != ' => 1
+        ],
+        'order' => [
+          'TAutoMessage.sort' => 'desc',
+          'TAutoMessage.id' => 'desc'
+        ],
+        'limit' => 1,
+        'recursive' => -1
       ];
       $lastData = $this->TAutoMessage->find('first', $params);
-      if($lastData['TAutoMessage']['sort'] === '0'
-          || $lastData['TAutoMessage']['sort'] === 0
-          || $lastData['TAutoMessage']['sort'] === null){
-            //ソート順が登録されていなかったらソート順をセットする
-            if(! $this->remoteSetSort()){
-              $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
-              return false;
-            }
-            //もう一度ソートの最大値を取り直す
-            $lastData = $this->TAutoMessage->find('first', $params);
+      if ($lastData['TAutoMessage']['sort'] === '0'
+        || $lastData['TAutoMessage']['sort'] === 0
+        || $lastData['TAutoMessage']['sort'] === null) {
+        //ソート順が登録されていなかったらソート順をセットする
+        if (!$this->remoteSetSort()) {
+          $this->set('alertMessage',
+            ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
+          return false;
+        }
+        //もう一度ソートの最大値を取り直す
+        $lastData = $this->TAutoMessage->find('first', $params);
       }
       $nextSort = 1;
       if (!empty($lastData)) {
@@ -402,19 +512,20 @@ class TAutoMessagesController extends AppController {
       $changeEditData = json_decode($value['TAutoMessage']['activity'], true);
       $changeEditData['conditions'] = array_reverse($changeEditData['conditions'], true);
 
-      foreach($changeEditData['conditions'] as $key => $val){
-        if($key >= 4) {
+      foreach ($changeEditData['conditions'] as $key => $val) {
+        if ($key >= 4) {
           unset($changeEditData['conditions'][$key]);
-          $changeEditData['conditions'][$key+1] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][$key];
+          $changeEditData['conditions'][$key + 1] = json_decode($value['TAutoMessage']['activity'],
+            true)['conditions'][$key];
         }
       }
 
-      foreach($changeEditData['conditions'] as $key => $val){
-        if($key === 11) {
+      foreach ($changeEditData['conditions'] as $key => $val) {
+        if ($key === 11) {
           unset($changeEditData['conditions'][11]);
           $changeEditData['conditions'][4] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][10];
         }
-        if($key === C_AUTO_TRIGGER_STAY_PAGE
+        if ($key === C_AUTO_TRIGGER_STAY_PAGE
           || $key === C_AUTO_TRIGGER_REFERRER
           || $key === C_AUTO_TRIGGER_SPEECH_CONTENT
           || $key === C_AUTO_TRIGGER_STAY_PAGE_OF_FIRST
@@ -424,7 +535,7 @@ class TAutoMessagesController extends AppController {
       }
 
       $mailTransmissionData = $this->MMailTransmissionSetting->findById($value['TAutoMessage']['m_mail_transmission_settings_id']);
-      if(!empty($mailTransmissionData)) {
+      if (!empty($mailTransmissionData)) {
         $this->MMailTransmissionSetting->create();
         $mailTransmissionData['MMailTransmissionSetting']['id'] = null;
         $this->MMailTransmissionSetting->set($mailTransmissionData);
@@ -439,7 +550,7 @@ class TAutoMessagesController extends AppController {
 
       $saveData['TAutoMessage']['sort'] = $nextSort;
       $saveData['TAutoMessage']['m_companies_id'] = $value['TAutoMessage']['m_companies_id'];
-      $saveData['TAutoMessage']['name'] = $value['TAutoMessage']['name'].'コピー';
+      $saveData['TAutoMessage']['name'] = $value['TAutoMessage']['name'] . 'コピー';
       $saveData['TAutoMessage']['trigger_type'] = $value['TAutoMessage']['trigger_type'];
       $saveData['TAutoMessage']['activity'] = $value['TAutoMessage']['activity'];
       $saveData['TAutoMessage']['action_type'] = $value['TAutoMessage']['action_type'];
@@ -457,29 +568,30 @@ class TAutoMessagesController extends AppController {
       $this->TAutoMessage->checkBeforeValidates($saveData['TAutoMessage']['action_type']);
 
       // バリデーションチェックでエラーが出た場合
-      if($res){
-        if(!$this->TAutoMessage->validates()) {
+      if ($res) {
+        if (!$this->TAutoMessage->validates()) {
           $res = false;
           $errorMessage = $this->TAutoMessage->validationErrors;
           $this->MMailTransmissionSetting->rollback();
           $this->TAutoMessage->rollback();
-        }
-        else{
+        } else {
           //オートメッセージ　営業時間を4番目に入れたので並び替え処理
-          $changeEditData = json_decode($saveData['TAutoMessage']['activity'],true);
-          foreach($changeEditData['conditions'] as $key => $val){
-            if($key == 4) {
+          $changeEditData = json_decode($saveData['TAutoMessage']['activity'], true);
+          foreach ($changeEditData['conditions'] as $key => $val) {
+            if ($key == 4) {
               unset($changeEditData['conditions'][4]);
-              $changeEditData['conditions'][11] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][4];
+              $changeEditData['conditions'][11] = json_decode($value['TAutoMessage']['activity'],
+                true)['conditions'][4];
             }
           }
 
-          foreach($changeEditData['conditions'] as $key => $val){
-            if($key >= 4 && $key != 11) {
+          foreach ($changeEditData['conditions'] as $key => $val) {
+            if ($key >= 4 && $key != 11) {
               unset($changeEditData['conditions'][$key]);
-              $changeEditData['conditions'][$key-1] = json_decode($value['TAutoMessage']['activity'], true)['conditions'][$key];
+              $changeEditData['conditions'][$key - 1] = json_decode($value['TAutoMessage']['activity'],
+                true)['conditions'][$key];
             }
-            if($key == 11) {
+            if ($key == 11) {
               $changeEditData['conditions'][10] = $changeEditData['conditions'][11];
               unset($changeEditData['conditions'][11]);
             }
@@ -488,7 +600,7 @@ class TAutoMessagesController extends AppController {
           $changeEditData = json_encode($changeEditData);
           $saveData['TAutoMessage']['activity'] = $changeEditData;
 
-          if( $this->TAutoMessage->save($saveData,false) ) {
+          if ($this->TAutoMessage->save($saveData, false)) {
             $this->MMailTransmissionSetting->commit();
             $this->TAutoMessage->commit();
             $this->Session->delete('dstoken');
@@ -503,35 +615,38 @@ class TAutoMessagesController extends AppController {
    * オートメッセージ設定ソート順更新
    *
    * */
-  public function remoteSaveSort(){
+  public function remoteSaveSort()
+  {
     Configure::write('debug', 2);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
-    if ( !$this->request->is('ajax') ) return false;
-    if ( !empty($this->params->data['list']) ) {
+    if (!$this->request->is('ajax')) {
+      return false;
+    }
+    if (!empty($this->params->data['list'])) {
       $this->TAutoMessage->begin();
       $list = $this->params->data['list'];
       $sortNoList = $this->params->data['sortNolist'];
       sort($sortNoList);
-      $this->log($list,LOG_DEBUG);
+      $this->log($list, LOG_DEBUG);
       /* 現在の並び順を取得 */
       $params = $this->paginate['TAutoMessage'];
       $params['fields'] = [
-          'TAutoMessage.id',
-          'TAutoMessage.sort'
+        'TAutoMessage.id',
+        'TAutoMessage.sort'
       ];
       $params['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
       unset($params['limit']);
       $prevSort = $this->TAutoMessage->find('list', $params);
       //新しくソート順を設定したため、空で来ることがある
       $reset_flg = false;
-      foreach($prevSort as $key => $val){
+      foreach ($prevSort as $key => $val) {
         //設定されていない値'0'が一つでも入っていたらsortをリセット
-        if($val === '0' || $val === 0 || $val === null){
+        if ($val === '0' || $val === 0 || $val === null) {
           $reset_flg = true;
         }
       }
-      if($reset_flg){
+      if ($reset_flg) {
         //ソート順のリセットはID順とする
 //         $i = 1;
 //         foreach($prevSort as $key => $val){
@@ -539,13 +654,14 @@ class TAutoMessagesController extends AppController {
 //           $i++;
 //         }
         //ソート順が登録されていなかったらソート順をセットする
-        if(! $this->remoteSetSort()){
-          $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+        if (!$this->remoteSetSort()) {
+          $this->set('alertMessage',
+            ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
           return false;
         }
         $prevSort = $this->TAutoMessage->find('list', $params);
         //この時$sortNoListは空なので作成する
-        if(empty($sortNoList)){
+        if (empty($sortNoList)) {
           for ($i = 0; count($list) > $i; $i++) {
             $id = $list[$i];
             $sortNoList[] = $prevSort[$id];
@@ -559,12 +675,12 @@ class TAutoMessagesController extends AppController {
       $ret = true;
       for ($i = 0; count($list) > $i; $i++) {
         $id = $list[$i];
-        if ( isset($prevSort[$id]) ) {
+        if (isset($prevSort[$id])) {
           $saveData = [
-              'TAutoMessage' => [
-                  'id' => $id,
-                  'sort' => $sortNoList[$i]
-              ]
+            'TAutoMessage' => [
+              'id' => $id,
+              'sort' => $sortNoList[$i]
+            ]
           ];
           if (!$this->TAutoMessage->validates()) {
             $ret = false;
@@ -584,8 +700,7 @@ class TAutoMessagesController extends AppController {
       if ($ret) {
         $this->TAutoMessage->commit();
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-      }
-      else {
+      } else {
         $this->TAutoMessage->rollback();
         $this->renderMessage(C_MESSAGE_TYPE_ERROR, Configure::read('message.const.saveFailed'));
       }
@@ -596,48 +711,49 @@ class TAutoMessagesController extends AppController {
    * オートメッセージ設定ソート順を現在のID順でセット
    *
    * */
-  public function remoteSetSort(){
+  public function remoteSetSort()
+  {
     $this->TAutoMessage->begin();
     /* 現在の並び順を取得 */
     $this->paginate['TAutoMessage']['conditions']['TAutoMessage.m_companies_id'] = $this->userInfo['MCompany']['id'];
     $params = [
-        'fields' => [
-            'TAutoMessage.sort'
-        ],
-        'conditions' => [
-            'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+      'fields' => [
+        'TAutoMessage.sort'
+      ],
+      'conditions' => [
+        'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
 //            'TAutoMessage.del_flg != ' => 1
-        ],
-        'order' => [
-            'TAutoMessage.sort' => 'asc',
-            'TAutoMessage.id' => 'asc'
-        ],
-        'limit' => 1,
-        'recursive' => -1
+      ],
+      'order' => [
+        'TAutoMessage.sort' => 'asc',
+        'TAutoMessage.id' => 'asc'
+      ],
+      'limit' => 1,
+      'recursive' => -1
     ];
     $params['fields'] = [
-        'TAutoMessage.id',
-        'TAutoMessage.sort'
+      'TAutoMessage.id',
+      'TAutoMessage.sort'
     ];
     unset($params['limit']);
     $prevSort = $this->TAutoMessage->find('list', $params);
     //ソート順のリセットはID順とする
     $i = 1;
-    foreach($prevSort as $key => $val){
+    foreach ($prevSort as $key => $val) {
       $prevSort[$key] = strval($i);
       $i++;
     }
     $prevSortKeys = am($prevSort);
-    $this->log($prevSortKeys,LOG_DEBUG);
+    $this->log($prevSortKeys, LOG_DEBUG);
     $i = 0;
     $ret = true;
-    foreach($prevSort as $key => $val){
+    foreach ($prevSort as $key => $val) {
       $id = $key;
       $saveData = [
-          'TAutoMessage' => [
-              'id' => $id,
-              'sort' => $prevSortKeys[$i]
-          ]
+        'TAutoMessage' => [
+          'id' => $id,
+          'sort' => $prevSortKeys[$i]
+        ]
       ];
       if (!$this->TAutoMessage->validates()) {
         $ret = false;
@@ -652,8 +768,7 @@ class TAutoMessagesController extends AppController {
     if ($ret) {
       $this->TAutoMessage->commit();
       return true;
-    }
-    else {
+    } else {
       $this->TAutoMessage->rollback();
       return false;
     }
@@ -663,18 +778,20 @@ class TAutoMessagesController extends AppController {
    * ステータス更新
    * @return void
    * */
-  public function changeStatus() {
+  public function changeStatus()
+  {
     Configure::write('debug', 0);
-    $this->autoRender = FALSE;
+    $this->autoRender = false;
     $this->layout = 'ajax';
     $inputData = $this->request->data;
     $case = gettype($inputData['status']);
     $activeFlg = 1;
-    if ($case === "boolean" && $inputData['status'] || $case === "string" && strcmp($inputData['status'], 'true') === 0) {
+    if ($case === "boolean" && $inputData['status'] || $case === "string" && strcmp($inputData['status'],
+        'true') === 0) {
       $activeFlg = 0;
     }
     $this->TAutoMessage->updateAll(
-      ['active_flg'=>$activeFlg],
+      ['active_flg' => $activeFlg],
       [
         'id' => $inputData['targetList'],
         'm_companies_id' => $this->userInfo['MCompany']['id'],
@@ -691,63 +808,63 @@ class TAutoMessagesController extends AppController {
   {
     Configure::write('debug', 0);
     $this->autoRender = false;
-    $this->layout     = false;
+    $this->layout = false;
     $result = ['success' => false];
-    $file      = $this->params['form']['file'];
-    $lastPage  = $this->request->data['lastPage'];
+    $file = $this->params['form']['file'];
+    $lastPage = $this->request->data['lastPage'];
     $component = new AutoMessageExcelImportComponent($file['tmp_name']);
     try {
       $component->getImportData();
       $transactions = null;
-      $data         = $component->parseData();
+      $data = $component->parseData();
       $transactions = $this->TransactionManager->begin();
-      $dataArray    = [];
-      $errorArray   = [];
-      $errorFound   = false;
+      $dataArray = [];
+      $errorArray = [];
+      $errorFound = false;
       foreach ($data as $index => $row) {
         $scenarioId = null;
         if ($row['scenario']) {
           $scenarioId = $this->getScenarioIdByName($row['scenario']);
           // scenario not exist
           if (!$scenarioId) {
-            $errorArray                  = [];
+            $errorArray = [];
             $errorArray[$index]['BQ'][0] = "シナリオが存在しません";
-            $exception                   = new AutoMessageException("Excelデータバリデーションエラー", 200);
+            $exception = new AutoMessageException("Excelデータバリデーションエラー", 200);
             $exception->setErrors($errorArray);
             throw $exception;
           }
         }
         $saveData = [
           'TAutoMessage' => [
-            'lastPage'              => $lastPage,
-            'm_companies_id'        => $this->userInfo['MCompany']['id'],
-            'name'                  => $row['name'],
-            'trigger_type'          => 0, // 「画面読み込み時」固定
-            'activity'              => json_encode($row['activity'], JSON_UNESCAPED_UNICODE), // 日本語はエスケープしないで入れる仕様
-            'action_type'           => $row['action_type'], // 「チャットメッセージを送る」固定
-            'active_flg'            => $row['active_flg'],
+            'lastPage' => $lastPage,
+            'm_companies_id' => $this->userInfo['MCompany']['id'],
+            'name' => $row['name'],
+            'trigger_type' => 0, // 「画面読み込み時」固定
+            'activity' => json_encode($row['activity'], JSON_UNESCAPED_UNICODE), // 日本語はエスケープしないで入れる仕様
+            'action_type' => $row['action_type'], // 「チャットメッセージを送る」固定
+            'active_flg' => $row['active_flg'],
             't_chatbot_scenario_id' => $scenarioId,
-            'del_flg'               => 0
+            'del_flg' => 0
           ]
         ];
 
         if ($row['send_mail_flg'] === 1) {
-          $saveData['main']['send_mail_flg']  = $row['send_mail_flg'];
+          $saveData['main']['send_mail_flg'] = $row['send_mail_flg'];
           $saveData['main']['mail_address_1'] = $row['mail_address_1'];
           $saveData['main']['mail_address_2'] = $row['mail_address_2'];
           $saveData['main']['mail_address_3'] = $row['mail_address_3'];
           $saveData['main']['mail_address_4'] = $row['mail_address_4'];
           $saveData['main']['mail_address_5'] = $row['mail_address_5'];
-          $saveData['main']['subject']        = $row['mail_subject'];
-          $saveData['main']['from_name']      = $row['mail_from_name'];
+          $saveData['main']['subject'] = $row['mail_subject'];
+          $saveData['main']['from_name'] = $row['mail_from_name'];
         }
 
         $this->TAutoMessage->set($saveData);
         $validate = $this->TAutoMessage->validates();
-        $errors   = $this->TAutoMessage->validationErrors;
+        $errors = $this->TAutoMessage->validationErrors;
         if (!empty($errors)) {
           $errorArray[$index]['E'][0] = isset($errors['activity']) ? $errors['activity'][0] : '';
-          $exception                  = new AutoMessageException("データバリデーションエラー", 200);
+          $exception = new AutoMessageException("データバリデーションエラー", 200);
           $exception->setErrors($errorArray);
           throw $exception;
         } else {
@@ -757,7 +874,7 @@ class TAutoMessagesController extends AppController {
       // delete old data
       $this->TAutoMessage->updateAll(['del_flg' => 1],
         [
-          'del_flg != '    => 1,
+          'del_flg != ' => 1,
           'm_companies_id' => $this->userInfo['MCompany']['id']
         ]
       );
@@ -767,24 +884,24 @@ class TAutoMessagesController extends AppController {
         $nextPage = $this->_entryProcess($saveData);
       }
       $this->TransactionManager->commitTransaction($transactions);
-      $result['success']     = true;
+      $result['success'] = true;
       $result['showPageNum'] = $nextPage;
     } catch (AutoMessageException $e) {
       if ($transactions) {
         $this->TransactionManager->rollbackTransaction($transactions);
       }
-      $result['success']       = false;
-      $result['errorCode']     = 400;
+      $result['success'] = false;
+      $result['errorCode'] = 400;
       $result['errorMessages'] = $e->getErrors();
     } catch (Exception $e) {
       if ($transactions) {
         $this->TransactionManager->rollbackTransaction($transactions);
       }
-      $result['success']   = false;
+      $result['success'] = false;
       $result['errorCode'] = 400;
       $this->log("Excel import error found. message => " . $e->getMessage, LOG_WARNING);
       $result['errorMessages'] = [
-        'type'    => 'system',
+        'type' => 'system',
         'message' => 'ファイルの読み込みに失敗しました。'
       ];
     }
@@ -799,46 +916,51 @@ class TAutoMessagesController extends AppController {
   {
     Configure::write('debug', 0);
     $this->autoRender = false;
-    $this->layout     = false;
-    $filePath         = ROOT . DS . self::TEMPLATE_FILE_NAME;
-    $component        = new AutoMessageExcelExportComponent($filePath);
+    $this->layout = false;
+    $filePath = ROOT . DS . self::TEMPLATE_FILE_NAME;
+    $component = new AutoMessageExcelExportComponent($filePath);
     $component->getImportData();
     $params = [
       'order' => [
         'TAutoMessage.sort' => 'asc',
-        'TAutoMessage.id'   => 'asc'
+        'TAutoMessage.id' => 'asc'
       ],
       'fields' => ['TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name', 'CalledAutoMessage.name'],
       'conditions' => [
         'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id'],
-        'TAutoMessage.del_flg != '    => 1
+        'TAutoMessage.del_flg != ' => 1
       ],
-      'joins' => [[
-        'type'       => 'LEFT',
-        'table'      => 't_chatbot_scenarios',
-        'alias'      => 'TChatbotScenario',
-        'conditions' => [
-          'TAutoMessage.t_chatbot_scenario_id = TChatbotScenario.id'
-        ]],
+      'joins' => [
         [
-          'type'       => 'LEFT',
-          'table'      => 't_auto_messages',
-          'alias'      => 'CalledAutoMessage',
+          'type' => 'LEFT',
+          'table' => 't_chatbot_scenarios',
+          'alias' => 'TChatbotScenario',
+          'conditions' => [
+            'TAutoMessage.t_chatbot_scenario_id = TChatbotScenario.id'
+          ]
+        ],
+        [
+          'type' => 'LEFT',
+          'table' => 't_auto_messages',
+          'alias' => 'CalledAutoMessage',
           'conditions' => [
             'TAutoMessage.call_automessage_id = CalledAutoMessage.id'
           ]
-        ]],
-      'recursive'  => -1
+        ]
+      ],
+      'recursive' => -1
     ];
     $data = $this->TAutoMessage->find('all', $params);
-    foreach($data as $index => $value) {
+    foreach ($data as $index => $value) {
       $activity = json_decode($value['TAutoMessage']['activity'], true);
-      foreach($activity['conditions'] as $key => $val){
+      foreach ($activity['conditions'] as $key => $val) {
         $targetKey = $key;
-        if($targetKey >= 4) {
-          $targetKey = $targetKey+1;
-        } else if($targetKey === 10) {
-          $targetKey = 4;
+        if ($targetKey >= 4) {
+          $targetKey = $targetKey + 1;
+        } else {
+          if ($targetKey === 10) {
+            $targetKey = 4;
+          }
         }
         $activity = $this->convertOldIFData($targetKey, $val, $activity, $key);
       }
@@ -848,9 +970,10 @@ class TAutoMessagesController extends AppController {
     return $component->export($data);
   }
 
-  public function downloadTemplate() {
+  public function downloadTemplate()
+  {
     $this->autoRender = false;
-    $filePath = ROOT.DS.self::FULL_TEMPLATE_FILE_NAME;
+    $filePath = ROOT . DS . self::FULL_TEMPLATE_FILE_NAME;
     $this->response->download(self::FULL_TEMPLATE_FILE_NAME);
     $this->response->file($filePath);
   }
@@ -860,7 +983,8 @@ class TAutoMessagesController extends AppController {
    * @param array $inputData
    * @return void
    * */
-  private function _entry($saveData) {
+  private function _entry($saveData)
+  {
     $nextPage = '1';
     $transactions = null;
     try {
@@ -868,15 +992,17 @@ class TAutoMessagesController extends AppController {
       $nextPage = $this->_entryProcess($saveData);
       $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
-      $this->redirect('/TAutoMessages/index/page:'.$nextPage, null, false);
-    } catch(AutoMessageException $e) {
+      $this->redirect('/TAutoMessages/index/page:' . $nextPage, null, false);
+    } catch (AutoMessageException $e) {
       $this->TransactionManager->rollbackTransaction($transactions);
-      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+      $this->set('alertMessage',
+        ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
       $this->set('errors', $e->getErrors());
       $this->set('lastPage', $e->getLastPage());
-    } catch(Exception $e) {
+    } catch (Exception $e) {
       $this->TransactionManager->rollbackTransaction($transactions);
-      $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+      $this->set('alertMessage',
+        ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
     }
   }
 
@@ -886,42 +1012,43 @@ class TAutoMessagesController extends AppController {
    * @param array $inputData
    * @return {String}
    * */
-  private function _entryProcess($saveData) {
+  private function _entryProcess($saveData)
+  {
     $errors = [];
     $saveData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
-    if(array_key_exists ('lastPage',$saveData)){
+    if (array_key_exists('lastPage', $saveData)) {
       $nextPage = $saveData['lastPage'];
-    }
-    else{
+    } else {
       $nextPage = '1';
     }
 
-    if ( empty($saveData['TAutoMessage']['id']) ) {
+    if (empty($saveData['TAutoMessage']['id'])) {
       //新規追加
       $this->TAutoMessage->create();
       $params = [
-          'fields' => [
-              'TAutoMessage.sort'
-          ],
-          'conditions' => [
-              'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
+        'fields' => [
+          'TAutoMessage.sort'
+        ],
+        'conditions' => [
+          'TAutoMessage.m_companies_id' => $this->userInfo['MCompany']['id']
 //              'TAutoMessage.del_flg != ' => 1
-          ],
-          'order' => [
-              'TAutoMessage.sort' => 'desc',
-              'TAutoMessage.id' => 'desc'
-          ],
-          'limit' => 1,
-          'recursive' => -1
+        ],
+        'order' => [
+          'TAutoMessage.sort' => 'desc',
+          'TAutoMessage.id' => 'desc'
+        ],
+        'limit' => 1,
+        'recursive' => -1
       ];
       $lastData = $this->TAutoMessage->find('first', $params);
-      if($lastData){
-        if($lastData['TAutoMessage']['sort'] === '0'
-            || $lastData['TAutoMessage']['sort'] === 0
-            || $lastData['TAutoMessage']['sort'] === null){
+      if ($lastData) {
+        if ($lastData['TAutoMessage']['sort'] === '0'
+          || $lastData['TAutoMessage']['sort'] === 0
+          || $lastData['TAutoMessage']['sort'] === null) {
           //ソート順が登録されていなかったらソート順をセットする
-          if(! $this->remoteSetSort()) {
-            $this->set('alertMessage',['type' => C_MESSAGE_TYPE_ERROR, 'text'=>Configure::read('message.const.saveFailed')]);
+          if (!$this->remoteSetSort()) {
+            $this->set('alertMessage',
+              ['type' => C_MESSAGE_TYPE_ERROR, 'text' => Configure::read('message.const.saveFailed')]);
             throw new AutoMessageException('ソート順が設定できませんでした。');
           }
           //もう一度ソートの最大値を取り直す
@@ -934,7 +1061,7 @@ class TAutoMessagesController extends AppController {
       }
       $saveData['TAutoMessage']['sort'] = $nextSort;
 
-      $count = $this->TAutoMessage->find('first',[
+      $count = $this->TAutoMessage->find('first', [
         'fields' => ['count(*) as count'],
         'conditions' => ['TAutoMessage.del_flg != ' => 1, 'm_companies_id' => $this->userInfo['MCompany']['id']]
       ]);
@@ -946,54 +1073,54 @@ class TAutoMessagesController extends AppController {
     $subject = '';
     $fromName = '';
     $templateId = 0;
-    if($saveData['TAutoMessage']['action_type'] == C_AUTO_ACTION_TYPE_SENDMESSAGE && !empty($saveData['main']['send_mail_flg']) && intval($saveData['main']['send_mail_flg']) === C_CHECK_ON) {
+    if ($saveData['TAutoMessage']['action_type'] == C_AUTO_ACTION_TYPE_SENDMESSAGE && !empty($saveData['main']['send_mail_flg']) && intval($saveData['main']['send_mail_flg']) === C_CHECK_ON) {
       $this->request->data['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
       $saveData['TAutoMessage']['send_mail_flg'] = intval($saveData['main']['send_mail_flg']);
-      foreach($saveData['main'] as $k => $v) {
-        if(preg_match('/mail_address_[1-5]/', $k)) {
+      foreach ($saveData['main'] as $k => $v) {
+        if (preg_match('/mail_address_[1-5]/', $k)) {
           $this->request->data['TAutoMessage'][$k] = $v;
-          if(!empty($v)) {
-            if($toAddresses !== '') {
+          if (!empty($v)) {
+            if ($toAddresses !== '') {
               $toAddresses .= ',';
             }
             $toAddresses .= $v;
           }
         }
-        if(strpos($k, 'subject') === 0) {
+        if (strpos($k, 'subject') === 0) {
           $this->request->data['TAutoMessage']['subject'] = $v;
           $subject = $v;
         }
-        if(strpos($k, 'from_name') === 0) {
+        if (strpos($k, 'from_name') === 0) {
           $this->request->data['TAutoMessage']['from_name'] = $v;
           $fromName = $v;
         }
       }
-      if(empty($saveData['TAutoMessage']['m_mail_transmission_settings_id'])) {
+      if (empty($saveData['TAutoMessage']['m_mail_transmission_settings_id'])) {
         $this->MMailTransmissionSetting->create();
       } else {
         $this->MMailTransmissionSetting->read(null, $saveData['TAutoMessage']['m_mail_transmission_settings_id']);
       }
       $this->MMailTransmissionSetting->set([
-          'm_companies_id' => $this->userInfo['MCompany']['id'],
-          'from_name' => $fromName,
-          'to_address' => $toAddresses,
-          'subject' => $subject
+        'm_companies_id' => $this->userInfo['MCompany']['id'],
+        'from_name' => $fromName,
+        'to_address' => $toAddresses,
+        'subject' => $subject
       ]);
       $validate = $this->MMailTransmissionSetting->validates();
       $errors = $this->MMailTransmissionSetting->validationErrors;
-      if(empty($errors)){
+      if (empty($errors)) {
         $this->MMailTransmissionSetting->save();
-        if(empty($saveData['TAutoMessage']['m_mail_transmission_settings_id'])) {
+        if (empty($saveData['TAutoMessage']['m_mail_transmission_settings_id'])) {
           $saveData['TAutoMessage']['m_mail_transmission_settings_id'] = $this->MMailTransmissionSetting->getLastInsertId();
         }
-        if(empty($saveData['TAutoMessage']['m_mail_template_id'])) {
-          $templateData = $this->MMailTemplate->find('first',[
-              'conditions' => [
-                  'm_companies_id' => $this->userInfo['MCompany']['id'],
-                  'mail_type_cd' => 'AM001'
-              ]
+        if (empty($saveData['TAutoMessage']['m_mail_template_id'])) {
+          $templateData = $this->MMailTemplate->find('first', [
+            'conditions' => [
+              'm_companies_id' => $this->userInfo['MCompany']['id'],
+              'mail_type_cd' => 'AM001'
+            ]
           ]);
-          if(!empty($templateData)) {
+          if (!empty($templateData)) {
             $saveData['TAutoMessage']['m_mail_template_id'] = $templateData['MMailTemplate']['id'];
           }
         }
@@ -1010,7 +1137,7 @@ class TAutoMessagesController extends AppController {
       $saveData['TAutoMessage']['send_mail_flg'] = 0;
     }
 
-    if(strcmp($this->request->data['TAutoMessage']['action_type'], "1") === 0) {
+    if (strcmp($this->request->data['TAutoMessage']['action_type'], "1") === 0) {
       $saveData['TAutoMessage']['t_chatbot_scenario_id'] = null;
     }
 
@@ -1023,41 +1150,44 @@ class TAutoMessagesController extends AppController {
     $errors = $this->TAutoMessage->validationErrors;
 
     // その他のチェック
-    if ( !empty($saveData['TAutoMessage']) ) {
+    if (!empty($saveData['TAutoMessage'])) {
       $activity = json_decode($saveData['TAutoMessage']['activity']);
 
       /* 項目ごとの設定数上限チェック */
       $tmpMessage = "%sの場合、『%s』は%d個まで設定可能です";
 
-      foreach((array)$activity->conditions as $key => $val) {
+      foreach ((array)$activity->conditions as $key => $val) {
         $setting = $this->outMessageTriggerList[$key];
-        if ( !isset($setting['createLimit'][$activity->conditionType]) ) continue;
-        if ( count($val) > intval($setting['createLimit'][$activity->conditionType]) ) {
+        if (!isset($setting['createLimit'][$activity->conditionType])) {
+          continue;
+        }
+        if (count($val) > intval($setting['createLimit'][$activity->conditionType])) {
           $validate = false;
-          $errors['triggers'][$setting['key']] = sprintf($tmpMessage, $this->outMessageIfType[$activity->conditionType], $setting['label'], $setting['createLimit'][$activity->conditionType]);
+          $errors['triggers'][$setting['key']] = sprintf($tmpMessage, $this->outMessageIfType[$activity->conditionType],
+            $setting['label'], $setting['createLimit'][$activity->conditionType]);
         }
       }
     }
 
     if ($validate) {
       //オートメッセージ　営業時間を4番目に入れたので並び替え処理
-      $changeEditData = json_decode($saveData['TAutoMessage']['activity'],true);
-      foreach($changeEditData['conditions'] as $key => $val){
-        if($key === 4) {
+      $changeEditData = json_decode($saveData['TAutoMessage']['activity'], true);
+      foreach ($changeEditData['conditions'] as $key => $val) {
+        if ($key === 4) {
           unset($changeEditData['conditions'][4]);
-          $changeEditData['conditions'][10] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][4];
+          $changeEditData['conditions'][10] = json_decode($saveData['TAutoMessage']['activity'], true)['conditions'][4];
         }
-        if($key >= 5) {
+        if ($key >= 5) {
           unset($changeEditData['conditions'][$key]);
-          $changeEditData['conditions'][$key-1] = json_decode($saveData['TAutoMessage']['activity'],true)['conditions'][$key];
+          $changeEditData['conditions'][$key - 1] = json_decode($saveData['TAutoMessage']['activity'],
+            true)['conditions'][$key];
         }
       }
       $changeEditData = json_encode($changeEditData);
       $saveData['TAutoMessage']['activity'] = $changeEditData;
-      if( $this->TAutoMessage->save($saveData,false) ) {
+      if ($this->TAutoMessage->save($saveData, false)) {
       }
-    }
-    else {
+    } else {
       $exception = new AutoMessageException('バリデーションエラー');
       $exception->setErrors($errors);
       $exception->setLastPage($nextPage);
@@ -1073,7 +1203,8 @@ class TAutoMessagesController extends AppController {
    * ビュー部品セット
    * @return void
    * */
-  private function _viewElement() {
+  private function _viewElement()
+  {
     // TODO out -> auto に変更
     // トリガー種別
     $this->set('outMessageTriggerType', Configure::read('outMessageTriggerType'));
@@ -1092,11 +1223,11 @@ class TAutoMessagesController extends AppController {
     // 有効無効
     $this->set('outMessageAvailableType', Configure::read('outMessageAvailableType'));
     // 画像パス
-    $this->set('gallaryPath', C_NODE_SERVER_ADDR.C_NODE_SERVER_FILE_PORT.'/img/widget/');
+    $this->set('gallaryPath', C_NODE_SERVER_ADDR . C_NODE_SERVER_FILE_PORT . '/img/widget/');
 
     $this->set('companyKey', $this->userInfo['MCompany']['company_key']);
     // 最後に表示していたページ番号
-    if(!empty($this->request->query['lastpage'])){
+    if (!empty($this->request->query['lastpage'])) {
       $this->set('lastPage', $this->request->query['lastpage']);
     }
   }
@@ -1115,12 +1246,12 @@ class TAutoMessagesController extends AppController {
       foreach ($conditions as $index => $settings) {
         if (array_key_exists('keyword', $settings)) {
           $newSettings = array(
-              "targetName" => "1",
-              "keyword_contains" => "",
-              "keyword_contains_type" => "1",
-              "keyword_exclusions" => "",
-              "keyword_exclusions_type" => "1",
-              "stayPageCond" => 1
+            "targetName" => "1",
+            "keyword_contains" => "",
+            "keyword_contains_type" => "1",
+            "keyword_exclusions" => "",
+            "keyword_exclusions_type" => "1",
+            "stayPageCond" => 1
           );
           $newSettings["targetName"] = $settings['targetName'];
           switch ($settings['stayPageCond']) {
@@ -1149,11 +1280,11 @@ class TAutoMessagesController extends AppController {
       foreach ($conditions as $index => $settings) {
         if (array_key_exists('keyword', $settings)) {
           $newSettings = array(
-              "keyword_contains" => "",
-              "keyword_contains_type" => "1",
-              "keyword_exclusions" => "",
-              "keyword_exclusions_type" => "1",
-              "referrerCond" => 2
+            "keyword_contains" => "",
+            "keyword_contains_type" => "1",
+            "keyword_exclusions" => "",
+            "keyword_exclusions_type" => "1",
+            "referrerCond" => 2
           );
           switch ($settings['referrerCond']) {
             case 1: // 完全一致
@@ -1181,13 +1312,13 @@ class TAutoMessagesController extends AppController {
       foreach ($conditions as $index => $settings) {
         if (array_key_exists('speechContent', $settings)) {
           $newSettings = array(
-              "keyword_contains" => "",
-              "keyword_contains_type" => "1",
-              "keyword_exclusions" => "",
-              "keyword_exclusions_type" => "1",
-              "speechContentCond" => "1",
-              "triggerTimeSec" => 3,
-              "speechTriggerCond" => "1"
+            "keyword_contains" => "",
+            "keyword_contains_type" => "1",
+            "keyword_exclusions" => "",
+            "keyword_exclusions_type" => "1",
+            "speechContentCond" => "1",
+            "triggerTimeSec" => 3,
+            "speechTriggerCond" => "1"
           );
           $newSettings['speechContentCond'] = $settings['speechContentCond'];
           $newSettings['triggerTimeSec'] = $settings['triggerTimeSec'];
@@ -1218,12 +1349,12 @@ class TAutoMessagesController extends AppController {
       foreach ($conditions as $index => $settings) {
         if (array_key_exists('keyword', $settings)) {
           $newSettings = array(
-              "targetName" => "1",
-              "keyword_contains" => "",
-              "keyword_contains_type" => "1",
-              "keyword_exclusions" => "",
-              "keyword_exclusions_type" => "1",
-              "stayPageCond" => 1
+            "targetName" => "1",
+            "keyword_contains" => "",
+            "keyword_contains_type" => "1",
+            "keyword_exclusions" => "",
+            "keyword_exclusions_type" => "1",
+            "stayPageCond" => 1
           );
           $newSettings["targetName"] = $settings['targetName'];
           switch ($settings['stayPageCond']) {
@@ -1252,12 +1383,12 @@ class TAutoMessagesController extends AppController {
       foreach ($conditions as $index => $settings) {
         if (array_key_exists('keyword', $settings)) {
           $newSettings = array(
-              "targetName" => "1",
-              "keyword_contains" => "",
-              "keyword_contains_type" => "1",
-              "keyword_exclusions" => "",
-              "keyword_exclusions_type" => "1",
-              "stayPageCond" => 1
+            "targetName" => "1",
+            "keyword_contains" => "",
+            "keyword_contains_type" => "1",
+            "keyword_exclusions" => "",
+            "keyword_exclusions_type" => "1",
+            "stayPageCond" => 1
           );
           $newSettings["targetName"] = $settings['targetName'];
           switch ($settings['stayPageCond']) {
@@ -1283,13 +1414,15 @@ class TAutoMessagesController extends AppController {
     }
     return $activity;
   }
-/**
- * _getWidgetSettings
- * ウィジェット設定を取得し、シミュレーター表示用にパラメーターを設定する
- *
- * @return $inputData['MWidgetSetting'] シミュレーター表示用にパラメーターを設定したもの
- */
-  private function _getWidgetSettings() {
+
+  /**
+   * _getWidgetSettings
+   * ウィジェット設定を取得し、シミュレーター表示用にパラメーターを設定する
+   *
+   * @return $inputData['MWidgetSetting'] シミュレーター表示用にパラメーターを設定したもの
+   */
+  private function _getWidgetSettings()
+  {
     $inputData = [];
     $ret = $this->MWidgetSetting->coFind('first');
     $inputData = $ret['MWidgetSetting'];
@@ -1298,100 +1431,92 @@ class TAutoMessagesController extends AppController {
     $inputData = $this->_setShowTab($inputData);
 
     // 詳細設定
-    if ( isset($ret['MWidgetSetting']['style_settings']) ) {
+    if (isset($ret['MWidgetSetting']['style_settings'])) {
       $json = $this->_settingToObj($ret['MWidgetSetting']['style_settings']);
       $inputData = $this->_setStyleSetting($inputData, $json);
     }
-    if(array_key_exists ('re_border_color',$json)){
-      if($json['re_border_color'] === 'none'){
+    if (array_key_exists('re_border_color', $json)) {
+      if ($json['re_border_color'] === 'none') {
         $this->set('re_border_color_flg', false);
         $inputData['re_border_color'] = 'なし';
         $inputData['re_border_none'] = true;
-      }
-      else{
+      } else {
         $this->set('re_border_color_flg', true);
       }
-    }
-    else{
+    } else {
       //初回読み込み時
 //         $this->set('re_border_color_flg', false);
 //         $inputData['re_border_color'] = 'なし';
 //         $inputData]['re_border_none'] = true;
       $this->set('re_border_color_flg', true);
     }
-    if(array_key_exists ('se_border_color',$json)){
-      if($json['se_border_color'] === 'none'){
+    if (array_key_exists('se_border_color', $json)) {
+      if ($json['se_border_color'] === 'none') {
         $this->set('se_border_color_flg', false);
         $inputData['se_border_color'] = 'なし';
         $inputData['se_border_none'] = true;
-      }
-      else{
+      } else {
         $this->set('se_border_color_flg', true);
       }
-    }
-    else{
+    } else {
       //初回読み込み時
 //         $this->set('se_border_color_flg', false);
 //         $inputData['se_border_color'] = 'なし';
 //         $inputData['se_border_none'] = true;
       $this->set('se_border_color_flg', true);
     }
-    if(array_key_exists ('message_box_border_color',$json)){
-      if($json['message_box_border_color'] === 'none'){
+    if (array_key_exists('message_box_border_color', $json)) {
+      if ($json['message_box_border_color'] === 'none') {
         $this->set('message_box_border_color_flg', false);
         $inputData['message_box_border_color'] = 'なし';
         $inputData['message_box_border_none'] = true;
-      }
-      else{
+      } else {
         $this->set('message_box_border_color_flg', true);
       }
-    }
-    else{
+    } else {
       $this->set('message_box_border_color_flg', true);
     }
     //ウィジェット外枠線
-    if(array_key_exists ('widget_border_color',$json)){
-      if($json['widget_border_color'] === 'none'){
+    if (array_key_exists('widget_border_color', $json)) {
+      if ($json['widget_border_color'] === 'none') {
         $this->set('widget_border_color_flg', false);
         $inputData['widget_border_color'] = 'なし';
         $inputData['widget_outside_border_none'] = true;
-      }
-      else{
+      } else {
         $this->set('widget_border_color_flg', true);
       }
-    }
-    else{
+    } else {
       $this->set('widget_border_color_flg', true);
     }
     //ウィジェット内枠線
-    if(array_key_exists ('widget_inside_border_color',$json)){
-      if($json['widget_inside_border_color'] === 'none'){
+    if (array_key_exists('widget_inside_border_color', $json)) {
+      if ($json['widget_inside_border_color'] === 'none') {
         $this->set('widget_inside_border_color_flg', false);
         $inputData['widget_inside_border_color'] = 'なし';
         $inputData['widget_inside_border_none'] = true;
-      }
-      else{
+      } else {
         $this->set('widget_inside_border_color_flg', true);
       }
-    }
-    else{
+    } else {
       $this->set('widget_inside_border_color_flg', true);
     }
     //仕様変更常に高度な設定の設定値が反映されるようにする
-    if(array_key_exists ('color_setting_type',$json)){
-      if($json['color_setting_type'] === '1'){
+    if (array_key_exists('color_setting_type', $json)) {
+      if ($json['color_setting_type'] === '1') {
         $inputData['color_setting_type'] = '0';
       }
     }
 
     //営業時間設定確認
-    $operatingHourData = $this->MOperatingHour->find('first', ['conditions' => [
-      'm_companies_id' => $this->userInfo['MCompany']['id']
-    ]]);
-    if(empty($operatingHourData)) {
+    $operatingHourData = $this->MOperatingHour->find('first', [
+      'conditions' => [
+        'm_companies_id' => $this->userInfo['MCompany']['id']
+      ]
+    ]);
+    if (empty($operatingHourData)) {
       $operatingHourData['MOperatingHour']['active_flg'] = 2;
     }
-    $this->set('operatingHourData',$operatingHourData['MOperatingHour']['active_flg']);
+    $this->set('operatingHourData', $operatingHourData['MOperatingHour']['active_flg']);
     $titleLength = 12;
     $subTitleLength = 15;
     $descriptionLength = 15;
@@ -1425,7 +1550,8 @@ class TAutoMessagesController extends AppController {
    * @return $settings オブジェクト JSON形式のデータをオブジェクトに変換したもの
    *
    * */
-  private function _settingToObj($jsonData){
+  private function _settingToObj($jsonData)
+  {
     $settings = [];
 
     // キーの管理用変数のキーと値を入れ替える
@@ -1435,10 +1561,10 @@ class TAutoMessagesController extends AppController {
     $json = json_decode($jsonData);
 
     // 保持していた設定ごとループ処理
-    foreach($json as $key => $val){
+    foreach ($json as $key => $val) {
       // 設定名が管理しているキーである場合、値を $settings にセット
-      if ( isset($styleColumns[$key]) ) {
-      $settings[$styleColumns[$key]] = $val;
+      if (isset($styleColumns[$key])) {
+        $settings[$styleColumns[$key]] = $val;
       }
     }
 
@@ -1450,21 +1576,23 @@ class TAutoMessagesController extends AppController {
    * @param $d ($inputData)
    * @return $d ($inputData)
    * */
-  private function _setShowTab($d){
+  private function _setShowTab($d)
+  {
     // チャットのみ
-    if ( $this->coreSettings[C_COMPANY_USE_CHAT] && !$this->coreSettings[C_COMPANY_USE_SYNCLO] ) {
+    if ($this->coreSettings[C_COMPANY_USE_CHAT] && !$this->coreSettings[C_COMPANY_USE_SYNCLO]) {
       $d['widget']['showTab'] = "chat";
-    }
-    // 画面・資料同期のみ
-    else if ( ($this->coreSettings[C_COMPANY_USE_SYNCLO] || (isset($this->coreSettings[C_COMPANY_USE_DOCUMENT]) && $this->coreSettings[C_COMPANY_USE_DOCUMENT]) ) && !$this->coreSettings[C_COMPANY_USE_CHAT] ) {
-      $d['widget']['showTab'] = "call";
-    }
-    // どちらも
+    } // 画面・資料同期のみ
     else {
-      // チャットがデフォルト
-      $d['widget']['showTab'] = "chat";
-      if ( isset($this->request->params['named']['showTab']) && strcmp($this->request->params['named']['showTab'], "call") === 0 ) {
-      $d['widget']['showTab'] = "call";
+      if (($this->coreSettings[C_COMPANY_USE_SYNCLO] || (isset($this->coreSettings[C_COMPANY_USE_DOCUMENT]) && $this->coreSettings[C_COMPANY_USE_DOCUMENT])) && !$this->coreSettings[C_COMPANY_USE_CHAT]) {
+        $d['widget']['showTab'] = "call";
+      } // どちらも
+      else {
+        // チャットがデフォルト
+        $d['widget']['showTab'] = "chat";
+        if (isset($this->request->params['named']['showTab']) && strcmp($this->request->params['named']['showTab'],
+            "call") === 0) {
+          $d['widget']['showTab'] = "call";
+        }
       }
     }
     return $d;
@@ -1476,157 +1604,190 @@ class TAutoMessagesController extends AppController {
    * @param $json ($inputData['MWidgetSetting']['style_settings']をjson_decodeしたもの)
    * @return $d ($inputData)
    * */
-  private function _setStyleSetting($d, $json) {
-    foreach($this->styleSetting as $key => $list) {
-      foreach($list as $v) {
+  private function _setStyleSetting($d, $json)
+  {
+    foreach ($this->styleSetting as $key => $list) {
+      foreach ($list as $v) {
         switch ($key) {
           case 'chat':
-            if ( !$this->coreSettings[C_COMPANY_USE_CHAT] ) { continue; }
-            if ( strcmp($v, 'chat_init_show_textarea') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (!$this->coreSettings[C_COMPANY_USE_CHAT]) {
+              continue;
+            }
+            if (strcmp($v,
+                'chat_init_show_textarea') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_init_show_textarea'] = C_AUTO_WIDGET_TEXTAREA_OPEN; // デフォルト値
             }
-            if ( strcmp($v, 'chat_radio_behavior') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'chat_radio_behavior') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_radio_behavior'] = C_WIDGET_RADIO_CLICK_SEND; // デフォルト値
             }
-            if ( strcmp($v, 'chat_trigger') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'chat_trigger') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_trigger'] = C_WIDGET_SEND_ACT_PUSH_KEY; // デフォルト値
             }
-            if ( strcmp($v, 'show_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v, 'show_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['show_name'] = strval(C_WIDGET_SHOW_COMP); // デフォルト値
               break;
             }
-            if ( strcmp($v, 'show_automessage_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'show_automessage_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['show_automessage_name'] = strval(C_SELECT_CAN); // デフォルト値
               break;
             }
-            if ( strcmp($v, 'show_op_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              if(isset($d['show_name']) && is_numeric($d['show_name'])) {
+            if (strcmp($v,
+                'show_op_name') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              if (isset($d['show_name']) && is_numeric($d['show_name'])) {
                 $d['show_op_name'] = $d['show_name']; // 設定値が存在しない場合は既存使用に依存する
               } else {
                 $d['show_op_name'] = strval(C_WIDGET_SHOW_COMP); // デフォルト値
               }
               break;
             }
-            if ( strcmp($v, 'chat_message_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'chat_message_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_message_design_type'] = C_WIDGET_CHAT_MESSAGE_DESIGN_TYPE_BOX; // デフォルト値
             }
-            if ( strcmp($v, 'chat_message_arrow_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'chat_message_arrow_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_message_arrow_position'] = 2; // デフォルト値（下）
             }
-            if ( strcmp($v, 'chat_message_with_animation') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'chat_message_with_animation') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_message_with_animation'] = C_CHECK_OFF; // デフォルト値（非選択状態：アニメーション無効）
             }
-            if ( strcmp($v, 'chat_message_copy') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'chat_message_copy') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_message_copy'] = C_WIDGET_CHAT_MESSAGE_CAN_COPY; // デフォルト値
             }
-            if ( strcmp($v, 'sp_show_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v, 'sp_show_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['sp_show_flg'] = C_SELECT_CAN; // デフォルト値
             }
 
-            if ( strcmp($v, 'sp_header_light_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'sp_header_light_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['sp_header_light_flg'] = C_SELECT_CAN_NOT; // デフォルト値
             }
 
-            if ( strcmp($v, 'sp_auto_open_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'sp_auto_open_flg') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['sp_auto_open_flg'] = C_CHECK_OFF; // デフォルト値
             }
 
-            if ( strcmp($v, 'sp_maximize_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'sp_maximize_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['sp_maximize_size_type'] = C_SELECT_CAN; // デフォルト値
             }
 
-            if ( isset($json[$v]) ) {
+            if (isset($json[$v])) {
               $d[$v] = $json[$v];
             }
             break;
           case 'synclo':
-            if ( !($this->coreSettings[C_COMPANY_USE_SYNCLO] || (isset($this->coreSettings[C_COMPANY_USE_DOCUMENT]) && $this->coreSettings[C_COMPANY_USE_DOCUMENT]) ) ) { continue; }
+            if (!($this->coreSettings[C_COMPANY_USE_SYNCLO] || (isset($this->coreSettings[C_COMPANY_USE_DOCUMENT]) && $this->coreSettings[C_COMPANY_USE_DOCUMENT]))) {
+              continue;
+            }
 
-            if ( isset($json[$v]) ) {
+            if (isset($json[$v])) {
               $d[$v] = $json[$v];
             }
             break;
           case 'common':
-            if ( strcmp($v, "max_show_timing_site") === 0 || strcmp($v, "max_show_timing_page") === 0 ) { continue; }
-            if ( strcmp($v, "show_timing") === 0 && isset($json[$v]) ) {
-              if ( strcmp($json[$v], C_WIDGET_SHOW_TIMING_SITE) === 0 ) {
-                if ( isset($json["max_show_timing_site"]) ) {
+            if (strcmp($v, "max_show_timing_site") === 0 || strcmp($v, "max_show_timing_page") === 0) {
+              continue;
+            }
+            if (strcmp($v, "show_timing") === 0 && isset($json[$v])) {
+              if (strcmp($json[$v], C_WIDGET_SHOW_TIMING_SITE) === 0) {
+                if (isset($json["max_show_timing_site"])) {
                   $d["max_show_timing_site"] = $json["max_show_timing_site"];
                 }
-              }
-              else if ( strcmp($json[$v], C_WIDGET_SHOW_TIMING_PAGE) === 0 ) {
-                if ( isset($json["max_show_timing_page"]) ) {
-                  $d["max_show_timing_page"] = $json["max_show_timing_page"];
+              } else {
+                if (strcmp($json[$v], C_WIDGET_SHOW_TIMING_PAGE) === 0) {
+                  if (isset($json["max_show_timing_page"])) {
+                    $d["max_show_timing_page"] = $json["max_show_timing_page"];
+                  }
                 }
               }
             }
-            if ( strcmp($v, "max_show_time") === 0 || strcmp($v, "max_show_time_page") === 0 ) { continue; }
-            if ( strcmp($v, "show_time") === 0 && isset($json[$v]) ) {
-              if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_SITE) === 0 ) {
-                if ( isset($json["max_show_time"]) ) {
+            if (strcmp($v, "max_show_time") === 0 || strcmp($v, "max_show_time_page") === 0) {
+              continue;
+            }
+            if (strcmp($v, "show_time") === 0 && isset($json[$v])) {
+              if (strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_SITE) === 0) {
+                if (isset($json["max_show_time"])) {
                   $d["max_show_time"] = $json["max_show_time"];
                 }
-              }
-              else if ( strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_PAGE) === 0 ) {
-                if ( isset($json["max_show_time_page"]) ) {
-                  $d["max_show_time_page"] = $json["max_show_time_page"];
+              } else {
+                if (strcmp($json[$v], C_WIDGET_AUTO_OPEN_TYPE_PAGE) === 0) {
+                  if (isset($json["max_show_time_page"])) {
+                    $d["max_show_time_page"] = $json["max_show_time_page"];
+                  }
                 }
               }
             }
             // デフォルト値（プレミアムプランのみ表示する）
-            if ( strcmp($v, 'show_access_id') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'show_access_id') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['show_access_id'] = C_SELECT_CAN_NOT;
             }
             //ウィジットサイズタイプ
-            if ( strcmp($v, 'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'widget_size_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['widget_size_type'] = C_WIDGET_SIZE_TYPE_SMALL; // デフォルト値
             }
             //最小化時のデザインタイプ
-            if ( strcmp($v, 'minimize_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'minimize_design_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['minimize_design_type'] = C_MINIMIZED_DESIGN_NO_SIMPLE; // デフォルト値
             }
             //背景の影
-            if ( strcmp($v, 'box_shadow') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v, 'box_shadow') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['box_shadow'] = C_BOX_SHADOW; // デフォルト値
             }
             //閉じるボタン
             //閉じるボタン有効無効
-            if ( strcmp($v, 'close_button_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'close_button_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['close_button_setting'] = C_CLOSE_BUTTON_SETTING_OFF; // デフォルト値
             }
             //小さなバナー表示有効無効
-            if ( strcmp($v, 'close_button_mode_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'close_button_mode_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['close_button_mode_type'] = C_CLOSE_BUTTON_SETTING_MODE_TYPE_HIDDEN; // デフォルト値
             }
             //バナーテキスト
-            if ( strcmp($v, 'bannertext') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v, 'bannertext') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['bannertext'] = C_BANNER_TEXT; // デフォルト値
             }
             //閉じるボタン
             /* カラー設定styat */
             //0.通常設定・高度設定
-            if ( strcmp($v, 'color_setting_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'color_setting_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['color_setting_type'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
             }
             //1.メインカラー
-            if ( strcmp($v, 'main_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v, 'main_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['main_color'] = MAIN_COLOR; // デフォルト値
             }
             //2.タイトル文字色
-            if ( strcmp($v, 'string_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'string_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['string_color'] = STRING_COLOR; // デフォルト値
             }
             //3.吹き出し文字色
-            if ( strcmp($v, 'message_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'message_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['message_text_color'] = MESSAGE_TEXT_COLOR; // デフォルト値
             }
             //4.その他文字色
-            if ( strcmp($v, 'other_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'other_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['other_text_color'] = OTHER_TEXT_COLOR; // デフォルト値
             }
             //ヘッダー文字サイズ
-            if ( strcmp($v, 'header_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              switch(intval($d['widget_size_type'])) {
+            if (strcmp($v,
+                'header_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              switch (intval($d['widget_size_type'])) {
                 case 1:
                   $d['header_text_size'] = "14";
                   break;
@@ -1642,50 +1803,57 @@ class TAutoMessagesController extends AppController {
               break;
             }
             //5.ウィジェット枠線色
-            if ( strcmp($v, 'widget_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'widget_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['widget_border_color'] = WIDGET_BORDER_COLOR; // デフォルト値
             }
             //6.ヘッダー背景色
-            if ( strcmp($v, 'header_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'header_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['header_background_color'] = HEADER_BACKGROUND_COLOR; // デフォルト値
             }
             //6.吹き出し枠線色
-            if ( strcmp($v, 'chat_talk_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'chat_talk_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_talk_border_color'] = CHAT_TALK_BORDER_COLOR; // デフォルト値
             }
             //7.企業名文字色
-            if ( strcmp($v, 'sub_title_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              if($json['main_color'] && $json['main_color'] !== MAIN_COLOR){
+            if (strcmp($v,
+                'sub_title_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              if ($json['main_color'] && $json['main_color'] !== MAIN_COLOR) {
                 $d['sub_title_text_color'] = $json['main_color'];
-              }
-              else{
+              } else {
                 $d['sub_title_text_color'] = SUB_TITLE_TEXT_COLOR; // デフォルト値
               }
             }
             //8.説明文文字色
-            if ( strcmp($v, 'description_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'description_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['description_text_color'] = DESCRIPTION_TEXT_COLOR; // デフォルト値
             }
             //9.チャットエリア背景色
-            if ( strcmp($v, 'chat_talk_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'chat_talk_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_talk_background_color'] = CHAT_TALK_BACKGROUND_COLOR; // デフォルト値
             }
             //10.企業名担当者名文字色
-            if ( strcmp($v, 'c_name_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              if($json['main_color'] && $json['main_color'] !== MAIN_COLOR){
+            if (strcmp($v,
+                'c_name_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              if ($json['main_color'] && $json['main_color'] !== MAIN_COLOR) {
                 $d['c_name_text_color'] = $json['main_color'];
-              }
-              else{
+              } else {
                 $d['c_name_text_color'] = C_NAME_TEXT_COLOR; // デフォルト値
               }
             }
             //11.企業側吹き出し文字色
-            if ( strcmp($v, 're_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                're_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['re_text_color'] = RE_TEXT_COLOR; // デフォルト値
             }
             //企業側吹き出し文字サイズ
-            if ( strcmp($v, 're_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              switch(intval($d['widget_size_type'])) {
+            if (strcmp($v,
+                're_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              switch (intval($d['widget_size_type'])) {
                 case 1:
                   $d['re_text_size'] = "12";
                   break;
@@ -1701,39 +1869,39 @@ class TAutoMessagesController extends AppController {
               break;
             }
             //12.企業側吹き出し背景色
-            if ( strcmp($v, 're_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              if($json['main_color'] || $json['main_color'] !== MAIN_COLOR){
+            if (strcmp($v,
+                're_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              if ($json['main_color'] || $json['main_color'] !== MAIN_COLOR) {
                 //企業側吹き出し用の色をメインカラーから算出
                 $main_color = $json['main_color'];
-                $code = substr($main_color,1);
-                if(strlen($code) === 3){
-                  $r = substr($code,0,1).substr($code,0,1);
-                  $g = substr($code,1,1).substr($code,1,1);
-                  $b = substr($code,2).substr($code,2);
-                }
-                else{
-                  $r = substr($code,0,2);
-                  $g = substr($code,2,2);
-                  $b = substr($code,4);
+                $code = substr($main_color, 1);
+                if (strlen($code) === 3) {
+                  $r = substr($code, 0, 1) . substr($code, 0, 1);
+                  $g = substr($code, 1, 1) . substr($code, 1, 1);
+                  $b = substr($code, 2) . substr($code, 2);
+                } else {
+                  $r = substr($code, 0, 2);
+                  $g = substr($code, 2, 2);
+                  $b = substr($code, 4);
                 }
 
-                $balloonR = dechex(255 - (255 - intval($r,16)) * 0.1);
-                $balloonG = dechex(255 - (255 - intval($g,16)) * 0.1);
-                $balloonB = dechex(255 - (255 - intval($b,16)) * 0.1);
-                $defColor = '#'.$balloonR.$balloonG.$balloonB;
+                $balloonR = dechex(255 - (255 - intval($r, 16)) * 0.1);
+                $balloonG = dechex(255 - (255 - intval($g, 16)) * 0.1);
+                $balloonB = dechex(255 - (255 - intval($b, 16)) * 0.1);
+                $defColor = '#' . $balloonR . $balloonG . $balloonB;
                 $d['re_background_color'] = $defColor;
-              }
-              else{
+              } else {
                 $d['re_background_color'] = RE_BACKGROUND_COLOR; // デフォルト値
               }
             }
             //13.企業側吹き出し枠線色
-            if ( strcmp($v, 're_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                're_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
 //               if($json['re_border_color'] === 'false'){
 //                 $d['re_border_color'] = 'false';
 //               }
 //               else{
-                $d['re_border_color'] = RE_BORDER_COLOR; // デフォルト値
+              $d['re_border_color'] = RE_BORDER_COLOR; // デフォルト値
 //               }
             }
 //             //14.企業側吹き出し枠線なし
@@ -1741,12 +1909,14 @@ class TAutoMessagesController extends AppController {
 //               $d['re_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
 //             }
             //15.訪問者側吹き出し文字色
-            if ( strcmp($v, 'se_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'se_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['se_text_color'] = SE_TEXT_COLOR; // デフォルト値
             }
             //訪問者側吹き出し文字サイズ
-            if ( strcmp($v, 'se_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              switch(intval($d['widget_size_type'])) {
+            if (strcmp($v,
+                'se_text_size') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              switch (intval($d['widget_size_type'])) {
                 case 1:
                   $d['se_text_size'] = "12";
                   break;
@@ -1762,11 +1932,13 @@ class TAutoMessagesController extends AppController {
               break;
             }
             //16.訪問者側吹き出し背景色
-            if ( strcmp($v, 'se_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'se_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['se_background_color'] = SE_BACKGROUND_COLOR; // デフォルト値
             }
             //17.訪問者側吹き出し枠線色
-            if ( strcmp($v, 'se_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'se_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['se_border_color'] = SE_BORDER_COLOR; // デフォルト値
             }
 //             //18.訪問者側吹き出し枠線なし
@@ -1774,19 +1946,23 @@ class TAutoMessagesController extends AppController {
 //               $d['se_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
 //             }
             //19.メッセージエリア背景色
-            if ( strcmp($v, 'chat_message_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'chat_message_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['chat_message_background_color'] = CHAT_MESSAGE_BACKGROUND_COLOR; // デフォルト値
             }
             //20.メッセージBOX文字色
-            if ( strcmp($v, 'message_box_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'message_box_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['message_box_text_color'] = MESSAGE_BOX_TEXT_COLOR; // デフォルト値
             }
             //21.メッセージBOX背景色
-            if ( strcmp($v, 'message_box_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'message_box_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['message_box_background_color'] = MESSAGE_BOX_BACKGROUND_COLOR; // デフォルト値
             }
             //22.メッセージBOX枠線色
-            if ( strcmp($v, 'message_box_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'message_box_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['message_box_border_color'] = MESSAGE_BOX_BORDER_COLOR; // デフォルト値
             }
 //             //23.メッセージBOX枠線なし
@@ -1794,25 +1970,26 @@ class TAutoMessagesController extends AppController {
 //               $d['message_box_border_none'] = COLOR_SETTING_TYPE_OFF; // デフォルト値
 //             }
             //24.送信ボタン文字色
-            if ( strcmp($v, 'chat_send_btn_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              if($json['string_color'] && $json['string_color'] !== STRING_COLOR){
+            if (strcmp($v,
+                'chat_send_btn_text_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              if ($json['string_color'] && $json['string_color'] !== STRING_COLOR) {
                 $d['chat_send_btn_text_color'] = $json['string_color'];
-              }
-              else{
+              } else {
                 $d['chat_send_btn_text_color'] = CHAT_SEND_BTN_TEXT_COLOR; // デフォルト値
               }
             }
             //25.送信ボタン背景色
-            if ( strcmp($v, 'chat_send_btn_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
-              if($json['main_color'] && $json['main_color'] !== MAIN_COLOR){
+            if (strcmp($v,
+                'chat_send_btn_background_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
+              if ($json['main_color'] && $json['main_color'] !== MAIN_COLOR) {
                 $d['chat_send_btn_background_color'] = $json['main_color'];
-              }
-              else{
+              } else {
                 $d['chat_send_btn_background_color'] = CHAT_SEND_BTN_BACKGROUND_COLOR; // デフォルト値
               }
             }
             //26.ウィジット内枠線色
-            if ( strcmp($v, 'widget_inside_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'widget_inside_border_color') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['widget_inside_border_color'] = WIDGET_INSIDE_BORDER_COLOR; // デフォルト値
             }
 //             //26.ウィジット内枠線色
@@ -1822,32 +1999,38 @@ class TAutoMessagesController extends AppController {
             /* カラー設定end */
 
             //行：ラジオボタン間マージン
-            if ( strcmp($v, 'line_button_margin') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'line_button_margin') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['line_button_margin'] = 8;
             }
 
             //ラジオボタン間マージン
-            if ( strcmp($v, 'btw_button_margin') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'btw_button_margin') === 0 && (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['btw_button_margin'] = 4;
             }
 
             //タイトル位置
-            if ( strcmp($v, 'widget_title_top_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'widget_title_top_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['widget_title_top_type'] = WIDGET_TITLE_TOP_TYPE_CENTER; // デフォルト値
             }
 
             //企業名位置
-            if ( strcmp($v, 'widget_title_name_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'widget_title_name_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['widget_title_name_type'] = WIDGET_TITLE_NAME_TYPE_LEFT; // デフォルト値
             }
 
             //説明文位置
-            if ( strcmp($v, 'widget_title_explain_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'widget_title_explain_type') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['widget_title_explain_type'] = WIDGET_TITLE_EXPLAIN_TYPE_LEFT; // デフォルト値
             }
 
             //スマホ小さなバナー縦の上から割合
-            if ( strcmp($v, 'sp_banner_vertical_position_from_top') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'sp_banner_vertical_position_from_top') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['sp_banner_vertical_position_from_top'] = "50%"; // デフォルト値
             }
 
@@ -1857,34 +2040,39 @@ class TAutoMessagesController extends AppController {
             }*/
 
             //スマホ小さなバナー横の割合
-            if ( strcmp($v, 'sp_banner_horizontal_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'sp_banner_horizontal_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['sp_banner_horizontal_position'] = "5px"; // デフォルト値
             }
 
             /* スマホ用隠しパラメータend */
 
             //スマホ_スクロール中の表示制御
-            if ( strcmp($v, 'sp_scroll_view_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'sp_scroll_view_setting') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d[' sp_scroll_view_setting'] = C_SP_SCROLL_VIEW_SETTING; // デフォルト値
             }
 
             //スマホ_小さなバナー表示位置
-            if ( strcmp($v, 'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'sp_banner_position') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['sp_banner_position'] = $d['show_position']; // デフォルト値(PC版の右下・左下)
             }
 
             //スマホ_小さなバナーテキスト
-            if ( strcmp($v, 'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_string($json[$v]))) ) {
+            if (strcmp($v,
+                'sp_banner_text') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_string($json[$v])))) {
               $d['sp_banner_text'] = $d['bannertext']; // デフォルト値(PC版のテキスト)
             }
 
             //スマホ_ウィジェット状態フラグ
-            if ( strcmp($v, 'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v]))) ) {
+            if (strcmp($v,
+                'sp_widget_view_pattern') === 0 & (!isset($json[$v]) || (isset($json[$v]) && !is_numeric($json[$v])))) {
               $d['sp_widget_view_pattern'] = C_WIDGET_SP_VIEW_THERE_PATTERN_BANNER; // デフォルト値
             }
 
 
-            if ( isset($json[$v]) ) {
+            if (isset($json[$v])) {
               $d[$v] = $json[$v];
             }
             break;
@@ -1912,19 +2100,33 @@ class TAutoMessagesController extends AppController {
     return $data['TChatbotScenario']['id'];
   }
 
-  private function convertCallAutomessageList($array, $editTargetId) {
+  private function convertCallAutomessageList($array, $editTargetId)
+  {
     $resultArray = array();
-    foreach($array as $index => $data) {
-      if(strcmp($data['TAutoMessage']['active_flg'], 1) === 0) continue;
+    $disallowActiveChanging = false;
+    foreach ($array as $index => $data) {
+      if (strcmp($data['TAutoMessage']['active_flg'], 1) === 0) {
+        continue;
+      }
 
-      if($editTargetId && strcmp($data['TAutoMessage']['id'], $editTargetId) !== 0 && strcmp($data['TAutoMessage']['call_automessage_id'], $editTargetId) !== 0) {
+      if ($editTargetId && strcmp($data['TAutoMessage']['call_automessage_id'], $editTargetId) === 0) {
+        $disallowActiveChanging = true;
+      }
+
+      if ($editTargetId && strcmp($data['TAutoMessage']['id'],
+          $editTargetId) !== 0 && strcmp($data['TAutoMessage']['call_automessage_id'], $editTargetId) !== 0) {
         // 編集時に必要なデータ
-        $resultArray[$data['TAutoMessage']['id']] = 'No.'.($index + 1).'：'.$data['TAutoMessage']['name'];
-      } else if(!$editTargetId) {
-        $resultArray[$data['TAutoMessage']['id']] = 'No.'.($index + 1).'：'.$data['TAutoMessage']['name'];
+        $resultArray[$data['TAutoMessage']['id']] = 'No.' . ($index + 1) . '：' . $data['TAutoMessage']['name'];
+      } else {
+        if (!$editTargetId) {
+          $resultArray[$data['TAutoMessage']['id']] = 'No.' . ($index + 1) . '：' . $data['TAutoMessage']['name'];
+        }
       }
     }
 
-    return $resultArray;
+    return array(
+      'data' => $resultArray,
+      'disallowActiveChanging' => $disallowActiveChanging
+    );
   }
 }

@@ -108,6 +108,10 @@ li {
   }
 }
 
+.disabled {
+  color: #CCCCCC;
+}
+
 table {
   border-collapse: separate;
   border-spacing:0;
@@ -8568,7 +8572,8 @@ ul.naviBtn {
                         label {
                           padding-top: 6px;
                           &.executeNextActionCheck {
-                            display: block;
+                            display: flex;
+                            align-items: center;
                           }
                           &.jumpLinkAction {
                             display: inline-flex;
