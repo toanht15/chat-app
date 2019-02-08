@@ -4268,7 +4268,9 @@
         var chatList = document.getElementsByTagName('sinclo-chat')[0];
         var div = document.createElement('div');
         var li = document.createElement('li');
-        div = sinclo.chatApi._editDivForIconSetting( div, true );
+        if (settings.balloonStyle === '1') {
+          div = sinclo.chatApi._editDivForIconSetting( div, true );
+        }
         div.classList.add('sinclo-scenario-msg');
         div.appendChild(li);
         chatList.appendChild(div);
@@ -4302,7 +4304,9 @@
             var currentHeight = $(this).find('.thumbnail').height();
             maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
           });
-
+          if (!settings.outCarouselNoneBorder) {
+            maxHeight = maxHeight + 2; // border
+          }
           slick.$slides.each(function(slide) {
             $(this).find('.thumbnail').css('min-height', maxHeight + 'px');
           });
@@ -4920,7 +4924,7 @@
             data.width          = settings.lineUpStyle === '1' ? 310 : 193;
             break;
         }
-        if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
+        if (Number(sincloInfo.widget.showOperatorIcon) === 1 && settings.balloonStyle === '1') {
           data.containerWidth = data.containerWidth - this.getChatIconWidth();
           data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 14;
         }
@@ -4956,7 +4960,7 @@
             data.width          = settings.lineUpStyle === '1' ? 340 : 215;
             break;
         }
-        if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
+        if (Number(sincloInfo.widget.showOperatorIcon) === 1 && settings.balloonStyle === '1') {
           data.containerWidth = data.containerWidth - this.getChatIconWidth();
           data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 14;
         }
@@ -5000,7 +5004,7 @@
             data.width          = settings.lineUpStyle === '1' ? 260 : 158;
             break;
         }
-        if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
+        if (Number(sincloInfo.widget.showOperatorIcon) === 1 && settings.balloonStyle === '1') {
           data.containerWidth = data.containerWidth - this.getChatIconWidth();
           data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 14;
         }
@@ -5036,7 +5040,7 @@
             data.width          = settings.lineUpStyle === '1' ? 280 : 170;
             break;
         }
-        if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
+        if (Number(sincloInfo.widget.showOperatorIcon) === 1 && settings.balloonStyle === '1') {
           data.containerWidth = data.containerWidth - this.getChatIconWidth();
           data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 14;
         }
