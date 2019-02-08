@@ -1026,7 +1026,7 @@ $config['chatbotScenarioActionList'] = array(
       ),
       'elseEnabled' => 0,
       'elseAction' => array(
-        "actionType" => "1",
+        "actionType" => 1,
         "action" => array(
           "message" => ""
         )
