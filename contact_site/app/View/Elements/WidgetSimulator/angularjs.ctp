@@ -614,12 +614,12 @@
         divElm.querySelector('li .details:not(.cName)').innerHTML = carousel.html;
 
         divElm.style.display = "";
-        if( $scope.needsIcon() ) {
+        if ($scope.needsIcon()) {
           //チャットボットのアイコンを表示する場合は
           //アイコンを含む要素を作成する。
-          gridElm = $scope.addIconImage( gridElm );
+          gridElm = $scope.addIconImage(gridElm);
         } else {
-          gridElm.classList.add("no_icon");
+          gridElm.classList.add('no_icon');
         }
 
         gridElm.appendChild(divElm);
@@ -663,8 +663,9 @@
           infinite    : false,
           lazyLoad    : 'ondemand',
           prevArrow   : '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
-          nextArrow   : '<i class="fas ' + nextIconClass + ' slick-next"></i>'
+          nextArrow   : '<i class="fas ' + nextIconClass + ' slick-next"></i>',
         });
+        
         // 復元機能
         var oldIndex = null;
         angular.forEach(data.settings.images, function(image, index) {

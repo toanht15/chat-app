@@ -4704,7 +4704,7 @@
         html+= '<div class="single-item" id="' + name + '">';
         settings.images.forEach(function (image, key) {
           html+= '<div style="width: ' + containerWidth + 'px">';
-          html+= '<div class="thumbnail" id="slide_' + name + '_image' + key + '" data-answer="' + image.answer + '" style="display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
+          html+= '<div class="thumbnail" id="slide_' + name + '_image' + key + '" data-answer="' + image.answer + '" style="margin: auto; display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
           html+= '<img id="img' + name + '_image' + key + '" alt="画像" data-answer="' + image.answer + '" style="cursor: pointer; height: ' + carouselSize.height + 'px; width: ' + carouselSize.width + 'px;" src="' + image.url + '" />';
           html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
           html+= '<div class="title"><strong style="font-weight: bold;">' + image.title + '</strong></div>';
@@ -4921,7 +4921,7 @@
         }
         if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
           data.containerWidth = data.containerWidth - this.getChatIconWidth();
-          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 14;
         }
         data.height = data.width / aspectRatio;
 
@@ -4957,7 +4957,7 @@
         }
         if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
           data.containerWidth = data.containerWidth - this.getChatIconWidth();
-          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 14;
         }
         data.height = data.width / aspectRatio;
 
@@ -5001,7 +5001,7 @@
         }
         if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
           data.containerWidth = data.containerWidth - this.getChatIconWidth();
-          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 14;
         }
         data.height = data.width / aspectRatio;
 
@@ -5037,7 +5037,7 @@
         }
         if (Number(sincloInfo.widget.showOperatorIcon) === 1) {
           data.containerWidth = data.containerWidth - this.getChatIconWidth();
-          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 12;
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 14;
         }
         data.height = data.width / aspectRatio;
 
