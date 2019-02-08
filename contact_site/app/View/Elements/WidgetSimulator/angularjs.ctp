@@ -614,7 +614,7 @@
         divElm.querySelector('li .details:not(.cName)').innerHTML = carousel.html;
 
         divElm.style.display = "";
-        if ($scope.needsIcon()) {
+        if ($scope.needsIcon() && data.settings.balloonStyle === '1') {
           //チャットボットのアイコンを表示する場合は
           //アイコンを含む要素を作成する。
           gridElm = $scope.addIconImage(gridElm);
@@ -651,7 +651,9 @@
             var currentHeight = $(this).find('.thumbnail').height();
             maxHeight         = currentHeight > maxHeight ? currentHeight : maxHeight;
           });
-
+          if (!data.settings.outCarouselNoneBorder) {
+           maxHeight = maxHeight + 2; // border
+          }
           slick.$slides.each(function(slide) {
             $(this).find('.thumbnail').css('min-height', maxHeight + 'px');
           });

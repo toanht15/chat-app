@@ -1081,7 +1081,7 @@
           data.width          = settings.lineUpStyle === '1' ? 280 : 170;
           break;
       }
-      if (Number(this.settings.show_chatbot_icon) === 1) {
+      if (Number(this.settings.show_chatbot_icon) === 1 && settings.balloonStyle === '1') {
         data.containerWidth = data.containerWidth - this.getChatIconWidth();
         data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
       }
@@ -1117,7 +1117,7 @@
           data.width          = settings.lineUpStyle === '1' ? 260 : 158;
           break;
       }
-      if (Number(this.settings.show_chatbot_icon) === 1) {
+      if (Number(this.settings.show_chatbot_icon) === 1 && settings.balloonStyle === '1') {
         data.containerWidth = data.containerWidth - this.getChatIconWidth();
         data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
       }
@@ -1160,7 +1160,7 @@
           data.width          = settings.lineUpStyle === '1' ? 310 : 193;
           break;
       }
-      if (Number(this.settings.show_chatbot_icon) === 1) {
+      if (Number(this.settings.show_chatbot_icon) === 1 && settings.balloonStyle === '1') {
         data.containerWidth = data.containerWidth - this.getChatIconWidth();
         data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
       }
@@ -1196,7 +1196,7 @@
           data.width          = settings.lineUpStyle === '1' ? 340 : 215;
           break;
       }
-      if (Number(this.settings.show_chatbot_icon) === 1) {
+      if (Number(this.settings.show_chatbot_icon) === 1 && settings.balloonStyle === '1') {
         data.containerWidth = data.containerWidth - this.getChatIconWidth();
         data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
       }
