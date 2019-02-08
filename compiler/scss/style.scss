@@ -108,6 +108,10 @@ li {
   }
 }
 
+.disabled {
+  color: #CCCCCC;
+}
+
 table {
   border-collapse: separate;
   border-spacing:0;
@@ -8411,17 +8415,18 @@ ul.naviBtn {
                         label {
                           padding-top: 6px;
                           &.executeNextActionCheck {
-                            display: block;
+                            display: flex;
+                            align-items: center;
                           }
                           &.jumpLinkAction {
                             display: inline-flex;
                             justify-content: center;
                             align-items: center;
+                            &:last-child {
+                              margin-left: 15px;
+                            }
                             input[type="radio"] {
                               margin-top: 0;
-                              &:last-child {
-                                margin-left: 10px;
-                              }
                             }
                           }
                         }
