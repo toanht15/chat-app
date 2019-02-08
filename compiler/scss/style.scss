@@ -8503,10 +8503,24 @@ ul.naviBtn {
                       }
                       div.conditionAction {
                         flex-grow: 1;
-                        label.executeNextActionCheck {
+                        label {
                           padding-top: 6px;
-                          display: block;
+                          &.executeNextActionCheck {
+                            display: block;
+                          }
+                          &.jumpLinkAction {
+                            display: inline-flex;
+                            justify-content: center;
+                            align-items: center;
+                            input[type="radio"] {
+                              margin-top: 0;
+                              &:last-child {
+                                margin-left: 10px;
+                              }
+                            }
+                          }
                         }
+
                         textarea {
                           width:  calc(100% - 1em);
                         }

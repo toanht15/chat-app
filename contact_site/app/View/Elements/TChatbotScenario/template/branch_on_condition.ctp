@@ -31,7 +31,7 @@
         <li class="styleFlexbox">
           <div class="fb15em indentDown"><label class="require">実行するアクション</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件を満たした場合に「テキスト発言」「シナリオ呼出」「シナリオを終了」「次のアクションへ」のいずれかの処理を行うことができます。">?</icon></span></div>
           <div class="conditionTypeSelect">
-            <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = condition.actionType.toString()" ng-options="index as type.label for (index, type) in processActionTypeList"></select>
+            <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = condition.actionType.toString()" ng-options="item.value as item.label for item in processActionTypeList"></select>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 1">
             <resize-textarea maxlength="4000" ng-model="condition.action.message" placeholder="メッセージを入力してください"></resize-textarea>
@@ -44,6 +44,11 @@
             <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="condition.action.executeNextAction" ng-init="condition.action.executeNextAction = condition.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。">?</icon></span></label>
           </div>
           <div class="conditionAction" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
+          <div class="conditionAction" ng-if="condition.actionType == 5">
+            <input type="text" maxlength="300" ng-model="condition.action.url" placeholder="URLを入力してください"/>
+            <label class="jumpLinkAction pointer"><input type="radio" ng-model="condition.action.openType" ng-init="condition.action.openType = condition.action.openType == 1" value="1">ページを遷移する</label>
+            <label class="jumpLinkAction pointer"><input type="radio" ng-model="condition.action.openType" ng-init="condition.action.openType = condition.action.openType == 1" value="2">新規で開く</label>
+          </div>
         </li>
       </ul>
       <div class='area-btn'>
@@ -60,7 +65,7 @@
         <ul class="condition else" ng-if="setItem.elseEnabled == true">
           <li class="styleFlexbox">
             <div class="conditionTypeSelect">
-              <select class="m10r" ng-model="setItem.elseAction.actionType" ng-init="setItem.elseAction.actionType = setItem.elseAction.actionType.toString()" ng-options="index as type.label for (index, type) in processElseActionTypeList"></select>
+              <select class="m10r" ng-model="setItem.elseAction.actionType" ng-init="setItem.elseAction.actionType = setItem.elseAction.actionType.toString()" ng-options="item.value as item.label for item in processElseActionTypeList"></select>
             </div>
             <div class="conditionAction elseCondition" ng-if="setItem.elseAction.actionType == 1">
               <resize-textarea maxlength="4000" ng-model="setItem.elseAction.action.message" placeholder="メッセージを入力してください"></resize-textarea>
@@ -73,6 +78,11 @@
               <label class="executeNextActionCheck pointer"><input type="checkbox" ng-model="setItem.elseAction.action.executeNextAction" ng-init="setItem.elseAction.action.executeNextAction = setItem.elseAction.action.executeNextAction == 1">終了後、このシナリオに戻る<span class="questionBalloon"><icon class="questionBtn" data-tooltip="呼び出したシナリオの終了後、このアクションの続きを実行するか設定できます。">?</icon></span></label>
             </div>
             <div class="conditionAction elseCondition" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
+            <div class="conditionAction" ng-if="setItem.elseAction.action.actionType == 5">
+              <input type="text" maxlength="300" ng-model="condition.action.url" placeholder="URLを入力してください"/>
+              <label class="executeNextActionCheck pointer"><input type="radio" ng-model="setItem.elseAction.action.openType" ng-init="setItem.elseAction.action.openType = setItem.elseAction.action.openType == 1" value="1">ページを遷移する</label>
+              <label class="executeNextActionCheck pointer"><input type="radio" ng-model="setItem.elseAction.action.openType" ng-init="setItem.elseAction.action.openType = setItem.elseAction.action.openType == 1" value="2">新規で開く</label>
+            </div>
           </li>
         </ul>
       </div>
