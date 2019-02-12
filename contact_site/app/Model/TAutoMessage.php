@@ -15,6 +15,10 @@ class TAutoMessage extends AppModel {
         'rule' => ['maxLength', 50],
         'allowEmpty' => false,
         'message' => '名称を５０文字以内で入力してください'
+      ],
+      'isActiveNameUnique' => [
+        'rule' => 'isActiveNameUnique',
+        'message' => '既に同じ名称が有効設定に存在します。'
       ]
     ],
     'activity' => [
@@ -205,5 +209,28 @@ class TAutoMessage extends AppModel {
       return true;
     }
     return !empty($param['call_automessage_id']);
+  }
+
+  public function isActiveNameUnique($param) {
+    if(strcmp($this->data['TAutoMessage']['active_flg'], C_STATUS_UNAVAILABLE) === 0) {
+      // 無効状態であればOK
+      return true;
+    }
+
+    $validations = array(
+      'conditions' => array(
+        'm_companies_id' => $this->data['TAutoMessage']['m_companies_id'],
+        'name' => $param['name']
+      )
+    );
+
+    if($this->data['TAutoMessage']['id']) {
+      $validations['conditions']['NOT'] = array();
+      $validations['conditions']['NOT']['id'] = $this->data['TAutoMessage']['id'];
+    }
+
+    $count = $this->find('count', $validations);
+
+    return $count === 0 ? true : false;
   }
 }

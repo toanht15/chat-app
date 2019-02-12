@@ -790,14 +790,25 @@ class TAutoMessagesController extends AppController
         'true') === 0) {
       $activeFlg = 0;
     }
-    $this->TAutoMessage->updateAll(
-      ['active_flg' => $activeFlg],
-      [
-        'id' => $inputData['targetList'],
-        'm_companies_id' => $this->userInfo['MCompany']['id'],
-        'del_flg' => 0
-      ]
-    );
+    $this->TAutoMessage->begin();
+    foreach($inputData['targetList'] as $index => $targetId) {
+      $data = $this->TAutoMessage->find('first', array(
+        'conditions' => array(
+          'id' => $targetId
+        )
+      ));
+
+      $data['TAutoMessage']['active_flg'] = $activeFlg;
+      $this->TAutoMessage->set($data);
+      if ($this->TAutoMessage->validates()) {
+        $this->TAutoMessage->save();
+      } else {
+        $this->TAutoMessage->rollback();
+        $this->renderMessage(C_MESSAGE_TYPE_ERROR, $this->TAutoMessage->validationErrors['name'][0]);
+        return;
+      }
+    }
+    $this->TAutoMessage->commit();
   }
 
   /**
