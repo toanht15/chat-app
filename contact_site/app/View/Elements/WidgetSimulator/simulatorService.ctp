@@ -969,7 +969,6 @@
           g = String(code.substr(2, 2));
           b = String(code.substr(4));
         }
-
         var balloonR = String(Math.floor(255 - (255 - parseInt(r, 16)) * opacity));
         var balloonG = String(Math.floor(255 - (255 - parseInt(g, 16)) * opacity));
         var balloonB = String(Math.floor(255 - (255 - parseInt(b, 16)) * opacity));
@@ -980,75 +979,405 @@
         return ('#' + codeR + codeG + codeB).toUpperCase();
       },
 
-      hexToRgb: function(hex) {
-        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ? {
-          r: parseInt(result[1], 16),
-          g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16),
-        } : null;
-      },
+    createCarousel: function (data) {
+      var result = { html: '', selector: ''};
+      var messageHtml = data.message !== "" ? this.createMessage(data.message, data.prefix) : "";
+      var prefix = (typeof data.prefix !== 'undefined' && data.prefix !== '') ? data.prefix + '-' : '';
+      var index = $('#chatTalk > div:not([style*="display: none;"])').length;
+      var carouselId = prefix + 'sinclo-carousel-' + index;
+      var html = '';
+      var carouselSize = this.getCarouselSize(data.settings);
+      var arrowPosition = this.getArrowPosition(data.settings);
+      var thumbnailWidth = carouselSize.width + 2;
+      var containerWidth = carouselSize.containerWidth + 2;
+      var imgWidth = data.settings.outCarouselNoneBorder ? carouselSize.width + 2 : carouselSize.width;
+      html+= '<div class=\'carousel-container\' style="width: ' + containerWidth + 'px; margin-top: 6px;">';
+      html += '<style>';
+      html += '#sincloBox #' + carouselId + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
+      html += '#sincloBox #' + carouselId + ' .slick-dots li button:before { font-size: 25px;}';
+      html += '#sincloBox #' + carouselId + ' .slick-next:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + data.settings.customDesign.arrowColor + ';}';
+      html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + data.settings.customDesign.arrowColor + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title strong { font-size: ' + data.settings.customDesign.titleFontSize + 'px; color: ' + data.settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .title {  margin: 10px 12px 3px 12px; text-align: ' + this.getTitleTextAlign(data.settings.titlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail .caption .sub-title { margin: 0 12px 8px 12px; font-size: ' + data.settings.customDesign.subTitleFontSize + 'px; color: ' + data.settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(data.settings.subTitlePosition) + ';}';
+      html += '#sincloBox #' + carouselId + ' .thumbnail:hover { -webkit-filter: brightness(110%); filter: brightness(110%);}';
+      if (data.settings.outCarouselNoneBorder) {
+        html += '#sincloBox #' + carouselId + ' .thumbnail { border: none;} ';
+      } else {
+        html += '#sincloBox #' + carouselId + ' .thumbnail { border: 1px solid ' + data.settings.customDesign.outBorderColor + ';} ';
+      }
 
-      /**
-       * ファイル拡張子から、画像か判別する
-       * @param String extension ファイル拡張子
-       */
-      isImage: function(extension) {
-        return /jpeg|jpg|gif|png/i.test(extension);
-      },
+      if (data.settings.inCarouselNoneBorder) {
+        html += '#sincloBox #' + carouselId + ' .thumbnail img { border-bottom: none;} ';
+      } else {
+        html += '#sincloBox #' + carouselId + ' .thumbnail img { border-bottom: 1px solid ' + data.settings.customDesign.inBorderColor + ';} ';
+      }
 
-      /**
-       * ファイルタイプ別ごとに、font-awesome用のクラスを出し分ける
-       * @param String extension ファイルの拡張子
-       */
-      selectIconClassFromExtension: function(extension) {
-        var selectedClass = '';
-        var icons = {
-          image: 'fa-file-image',
-          pdf: 'fa-file-pdf',
-          word: 'fa-file-word',
-          powerpoint: 'fa-file-powerpoint',
-          excel: 'fa-file-excel',
-          audio: 'fa-file-audio',
-          video: 'fa-file-video',
-          zip: 'fa-file-zip',
-          code: 'fa-file-code',
-          text: 'fa-file-text',
-          file: 'fa-file',
-        };
-        var extensions = {
-          gif: icons.image,
-          jpeg: icons.image,
-          jpg: icons.image,
-          png: icons.image,
-          pdf: icons.pdf,
-          doc: icons.word,
-          docx: icons.word,
-          ppt: icons.powerpoint,
-          pptx: icons.powerpoint,
-          xls: icons.excel,
-          xlsx: icons.excel,
-          aac: icons.audio,
-          mp3: icons.audio,
-          ogg: icons.audio,
-          avi: icons.video,
-          flv: icons.video,
-          mkv: icons.video,
-          mp4: icons.video,
-          gz: icons.zip,
-          zip: icons.zip,
-          css: icons.code,
-          html: icons.code,
-          js: icons.code,
-          txt: icons.text,
-          csv: icons.csv,
-          file: icons.file,
-        };
+      if (data.settings.arrowType !== '2') {
+        html += '#sincloBox #' + carouselId + ' .slick-next:before { font-weight: 900 }';
+        html += '#sincloBox #' + carouselId + ' .slick-prev:before { font-weight: 900 }';
+      }
 
-        return extensions[extension] || extensions['file'];
-      },
+      html += '#sincloBox #' + carouselId + ' .slick-next { right: ' + arrowPosition.right + 'px }';
+      html += '#sincloBox #' + carouselId + ' .slick-prev { left: ' + arrowPosition.left + 'px }';
+      html += '</style>';
 
-    };
-  });
+      html+= '<div class="single-item" id="' + carouselId + '">';
+      angular.forEach(data.images, function (image, key) {
+        html+= '<div style="width: ' + containerWidth + 'px">';
+        html+= '<div class="thumbnail" id="' + prefix + 'image' + key + '" style="cursor: pointer; margin-left: auto; margin-right: auto; display: flex; flex-direction: column; background-color: #FFFFFF; width: ' + thumbnailWidth + 'px;">';
+        html+= '<img id="img_' + prefix + 'image' + key +'" style="cursor: pointer; width: ' + imgWidth + 'px; height: ' + carouselSize.height + 'px" src="' + image.url + '" />';
+        html+= '<div class="caption" style="display: flex; flex-direction: column; flex: 1 0 auto;">';
+        html+= '<div class="title"><strong style="font-weight: bold">' + image.title + '</strong></div>';
+        html+= '<p class="sub-title">' + image.subTitle + '</p>';
+        html+= '</div></div></div>';
+      });
+      html+= '</div></div>';
 
+      result.html = messageHtml === "" ? html :messageHtml +  html;
+      result.selector = '#' + carouselId;
+      return result;
+    },
+
+    getCarouselSize: function(settings) {
+      if (settings.carouselPattern === '1') {
+        return this.getInsideArrowCarouselSize(settings);
+      } else {
+        return this.getOutsideArrowCarouselSize(settings);
+      }
+    },
+    getOutsideArrowCarouselSize: function(settings) {
+      if (settings.balloonStyle === '1'){
+        return this.getOutsideArrowHasBalloonCarouselSize(settings);
+      } else {
+        return this.getOutsideArrowNoneBalloonCarouselSize(settings);
+      }
+    },
+    getOutsideArrowNoneBalloonCarouselSize: function(settings) {
+      var aspectRatio = settings.aspectRatio;
+      if (!aspectRatio) {
+        aspectRatio = 1;
+      }
+      var data = {width: 0, height: 0, containerWidth: 0};
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          data.containerWidth = 170;
+          data.width          = settings.lineUpStyle === '1' ? 170 : 100;
+          break;
+        case 2:
+          data.containerWidth = 220;
+          data.width          = settings.lineUpStyle === '1' ? 220 : 130;
+          break;
+        case 3:
+          data.containerWidth = 280;
+          data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+          break;
+        case 4:
+          data.containerWidth = 280;
+          data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+          break;
+        default:
+          data.containerWidth = 280;
+          data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+          break;
+      }
+      if (Number(this.settings.show_chatbot_icon) === 1 && settings.balloonStyle === '1') {
+        data.containerWidth = data.containerWidth - this.getChatIconWidth();
+        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
+      }
+      data.height = data.width / aspectRatio;
+
+      return data;
+    },
+    getOutsideArrowHasBalloonCarouselSize: function(settings) {
+      var aspectRatio = settings.aspectRatio;
+      if (!aspectRatio) {
+        aspectRatio = 1;
+      }
+      var data = {width: 0, height: 0, containerWidth: 0};
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          data.containerWidth = 170;
+          data.width          = settings.lineUpStyle === '1' ? 170 : 100;
+          break;
+        case 2:
+          data.containerWidth = 220;
+          data.width          = settings.lineUpStyle === '1' ? 220 : 130;
+          break;
+        case 3:
+          data.containerWidth = 260;
+          data.width          = settings.lineUpStyle === '1' ? 260 : 158;
+          break;
+        case 4:
+          data.containerWidth = 260;
+          data.width          = settings.lineUpStyle === '1' ? 260 : 158;
+          break;
+        default:
+          data.containerWidth = 260;
+          data.width          = settings.lineUpStyle === '1' ? 260 : 158;
+          break;
+      }
+      if (Number(this.settings.show_chatbot_icon) === 1 && settings.balloonStyle === '1') {
+        data.containerWidth = data.containerWidth - this.getChatIconWidth();
+        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
+      }
+      data.height = data.width / aspectRatio;
+
+      return data;
+    },
+    getInsideArrowCarouselSize: function(settings) {
+      if (settings.balloonStyle === '1'){
+        return this.getInsideArrowHasBalloonCarouselSize(settings);
+      } else {
+        return this.insideArrowNoneBalloonCarouselSize(settings);
+      }
+    },
+    getInsideArrowHasBalloonCarouselSize: function(settings) {
+      var aspectRatio = settings.aspectRatio;
+      if (!aspectRatio) {
+        aspectRatio = 1;
+      }
+      var data = {width: 0, height: 0, containerWidth: 0};
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          data.containerWidth = 200;
+          data.width          = settings.lineUpStyle === '1' ? 200 : 125;
+          break;
+        case 2:
+          data.containerWidth = 250;
+          data.width          = settings.lineUpStyle === '1' ? 250 : 155;
+          break;
+        case 3:
+          data.containerWidth = 310;
+          data.width          = settings.lineUpStyle === '1' ? 310 : 193;
+          break;
+        case 4:
+          data.containerWidth = 310;
+          data.width          = settings.lineUpStyle === '1' ? 310 : 193;
+          break;
+        default:
+          data.containerWidth = 310;
+          data.width          = settings.lineUpStyle === '1' ? 310 : 193;
+          break;
+      }
+      if (Number(this.settings.show_chatbot_icon) === 1 && settings.balloonStyle === '1') {
+        data.containerWidth = data.containerWidth - this.getChatIconWidth();
+        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
+      }
+      data.height = data.width / aspectRatio;
+
+      return data;
+    },
+    insideArrowNoneBalloonCarouselSize: function(settings) {
+      var aspectRatio = settings.aspectRatio;
+      if (!aspectRatio) {
+        aspectRatio = 1;
+      }
+      var data = {width: 0, height: 0, containerWidth: 0};
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          data.containerWidth = 220;
+          data.width          = settings.lineUpStyle === '1' ? 220 : 136;
+          break;
+        case 2:
+          data.containerWidth = 280;
+          data.width          = settings.lineUpStyle === '1' ? 280 : 170;
+          break;
+        case 3:
+          data.containerWidth = 340;
+          data.width          = settings.lineUpStyle === '1' ? 340 : 215;
+          break;
+        case 4:
+          data.containerWidth = 340;
+          data.width          = settings.lineUpStyle === '1' ? 340 : 215;
+          break;
+        default:
+          data.containerWidth = 340;
+          data.width          = settings.lineUpStyle === '1' ? 340 : 215;
+          break;
+      }
+      if (Number(this.settings.show_chatbot_icon) === 1 && settings.balloonStyle === '1') {
+        data.containerWidth = data.containerWidth - this.getChatIconWidth();
+        data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 13;
+      }
+      data.height = data.width / aspectRatio;
+
+      return data;
+    },
+    getChatIconWidth: function() {
+      switch (Number(this.widgetSizeTypeToggle)) {
+        case 1:
+          return 32;
+        case 2:
+          return 37;
+        case 3:
+          return 42;
+        case 4:
+          return 42;
+        default:
+          return 37;
+      }
+    },
+    getArrowPosition: function(setting){
+      var data = { left: 0, right: 0 };
+      if (setting.lineUpStyle === '1') {
+        if (setting.carouselPattern === '2') {
+          if (setting.arrowType === '3') {
+            data.left = -30;
+            data.right = -30;
+          } else {
+            data.left = -34;
+            data.right = -30;
+          }
+        } else {
+          switch (setting.arrowType) {
+            case '1':
+            case '2':
+              data.left = 8;
+              data.right = 14;
+              break;
+            case '3':
+              data.left = 8;
+              data.right = 8;
+              break;
+            case '4':
+              data.left = 8;
+              data.right = 10;
+              break;
+            default:
+              data.left = 8;
+              data.right = 8;
+              break;
+          }
+        }
+      } else {
+        if (setting.carouselPattern === '2') {
+          switch (setting.arrowType) {
+            case '1':
+            case '2':
+              data.left = -27;
+              data.right = -25;
+              break;
+            case '3':
+              data.left = -20;
+              data.right = -25;
+              break;
+            case '4':
+              data.left = -27;
+              data.right = -25;
+              break;
+            default:
+              data.left = -27;
+              data.right = -25;
+              break;
+          }
+        } else {
+          switch (setting.arrowType) {
+            case '1':
+            case '2':
+              data.left = 16;
+              data.right = 16;
+              break;
+            case '3':
+              data.left = 12;
+              data.right = 8;
+              break;
+            case '4':
+              data.left = 16;
+              data.right = 16;
+              break;
+            default:
+              data.left = 16;
+              data.right = 16;
+              break;
+          }
+        }
+      }
+
+      return data;
+    },
+
+    getTitleTextAlign: function (value){
+      switch (Number(value)) {
+        case 1:
+          return 'left';
+        case 2:
+          return 'center';
+        case 3:
+          return 'right';
+        default:
+          return 'left';
+      }
+    },
+
+    hexToRgb: function (hex) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    },
+
+    /**
+     * ファイル拡張子から、画像か判別する
+     * @param String extension ファイル拡張子
+     */
+    isImage: function(extension) {
+      return /jpeg|jpg|gif|png/i.test(extension);
+    },
+
+    /**
+     * ファイルタイプ別ごとに、font-awesome用のクラスを出し分ける
+     * @param String extension ファイルの拡張子
+     */
+    selectIconClassFromExtension: function(extension) {
+      var selectedClass = "";
+      var icons = {
+        image:      'fa-file-image',
+        pdf:        'fa-file-pdf',
+        word:       'fa-file-word',
+        powerpoint: 'fa-file-powerpoint',
+        excel:      'fa-file-excel',
+        audio:      'fa-file-audio',
+        video:      'fa-file-video',
+        zip:        'fa-file-zip',
+        code:       'fa-file-code',
+        text:       'fa-file-text',
+        file:       'fa-file'
+      };
+      var extensions = {
+        gif: icons.image,
+        jpeg: icons.image,
+        jpg: icons.image,
+        png: icons.image,
+        pdf: icons.pdf,
+        doc: icons.word,
+        docx: icons.word,
+        ppt: icons.powerpoint,
+        pptx: icons.powerpoint,
+        xls: icons.excel,
+        xlsx: icons.excel,
+        aac: icons.audio,
+        mp3: icons.audio,
+        ogg: icons.audio,
+        avi: icons.video,
+        flv: icons.video,
+        mkv: icons.video,
+        mp4: icons.video,
+        gz: icons.zip,
+        zip: icons.zip,
+        css: icons.code,
+        html: icons.code,
+        js: icons.code,
+        txt: icons.text,
+        csv: icons.csv,
+        file: icons.file
+      };
+
+      return extensions[extension] || extensions['file'];
+    }
+
+  };
+});
 </script>

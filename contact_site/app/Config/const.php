@@ -252,6 +252,7 @@ define('C_SCENARIO_UI_TYPE_MULTIPLE_ROW_TEXT', 2);
 define('C_SCENARIO_UI_TYPE_RADIO_BUTTON', 3);
 define('C_SCENARIO_UI_TYPE_PULLDOWN', 4);
 define('C_SCENARIO_UI_TYPE_CALENDAR', 5);
+define('C_SCENARIO_UI_TYPE_CAROUSEL', 6);
 
 define('C_SCENARIO_UI_TYPE_BUTTON', 7);
 
@@ -828,59 +829,83 @@ $config['chatbotScenarioActionList'] = array(
     'default' => array(
       'messageIntervalTimeSec' => '2',
       'chatTextArea' => '1',
-      'hearings' => array(
-        array(
-          'variableName' => '',
-          'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
-          'uiType' => '1',
-          'message' => '',
-          'required' => true,
-          'errorMessage' => '',
-          'settings' => array(
-            'options' => array(""), // options for radio or pulldown
-            'disablePastDate' => true,
-            'isSetDisableDate' => false,
-            'isDisableDayOfWeek' => false,
-            'isSetSpecificDate' => false,
-            'isEnableAfterDate' => false,
-            'enableAfterDate' => null,
-            'isDisableAfterData' => false,
-            'enableAfterDate' => null,
-            'dayOfWeekSetting' => array(
-              0 => false, // sun
-              1 => false, // mon
-              2 => false, // tue
-              3 => false, // wed
-              4 => false, // thur
-              5 => false, // fri
-              6 => false, // sat
-            ),
-            'setSpecificDateType' => '',
-            'specificDateData' => array(""),
-            'language' => 1, // 1: japanese, 2: english
-            'pulldownCustomDesign' => false,
-            'calendarCustomDesign' => false,
-            'customDesign' => array(
-              'borderColor' => '',
-              'backgroundColor' => '#FFFFFF',
-              'textColor' => '',
-              'headerBackgroundColor' => '',
-              'headerTextColor' => '#FFFFFF',
-              'headerWeekdayBackgroundColor' => '',
-              'calendarBackgroundColor' => '#FFFFFF',
-              'calendarTextColor' => '',
-              'saturdayColor' => '',
-              'sundayColor' => '',
-              'messageAlign' => '2',
-              'buttonBackgroundColor' => '#FFFFFF',
-              'buttonTextColor' => '#007AFF',
-              'buttonAlign' => '2',
-              'buttonActiveColor' => '#BABABA',
-              'buttonBorderColor' => '#E3E3E3'
+      'hearings' => [[
+        'variableName' => '',
+        'inputType' => C_SCENARIO_INPUT_TYPE_TEXT,
+        'uiType' => '1',
+        'message' => '',
+        'required' => true,
+        'errorMessage' => '',
+        'settings' => [
+          'options' => [""], // options for radio or pulldown
+          'disablePastDate' => true,
+          'isSetDisableDate' => false,
+          'isDisableDayOfWeek' => false,
+          'isSetSpecificDate' => false,
+          'isEnableAfterDate' => false,
+          'enableAfterDate' => null,
+          'isDisableAfterData' => false,
+          'enableAfterDate'=> null,
+          'dayOfWeekSetting' => [
+            0 => false, // sun
+            1 => false, // mon
+            2 => false, // tue
+            3 => false, // wed
+            4 => false, // thur
+            5 => false, // fri
+            6 => false, // sat
+          ],
+          'setSpecificDateType' => '',
+          'specificDateData' => [""],
+          'language' => 1, // 1: japanese, 2: english
+          'pulldownCustomDesign' => false,
+          'calendarCustomDesign' => false,
+          'carouselCustomDesign' => false,
+          'balloonStyle' => '1', //1: 吹き出しあり、２：吹き出しなし
+          'lineUpStyle' => '1', //1: 1つずつ表示、２：並べて表示
+          'carouselPattern' => '2', // arrow position
+          'arrowType' => '4',
+          'titlePosition' => '1', // 1 : left, 2: center , 3: right
+          'subTitlePosition' => '1', // 1 : left, 2: center , 3: right
+          'outCarouselNoneBorder' => false,
+          'inCarouselNoneBorder' => false,
+          'aspectRatio' => null,
+          'customDesign' => [
+            'borderColor' => '',
+            'backgroundColor' => '#FFFFFF',
+            'textColor' => '',
+            'headerBackgroundColor' => '',
+            'headerTextColor' => '#FFFFFF',
+            'headerWeekdayBackgroundColor' => '',
+            'calendarBackgroundColor' => '#FFFFFF',
+            'calendarTextColor' => '',
+            'saturdayColor' => '',
+            'sundayColor' => '',
+            'titleColor'                   => '#333333',
+            'subTitleColor'                => '#333333',
+            'arrowColor'                   => '',
+            'titleFontSize'                => '15',
+            'subTitleFontSize'             => '14',
+            'outBorderColor'               => '#E8E7E0',
+            'inBorderColor'                => '#E8E7E0',
+            'messageAlign' => '2',
+            'buttonBackgroundColor' => '#FFFFFF',
+            'buttonTextColor' => '#007AFF',
+            'buttonAlign' => '2',
+            'buttonActiveColor' => '#BABABA',
+            'buttonBorderColor' => '#E3E3E3'
+          ],
+          'images' => array(
+            array(
+              'title' => '',
+              'subTitle' => '',
+              'answer' => '',
+              'url' => '',
             )
           )
-        )
-      ),
+        ]
+      ]
+      ],
       'restore' => true,
       'isConfirm' => '2',
       'confirmMessage' => '',
@@ -983,7 +1008,7 @@ $config['chatbotScenarioActionList'] = array(
       'cancelLabel' => 'ファイル送信をキャンセルする'
     )
   )
-,
+  ,
   // 条件分岐
   C_SCENARIO_ACTION_BRANCH_ON_CONDITION => array(
     'label' => '条件分岐',
@@ -994,7 +1019,7 @@ $config['chatbotScenarioActionList'] = array(
         array(
           "matchValue" => "",
           "matchValueType" => "1", // のいずれかを含む場合
-          "actionType" => "1", //テキスト発言
+          "actionType" => 1, //テキスト発言
           "action" => array(
             "message" => ""
           )
@@ -1002,7 +1027,7 @@ $config['chatbotScenarioActionList'] = array(
       ),
       'elseEnabled' => 0,
       'elseAction' => array(
-        "actionType" => "1",
+        "actionType" => 1,
         "action" => array(
           "message" => ""
         )
