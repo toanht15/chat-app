@@ -220,7 +220,7 @@
           elm.classList.add("icon_border");
         }
 
-        if ( $scope.isNeedAnimationClass ) {
+        if ( $scope.isNeedAnimationClass() ) {
           elm.classList.add("effect_left");
         }
 
