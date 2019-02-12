@@ -8512,11 +8512,12 @@ ul.naviBtn {
                             display: inline-flex;
                             justify-content: center;
                             align-items: center;
+                            padding-top: 9px;
+                            &:last-child {
+                              margin-left: 10px;
+                            }
                             input[type="radio"] {
                               margin-top: 0;
-                              &:last-child {
-                                margin-left: 10px;
-                              }
                             }
                           }
                         }
@@ -8933,7 +8934,6 @@ ul.naviBtn {
                   width: 40px;
                   height: 40px;
                   img {
-                    max-height: 40px;
                     max-width: 40px;
                   }
                 }
@@ -11465,6 +11465,7 @@ div.balloon {
       grid-template-columns: minmax(max-content, max-content) 1fr;
       &.no_icon {
         grid-template-columns: 1fr;
+        -ms-grid-columns: 1fr;
       }
       .iconDiv {
         display: flex;
@@ -11652,7 +11653,6 @@ div.balloon {
             width: 40px;
             height: 40px;
             img {
-              max-height: 40px;
               max-width: 40px;
             }
           }

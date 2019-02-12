@@ -859,6 +859,16 @@ $config['chatbotScenarioActionList'] = array(
             'language' => 1, // 1: japanese, 2: english
             'pulldownCustomDesign' => false,
             'calendarCustomDesign' => false,
+            'carouselCustomDesign' => false,
+            'balloonStyle' => '1', //1: 吹き出しあり、２：吹き出しなし
+            'lineUpStyle' => '1', //1: 1つずつ表示、２：並べて表示
+            'carouselPattern' => '2', // arrow position
+            'arrowType' => '4',
+            'titlePosition' => '1', // 1 : left, 2: center , 3: right
+            'subTitlePosition' => '1', // 1 : left, 2: center , 3: right
+            'outCarouselNoneBorder' => false,
+            'inCarouselNoneBorder' => false,
+            'aspectRatio' => null,
             'customDesign' => array(
               'borderColor'                  => '',
               'backgroundColor'              => '#FFFFFF',
@@ -1008,7 +1018,7 @@ $config['chatbotScenarioActionList'] = array(
         array(
           "matchValue" => "",
           "matchValueType" => "1", // のいずれかを含む場合
-          "actionType" => "1", //テキスト発言
+          "actionType" => 1, //テキスト発言
           "action" => array(
             "message" => ""
           )
@@ -1016,7 +1026,7 @@ $config['chatbotScenarioActionList'] = array(
       ),
       'elseEnabled' => 0,
       'elseAction' => array(
-        "actionType" => "1",
+        "actionType" => 1,
         "action" => array(
           "message" => ""
         )
