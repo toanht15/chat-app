@@ -1,5 +1,11 @@
 <?php
 
+// AWS: S3
+define('C_AWS_S3_VERSION', 'latest'); // ウィジェット用参照先
+define('C_AWS_S3_REGION', 'ap-northeast-1'); // ウィジェット用参照先
+define('C_AWS_S3_STORAGE', 'STANDARD'); // ウィジェット用参照先
+define('C_AWS_S3_HOSTNAME', 'https://s3-' . C_AWS_S3_REGION . '.amazonaws.com/'); // S3パス
+
 // 正規表現
 define('C_MATCH_RULE_TEL', '/^\+?(\d|-)*$/'); // TEL
 define('C_MATCH_RULE_TIME', '/^(24:00|2[0-3]:[0-5][0-9]|[0-1]?[0-9]:[0-5][0-9])$/'); // 時間 H:i
