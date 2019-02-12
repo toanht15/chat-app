@@ -1,7 +1,7 @@
 <script type="text/javascript">
   'use strict';
 
-  var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate', 'ui.sortable']);
+  var sincloApp = angular.module('sincloApp', ['ngSanitize', 'ui.validate', 'ui.sortable', 'slickCarousel']);
 
   sincloApp.controller('MainController', [
     '$scope',
@@ -28,13 +28,13 @@
           firstDayOfWeek: 0,
           weekdays: {
             shorthand: ['日', '月', '火', '水', '木', '金', '土'],
-            longhand: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'],
+            longhand: ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日']
           },
           months: {
             shorthand: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-            longhand: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-          },
-        },
+            longhand: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+          }
+        }
       };
 
       // アクション設定の取得・初期化
@@ -53,16 +53,16 @@
                 setActionListTmp[key].requestHeaders = [
                   {
                     name: '',
-                    value: '',
-                  },
+                    value: ''
+                  }
                 ];
               }
               if (!setActionListTmp[key].responseBodyMaps || setActionListTmp[key].responseBodyMaps.length === 0) {
                 setActionListTmp[key].responseBodyMaps = [
                   {
                     sourceKey: '',
-                    variableName: '',
-                  },
+                    variableName: ''
+                  }
                 ];
               }
             }
@@ -85,7 +85,7 @@
         if (scenarioJsonList.hasOwnProperty(key)) {
           this.scenarioList.push({
             'id': scenarioJsonList[key].TChatbotScenario.id,
-            'name': scenarioJsonList[key].TChatbotScenario.name,
+            'name': scenarioJsonList[key].TChatbotScenario.name
           });
         }
       }
@@ -98,7 +98,7 @@
         if (leadJsonList.hasOwnProperty(key)) {
           this.leadList.push({
             'id': leadJsonList[key]['TLeadListSetting']['id'],
-            'name': leadJsonList[key]['TLeadListSetting']['list_name'],
+            'name': leadJsonList[key]['TLeadListSetting']['list_name']
           });
         }
       }
@@ -111,7 +111,7 @@
         if (scenarioJsonListForBranchOnCond.hasOwnProperty(key)) {
           this.scenarioListForBranchOnCond.push({
             'id': scenarioJsonListForBranchOnCond[key].TChatbotScenario.id,
-            'name': scenarioJsonListForBranchOnCond[key].TChatbotScenario.name,
+            'name': scenarioJsonListForBranchOnCond[key].TChatbotScenario.name
           });
         }
       }
@@ -149,6 +149,34 @@
 
       $scope.chatbotIconIsFontIcon = function(target) {
         return target.match(/^fa/) !== null;
+      };
+
+      $scope.canShowChatbotIcon = function(hearing, showFlg) {
+        var canShow = false;
+        switch (Number(hearing.uiType)) {
+          case 1:
+          case 2:
+            canShow = !!hearing.message;
+            break;
+          case 3:
+          case 4:
+            canShow = !!(hearing.message || hearing.settings.options[0]);
+            break;
+          case 5:
+            canShow = true;
+            break;
+          case 6:
+            canShow = !!(hearing.settings.balloonStyle === '1');
+            break;
+          case 7:
+            canShow = !!(hearing.message || hearing.settings.options[0]);
+            break;
+          default:
+            canShow = true;
+            break;
+        }
+
+        return canShow && Number(showFlg) === 1;
       };
 
       $scope.isMainColorWhite = function() {
@@ -213,7 +241,7 @@
             default:
               this.resultClass['smallSize'] = true;
           }
-        },
+        }
       };
       /**
        * angularのExpressionを文字列のまま表示する
@@ -251,7 +279,7 @@
           $scope.setActionList.forEach(function(actionItem, index) {
             actionValidationCheck(elms[index], $scope.setActionList, actionItem);
           });
-        },
+        }
       };
 
       // ヒアリング一覧の並び替えオプション
@@ -283,7 +311,7 @@
         },
         stop: function(event, ui) {
           $scope.$apply();
-        },
+        }
       };
 
       // ヒアリング一覧の並び替えオプション
@@ -319,7 +347,7 @@
           $scope.setActionList.forEach(function(actionItem, index) {
             actionValidationCheck(elms[index], $scope.setActionList, actionItem);
           });
-        },
+        }
       };
 
       // リードリスト一覧の並び替えオプション
@@ -340,48 +368,70 @@
           $scope.setActionList.forEach(function(actionItem, index) {
             actionValidationCheck(elms[index], $scope.setActionList, actionItem);
           });
-        },
+        }
       };
 
+      // カルーセルの画像の並び替えオプション
+      $scope.sortableOptionsCarousel = {
+        axis       : 'y',
+        tolerance  : 'pointer',
+        containment: 'parent',
+        handle     : '.handleOption',
+        cursor     : 'move',
+        helper     : 'clone',
+        start      : function(event, ui) {
+          ui.helper.find('.area-btn').css('right', '-50px');
+        },
+        stop       : function(event, ui) {
+          $timeout(function() {
+            $scope.$apply();
+          });
+          // 並び替え後、変数のチェックを行う
+          var elms = document.querySelectorAll('li.set_action_item');
+          $scope.setActionList.forEach(function(actionItem, index) {
+            actionValidationCheck(elms[index], $scope.setActionList, actionItem);
+          });
+        }
+      };
       $scope.getHearingButtonSetting = function(target, settings) {
-        switch(target) {
+        switch (target) {
           case 'messageAlign':
-            if(settings && settings.customDesign.messageAlign) {
+            if (settings && settings.customDesign.messageAlign) {
               return settings.customDesign.messageAlign;
             } else {
               return '1';
             }
             break;
           case 'buttonBackgroundColor':
-            if(settings && settings.customDesign.buttonBackgroundColor) {
+            if (settings && settings.customDesign.buttonBackgroundColor) {
               return settings.customDesign.buttonBackgroundColor;
             } else {
               return '#FFFFFF';
             }
             break;
           case 'buttonTextColor':
-            if(settings && settings.customDesign.buttonTextColor) {
+            if (settings && settings.customDesign.buttonTextColor) {
               return settings.customDesign.buttonTextColor;
             } else {
               return '#007AFF';
             }
             break;
           case 'buttonAlign':
-            if(settings && settings.customDesign.buttonAlign) {
+            if (settings && settings.customDesign.buttonAlign) {
               return settings.customDesign.buttonAlign;
             } else {
               return '2';
             }
             break;
           case 'buttonActiveColor':
-            if(settings && settings.customDesign.buttonActiveColor) {
+            if (settings && settings.customDesign.buttonActiveColor) {
               return settings.customDesign.buttonActiveColor;
             } else {
               return '#BABABA';
             }
             break;
           case 'buttonBorderColor':
-            if(settings && settings.customDesign.buttonBorderColor) {
+            if (settings && settings.customDesign.buttonBorderColor) {
               return settings.customDesign.buttonBorderColor;
             } else {
               return '#E3E3E3';
@@ -419,10 +469,10 @@
             var time = 500;
             if (isAppendAtLast) {
               actionBox.stop().animate({
-                scrollTop: actionBox.scrollTop() + actionBox[0].scrollHeight,
+                scrollTop: actionBox.scrollTop() + actionBox[0].scrollHeight
               }, time);
               previewBox.stop().animate({
-                scrollTop: previewBox.scrollTop() + previewBox[0].scrollHeight,
+                scrollTop: previewBox.scrollTop() + previewBox[0].scrollHeight
               }, time);
               // フォーカス移動
               $('#tchatbotscenario_form_action_body .set_action_item:last-of-type').focus();
@@ -431,7 +481,7 @@
               var target = $('#action' + index + '_setting');
               var targetY = target.position().top - actionBox.position().top;
               actionBox.stop().animate({
-                scrollTop: actionBox.scrollTop() + targetY,
+                scrollTop: actionBox.scrollTop() + targetY
               }, time);
               // フォーカス移動
               $('#tchatbotscenario_form_action_body .set_action_item:eq(' + index + ')').focus();
@@ -451,6 +501,13 @@
         target.settings.customDesign.sundayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.saturdayColor = $scope.widget.settings.description_text_color;
         target.settings.customDesign.headerWeekdayBackgroundColor = this.getRawColor($scope.widget.settings.main_color);
+        target.settings.customDesign.titleColor = '#333333';
+        target.settings.customDesign.subTitleColor = '#333333';
+        target.settings.customDesign.arrowColor = $scope.widget.settings.main_color;
+        target.settings.customDesign.outBorderColor = '#E8E7E0';
+        target.settings.customDesign.inBorderColor = '#E8E7E0';
+        target.settings.customDesign.titleFontSize = parseInt($scope.widget.settings.re_text_size) + 1;
+        target.settings.customDesign.subTitleFontSize = parseInt($scope.widget.settings.re_text_size);
         target.settings.customDesign.messageAlign = '2';
         target.settings.customDesign.buttonBackgroundColor = $scope.widget.settings.re_background_color;
         target.settings.customDesign.buttonTextColor = '#007AFF';
@@ -495,7 +552,7 @@
           LocalStorageService.setItem($scope.storageKey, [
             {
               key: 'targetDeleteFileIds',
-              value: $scope.targetDeleteFileIds,
+              value: $scope.targetDeleteFileIds
             }]);
         }
         $scope.setActionList.splice(setActionId, 1);
@@ -586,6 +643,46 @@
         jscolor.installByClassName('jscolor');
       };
 
+      this.revertCarouselDesign = function(actionIndex, hearingIndex, customDesignIndex) {
+        var defaultColor = '#FFFFFF';
+        var target = $('#action' + actionIndex + '_carousel' + hearingIndex + '_' + customDesignIndex);
+        switch (customDesignIndex) {
+          case 'titleColor':
+            defaultColor = '#333333';
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+          case 'subTitleColor':
+            defaultColor = '#333333';
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+          case 'arrowColor':
+            defaultColor = $scope.widget.settings.main_color;
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+          case 'titleFontSize':
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = parseInt($scope.widget.settings.re_text_size) + 1;
+            break;
+          case 'subTitleFontSize':
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = parseInt($scope.widget.settings.re_text_size);
+            break;
+          case 'outBorderColor':
+            defaultColor = '#E8E7E0';
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+          case 'inBorderColor':
+            defaultColor = '#E8E7E0';
+            $scope.setActionList[actionIndex].hearings[hearingIndex].settings.customDesign[customDesignIndex] = defaultColor;
+            target.css('background-color', defaultColor);
+            break;
+        }
+
+        jscolor.installByClassName('jscolor');
+      };
+
       // アクションの追加・削除を検知する
       $scope.watchActionList = [];
       $scope.$watchCollection('setActionList', function(newObject, oldObject) {
@@ -612,7 +709,7 @@
         7: '電話番号',
         8: 'FAX番号',
         9: '携帯番号',
-        10: 'メールアドレス',
+        10: 'メールアドレス'
       };
 
       // 各アクション内の変更を検知し、プレビューのメッセージを表示更新する
@@ -660,7 +757,7 @@
           // hearings
           if (typeof newObject.message !== 'undefied' && typeof newObject.hearings !== 'undefined') {
             angular.forEach(newObject.hearings, function(hearing, hearingIndex) {
-              if (hearing.uiType == 3) {
+              if (hearing.uiType === '3') {
                 $timeout(function() {
                   $scope.$apply();
                 }).then(function() {
@@ -703,8 +800,8 @@
                   disable: [],
                   enable: [],
                   locale: {
-                    firstDayOfWeek: 0,
-                  },
+                    firstDayOfWeek: 0
+                  }
                 };
                 // set language for calendar
                 if (hearing.settings.language == 1) {
@@ -713,7 +810,7 @@
                 } else {
                   // english
                   calendar_options.locale = {
-                    firstDayOfWeek: 0,
+                    firstDayOfWeek: 0
                   };
                 }
 
@@ -749,7 +846,7 @@
                     calendar_options.disable = [
                       function(date) {
                         return disableWeekDays.indexOf(date.getDay()) !== -1;
-                      },
+                      }
                     ];
                   } else {
                     calendar_options.disable = [];
@@ -847,7 +944,60 @@
                   $('#action' + index + '_datepicker' + hearingIndex).on('change', function() {
                     self.customCalendarTextColor(calendarTarget, hearing.settings.customDesign);
                   });
+                });
+              }
 
+              // carousel customize
+              if (hearing.uiType === '6') {
+                var carouselTarget = $('[id^="carousel_action' + index + '_hearing' + hearingIndex + '"]');
+                if (hearing.settings.balloonStyle === '2') {
+                  hearing.message = "";
+                }
+                var prevIconClass = '';
+                var nextIconClass = '';
+                if (hearing.settings.arrowType === '3') {
+                  prevIconClass = 'fa-chevron-left';
+                  nextIconClass = 'fa-chevron-right';
+                } else if (hearing.settings.arrowType === '4') {
+                  prevIconClass = 'fa-chevron-square-left';
+                  nextIconClass = 'fa-chevron-square-right';
+                } else {
+                  prevIconClass = 'fa-chevron-circle-left';
+                  nextIconClass = 'fa-chevron-circle-right';
+                }
+                var slidesToShow = hearing.settings.lineUpStyle === '1' ? 1 : 1.5;
+                var lazyLoad     = hearing.settings.balloonStyle === '1' ? 'ondemand' : 'progressive';
+                var speed        = hearing.settings.carouselPattern === '1' ? 300 : 350;
+
+                hearing.settings.slickSettings = {
+                  dots: true,
+                  slidesToShow: slidesToShow,
+                  infinite: false,
+                  lazyLoad: lazyLoad,
+                  speed: speed,
+                  prevArrow: '<i class="fas ' + prevIconClass + ' slick-prev"></i>',
+                  nextArrow: '<i class="fas ' + nextIconClass + ' slick-next"></i>'
+                };
+
+                $timeout(function() {
+                  $scope.$apply(function() {
+                    hearing.settings.dataLoaded = true;
+
+                    var maxHeight = 0;
+                    carouselTarget.find('.thumbnail').each(function() {
+                      var currentHeight = $(this).find('.title').height() + $(this).find('p').height() + $(this).find('img').height();
+                      maxHeight = currentHeight > maxHeight ? currentHeight : maxHeight;
+                    });
+                    maxHeight = maxHeight + 25; // 25 margin
+                    console.log(maxHeight);
+                    carouselTarget.find('.thumbnail').each(function() {
+                      $(this).css('min-height', maxHeight + 'px');
+                    });
+                  });
+                }, 200).then(function() {
+                  if (hearing.settings.carouselCustomDesign) {
+                    jscolor.installByClassName('jscolor');
+                  }
                 });
               }
               // button customize
@@ -987,7 +1137,7 @@
         return result ? {
           r: parseInt(result[1], 16),
           g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16),
+          b: parseInt(result[3], 16)
         } : null;
       };
 
@@ -1003,7 +1153,7 @@
 
       // remove opacity from hex color
       this.getRawColor = function(hex, opacity) {
-        if(!opacity) {
+        if (!opacity) {
           opacity = 0.1;
         }
         var code = hex.substr(1), r, g, b;
@@ -1217,7 +1367,7 @@
               }, false);
             }
             return XHR;
-          },
+          }
         }).done(function(data, textStatus, jqXHR) {
           // 更新前のファイルIDを、削除リストに追加する
           if (typeof actionDetail.tChatbotScenarioSendFileId !== 'undefined' &&
@@ -1232,7 +1382,7 @@
           LocalStorageService.setItem($scope.storageKey, [
             {
               key: 'targetDeleteFileIds',
-              value: $scope.targetDeleteFileIds,
+              value: $scope.targetDeleteFileIds
             }]);
         }).fail(function(jqXHR, textStatus, errorThrown) {
           alert('fail');
@@ -1287,7 +1437,7 @@
             type: 'post',
             data: {
               id: document.getElementById('TChatbotScenarioId').value,
-              targetDeleteFileIds: JSON.stringify($scope.targetDeleteFileIds),
+              targetDeleteFileIds: JSON.stringify($scope.targetDeleteFileIds)
             },
             cache: false,
             url: "<?= $this->Html->url('/TChatbotScenario/remoteDelete') ?>",
@@ -1297,7 +1447,7 @@
               // 一覧ページへ遷移する
               var url = "<?= $this->Html->url('/TChatbotScenario/index') ?>";
               location.href = url + '/page:' + lastPage;
-            },
+            }
           });
         };
       };
@@ -1387,20 +1537,39 @@
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
         var actionStep = targetActionId.replace(/action([0-9]+)_setting/, '$1');
         var actionType = $scope.setActionList[actionStep].actionType;
+        var target;
+        var src;
+
         if (optionType === '3' || optionType === '4' || optionType === '7') {
           // ラジオボタン、プルダウン
-          var src = $scope.actionList[actionType].default.hearings[0].settings.options;
-          var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
-        } else {
+          src = $scope.actionList[actionType].default.hearings[0].settings.options;
+          target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
+        } else if (optionIndex === '5') {
           // カレンダー
-          var src = $scope.actionList[actionType].default.hearings[0].settings.specificDateData;
-          var target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
+          src = $scope.actionList[actionType].default.hearings[0].settings.specificDateData;
+          target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
+        } else {
+          // カルーセル
+          var imageData = {
+            title: '',
+            subTitle: '',
+            answer: '',
+            url: ''
+          };
+          target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
+          $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = false;
+        }
+        if (optionType === '6') {
+          target.splice(optionIndex + 1, 0, imageData);
+        } else {
+          target.splice(optionIndex + 1, 0, '');
         }
 
-        target.splice(optionIndex + 1, 0, '');
         // 表示更新
         $timeout(function() {
-          $scope.$apply();
+          $scope.$apply(function() {
+            $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = true;
+          });
         }).then(function() {
           var targetElmList = $('.action' + actionStep + '_option' + listIndex);
           self.controllListView(actionType, targetElmList, target);
@@ -1416,6 +1585,288 @@
         });
       };
 
+      this.getCarouselSize = function(settings, widgetSizeType) {
+        if (settings.carouselPattern === '2') {
+          return this.getOutsideArrowCarouselSize(settings, widgetSizeType)
+        } else {
+          return this.getInsideArrowCarouselSize(settings, widgetSizeType);
+        }
+      };
+
+      this.getOutsideArrowCarouselSize = function(settings, widgetSizeType) {
+        if (settings.balloonStyle === '1') {
+          return this.getOutsideArrowHasBalloonCarouselSize(settings, widgetSizeType);
+        } else {
+          return this.getOutsideArrowNoneBalloonCarouselSize(settings, widgetSizeType);
+        }
+      };
+
+      this.getOutsideArrowHasBalloonCarouselSize = function(settings, widgetSizeType) {
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
+        switch (Number(widgetSizeType)) {
+          case 1:
+            data.containerWidth = 170;
+            data.width = settings.lineUpStyle === '1' ? 170 : 100;
+            break;
+          case 2:
+            data.containerWidth = 220;
+            data.width = settings.lineUpStyle === '1' ? 220 : 132;
+            break;
+          case 3:
+            data.containerWidth = 280;
+            data.width = settings.lineUpStyle === '1' ? 280 : 175;
+            break;
+          case 4:
+            data.containerWidth = 280;
+            data.width = settings.lineUpStyle === '1' ? 280 : 175;
+            break;
+          default:
+            data.containerWidth = 280;
+            data.width = settings.lineUpStyle === '1' ? 280 : 175;
+            break;
+        }
+        if (Number($scope.widget.settings['show_chatbot_icon']) === 1 && settings.balloonStyle === '1') {
+          data.containerWidth =  data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 10;
+        }
+        data.height = data.width / aspectRatio;
+
+        return data;
+      };
+
+      this.getOutsideArrowNoneBalloonCarouselSize = function(settings, widgetSizeType) {
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
+        switch (Number(widgetSizeType)) {
+          case 1:
+            data.containerWidth = 170;
+            data.width = settings.lineUpStyle === '1' ? 170 : 100;
+            break;
+          case 2:
+            data.containerWidth = 230;
+            data.width = settings.lineUpStyle === '1' ? 230 : 140;
+            break;
+          case 3:
+            data.containerWidth = 290;
+            data.width = settings.lineUpStyle === '1' ? 290 : 180;
+            break;
+          case 4:
+            data.containerWidth = 290;
+            data.width = settings.lineUpStyle === '1' ? 290 : 180;
+            break;
+          default:
+            data.containerWidth = 290;
+            data.width = settings.lineUpStyle === '1' ? 290 : 180;
+            break;
+        }
+        if (Number($scope.widget.settings['show_chatbot_icon']) === 1 && settings.balloonStyle === '1') {
+          data.containerWidth =  data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 10;
+        }
+        data.height = data.width / aspectRatio;
+
+        return data;
+      };
+
+      this.getInsideArrowCarouselSize = function(settings, widgetSizeType){
+        if (settings.balloonStyle === '1') {
+          return this.getInsideArrowHasBalloonCarouselSize(settings, widgetSizeType);
+        } else {
+          return this.getInsideArrowNoneBalloonCarouselSize(settings, widgetSizeType);
+        }
+      };
+
+      this.getInsideArrowHasBalloonCarouselSize = function(settings, widgetSizeType){
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
+        switch (Number(widgetSizeType)) {
+          case 1:
+            data.containerWidth = 210;
+            data.width = settings.lineUpStyle === '1' ? 210 : 132;
+            break;
+          case 2:
+            data.containerWidth = 260;
+            data.width = settings.lineUpStyle === '1' ? 260 : 162;
+            break;
+          case 3:
+            data.containerWidth = 320;
+            data.width = settings.lineUpStyle === '1' ? 320 : 200;
+            break;
+          case 4:
+            data.containerWidth = 320;
+            data.width = settings.lineUpStyle === '1' ? 320 : 200;
+            break;
+          default:
+            data.containerWidth = 320;
+            data.width = settings.lineUpStyle === '1' ? 320 : 200;
+            break;
+        }
+        if (Number($scope.widget.settings['show_chatbot_icon']) === 1 && settings.balloonStyle === '1') {
+          data.containerWidth =  data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 10;
+        }
+        data.height = data.width / aspectRatio;
+
+        return data;
+      };
+
+      this.getInsideArrowNoneBalloonCarouselSize = function(settings, widgetSizeType){
+        var aspectRatio = settings.aspectRatio;
+        if (!aspectRatio) {
+          aspectRatio = 1;
+        }
+        var data = { width: 0, height: 0, containerWidth: 0};
+        switch (Number(widgetSizeType)) {
+          case 1:
+            data.containerWidth = 230;
+            data.width = settings.lineUpStyle === '1' ? 230 : 142;
+            break;
+          case 2:
+            data.containerWidth = 280;
+            data.width = settings.lineUpStyle === '1' ? 280 : 172;
+            break;
+          case 3:
+            data.containerWidth = 340;
+            data.width = settings.lineUpStyle === '1' ? 340 : 212;
+            break;
+          case 4:
+            data.containerWidth = 340;
+            data.width = settings.lineUpStyle === '1' ? 340 : 212;
+            break;
+          default:
+            data.containerWidth = 340;
+            data.width = settings.lineUpStyle === '1' ? 340 : 212;
+            break;
+        }
+        if (Number($scope.widget.settings['show_chatbot_icon']) === 1 && settings.balloonStyle === '1') {
+          data.containerWidth =  data.containerWidth - this.getChatIconWidth();
+          data.width = settings.lineUpStyle === '1' ? data.width - this.getChatIconWidth() : data.width - this.getChatIconWidth() + 10;
+        }
+        data.height = data.width / aspectRatio;
+
+        return data;
+      };
+
+      this.getChatIconWidth = function() {
+        switch (Number($scope.widget.settings['widget_size_type'])) {
+          case 1:
+            return 32;
+          case 2:
+            return 37;
+          case 3:
+            return 42;
+          case 4:
+            return 42;
+          default:
+            return 37;
+        }
+      };
+
+      this.getArrowPosition = function(setting){
+        var data = { left: 0, right: 0 };
+        if (setting.lineUpStyle === '1') {
+            if (setting.carouselPattern === '2') {
+              if (setting.arrowType === '3') {
+                data.left = -30;
+                data.right = -30;
+              } else {
+                data.left = -34;
+                data.right = -30;
+              }
+            } else {
+              switch (setting.arrowType) {
+                case '1':
+                case '2':
+                  data.left = 8;
+                  data.right = 14;
+                  break;
+                case '3':
+                  data.left = 8;
+                  data.right = 8;
+                  break;
+                case '4':
+                  data.left = 8;
+                  data.right = 10;
+                  break;
+                default:
+                  data.left = 8;
+                  data.right = 8;
+                  break;
+              }
+            }
+        } else {
+          if (setting.carouselPattern === '2') {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = -27;
+                data.right = -25;
+                break;
+              case '3':
+                data.left = -20;
+                data.right = -25;
+                break;
+              case '4':
+                data.left = -27;
+                data.right = -25;
+                break;
+              default:
+                data.left = -27;
+                data.right = -25;
+                break;
+            }
+          } else {
+            switch (setting.arrowType) {
+              case '1':
+              case '2':
+                data.left = 16;
+                data.right = 16;
+                break;
+              case '3':
+                data.left = 12;
+                data.right = 8;
+                break;
+              case '4':
+                data.left = 16;
+                data.right = 16;
+                break;
+              default:
+                data.left = 16;
+                data.right = 16;
+                break;
+            }
+          }
+        }
+
+        return data;
+      };
+
+      this.convertNegativeNum = function(value) {
+        return Number(value);
+      };
+
+      this.getTitleTextAlign = function(value) {
+        switch (Number(value)) {
+          case 1:
+            return 'left';
+          case 2:
+            return 'center';
+          case 3:
+            return 'right';
+          default:
+            return 'left';
+        }
+      };
       // remove options (radio, pulldown, calendar) in hearing
       this.removeHearingOption = function($event, optionType, optionIndex, listIndex) {
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
@@ -1424,14 +1875,20 @@
         if (optionType === '3' || optionType === '4' || optionType === '7') {
           // ラジオボタン、プルダウン
           var target = $scope.setActionList[actionStep].hearings[listIndex].settings.options;
-        } else {
+        } else if (optionType === '5' ){
           // カレンダー
           var target = $scope.setActionList[actionStep].hearings[listIndex].settings.specificDateData;
+        } else {
+          // カルーセル
+          var target = $scope.setActionList[actionStep].hearings[listIndex].settings.images;
+          $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = false;
         }
         target.splice(optionIndex, 1);
         // 表示更新
         $timeout(function() {
-          $scope.$apply();
+          $scope.$apply(function() {
+            $scope.setActionList[actionStep].hearings[listIndex].settings.dataLoaded = true;
+          });
         }).then(function() {
           var targetElmList = $('.action' + actionStep + '_option' + listIndex);
           self.controllListView(actionType, targetElmList, target);
@@ -1520,11 +1977,27 @@
       this.selectFile = function($event) {
         var targetActionId = $($event.target).parents('.set_action_item')[0].id;
         var fileElm = document.querySelector('#' + targetActionId + ' .fileElm');
-
         if (fileElm) {
           // ファイルピッカー呼び出し
           fileElm.click();
         }
+      };
+
+      /**
+       * ファイル選択ダイアログの起動
+       */
+      this.carouselSelectFile = function($event, actionIndex, hearingIndex, imageIndex) {
+        var file = document.querySelector('#upload_action' + actionIndex + '_hearing' + hearingIndex + '_image' + imageIndex);
+        if (file) {
+          // ファイルピッカー呼び出し
+          file.click();
+        }
+      };
+
+      this.removeCarouselImage = function($event, actionIndex, hearingIndex, imageIndex) {
+        var file = document.querySelector('#upload_action' + actionIndex + '_hearing' + hearingIndex + '_image' + imageIndex);
+        file.value = "";
+        $scope.setActionList[actionIndex].hearings[hearingIndex].settings.images[imageIndex].url = "";
       };
 
       /**
@@ -1629,15 +2102,21 @@
 
         var hearings = [];
         angular.forEach(action.hearings, function(item, index) {
-          if (typeof item.variableName !== 'undefined' && item.variableName !== '' && (item.uiType === '7' || (typeof item.message !==
-              'undefined' && item.message !== ''))) {
-            // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
-            if(item.uiType === '7' && (typeof item.message ===
-                'undefined' || item.message === '')) {
-              item.message = "";
+          if (item.uiType === '1' || item.uiType == '2') {
+            if (typeof item.variableName !== 'undefined' && item.variableName !== '' && typeof item.message !==
+                'undefined' && item.message !== '') {
+              // item.inputLFType = item.inputLFType == 1 ? '1' : '2';
+              hearings.push(item);
             }
-            hearings.push(item);
+          } else {
+            if (typeof item.variableName !== 'undefined' && item.variableName !== '') {
+              if (typeof item.message === 'undefined' || item.message === '') {
+                item.message = '';
+              }
+              hearings.push(item);
+            }
           }
+
         });
         if (hearings.length < 1) return null;
         action.hearings = hearings;
@@ -1659,9 +2138,13 @@
             delete item.settings;
           }
 
+          if (item.uiType === '6') {
+            delete item.settings.dataLoaded;
+            delete item.settings.slickSettings;
+          }
+
           hearings.push(item);
         });
-
         action.hearings = hearings;
         return action;
       };
@@ -2001,8 +2484,8 @@
         if (!$scope.setActionList[actionIndex].hearings[hearingIndex].inputType) {
           $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = '1';
         }
-        // set defaut settings
-        if (!$scope.setActionList[actionIndex].hearings[hearingIndex].settings) {
+        // set default settings
+        if (!$scope.setActionList[actionIndex].hearings[hearingIndex].settings || !$scope.setActionList[actionIndex].hearings[hearingIndex].settings.images) {
           $scope.setActionList[actionIndex].hearings[hearingIndex].settings = $scope.actionList[2].default.hearings[0].settings;
         }
 
@@ -2011,8 +2494,8 @@
         if (uiType === '2' && (inputType === '3' || inputType === '4')) {
           $scope.setActionList[actionIndex].hearings[hearingIndex].inputType = 1;
         }
-        // set default design for pulldown or calendar
-        if (uiType === '5' || uiType === '4' || uiType === '7') {
+        // set default for customize design
+        if (uiType === '5' || uiType === '4' || uiType === '6' || uiType === '7') {
           $scope.setActionList[actionIndex].hearings[hearingIndex] = this.setDefaultColorHearing(
               $scope.setActionList[actionIndex].hearings[hearingIndex]);
         }
@@ -2081,7 +2564,7 @@
                 LocalStorageService.setItem($scope.storageKey, [
                   {
                     key: 'targetDeleteFileIds',
-                    value: $scope.targetDeleteFileIds,
+                    value: $scope.targetDeleteFileIds
                   }]);
                 LocalStorageService.removeItem($scope.storageKey, 'scenarios');
               } else {
@@ -2109,6 +2592,41 @@
           };
           fileReader.readAsArrayBuffer(fileObj);
         });
+
+        $(document).on('change', '.carousel-item .image_upload_btn', function(e) {
+          var fileId = $(this).attr('id');
+          var files = e.target.files;
+          if ( window.URL && files.length > 0 ) {
+            var file = files[files.length-1];
+
+            // jpeg/jpg/png
+            var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
+            if ( !reg.exec(file.type) ) {
+              $(this).val("");
+              return false;
+            }
+            var url = window.URL.createObjectURL(file);
+            // changeImagePath(url, file.name);
+            openTrimmingDialog(function(){
+              // beforeTrimmingInit(url, $('#picDiv img'));
+              beforeTrimmingInit(url, $('#trimmed_image'));
+              carouselTrimmingInit($scope, fileId);
+            });
+          }
+        });
+
+        function openTrimmingDialog(callback){
+          $.ajax({
+            type: 'post',
+            dataType: 'html',
+            cache: false,
+            url: "<?= $this->Html->url(['controller' => 'MWidgetSettings', 'action' => 'remoteTimmingInfo']) ?>",
+            success: function(html){
+              modalOpen.call(window, html, 'p-widget-carousel-trimming', 'トリミング', 'moment');
+              callback();
+            }
+          });
+        }
 
         // 変更を行っている場合、アラート表示を行う
         $(window).on('beforeunload', function(e) {
@@ -2148,7 +2666,7 @@
         }).then(function() {
           $('#simulator_popup').css({
             width: $('#sincloBox').outerWidth() + 28 + 'px',
-            height: $('#sincloBox').outerHeight() + defaultHeight + 'px',
+            height: $('#sincloBox').outerHeight() + defaultHeight + 'px'
           });
           $scope.actionInit();
         }, 0);
@@ -2161,7 +2679,7 @@
         }
         $('#simulator_popup').css({
           width: $('#sincloBox').outerWidth() + 28 + 'px',
-          height: $('#sincloBox').outerHeight() + defaultHeight + 'px',
+          height: $('#sincloBox').outerHeight() + defaultHeight + 'px'
         });
       });
 
@@ -2202,7 +2720,7 @@
               LocalStorageService.setItem('chatbotVariables', [
                 {
                   key: actionDetail.hearings[$scope.hearingIndex].variableName,
-                  value: message,
+                  value: message
                 }]);
               // 次のアクション
               $scope.hearingIndex++;
@@ -2237,7 +2755,7 @@
           LocalStorageService.setItem('chatbotVariables', [
             {
               key: $scope.setActionList[$scope.actionStep].selection.variableName,
-              value: message,
+              value: message
             }]);
           $scope.actionStep++;
           $scope.doAction();
@@ -2249,14 +2767,14 @@
           $.post("<?=$this->Html->url(['controller' => 'CompanyData', 'action' => 'parseSignature'])?>",
               JSON.stringify({
                 'accessToken': 'x64rGrNWCHVJMNQ6P4wQyNYjW9him3ZK',
-                'targetText': message,
+                'targetText': message
               }), null, 'json').done(function(result) {
             setTimeout(function() {
               $scope.$broadcast('addReForm', {
                 prefix: 'action' + $scope.actionStep + '_bulk-hearing',
                 isConfirm: true,
                 bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
-                resultData: result,
+                resultData: result
               });
               $scope.$broadcast('switchSimulatorChatTextArea', false);
               chatBotTypingRemove();
@@ -2271,14 +2789,14 @@
           Object.keys(message).forEach(function(elm) {
             saveValue.push({
               key: elm,
-              value: message[elm].value,
+              value: message[elm].value
             });
           });
           $scope.$broadcast('addReForm', {
             prefix: 'action' + $scope.actionStep + '_bulk-hearing',
             isConfirm: false,
             bulkHearings: $scope.setActionList[$scope.actionStep].multipleHearings,
-            resultData: {data: message},
+            resultData: {data: message}
           });
           LocalStorageService.setItem('chatbotVariables', saveValue);
           $scope.actionStep++;
@@ -2303,7 +2821,7 @@
               LocalStorageService.setItem('chatbotVariables', [
                 {
                   key: actionDetail.hearings[$scope.hearingIndex].variableName,
-                  value: message,
+                  value: message
                 }]);
               // 次のアクション
               $scope.hearingIndex++;
@@ -2320,7 +2838,7 @@
             LocalStorageService.setItem('chatbotVariables', [
               {
                 key: actionDetail.hearings[$scope.hearingIndex].variableName,
-                value: message,
+                value: message
               }]);
             // 次のアクション
             $scope.hearingIndex++;
@@ -2367,7 +2885,7 @@
             LocalStorageService.setItem('chatbotVariables', [
               {
                 key: actionDetail.hearings[hearingIndex].variableName,
-                value: message,
+                value: message
               }]);
             // 次のアクション
             $scope.hearingIndex++;
@@ -2386,7 +2904,7 @@
           LocalStorageService.setItem('chatbotVariables', [
             {
               key: actionDetail.hearings[hearingIndex].variableName,
-              value: message,
+              value: message
             }]);
           // 次のアクション
           $scope.hearingIndex++;
@@ -2842,6 +3360,23 @@
                 hearingDetail.required);
           }
 
+          if (hearingDetail.uiType == <?= C_SCENARIO_UI_TYPE_CAROUSEL ?>) {
+            var data = {};
+            data.images = hearingDetail.settings.images;
+            data.design = hearingDetail.settings.customDesign;
+            data.settings = hearingDetail.settings;
+            data.prefix = 'action' + $scope.actionStep + '_hearing' + $scope.hearingIndex;
+            data.message = $scope.replaceVariable(message);
+            data.isRestore = isRestore;
+            data.oldValue = LocalStorageService.getItem('chatbotVariables', hearingDetail.variableName);
+            data.textColor = $scope.widget.settings.re_background_color;
+            data.backgroundColor = $scope.widget.settings.re_text_color;
+
+            $scope.$broadcast('addReCarousel', data);
+            $scope.$broadcast('switchSimulatorChatTextArea', !hearingDetail.required, hearingDetail.uiType,
+                hearingDetail.required);
+          }
+
           $scope.$emit('setRestoreStatus', $scope.actionStep, $scope.hearingIndex, true);
         } else if (actionDetail.isConfirm === '1' && ($scope.hearingIndex === actionDetail.hearings.length)) {
           // 確認メッセージ
@@ -2921,10 +3456,10 @@
           type: 'post',
           dataType: 'json',
           data: {
-            id: scenarioId,
+            id: scenarioId
           },
           cache: false,
-          timeout: 10000,
+          timeout: 10000
         }).done(function(data) {
           console.info('successed get scenario detail.');
           try {
@@ -2983,14 +3518,14 @@
             LocalStorageService.setItem('chatbotVariables', [
               {
                 key: calcRule.variableName,
-                value: String(result),
+                value: String(result)
               }]);
           } catch (e) {
             console.log(e);
             LocalStorageService.setItem('chatbotVariables', [
               {
                 key: calcRule.variableName,
-                value: '計算エラー',
+                value: '計算エラー'
               }]);
           }
         });
@@ -3047,7 +3582,7 @@
         var halfWidth = formula.replace(/[！-～]/g,
             function(tmpStr) {
               return String.fromCharCode(tmpStr.charCodeAt(0) - 0xFEE0);
-            },
+            }
         );
         return halfWidth.replace(/”/g, '"').
             replace(/’/g, '\'').
@@ -3074,7 +3609,7 @@
           'requestHeaders': requestHeaders,
           'requestBody': $scope.replaceVariable(actionDetail.requestBody),
           'responseType': actionDetail.responseType,
-          'responseBodyMaps': actionDetail.responseBodyMaps,
+          'responseBodyMaps': actionDetail.responseBodyMaps
         };
 
         $.ajax({
@@ -3082,10 +3617,10 @@
           type: 'post',
           dataType: 'json',
           data: {
-            apiParams: JSON.stringify(sendData),
+            apiParams: JSON.stringify(sendData)
           },
           cache: false,
-          timeout: 10000,
+          timeout: 10000
         }).done(function(data) {
           console.info('successed calling external api.');
           var storageParam = [];
@@ -3134,6 +3669,7 @@
             find('.sinclo-text-line').
             removeClass('underlineText');
         $('#sincloBox [id^="action' + actionIndex + '"][id*="calendar"]').addClass('disabledArea');
+        $('#sincloBox [id^="action' + actionIndex + '"][id*="carousel"]').addClass('disabledArea');
         $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
         $scope.$broadcast('disableHearingInputFlg');
       };
@@ -3150,7 +3686,14 @@
             $scope.addVisitorHearingMessage(message);
             $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
                 'action' + actionStep + '_hearing' + $scope.hearingIndex);
-          } else if ((!item && skipped) || (item && ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '7' || item !== message))) {
+          } else if ((!item && skipped) ||
+              (item && ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '7' || item !== message))) {
+            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
+            $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
+            $scope.reSelectionHearing(message, actionStep, hearingIndex);
+            $scope.$broadcast('addSeMessage', $scope.replaceVariable(message),
+                'action' + actionStep + '_hearing' + $scope.hearingIndex);
+          } else if ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '6') {
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
             $scope.reSelectionHearing(message, actionStep, hearingIndex);
@@ -3211,6 +3754,16 @@
         } else {
           $(this).parents('.sinclo_re').find('.nextBtn').hide();
         }
+      });
+
+      $(document).on('click', '#chatTalk .carousel-container .thumbnail', function() {
+        var prefix = $(this).attr('id');
+        var numbers = prefix.match(/\d+/g).map(Number);
+        var actionStep = numbers[0];
+        var hearingIndex = numbers[1];
+        var imageIndex = numbers[2];
+        var message = $scope.setActionList[actionStep].hearings[hearingIndex].settings.images[imageIndex].answer;
+        self.handleReselectionInput(message, actionStep, hearingIndex);
       });
 
       // カレンダーの選択
@@ -3309,7 +3862,7 @@
         $(window).on('load', autoResize);
         $(window).on('resize', autoResize);
         elm[0].addEventListener('input', autoResize);
-      },
+      }
     };
   }).directive('validateAction', function() {
     return {
@@ -3321,7 +3874,7 @@
         scope.$watch(attrs.ngModel, function(actionItem) {
           actionValidationCheck(elm[0], scope.$parent.setActionList, actionItem);
         }, true);
-      },
+      }
     };
   });
 
@@ -3358,7 +3911,7 @@
       var targetHeight = Number(targetObj.find('ul').css('height').replace('px', ''));
       targetObj.css({
         top: $(this).offset().top - 45 + 15 * per_expand + 'px',
-        left: $(this).offset().left - targetWidth * 0.65 + 'px',
+        left: $(this).offset().left - targetWidth * 0.65 + 'px'
       });
       //画面の拡大率を取得(どのような状況でもしっかり処理を行えるよう
 
@@ -3367,14 +3920,14 @@
       var contentposition = Number(targetObj.css('top').replace('px', '')) + targetHeight + 175;
       if (contentposition > window.innerHeight) {
         targetObj.css({
-          top: $(this).offset().top - 60 - 30 * per_expand + 'px',
+          top: $(this).offset().top - 60 - 30 * per_expand + 'px'
         });
         //ヘルプを上に出しても下に出してもオーバーしてしまう場合
         if (Number(targetObj.css('top').replace('px', '')) - targetHeight + targetObj.outerHeight() <
             $('#color-bar').outerHeight()) {
           targetObj.css({
             left: $(this).offset().left - (targetWidth * 1.2) + 5 + 'px',
-            top: $('#content').outerHeight() / 2 - targetHeight / 2 + 'px',
+            top: $('#content').outerHeight() / 2 - targetHeight / 2 + 'px'
           });
         } else {
           targetObj.find('ul').css('top', 'auto');
@@ -3413,7 +3966,7 @@
       targetObj.css({
         top: ($(this).offset().top - targetObj.outerHeight() - 70) + 'px',
         left: ($(this).offset().left - 79) + 'px',
-        display: 'block',
+        display: 'block'
       });
     }).off('mouseleave', '.errorBtn').on('mouseleave', '.errorBtn', function(event) {
       var targetObj = $('.errorBalloon');
@@ -3431,7 +3984,7 @@
       var targetY = target.position().top - box.position().top;
 
       box.stop().animate({
-        scrollTop: box.scrollTop() + targetY,
+        scrollTop: box.scrollTop() + targetY
       }, time);
       return false;
     });
@@ -3443,7 +3996,7 @@
       var targetY = target.position().top - box.position().top;
 
       box.stop().animate({
-        scrollTop: box.scrollTop() + targetY,
+        scrollTop: box.scrollTop() + targetY
       }, time);
       target.closest('.set_action_item ').focus();
     });
@@ -3485,7 +4038,7 @@
       var targetY = target.position().top - box.position().top;
 
       box.stop().animate({
-        scrollTop: box.scrollTop() + targetY,
+        scrollTop: box.scrollTop() + targetY
       }, time);
     });
 
@@ -3533,10 +4086,17 @@
 
     } else if (actionItem.actionType == <?= C_SCENARIO_ACTION_HEARING ?>) {
       var invalidVariables = actionItem.hearings.some(function(obj) {
-        return !obj.variableName || (obj.uiType !== '7' && !obj.message);
+        return !obj.variableName;
       });
       if (invalidVariables) {
-        messageList.push('変数名と質問内容が未入力です');
+        messageList.push('変数名が未入力です');
+      }
+
+      var invalidMessages = actionItem.hearings.some(function(obj) {
+        return !obj.message && (obj.uiType == 1 || obj.uiType == 2);
+      });
+      if (invalidMessages) {
+        messageList.push('質問内容が未入力です');
       }
 
       var hasBlankErrMess = false;
@@ -3544,6 +4104,9 @@
       var hasInvalidLengthErrMess = false;
       var hasBlankCanSelectDate = false;
       var hasBlankCannotSelectDate = false;
+      var hasBlankImageTitle = false;
+      var hasBlankImageAnswer = false;
+      var hasBlankImageUrl = false;
       angular.forEach(actionItem.hearings, function(item, itemKey) {
         // valid date error mesage
         if ((item.uiType === '1' || item.uiType === '2') && item.inputType != 1) {
@@ -3581,6 +4144,26 @@
             }
           }
         }
+
+        if (item.uiType === '6') {
+          if (item.settings.images.some(function(image) {
+            return image.title === '';
+          })) {
+            hasBlankImageTitle = true;
+          }
+
+          if (item.settings.images.some(function(image) {
+            return image.answer === '';
+          })) {
+            hasBlankImageAnswer = true;
+          }
+
+          if (item.settings.images.some(function(image) {
+            return image.url === '';
+          })) {
+            hasBlankImageUrl = true;
+          }
+        }
       });
       if (hasBlankErrMess) {
         messageList.push('入力エラー時の返信メッセージが未入力です');
@@ -3600,6 +4183,18 @@
 
       if (hasBlankCanSelectDate) {
         messageList.push('選択できる日付を指定するが未入力です');
+      }
+
+      if (hasBlankImageTitle) {
+        messageList.push('画像のタイトルが未入力です');
+      }
+
+      if (hasBlankImageAnswer) {
+        messageList.push('選択時の内容が未入力です');
+      }
+
+      if (hasBlankImageUrl) {
+        messageList.push('画像が選択されていません');
       }
 
       if (actionItem.isConfirm) {

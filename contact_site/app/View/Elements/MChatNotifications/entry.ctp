@@ -50,7 +50,7 @@
           </div>
           <div id="picChooseDiv">
             <div class="greenBtn btn-shadow" onclick="showGallary()">ギャラリーから選択</div>
-            <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage'); ?>画像をアップロード</div>
+            <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage', array('accept' => '.png,.jpeg,.jpg,.gif')); ?>画像をアップロード</div>
             <input type="hidden" name="data[Trimming][info]" id="TrimmingInfo" />
           </div>
         </div>

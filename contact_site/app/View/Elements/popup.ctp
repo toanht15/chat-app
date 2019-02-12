@@ -290,6 +290,16 @@
             return popupEvent.close();
           };
           break;
+        case 'p-widget-carousel-trimming':
+          var trimmingBtn = _button("トリミング");
+          trimmingBtn.onclick = function() {
+            return popupEvent.trimCarouselImage();
+          };
+          var cancelButton = _button("キャンセル");
+          cancelButton.onclick = function () {
+            return popupEvent.close();
+          };
+          break;
         case 'p-copy':
           var closeBtn = _button("コピーする");
           closeBtn.onclick = function () {

@@ -79,10 +79,14 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             radio: 33,
             pulldown: 34,
             calendar: 35,
+            carousel: 43,
+            button: 47,
             reInputText: 36,
             reInputRadio: 37,
             reInputPulldown: 38,
             reInputCalendar: 39,
+            reInputCarousel: 44,
+            reInputButton: 48,
             cancel: 90
           },
           message: {
@@ -92,7 +96,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
             receiveFile: 27,
             returnBulkHearing: 40,
             pulldown: 41,
-            calendar: 42
+            calendar: 42,
+            carousel: 45,
+            button: 46
           }
         },
         cogmo: {
@@ -1707,9 +1713,9 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         }
       }// 消費者からのメッセージの場合
       else if ( type === chatApi.messageType.scenario.customer.hearing || type === chatApi.messageType.scenario.customer.radio
-        || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar
+        || type === chatApi.messageType.scenario.customer.pulldown || type === chatApi.messageType.scenario.customer.calendar || type === chatApi.messageType.scenario.customer.carousel || type === chatApi.messageType.scenario.customer.button
         || type === chatApi.messageType.scenario.customer.reInputText || type === chatApi.messageType.scenario.customer.reInputRadio
-        || type === chatApi.messageType.scenario.customer.reInputPulldown || type === chatApi.messageType.scenario.customer.reInputCalendar) {
+        || type === chatApi.messageType.scenario.customer.reInputPulldown || type === chatApi.messageType.scenario.customer.reInputCalendar || type === chatApi.messageType.scenario.customer.reInputCarousel || type === chatApi.messageType.scenario.customer.reInputButton) {
         cn = "sinclo_re";
         div.style.textAlign = 'left';
         div.style.height = 'auto';
@@ -1741,14 +1747,34 @@ var sincloApp = angular.module('sincloApp', ['ngSanitize']),
         content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
         content += $scope.createTextOfMessage(chat, message);
       }
-      else if ( type === chatApi.messageType.scenario.message.pulldown || type === chatApi.messageType.scenario.message.calendar) {
+      else if ( type === chatApi.messageType.scenario.message.pulldown
+          || type === chatApi.messageType.scenario.message.calendar
+          || type === chatApi.messageType.scenario.message.carousel
+          || type === chatApi.messageType.scenario.message.button) {
         cn = "sinclo_auto";
         div.style.textAlign = 'right';
         div.style.height = 'auto';
         div.style.padding = '0';
         content = "<span class='cName'>シナリオメッセージ(ヒアリング)</span>";
         var json = JSON.parse(message);
-        content += $scope.createTextOfMessage(chat, json.message);
+        if(!json.message) {
+          switch (type) {
+            case chatApi.messageType.scenario.message.pulldown:
+              content += '（プルダウン質問内容なし）';
+              break;
+            case chatApi.messageType.scenario.message.calendar:
+              content += '（カレンダー質問内容なし）';
+              break;
+            case chatApi.messageType.scenario.message.carousel:
+              content += '（カルーセル質問内容なし）';
+              break;
+            default:
+              content += '（質問内容なし）';
+              break;
+          }
+        } else {
+          content += $scope.createTextOfMessage(chat, json.message);
+        }
       }
       else if ( type === chatApi.messageType.scenario.message.selection ) {
         cn = "sinclo_auto";
