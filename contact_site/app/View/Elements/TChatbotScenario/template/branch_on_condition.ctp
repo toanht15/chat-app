@@ -29,7 +29,7 @@
           </div>
         </li>
         <li class="styleFlexbox">
-          <div class="fb15em indentDown"><label class="require">実行するアクション</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件を満たした場合に「テキスト発言」「シナリオ呼出」「リンク呼出」「シナリオを終了」「次のアクションへ」のいずれかの処理を行うことができます。">?</icon></span></div>
+          <div class="fb15em indentDown"><label class="require">実行するアクション</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件を満たした場合に「テキスト発言」「シナリオ呼出」「リンク（URL）」「シナリオを終了」「次のアクションへ」のいずれかの処理を行うことができます。">?</icon></span></div>
           <div class="conditionTypeSelect">
             <select class="m10r" ng-model="condition.actionType" ng-init="condition.actionType = (condition.actionType ? condition.actionType : '1')" ng-options="item.value as item.label for item in processActionTypeList"></select>
           </div>
@@ -46,8 +46,8 @@
           <div class="conditionAction" ng-if="condition.actionType == 3 || condition.actionType == 4"></div>
           <div class="conditionAction" ng-if="condition.actionType == 5" ng-init="condition.action.openType = (condition.action.openType ? condition.action.openType : 1)">
             <input type="text" maxlength="300" ng-model="condition.action.url" placeholder="URLを入力してください"/>
-            <label class="jumpLinkAction pointer"><input type="radio" ng-model="condition.action.openType" value="1">ページを遷移する</label>
-            <label class="jumpLinkAction pointer"><input type="radio" ng-model="condition.action.openType" value="2">新規で開く</label>
+            <label class="jumpLinkAction pointer"><input type="radio" ng-model="condition.action.openType" value="1">ページ遷移する</label>
+            <label class="jumpLinkAction pointer"><input type="radio" ng-model="condition.action.openType" value="2">新規ページで開く</label>
           </div>
         </li>
       </ul>
