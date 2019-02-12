@@ -832,6 +832,15 @@ class TAutoMessagesController extends AppController
       $dataArray = [];
       $errorArray = [];
       $errorFound = false;
+
+      // delete old data
+      $this->TAutoMessage->updateAll(['del_flg' => 1],
+        [
+          'del_flg != ' => 1,
+          'm_companies_id' => $this->userInfo['MCompany']['id']
+        ]
+      );
+
       foreach ($data as $index => $row) {
         $scenarioId = null;
         if ($row['scenario']) {
@@ -871,6 +880,8 @@ class TAutoMessagesController extends AppController
         }
 
         $this->TAutoMessage->set($saveData);
+        $this->TAutoMessage->checkBeforeValidates($saveData['TAutoMessage']['action_type'], true);
+
         $validate = $this->TAutoMessage->validates();
         $errors = $this->TAutoMessage->validationErrors;
         if (!empty($errors)) {
@@ -882,17 +893,23 @@ class TAutoMessagesController extends AppController
           array_push($dataArray, $saveData);
         }
       }
-      // delete old data
-      $this->TAutoMessage->updateAll(['del_flg' => 1],
-        [
-          'del_flg != ' => 1,
-          'm_companies_id' => $this->userInfo['MCompany']['id']
-        ]
-      );
 
       $nextPage = '1';
+      $idNameMap = array();
       foreach ($dataArray as $index => $saveData) {
-        $nextPage = $this->_entryProcess($saveData);
+        $saveResult = $this->_entryProcess($saveData, true);
+        $idNameMap[$saveResult['name']] = $saveResult['id'];
+      }
+      foreach ($data as $index => $row) {
+        if(!empty($row['call_automessage_name'])) {
+          $targetId = $idNameMap[$row['name']];
+          $callAutomessageId = $idNameMap[$row['call_automessage_name']];
+          $this->TAutoMessage->read(null, $targetId);
+          $this->TAutoMessage->set(array(
+            'call_automessage_id' => $callAutomessageId
+          ));
+          $this->TAutoMessage->save();
+        }
       }
       $this->TransactionManager->commitTransaction($transactions);
       $result['success'] = true;
@@ -1000,7 +1017,7 @@ class TAutoMessagesController extends AppController
     $transactions = null;
     try {
       $transactions = $this->TransactionManager->begin();
-      $nextPage = $this->_entryProcess($saveData);
+      $nextPage = $this->_entryProcess($saveData)['page'];
       $this->TransactionManager->commitTransaction($transactions);
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
       $this->redirect('/TAutoMessages/index/page:' . $nextPage, null, false);
@@ -1023,7 +1040,7 @@ class TAutoMessagesController extends AppController
    * @param array $inputData
    * @return {String}
    * */
-  private function _entryProcess($saveData)
+  private function _entryProcess($saveData, $bulkInsertMode = false)
   {
     $errors = [];
     $saveData['TAutoMessage']['m_companies_id'] = $this->userInfo['MCompany']['id'];
@@ -1155,7 +1172,7 @@ class TAutoMessagesController extends AppController
     $this->TAutoMessage->set($saveData);
 
     // action_typeごとに不要なバリデーションルールを削除する
-    $this->TAutoMessage->checkBeforeValidates($saveData['TAutoMessage']['action_type']);
+    $this->TAutoMessage->checkBeforeValidates($saveData['TAutoMessage']['action_type'], $bulkInsertMode);
 
     $validate = $this->TAutoMessage->validates();
     $errors = $this->TAutoMessage->validationErrors;
@@ -1207,7 +1224,11 @@ class TAutoMessagesController extends AppController
 
     $page = $nextPage;
 
-    return $page >= 1 ? $page : 1;
+    return array(
+      'page' => $page >= 1 ? $page : 1,
+      'id' => $this->TAutoMessage->getLastInsertID(),
+      'name' => $saveData['TAutoMessage']['name']
+    );
   }
 
   /**

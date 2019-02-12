@@ -50,6 +50,11 @@ class ExcelParserComponent extends Component {
     return $arr;
   }
 
+  public function getColumnData($beginColumn, $begin, $endColumn, $end) {
+    $data = $this->currentSheet->rangeToArray($beginColumn . $begin . ':' . $endColumn . $end, NULL, TRUE, FALSE);
+    return $data;
+  }
+
   public function exportData()
   {
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
