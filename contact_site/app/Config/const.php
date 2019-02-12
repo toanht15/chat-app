@@ -1207,7 +1207,7 @@ $config['chatbotScenarioBranchOnConditionActionType'] = array(
   ),
   array(
     'index' => 3,
-    'label' => 'リンク呼出',
+    'label' => 'リンク（URL）',
     'value' => C_SCENARIO_PROCESS_ACTION_TYPE_JUMP_LINK
   ),
   array(
@@ -1236,7 +1236,7 @@ $config['chatbotScenarioBranchOnConditionElseActionType'] = array(
   ),
   array(
     'index' => 3,
-    'label' => 'リンク呼出',
+    'label' => 'リンク（URL）',
     'value' => C_SCENARIO_PROCESS_ACTION_TYPE_JUMP_LINK
   ),
   array(
