@@ -47,7 +47,7 @@ class TAutoMessage extends AppModel {
    * バリデーション実行前に、アクションタイプ別にルールを追加する
    * @param  String $actionType アクションタイプ
    */
-  public function checkBeforeValidates($actionType) {
+  public function checkBeforeValidates($actionType, $bulkInsertMode = false) {
     if ($actionType == C_AUTO_ACTION_TYPE_SELECTSCENARIO) {
       $this->validator()->add('t_chatbot_scenario_id', 'checkScenario', array(
         'rule' => 'checkScenario',
@@ -55,7 +55,7 @@ class TAutoMessage extends AppModel {
         'message' => 'シナリオを選択してください'
       ));
       $this->validator()->remove('action');
-    } else if($actionType == C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE) {
+    } else if($actionType == C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE && !$bulkInsertMode) {
       $this->validator()->add('call_automessage_id', 'checkCallAutoMessage', array(
         'rule' => 'checkCallAutoMessage',
         'required' => true,
@@ -219,8 +219,10 @@ class TAutoMessage extends AppModel {
 
     $validations = array(
       'conditions' => array(
+        'name' => $param['name'],
         'm_companies_id' => $this->data['TAutoMessage']['m_companies_id'],
-        'name' => $param['name']
+        'active_flg' => 0,
+        'del_flg' => 0
       )
     );
 
