@@ -160,7 +160,7 @@
 
             <span ng-if="hearingItem.uiType === '6'" style="padding: 0;">
                             <label>表示形式<span class="questionBalloon"><icon class="questionBtn"
-                                                                           data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ<br>email　　　：メールアドレス形式のみ<br>tel_number：0から始まる10桁以上の数字とハイフンのみ">?</icon></span></label>
+                                                                           data-tooltip="吹き出しの表示有無を選択できます。">?</icon></span></label>
                             <label class="pointer"><input type="radio"
                                                           name="action{{setActionId}}-hearing{{listId}}-balloon-style"
                                                           value="1"
@@ -173,7 +173,7 @@
 
             <span ng-if="hearingItem.uiType === '6'" style="padding: 0;">
                             <label>スタイル<span class="questionBalloon"><icon class="questionBtn"
-                                                                           data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ<br>email　　　：メールアドレス形式のみ<br>tel_number：0から始まる10桁以上の数字とハイフンのみ">?</icon></span></label>
+                                                                           data-tooltip="画像をウィジェット内に全画面表示するか、並べて表示するかを選択できます。">?</icon></span></label>
                             <label class="pointer"><input type="radio"
                                                           name="action{{setActionId}}-hearing{{listId}}-lineup-style"
                                                           value="1"
@@ -199,7 +199,7 @@
                     <div class="carousel-image styleFlexbox">
                       <span class="carousel-label"><label class="">画像 <span class="questionBalloon"><icon
                                 class="questionBtn"
-                                data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                                data-tooltip="カルーセルに表示する画像を設定します。</br>※ファイル形式：jpg, jpeg, png, gif">?</icon></span></label></span>
                       <p style="display: inline-block" class="m20l" ng-show="!hearingItem.settings.images[imageIndex].url && !hearingItem.settings.images[imageIndex].isUploading">画像が選択されていません</p>
                       <div class="uploadProgress" style="margin-left: 10px" ng-show="hearingItem.settings.images[imageIndex].isUploading">
                         <div class="uploadProgressArea" style="width: 20em;"><span>アップロード中 ...</span><div class="uploadProgressRate progressbar_action{{setActionId}}_hearing{{listId}}_image{{imageIndex}}"><span>アップロード中 ...</span></div></div>
@@ -218,20 +218,20 @@
                     <div class="carousel-title styleFlexbox">
                       <span class="carousel-label"><label class="">タイトル <span class="questionBalloon"><icon
                                 class="questionBtn"
-                                data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                                data-tooltip="説明文のタイトルの設定を行います。">?</icon></span></label></span>
                       <input type="text" ng-model="hearingItem.settings.images[imageIndex].title" class="m20l m10r">
                     </div>
                     <div class="carousel-sub-title styleFlexbox">
                       <span class="carousel-label"><label class="">本文 <span class="questionBalloon"><icon
                             class="questionBtn"
-                            data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                            data-tooltip="説明文の設定を行います。">?</icon></span></label></span>
                       <resize-textarea class="m20l m10r" style="height: 27px" maxlength="4000" rows="1"
                                        data-maxRow="10" ng-model="hearingItem.settings.images[imageIndex].subTitle"></resize-textarea>
                     </div>
                     <div class="carousel-answer styleFlexbox">
                       <span class="carousel-label"><label class="">選択時の内容 <span class="questionBalloon"><icon
                             class="questionBtn"
-                            data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                            data-tooltip="サイト訪問者（チャット利用者）が画像を選択した際に変数にセットする文言を設定します。">?</icon></span></label></span>
                       <input type="text" class="m20l m10r" ng-model="hearingItem.settings.images[imageIndex].answer">
                     </div>
                   </div>
@@ -250,7 +250,7 @@
               <input type="checkbox" class="m15t"
                      ng-model="hearingItem.settings.carouselCustomDesign">デザインをカスタマイズする
               <span class="questionBalloon"><icon class="questionBtn"
-                                                  data-tooltip="プルダウンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
+                                                  data-tooltip="カルーセルのデザイン（文字色、文字サイズ、矢印のデザイン、枠線色）を変更できます。">?</icon></span>
             </label>
 
             <div class="dropdown-custom-design-area"

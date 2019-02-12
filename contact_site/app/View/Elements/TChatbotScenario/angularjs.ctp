@@ -163,6 +163,8 @@
             canShow = !!(hearing.message || hearing.settings.options[0]);
             break;
           case 5:
+            canShow = true;
+            break;
           case 6:
             canShow = !!(hearing.settings.balloonStyle === '1');
             break;
