@@ -265,7 +265,7 @@ class MWidgetSetting extends AppModel {
         'uploadImage' => [
             // ルール：extension => pathInfoを使用して拡張子を検証
             'extension' => [
-                'rule' => [ 'extension', [ 'jpg', 'jpeg', 'png'] ],
+                'rule' => [ 'extension', [ 'jpg', 'jpeg', 'png', 'gif'] ],
                 'allowEmpty' => true,
                 'message' => ["無効なファイル形式です"]
             ],
