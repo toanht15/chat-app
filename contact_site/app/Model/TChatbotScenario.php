@@ -11,9 +11,15 @@ class TChatbotScenario extends AppModel {
 
   public $validate = [
     'name' => [
-      'rule' => ['maxLength', 50],
-      'allowEmpty' => false,
-      'message' => '名称を５０文字以内で入力してください'
+      'maxLength' => [
+        'rule' => ['maxLength', 50],
+        'allowEmpty' => false,
+        'message' => '名称を５０文字以内で入力してください'
+      ],
+      'isUnique' => [
+        'rule' => 'isUnique',
+        'message' => '既に同じ名称の設定が存在します。'
+      ]
     ],
     'activity' => [
       'checkActivity' => [
