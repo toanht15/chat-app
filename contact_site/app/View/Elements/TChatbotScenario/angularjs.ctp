@@ -2600,7 +2600,7 @@
             var file = files[files.length-1];
 
             // jpeg/jpg/png
-            var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+            var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
             if ( !reg.exec(file.type) ) {
               $(this).val("");
               return false;
