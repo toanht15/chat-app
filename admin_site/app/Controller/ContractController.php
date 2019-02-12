@@ -43,7 +43,7 @@ class ContractController extends AppController
   const OPTION_SCENARIO = "##OPTION_SCENALIO##";
   const OPTION_CAPTURE = "##OPTION_CAPTURE##";
 
-  public $components = array('MailSender');
+  public $components = array('MailSender', 'Amazon');
   public $uses = array('MCompany',
     'MAgreements',
     'MUser',
@@ -509,6 +509,7 @@ class ContractController extends AppController
     try {
       $transaction = $this->TransactionManager->begin();
       $addedCompanyInfo = $this->createCompany($companyInfo);
+      $companyInfo['company_key'] = $addedCompanyInfo['companyKey'];
       $this->createAgreementInfo($addedCompanyInfo, $companyInfo, $userInfo, $agreementInfo);
       $this->createFirstAdministratorUser($addedCompanyInfo['id'], $userInfo, $agreementInfo);
       $this->addDefaultChatPersonalSettings($addedCompanyInfo['id'], $companyInfo);
@@ -614,7 +615,9 @@ class ContractController extends AppController
       }
       $this->MCompany->create();
       $this->MCompany->set($insertData);
-      $this->MCompany->save();
+      if(!$this->MCompany->save()) {
+        throw new Exception(json_encode($this->MCompany->validationErrors, JSON_UNESCAPED_UNICODE));
+      }
     } catch (Exception $e) {
       throw $e;
     }
@@ -893,7 +896,7 @@ class ContractController extends AppController
         $this->TDictionaries->create();
         $this->TDictionaries->set([
           "m_companies_id" => $m_companies_id,
-          "m_user_id" => 0, // 共有設定なので0固定
+          "m_users_id" => 0, // 共有設定なので0固定
           "m_category_id" => $categoryId,
           "word" => $item['word'],
           "type" => $item['type'],
@@ -942,7 +945,19 @@ class ContractController extends AppController
       foreach ($default as &$scenario) {
         $actions = &$scenario['activity']['scenarios'];
         foreach ($actions as &$action) {
-          if (strcmp($action['actionType'], 4) === 0) {
+          if (strcmp($action['actionType'], 2) === 0) {
+            foreach($action['hearings'] as $index => &$hearing) {
+              if(strcmp($hearing['uiType'], 6) === 0) {
+                foreach($hearing['settings']['images'] as $idx => $image) {
+                  $saveFilename = $this->generateImageName($companyInfo['company_key']);
+                  $ret = $this->Amazon->putObject('carouselImages/'.$saveFilename, APP.'Assets/scenario/'.$image['url']);
+                  if($ret) {
+                    $hearing['settings']['images'][$idx]['url'] = $ret;
+                  }
+                }
+              }
+            }
+          } else if (strcmp($action['actionType'], 4) === 0) {
             // メール転送設定とテンプレート設定を追加
             $mailTransmissionSetting = $action['mailTransmission'];
             $mailTemplateSetting = $action['mailTemplate'];
@@ -1376,5 +1391,9 @@ class ContractController extends AppController
     } else {
       return 'cloud-service@medialink-ml.co.jp,alexandre.mercier@medialink-ml.co.jp';
     }
+  }
+
+  protected function generateImageName($companyKey, $file) {
+    return $companyKey."-".date("YmdHis").".".microtime(true).".png";
   }
 }
