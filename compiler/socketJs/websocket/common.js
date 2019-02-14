@@ -4059,6 +4059,9 @@ var socket, // socket.io
             if (e) e.stopPropagation();
             if (common.isPortrait() || document.activeElement.id ===
                 'sincloChatMessage') return false; // 横向きの場合のみ使用
+            if (check.smartphone() && (document.body.clientWidth / window.innerWidth) <= 1) {
+              sinclo.adjustSpWidgetSize();
+            }
             sinclo.operatorInfo.reCreateWidget();
           });
         }

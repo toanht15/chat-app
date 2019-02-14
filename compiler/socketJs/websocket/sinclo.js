@@ -2796,11 +2796,13 @@
     },
     adjustSpWidgetSize: function() {
       if (check.smartphone()) {
+        var expansionRatio = document.body.clientWidth / window.innerWidth;
         if ($('#flexBoxWrap').is(':visible')) {
           console.log('<><><><>adjustSpWidgetSizeのdisplaytextareaが作動<><><><>');
           // 縦の場合
           // 最大化以外の場合とfocus中の場合は操作しない
           if (sinclo.chatApi.spFocusFlg) return;
+          if (expansionRatio > 1 || expansionRatio < 0.95) return;
           var widgetWidth = 0,
               ratio = 0;
           if (common.isPortrait() && $(window).height() > $(window).width()) {
@@ -2847,6 +2849,7 @@
         } else {
           if (check.smartphone()) {
             console.log('<><><><>adjustSpWidgetSizeのhidetextareaが作動<><><><>');
+            if (expansionRatio > 1 || expansionRatio < 0.95) return;
             // 縦の場合
             var widgetWidth = 0,
                 ratio = 0;
