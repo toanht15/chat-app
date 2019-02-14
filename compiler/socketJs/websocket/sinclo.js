@@ -1805,6 +1805,11 @@
 
         currentScenarioChatId.push(obj.chatId);
         sinclo.scenarioApi.set('s_targetChatId', currentScenarioChatId);
+        if (sinclo.chatApi.isCustomerSendMessageType(obj.messageType) && sinclo.scenarioApi.isWaitingInput()
+            && (!check.isset(storage.s.get('operatorEntered')) ||
+                storage.s.get('operatorEntered') === 'false')) {
+          sinclo.scenarioApi.triggerInputWaitComplete(obj.chatMessage);
+        }
       }
       common.chatBotTypingRemove();
       var isBot = (Number(obj.messageType) >= 3 && Number(obj.messageType) <=
@@ -2791,11 +2796,13 @@
     },
     adjustSpWidgetSize: function() {
       if (check.smartphone()) {
+        var expansionRatio = document.body.clientWidth / window.innerWidth;
         if ($('#flexBoxWrap').is(':visible')) {
           console.log('<><><><>adjustSpWidgetSizeのdisplaytextareaが作動<><><><>');
           // 縦の場合
           // 最大化以外の場合とfocus中の場合は操作しない
           if (sinclo.chatApi.spFocusFlg) return;
+          if (expansionRatio > 1 || expansionRatio < 0.95) return;
           var widgetWidth = 0,
               ratio = 0;
           if (common.isPortrait() && $(window).height() > $(window).width()) {
@@ -2842,6 +2849,7 @@
         } else {
           if (check.smartphone()) {
             console.log('<><><><>adjustSpWidgetSizeのhidetextareaが作動<><><><>');
+            if (expansionRatio > 1 || expansionRatio < 0.95) return;
             // 縦の場合
             var widgetWidth = 0,
                 ratio = 0;
@@ -4878,7 +4886,7 @@
         // custom arrow position
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-next { right: ' + arrowPosition.right + 'px }';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev { left: ' + arrowPosition.left + 'px }';
-          
+
         style += '</style>';
 
         return style;
@@ -6107,7 +6115,6 @@
               && (!check.isset(storage.s.get('operatorEntered')) ||
                   storage.s.get('operatorEntered') === 'false')) {
             sinclo.scenarioApi._hearing._setPrevSeqNum();
-            sinclo.scenarioApi.triggerInputWaitComplete(value);
             messageType = sinclo.scenarioApi.getCustomerMessageType();
             if (sinclo.scenarioApi._hearing._forceRadioTypeFlg) {
               messageType = sinclo.chatApi.messageType.scenario.customer.reInputRadio;
@@ -6751,6 +6758,28 @@
           $('#sincloBox ul#chatTalk li sinclo-radio [type="radio"] + label').
               addClass('radio-zoom');
         }
+      },
+      isCustomerSendMessageType: function(type) {
+        type = Number(type);
+        return type === sinclo.chatApi.messageType.customer
+            || type === sinclo.chatApi.messageType.scenario.customer.answerBulkHearing
+            || type === sinclo.chatApi.messageType.scenario.customer.button
+            || type === sinclo.chatApi.messageType.scenario.customer.calendar
+            || type === sinclo.chatApi.messageType.scenario.customer.carousel
+            || type === sinclo.chatApi.messageType.scenario.customer.hearing
+            || type === sinclo.chatApi.messageType.scenario.customer.modifyBulkHearing
+            || type === sinclo.chatApi.messageType.scenario.customer.noModBulkHearing
+            || type === sinclo.chatApi.messageType.scenario.customer.pulldown
+            || type === sinclo.chatApi.messageType.scenario.customer.radio
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputButton
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputCalendar
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputCarousel
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputPulldown
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputRadio
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputText
+            || type === sinclo.chatApi.messageType.scenario.customer.selection
+            || type === sinclo.chatApi.messageType.scenario.customer.sendFile
+            || type === sinclo.chatApi.messageType.scenario.customer.skipHearing
       }
     },
     trigger: {
