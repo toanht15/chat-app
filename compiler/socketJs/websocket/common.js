@@ -1101,6 +1101,12 @@ var socket, // socket.io
       html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-code:before { content: "\\f1c9" }';
       html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-file-text:before { content: "\\f15c" }';
       html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-cloud-upload:before { content: "\\f0ee" }';
+      html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-chevron-left:before { content: "\\f053" }';
+      html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-chevron-right:before { content: "\\f054" }';
+      html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-chevron-square-left:before { content: "\\f32a" }';
+      html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-chevron-square-right:before { content: "\\f32b" }';
+      html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-chevron-circle-left:before { content: "\\f137" }';
+      html += '      #sincloBox ul#chatTalk li .sinclo-fal.fa-chevron-circle-right:before { content: "\\f138" }';
       html += '      #sincloBox .sinclo-fal.fa-comments:before { content: "\\f086" }';
       html += '      #sincloBox .sinclo-fal.fa-phone:before { content: "\\f095" }';
       html += '      #sincloBox .sinclo-fal.fa-robot:before { content: "\\f544" }';
@@ -4059,6 +4065,9 @@ var socket, // socket.io
             if (e) e.stopPropagation();
             if (common.isPortrait() || document.activeElement.id ===
                 'sincloChatMessage') return false; // 横向きの場合のみ使用
+            if (check.smartphone() && (document.body.clientWidth / window.innerWidth) <= 1) {
+              sinclo.adjustSpWidgetSize();
+            }
             sinclo.operatorInfo.reCreateWidget();
           });
         }
