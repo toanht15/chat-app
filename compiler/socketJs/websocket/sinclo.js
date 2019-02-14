@@ -56,12 +56,14 @@
           });
         }
       },
+      widgetMoving: false,
       ev: function() {
         sinclo.adjustSpWidgetSize();
         if (!common.widgetHandler.isShown()) {
           console.log('非表示状態のため動作させない');
           return;
         }
+        sinclo.operatorInfo.widgetMoving = true;
         var height = 0;
         var sincloBox = document.getElementById('sincloBox');
         var flg = sinclo.widget.condifiton.get();
@@ -186,6 +188,7 @@
             elm.animate({
               height: height + 'px'
             }, 'first', null, function() {
+              sinclo.operatorInfo.widgetMoving = false;
               console.log(
                   '$(\'#sincloBox\').offset().top : %s, $(\'#sincloWidgetBox\').offset().top',
                   $('#sincloBox').offset().top,
@@ -385,6 +388,12 @@
             sincloBox.style.opacity = 0;
             sinclo.operatorInfo.nowScrollTimer = setTimeout(function() {
               sincloBox.style.opacity = 1;
+              // sincloBoxに付与しているtransitionとの関係で
+              // スクロールの仕方によってはopacityが1なのに表示上見えていないケースがあるため
+              // リフレッシュの一環として1px瞬時に大きさを変更する
+              var sincloBoxHeight = $(sincloBox).height();
+              $(sincloBox).height(sincloBoxHeight - 1);
+              $(sincloBox).height(sincloBoxHeight);
             }, 400);
           } else {
             sincloBox.style.opacity = 1;
@@ -2853,7 +2862,7 @@
               $('#sincloBox ul sinclo-typing').
                   css('padding-bottom', (fullHeight * 0.1604) + 'px');
               if (storage.l.get('widgetMaximized') === 'true') {
-                $('#sincloBox').height(window.innerHeight);
+                $('#sincloBox').height('100%');
               }
             } else {
               //余白ありの場合
@@ -2899,6 +2908,9 @@
               if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
                 var fullHeight = sinclo.calcSpWidgetHeight();
                 $('#chatTalk').outerHeight(fullHeight);
+                if (storage.l.get('widgetMaximized') === 'true') {
+                  $('#sincloBox').height('100%');
+                }
                 //余白ありの場合
               } else {
                 widgetWidth = $(window).width() - 20;

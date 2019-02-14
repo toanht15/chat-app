@@ -4047,7 +4047,9 @@ var socket, // socket.io
 
           // スクロールをした時の処理群
           window.addEventListener('scroll', sinclo.operatorInfo.widgetHide);
-
+          setInterval(function(){
+            if(!sinclo.operatorInfo.widgetMoving) sinclo.adjustSpWidgetSize();
+          }, 200);
           // 画面を回転ときは、向きによってスタイルを変える
           window.addEventListener('orientationchange', function() {
             //バナー表示だった
