@@ -2054,7 +2054,7 @@
             }
 
             var carousel = JSON.parse(obj.chatMessage);
-            this.chatApi.addCarousel('hearing_msg sinclo_re', carousel.message,
+            this.chatApi.addCarousel('', carousel.message,
                 carousel.settings);
             sinclo.chatApi.scDown();
             return false;
@@ -2429,7 +2429,7 @@
         }
 
         var carousel = JSON.parse(obj.message);
-        this.chatApi.addCarousel('hearing_msg sinclo_re', carousel.message,
+        this.chatApi.addCarousel('', carousel.message,
             carousel.settings);
         sinclo.chatApi.scDown();
         return false;
