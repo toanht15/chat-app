@@ -8265,6 +8265,7 @@
         sinclo.chatApi.forceHideMiniMessageArea = true;
         sinclo.scenarioApi._hearing._disableGrantCancelAbleFlg = false;
         sinclo.scenarioApi._hearing._forceRadioTypeFlg = false;
+        sinclo.scenarioApi._hearing._endValidInputWatcher();
         sinclo.chatApi.hideMiniMessageArea();
         self._saveProcessingState(false);
         sinclo.chatApi.removeAllEvent();
