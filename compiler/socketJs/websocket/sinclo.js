@@ -1805,11 +1805,6 @@
 
         currentScenarioChatId.push(obj.chatId);
         sinclo.scenarioApi.set('s_targetChatId', currentScenarioChatId);
-        if (sinclo.chatApi.isCustomerSendMessageType(obj.messageType) && sinclo.scenarioApi.isWaitingInput()
-            && (!check.isset(storage.s.get('operatorEntered')) ||
-                storage.s.get('operatorEntered') === 'false')) {
-          sinclo.scenarioApi.triggerInputWaitComplete(obj.chatMessage);
-        }
       }
       common.chatBotTypingRemove();
       var isBot = (Number(obj.messageType) >= 3 && Number(obj.messageType) <=
@@ -6157,6 +6152,13 @@
                 isScenarioMessage: isScenarioMessage
               });
             }, 100);
+            if (sinclo.chatApi.isCustomerSendMessageType(messageType)
+                && sinclo.scenarioApi.isProcessing()
+                && sinclo.scenarioApi.isWaitingInput()
+                && (!check.isset(storage.s.get('operatorEntered')) ||
+                    storage.s.get('operatorEntered') === 'false')) {
+              sinclo.scenarioApi.triggerInputWaitComplete(value);
+            }
           });
 
           storage.s.set('chatEmit', true);
@@ -10528,21 +10530,27 @@
               break;
             case 5:
               // リンク呼出
-              var url = condition.action.url,
+              var childWindow = null,
                   openType = condition.action.openType;
-              console.log('url : %s openType : %s',url ,openType);
-              switch(Number(openType)) {
-                case 1:
-                  // ページ遷移
-                  location.href = url;
-                  break;
-                case 2:
-                  window.open(url);
-                  break;
+              if(Number(openType) === 2) {
+                childWindow = window.open('about:blank', 'sincloChild');
               }
-              if (self._parent._goToNextScenario()) {
-                self._parent._process();
-              }
+              self._parent._doing(0.2, function() {
+                var url = condition.action.url;
+                console.log('url : %s openType : %s', url, openType);
+                switch (Number(openType)) {
+                  case 1:
+                    // ページ遷移
+                    location.href = url;
+                    break;
+                  case 2:
+                    childWindow.location.href = url;
+                    break;
+                }
+                if (self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
+              });
               break;
           }
         },
