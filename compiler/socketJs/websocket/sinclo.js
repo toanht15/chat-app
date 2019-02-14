@@ -2044,6 +2044,21 @@
             sinclo.chatApi.scDown();
             return false;
           } else if (obj.messageType ===
+              sinclo.chatApi.messageType.scenario.message.carousel) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = 'sinclo_re';
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = '';
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            var carousel = JSON.parse(obj.chatMessage);
+            this.chatApi.addCarousel('hearing_msg sinclo_re', carousel.message,
+                carousel.settings);
+            sinclo.chatApi.scDown();
+            return false;
+          } else if (obj.messageType ===
               sinclo.chatApi.messageType.scenario.message.button) {
             // 別タブで送信されたシナリオのメッセージは表示する
             cn = 'sinclo_re';
@@ -2413,9 +2428,9 @@
           userName = window.sincloInfo.widget.subTitle;
         }
 
-        var calendar = JSON.parse(obj.message);
-        this.chatApi.addCarousel('hearing_msg sinclo_re', calendar.message,
-            calendar.settings);
+        var carousel = JSON.parse(obj.message);
+        this.chatApi.addCarousel('hearing_msg sinclo_re', carousel.message,
+            carousel.settings);
         sinclo.chatApi.scDown();
         return false;
       }
