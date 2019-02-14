@@ -1677,8 +1677,8 @@
           if ((Number(chat.messageType) === 22 || Number(chat.messageType) ===
               23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
             prevMessageBlock = $('sinclo-chat').find('div:last-child');
-          } else if (Number(chat.messageType) === 41) {
-            prevMessageBlock = $('sinclo-chat').find('div:last-child');
+          } else if (Number(chat.messageType) === 41 || Number(chat.messageType) === 45) {
+            prevMessageBlock = $('sinclo-chat').find('div.sinclo-scenario-msg:last');
           } else {
             if (prevMessageBlock !== null) {
               if (prevMessageBlock.find('[type="radio"]').length > 0) {
@@ -1697,6 +1697,18 @@
                 }
               } else if (prevMessageBlock.find('select').length > 0) {
                 prevMessageBlock.find('select').val(chat.message);
+              } else if(prevMessageBlock.find('.carousel-container').length > 0) {
+                prevMessageBlock.find('.hearing_msg').each(function(index, elm) {
+                 //　カルーセル
+                  $(this).
+                      find('[id^="slide_sinclo-carousel"]').
+                      prop('disabled', true).
+                      css('opacity', 0.5);
+                  $(this).
+                      find('[id^="slide_sinclo-carousel"]').
+                      prop('disabled', true).
+                      css('opacity', 0.5);
+                });
               }
               prevMessageBlock = null;
             }
@@ -6119,6 +6131,14 @@
             isScenarioMessage = true;
           }
 
+          if (sinclo.chatApi.isCustomerSendMessageType(messageType)
+              && sinclo.scenarioApi.isProcessing()
+              && sinclo.scenarioApi.isWaitingInput()
+              && (!check.isset(storage.s.get('operatorEntered')) ||
+                  storage.s.get('operatorEntered') === 'false')) {
+            sinclo.scenarioApi.triggerInputWaitComplete(value);
+          }
+
           sinclo.trigger.judge.matchAllSpeechContent(value, function(result) {
             if ((isScenarioMessage || result) &&
                 (!check.isset(storage.s.get('operatorEntered')) ||
@@ -6152,13 +6172,6 @@
                 isScenarioMessage: isScenarioMessage
               });
             }, 100);
-            if (sinclo.chatApi.isCustomerSendMessageType(messageType)
-                && sinclo.scenarioApi.isProcessing()
-                && sinclo.scenarioApi.isWaitingInput()
-                && (!check.isset(storage.s.get('operatorEntered')) ||
-                    storage.s.get('operatorEntered') === 'false')) {
-              sinclo.scenarioApi.triggerInputWaitComplete(value);
-            }
           });
 
           storage.s.set('chatEmit', true);
@@ -10533,7 +10546,7 @@
               var childWindow = null,
                   openType = condition.action.openType;
               if(Number(openType) === 2) {
-                childWindow = window.open('about:blank', 'sincloChild');
+                childWindow = window.open('about:blank', 'sincloChild' + (new Date()).getTime());
               }
               self._parent._doing(0.2, function() {
                 var url = condition.action.url;
