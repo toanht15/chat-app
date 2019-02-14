@@ -2404,6 +2404,23 @@
       }
 
       if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.carousel) {
+        // 別タブで送信されたシナリオのメッセージは表示する
+        cn = 'sinclo_re';
+        if (window.sincloInfo.widget.showAutomessageName === 2) {
+          userName = '';
+        } else {
+          userName = window.sincloInfo.widget.subTitle;
+        }
+
+        var calendar = JSON.parse(obj.message);
+        this.chatApi.addCarousel('hearing_msg sinclo_re', calendar.message,
+            calendar.settings);
+        sinclo.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.button) {
         this.chatApi.addButton('hearing_msg sinclo_re', JSON.parse(obj.message).message,
             JSON.parse(obj.message).settings);
