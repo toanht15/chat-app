@@ -6114,7 +6114,6 @@
               && (!check.isset(storage.s.get('operatorEntered')) ||
                   storage.s.get('operatorEntered') === 'false')) {
             sinclo.scenarioApi._hearing._setPrevSeqNum();
-            sinclo.scenarioApi.triggerInputWaitComplete(value);
             messageType = sinclo.scenarioApi.getCustomerMessageType();
             if (sinclo.scenarioApi._hearing._forceRadioTypeFlg) {
               messageType = sinclo.chatApi.messageType.scenario.customer.reInputRadio;
