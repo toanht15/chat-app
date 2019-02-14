@@ -4848,11 +4848,12 @@
       },
       createCarouselStyle: function(settings, id) {
         var arrowPosition = sinclo.chatApi.getArrowPosition(settings);
+        var fontFamily = settings.arrowType === '2' ? 'FA5P' : 'SincloFont';
         var style = '<style>';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li { border-radius: unset; background: none; padding: 0 5px;}';
         style += '#sincloBox ul#chatTalk ' + id + ' .slick-dots li button:before { font-size: 25px;}';
-        style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
-        style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-family: "Font Awesome 5 Pro"; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .slick-next:before { font-family: ' + fontFamily + '; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
+        style += '#sincloBox ul#chatTalk ' + id + ' .slick-prev:before { font-family: ' + fontFamily + '; font-size: 28px; opacity: .5; color: ' + settings.customDesign.arrowColor + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title strong { font-size: ' + settings.customDesign.titleFontSize + 'px; color: ' + settings.customDesign.titleColor + '; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .title { margin: 10px 12px 3px 12px; text-align: ' + this.getTitleTextAlign(settings.titlePosition) + ';}';
         style += '#sincloBox ul#chatTalk ' + id + ' .thumbnail .caption .sub-title { margin: 0 12px 8px 12px; font-size: ' + settings.customDesign.subTitleFontSize + 'px; color: ' + settings.customDesign.subTitleColor + '; text-align: ' + this.getTitleTextAlign(settings.subTitlePosition) + ';}';
@@ -5156,14 +5157,14 @@
         var prevIconClass = '';
         var nextIconClass = '';
         if (settings.arrowType === '3') {
-          prevIconClass = 'fa-chevron-left';
-          nextIconClass = 'fa-chevron-right';
+          prevIconClass = 'sinclo-fal fa-chevron-left';
+          nextIconClass = 'sinclo-fal fa-chevron-right';
         } else if (settings.arrowType === '4') {
-          prevIconClass = 'fa-chevron-square-left';
-          nextIconClass = 'fa-chevron-square-right';
+          prevIconClass = 'sinclo-fal fa-chevron-square-left';
+          nextIconClass = 'sinclo-fal fa-chevron-square-right';
         } else {
-          prevIconClass = 'fa-chevron-circle-left';
-          nextIconClass = 'fa-chevron-circle-right';
+          prevIconClass = 'sinclo-fal fa-chevron-circle-left';
+          nextIconClass = 'sinclo-fal fa-chevron-circle-right';
         }
 
         var slidesToShow = settings.lineUpStyle === '1' ? 1 : 1.5;
