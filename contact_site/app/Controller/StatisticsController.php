@@ -2036,7 +2036,7 @@ class StatisticsController extends AppController {
        force index(idx_t_history_chat_logs_message_type_companies_id) where message_type in (5, 21, 22, 23, 27, 40, 41, 42, 45, 46, 49, 52) and m_companies_id = ? and created between ? and ? order by t_histories_id, message_distinction) as thcl
     INNER JOIN
       (select id,m_companies_id,t_histories_id,message_distinction,message_type,created from t_history_chat_logs
-       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where m_companies_id = ? and message_type = 1 and message_request_flg = 1 and created between ? and ? group by t_histories_id order by t_histories_id, message_distinction) as thcl3
+       force index(idx_t_history_chat_logs_request_flg_companies_id_users_id) where m_companies_id = ? and message_type in (1, 12, 13, 19, 30, 33, 34, 35, 43, 47, 50, 53) and message_request_flg = 1 and created between ? and ? group by t_histories_id order by t_histories_id, message_distinction) as thcl3
     ON (
       thcl.t_histories_id = thcl3.t_histories_id
     AND
