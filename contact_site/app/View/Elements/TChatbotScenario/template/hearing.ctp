@@ -11,7 +11,7 @@
                                                                       data-tooltip="変数名を設定します。<br>ここで設定した変数名にサイト訪問者の回答内容が保存されます。<br>変数に保存された値（内容）は後続の処理（アクション）で、{{showExpression('変数名')}}と指定することで利用することが可能です。<br><br>例）変数名：名前　⇒　{{showExpression('名前')}}様からのお問い合わせを受付いたしました。">?</icon></span>
         </div>
         <div class='area-type'>タイプ<span class="questionBalloon"><icon class="questionBtn"
-                                                                      data-tooltip="ヒアリングの回答を入力する形式を指定します。<br>＜タイプ＞<br>テキスト(1行)　 　 ：フリーテキスト入力（改行不可）<br>テキスト(複数行)　 ：フリーテキスト入力（改行可）<br>ラジオボタン　　　：ラジオボタン形式の択一選択<br>プルダウン　　　　：プルダウン形式の択一選択<br>カレンダー　　　　：カレンダーから日付を選択"
+                                                                      data-tooltip="ヒアリングの回答を入力する形式を指定します。<br>＜タイプ＞<br>テキスト(1行)　　 　　 ：フリーテキスト入力（改行不可）<br>テキスト(複数行)　　　 ：フリーテキスト入力（改行可）<br>ラジオボタン　　　　　：ラジオボタン形式の択一選択<br>プルダウン　　　　　　：プルダウン形式の択一選択<br>カルーセル（画像表示）：画像表示による択一選択<br>コンファーム　　　　　：ボタン形式の択一選択<br>カレンダー　　　　　　：カレンダーから日付を選択"
                                                                       data-tooltip-width="30em">?</icon></span>
         </div>
         <div class='area-message'>質問内容<span class="questionBalloon"><icon class="questionBtn"
@@ -39,15 +39,17 @@
                     ng-change="main.handleChangeUitype(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
               <option value="1">テキスト（１行）</option>
               <option value="2">テキスト（複数行）</option>
+              <option value="8">ボタン</option>
               <option value="3">ラジオボタン</option>
               <option value="4">プルダウン</option>
               <option value="6">カルーセル（画像表示）</option>
+              <option value="7">コンファーム</option>
+              <option value="9">チェックボックス</option>
               <option value="5">カレンダー</option>
-              <option value="7">ボタン</option>
             </select>
           </div>
           <div class='area-message' >
-            <resize-textarea ng-class="{disabledArea: hearingItem.settings.balloonStyle === '2'}" maxlength="4000" ng-model="hearingItem.message" rows="1"
+            <resize-textarea class="variable-suggest" ng-class="{disabledArea: hearingItem.settings.balloonStyle === '2'}" maxlength="4000" ng-model="hearingItem.message" rows="1"
                              data-maxRow="10" ></resize-textarea>
           </div>
           <div class='area-btn'>
@@ -112,21 +114,21 @@
                                 </label>
                             </span>
               <div>
-                <resize-textarea name="errorMessage" maxlength="4000" ng-model="hearingItem.errorMessage"
+                <resize-textarea name="errorMessage" class="variable-suggest" maxlength="4000" ng-model="hearingItem.errorMessage"
                                  cols="48"
                                  rows="1" placeholder="入力エラー時の返信メッセージを入力してください"
                                  data-maxRow="10"></resize-textarea>
               </div>
             </div>
 
-            <div ng-if="hearingItem.uiType === '3' || hearingItem.uiType === '4' || hearingItem.uiType === '7'"
+            <div ng-if="hearingItem.uiType === '3' || hearingItem.uiType === '4' || hearingItem.uiType === '7' || hearingItem.uiType === '8' || hearingItem.uiType === '9'"
                  ng-repeat="(optionIndex, option) in hearingItem.settings.options  track by $index"
                  class="select-option-input action{{setActionId}}_option{{listId}}"
                  ng-init="main.controllHearingOptionView(setActionId, listId)">
                             <span><label class="">選択肢 {{optionIndex + 1}}<span class="questionBalloon"><icon
                                       class="questionBtn"
                                       data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
-              <input type="text" class="m20l" ng-model="hearingItem.settings.options[optionIndex]"
+              <input type="text" class="m20lt" ng-model="hearingItem.settings.options[optionIndex]"
                      style="width: 200px;">
               <div class="btnBlock">
                 <a><?= $this->Html->image('add.png', array(
@@ -151,6 +153,16 @@
                  ng-click="main.showBulkSelectionPopup(setActionId, listId, hearingItem.uiType);"> 選択肢を一括登録</a>
             </div>
 
+            <div ng-if=" hearingItem.uiType === '9'" class="checkbox-separator" style="display: flex; margin-top: 6px">
+              <span><label class="">複数選択された際の区切り文字<span class="questionBalloon"><icon class="questionBtn"
+                                                                                      data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+              <select name="checkbox-separator" ng-model="hearingItem.settings.checkboxSeparator" style="width: 150px; margin-left: 20px; height: 29.5px;">
+                <option value="1"> ,（カンマ）</option>
+                <option value="2">/（スラッシュ）</option>
+                <option value="3">|（パイプ）</option>
+              </select>
+            </div>
+
             <label ng-if="hearingItem.uiType === '4'" class="pointer">
               <input type="checkbox" class="m15t" id="dropdown_custom_design"
                      ng-model="hearingItem.settings.pulldownCustomDesign">デザインをカスタマイズする
@@ -160,7 +172,7 @@
 
             <span ng-if="hearingItem.uiType === '6'" style="padding: 0;">
                             <label>表示形式<span class="questionBalloon"><icon class="questionBtn"
-                                                                           data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ<br>email　　　：メールアドレス形式のみ<br>tel_number：0から始まる10桁以上の数字とハイフンのみ">?</icon></span></label>
+                                                                           data-tooltip="吹き出しの表示有無を選択できます。">?</icon></span></label>
                             <label class="pointer"><input type="radio"
                                                           name="action{{setActionId}}-hearing{{listId}}-balloon-style"
                                                           value="1"
@@ -173,7 +185,7 @@
 
             <span ng-if="hearingItem.uiType === '6'" style="padding: 0;">
                             <label>スタイル<span class="questionBalloon"><icon class="questionBtn"
-                                                                           data-tooltip="サイト訪問者が入力した回答が適切か、整合性チェックを行うことができます。<br>入力内容が不適切だった場合（整合性チェックNGだった場合）は、「入力エラー時の返信メッセージ」に設定されたメッセージを自動送信後、再度ヒアリングを実施します。<br><br>＜タイプ＞<br>text　　　　：制限なし<br>number　　 ：数字のみ<br>email　　　：メールアドレス形式のみ<br>tel_number：0から始まる10桁以上の数字とハイフンのみ">?</icon></span></label>
+                                                                           data-tooltip="画像をウィジェット内に全画面表示するか、並べて表示するかを選択できます。">?</icon></span></label>
                             <label class="pointer"><input type="radio"
                                                           name="action{{setActionId}}-hearing{{listId}}-lineup-style"
                                                           value="1"
@@ -199,7 +211,7 @@
                     <div class="carousel-image styleFlexbox">
                       <span class="carousel-label"><label class="">画像 <span class="questionBalloon"><icon
                                 class="questionBtn"
-                                data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                                data-tooltip="カルーセルに表示する画像を設定します。</br>※ファイル形式：jpg, jpeg, png, gif">?</icon></span></label></span>
                       <p style="display: inline-block" class="m20l" ng-show="!hearingItem.settings.images[imageIndex].url && !hearingItem.settings.images[imageIndex].isUploading">画像が選択されていません</p>
                       <div class="uploadProgress" style="margin-left: 10px" ng-show="hearingItem.settings.images[imageIndex].isUploading">
                         <div class="uploadProgressArea" style="width: 20em;"><span>アップロード中 ...</span><div class="uploadProgressRate progressbar_action{{setActionId}}_hearing{{listId}}_image{{imageIndex}}"><span>アップロード中 ...</span></div></div>
@@ -218,20 +230,20 @@
                     <div class="carousel-title styleFlexbox">
                       <span class="carousel-label"><label class="">タイトル <span class="questionBalloon"><icon
                                 class="questionBtn"
-                                data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                                data-tooltip="説明文のタイトルの設定を行います。">?</icon></span></label></span>
                       <input type="text" ng-model="hearingItem.settings.images[imageIndex].title" class="m20l m10r">
                     </div>
                     <div class="carousel-sub-title styleFlexbox">
                       <span class="carousel-label"><label class="">本文 <span class="questionBalloon"><icon
                             class="questionBtn"
-                            data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                            data-tooltip="説明文の設定を行います。">?</icon></span></label></span>
                       <resize-textarea class="m20l m10r" style="height: 27px" maxlength="4000" rows="1"
                                        data-maxRow="10" ng-model="hearingItem.settings.images[imageIndex].subTitle"></resize-textarea>
                     </div>
                     <div class="carousel-answer styleFlexbox">
                       <span class="carousel-label"><label class="">選択時の内容 <span class="questionBalloon"><icon
                             class="questionBtn"
-                            data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
+                            data-tooltip="サイト訪問者（チャット利用者）が画像を選択した際に変数にセットする文言を設定します。">?</icon></span></label></span>
                       <input type="text" class="m20l m10r" ng-model="hearingItem.settings.images[imageIndex].answer">
                     </div>
                   </div>
@@ -250,7 +262,7 @@
               <input type="checkbox" class="m15t"
                      ng-model="hearingItem.settings.carouselCustomDesign">デザインをカスタマイズする
               <span class="questionBalloon"><icon class="questionBtn"
-                                                  data-tooltip="プルダウンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
+                                                  data-tooltip="カルーセルのデザイン（文字色、文字サイズ、矢印のデザイン、枠線色）を変更できます。">?</icon></span>
             </label>
 
             <div class="dropdown-custom-design-area"
@@ -673,7 +685,7 @@
                  class="button-design-custom-area">
                   <span class="button-custom-items">
                   <label style="width: 100px;">質問内容位置</label>
-                      <div class="radio-buttons" ng-init="hearingItem.settings.customDesign.messageAlign = 1">
+                      <div class="radio-buttons">
                         <label class="radio-label text3 pointer"
                                for="action{{setActionId}}_button{{listId}}_messageAlign1">
                           <input type="radio"
@@ -713,6 +725,29 @@
                         ng-click="main.revertButtonColor(setActionId, listId, 'buttonTextColor')">標準に戻す</span>
                 </span>
               <span class="button-custom-items">
+                  <label style="width: 100px;">ボタン文字位置</label>
+                      <div class="radio-buttons">
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign1">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign1"
+                                 ng-model="hearingItem.settings.customDesign.buttonAlign"
+                                 value="1">左寄せ</label>
+                        <label class="radio-label text4 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign2">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign2"
+                                 ng-model="hearingItem.settings.customDesign.buttonAlign"
+                                 value="2">中央寄せ</label>
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign3">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign3"
+                                 ng-model="hearingItem.settings.customDesign.buttonAlign"
+                                 value="3">右寄せ</label>
+                      </div>
+                </span>
+              <span class="button-custom-items">
                   <label>ボタン選択色</label>
                   <input type="text" id="action{{setActionId}}_button{{listId}}_buttonActiveColor"
                          class="jscolor{hash:true} ignore-click-event"
@@ -733,6 +768,155 @@
               <label class="pointer" style="margin-left: 116px">
                 <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
                        ng-model="hearingItem.settings.customDesign.outButtonNoneBorder" value="1">枠線なしにする
+              </label>
+            </div>
+
+            <label ng-if="hearingItem.uiType === '8'" class="pointer">
+              <input type="checkbox" ng-model="hearingItem.settings.buttonUICustomDesign">デザインをカスタマイズする
+              <span class="questionBalloon"><icon class="questionBtn"
+                                                  data-tooltip="ボタンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
+            </label>
+            <div ng-if="hearingItem.uiType === '8' && hearingItem.settings.buttonUICustomDesign"
+                 class="button-design-custom-area">
+              <span class="button-custom-items">
+                  <label>ボタン背景色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_buttonUIBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.buttonUIBackgroundColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertButtonUIColor(setActionId, listId, 'buttonUIBackgroundColor')">標準に戻す</span>
+                </span>
+              <span class="button-custom-items">
+                  <label>ボタン文字色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_buttonUITextColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.buttonUITextColor"
+                         ng-change="main.changeButtonColor(setActionId, listId, 'buttonUITextColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertButtonUIColor(setActionId, listId, 'buttonUITextColor')">標準に戻す</span>
+                </span>
+              <span class="button-custom-items">
+                  <label style="width: 100px;">ボタン文字位置</label>
+                      <div class="radio-buttons">
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign1">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign1"
+                                 ng-model="hearingItem.settings.customDesign.buttonUITextAlign"
+                                 value="1">左寄せ</label>
+                        <label class="radio-label text4 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign2">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign2"
+                                 ng-model="hearingItem.settings.customDesign.buttonUITextAlign"
+                                 value="2">中央寄せ</label>
+                        <label class="radio-label text3 pointer"
+                               for="action{{setActionId}}_button{{listId}}_buttonAlign3">
+                          <input type="radio"
+                                 id="action{{setActionId}}_button{{listId}}_buttonAlign3"
+                                 ng-model="hearingItem.settings.customDesign.buttonUITextAlign"
+                                 value="3">右寄せ</label>
+                      </div>
+                </span>
+              <span class="button-custom-items">
+                  <label>ボタン選択色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_buttonUIActiveColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.buttonUIActiveColor"
+                         ng-change="main.changeButtonColor(setActionId, listId, 'buttonUIActiveColor')">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertButtonUIColor(setActionId, listId, 'buttonUIActiveColor')">標準に戻す</span>
+                </span>
+              <span class="button-custom-items">
+                <label>ボタン枠線色</label>
+                <input type="text" class="jscolor{hash:true} ignore-click-event"
+                       id="action{{setActionId}}_button{{listId}}_buttonUIBorderColor"
+                       ng-model="hearingItem.settings.customDesign.buttonUIBorderColor">
+                <span class="greenBtn btn-shadow revert-button"
+                      ng-click="main.revertButtonUIColor(setActionId, listId, 'buttonUIBorderColor')">標準に戻す</span>
+              </span>
+
+              <label class="pointer" style="margin-left: 116px">
+                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
+                       ng-model="hearingItem.settings.outButtonUINoneBorder">枠線なしにする
+              </label>
+            </div>
+
+            <label ng-if="hearingItem.uiType === '9'" class="pointer">
+              <input type="checkbox" ng-model="hearingItem.settings.checkboxCustomDesign">デザインをカスタマイズする
+              <span class="questionBalloon"><icon class="questionBtn"
+                                                  data-tooltip="ボタンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
+            </label>
+            <div ng-if="hearingItem.uiType === '9' && hearingItem.settings.checkboxCustomDesign"
+                 class="checkbox-design-custom-area">
+              <span class="checkbox-custom-items">
+                  <label>チェックボックス背景色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.checkboxBackgroundColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxBackgroundColor')">標準に戻す</span>
+                </span>
+              <span class="checkbox-custom-items">
+                  <label>チェック色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxActiveColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.checkboxActiveColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxActiveColor')">標準に戻す</span>
+              </span>
+
+              <span class="checkbox-custom-items">
+                <label>チェックボックス枠線色</label>
+                <input type="text" class="jscolor{hash:true} ignore-click-event"
+                       id="action{{setActionId}}_button{{listId}}_checkboxBorderColor"
+                       ng-model="hearingItem.settings.customDesign.checkboxBorderColor">
+                <span class="greenBtn btn-shadow revert-button"
+                      ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxBorderColor')">標準に戻す</span>
+              </span>
+
+              <label class="pointer" style="margin-left: 165px">
+                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
+                       ng-model="hearingItem.settings.checkboxNoneBorder">枠線なしにする
+              </label>
+            </div>
+
+            <label ng-if="hearingItem.uiType === '3'" class="pointer">
+              <input type="checkbox" ng-model="hearingItem.settings.radioCustomDesign">デザインをカスタマイズする
+              <span class="questionBalloon"><icon class="questionBtn"
+                                                  data-tooltip="ボタンのデザイン（配色）を自由にカスタマイズすることができます。">?</icon></span>
+            </label>
+            <div ng-if="hearingItem.uiType === '3' && hearingItem.settings.radioCustomDesign"
+                 class="checkbox-design-custom-area">
+              <span class="checkbox-custom-items">
+                  <label>ラジオボタン背景色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_radioBackgroundColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.radioBackgroundColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioBackgroundColor')">標準に戻す</span>
+                </span>
+              <span class="checkbox-custom-items">
+                  <label>ラジオボタンの色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_radioActiveColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.radioActiveColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioActiveColor')">標準に戻す</span>
+              </span>
+
+              <span class="checkbox-custom-items">
+                <label>ラジオボタン枠線色</label>
+                <input type="text" class="jscolor{hash:true} ignore-click-event"
+                       id="action{{setActionId}}_button{{listId}}_radioBorderColor"
+                       ng-model="hearingItem.settings.customDesign.radioBorderColor">
+                <span class="greenBtn btn-shadow revert-button"
+                      ng-click="main.revertRadioButtonColor(setActionId, listId, 'radioBorderColor')">標準に戻す</span>
+              </span>
+
+              <label class="pointer" style="margin-left: 165px">
+                <input type="checkbox" style="margin-top: 5px; margin-bottom: 10px;"
+                       ng-model="hearingItem.settings.radioNoneBorder">枠線なしにする
               </label>
             </div>
           </div>
@@ -758,7 +942,7 @@
                                                                                        data-tooltip="確認メッセージとして送信するメッセージを設定します。<br><br>＜設定例＞<br>お名前　　　　：{{showExpression('名前')}}<br>電話番号　　　：{{showExpression('電話番号')}}<br>メールアドレス：{{showExpression('メールアドレス')}}<br>でよろしいでしょうか？">?</icon></span></label></span>
 
               <div>
-                <resize-textarea name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="1"
+                <resize-textarea class="variable-suggest" name="confirmMessage" ng-model="setItem.confirmMessage" cols="48" rows="1"
                                  placeholder="確認内容のメッセージを入力してください" data-maxRow="10"></resize-textarea>
               </div>
             </li>
@@ -766,14 +950,14 @@
                     <span class="fb9em"><label>選択肢（OK）<span class="questionBalloon"><icon class="questionBtn"
                                                                                           data-tooltip="OK（次のアクションを実行）の場合の選択肢の名称を設定します。">?</icon></span></label></span>
               <div>
-                <input type="text" name="success" ng-model="setItem.success">
+                <input type="text" name="success" class="variable-suggest" ng-model="setItem.success">
               </div>
             </li>
             <li class="styleFlexbox">
                     <span class="fb9em"><label>選択肢（NG）<span class="questionBalloon"><icon class="questionBtn"
                                                                                           data-tooltip="NG（再入力）の場合の選択肢の名称を設定します。">?</icon></span></label></span>
               <div>
-                <input type="text" name="cancel" ng-model="setItem.cancel">
+                <input type="text" name="cancel" class="variable-suggest" ng-model="setItem.cancel">
               </div>
             </li>
           </ul>

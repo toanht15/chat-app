@@ -585,7 +585,7 @@ class HistoriesController extends AppController
         }
         if ($val['THistoryChatLog']['message_type'] == 12 || $val['THistoryChatLog']['message_type'] == 33
           || $val['THistoryChatLog']['message_type'] == 34 || $val['THistoryChatLog']['message_type'] == 35
-          || $val['THistoryChatLog']['message_type'] == 43) {
+          || $val['THistoryChatLog']['message_type'] == 43 || $val['THistoryChatLog']['message_type'] == 47) {
           $row['transmissionKind'] = '訪問者（ヒアリング回答）';
           $row['transmissionPerson'] = '';
         }
@@ -652,7 +652,7 @@ class HistoriesController extends AppController
         }
         if ($val['THistoryChatLog']['message_type'] == 36 || $val['THistoryChatLog']['message_type'] == 37
           || $val['THistoryChatLog']['message_type'] == 38 || $val['THistoryChatLog']['message_type'] == 39
-          || $val['THistoryChatLog']['message_type'] == 44) {
+          || $val['THistoryChatLog']['message_type'] == 44 || $val['THistoryChatLog']['message_type'] == 48) {
           $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング再回答）';
           $row['transmissionPerson'] = '';
         }
@@ -666,7 +666,7 @@ class HistoriesController extends AppController
           }
         }
         if ($val['THistoryChatLog']['message_type'] == 41 || $val['THistoryChatLog']['message_type'] == 42
-          || $val['THistoryChatLog']['message_type'] == 45) {
+          || $val['THistoryChatLog']['message_type'] == 45 || $val['THistoryChatLog']['message_type'] == 46) {
           $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
           $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
           $json = json_decode($val['THistoryChatLog']['message']);
@@ -831,6 +831,7 @@ class HistoriesController extends AppController
         case 33: // 訪問者（シナリオ：ヒアリング回答）radio
         case 34: // 訪問者（シナリオ：ヒアリング回答）pulldown
         case 35: // 訪問者（シナリオ：ヒアリング回答）calendar
+        case 47:
           $row = $this->_setData($date, "訪問者（ヒアリング回答）", "", $message);
           break;
         case 13: // 訪問者（シナリオ：選択肢回答）
@@ -853,10 +854,12 @@ class HistoriesController extends AppController
         case 37: // 訪問者（シナリオ：ヒアリング再回答）radio
         case 38: // 訪問者（シナリオ：ヒアリング再回答）pulldown
         case 39: // 訪問者（シナリオ：ヒアリング再回答）calendar
+        case 48:
           $row = $this->_setData($date, "シナリオメッセージ（ヒアリング再回答）", "", $message);
           break;
         case 41: // シナリオメッセージ（ヒアリング）pulldown
         case 42: // シナリオメッセージ（ヒアリング）calendar
+        case 46:
           $row = $this->_setData($date, "シナリオメッセージ（ヒアリング）", $this->userInfo['MCompany']['company_name'],
             $message);
           break;

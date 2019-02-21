@@ -5596,6 +5596,32 @@ ul.naviBtn {
               padding-bottom: 0.5em;
             }
           }
+          .chatMessageDesignBlock {
+            display: flex;
+            flex-flow: column nowrap;
+            label.pointer {
+              display: flex;
+              align-items: center;
+              &.first {
+                margin-top: 2px;
+              }
+              &.last {
+                margin-top: 5px;
+              }
+            }
+            div.chatMessageArrowPositionBlock {
+              margin-top: 3px;
+              margin-left: 16px;
+              display: flex;
+              span.subMenu {
+                width: 8em;
+                display: inline-block;
+              }
+              div.chatMessageArrowPosition {
+                display: inline-block;
+              }
+            }
+          }
         }
 
       }
@@ -5615,6 +5641,12 @@ ul.naviBtn {
           border-radius: 100%;
           &.no_border{
             border: none;
+          }
+          &.arrowUp {
+            align-items: flex-start
+          }
+          &.arrowBottom {
+            align-items: flex-end
           }
           img{
             height: 53px;
@@ -7792,6 +7824,58 @@ ul.naviBtn {
                       }
                     }
                   }
+
+                  .checkbox-design-custom-area {
+                    input[type="checkbox"], input[type="radio"] {
+                      margin-top: 0px;
+                    }
+
+                    .checkbox-custom-items {
+                      margin-left: 16px;
+                      height: 35px;
+                      display: flex;
+                      width: 32em;
+                      padding: 2px 0;
+                      align-items: center;
+
+                      input[type="text"] {
+                        width: 120px;
+                        height: 26px;
+                        font-size: 12px;
+                        padding-left: 4px;
+                        position: relative;
+                        border: none !important;
+                        border-bottom: 1px solid #909090 !important;
+                        border-radius: 0 !important;
+                      }
+
+                      label {
+                        flex-basis: 150px;
+                      }
+
+                      .radio-buttons {
+                        display: flex;
+                        align-items: center;
+                        flex-basis: 265px;
+                        label {
+                          margin-top: 0px;
+                          &.text3 {
+
+                          }
+                          &.text4 {
+                            margin-right: 20px;
+                          }
+                        }
+                      }
+
+                      .revert-button {
+                        position: relative;
+                        left: 10px;
+                        padding: 4px;
+                        bottom: 0px;
+                      }
+                    }
+                  }
                 }
 
                 &.action_bulk_hearing {
@@ -8471,10 +8555,25 @@ ul.naviBtn {
                       }
                       div.conditionAction {
                         flex-grow: 1;
-                        label.executeNextActionCheck {
+                        label {
                           padding-top: 6px;
-                          display: block;
+                          &.executeNextActionCheck {
+                            display: block;
+                          }
+                          &.jumpLinkAction {
+                            display: inline-flex;
+                            justify-content: center;
+                            align-items: center;
+                            padding-top: 9px;
+                            &:last-child {
+                              margin-left: 10px;
+                            }
+                            input[type="radio"] {
+                              margin-top: 0;
+                            }
+                          }
                         }
+
                         textarea {
                           width:  calc(100% - 1em);
                         }
@@ -8612,7 +8711,7 @@ ul.naviBtn {
                   grid-column: 4;
                   -ms-grid-column: 4;
                 }
-                input[type="text"].make-box{
+                input[type="text"].make-box, select.make-box{
                   border-radius: 4px;
                   border: 1px solid #909090;
                   width: auto;
@@ -8718,6 +8817,15 @@ ul.naviBtn {
               display: flex;
               justify-content: flex-end;
               align-items: flex-end;
+              &.arrowUp {
+                align-items: flex-start;
+                i, div.img_wrapper {
+                  margin-top: 10px;
+                }
+              }
+              &.arrowBottom {
+                align-items: flex-end;
+              }
               i {
                 display: flex;
                 justify-content: center;
@@ -8741,9 +8849,19 @@ ul.naviBtn {
             li.sinclo_re {
               -ms-grid-column: 2;
               -ms-grid-column-align: start;
-              justify-self: start;
+              &:not(.no-wrap) {
+                justify-self: start;
+              }
               &.recv_file_left {
                 justify-self: stretch;
+              }
+            }
+
+            .noneBalloon {
+              -ms-grid-column: 2;
+              -ms-grid-column-align: start;
+              &:not(.no-wrap) {
+                justify-self: start;
               }
             }
           }
@@ -8753,6 +8871,15 @@ ul.naviBtn {
             min-width: 285px;
             .grid_preview  {
               .iconDiv {
+                &.arrowUp {
+                  align-items: flex-start;
+                  i, div.img_wrapper {
+                    margin-top: 10px;
+                  }
+                }
+                &.arrowBottom {
+                  align-items: flex-end;
+                }
                 i {
                   height: 30px;
                   width: 30px;
@@ -8777,6 +8904,15 @@ ul.naviBtn {
             min-width: 342.5px;
             .grid_preview  {
               .iconDiv {
+                &.arrowUp {
+                  align-items: flex-start;
+                  i, div.img_wrapper {
+                    margin-top: 10px;
+                  }
+                }
+                &.arrowBottom {
+                  align-items: flex-end;
+                }
                 i {
                   height: 35px;
                   width: 35px;
@@ -8801,6 +8937,15 @@ ul.naviBtn {
             min-width: 400px;
             .grid_preview  {
               .iconDiv {
+                &.arrowUp {
+                  align-items: flex-start;
+                  i, div.img_wrapper {
+                    margin-top: 10px;
+                  }
+                }
+                &.arrowBottom {
+                  align-items: flex-end;
+                }
                 i {
                   height: 40px;
                   width: 40px;
@@ -8823,6 +8968,15 @@ ul.naviBtn {
           &.customSize {
             .grid_preview {
               .iconDiv {
+                &.arrowUp {
+                  align-items: flex-start;
+                  i, div.img_wrapper {
+                    margin-top: 10px;
+                  }
+                }
+                &.arrowBottom {
+                  align-items: flex-end;
+                }
                 i {
                   height: 40px;
                   width: 40px;
@@ -11363,11 +11517,21 @@ div.balloon {
       grid-template-columns: minmax(max-content, max-content) 1fr;
       &.no_icon {
         grid-template-columns: 1fr;
+        -ms-grid-columns: 1fr;
       }
       .iconDiv {
         display: flex;
         justify-content: flex-end;
         align-items: flex-end;
+        &.arrowUp {
+          align-items: flex-start;
+          i, div.img_wrapper {
+            margin-top: 10px;
+          }
+        }
+        &.arrowBottom {
+          align-items: flex-end;
+        }
         i {
           display:flex;
           justify-content: center;
@@ -11393,6 +11557,15 @@ div.balloon {
       .iconDiv {
         max-width: 35px;
         min-width: 35px;
+        &.arrowUp {
+          align-items: flex-start;
+          i, div.img_wrapper {
+            margin-top: 10px;
+          }
+        }
+        &.arrowBottom {
+          align-items: flex-end;
+        }
         div.img_wrapper {
           display: inline-block;
           padding: 0px;
@@ -11417,6 +11590,15 @@ div.balloon {
         .iconDiv {
           max-width: 30px;
           min-width: 30px;
+          &.arrowUp {
+            align-items: flex-start;
+            i, div.img_wrapper {
+              margin-top: 10px;
+            }
+          }
+          &.arrowBottom {
+            align-items: flex-end;
+          }
           i {
             height: 30px;
             width: 30px;
@@ -11440,6 +11622,15 @@ div.balloon {
         .iconDiv {
           max-width: 37px;
           min-width: 37px;
+          &.arrowUp {
+            align-items: flex-start;
+            i, div.img_wrapper {
+              margin-top: 10px;
+            }
+          }
+          &.arrowBottom {
+            align-items: flex-end;
+          }
           i {
             height: 35px;
             width: 35px;
@@ -11463,6 +11654,15 @@ div.balloon {
         .iconDiv {
           max-width: 42px;
           min-width: 42px;
+          &.arrowUp {
+            align-items: flex-start;
+            i, div.img_wrapper {
+              margin-top: 10px;
+            }
+          }
+          &.arrowBottom {
+            align-items: flex-end;
+          }
           i {
             height: 40px;
             width: 40px;
@@ -11486,6 +11686,16 @@ div.balloon {
         .iconDiv {
           max-width: 42px;
           min-width: 42px;
+          &.arrowUp {
+            align-items: flex-start;
+            i, div.img_wrapper {
+              margin-top: 10px;
+            }
+          }
+          &.arrowBottom {
+            align-items: flex-end;
+          }
+
           i {
             height: 40px;
             width: 40px;
@@ -11551,6 +11761,7 @@ div.balloon {
           .img_wrapper {
             width: 40px;
             max-height: 40px;
+            max-width: 40px;
             img {
               max-width: 40px;
             }

@@ -307,6 +307,11 @@ $config['default'] = [
       "chatMessageDesignType"=>"1",
 
       /**
+       * BOX型の場合のツノの位置（上）
+       */
+      "chatMessageArrowPosition"=>"1",
+
+      /**
        * メッセージ表示時アニメーション
        * 1: 有効、0: 無効
        */

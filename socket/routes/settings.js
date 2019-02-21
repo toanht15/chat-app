@@ -109,6 +109,11 @@ router.get("/", function (req, res, next) {
       if (('chatMessageDesignType' in settings)) {
         chatMessageDesignType = isNumeric(settings.chatMessageDesignType);
       }
+      // ツノの位置設定が存在しない場合は「下」
+      var chatMessageArrowPosition = 2;
+      if (('chatMessageArrowPosition' in settings)) {
+        chatMessageArrowPosition = isNumeric(settings.chatMessageArrowPosition);
+      }
       // メッセージ表示時アニメーション設定が存在しない場合は「アニメーション無効」
       var chatMessageWithAnimation = 0;
       if (('chatMessageWithAnimation' in settings)) {
@@ -411,6 +416,7 @@ router.get("/", function (req, res, next) {
         chatRadioBehavior: isNumeric(settings.chatRadioBehavior),
         chatTrigger: isNumeric(settings.chatTrigger),
         chatMessageDesignType: chatMessageDesignType,
+        chatMessageArrowPosition: chatMessageArrowPosition,
         chatMessageWithAnimation: chatMessageWithAnimation,
         chatTrigger: isNumeric(settings.chatTrigger),
         radiusRatio: isNumeric(settings.radiusRatio),

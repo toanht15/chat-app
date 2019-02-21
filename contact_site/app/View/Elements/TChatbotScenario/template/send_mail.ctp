@@ -5,7 +5,7 @@
       <span class="fb13em"><label>送信先メールアドレス<span class="questionBalloon"><icon class="questionBtn" data-tooltip="送信先のメールアドレスを設定します。<br>（変数の利用も可能です）">?</icon></span></label></span>
       <ul class="itemListGroup">
         <li ng-repeat="(listId, addressItem) in setItem.toAddress track by $index">
-          <input type="text" ng-model="setItem.toAddress[listId]" ng-init="setItem.toAddress[listId] = setItem.toAddress[listId]" default="">
+          <input type="text" ng-model="setItem.toAddress[listId]" class="variable-suggest" ng-init="setItem.toAddress[listId] = setItem.toAddress[listId]" default="">
           <div class="btnBlock">
             <a><?= $this->Html->image('add.png', array('alt' => '追加', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow disOffgreenBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.addActionItemList($event, listId)')) ?></a><a><?= $this->Html->image('dustbox.png', array('alt' => '削除', 'width' => 25, 'height' => 25, 'class' => 'btn-shadow redBtn deleteBtn', 'style' => 'padding: 2px', 'ng-click' => 'main.removeActionItemList($event, listId)')) ?></a>
           </div>
@@ -15,13 +15,13 @@
     <li class="styleFlexbox">
       <span class="fb13em"><label>メールタイトル<span class="questionBalloon"><icon class="questionBtn" data-tooltip="メールタイトルを設定します。<br>（変数の利用も可能です）">?</icon></span></label></span>
       <div>
-        <input type="text" ng-model="setItem.subject">
+        <input type="text" class="variable-suggest" ng-model="setItem.subject">
       </div>
     </li>
     <li class="styleFlexbox">
       <span class="fb13em"><label>差出人名<span class="questionBalloon"><icon class="questionBtn" data-tooltip="差出人名を設定します。<br>（変数の利用も可能です）">?</icon></span></label></span>
       <div>
-        <input type="text" ng-model="setItem.fromName">
+        <input type="text" class="variable-suggest" ng-model="setItem.fromName">
       </div>
     </li>
     <li class="styleFlexbox">

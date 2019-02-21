@@ -133,6 +133,7 @@ class MWidgetSetting extends AppModel {
       'show_automessage_name' => "showAutomessageName",
       'show_op_name' => "showOpName",
       'chat_message_design_type' => "chatMessageDesignType",
+      'chat_message_arrow_position' => "chatMessageArrowPosition",
       'chat_message_with_animation' => "chatMessageWithAnimation",
       'show_description' => "showDescription",
       'display_time_flg' => "displayTimeFlg",
@@ -264,7 +265,7 @@ class MWidgetSetting extends AppModel {
         'uploadImage' => [
             // ルール：extension => pathInfoを使用して拡張子を検証
             'extension' => [
-                'rule' => [ 'extension', [ 'jpg', 'jpeg', 'png'] ],
+                'rule' => [ 'extension', [ 'jpg', 'jpeg', 'png', 'gif'] ],
                 'allowEmpty' => true,
                 'message' => ["無効なファイル形式です"]
             ],
