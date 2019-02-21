@@ -80,6 +80,14 @@
         $scope.addButton(message, settings, design, prefix);
       });
 
+      $scope.$on('addReButtonUI', function(event, data) {
+        $scope.addButtonUI(data);
+      });
+
+      $scope.$on('addReCheckbox', function(event, data) {
+        $scope.addCheckbox(data);
+      });
+
       $scope.$on('disableHearingInputFlg', function(event) {
         $scope.isHearingInput = false;
       });
@@ -96,6 +104,11 @@
       $scope.$on('addSeMessage', function(event, message, prefix) {
         console.log('=== SimulatorController::addSeMessage ===');
         $scope.addMessage('se', message, prefix);
+      });
+
+      $scope.$on('addCheckboxMessage', function(event, message, prefix, separator) {
+        console.log('=== SimulatorController::addCheckboxMessage ===');
+        $scope.addCheckboxMessage(message, prefix, separator);
       });
 
       /**
@@ -269,6 +282,25 @@
         } else {
           gridElm.classList.add("no_icon");
         }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
+        self.autoScroll();
+      };
+
+      $scope.addCheckboxMessage = function(message, prefix, separator) {
+        // ベースとなる要素をクローンし、メッセージを挿入する
+        var gridElm = document.createElement("div");
+        $(gridElm).addClass("grid_balloon");
+          var divElm = document.querySelector('#chatTalk div > li.sinclo_se.chat_right').parentNode.cloneNode(true);
+          divElm.id = prefix + '_answer';
+
+        var formattedMessage = $scope.simulatorSettings.createCheckboxMessage(message, separator);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = formattedMessage;
+
+        // 要素を追加する
+        divElm.style.display = "";
+        gridElm.classList.add("no_icon");
 
         gridElm.appendChild(divElm);
         document.getElementById('chatTalk').appendChild(gridElm);
@@ -773,6 +805,44 @@
         if( $scope.needsIcon() ) {
           //チャットボットのアイコンを表示する場合は
           //アイコンを含む要素を作成する。
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
+        self.autoScroll();
+      };
+
+      $scope.addButtonUI = function(data) {
+        var gridElm = document.createElement("div");
+        $(gridElm).addClass("grid_balloon");
+        var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+        divElm.id = data.prefix + '_question';
+        var html = $scope.simulatorSettings.createButtonUI(data);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
+          gridElm = $scope.addIconImage( gridElm );
+        } else {
+          gridElm.classList.add("no_icon");
+        }
+
+        gridElm.appendChild(divElm);
+        document.getElementById('chatTalk').appendChild(gridElm);
+        self.autoScroll();
+      };
+
+      $scope.addCheckbox = function(data) {
+        var gridElm = document.createElement("div");
+        $(gridElm).addClass("grid_balloon");
+        var divElm = document.querySelector('#chatTalk div > li.sinclo_re.chat_left').parentNode.cloneNode(true);
+        divElm.id = data.prefix + '_question';
+        var html = $scope.simulatorSettings.createCheckbox(data);
+        divElm.querySelector('li .details:not(.cName)').innerHTML = html;
+        divElm.style.display = "";
+        if( $scope.needsIcon() ) {
           gridElm = $scope.addIconImage( gridElm );
         } else {
           gridElm.classList.add("no_icon");
