@@ -102,7 +102,7 @@ $(document).ready(function(){
               return false;
           }
           // jpeg/jpg/png
-          var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+          var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
           if ( !reg.exec(file.type) ) {
               $("#MChatNotificationUploadImage").val("");
               return false;

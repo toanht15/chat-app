@@ -215,6 +215,11 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
     $scope.createIconWithFontIcon = function() {
       var iconDiv = document.createElement("div");
       $(iconDiv).addClass("iconDiv");
+      if( $scope.widget.chatMessageArrowPosition == '1' ) {
+        $(iconDiv).addClass("arrowUp");
+      } else {
+        $(iconDiv).addClass("arrowBottom");
+      }
       var iconElm = document.createElement("i");
       iconElm.classList.add("sinclo-fal");
       var classNameArray = $scope.widget.chatbotIconPath.split(" ");
@@ -234,6 +239,11 @@ sincloApp.controller('MainController', ['$scope', 'SimulatorService', function($
       var imgWrapDiv = document.createElement("div");
       $(imgWrapDiv).addClass("img_wrapper");
       $(iconDiv).addClass("iconDiv");
+      if( $scope.widget.chatMessageArrowPosition == '1' ) {
+        $(iconDiv).addClass("arrowUp");
+      } else {
+        $(iconDiv).addClass("arrowBottom");
+      }
       var iconElm = document.createElement("img");
       iconElm.src = $scope.widget.chatbotIconPath;
       imgWrapDiv.appendChild(iconElm);

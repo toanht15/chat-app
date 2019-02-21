@@ -8,7 +8,12 @@
       </div>
       <div  class='styleFlexbox' ng-repeat="(listId, addCustomerInformation) in setItem.addCustomerInformations track by $index">
         <div class='grid-container short grid-container-body itemListGroup'>
-          <div class='area-name'><input type="text" ng-model="addCustomerInformation.variableName"></div>
+          <div class='area-name'>
+            <select ng-model="addCustomerInformation.variableName" >
+              <option value="">選択してください</option>
+              <option ng-repeat="item in storedVariableList track by $index" value="{{item}}" ng-bind="item"></option>
+            </select>
+          </div>
           <div class='area-selector short'>
             <select ng-model="addCustomerInformation.targetId">
               <option value="">選択してください</option>
