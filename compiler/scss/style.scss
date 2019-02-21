@@ -7166,6 +7166,120 @@ ul.naviBtn {
   }
 }
 
+/* チャットツリー設定 */
+#t_chatbot_diagrams_idx {
+  .questionBtn {
+    border-radius: 20px;
+    width: 1.3em;
+    height: 1.3em;
+    font-size: 12px!important;
+    line-height: 12px;
+    padding: 0.1em;
+  }
+  #t_chatbot_diagrams_header {
+    display: grid;
+    display: -ms-grid;
+    -ms-grid-columns: 1fr 200px;
+    grid-template-columns: 1fr 200px;
+    border-bottom: 1px solid #8B8B8B;
+    #t_chatbot_diagrams_entry {
+      ul {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        li {
+          display: flex;
+          label{
+            display: flex;
+            align-items: center;
+            span {
+              margin-left: 10px;
+            }
+          }
+          div {
+            margin-left: 20px;
+          }
+        }
+      }
+      ul li:not(:first-child) {
+        margin-left: 50px;
+      }
+    }
+  }
+  #canvas_scale_controller {
+    position: fixed;
+    top: 220px;
+    left: 260px;
+    z-index: 4;
+  }
+  #t_chatbot_diagrams_body {
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 150px 1fr;
+    grid-template-columns: 150px 1fr;
+    height: calc(100vh - 225px);
+    overflow-y: hidden;
+    #diagrams_side_bar {
+      -ms-grid-column: 1;
+      border-right: 1px solid #8B8B8B;
+      padding: 10px;
+      z-index: 4;
+      .form_subtitle {
+        border-bottom: 3px solid #C3D69B;
+        padding-left: 5px;
+      }
+      #node_list {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: calc(100% - 180px);
+        min-height: 555px;
+        >i {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #ffffff;
+          font-size: 25px;
+          background-color: #99cc66;
+          width: 50px;
+          height: 50px;
+          border-radius: 25%;
+          cursor: pointer;
+        }
+        >p{
+          margin-top:2px;
+        }
+        .branch {
+          background-color: #cc6666;
+        }
+        .text {
+          background-color: #cc9966;
+        }
+        .scenario {
+          background-color: #cccc66;
+        }
+        .jump {
+          background-color: #99cc66;
+        }
+        .link {
+          background-color: #66cc66;
+        }
+        .operator {
+          background-color: #66cc99;
+        }
+        .cv {
+          background-color: #66cccc;
+        }
+      }
+    }
+    #canvas {
+      -ms-grid-column: 2;
+      z-index: 1;
+    }
+  }
+}
+
 /* チャットボットシナリオ設定 */
 #tchatbotscenario_idx {
   &.entry-wrapper {
