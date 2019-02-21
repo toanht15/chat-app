@@ -56,12 +56,14 @@
           });
         }
       },
+      widgetMoving: false,
       ev: function() {
         sinclo.adjustSpWidgetSize();
         if (!common.widgetHandler.isShown()) {
           console.log('非表示状態のため動作させない');
           return;
         }
+        sinclo.operatorInfo.widgetMoving = true;
         var height = 0;
         var sincloBox = document.getElementById('sincloBox');
         var flg = sinclo.widget.condifiton.get();
@@ -186,6 +188,7 @@
             elm.animate({
               height: height + 'px'
             }, 'first', null, function() {
+              sinclo.operatorInfo.widgetMoving = false;
               console.log(
                   '$(\'#sincloBox\').offset().top : %s, $(\'#sincloWidgetBox\').offset().top',
                   $('#sincloBox').offset().top,
@@ -385,6 +388,12 @@
             sincloBox.style.opacity = 0;
             sinclo.operatorInfo.nowScrollTimer = setTimeout(function() {
               sincloBox.style.opacity = 1;
+              // sincloBoxに付与しているtransitionとの関係で
+              // スクロールの仕方によってはopacityが1なのに表示上見えていないケースがあるため
+              // リフレッシュの一環として1px瞬時に大きさを変更する
+              var sincloBoxHeight = $(sincloBox).height();
+              $(sincloBox).height(sincloBoxHeight - 1);
+              $(sincloBox).height(sincloBoxHeight);
             }, 400);
           } else {
             sincloBox.style.opacity = 1;
@@ -1690,8 +1699,8 @@
           if ((Number(chat.messageType) === 22 || Number(chat.messageType) ===
               23) && chat.message.match(/\[\]/) && prevMessageBlock === null) {
             prevMessageBlock = $('sinclo-chat').find('div:last-child');
-          } else if (Number(chat.messageType) === 41) {
-            prevMessageBlock = $('sinclo-chat').find('div:last-child');
+          } else if (Number(chat.messageType) === 41 || Number(chat.messageType) === 45) {
+            prevMessageBlock = $('sinclo-chat').find('div.sinclo-scenario-msg:last');
           } else {
             if (prevMessageBlock !== null) {
               if (prevMessageBlock.find('[type="radio"]').length > 0) {
@@ -1710,6 +1719,18 @@
                 }
               } else if (prevMessageBlock.find('select').length > 0) {
                 prevMessageBlock.find('select').val(chat.message);
+              } else if(prevMessageBlock.find('.carousel-container').length > 0) {
+                prevMessageBlock.find('.hearing_msg').each(function(index, elm) {
+                 //　カルーセル
+                  $(this).
+                      find('[id^="slide_sinclo-carousel"]').
+                      prop('disabled', true).
+                      css('opacity', 0.5);
+                  $(this).
+                      find('[id^="slide_sinclo-carousel"]').
+                      prop('disabled', true).
+                      css('opacity', 0.5);
+                });
               }
               prevMessageBlock = null;
             }
@@ -1818,11 +1839,6 @@
 
         currentScenarioChatId.push(obj.chatId);
         sinclo.scenarioApi.set('s_targetChatId', currentScenarioChatId);
-        if (sinclo.chatApi.isCustomerSendMessageType(obj.messageType) && sinclo.scenarioApi.isWaitingInput()
-            && (!check.isset(storage.s.get('operatorEntered')) ||
-                storage.s.get('operatorEntered') === 'false')) {
-          sinclo.scenarioApi.triggerInputWaitComplete(obj.chatMessage);
-        }
       }
       common.chatBotTypingRemove();
       var isBot = (Number(obj.messageType) >= 3 && Number(obj.messageType) <=
@@ -2059,6 +2075,21 @@
             var calendar = JSON.parse(obj.chatMessage);
             this.chatApi.addCalendar('hearing_msg sinclo_re', calendar.message,
                 calendar.settings);
+            sinclo.chatApi.scDown();
+            return false;
+          } else if (obj.messageType ===
+              sinclo.chatApi.messageType.scenario.message.carousel) {
+            // 別タブで送信されたシナリオのメッセージは表示する
+            cn = 'sinclo_re';
+            if (window.sincloInfo.widget.showAutomessageName === 2) {
+              userName = '';
+            } else {
+              userName = window.sincloInfo.widget.subTitle;
+            }
+
+            var carousel = JSON.parse(obj.chatMessage);
+            this.chatApi.addCarousel('', carousel.message,
+                carousel.settings);
             sinclo.chatApi.scDown();
             return false;
           } else if (obj.messageType ===
@@ -2421,6 +2452,23 @@
         var calendar = JSON.parse(obj.message);
         this.chatApi.addCalendar('hearing_msg sinclo_re', calendar.message,
             calendar.settings);
+        sinclo.chatApi.scDown();
+        return false;
+      }
+
+      if (obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.carousel) {
+        // 別タブで送信されたシナリオのメッセージは表示する
+        cn = 'sinclo_re';
+        if (window.sincloInfo.widget.showAutomessageName === 2) {
+          userName = '';
+        } else {
+          userName = window.sincloInfo.widget.subTitle;
+        }
+
+        var carousel = JSON.parse(obj.message);
+        this.chatApi.addCarousel('', carousel.message,
+            carousel.settings);
         sinclo.chatApi.scDown();
         return false;
       }
@@ -2843,7 +2891,7 @@
               $('#sincloBox ul sinclo-typing').
                   css('padding-bottom', (fullHeight * 0.1604) + 'px');
               if (storage.l.get('widgetMaximized') === 'true') {
-                $('#sincloBox').height(window.innerHeight);
+                $('#sincloBox').height('100%');
               }
             } else {
               //余白ありの場合
@@ -2889,6 +2937,9 @@
               if (window.sincloInfo.widget.spMaximizeSizeType === 2) {
                 var fullHeight = sinclo.calcSpWidgetHeight();
                 $('#chatTalk').outerHeight(fullHeight);
+                if (storage.l.get('widgetMaximized') === 'true') {
+                  $('#sincloBox').height('100%');
+                }
                 //余白ありの場合
               } else {
                 widgetWidth = $(window).width() - 20;
@@ -6239,6 +6290,14 @@
             isScenarioMessage = true;
           }
 
+          if (sinclo.chatApi.isCustomerSendMessageType(messageType)
+              && sinclo.scenarioApi.isProcessing()
+              && sinclo.scenarioApi.isWaitingInput()
+              && (!check.isset(storage.s.get('operatorEntered')) ||
+                  storage.s.get('operatorEntered') === 'false')) {
+            sinclo.scenarioApi.triggerInputWaitComplete(value);
+          }
+
           sinclo.trigger.judge.matchAllSpeechContent(value, function(result) {
             if ((isScenarioMessage || result) &&
                 (!check.isset(storage.s.get('operatorEntered')) ||
@@ -8337,6 +8396,7 @@
         sinclo.chatApi.forceHideMiniMessageArea = true;
         sinclo.scenarioApi._hearing._disableGrantCancelAbleFlg = false;
         sinclo.scenarioApi._hearing._forceRadioTypeFlg = false;
+        sinclo.scenarioApi._hearing._endValidInputWatcher();
         sinclo.chatApi.hideMiniMessageArea();
         self._saveProcessingState(false);
         sinclo.chatApi.removeAllEvent();
@@ -10717,21 +10777,27 @@
               break;
             case 5:
               // リンク呼出
-              var url = condition.action.url,
+              var childWindow = null,
                   openType = condition.action.openType;
-              console.log('url : %s openType : %s',url ,openType);
-              switch(Number(openType)) {
-                case 1:
-                  // ページ遷移
-                  location.href = url;
-                  break;
-                case 2:
-                  window.open(url);
-                  break;
+              if(Number(openType) === 2) {
+                childWindow = window.open('about:blank', 'sincloChild' + (new Date()).getTime());
               }
-              if (self._parent._goToNextScenario()) {
-                self._parent._process();
-              }
+              self._parent._doing(0.2, function() {
+                var url = condition.action.url;
+                console.log('url : %s openType : %s', url, openType);
+                switch (Number(openType)) {
+                  case 1:
+                    // ページ遷移
+                    location.href = url;
+                    break;
+                  case 2:
+                    childWindow.location.href = url;
+                    break;
+                }
+                if (self._parent._goToNextScenario()) {
+                  self._parent._process();
+                }
+              });
               break;
           }
         },
