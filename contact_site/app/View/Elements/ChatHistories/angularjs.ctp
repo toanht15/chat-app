@@ -324,13 +324,13 @@
         var coreSettings = "<?= $coreSettings[C_COMPANY_USE_HISTORY_DELETE] ?>";
         var img = message.match(/<img ([\s\S]*?)>/g);
         //横並びの場合
-        if (<?= $screenFlg ?> == 1;
+        if (<?= $screenFlg ?> == 1
       )
         {
           dataBaloon = 89;
         }
         //縦並びの場合
-        if (<?= $screenFlg ?> == 2;
+        if (<?= $screenFlg ?> == 2
       )
         {
           dataBaloon = 45;
@@ -1336,7 +1336,7 @@
         ;
         return trimToURL(targetParams, url);
       };
-    };
+    }
   ])
   ;
 
