@@ -51,13 +51,23 @@ var currentEditCell = null;
     linkPinning: false,
     defaultLink: new joint.dia.Link({
       attrs: {
-        '.marker-target': {d: 'M 10 0 L 0 5 L 10 10 z'},
+        '.connection': {
+          stroke: '#0984e3',
+          'stroke-width': 4
+        },
+        '.marker-target': {
+          stroke: '#0984e3',
+          fill: '#0984e3',
+          d: 'M 14 0 L 0 7 L 14 14 z'
+        },
+        '.link-tools .link-tool .tool-remove circle': {
+          'class': 'diagram'
+        },
         '.marker-arrowhead[end="source"]': {d: 'M 0 0 z'},
         '.marker-arrowhead[end="target"]': {d: 'M 0 0 z'},
       },
     }),
     validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
-      wasMoved = true;
       // in portからは矢印を表示させない
       if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
       // 同一Elementのout → in portは許容しない
@@ -69,7 +79,7 @@ var currentEditCell = null;
         return false;
       }
       //既に他ポートに接続しているout portは線を出さない
-      /*if(cellViewS.model.attributes.state.next_node){
+      if(cellViewS.model.attr('nodeBasicInfo/nextNodeId') && cellViewS.model.attr('nodeBasicInfo/nextNodeId') !== ""){
         var sourceId = cellViewS.model.id;
         var links = graph.getLinks();
         var count = 0;
@@ -81,7 +91,7 @@ var currentEditCell = null;
           linkView.model.remove();
           return false;
         }
-      }*/
+      }
       console.log(cellViewS);
 
       // outPortには入力させない
@@ -98,6 +108,8 @@ var currentEditCell = null;
   paper.on('cell:pointerup',
       function (cellView, evt, x, y) {
       //init current edit cell to null;
+
+        haloCreator(cellView);
         currentEditCell = null;
         if( !wasMoved && isNeedModalOpen(cellView) ) {
           currentEditCell = setViewElement(cellView);
@@ -113,8 +125,28 @@ var currentEditCell = null;
     dragReferencePosition = { x:x * paper.scale().sx, y:y * paper.scale().sy };
   });
 
-  paper.on('blank:pointerup',function(cellView, x, y) {
+  paper.on('blank:pointerup',function() {
     dragReferencePosition = null;
+  });
+
+  paper.on('mousewheel', function() {
+    console.log("あいうえお");
+  });
+
+
+
+  paper.on('link:connect', function(linkView, e) {
+    try {
+      linkView.sourceView.model.attr('nodeBasicInfo/nextNodeId', linkView.targetView.model.attributes.id);
+    } catch (e) {
+      console.log("unexpected connect");
+    }
+  });
+
+  graph.on('remove', function(deleteView, b) {
+    if(deleteView.isLink() && deleteView.attributes.target.id){
+      resetNextNode(deleteView.attributes.source.id);
+    }
   });
 
   $('input[type=range]').on('input', function(e){
@@ -138,7 +170,25 @@ var currentEditCell = null;
     initNodeEvent(node);
   };
 
-
+  var haloCreator = function(cellView) {
+    if(cellView.model.isLink()) return;
+    if(cellView.model.getAncestors()[0]){
+      cellView = paper.findViewByModel(cellView.model.getAncestors()[0]);
+    }
+    var halo = new joint.ui.Halo({
+      cellView: cellView,
+      boxContent: false
+    });
+    halo.removeHandle('resize');
+    halo.removeHandle('rotate');
+    halo.removeHandle('link');
+    halo.removeHandle('unlink');
+    halo.removeHandle('clone');
+    halo.changeHandle('remove', {
+      position: 'ne'
+    });
+    halo.render();
+  }
 });
 
   var addMoveFlg = function(){
@@ -148,14 +198,14 @@ var currentEditCell = null;
   function initNodeEvent(node){
     for(var i = 0; i < node.length; i++) {
 
-      if(node[i].attr('nodeType') === "childViewNode"
-      || node[i].attr('nodeType') === "childPortNode"){
+      if(node[i].attr('nodeBasicInfo/nodeType') === "childViewNode"
+      || node[i].attr('nodeBasicInfo/nodeType') === "childPortNode"){
         node[i].on('change:position', childMove);
       }
 
-      if(nodeTypeArray.indexOf(node[i].attr('nodeType')) > -1
-      || node[i].attr('nodeType') === "operator"
-      || node[i].attr('nodeType') === "cv") {
+      if(nodeTypeArray.indexOf(node[i].attr('nodeBasicInfo/nodeType')) > -1
+      || node[i].attr('nodeBasicInfo/nodeType') === "operator"
+      || node[i].attr('nodeBasicInfo/nodeType') === "cv") {
         node[i].on('change:position', addMoveFlg);
       }
     }
@@ -173,7 +223,7 @@ var currentEditCell = null;
   }
 
   function isNeedModalOpen (cell){
-    var type = cell.model.attr().nodeType;
+    var type = cell.model.attr('nodeBasicInfo/nodeType');
     if( type != null ){
       return nodeTypeArray.indexOf(type) > -1
           || type === "childViewNode"
@@ -186,12 +236,12 @@ var currentEditCell = null;
 
 
   function processModalCreate(elm) {
-    var type = elm.model.attr('nodeType');
+    var type = elm.model.attr('nodeBasicInfo/nodeType');
     var htmlCreator,
         modalName,
         modalClass;
     if (elm.model.getAncestors()[0] != null) {
-      type = elm.model.getAncestors()[0].attr('nodeType');
+      type = elm.model.getAncestors()[0].attr('nodeBasicInfo/nodeType');
     }
     switch (type) {
       case "branch":
@@ -274,11 +324,15 @@ var currentEditCell = null;
       return;
     }
     if(currentEditCell.getAncestors()[0]){
+      //テキスト発言、または条件分岐の場合、全てのジャンプアクションを取得
+      if(currentEditCell.getAncestors()[0].attr('nodeType') === 'text'
+      || currentEditCell.getAncestors()[0].attr('nodeType') === 'branch'){
+        bindJumpData(currentEditCell.getAncestors()[0]);
+      }
       currentEditCell.getAncestors()[0].remove();
     } else {
       currentEditCell.remove();
     }
-    currentEditCell.remove();
     currentEditCell = null;
   }
   
@@ -289,11 +343,15 @@ var currentEditCell = null;
     }
     if(currentEditCell.getAncestors()[0]){
       //シナリオ呼出・ジャンプ・リンクの場合
-      bindSingleView(currentEditCell.getAncestors()[0].attr('nodeType'));
+      bindSingleView(currentEditCell.getAncestors()[0].attr('nodeBasicInfo/nodeType'));
     } else {
 
     }
 
+  }
+
+  function bindJumpData() {
+    graph.getElements();
   }
 
   function setViewElement(target) {
@@ -301,8 +359,8 @@ var currentEditCell = null;
     //
     var viewNode = target.model;
     var childList = viewNode.getEmbeddedCells();
-    if(viewNode.attr('nodeType') === 'operator'
-    || viewNode.attr('nodeType') === 'cv') {
+    if(viewNode.attr('nodeBasicInfo/nodeType') === 'operator'
+    || viewNode.attr('nodeBasicInfo/nodeType') === 'cv') {
       // オペレーター、 CVの場合は
       return viewNode;
     } else if(childList.length > 0) {
@@ -347,6 +405,7 @@ var currentEditCell = null;
         //配列は直接上書きができないので一度nullにする
         currentEditCell.getAncestors()[0].attr('.label/text', convertTextForTitle(convertTextLength(nodeName, 6),"分岐"));
         currentEditCell.getAncestors()[0].attr('actionParam/selection', null);
+        currentEditCell.attr('text/text', convertTextLength(speakTextContents, 8));
         nodeParam = {
           nodeName: nodeName,
           text: speakTextContents,
@@ -498,11 +557,11 @@ var currentEditCell = null;
     var html = $("<div id='jump_modal'>" +
         "<label for='jump'>ノード名</label>" +
         "<select name='jump' id='jumpTargetNode'>" +
-        "<option>ノード名を選択してください</option>" +
-        "<option>資料請求</option>" +
-        "<option>メインメニュー</option>" +
+        "<option value=''>ノード名を選択してください</option>" +
         "<select>" +
         "</div>");
+    html.find('select').val(nodeData.targetId);
+    html = nodeEditHandler.typeJump.createContents(html);
     html.find('select').val(nodeData.targetId);
     return html;
   }
@@ -563,7 +622,34 @@ var currentEditCell = null;
     }
   };
 
+  function resetNextNode(targetId){
+    var allElmList = graph.getElements();
+    for(var i = 0; i < allElmList.length; i++){
+      if(allElmList[i].attributes.id === targetId) {
+        allElmList[i].attr('nodeBasicInfo/nextNodeId', "");
+      }
+    }
+  }
+
   var nodeEditHandler = {
+    typeJump: {
+      createContents: function(html){
+        var allElmList = graph.getElements();
+        for(var i = 0; i < allElmList.length; i++) {
+          if(allElmList[i].attr('nodeBasicInfo/nodeType') === "text"
+          || allElmList[i].attr('nodeBasicInfo/nodeType') === "branch") {
+            if(allElmList[i].attr('actionParam/nodeName') !== "") {
+              //ノード名がある場合は、option属性を生成し付与する
+              var newOption = $('<option></option>');
+              newOption.val(allElmList[i].attributes.id);
+              newOption.text(allElmList[i].attr('actionParam/nodeName'));
+              html.children("select").append(newOption);
+            }
+          }
+        }
+        return html;
+      }
+    },
     typeText: {
       convertContents: function(originContents) {
         return nodeEditHandler.textAreaToArray(originContents);
@@ -629,7 +715,7 @@ var currentEditCell = null;
       removeAllPortView: function(branch){
         var childList = branch.getEmbeddedCells();
         for(var i = 0; i < childList.length; i++) {
-          if( childList[i].attr('nodeType') === 'childPortNode') {
+          if( childList[i].attr('nodeBasicInfo/nodeType') === 'childPortNode') {
             childList[i].remove();
           }
         }
@@ -637,7 +723,7 @@ var currentEditCell = null;
       portCreator: function(posX, posY, text, additionalY){
         return new joint.shapes.devs.Model({
           position: { x: posX + 5, y: posY + additionalY },
-          size: { width: 140, height: 30 },
+          size: { width: 170, height: 30 },
           outPorts: ['out'],
           ports: {
             groups: {
@@ -656,7 +742,7 @@ var currentEditCell = null;
                 position: {
                   name: 'absolute',
                   args: {
-                    x: 145,
+                    x: 175,
                     y: 0,
                   }
                 },
@@ -668,8 +754,6 @@ var currentEditCell = null;
             '.label': {
               text: text,
               'ref-width': '70%',
-              'ref-x': .5,
-              'ref-y': .5,
               'font-size': "12px",
               fill: '#000'
             },
@@ -685,7 +769,10 @@ var currentEditCell = null;
               refX: '-25%',
               refY: '-25%'
             },
-            nodeType: 'childPortNode',
+            nodeBasicInfo: {
+              nodeType: 'childPortNode',
+              nextNode: ""
+            }
           }
         });
       }
@@ -699,6 +786,10 @@ var currentEditCell = null;
       }
       return contentArray;
     }
+  };
+
+  function exportJSON(){
+    console.log(JSON.stringify(graph.toJSON()));
   }
 
 
