@@ -7950,6 +7950,58 @@ ul.naviBtn {
                       }
                     }
                   }
+
+                  .checkbox-design-custom-area {
+                    input[type="checkbox"], input[type="radio"] {
+                      margin-top: 0px;
+                    }
+
+                    .checkbox-custom-items {
+                      margin-left: 16px;
+                      height: 35px;
+                      display: flex;
+                      width: 32em;
+                      padding: 2px 0;
+                      align-items: center;
+
+                      input[type="text"] {
+                        width: 120px;
+                        height: 26px;
+                        font-size: 12px;
+                        padding-left: 4px;
+                        position: relative;
+                        border: none !important;
+                        border-bottom: 1px solid #909090 !important;
+                        border-radius: 0 !important;
+                      }
+
+                      label {
+                        flex-basis: 150px;
+                      }
+
+                      .radio-buttons {
+                        display: flex;
+                        align-items: center;
+                        flex-basis: 265px;
+                        label {
+                          margin-top: 0px;
+                          &.text3 {
+
+                          }
+                          &.text4 {
+                            margin-right: 20px;
+                          }
+                        }
+                      }
+
+                      .revert-button {
+                        position: relative;
+                        left: 10px;
+                        padding: 4px;
+                        bottom: 0px;
+                      }
+                    }
+                  }
                 }
 
                 &.action_bulk_hearing {
@@ -8785,7 +8837,7 @@ ul.naviBtn {
                   grid-column: 4;
                   -ms-grid-column: 4;
                 }
-                input[type="text"].make-box{
+                input[type="text"].make-box, select.make-box{
                   border-radius: 4px;
                   border: 1px solid #909090;
                   width: auto;
