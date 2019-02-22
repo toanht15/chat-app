@@ -8242,7 +8242,7 @@
               && !sinclo.scenarioApi.isProcessing() &&
               !sinclo.scenarioApi.isWaitingInput() &&
               this.speechContentRegEx.length > 0) {
-            for (var index in this.speechContentRegEx) {
+            for (var index = 0; index < this.speechContentRegEx.length; index++) {
               console.log(this.speechContentRegEx[index].id);
               if (sinclo.chatApi.triggeredAutoSpeechExists(
                   this.speechContentRegEx[index].id)) {
