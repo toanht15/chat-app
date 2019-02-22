@@ -906,7 +906,7 @@
         style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox input:hover ~ .checkmark {background-color: ' +
             data.settings.customDesign.checkboxActiveColor + '}';
         style += '#sincloBox #' + checkboxName +
-            ' span.ok-button {width: 100px; height: 30px; cursor: pointer; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + this._settings['chat_send_btn_background_color'] + '; color: ' + this._settings['chat_send_btn_text_color'] + ';}';
+            ' span.ok-button {width: 100px; height: 30px; cursor: pointer; margin: auto; display: inline-flex; justify-content: center; align-items: center; border-radius: 12px; background-color: ' + this._settings['chat_send_btn_background_color'] + '; color: ' + this._settings['chat_send_btn_text_color'] + ';}';
         style += '#sincloBox #' + checkboxName + ' {display: grid; }';
         if (data.settings.checkboxNoneBorder) {
           style += '#sincloBox #' + checkboxName + ' .sinclo-checkbox .checkmark {border: none;}';
