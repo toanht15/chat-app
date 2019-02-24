@@ -16,6 +16,7 @@
     'jump',
     'link'
   ];
+  var scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
 
   var currentEditCell = null;
 
@@ -41,6 +42,11 @@
     });
 
     graph = new joint.dia.Graph;
+
+    debugger;
+    if ($('#TChatbotDiagramActivity').val() !== null) {
+      graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
+    }
 
     var paper = new joint.dia.Paper({
       el: canvas,
