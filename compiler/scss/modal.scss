@@ -1638,7 +1638,7 @@
 
       /* テキスト発言のモーダル */
       &.p_diagrams_text {
-        width: 700px;
+        width: 960px;
         #popup-main {
           padding: 0!important;
         }
@@ -1648,8 +1648,7 @@
           align-items: center;
           border-bottom: 1px solid #909090;
           #text_modal_editor {
-            padding: 20px 0 20px 20px;
-            width: 350px;
+            width: 585px;
             display: flex;
             border-right: 1px solid #909090;
             flex-direction: column;
@@ -1657,32 +1656,42 @@
               margin-left: 28px;
               width: 230px;
             }
-            p {
-              text-align: center;
-              margin-right: 75px;
-              margin-bottom: 5px;
-            }
             #text_modal_head {
+              padding: 20px 0 0 20px;
               input[type='text'] {
-                width: 190px;
-                margin-left: 15px;
+                width: 521px;
+                margin-left: 21px;
+                margin-top: 10px;
               }
             }
-            #text_modal_body > div:not(:first-child) {
+            #text_modal_contents {
+              margin-left: 20px;
+            }
+
+            #text_modal_contents > div:not(:first-child) {
               margin-top: 15px;
             }
-            .text_modal_setting {
+            #text_modal_body {
               display: flex;
-              align-items: center;
-              img.btn-shadow {
-                margin-left: 5px;
-                padding: 2px;
+              margin-top: 20px;
+              padding: 20px 0 20px 20px;
+              border-top: 1px solid;
+              p {
+                margin: 0;
               }
-              textarea {
-                width: 255px;
-                height: 2em;
-                resize: none;
-                overflow: hidden;
+              .text_modal_setting {
+                display: flex;
+                align-items: center;
+                img.btn-shadow {
+                  margin-left: 5px;
+                  padding: 2px;
+                }
+                textarea {
+                  width: 425px;
+                  height: 6em;
+                  resize: none;
+                  overflow: hidden;
+                }
               }
             }
           }

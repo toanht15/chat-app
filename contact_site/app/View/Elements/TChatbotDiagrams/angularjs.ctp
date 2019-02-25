@@ -23,21 +23,17 @@
         $('#TChatbotDiagramsEntryForm').submit();
       });
 
-    }]).controller('ProvideController', [ function() {
-      $(document).on('diagram.clicker', function(e) {
-        sincloApp.controllerProvider.register('ModalController', [
-          '$scope', '$timeout', function($dialogScope, $timeout) {
-            var takasi = function(){
-              console.log(takasi);
-            };
-            $(document).on('diagram.openModal', function(e) {
-              $timeout(function() {
-                $dialogScope.$apply();
-              });
-            });
-          }
-        ]);
-      });
+    }]).controller('ModalController', [
+      '$scope', '$timeout', '$compile', function($dialogScope, $timeout, $compile) {
+        $(document).on('diagram.openModal', function(e, elm) {
+          $timeout(function(elm) {
+            $dialogScope.$apply();
+            $compile(elm)($dialogScope);
+          });
+        });
+      $dialogScope.piyo = function(){
+        console.log("konnnitha");
+      };
     }]).directive('resizeTextarea', function() {
     return {
       restrict: 'E',
@@ -77,6 +73,28 @@
         $(window).on('load', autoResize);
         $(window).on('resize', autoResize);
         elm[0].addEventListener('input', autoResize);
+      }
+    };
+  }).directive('branchModal', function() {
+    return {
+      restrict: 'E',
+      template: '<p ng-click="piyo()"><resize-textarea></resize-textarea>テストです!</p>',
+      link: function (scope, element) {
+        console.log(element);
+        scope.piyo = function() {
+          alert("これがテストです");
+        }
+      }
+    };
+  }).directive('textModal', function() {
+    return {
+      restrict: 'E',
+      template: angular.element('<resize-textarea></resize-textarea>'),
+      link: function (scope, element) {
+        console.log(element);
+        scope.piyo = function() {
+          alert("これがテストです");
+        }
       }
     };
   });
