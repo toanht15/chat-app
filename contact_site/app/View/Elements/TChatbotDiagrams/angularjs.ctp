@@ -23,21 +23,13 @@
         $('#TChatbotDiagramsEntryForm').submit();
       });
 
-    }]).controller('ProvideController', [ function() {
-      $(document).on('diagram.clicker', function(e) {
-        sincloApp.controllerProvider.register('ModalController', [
-          '$scope', '$timeout', function($dialogScope, $timeout) {
-            var takasi = function(){
-              console.log(takasi);
-            };
-            $(document).on('diagram.openModal', function(e) {
-              $timeout(function() {
-                $dialogScope.$apply();
-              });
-            });
-          }
-        ]);
-      });
+    }]).controller('ModalController', [
+      '$scope', '$timeout', '$compile', function($dialogScope, $timeout, $compile) {
+        $(document).on('diagram.openModal', function(e, elm) {
+          $timeout(function() {
+            $dialogScope.$apply();
+          });
+        });
     }]).directive('resizeTextarea', function() {
     return {
       restrict: 'E',
