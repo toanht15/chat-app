@@ -611,11 +611,6 @@
   }
 
   function deleteTextBox(e) {
-    if(e.find('textarea') != null) {
-      console.log(e.parent());
-      console.log($('#text_modal_contents').index(e.parent()));
-      previewHandler.typeText.removeBalloon($('#text_modal_contents').index(e.parent()));
-    }
     e.parentNode.parentNode.removeChild(e.parentNode);
     btnViewHandler.switcher();
     popupEvent.resize();
