@@ -43,7 +43,7 @@
 
     graph = new joint.dia.Graph;
 
-    if (!!$('#TChatbotDiagramActivity').val()) {
+    if ($('#TChatbotDiagramActivity').val()) {
       graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
     }
 
@@ -107,6 +107,8 @@
       }
     });
 
+    graph.addCell(startNode());
+
     var dragReferencePosition = null;
 
     paper.on('cell:pointerup',
@@ -131,11 +133,11 @@
     });
 
     $(document).on('keyup', 'textarea', function(evt){
-      $('.preview_moc').text(this.value);
+      $('span.detail').text(this.value);
     });
 
     $(document).on('keydown', 'textarea', function(evt){
-      $('.preview_moc').text(this.value);
+      $('span.detail').text(this.value);
     });
 
     paper.on('blank:pointerup', function() {
@@ -145,7 +147,12 @@
     paper.on('link:connect', function(linkView, e) {
       try {
         linkView.sourceView.model.attr('nodeBasicInfo/nextNodeId', linkView.targetView.model.attributes.id);
-        console.log("合体しました");
+        // 接続元が分岐　かつ　接続先がテキスト　か　分岐
+        if( linkView.sourceView.model.attr('nodeBasicInfo/nodeType') === "childPortNode"
+        &&( linkView.targetView.model.attr('nodeBasicInfo/nodeType') === "text"
+          ||linkView.targetView.model.attr('nodeBasicInfo/nodeType') === "branch" )) {
+          setDefaultNodeName(linkView.targetView);
+        }
       } catch (e) {
         console.log('unexpected connect');
       }
@@ -177,6 +184,7 @@
     };
 
     var haloCreator = function(cellView) {
+      if(cellView.model.attr("nodeBasicInfo/nodeType") === "start") return;
       if (cellView.model.isLink()) return;
       if (cellView.model.getAncestors()[0]) {
         cellView = paper.findViewByModel(cellView.model.getAncestors()[0]);
@@ -422,7 +430,9 @@
         break;
       case 'scenario':
         target = $('#callTargetScenario option:selected');
-        viewText = target.text();
+        if(target.val() !== ""){
+          viewText = target.text();
+        }
         nodeParam = {
           scenarioId: target.val()
         };
@@ -430,7 +440,9 @@
         break;
       case 'jump':
         target = $('#jumpTargetNode option:selected');
-        viewText = target.text();
+        if(target.val() !== ""){
+          viewText = target.text();
+        }
         nodeParam = {
           targetId: target.val()
         };
@@ -478,7 +490,7 @@
       '<div class=\'branch_modal_setting_header\'>' +
       '<div class=\'flex_row_box\'>' +
       '<p>発言内容</p>' +
-      '<textarea></textarea>' +
+      '<textarea class="node_branch"></textarea>' +
       '</div>' +
       '<div class=\'flex_row_box\'>' +
       '<label for=\'branch_button\'>表示形式</label>' +
@@ -507,6 +519,7 @@
     html.find('.flex_row_box > textarea').val(nodeData.text);
     html.find('select').val(nodeData.btnType);
     html = nodeEditHandler.typeBranch.createContents(html, nodeData);
+    html.find("#branch_modal_preview").append($(".preview_moc"));
     return html;
   }
 
@@ -521,7 +534,7 @@
       '<p>発言内容</p>' +
       '<div id="text_modal_contents" >' +
       '<div class=\'text_modal_setting\'>' +
-      '<textarea></textarea>' +
+      '<textarea class="node_text"></textarea>' +
       '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
       '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
       '</div>' +
@@ -529,11 +542,11 @@
       '</div>' +
       '</div>' +
       '<div id=\'text_modal_preview\'>' +
-      '<p class="preview_moc"></p>' +
       '</div>' +
       '</div>');
     html.find('input[type=text]').val(nodeData.nodeName);
     html = nodeEditHandler.typeText.createContents(html, nodeData);
+    html.find("#text_modal_preview").append($(".preview_moc"));
     return html;
   }
 

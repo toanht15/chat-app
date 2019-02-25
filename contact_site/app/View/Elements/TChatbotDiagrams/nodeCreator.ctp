@@ -165,6 +165,63 @@ function contentViewNode(posX, posY) {
   });
 }
 
+function startNode() {
+  return new joint.shapes.devs.Model({
+    position: {x: 100, y: 150},
+    size: {width: smallNode.width, height: smallNode.height},
+    outPorts: ['out'],
+    ports: {
+      groups: {
+        'out': {
+          attrs: {
+            '.port-body': {
+              fill: "#F27D82",
+              height: portSetting.outPortSize,
+              width: portSetting.outPortSize,
+              stroke: false
+            },
+            '.port-label': {
+              'font-size': 0
+            }
+          },
+          position: {
+            name: 'absolute',
+            args: {
+              x: smallNode.outPortX,
+              y: smallNode.outPortY
+            }
+          },
+          markup: '<rect class="port-body"/>'
+        }
+      }
+    },
+    attrs: {
+      '.label': {
+        text: "START",
+        'ref-width': '70%',
+        'font-size': '12px',
+        fill: '#FFF'
+      },
+      rect: {
+        fill: '#EA2027',
+        stroke: false
+      },
+      button: {
+        cursor: 'pointer',
+        ref: 'buttonLabel',
+        refWidth: '150%',
+        refHeight: '150%',
+        refX: '-25%',
+        refY: '-25%'
+      },
+      nodeBasicInfo: {
+        nodeType: 'start',
+        nextNode: ''
+      }
+    }
+  });
+}
+
 function constantNodeOnlyInPort(posX, posY) {
   return new joint.shapes.devs.Model({
     position: {x: posX, y: posY},

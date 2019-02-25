@@ -7192,12 +7192,14 @@ ul.naviBtn {
           label{
             display: flex;
             align-items: center;
+            min-width: 134px;
             span {
               margin-left: 10px;
             }
           }
           div {
             margin-left: 20px;
+            min-width: 201px;
           }
         }
       }
