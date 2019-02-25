@@ -26,6 +26,5 @@
     <p>CVポイント</p>
   </div>
 </div>
-<div id="canvas" ng-app="sincloApp" ng-controller="ProvideController">
-
+<div id="canvas" >
 </div>
