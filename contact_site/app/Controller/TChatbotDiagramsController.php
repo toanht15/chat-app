@@ -9,9 +9,11 @@
  * @property TChatbotScenario $TChatbotScenario
  * @property TransactionManager $TransactionManager
  */
-class TChatbotDiagramsController extends AppController
+App::uses('WidgetSettingController', 'Controller');
+
+class TChatbotDiagramsController extends WidgetSettingController
 {
-  public $uses = array('TChatbotDiagram', 'TransactionManager', 'TChatbotScenario');
+  public $uses = array('TChatbotDiagram', 'TransactionManager', 'TChatbotScenario', 'MWidgetSetting', 'TAutoMessage');
   public $paginate = [
     'TChatbotDiagram' => [
       'limit' => 100,
@@ -25,12 +27,6 @@ class TChatbotDiagramsController extends AppController
     ]
   ];
 
-  public function beforeFilter()
-  {
-    parent::beforeFilter();
-    $this->set('title_for_layout', 'チャットツリー設定');
-  }
-
   public function index()
   {
     $this->paginate['TChatbotDiagram']['conditions']['TChatbotDiagram.m_companies_id'] = $this->userInfo['MCompany']['id'];
@@ -42,6 +38,8 @@ class TChatbotDiagramsController extends AppController
   {
     $scenarioData = $this->_getScenarioList();
     $this->set('scenarioList', $scenarioData);
+    // プレビュー・シミュレーター表示用ウィジェット設定の取得
+    $this->set('widgetSettings', $this->_getWidgetSettings());
     if (empty($id)) {
 
     } else {

@@ -17,6 +17,7 @@
     'link'
   ];
   var scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
+  var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
 
   var currentEditCell = null;
 
