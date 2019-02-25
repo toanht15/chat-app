@@ -17,7 +17,6 @@
     'link'
   ];
   var scenarioList = <?= json_encode($scenarioList, JSON_UNESCAPED_UNICODE) ?>;
-  var widgetSettings = <?= json_encode($widgetSettings, JSON_UNESCAPED_UNICODE) ?>;
 
   var currentEditCell = null;
 
@@ -120,6 +119,9 @@
         currentEditCell = null;
         if (!wasMoved && isNeedModalOpen(cellView)) {
           currentEditCell = setViewElement(cellView);
+          if($('#popup-main > div')[0]) {
+            $('#popup-main')[0].removeChild($('#popup-main > div')[0]);
+          }
           var modalData = processModalCreate(cellView);
           modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
           initPopupCloseEvent();
@@ -133,12 +135,11 @@
       dragReferencePosition = {x: x * paper.scale().sx, y: y * paper.scale().sy};
     });
 
-    $(document).on('keyup', 'textarea', function(evt){
-      $('span.detail').text(this.value);
-    });
-
-    $(document).on('keydown', 'textarea', function(evt){
-      $('span.detail').text(this.value);
+    //テキスト発言用のイベントを作成する
+    $(document).on('keyup keydown', '.text_modal_setting > textarea', function(evt){
+      var index = $('.text_modal_setting > textarea').index(this);
+      console.log(index);
+      $($('#text_modal_preview span.detail')[index]).text(this.value);
     });
 
     paper.on('blank:pointerup', function() {
@@ -520,7 +521,6 @@
     html.find('.flex_row_box > textarea').val(nodeData.text);
     html.find('select').val(nodeData.btnType);
     html = nodeEditHandler.typeBranch.createContents(html, nodeData);
-    html.find("#branch_modal_preview").append($(".preview_moc"));
     return html;
   }
 
@@ -547,7 +547,6 @@
       '</div>');
     html.find('input[type=text]').val(nodeData.nodeName);
     html = nodeEditHandler.typeText.createContents(html, nodeData);
-    html.find("#text_modal_preview").append($(".preview_moc"));
     return html;
   }
 
@@ -599,6 +598,11 @@
 
   function addTextBox(e) {
     var cloneElm = $(e.parentNode).clone();
+    //テキストエリアが追加されたら、previewのそういう処理を走らせる
+    if(cloneElm.find('textarea') != null) {
+      cloneElm.children('textarea').val('');
+      previewHandler.typeText.addBalloon();
+    }
     cloneElm.children('textarea').val('');
     cloneElm.children('input[type=text]').val('');
     $(e.parentNode).after(cloneElm);
@@ -607,6 +611,11 @@
   }
 
   function deleteTextBox(e) {
+    if(e.find('textarea') != null) {
+      console.log(e.parent());
+      console.log($('#text_modal_contents').index(e.parent()));
+      previewHandler.typeText.removeBalloon($('#text_modal_contents').index(e.parent()));
+    }
     e.parentNode.parentNode.removeChild(e.parentNode);
     btnViewHandler.switcher();
     popupEvent.resize();
@@ -698,12 +707,13 @@
         } else {
 
         }
+        html.find("#text_modal_preview").append($(".chatTalk").clone());
         return html;
       }
     },
     typeBranch: {
       convertContents: function(originContents) {
-        return nodeEditHandler.textAreaToArray(originContents);
+        return nodeEditHandler.textToArray(originContents);
       },
       createContents: function(html, nodeData) {
         if (nodeData.selection.length > 0) {
@@ -811,7 +821,7 @@
         });
       }
     },
-    textAreaToArray: function(contents) {
+    textToArray: function(contents) {
       var contentArray = [];
       for (var i = 0; i < contents.length; i++) {
         if ($(contents[i]).children('input[type=text]').val()) {
@@ -819,6 +829,29 @@
         }
       }
       return contentArray;
+    },
+    textAreaToArray: function(contents) {
+      var contentArray = [];
+      for (var i = 0; i < contents.length; i++) {
+        if ($(contents[i]).children('textarea').val()) {
+          contentArray.push($(contents[i]).children('textarea').val());
+        }
+      }
+      return contentArray;
+    }
+  };
+
+  var previewHandler = {
+    typeText: {
+      addBalloon: function(){
+        var newBalloon = $('#text_modal_preview > div.chatTalk').clone();
+        console.log(newBalloon.find('span').text());
+        newBalloon.find('span').text("");
+        $('#text_modal_preview').append(newBalloon);
+      },
+      removeBalloon: function(){
+
+      }
     }
   };
 

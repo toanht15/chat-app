@@ -9,6 +9,7 @@
 <?php echo $this->element('TChatbotDiagrams/nodeCreator'); ?>
 <?php echo $this->element('TChatbotDiagrams/jointScript'); ?>
 <?php echo $this->element('TChatbotDiagrams/preview'); ?>
+<?php echo $this->element('WidgetSimulator/simulatorService'); ?>
 <div>
   <ul>
     <li>
