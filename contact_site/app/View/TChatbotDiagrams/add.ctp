@@ -16,7 +16,7 @@
   </div>
   <div id="t_chatbot_diagrams_header">
     <div id="t_chatbot_diagrams_entry">
-      <?= $this->Form->create('TChatbotDiagrams', ['url' => ['controller' => 'TChatbotDiagrams', 'action' => 'add'], 'novalidate' => true, 'id' => 'TChatbotDiagramsEntryForm', 'name' => 'TChatbotDiagramsEntryForm']) ?>
+      <?= $this->Form->create('TChatbotDiagrams', ['url' => ['controller' => 'TChatbotDiagrams', 'action' => 'save'], 'novalidate' => true, 'id' => 'TChatbotDiagramsEntryForm', 'name' => 'TChatbotDiagramsEntryForm']) ?>
       <?= $this->element('TChatbotDiagrams/entry'); ?>
       <?= $this->Form->end(); ?>
     </div>
