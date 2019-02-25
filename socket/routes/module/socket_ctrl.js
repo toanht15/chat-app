@@ -4742,6 +4742,36 @@ io.sockets.on('connection', function(socket) {
   });
 
   // ============================================
+  // チャットツリーイベントハンドラ
+  // ============================================
+  socket.on('getChatDiagram', function(data, ack) {
+    var obj = JSON.parse(data);
+    var result = {};
+    pool.query(
+      'select activity from t_chatbot_diagrams where m_companies_id = ? and id = ?;',
+      [companyList[obj.siteKey], obj.scenarioId],
+      function(err, row) {
+        if (err !== null && err !== '') {
+          if (ack) {
+            ack(result);
+          } else {
+            emit.toMine('resGetChatDiagram', result, socket);
+          }
+          return;
+        }
+        if (row.length !== 0) {
+          result = JSON.parse(row[0].activity);
+        }
+        if (ack) {
+          ack({id: obj.scenarioId, activity: result});
+        } else {
+          emit.toMine('resGetChatDiagram',
+              {id: obj.scenarioId, activity: result}, socket);
+        }
+      });
+  });
+
+  // ============================================
   //  画面キャプチャ共有イベントハンドラ
   // ============================================
 

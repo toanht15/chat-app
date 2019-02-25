@@ -517,7 +517,7 @@
       '<p>発言内容</p>' +
       '<div id=\'text_modal_body\' ng-app="sincloApp" ng-controller="ModalController" >' +
       '<div class=\'text_modal_setting\'>' +
-      '<resize-textarea></resize-textarea>' +
+      '<textarea></textarea>' +
       '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
       '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
       '</div>' +
