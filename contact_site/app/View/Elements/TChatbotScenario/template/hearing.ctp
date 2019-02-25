@@ -33,7 +33,7 @@
               <span class="checkmark"></span>
             </label>
           </div>
-          <div class='area-name'><input type="text" ng-model="hearingItem.variableName"></div>
+          <div class='area-name'><input type="text" class="variable-suggest" ng-model="hearingItem.variableName"></div>
           <div class='area-type'>
             <select name="hearing-input-option" ng-model="hearingItem.uiType"
                     ng-change="main.handleChangeUitype(<?= C_SCENARIO_ACTION_HEARING ?>, setActionId, listId, hearingItem.uiType)">
@@ -128,7 +128,7 @@
                             <span><label class="">選択肢 {{optionIndex + 1}}<span class="questionBalloon"><icon
                                       class="questionBtn"
                                       data-tooltip="選択肢を1つずつ設定します。<br>例）選択肢１：男性<br>　　選択肢２：女性">?</icon></span></label></span>
-              <input type="text" class="m20lt" ng-model="hearingItem.settings.options[optionIndex]"
+              <input type="text" class="variable-suggest m20lt" ng-model="hearingItem.settings.options[optionIndex]"
                      style="width: 200px;">
               <div class="btnBlock">
                 <a><?= $this->Html->image('add.png', array(
@@ -231,20 +231,20 @@
                       <span class="carousel-label"><label class="">タイトル <span class="questionBalloon"><icon
                                 class="questionBtn"
                                 data-tooltip="説明文のタイトルの設定を行います。">?</icon></span></label></span>
-                      <input type="text" ng-model="hearingItem.settings.images[imageIndex].title" class="m20l m10r">
+                      <input type="text" ng-model="hearingItem.settings.images[imageIndex].title" class="variable-suggest m20l m10r">
                     </div>
                     <div class="carousel-sub-title styleFlexbox">
                       <span class="carousel-label"><label class="">本文 <span class="questionBalloon"><icon
                             class="questionBtn"
                             data-tooltip="説明文の設定を行います。">?</icon></span></label></span>
-                      <resize-textarea class="m20l m10r" style="height: 27px" maxlength="4000" rows="1"
+                      <resize-textarea class="variable-suggest m20l m10r" style="height: 27px" maxlength="4000" rows="1"
                                        data-maxRow="10" ng-model="hearingItem.settings.images[imageIndex].subTitle"></resize-textarea>
                     </div>
                     <div class="carousel-answer styleFlexbox">
                       <span class="carousel-label"><label class="">選択時の内容 <span class="questionBalloon"><icon
                             class="questionBtn"
                             data-tooltip="サイト訪問者（チャット利用者）が画像を選択した際に変数にセットする文言を設定します。">?</icon></span></label></span>
-                      <input type="text" class="m20l m10r" ng-model="hearingItem.settings.images[imageIndex].answer">
+                      <input type="text" class="variable-suggest m20l m10r" ng-model="hearingItem.settings.images[imageIndex].answer">
                     </div>
                   </div>
                   </div>
@@ -858,14 +858,21 @@
                         ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxBackgroundColor')">標準に戻す</span>
                 </span>
               <span class="checkbox-custom-items">
-                  <label>チェック色</label>
+                  <label>チェックON時の背景色</label>
                   <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxActiveColor"
                          class="jscolor{hash:true} ignore-click-event"
                          ng-model="hearingItem.settings.customDesign.checkboxActiveColor">
                   <span class="greenBtn btn-shadow revert-button"
                         ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxActiveColor')">標準に戻す</span>
               </span>
-
+              <span class="checkbox-custom-items">
+                  <label>チェック色</label>
+                  <input type="text" id="action{{setActionId}}_button{{listId}}_checkboxCheckmarkColor"
+                         class="jscolor{hash:true} ignore-click-event"
+                         ng-model="hearingItem.settings.customDesign.checkboxCheckmarkColor">
+                  <span class="greenBtn btn-shadow revert-button"
+                        ng-click="main.revertCheckboxColor(setActionId, listId, 'checkboxCheckmarkColor')">標準に戻す</span>
+              </span>
               <span class="checkbox-custom-items">
                 <label>チェックボックス枠線色</label>
                 <input type="text" class="jscolor{hash:true} ignore-click-event"
