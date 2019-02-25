@@ -21,7 +21,7 @@
               'data-balloon-position' => '36',
               'width' => 45,
               'height' => 45,
-              'onclick' => 'openEditor()',
+              'onclick' => 'openAdd()',
             )) ?>
           </a>
         </span>

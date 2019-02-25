@@ -745,7 +745,7 @@
           ?>
         </div>
         <div id="popup-title"></div>
-        <div id="popup-main" ng-app="sincloApp" ng-controller="ModalController as main"></div>
+        <div id="popup-main"></div>
         <div id="popup-button"></div>
         <div id="popup-warning" style="color: #FF7B7B; text-align:center;"></div>
       </div>

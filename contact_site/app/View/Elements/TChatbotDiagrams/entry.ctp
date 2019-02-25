@@ -45,7 +45,7 @@
   <?= $this->Form->hidden('TChatbotDiagram.activity') ?>
   <div id="tchatbotscenario_actions" class="fotterBtnArea">
     <?=$this->Html->link('戻る','/TChatbotDiagrams/index/page:', ['class'=>'whiteBtn btn-shadow'])?>
-    <a id="submitBtn" href="javascript:void(0)" onclick="exportJSON()" class="greenBtn btn-shadow">保存</a>
+    <a id="submitBtn" href="javascript:void(0)" class="greenBtn btn-shadow">保存</a>
     <?php
     $class = "";
     if ( empty($this->data['TChatbotScenario']['id']) ) {

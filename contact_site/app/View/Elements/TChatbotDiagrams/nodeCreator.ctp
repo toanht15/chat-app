@@ -19,7 +19,7 @@ var actionParam = {};
 
 var portSetting = {
   inPortSize: 31,
-  outPortSize: 30
+  outPortSize: 31
 };
 
 var middleNode = {
