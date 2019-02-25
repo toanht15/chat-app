@@ -584,6 +584,12 @@ function getMessageTypeByUiType(type) {
     case 7:
       result = 46;
       break;
+    case 8:
+      result = 49;
+      break;
+    case 9:
+      result = 52;
+      break;
     default:
       result = 22;
   }

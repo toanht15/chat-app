@@ -524,8 +524,9 @@
             0.5);
         target.settings.customDesign.buttonUIBorderColor          = '#E3E3E3';
         target.settings.customDesign.checkboxBackgroundColor      = '#FFFFFF';
-        target.settings.customDesign.checkboxActiveColor          = $scope.widget.settings.main_color;
-        target.settings.customDesign.checkboxBorderColor          = $scope.widget.settings.main_color;
+        target.settings.customDesign.checkboxActiveColor          = '#FFFFFF';
+        target.settings.customDesign.checkboxBorderColor          = $scope.widget.settings.main_color;;
+        target.settings.customDesign.checkboxCheckmarkColor       = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBackgroundColor         = '#FFFFFF';
         target.settings.customDesign.radioActiveColor             = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBorderColor             = $scope.widget.settings.main_color;
@@ -670,7 +671,10 @@
             defaultColor = '#FFFFFF';
             break;
           case 'checkboxActiveColor':
-            defaultColor = $scope.widget.settings.main_color;
+            defaultColor = '#FFFFFF';
+            break;
+          case 'checkboxCheckmarkColor':
+            defaultColor = $scope.widget.settings.main_color;;
             break;
           case 'checkboxBorderColor':
             defaultColor = $scope.widget.settings.main_color;
@@ -3908,7 +3912,7 @@
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
             $scope.addVisitorHearingMessage(message);
           } else if ((!item && skipped) ||
-              (item && ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '7' || item !== message))) {
+              (item && ($scope.setActionList[actionStep].hearings[hearingIndex].uiType === '7' || $scope.setActionList[actionStep].hearings[hearingIndex].uiType === '8' || $scope.setActionList[actionStep].hearings[hearingIndex].uiType === '9' || item !== message))) {
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').find('.nextBtn').hide();
             $('#action' + actionStep + '_hearing' + hearingIndex + '_question').parent().nextAll('div').remove();
             $scope.reSelectionHearing(message, actionStep, hearingIndex);

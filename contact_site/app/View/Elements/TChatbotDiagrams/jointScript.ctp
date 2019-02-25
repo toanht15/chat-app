@@ -121,8 +121,7 @@
           modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
           initPopupCloseEvent();
           btnViewHandler.switcher();
-          $(document).trigger('diagram.openModal');
-          $(document).trigger('diagram.clicker');
+          $(document).trigger('diagram.openModal', [modalData.content]);
         }
         wasMoved = false;
       });
@@ -131,12 +130,16 @@
       dragReferencePosition = {x: x * paper.scale().sx, y: y * paper.scale().sy};
     });
 
-    paper.on('blank:pointerup', function() {
-      dragReferencePosition = null;
+    $(document).on('keyup', 'textarea', function(evt){
+      $('.preview_moc').text(this.value);
     });
 
-    paper.on('mousewheel', function() {
-      console.log('あいうえお');
+    $(document).on('keydown', 'textarea', function(evt){
+      $('.preview_moc').text(this.value);
+    });
+
+    paper.on('blank:pointerup', function() {
+      dragReferencePosition = null;
     });
 
     paper.on('link:connect', function(linkView, e) {
@@ -514,8 +517,9 @@
       '<label for=\'node_name\'>ノード名</label>' +
       '<input id=\'my_node_name\' name=\'node_name\' type=\'text\' placeholder=\'ノード名を入力して下さい\'/>' +
       '</div>' +
+      '<div id=\'text_modal_body\'>' +
       '<p>発言内容</p>' +
-      '<div id=\'text_modal_body\' ng-app="sincloApp" ng-controller="ModalController" >' +
+      '<div id="text_modal_contents" >' +
       '<div class=\'text_modal_setting\'>' +
       '<textarea></textarea>' +
       '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
@@ -523,7 +527,9 @@
       '</div>' +
       '</div>' +
       '</div>' +
+      '</div>' +
       '<div id=\'text_modal_preview\'>' +
+      '<p class="preview_moc"></p>' +
       '</div>' +
       '</div>');
     html.find('input[type=text]').val(nodeData.nodeName);

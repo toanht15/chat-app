@@ -1386,6 +1386,10 @@
             case 44:
             case 47:
             case 48:
+            case 50:
+            case 51:
+            case 53:
+            case 54:
               // ラジオボタン、プルダウン、カレンダーの回答・再回答に対してはcancelableは付与しない
               cn = 'sinclo_se';
               isHearingAnswer = true;
@@ -1604,6 +1608,15 @@
             var carousel = JSON.parse(chat.message);
             this.chatApi.addCarousel('', carousel.message,
                 carousel.settings);
+            // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
+            if (sinclo.scenarioApi._hearing.disableRestoreMessage(
+                chat.chatId)) {
+              sinclo.scenarioApi._hearing._disableAllHearingMessageInput();
+            }
+          } else if (Number(chat.messageType) === 49) {
+            var buttonUI = JSON.parse(chat.message);
+            this.chatApi.addButtonUI('hearing_msg sinclo_re', buttonUI.message,
+                buttonUI.settings);
             // シナリオ実行中かつ該当IDが存在する場合以外はdisabledをつける
             if (sinclo.scenarioApi._hearing.disableRestoreMessage(
                 chat.chatId)) {
@@ -1907,6 +1920,10 @@
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.button
             || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.customer.buttonUI
+            || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.customer.checkbox
+            || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputRadio
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputPulldown
@@ -1914,6 +1931,10 @@
             sinclo.chatApi.messageType.scenario.customer.reInputCarousel
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputCalendar
+            || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.customer.reInputButtonUI
+            || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.customer.reInputCheckbox
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.customer.reInputButton) {
           cn = 'sinclo_se';
@@ -1953,6 +1974,10 @@
             sinclo.chatApi.messageType.scenario.message.carousel
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.button
+            || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.message.buttonUI
+            || obj.messageType ===
+            sinclo.chatApi.messageType.scenario.message.checkbox
             || obj.messageType ===
             sinclo.chatApi.messageType.scenario.message.selection
             || obj.messageType ===
@@ -2383,6 +2408,10 @@
           sinclo.chatApi.messageType.scenario.message.calendar
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.button
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.buttonUI
+          || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.checkbox
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.selection
           || obj.messageType ===
@@ -3043,6 +3072,10 @@
             reInputCarousel: 44,
             button: 47,
             reInputButton: 48,
+            buttonUI: 50,
+            reInputButtonUI: 51,
+            checkbox: 53,
+            reInputCheckbox: 54,
             skipHearing: 90
           },
           message: {
@@ -3054,7 +3087,9 @@
             pulldown: 41,
             calendar: 42,
             carousel: 45,
-            button: 46
+            button: 46,
+            buttonUI: 49,
+            checkbox: 52
           }
         },
         cogmo: {
@@ -4477,6 +4512,27 @@
         li.className = cs;
         li.innerHTML = messageHtml + buttonsHtml;
       },
+      addButtonUI: function(cs, message, settings, storedValue) {
+        common.chatBotTypingTimerClear();
+        common.chatBotTypingRemove();
+        var chatList = document.getElementsByTagName('sinclo-chat')[0];
+        var div = document.createElement('div');
+        var li = document.createElement('li');
+        div = sinclo.chatApi._editDivForIconSetting(div, true);
+        div.classList.add('sinclo-scenario-msg');
+        div.appendChild(li);
+        chatList.appendChild(div);
+
+        var messageHtml = sinclo.chatApi.createMessageHtml(message);
+        var buttonUIHtml = sinclo.chatApi.createButtonUIHtml(settings,
+            chatList.children.length, storedValue);
+        div.style.textAlign = 'left';
+        cs += ' effect_left';
+        cs += ' hearing_msg';
+
+        li.className = cs;
+        li.innerHTML = messageHtml + buttonUIHtml;
+      },
       createCalendarHtml: function(settings, index, storedValue) {
         var html = '';
         var storedValueIsFound = false;
@@ -4760,6 +4816,30 @@
 
         return html;
       },
+      createButtonUIHtml: function(settings, index, storedValue) {
+        var name = 'sinclo-buttonUI' + index;
+        var style = sinclo.chatApi.createButtonUIStyle(settings, '#' + name);
+        var html = '';
+        var storedValueIsFound = false;
+        html += '<div id="' + name + '">';
+        html += style;
+        settings.options.forEach(function(option, index) {
+          if (storedValue === option) {
+            storedValueIsFound = true;
+            html += '<button onclick="return false;" class="sinclo-button-ui selected">' + option + '</button>';
+          } else {
+            html += '<button onclick="return false;" class="sinclo-button-ui">' + option + '</button>'
+          }
+        });
+        html += '</div>';
+
+        if (storedValueIsFound) {
+          html += '<p class=\'sincloButtonWrap\' onclick=\'sinclo.chatApi.send("' +
+              storedValue + '")\'><span class=\'sincloButton\'>次へ</span></p>';
+        }
+
+        return html;
+      },
       createCarouselHtml: function(settings, index, storedValue) {
         var style = sinclo.chatApi.createCarouselStyle(settings,
             '#carousel-container' + index);
@@ -4808,6 +4888,41 @@
         if (check.smartphone()) {
           style += 'font-size: 16px;';
         }
+
+        return style;
+      },
+      createButtonUIStyle: function(settings, id) {
+        var style = '<style>';
+        style += '#sincloBox ul#chatTalk ' + id + ' button {cursor: pointer; min-height: 35px; margin-bottom: 1px; padding: 10px 15px;}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button {background-color: ' + settings.customDesign.buttonUIBackgroundColor + '}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button {width: 200px;}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button {color: ' + settings.customDesign.buttonUITextColor + '}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button:focus {outline: none}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button:active {background-color: ' + settings.customDesign.buttonUIActiveColor +'}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button:first-of-type {border-top-left-radius: 8px; border-top-right-radius: 8px}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button:last-child {border-bottom-left-radius: 8px; border-bottom-right-radius: 8px}';
+        style += '#sincloBox ul#chatTalk ' + id + ' button.selected {background-color: ' + settings.customDesign.buttonUIActiveColor + '}';
+        if (settings.outButtonUINoneBorder) {
+          style += '#sincloBox ul#chatTalk ' + id + ' button {border: none}';
+        } else {
+          style += '#sincloBox ul#chatTalk ' + id + ' button {border: 1px solid ' + settings.customDesign.buttonUIBorderColor +' }';
+        }
+
+        switch (Number(settings.customDesign.buttonUITextAlign)) {
+          case 1:
+            style += '#sincloBox ul#chatTalk ' + id + ' button {text-align: left}';
+            break;
+          case 2:
+            style += '#sincloBox ul#chatTalk ' + id + ' button {text-align: center}';
+            break;
+          case 3:
+            style += '#sincloBox ul#chatTalk ' + id + ' button {text-align: right}';
+            break;
+          default:
+            style += '#sincloBox ul#chatTalk ' + id + ' button {text-align: center}';
+            break;
+        }
+        style += '</style>';
 
         return style;
       },
@@ -6893,16 +7008,15 @@
             sinclo.chatApi.messageType.scenario.customer.noModBulkHearing
             || type === sinclo.chatApi.messageType.scenario.customer.pulldown
             || type === sinclo.chatApi.messageType.scenario.customer.radio
-            || type ===
-            sinclo.chatApi.messageType.scenario.customer.reInputButton
-            || type ===
-            sinclo.chatApi.messageType.scenario.customer.reInputCalendar
-            || type ===
-            sinclo.chatApi.messageType.scenario.customer.reInputCarousel
-            || type ===
-            sinclo.chatApi.messageType.scenario.customer.reInputPulldown
-            || type ===
-            sinclo.chatApi.messageType.scenario.customer.reInputRadio
+            || type === sinclo.chatApi.messageType.scenario.customer.buttonUI
+            || type === sinclo.chatApi.messageType.scenario.customer.checkbox
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputButtonUI
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputCheckbox
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputButton
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputCalendar
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputCarousel
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputPulldown
+            || type === sinclo.chatApi.messageType.scenario.customer.reInputRadio
             || type === sinclo.chatApi.messageType.scenario.customer.reInputText
             || type === sinclo.chatApi.messageType.scenario.customer.selection
             || type === sinclo.chatApi.messageType.scenario.customer.sendFile
@@ -8816,6 +8930,24 @@
           callback();
         }
       },
+      _showButtonUI: function(params, callback) {
+        console.log(
+            '>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> SHOW BUTTON UI<<<<<<<<<<<<<<<<<<<<<<<<<<<');
+        var self = sinclo.scenarioApi;
+        params.message = self._replaceVariable(params.message);
+        if (!self._isShownMessage(self.get(self._lKey.currentScenarioSeqNum),
+            params.categoryNum)) {
+          sinclo.chatApi.addButtonUI('sinclo_re', params.message,
+              params.settings, params.storedValue);
+          self._handleChatTextArea(params.type);
+          self._saveShownMessage(self.get(self._lKey.currentScenarioSeqNum),
+              params.categoryNum);
+          sinclo.chatApi.scDown();
+          self._putHearingButtonUI(params, callback);
+        } else {
+          callback();
+        }
+      },
       _showFileTypeMessage: function(
           type, resultDataSet, categoryNum, showTextArea, callback) {
         var self = sinclo.scenarioApi;
@@ -8999,6 +9131,34 @@
         }
       },
       _putHearingButtons: function(data, callback) {
+        var buttonData = {
+          message: data.message,
+          settings: data.settings
+        };
+        var self = sinclo.scenarioApi,
+            storeObj = {
+              scenarioId: self.get(self._lKey.scenarioId),
+              type: data.type,
+              uiType: data.uiType,
+              messageType: self.get(self._lKey.scenarioMessageType),
+              sequenceNum: self.get(self._lKey.currentScenarioSeqNum),
+              requireCv: self._bulkHearing.isInMode() ||
+                  (data.type === self._actionType.hearing &&
+                      self._hearing._cvIsEnable()),
+              categoryNum: data.categoryNum,
+              showTextarea: data.showTextArea,
+              message: JSON.stringify(buttonData)
+            };
+        if (self._disallowSaveing()) {
+          self._pushScenarioMessage(storeObj, function(item) {
+            self._saveMessage(item.data);
+            callback();
+          });
+        } else {
+          self._storeMessageToDB([storeObj], callback);
+        }
+      },
+      _putHearingButtonUI: function(data, callback) {
         var buttonData = {
           message: data.message,
           settings: data.settings
@@ -9342,6 +9502,10 @@
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.button
               || obj.messageType ===
+              sinclo.chatApi.messageType.scenario.customer.buttonUI
+              || obj.messageType ===
+              sinclo.chatApi.messageType.scenario.customer.checkbox
+              || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.reInputText
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.reInputRadio
@@ -9353,6 +9517,10 @@
               sinclo.chatApi.messageType.scenario.customer.reInputCarousel
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.reInputButton
+              || obj.messageType ===
+              sinclo.chatApi.messageType.scenario.customer.reInputButtonUI
+              || obj.messageType ===
+              sinclo.chatApi.messageType.scenario.customer.reInputCheckbox
               || obj.messageType ===
               sinclo.chatApi.messageType.scenario.customer.skipHearing);
         },
@@ -9868,6 +10036,22 @@
                     self._getCurrentHearingProcess().variableName);
               }
               self._parent._showCarousel(params, callback);
+              break;
+            case '8': // ボタンUI
+              self._parent.set(self._parent._lKey.sendCustomerMessageType, 50);
+              self._parent.set(self._parent._lKey.scenarioMessageType, 49);
+              var params = {
+                type: '2',
+                uiType: uiType,
+                message: message,
+                settings: settings,
+                categoryNum: self._getCurrentSeq()
+              };
+              if (self._parent._getCurrentScenario().restore) {
+                params.storedValue = self._parent._getSavedVariable(
+                    self._getCurrentHearingProcess().variableName);
+              }
+              self._parent._showButtonUI(params, callback);
               break;
             default:
               self._parent.set(self._parent._lKey.sendCustomerMessageType, 12);
