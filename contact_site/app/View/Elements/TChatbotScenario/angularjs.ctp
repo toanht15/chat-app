@@ -533,7 +533,7 @@
         target.settings.customDesign.checkboxCheckmarkColor       = $scope.widget.settings.main_color;
         target.settings.customDesign.radioBackgroundColor         = '#FFFFFF';
         target.settings.customDesign.radioActiveColor             = $scope.widget.settings.main_color;
-        target.settings.customDesign.radioBorderColor             = $scope.widget.settings.main_color;
+        target.settings.customDesign.radioBorderColor             = '#999';
 
         return target;
       };
@@ -701,7 +701,7 @@
             defaultColor = $scope.widget.settings.main_color;
             break;
           case 'radioBorderColor':
-            defaultColor = $scope.widget.settings.main_color;
+            defaultColor = '#999';
             break;
         }
 
@@ -4026,7 +4026,7 @@
         var hearingIndex = numbers[1];
         self.handleReselectionInput(message, actionStep, hearingIndex);
       });
-
+      // button ui
       $(document).on('click', '#chatTalk .sinclo-button-ui', function() {
         $(this).parents('div').find('.sinclo-button-ui').removeClass('selected');
         $(this).addClass('selected');

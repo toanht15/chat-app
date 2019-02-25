@@ -29,7 +29,7 @@
           </div>
         </li>
         <li class="styleFlexbox">
-          <span class="fb15em indentDown"><label class="require">条件</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="「参照する変数名」に指定した変数の値を設定します。複数の値を設定する場合はスペースで区切ってください。">?</icon></span></span>
+          <span class="fb15em indentDown"><label class="require">条件</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数の値に入力した内容を完全一致で扱うか、部分一致で扱うかを選択します。">?</icon></span></span>
           <label class="pointer" style="flex-grow: 0"><input type="radio" name="action{{setActionId}}_matchValuePattern{{listId}}" ng-model="condition.matchValuePattern" value="1">完全一致</label>
           <label class="pointer" style="margin-left: 40px"><input type="radio" name="action{{setActionId}}_matchValuePattern{{listId}}" ng-model="condition.matchValuePattern" value="2">部分一致</label>
         </li>
