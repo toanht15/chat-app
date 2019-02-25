@@ -726,7 +726,8 @@ router.get("/", function (req, res, next) {
           "activity": activityObj,
           "action_type": isNumeric(common.autoMessageSettings[siteKey][i].action_type),
           "send_mail_flg": isNumeric(common.autoMessageSettings[siteKey][i].send_mail_flg),
-          "scenario_id": isNumeric(common.autoMessageSettings[siteKey][i].t_chatbot_scenario_id)
+          "scenario_id": isNumeric(common.autoMessageSettings[siteKey][i].t_chatbot_scenario_id),
+          "diagram_id": isNumeric(common.autoMessageSettings[siteKey][i].t_chatbot_diagram_id)
         });
       }
       if(common.chatSettings[siteKey]) {

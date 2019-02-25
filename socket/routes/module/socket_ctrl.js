@@ -4755,7 +4755,7 @@ io.sockets.on('connection', function(socket) {
     var result = {};
     pool.query(
       'select activity from t_chatbot_diagrams where m_companies_id = ? and id = ?;',
-      [companyList[obj.siteKey], obj.scenarioId],
+      [companyList[obj.siteKey], obj.diagramId],
       function(err, row) {
         if (err !== null && err !== '') {
           if (ack) {
@@ -4772,7 +4772,7 @@ io.sockets.on('connection', function(socket) {
           ack({id: obj.scenarioId, activity: result});
         } else {
           emit.toMine('resGetChatDiagram',
-              {id: obj.scenarioId, activity: result}, socket);
+              {id: obj.diagramId, activity: result}, socket);
         }
       });
   });
