@@ -75,6 +75,7 @@ class TChatbotDiagramsController extends WidgetSettingController
       }
 
       $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
+      $this->redirect(['action' => 'index']);
     }
   }
 
@@ -157,7 +158,7 @@ class TChatbotDiagramsController extends WidgetSettingController
       }
       if ($ret) {
         $this->TChatbotDiagram->commit();
-        $this->redirect(array('Controller' => $this->name, 'action' => 'index'));
+        $this->redirect(['action' => 'index']);
         $this->renderMessage(C_MESSAGE_TYPE_SUCCESS, Configure::read('message.const.saveSuccessful'));
 
       } else {

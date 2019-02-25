@@ -3341,6 +3341,11 @@
                 return false;
               }
               sinclo.chatApi.disableAllButtonsSlightly();
+              if (sinclo.diagramApi.executor.isProcessing()) {
+                var nextNodeId = $(this).data('nextNid');
+                sinclo.diagramApi.executor.setNext(nextNodeId);
+                sinclo.diagramApi.executor.execute();
+              }
               var self = sinclo.scenarioApi._hearing;
               if (e) e.stopPropagation();
               console.log(
@@ -11649,6 +11654,15 @@
             case 'branch':
               self.branch.doAction();
               break;
+            case 'text':
+              self.speakText.doAction();
+              break;
+            case 'scenario':
+              self.callScenario.doAction();
+              break;
+            case 'jump':
+              self.jumpNode.doAction();
+              break;
           }
         },
         getCurrentNode: function(nodeId) {
@@ -11675,6 +11689,15 @@
             }
           });
           self.storage.set(self.storage._lKey.currentNode, targetNode);
+        },
+        isProcessing: function() {
+          var self = sinclo.diagramApi;
+          var result = false;
+          var value = self.storage.get(self.storage._lKey.processing);
+          if (value !== null && (value === 'true' || value === true)) {
+            result = true;
+          }
+          return result;
         }
       },
       common: {
@@ -11683,9 +11706,9 @@
           self.storage.setBaseObj(self.defaultVal);
           self.storage.set(self.storage._lKey.diagrams, data.cells);
           self.storage.set(self.storage._lKey.diagramId, id);
+          self.common._saveProcessingState(true);
           var beginNode = self.common.getStartNode(data.cells);
           self.executor.setNext(beginNode.attrs.nodeBasicInfo.nextNodeId);
-          self.executor.execute();
         },
         getStartNode: function(obj) {
           var self = sinclo.diagramApi;
@@ -11704,7 +11727,11 @@
               && node.attrs.nodeBasicInfo
               && node.attrs.nodeBasicInfo.nodeType
               && node.attrs.nodeBasicInfo.nodeType === 'start';
-        }
+        },
+        _saveProcessingState: function(isProcessing) {
+          var self = sinclo.diagramApi.storage;
+          self.set(self._lKey.processing, isProcessing);
+        },
       },
       /**
        * 分岐
@@ -11714,18 +11741,19 @@
           var self = sinclo.diagramApi;
           var currentNode = self.storage.get(self.storage._lKey.currentNode);
           var message = currentNode.attrs.actionParam.text;
-          var selections = this.branch.getSelectionMap(currentNode);
-          var labels = this.branch.getLabelMap(currentNode, Object.keys(selections));
+          var selections = self.branch.getSelectionMap(currentNode);
+          var labels = self.branch.getLabelMap(currentNode, Object.keys(selections));
+          self.branch.showMessage(currentNode, message, selections, labels);
         },
         getSelectionMap: function(currentNode) {
           var self = sinclo.diagramApi;
           var itemIds = currentNode.embeds;
           var map = {};
-          var baseData = self.storage._getBaseObj();
+          var baseData = self.storage.getBaseObj();
           for(var i=0; i < itemIds.length; i++) {
-            for(var nodeIndex=0; nodeIndex < baseData.length; nodeIndex++) {
-              if(baseData[nodeIndex]['id'] === itemIds[i] && baseData[nodeIndex]['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode') {
-                map[itemIds[i]] = baseData[nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'];
+            for(var nodeIndex=0; nodeIndex < baseData[self.storage._lKey.diagrams].length; nodeIndex++) {
+              if(baseData[self.storage._lKey.diagrams][nodeIndex]['id'] === itemIds[i] && baseData[self.storage._lKey.diagrams][nodeIndex]['attrs']['nodeBasicInfo']['nodeType'] === 'childPortNode') {
+                map[itemIds[i]] = baseData[self.storage._lKey.diagrams][nodeIndex]['attrs']['nodeBasicInfo']['nextNodeId'];
               }
             }
           }
@@ -11739,9 +11767,30 @@
           }
           return map;
         },
-        showMessage: function(currentNode, message, labels, selectionMap) {
-          html += '<li class="sinclo_re effect-left">';
-          html += '<span class="sinclo-text-line">' + message + '</span>';
+        showMessage: function(currentNode, message, selectionMap, labels) {
+          var self = sinclo.diagramApi;
+          common.chatBotTypingTimerClear();
+          common.chatBotTypingRemove();
+          var cs = 'diagram_msg sinclo_re';
+          var chatList = document.getElementsByTagName('sinclo-chat')[0];
+          var div = document.createElement('div');
+          var li = document.createElement('li');
+          div = sinclo.chatApi._editDivForIconSetting(div, true);
+          div.classList.add('sinclo-diagram-msg');
+          div.appendChild(li);
+          chatList.appendChild(div);
+
+          var messageHtml = sinclo.chatApi.createMessageHtml(message);
+          var buttonHtml = self.branch.getHtml(currentNode, selectionMap, labels);
+          div.style.textAlign = 'left';
+          cs += ' effect_left';
+          cs += ' diagram_msg';
+
+          li.className = cs;
+          li.innerHTML = messageHtml + buttonHtml;
+        },
+        getHtml: function(currentNode, selectionMap, labels) {
+          var html = '';
           Object.keys(labels).forEach(function(nodeId, idx, arr) {
             var timestamp = (new Date()).getTime();
             switch(Number(currentNode.attrs.actionParam.btnType)) {
@@ -11749,7 +11798,7 @@
                 // ラジオボタン
                 html += '<sinclo-radio>';
                 html += '<input type="radio" name="sinclo-radio-' + timestamp + '" id="sinclo-radio-' + timestamp + '" class="sinclo-chat-radio" value="' + labels[nodeId] + '" data-next-nid="' + selectionMap[nodeId] + '">';
-                html += '<label for="sinclo-radio-' + timestamp + '">' + message + '</label>';
+                html += '<label for="sinclo-radio-' + timestamp + '">' + labels[nodeId] + '</label>';
                 html += '</sinclo-radio>';
                 break;
               case 2:
@@ -11762,22 +11811,66 @@
       },
       speakText: {
         doAction: function() {
+          var self = sinclo.diagramApi;
+          var currentNode = self.storage.get(self.storage._lKey.currentNode);
+          var messages = currentNode.attrs.actionParam.text;
+          self.speakText.showMessages(currentNode, messages).then(function(){
+            var nextNodeId = currentNode.attrs.nodeBasicInfo.nextNodeId;
+            self.executor.setNext(nextNodeId);
+            self.executor.execute();
+          });
+        },
+        showMessages(currentNode, messages) {
+          var defer = $.Deferred();
+          var self = sinclo.diagramApi;
+          common.chatBotTypingTimerClear();
+          common.chatBotTypingRemove();
+          for(var i=0; i < messages.length; i++) {
+            var cs = 'diagram_msg sinclo_re';
+            var chatList = document.getElementsByTagName('sinclo-chat')[0];
+            var div = document.createElement('div');
+            var li = document.createElement('li');
+            div = sinclo.chatApi._editDivForIconSetting(div, true);
+            div.classList.add('sinclo-diagram-msg');
+            div.appendChild(li);
+            chatList.appendChild(div);
 
+            var messageHtml = sinclo.chatApi.createMessageHtml(message);
+            div.style.textAlign = 'left';
+            cs += ' effect_left';
+            cs += ' diagram_msg';
+
+            li.className = cs;
+            setTimeout(function() {
+              li.innerHTML = messageHtml;
+              if(i === messages.length - 1) {
+                defer.resolve();
+              }
+            }, 2000 * i);
+          }
+          return defer.promise();
         }
       },
       callScenario: {
         doAction: function() {
-
+          var self = sinclo.diagramApi;
+          var scenarioId = currentNode.attrs.actionParam.scenarioId;
+          emit('getScenario', {'scenarioId': scenarioId});
+          // 後続のnodeは呼び出しなしのため、チャットツリーは終了する
+          self.common._saveProcessingState(false);
         }
       },
       jumpNode: {
         doAction: function() {
-
+          var self = sinclo.diagramApi;
+          var toNodeId = currentNode.attrs.actionParam.targetId;
+          self.executor.setNext(toNodeId);
+          self.executor.execute();
         }
       },
       jumpLink: {
         doAction: function() {
-
+          // FIXME
         }
       },
       callOperator: {

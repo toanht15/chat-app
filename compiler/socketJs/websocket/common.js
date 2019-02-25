@@ -6987,7 +6987,7 @@ var socket, // socket.io
     socket.on('resGetChatDiagram', function(d) {
       var obj = common.jParse(d);
       sinclo.diagramApi.common.init(obj.id, obj.activity);
-      sinclo.scenarioApi.begin();
+      sinclo.diagramApi.executor.execute();
     }); // socket-on: sendChatResult
 
     // チャット入力状況受信
