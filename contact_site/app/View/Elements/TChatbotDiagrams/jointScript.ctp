@@ -107,9 +107,14 @@
 
 
     var dragReferencePosition = null;
+    var dataForUpdate = $('#TChatbotDiagramActivity').val()
 
-    if ($('#TChatbotDiagramActivity').val() !== null && $('#TChatbotDiagramActivity').val() !== '') {
-      graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
+    if (dataForUpdate !== null && dataForUpdate !== '') {
+      graph.fromJSON(JSON.parse(dataForUpdate));
+      setTimeout(function(){
+        graph.resetCells(dataForUpdate.cells);
+        initNodeEvent(graph.getCells());
+      }, 500);
     }
 
     paper.on('cell:pointerup',
