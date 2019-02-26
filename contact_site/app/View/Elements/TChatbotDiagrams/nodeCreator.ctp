@@ -218,7 +218,7 @@ function startNode() {
         nodeType: 'start',
         nextNode: ''
       }
-    }
+    },
   });
 }
 
@@ -354,7 +354,7 @@ function constantNode(posX, posY) {
         nodeType: nodeType,
         nextNodeId: ""
       }
-    }
+    },
   });
 }
 </script>

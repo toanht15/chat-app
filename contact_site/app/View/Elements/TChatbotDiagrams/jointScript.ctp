@@ -7,6 +7,7 @@
  */
 ?>
 <script>
+
   var nodeFactory = new NodeFactory();
   var wasMoved = false;
   var nodeTypeArray = [
@@ -27,10 +28,6 @@
       $(target).draggable({
         helper: 'clone'
       });
-
-      $(target).on('click', function() {
-        console.log(paper.localToClientPoint());
-      });
     });
 
     var canvas = document.getElementById('canvas');
@@ -43,10 +40,6 @@
     });
 
     graph = new joint.dia.Graph;
-
-    if ($('#TChatbotDiagramActivity').val()) {
-      graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
-    }
 
     var paper = new joint.dia.Paper({
       el: canvas,
@@ -74,6 +67,7 @@
         }
       }),
       validateConnection: function(cellViewS, magnetS, cellViewT, magnetT, end, linkView) {
+
         // in portからは矢印を表示させない
         if (magnetS && magnetS.getAttribute('port-group') === 'in') return false;
         // 同一Elementのout → in portは許容しない
@@ -110,11 +104,15 @@
 
     graph.addCell(startNode());
 
+
+
     var dragReferencePosition = null;
 
     paper.on('cell:pointerup',
       function(cellView, evt, x, y) {
         //init current edit cell to null;
+
+        console.log(cellView.model.getAncestors());
 
         haloCreator(cellView);
         currentEditCell = null;
@@ -179,6 +177,8 @@
         );
       }
     });
+
+
 
     var nodeMaster = function(type, posX, posY) {
       var node = nodeFactory.createNode(type, posX, posY);
@@ -599,12 +599,13 @@
 
   function addTextBox(e) {
     var cloneElm = $(e.parentNode).clone();
-    //テキストエリアが追加されたら、previewのそういう処理を走らせる
+    var index = 0;
+    //テキストエリアが追加されたら、previewに新しく要素を追加する
     if(cloneElm.find('textarea') != null) {
+      index = $('.text_modal_setting').index($(e.parentNode));
       cloneElm.children('textarea').val('');
-      previewHandler.typeText.addBalloon();
+      previewHandler.typeText.addBalloon(index);
     }
-    cloneElm.children('textarea').val('');
     cloneElm.children('input[type=text]').val('');
     $(e.parentNode).after(cloneElm);
     btnViewHandler.switcher();
@@ -839,11 +840,12 @@
 
   var previewHandler = {
     typeText: {
-      addBalloon: function(){
-        var newBalloon = $('#text_modal_preview > div.chatTalk').clone();
+      addBalloon: function(index){
+        var newBalloon = $('#text_modal_preview > div.chatTalk:first-child').clone();
         console.log(newBalloon.find('span').text());
         newBalloon.find('span').text("");
-        $('#text_modal_preview').append(newBalloon);
+        console.log($($('#text_modal_preview')[index]));
+        $($('#text_modal_preview')[index]).after(newBalloon);
       },
       removeBalloon: function(){
 

@@ -7281,6 +7281,7 @@ ul.naviBtn {
     }
     #canvas {
       -ms-grid-column: 2;
+      overflow: hidden;
       z-index: 1;
       svg {
         cursor: move;
