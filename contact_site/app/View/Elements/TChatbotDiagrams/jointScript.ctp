@@ -52,12 +52,12 @@
         attrs: {
           '.connection': {
             stroke: '#AAAAAA',
-            'stroke-width': 4
+            'stroke-width': 3
           },
           '.marker-target': {
             stroke: '#AAAAAA',
             fill: '#AAAAAA',
-            d: 'M 14 0 L 0 7 L 14 14 z'
+            d: 'M 15 0 L 0 6 L 0 9 L 15 15 z'
           },
           '.link-tools .link-tool .tool-remove circle': {
             'class': 'diagram'
