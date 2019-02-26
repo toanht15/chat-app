@@ -51,12 +51,12 @@
       defaultLink: new joint.dia.Link({
         attrs: {
           '.connection': {
-            stroke: '#0984e3',
+            stroke: '#AAAAAA',
             'stroke-width': 4
           },
           '.marker-target': {
-            stroke: '#0984e3',
-            fill: '#0984e3',
+            stroke: '#AAAAAA',
+            fill: '#AAAAAA',
             d: 'M 14 0 L 0 7 L 14 14 z'
           },
           '.link-tools .link-tool .tool-remove circle': {
