@@ -23,22 +23,22 @@ var portSetting = {
 };
 
 var middleNode = {
-  width: 180,
+  width: 200,
   height: 70,
   inPortX: -30,
   inPortY: 20,
-  outPortX: 170,
+  outPortX: 190,
   outPortY: 20,
   labelX: .3,
   labelY: .1,
   nodeType: "text"
 };
 var smallNode = {
-  width: 180,
+  width: 140,
   height: 50,
   inPortX: -30,
   inPortY: 10,
-  outPortX: 170,
+  outPortX: 130,
   outPortY: 10,
   labelX: .5,
   labelY: .4,
@@ -148,7 +148,7 @@ function NodeFactory() {
 function contentViewNode(posX, posY) {
   return new joint.shapes.basic.Rect({
     position: {x :posX + 5, y: posY + 25},
-    size: { width: 170, height: 40 },
+    size: { width: 190, height: 40 },
     attrs: {
       rect: {
         fill: "#FFFFFF",
