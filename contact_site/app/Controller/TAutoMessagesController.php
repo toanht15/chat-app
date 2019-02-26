@@ -38,7 +38,7 @@ class TAutoMessagesController extends WidgetSettingController
         'TAutoMessage.sort' => 'asc',
         'TAutoMessage.id' => 'asc'
       ),
-      'fields' => array('TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name'),
+      'fields' => array('TAutoMessage.*', 'TChatbotScenario.id', 'TChatbotScenario.name', 'TChatbotDiagram.name'),
       'conditions' => array('TAutoMessage.del_flg != ' => 1),
       'joins' => array(
         array(
