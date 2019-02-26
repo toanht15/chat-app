@@ -3895,7 +3895,8 @@
             removeClass('underlineText');
         $('#sincloBox [id^="action' + actionIndex + '"][id*="calendar"]').addClass('disabledArea');
         $('#sincloBox [id^="action' + actionIndex + '"][id*="carousel"]').addClass('disabledArea');
-        $('#sincloBox [id^="action' + actionIndex + '"][id*="sinclo-buttonUI"]').addClass('disabledArea');
+        $('#sincloBox [id^="action' + actionIndex + '"] .sinclo-button').prop('disabled', true).css('background-color', '#DADADA');
+        $('#sincloBox [id^="action' + actionIndex + '"] .sinclo-button-ui').prop('disabled', true).css('background-color', '#DADADA');
         $('#sincloBox [id^="action' + actionIndex + '"][id*="sinclo-checkbox"]').addClass('disabledArea');
         $('#sincloBox [id^="action' + actionIndex + '"][id$="next"]').hide();
         $scope.$broadcast('disableHearingInputFlg');
