@@ -108,10 +108,6 @@ li {
   }
 }
 
-.disabled {
-  color: #CCCCCC;
-}
-
 table {
   border-collapse: separate;
   border-spacing:0;
@@ -6120,9 +6116,6 @@ ul.naviBtn {
       &.actionValueScenarioLabel {
         background-color: #edbf35;
       }
-      &.actionValueCallAutomessageLabel {
-        background-color: #d251c4;
-      }
     }
 
     #balloons {
@@ -6177,18 +6170,11 @@ ul.naviBtn {
         > li {
           padding: 15px 0;
 
-          &#callAutoMessageSetting {
-            select {
-              height: 23px;
-            }
-            padding-bottom: 30px;
-          }
-
           &:not(.error-message) {
             border-top: 1px solid #B7B7B7;
           }
 
-          &:first-child, &.no-border{
+          &:first-child {
             border-top: none;
           }
 
@@ -7180,6 +7166,120 @@ ul.naviBtn {
   }
 }
 
+/* チャットツリー設定 */
+#t_chatbot_diagrams_idx {
+  .questionBtn {
+    border-radius: 20px;
+    width: 1.3em;
+    height: 1.3em;
+    font-size: 12px!important;
+    line-height: 12px;
+    padding: 0.1em;
+  }
+  #t_chatbot_diagrams_header {
+    display: grid;
+    display: -ms-grid;
+    -ms-grid-columns: 1fr 200px;
+    grid-template-columns: 1fr 200px;
+    border-bottom: 1px solid #8B8B8B;
+    #t_chatbot_diagrams_entry {
+      ul {
+        display: flex;
+        justify-content: start;
+        align-items: center;
+        li {
+          display: flex;
+          label{
+            display: flex;
+            align-items: center;
+            span {
+              margin-left: 10px;
+            }
+          }
+          div {
+            margin-left: 20px;
+          }
+        }
+      }
+      ul li:not(:first-child) {
+        margin-left: 50px;
+      }
+    }
+  }
+  #canvas_scale_controller {
+    position: fixed;
+    top: 220px;
+    left: 260px;
+    z-index: 4;
+  }
+  #t_chatbot_diagrams_body {
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 150px 1fr;
+    grid-template-columns: 150px 1fr;
+    height: calc(100vh - 225px);
+    overflow-y: hidden;
+    #diagrams_side_bar {
+      -ms-grid-column: 1;
+      border-right: 1px solid #8B8B8B;
+      padding: 10px;
+      z-index: 4;
+      .form_subtitle {
+        border-bottom: 3px solid #C3D69B;
+        padding-left: 5px;
+      }
+      #node_list {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: calc(100% - 180px);
+        min-height: 555px;
+        >i {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #ffffff;
+          font-size: 25px;
+          background-color: #99cc66;
+          width: 50px;
+          height: 50px;
+          border-radius: 25%;
+          cursor: pointer;
+        }
+        >p{
+          margin-top:2px;
+        }
+        .branch {
+          background-color: #cc6666;
+        }
+        .text {
+          background-color: #cc9966;
+        }
+        .scenario {
+          background-color: #cccc66;
+        }
+        .jump {
+          background-color: #99cc66;
+        }
+        .link {
+          background-color: #66cc66;
+        }
+        .operator {
+          background-color: #66cc99;
+        }
+        .cv {
+          background-color: #66cccc;
+        }
+      }
+    }
+    #canvas {
+      -ms-grid-column: 2;
+      z-index: 1;
+    }
+  }
+}
+
 /* チャットボットシナリオ設定 */
 #tchatbotscenario_idx {
   &.entry-wrapper {
@@ -7255,10 +7355,10 @@ ul.naviBtn {
           text-align: center;
 
           &.typeAutoMessage {
-            background-color: #9BBBD6;
+            background-color: #B2D251;
           }
           &.typeScenario {
-            background-color: #9BD6D1;
+            background-color: #EDBF35;
           }
 
           & + span {
@@ -7813,6 +7913,58 @@ ul.naviBtn {
 
                       label {
                         flex-basis: 100px;
+                      }
+
+                      .radio-buttons {
+                        display: flex;
+                        align-items: center;
+                        flex-basis: 265px;
+                        label {
+                          margin-top: 0px;
+                          &.text3 {
+
+                          }
+                          &.text4 {
+                            margin-right: 20px;
+                          }
+                        }
+                      }
+
+                      .revert-button {
+                        position: relative;
+                        left: 10px;
+                        padding: 4px;
+                        bottom: 0px;
+                      }
+                    }
+                  }
+
+                  .checkbox-design-custom-area {
+                    input[type="checkbox"], input[type="radio"] {
+                      margin-top: 0px;
+                    }
+
+                    .checkbox-custom-items {
+                      margin-left: 16px;
+                      height: 35px;
+                      display: flex;
+                      width: 32em;
+                      padding: 2px 0;
+                      align-items: center;
+
+                      input[type="text"] {
+                        width: 120px;
+                        height: 26px;
+                        font-size: 12px;
+                        padding-left: 4px;
+                        position: relative;
+                        border: none !important;
+                        border-bottom: 1px solid #909090 !important;
+                        border-radius: 0 !important;
+                      }
+
+                      label {
+                        flex-basis: 150px;
                       }
 
                       .radio-buttons {
@@ -8673,7 +8825,7 @@ ul.naviBtn {
                   grid-column: 4;
                   -ms-grid-column: 4;
                 }
-                input[type="text"].make-box{
+                input[type="text"].make-box, select.make-box{
                   border-radius: 4px;
                   border: 1px solid #909090;
                   width: auto;
@@ -8948,7 +9100,6 @@ ul.naviBtn {
                   width: 40px;
                   height: 40px;
                   img {
-                    max-height: 40px;
                     max-width: 40px;
                   }
                 }
@@ -11480,6 +11631,7 @@ div.balloon {
       grid-template-columns: minmax(max-content, max-content) 1fr;
       &.no_icon {
         grid-template-columns: 1fr;
+        -ms-grid-columns: 1fr;
       }
       .iconDiv {
         display: flex;
@@ -11667,7 +11819,6 @@ div.balloon {
             width: 40px;
             height: 40px;
             img {
-              max-height: 40px;
               max-width: 40px;
             }
           }

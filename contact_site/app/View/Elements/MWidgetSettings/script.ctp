@@ -1630,6 +1630,9 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
         }
         $scope.changeFlg = true;
       });
+      if(Number($scope.chat_init_show_textarea) === 2) {
+        $scope.resizeChatArea();
+      }
       $(window).on('resize', function(e){
         if($scope.showWidgetType === 1) {
           $scope.resizeWidgetHeightByWindowHeight();
@@ -1646,10 +1649,6 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
 
       if(Number($scope.closeButtonSettingToggle) !== 2 || Number($scope.closeButtonModeTypeToggle) !== 1) {
         $scope.showTimeBannerSettingDisable();
-      }
-
-      if(Number($scope.chat_init_show_textarea) === 2) {
-        $scope.resizeChatArea();
       }
     });
 
@@ -1873,10 +1872,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       if ( window.URL && files.length > 0 ) {
         var file = files[files.length-1];
         // jpeg/jpg/png
-        var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+        var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
         if ( !reg.exec(file.type) ) {
             $("#MWidgetSettingUploadImage").val("");
-            $scope.uploadImageError = "画像はpng,jpeg,jpgのいずれかのみ利用可能です"
+            $scope.uploadImageError = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
+          return false;
         }
 
         var url = window.URL.createObjectURL(file);
@@ -1894,11 +1894,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       var files = e.target.files;
       if ( window.URL && files.length > 0 ) {
         var file = files[files.length-1];
-        // jpeg/jpg/png
-        var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+        // jpeg/jpg/png/gif
+        var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
         if ( !reg.exec(file.type) ) {
           $("#MWidgetSettingUploadBotIcon").val("");
-          $scope.uploadImageError = "画像はpng,jpeg,jpgのいずれかのみ利用可能です"
+          $scope.uploadImageError = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
         }
 
         var url = window.URL.createObjectURL(file);
@@ -1916,11 +1916,11 @@ sincloApp.controller('WidgetCtrl', function($scope, $timeout){
       var files = e.target.files;
       if ( window.URL && files.length > 0 ) {
         var file = files[files.length-1];
-        // jpeg/jpg/png
-        var reg = new  RegExp(/image\/(png|jpeg|jpg)/i);
+        // jpeg/jpg/png/gif
+        var reg = new  RegExp(/image\/(png|jpeg|jpg|gif)/i);
         if ( !reg.exec(file.type) ) {
           $("#MWidgetSettingUploadOpIcon").val("");
-          $scope.uploadImageError = "画像はpng,jpeg,jpgのいずれかのみ利用可能です"
+          $scope.uploadImageError = "画像はpng,jpeg,jpg,gifのいずれかのみ利用可能です"
         }
 
         var url = window.URL.createObjectURL(file);

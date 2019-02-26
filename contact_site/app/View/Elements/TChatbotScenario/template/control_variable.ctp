@@ -27,7 +27,7 @@
           ng-model="setItem.calcRules">
         <li class='grid-container-control-variable grid-container-body itemListGroup'
             ng-repeat="(formulaId, item) in setItem.calcRules track by $index">
-          <div class='area-name'><input type="text" ng-model="item.variableName"></div>
+          <div class='area-name'><input type="text" class="variable-suggest" ng-model="item.variableName"></div>
           <div class='area-type'>
             <select name="hearing-input-option" ng-model="item.calcType" ng-change="main.handleControlVariableDetail(item.calcType, formulaId, setActionId)">
               <option value="1">数値</option>
@@ -35,7 +35,7 @@
             </select>
           </div>
           <div class='area-message'>
-            <resize-textarea maxlength="4000" ng-model="item.formula" rows="1"
+            <resize-textarea maxlength="4000" ng-model="item.formula" rows="1" class="variable-suggest"
             data-maxRow="10"></resize-textarea>
             <s ng-if="item.calcType == 1">※ “+“（足す）,“-“（引く）,“*“（掛ける）,“/“（割る）,“()“（カッコ）を利用した四則演算が可能です。</s>
             <s ng-if="item.calcType == 2">※ “&“を用いた文字列の結合や文字列の代入が可能です。</s>

@@ -1050,7 +1050,7 @@ $headerNo = 1;
                   </div>
                   <div id="picChooseDiv">
                     <div class="greenBtn btn-shadow" ng-click="showGallary(<?=WIDGET_GALLERY_TYPE_MAIN ?>)">ギャラリーから選択</div>
-                    <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage', array('accept' => '.png,.jpeg,.jpg')); ?>画像をアップロード</div>
+                    <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadImage', array('accept' => '.png,.jpeg,.jpg,.gif')); ?>画像をアップロード</div>
                     <input type="hidden" name="data[Trimming][info]" ng-model="trimmingInfo" id="TrimmingInfo" />
                   </div>
                 </div>
@@ -1080,7 +1080,7 @@ $headerNo = 1;
                       </div>
                       <div id="iconChooseDiv">
                         <div class="greenBtn btn-shadow" ng-click="showGallary(<?=WIDGET_GALLERY_TYPE_CHATBOT ?>)">ギャラリーから選択</div>
-                        <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadBotIcon', array('accept' => '.png,.jpeg,.jpg')); ?>画像をアップロード</div>
+                        <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadBotIcon', array('accept' => '.png,.jpeg,.jpg,.gif')); ?>画像をアップロード</div>
                         <input type="hidden" name="data[Trimming][botIconInfo]" ng-model="trimmingBotIconInfo" id="TrimmingBotIconInfo" />
                       </div>
                     </div>
@@ -1110,7 +1110,7 @@ $headerNo = 1;
                       </div>
                       <div id="iconChooseDiv">
                         <div class="greenBtn btn-shadow" ng-click="showGallary(<?=WIDGET_GALLERY_TYPE_OPERATOR ?>)">ギャラリーから選択</div>
-                        <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadOpIcon', array('accept' => '.png,.jpeg,.jpg')); ?>画像をアップロード</div>
+                        <div class="greenBtn btn-shadow" id="fileTagWrap"><?php echo $this->Form->file('uploadOpIcon', array('accept' => '.png,.jpeg,.jpg,.gif')); ?>画像をアップロード</div>
                         <input type="hidden" name="data[Trimming][opIconInfo]" ng-model="trimmingOpIconInfo" id="TrimmingOpIconInfo" />
                       </div>
                     </div>

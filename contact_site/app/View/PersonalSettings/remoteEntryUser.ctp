@@ -107,8 +107,8 @@
     if (window.URL && files.length > 0) {
       var file = files[files.length - 1];
 
-      // jpeg/jpg/png
-      var reg = new RegExp(/image\/(png|jpeg|jpg)/i);
+      // jpeg/jpg/png/gif
+      var reg = new RegExp(/image\/(png|jpeg|jpg|gif)/i);
       if (!reg.exec(file.type)) {
         $('#MUserUploadProfileIcon').val('');
         return false;

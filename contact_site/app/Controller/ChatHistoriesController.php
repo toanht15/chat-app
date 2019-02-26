@@ -824,9 +824,15 @@ class ChatHistoriesController extends AppController
             || $val['THistoryChatLog']['message_type'] == 34
             || $val['THistoryChatLog']['message_type'] == 35
             || $val['THistoryChatLog']['message_type'] == 43
-            || $val['THistoryChatLog']['message_type'] == 47) {
+            || $val['THistoryChatLog']['message_type'] == 47
+            || $val['THistoryChatLog']['message_type'] == 50
+            || $val['THistoryChatLog']['message_type'] == 53) {
             $row['transmissionKind'] = '訪問者（ヒアリング回答）';
             $row['transmissionPerson'] = '';
+          }
+          if ($val['THistoryChatLog']['message_type'] == 53) {
+            $json = json_decode($val['THistoryChatLog']['message'], TRUE);
+            $val['THistoryChatLog']['message'] = $json['message'];
           }
           if ($val['THistoryChatLog']['message_type'] == 13) {
             $row['transmissionKind'] = '訪問者（選択肢回答）';
@@ -882,7 +888,9 @@ class ChatHistoriesController extends AppController
             || $val['THistoryChatLog']['message_type'] == 38
             || $val['THistoryChatLog']['message_type'] == 39
             || $val['THistoryChatLog']['message_type'] == 44
-            || $val['THistoryChatLog']['message_type'] == 48) {
+            || $val['THistoryChatLog']['message_type'] == 48
+            || $val['THistoryChatLog']['message_type'] == 51
+            || $val['THistoryChatLog']['message_type'] == 54) {
             $row['transmissionKind']   = 'シナリオメッセージ（ヒアリング再回答）';
             $row['transmissionPerson'] = '';
           }
@@ -898,7 +906,10 @@ class ChatHistoriesController extends AppController
           if ($val['THistoryChatLog']['message_type'] == 41
             || $val['THistoryChatLog']['message_type'] == 42
             || $val['THistoryChatLog']['message_type'] == 45
-            || $val['THistoryChatLog']['message_type'] == 46) {
+            || $val['THistoryChatLog']['message_type'] == 46
+            || $val['THistoryChatLog']['message_type'] == 49
+            || $val['THistoryChatLog']['message_type'] == 52
+            || $val['THistoryChatLog']['message_type'] == 55) {
             $row['transmissionKind'] = 'シナリオメッセージ（ヒアリング）';
             $row['transmissionPerson'] = $this->userInfo['MCompany']['company_name'];
             $json = json_decode($val['THistoryChatLog']['message']);
@@ -912,6 +923,15 @@ class ChatHistoriesController extends AppController
                   break;
                 case 45:
                   $val['THistoryChatLog']['message'] = '（カルーセル質問内容なし）';
+                  break;
+                case 49:
+                  $val['THistoryChatLog']['message'] = '（ボタン質問内容なし）';
+                  break;
+                case 52:
+                  $val['THistoryChatLog']['message'] = '（チェックボックス質問内容なし）';
+                  break;
+                case 55:
+                  $val['THistoryChatLog']['message'] = '（ラジオボタン質問内容なし）';
                   break;
                 default:
                   $val['THistoryChatLog']['message'] = '（質問内容なし）';
