@@ -7209,12 +7209,14 @@ ul.naviBtn {
           label{
             display: flex;
             align-items: center;
+            min-width: 134px;
             span {
               margin-left: 10px;
             }
           }
           div {
             margin-left: 20px;
+            min-width: 201px;
           }
         }
       }
@@ -9287,6 +9289,31 @@ ul.naviBtn {
       font-size: 12px !important;
       line-height: 12px;
       padding: 0.1em;
+    }
+  }
+}
+
+/* チャットツリー設定 */
+#TChatbotDiagram_idx {
+  .callerTypeLabel {
+    display: inline-block;
+    padding: 4px 2px;
+    margin-right: 8px;
+    border-radius: 5px;
+    width: 10em;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+
+    &.typeAutoMessage {
+      background-color: #B2D251;
+    }
+    &.typeScenario {
+      background-color: #EDBF35;
+    }
+
+    & + span {
+      line-height: 2;
     }
   }
 }

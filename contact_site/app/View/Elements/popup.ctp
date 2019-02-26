@@ -758,7 +758,7 @@
 <script>
   console.log(location.href);
   if(location.href.indexOf("TChatbotDiagrams/add") > -1
-  || location.href.indexOf("TchatbotDiagrams/edit") > -1) {
+  || location.href.indexOf("TChatbotDiagrams/edit") > -1) {
     $('#popup').attr("ng-app", "sincloApp")
     .attr("ng-controller", "ModalController");
   }

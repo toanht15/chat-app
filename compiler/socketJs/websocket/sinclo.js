@@ -7063,16 +7063,26 @@
               if (message.action_type == 2) {
                 if (conditionKey === 7 || sinclo.trigger.triggerIds[ret][0] ==
                     message.id) {
-                  sinclo.trigger.setAction(message.id, message.action_type,
-                      message.activity, message.send_mail_flg,
-                      message.scenario_id, message.call_automessage_id, message.diagram_id);
+                  sinclo.trigger.setAction(
+                      message.id,
+                      message.action_type,
+                      message.activity,
+                      message.send_mail_flg,
+                      message.scenario_id,
+                      message.call_automessage_id,
+                      message.diagram_id);
                   sinclo.trigger.processing = false;
                   console.log('scenarioStart');
                 }
               } else {
-                sinclo.trigger.setAction(message.id, message.action_type,
-                    message.activity, message.send_mail_flg,
-                    message.scenario_id, message.call_automessage_id, message.diagram_id);
+                sinclo.trigger.setAction(
+                    message.id,
+                    message.action_type,
+                    message.activity,
+                    message.send_mail_flg,
+                    message.scenario_id,
+                    message.call_automessage_id,
+                    message.diagram_id);
                 sinclo.trigger.processing = false;
               }
             }, ret);

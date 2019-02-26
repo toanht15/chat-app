@@ -44,6 +44,10 @@
 
     graph = new joint.dia.Graph;
 
+    if ($('#TChatbotDiagramActivity').val()) {
+      graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
+    }
+
     var paper = new joint.dia.Paper({
       el: canvas,
       width: canvas.width,
@@ -104,6 +108,8 @@
       }
     });
 
+    graph.addCell(startNode());
+
     var dragReferencePosition = null;
 
     if ($('#TChatbotDiagramActivity').val() !== null && $('#TChatbotDiagramActivity').val() !== '') {
@@ -118,6 +124,9 @@
         currentEditCell = null;
         if (!wasMoved && isNeedModalOpen(cellView)) {
           currentEditCell = setViewElement(cellView);
+          if($('#popup-main > div')[0]) {
+            $('#popup-main')[0].removeChild($('#popup-main > div')[0]);
+          }
           var modalData = processModalCreate(cellView);
           modalOpen.call(window, modalData.content, modalData.id, modalData.name, 'moment');
           initPopupCloseEvent();
@@ -131,12 +140,11 @@
       dragReferencePosition = {x: x * paper.scale().sx, y: y * paper.scale().sy};
     });
 
-    $(document).on('keyup', 'textarea', function(evt){
-      $('.preview_moc').text(this.value);
-    });
-
-    $(document).on('keydown', 'textarea', function(evt){
-      $('.preview_moc').text(this.value);
+    //テキスト発言用のイベントを作成する
+    $(document).on('keyup keydown', '.text_modal_setting > textarea', function(evt){
+      var index = $('.text_modal_setting > textarea').index(this);
+      console.log(index);
+      $($('#text_modal_preview span.detail')[index]).text(this.value);
     });
 
     paper.on('blank:pointerup', function() {
@@ -146,7 +154,12 @@
     paper.on('link:connect', function(linkView, e) {
       try {
         linkView.sourceView.model.attr('nodeBasicInfo/nextNodeId', linkView.targetView.model.attributes.id);
-        console.log("合体しました");
+        // 接続元が分岐　かつ　接続先がテキスト　か　分岐
+        if( linkView.sourceView.model.attr('nodeBasicInfo/nodeType') === "childPortNode"
+        &&( linkView.targetView.model.attr('nodeBasicInfo/nodeType') === "text"
+          ||linkView.targetView.model.attr('nodeBasicInfo/nodeType') === "branch" )) {
+          setDefaultNodeName(linkView.targetView);
+        }
       } catch (e) {
         console.log('unexpected connect');
       }
@@ -178,6 +191,7 @@
     };
 
     var haloCreator = function(cellView) {
+      if(cellView.model.attr("nodeBasicInfo/nodeType") === "start") return;
       if (cellView.model.isLink()) return;
       if (cellView.model.getAncestors()[0]) {
         cellView = paper.findViewByModel(cellView.model.getAncestors()[0]);
@@ -423,7 +437,9 @@
         break;
       case 'scenario':
         target = $('#callTargetScenario option:selected');
-        viewText = target.text();
+        if(target.val() !== ""){
+          viewText = target.text();
+        }
         nodeParam = {
           scenarioId: target.val()
         };
@@ -431,7 +447,9 @@
         break;
       case 'jump':
         target = $('#jumpTargetNode option:selected');
-        viewText = target.text();
+        if(target.val() !== ""){
+          viewText = target.text();
+        }
         nodeParam = {
           targetId: target.val()
         };
@@ -479,7 +497,7 @@
       '<div class=\'branch_modal_setting_header\'>' +
       '<div class=\'flex_row_box\'>' +
       '<p>発言内容</p>' +
-      '<textarea></textarea>' +
+      '<textarea class="node_branch"></textarea>' +
       '</div>' +
       '<div class=\'flex_row_box\'>' +
       '<label for=\'branch_button\'>表示形式</label>' +
@@ -522,7 +540,7 @@
       '<p>発言内容</p>' +
       '<div id="text_modal_contents" >' +
       '<div class=\'text_modal_setting\'>' +
-      '<textarea></textarea>' +
+      '<textarea class="node_text"></textarea>' +
       '<img src=\'/img/add.png?1530001126\' width=\'20\' height=\'20\' class=\'btn-shadow disOffgreenBtn\' onclick=\'addTextBox(this)\'>' +
       '<img src=\'/img/dustbox.png?1530001127\' width=\'20\' height=\'20\' class=\'btn-shadow redBtn\' onclick=\'deleteTextBox(this)\'>' +
       '</div>' +
@@ -530,7 +548,6 @@
       '</div>' +
       '</div>' +
       '<div id=\'text_modal_preview\'>' +
-      '<p class="preview_moc"></p>' +
       '</div>' +
       '</div>');
     html.find('input[type=text]').val(nodeData.nodeName);
@@ -586,6 +603,11 @@
 
   function addTextBox(e) {
     var cloneElm = $(e.parentNode).clone();
+    //テキストエリアが追加されたら、previewのそういう処理を走らせる
+    if(cloneElm.find('textarea') != null) {
+      cloneElm.children('textarea').val('');
+      previewHandler.typeText.addBalloon();
+    }
     cloneElm.children('textarea').val('');
     cloneElm.children('input[type=text]').val('');
     $(e.parentNode).after(cloneElm);
@@ -685,12 +707,13 @@
         } else {
 
         }
+        html.find("#text_modal_preview").append($(".chatTalk").clone());
         return html;
       }
     },
     typeBranch: {
       convertContents: function(originContents) {
-        return nodeEditHandler.textAreaToArray(originContents);
+        return nodeEditHandler.textToArray(originContents);
       },
       createContents: function(html, nodeData) {
         if (nodeData.selection.length > 0) {
@@ -798,7 +821,7 @@
         });
       }
     },
-    textAreaToArray: function(contents) {
+    textToArray: function(contents) {
       var contentArray = [];
       for (var i = 0; i < contents.length; i++) {
         if ($(contents[i]).children('input[type=text]').val()) {
@@ -806,6 +829,29 @@
         }
       }
       return contentArray;
+    },
+    textAreaToArray: function(contents) {
+      var contentArray = [];
+      for (var i = 0; i < contents.length; i++) {
+        if ($(contents[i]).children('textarea').val()) {
+          contentArray.push($(contents[i]).children('textarea').val());
+        }
+      }
+      return contentArray;
+    }
+  };
+
+  var previewHandler = {
+    typeText: {
+      addBalloon: function(){
+        var newBalloon = $('#text_modal_preview > div.chatTalk').clone();
+        console.log(newBalloon.find('span').text());
+        newBalloon.find('span').text("");
+        $('#text_modal_preview').append(newBalloon);
+      },
+      removeBalloon: function(){
+
+      }
     }
   };
 
