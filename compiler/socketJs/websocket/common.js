@@ -5043,6 +5043,8 @@ var socket, // socket.io
       } else if (obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.hearing
           || obj.messageType ===
+          sinclo.chatApi.messageType.scenario.message.radio
+          || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.pulldown
           || obj.messageType ===
           sinclo.chatApi.messageType.scenario.message.calendar
@@ -5066,6 +5068,8 @@ var socket, // socket.io
         if (!sinclo.scenarioApi.isProcessing()) {
           return;
         }
+      } else if (!sinclo.scenarioApi.isProcessing()) {
+        return;
       }
       var widget = window.sincloInfo.widget;
       var sizeList = common.getSizeType(widget.widgetSizeType);
