@@ -74,9 +74,13 @@ class TChatbotDiagramsController extends WidgetSettingController
       // FIXME ソート
       $saveData = array(
         'm_companies_id' => $this->userInfo['MCompany']['id'],
-        'name' => $this->request->data['TChatDiagram']['name'],
+        'name' => $this->request->data['TChatbotDiagram']['name'],
         'activity' => $this->request->data['TChatbotDiagram']['activity']
       );
+
+      if(!empty($this->request->data['TChatbotDiagram']['id'])) {
+        $saveData['id'] = $this->request->data['TChatbotDiagram']['id'];
+      }
 
       try {
         $this->TChatbotDiagram->save($saveData);
