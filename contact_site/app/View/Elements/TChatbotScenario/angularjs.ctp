@@ -147,6 +147,10 @@
       var scenarioId = document.getElementById('TChatbotScenarioId').value || 'tmp';
       $scope.storageKey = 'scenario_' + scenarioId;
 
+      $scope.initActionType = function(num) {
+        return num ? Number(num) : 1;
+      };
+
       $scope.chatbotIconIsFontIcon = function(target) {
         return target.match(/^fa/) !== null;
       };
