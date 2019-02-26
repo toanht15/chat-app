@@ -27,7 +27,7 @@ var middleNode = {
   height: 70,
   inPortX: -30,
   inPortY: 20,
-  outPortX: 180,
+  outPortX: 170,
   outPortY: 20,
   labelX: .3,
   labelY: .1,
@@ -38,7 +38,7 @@ var smallNode = {
   height: 50,
   inPortX: -30,
   inPortY: 10,
-  outPortX: 180,
+  outPortX: 170,
   outPortY: 10,
   labelX: .5,
   labelY: .4,
@@ -152,7 +152,9 @@ function contentViewNode(posX, posY) {
     attrs: {
       rect: {
         fill: "#FFFFFF",
-        stroke: false
+        stroke: false,
+        rx: 3,
+        ry: 3
       },
       text: {
         text: "",
@@ -177,8 +179,10 @@ function startNode() {
             '.port-body': {
               fill: "#F27D82",
               height: portSetting.outPortSize,
-              width: portSetting.outPortSize,
-              stroke: false
+              width: portSetting.outPortSize + 10,
+              stroke: false,
+              rx: 5,
+              ry: 5
             },
             '.port-label': {
               'font-size': 0
@@ -191,6 +195,7 @@ function startNode() {
               y: smallNode.outPortY
             }
           },
+          z: 0,
           markup: '<rect class="port-body"/>'
         }
       }
@@ -200,19 +205,14 @@ function startNode() {
         text: "START",
         'ref-width': '70%',
         'font-size': '12px',
+        'font-weight': 'bold',
         fill: '#FFF'
       },
       rect: {
         fill: '#EA2027',
-        stroke: false
-      },
-      button: {
-        cursor: 'pointer',
-        ref: 'buttonLabel',
-        refWidth: '150%',
-        refHeight: '150%',
-        refX: '-25%',
-        refY: '-25%'
+        stroke: false,
+        rx: 5,
+        ry: 5
       },
       nodeBasicInfo: {
         nodeType: 'start',
@@ -235,8 +235,10 @@ function constantNodeOnlyInPort(posX, posY) {
               fill: inColor,
               magnet: 'passive',
               height: portSetting.inPortSize,
-              width: portSetting.inPortSize,
-              stroke: false
+              width: portSetting.inPortSize + 10,
+              stroke: false,
+              rx: 5,
+              ry: 5
             },
             '.port-label': {
               'font-size': 0
@@ -249,6 +251,7 @@ function constantNodeOnlyInPort(posX, posY) {
               y: nodeSize.inPortY,
             }
           },
+          z: 0,
           markup: '<rect class="port-body"/>'
         }
       }
@@ -258,16 +261,15 @@ function constantNodeOnlyInPort(posX, posY) {
         text: labelText,
         'text-anchor': 'middle',
         'font-size': "12px",
-        fill: '#fff'
+        'font-weight': 'bold',
+        fill: '#fff',
+        y: 7
       },
-      rect: {fill: bgColor, stroke: false},
-      button: {
-        cursor: 'pointer',
-        ref: 'buttonLabel',
-        refWidth: '150%',
-        refHeight: '150%',
-        refX: '-25%',
-        refY: '-25%'
+      rect: {
+        fill: bgColor,
+        stroke: false,
+        rx: 5,
+        ry: 5
       },
       nodeBasicInfo: {
         nodeType: nodeType
@@ -291,8 +293,10 @@ function constantNode(posX, posY) {
               fill: inColor,
               magnet: 'passive',
               height: portSetting.inPortSize,
-              width: portSetting.inPortSize,
-              stroke: false
+              width: portSetting.inPortSize + 10,
+              stroke: false,
+              rx: 5,
+              ry: 5
             },
             '.port-label': {
               'font-size': 0
@@ -305,6 +309,7 @@ function constantNode(posX, posY) {
               y: nodeSize.inPortY,
             }
           },
+          z: 0,
           markup: '<rect class="port-body"/>'
         },
         'out': {
@@ -312,8 +317,10 @@ function constantNode(posX, posY) {
             '.port-body': {
               fill: outColor,
               height: portSetting.outPortSize,
-              width: portSetting.outPortSize,
-              stroke: false
+              width: portSetting.outPortSize + 10,
+              stroke: false,
+              rx: 5,
+              ry: 5
             },
             '.port-label': {
               'font-size': 0
@@ -326,6 +333,7 @@ function constantNode(posX, posY) {
               y: nodeSize.outPortY,
             }
           },
+          z: 0,
           markup: '<rect class="port-body"/>'
         }
       }
@@ -335,19 +343,15 @@ function constantNode(posX, posY) {
         text: labelText,
         'text-anchor': 'middle',
         'font-size': "12px",
+        'font-weight': 'bold',
         fill: '#fff',
+        y: 7
       },
       rect: {
         fill: bgColor,
         stroke: false,
-      },
-      button: {
-        cursor: 'pointer',
-        ref: 'buttonLabel',
-        refWidth: '150%',
-        refHeight:  '150%',
-        refX: '-25%',
-        refY: '-25%'
+        rx: 5,
+        ry: 5
       },
       actionParam: actionParam,
       nodeBasicInfo: {
