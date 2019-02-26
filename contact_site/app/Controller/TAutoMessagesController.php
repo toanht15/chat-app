@@ -25,7 +25,8 @@ class TAutoMessagesController extends AppController
     'MMailTransmissionSetting',
     'MMailTemplate',
     'MWidgetSetting',
-    'TChatbotScenario'
+    'TChatbotScenario',
+    'TChatbotDiagram'
   );
   public $components = array('AutoMessageExcelExport', 'NodeSettingsReload', 'AutoMessageExcelImport');
   public $helpers = array('AutoMessage');
@@ -45,6 +46,14 @@ class TAutoMessagesController extends AppController
           'alias' => 'TChatbotScenario',
           'conditions' => array(
             'TAutoMessage.t_chatbot_scenario_id = TChatbotScenario.id'
+          )
+        ),
+        array(
+          'type' => 'LEFT',
+          'table' => 't_chatbot_diagrams',
+          'alias' => 'TChatbotDiagram',
+          'conditions' => array(
+            'TAutoMessage.t_chatbot_diagram_id = TChatbotDiagram.id'
           )
         )
       ),
@@ -261,6 +270,21 @@ class TAutoMessagesController extends AppController
     ]);
     $this->request->data['chatbotScenario'] = $chatbotScenario;
 
+    // チャットツリー設定の一覧を取得する
+    $chatbotDiagram = $this->TChatbotDiagram->find('list', array(
+      'fields' => array('id', 'name'),
+      'order' => array(
+        'TChatbotDiagram.sort' => 'asc',
+        'TChatbotDiagram.id' => 'asc'
+      ),
+      'conditions' => array(
+        'TChatbotDiagram.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'TChatbotDiagram.del_flg != ' => 1
+      )
+    ));
+
+    $this->request->data['chatbotDiagram'] = $chatbotDiagram;
+
     // オートメッセージ一覧を取得する
     $otherAllAutoMessages = $this->TAutoMessage->find('all', array(
       'order' => array(
@@ -370,6 +394,21 @@ class TAutoMessagesController extends AppController
       ]
     ]);
     $this->request->data['chatbotScenario'] = $chatbotScenario;
+
+    // チャットツリー設定の一覧を取得する
+    $chatbotDiagram = $this->TChatbotDiagram->find('list', array(
+      'fields' => array('id', 'name'),
+      'order' => array(
+        'TChatbotDiagram.sort' => 'asc',
+        'TChatbotDiagram.id' => 'asc'
+      ),
+      'conditions' => array(
+        'TChatbotDiagram.m_companies_id' => $this->userInfo['MCompany']['id'],
+        'TChatbotDiagram.del_flg != ' => 1
+      )
+    ));
+
+    $this->request->data['chatbotDiagram'] = $chatbotDiagram;
 
     // オートメッセージ一覧を取得する
     $otherAllAutoMessages = $this->TAutoMessage->find('all', array(
