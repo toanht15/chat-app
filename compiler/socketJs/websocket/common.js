@@ -6983,6 +6983,13 @@ var socket, // socket.io
       sinclo.scenarioApi.begin();
     }); // socket-on: sendChatResult
 
+    // 新着チャット
+    socket.on('resGetChatDiagram', function(d) {
+      var obj = common.jParse(d);
+      sinclo.diagramApi.common.init(obj.id, obj.activity);
+      sinclo.scenarioApi.begin();
+    }); // socket-on: sendChatResult
+
     // チャット入力状況受信
     socket.on('receiveTypeCond', function(d) {
       sinclo.chatApi.createTypingMessage(d);

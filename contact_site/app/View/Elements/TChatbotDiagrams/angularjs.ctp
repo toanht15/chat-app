@@ -19,7 +19,7 @@
       // 保存ボタン
       $('#submitBtn').on('click', function(e) {
         // データをJSONにして送信
-        $('#TChatbotDiagramsActivity').val(exportJSON());
+        $('#TChatbotDiagramActivity').val(exportJSON());
         $('#TChatbotDiagramsEntryForm').submit();
       });
       $scope.widget = SimulatorService;

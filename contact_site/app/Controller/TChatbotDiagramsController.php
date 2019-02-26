@@ -58,10 +58,11 @@ class TChatbotDiagramsController extends WidgetSettingController
     if ($this->request->is('post')) {
       $transaction = $this->TransactionManager->begin();
 
+      // FIXME ソート
       $saveData = array(
         'm_companies_id' => $this->userInfo['MCompany']['id'],
-        'name' => $this->request->data['TChatbotDiagrams']['name'],
-        'activity' => $this->request->data['TChatbotDiagrams']['activity']
+        'name' => $this->request->data['TChatDiagram']['name'],
+        'activity' => $this->request->data['TChatbotDiagram']['activity']
       );
 
       try {
