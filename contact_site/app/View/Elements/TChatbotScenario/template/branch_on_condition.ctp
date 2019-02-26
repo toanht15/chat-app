@@ -1,5 +1,5 @@
 <?php /* 条件分岐 */ ?>
-<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>" class="set_action_item_body ionSettingView(setActiaction_branch_on_condition" ng-init="main.controllBranchOnConditonId)">
+<div ng-if="setItem.actionType == <?= C_SCENARIO_ACTION_BRANCH_ON_CONDITION ?>" class="set_action_item_body action_branch_on_condition" ng-init="main.controllBranchOnConditionSettingView(setActionId)">
   <ul>
     <li class="styleFlexbox">
       <span class="fb15em"><label class="require">参照する変数名</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="条件の判定に利用する変数名を設定します。<br>（変数名を{{showExpression('変数名')}}と{で括る必要はありません）">?</icon></span></span>
@@ -29,7 +29,7 @@
           </div>
         </li>
         <li class="styleFlexbox">
-          <span class="fb15em indentDown"><label class="require">条件</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="「参照する変数名」に指定した変数の値を設定します。複数の値を設定する場合はスペースで区切ってください。">?</icon></span></span>
+          <span class="fb15em indentDown"><label class="require">条件</label><span class="questionBalloon"><icon class="questionBtn" data-tooltip="変数の値に入力した内容を完全一致で扱うか、部分一致で扱うかを選択します。">?</icon></span></span>
           <label class="pointer" style="flex-grow: 0"><input type="radio" name="action{{setActionId}}_matchValuePattern{{listId}}" ng-model="condition.matchValuePattern" value="1">完全一致</label>
           <label class="pointer" style="margin-left: 40px"><input type="radio" name="action{{setActionId}}_matchValuePattern{{listId}}" ng-model="condition.matchValuePattern" value="2">部分一致</label>
         </li>

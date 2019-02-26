@@ -433,6 +433,67 @@
                   return popupEvent.close();
               };
               break;
+        case 'p_const_diagrams':
+          var saveBtn = _button("保存");
+          saveBtn.onclick = function () {
+            return popupEvent.closePopup(1);
+          };
+          var closeBtn = _button("閉じる");
+          closeBtn.onclick = function () {
+            return popupEvent.closeNoPopup();
+          };
+
+          var deleteBtn = _button("削除");
+          deleteBtn = _changeBtnColor(deleteBtn, "redBtn");
+          deleteBtn.onclick = function () {
+            return popupEvent.closePopup(2);
+          };
+
+          break;
+        case 'p_close_diagrams':
+          var closeBtn = _button("閉じる");
+          closeBtn.onclick = function () {
+            return popupEvent.closeNoPopup();
+          };
+
+          var deleteBtn = _button("削除");
+          deleteBtn = _changeBtnColor(deleteBtn, "redBtn");
+          deleteBtn.onclick = function () {
+            return popupEvent.closePopup(2);
+          };
+          break;
+        case 'p_diagrams_branch':
+          var saveBtn = _button("保存");
+          saveBtn.onclick = function () {
+            return popupEvent.closePopup(1);
+          };
+          var closeBtn = _button("閉じる");
+          closeBtn.onclick = function () {
+            return popupEvent.closeNoPopup();
+          };
+
+          var deleteBtn = _button("削除");
+          deleteBtn = _changeBtnColor(deleteBtn, "redBtn");
+          deleteBtn.onclick = function () {
+            return popupEvent.closePopup(2);
+          };
+          break;
+        case 'p_diagrams_text':
+          var saveBtn = _button("保存");
+          saveBtn.onclick = function () {
+            return popupEvent.closePopup(1);
+          };
+          var closeBtn = _button("閉じる");
+          closeBtn.onclick = function () {
+            return popupEvent.closeNoPopup();
+          };
+
+          var deleteBtn = _button("削除");
+          deleteBtn = _changeBtnColor(deleteBtn, "redBtn");
+          deleteBtn.onclick = function () {
+            return popupEvent.closePopup(2);
+          };
+          break;
         default:
           var closeBtn = _button("閉じる");
           closeBtn.onclick = function () {
@@ -462,6 +523,12 @@
         a.textContent = text;
         area.appendChild(a);
         return a;
+      }
+
+      function _changeBtnColor(btn, className) {
+        $(btn).removeClass('greenBtn');
+        btn.classList.add(className);
+        return btn;
       }
     },
     _popupCreate: function () {
