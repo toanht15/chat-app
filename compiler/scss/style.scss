@@ -108,6 +108,10 @@ li {
   }
 }
 
+.disabled {
+  color: #CCCCCC;
+}
+
 table {
   border-collapse: separate;
   border-spacing:0;
@@ -6116,6 +6120,9 @@ ul.naviBtn {
       &.actionValueScenarioLabel {
         background-color: #edbf35;
       }
+      &.actionValueCallAutomessageLabel {
+        background-color: #d251c4;
+      }
     }
 
     #balloons {
@@ -6170,11 +6177,18 @@ ul.naviBtn {
         > li {
           padding: 15px 0;
 
+          &#callAutoMessageSetting {
+            select {
+              height: 23px;
+            }
+            padding-bottom: 30px;
+          }
+
           &:not(.error-message) {
             border-top: 1px solid #B7B7B7;
           }
 
-          &:first-child {
+          &:first-child, &.no-border{
             border-top: none;
           }
 
