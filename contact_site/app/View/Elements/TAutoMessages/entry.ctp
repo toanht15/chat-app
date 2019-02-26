@@ -132,8 +132,43 @@
           </li>
           <!-- シナリオ選択 -->
 
+          <!-- オートメッセージを呼び出す -->
+          <li id="callAutoMessageSetting" class="no-border" ng-show="action_type == <?= C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE ?>">
+            <span class="require"><label>呼出先</label></span>
+            <label id="tautomessage_select_scenario" style="display: inline-block;" <?php echo true ? '' : 'class="commontooltip" data-text="こちらの機能はオプションの加入が必要です。"' ?>>
+              <?= $this->Form->input('call_automessage_id', array(
+                'type' => 'select',
+                'options' => $this->data['otherAutoMessages'],
+                'empty' => 'オートメッセージを選択してください',
+                'disabled' => !true,
+              ), array(
+                'default' => (!empty($this->data['TAutoMessage']['call_automessage_id'])) ? $this->data['TAutoMessage']['call_automessage_id'] : ''
+              )) ?>
+            </label>
+          </li>
+
+          <!-- チャットツリーを呼び出す -->
+          <li ng-show="action_type == <?= C_AUTO_ACTION_TYPE_SELECTCHATDIAGRAM ?>" class="bt0">
+            <span class="require"><label>チャットツリー</label></span>
+            <?php
+            $canSelectScenario = isset($coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO]) && $coreSettings[C_COMPANY_USE_CHATBOT_SCENARIO];
+            ?>
+            <label id="tautomessage_select_diagram" style="display: inline-block;" <?php echo $canSelectScenario ? '' : 'class="commontooltip" data-text="こちらの機能はオプションの加入が必要です。"' ?>>
+              <?= $this->Form->input('t_chatbot_diagram_id', [
+                'type' => 'select',
+                'options' => $this->data['chatbotDiagram'],
+                'empty' => 'チャットツリーを選択してください',
+                'disabled' => !$canSelectScenario,
+              ], [
+                'default' => (!empty($this->data['TAutoMessage']['t_chatbot_diagram_id'])) ? $this->data['TAutoMessage']['t_chatbot_diagram_id'] : ''
+              ]) ?>
+            </label>
+            <?php if (!empty($errors['t_chatbot_diagram_id'])) echo "<pre class='error-message'>" . h($errors['t_chatbot_diagram_id'][0]) . "</pre>"; ?>
+          </li>
+          <!-- チャットツリーを呼び出す -->
+
           <!-- ウィジェット -->
-          <li class="bt0">
+          <li class="bt0" ng-show="action_type != <?= C_AUTO_ACTION_TYPE_CALL_AUTOMESSAGE ?>">
             <span class="require"><label>ウィジェット</label></span>
             <label class="pointer"><?= $this->ngForm->input('main.widget_open', [
               'type' => 'radio',
@@ -325,12 +360,13 @@
           <!-- 状態 -->
           <li>
             <span class="require"><label>状態</label></span>
-            <label class="pointer"><?= $this->Form->input('active_flg', [
+            <label class="<?php if($this->data['disallowActiveChanging']) echo 'disabled '?>pointer"><?= $this->Form->input('active_flg', [
               'type' => 'radio',
               'options' => $outMessageAvailableType,
               'default' => C_STATUS_AVAILABLE,
-              'separator' => '</label>&nbsp;<label class="pointer">',
-              'error' => false
+              'separator' => '</label>&nbsp;<label class="'.($this->data['disallowActiveChanging'] ? 'disabled commontooltip ' : '').'pointer" '.($this->data['disallowActiveChanging'] ? 'data-text="呼出先に設定されている場合は<br>無効に変更できません"' : '').'>',
+              'error' => false,
+              'disabled' => $this->data['disallowActiveChanging']
             ]); ?></label>
           </li>
           <!-- 状態 -->
@@ -357,7 +393,11 @@
           $class = "vHidden";
         }
         ?>
+        <?php if($this->data['disallowActiveChanging']): ?>
+          <a class="grayBtn btn-shadow <?=$class?> commontooltip" data-text="呼出先に設定されている場合は<br>削除できません">削除</a>
+        <?php else: ?>
           <a href="javascript:void(0)" onclick="removeAct(<?= $lastPage?>)" class="redBtn btn-shadow <?=$class?>">削除</a>
+        <?php endif; ?>
       </div>
     </section>
 </div>

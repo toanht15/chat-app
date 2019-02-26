@@ -108,6 +108,10 @@
 
     var dragReferencePosition = null;
 
+    if ($('#TChatbotDiagramActivity').val() !== null && $('#TChatbotDiagramActivity').val() !== '') {
+      graph.fromJSON(JSON.parse($('#TChatbotDiagramActivity').val()));
+    }
+
     paper.on('cell:pointerup',
       function(cellView, evt, x, y) {
         //init current edit cell to null;
