@@ -55,9 +55,9 @@ function NodeFactory() {
     nodeSize = middleNode;
     nodeType = type;
     if(type === "branch") {
-      inColor = "#fd9644";
-      outColor = "#FDCBA4";
-      bgColor = "#fd9644";
+      inColor = "#ee5253";
+      outColor = "#F6ABAC";
+      bgColor = "#ee5253";
       labelText = "分岐";
       childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
@@ -68,9 +68,9 @@ function NodeFactory() {
         selection: []
       };
     } else if (type === "text") {
-      inColor = "#fed330";
-      outColor = "#FEE794";
-      bgColor = "#fed330";
+      inColor = "#ff9f43";
+      outColor = "#FFD2A8";
+      bgColor = "#ff9f43";
       labelText = "テキスト発言";
       childNode = contentViewNode;
       masterNode = constantNode;
@@ -79,9 +79,9 @@ function NodeFactory() {
         text:[],
       };
     } else if (type === "scenario") {
-      inColor = "#26de81";
-      outColor = "#7AEAB0";
-      bgColor = "#26de81";
+      inColor = "#0abde3";
+      outColor = "#59DCF7";
+      bgColor = "#0abde3";
       labelText = "シナリオ呼出";
       childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
@@ -89,9 +89,9 @@ function NodeFactory() {
         scenarioId: ""
       };
     } else if (type === "jump") {
-      inColor = "#2bcbba";
-      outColor = "#78E2D6";
-      bgColor = "#2bcbba";
+      inColor = "#10ac84";
+      outColor = "#32EAB9";
+      bgColor = "#10ac84";
       labelText = "ジャンプ";
       childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
@@ -99,9 +99,9 @@ function NodeFactory() {
         targetId: ""
       };
     } else if (type === "link") {
-      inColor = "#45aaf2";
-      outColor = "#A0D4F7";
-      bgColor = "#45aaf2";
+      inColor = "#960C84";
+      outColor = "#CA10B1";
+      bgColor = "#960C84";
       labelText = "リンク";
       childNode = contentViewNode;
       masterNode = constantNode;
@@ -110,20 +110,20 @@ function NodeFactory() {
         linkType: "same"
       }
     } else if (type === "operator") {
-      inColor = "#4b7bec";
-      outColor = "#A3BBF4";
-      bgColor = "#4b7bec";
+      inColor = "#2e86de";
+      outColor = "#84B7EB";
+      bgColor = "#2e86de";
       labelText = "オペレータ呼出";
-      nodeSize = smallNode;
+      childNode = contentViewNode;
       masterNode = constantNodeOnlyInPort;
       actionParam = {};
     } else if (type === "cv") {
       console.log("CVポイント");
-      inColor = "#a55eea";
-      outColor = "#D6B7F5";
-      bgColor = "#a55eea";
+      inColor = "#5f27cd";
+      outColor = "#9771E4";
+      bgColor = "#5f27cd";
       labelText = "CVポイント";
-      nodeSize = smallNode;
+      childNode = contentViewNode;
       masterNode = constantNode;
       actionParam = {};
     }
@@ -177,7 +177,7 @@ function startNode() {
         'out': {
           attrs: {
             '.port-body': {
-              fill: "#F27D82",
+              fill: "#BDC6CF",
               height: portSetting.outPortSize,
               width: portSetting.outPortSize + 10,
               stroke: false,
@@ -206,10 +206,11 @@ function startNode() {
         'ref-width': '70%',
         'font-size': '12px',
         'font-weight': 'bold',
-        fill: '#FFF'
+        fill: '#FFF',
+        y: 19
       },
       rect: {
-        fill: '#EA2027',
+        fill: '#8395a7',
         stroke: false,
         rx: 5,
         ry: 5

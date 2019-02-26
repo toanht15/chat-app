@@ -104,6 +104,8 @@
 
     graph.addCell(startNode());
 
+    console.log(paper);
+
 
 
     var dragReferencePosition = null;
@@ -117,11 +119,14 @@
       }, 500);
     }
 
+    var allDrawnCellList = graph.getCells();
+    for( var i = 0; i < allDrawnCellList; i++) {
+      haloCreator(paper.findViewByModel(allDrawnCellList[i]));
+    }
+
     paper.on('cell:pointerup',
       function(cellView, evt, x, y) {
         //init current edit cell to null;
-
-        console.log(cellView.model.getAncestors());
 
         haloCreator(cellView);
         currentEditCell = null;
@@ -157,11 +162,11 @@
     paper.on('link:connect', function(linkView, e) {
       try {
         linkView.sourceView.model.attr('nodeBasicInfo/nextNodeId', linkView.targetView.model.attributes.id);
-        // 接続元が分岐　かつ　接続先がテキスト　か　分岐
+        // 接続元が分岐　かつ　(接続先が テキスト　か　分岐)
         if( linkView.sourceView.model.attr('nodeBasicInfo/nodeType') === "childPortNode"
         &&( linkView.targetView.model.attr('nodeBasicInfo/nodeType') === "text"
           ||linkView.targetView.model.attr('nodeBasicInfo/nodeType') === "branch" )) {
-          setDefaultNodeName(linkView.targetView);
+          previewHandler.setDefaultNodeName(linkView.sourceView.model, linkView.targetView.model);
         }
       } catch (e) {
         console.log('unexpected connect');
@@ -193,6 +198,9 @@
       var node = nodeFactory.createNode(type, posX, posY);
       graph.addCell(node);
       initNodeEvent(node);
+      for(var i = 0; i < graph.getCells().length; i++) {
+        haloCreator(paper.findViewByModel(graph.getCells()[i]));
+      }
     };
 
     var haloCreator = function(cellView) {
@@ -211,7 +219,8 @@
       halo.removeHandle('unlink');
       halo.removeHandle('clone');
       halo.changeHandle('remove', {
-        position: 'ne'
+        position: 'ne',
+        icon: '/img/close_halo.PNG'
       });
       halo.render();
     };
@@ -330,6 +339,7 @@
         case 2:
           //削除処理
             popupEventOverlap.closePopup = function() {
+              previewHandler.typeJump.deleteTargetName(currentEditCell);
               deleteEditNode();
               popupEventOverlap.closeNoPopupOverlap();
               popupEvent.closeNoPopup()
@@ -773,17 +783,19 @@
       portCreator: function(posX, posY, text, additionalY) {
         return new joint.shapes.devs.Model({
           position: {x: posX + 5, y: posY + additionalY},
-          size: {width: 170, height: 30},
+          size: {width: 190, height: 30},
           outPorts: ['out'],
           ports: {
             groups: {
               'out': {
                 attrs: {
                   '.port-body': {
-                    fill: "#FDCBA4",
+                    fill: "#F6ABAC",
                     height: 30,
-                    width: 30,
-                    stroke: false
+                    width: 41,
+                    stroke: false,
+                    rx: 3,
+                    ry: 3
                   },
                   '.port-label': {
                     'font-size': 0
@@ -792,10 +804,11 @@
                 position: {
                   name: 'absolute',
                   args: {
-                    x: 175,
+                    x: 185,
                     y: 0
                   }
                 },
+                z: 0,
                 markup: '<rect class="port-body"/>'
               }
             }
@@ -808,16 +821,8 @@
               fill: '#000'
             },
             rect: {
-              fill: '#FFFFFF',
+              fill: '#EEEEEE',
               stroke: false
-            },
-            button: {
-              cursor: 'pointer',
-              ref: 'buttonLabel',
-              refWidth: '150%',
-              refHeight: '150%',
-              refX: '-25%',
-              refY: '-25%'
             },
             nodeBasicInfo: {
               nodeType: 'childPortNode',
@@ -858,6 +863,26 @@
       },
       removeBalloon: function(){
 
+      }
+    },
+    setDefaultNodeName: function(source, target){
+      //既に情報が入っている場合はreturnさせる
+      if(target.attr("actionParam/nodeName") !== "") return;
+      var defaultValue = source.attr(".label/text");
+      target.attr("actionParam/nodeName", defaultValue);
+      target.attr(".label/text",
+        convertTextForTitle(convertTextLength(defaultValue, 8), 'テキスト発言'));
+    },
+    typeJump: {
+      editTargetName: function(){
+
+      },
+      deleteTargetName: function(targetCell){
+        var allCells = graph.getCells();
+        console.log(targetCell);
+        for(var i = 0; i < allCells.length; i++) {
+
+        }
       }
     }
   };
