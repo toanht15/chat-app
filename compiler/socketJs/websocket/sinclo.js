@@ -5186,7 +5186,6 @@
 
         return style;
       },
->>>>>>> origin/release_for_20190227_2
       createButtonHtml: function(settings, index, storedValue, isNoText) {
         var style = sinclo.chatApi.createButtonWrapStyle(settings, isNoText);
         var name = 'sinclo-button' + index;
