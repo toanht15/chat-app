@@ -10070,6 +10070,9 @@
         },
         _handleCancel: function(e) {
           var self = sinclo.scenarioApi._hearing;
+          if (self.isConfirmingFlg) {
+            self.isConfirmingFlg = false;
+          }
           // テキストの場合はクリックしたテキスト自身、それ以外の場合は変更したターゲットの次にあるdivからchatIdを取得する
           var isCancelTargetText = $(e.target).
               closest('div').
@@ -10114,6 +10117,9 @@
         },
         _handleCarouselCancel: function(e) {
           var self = sinclo.scenarioApi._hearing;
+          if (self.isConfirmingFlg) {
+            self.isConfirmingFlg = false;
+          }
           var target = $(e).closest('.sinclo-scenario-msg').nextAll(':has(.sinclo_se):first').find('.sinclo_se');
           var targetChatId = target.data('chatId');
           sinclo.scenarioApi.syncScenarioData.sendDetail('cancelHearing',
@@ -10148,6 +10154,9 @@
         },
         _handleButtonCancel: function(e) {
           var self = sinclo.scenarioApi._hearing;
+          if (self.isConfirmingFlg) {
+            self.isConfirmingFlg = false;
+          }
           // テキストの場合はクリックしたテキスト自身、それ以外の場合は変更したターゲットの次にあるdivからchatIdを取得する
           var target = $(e.target).
               parents('li').
@@ -10723,6 +10732,7 @@
         errorCountFlg: false,
         isConfirmingFlg: false,
         _showConfirmMessage: function(silentRequest) {
+          var self = sinclo.scenarioApi._hearing;
           var executeSilent = false;
           if (typeof (silentRequest) !== 'undefined') {
             executeSilent = silentRequest;
@@ -10733,13 +10743,12 @@
           console.warn(
               '_showConfirmMessage start with executeSilent: ' + executeSilent);
           console.warn('isConfirmingFlg is ' + this.isConfirmingFlg);
-          if (this.isConfirmingFlg) {
+          if (self.isConfirmingFlg) {
             executeSilent = true;
           }
-          this.isConfirmingFlg = true;
+          self.isConfirmingFlg = true;
           console.warn(
               'changed isConfirmingFlg to true! >>>' + this.isConfirmingFlg);
-          var self = sinclo.scenarioApi._hearing;
           var messageBlock = self._parent._createSelectionMessage(
               self._parent.get(
                   self._parent._lKey.currentScenario).confirmMessage, [
@@ -10747,11 +10756,8 @@
                 self._parent.get(self._parent._lKey.currentScenario).cancel]);
           var handleConfirmMessageFunc = function() {
             // 最後の回答にはイベントを付与しない
-            self._disableGrantCancelAbleFlg = true;
             self._parent._waitingInput(function(inputVal) {
-              setTimeout(function() {
-                self._disableGrantCancelAbleFlg = false;
-              }, 1000);
+              self._disableGrantCancelAbleFlg = true;
               self._parent._unWaitingInput();
               self._parent._handleStoredMessage();
               console.log('inputVal : ' + inputVal +
