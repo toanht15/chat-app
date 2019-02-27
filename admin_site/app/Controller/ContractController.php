@@ -851,9 +851,10 @@ class ContractController extends AppController
     );
     if (empty($autoMessages)) {
       $default = $this->getDefaultAutomessageConfigurations($companyInfo['options']['chatbotScenario']);
+      $addedRelationAutomessageIds = array();
       foreach ($default as $index => $item) {
         $this->TAutoMessages->create();
-        $data = [
+        $data = array(
           "m_companies_id" => $m_companies_id,
           "name" => $item['name'],
           "trigger_type" => $item['trigger_type'],
@@ -861,12 +862,15 @@ class ContractController extends AppController
           "action_type" => $item['action_type'],
           "sort" => $item['sort'],
           "active_flg" => $item['active_type']
-        ];
+        );
         if (array_key_exists($index, $addedRelationScenarioIds) && array_key_exists('t_chatbot_scenario_id', $item)) {
           $data['t_chatbot_scenario_id'] = $addedRelationScenarioIds[$index];
+        } else if (array_key_exists('target_automessage_index', $item) && array_key_exists($index, $addedRelationAutomessageIds)) {
+          $data['call_automessage_id'] = $addedRelationAutomessageIds[$index];
         }
         $this->TAutoMessages->set($data);
         $this->TAutoMessages->save();
+        array_push($addedRelationAutomessageIds, $this->TAutoMessages->getLastInsertId());
       }
     }
   }
