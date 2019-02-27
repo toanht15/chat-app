@@ -10747,11 +10747,8 @@
                 self._parent.get(self._parent._lKey.currentScenario).cancel]);
           var handleConfirmMessageFunc = function() {
             // 最後の回答にはイベントを付与しない
-            self._disableGrantCancelAbleFlg = true;
             self._parent._waitingInput(function(inputVal) {
-              setTimeout(function() {
-                self._disableGrantCancelAbleFlg = false;
-              }, 1000);
+              self._disableGrantCancelAbleFlg = true;
               self._parent._unWaitingInput();
               self._parent._handleStoredMessage();
               console.log('inputVal : ' + inputVal +
