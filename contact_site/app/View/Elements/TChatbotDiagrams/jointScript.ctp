@@ -228,7 +228,6 @@
         };
         popupEventOverlap.open('現在のノードを削除します。よろしいですか？',"p_diagram_delete_alert" ,"削除の確認");
       });
-      halo.render();
     };
   });
 
@@ -429,7 +428,7 @@
         nodeName = $('#my_node_name').val();
         speakTextContents = nodeEditHandler.typeText.convertContents($('.text_modal_setting'));
         currentEditCell.getAncestors()[0].attr('.label/text',
-          convertTextForTitle(convertTextLength(nodeName, 8), 'テキスト発言'));
+          convertTextForTitle(convertTextLength(nodeName, 3), 'テキスト発言'));
         currentEditCell.attr('text/text', convertTextLength(speakTextContents[0], 14));
         //配列は直接上書きができないので一度nullにする
         currentEditCell.getAncestors()[0].attr('actionParam/text', null);
@@ -446,7 +445,7 @@
         nodeEditHandler.typeBranch.handleBranchPorts(selectionList);
         //配列は直接上書きができないので一度nullにする
         currentEditCell.getAncestors()[0].attr('.label/text',
-          convertTextForTitle(convertTextLength(nodeName, 12), '分岐'));
+          convertTextForTitle(convertTextLength(nodeName, 6), '分岐'));
         currentEditCell.getAncestors()[0].attr('actionParam/selection', null);
         currentEditCell.attr('text/text', convertTextLength(speakTextContents, 14));
         nodeParam = {

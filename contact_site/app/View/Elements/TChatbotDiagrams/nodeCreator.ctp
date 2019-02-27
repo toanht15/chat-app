@@ -25,11 +25,11 @@ var portSetting = {
 
 var middleNode = {
   width: 200,
-  height: 100,
+  height: 90,
   inPortX: -30,
-  inPortY: 20,
-  outPortX: 190,
-  outPortY: 20,
+  inPortY: 30,
+  outPortX: 200,
+  outPortY: 30,
   labelX: .3,
   labelY: .1,
   nodeType: "text"
@@ -155,7 +155,7 @@ function NodeFactory() {
 
 function contentViewNode(posX, posY) {
   return new joint.shapes.basic.Rect({
-    position: {x :posX + 5, y: posY + 45},
+    position: {x :posX + 5, y: posY + 35},
     size: { width: 190, height: 50 },
     attrs: {
       rect: {
@@ -215,7 +215,7 @@ function startNode() {
         'font-size': '12px',
         'font-weight': 'bold',
         fill: '#FFF',
-        y: 19
+        y: 19,
       },
       rect: {
         fill: '#8395a7',
@@ -244,7 +244,7 @@ function constantNodeOnlyInPort(posX, posY) {
               fill: inColor,
               magnet: 'passive',
               height: portSetting.inPortSize,
-              width: portSetting.inPortSize + 10,
+              width: portSetting.inPortSize,
               stroke: false,
               rx: 5,
               ry: 5
@@ -269,26 +269,33 @@ function constantNodeOnlyInPort(posX, posY) {
       '.label': {
         text: labelText,
         'text-anchor': 'middle',
-        'font-size': "12px",
+        'font-size': "14px",
         'font-weight': 'bold',
         fill: '#fff',
-        y: 7
+        y: 12,
       },
       '.icon' : {
-        transform: "scale(0.05)"
+        transform: "scale(0.05) translate(70, 70)"
       },
-      rect: {
+      '.body': {
         fill: bgColor,
         stroke: false,
         rx: 5,
         ry: 5
+      },
+      '.inCover': {
+        fill: bgColor,
+        height: portSetting.inPortSize,
+        width: 6,
+        x: -6,
+        y: 30
       },
       nodeBasicInfo: {
         nodeType: nodeType
       },
       actionParam: actionParam
     },
-    markup: '<rect class="body"/><path class="icon" d="' + iconSVG + '"></path><text class="label"/>'
+    markup: '<rect class="body"/><rect class="inCover"/><path class="icon" d="' + iconSVG + '"></path><text class="label"/>'
   });
 }
 
@@ -306,7 +313,7 @@ function constantNode(posX, posY) {
               fill: inColor,
               magnet: 'passive',
               height: portSetting.inPortSize,
-              width: portSetting.inPortSize + 10,
+              width: portSetting.inPortSize,
               stroke: false,
               rx: 5,
               ry: 5
@@ -330,7 +337,7 @@ function constantNode(posX, posY) {
             '.port-body': {
               fill: outColor,
               height: portSetting.outPortSize,
-              width: portSetting.outPortSize + 10,
+              width: portSetting.outPortSize,
               stroke: false,
               rx: 5,
               ry: 5
@@ -355,21 +362,35 @@ function constantNode(posX, posY) {
       '.label': {
         text: labelText,
         'text-anchor': 'middle',
-        'font-size': "12px",
+        'font-size': "14px",
         'font-weight': 'bold',
         fill: '#fff',
-        y: 7
+        y: 12,
       },
       '.icon' : {
-        transform: "scale(0.05) translate(600, 10)",
-        x: 100,
-        y: 100
+        transform: "scale(0.05) translate(70, 70)",
       },
-      rect: {
+      '.body': {
         fill: bgColor,
         stroke: false,
         rx: 5,
         ry: 5
+      },
+      '.inCover': {
+        fill: inColor,
+        stroke: false,
+        height: portSetting.inPortSize,
+        width: 6,
+        x: -6,
+        y: 30
+      },
+      '.outCover': {
+        fill: outColor,
+        stroke: false,
+        height: portSetting.outPortSize,
+        width: 6,
+        x: 200,
+        y: 30
       },
       actionParam: actionParam,
       nodeBasicInfo: {
@@ -377,7 +398,7 @@ function constantNode(posX, posY) {
         nextNodeId: ""
       }
     },
-    markup: '<rect class="body"/><path class="icon" d="' + iconSVG + '"></path><text class="label"/>'
+    markup: '<rect class="body"/><rect class="inCover"/><rect class="outCover"/><path class="icon" d="' + iconSVG + '"></path><text class="label"/>'
   });
 }
 </script>
